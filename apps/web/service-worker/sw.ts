@@ -3,6 +3,7 @@
 import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
+import { checkAppManifestUrl } from "#shared/services/serviceWorker/checkAppManifestUrl";
 import { HostedAssetOriginMap } from "@esposter/db-schema";
 import { omitUndefined } from "@esposter/shared";
 import { cacheNames } from "@vite-pwa/workbox-swkit/core";
@@ -20,12 +21,16 @@ import { navigationDenylist } from "virtual:unplugin-pwa-nuxt/navigation-denylis
 // Page, so the module hands over its routes as the denylist
 declare let self: { __WB_MANIFEST: PrecacheEntry[] } & ServiceWorkerGlobalScope;
 
+const APP_MANIFESTS_CACHE_NAME = "app-manifests";
+const MAX_CACHED_APP_MANIFESTS = 8;
 const MAX_CACHED_PAGES = 32;
 const NETWORK_TIMEOUT_SECONDS = 3;
 const PAGES_CACHE_NAME = "pages";
-// The caches this worker owns: its precache, the pages it keeps, and the hosted objects its preloader fills. Activation deletes
-// Every other cache of the origin, so a cache an earlier build or an earlier product left under another name is not kept
+// The caches this worker owns: its precache, the pages and app manifests it keeps, and the hosted objects its preloader fills.
+// Activation deletes every other cache of the origin, so a cache an earlier build or an earlier product left under another name
+// Is not kept
 const OWNED_CACHE_NAMES: ReadonlySet<string> = new Set([
+  APP_MANIFESTS_CACHE_NAME,
   cacheNames.precache,
   HOSTED_ASSETS_CACHE_NAME,
   PAGES_CACHE_NAME,
@@ -37,17 +42,32 @@ precacheAndRoute(self.__WB_MANIFEST);
 // @TODO: https://github.com/GoogleChrome/workbox/issues/3490 — a plugin class declares each hook it implements as
 // `WorkboxPlugin[hook]`, which carries `undefined` that the interface's optional hook refuses under
 // `exactOptionalPropertyTypes`. Both hooks are arrow-function fields, so they keep their instance without it
-const { cacheDidUpdate, cachedResponseWillBeUsed } = new ExpirationPlugin({ maxEntries: MAX_CACHED_PAGES });
-const expirationPlugin = omitUndefined({ cacheDidUpdate, cachedResponseWillBeUsed });
+const createExpirationPlugin = (maxEntries: number) => {
+  const { cacheDidUpdate, cachedResponseWillBeUsed } = new ExpirationPlugin({ maxEntries });
+  return omitUndefined({ cacheDidUpdate, cachedResponseWillBeUsed });
+};
 registerRoute(
   new NavigationRoute(
     new NetworkFirst({
       cacheName: PAGES_CACHE_NAME,
       networkTimeoutSeconds: NETWORK_TIMEOUT_SECONDS,
-      plugins: [expirationPlugin],
+      plugins: [createExpirationPlugin(MAX_CACHED_PAGES)],
     }),
     { denylist: navigationDenylist },
   ),
+);
+
+// The app manifest is fetched fresh while online, and that answer is kept for offline. A build's meta is named by its id, so
+// Its copy is never stale. latest.json is not: its request skips the browser's cache, which holds the one-year copy the server
+// Stamps on it, and its key drops the timestamp the outdated-build check adds, so one copy is kept rather than one per check
+const appManifests = new NetworkFirst({
+  cacheName: APP_MANIFESTS_CACHE_NAME,
+  fetchOptions: { cache: "no-store" },
+  plugins: [createExpirationPlugin(MAX_CACHED_APP_MANIFESTS)],
+});
+registerRoute(
+  ({ url }) => checkAppManifestUrl(url, self.location.origin),
+  ({ event, url }) => appManifests.handle({ event, request: new Request(new URL(url.pathname, url.origin)) }),
 );
 
 // A hosted object is answered from the cache its preloader filled, and a miss goes to the network unstored, since the

@@ -101,9 +101,9 @@ Before the emptying, the dev `public-genshin-assets` was listed by its top-level
 
 - the worker unchanged: installing for about 20 s, then `installing` and `active` null and no controller;
 - the same worker with that one entry removed: installs, activates and controls the page (about 55 s);
-- the other entries of that worker (1053 less the removed manifest) all answer 200 on the live site, so removing the manifest entry is the whole difference. The per-entry probe results were not kept in the repo, so this record gives no count of the entries probed.
+- the other URLs of that worker (1048 distinct, from its 1053 entries less the removed manifest and four icon entries written with a leading slash, which repeat a checked URL) all answer 200 on the live site, so removing the manifest entry is the whole difference. The per-entry probe results were not kept in the repo, so this record gives no count of the entries probed.
 
-The fix (`packages/unplugin-pwa-nuxt`, the build test asserts it) leaves the app manifest out of the precache. The built `sw.js` of this change names no `_nuxt/builds/meta` entry and 1052 entries in all.
+The fix (`packages/unplugin-pwa-nuxt`, the build test asserts it) leaves the app manifest out of the precache. The built `sw.js` of this change names no `_nuxt/builds/meta` entry and 1052 entries, 1048 distinct URLs.
 
 **The driven run.** The local production build of `apps/web` (`pnpm -C apps/web build` with `CLOUDFLARE_ENV=dev`, so the hosted origin is `hosted.dev.esposter.com`), served by `pnpm start` with placeholder values for the app's environment variable names. A throwaway Chrome, driven over CDP, with the first visit to `/dungeons`, a reload and a second visit, then the network disconnected for the page and the worker:
 
@@ -113,5 +113,13 @@ The fix (`packages/unplugin-pwa-nuxt`, the build test asserts it) leaves the app
 - second visit: 87 hosted responses, all 87 answered by the worker's cache, none from the disk cache or the network, and no fetch by the worker to a hosted origin;
 - offline visit, network disconnected for the page and the worker: 87 hosted responses, all 87 answered by the worker's cache, none failed, no fetch by the worker to a hosted origin (5.1's claim, with the network disabled);
 - no page exception, no worker error, no hosted request failed in the online visits.
+
+**The offline app manifest (R9).** The same local production build (`CLOUDFLARE_ENV=dev`), served by `wrangler dev` on a free local port with the main checkout's `apps/web/.env` (its values are not recorded). A throwaway Chrome, in a fresh browser context, drives it: a visit to `/about` until the worker controls the page, a client navigation to `/privacy-policy` and back, a reload, and the two reads Nuxt makes of the app manifest (`builds/meta/<build id>.json` for `getAppManifest`, `builds/latest.json?<timestamp>` for the outdated-build check), made online. Then the browser's HTTP cache is cleared, the network is disconnected, `/about` is reloaded, the two reads are made again, and the page navigates to `/privacy-policy`. Client navigation and boot made no manifest request on these static pages, so the reads are replayed with Nuxt's own request shapes.
+
+- before (the precache without a manifest route): the offline reads fail, `TypeError: Failed to fetch` for both, and the offline reload raises two page exceptions (`Failed to fetch` and `Event`);
+- after: the offline reads answer 200 from the worker's stored copy, and the offline navigation records no request error and no page exception;
+- the worker is `activated` and controls the page in both runs.
+
+The offline reload still raises the two exceptions in both runs, and the stacks of the after run place them in the engine's loader, which fetches `_nuxt/engine/*.gltf` and `.jpeg` by url, files the precache leaves out on purpose. They are not manifest reads. The requests the reload reports as aborted are the online reads' own, which the navigation tore down.
 
 **Not yet on the deployed dev site.** The Deploy of `ai/queue` is skipped: CI on the current head (`2251a4a81f`) is red in `scripts/src/workspace/oxlintPlugins.test.ts` (the `comments/no-over-width-comment` rule is not enabled), which is not this change. The same driven run against `https://dev.esposter.com` (`HOSTED=https://hosted.dev.esposter.com`) is the check once a Deploy carries this change.

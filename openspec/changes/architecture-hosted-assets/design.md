@@ -286,10 +286,10 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 | :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
 | `packages/db-schema/src/models/storage/StorageBucket.ts`                       | the public buckets a product's origin names                                                   |
 | `apps/infra/src/cloudflare/resources/r2Buckets/`                               | the buckets; the shared hosted bucket and its custom domain are declared beside them          |
-| `apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts` | the Cache Rules: hosted text objects eligible for the edge cache, and `/sw.js` bypassing it   |
+| `apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts` | the Cache Rules: hosted objects cached at the edge, and /sw.js and build list bypassing it    |
 | `apps/web/server/routes/assets/[bucket]/[...key].get.ts`                       | serves the user buckets only, once the game buckets are off the route                         |
 | `apps/web/configuration/security.ts`                                           | the `connect-src`, `font-src` and `media-src` directives over the environment's hosted origin |
-| `apps/web/service-worker/sw.ts`                                                | the cache-first route over the hosted origins, and the claim on activation                    |
+| `apps/web/service-worker/sw.ts`                                                | the hosted cache-first route, the manifest's network-first route, and the activation claim    |
 | `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`                | the precache globs, the server's own files without the app manifest                           |
 | `scripts/src/services/hostedAssets/publishHostedAssets.ts`                     | the publish pipeline the generic publish generalises                                          |
 | `scripts/src/services/hostedAssets/verifyHostedAssetObject.ts`                 | the per-object hash check the fill reuses                                                     |

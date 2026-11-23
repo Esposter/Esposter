@@ -32,7 +32,7 @@ flowchart LR
 | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `apps/web/configuration/pwa.ts`                                         | The manifest, the worker's source, the strategy and the update policy                              |
 | `apps/web/configuration/pwa.test.ts`                                    | Every manifest icon exists in the public folder                                                    |
-| `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation, `SKIP_WAITING`, push and click                           |
+| `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation and the app manifest, `SKIP_WAITING`, push and click      |
 | `packages/unplugin-pwa-nuxt/`                                           | The module that builds the worker and registers it ([its page](../../unplugin-pwa-nuxt/README.md)) |
 | `scripts/src/workspace/workerScope.test.ts`                             | Runs every worker, this one included, in a scope with no window or Node                            |
 | `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                                      |

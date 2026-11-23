@@ -26,9 +26,10 @@ export const esposterComHostedAssetsCache: cloudflare.Ruleset = new cloudflare.R
       {
         action: "set_cache_settings",
         actionParameters: { cache: false },
-        description: "the web worker's script bypasses the edge cache, since the browser's update check reads it",
+        description:
+          "the web worker's script and the app's build list bypass the edge cache, since the update checks read them",
         enabled: true,
-        expression: 'http.request.uri.path eq "/sw.js"',
+        expression: `http.request.uri.path in ${toRulesSet(["/sw.js", "/_nuxt/builds/latest.json"])}`,
       },
     ],
     zoneId: esposterCom.id,
