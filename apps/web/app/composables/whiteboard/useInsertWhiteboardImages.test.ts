@@ -1,21 +1,27 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useInsertWhiteboardImages } from "#src/composables/whiteboard/useInsertWhiteboardImages";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { WHITEBOARD_IMAGE_INSERT_OFFSET, WHITEBOARD_IMAGE_SIZE } from "#src/services/whiteboard/palette/constants";
 import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 import { getElementBounds } from "vue-block-editor-headless";
 
-const { uploadResourceFileMock } = vi.hoisted(() => ({
+const { deleteResourceFileMock, uploadResourceFileMock } = vi.hoisted(() => ({
+  deleteResourceFileMock: vi.fn<(id: string, url: string) => void>(),
   uploadResourceFileMock: vi.fn<(file: File, hash?: string) => Promise<string>>(),
 }));
 
 // The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here
 vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
+}));
+vi.mock(import("#src/composables/resource/useDeleteResourceFile"), () => ({
+  useDeleteResourceFile: () => deleteResourceFileMock,
 }));
 
 const getFileId = async (imageFile: File) => getSha256Hex(new Uint8Array(await imageFile.arrayBuffer()));
@@ -109,5 +115,27 @@ describe(useInsertWhiteboardImages, () => {
       x: firstBounds.x + WHITEBOARD_IMAGE_INSERT_OFFSET,
       y: firstBounds.y + WHITEBOARD_IMAGE_INSERT_OFFSET,
     });
+  });
+
+  test("an image whose board is switched to while it uploads lands on neither board, and its upload is deleted from the one it went to", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { applyResource, clearResource } = resourceStore;
+    const resource = createResourceListItem();
+    applyResource(resource, null, null);
+    const fileId = await getFileId(file);
+    uploadResourceFileMock.mockImplementationOnce(() => {
+      clearResource(resource.id);
+      applyResource(createResourceListItem(), null, null);
+      return Promise.resolve(fileId);
+    });
+    const insertImages = useInsertWhiteboardImages();
+    await insertImages([file]);
+
+    const whiteboardStore = useWhiteboardStore();
+    const { whiteboard } = storeToRefs(whiteboardStore);
+    expect(whiteboard.value.elements).toHaveLength(0);
+    expect(deleteResourceFileMock).toHaveBeenCalledExactlyOnceWith(resource.id, fileId);
   });
 });

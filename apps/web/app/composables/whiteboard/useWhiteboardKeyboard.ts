@@ -25,6 +25,7 @@ import {
 import { WHITEBOARD_TOOL_LOCK_SHORTCUT } from "#src/services/whiteboard/tool/constants";
 import { WhiteboardShapeItemMap } from "#src/services/whiteboard/tool/WhiteboardShapeItemMap";
 import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardToolItemMap";
+import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection.
@@ -38,6 +39,8 @@ export const useWhiteboardKeyboard = (
   tool: Ref<GestureTool>,
 ) => {
   const { isOpen: isDeleteOpen } = useSingletonDialog(deletingIds);
+  const resourceStore = useResourceStore();
+  const { getOpening } = resourceStore;
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { chooseShape, toggleToolLock } = whiteboardEditorStore;
 
@@ -52,10 +55,13 @@ export const useWhiteboardKeyboard = (
   const copySelectionToClipboard = async () => {
     await writeSelectionToClipboard(editState.value.document, selectedIds.value);
   };
-  // A cut deletes only once the clipboard has taken the elements, so a refused write leaves the board as it was
+  // A cut deletes only once the clipboard has taken the elements, so a refused write leaves the board as it was, and a board
+  // Switched to during the write is left alone, since the elements were cut from the board it held
   const cutSelection = async () => {
     const cutIds = selectedIds.value;
-    if (await writeSelectionToClipboard(editState.value.document, cutIds)) removeElements(cutIds);
+    const opening = getOpening();
+    if ((await writeSelectionToClipboard(editState.value.document, cutIds)) && getOpening() === opening)
+      removeElements(cutIds);
   };
   const deleteSelection = () => {
     requestSelectionDelete(deletingIds, selectedIds);

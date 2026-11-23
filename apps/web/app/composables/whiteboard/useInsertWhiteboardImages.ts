@@ -9,7 +9,7 @@ import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { ResourceType } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 // Places image files on a whiteboard, pasted, picked or dropped. Each file is uploaded as a file asset of the whiteboard, and the element it places
 // Holds the file's id and none of its bytes, centred on the point a drop lands on, or where the canvas is centred when no point is given. A file that is
@@ -17,26 +17,43 @@ import { getResultAsync } from "@esposter/shared";
 export const useInsertWhiteboardImages = () => {
   const resourceStore = useResourceStore();
   const { currentResourceId } = storeToRefs(resourceStore);
+  const { getOpening } = resourceStore;
   const uploadFile = useUploadResourceFile(ResourceType.Whiteboard, () => currentResourceId.value);
+  const deleteFile = useDeleteResourceFile(ResourceType.Whiteboard);
   const whiteboardStore = useWhiteboardStore();
   const { insertElement } = whiteboardStore;
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { getCentrePoint } = whiteboardEditorStore;
   return async (files: File[], point?: Point) => {
     const imageFiles = files.filter((file) => IMAGE_UPLOAD_MIME_TYPES.includes(file.type));
+    // The board the images were picked for. An upload names the board open when it is made, so it is made only while that
+    // Board is still open, and an image whose board closed while it uploaded is placed on none: the open board is not the one
+    // It was picked for, so the upload is deleted from the board it went to
+    const opening = getOpening();
+    const resourceId = currentResourceId.value;
     const uploadResults = await Promise.all(
       imageFiles.map(async (imageFile) => {
         // The file is addressed by the hash of its bytes, the id the element holds
         const fileId = await getSha256Hex(new Uint8Array(await imageFile.arrayBuffer()));
+        if (getOpening() !== opening) return undefined;
+
         const uploadResult = await getResultAsync(() => uploadFile(imageFile, fileId));
-        return uploadResult.map(() => fileId);
+        return uploadResult.map((url) => ({ fileId, url }));
       }),
     );
+    if (getOpening() !== opening) {
+      for (const uploadResult of uploadResults)
+        uploadResult?.match(({ url }) => {
+          deleteFile(resourceId, url);
+        }, noop);
+      return;
+    }
+
     const centre = point ?? getCentrePoint();
     // Inserted in the order they were picked, so the element list and the stacking follow it
     for (const [index, uploadResult] of uploadResults.entries())
-      uploadResult.match(
-        (fileId) => {
+      uploadResult?.match(
+        ({ fileId }) => {
           const offset = index * WHITEBOARD_IMAGE_INSERT_OFFSET;
           insertElement(createWhiteboardImageElement(fileId, { x: centre.x + offset, y: centre.y + offset }));
         },

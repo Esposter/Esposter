@@ -13,6 +13,7 @@ import { getHitTolerance } from "#src/services/whiteboard/gesture/getHitToleranc
 import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 import { WHITEBOARD_RESET_SCALE } from "#src/services/whiteboard/viewport/constants";
 import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { useContextMenuStore } from "#src/store/ui/contextMenu";
@@ -39,11 +40,21 @@ export const useWhiteboardContextMenu = (
   const { canvasRect, selectedIds, viewport } = storeToRefs(whiteboardEditorStore);
   const { fitToElements, zoomTo } = whiteboardEditorStore;
   const { pasteText, ...selectionCommands } = commands;
-  // The paste event cannot fire from a menu, so the clipboard is read when the item is chosen, and a read the browser refuses is told to the owner
-  const paste = () =>
-    getResultAsync(() => window.navigator.clipboard.readText()).match(pasteText, () => {
-      createAlert("Could not read the clipboard.", "error");
-    });
+  const resourceStore = useResourceStore();
+  const { getOpening } = resourceStore;
+  // The paste event cannot fire from a menu, so the clipboard is read when the item is chosen, and a read the browser refuses is told to the owner.
+  // The clipboard is pasted onto the board chosen, so a board switched to during the read takes none of it
+  const paste = () => {
+    const opening = getOpening();
+    return getResultAsync(() => window.navigator.clipboard.readText()).match(
+      (text) => {
+        if (getOpening() === opening) pasteText(text);
+      },
+      () => {
+        createAlert("Could not read the clipboard.", "error");
+      },
+    );
+  };
   const fitToContent = () => {
     fitToElements(editState.value.document.elements);
   };
