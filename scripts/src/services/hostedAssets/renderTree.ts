@@ -1,6 +1,6 @@
-import type { KeyTree } from "#src/models/gameData/KeyTree";
+import type { KeyTree } from "#src/models/hostedAssets/KeyTree";
 
-import { renderName } from "#src/services/gameData/renderName";
+import { renderName } from "#src/services/hostedAssets/renderName";
 import { compareNaturally } from "#src/services/shared/compareNaturally";
 
 export const renderTree = (tree: KeyTree, indentation: string): string =>

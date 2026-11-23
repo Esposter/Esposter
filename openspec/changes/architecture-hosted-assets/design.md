@@ -291,8 +291,8 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 | `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`                | the precache globs, which `**/*.{js,css,html}` keeps off hosted objects                       |
 | `scripts/src/services/hostedAssets/publishHostedAssets.ts`                     | the publish pipeline the generic publish generalises                                          |
 | `scripts/src/services/hostedAssets/verifyHostedAssetObject.ts`                 | the per-object hash check the fill reuses                                                     |
-| `scripts/src/services/gameData/writeGameDataKeys.ts`                           | the keys renderer the generic renderer generalises                                            |
-| `scripts/src/services/gameData/getGameDataKeysSource.ts`                       | the keys source, and the one committed generated file this change keeps                       |
+| `scripts/src/services/hostedAssets/writeHostedAssetKeys.ts`                    | the keys renderer the generic renderer generalises                                            |
+| `scripts/src/services/hostedAssets/getHostedAssetKeysSource.ts`                | the keys source, and the one committed generated file this change keeps                       |
 | `packages/genshin-world/src/generated/gameDataLock.json`                       | Genshin's lock, which the generic lock format replaces in place                               |
 | `packages/genshin-world/src/services/data/readGameData.ts`                     | Genshin's reader, which becomes the generic reader                                            |
 | `packages/hosted-assets/src/composables/useHostedAssetsPreload.ts`             | the preloader, generalised from Genshin's and moved here                                      |

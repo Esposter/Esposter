@@ -1,6 +1,6 @@
-import type { KeyTree } from "#src/models/gameData/KeyTree";
+import type { KeyTree } from "#src/models/hostedAssets/KeyTree";
 
-import { descendKeyTree } from "#src/services/gameData/descendKeyTree";
+import { descendKeyTree } from "#src/services/hostedAssets/descendKeyTree";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A key that also prefixes other keys sits under `self`, since one node cannot be both a string and a branch; a literal `self` segment is the one collision

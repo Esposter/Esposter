@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { GAME_DATA_KEYS_PATH } from "#src/services/gameData/constants";
+import { GAME_DATA_KEYS_PATH, GAME_DATA_PRODUCT_NAME } from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { writeGameDataKeys } from "#src/services/gameData/writeGameDataKeys";
+import { writeHostedAssetKeys } from "#src/services/hostedAssets/writeHostedAssetKeys";
 import { defineCommand } from "citty";
 
 export const keysCommand: SubCommandsDef[string] = defineCommand({
@@ -11,6 +11,6 @@ export const keysCommand: SubCommandsDef[string] = defineCommand({
     name: "keys",
   },
   run: async () => {
-    await writeGameDataKeys(await readGameDataLock(), GAME_DATA_KEYS_PATH);
+    await writeHostedAssetKeys(GAME_DATA_PRODUCT_NAME, await readGameDataLock(), GAME_DATA_KEYS_PATH);
   },
 });

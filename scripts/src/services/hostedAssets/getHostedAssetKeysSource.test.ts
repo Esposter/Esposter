@@ -1,14 +1,14 @@
-import { getGameDataKeysSource } from "#src/services/gameData/getGameDataKeysSource";
 import { createHostedAssetLockObject } from "#src/services/hostedAssets/createHostedAssetLockObject.test";
+import { getHostedAssetKeysSource } from "#src/services/hostedAssets/getHostedAssetKeysSource";
 import { describe, expect, test } from "vitest";
 
-describe(getGameDataKeysSource, () => {
+describe(getHostedAssetKeysSource, () => {
   const HASH = "hash";
 
   test("nests a key by its segments, keeping a key that prefixes others under self and quoting a numeric segment", () => {
     expect.hasAssertions();
 
-    const source = getGameDataKeysSource({
+    const source = getHostedAssetKeysSource("Fixture", {
       indexes: { "bookBody/English": createHostedAssetLockObject("bookBody/English", HASH) },
       objects: {
         domains: createHostedAssetLockObject("domains", HASH),
@@ -22,9 +22,9 @@ describe(getGameDataKeysSource, () => {
       import type { ValueOfDeep } from "type-fest";
 
       // The lock's keys as a nested constant, each path nested by its segments.
-      // GameDataKey is the union of its leaf paths, which readers may use to name a key.
-      // Generated from gameDataLock.json on every publish.
-      export const GameDataKeys = {
+      // FixtureKey is the union of its leaf paths, which readers may use to name a key.
+      // Generated from fixtureLock.json on every publish.
+      export const FixtureKeys = {
         domains: {
           self: "domains",
           weeklyBosses: "domains/weeklyBosses",
@@ -34,15 +34,15 @@ describe(getGameDataKeysSource, () => {
         },
       } as const;
 
-      export const GameDataIndexKeys = {
+      export const FixtureIndexKeys = {
         bookBody: {
           English: "bookBody/English",
         },
       } as const;
 
-      export type GameDataIndexKey = ValueOfDeep<typeof GameDataIndexKeys>;
-      export type GameDataKey = ValueOfDeep<typeof GameDataKeys>;
-      export type GameDataKeyOf<D extends keyof typeof GameDataKeys> = ValueOfDeep<(typeof GameDataKeys)[D]>;
+      export type FixtureIndexKey = ValueOfDeep<typeof FixtureIndexKeys>;
+      export type FixtureKey = ValueOfDeep<typeof FixtureKeys>;
+      export type FixtureKeyOf<D extends keyof typeof FixtureKeys> = ValueOfDeep<(typeof FixtureKeys)[D]>;
       "
     `);
   });
@@ -50,7 +50,7 @@ describe(getGameDataKeysSource, () => {
   test("keeps a segment named after an Object.prototype member as a key of its own, computing __proto__ so it is an own property", () => {
     expect.hasAssertions();
 
-    const source = getGameDataKeysSource({
+    const source = getHostedAssetKeysSource("Fixture", {
       indexes: {},
       objects: {
         ["__proto__"]: createHostedAssetLockObject("__proto__", HASH),
@@ -64,9 +64,9 @@ describe(getGameDataKeysSource, () => {
       import type { ValueOfDeep } from "type-fest";
 
       // The lock's keys as a nested constant, each path nested by its segments.
-      // GameDataKey is the union of its leaf paths, which readers may use to name a key.
-      // Generated from gameDataLock.json on every publish.
-      export const GameDataKeys = {
+      // FixtureKey is the union of its leaf paths, which readers may use to name a key.
+      // Generated from fixtureLock.json on every publish.
+      export const FixtureKeys = {
         ["__proto__"]: "__proto__",
         a: {
           constructor: "a/constructor",
@@ -74,13 +74,13 @@ describe(getGameDataKeysSource, () => {
         },
       } as const;
 
-      export const GameDataIndexKeys = {
+      export const FixtureIndexKeys = {
 
       } as const;
 
-      export type GameDataIndexKey = ValueOfDeep<typeof GameDataIndexKeys>;
-      export type GameDataKey = ValueOfDeep<typeof GameDataKeys>;
-      export type GameDataKeyOf<D extends keyof typeof GameDataKeys> = ValueOfDeep<(typeof GameDataKeys)[D]>;
+      export type FixtureIndexKey = ValueOfDeep<typeof FixtureIndexKeys>;
+      export type FixtureKey = ValueOfDeep<typeof FixtureKeys>;
+      export type FixtureKeyOf<D extends keyof typeof FixtureKeys> = ValueOfDeep<(typeof FixtureKeys)[D]>;
       "
     `);
   });
@@ -89,7 +89,7 @@ describe(getGameDataKeysSource, () => {
     expect.hasAssertions();
 
     expect(() =>
-      getGameDataKeysSource({
+      getHostedAssetKeysSource("Fixture", {
         indexes: {},
         objects: Object.fromEntries([
           ["a/self", createHostedAssetLockObject("a/self", HASH)],
@@ -100,7 +100,7 @@ describe(getGameDataKeysSource, () => {
       `[InvalidOperationError: Invalid operation: Push, name: a, shares its self slot with a segment named self in the lock]`,
     );
     expect(() =>
-      getGameDataKeysSource({
+      getHostedAssetKeysSource("Fixture", {
         indexes: {},
         objects: { a: createHostedAssetLockObject("a", HASH), "a/self": createHostedAssetLockObject("a/self", HASH) },
       }),
@@ -113,7 +113,7 @@ describe(getGameDataKeysSource, () => {
     expect.hasAssertions();
 
     expect(() =>
-      getGameDataKeysSource({
+      getHostedAssetKeysSource("Fixture", {
         indexes: {},
         objects: Object.fromEntries([
           ["a/self/x", createHostedAssetLockObject("a/self/x", HASH)],

@@ -27,3 +27,6 @@ export const MAX_CONCURRENT_OBJECT_BODIES = 16;
 export const MAX_CONCURRENT_VERIFY_FETCHES = 16;
 // Downloads in flight at once while the mirror is filled whole, which bounds the fill's memory by one wave of objects
 export const MAX_CONCURRENT_MIRROR_DOWNLOADS = 16;
+
+// The line that closes each constant `renderConstant` writes, after its body
+export const RENDERED_CONSTANT_CLOSING = "} as const;";

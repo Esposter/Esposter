@@ -1,6 +1,6 @@
 import { GAME_DATA_INDEX_KEYS_NAME, GAME_DATA_KEYS_NAME } from "#src/services/gameData/constants";
-import { renderConstant } from "#src/services/gameData/renderConstant";
 import { parseGameDataKeyList } from "#src/services/genshinProgress/parseGameDataKeyList";
+import { renderConstant } from "#src/services/hostedAssets/renderConstant";
 import { describe, expect, test } from "vitest";
 
 describe(parseGameDataKeyList, () => {
