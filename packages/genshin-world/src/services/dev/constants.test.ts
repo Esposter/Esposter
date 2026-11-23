@@ -1,4 +1,4 @@
-import type { DevSaveTables } from "#src/models/dev/DevSaveTables";
+import type { DevGiveItemTables } from "#src/models/dev/DevGiveItemTables";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 
@@ -52,10 +52,7 @@ export const DEV_CRYSTAL_CORE_NAME = "Crystal Core";
 const CRYSTAL_CORE_NAME_TEXT_ID = "1";
 
 // The name tables a dev line's item is resolved against: the game's words in English and the one material above
-export const DEV_ITEM_TABLES: Pick<
-  DevSaveTables,
-  "gameText" | "itemRooms" | "materialDataMap" | "nameText" | "reliquaryPieceEntryMap" | "weaponDataMap"
-> = {
+export const DEV_ITEM_TABLES: DevGiveItemTables = {
   gameText: ENGLISH_GAME_TEXT,
   itemRooms,
   materialDataMap: new Map([

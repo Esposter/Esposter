@@ -1,5 +1,5 @@
+import type { DevGiveItemTables } from "#src/models/dev/DevGiveItemTables";
 import type { DevSaveOutcome } from "#src/models/dev/DevSaveOutcome";
-import type { DevSaveTables } from "#src/models/dev/DevSaveTables";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
 import { MAX_DEV_GIVE_COUNT } from "#src/services/dev/constants";
@@ -26,10 +26,7 @@ type GiveItemArguments = z.infer<typeof giveItemArgs>;
 export const giveItem = (
   save: GenshinSave,
   { count, item }: GiveItemArguments,
-  tables: Pick<
-    DevSaveTables,
-    "gameText" | "itemRooms" | "materialDataMap" | "nameText" | "reliquaryPieceEntryMap" | "weaponDataMap"
-  >,
+  tables: DevGiveItemTables,
 ): DevSaveOutcome => {
   const resolution = resolveDevItem(item, tables);
   if (!resolution.ok) return resolution;
