@@ -21,11 +21,11 @@ describe(useReadData, () => {
     TRPCClientError.from<never>({ error: { code: -32_603, data: { code }, message } });
 
   // A guest at mount, so the signed-in reader is not called until the session appears
-  const mountReadData = async (authedReader: () => never) => {
+  const mountReadData = async (authedReader: () => void, unauthedReader: () => void = noop) => {
     wrapper = await mountSuspended(
       defineComponent({
         async setup() {
-          await useReadData(noop, authedReader);
+          await useReadData(unauthedReader, authedReader);
           return () => h("div");
         },
       }),
@@ -70,5 +70,18 @@ describe(useReadData, () => {
     await flushPromises();
 
     expect(alerts.value).toHaveLength(0);
+  });
+
+  // A guest read runs onMounted, where no component is left to hand a failure to, so it is alerted there as well
+  test("alerts a guest read that fails at mount", async () => {
+    expect.hasAssertions();
+
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    await mountReadData(noop, () => {
+      throw createTrpcClientError("INTERNAL_SERVER_ERROR");
+    });
+
+    expect(alerts.value).toHaveLength(1);
   });
 });

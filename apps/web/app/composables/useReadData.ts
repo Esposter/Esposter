@@ -28,6 +28,6 @@ export const useReadData = async (
   // Unauthenticated means reading data from local storage, which must happen onMounted.
   else
     onMounted(async () => {
-      await unauthedReader();
+      await getResultAsync(async () => unauthedReader()).match(noop, createErrorAlert);
     }, currentInstance);
 };
