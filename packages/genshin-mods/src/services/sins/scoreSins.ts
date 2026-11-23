@@ -7,7 +7,7 @@ import { InitialState } from "../InitialState";
 import { readHome } from "../readHome";
 import { veilText } from "../veil/veilText";
 import { appendSinEvidence } from "./appendSinEvidence";
-import { SINS_API_URL, SINS_TIMEOUT_MS } from "./constants";
+import { SINS_API_MAX_BYTES, SINS_API_URL, SINS_TIMEOUT_MS } from "./constants";
 import { getSinQuestions } from "./getSinQuestions";
 import { parseSinsResult } from "./parseSinsResult";
 import { readTypeSafeKey } from "./readTypeSafeKey";
@@ -37,6 +37,7 @@ export async function scoreSins($: EngineInterface, text: string, typeSafeKey: s
       stdin: JSON.stringify({
         apiUrl: SINS_API_URL,
         key,
+        maxBytes: SINS_API_MAX_BYTES,
         questions: getSinQuestions(),
         session,
         state: veilText(text),

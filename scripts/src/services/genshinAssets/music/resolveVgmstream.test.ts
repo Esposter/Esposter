@@ -57,7 +57,7 @@ describe(resolveVgmstream, () => {
     expect.hasAssertions();
 
     Object.defineProperty(process, "platform", { value: "darwin" });
-    vi.mocked(fetchOk).mockResolvedValue(new Response("not the pinned archive"));
+    vi.mocked(fetchOk).mockResolvedValue(new TextEncoder().encode("not the pinned archive"));
     // The real installer runs here, so the refusal is the one a stage meets: its archive is checked before it is unpacked
     vi.mocked(resolvePinnedTool).mockImplementationOnce(installPinnedTool);
 

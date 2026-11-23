@@ -25,7 +25,7 @@ import {
   PUBLISH_DIRECTORY_NAME,
   TOOLS_DIRECTORY,
 } from "#src/services/recreation/animeStudio/constants";
-import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
+import { MEBIBYTE, PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { CACHE_ROOT, WINDOWS_ANIMESTUDIO_DIRECTORY } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
@@ -246,6 +246,8 @@ export const SAMPLED_VOICE_MAX_LAG = 4;
 export const MUSIC_RECORDING_BITRATE = "64k";
 // A recording runs to tens of megabytes, past the bound a script's ordinary request is given
 export const SAMPLE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
+// The most of a sample file held whole, past the largest a library's mapped sample runs to
+export const SAMPLE_FILE_MAX_BYTES: number = 256 * MEBIBYTE;
 // What a voice's instrument is chosen from: each library's sustained and plucked orchestral instruments and its pianos,
 // Harps and tuned percussion, past which an orchestral theme reaches for nothing
 export const SAMPLED_INSTRUMENTS: SampledInstrument[] = [

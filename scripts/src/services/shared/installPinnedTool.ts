@@ -1,5 +1,6 @@
 import type { PinnedTool } from "#src/models/shared/PinnedTool";
 
+import { PINNED_TOOL_MAX_BYTES } from "#src/services/shared/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { findExecutable } from "#src/services/shared/findExecutable";
 import { getSystemTarPath } from "#src/services/shared/getSystemTarPath";
@@ -21,8 +22,7 @@ export const installPinnedTool = async ({
   executablePattern,
   isArchive,
 }: PinnedTool): Promise<string> => {
-  const response = await fetchOk(archiveUrl, { timeoutMs: downloadTimeoutMs });
-  const archive = new Uint8Array(await response.arrayBuffer());
+  const archive = await fetchOk(archiveUrl, { maxBytes: PINNED_TOOL_MAX_BYTES, timeoutMs: downloadTimeoutMs });
   const checksum = createHash("sha256").update(archive).digest("hex");
   if (checksum !== archiveSha256)
     throw new InvalidOperationError(Operation.Read, archiveUrl, `has checksum ${checksum}, not the pinned one`);

@@ -26,3 +26,6 @@ export const SINS_PANE_ID = "sins";
 export const SINS_TIMEOUT_MS = 60_000;
 
 export const SINS_API_URL = "https://api.typesafe.ai/v1/systemone";
+// The most of the API's reply held whole: an answer is a score and a confidence for each question, so a reply past this
+// Is read as no answer rather than read on
+export const SINS_API_MAX_BYTES: number = 1024 * 1024;

@@ -1,3 +1,4 @@
+import { MEBIBYTE } from "#src/services/shared/constants";
 import { DATA_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
@@ -7,6 +8,8 @@ export const TOOLS_DIRECTORY: string = join(DATA_ROOT, "tools");
 // ACL source all come from this one tree
 export const ANIMESTUDIO_REPOSITORY = "Escartem/AnimeStudio";
 export const ANIMESTUDIO_SHA = "db860e1f9bf0e0314b892782304d44f3ac42c261";
+// The most of a commit's codeload archive held whole: AnimeStudio's tree is about 7 MB, so the bound sits far past it
+export const CODELOAD_ARCHIVE_MAX_BYTES: number = 64 * MEBIBYTE;
 // Texture2DDecoder (github.com/KiruyaMomochi/Texture2DDecoder) at the commit: the native library behind the managed
 // Wrapper the CLI references as Kyaru.Texture2DDecoder, whose macOS build the NuGet package does not ship
 export const TEXTURE2DDECODER_REPOSITORY = "KiruyaMomochi/Texture2DDecoder";

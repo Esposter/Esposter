@@ -1,4 +1,5 @@
 import {
+  ASSET_PATH_INDEX_MAX_BYTES,
   ASSET_PATH_INDEX_PATH,
   ASSET_PATH_INDEX_SHA256,
   ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
@@ -45,8 +46,10 @@ export const ensureAssetPathIndex = async (
     await verification;
     return indexPath;
   }
-  const response = await fetchOk(ASSET_PATH_INDEX_URL, { timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS });
-  const index = new Uint8Array(await response.arrayBuffer());
+  const index = await fetchOk(ASSET_PATH_INDEX_URL, {
+    maxBytes: ASSET_PATH_INDEX_MAX_BYTES,
+    timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
+  });
   assertPinned(ASSET_PATH_INDEX_URL, createHash("sha256").update(index).digest("hex"), sha256);
   await publishFile(indexPath, index);
   verifications.set(key, Promise.resolve());

@@ -5,6 +5,7 @@ import {
   GCSIM_CONFIG_FILE,
   GCSIM_FETCH_CONCURRENCY,
   GCSIM_MAIN_COMMIT,
+  GCSIM_RAW_FILE_MAX_BYTES,
   GCSIM_RAW_URL,
   GCSIM_TREES_URL,
 } from "#src/services/genshinAssets/kits/constants";
@@ -39,8 +40,10 @@ export const readGcsimMainCharacters = async (folders: readonly string[]): Promi
     .map(({ path }) => path);
   const sourceMap = new Map<string, string>();
   await forEachConcurrently(filePaths, GCSIM_FETCH_CONCURRENCY, async (path) => {
-    const response = await fetchOk(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${path}`);
-    sourceMap.set(path, await response.text());
+    const bytes = await fetchOk(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${path}`, {
+      maxBytes: GCSIM_RAW_FILE_MAX_BYTES,
+    });
+    sourceMap.set(path, new TextDecoder().decode(bytes));
   });
   return new Map(
     folders.flatMap((folder) => {

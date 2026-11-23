@@ -2,7 +2,7 @@
 import type { ProvenanceSource } from "#src/models/provenance/Provenance";
 
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { MEBIBYTE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GameLanguage, GameLanguageTagMap } from "genshin-text";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
@@ -200,6 +200,9 @@ export const DUMP_FETCH_BATCH_SIZE = 8;
 // How long one dump file may take to download: a language's text map is tens of megabytes, which the default bound cuts
 // Off before its body is read
 export const DUMP_FILE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
+// The most of a dump file held whole: the dump's largest table, the dialog table, is about 93 MB, so the bound sits past
+// It
+export const DUMP_FILE_MAX_BYTES: number = 128 * MEBIBYTE;
 
 // The keys a published record or data file holds a name's or a description's text hash under: a `nameTextId` the item and
 // Character tables cite, the `nameTextHash` and `descriptionTextHash` the Spiral Abyss's blessings and Benedictions hold,

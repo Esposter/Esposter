@@ -2,6 +2,7 @@
 import type { ProvenanceSource } from "#src/models/provenance/Provenance";
 
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { MEBIBYTE } from "#src/services/shared/constants";
 import { join } from "node:path";
 
 // The open world's streams: a tile's StreamGen blob and a city area's are named by their path's hash under this folder,
@@ -43,6 +44,8 @@ export const ASSET_PATH_INDEX_SOURCE: ProvenanceSource = {
 export const ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS: number = Temporal.Duration.from({ minutes: 10 }).total(
   "milliseconds",
 );
+// The most of the index a fetch holds whole: the index is about 92 MB, so the bound sits past it
+export const ASSET_PATH_INDEX_MAX_BYTES: number = 128 * MEBIBYTE;
 export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "asset-index", "gi-2.6.0.json");
 // A prefab's stem starts with one of the open world's name roots, each the folder its prefabs sit under in the game's tree
 export const PREFAB_ROOT_MAP: Record<string, string> = {

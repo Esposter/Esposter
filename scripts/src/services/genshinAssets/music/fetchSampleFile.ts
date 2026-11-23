@@ -2,7 +2,11 @@ import type { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibra
 
 import { SampleLibraryCommitMap } from "#src/services/genshinAssets/music/SampleLibraryCommitMap";
 import { SampleLibraryOwnerMap } from "#src/services/genshinAssets/music/SampleLibraryOwnerMap";
-import { SAMPLE_DOWNLOAD_TIMEOUT_MS, SAMPLES_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import {
+  SAMPLE_DOWNLOAD_TIMEOUT_MS,
+  SAMPLE_FILE_MAX_BYTES,
+  SAMPLES_DIRECTORY,
+} from "#src/services/genshinAssets/shared/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { publishFile } from "#src/services/shared/publishFile";
 import { existsSync } from "node:fs";
@@ -15,10 +19,10 @@ export const fetchSampleFile = async (library: SampleLibrary, path: string): Pro
   const localPath = join(SAMPLES_DIRECTORY, library, path);
   if (existsSync(localPath)) return localPath;
   const segments = path.split("/").map((segment) => encodeURIComponent(segment));
-  const response = await fetchOk(
+  const bytes = await fetchOk(
     `https://raw.githubusercontent.com/${SampleLibraryOwnerMap[library]}/${library}/${SampleLibraryCommitMap[library]}/${segments.join("/")}`,
-    { timeoutMs: SAMPLE_DOWNLOAD_TIMEOUT_MS },
+    { maxBytes: SAMPLE_FILE_MAX_BYTES, timeoutMs: SAMPLE_DOWNLOAD_TIMEOUT_MS },
   );
-  await publishFile(localPath, new Uint8Array(await response.arrayBuffer()));
+  await publishFile(localPath, bytes);
   return localPath;
 };

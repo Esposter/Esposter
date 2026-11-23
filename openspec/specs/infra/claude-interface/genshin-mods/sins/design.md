@@ -171,10 +171,10 @@ The sins files:
 ```text
 packages/genshin-mods/src/services/readHome.ts         ← the home folder from the engine's environment, shared by ward and sins
 packages/genshin-mods/src/services/sins/   ← each module with its co-located .test.ts where it has one
-  constants.ts            ← the seven sins and their criteria, the half-life, the prior, the history cap, the bar width, the pane's id and the API URL
+  constants.ts            ← the seven sins and their criteria, the half-life, the prior, the history cap, the bar width, the pane's id, the API URL and the most of its reply held whole
   SinColorMap.ts          ← each sin's slot of the palette, light and dark
   SinStatusTextMap.ts     ← the words the band and the pane give a status
-  sinsScript.ts           ← the node script's code, run inline with `node -e`: one POST and the evidence log
+  sinsScript.ts           ← the node script's code, run inline with `node -e`: one POST, its reply read under the ceiling the hook passes, and the evidence log
   getPosteriorTrail.ts    ← the replayed posterior after each prompt, and the posterior now
   getScoreAndSpread.ts    ← the score and spread from one posterior
   getTrend.ts             ← the score after each of the last thirty prompts, and its glyphs

@@ -2,6 +2,7 @@ import {
   GCSIM_CHARACTERS_PATH,
   GCSIM_CONFIG_FILE,
   GCSIM_MAIN_COMMIT,
+  GCSIM_RAW_FILE_MAX_BYTES,
   GCSIM_RAW_URL,
   GCSIM_TREES_URL,
 } from "#src/services/genshinAssets/kits/constants";
@@ -30,7 +31,7 @@ describe(readGcsimMainCharacters, () => {
     // An empty token is no token, so the listing's headers are absent and the call's arguments are the URL alone
     vi.stubEnv("GITHUB_TOKEN", "");
     vi.mocked(fetchJson).mockResolvedValueOnce({ tree: [{ path: configPath, type: "blob" }], truncated: false });
-    vi.mocked(fetchOk).mockResolvedValueOnce(new Response(""));
+    vi.mocked(fetchOk).mockResolvedValueOnce(new Uint8Array());
 
     await readGcsimMainCharacters([folder]);
 
@@ -39,6 +40,8 @@ describe(readGcsimMainCharacters, () => {
       FETCH_JSON_MAX_BYTES,
       undefined,
     );
-    expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${configPath}`);
+    expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${configPath}`, {
+      maxBytes: GCSIM_RAW_FILE_MAX_BYTES,
+    });
   });
 });

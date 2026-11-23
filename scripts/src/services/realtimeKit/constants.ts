@@ -1,5 +1,6 @@
 import type { RealtimeKitPreset } from "#src/models/realtimeKit/RealtimeKitPreset";
 
+import { MEBIBYTE } from "#src/services/shared/constants";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 import { SITE_NAME } from "@esposter/shared";
 
@@ -33,3 +34,6 @@ export const ESC_ENVIRONMENT_NAME = `${SITE_NAME.toLowerCase()}-infra/prod`;
 export const ESC_KEY_PREFIX = `pulumiConfig.${SITE_NAME.toLowerCase()}-infra:`;
 export const JSON_CONTENT_TYPE = "application/json";
 export const REQUEST_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
+// The most of a Cloudflare reply the provisioning holds whole: an envelope of JSON it reads and checks, so a reply past
+// This is refused rather than read on
+export const CLOUDFLARE_API_MAX_BYTES: number = 8 * MEBIBYTE;

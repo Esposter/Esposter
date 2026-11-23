@@ -118,6 +118,9 @@ export const BYTE = 255;
 export const D65_WHITE: Vector = [0.950428545, 1, 1.088900371];
 // A pinned tool's archive runs to a hundred-odd megabytes, so its download is bounded by minutes rather than seconds
 export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
+// The most of a pinned tool's archive a download holds whole: an archive runs to a hundred-odd megabytes, so the bound
+// Sits past it
+export const PINNED_TOOL_MAX_BYTES: number = 256 * MEBIBYTE;
 // MacOS's own sysctl, named by its path so a sysctl of the same name on the PATH is never run
 export const SYSCTL_PATH = "/usr/sbin/sysctl";
 // The web app's directory, against the repository root

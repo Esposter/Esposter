@@ -10,9 +10,26 @@ import { dirname } from "node:path";
 
 let input = "";
 for await (const chunk of process.stdin) input += chunk;
-const { apiUrl, key, questions, session, state, storePath } = JSON.parse(input);
+const { apiUrl, key, maxBytes, questions, session, state, storePath } = JSON.parse(input);
 const finish = (result) => process.stdout.write(JSON.stringify(result));
 const sqlite = process.getBuiltinModule?.("node:sqlite");
+// The reply read as JSON, held whole only up to maxBytes: a reply past it is cut off and reads as no answer. The plugin
+// reaches no shared reader, so this is its own counting read, of the shape readBoundedBody (genshin-persona) has
+const readAnswers = async (response) => {
+  const reader = response.body?.getReader();
+  if (!reader) return undefined;
+  const chunks = [];
+  let size = 0;
+  for (let read = await reader.read(); !read.done; read = await reader.read()) {
+    size += read.value.length;
+    if (size > maxBytes) {
+      await reader.cancel();
+      return undefined;
+    }
+    chunks.push(read.value);
+  }
+  return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+};
 
 if (!key) finish({ result: "${SinStatusKind.NoKey}" });
 else if (!sqlite) finish({ result: "${SinStatusKind.NodeTooOld}" });
@@ -22,7 +39,7 @@ else {
     headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
     method: "POST",
   });
-  const answers = response.ok ? (await response.json()).answers || {} : {};
+  const answers = response.ok ? (await readAnswers(response))?.answers || {} : {};
   const names = Object.keys(questions);
   const isAnswered = names.every(
     (name) => typeof answers[name]?.score === "number" && typeof answers[name]?.confidence === "number",

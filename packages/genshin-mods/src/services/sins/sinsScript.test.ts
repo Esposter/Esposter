@@ -12,6 +12,7 @@ import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { SinNames } from "../../models/SinName";
+import { SINS_API_MAX_BYTES } from "./constants";
 import { getSinQuestions } from "./getSinQuestions";
 import { SINS_SCRIPT } from "./sinsScript";
 
@@ -60,7 +61,14 @@ describe("sinsScript", () => {
     });
   });
 
-  const getPayload = () => ({ apiUrl, questions: getSinQuestions(), session: 1, state: "", storePath });
+  const getPayload = () => ({
+    apiUrl,
+    maxBytes: SINS_API_MAX_BYTES,
+    questions: getSinQuestions(),
+    session: 1,
+    state: "",
+    storePath,
+  });
 
   test("answers no-key without a key, and makes no request", async () => {
     expect.hasAssertions();
@@ -90,6 +98,16 @@ describe("sinsScript", () => {
     expect(rows).toHaveLength(1);
     expect(Object.keys(JSON.parse(String(rows[0]?.answers)))).toStrictEqual([...SinNames]);
     database.close();
+  });
+
+  test("reads a reply past its ceiling as no answer, and writes no evidence", async () => {
+    expect.hasAssertions();
+
+    expect(JSON.parse(await runScript({ ...getPayload(), maxBytes: 4 }, "test-key"))).toStrictEqual({
+      reason: "unanswered",
+      result: "failed",
+    });
+    expect(existsSync(storePath)).toBe(false);
   });
 
   test("writes no evidence when the call fails", async () => {

@@ -1,5 +1,5 @@
 import { getWorktreeName } from "#src/services/genshinParity/shared/getWorktreeName";
-import { PARITY_FOLDER_NAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { MEBIBYTE, PARITY_FOLDER_NAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { DATA_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
@@ -43,6 +43,9 @@ export const PARITY_DEFAULT_PORT = 3011;
 // How many ports from the first one a command probes for the page, and how long each probe waits for an answer
 export const PARITY_PORT_COUNT = 10;
 export const PARITY_PROBE_TIMEOUT_MS = 1000;
+// The most of a probe's answer read: the parity page is a document with its title in its head, and whatever else
+// Answers on the port is refused past this rather than read on
+export const PARITY_PAGE_MAX_BYTES: number = MEBIBYTE;
 // The title the parity page's HTML carries, which tells it apart from whatever else answers on a port
 export const PARITY_PAGE_TITLE = "<title>Genshin parity</title>";
 // The world package, whose parity page a load run builds for production and serves beside the dev server

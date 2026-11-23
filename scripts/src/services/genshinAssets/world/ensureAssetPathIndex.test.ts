@@ -1,4 +1,5 @@
 import {
+  ASSET_PATH_INDEX_MAX_BYTES,
   ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
   ASSET_PATH_INDEX_URL,
 } from "#src/services/genshinAssets/world/constants";
@@ -60,10 +61,11 @@ describe(ensureAssetPathIndex, () => {
     expect.hasAssertions();
 
     const indexPath = join(directory, "missing-index.json");
-    vi.mocked(fetchOk).mockResolvedValueOnce(new Response(fixtureIndex));
+    vi.mocked(fetchOk).mockResolvedValueOnce(new TextEncoder().encode(fixtureIndex));
 
     await expect(ensureAssetPathIndex(indexPath, fixtureSha256)).resolves.toBe(indexPath);
     expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(ASSET_PATH_INDEX_URL, {
+      maxBytes: ASSET_PATH_INDEX_MAX_BYTES,
       timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
     });
   });
@@ -72,7 +74,7 @@ describe(ensureAssetPathIndex, () => {
     expect.hasAssertions();
 
     const indexPath = join(directory, "refused-index.json");
-    vi.mocked(fetchOk).mockResolvedValueOnce(new Response(fixtureIndex));
+    vi.mocked(fetchOk).mockResolvedValueOnce(new TextEncoder().encode(fixtureIndex));
 
     await expect(ensureAssetPathIndex(indexPath)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/3192b1759a6d1f6879cc348ad92e078092c1fb9f/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json, has SHA-256 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a, not the pinned one]`,

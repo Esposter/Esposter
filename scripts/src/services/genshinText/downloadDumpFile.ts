@@ -3,6 +3,7 @@ import type { DumpFile } from "#src/models/genshinText/DumpFile";
 import {
   ANIME_GAME_DATA_URL,
   DUMP_FILE_DOWNLOAD_TIMEOUT_MS,
+  DUMP_FILE_MAX_BYTES,
   GAME_TEXT_DIRECTORY,
 } from "#src/services/genshinText/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
@@ -14,9 +15,7 @@ import { join } from "node:path";
 export const downloadDumpFile = async ({ path }: DumpFile): Promise<void> => {
   const segments = path.split("/");
   const localPath = join(GAME_TEXT_DIRECTORY, ...segments);
-  const response = await fetchOk(
-    `${ANIME_GAME_DATA_URL}/${segments.map((segment) => encodeURIComponent(segment)).join("/")}`,
-    { timeoutMs: DUMP_FILE_DOWNLOAD_TIMEOUT_MS },
-  );
-  await publishFile(localPath, new Uint8Array(await response.arrayBuffer()));
+  const url = `${ANIME_GAME_DATA_URL}/${segments.map((segment) => encodeURIComponent(segment)).join("/")}`;
+  const bytes = await fetchOk(url, { maxBytes: DUMP_FILE_MAX_BYTES, timeoutMs: DUMP_FILE_DOWNLOAD_TIMEOUT_MS });
+  await publishFile(localPath, bytes);
 };

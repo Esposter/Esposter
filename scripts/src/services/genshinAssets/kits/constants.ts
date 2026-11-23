@@ -1,7 +1,7 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer */
 import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimStanceNormalAttack";
 
-import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
+import { MEBIBYTE, WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { CACHE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
@@ -16,6 +16,9 @@ export const GCSIM_RAW_URL = "https://raw.githubusercontent.com/genshinsim/gcsim
 export const GCSIM_TREES_URL = "https://api.github.com/repos/genshinsim/gcsim/git/trees";
 // The raw files of a kit read at once, so a character folder's dozens of files never open that many connections
 export const GCSIM_FETCH_CONCURRENCY = 8;
+// The most of a raw source file held whole, read once for the classification: a character's file is kilobytes, so the
+// Bound sits far past it
+export const GCSIM_RAW_FILE_MAX_BYTES: number = 8 * MEBIBYTE;
 export const GCSIM_CHARACTERS_PATH = "internal/characters";
 // A character folder's config, which a folder holding only other folders, the Traveler's, does not have
 export const GCSIM_CONFIG_FILE = "config.yml";

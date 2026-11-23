@@ -1,6 +1,7 @@
 import {
   ANIME_GAME_DATA_URL,
   DUMP_FILE_DOWNLOAD_TIMEOUT_MS,
+  DUMP_FILE_MAX_BYTES,
   QUEST_BINARY_DIRECTORY_PATH,
 } from "#src/services/genshinText/constants";
 import { downloadDumpFile } from "#src/services/genshinText/downloadDumpFile";
@@ -21,13 +22,13 @@ describe(downloadDumpFile, () => {
   test("a fetched source is pinned to a commit", async () => {
     expect.hasAssertions();
 
-    vi.mocked(fetchOk).mockResolvedValueOnce(new Response(""));
+    vi.mocked(fetchOk).mockResolvedValueOnce(new Uint8Array());
 
     await downloadDumpFile({ path: `${QUEST_BINARY_DIRECTORY_PATH}/${fileName}`, sha: fileSha });
 
     expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(
       `${ANIME_GAME_DATA_URL}/${QUEST_BINARY_DIRECTORY_PATH}/${fileName}`,
-      { timeoutMs: DUMP_FILE_DOWNLOAD_TIMEOUT_MS },
+      { maxBytes: DUMP_FILE_MAX_BYTES, timeoutMs: DUMP_FILE_DOWNLOAD_TIMEOUT_MS },
     );
   });
 });

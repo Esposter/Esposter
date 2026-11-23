@@ -19,7 +19,7 @@ describe(readWikiTalentPages, () => {
   test("reads a cached answer back without asking the wiki again", async () => {
     expect.hasAssertions();
 
-    vi.mocked(fetchOk).mockResolvedValueOnce(Response.json({ query: { pages: [] } }));
+    vi.mocked(fetchOk).mockResolvedValueOnce(new TextEncoder().encode(JSON.stringify({ query: { pages: [] } })));
     await readWikiTalentPages("a", cacheDirectory);
 
     await expect(readWikiTalentPages("a", cacheDirectory)).resolves.toStrictEqual([]);
@@ -29,7 +29,9 @@ describe(readWikiTalentPages, () => {
   test("refuses a wiki error answer rather than caching it", async () => {
     expect.hasAssertions();
 
-    vi.mocked(fetchOk).mockResolvedValueOnce(Response.json({ error: { code: "a", info: "a" } }));
+    vi.mocked(fetchOk).mockResolvedValueOnce(
+      new TextEncoder().encode(JSON.stringify({ error: { code: "a", info: "a" } })),
+    );
 
     await expect(readWikiTalentPages("a", cacheDirectory)).rejects.toThrowErrorMatchingInlineSnapshot(`
       [ZodError: [

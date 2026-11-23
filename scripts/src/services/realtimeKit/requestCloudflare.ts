@@ -2,8 +2,15 @@ import type { CloudflareCredentials } from "#src/models/realtimeKit/CloudflareCr
 import type { z } from "zod";
 
 import { RequestMethod } from "#src/models/realtimeKit/RequestMethod";
-import { CLOUDFLARE_API_ORIGIN, JSON_CONTENT_TYPE, REQUEST_TIMEOUT_MS } from "#src/services/realtimeKit/constants";
+import {
+  CLOUDFLARE_API_MAX_BYTES,
+  CLOUDFLARE_API_ORIGIN,
+  JSON_CONTENT_TYPE,
+  REQUEST_TIMEOUT_MS,
+} from "#src/services/realtimeKit/constants";
 import { fetchResponse } from "#src/services/shared/fetchResponse";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readBoundedResponse } from "#src/services/shared/readBoundedResponse";
 import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -29,5 +36,6 @@ export const requestCloudflare = async <Schema extends z.ZodType>(
     timeoutMs: REQUEST_TIMEOUT_MS,
   });
   if (!response.ok) throw new InvalidOperationError(METHOD_OPERATION_MAP[method], path, `responds ${response.status}`);
-  return schema.parse(await response.json());
+  const bytes = await readBoundedResponse(response, path, CLOUDFLARE_API_MAX_BYTES);
+  return schema.parse(parseMachineJson(new TextDecoder().decode(bytes)));
 };
