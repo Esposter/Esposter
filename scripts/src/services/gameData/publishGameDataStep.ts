@@ -6,6 +6,7 @@ import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
 import { commitHostedAssetLock } from "#src/services/hostedAssets/commitHostedAssetLock";
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
+import { planHostedAssetPublication } from "#src/services/hostedAssets/planHostedAssetPublication";
 import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
 import { readOtherHostedAssetLocks } from "#src/services/hostedAssets/readOtherHostedAssetLocks";
 import { writeHostedAssetKeys } from "#src/services/hostedAssets/writeHostedAssetKeys";
@@ -26,8 +27,8 @@ export const publishGameDataStep = async ({
     createBucketClientMap: isDryRun ? undefined : () => createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket),
     currentLock,
     otherLocks: await readOtherHostedAssetLocks(GAME_DATA_PRODUCT),
+    plan: planHostedAssetPublication(publication),
     product: GAME_DATA_PRODUCT,
-    publication,
     scopes,
   });
   if (result.outcome === HostedAssetPublishOutcome.Unchanged) return `${label}: unchanged, no request made`;

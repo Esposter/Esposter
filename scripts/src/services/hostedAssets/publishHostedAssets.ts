@@ -4,28 +4,29 @@ import type { PublishHostedAssetsOptions } from "#src/models/hostedAssets/Publis
 
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
 import { assertScopeUnclaimed } from "#src/services/hostedAssets/assertScopeUnclaimed";
+import { encodeHostedAssetObject } from "#src/services/hostedAssets/encodeHostedAssetObject";
+import { encodeHostedAssetRecord } from "#src/services/hostedAssets/encodeHostedAssetRecord";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
 import { mergeHostedAssetLock } from "#src/services/hostedAssets/mergeHostedAssetLock";
-import { planHostedAssetPublication } from "#src/services/hostedAssets/planHostedAssetPublication";
 import { publishHostedAssetsToBucket } from "#src/services/hostedAssets/publishHostedAssetsToBucket";
 import { readHostedAssetReachableObjects } from "#src/services/hostedAssets/readHostedAssetReachableObjects";
-import { compressZstd } from "@esposter/db";
 import { CloudflareEnvironment } from "@esposter/db-schema";
-import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { getHostedAssetPath } from "hosted-assets";
 
-// Stores what a publication names in every environment's bucket, and returns the entries it planned for the caller to merge
-// Into the lock and commit. The caller commits only once this resolves: a failure in either bucket throws before then, so the
-// Committed lock never names data a reader cannot fetch, and a rerun converges on the same objects.
+// Stores what a plan names in every environment's bucket, and returns the entries it planned for the caller to merge into the
+// Lock and commit. The caller commits only once this resolves: a failure in either bucket throws before then, so the committed
+// Lock never names data a reader cannot fetch, and a rerun converges on the same objects. A records product's objects are
+// Stored zstd-compressed, and a files product's as their extension's table names
 export const publishHostedAssets = async ({
   createBucketClientMap,
   currentLock,
   otherLocks,
+  plan,
   product,
-  publication,
   scopes,
 }: PublishHostedAssetsOptions): Promise<HostedAssetPublishResult> => {
   for (const scope of scopes) assertScopeUnclaimed(scope, otherLocks);
-  const plan = planHostedAssetPublication(publication);
   const plannedKeys = [...Object.keys(plan.lock.objects), ...Object.keys(plan.lock.indexes)];
   const outsideScopeKey = plannedKeys.find(
     (key) => !scopes.some((scope) => scope === key || scope === takeOne(key.split("/"))),
@@ -49,16 +50,21 @@ export const publishHostedAssets = async ({
   // And each bucket stores only the objects it lacks
   if (plan.records.length === 0 && isLockUnchanged) return { outcome: HostedAssetPublishOutcome.Empty };
   const bucketClientMap = createBucketClientMap();
-  const compressedJsonMap = new Map<string, Promise<Buffer>>();
-  // Compressed once per object and shared by both environments, which hold the same bytes
-  const getCompressedJson = (record: HostedAssetRecord) => {
-    const compressedJson = compressedJsonMap.get(record.sha256) ?? compressZstd(record.json, DEFAULT_COMPRESSION_LEVEL);
-    compressedJsonMap.set(record.sha256, compressedJson);
-    return compressedJson;
+  const encodeStored = (record: HostedAssetRecord) =>
+    product.source.kind === "records"
+      ? encodeHostedAssetRecord(record.bytes)
+      : encodeHostedAssetObject(record.extension, record.bytes);
+  const encodeMap = new Map<string, ReturnType<typeof encodeStored>>();
+  // Encoded once per object and shared by both environments, which hold the same bytes
+  const getEncoded = (record: HostedAssetRecord) => {
+    const path = getHostedAssetPath(record);
+    const encoded = encodeMap.get(path) ?? encodeStored(record);
+    encodeMap.set(path, encoded);
+    return encoded;
   };
   const publishBucket = async (bucketClient: (typeof bucketClientMap)[CloudflareEnvironment]) => {
     const reachableObjects = await readHostedAssetReachableObjects(bucketClient, [currentLock]);
-    return publishHostedAssetsToBucket(bucketClient, plan.records, reachableObjects, getCompressedJson);
+    return publishHostedAssetsToBucket(bucketClient, plan.records, reachableObjects, getEncoded);
   };
   const [devCount, prodCount] = await Promise.all([
     publishBucket(bucketClientMap[CloudflareEnvironment.Development]),

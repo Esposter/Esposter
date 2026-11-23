@@ -27,7 +27,7 @@ describe(summarizeGameDataChanges, () => {
       {
         extension: ".json",
         isIndex: false,
-        json: '{"attack":1,"defense":2}',
+        bytes: Buffer.from('{"attack":1,"defense":2}'),
         scope: "stats/weapons",
         sha256: "2".repeat(64),
       },

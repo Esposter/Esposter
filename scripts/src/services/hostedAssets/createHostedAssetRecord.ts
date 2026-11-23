@@ -6,6 +6,6 @@ import { getContentAddress } from "@esposter/shared-node/cache";
 // A record named by the sha256 of its compact JSON, so a value that serializes the same way on every machine is named the
 // Same way and a change of compression level never renames it
 export const createHostedAssetRecord = (scope: string, value: unknown, isIndex: boolean): HostedAssetRecord => {
-  const json = JSON.stringify(value);
-  return { extension: HOSTED_RECORD_EXTENSION, isIndex, json, scope, sha256: getContentAddress(Buffer.from(json)) };
+  const bytes = Buffer.from(JSON.stringify(value));
+  return { bytes, extension: HOSTED_RECORD_EXTENSION, isIndex, scope, sha256: getContentAddress(bytes) };
 };

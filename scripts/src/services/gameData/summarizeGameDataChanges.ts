@@ -20,7 +20,7 @@ export const summarizeGameDataChanges = async (
   nextLock: HostedAssetLock,
   records: HostedAssetRecord[],
 ): Promise<string[]> => {
-  const recordJsonMap = new Map(records.map(({ json, sha256 }) => [sha256, json]));
+  const recordJsonMap = new Map(records.map(({ bytes, sha256 }) => [sha256, bytes.toString("utf8")]));
   // A hash the next lock names under a dataset is one this publication planned, or one the current lock published
   const readNext = <T>(dataset: string, hash: string): Promise<T | undefined> => {
     const json = recordJsonMap.get(hash);

@@ -12,7 +12,7 @@ import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAsset
 import { toHostedAssetLockObject } from "#src/services/hostedAssets/toHostedAssetLockObject";
 import { toHostedAssetPaths } from "#src/services/hostedAssets/toHostedAssetPaths";
 import { settleAll } from "@esposter/shared";
-import { getHostedAssetPath } from "hosted-assets";
+import { getHostedAssetPath, HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 
 // Stores what one bucket does not hold yet, and returns how many objects it wrote. A stored object is reused as it is when
 // The current lock reaches it or it is young, and otherwise rewritten with the same bytes, which restarts its age so no
@@ -21,7 +21,7 @@ export const publishHostedAssetsToBucket = async (
   bucketClient: R2BucketClient,
   records: HostedAssetRecord[],
   reachableObjects: HostedAssetName[],
-  getCompressedJson: (record: HostedAssetRecord) => Promise<Buffer>,
+  getEncoded: (record: HostedAssetRecord) => Promise<{ body: Uint8Array; contentEncoding?: string | undefined }>,
 ): Promise<number> => {
   const lastModifiedMap = new Map(
     (await bucketClient.list("")).map(({ key, lastModified }) => [key, lastModified] as const),
@@ -38,13 +38,15 @@ export const publishHostedAssetsToBucket = async (
       );
     })
     .map(({ key, record }) => ({ isCreateOnly: !lastModifiedMap.has(key), key, record }));
-  const writeRecord = async ({ isCreateOnly, key, record }: (typeof writes)[number]) =>
-    bucketClient.put(key, new Uint8Array(await getCompressedJson(record)), {
+  const writeRecord = async ({ isCreateOnly, key, record }: (typeof writes)[number]) => {
+    const { body, contentEncoding } = await getEncoded(record);
+    return bucketClient.put(key, new Uint8Array(body), {
       cacheControl: HOSTED_ASSET_CACHE_CONTROL,
-      contentEncoding: "zstd",
-      contentType: "application/json",
+      contentEncoding,
+      contentType: HOSTED_ASSET_CONTENT_TYPES[record.extension],
       createOnly: isCreateOnly,
     });
+  };
   const leafWrites = writes.filter(({ record }) => !record.isIndex);
   const indexWrites = writes.filter(({ record }) => record.isIndex);
   const leafResults = await settleAll(

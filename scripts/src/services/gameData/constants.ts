@@ -23,6 +23,7 @@ export const GAME_DATA_PRODUCT: HostedAssetProduct = {
   lockPath: GAME_DATA_LOCK_PATH,
   lockRepositoryPath: GAME_DATA_LOCK_REPOSITORY_PATH,
   scopes: Object.values(GameDataset),
+  source: { kind: "records" },
 };
 // The nested keys a publish writes beside the lock, which code imports in place of the lock's own key strings
 export const GAME_DATA_KEYS_FILE_NAME = "gameDataKeys.ts";

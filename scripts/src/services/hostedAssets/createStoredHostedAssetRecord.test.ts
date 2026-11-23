@@ -6,8 +6,8 @@ import { describe } from "vitest";
 export const createStoredHostedAssetRecord = (baseUrl: string, scope: string, value: unknown) => {
   const record = createHostedAssetRecord(scope, value, false);
   return {
-    bytes: Buffer.byteLength(record.json),
-    json: record.json,
+    bytes: record.bytes.byteLength,
+    json: record.bytes.toString("utf8"),
     sha256: record.sha256,
     url: getHostedAssetUrl(baseUrl, record),
   };

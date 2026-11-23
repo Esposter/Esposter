@@ -7,8 +7,10 @@ import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetP
 import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { DAY_MS } from "#src/services/hostedAssets/constants";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
+import { planHostedAssetFiles } from "#src/services/hostedAssets/planHostedAssetFiles";
 import { planHostedAssetPublication } from "#src/services/hostedAssets/planHostedAssetPublication";
 import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
+import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -43,6 +45,15 @@ describe(publishHostedAssets, () => {
     lockPath: TEST_FILENAME,
     lockRepositoryPath: TEST_FILENAME,
     scopes,
+    source: { kind: "records" },
+  };
+  const filesScope = TEST_FILENAME;
+  const filesProduct: HostedAssetProduct = {
+    bucket: StorageBucket.PublicHostedAssets,
+    lockPath: TEST_FILENAME,
+    lockRepositoryPath: TEST_FILENAME,
+    scopes: [filesScope],
+    source: { folder: TEST_FILENAME, kind: "files" },
   };
 
   beforeEach(() => {
@@ -63,7 +74,7 @@ describe(publishHostedAssets, () => {
       currentLock: emptyLock,
       otherLocks: [],
       product,
-      publication,
+      plan: planHostedAssetPublication(publication),
       scopes,
     });
 
@@ -89,7 +100,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication,
+        plan: planHostedAssetPublication(publication),
         scopes,
       }),
     );
@@ -98,7 +109,7 @@ describe(publishHostedAssets, () => {
       currentLock,
       otherLocks: [],
       product,
-      publication,
+      plan: planHostedAssetPublication(publication),
       scopes,
     });
 
@@ -121,7 +132,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication,
+        plan: planHostedAssetPublication(publication),
         scopes,
       }),
     );
@@ -133,7 +144,7 @@ describe(publishHostedAssets, () => {
       currentLock,
       otherLocks: [],
       product,
-      publication,
+      plan: planHostedAssetPublication(publication),
       scopes,
     });
 
@@ -157,7 +168,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication,
+        plan: planHostedAssetPublication(publication),
         scopes,
       }),
     );
@@ -170,7 +181,7 @@ describe(publishHostedAssets, () => {
       currentLock,
       otherLocks: [],
       product,
-      publication: changedPublication,
+      plan: planHostedAssetPublication(changedPublication),
       scopes,
     });
 
@@ -192,7 +203,7 @@ describe(publishHostedAssets, () => {
       currentLock: emptyLock,
       otherLocks: [],
       product,
-      publication,
+      plan: planHostedAssetPublication(publication),
       scopes,
     });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
@@ -201,7 +212,7 @@ describe(publishHostedAssets, () => {
       currentLock: emptyLock,
       otherLocks: [],
       product,
-      publication,
+      plan: planHostedAssetPublication(publication),
       scopes,
     });
 
@@ -238,7 +249,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication: ascending,
+        plan: planHostedAssetPublication(ascending),
         scopes,
       }),
     );
@@ -248,7 +259,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication: descending,
+        plan: planHostedAssetPublication(descending),
         scopes,
       }),
     );
@@ -260,7 +271,13 @@ describe(publishHostedAssets, () => {
   test("names what it would publish without touching a bucket", async () => {
     expect.hasAssertions();
 
-    const result = await publishHostedAssets({ currentLock: emptyLock, otherLocks: [], product, publication, scopes });
+    const result = await publishHostedAssets({
+      currentLock: emptyLock,
+      otherLocks: [],
+      product,
+      plan: planHostedAssetPublication(publication),
+      scopes,
+    });
 
     // Nothing was published before, so the lock it would leave is the plan's own
     const plan = planHostedAssetPublication(publication);
@@ -283,7 +300,7 @@ describe(publishHostedAssets, () => {
       currentLock: emptyLock,
       otherLocks: [],
       product,
-      publication: { indexes: {}, objects: {} },
+      plan: planHostedAssetPublication({ indexes: {}, objects: {} }),
       scopes,
     });
 
@@ -302,7 +319,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication,
+        plan: planHostedAssetPublication(publication),
         scopes,
       }),
     );
@@ -311,7 +328,7 @@ describe(publishHostedAssets, () => {
       currentLock,
       otherLocks: [],
       product,
-      publication: { indexes: {}, objects: {} },
+      plan: planHostedAssetPublication({ indexes: {}, objects: {} }),
       scopes,
     });
 
@@ -336,13 +353,42 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication,
+        plan: planHostedAssetPublication(publication),
         scopes,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[AggregateError: offline]`);
   });
 
   // The read back of each written object is what stands between a bucket that stored other bytes and a lock that names them
+  // A file is stored as its extension's table names: a tsx brotli-encoded, its decoded bytes the ones its name hashes
+  test("a published tsx is stored brotli-encoded under its content type, and its decoded bytes hash to its name", async () => {
+    expect.hasAssertions();
+
+    const bucketClientMap = createBucketClientMap();
+    const bytes = Buffer.from(TEST_FILENAME);
+    const sha256 = getContentAddress(bytes);
+    await publishHostedAssets({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock: emptyLock,
+      otherLocks: [],
+      plan: planHostedAssetFiles(filesScope, [{ bytes, extension: ".tsx", key: "map.tsx", sha256 }]),
+      product: filesProduct,
+      scopes: [filesScope],
+    });
+
+    const stored = bucketClientMap[CloudflareEnvironment.Production].store.get(`${filesScope}/${sha256}.tsx`);
+    expect(stored?.contentEncoding).toBe("br");
+    expect(stored?.contentType).toBe("application/xml");
+    await expect(
+      readHostedAssetBytes(bucketClientMap[CloudflareEnvironment.Production], {
+        bytes: bytes.byteLength,
+        extension: ".tsx",
+        scope: filesScope,
+        sha256,
+      }),
+    ).resolves.toStrictEqual(bytes);
+  });
+
   test("a mismatched object stops the commit", async () => {
     expect.hasAssertions();
 
@@ -360,7 +406,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication,
+        plan: planHostedAssetPublication(publication),
         scopes,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -384,7 +430,13 @@ describe(publishHostedAssets, () => {
     };
 
     await expect(
-      publishHostedAssets({ currentLock: emptyLock, otherLocks: [otherLock], product, publication, scopes }),
+      publishHostedAssets({
+        currentLock: emptyLock,
+        otherLocks: [otherLock],
+        product,
+        plan: planHostedAssetPublication(publication),
+        scopes,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: stats, overlaps stats/weapons, which another product's lock declares]`,
     );
@@ -398,7 +450,7 @@ describe(publishHostedAssets, () => {
         currentLock: emptyLock,
         otherLocks: [],
         product,
-        publication,
+        plan: planHostedAssetPublication(publication),
         scopes: [GameDataset.Profile],
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
