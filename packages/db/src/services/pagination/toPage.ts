@@ -2,9 +2,9 @@ import type { Page, PageCursor, PageSort } from "@esposter/db-schema";
 
 import { encodePageCursor, toPageCursorValue } from "@esposter/db-schema";
 
-// A read asks for one row past its limit, and that row is the whole answer to whether the list goes on: the page drops it
-// And continues from the last row it keeps, never from the dropped one, which the next read answers. A backward read's
-// Rows arrive in reverse and are turned back into the list's order, and its cursor keeps reading backward
+// A read asks for one row past its limit, and that row is the whole answer to whether the list goes on: the page drops
+// It And continues from the last row it keeps, never from the dropped one, which the next read answers. A backward
+// Read's Rows arrive in reverse and are turned back into the list's order, and its cursor keeps reading backward
 export const toPage = <TKey extends string, TItem extends Record<TKey, unknown>>(
   rows: TItem[],
   { keys }: PageSort<TKey>,

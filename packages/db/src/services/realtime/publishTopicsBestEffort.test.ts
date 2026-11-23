@@ -5,8 +5,8 @@ import { getColumnTopic, getTopic, TopicKind, topicSchema } from "@esposter/db-s
 import { noop, ZERO_UUID } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-// Each topic's object is named by the topic itself, and its publish records the topic it was named for and the columns it
-// Was published with
+// Each topic's object is named by the topic itself, and its publish records the topic it was named for and the columns
+// It Was published with
 const createTopicNamespace = (published: ColumnTopic[]) => ({
   get: (id: Topic) => ({
     publish: (columns?: string[]) => {
@@ -40,8 +40,8 @@ describe(publishTopicsBestEffort, () => {
     expect(published).toStrictEqual([{ topic: roomTopic }, { topic: userTopic }]);
   });
 
-  // A topic a write names with several column lists is published once with all their columns, since its object wakes each
-  // Subscriber that reads any of them. A list that names every column publishes every column
+  // A topic a write names with several column lists is published once with all their columns, since its object wakes
+  // Each Subscriber that reads any of them. A list that names every column publishes every column
   test("publishes a topic named with several column lists once, with the columns of all of them", async () => {
     expect.hasAssertions();
 
@@ -80,7 +80,8 @@ describe(publishTopicsBestEffort, () => {
     expect(consoleError).toHaveBeenCalledExactlyOnceWith(failure, error);
   });
 
-  // The topics are read inside the same boundary, so a throw from reading them is logged the same way and publishes none
+  // The topics are read inside the same boundary, so a throw from reading them is logged the same way and publishes
+  // None
   test("logs a throw from reading the topics instead of throwing it, and publishes none", async () => {
     expect.hasAssertions();
 

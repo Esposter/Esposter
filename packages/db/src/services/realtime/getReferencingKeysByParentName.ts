@@ -6,13 +6,15 @@ import { getOrCreate } from "@esposter/shared";
 import { getTableColumns, getTableName } from "drizzle-orm";
 import { getTableConfig } from "drizzle-orm/sqlite-core";
 
-// The key a column is held under in its table's definition, which is the name a scope declaration and a returned row use
+// The key a column is held under in its table's definition, which is the name a scope declaration and a returned row
+// Use
 const getColumnKey = (table: Table, column: Column): string | undefined => {
   const columns = getTableColumns(table);
   return Object.keys(columns).find((key) => columns[key]?.name === column.name);
 };
 
-// The columns a foreign key holds, each paired with the column of the referenced row it takes its value from, by position
+// The columns a foreign key holds, each paired with the column of the referenced row it takes its value from, by
+// Position
 const getReferencingColumns = (
   table: Table,
   columns: Column[],
@@ -28,8 +30,8 @@ const getReferencingColumns = (
       : [];
   });
 
-// Every foreign key of the schema, keyed by the table it references. Read off each table's declaration, so a key a table
-// Declares is in the graph with nothing to register
+// Every foreign key of the schema, keyed by the table it references. Read off each table's declaration, so a key a
+// Table Declares is in the graph with nothing to register
 export const getReferencingKeysByParentName = (): Map<string, ReferencingKey[]> => {
   const tableNameReferencingKeysMap = new Map<string, ReferencingKey[]>();
   for (const table of getSchemaTables())

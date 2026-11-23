@@ -25,8 +25,8 @@ interface ReadResourceListPageOptions {
 
 // One page of the owner's resources in the order the sort declares, with the cursor for the next. The read without a
 // Cursor is the first page, and it also answers how many rows the where matches. A search's relevance keys are read off
-// Each row so the cursor can continue from the last one, and they are left out of the page. Each row carries the viewer's
-// Own star beside it, so a list shows every row's star from the page alone
+// Each row so the cursor can continue from the last one, and they are left out of the page. Each row carries the
+// Viewer's Own star beside it, so a list shows every row's star from the page alone
 export const readResourceListPage = async (
   db: Database,
   { cursor, limit, search, sort, userId, where }: ReadResourceListPageOptions,
@@ -43,7 +43,8 @@ export const readResourceListPage = async (
     updatedAt: resourcesInResource.updatedAt,
   } satisfies Record<ResourceListColumnKey, SQLWrapper>;
   const boundSort = createPageSort(columns, sort);
-  // The star is the viewer's row for the resource, tombstones included: a removed star reads as one, so a client applies its removal
+  // The star is the viewer's row for the resource, tombstones included: a removed star reads as one, so a client
+  // Applies its removal
   const query = db
     .select({
       ...resourceListSelection,

@@ -4,8 +4,8 @@ import { readResourceListPage } from "#src/services/resource/readResourceListPag
 import { resourcesInResource } from "@esposter/db-schema";
 import { and, eq, isNotNull } from "drizzle-orm";
 
-// One page of the owner's Recycle bin: the resources soft-deleted and not yet purged, in the order the sort declares. Every
-// Other resource list reads the live rows, so the bin is the one list whose where is the deleted rows
+// One page of the owner's Recycle bin: the resources soft-deleted and not yet purged, in the order the sort declares.
+// Every Other resource list reads the live rows, so the bin is the one list whose where is the deleted rows
 export const readDeletedResourcePage = (
   db: Database,
   {

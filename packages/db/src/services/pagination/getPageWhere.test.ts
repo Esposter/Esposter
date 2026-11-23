@@ -53,7 +53,8 @@ describe(getPageWhere, () => {
     let nextEncodedCursor = encodedCursor;
     do {
       const cursor = createPageInputSchema(bound).parse({ cursor: nextEncodedCursor, limit }).cursor;
-      // oxlint-disable-next-line no-await-in-loop -- Pagination: each page is requested with the nextCursor the one before it answered
+      // Before it answered
+      // oxlint-disable-next-line no-await-in-loop -- Pagination: each page is requested with the nextCursor the one
       const page = await readPage(bound, cursor);
       items.push(...page.items);
       nextEncodedCursor = page.nextCursor;

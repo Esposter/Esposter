@@ -12,8 +12,9 @@ const getDeletedKeys = (keys: unknown): string[] => {
   return Array.isArray(keys) ? keys.filter((key): key is string => typeof key === "string") : [];
 };
 
-// Records the reads and writes of a bucket binding into the blobs the scope holds when the call runs, and nothing outside one.
-// A read names the key it reads or the directory a listing lies in, and a write publishes the topics of the key it changes
+// Records the reads and writes of a bucket binding into the blobs the scope holds when the call runs, and nothing
+// Outside one. A read names the key it reads or the directory a listing lies in, and a write publishes the topics of
+// The key it changes
 const recordCall = (method: string | symbol, args: unknown[], bucket: string, blobs: RecordedBlobs) => {
   const [first] = args;
   if (method === "get" || method === "head") {
@@ -26,8 +27,9 @@ const recordCall = (method: string | symbol, args: unknown[], bucket: string, bl
   } else if (method === "delete") for (const key of getDeletedKeys(first)) recordBlobWrite(blobs, bucket, key);
 };
 
-// A multipart upload writes its object when it completes, so the completion is recorded as the write of the key the upload
-// Was created for, as a put is. Its other methods add parts to an object that does not exist yet, so they record nothing
+// A multipart upload writes its object when it completes, so the completion is recorded as the write of the key the
+// Upload Was created for, as a put is. Its other methods add parts to an object that does not exist yet, so they record
+// Nothing
 const recordUpload = (
   upload: R2MultipartUpload,
   key: string,

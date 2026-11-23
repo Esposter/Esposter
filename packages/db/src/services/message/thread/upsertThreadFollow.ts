@@ -3,10 +3,10 @@ import type { Database, ThreadFollowInMessage } from "@esposter/db-schema";
 import { THREAD_FOLLOW_CONFLICT_TARGET } from "#src/services/message/thread/constants";
 import { threadFollowsInMessage } from "@esposter/db-schema";
 
-// The upsert a follow and an unfollow share: an existing row takes the decision, a missing one is inserted with it. The row
-// Comes back with the version the write left it at, which is the answer the client settles its entry on
-// The return type is spelled because the inferred one names zod's `$brand`, which this package cannot reach
-// Left inferred, the declaration fails with TS2883 (microsoft/TypeScript#64599)
+// The upsert a follow and an unfollow share: an existing row takes the decision, a missing one is inserted with it. The
+// Row Comes back with the version the write left it at, which is the answer the client settles its entry on The return
+// Type is spelled because the inferred one names zod's `$brand`, which this package cannot reach Left inferred, the
+// Declaration fails with TS2883 (microsoft/TypeScript#64599)
 export const upsertThreadFollow = (
   db: Database,
   { roomId, threadRootId, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootId" | "userId">,

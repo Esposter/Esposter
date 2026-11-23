@@ -7,9 +7,9 @@ import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorag
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A copy the server makes of a blob it already holds, charged to whoever receives it. The charge is taken before the
-// Bytes are written: the write's own notification orders nothing, and an event arriving before its row exists is dropped
-// For good. The length is provisional, and the copy's own write notification replaces it with the stored size. A copy
-// That fails gives the charge back before its failure is rethrown, so a failed copy leaves nothing counted
+// Bytes are written: the write's own notification orders nothing, and an event arriving before its row exists is
+// Dropped For good. The length is provisional, and the copy's own write notification replaces it with the stored size.
+// A copy That fails gives the charge back before its failure is rethrown, so a failed copy leaves nothing counted
 export const chargeAndCopyBlob = async (
   db: Database,
   userId: UserInAuth["id"],

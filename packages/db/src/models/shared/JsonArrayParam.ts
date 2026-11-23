@@ -1,7 +1,8 @@
 import { entityKind, Param } from "drizzle-orm";
 
-// The one parameter `inJsonArray` binds a list as: its values as a JSON array. It is a parameter of its own kind, so the read
-// Set walker finds the list by its kind and reads the values it holds, rather than matching the text around the parameter
+// The one parameter `inJsonArray` binds a list as: its values as a JSON array. It is a parameter of its own kind, so
+// The read Set walker finds the list by its kind and reads the values it holds, rather than matching the text around
+// The parameter
 export class JsonArrayParam extends Param<string> {
   static override readonly [entityKind] = "JsonArrayParam";
 

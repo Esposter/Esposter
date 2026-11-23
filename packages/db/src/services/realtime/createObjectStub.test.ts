@@ -4,8 +4,9 @@ import type { ColumnTopic } from "@esposter/db-schema";
 import { createObjectStub } from "#src/services/realtime/createObjectStub";
 import { describe, expect, test, vi } from "vitest";
 
-// A stub as a Durable Object's own class types it: one RPC method, the HTTP entry a socket is forwarded to, and the invoke every
-// Object answers its RPC methods through. Its readThreads is a decoy, since a call through the wrapper must not reach it
+// A stub as a Durable Object's own class types it: one RPC method, the HTTP entry a socket is forwarded to, and the
+// Invoke every Object answers its RPC methods through. Its readThreads is a decoy, since a call through the wrapper
+// Must not reach it
 const createRoomStub = () => {
   const readThreads = vi.fn<(threadRootIds: number[]) => Promise<string[]>>((threadRootIds) =>
     Promise.resolve(threadRootIds.map(String)),

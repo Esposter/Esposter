@@ -30,7 +30,8 @@ describe(recordStatements, () => {
     expect(statements).toHaveLength(4);
   });
 
-  // A select is built in steps, and only its last step is a query, so the handle wraps the builder the first step returns
+  // A select is built in steps, and only its last step is a query, so the handle wraps the builder the first step
+  // Returns
   test("records a select awaited through its builder chain", async () => {
     expect.hasAssertions();
 

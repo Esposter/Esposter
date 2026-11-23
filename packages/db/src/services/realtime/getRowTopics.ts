@@ -6,8 +6,8 @@ import { getScopeTopics } from "#src/services/realtime/getScopeTopics";
 import { getColumnTopic } from "@esposter/db-schema";
 import { checkIsRecord } from "@esposter/shared";
 
-// The scope topic of each scope value each row holds, one per scope column a row has a value for, each naming the columns
-// The write changed (`undefined` for a row-set change). A null value names no row, so it is left out
+// The scope topic of each scope value each row holds, one per scope column a row has a value for, each naming the
+// Columns The write changed (`undefined` for a row-set change). A null value names no row, so it is left out
 export const getRowTopics = async (
   table: Table,
   rows: unknown[],

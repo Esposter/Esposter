@@ -40,7 +40,8 @@ describe(createPresignedPutUrl, () => {
     expect(url.searchParams.get("X-Amz-SignedHeaders")).toBe("content-type;host");
   });
 
-  // A development account's buckets carry the development environment's name, and the signed url has to name that bucket
+  // A development account's buckets carry the development environment's name, and the signed url has to name that
+  // Bucket
   test("names the bucket of the environment the credentials are for", async () => {
     expect.hasAssertions();
 

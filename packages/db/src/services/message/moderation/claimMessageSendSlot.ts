@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Retry: a claim lost to a racing send decides again on the clock that won, so each attempt waits on the one before it */
+/* oxlint-disable no-await-in-loop -- Retry: a claim lost to a racing send decides again on the clock that won, so
+   each attempt waits on the one before it */
 import type { MessageCreationRejection } from "#src/models/message/moderation/MessageCreationRejection";
 import type { Database } from "@esposter/db-schema";
 

@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Retry: a reconcile that lost its conditional write runs again from the row as the winning write left it */
+/* oxlint-disable no-await-in-loop -- Retry: a reconcile that lost its conditional write runs again from the row as
+   the winning write left it */
 import type { ReconcileStorageLedgerEntryResult } from "#src/models/storage/ReconcileStorageLedgerEntryResult";
 import type { Database, StorageBucket, StorageLedgerEntryInStorage } from "@esposter/db-schema";
 

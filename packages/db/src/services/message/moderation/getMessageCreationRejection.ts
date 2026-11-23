@@ -57,7 +57,8 @@ export const getMessageCreationRejection = async (
     getOrCreate(permissionPromiseMap, permission, () => checkHasPermission(db, userId, roomId, permission));
   // A timeout outranks every permission — a moderator who times themselves out stays timed out
   if (member.timeoutUntil && member.timeoutUntil > new Date()) return { type: MessageCreationRejectionType.Timeout };
-  // A direct message has no roles to grant anything: its two members are the only ones, and blocking is what it has instead
+  // A direct message has no roles to grant anything: its two members are the only ones, and blocking is what it has
+  // Instead
   else if (room.type !== RoomType.DirectMessage && !(await checkHasRoomPermission(RoomPermission.SendMessages)))
     return { type: MessageCreationRejectionType.MissingPermission };
   else if (room.isReadOnly && !(await checkHasRoomPermission(RoomPermission.ManageMessages)))

@@ -8,13 +8,14 @@ import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import { checkIsRecord } from "@esposter/shared";
 import { getTableColumns } from "drizzle-orm";
 
-// How a recorded write answers its caller for the projection the caller asked for, keyed by the recorded statement the caller holds
+// How a recorded write answers its caller for the projection the caller asked for, keyed by the recorded statement the
+// Caller holds
 export const statementAnswerMap = new WeakMap<object, (result: unknown) => unknown>();
 
-// A write's RETURNING names the scope values of the rows it returns, and its topics are keyed by them, and its row versions carry
-// The version it left each row at. So the projection is widened with those columns the caller did not ask for, here rather than
-// In each caller, which would have to remember to ask for them. The caller is answered only the columns it asked for, and a
-// Projection that already holds every widened column is left as it is
+// A write's RETURNING names the scope values of the rows it returns, and its topics are keyed by them, and its row
+// Versions carry The version it left each row at. So the projection is widened with those columns the caller did not
+// Ask for, here rather than In each caller, which would have to remember to ask for them. The caller is answered only
+// The columns it asked for, and a Projection that already holds every widened column is left as it is
 export const widenReturning = (
   table: SQLiteTable,
   fields: Record<string, unknown>,
@@ -30,9 +31,9 @@ export const widenReturning = (
   };
 };
 
-// A write that asks for no RETURNING runs as one that returns its table's widened columns, so the rows it changes are named by the
-// Values they hold after it, whatever its WHERE matched. Its caller asked for no rows, so it is answered none. A statement that is
-// Not a write, or a table with no scope column, runs as it is
+// A write that asks for no RETURNING runs as one that returns its table's widened columns, so the rows it changes are
+// Named by the Values they hold after it, whatever its WHERE matched. Its caller asked for no rows, so it is answered
+// None. A statement that is Not a write, or a table with no scope column, runs as it is
 export const widenUnreturnedWrite = (
   statement: PromiseLike<unknown> & SQLWrapper,
 ): { answer?: (result: unknown) => unknown; statement: PromiseLike<unknown> & SQLWrapper } => {
@@ -46,7 +47,8 @@ export const widenUnreturnedWrite = (
   return checkIsStatement(widened) ? { answer: () => undefined, statement: widened } : { statement };
 };
 
-// The result a recorded statement answers its caller with: the rows it resolved to, projected to the columns the caller asked for
+// The result a recorded statement answers its caller with: the rows it resolved to, projected to the columns the caller
+// Asked for
 export const answerReturned = (statement: object, result: unknown): unknown => {
   const answer = statementAnswerMap.get(statement);
   return answer ? answer(result) : result;

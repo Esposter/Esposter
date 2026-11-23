@@ -11,8 +11,8 @@ import { checkIsRecord } from "@esposter/shared";
 import { getTableColumns, getTableName, is } from "drizzle-orm";
 import { SQLiteDeleteBase, SQLiteUpdateBase } from "drizzle-orm/sqlite-core";
 
-// The columns a write changes. An update changes the columns it sets and its `$onUpdate` columns, and an insert or a delete
-// Changes which rows the table holds, a row-set change, so it names no columns (`undefined`)
+// The columns a write changes. An update changes the columns it sets and its `$onUpdate` columns, and an insert or a
+// Delete Changes which rows the table holds, a row-set change, so it names no columns (`undefined`)
 const getWriteColumns = (table: Table, statement: SQLWrapper): string[] | undefined => {
   if (!is(statement, SQLiteUpdateBase)) return undefined;
   const columns = getTableColumns(table);
@@ -22,10 +22,11 @@ const getWriteColumns = (table: Table, statement: SQLWrapper): string[] | undefi
   return [...new Set([...setKeys, ...updatedKeys].map((key) => columns[key]?.name ?? key))];
 };
 
-// The topics one statement publishes, each with the columns the write changed. A write that asks for RETURNING names the
-// Scope values of the rows it returned, so one that returned none changed nothing. A write that asks for none names the rows
-// It read before it ran, if it made any: an update's old values, and a delete's cascaded and changed rows. Every changed table
-// Names its table-wide topic, and a delete's cascaded and changed tables are named table-wide, since RETURNING does not report them
+// The topics one statement publishes, each with the columns the write changed. A write that asks for RETURNING names
+// The Scope values of the rows it returned, so one that returned none changed nothing. A write that asks for none names
+// The rows It read before it ran, if it made any: an update's old values, and a delete's cascaded and changed rows.
+// Every changed table Names its table-wide topic, and a delete's cascaded and changed tables are named table-wide,
+// Since RETURNING does not report them
 export const computeStatementWriteTopics = async ({
   before,
   rows,

@@ -3,6 +3,7 @@ export interface ListBlobNamesOptions {
   // Just uploaded, but whose owning row write has not landed yet, is never mistaken for an orphan. R2 reports when an
   // Object was last written, which is never before it was created, so the filter only ever holds a blob back longer
   createdBefore?: Date | undefined;
-  // How many objects one listing page takes. Production leaves it to R2's default, and a test sets it to reach a page boundary
+  // How many objects one listing page takes. Production leaves it to R2's default, and a test sets it to reach a page
+  // Boundary
   pageSize?: number | undefined;
 }

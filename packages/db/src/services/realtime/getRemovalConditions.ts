@@ -20,9 +20,9 @@ type RemovalCondition = SQL | undefined;
 // The condition over each table a delete removes rows from, as a subquery over the delete's own WHERE and its parents'
 // Conditions. A child's rows are those whose key holds a referenced value of a removed parent row, so a condition reads
 // Only its parents' conditions, and no value an earlier statement returned: the reads can sit in one batch before the
-// Delete they precede. A self-reference (a reply's parent is a post) is the one cycle, and its rows are the closure of the
-// Rows the other keys remove, which a recursive subquery reads. A cycle through other tables is not walked, so its tables
-// Have no condition and are not read
+// Delete they precede. A self-reference (a reply's parent is a post) is the one cycle, and its rows are the closure of
+// The Rows the other keys remove, which a recursive subquery reads. A cycle through other tables is not walked, so its
+// Tables Have no condition and are not read
 export const getRemovalConditions = (database: Database, table: Table, where: SQL | undefined) => {
   const rootName = getTableName(table);
   const { removedTables } = walkCascade(table);
@@ -58,7 +58,8 @@ export const getRemovalConditions = (database: Database, table: Table, where: SQ
     tableNameRemovalConditionMap.set(name, condition);
     return condition;
   };
-  // A changed child's rows are those its changing keys reach from a removed parent, so each key's condition is over the parent's
+  // A changed child's rows are those its changing keys reach from a removed parent, so each key's condition is over the
+  // Parent's
   const changedConditions: ChangedCondition[] = Array.from(tableNameChangedKeysMap.values(), (incomingKeys) => ({
     condition: or(
       ...incomingKeys.map(({ key, parent }) => getKeyCondition(database, key, parent, conditionOf(parent))),

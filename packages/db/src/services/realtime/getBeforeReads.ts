@@ -16,10 +16,11 @@ export interface BeforeRead {
   table: Table;
 }
 
-// The reads a write needs before it runs, so the values its rows hold before it are named with the values they hold after
-// It. An update reads the rows its WHERE matches, when its SET writes a scope column. A delete reads the rows each table it
-// Cascades to holds, and the rows of each table a key sets null or to its default changes, so the children that RETURNING
-// Does not report are named by their own scope values. A statement that is not a write needs none
+// The reads a write needs before it runs, so the values its rows hold before it are named with the values they hold
+// After It. An update reads the rows its WHERE matches, when its SET writes a scope column. A delete reads the rows
+// Each table it Cascades to holds, and the rows of each table a key sets null or to its default changes, so the
+// Children that RETURNING Does not report are named by their own scope values. A statement that is not a write needs
+// None
 export const getBeforeReads = (database: Database, statement: SQLWrapper): BeforeRead[] => {
   if (is(statement, SQLiteUpdateBase)) return getUpdateBeforeReads(database, statement);
   if (is(statement, SQLiteDeleteBase)) return getDeleteBeforeReads(database, statement);

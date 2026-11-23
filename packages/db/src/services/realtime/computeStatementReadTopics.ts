@@ -13,9 +13,9 @@ import { getScopeColumnTopics } from "#src/services/realtime/getScopeColumnTopic
 import { getColumnTopic, getTableTopic } from "@esposter/db-schema";
 import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 
-// The table occurrences a left join may name by the rows it returns. An occurrence is named by no equality of its own, and is
-// Neither tested by a filter nor referenced by an inner join's condition: an inner join drops the rows no match reaches, and a
-// Filter removes rows
+// The table occurrences a left join may name by the rows it returns. An occurrence is named by no equality of its own,
+// And is Neither tested by a filter nor referenced by an inner join's condition: an inner join drops the rows no match
+// Reaches, and a Filter removes rows
 const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
   const keys = readSet.occurrences.map((occurrence) => getOccurrenceKey(occurrence));
   const scopedKeys = new Set(
@@ -31,15 +31,16 @@ const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
 };
 
 // The topics one statement a read awaited watches, each with the columns the statement references of its table. A scope
-// Equality names the rows it selects by its value. An unscoped table occurrence is named by the rows a left join returns, when
-// The join keeps its rows and returns the partner key: each returned row names the value the join matches on, so a row of
-// Another value does not wake the read. An unscoped occurrence no returned row names leaves its table table-wide, and a
-// Table-wide table's row topics are dropped, since its table-wide topic covers every row. An empty read names what it named
-// Before, table-wide
+// Equality names the rows it selects by its value. An unscoped table occurrence is named by the rows a left join
+// Returns, when The join keeps its rows and returns the partner key: each returned row names the value the join matches
+// On, so a row of Another value does not wake the read. An unscoped occurrence no returned row names leaves its table
+// `table-wide`, and a Table-wide table's row topics are dropped, since its table-wide topic covers every row. An empty
+// Read names what it named Before, table-wide
 export const computeStatementReadTopics = async ({ rows, statement }: RecordedStatement): Promise<ColumnTopic[]> => {
   const readSet = computeStatementReadSet(statement);
   const { sql } = new SQLiteDialect().sqlToQuery(statement.getSQL());
-  // A table's watch reads the columns its statement references, under the names and aliases the statement gives the table
+  // A table's watch reads the columns its statement references, under the names and aliases the statement gives the
+  // Table
   const tableColumnsMap = new Map<string, string[] | undefined>();
   const getColumns = (tableName: string) => {
     if (!tableColumnsMap.has(tableName)) {
@@ -69,7 +70,8 @@ export const computeStatementReadTopics = async ({ rows, statement }: RecordedSt
     .flat()
     .filter(({ table }) => !tableWideTables.includes(table));
   const joinTopics = await getScopeColumnTopics(joinScopeValues, getColumns);
-  // A table-wide table names its rows, and the columns its statement reads, so an update of a column it does not read wakes it not
+  // A table-wide table names its rows, and the columns its statement reads, so an update of a column it does not read
+  // Wakes it not
   const tableTopics = tableWideTables.map((tableName) =>
     getColumnTopic(getTableTopic(tableName), getColumns(tableName)),
   );

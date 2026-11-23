@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Pagination: each ListObjectsV2 page is requested with the token the one before it returned */
+/* oxlint-disable no-await-in-loop -- Pagination: each ListObjectsV2 page is requested with the token the one before
+   it returned */
 import type { R2ListedObject } from "#src/models/storage/R2ListedObject";
 
 import { parseListBucketResult } from "#src/services/storage/parseListBucketResult";
