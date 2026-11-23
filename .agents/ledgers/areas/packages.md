@@ -77,7 +77,6 @@
 - `packages/vue-phaserjs/src/models/input` — `Slider.ts`, `VirtualJoystick.ts`
 - `packages/vue-phaserjs/src/services/input` — `createSlider.test.ts`, `createSlider.ts`, `createVirtualJoystick.test.ts`, `createVirtualJoystick.ts`
 - `apps/infra` — `CHANGELOG.md`, `Pulumi.prod.yaml`, `Pulumi.yaml`, `README.md`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
-- `apps/infra/src` — `cloudflareConfiguration.ts`
 - `apps/infra/docs`, `apps/infra/src/configuration.ts`
 - `apps/infra/src/github`
 - `packages/configuration/oxfmt`, `packages/configuration/src/models`
@@ -329,6 +328,9 @@
 - `apps/infra/src/cloudflare/services` — `getR2BucketCorsRules.ts`
 - `apps/infra/src/cloudflare/services` — `createD1Database.ts`, `createDeadLetterQueueConsumer.ts`, `createQueueConsumer.ts`, `createR2Bucket.ts`, `queueJobResources.ts`
 - `apps/infra/src/cloudflare/services` — `getPublicR2BucketCorsRules.ts`
+- `apps/infra/src/cloudflare/services` — `getAccountTokenPermissionGroupId.ts`, `getR2BucketResources.ts`, `getR2SecretAccessKey.ts`
+- `apps/infra/src/cloudflare/outputs`, `apps/infra/src/cloudflare/providers`
+- `apps/infra/src/cloudflare/resources` — `accountTokens`
 - `apps/jobs/src/services/tombstone` — `purgeExpiredTombstones.test.ts`, `purgeExpiredTombstones.ts`
 - `packages/db-schema/scripts` — `generateRegistry.ts`, `rewriteObjectMigrations.ts`
 - `packages/db-schema/src/generated` — `relations.ts`, `schema.ts`
