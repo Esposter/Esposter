@@ -21,7 +21,7 @@ The merges considered and refused:
 
 **Bootstrap order.** The token module's provider takes its key from config, so the `AccountToken` resources need only the bootstrap. The `cloudflare` provider takes `apiToken` from the infra token's output. That is a data dependency, so the engine creates the infra token before it configures the provider, and no `dependsOn` is written.
 
-Pulumi cannot preview the provider's resources until the infra token exists, because their provider configuration is unknown until then. So the first apply is read after it runs, not before. The expected plan on that first run is six creates, one provider create, one provider leaving state, and an update to each Cloudflare resource's provider with no replacement. A replacement would be refused by `protect: true`, so a surprise stops the apply rather than deleting a bucket.
+Pulumi cannot preview the provider's resources until the infra token exists, because their provider configuration is unknown until then. So the first apply is read after it runs, not before. The expected plan on that first run is seven creates, one provider create, one provider leaving state, and an update to each Cloudflare resource's provider with no replacement. A replacement would be refused by `protect: true`, so a surprise stops the apply rather than deleting a bucket.
 
 ```mermaid
 flowchart TD
