@@ -8,5 +8,6 @@ const sheetClipboardRowsSchema = z.array(z.array(z.string()));
 export const parseSheetClipboardRows = (text: string) => {
   // oxlint-disable-next-line no-restricted-properties -- a cell can look like an ISO datetime, which reviving would turn into a Date the schema then refuses
   const result = getResult(() => sheetClipboardRowsSchema.parse(JSON.parse(text)));
+  // Text that is not a copy in the sheet's format is another source's, so it reads as no rows
   return result.unwrapOr(undefined);
 };

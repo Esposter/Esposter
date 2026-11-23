@@ -15,6 +15,7 @@ export const timeZoneSchema = z.object({
       (timeZone) =>
         getResult(() => Temporal.Now.plainDateISO(timeZone)).match(
           () => true,
+          // A zone Temporal does not know is the refusal the error below states, so the answer is false
           () => false,
         ),
       { error: "Expected an IANA time zone" },

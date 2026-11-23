@@ -75,6 +75,7 @@ export const saveResourceContent = async (
         readResourceContent(ResourceDefinitionMap[resource.type].contentSchema, id),
       ).match<unknown>(
         (priorContent) => priorContent,
+        // An unreadable prior blob is no previous content, so the write it would diff against still goes through
         () => undefined,
       )
     : undefined;

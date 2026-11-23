@@ -5,5 +5,6 @@ import { getResult } from "@esposter/shared";
 export const checkIsRealEndsAt = (endsAt: string): boolean =>
   getResult(() => Temporal.PlainDateTime.from(endsAt)).match(
     () => true,
+    // Temporal refuses a date that does not exist, which is the answer false rather than a failure to report
     () => false,
   );

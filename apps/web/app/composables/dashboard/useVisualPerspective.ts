@@ -35,7 +35,11 @@ export const useVisualPerspective = (visualId: MaybeRefOrGetter<string>, getChar
   };
   const getViewUrl = () => {
     const chart = getChart();
-    const token = chart ? getResult(() => chart.perspectives.encode(chart.perspectives.capture())).unwrapOr("") : "";
+    const token = chart
+      ? getResult(() => chart.perspectives.encode(chart.perspectives.capture()))
+          .orTee(console.error)
+          .unwrapOr("")
+      : "";
     const entries = setViewEntryToken(viewEntries.value, toValue(visualId), token);
     const { href } = router.resolve({ query: { ...currentRoute.value.query, [DASHBOARD_VIEW_QUERY_KEY]: entries } });
     return new URL(href, window.location.origin).href;

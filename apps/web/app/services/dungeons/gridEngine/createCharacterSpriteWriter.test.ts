@@ -6,7 +6,7 @@ import { createCharacterSpriteWriter } from "#src/services/dungeons/gridEngine/c
 import { getCharacterDepth } from "#src/services/dungeons/gridEngine/getCharacterDepth";
 import { createGridEngine, Direction } from "grid-engine-headless";
 import { ok } from "neverthrow";
-import { assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(createCharacterSpriteWriter, () => {
   const CHARACTER_ID = "Player";
@@ -21,8 +21,10 @@ describe(createCharacterSpriteWriter, () => {
 
   // A one-row grid with the character on its second tile, facing down
   const createAttachedGridEngine = () => {
-    const gridEngine = createGridEngine({ tiles: [[false, false]] }).unwrapOr(undefined);
-    assert.exists(gridEngine);
+    const gridEngine = createGridEngine({ tiles: [[false, false]] }).match(
+      (engine) => engine,
+      (error) => expect.fail(`the grid engine was refused: ${error.kind}`),
+    );
     expect(
       gridEngine.addCharacter({ facingDirection: Direction.Down, id: CHARACTER_ID, startPosition: { x: 1, y: 0 } }),
     ).toStrictEqual(ok());

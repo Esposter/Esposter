@@ -11,5 +11,6 @@ export const getSlotChildIds: PageBuilderHelper<string[], [slotPointer: string]>
         .map((_value, index) => getNodeIdAt(kind, document, `${slotPointer}/${index}`))
         // eslint-disable-next-line no-restricted-syntax -- a node id, never typed
         .filter((id) => id !== ""),
+    // A slot the document does not hold has no children, so a pointer that does not resolve reads as none
     () => [],
   );

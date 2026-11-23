@@ -17,6 +17,7 @@ import { z } from "zod";
 // It is read the way the poll's viewer reads it, by jsonDateParse, so a poll the server accepts is one the viewer renders
 const checkIsPollMessage = (message: string | undefined) =>
   message !== undefined &&
+  // A body that is not JSON is no poll, which the schema refuses as undefined
   pollMessageContentSchema.safeParse(getResult((): unknown => jsonDateParse(message)).unwrapOr(undefined)).success;
 
 // A message as its sender composes it: text, attachments the uploads reserved, the message it replies to, and the type

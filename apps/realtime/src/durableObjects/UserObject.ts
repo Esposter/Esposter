@@ -347,6 +347,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
   // Frame naming a topic its read did not name is refused whole, before anything is stored or subscribed
   override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
     if (typeof message !== "string") return;
+    // A frame that is not JSON reads as undefined, which the schema below refuses, so a garbled frame is dropped
     const parsedJson: unknown = getResult(() => jsonDateParse(message)).unwrapOr(undefined);
     const frame = userClientFrameSchema.safeParse(parsedJson);
     if (!frame.success) return;

@@ -23,6 +23,7 @@ export const parseSurveyConditionRows = (source: string): SurveyConditionRows | 
 
       return { join: isOr ? SurveyConditionJoin.Or : SurveyConditionJoin.And, rows };
     },
+    // A source the expression parser refuses has no row shape, which is the undefined this returns
     () => undefined,
   );
 };

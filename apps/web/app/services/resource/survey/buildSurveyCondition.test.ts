@@ -84,10 +84,16 @@ describe(buildSurveyCondition, () => {
     );
 
     expect(
-      runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "a", b: "b" } }).unwrapOr(undefined),
+      runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "a", b: "b" } }).match(
+        (value) => value,
+        (error) => expect.fail(error.message),
+      ),
     ).toBe(true);
     expect(
-      runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "b", b: "b" } }).unwrapOr(undefined),
+      runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "b", b: "b" } }).match(
+        (value) => value,
+        (error) => expect.fail(error.message),
+      ),
     ).toBe(false);
   });
 });

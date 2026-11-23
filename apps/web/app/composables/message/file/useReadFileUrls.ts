@@ -31,7 +31,9 @@ export const useReadFileUrls = () => {
               { files: imageFiles.map(({ id }) => ({ id })), roomId },
               { context: { isBackground: true } },
             ),
-          ).unwrapOr([])
+          )
+            .orTee(console.error)
+            .unwrapOr([])
         : [],
     ]);
     const expiresAt = Date.now() + READ_PRESIGNED_URL_DURATION_MS;
