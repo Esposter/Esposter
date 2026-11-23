@@ -10,6 +10,10 @@ import { exhaustiveGuard } from "@esposter/shared";
 // A Hydro one, 2.25% for every 100 Elemental Mastery of a Dendro or Anemo one and 1% for every 100 DEF of a Geo one, at
 // Most 36%, as gcsim (MIT) pkg/simulation/setup.go gives it
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/simulation/setup.go
+// The 0.006 Hydro coefficient is not read from the weapon passives' dataset, though row 114431 of the dump's
+// EquipAffixExcelConfigData holds the same 0.006 at its first rank: that row is Echoes of the Plentiful Land (the
+// Ring of Yaxche's passive), a Normal Attack DMG increase per 1,000 Max HP, a different mechanic. No dump table gives
+// The Ascendant Gleam's own coefficients, so they stay gcsim's
 export const getAscendantGleamBonus = ({ attributes, element }: Combatant): number => {
   if (element === undefined) return 0;
   const { attack, attributeTotalMap, defense, maxHealth } = attributes;
