@@ -1,6 +1,7 @@
 import type { VizeUnpluginOptions } from "@vizejs/unplugin";
 import type { UserConfig } from "tsdown";
 
+import { autoImportDeclarationsPlugin } from "#src/services/autoImportDeclarationsPlugin";
 import { STYLESHEET_REQUEST_REGEX, VUE_AUTO_IMPORTS } from "#src/services/constants";
 import { getTsdownConfiguration } from "#src/services/getTsdownConfiguration";
 import { mergeStylesheetsPlugin } from "#src/services/mergeStylesheetsPlugin";
@@ -33,7 +34,8 @@ export const getTsdownConfigurationVue = (vizeOptions: VizeUnpluginOptions = {})
     // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script
     deps: { alwaysBundle: [STYLESHEET_REQUEST_REGEX] },
     plugins: [
-      AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
+      AutoImport({ dts: false, imports: [...VUE_AUTO_IMPORTS] }),
+      autoImportDeclarationsPlugin(VUE_AUTO_IMPORTS),
       Vize({ ...vizeOptions, isProduction: true }),
       mergeStylesheetsPlugin(),
     ],

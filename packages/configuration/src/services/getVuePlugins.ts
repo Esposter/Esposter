@@ -1,6 +1,7 @@
 import type { VizeOptions } from "@vizejs/vite-plugin";
 import type { PluginOption } from "vite";
 
+import { autoImportDeclarationsPlugin } from "#src/services/autoImportDeclarationsPlugin";
 import { VUE_AUTO_IMPORTS } from "#src/services/constants";
 import { vize } from "@vizejs/vite-plugin";
 import AutoImport from "unplugin-auto-import/vite";
@@ -12,6 +13,7 @@ import AutoImport from "unplugin-auto-import/vite";
 // `TresMesh`, depends on that. The build always compiles for production, but a test run takes `isProduction` from
 // Vite's mode, so a test compile is not a production one.
 export const getVuePlugins = (vizeOptions: VizeOptions = {}): PluginOption[] => [
-  AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
+  AutoImport({ dts: false, imports: [...VUE_AUTO_IMPORTS] }),
+  autoImportDeclarationsPlugin(VUE_AUTO_IMPORTS),
   vize(vizeOptions),
 ];

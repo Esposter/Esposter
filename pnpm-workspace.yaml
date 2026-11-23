@@ -185,6 +185,7 @@ catalog:
   tsrs: ^7.1.0-beta.tsrs4
   type-fest: ^6.0.3
   unicode-emoji-json: ^0.9.0
+  unimport: ^7.0.3
   unocss: ^66.13.0
   unplugin-auto-import: ^21.1.0
   uuid: ^14.0.3

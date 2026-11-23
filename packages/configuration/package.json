@@ -69,6 +69,7 @@
     "rolldown": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
+    "unimport": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
