@@ -1,8 +1,8 @@
 import { TransferDirection } from "#src/models/fleet/data/TransferDirection";
+import { createTransferCommand } from "#src/services/fleet/data/commands/createTransferCommand";
 import { filesCommand } from "#src/services/fleet/data/commands/filesCommand";
 import { manifestCommand } from "#src/services/fleet/data/commands/manifestCommand";
 import { stampsCommand } from "#src/services/fleet/data/commands/stampsCommand";
-import { createTransferCommand } from "#src/services/fleet/data/commands/transferCommand";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
