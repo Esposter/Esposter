@@ -44,6 +44,7 @@ describe("security", () => {
         `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
+        "https://hosted.esposter.com",
       ]),
     );
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(
@@ -51,9 +52,26 @@ describe("security", () => {
         "'self'",
         `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
         "https://assets.esposter.com",
+        "https://hosted.esposter.com",
         "blob:",
       ]),
     );
+    expect(contentSecurityPolicy?.["font-src"]).toStrictEqual(["'self'", "https://hosted.esposter.com"]);
+  });
+
+  test("lists the development hosts in a development build", async () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("CLOUDFLARE_ENV", "dev");
+    vi.resetModules();
+    const { security } = await import("#configuration/security");
+
+    const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
+
+    expect(contentSecurityPolicy?.["connect-src"]).toStrictEqual(
+      expect.arrayContaining(["https://hosted.dev.esposter.com"]),
+    );
+    expect(contentSecurityPolicy?.["font-src"]).toStrictEqual(["'self'", "https://hosted.dev.esposter.com"]);
   });
 
   test("writes no unset host into a source list", async () => {
@@ -70,6 +88,7 @@ describe("security", () => {
       "data:",
       "blob:",
       `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      "https://hosted.esposter.com",
       "https://*.realtime.cloudflare.com",
       "wss://*.realtime.cloudflare.com",
       CLOUDFLARE_INSIGHTS_URL,
@@ -77,6 +96,7 @@ describe("security", () => {
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual([
       "'self'",
       `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      "https://hosted.esposter.com",
       "blob:",
     ]);
   });

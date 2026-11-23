@@ -36,7 +36,7 @@ Ordered by dependency. Each task names how it is verified: a test written first 
 - [ ] 4.3 Add one Cache Rule for the shared hosted hostname in each environment, caching JSON, XML and TSX with an edge TTL of one year. Verify: `curl -sI` on a published `.tsx` through `hosted.dev.esposter.com` returns `cf-cache-status` MISS on the first request and HIT on the second, recorded in the verification note.
 - [ ] 4.4 Confirm whether the Cache Rule overrides the origin's `Cache-Control`, and record the answer in the design's edge section. Verify: a request whose origin object carries `max-age=60` shows the rule's TTL in its `cache-control` or `age` headers, recorded in the change's verification note.
 - [ ] 4.5 Remove the two game buckets from the asset route, and delete the rejected record `openspec/rejected/infra/cdn-in-front-of-blob-storage/`. Verify: `pnpm -C apps/web exec vitest run "server/routes/assets"` passes with the game buckets refused as 404, and `git grep -n "cdn-in-front-of-blob-storage" -- openspec` returns no hit outside the archive.
-- [ ] 4.6 Add the one hosted origin to the CSP: `font-src` (new), `media-src` and `connect-src`. Verify: `pnpm -C apps/web exec vitest run configuration/security.test.ts` passes with the origin asserted, seen failing first.
+- [x] 4.6 Add the one hosted origin to the CSP: `font-src` (new), `media-src` and `connect-src`. Verify: `pnpm -C apps/web exec vitest run configuration/security.test.ts` passes with the origin asserted, seen failing first.
 
 ## 5. The service worker and the claim
 

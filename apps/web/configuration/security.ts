@@ -6,14 +6,18 @@ import {
   NUXT_IMAGE_ERROR_HANDLER,
   REALTIME_ASSETS_URL,
 } from "#configuration/constants";
+import { getCloudflareEnvironment } from "#configuration/wrangler";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { BASE_URL } from "#src/services/desmos/constants";
 import { createHash } from "node:crypto";
 
 import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
+import { HostedAssetOriginMap } from "../../../packages/db-schema/src/services/storage/HostedAssetOriginMap.ts";
 
 // R2's S3 endpoint for the account: a private object's presigned URL names it, so the browser's PUTs and GETs go there
 const R2_ENDPOINT = `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+// The origin the game's engines load every hosted object from, in this environment
+const HOSTED_ASSET_ORIGIN = HostedAssetOriginMap[getCloudflareEnvironment()];
 
 export const security: NonNullable<NuxtConfig["security"]> = {
   headers: {
@@ -30,6 +34,8 @@ export const security: NonNullable<NuxtConfig["security"]> = {
         R2_ENDPOINT,
         // The public assets host, which serves a public bucket's objects and the game data the world fetches
         process.env.PUBLIC_ASSETS_BASE_URL,
+        // The hosted bucket's custom domain, which serves the hosted objects to the game's loaders
+        HOSTED_ASSET_ORIGIN,
         // RealtimeKit: its REST and signalling API, and the virtual background's models at its asset host
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
@@ -44,9 +50,11 @@ export const security: NonNullable<NuxtConfig["security"]> = {
       // Landed on carries its policy to every page it opens after
       "img-src": ["'self'", "data:", "blob:", "https:"],
       // Audio and video messages play from R2, and an uploaded file's preview plays from its `blob:` URL
-      "media-src": ["'self'", R2_ENDPOINT, process.env.PUBLIC_ASSETS_BASE_URL, "blob:"].filter(
+      "media-src": ["'self'", R2_ENDPOINT, process.env.PUBLIC_ASSETS_BASE_URL, HOSTED_ASSET_ORIGIN, "blob:"].filter(
         (source) => source !== undefined,
       ),
+      // A game's font is a hosted object its engine loads as a `FontFace`, which fetches it across origins
+      "font-src": ["'self'", HOSTED_ASSET_ORIGIN],
       // Desmos
       "script-src": ["'unsafe-eval'"],
       // An event handler attribute runs only when its hash is listed under 'unsafe-hashes', and the one handler allowed is
