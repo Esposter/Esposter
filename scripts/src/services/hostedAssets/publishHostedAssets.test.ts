@@ -437,7 +437,6 @@ describe(publishHostedAssets, () => {
     });
   });
 
-  // The read back of each written object is what stands between a bucket that stored other bytes and a lock that names them
   // A file is stored as its extension's table names: a tsx brotli-encoded, its decoded bytes the ones its name hashes
   test("a published tsx is stored brotli-encoded under its content type, and its decoded bytes hash to its name", async () => {
     expect.hasAssertions();
@@ -467,6 +466,7 @@ describe(publishHostedAssets, () => {
     ).resolves.toStrictEqual(bytes);
   });
 
+  // The read back of each written object is what stands between a bucket that stored other bytes and a lock that names them
   test("a mismatched object stops the commit", async () => {
     expect.hasAssertions();
 
