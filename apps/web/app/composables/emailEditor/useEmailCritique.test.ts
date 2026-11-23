@@ -15,7 +15,7 @@ const createDocument = (href: string | undefined): EmailDocument => ({
   root: { props: { lang: "", title: "" } },
 });
 
-describe("useEmailCritique", () => {
+describe(useEmailCritique, () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });

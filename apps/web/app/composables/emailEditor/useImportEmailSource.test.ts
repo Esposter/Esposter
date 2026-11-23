@@ -62,6 +62,7 @@ describe(useImportEmailSource, () => {
       .mockReturnValueOnce(columnId)
       .mockReturnValueOnce(buttonId);
     const isImported = importEmailSource(resourceId, TEST_IMPORTED_SOURCE);
+
     expect(isImported).toBe(true);
     expect(getEmailDocument(resourceId)?.content).toStrictEqual([
       {
@@ -79,6 +80,7 @@ describe(useImportEmailSource, () => {
     ]);
 
     undo(resourceId);
+
     expect(getEmailDocument(resourceId)).toStrictEqual(existingDocument);
   });
 
@@ -92,6 +94,7 @@ describe(useImportEmailSource, () => {
     const { getEmailDocument } = pageBuilderDocumentStore;
     const importEmailSource = useImportEmailSource();
     const isImported = importEmailSource(resourceId, TEST_INCLUDE_SOURCE);
+
     expect(isImported).toBe(false);
     expect(getEmailDocument(resourceId)).toStrictEqual(existingDocument);
     expect(alerts.value.map(({ text }) => text)).toStrictEqual([
