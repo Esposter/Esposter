@@ -13,10 +13,32 @@ const enclosingFunctions = function* (node: ESTree.Node): Generator<ESTree.Node>
 
 export const noReturnGlobalProperties: Rule = defineRule({
   create(context) {
-    // The names bound to a global call, keyed by the function that binds them, so a name bound in one function is not a
-    // global in a sibling. A destructured binding names nothing, so it adds none
-    const scopeGlobalNamesMap = new Map<ESTree.Node | null, Set<string>>();
+    // The names each function binds, keyed by that function, with whether the binding is a global call
+    // A name bound in one function is not a global in a sibling
+    // A nested binding shadows the outer one, so a return reads the innermost binding of each name
+    // A destructured binding names nothing, so it adds none
+    const scopeBindingsMap = new Map<ESTree.Node | null, Map<string, boolean>>();
+    const bind = (scope: ESTree.Node | null, name: string, isGlobal: boolean): void => {
+      const bindings = scopeBindingsMap.get(scope) ?? new Map<string, boolean>();
+      bindings.set(name, isGlobal);
+      scopeBindingsMap.set(scope, bindings);
+    };
+    const checkIsGlobalName = (scopes: (ESTree.Node | null)[], name: string): boolean => {
+      for (const scope of scopes) {
+        const bindings = scopeBindingsMap.get(scope);
+        if (bindings?.has(name)) return bindings.get(name) === true;
+      }
+
+      return false;
+    };
+    const bindParameters = (node: ESTree.ArrowFunctionExpression | ESTree.Function): void => {
+      for (const parameter of node.params) if (parameter.type === "Identifier") bind(node, parameter.name, false);
+    };
+
     return {
+      ArrowFunctionExpression: bindParameters,
+      FunctionDeclaration: bindParameters,
+      FunctionExpression: bindParameters,
       ReturnStatement(node) {
         if (node.argument?.type !== "ObjectExpression") return;
 
@@ -25,24 +47,19 @@ export const noReturnGlobalProperties: Rule = defineRule({
         for (const property of node.argument.properties) {
           if (property.type !== "Property" || property.value.type !== "Identifier") continue;
           const name = property.value.name;
-          if (scopes.some((scope) => scopeGlobalNamesMap.get(scope)?.has(name)))
+          if (checkIsGlobalName(scopes, name))
             context.report({ message: buildGlobalPropertyMessage(name), node: property });
         }
       },
       VariableDeclaration(node) {
+        const scope = enclosingFunctions(node).next().value ?? null;
         for (const { id, init } of node.declarations) {
-          if (
-            id.type !== "Identifier" ||
-            init?.type !== "CallExpression" ||
-            init.callee.type !== "Identifier" ||
-            !GLOBAL_CALLEE_NAMES.has(init.callee.name)
-          )
-            continue;
-
-          const scope = enclosingFunctions(node).next().value ?? null;
-          const names = scopeGlobalNamesMap.get(scope) ?? new Set<string>();
-          names.add(id.name);
-          scopeGlobalNamesMap.set(scope, names);
+          if (id.type !== "Identifier") continue;
+          const isGlobal =
+            init?.type === "CallExpression" &&
+            init.callee.type === "Identifier" &&
+            GLOBAL_CALLEE_NAMES.has(init.callee.name);
+          bind(scope, id.name, isGlobal);
         }
       },
     };

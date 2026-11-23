@@ -93,6 +93,18 @@ describe("pinia/no-return-global-properties", () => {
       source: `export const useNStore2 = () => {\n  const route = useRoute();\n  return () => {\n    return { route };\n  };\n};`,
       violations: 1,
     },
+    // A local declared in a nested function shadows the global of the enclosing function, so its return reports nothing
+    {
+      name: "nestedLocalShadowsRoute",
+      source: `export const useOStore2 = defineStore("nestedLocalShadowsRoute", () => {\n  const route = useRoute();\n  const build = () => {\n    const route = makeLocal();\n    return { route };\n  };\n  return { build, route };\n});`,
+      violations: 1,
+    },
+    // A parameter of a nested function shadows the enclosing global the same way
+    {
+      name: "nestedParameterShadowsRoute",
+      source: `export const useQStore2 = defineStore("nestedParameterShadowsRoute", () => {\n  const route = useRoute();\n  const build = (route) => {\n    return { route };\n  };\n  return { build, route };\n});`,
+      violations: 1,
+    },
   ];
   setupPluginSuite({ fixtures: FIXTURES, plugin: "pinia", rules: [RULE] });
 });
