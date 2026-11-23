@@ -1,6 +1,6 @@
 import type { ESTree, Reference } from "@oxlint/plugins";
 
-// The export parents that keep a binding read as both a type and a value a value, as `export { A }` does
+// The export parents that keep a binding read as both a type and a value, as `export { A }` does
 const EXPORT_PARENT_TYPES = new Set(["ExportDefaultDeclaration", "ExportSpecifier", "TSExportAssignment"]);
 
 // A value use that is still only a type's: the operand of `typeof`, or the computed key of a type literal.
