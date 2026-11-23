@@ -70,6 +70,12 @@ describe("restrictedOverloadSyntaxes", () => {
         source: "export class Parser {\n  parse(value: string | number) {\n    return value;\n  }\n}",
         violations: 0,
       },
+      {
+        filePath: "declareClassMethod.ts",
+        name: "declareClassMethod",
+        source: "declare class Parser {\n  parse(value: string | number): string | number;\n}",
+        violations: 0,
+      },
     ],
   });
 });

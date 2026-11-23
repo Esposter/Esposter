@@ -23,13 +23,14 @@ export const RESTRICTED_OVERLOAD_SYNTAXES: SelectorBanList = {
         "TSCallSignatureDeclaration ~ TSCallSignatureDeclaration:not(TSModuleDeclaration[declare=true] TSCallSignatureDeclaration)",
     },
     {
-      // A method with no body in a class is an overload signature, since the implementation is the one with a body. An
-      // Abstract method is a different node, and two abstract methods of different names are not overloads of each other
-      // Either, so no selector names an abstract overload
+      // A method with no body in a class is an overload signature, since the implementation is the one with a body. A
+      // Declared class is ambient, so its bodiless methods are declarations rather than overloads, as in a declared
+      // Module. An abstract method is a different node, and two abstract methods of different names are not overloads of
+      // Each other either, so no selector names an abstract overload
       message:
         "Overloads are banned — a class method's overload signatures are one method per call shape, each with its own exact type. See the typescript skill's references/function-signatures.md.",
       selector:
-        "MethodDefinition[value.type=TSEmptyBodyFunctionExpression]:not(TSModuleDeclaration[declare=true] MethodDefinition)",
+        "MethodDefinition[value.type=TSEmptyBodyFunctionExpression]:not(TSModuleDeclaration[declare=true] MethodDefinition, ClassDeclaration[declare=true] MethodDefinition)",
     },
   ],
   excludeFiles: ["**/*.d.ts"],
