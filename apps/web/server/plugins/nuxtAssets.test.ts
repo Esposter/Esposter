@@ -1,10 +1,11 @@
 import nuxtAssets from "#server/plugins/nuxtAssets";
+import { H3Event } from "nitro/h3";
 import { createRouteRulesPlugin } from "nuxt-security-module/runtime/nitro/plugins/routeRules";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-type ResponseHook = (response: Response, event: { req: { url: string }; url: URL }) => void;
+type ResponseHook = (response: Response, event: H3Event) => void;
 
-const createEvent = (url: string) => ({ req: { url }, url: new URL(url) });
+const createEvent = (url: string) => new H3Event(new Request(url));
 
 const getResponseHook = async (): Promise<ResponseHook> => {
   const hook = vi.fn<(name: string, handler: ResponseHook) => void>();
