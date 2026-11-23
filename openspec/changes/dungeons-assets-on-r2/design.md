@@ -31,7 +31,7 @@ The binaries are different. They leave git after the first publish verifies them
 
 The prior art's decisions on keys are carried. The branch's reasons are in its commit message (`158d95e9d1`), and these are the parts that touch a save:
 
-- **Carried:** the species key stays `MonsterKey` and its portrait is `MonsterKeyFileKeyMap[key]`, so no saved monster is renamed and the battle label stays readable. The saved `asset` field is dropped from the plain `monsterSchema`, which parses old saves because zod strips unknown keys.
+- **Carried:** the species key stays `MonsterKey` and its portrait is `getMonsterFileKey(key)`, the guarded read of `MonsterKeyFileKeyMap` that throws for a species the map lacks, so no saved monster is renamed and the battle label stays readable. The saved `asset` field is dropped from the plain `monsterSchema`, which parses old saves because zod strips unknown keys.
 - **Carried:** the capture ball's texture is `CaptureItemFileKeyMap` by item id, not an optional `Item.fileKey`, so a saved inventory without the field still captures.
 - **Carried:** `Attack.soundEffectKey` becomes `fileKey`, and every image, sound and font key collapses into `FileKey`.
 - **Carried:** the world's foreground is `TilemapForegroundFileKeyMap`, read by `PixelArtTextureKeys`.
@@ -108,20 +108,21 @@ The Phaser pass is near-instant. It runs after every object is held in the cache
 
 The rows naming a file the prior art creates (the save-safe maps, the Preloader's loaders and the third-party folder) describe what this change creates; every other row is a file that exists now.
 
-| File                                                                        | Role                                                                                    |
-| :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-| `apps/web/app/assets/dungeons/`                                             | the files this change moves out of git and the bundle, and the Tiled tree that stays    |
-| `apps/web/app/services/dungeons/loader/loadImages.ts`                       | the image loader, which takes keys and reads their urls                                 |
-| `apps/web/app/services/dungeons/loader/loadSounds.ts`                       | the sound loader, which reads its urls from the key map                                 |
-| `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                    | deleted: the tileset urls come from the key map                                         |
-| `apps/web/app/util/file/toXmlBlobUrl.ts`                                    | deleted: only the tileset map imports it                                                |
-| `apps/web/app/components/Dungeons/Preloader/Scene.vue`                      | the one bar, driven by the generic preloader                                            |
-| "apps/web/app/services/dungeons/monster/MonsterKeyFileKeyMap.ts"            | the portrait of each species, the save-safe lookup                                      |
-| "apps/web/app/services/dungeons/item/CaptureItemFileKeyMap.ts"              | the capture ball's texture by item id                                                   |
-| "apps/web/app/services/dungeons/scene/world/TilemapForegroundFileKeyMap.ts" | each map's foreground, read by the pixel-art list                                       |
-| `apps/web/app/services/dungeons/loader/PixelArtTextureKeys.ts`              | the pixel-art texture list, read from the key map                                       |
-| `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`         | reads each tileset's url by its name                                                    |
-| `apps/web/scripts/phaser/`                                                  | the dead file-pack generator, deleted                                                   |
-| `apps/web/scripts/tiled/`                                                   | the `tiled:gen` generator that reads the `.tmx` and `.tiled-project`, which stay in git |
-| `apps/web/shared/generated/phaser/`                                         | the generated `FileKey` and `files.json`, deleted                                       |
-| `apps/web/shared/generated/tiled/`                                          | the generated typed properties the dungeons game keeps                                  |
+| File                                                                        | Role                                                                                      |
+| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `apps/web/app/assets/dungeons/`                                             | the files this change moves out of git and the bundle, and the Tiled tree that stays      |
+| `apps/web/app/services/dungeons/loader/loadImages.ts`                       | the image loader, which takes keys and reads their urls                                   |
+| `apps/web/app/services/dungeons/loader/loadSounds.ts`                       | the sound loader, which reads its urls from the key map                                   |
+| `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                    | deleted: the tileset urls come from the key map                                           |
+| `apps/web/app/util/file/toXmlBlobUrl.ts`                                    | deleted: only the tileset map imports it                                                  |
+| `apps/web/app/components/Dungeons/Preloader/Scene.vue`                      | the one bar, driven by the generic preloader                                              |
+| "apps/web/app/services/dungeons/monster/MonsterKeyFileKeyMap.ts"            | the portrait of each species, the save-safe lookup                                        |
+| `apps/web/app/services/dungeons/monster/getMonsterFileKey.ts`               | the portrait lookup the monster components call, which throws for a species the map lacks |
+| "apps/web/app/services/dungeons/item/CaptureItemFileKeyMap.ts"              | the capture ball's texture by item id                                                     |
+| "apps/web/app/services/dungeons/scene/world/TilemapForegroundFileKeyMap.ts" | each map's foreground, read by the pixel-art list                                         |
+| `apps/web/app/services/dungeons/loader/PixelArtTextureKeys.ts`              | the pixel-art texture list, read from the key map                                         |
+| `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`         | reads each tileset's url by its name                                                      |
+| `apps/web/scripts/phaser/`                                                  | the dead file-pack generator, deleted                                                     |
+| `apps/web/scripts/tiled/`                                                   | the `tiled:gen` generator that reads the `.tmx` and `.tiled-project`, which stay in git   |
+| `apps/web/shared/generated/phaser/`                                         | the generated `FileKey` and `files.json`, deleted                                         |
+| `apps/web/shared/generated/tiled/`                                          | the generated typed properties the dungeons game keeps                                    |
