@@ -4,7 +4,7 @@ import type { HostedAssetPublishResult } from "#src/models/hostedAssets/HostedAs
 import type { HostedAssetLock } from "hosted-assets";
 
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
-import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
+import { createMemoryR2BucketClientMap } from "#src/services/cloudflare/createMemoryR2BucketClientMap.test";
 import { DAY_MS } from "#src/services/hostedAssets/constants";
 import { filesProductBase } from "#src/services/hostedAssets/constants.test";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
@@ -19,12 +19,6 @@ import { getContentAddress } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
 import { getHostedAssetPath, HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-// Each environment's bucket is its own in-memory store, made fresh for each test, so a rerun reads what the test stored
-const createBucketClientMap = () => ({
-  [CloudflareEnvironment.Development]: createMemoryR2BucketClient(),
-  [CloudflareEnvironment.Production]: createMemoryR2BucketClient(),
-});
 
 // The lock a published result plans, which a caller commits and a test carries into its next publish
 const getPlannedLock = (result: HostedAssetPublishResult): HostedAssetLock => {
@@ -60,7 +54,7 @@ describe(publishHostedAssets, () => {
   };
   // Publishes the base publication into a bucket map from no lock, and returns the lock it planned
   const publishPublication = async (
-    bucketClientMap: ReturnType<typeof createBucketClientMap>,
+    bucketClientMap: ReturnType<typeof createMemoryR2BucketClientMap>,
   ): Promise<HostedAssetLock> =>
     getPlannedLock(
       await publishHostedAssets({
@@ -90,7 +84,7 @@ describe(publishHostedAssets, () => {
   test("a verified publish writes both environments", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock: emptyLock,
@@ -115,9 +109,9 @@ describe(publishHostedAssets, () => {
   test("a rerun of an unchanged plan makes no request", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = await publishPublication(bucketClientMap);
-    const createBucketClientMapSpy = vi.fn<typeof createBucketClientMap>(() => bucketClientMap);
+    const createBucketClientMapSpy = vi.fn<typeof createMemoryR2BucketClientMap>(() => bucketClientMap);
     const rerun = await publishHostedAssets({
       createBucketClientMap: createBucketClientMapSpy,
       currentLock,
@@ -139,7 +133,7 @@ describe(publishHostedAssets, () => {
   ])("stores %s an environment lost although the lock still names it", async (_label, isIndex) => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = await publishPublication(bucketClientMap);
     const record = takeOne(
       planHostedAssetPublication(publication).records.filter(({ isIndex: isRecordIndex }) => isRecordIndex === isIndex),
@@ -169,7 +163,7 @@ describe(publishHostedAssets, () => {
   test("a publish of one scope aborts when a bucket lost an index of another scope", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = await publishPublication(bucketClientMap);
     const index = takeOne(planHostedAssetPublication(publication).records.filter(({ isIndex }) => isIndex));
     bucketClientMap[CloudflareEnvironment.Production].store.delete(getHostedAssetPath(index));
@@ -192,7 +186,7 @@ describe(publishHostedAssets, () => {
   test("stores a changed record and its index only", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = await publishPublication(bucketClientMap);
     const changedPublication: HostedAssetPublication = {
       ...publication,
@@ -219,7 +213,7 @@ describe(publishHostedAssets, () => {
   test("rewrites a stored object that is past the reuse window and that no lock names", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock: emptyLock,
@@ -267,7 +261,7 @@ describe(publishHostedAssets, () => {
     };
     const first = getPlannedLock(
       await publishHostedAssets({
-        createBucketClientMap,
+        createBucketClientMap: createMemoryR2BucketClientMap,
         currentLock: emptyLock,
         otherLocks: [],
         product,
@@ -277,7 +271,7 @@ describe(publishHostedAssets, () => {
     );
     const second = getPlannedLock(
       await publishHostedAssets({
-        createBucketClientMap,
+        createBucketClientMap: createMemoryR2BucketClientMap,
         currentLock: emptyLock,
         otherLocks: [],
         product,
@@ -315,7 +309,7 @@ describe(publishHostedAssets, () => {
   test("an empty publication that drops a scope's entries still publishes the lock", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = await publishPublication(bucketClientMap);
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
@@ -338,7 +332,7 @@ describe(publishHostedAssets, () => {
   test("rejects when a bucket refuses a write", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     vi.spyOn(bucketClientMap[CloudflareEnvironment.Production], "put").mockRejectedValue(new Error("offline"));
 
     await expect(
@@ -359,7 +353,7 @@ describe(publishHostedAssets, () => {
 
     const bytes = Buffer.from(TEST_FILENAME);
     const files = [{ bytes, extension: ".png", key: TEST_FILENAME, sha256: getContentAddress(bytes) }];
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = getPlannedLock(
       await publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
@@ -386,7 +380,7 @@ describe(publishHostedAssets, () => {
   test("changed bytes get a new url", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const changed = Buffer.from("");
     const currentLock = getPlannedLock(
       await publishHostedAssets({
@@ -428,7 +422,7 @@ describe(publishHostedAssets, () => {
   test("a published tsx is stored brotli-encoded under its content type, and its decoded bytes hash to its name", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const bytes = Buffer.from(TEST_FILENAME);
     const sha256 = getContentAddress(bytes);
     await publishHostedAssets({
@@ -458,7 +452,7 @@ describe(publishHostedAssets, () => {
   test("a binary file a records product publishes is stored unencoded under its content type", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const bytes = Buffer.from(TEST_FILENAME);
     const sha256 = getContentAddress(bytes);
     await publishHostedAssets({
@@ -484,7 +478,7 @@ describe(publishHostedAssets, () => {
   test("a mismatched object stops the commit", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const productionBucket = bucketClientMap[CloudflareEnvironment.Production];
     const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
     const storedGet = productionBucket.get;
@@ -511,7 +505,7 @@ describe(publishHostedAssets, () => {
   test("a reused object whose stored bytes are altered stops the commit", async () => {
     expect.hasAssertions();
 
-    const bucketClientMap = createBucketClientMap();
+    const bucketClientMap = createMemoryR2BucketClientMap();
     const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
     await bucketClientMap[CloudflareEnvironment.Production].put(alteredPath, new Uint8Array(alteredBytes));
 

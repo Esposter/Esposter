@@ -1,7 +1,7 @@
 import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetProduct";
 import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
-import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
+import { createMemoryR2BucketClientMap } from "#src/services/cloudflare/createMemoryR2BucketClientMap.test";
 import { filesProductBase } from "#src/services/hostedAssets/constants.test";
 import { planHostedAssetPublication } from "#src/services/hostedAssets/planHostedAssetPublication";
 import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
@@ -13,12 +13,6 @@ import { takeOne, ZERO_UUID } from "@esposter/shared";
 import { getContentAddress } from "@esposter/shared-node/cache";
 import { getHostedAssetPath } from "hosted-assets";
 import { describe, expect, test } from "vitest";
-
-// Each environment's bucket is its own in-memory store, made fresh for each test
-const createBucketClientMap = () => ({
-  [CloudflareEnvironment.Development]: createMemoryR2BucketClient(),
-  [CloudflareEnvironment.Production]: createMemoryR2BucketClient(),
-});
 
 describe(repairHostedAssets, () => {
   const product: HostedAssetProduct = { ...filesProductBase, source: { kind: "records" } };
@@ -33,7 +27,7 @@ describe(repairHostedAssets, () => {
   // Publishes the publication into both buckets from no lock, and returns the buckets with the lock it planned and the object
   // And index that lock names. A publish that is refused throws, so its result needs no check of its own
   const publish = async () => {
-    const buckets = createBucketClientMap();
+    const buckets = createMemoryR2BucketClientMap();
     const plan = planHostedAssetPublication(publication);
     await publishHostedAssets({
       createBucketClientMap: () => buckets,
