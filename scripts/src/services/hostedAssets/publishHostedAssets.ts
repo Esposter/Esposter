@@ -2,6 +2,7 @@ import type { HostedAssetPublishResult } from "#src/models/hostedAssets/HostedAs
 import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetRecord";
 import type { PublishHostedAssetsOptions } from "#src/models/hostedAssets/PublishHostedAssetsOptions";
 
+import { HostedAssetMissingIndexPolicy } from "#src/models/hostedAssets/HostedAssetMissingIndexPolicy";
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
 import { assertScopeUnclaimed } from "#src/services/hostedAssets/assertScopeUnclaimed";
 import { encodeHostedAssetObject } from "#src/services/hostedAssets/encodeHostedAssetObject";
@@ -63,7 +64,11 @@ export const publishHostedAssets = async ({
     return encoded;
   };
   const publishBucket = async (bucketClient: (typeof bucketClientMap)[CloudflareEnvironment]) => {
-    const reachableObjects = await readHostedAssetReachableObjects(bucketClient, [currentLock]);
+    const reachableObjects = await readHostedAssetReachableObjects(
+      bucketClient,
+      [currentLock],
+      HostedAssetMissingIndexPolicy.Skip,
+    );
     return publishHostedAssetsToBucket(bucketClient, plan.records, reachableObjects, getEncoded);
   };
   const [devCount, prodCount] = await Promise.all([

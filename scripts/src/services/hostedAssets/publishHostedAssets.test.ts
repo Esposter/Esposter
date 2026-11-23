@@ -156,6 +156,41 @@ describe(publishHostedAssets, () => {
     expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
   });
 
+  test("stores an index an environment lost although the lock still names it", async () => {
+    expect.hasAssertions();
+
+    const bucketClientMap = createBucketClientMap();
+    const currentLock = getPlannedLock(
+      await publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock: emptyLock,
+        otherLocks: [],
+        product,
+        plan: planHostedAssetPublication(publication),
+        scopes,
+      }),
+    );
+    const index = takeOne(planHostedAssetPublication(publication).records.filter(({ isIndex }) => isIndex));
+    bucketClientMap[CloudflareEnvironment.Production].store.delete(getHostedAssetPath(index));
+
+    const rerun = await publishHostedAssets({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock,
+      otherLocks: [],
+      product,
+      plan: planHostedAssetPublication(publication),
+      scopes,
+    });
+
+    expect(rerun).toStrictEqual({
+      outcome: HostedAssetPublishOutcome.Published,
+      plannedLock: currentLock,
+      storedObjectCount: 4,
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 1 },
+    });
+    expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
+  });
+
   // A record that changes is one new object, and its index is the only other object a lock change needs
   test("stores a changed record and its index only", async () => {
     expect.hasAssertions();
