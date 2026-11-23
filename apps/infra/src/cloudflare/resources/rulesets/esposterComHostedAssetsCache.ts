@@ -23,6 +23,13 @@ export const esposterComHostedAssetsCache: cloudflare.Ruleset = new cloudflare.R
         enabled: true,
         expression: `http.host in ${toRulesSet(hostedHostnames)} and http.request.uri.path.extension in ${toRulesSet(HOSTED_TEXT_EXTENSIONS)}`,
       },
+      {
+        action: "set_cache_settings",
+        actionParameters: { cache: false },
+        description: "the web worker's script bypasses the edge cache, since the browser's update check reads it",
+        enabled: true,
+        expression: 'http.request.uri.path eq "/sw.js"',
+      },
     ],
     zoneId: esposterCom.id,
   },

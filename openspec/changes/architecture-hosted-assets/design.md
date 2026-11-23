@@ -286,7 +286,7 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 | :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
 | `packages/db-schema/src/models/storage/StorageBucket.ts`                       | the public buckets a product's origin names                                                   |
 | `apps/infra/src/cloudflare/resources/r2Buckets/`                               | the buckets; the shared hosted bucket and its custom domain are declared beside them          |
-| `apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts` | the Cache Rule: the hosted hostnames' text objects eligible for the edge cache                |
+| `apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts` | the Cache Rules: hosted text objects eligible for the edge cache, and `/sw.js` bypassing it   |
 | `apps/web/server/routes/assets/[bucket]/[...key].get.ts`                       | serves the user buckets only, once the game buckets are off the route                         |
 | `apps/web/configuration/security.ts`                                           | the `connect-src`, `font-src` and `media-src` directives over the environment's hosted origin |
 | `apps/web/service-worker/sw.ts`                                                | the cache-first route over the hosted origins, and the claim on activation                    |
