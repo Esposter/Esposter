@@ -8,7 +8,7 @@ import { getHostedAssetLockKey } from "#src/services/hostedAssets/getHostedAsset
 import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 import { InvalidOperationError, Operation, settleAll, takeOne } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, sep } from "node:path";
 
 // Restores files of a files product's working copy from their objects: each named file is read back from the bucket, checked
 // Against its name and the length its lock records, and written at its key under the folder, so a changed original can be
@@ -22,13 +22,18 @@ export const pullHostedAssetFiles = async (
   repositoryRoot: string,
 ): Promise<number> => {
   const { folder } = getHostedAssetFilesSource(product);
+  const directory = join(repositoryRoot, folder);
   const bucketClient = createBucketClient();
   const scope = takeOne(product.scopes);
   await settleAll(
     keys.map((key) => async () => {
       const object = lock.objects[getHostedAssetLockKey(scope, key)];
       if (object === undefined) throw new InvalidOperationError(Operation.Read, key, "is not a key of the lock");
-      const path = join(repositoryRoot, folder, key);
+      // A lock can name a key with a parent segment, which the folder walk never produces, so the path is checked before
+      // Any byte is read or written
+      const path = join(directory, key);
+      if (!path.startsWith(`${directory}${sep}`))
+        throw new InvalidOperationError(Operation.Read, key, "leaves its product's folder");
       const bytes = await readHostedAssetBytes(bucketClient, object);
       await mkdir(dirname(path), { recursive: true });
       await writeFile(path, bytes);

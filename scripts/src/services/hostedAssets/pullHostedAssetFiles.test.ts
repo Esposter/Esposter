@@ -57,4 +57,27 @@ describe(pullHostedAssetFiles, () => {
     await expect(readFile(join(repositoryRoot, folder, keyA))).resolves.toStrictEqual(bytesA);
     await expect(readFile(join(repositoryRoot, folder, keyB))).resolves.toStrictEqual(bytesB);
   });
+
+  test("a lock key that leaves the folder is refused before any file is written", async () => {
+    expect.hasAssertions();
+
+    // The lock names a key with a parent segment, and its object is in the bucket, so only the path check can refuse it
+    const escaping = {
+      bytes: bytesA,
+      extension: ".png",
+      key: `../${TEST_FILENAME}.png`,
+      sha256: getContentAddress(bytesA),
+    };
+    const { lock, records } = planHostedAssetFiles(TEST_FILENAME, [escaping]);
+    const bucketClient = createMemoryR2BucketClient();
+    await Promise.all(
+      records.map((record) => bucketClient.put(getHostedAssetPath(record), new Uint8Array(record.bytes))),
+    );
+
+    await expect(
+      pullHostedAssetFiles(() => bucketClient, product, lock, [escaping.key], repositoryRoot),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: ../a.png, leaves its product's folder]`,
+    );
+  });
 });
