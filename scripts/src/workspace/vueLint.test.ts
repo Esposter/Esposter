@@ -1,4 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { jsonDateParse } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -9,8 +10,8 @@ interface VizeLintReport {
   file: string;
   messages: { line: number; ruleId: string }[];
 }
-// oxlint reads only a component's script, and a JS plugin reports a template finding on the script or not at all, so the
-// Template rules run in vize's own lint over the root `vite.config.ts`. Each planted component breaks one template rule
+// A component's script is all oxlint reads, and a JS plugin reports a template finding on the script or not at all, so
+// The template rules run in vize's own lint over the root `vite.config.ts`. Each planted component breaks one template rule
 // On a known line. The script-first one also binds `v-html`, which vize reports by default and the repository allows, so
 // A finding list read under vize's defaults instead of the repository's configuration fails too
 describe("vueLint", () => {
@@ -50,7 +51,7 @@ const html = "";
       encoding: "utf8",
     });
     findingMap = new Map(
-      (JSON.parse(stdout) as VizeLintReport[]).map(({ file, messages }) => [
+      jsonDateParse<VizeLintReport[]>(stdout).map(({ file, messages }) => [
         basename(file),
         messages.map(({ line, ruleId }) => `${ruleId}:${line}`),
       ]),

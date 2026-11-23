@@ -1,6 +1,7 @@
 import type { SetupSyntaxSuiteOptions } from "#src/models/SetupSyntaxSuiteOptions";
 
 import { ESLint } from "eslint";
+
 // oxlint-disable-next-line no-restricted-imports -- shared-node depends on this package, so this test's own spawn passes windowsHide, as the wrapper does
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -55,6 +56,7 @@ export const setupSyntaxSuite = ({ entries, fixtures }: SetupSyntaxSuiteOptions)
       [join(REPOSITORY_ROOT, "node_modules", "vize", "bin", "vize"), "lint", "--format", "json", ...componentPaths],
       { cwd: REPOSITORY_ROOT, encoding: "utf8", windowsHide: true },
     );
+    // oxlint-disable-next-line no-restricted-properties -- shared depends on this package, and vize's report holds no date to revive
     for (const { file, messages: reportedMessages } of JSON.parse(stdout) as VizeLintReport[]) {
       const name = basename(file, ".vue");
       fixtureViolationsMap.set(name, (fixtureViolationsMap.get(name) ?? 0) + countEntryMessages(reportedMessages));
