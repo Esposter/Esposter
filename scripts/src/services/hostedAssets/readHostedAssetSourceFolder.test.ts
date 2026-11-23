@@ -74,16 +74,18 @@ describe(readHostedAssetSourceFolder, () => {
     expect(files.map(({ key }) => key)).toStrictEqual([`${TEST_FILENAME}.png`]);
   });
 
-  // The link is an unhosted file's, which the walk never publishes, so its refusal would fail a publish over nothing
-  test("a symbolic link of an unhosted extension is not refused", async () => {
+  // The link is refused although its extension is unhosted, since the refusal is made before the filter keeps files out
+  test("a symbolic link of an unhosted extension is refused by name, not skipped", async () => {
     expect.hasAssertions();
 
     await writeFile(join(repositoryRoot, folder, "tile.png"), "b");
     await symlink(join(repositoryRoot, "elsewhere.ts"), join(repositoryRoot, folder, "map.ts"));
 
-    const files = await readHostedAssetSourceFolder(repositoryRoot, folder, [".ts"]);
-
-    expect(files.map(({ key }) => key)).toStrictEqual(["tile.png"]);
+    await expect(
+      readHostedAssetSourceFolder(repositoryRoot, folder, [".ts"]),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: a/map.ts, is a symbolic link, which a publish does not follow]`,
+    );
   });
 
   test("every file is read in key order, named by the hash of its bytes", async () => {
