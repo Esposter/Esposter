@@ -7,6 +7,7 @@ import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDa
 import { commitHostedAssetLock } from "#src/services/hostedAssets/commitHostedAssetLock";
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
 import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
+import { readOtherHostedAssetLocks } from "#src/services/hostedAssets/readOtherHostedAssetLocks";
 import { writeHostedAssetKeys } from "#src/services/hostedAssets/writeHostedAssetKeys";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 
@@ -24,6 +25,7 @@ export const publishGameDataStep = async ({
   const result = await publishHostedAssets({
     createBucketClientMap: isDryRun ? undefined : () => createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket),
     currentLock,
+    otherLocks: await readOtherHostedAssetLocks(GAME_DATA_PRODUCT),
     product: GAME_DATA_PRODUCT,
     publication,
     scopes,

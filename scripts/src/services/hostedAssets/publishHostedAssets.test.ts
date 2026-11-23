@@ -12,6 +12,7 @@ import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAss
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { getContentAddress } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
 import { getHostedAssetPath } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -60,6 +61,7 @@ describe(publishHostedAssets, () => {
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock: emptyLock,
+      otherLocks: [],
       product,
       publication,
       scopes,
@@ -85,6 +87,7 @@ describe(publishHostedAssets, () => {
       await publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
         product,
         publication,
         scopes,
@@ -93,6 +96,7 @@ describe(publishHostedAssets, () => {
     const rerun = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock,
+      otherLocks: [],
       product,
       publication,
       scopes,
@@ -115,6 +119,7 @@ describe(publishHostedAssets, () => {
       await publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
         product,
         publication,
         scopes,
@@ -126,6 +131,7 @@ describe(publishHostedAssets, () => {
     const rerun = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock,
+      otherLocks: [],
       product,
       publication,
       scopes,
@@ -149,6 +155,7 @@ describe(publishHostedAssets, () => {
       await publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
         product,
         publication,
         scopes,
@@ -161,6 +168,7 @@ describe(publishHostedAssets, () => {
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock,
+      otherLocks: [],
       product,
       publication: changedPublication,
       scopes,
@@ -182,6 +190,7 @@ describe(publishHostedAssets, () => {
     await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock: emptyLock,
+      otherLocks: [],
       product,
       publication,
       scopes,
@@ -190,6 +199,7 @@ describe(publishHostedAssets, () => {
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock: emptyLock,
+      otherLocks: [],
       product,
       publication,
       scopes,
@@ -226,6 +236,7 @@ describe(publishHostedAssets, () => {
       await publishHostedAssets({
         createBucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
         product,
         publication: ascending,
         scopes,
@@ -235,6 +246,7 @@ describe(publishHostedAssets, () => {
       await publishHostedAssets({
         createBucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
         product,
         publication: descending,
         scopes,
@@ -248,7 +260,7 @@ describe(publishHostedAssets, () => {
   test("names what it would publish without touching a bucket", async () => {
     expect.hasAssertions();
 
-    const result = await publishHostedAssets({ currentLock: emptyLock, product, publication, scopes });
+    const result = await publishHostedAssets({ currentLock: emptyLock, otherLocks: [], product, publication, scopes });
 
     // Nothing was published before, so the lock it would leave is the plan's own
     const plan = planHostedAssetPublication(publication);
@@ -269,6 +281,7 @@ describe(publishHostedAssets, () => {
     const result = await publishHostedAssets({
       createBucketClientMap: createBucketClientMapSpy,
       currentLock: emptyLock,
+      otherLocks: [],
       product,
       publication: { indexes: {}, objects: {} },
       scopes,
@@ -287,6 +300,7 @@ describe(publishHostedAssets, () => {
       await publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
         product,
         publication,
         scopes,
@@ -295,6 +309,7 @@ describe(publishHostedAssets, () => {
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock,
+      otherLocks: [],
       product,
       publication: { indexes: {}, objects: {} },
       scopes,
@@ -319,6 +334,7 @@ describe(publishHostedAssets, () => {
       publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
         product,
         publication,
         scopes,
@@ -326,11 +342,39 @@ describe(publishHostedAssets, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[AggregateError: offline]`);
   });
 
+  test("rejects a scope another product's lock already declares", async () => {
+    expect.hasAssertions();
+
+    const otherLock: HostedAssetLock = {
+      indexes: {},
+      objects: {
+        "stats/weapons": {
+          bytes: 0,
+          extension: ".json",
+          scope: "stats/weapons",
+          sha256: getContentAddress(Buffer.from(TEST_FILENAME)),
+        },
+      },
+    };
+
+    await expect(
+      publishHostedAssets({ currentLock: emptyLock, otherLocks: [otherLock], product, publication, scopes }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: stats, overlaps stats/weapons, which another product's lock declares]`,
+    );
+  });
+
   test("rejects a record published outside the scopes it names", async () => {
     expect.hasAssertions();
 
     await expect(
-      publishHostedAssets({ currentLock: emptyLock, product, publication, scopes: [GameDataset.Profile] }),
+      publishHostedAssets({
+        currentLock: emptyLock,
+        otherLocks: [],
+        product,
+        publication,
+        scopes: [GameDataset.Profile],
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: stats/weapons, is published outside the scopes it names]`,
     );

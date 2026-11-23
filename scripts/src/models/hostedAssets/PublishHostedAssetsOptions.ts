@@ -11,6 +11,8 @@ export interface PublishHostedAssetsOptions {
   createBucketClientMap?: (() => Record<CloudflareEnvironment, R2BucketClient>) | undefined;
   // The lock as the working tree has it, which the publication replaces the scopes of
   currentLock: HostedAssetLock;
+  // Every other declared product's lock, whose declared scopes the publication may not overlap
+  otherLocks: HostedAssetLock[];
   product: HostedAssetProduct;
   publication: HostedAssetPublication;
   // The scopes the publication replaces wholesale, or the single keys it replaces, and no other entry of the lock is touched

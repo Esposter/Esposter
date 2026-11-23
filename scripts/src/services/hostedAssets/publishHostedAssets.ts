@@ -3,6 +3,7 @@ import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetReco
 import type { PublishHostedAssetsOptions } from "#src/models/hostedAssets/PublishHostedAssetsOptions";
 
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
+import { assertScopeUnclaimed } from "#src/services/hostedAssets/assertScopeUnclaimed";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
 import { mergeHostedAssetLock } from "#src/services/hostedAssets/mergeHostedAssetLock";
 import { planHostedAssetPublication } from "#src/services/hostedAssets/planHostedAssetPublication";
@@ -18,10 +19,12 @@ import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } 
 export const publishHostedAssets = async ({
   createBucketClientMap,
   currentLock,
+  otherLocks,
   product,
   publication,
   scopes,
 }: PublishHostedAssetsOptions): Promise<HostedAssetPublishResult> => {
+  for (const scope of scopes) assertScopeUnclaimed(scope, otherLocks);
   const plan = planHostedAssetPublication(publication);
   const plannedKeys = [...Object.keys(plan.lock.objects), ...Object.keys(plan.lock.indexes)];
   const outsideScopeKey = plannedKeys.find(
