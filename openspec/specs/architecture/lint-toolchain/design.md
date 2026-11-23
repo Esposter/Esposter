@@ -131,21 +131,21 @@ What stays in ESLint, and why:
 | `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `oxlint.config.ts`                                                    |
 | `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables after the base rules, so they win                                                |
 | `packages/configuration/eslint/index.vueScopedStyles.js`            | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                              |
-| `packages/configuration/eslint/plugins/scopedStyles.js`             | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here |
-| `packages/configuration/eslint/plugins/htmlTagNames.js`             | The HTML standard's tag names that ban reads, with the upstream release it was copied from                  |
-| `packages/configuration/eslint/plugins/htmlElementAttributes.js`    | The attributes each HTML element accepts, that ban's other half, with the same provenance                   |
+| `vite/services/scopedStyleSyntaxes.ts`                              | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here |
+| `vite/services/htmlTagNames.ts`                                     | The HTML standard's tag names that ban reads, with the upstream release it was copied from                  |
+| `vite/services/htmlElementAttributes.ts`                            | The attributes each HTML element accepts, that ban's other half, with the same provenance                   |
 | `packages/configuration/eslint/ignores.js`                          | ESLint's shared ignores; the tileset glob is the one `oxlint.config.ts` exports                             |
 | `packages/configuration/eslint/typescriptRules.js`                  | ESLint-only rules oxlint cannot express — just `no-restricted-syntax` (plus the parked `naming-convention`) |
 
 ## The HTML data behind the scoped-styles ban
 
-`scopedStyles.js` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.js`, and each element's attributes, in `htmlElementAttributes.js`. Both are our own typed constants, copied from the upstream `html-tag-names` and `html-element-attributes` packages under their MIT notice, and each file's header names the upstream release it was copied from. A refresh re-crawls the standard and re-checks those headers.
+`scopedStyleSyntaxes.ts` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.ts`, and each element's attributes, in `htmlElementAttributes.ts`. Both are our own typed constants, copied from the upstream `html-tag-names` and `html-element-attributes` packages under their MIT notice, and each file's header names the upstream release it was copied from. A refresh re-crawls the standard and re-checks those headers.
 
 The other eight items are counted here and stay on the [tracker](https://github.com/wooorm/html-element-attributes/issues?q=is%3Aissue): out of scope 5, false positive 2, rejected 1. The in-scope item is listed below.
 
-| Upstream issue or pull request                                                                                              | Verdict                                                                                                                       | Where it is proven                                   |
-| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `html-element-attributes` [12](https://github.com/wooorm/html-element-attributes/issues/12) — `part`, `exportparts` missing | In scope, fixed upstream by [pull request 13](https://github.com/wooorm/html-element-attributes/pull/13); the data carries it | `scopedStyles.test.ts`, `shadowPartGlobalAttributes` |
+| Upstream issue or pull request                                                                                              | Verdict                                                                                                                       | Where it is proven                                                         |
+| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `html-element-attributes` [12](https://github.com/wooorm/html-element-attributes/issues/12) — `part`, `exportparts` missing | In scope, fixed upstream by [pull request 13](https://github.com/wooorm/html-element-attributes/pull/13); the data carries it | `scripts/src/workspace/scopedStyles.test.ts`, `shadowPartGlobalAttributes` |
 
 The tag names predate the standard's `selectedcontent` element, which the standard now defines and the rule therefore does not check. A refresh adds it.
 
