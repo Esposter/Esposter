@@ -20,7 +20,9 @@ export interface DerivedAssetComponentOptions {
   isCapitalWorld?: boolean;
   musicPlaylistId?: number;
   namePattern?: string;
-  roots: AssetRoot[];
+  // Absent when the component has no pointer root of its own. Weapons' roots are published by `weapon-roots` and read by
+  // `readComponentRoots`, so its entry leaves them out as well
+  roots?: AssetRoot[];
   screen: string;
   spawns?: AssetSpawn[];
   world?: WorldOptions;

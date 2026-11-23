@@ -10,7 +10,7 @@ import {
 
 // The one definition every capital and sub-area of the open world shares: a part derived from its place,
 // With no root of its own
-const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: true, roots: [], screen: "WorldScreen" };
+const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: true, screen: "WorldScreen" };
 
 // Each component's roots, which `extract` follows every pointer from, and the assets no pointer from them reaches by
 // The name the game gives them, which the asset index turns into the blocks holding them. The login screen's roots are
@@ -25,12 +25,7 @@ const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: tr
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
   // The animals: their `Animal_` models, fish and pets among them, and the `Ani_Animal_` clips that move them. No pointer
   // Roots them, so the asset index's names find them
-  [DerivedAssetComponent.Animals]: {
-    clipPattern: "^Ani_Animal_",
-    namePattern: "^Animal_",
-    roots: [],
-    screen: "WorldScreen",
-  },
+  [DerivedAssetComponent.Animals]: { clipPattern: "^Ani_Animal_", namePattern: "^Animal_", screen: "WorldScreen" },
   // Each sub-area with a catalogued extent: a catalogue area the game outlines, derived the way a capital is, from the centre
   // Of its outline's box (`readDerivedWorldPlace`) and the terrain tiles its outline reaches. An area with no outline is no
   // Component, so it keeps its region's ground
@@ -50,7 +45,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.Character]: {
     interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" },
     namePattern: `^${AVATAR_ICON_PREFIX}`,
-    roots: [],
     screen: "CharacterScreen",
   },
   [DerivedAssetComponent.ChenyuValeSouthernMountain]: DERIVED_WORLD_OPTIONS,
@@ -67,7 +61,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.Fishing]: {
     clipPattern: "^Ani_FishingRod_",
     namePattern: "^(FishingRod_Normal_|Eff_(Ani_)?Avatar_Fishing_(Cork|Cast)|SkillObj_Fishing_Cast)",
-    roots: [],
     screen: "WorldScreen",
   },
   // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
@@ -78,7 +71,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.Fontaine]: {
     isCapitalWorld: true,
     namePattern: String.raw`^(Area_Fd_Build_FDC_Zhonglou_01|Area_Fd_(Build|Plot)_FDC_POI_Zongzhan_)`,
-    roots: [],
     screen: "WorldScreen",
   },
   [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: DERIVED_WORLD_OPTIONS,
@@ -90,7 +82,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.Hud]: {
     clipPattern: "^Ani_InLevelMainPage_",
     interface: { anchorPattern: "^TeamBtn_MP$", root: "InLevelMainPage" },
-    roots: [],
     screen: "HudScreen",
   },
   [DerivedAssetComponent.HypostyleDesert]: DERIVED_WORLD_OPTIONS,
@@ -155,7 +146,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   },
   // The props and gadgets the world places. It roots and names no pattern: the asset index has no GameObject rows, so a
   // Prefab's name finds nothing there, and each kind's export names the assets of its own prefab
-  [DerivedAssetComponent.Props]: { roots: [], screen: "WorldScreen" },
+  [DerivedAssetComponent.Props]: { screen: "WorldScreen" },
   [DerivedAssetComponent.QiongjiEstuary]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.QuahuacanCliff]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.RealmOfFarakhkert]: DERIVED_WORLD_OPTIONS,
@@ -176,7 +167,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     clipPattern: "^Ani_Avatar_Girl_(Standby|WalkCycle|RunCycle|SprintCycle)$",
     // Their bones are PlayerGirl's rig, whose avatar names each bone's path (`avatar playergirl`)
     clipSkeleton: DerivedAssetComponent.PlayerGirl,
-    roots: [],
     screen: "WorldScreen",
   },
   [DerivedAssetComponent.TsurumiIsland]: DERIVED_WORLD_OPTIONS,
@@ -188,7 +178,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // The weapons' screen. Its roots are the prefabs whose renderers draw the held weapons' meshes, which `weapon-roots`
   // Derives from the layouts of the blocks the asset index puts those meshes in and publishes, so `readComponentRoots`
   // Reads them rather than this map. The icons its fit traces are exported by `weapon-icons` from the weapon table
-  [DerivedAssetComponent.Weapons]: { roots: [], screen: "WeaponScreen" },
+  [DerivedAssetComponent.Weapons]: { screen: "WeaponScreen" },
   [DerivedAssetComponent.WindrestPeak]: DERIVED_WORLD_OPTIONS,
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the
@@ -196,7 +186,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // Blade meshes, which no dumped layout draws: its prefab's pointers are null, so only their names reach them
   [DerivedAssetComponent.Windrise]: {
     namePattern: String.raw`^(Stages_Unique_CyTree01_(Bark|Leaf)_Lod0|BigWorldTerrain_(1|2)_-(1|2)\.bin_BaseMap|Property_Build_Windmill02_(Bottom_Vo|Blade_Lod0))$`,
-    roots: [],
     screen: "WorldScreen",
     world: {
       // The oak's foot is the origin of our Windrise, as our scene has always stood round it
