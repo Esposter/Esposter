@@ -7,9 +7,10 @@ import type { Node, PassNode } from "three/webgpu";
 import { WitnessRole } from "#parity/models/witness/WitnessRole";
 import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
 import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
+import { checkIsRideCopy } from "#parity/witness/checkIsRideCopy";
 import { checkIsWitnessDrawn } from "#parity/witness/checkIsWitnessDrawn";
 import { asVec3Node } from "#src/services/scene/asVec3Node";
-import { IN_FAMILY_KEY, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
+import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { readUserData } from "#src/services/scene/readUserData";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
@@ -20,7 +21,6 @@ import {
   FloatType,
   Layers,
   Light,
-  Matrix4,
   Mesh,
   RenderTarget,
   Vector2,
@@ -71,13 +71,6 @@ let occlusion:
       scenePass: PassNode;
     }
   | undefined;
-// Whether a mesh sits beneath a copy the scene makes of an export (`rideLoginWitnessDoor`), whose root holds the copy's
-// Placement within its family. Every such mesh is the export's geometry drawn a second time
-const checkIsRideCopy = (object: Object3D): boolean => {
-  for (let node: null | Object3D = object; node; node = node.parent)
-    if (node.userData[IN_FAMILY_KEY] instanceof Matrix4) return true;
-  return false;
-};
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
 // Metres, the light the material adds after lighting, the world normal its normal map bends and the one its geometry
