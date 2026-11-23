@@ -52,6 +52,9 @@ export const MAX_WIKI_TITLES_PER_QUERY = 50;
 export const WIKI_FILE_CONCURRENCY = 8;
 // How long any request a script makes may take (`fetchJson`) — the npm registry and the GitHub API alike
 export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
+// The most of a JSON answer a script holds: a full npm packument runs to 16 MB for TypeScript alone, and a body past this
+// Is refused rather than read on (`fetchJson`)
+export const FETCH_JSON_MAX_BYTES: number = 128 * 1024 * 1024;
 export const SECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 export const MILLISECONDS_PER_MINUTE: number = SECONDS_PER_MINUTE * 1000;
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the lockfile conflict

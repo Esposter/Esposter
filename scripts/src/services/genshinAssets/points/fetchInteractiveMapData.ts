@@ -6,6 +6,7 @@ import {
   INTERACTIVE_MAP_ID,
   INTERACTIVE_MAP_LANGUAGE,
 } from "#src/services/genshinAssets/points/constants";
+import { FETCH_JSON_MAX_BYTES } from "#src/services/shared/constants";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -21,7 +22,7 @@ export const fetchInteractiveMapData = async <TData>(
     map_id: String(INTERACTIVE_MAP_ID),
   });
   const url = `${INTERACTIVE_MAP_API_URL}/${endpoint}?${query}`;
-  const { data, message, retcode } = await fetchJson<InteractiveMapResponse<TData>>(url);
+  const { data, message, retcode } = await fetchJson<InteractiveMapResponse<TData>>(url, FETCH_JSON_MAX_BYTES);
   if (retcode !== 0) throw new InvalidOperationError(Operation.Read, url, message);
   return data;
 };

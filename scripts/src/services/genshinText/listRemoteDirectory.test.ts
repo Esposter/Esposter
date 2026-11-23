@@ -4,6 +4,7 @@ import {
   QUEST_BINARY_DIRECTORY_PATH,
 } from "#src/services/genshinText/constants";
 import { listRemoteDirectory } from "#src/services/genshinText/listRemoteDirectory";
+import { FETCH_JSON_MAX_BYTES } from "#src/services/shared/constants";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -26,6 +27,7 @@ describe(listRemoteDirectory, () => {
 
     expect(vi.mocked(fetchJson)).toHaveBeenCalledExactlyOnceWith(
       `${ANIME_GAME_DATA_TREES_URL}/${ANIME_GAME_DATA_COMMIT}:${QUEST_BINARY_DIRECTORY_PATH}`,
+      FETCH_JSON_MAX_BYTES,
       undefined,
     );
   });

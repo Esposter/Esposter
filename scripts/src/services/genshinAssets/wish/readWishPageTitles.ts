@@ -2,6 +2,7 @@ import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { WISH_CATEGORY, WISH_CATEGORY_LIMIT } from "#src/services/genshinAssets/wish/constants";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { WIKI_API_MAX_BYTES } from "genshin-persona/src/services/constants.ts";
 import { z } from "zod";
 
 const categoryMembersSchema = z.object({
@@ -18,7 +19,11 @@ export const readWishPageTitles = async (): Promise<string[]> => {
     formatversion: "2",
     list: "categorymembers",
   });
-  const { continue: continuation, query } = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, categoryMembersSchema);
+  const { continue: continuation, query } = await readWikiApi(
+    `${WIKI_API_URL}?${searchParams}`,
+    categoryMembersSchema,
+    WIKI_API_MAX_BYTES,
+  );
   if (continuation !== undefined)
     throw new InvalidOperationError(Operation.Read, WISH_CATEGORY, `holds more than ${WISH_CATEGORY_LIMIT} pages`);
 

@@ -1,4 +1,5 @@
 import { WIKI_FETCH_TIMEOUT_MS, WIKI_FILE_MAX_BYTES, WIKI_FILE_REQUEST_HEADERS } from "#src/services/constants";
+import { readBoundedBody } from "#src/services/readBoundedBody";
 import { request } from "node:https";
 
 // One file off the wiki's file host, whole, or nothing for a response that is not it — a status other than OK, a
@@ -17,25 +18,7 @@ export const readWikiFile = (url: string): Promise<Uint8Array | undefined> =>
           return;
         }
 
-        const chunks: Buffer[] = [];
-        let size = 0;
-        response.on("data", (chunk: Buffer) => {
-          size += chunk.length;
-          // The body is dropped as it arrives once it passes the ceiling, so an endless answer is never held whole
-          if (size > WIKI_FILE_MAX_BYTES) {
-            response.destroy();
-            resolve(undefined);
-            return;
-          }
-
-          chunks.push(chunk);
-        });
-        response.on("end", () => {
-          resolve(response.complete ? Buffer.concat(chunks) : undefined);
-        });
-        response.on("error", () => {
-          resolve(undefined);
-        });
+        resolve(readBoundedBody(response, WIKI_FILE_MAX_BYTES));
       },
     );
     clientRequest.on("error", () => {

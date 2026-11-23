@@ -1,5 +1,5 @@
 import { checkIsWikiImageInfoResponse } from "#src/services/checkIsWikiImageInfoResponse";
-import { WIKI_IMAGE_INFO_URL } from "#src/services/constants";
+import { WIKI_API_MAX_BYTES, WIKI_IMAGE_INFO_URL } from "#src/services/constants";
 import { readWikiJson } from "#src/services/readWikiJson";
 
 // Where the wiki serves each file from, by the title asked for; a title it does not hold — a line renamed or
@@ -9,6 +9,7 @@ export const readWikiFileUrls = async (titles: string[]): Promise<Map<string, st
   const response = await readWikiJson(
     `${WIKI_IMAGE_INFO_URL}${encodeURIComponent(titles.join("|"))}`,
     checkIsWikiImageInfoResponse,
+    WIKI_API_MAX_BYTES,
   );
   const query = response?.query;
   const normalizedAskedTitleMap = new Map((query?.normalized ?? []).map(({ from = "", to = "" }) => [to, from]));

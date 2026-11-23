@@ -2,6 +2,7 @@ import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/De
 import type { Release } from "#src/models/outdatedDependencies/shared/Release";
 
 import { getLatestCompatibleTag } from "#src/services/outdatedDependencies/tag/getLatestCompatibleTag";
+import { FETCH_JSON_MAX_BYTES } from "#src/services/shared/constants";
 import { fetchJson } from "#src/services/shared/fetchJson";
 
 // The runner images GitHub builds, one readme per image (`Ubuntu2604-Readme.md`), which is the list Renovate's
@@ -10,6 +11,7 @@ import { fetchJson } from "#src/services/shared/fetchJson";
 export const readGitHubRunnerRelease = async ({ packageName, specifier }: DependencyEntry): Promise<Release> => {
   const files = await fetchJson<{ name: string }[]>(
     `https://api.github.com/repos/actions/runner-images/contents/images/${packageName}`,
+    FETCH_JSON_MAX_BYTES,
   );
   const readmeRegex = new RegExp(String.raw`^${packageName}(?<digits>\d+)-Readme\.md$`, "iu");
   const versions = files.flatMap(({ name }) => {

@@ -1,3 +1,4 @@
+import { FETCH_JSON_MAX_BYTES } from "#src/services/shared/constants";
 import { fetchGitHubTree } from "#src/services/shared/fetchGitHubTree";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -31,6 +32,8 @@ describe(fetchGitHubTree, () => {
 
     await fetchGitHubTree(url, name);
 
-    expect(vi.mocked(fetchJson)).toHaveBeenCalledExactlyOnceWith(url, { Authorization: "Bearer token" });
+    expect(vi.mocked(fetchJson)).toHaveBeenCalledExactlyOnceWith(url, FETCH_JSON_MAX_BYTES, {
+      Authorization: "Bearer token",
+    });
   });
 });

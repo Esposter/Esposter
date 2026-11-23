@@ -6,6 +6,7 @@ import {
   GCSIM_TREES_URL,
 } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
+import { FETCH_JSON_MAX_BYTES } from "#src/services/shared/constants";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -35,6 +36,7 @@ describe(readGcsimMainCharacters, () => {
 
     expect(vi.mocked(fetchJson)).toHaveBeenCalledExactlyOnceWith(
       `${GCSIM_TREES_URL}/${GCSIM_MAIN_COMMIT}?recursive=1`,
+      FETCH_JSON_MAX_BYTES,
       undefined,
     );
     expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${configPath}`);

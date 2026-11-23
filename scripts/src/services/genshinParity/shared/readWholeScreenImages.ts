@@ -5,7 +5,7 @@ import type { WikiImagesResponse } from "#src/models/genshinParity/WikiImagesRes
 import { getWholeScreenImages } from "#src/services/genshinParity/shared/getWholeScreenImages";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { WIKI_ORIGIN } from "genshin-persona/src/services/constants.ts";
+import { WIKI_API_MAX_BYTES, WIKI_ORIGIN } from "genshin-persona/src/services/constants.ts";
 import { z } from "zod";
 
 // The answer's shape, checked so a batch the API answers otherwise fails the read rather than reading as empty
@@ -38,7 +38,7 @@ export const readWholeScreenImages = async (articleTitle: string): Promise<Whole
   while (continueParameters) {
     const query: string = new URLSearchParams(continueParameters).toString();
     // oxlint-disable-next-line no-await-in-loop -- Pagination: each batch is asked for by the continuation the one before it gave
-    const response = await readWikiApi(query ? `${url}&${query}` : url, wikiImagesResponseSchema);
+    const response = await readWikiApi(query ? `${url}&${query}` : url, wikiImagesResponseSchema, WIKI_API_MAX_BYTES);
     if (response.error)
       throw new InvalidOperationError(Operation.Read, articleTitle, `${response.error.code}: ${response.error.info}`);
     for (const [id, page] of Object.entries(response.query?.pages ?? {})) pageMap[id] = { ...pageMap[id], ...page };

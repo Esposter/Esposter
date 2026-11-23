@@ -58,7 +58,7 @@ Bytes already held are read through a view, never copied out of their buffer: `n
 
 ## Bound what an outside host can send
 
-A body fetched from the wiki's file host is read through `readWikiFile` (`genshin-persona`), the one reader that refuses a body past `WIKI_FILE_MAX_BYTES` and answers nothing for it. A new read of an outside body goes through a reader that bounds it, rather than a `.arrayBuffer()` of the response.
+A body fetched from the wiki's file host is read through `readWikiFile` (`genshin-persona`), the one reader that refuses a body past `WIKI_FILE_MAX_BYTES` and answers nothing for it. Every other read of an outside body goes through `readBoundedBody` (`genshin-persona`), the one bounded read: `readWikiJson` (the plugin's wiki API reads) and the scripts' `fetchJson` and `readWikiApi` take the ceiling as an argument and pass the body through it, so a reader cannot be written without naming one. A new read of an outside body goes through a reader that bounds it, rather than a `.arrayBuffer()` or `.json()` of the response. Our own R2 objects and the lock-pinned game data are trusted and need no bound.
 
 ## A script's clock is boot, spawns and reads
 

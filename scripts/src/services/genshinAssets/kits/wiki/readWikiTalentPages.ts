@@ -5,6 +5,7 @@ import { parseAdvancedProperties } from "#src/services/genshinAssets/kits/wiki/p
 import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
+import { WIKI_API_MAX_BYTES } from "genshin-persona/src/services/constants.ts";
 import { CombatTalent } from "genshin-world";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -54,7 +55,7 @@ export const readWikiTalentPages = async (name: string, cacheDirectory: string):
       rvprop: "content|ids",
       rvslots: "main",
     });
-    const answer = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, categoryResponseSchema);
+    const answer = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, categoryResponseSchema, WIKI_API_MAX_BYTES);
     mkdirSync(cacheDirectory, { recursive: true });
     writeFileSync(cachePath, JSON.stringify(answer));
   }

@@ -1,6 +1,7 @@
 import { wikiRedirectResponseSchema } from "#src/models/genshinAssets/enemies/WikiRedirectResponse";
 import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
+import { WIKI_API_MAX_BYTES } from "genshin-persona/src/services/constants.ts";
 
 // The redirect target of each label in one batch, read from the wiki's answer for the batch, or null where the wiki
 // Has no redirect from it
@@ -12,7 +13,11 @@ export const fetchRedirectBatch = async (labels: readonly string[]): Promise<Rec
     redirects: "1",
     titles: labels.join("|"),
   });
-  const { query } = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, wikiRedirectResponseSchema);
+  const { query } = await readWikiApi(
+    `${WIKI_API_URL}?${searchParams}`,
+    wikiRedirectResponseSchema,
+    WIKI_API_MAX_BYTES,
+  );
   const targets = new Map((query.redirects ?? []).map(({ from, to }) => [from, to]));
   return Object.fromEntries(labels.map((label) => [label, targets.get(label) ?? null]));
 };
