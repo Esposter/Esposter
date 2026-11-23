@@ -15,7 +15,7 @@ export const readGcsimCitedArea = (
   file: string,
   targetingArea: AttackArea,
   resolveName: (name: string) => GoValue | undefined,
-): undefined | { area: AttackArea; sizes: number[] } => {
+): { area: AttackArea; sizes: number[] } | undefined => {
   const tokens = tokenizeGo(line);
   for (let position = 0; position < tokens.length; position++) {
     const hitbox = readGoHitbox(tokens, position, resolveName, file, () => undefined);

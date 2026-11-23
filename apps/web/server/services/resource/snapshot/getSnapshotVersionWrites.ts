@@ -19,10 +19,9 @@ export const getSnapshotVersionWrites = (
     channel,
     reason,
     version,
-  }: UndefinedOnPartial<Partial<Pick<ResourceVersionInResource, "reason">>> & {
-    channel: SnapshotChannel;
-    version: number | SQL<number>;
-  },
+  }: { channel: SnapshotChannel; version: number | SQL<number> } & UndefinedOnPartial<
+    Partial<Pick<ResourceVersionInResource, "reason">>
+  >,
   { assetHashes, summary, writtenVersion }: PreparedSnapshotVersion,
 ) => {
   const { baseHash, hash, plaintextBytes, storedBytes } = writtenVersion;

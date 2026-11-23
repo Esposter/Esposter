@@ -62,7 +62,6 @@ const shadowCameraMap = new WeakMap<Camera, Camera>();
 // The scene, its camera or the occlusion's reach changes. The pipeline, the depth pass and the occlusion each hold
 // Targets of their own, so a rebuild releases all three
 let occlusion:
-  | undefined
   | {
       camera: Camera;
       occlusionNode: GTAONode;
@@ -70,7 +69,8 @@ let occlusion:
       renderPipeline: RenderPipeline;
       scene: Scene;
       scenePass: PassNode;
-    };
+    }
+  | undefined;
 // Whether a mesh sits beneath a copy the scene makes of an export (`rideLoginWitnessDoor`), whose root holds the copy's
 // Placement within its family. Every such mesh is the export's geometry drawn a second time
 const checkIsRideCopy = (object: Object3D): boolean => {

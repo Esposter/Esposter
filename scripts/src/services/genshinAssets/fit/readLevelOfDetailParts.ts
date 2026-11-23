@@ -16,7 +16,7 @@ export const readLevelOfDetailParts = (
   placements: readonly AssetPlacement[],
   meshRegex: RegExp,
   meshDirectory: string,
-): { meshPathMap: Map<string, string>; partPlacements: (AssetPlacement & { part: string })[] } => {
+): { meshPathMap: Map<string, string>; partPlacements: ({ part: string } & AssetPlacement)[] } => {
   const drawn = selectFinestLevels(placements, (mesh) => existsSync(join(meshDirectory, `${mesh}.obj`)));
   const levelPlacements = drawn.flatMap((placement) => {
     const groups = meshRegex.exec(placement.mesh)?.groups;

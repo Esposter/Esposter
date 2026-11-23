@@ -18,7 +18,7 @@ export const payShopGoodCosts = (
   purchases: ShopPurchase[],
   good: Pick<ShopGood, "costs"> & ShopGoodLimit,
   now: Temporal.Instant,
-): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
+): { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } | undefined => {
   if (
     checkIsShopGoodSoldOut(good, purchases, now) ||
     good.costs.some(({ count, itemId }) => countShopCost(inventory, wallet, itemId) < count)

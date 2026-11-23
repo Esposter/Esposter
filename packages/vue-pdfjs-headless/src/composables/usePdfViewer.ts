@@ -102,7 +102,7 @@ export const usePdfViewer = ({
     const viewerAbortController = new AbortController();
     const { signal } = viewerAbortController;
     // @TODO: https://github.com/mozilla/pdf.js/issues/22213 — pdf.js's PDFViewerOptions typedef omits the abortSignal PDFViewer's constructor reads, so the options are typed with it added
-    const viewerOptions: ConstructorParameters<typeof PdfJsViewer>[0] & { abortSignal: AbortSignal } = {
+    const viewerOptions: { abortSignal: AbortSignal } & ConstructorParameters<typeof PdfJsViewer>[0] = {
       abortSignal: signal,
       container: containerValue,
       eventBus: bus,

@@ -22,17 +22,17 @@ const HEXADECIMAL_BYTE_DIGITS = 2;
 const HEXADECIMAL_UNIT_DIGITS = 4;
 // Only the escapes a template author writes on purpose; anything else such as `\}` is kept as typed
 const escapeValueMap: Record<string, string> = {
-  "0": "\0",
-  $: "$",
+  "{": "{",
   "\\": "\\",
   "`": "`",
+  $: "$",
+  "0": "\0",
   b: "\b",
   f: "\f",
   n: "\n",
   r: "\r",
   t: "\t",
   v: "\v",
-  "{": "{",
 };
 
 const toCharacters = (text: string, escapable: boolean): Character[] =>

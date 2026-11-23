@@ -4,7 +4,7 @@ import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 interface Props {
   // What a read that returned nothing says, as UiEmptyState takes it. A list with no empty state of its own leaves it
   // Unset, and an empty read then draws nothing
-  emptyState?: undefined | { description: string; meaning: UiIconMeaning; title: string };
+  emptyState?: { description: string; meaning: UiIconMeaning; title: string } | undefined;
   // The read's failure message, "" while it has none, which is what useQuery holds
   error: string;
   // The read has settled with nothing in it

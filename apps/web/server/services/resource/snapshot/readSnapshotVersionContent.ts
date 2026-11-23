@@ -16,7 +16,7 @@ import { ObjectNotStoredError } from "keyframe-store";
 // Internal error rather than being dressed up as a page that was never there.
 export const readSnapshotVersionContent = async <TType extends ResourceType>(
   db: Context["db"],
-  resource: Pick<ResourceInResource, "id"> & { type: TType },
+  resource: { type: TType } & Pick<ResourceInResource, "id">,
   { channel, version }: Pick<ResourceVersionInResource, "channel" | "version">,
 ): Promise<ResourceContent<TType> | undefined> => {
   const resourceVersion = await db.query.resourceVersionsInResource.findFirst({

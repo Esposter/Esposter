@@ -1,7 +1,7 @@
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
-export const ProgramStatusHeaders: UiDataTableColumn<ProgramStatusRow & { id: string }>[] = [
+export const ProgramStatusHeaders: UiDataTableColumn<{ id: string } & ProgramStatusRow>[] = [
   { key: "keyValue", title: "Participant" },
   {
     compare: (firstRow, secondRow) => firstRow.addedAt.getTime() - secondRow.addedAt.getTime(),

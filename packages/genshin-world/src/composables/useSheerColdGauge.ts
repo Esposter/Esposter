@@ -9,7 +9,7 @@ interface SheerColdGaugeOptions {
   // The ratio of anti-cold the character on the field holds the gauge's fill down with
   getAntiColdRatio: () => number;
   // The character on the field, whose maximum health and locomotion phase the gauge reads, undefined before it has loaded
-  getCharacter: () => undefined | { maxHealth: number; phase: LocomotionPhase };
+  getCharacter: () => { maxHealth: number; phase: LocomotionPhase } | undefined;
   // The character's body, whose position the gauge is read at, undefined until the body is given
   getCharacterBody: () => Object3D | undefined;
   // The weather of the area the camera stands in

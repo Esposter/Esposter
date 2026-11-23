@@ -163,7 +163,7 @@ interface Props {
   gameDataBaseUrl: string;
   getAntiColdRatio: () => number;
   // Where the locomotion phase of the character on the field is read, which the Sheer Cold gauge reads its swimming off
-  getCharacter: () => undefined | { maxHealth: number; phase: LocomotionPhase };
+  getCharacter: () => { maxHealth: number; phase: LocomotionPhase } | undefined;
   // The world's ground at a point in its own coordinates, which everything placed in the world stands on
   getGroundHeight: (x: number, z: number) => number;
   // The world's clock, which each defeat and each camp's load is read against

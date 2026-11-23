@@ -12,11 +12,11 @@ export interface SurveyChoiceOptionsProps extends SurveyChoicesProps {
   otherText: string;
 }
 
-export const surveyChoiceOptionsPropsShape: typeof surveyChoicesPropsShape & {
+export const surveyChoiceOptionsPropsShape: {
   choicesOrder: z.ZodDefault<z.ZodEnum<typeof SurveyChoicesOrder>>;
   hasOther: z.ZodDefault<z.ZodBoolean>;
   otherText: z.ZodDefault<z.ZodString>;
-} = {
+} & typeof surveyChoicesPropsShape = {
   ...surveyChoicesPropsShape,
   choicesOrder: z.enum(SurveyChoicesOrder).default(SurveyChoicesOrder.None),
   hasOther: z.boolean().default(false),

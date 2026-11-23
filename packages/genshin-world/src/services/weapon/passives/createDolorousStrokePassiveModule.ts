@@ -24,7 +24,7 @@ const SKILL_TAGS = new Set<AttackTag | undefined>([AttackTag.ElementalBurst, Att
 
 // The status a hit of the given kind extends, with the cooldown its extensions keep: a normal or charged attack's
 // Irreparable, a skill's or burst's Unforgivable, and none for any other hit
-const getExtendedStatus = (attackTag: AttackTag | undefined): undefined | { cooldownId: string; id: string } => {
+const getExtendedStatus = (attackTag: AttackTag | undefined): { cooldownId: string; id: string } | undefined => {
   if (ATTACK_TAGS.has(attackTag)) return { cooldownId: ATTACK_EXTENSION_COOLDOWN_ID, id: IRREPARABLE_ID };
   if (SKILL_TAGS.has(attackTag)) return { cooldownId: SKILL_EXTENSION_COOLDOWN_ID, id: UNFORGIVABLE_ID };
   return undefined;

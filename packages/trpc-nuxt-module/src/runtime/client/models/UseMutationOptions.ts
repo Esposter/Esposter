@@ -10,7 +10,7 @@ export type UseMutationOptions<
   TData = TDefinition["output"],
   TPickKeys extends KeysOf<TData> = KeysOf<TData>,
   TDefault = undefined,
-> = Except<
+> = { mutationKey?: string; trpc?: TRPCRequestOptions } & Except<
   AsyncDataOptions<TDefinition["output"], TData, TPickKeys, TDefault>,
   "enabled" | "immediate" | "lazy" | "server" | "watch"
-> & { mutationKey?: string; trpc?: TRPCRequestOptions };
+>;

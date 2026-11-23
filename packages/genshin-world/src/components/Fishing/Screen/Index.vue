@@ -10,7 +10,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The cast as it stands: the tension held on the bar and the zone it is held in, or none while no line is out
-  view?: undefined | { tension: number; zone: FishingZone };
+  view?: { tension: number; zone: FishingZone } | undefined;
 }
 
 const props = defineProps<Props>();

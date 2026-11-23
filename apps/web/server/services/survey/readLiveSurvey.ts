@@ -13,7 +13,7 @@ import { eq } from "drizzle-orm";
 export const readLiveSurvey = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
-): Promise<ResourceInResource & { publication: null | ResourcePublicationInResource }> => {
+): Promise<{ publication: null | ResourcePublicationInResource } & ResourceInResource> => {
   const survey = await db.query.resourcesInResource.findFirst({ where: getLiveSurveyWhere(surveyId) });
   if (!survey) throw getNotFoundError(DatabaseEntityType.Resource, surveyId);
   const [publication] = await db

@@ -9,9 +9,9 @@ export interface WorldQuestTargetsOptions {
   mapCamera: Readonly<Ref<MapCamera>>;
   windrise: Readonly<
     Ref<
+      | { regionDataMap: ReadonlyMap<string, RegionData>; residentSpots: ReadonlyMap<string, ResidentSpot> }
       | null
       | undefined
-      | { regionDataMap: ReadonlyMap<string, RegionData>; residentSpots: ReadonlyMap<string, ResidentSpot> }
     >
   >;
 }

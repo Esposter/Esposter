@@ -16,7 +16,7 @@ describe(usePdfThumbnails, () => {
   // The sidebar's rows are reported in and out of view by the observer the composable made, the latest of which is kept
   // With the root it was made against and the rows it watches
   let reportVisibility: (element: Element, isIntersecting: boolean) => void = noop;
-  let latestObserver: undefined | { observed: Element[]; root?: Document | Element | null };
+  let latestObserver: { observed: Element[]; root?: Document | Element | null } | undefined;
   const IntersectionObserverStub = function (
     callback: (entries: IntersectionObserverEntry[]) => void,
     options?: IntersectionObserverInit,

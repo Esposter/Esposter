@@ -4,4 +4,4 @@ import type { EnemyCamp } from "genshin-world";
 export const replaceEnemyCamps = <Data extends object>(
   data: Data,
   enemyCamps: EnemyCamp[],
-): Data & { enemyCamps: EnemyCamp[] } => ({ ...data, enemyCamps });
+): { enemyCamps: EnemyCamp[] } & Data => ({ ...data, enemyCamps });

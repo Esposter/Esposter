@@ -12,11 +12,11 @@ export interface ImageElement extends BoxElement, ItemEntityType<typeof Position
 }
 
 export const imageElementSchema: z.ZodObject<
-  typeof boxElementSchema.shape & {
+  {
     altText: z.ZodString;
     fileId: z.ZodCustomStringFormat<"sha256_hex">;
     type: z.ZodLiteral<typeof PositionedElementType.Image>;
-  }
+  } & typeof boxElementSchema.shape
 > = z.object({
   ...boxElementSchema.shape,
   altText: z.string(),

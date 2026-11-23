@@ -12,9 +12,9 @@ export const MathExpressionOperatorMap: {
   [MathExpressionGrammarRule.Nullish]: { "??": MathExpressionLogicalOperator.Nullish },
   [MathExpressionGrammarRule.Power]: { ".^": "dotPow", "^": "pow" },
   [MathExpressionGrammarRule.Unary]: {
-    "+": MathExpressionFunctionName.UnaryPlus,
     "-": MathExpressionFunctionName.UnaryMinus,
-    not: "not",
+    "+": MathExpressionFunctionName.UnaryPlus,
     "~": "bitNot",
+    not: "not",
   },
 };

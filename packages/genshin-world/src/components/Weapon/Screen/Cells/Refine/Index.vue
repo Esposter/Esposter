@@ -9,7 +9,7 @@ interface Props {
   // The copy the Refine tab picked, which stands in for the material when it is set
   pickedCopyId?: number | undefined;
   // The refinement material the Refine tab offers, with the count the bag holds of it
-  refinementMaterial?: undefined | { count: number; name: string };
+  refinementMaterial?: { count: number; name: string } | undefined;
 }
 
 defineProps<Props>();

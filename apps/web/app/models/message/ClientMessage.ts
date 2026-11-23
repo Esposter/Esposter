@@ -4,4 +4,4 @@ import type { RoomMessage } from "@esposter/db-schema";
 // The room is added here, the one place its id is carried.
 // `isLoading` is set only on the optimistic bubble a send renders before the server answers.
 // It is what the bubble's loading state reads — the row itself never carries it
-export type ClientMessage = RoomMessage & { isLoading?: true; roomId: string };
+export type ClientMessage = { isLoading?: true; roomId: string } & RoomMessage;

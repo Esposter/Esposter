@@ -19,7 +19,7 @@ const wrapperAttributes: typeof sectionAttributes.allowedAttributes & typeof wra
 };
 
 export const wrapperPropsSchema: z.ZodObject<
-  typeof sectionPropsSchema.shape & { gap: MjmlAttributeSchema },
+  { gap: MjmlAttributeSchema } & typeof sectionPropsSchema.shape,
   z.core.$strict
 > = z.strictObject({
   ...sectionPropsSchema.shape,

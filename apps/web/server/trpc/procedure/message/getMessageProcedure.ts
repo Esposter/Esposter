@@ -20,7 +20,7 @@ import { TRPCError } from "@trpc/server";
 // Caller, including one holding RoomPermission.ManageMessages), and who may perform it (unauthorized otherwise).
 // The message is read from its room's object, where a live message is held, so a deleted one is not found here.
 // The procedure provides the message as the object held it when it was read
-export const getMessageProcedure = <T extends z.ZodType<Pick<RoomMessage, "id"> & { roomId: string }>>(
+export const getMessageProcedure = <T extends z.ZodType<{ roomId: string } & Pick<RoomMessage, "id">>>(
   schema: T,
   operation: MessageOperation,
 ) =>

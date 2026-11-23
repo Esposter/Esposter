@@ -2,4 +2,4 @@ import type { ModerationLogInMessage } from "@esposter/db-schema";
 
 // An audit entry whose actor and target carry the name each one has in the room the entry is in. Plain data over the
 // Row, since the procedure returns the mapped page rather than table records
-export type ModerationLogInRoom = ModerationLogInMessage & { actorDisplayName: string; targetDisplayName: string };
+export type ModerationLogInRoom = { actorDisplayName: string; targetDisplayName: string } & ModerationLogInMessage;

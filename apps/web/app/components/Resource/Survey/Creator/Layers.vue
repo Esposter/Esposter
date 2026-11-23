@@ -13,7 +13,7 @@ import { getAcceptingSlotPointers, getBlockLayerRows, getBlockNode } from "vue-b
 import { surveyNodeChildren, surveyNodeTypeDefinitionMap, surveyRegistry } from "vue-survey-engine-headless";
 
 // A row of the tree: a node's depth below the survey's pages, read as the indent before its title
-type LayerItem = UiListItem<string> & { depth: number };
+type LayerItem = { depth: number } & UiListItem<string>;
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedPointer } = storeToRefs(surveyCreatorStore);

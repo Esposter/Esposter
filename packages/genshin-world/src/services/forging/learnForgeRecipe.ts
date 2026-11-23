@@ -10,5 +10,5 @@ export const learnForgeRecipe = (
   recipe: ForgeRecipe,
   diagramItemId: number,
   { inventory, progress }: { inventory: Inventory; progress: ForgeProgress },
-): undefined | { inventory: Inventory; progress: ForgeProgress } =>
+): { inventory: Inventory; progress: ForgeProgress } | undefined =>
   learnByDiagramInProgress(recipe, diagramItemId, { inventory, progress }, "learnedRecipeIds");

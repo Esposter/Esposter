@@ -11,7 +11,7 @@ import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
 export const claimFleetEntryHere = async (
   entry: string,
   worker: string,
-): Promise<ReturnType<typeof claimFleetEntry> & { holder: ClaimHolder }> => {
+): Promise<{ holder: ClaimHolder } & ReturnType<typeof claimFleetEntry>> => {
   const profile = readRequiredMachineProfile();
   const holder: ClaimHolder = { machine: profile.id, worker: requireFleetWorker(worker) };
   const sample = await readMachineSample();

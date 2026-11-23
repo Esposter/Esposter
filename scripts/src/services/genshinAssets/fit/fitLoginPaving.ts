@@ -75,7 +75,7 @@ export const fitLoginPaving = async (
   corner: [number, number];
   grooves: Loop[];
   grooveSlope: number;
-  paint: PlanTones & { size: [number, number] };
+  paint: { size: [number, number] } & PlanTones;
   pockets: Loop[];
   size: [number, number];
 }> => {

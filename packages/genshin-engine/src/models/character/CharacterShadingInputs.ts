@@ -55,7 +55,7 @@ export interface CharacterShadingInputs {
   metalLightColor: Vector3Tuple;
   metalTexture?: Texture | undefined;
   // The outline's offset along the view ray, from the game's "_MaxOutlineZOffset", where a game model has one
-  outlineOffset?: undefined | { blockBChannel: number; size: number };
+  outlineOffset?: { blockBChannel: number; size: number } | undefined;
   // A game model's outline colours by region, read per pixel; a pack's outline is its edge's one colour
   outlineRegions?: OutlineRegions | undefined;
   // The outline's width knots, "_OutlineWidthAdjustZs" and "_OutlineWidthAdjustScales", as the outline reads them
@@ -77,7 +77,7 @@ export interface CharacterShadingInputs {
   specularMultiplier: number;
   // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It is not
   // The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that branch
-  sphere?: undefined | { mode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply; texture: Texture };
+  sphere?: { mode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply; texture: Texture } | undefined;
   vertexAo: number;
   vertexRampWidth: number;
 }

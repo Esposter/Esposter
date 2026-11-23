@@ -47,7 +47,7 @@ export const createCharacterMaterial = ({
   const color: [number, number, number] = [red, green, blue];
   const packToonTexture = isToonShared ? undefined : toonTexture;
   const shadingInputs = createCharacterShadingInputs(
-    mergeDefined<CharacterShadingOverrides & { rampTexture: Texture }>(
+    mergeDefined<{ rampTexture: Texture } & CharacterShadingOverrides>(
       {
         color,
         mainTexture: diffuseTexture,

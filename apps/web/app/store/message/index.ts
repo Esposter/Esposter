@@ -6,7 +6,7 @@ export const useMessageStore = defineStore("message", () => {
   const optionsMenuMessageId = ref<0 | ClientMessage["id"]>(0);
   // A message's items are built only by the options bar mounted over the active message, so a context menu asked for
   // On a message waits here until that bar mounts and opens it
-  const contextMenuRequest = ref<Pick<UiContextMenu, "opener" | "x" | "y"> & { messageId: ClientMessage["id"] }>();
+  const contextMenuRequest = ref<{ messageId: ClientMessage["id"] } & Pick<UiContextMenu, "opener" | "x" | "y">>();
   const editingMessageId = ref<0 | ClientMessage["id"]>(0);
   return { contextMenuRequest, editingMessageId, optionsMenuMessageId };
 });

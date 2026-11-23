@@ -275,7 +275,7 @@ describe(getTableKitCandidates, () => {
     const candidateValues = readCandidateValues(candidateMap);
     const readValueIndexes = (listName: string) =>
       [0, 1, 2].map(
-        (hit) => (candidateValues[`hits.${listName}.${hit}.multiplier`] as undefined | { index: number })?.index,
+        (hit) => (candidateValues[`hits.${listName}.${hit}.multiplier`] as { index: number } | undefined)?.index,
       );
 
     expect({

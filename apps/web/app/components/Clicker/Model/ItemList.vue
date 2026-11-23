@@ -16,7 +16,7 @@ defineSlots<{ detail: (props: { item: T }) => VNode }>();
 const { items, label } = defineProps<Props>();
 // Each row carries its item, so the slots draw from it without finding it again
 const listItems = computed(() =>
-  items.map<UiListItem<string> & { item: T }>((item) => ({ hasMarkSlot: true, item, title: item.id, value: item.id })),
+  items.map<{ item: T } & UiListItem<string>>((item) => ({ hasMarkSlot: true, item, title: item.id, value: item.id })),
 );
 // One key for a row, read both by its attribute and by the lookup that finds it again
 const getRowKey = (value: string) => `${label}${ID_SEPARATOR}${value}`;

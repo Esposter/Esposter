@@ -7,7 +7,7 @@ import { computeLastMiningOutcropDraw } from "#src/services/leyLine/computeLastM
 // Draw, and a place mined since stands again only from its respawn. A draw from before the last 06:00 stands nowhere
 export const computeStandingMiningOutcrops = (
   places: readonly GatheringPlace[],
-  drawn: undefined | { at: Temporal.Instant; placeIds: readonly string[] },
+  drawn: { at: Temporal.Instant; placeIds: readonly string[] } | undefined,
   minedAtMap: ReadonlyMap<string, Temporal.Instant>,
   now: Temporal.Instant,
 ): GatheringPlace[] => {

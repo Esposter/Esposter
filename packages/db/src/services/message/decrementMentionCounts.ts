@@ -18,7 +18,7 @@ export const decrementMentionCounts = async (
     message,
     roomId,
     userId,
-  }: Pick<RoomMessage, "createdAt" | "editedAt" | "message" | "userId"> & { roomId: string },
+  }: { roomId: string } & Pick<RoomMessage, "createdAt" | "editedAt" | "message" | "userId">,
 ): Promise<UserToRoomInMessage[]> => {
   const writtenAt = editedAt ?? createdAt;
   const mentionTargetWhere = await getMentionTargetWhere(db, { message, roomId, userId });

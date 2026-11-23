@@ -11,5 +11,5 @@ export const createMjmlRichTextPropsSchema = <
 >(
   attributesSchema: TShape,
   richText: MjmlRichTextDefinition<TContent>,
-): z.ZodObject<TShape & { content: z.ZodType<TContent> }, z.core.$strict> =>
+): z.ZodObject<{ content: z.ZodType<TContent> } & TShape, z.core.$strict> =>
   z.strictObject({ ...attributesSchema, content: richText.schema });

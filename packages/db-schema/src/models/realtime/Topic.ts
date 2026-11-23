@@ -21,7 +21,7 @@ export interface ColumnTopic {
 // A table's scope topic (the live queries design): `<table>:*` for every row of the table, or `<table>:<column>=<value>`
 // For the rows a scope value names. A secret's value is its digest, so the topic never carries the credential itself. A
 // Column is never part of the name: the columns a watch reads or a publish changes are a `ColumnTopic`'s metadata
-export type ScopeTopic = `${string}:${string}=${string}` | `${string}:*`;
+export type ScopeTopic = `${string}:*` | `${string}:${string}=${string}`;
 
 // A piece of state a query reads and a mutation changes, named `<kind>:<id>` (the live queries design), by a scope topic the
 // Reads and writes of a table infer, or by a blob topic. A watch frame and the invalidation that answers it carry the name

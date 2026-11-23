@@ -33,7 +33,7 @@ const getDoorObject = (
   x: number,
   y: number,
   teleportTarget: TeleportTarget,
-): Types.Tilemaps.TiledObject & { x: number; y: number } => ({
+): { x: number; y: number } & Types.Tilemaps.TiledObject => ({
   id: 0,
   name: "",
   properties: [{ name: TeleportObjectProperty.Target, type: "class", value: teleportTarget }],

@@ -17,12 +17,12 @@ export interface SurveyImageNodeProps extends BlockNodeProps, SurveyImageBoxProp
 
 // An empty alt text marks the picture as decoration, so it is the empty string and not an absent one
 export const surveyImageNodePropsSchema: z.ZodObject<
-  typeof surveyImageBoxPropsShape & {
+  {
     altText: z.ZodDefault<z.ZodString>;
     imageLink: z.ZodDefault<z.ZodString>;
     name: typeof surveyNameSchema;
     visibleIf: typeof surveyConditionSchema;
-  }
+  } & typeof surveyImageBoxPropsShape
 > = z.object({
   ...surveyImageBoxPropsShape,
   altText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),

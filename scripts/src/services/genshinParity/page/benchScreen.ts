@@ -19,7 +19,7 @@ export const benchScreen = async ({
   frameCount,
   warmMs,
   ...options
-}: ParityPageOptions & { frameCount: number; warmMs: number }): Promise<SceneBench> => {
+}: { frameCount: number; warmMs: number } & ParityPageOptions): Promise<SceneBench> => {
   const { close, page } = await openParityPage({ ...options, isFrameRateUnlimited: true });
   return withFinalizerAsync(
     async () => {

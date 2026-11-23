@@ -10,7 +10,7 @@ import { toFaceEdges } from "#src/services/genshinAssets/fit/toFaceEdges";
 export const findOpenLoops = (
   vertices: readonly Vector[],
   pieceFaces: readonly Vector[],
-): (Pick<SkeletonNode, "centre" | "radius"> & { edges: [number, number][]; vertices: number[] })[] => {
+): ({ edges: [number, number][]; vertices: number[] } & Pick<SkeletonNode, "centre" | "radius">)[] => {
   const edgeFaceCountMap = new Map<string, number>();
   const edgeVerticesMap = new Map<string, [number, number]>();
   for (const [first, second] of toFaceEdges(pieceFaces)) {

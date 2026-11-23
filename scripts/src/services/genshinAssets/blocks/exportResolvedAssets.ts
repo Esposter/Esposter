@@ -18,7 +18,7 @@ export const exportResolvedAssets = async (
   types: readonly AssetType[],
   assetsDirectory: string,
   exportType?: AnimeStudioExportType,
-): Promise<{ assets: (IndexedAsset & { file: string })[]; unresolved: string[] }> => {
+): Promise<{ assets: ({ file: string } & IndexedAsset)[]; unresolved: string[] }> => {
   const keyObjectsMap = Map.groupBy(resolvedObjects, ({ block, pathId }) => toObjectKey(block, pathId));
   const indexedAssets = await readIndexedAssets(
     ({ block, pathId, type }) =>
@@ -26,7 +26,7 @@ export const exportResolvedAssets = async (
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
   const keyIndexedMap = Map.groupBy(indexedAssets, ({ block, pathId }) => toObjectKey(block, pathId));
-  const assets: (IndexedAsset & { file: string })[] = [];
+  const assets: ({ file: string } & IndexedAsset)[] = [];
   const unresolved: string[] = [];
   for (const [key, objects] of keyObjectsMap) {
     const files = [...new Set(objects.map(({ file }) => file))];

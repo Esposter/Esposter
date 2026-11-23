@@ -15,12 +15,12 @@ export interface SurveyTagBoxNodeProps extends SurveyChoiceOptionsProps, SurveyQ
 }
 
 export const surveyTagBoxNodePropsSchema: z.ZodObject<
-  typeof surveyChoiceOptionsPropsShape &
-    typeof surveyQuestionBasePropsShape & {
-      maxSelected: z.ZodOptional<z.ZodInt>;
-      minSelected: z.ZodOptional<z.ZodInt>;
-      placeholder: z.ZodDefault<z.ZodString>;
-    }
+  {
+    maxSelected: z.ZodOptional<z.ZodInt>;
+    minSelected: z.ZodOptional<z.ZodInt>;
+    placeholder: z.ZodDefault<z.ZodString>;
+  } & typeof surveyChoiceOptionsPropsShape &
+    typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   ...surveyChoiceOptionsPropsShape,

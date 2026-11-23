@@ -24,14 +24,14 @@ export interface SurveyMatrixDynamicNodeProps extends SurveyQuestionBaseProps {
 
 // A column is told apart by its name, since an answer is keyed by the name and a repeated one would overwrite the other's answer
 export const surveyMatrixDynamicNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     addRowText: z.ZodDefault<z.ZodString>;
     columns: z.ZodDefault<z.ZodArray<typeof surveyMatrixColumnSchema>>;
     maxRowCount: z.ZodDefault<z.ZodInt>;
     minRowCount: z.ZodDefault<z.ZodInt>;
     removeRowText: z.ZodDefault<z.ZodString>;
     rowCount: z.ZodDefault<z.ZodInt>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   addRowText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),

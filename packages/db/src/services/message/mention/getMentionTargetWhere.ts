@@ -10,7 +10,7 @@ import { and, eq, inArray, ne, or } from "drizzle-orm";
 // Undefined when the message reaches nobody, so a caller has no update to write
 export const getMentionTargetWhere = async (
   db: Database,
-  { message, roomId, userId }: Pick<RoomMessage, "message" | "userId"> & { roomId: string },
+  { message, roomId, userId }: { roomId: string } & Pick<RoomMessage, "message" | "userId">,
 ): Promise<SQL | undefined> => {
   const classifiedMentions = await getSenderClassifiedMentions(db, roomId, userId ?? undefined, message);
   const mentionCondition = or(...(await getMentionBadgeConditions(db, roomId, classifiedMentions)));

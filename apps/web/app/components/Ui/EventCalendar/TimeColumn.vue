@@ -23,7 +23,7 @@ interface Props {
 // In the same slot side by side, and on today a line in the accent at the current time. The hours outside the working
 // Day and the whole of a weekend are shaded, as Outlook shades them
 const { day, events, focusedSlot, isCreatable, now, selectedSlot } = defineProps<Props>();
-const emit = defineEmits<UiCalendarSlotEmits & { select: [start: Temporal.PlainDateTime] }>();
+const emit = defineEmits<{ select: [start: Temporal.PlainDateTime] } & UiCalendarSlotEmits>();
 const midnight = Temporal.PlainTime.from({ hour: 0 });
 const slotMinutes = CALENDAR_SLOT_DURATION.total("minutes");
 const slotStarts = Array.from(
@@ -67,7 +67,7 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
     ui-guide
     relative
   >
-    <!-- eslint-disable-next-line a11y/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
+    <!-- oxlint-disable-next-line a11y/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
     <div
       v-for="({ slotName, slotStart }, index) of slots"
       :key="index"

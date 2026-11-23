@@ -10,7 +10,7 @@ import { z } from "zod";
 // Material draws. Joints index the rig's bones, and a vertex's four weights sum to one
 export interface AvatarMesh {
   colors: AvatarView;
-  indices: AvatarView & { isUint32: boolean };
+  indices: { isUint32: boolean } & AvatarView;
   joints: AvatarView;
   name: string;
   normals: AvatarView;

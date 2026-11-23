@@ -57,7 +57,7 @@ const createYelanCombatant = (): Combatant => ({
 const readPassiveBonuses = (
   ascension: number,
   teamElements: Element[],
-): undefined | { amount: number; attribute: Attribute }[] => {
+): { amount: number; attribute: Attribute }[] | undefined => {
   const combatant = { ...createYelanCombatant(), ascension, element: Element.Hydro };
   const deployedCombatants = [
     createDeployedCombatant(combatant, { isOnField: true }),

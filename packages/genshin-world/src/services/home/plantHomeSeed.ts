@@ -16,7 +16,7 @@ export const plantHomeSeed = (
     plantings,
     plants,
   }: { inventory: Inventory; now: Temporal.Instant; plantings: HomePlanting[]; plants: HomePlant[] },
-): undefined | { inventory: Inventory; plantings: HomePlanting[] } => {
+): { inventory: Inventory; plantings: HomePlanting[] } | undefined => {
   const seed = [{ count: 1, id: seedItemId }];
   const isGrown = plants.some((plant) => plant.seedItemId === seedItemId);
   const isPlotFree = !plantings.some((planting) => planting.plotId === plotId);

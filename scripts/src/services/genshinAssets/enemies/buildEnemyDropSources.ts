@@ -29,7 +29,7 @@ export const buildEnemyDropSources = <T extends Pick<EnemyKind, "enemyType" | "i
 ): {
   dropFamilies: EnemyDropFamilyRow[];
   dropFamilyKinds: EnemyDropFamilyKindRow[];
-  enemyKindRows: (T & { dropSource: EnemyDropSource })[];
+  enemyKindRows: ({ dropSource: EnemyDropSource } & T)[];
 } => {
   const { Enemies: dropFamilies } = dropsModuleSchema.parse(
     parseLuaTable(readWikiPageContent(DROPS_TABLE_WIKI_MODULE_TITLE, cacheDirectory)),

@@ -9,10 +9,10 @@ import { z } from "zod";
 // Target's Max HP, the HP its revive buff restores to a fallen character, the bonus its buff gives, the fill its
 // Anti-cold buff holds down, and who the use reaches. A dish has a heal, a revive, a bonus, an anti-cold, or any of them
 export interface DishUse {
-  antiCold?: undefined | { ratio: number; seconds: number };
+  antiCold?: { ratio: number; seconds: number } | undefined;
   bonus?: DishBonus | undefined;
-  heal?: undefined | { flat: number; healthShare: number };
-  revive?: undefined | { flat: number };
+  heal?: { flat: number; healthShare: number } | undefined;
+  revive?: { flat: number } | undefined;
   target: DishTarget;
 }
 

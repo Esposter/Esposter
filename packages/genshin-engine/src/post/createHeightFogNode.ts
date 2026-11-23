@@ -27,7 +27,7 @@ export const createHeightFogNode = (
     scatterStrength,
     startDistance,
   }: FogUniforms,
-  stoneHaze?: Pick<StoneLightUniforms, "hazeColor" | "hazeScatterColor"> & { maskNode: TextureNode },
+  stoneHaze?: { maskNode: TextureNode } & Pick<StoneLightUniforms, "hazeColor" | "hazeScatterColor">,
 ): Node<"vec4"> => {
   const cameraWorldMatrix = uniform(camera.matrixWorld);
   const cameraProjectionMatrixInverse = uniform(camera.projectionMatrixInverse);

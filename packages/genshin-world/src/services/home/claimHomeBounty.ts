@@ -14,7 +14,7 @@ export const claimHomeBounty = (
   characters: Character[],
   progress: HomeProgress,
   now: Temporal.Instant,
-  { comfort, comfortLevels, friendshipLevels, trustLevels }: HomeStoreLevels & { friendshipLevels: FriendshipLevels },
+  { comfort, comfortLevels, friendshipLevels, trustLevels }: { friendshipLevels: FriendshipLevels } & HomeStoreLevels,
 ): { characters: Character[]; progress: HomeProgress } => {
   const settled = settleHomeStores(progress, now, { comfort, comfortLevels, trustLevels });
   return {

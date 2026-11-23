@@ -11,7 +11,7 @@ describe(checkIsResourceAssetReadable, () => {
   const publishVersion = 1;
   // The one row that answers the per-asset question: the published version's row naming this hash
   const createDatabase = (isPublishedAsset: boolean) => {
-    const findFirstPublishedAsset = vi.fn<() => Promise<undefined | { assetHash: string }>>(() =>
+    const findFirstPublishedAsset = vi.fn<() => Promise<{ assetHash: string } | undefined>>(() =>
       Promise.resolve(isPublishedAsset ? { assetHash: hash } : undefined),
     );
     return {

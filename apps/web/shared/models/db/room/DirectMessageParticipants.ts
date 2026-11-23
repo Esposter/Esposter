@@ -5,6 +5,6 @@ import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 // So a sidebar listing every conversation costs one query instead of one per row. A participant is the membership row
 // A room's members read, with the user it belongs to: the same shape a join announces
 export interface DirectMessageParticipants {
-  participants: (MemberRow & { user: PublicUser })[];
+  participants: ({ user: PublicUser } & MemberRow)[];
   roomId: RoomInMessage["id"];
 }

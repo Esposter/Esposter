@@ -17,11 +17,11 @@ export const takeExponent = (state: MathExpressionParserState, text: string): st
     failExponent(state, text);
     return text;
   }
-  if (!checkIsDigitCharacter(afterMarker) && !["+", "-"].includes(afterMarker)) return text;
+  if (!checkIsDigitCharacter(afterMarker) && !["-", "+"].includes(afterMarker)) return text;
 
   state.index++;
   let exponent = "e";
-  if (["+", "-"].includes(afterMarker)) {
+  if (["-", "+"].includes(afterMarker)) {
     exponent += afterMarker;
     state.index++;
   }

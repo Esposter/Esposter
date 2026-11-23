@@ -7,7 +7,7 @@ import { FISHING_SPLASH_SECONDS } from "#src/services/fishing/constants";
 // For a fish that the strike hooked, so a cast still reeling within those seconds is the splash, and none is shown after
 export const computeFishingSplash = (
   cast: Pick<FishingCast, "phase" | "reelSeconds"> | undefined,
-): undefined | { age: number } => {
+): { age: number } | undefined => {
   if (cast?.phase !== FishingPhase.Reeling || cast.reelSeconds >= FISHING_SPLASH_SECONDS) return undefined;
   return { age: cast.reelSeconds / FISHING_SPLASH_SECONDS };
 };

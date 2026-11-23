@@ -7,7 +7,7 @@ import { InteractionKind } from "genshin-interface";
 // Record does not hold offers none
 export const computePlaceInteractables = (
   id: string,
-  place: undefined | { position: GroundPoint },
+  place: { position: GroundPoint } | undefined,
   name: string,
   getGroundHeight: (x: number, z: number) => number,
 ): Interactable[] => {

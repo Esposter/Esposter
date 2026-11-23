@@ -29,7 +29,7 @@ export const readCharacterMesh = (
     gameDataBaseUrl,
     lightUniforms,
     rampTexture,
-  }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture"> & { characterId: number; gameDataBaseUrl: string },
+  }: { characterId: number; gameDataBaseUrl: string } & Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
 ): ReturnType<typeof getResultAsync<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>> =>
   getResultAsync(async () => {
     const modelBlob = await characterPackReader.readFile(CHARACTER_MODEL_PATH);

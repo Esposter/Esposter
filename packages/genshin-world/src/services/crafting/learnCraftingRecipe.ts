@@ -11,5 +11,5 @@ export const learnCraftingRecipe = (
   recipe: CraftingRecipe,
   instructionItemId: number,
   { inventory, progress }: { inventory: Inventory; progress: CraftingProgress },
-): undefined | { inventory: Inventory; progress: CraftingProgress } =>
+): { inventory: Inventory; progress: CraftingProgress } | undefined =>
   learnByDiagramInProgress(recipe, instructionItemId, { inventory, progress }, "learnedRecipeIds");

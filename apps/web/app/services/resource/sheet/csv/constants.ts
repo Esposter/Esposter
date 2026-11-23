@@ -1,1 +1,1 @@
-export const FORMULA_TRIGGER_CHARACTERS: ReadonlySet<string> = new Set(["\t", "\r", "\n", "+", "-", "=", "@"]);
+export const FORMULA_TRIGGER_CHARACTERS: ReadonlySet<string> = new Set(["\t", "\r", "\n", "-", "@", "+", "="]);

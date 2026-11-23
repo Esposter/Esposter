@@ -44,7 +44,7 @@ describe(useMemberStore, () => {
     displayName: string,
     joinedRoomId = roomId,
     version = 0,
-  ): MemberRow & { user: PublicUser } => ({
+  ): { user: PublicUser } & MemberRow => ({
     deletedAt: null,
     displayName,
     roomId: joinedRoomId,

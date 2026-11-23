@@ -9,7 +9,7 @@ export const learnByDiagramInProgress = <Key extends string, Progress extends Re
   diagramItemId: number,
   { inventory, progress }: { inventory: Inventory; progress: Progress },
   learnedKey: Key,
-): undefined | { inventory: Inventory; progress: Progress } => {
+): { inventory: Inventory; progress: Progress } | undefined => {
   const learned = learnByDiagram({ id, learnedIds: progress[learnedKey], unlockItemIds }, diagramItemId, inventory);
   return learned && { inventory: learned.inventory, progress: { ...progress, [learnedKey]: learned.learnedIds } };
 };

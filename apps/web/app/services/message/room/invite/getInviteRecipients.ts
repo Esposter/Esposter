@@ -11,7 +11,7 @@ export const getInviteRecipients = (
   friends: PublicUser[],
   directMessages: RoomInMessage[],
   checkIsGroupDirectMessage: (directMessageId: string) => boolean,
-  getDirectMessageParticipants: (directMessageId: string) => (PublicUser & { displayName?: string })[],
+  getDirectMessageParticipants: (directMessageId: string) => ({ displayName?: string } & PublicUser)[],
 ): InviteRecipient[] => {
   const friendRecencyMap = getFriendRecencyMap(directMessages, getDirectMessageParticipants);
   const friendRecipients = friends.map(({ id, image, name }) => ({

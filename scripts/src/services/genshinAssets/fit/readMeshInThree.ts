@@ -15,10 +15,10 @@ export const readMeshInThree = async (
   placement: AssetPlacement,
   origin: readonly [number, number, number],
 ): Promise<
-  Pick<Awaited<ReturnType<typeof readObjMesh>>, "faceGroups" | "faces" | "faceUvs" | "uvs"> & {
-    normals: (undefined | Vector)[];
-    vertices: Vector[];
-  }
+  { normals: (undefined | Vector)[]; vertices: Vector[] } & Pick<
+    Awaited<ReturnType<typeof readObjMesh>>,
+    "faceGroups" | "faces" | "faceUvs" | "uvs"
+  >
 > => {
   const mesh = await readObjMesh(path);
   const [originX, originY, originZ] = origin;

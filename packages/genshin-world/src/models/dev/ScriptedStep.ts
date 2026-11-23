@@ -4,8 +4,8 @@ import type { ScriptedStepKind } from "#src/models/dev/ScriptedStepKind";
 // Itself. An expect step's `field` names one key of the record its line answers, and is left out to compare the
 // Whole value
 export type ScriptedStep =
-  | string
   | { equals: string; field?: string; kind: typeof ScriptedStepKind.Expect; line: string }
   | { kind: typeof ScriptedStepKind.Load }
   | { kind: typeof ScriptedStepKind.Save }
-  | { kind: typeof ScriptedStepKind.Wait; seconds: number };
+  | { kind: typeof ScriptedStepKind.Wait; seconds: number }
+  | string;

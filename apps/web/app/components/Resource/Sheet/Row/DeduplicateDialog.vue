@@ -24,7 +24,7 @@ const duplicateCount = computed(() => duplicateRows.value.length);
 const duplicateItems = computed(() =>
   duplicateRows.value.map((indexedRow) => ({ ...indexedRow, id: indexedRow.row.id })),
 );
-const duplicateColumns = computed<UiDataTableColumn<IndexedRow & { id: string }>[]>(() => [
+const duplicateColumns = computed<UiDataTableColumn<{ id: string } & IndexedRow>[]>(() => [
   { getValue: ({ index }) => String(index + 1), isSortable: false, key: "index", title: "#" },
   ...getVisibleEditableColumns(dataSource.value.columns).map((column) => ({
     getValue: ({ row }: IndexedRow) => getDisplayText(takeOne(row.data, column.name), column),

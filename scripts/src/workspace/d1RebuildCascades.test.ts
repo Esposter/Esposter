@@ -4,7 +4,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-type SnapshotEntity = SnapshotForeignKey | { entityType: string };
+type SnapshotEntity = { entityType: string } | SnapshotForeignKey;
 interface SnapshotForeignKey {
   entityType: "fks";
   onDelete: string;

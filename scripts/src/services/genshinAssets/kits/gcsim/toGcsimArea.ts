@@ -18,7 +18,7 @@ import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/cr
 export const toGcsimArea = (
   { box, center, fanAngle, offset, radius, shape }: GcsimHitbox,
   targetingArea: AttackArea,
-): undefined | { area: AttackArea; cause?: KitProvisionalCause } => {
+): { area: AttackArea; cause?: KitProvisionalCause } | undefined => {
   const forwardOffset = offset?.[1] ?? 0;
   const isOnBody = center === GcsimHitboxCenter.Player || center === GcsimHitboxCenter.Position;
   if (isOnBody && shape === GcsimHitboxShape.Box && box !== undefined)

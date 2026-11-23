@@ -66,7 +66,7 @@ export interface RoomObjectRpc {
   deleteFile: (
     input: { fileId: string; id: number },
     actor: RoomActor,
-  ) => null | { deletedFile: FileEntity; message: RoomMessage };
+  ) => { deletedFile: FileEntity; message: RoomMessage } | null;
   deleteLinkPreview: (id: number, actor: RoomActor) => null | RoomMessage;
   // Returns the message as it was before the delete, so the caller can remove the blobs its files named
   deleteMessage: (id: number, actor: RoomActor) => Promise<null | RoomMessage>;
@@ -121,7 +121,7 @@ export interface RoomObjectRpc {
   updateMessage: (
     input: { id: number; message: string },
     actor: RoomActor,
-  ) => null | { message: RoomMessage; previousMessage: RoomMessage };
+  ) => { message: RoomMessage; previousMessage: RoomMessage } | null;
   updateScheduledMessage: (
     input: { id: string; message: string; replyToId?: number | undefined; runAt: Date },
     actor: RoomActor,
@@ -137,7 +137,7 @@ export interface RoomReactionKey {
 }
 
 // A match with the rank its room gave it when the search had text, which is the key a search with text is paged by
-export type RoomSearchHit = RoomMessage & { rank: null | number };
+export type RoomSearchHit = { rank: null | number } & RoomMessage;
 
 export interface RoomSearchInput {
   cursor: PageCursor;

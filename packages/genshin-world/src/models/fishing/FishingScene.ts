@@ -6,5 +6,5 @@ import type { GroundPoint } from "genshin-engine";
 export interface FishingScene {
   fish?: FishingFish | undefined;
   lure?: GroundPoint | undefined;
-  splash?: undefined | { age: number };
+  splash?: { age: number } | undefined;
 }

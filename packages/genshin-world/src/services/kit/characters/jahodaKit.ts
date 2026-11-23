@@ -99,7 +99,7 @@ const removeMeowballs = (kitEffectState: KitEffectState): void => {
 
 // The deployed member with the lowest share of its health that still stands, as gcsim's lowest-HP pick finds it
 const findLowestHealthCharacterId = (party: Party): number | undefined => {
-  let lowest: undefined | { characterId: number; healthShare: number };
+  let lowest: { characterId: number; healthShare: number } | undefined;
   for (const characterId of getDeployedCharacterIds(party)) {
     const { healthShare } = getPartyMember(party, characterId);
     if (healthShare > 0 && (lowest === undefined || healthShare < lowest.healthShare))

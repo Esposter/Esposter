@@ -2,6 +2,8 @@ import { RangeOperator } from "#src/models/semver/RangeOperator";
 
 export const parseOperator = (text: string | undefined): RangeOperator => {
   switch (text) {
+    case "^":
+      return RangeOperator.Caret;
     case "<":
       return RangeOperator.LessThan;
     case "<=":
@@ -10,8 +12,6 @@ export const parseOperator = (text: string | undefined): RangeOperator => {
       return RangeOperator.GreaterThan;
     case ">=":
       return RangeOperator.GreaterThanOrEqual;
-    case "^":
-      return RangeOperator.Caret;
     case "~":
     case "~>":
       return RangeOperator.Tilde;

@@ -8,6 +8,8 @@ export type GetObjectProps<T, P extends string, D extends unknown[], R extends b
     ? never
     : NonNullable<T[K]> extends FunctionLike
       ? never
-      : | (D extends [unknown, ...infer Rest] ? GetProperties<T[K], GetPropertyPath<P, `${K}`, R>, Rest, false> : never)
-        | { path: GetPropertyPath<P, `${K}`, R>; value: T[K] };
+      : | { path: GetPropertyPath<P, `${K}`, R>; value: T[K] }
+        | (D extends [unknown, ...infer Rest]
+            ? GetProperties<T[K], GetPropertyPath<P, `${K}`, R>, Rest, false>
+            : never);
 }[keyof OmitIndexSignature<T> & (number | string)];

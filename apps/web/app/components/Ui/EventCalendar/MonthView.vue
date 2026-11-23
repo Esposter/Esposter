@@ -19,11 +19,10 @@ interface Props {
 const date = defineModel<Temporal.PlainDate>("date", { required: true });
 defineProps<Props>();
 const emit = defineEmits<
-  Pick<UiCalendarSlotEmits, "dragStart" | "nudge" | "open"> & {
-    create: [day: Temporal.PlainDate];
-    drop: [day: Temporal.PlainDate];
-    showDay: [day: Temporal.PlainDate];
-  }
+  { create: [day: Temporal.PlainDate]; drop: [day: Temporal.PlainDate]; showDay: [day: Temporal.PlainDate] } & Pick<
+    UiCalendarSlotEmits,
+    "dragStart" | "nudge" | "open"
+  >
 >();
 const grid = useTemplateRef("grid");
 const month = computed(() => date.value.toPlainYearMonth());

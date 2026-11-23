@@ -4,7 +4,7 @@ import { checkIsBase64 } from "#src/runtime/services/checkIsBase64";
 // The name and password a `Basic` authorization header carries, `undefined` for any other scheme or a malformed value.
 // The password may hold colons, so the name ends at the first one.
 // The credentials are UTF-8, as the client encodes them
-export const getBasicAuthCredentials = (authorization: null | string): undefined | { name: string; pass: string } => {
+export const getBasicAuthCredentials = (authorization: null | string): { name: string; pass: string } | undefined => {
   if (!authorization?.startsWith(`${BASIC_AUTHORIZATION_SCHEME} `)) return undefined;
 
   const encoded = authorization.slice(BASIC_AUTHORIZATION_SCHEME.length + 1).trim();

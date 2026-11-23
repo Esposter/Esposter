@@ -48,8 +48,8 @@ describe(readLevelOfDetailParts, () => {
     ]);
     expect(meshPathMap).toStrictEqual(
       new Map([
-        ["Tower", join(directory, "Tower_Lod0.obj")],
         ["Tower_Lod2", join(directory, "Tower_Lod2.obj")],
+        ["Tower", join(directory, "Tower_Lod0.obj")],
       ]),
     );
   });
@@ -71,8 +71,8 @@ describe(readLevelOfDetailParts, () => {
     ]);
     expect(meshPathMap).toStrictEqual(
       new Map([
-        ["Tower", join(directory, "Tower_Lod0.obj")],
         ["Tower_Lod0", join(directory, "Tower_Lod0.obj")],
+        ["Tower", join(directory, "Tower_Lod0.obj")],
       ]),
     );
   });

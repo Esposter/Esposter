@@ -281,7 +281,7 @@ export const directMessageRouter = router({
     }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)
-    .query<Page<RoomInMessage> & { participants: DirectMessageParticipants[] }>(
+    .query<{ participants: DirectMessageParticipants[] } & Page<RoomInMessage>>(
       async ({ ctx, input: { cursor, limit } }) => {
         const innerJoinCondition = and(
           eq(usersToRoomsInMessage.roomId, roomsInMessage.id),

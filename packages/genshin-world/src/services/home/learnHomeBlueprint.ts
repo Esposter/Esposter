@@ -10,5 +10,5 @@ export const learnHomeBlueprint = (
   blueprint: HomeBlueprint,
   diagramItemId: number,
   { inventory, progress }: { inventory: Inventory; progress: HomeProgress },
-): undefined | { inventory: Inventory; progress: HomeProgress } =>
+): { inventory: Inventory; progress: HomeProgress } | undefined =>
   learnByDiagramInProgress(blueprint, diagramItemId, { inventory, progress }, "learnedBlueprintIds");

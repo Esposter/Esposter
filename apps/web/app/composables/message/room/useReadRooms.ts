@@ -27,7 +27,7 @@ export const useReadRooms = async () => {
   // The page's rows are held on the overlay as they answer, and the page keeps only their ids for paging. A row's
   // Display name is the server's join, which the room list never shows, so it is left off the held row
   const readRoomPage = async (
-    readPage: () => Promise<{ items: (RoomInMessage & { displayName: string })[]; nextCursor: string }>,
+    readPage: () => Promise<{ items: ({ displayName: string } & RoomInMessage)[]; nextCursor: string }>,
   ) => {
     const page = await readPage();
     arriveRooms(page.items.map(({ displayName: _displayName, ...room }) => room));

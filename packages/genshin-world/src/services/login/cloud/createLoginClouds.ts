@@ -34,7 +34,7 @@ export const createLoginClouds = (
   const group = new Group();
   const covers: Record<string, UniformNode<"float", number>> = {};
   const disposables: { dispose: () => void }[] = [];
-  let sea: undefined | { depths: number[]; places: [number, number, number][] };
+  let sea: { depths: number[]; places: [number, number, number][] } | undefined;
   const seaLength = LOGIN_CLOUD_SEA_ROW.count * LOGIN_CLOUD_SEA_ROW.length;
   for (const [band, { aspect, sprites: fittedSprites }] of Object.entries(clouds)) {
     const sprites = fittedSprites.map(({ lit, outline }): CloudSprite => ({

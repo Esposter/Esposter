@@ -4,7 +4,7 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 
 // The punctuation an expression starts after: a call's or a group's opening, a list's separator, a literal's opening,
 // And the `=` or `:=` a value is assigned by
-const EXPRESSION_START_PUNCTUATION = new Set(["(", ",", ":=", "=", "{"]);
+const EXPRESSION_START_PUNCTUATION = new Set([",", ":=", "(", "{", "="]);
 // The keyword a switch's case value follows
 const CASE_KEYWORD = "case";
 

@@ -6,7 +6,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A value a Lua table literal holds: a string, a number, a boolean or a table, which is an object when it names its fields
 // And an array when it lists its values
-type LuaValue = boolean | LuaValue[] | number | string | { [field: string]: LuaValue };
+type LuaValue = { [field: string]: LuaValue } | boolean | LuaValue[] | number | string;
 
 // Reads a Lua table literal, as the wiki's data modules write it, into the values it holds: named fields as an object,
 // Listed values as an array, and nothing else. A table that names fields and also lists values keeps each listed value

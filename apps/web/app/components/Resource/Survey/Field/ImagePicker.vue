@@ -17,7 +17,7 @@ const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined }
 const { isDisabled, node } = defineProps<Props>();
 // Each choice keyed by its place, which the list's options and the answer's values are both read through
 const keyedChoices = computed(() => getSurveyKeyedChoices(node.props.choices));
-const items = computed<(UiListItem<string> & { imageLink: string })[]>(() =>
+const items = computed<({ imageLink: string } & UiListItem<string>)[]>(() =>
   keyedChoices.value.map(({ choice, key }) => ({
     hasMarkSlot: true,
     imageLink: choice.imageLink,

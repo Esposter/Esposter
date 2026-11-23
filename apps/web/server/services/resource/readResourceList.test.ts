@@ -23,7 +23,7 @@ describe(readResourceList, () => {
     return readResourceList(mockDatabase.db, userId, input, input.sort, input.cursor, listLimit);
   };
   const readList = (filter: ResourceFilterInput, listLimit = limit) => readPage(filter, "", listLimit);
-  const createResource = async (values: Partial<typeof resourcesInResource.$inferInsert> & { name: string }) => {
+  const createResource = async (values: { name: string } & Partial<typeof resourcesInResource.$inferInsert>) => {
     const inserted = await mockDatabase.db
       .insert(resourcesInResource)
       .values({ id: v7(), type: ResourceType.Note, userId, ...values })

@@ -15,7 +15,7 @@ export const createMjmlNodeBranch = <
   propsSchema: z.ZodObject<TPropsShape, z.core.$strict>,
   slots: TSlotShape,
 ): z.ZodObject<{
-  props: z.ZodObject<TPropsShape & TSlotShape & { id: z.ZodString }, z.core.$strict>;
+  props: z.ZodObject<{ id: z.ZodString } & TPropsShape & TSlotShape, z.core.$strict>;
   type: z.ZodLiteral<TType>;
 }> => {
   const declaredKeys = Object.keys(propsSchema.shape);

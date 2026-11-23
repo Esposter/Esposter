@@ -26,15 +26,15 @@ export interface StickyNoteElement
 }
 
 export const stickyNoteElementSchema: z.ZodObject<
-  typeof boxElementSchema.shape &
-    typeof textBoxElementSchema.shape & {
-      color: z.ZodDefault<typeof elementColorSchema>;
-      dashPattern: z.ZodDefault<typeof dashPatternSchema>;
-      fill: z.ZodString;
-      horizontalAlignment: z.ZodOptional<typeof horizontalAlignmentSchema>;
-      type: z.ZodLiteral<typeof PositionedElementType.StickyNote>;
-      verticalAlignment: z.ZodOptional<typeof verticalAlignmentSchema>;
-    }
+  {
+    color: z.ZodDefault<typeof elementColorSchema>;
+    dashPattern: z.ZodDefault<typeof dashPatternSchema>;
+    fill: z.ZodString;
+    horizontalAlignment: z.ZodOptional<typeof horizontalAlignmentSchema>;
+    type: z.ZodLiteral<typeof PositionedElementType.StickyNote>;
+    verticalAlignment: z.ZodOptional<typeof verticalAlignmentSchema>;
+  } & typeof boxElementSchema.shape &
+    typeof textBoxElementSchema.shape
 > = z.object({
   ...boxElementSchema.shape,
   ...textBoxElementSchema.shape,

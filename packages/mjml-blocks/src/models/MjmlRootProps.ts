@@ -4,13 +4,13 @@ import type { MjmlDirection } from "#src/models/MjmlDirection";
 export interface MjmlRootProps {
   attributes?: Record<string, Record<string, string>> | undefined;
   body?: Record<string, string> | undefined;
-  breakpoint?: undefined | { width: string };
+  breakpoint?: { width: string } | undefined;
   direction?: MjmlDirection | undefined;
-  fonts?: undefined | { href: string; name: string }[];
+  fonts?: { href: string; name: string }[] | undefined;
   // Empty when the email sets no language, so no language attribute is written
   lang: string;
   preview?: string | undefined;
-  styles?: undefined | { css: string; inline: boolean }[];
+  styles?: { css: string; inline: boolean }[] | undefined;
   // Empty when the email sets no title, so no title element is written
   title: string;
 }

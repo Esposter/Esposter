@@ -12,7 +12,7 @@ export const useReadDirectMessages = () => {
   // A page's rows and their participants arrive as the overlay's rows, and the page keeps only the ids its cursor pages by.
   // The viewer's own membership of each row is read too, since a list shows a conversation only while that membership is held
   const readDirectMessagePage = async (
-    readPage: () => Promise<Page<RoomInMessage> & { participants: DirectMessageParticipants[] }>,
+    readPage: () => Promise<{ participants: DirectMessageParticipants[] } & Page<RoomInMessage>>,
   ) => {
     const { participants, ...page } = await readPage();
     arriveDirectMessages(page.items);

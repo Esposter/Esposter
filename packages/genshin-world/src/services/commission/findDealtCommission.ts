@@ -11,7 +11,7 @@ export const findDealtCommission = (
   day: CommissionDay,
   commissionId: number,
   slice: CommissionSlice,
-): undefined | { commission: Commission; progress: CommissionProgress } => {
+): { commission: Commission; progress: CommissionProgress } | undefined => {
   const progress = day.dealtCommissions.find(({ commissionId: dealtId }) => dealtId === commissionId);
   if (!progress || day.claimedCommissionIds.includes(commissionId)) return undefined;
   const commission = slice.tasks.find(({ id }) => id === commissionId);

@@ -14,7 +14,7 @@ const BLACK: Vector3Tuple = [0, 0, 0];
 // A material's shading inputs with each default filled in. A region with no tint of its own takes the material's colour,
 // And the default lightmap of a material with none is the flat one the shading page's table proposes
 export const createCharacterShadingInputs = (
-  overrides: CharacterShadingOverrides & { rampTexture: Texture },
+  overrides: { rampTexture: Texture } & CharacterShadingOverrides,
 ): CharacterShadingInputs => {
   const color = overrides.color ?? WHITE;
   return mergeDefined<CharacterShadingInputs>(

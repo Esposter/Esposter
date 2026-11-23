@@ -35,7 +35,7 @@ interface Props {
 const view = defineModel<UiCalendarView>("view", { default: UiCalendarView.Month });
 const date = defineModel<Temporal.PlainDate>("date", { default: () => Temporal.Now.plainDateISO() });
 const { events, onCreate } = defineProps<Props>();
-const emit = defineEmits<Pick<UiCalendarSlotEmits, "open"> & { move: [id: string, start: Date] }>();
+const emit = defineEmits<{ move: [id: string, start: Date] } & Pick<UiCalendarSlotEmits, "open">>();
 const { now, today } = useCalendarClock();
 const viewItems: UiMenuItem<UiCalendarView>[] = UiCalendarViews.map((value) => ({ title: value, value }));
 const step = computed(() => UiCalendarViewStepMap[view.value]);

@@ -45,7 +45,7 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
   const regionStatueProgressMap = shallowRef<ReadonlyMap<string, StatueRegionProgressSave>>(new Map());
   const oculusPlaces = shallowRef<OculusPlace[]>([]);
   // The body that touches an Oculus and the camera the minimap marks those near it from, which the scene owns
-  let characterBody: undefined | { position: GroundPoint };
+  let characterBody: { position: GroundPoint } | undefined;
   let getMapCamera: (() => MapCamera) | undefined;
   // The city each region's statues are read against, the joined city table the world starts with
   let regionCityIds: RegionCityIds = {};

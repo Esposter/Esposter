@@ -41,7 +41,7 @@ describe("changTheNinth", () => {
       sides: [side, createSide([])],
       skillModules: GcgEffectNameSkillModuleMap,
     };
-    const context: GcgEffectContext & { userSideIndex: number } = { duel, sideIndex: 0, userSideIndex: 0 };
+    const context: { userSideIndex: number } & GcgEffectContext = { duel, sideIndex: 0, userSideIndex: 0 };
     changTheNinth.onAnySkillUsed?.(context, SKILL, zoneCard, dealt);
   };
 

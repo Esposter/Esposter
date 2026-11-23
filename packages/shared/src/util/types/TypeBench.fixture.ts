@@ -6,7 +6,7 @@ export interface TypeBenchFixture {
     id: string;
     joinedAt?: Date;
     profile: { avatarUrl?: null | string; displayName: string; links: { label: string; url: null | string }[] };
-    role: null | { name: string; permissions: string[] };
+    role: { name: string; permissions: string[] } | null;
   }[];
   owner: { id: string; profile: { displayName: string; links: { label: string; url: string }[] } };
   tags?: null | string[];

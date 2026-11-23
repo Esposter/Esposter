@@ -127,7 +127,7 @@ describe(useReadClicker, () => {
   test("does not save a change made after a signed-in read fails following a guest's read", async () => {
     expect.hasAssertions();
 
-    const session = ref<null | { user: { id: string } }>(null);
+    const session = ref<{ user: { id: string } } | null>(null);
     useSession.mockImplementation((fetcher?: unknown) =>
       fetcher ? { data: session } : computed(() => ({ data: session.value, isPending: false })),
     );

@@ -11,7 +11,7 @@ export const getFinestLevel = (
   width: number,
   height: number,
   region: ImageRegion,
-): Level & { left: number; top: number } => {
+): { left: number; top: number } & Level => {
   const left = Math.max(0, region.x - 1);
   const top = Math.max(0, region.y - 1);
   const levelWidth = Math.min(width, region.x + region.width + 1) - left;

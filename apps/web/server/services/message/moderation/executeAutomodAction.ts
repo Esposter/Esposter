@@ -9,7 +9,7 @@ import { executeAutomodAction as baseExecuteAutomodAction } from "@esposter/db";
 // Write like any other's, and no topic is published here by hand
 export const executeAutomodAction = async (
   db: Context["db"],
-  input: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs"> & { roomId: string; userId: string },
+  input: { roomId: string; userId: string } & Pick<RoomFilterInMessage, "action" | "timeoutDurationMs">,
 ): Promise<void> => {
   const executedAutomodAction = await baseExecuteAutomodAction(db, input, console.error);
   if (!executedAutomodAction) return;

@@ -19,7 +19,7 @@ export interface SurveyTextNodeProps extends SurveyQuestionBaseProps {
 
 // The bounds of a number input are text, since the browser reads its min and max as the text an owner typed
 export const surveyTextNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     inputType: z.ZodDefault<z.ZodEnum<typeof SurveyTextInputType>>;
     max: z.ZodDefault<z.ZodString>;
     maxLength: z.ZodOptional<z.ZodInt>;
@@ -27,7 +27,7 @@ export const surveyTextNodePropsSchema: z.ZodObject<
     minLength: z.ZodOptional<z.ZodInt>;
     pattern: z.ZodDefault<z.ZodString>;
     placeholder: z.ZodDefault<z.ZodString>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   inputType: z.enum(SurveyTextInputType).default(SurveyTextInputType.Text),

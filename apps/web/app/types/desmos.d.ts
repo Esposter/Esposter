@@ -32,7 +32,7 @@ declare namespace Desmos {
      */
     asyncScreenshot(callback: (dataUri: string) => void): void;
     asyncScreenshot(
-      opts: Parameters<Calculator["screenshot"]>[0] & {
+      opts: {
         /**
          * Determines the format of the generated image.
          * @default "png"
@@ -54,7 +54,7 @@ declare namespace Desmos {
          * @default false
          */
         showLabels?: boolean;
-      },
+      } & Parameters<Calculator["screenshot"]>[0],
       callback: (dataUri: string) => void,
     ): void;
 

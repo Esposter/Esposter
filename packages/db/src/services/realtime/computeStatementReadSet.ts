@@ -356,7 +356,7 @@ const computeDepths = (chunks: unknown[]) => {
   });
 };
 // The alias a table is given in a statement's text, such as `"table" as "alias"`, which is three chunks
-const getDeclaredAlias = (chunks: unknown[], index: number): undefined | { alias: string; table: Table } => {
+const getDeclaredAlias = (chunks: unknown[], index: number): { alias: string; table: Table } | undefined => {
   const source = chunks[index];
   const connector = chunks[index + 1];
   const alias = getNameValue(chunks[index + 2]);

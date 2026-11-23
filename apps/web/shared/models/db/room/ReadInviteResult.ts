@@ -6,6 +6,6 @@ import type { InviteInMessage, PublicUser, RoomInMessage } from "@esposter/db-sc
 // Renders beside the decision: the membership rows stay unread, since anyone holding the code reads this
 export interface ReadInviteResult extends InviteInMessage {
   isMember: boolean;
-  room: Pick<RoomInMessage, "name"> & { memberCount: number };
+  room: { memberCount: number } & Pick<RoomInMessage, "name">;
   user: PublicUser;
 }

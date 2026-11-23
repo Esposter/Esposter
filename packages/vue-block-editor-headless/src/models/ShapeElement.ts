@@ -30,17 +30,17 @@ export interface ShapeElement extends BoxElement, ItemEntityType<typeof Position
 }
 
 export const shapeElementSchema: z.ZodObject<
-  typeof boxElementSchema.shape &
-    typeof textBoxElementSchema.shape & {
-      color: z.ZodDefault<typeof elementColorSchema>;
-      cornerStyle: z.ZodDefault<typeof cornerStyleSchema>;
-      dashPattern: z.ZodDefault<typeof dashPatternSchema>;
-      fill: typeof elementColorSchema;
-      horizontalAlignment: z.ZodOptional<typeof horizontalAlignmentSchema>;
-      kind: typeof shapeKindSchema;
-      type: z.ZodLiteral<typeof PositionedElementType.Shape>;
-      verticalAlignment: z.ZodOptional<typeof verticalAlignmentSchema>;
-    }
+  {
+    color: z.ZodDefault<typeof elementColorSchema>;
+    cornerStyle: z.ZodDefault<typeof cornerStyleSchema>;
+    dashPattern: z.ZodDefault<typeof dashPatternSchema>;
+    fill: typeof elementColorSchema;
+    horizontalAlignment: z.ZodOptional<typeof horizontalAlignmentSchema>;
+    kind: typeof shapeKindSchema;
+    type: z.ZodLiteral<typeof PositionedElementType.Shape>;
+    verticalAlignment: z.ZodOptional<typeof verticalAlignmentSchema>;
+  } & typeof boxElementSchema.shape &
+    typeof textBoxElementSchema.shape
 > = z.object({
   ...boxElementSchema.shape,
   ...textBoxElementSchema.shape,

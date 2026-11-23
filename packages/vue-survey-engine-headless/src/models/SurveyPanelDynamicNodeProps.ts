@@ -18,13 +18,13 @@ export interface SurveyPanelDynamicNodeProps extends SurveyQuestionBaseProps {
 
 // The own props, without the template slot, which the node schema adds beside the id
 export const surveyPanelDynamicNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     addPanelText: z.ZodDefault<z.ZodString>;
     maxPanelCount: z.ZodDefault<z.ZodInt>;
     minPanelCount: z.ZodDefault<z.ZodInt>;
     panelCount: z.ZodDefault<z.ZodInt>;
     removePanelText: z.ZodDefault<z.ZodString>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   addPanelText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),

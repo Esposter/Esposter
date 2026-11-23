@@ -9,7 +9,7 @@ export interface SurveyImageChoice extends SurveyChoice {
   imageLink: string;
 }
 
-export const surveyImageChoiceSchema: z.ZodObject<typeof surveyChoiceSchema.shape & { imageLink: z.ZodString }> =
+export const surveyImageChoiceSchema: z.ZodObject<{ imageLink: z.ZodString } & typeof surveyChoiceSchema.shape> =
   z.object({
     ...surveyChoiceSchema.shape,
     imageLink: z.string().min(1).max(MAX_SURVEY_URL_LENGTH),

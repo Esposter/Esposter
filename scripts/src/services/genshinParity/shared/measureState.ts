@@ -12,7 +12,7 @@ export const measureState = async (
   page: Page,
   name: string,
   drive: () => Promise<void>,
-): Promise<TracedState & { state: StallState }> => {
+): Promise<{ state: StallState } & TracedState> => {
   await page.evaluate(() => {
     window.__frameTimes = [];
   });

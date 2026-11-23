@@ -13,8 +13,8 @@ export interface SurveyDropdownNodeProps extends SurveyChoiceOptionsProps, Surve
 }
 
 export const surveyDropdownNodePropsSchema: z.ZodObject<
-  typeof surveyChoiceOptionsPropsShape &
-    typeof surveyQuestionBasePropsShape & { placeholder: z.ZodDefault<z.ZodString> }
+  { placeholder: z.ZodDefault<z.ZodString> } & typeof surveyChoiceOptionsPropsShape &
+    typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   ...surveyChoiceOptionsPropsShape,

@@ -26,7 +26,7 @@ type ContentValue<TNode extends BlockNode, TRoot extends object> = OwnProps<TNod
 const getContentTarget = <
   TNode extends BlockNode,
   TRoot extends object,
-  TDefinition extends BlockTypeDefinition<TNode> & { formSchema: z.ZodType },
+  TDefinition extends { formSchema: z.ZodType } & BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
   kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
@@ -63,7 +63,7 @@ const getContentTarget = <
 export const usePageBuilderContent = <
   TNode extends BlockNode,
   TRoot extends object,
-  TDefinition extends BlockTypeDefinition<TNode> & { formSchema: z.ZodType },
+  TDefinition extends { formSchema: z.ZodType } & BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
   kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,

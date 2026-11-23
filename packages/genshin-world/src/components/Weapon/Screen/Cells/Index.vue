@@ -18,7 +18,7 @@ interface Props {
   // The copy the Refine tab picked, which stands in for the material when it is set
   pickedCopyId?: number | undefined;
   // The refinement material the Refine tab offers, with the count the bag holds of it
-  refinementMaterial?: undefined | { count: number; name: string };
+  refinementMaterial?: { count: number; name: string } | undefined;
   // The ranks a weapon can still gain, each one a slot on the Refine tab
   refineSlotCount: number;
 }

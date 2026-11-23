@@ -36,5 +36,5 @@ export interface KitSummon extends KitSwapEndable {
   stacks?: number | undefined;
   // The one enemy its hits land on, instead of each enemy their areas reach, if it lands on one
   target?: Enemy | undefined;
-  travel?: undefined | { metresPerSecond: number; startSeconds: number };
+  travel?: { metresPerSecond: number; startSeconds: number } | undefined;
 }

@@ -47,7 +47,7 @@ export interface GcgCardModule {
   // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own.
   // The `userSideIndex` is the side of the character who used the skill
   onAnySkillUsed?: (
-    context: GcgEffectContext & { userSideIndex: number },
+    context: { userSideIndex: number } & GcgEffectContext,
     skill: GcgSkill,
     zoneCard: GcgZoneCard,
     dealt: GcgDealtDamage[],

@@ -17,7 +17,7 @@ export const ascendToNextPhase = (
   level: number,
   phases: CharacterAscensionPhase[],
   { adventureRank, inventory, wallet }: { adventureRank: number; inventory: Inventory; wallet: Wallet },
-): AscensionRefusal | { ascension: number; inventory: Inventory; wallet: Wallet } => {
+): { ascension: number; inventory: Inventory; wallet: Wallet } | AscensionRefusal => {
   const nextPhase = getAscendableNextPhase(phases, ascension, level);
   if (!nextPhase) return AscensionRefusal.Cap;
   else if (

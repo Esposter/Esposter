@@ -120,7 +120,7 @@ export const useWorldOutcrops = ({
   );
   // The claims F offers at a cleared outcrop's blossom, and the place they are offered at, none where the held resin
   // Affords none and no Fragile Resin can restore it
-  const claimPrompt = shallowRef<BlossomClaimPrompt & { placeId: number }>();
+  const claimPrompt = shallowRef<{ placeId: number } & BlossomClaimPrompt>();
   // An event moves the one outcrop it names within its region, and the place the other kind of that region holds is kept
   // Out of its move
   const applyEvent = (placeId: number, event: OutcropEvent) => {

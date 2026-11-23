@@ -18,11 +18,11 @@ export interface SurveyExpressionNodeProps extends SurveyQuestionBaseProps {
 
 // A figure past ten decimal places is noise a reader cannot take in, so the places a format keeps are bounded
 export const surveyExpressionNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     displayFormat: z.ZodDefault<z.ZodEnum<typeof SurveyExpressionDisplayFormat>>;
     expression: typeof surveyConditionSchema;
     maxFractionDigits: z.ZodDefault<z.ZodInt>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   displayFormat: z.enum(SurveyExpressionDisplayFormat).default(SurveyExpressionDisplayFormat.None),

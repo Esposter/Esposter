@@ -82,6 +82,6 @@ export const SlashCommandDefinitionMap = {
     title: "Unflip",
     type: SlashCommandType.Unflip,
   },
-} as const satisfies { [P in SlashCommandType]: SlashCommand & { type: P } };
+} as const satisfies { [P in SlashCommandType]: { type: P } & SlashCommand };
 
 export const SlashCommandDefinitions = Object.values(SlashCommandDefinitionMap);

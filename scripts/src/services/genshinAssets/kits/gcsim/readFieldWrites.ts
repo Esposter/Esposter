@@ -9,7 +9,7 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumberValue";
 
-const ARITHMETIC_OPERATORS = new Set(["%", "&", "*", "+", "-", "/", "<", ">", "^", "|"]);
+const ARITHMETIC_OPERATORS = new Set(["-", "*", "/", "&", "%", "^", "+", "<", ">", "|"]);
 
 // Each write to a field of `c` in a file: a literal `=` gives its value, an increment or `op=` gives none, and a read like
 // `c.field == 2` is no write at all

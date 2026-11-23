@@ -15,7 +15,7 @@ export const ascendCharacter = (
     phases,
     wallet,
   }: { adventureRank: number; inventory: Inventory; phases: CharacterAscensionPhase[]; wallet: Wallet },
-): undefined | { character: Character; inventory: Inventory; wallet: Wallet } => {
+): { character: Character; inventory: Inventory; wallet: Wallet } | undefined => {
   const ascended = ascendToNextPhase(character.ascension, character.level, phases, {
     adventureRank,
     inventory,

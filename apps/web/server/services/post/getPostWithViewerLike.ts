@@ -3,7 +3,7 @@ import type { LikeInPost, PostInPost, PostInPostWithRelations, PublicUser } from
 export const getPostWithViewerLike = ({
   likesInPost,
   ...post
-}: PostInPost & { likesInPost?: LikeInPost[]; user: PublicUser }): PostInPostWithRelations => ({
+}: { likesInPost?: LikeInPost[]; user: PublicUser } & PostInPost): PostInPostWithRelations => ({
   ...post,
   viewerLike: likesInPost?.at(0),
 });

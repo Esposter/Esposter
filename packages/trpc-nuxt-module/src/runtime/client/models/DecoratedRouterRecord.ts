@@ -9,7 +9,7 @@ import type {
 } from "@trpc/server";
 
 // The router walked with tRPC's public inference helpers only, one procedure at a time
-export type DecoratedRouterRecord<TRoot extends AnyTRPCRootTypes, TRecord extends TRPCRouterRecord> = ProcedureNode & {
+export type DecoratedRouterRecord<TRoot extends AnyTRPCRootTypes, TRecord extends TRPCRouterRecord> = {
   readonly [TKey in keyof TRecord]: TRecord[TKey] extends AnyTRPCProcedure
     ? DecoratedProcedure<
         TRecord[TKey]["_def"]["type"],
@@ -23,4 +23,4 @@ export type DecoratedRouterRecord<TRoot extends AnyTRPCRootTypes, TRecord extend
     : TRecord[TKey] extends TRPCRouterRecord
       ? DecoratedRouterRecord<TRoot, TRecord[TKey]>
       : never;
-};
+} & ProcedureNode;

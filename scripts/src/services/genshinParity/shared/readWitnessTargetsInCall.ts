@@ -30,9 +30,10 @@ export const readWitnessTargetsInCall = async (
   isScene: boolean,
   lightDirection?: Readonly<Vector>,
 ): Promise<
-  Pick<WitnessGbuffer, "families" | "height" | "parts" | "width"> & {
-    targets: Partial<Record<WitnessTarget, Float32Array>>;
-  }
+  { targets: Partial<Record<WitnessTarget, Float32Array>> } & Pick<
+    WitnessGbuffer,
+    "families" | "height" | "parts" | "width"
+  >
 > => {
   const { families, height, parts, positionLift, targets, width } = await page.evaluate(
     ([targetNames, isSceneDrawn, direction]) => window.renderWitnessTargets(targetNames, isSceneDrawn, direction),

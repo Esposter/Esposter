@@ -12,7 +12,7 @@ import {
 export const toMonumentPlace = (
   mark: MapPointPlace<PuzzleKind>,
   { element, isTimed }: MonumentKindTiming,
-): MapPointPlace<PuzzleKind> & { monument: MonumentPlace } => ({
+): { monument: MonumentPlace } & MapPointPlace<PuzzleKind> => ({
   ...mark,
   monument: {
     element: element ?? PROVISIONAL_MONUMENT_ELEMENT,

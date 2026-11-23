@@ -19,7 +19,7 @@ export const findMovedGate = ({
 }: {
   recordedRows: readonly string[];
   results: readonly ParityPassResult[];
-}): undefined | { measured: string; name: string; pass: ParityPass; recorded: string } => {
+}): { measured: string; name: string; pass: ParityPass; recorded: string } | undefined => {
   for (const { measure, pass } of results)
     for (const { gate, name } of measure.readings) {
       const row = recordedRows.find(

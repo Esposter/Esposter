@@ -31,7 +31,7 @@ describe(fitVisualHull, () => {
   test("keeps an arch's opening open through its whole length, and its piers and deck solid", () => {
     expect.hasAssertions();
 
-    const arch: Mesh & { faces: [number, number, number][]; vertices: [number, number, number][] } = {
+    const arch: { faces: [number, number, number][]; vertices: [number, number, number][] } & Mesh = {
       faces: [],
       vertices: [],
     };

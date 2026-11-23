@@ -31,4 +31,4 @@ type MjmlContentDefinition<TNode extends BlockNode> =
   | { contentKind?: undefined; propsSchema: z.ZodType<OwnProps<TNode["props"]>> };
 
 // The props of a node whose content is a string: a label or raw kind's content schema parses one
-type MjmlStringContentProps<TNode extends BlockNode> = OwnProps<TNode["props"]> & { content: string };
+type MjmlStringContentProps<TNode extends BlockNode> = { content: string } & OwnProps<TNode["props"]>;

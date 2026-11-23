@@ -21,11 +21,11 @@ const SURVEY_BOOLEAN_DISPLAY_STYLE_OPTIONS: readonly SurveyBooleanDisplayStyle[]
 ];
 
 export const surveyBooleanNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     displayStyle: z.ZodDefault<z.ZodEnum<Record<SurveyBooleanDisplayStyle, SurveyBooleanDisplayStyle>>>;
     labelFalse: z.ZodDefault<z.ZodString>;
     labelTrue: z.ZodDefault<z.ZodString>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   displayStyle: z.enum(SURVEY_BOOLEAN_DISPLAY_STYLE_OPTIONS).default(SurveyBooleanDisplayStyle.Switch),

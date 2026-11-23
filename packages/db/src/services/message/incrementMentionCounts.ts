@@ -9,7 +9,7 @@ import { sql } from "drizzle-orm";
 // The sender, and returns the updated rows so callers can fan them out to their user objects.
 export const incrementMentionCounts = async (
   db: Database,
-  { message, roomId, userId }: Pick<RoomMessage, "message" | "userId"> & { roomId: string },
+  { message, roomId, userId }: { roomId: string } & Pick<RoomMessage, "message" | "userId">,
 ): Promise<UserToRoomInMessage[]> => {
   const mentionTargetWhere = await getMentionTargetWhere(db, { message, roomId, userId });
   if (!mentionTargetWhere) return [];

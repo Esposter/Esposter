@@ -14,7 +14,7 @@ import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 export const readTowerProfiles = async (
   placements: readonly AssetPlacement[],
   meshDirectory: string,
-): Promise<{ placement: AssetPlacement & { part: string }; profile: LatheProfile }[]> => {
+): Promise<{ placement: { part: string } & AssetPlacement; profile: LatheProfile }[]> => {
   const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, TOWER_MESH_REGEX, meshDirectory);
   const towerProfileMap = new Map<string, LatheProfile>();
   for (const [tower, meshPath] of meshPathMap) {

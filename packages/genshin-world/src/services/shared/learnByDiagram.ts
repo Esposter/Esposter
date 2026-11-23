@@ -9,7 +9,7 @@ export const learnByDiagram = (
   { id, learnedIds, unlockItemIds }: { id: number; learnedIds: number[]; unlockItemIds: number[] },
   diagramItemId: number,
   inventory: Inventory,
-): undefined | { inventory: Inventory; learnedIds: number[] } => {
+): { inventory: Inventory; learnedIds: number[] } | undefined => {
   if (
     !unlockItemIds.includes(diagramItemId) ||
     learnedIds.includes(id) ||

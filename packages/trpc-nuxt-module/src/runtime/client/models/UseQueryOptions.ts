@@ -11,8 +11,8 @@ export type UseQueryOptions<
   TData = TDefinition["output"],
   TPickKeys extends KeysOf<TData> = KeysOf<TData>,
   TDefault = undefined,
-> = SetFieldType<
+> = { queryKey?: string; trpc?: TRPCRequestOptions } & SetFieldType<
   AsyncDataOptions<TDefinition["output"], TData, TPickKeys, TDefault>,
   "watch",
   false | NonNullable<AsyncDataOptions<TDefinition["output"], TData, TPickKeys, TDefault>["watch"]>
-> & { queryKey?: string; trpc?: TRPCRequestOptions };
+>;

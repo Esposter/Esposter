@@ -11,7 +11,7 @@ import { v7 } from "uuid";
 export const generateUploadFilePresignedUrlEntities = async (
   credentials: StorageCredentials,
   bucket: StorageBucket,
-  files: (Pick<FileEntity, "filename" | "mimetype"> & { size: number })[],
+  files: ({ size: number } & Pick<FileEntity, "filename" | "mimetype">)[],
   prefix: string,
   options: {
     reserve: (reservations: { blobName: string; declaredBytes: number }[]) => Promise<void>;

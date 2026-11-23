@@ -19,14 +19,14 @@ export interface SurveyCheckboxNodeProps
 }
 
 export const surveyCheckboxNodePropsSchema: z.ZodObject<
-  typeof surveyChoiceOptionsPropsShape &
+  {
+    hasSelectAll: z.ZodDefault<z.ZodBoolean>;
+    maxSelected: z.ZodOptional<z.ZodInt>;
+    minSelected: z.ZodOptional<z.ZodInt>;
+    selectAllText: z.ZodDefault<z.ZodString>;
+  } & typeof surveyChoiceOptionsPropsShape &
     typeof surveyNoneChoicePropsShape &
-    typeof surveyQuestionBasePropsShape & {
-      hasSelectAll: z.ZodDefault<z.ZodBoolean>;
-      maxSelected: z.ZodOptional<z.ZodInt>;
-      minSelected: z.ZodOptional<z.ZodInt>;
-      selectAllText: z.ZodDefault<z.ZodString>;
-    }
+    typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   ...surveyChoiceOptionsPropsShape,

@@ -29,6 +29,9 @@ export const DataSourceTypeItemCategoryDefinitionMap = {
   },
 } as const satisfies Record<DataSourceType, { description: string; icon: string; title: string }>;
 
-export const DataSourceTypeItemCategoryDefinitions: (SelectItemCategoryDefinition<DataSourceType> & {
+export const DataSourceTypeItemCategoryDefinitions: ({
   description: string;
-})[] = parseDictionaryToArray(DataSourceTypeItemCategoryDefinitionMap, "value");
+} & SelectItemCategoryDefinition<DataSourceType>)[] = parseDictionaryToArray(
+  DataSourceTypeItemCategoryDefinitionMap,
+  "value",
+);

@@ -10,7 +10,7 @@ const internalCooldownTagSchema = z.enum(InternalCooldownTag) satisfies z.ZodTyp
 // The value a row gives the field of a kit's record its path's last key names, or undefined where the row gives no
 // Such field. A row whose ICD tag is `none` gives the field an undefined value, which the row still gives. A tag the
 // Enum does not name is given by no row, as the record would reject it, though the row's poise still stands
-export const readWikiRowValue = (row: WikiAdvancedProperty, field: string): undefined | { value: unknown } => {
+export const readWikiRowValue = (row: WikiAdvancedProperty, field: string): { value: unknown } | undefined => {
   switch (field) {
     case "gauge":
       return row.gauge === undefined ? undefined : { value: row.gauge };

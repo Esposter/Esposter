@@ -22,7 +22,7 @@ export const buyPaimonsBargainsCharacter = (
   good: PaimonsBargainsGood,
   characterDataMap: ReadonlyMap<number, CharacterData>,
   now: Temporal.Instant,
-): undefined | { characters: Character[]; purchases: ShopPurchase[]; wallet: Wallet } => {
+): { characters: Character[]; purchases: ShopPurchase[]; wallet: Wallet } | undefined => {
   const characterId = good.itemId;
   const held = characters.find(({ id }) => id === characterId);
   if (!checkIsCurrencyOnlyGood(good) || !checkIsPaimonsBargainsCharacterBuyable(held)) return undefined;

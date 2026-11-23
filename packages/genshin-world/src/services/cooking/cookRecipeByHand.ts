@@ -44,7 +44,7 @@ export const cookRecipeByHand = (
     talent?: CookingTalent | undefined;
     zones: CookingZones;
   },
-): undefined | { inventory: Inventory; progress: CookingProgress } => {
+): { inventory: Inventory; progress: CookingProgress } | undefined => {
   if (
     !checkIsCookingRecipeOpen(recipe, progress) ||
     !checkCanCookWith(avatarId) ||

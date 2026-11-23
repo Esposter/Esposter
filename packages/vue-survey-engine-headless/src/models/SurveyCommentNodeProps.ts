@@ -13,11 +13,11 @@ export interface SurveyCommentNodeProps extends SurveyQuestionBaseProps {
 }
 
 export const surveyCommentNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     maxLength: z.ZodOptional<z.ZodInt>;
     placeholder: z.ZodDefault<z.ZodString>;
     rows: z.ZodDefault<z.ZodInt>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   maxLength: z.int().positive().optional(),

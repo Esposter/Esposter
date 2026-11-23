@@ -121,7 +121,7 @@ describe(RoomObject, () => {
   type UserMethod = (typeof USER_METHODS)[number];
   const checkIsUserMethod = (method: string): method is UserMethod => USER_METHODS.some((name) => name === method);
   // A person's object as the room reaches it: each method a mock a test reads, and the invoke every call goes through
-  type UserStub = Record<UserMethod, Mock> & { invoke: Mock<ObjectInvoker["invoke"]> };
+  type UserStub = { invoke: Mock<ObjectInvoker["invoke"]> } & Record<UserMethod, Mock>;
 
   let mockDatabase: Awaited<ReturnType<typeof createMockDb>>;
   // Each person's user object as the room reaches it, so a test reads what the room asked each one to do

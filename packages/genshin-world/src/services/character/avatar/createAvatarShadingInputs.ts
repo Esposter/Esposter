@@ -46,7 +46,7 @@ const readOutlineWidthKnots = (colors: Readonly<Record<string, Vector4Tuple>>): 
 // Through (Exact on the form: the flag below a half takes the blue less a half, and the flag at one or above takes one)
 const readOutlineOffset = (
   nameFloatMap: ReadonlyMap<string, number>,
-): undefined | { blockBChannel: number; size: number } => {
+): { blockBChannel: number; size: number } | undefined => {
   const size = nameFloatMap.get("_MaxOutlineZOffset");
   return size === undefined
     ? undefined

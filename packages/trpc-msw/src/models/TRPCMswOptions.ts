@@ -14,7 +14,7 @@ export interface TRPCMswOptions<TContext extends object> {
   onUnhandledProcedure?: UnhandledProcedureAction;
   // The response headers a call's answer carries, which a test sets through its context
   responseMeta?: (
-    options: Except<Parameters<ResponseMetaFn>[0], "ctx"> & { ctx?: TContext },
+    options: { ctx?: TContext } & Except<Parameters<ResponseMetaFn>[0], "ctx">,
   ) => ReturnType<ResponseMetaFn>;
   // The real router, whose procedures' input parsers run before each resolver, so a call the server would reject
   // With BAD_REQUEST is rejected here too rather than answered. Without it any input reaches the resolver

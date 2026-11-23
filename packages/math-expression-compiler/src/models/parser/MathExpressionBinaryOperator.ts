@@ -11,6 +11,6 @@ export interface MathExpressionBinaryFunctionOperator {
 // A binary operator: its binding power, the higher binding tighter, and the node it builds. A binary or a comparison node
 // Names a function, and a logical node applies its operator
 export type MathExpressionBinaryOperator =
-  | MathExpressionBinaryFunctionOperator
   | { name: string; power: number; type: typeof MathExpressionNodeType.Comparison }
-  | { operator: MathExpressionLogicalOperator; power: number; type: typeof MathExpressionNodeType.Logical };
+  | { operator: MathExpressionLogicalOperator; power: number; type: typeof MathExpressionNodeType.Logical }
+  | MathExpressionBinaryFunctionOperator;

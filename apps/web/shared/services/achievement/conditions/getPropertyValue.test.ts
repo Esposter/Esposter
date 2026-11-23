@@ -16,7 +16,7 @@ describe(getPropertyValue, () => {
       getPropertyValue<{ data?: { pointCount: number } }, "data.pointCount">({}, "data.pointCount"),
     ).toBeUndefined();
     expect(
-      getPropertyValue<{ data: null | { pointCount: number } }, "data.pointCount">({ data: null }, "data.pointCount"),
+      getPropertyValue<{ data: { pointCount: number } | null }, "data.pointCount">({ data: null }, "data.pointCount"),
     ).toBeUndefined();
   });
 });

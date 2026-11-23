@@ -11,7 +11,7 @@ import { z } from "zod";
 export interface ParityRecordingManifestRow extends ParityStoredFile {
   attribution: ParityReferenceAttribution;
   name: string;
-  range?: undefined | { end: number; start: number };
+  range?: { end: number; start: number } | undefined;
   source: string;
   sourceFormat: string;
 }

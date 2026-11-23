@@ -10,5 +10,5 @@ export type UseSubscriptionOptions<TDefinition extends TRPCResolverDef> =
     // oxlint-disable-next-line selector-ban/no-restricted-syntax -- tRPC's subscribe is overloaded and exports no type for its callbacks overload, and a single signature reads the last overload, so the pattern names both
     (...args: never[]): unknown;
   }
-    ? Partial<TOptions> & { enabled?: MaybeRefOrGetter<boolean> }
+    ? { enabled?: MaybeRefOrGetter<boolean> } & Partial<TOptions>
     : never;

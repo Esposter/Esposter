@@ -24,7 +24,7 @@ interface Props {
 // The day shown, so a step off the first or the last day steps the view
 const date = defineModel<Temporal.PlainDate>("date", { required: true });
 const { days, step, today } = defineProps<Props>();
-const emit = defineEmits<UiCalendarSlotEmits & { showDay: [day: Temporal.PlainDate] }>();
+const emit = defineEmits<{ showDay: [day: Temporal.PlainDate] } & UiCalendarSlotEmits>();
 const scroller = useTemplateRef("scroller");
 const grid = useTemplateRef("grid");
 const header = useTemplateRef("header");

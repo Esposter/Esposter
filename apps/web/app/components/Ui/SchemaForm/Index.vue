@@ -39,7 +39,7 @@ const uischema = computed(() => Generate.uiSchema(jsonFormsSchema.value, undefin
 const options = { validationMode: "NoValidation" } as const;
 // What the renderers read through the form. Shallow, because its reducers return a new core for every change, so the
 // Property being replaced is the only change to track, and the renderers inside are never proxied
-const jsonforms = shallowReactive<JsonFormsSubStates & { core: JsonFormsCore }>({
+const jsonforms = shallowReactive<{ core: JsonFormsCore } & JsonFormsSubStates>({
   cells: [],
   config: configReducer(undefined, Actions.setConfig(uiSchemaFormConfiguration.value)),
   core: coreReducer(undefined, Actions.init(modelValue.value, jsonFormsSchema.value, uischema.value, options)),

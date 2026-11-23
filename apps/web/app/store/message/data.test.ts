@@ -28,7 +28,7 @@ import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
-  data?: undefined | { user: { id: string } };
+  data?: { user: { id: string } } | undefined;
 }
 
 // The composer's preview urls are incidental to every test that stubs them

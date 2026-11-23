@@ -15,10 +15,10 @@ export interface WorldInteractablesOptions {
   blacksmithPlace: Readonly<Ref<SceneGroupPlace | undefined>>;
   characterBody: Object3D;
   craftingBenchPlace: CraftingBenchPlace;
-  domainArena: Readonly<Ref<undefined | { center: { x: number; z: number } }>>;
+  domainArena: Readonly<Ref<{ center: { x: number; z: number } } | undefined>>;
   fishingPointPlaces: Readonly<Ref<FishingPointPlace[]>>;
   frostbearingTreePlaces: readonly FrostbearingTreePlace[];
-  homePotPoint: Readonly<Ref<undefined | { x: number; z: number }>>;
+  homePotPoint: Readonly<Ref<{ x: number; z: number } | undefined>>;
   homeRealmVisit: Readonly<Ref<HomeRealmVisit | undefined>>;
   input: Input;
   isDomainTreeRaised: Readonly<Ref<boolean>>;

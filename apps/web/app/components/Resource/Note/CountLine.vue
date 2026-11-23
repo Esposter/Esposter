@@ -19,7 +19,7 @@ watchImmediate(
     if (!currentEditor) return;
 
     // A caret move with no edit leaves the document object and the counted range as they were, so it reuses the count
-    let counted: undefined | { doc: typeof currentEditor.state.doc; from: number; to: number };
+    let counted: { doc: typeof currentEditor.state.doc; from: number; to: number } | undefined;
     const update = () => {
       const { doc, selection } = currentEditor.state;
       const { from, to } = selection.empty ? { from: 0, to: doc.content.size } : selection;

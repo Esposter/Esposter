@@ -147,7 +147,7 @@ export const usePdfAnnotations = ({
         if (kind === null) return;
 
         // The renderer stores an editor as it is drawn, so the last entry stored is the annotation just drawn
-        const drawn: undefined | { pageIndex: number } = [...loaded.annotationStorage].at(-1)?.[1];
+        const drawn: { pageIndex: number } | undefined = [...loaded.annotationStorage].at(-1)?.[1];
         if (drawn) onChange?.({ kind, pageNumber: drawn.pageIndex + 1 });
       });
     },

@@ -15,7 +15,7 @@ export interface SurveyMultipleTextNodeProps extends SurveyQuestionBaseProps {
 
 // Items are unique by their name, since the name is the key each answer is held under
 export const surveyMultipleTextNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & { items: z.ZodDefault<z.ZodArray<typeof surveyMultipleTextItemSchema>> }
+  { items: z.ZodDefault<z.ZodArray<typeof surveyMultipleTextItemSchema>> } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   items: createUniqueArraySchema(surveyMultipleTextItemSchema, "name")

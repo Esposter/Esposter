@@ -17,11 +17,11 @@ export interface SurveyMatrixNodeProps extends SurveyQuestionBaseProps {
 
 // A row and a column are each told apart by their value, since an answer holds the value and a repeated one would be two answers for one
 export const surveyMatrixNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     columns: z.ZodDefault<z.ZodArray<typeof surveyChoiceSchema>>;
     isAllRowRequired: z.ZodDefault<z.ZodBoolean>;
     rows: z.ZodDefault<z.ZodArray<typeof surveyChoiceSchema>>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   columns: createUniqueArraySchema(surveyChoiceSchema, "value").max(MAX_SURVEY_CHOICE_COUNT).default([]),

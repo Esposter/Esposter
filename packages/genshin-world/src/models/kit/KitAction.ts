@@ -19,7 +19,7 @@ export interface KitAction {
   // The length the action plays, if it is decided as it runs: once its seconds reach `atSeconds`, `decide` returns the
   // Seconds it plays from then on, from the state the team holds then, such as the Sourcewater Droplets a charge
   // Picks up
-  decideLength?: undefined | { atSeconds: number; decide: (context: KitContext) => number };
+  decideLength?: { atSeconds: number; decide: (context: KitContext) => number } | undefined;
   hits: KitHit[];
   // Whether the action is an aimed shot, which turns the body to the camera's aim while the aim is held, not to a target
   isAimed?: true;

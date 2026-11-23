@@ -16,6 +16,6 @@ declare module "vue-phaserjs" {
   interface AnimationKeyMap extends BaseAnimationKeyMap {}
 
   interface SceneWithPlugins {
-    scene: Scene["scene"] & { key: SceneKey };
+    scene: { key: SceneKey } & Scene["scene"];
   }
 }

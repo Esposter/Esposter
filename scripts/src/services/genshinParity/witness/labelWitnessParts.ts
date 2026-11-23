@@ -27,7 +27,7 @@ export const labelWitnessParts = async (
   witness: DerivedAssetComponent,
   family: string,
   camera?: WitnessView["camera"],
-): Promise<{ imagePath: string; parts: (WitnessPart & { pixel: [number, number] })[] }> => {
+): Promise<{ imagePath: string; parts: ({ pixel: [number, number] } & WitnessPart)[] }> => {
   await fetchReferences();
   const referencePath = await getReferencePath(referenceId);
   const { height, width } = await sharp(referencePath).metadata();

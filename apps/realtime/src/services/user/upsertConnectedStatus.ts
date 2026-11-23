@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 export const upsertConnectedStatus = async (
   userId: string,
   isConnected: boolean,
-): Promise<UserStatusInMessage & { status: UserStatus }> => {
+): Promise<{ status: UserStatus } & UserStatusInMessage> => {
   const upsertedStatus = takeOne(
     await db
       .insert(userStatusesInMessage)

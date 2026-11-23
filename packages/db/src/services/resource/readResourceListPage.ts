@@ -17,7 +17,7 @@ interface ReadResourceListPageOptions {
   cursor: PageCursor;
   limit: number;
   // Set when the list is a search: the words' expression, and the index hits that rank each row by bm25
-  search?: undefined | { expression: string; hits: ReturnType<typeof getResourceSearchHits> };
+  search?: { expression: string; hits: ReturnType<typeof getResourceSearchHits> } | undefined;
   sort: PageSort<ResourceListColumnKey>;
   userId: string;
   where?: SQL | undefined;

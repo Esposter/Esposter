@@ -20,7 +20,7 @@ import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } fro
 import { defineComponent, h, shallowRef, useTemplateRef } from "vue";
 
 // An item as a test writes it: its height flag is stated only where a test reads it, and absent means false
-type TestItem = GridBlock & { isAutoHeight?: boolean };
+type TestItem = { isAutoHeight?: boolean } & GridBlock;
 const toGridItem = (item: TestItem): GridItem => ({ isAutoHeight: false, ...item });
 
 // A tile's geometry as the inline style a test reads its position from

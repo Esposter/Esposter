@@ -10,13 +10,13 @@ import { EditorView } from "codemirror";
 // Draws no background of its own, so the frame it sits in shows through, and the text takes the token the app's text takes
 export const uiEditorExtensions: Extension[] = [
   EditorView.theme({
+    ".cm-activeLine, .cm-activeLineGutter": { backgroundColor: "transparent" },
+    ".cm-cursor, .cm-dropCursor": { borderLeftColor: `var(--ui-${UiToken.Accent})` },
+    ".cm-gutters": { backgroundColor: "transparent", border: "none", color: `var(--ui-${UiToken.Muted})` },
     "&": { backgroundColor: "transparent", color: `var(--ui-${UiToken.Text})` },
     "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, & .cm-selectionBackground": {
       backgroundColor: `color-mix(in srgb, var(--ui-${UiToken.Accent}) 25%, transparent)`,
     },
-    ".cm-activeLine, .cm-activeLineGutter": { backgroundColor: "transparent" },
-    ".cm-cursor, .cm-dropCursor": { borderLeftColor: `var(--ui-${UiToken.Accent})` },
-    ".cm-gutters": { backgroundColor: "transparent", border: "none", color: `var(--ui-${UiToken.Muted})` },
   }),
   syntaxHighlighting(HighlightStyle.define(uiHighlightSpecs)),
 ];

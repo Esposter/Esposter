@@ -5,6 +5,6 @@ import type { ExportedClipData } from "#src/models/genshinAssets/interface/Expor
 // For position, 2 rotation, 3 scale and 4 Euler angles)
 export interface ExportedAnimationClip {
   m_ClipBindingConstant: { genericBindings: { attribute: number; path: number; typeID: string }[] };
-  m_MuscleClip: { m_Clip: ExportedClipData | { data: ExportedClipData }; m_StartTime: number; m_StopTime: number };
+  m_MuscleClip: { m_Clip: { data: ExportedClipData } | ExportedClipData; m_StartTime: number; m_StopTime: number };
   m_Name: string;
 }

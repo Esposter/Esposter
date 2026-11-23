@@ -5,5 +5,5 @@ export interface CorsHandlerOptions {
   maxAge?: string | undefined;
   methods: string[];
   origin: string | string[];
-  preflight?: undefined | { statusCode: number };
+  preflight?: { statusCode: number } | undefined;
 }

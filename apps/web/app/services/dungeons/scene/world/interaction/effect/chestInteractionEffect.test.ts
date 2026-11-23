@@ -29,7 +29,7 @@ vi.mock("#src/services/dungeons/sound/getDungeonsSoundEffect", () => ({
   getDungeonsSoundEffect: () => ({ play: () => undefined }),
 }));
 
-const getChestObject = (x: number, y: number): Types.Tilemaps.TiledObject & { x: number; y: number } => ({
+const getChestObject = (x: number, y: number): { x: number; y: number } & Types.Tilemaps.TiledObject => ({
   id: 0,
   name: "",
   properties: [{ name: ChestObjectProperty.ItemId, type: "string", value: ItemId.Potion }],

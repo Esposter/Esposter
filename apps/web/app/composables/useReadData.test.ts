@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 describe(useReadData, () => {
   const message = "";
   const userId = v7();
-  const session = ref<null | { user: { id: string } }>(null);
+  const session = ref<{ user: { id: string } } | null>(null);
   let wrapper: undefined | VueWrapper;
 
   const createTrpcClientError = (code: string) =>

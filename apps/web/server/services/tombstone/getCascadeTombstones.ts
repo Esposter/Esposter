@@ -17,7 +17,7 @@ export const getCascadeTombstones = (
   table: Table,
   where: SQL | undefined,
   batched: Table[] = [],
-  registry: readonly (SQLiteTable & { deletedAt: SQLWrapper })[] = OVERLAY_TOMBSTONE_TABLES,
+  registry: readonly ({ deletedAt: SQLWrapper } & SQLiteTable)[] = OVERLAY_TOMBSTONE_TABLES,
 ) => {
   if (where === undefined) return [];
   const { conditionOf, removedTables } = getRemovalConditions(db, table, where);

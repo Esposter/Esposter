@@ -29,7 +29,7 @@ export const createKeyframeStore = (
   // Before anything encodes against it: a delta written against mismatched plaintext depends on the damage and
   // Stops decoding the moment the keyframe is repaired. A base that is itself a delta is not a state this store
   // Writes, and refusing it is what keeps reconstruction at two objects rather than a chain
-  const readKeyframe = async (hash: string): Promise<undefined | { plaintext: Uint8Array; storedBytes: number }> => {
+  const readKeyframe = async (hash: string): Promise<{ plaintext: Uint8Array; storedBytes: number } | undefined> => {
     const bytes = await objectStore.read(hash);
     if (!bytes) return undefined;
 
@@ -48,7 +48,7 @@ export const createKeyframeStore = (
   // Object starts with a well-formed header, never that its payload survived — a torn write or one bit of rot
   // Can leave enough of the header intact to parse while the compressed frame behind it does not decode to
   // What it claims. Adopting on the header alone would report someone else's write as this one's success
-  const readStoredObject = async (hash: string): Promise<undefined | { baseHash: string; plaintext: Uint8Array }> => {
+  const readStoredObject = async (hash: string): Promise<{ baseHash: string; plaintext: Uint8Array } | undefined> => {
     const bytes = await objectStore.read(hash);
     if (!bytes) return undefined;
 
@@ -119,7 +119,7 @@ export const createKeyframeStore = (
         };
         // An anchor the store no longer holds cannot be encoded against, so the lineage starts over from this
         // Version — the record it writes is honest about that, and nothing downstream depends on the gap
-        const encodeDelta = async (): Promise<undefined | { bytes: Uint8Array; keyframeStoredBytes: number }> => {
+        const encodeDelta = async (): Promise<{ bytes: Uint8Array; keyframeStoredBytes: number } | undefined> => {
           const keyframe = await readKeyframe(anchor.hash);
           if (!keyframe) return undefined;
 

@@ -19,12 +19,12 @@ export interface SurveyImagePickerNodeProps extends SurveyImageBoxProps, SurveyQ
 
 // Choices are unique by their value, since the value is what the picked answer holds
 export const surveyImagePickerNodePropsSchema: z.ZodObject<
-  typeof surveyImageBoxPropsShape &
-    typeof surveyQuestionBasePropsShape & {
-      choices: z.ZodDefault<z.ZodArray<typeof surveyImageChoiceSchema>>;
-      isLabelVisible: z.ZodDefault<z.ZodBoolean>;
-      multiSelect: z.ZodDefault<z.ZodBoolean>;
-    }
+  {
+    choices: z.ZodDefault<z.ZodArray<typeof surveyImageChoiceSchema>>;
+    isLabelVisible: z.ZodDefault<z.ZodBoolean>;
+    multiSelect: z.ZodDefault<z.ZodBoolean>;
+  } & typeof surveyImageBoxPropsShape &
+    typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   ...surveyImageBoxPropsShape,

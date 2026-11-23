@@ -11,7 +11,7 @@ export interface ToonEdge {
   // Whether the vertex colour's alpha scales the width, so a vertex with no alpha is not pushed out at all
   isVertexWeighted?: boolean;
   // The game's offset along the view ray, its size and the block-B flag that decides whether the vertex's blue scales it
-  offset?: undefined | { blockBChannel: number; size: number };
+  offset?: { blockBChannel: number; size: number } | undefined;
   size: number;
   widthKnots: OutlineWidthKnots;
 }

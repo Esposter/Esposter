@@ -110,7 +110,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
     return { ...page, items: pageMembers.map(({ roomId, userId }) => ({ roomId, userId })) };
   };
   // A member who joins arrives as the row the join announced, and is listed at the end of the room's list as they were
-  const arriveJoinedMember = ({ user, ...joinedMember }: MemberRow & { user: PublicUser }) => {
+  const arriveJoinedMember = ({ user, ...joinedMember }: { user: PublicUser } & MemberRow) => {
     storeUser(user);
     arrive(memberTable, toMemberRow(joinedMember));
     const { roomId, userId } = joinedMember;

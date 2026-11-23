@@ -9,7 +9,7 @@ import { toAxis } from "#src/services/toAxis";
 export const toCanvasRectStyle = (
   rect: CanvasRect,
   isOnCanvas = false,
-): Record<"bottom" | "height" | "left" | "width", string> & { position: "absolute" } => {
+): { position: "absolute" } & Record<"bottom" | "height" | "left" | "width", string> => {
   const { anchorMax, anchorMin, size } = rect;
   const { offsetMin } = computeRectOffsets(rect);
   const [left, width] = toAxis(

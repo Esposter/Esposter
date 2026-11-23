@@ -5,9 +5,9 @@ import { selectAchievementInAchievementSchema } from "#src/schema/achievement/ac
 import { selectUserAchievementInAchievementSchema } from "#src/schema/achievement/userAchievementsInAchievement";
 import { z } from "zod";
 
-export type UserAchievementInAchievementWithRelations = UserAchievementInAchievement & {
+export type UserAchievementInAchievementWithRelations = {
   achievement: AchievementInAchievement;
-};
+} & UserAchievementInAchievement;
 
 export const userAchievementInAchievementWithRelationsSchema = z.object({
   ...selectUserAchievementInAchievementSchema.shape,

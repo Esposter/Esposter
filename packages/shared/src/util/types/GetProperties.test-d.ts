@@ -4,7 +4,7 @@ import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe("getProperties type", () => {
   // A table row: its two key properties, and an index signature its other properties sit under
-  type TableEntity<T extends object> = T & { [key: string]: unknown; partitionKey: string; rowKey: string };
+  type TableEntity<T extends object> = { [key: string]: unknown; partitionKey: string; rowKey: string } & T;
 
   test("array", () => {
     expect.hasAssertions();
@@ -22,7 +22,7 @@ describe("getProperties type", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<{ a: { b: unknown[] } }>>().toEqualTypeOf<
-      { path: "a"; value: { b: unknown[] } } | { path: "a.b"; value: unknown[] } | { path: "a.b.length"; value: number }
+      { path: "a.b.length"; value: number } | { path: "a.b"; value: unknown[] } | { path: "a"; value: { b: unknown[] } }
     >();
   });
 
@@ -42,7 +42,7 @@ describe("getProperties type", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<{ "": string; function: () => void }>>().toEqualTypeOf<
-      { path: ""; value: string } | { path: ".length"; value: number }
+      { path: ".length"; value: number } | { path: ""; value: string }
     >();
   });
 
@@ -56,12 +56,12 @@ describe("getProperties type", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<symbol>>().toEqualTypeOf<
+      | { path: "description.length"; value: number }
       | {
           path: "description";
           // oxlint-disable-next-line selector-ban/no-restricted-syntax -- mirrors GetPrimitiveProps' emitted shape exactly
           value: string | undefined;
         }
-      | { path: "description.length"; value: number }
     >();
   });
 
@@ -82,10 +82,10 @@ describe("getProperties type", () => {
 
     expectTypeOf<GetProperties<TableEntity<{ "": number }>>>().toEqualTypeOf<
       | { path: ""; value: number }
-      | { path: "partitionKey"; value: string }
       | { path: "partitionKey.length"; value: number }
-      | { path: "rowKey"; value: string }
+      | { path: "partitionKey"; value: string }
       | { path: "rowKey.length"; value: number }
+      | { path: "rowKey"; value: string }
     >();
   });
 });

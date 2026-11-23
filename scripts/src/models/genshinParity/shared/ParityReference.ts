@@ -8,10 +8,10 @@ import type { ParityReferenceBase } from "#src/models/genshinParity/shared/Parit
 // It is written beside its fixture's snapshot, or flat in the references folder.
 // A screen no reference records yet is pending, with the reason it has none.
 // It names no image, so no run scores it and the committed report lists it as pending.
-export type ParityReference = ParityReferenceBase &
-  (
-    | { ownRender: string; pending?: never; placement?: never; source?: never; wikiTitle?: never }
-    | { ownRender?: never; pending: string; placement?: never; source?: never; wikiTitle?: never }
-    | { ownRender?: never; pending?: never; placement?: never; source: string; wikiTitle?: never }
-    | { ownRender?: never; pending?: never; placement?: ParityPlacement; source?: never; wikiTitle: string }
-  );
+export type ParityReference = (
+  | { ownRender: string; pending?: never; placement?: never; source?: never; wikiTitle?: never }
+  | { ownRender?: never; pending: string; placement?: never; source?: never; wikiTitle?: never }
+  | { ownRender?: never; pending?: never; placement?: never; source: string; wikiTitle?: never }
+  | { ownRender?: never; pending?: never; placement?: ParityPlacement; source?: never; wikiTitle: string }
+) &
+  ParityReferenceBase;

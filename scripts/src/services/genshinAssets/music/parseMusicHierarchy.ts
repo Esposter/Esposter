@@ -26,7 +26,7 @@ export const parseMusicHierarchy = (objects: readonly SoundBankObject[]): MusicH
   const findChildren = (
     data: Buffer,
     childTypes: readonly SoundBankObjectType[],
-  ): undefined | { end: number; ids: number[] } => {
+  ): { end: number; ids: number[] } | undefined => {
     for (let offset = 0; offset + 4 <= data.length; offset++) {
       const count = data.readUInt32LE(offset);
       if (count < 1 || count > MAX_CHILD_COUNT || offset + 4 + 4 * count > data.length) continue;

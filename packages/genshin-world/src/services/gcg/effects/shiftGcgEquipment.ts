@@ -30,7 +30,7 @@ const findGcgShiftSource = (
   side: GcgSideState,
   kind: GcgCardKind,
   targetIndex: number | undefined,
-): undefined | { characterIndex: number; equipmentIndex: number } => {
+): { characterIndex: number; equipmentIndex: number } | undefined => {
   const target = targetIndex === undefined ? undefined : side.characters.at(targetIndex);
   if (!target || target.hp <= 0 || holdsGcgEquipment(side, target.equipments, kind)) return undefined;
   for (const [characterIndex, character] of side.characters.entries()) {

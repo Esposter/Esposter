@@ -28,7 +28,7 @@ export const findAssignment = (
   const okDefault = findOkDefault(tokens, scope, name, position, constantMap);
   if (okDefault !== undefined) return { kind: "dominating", valueStart: okDefault };
   const otherClosures = readOtherClosures(tokens, scope, position);
-  let latest: undefined | { isTaken: boolean; kind: GoAssignmentKind; position: number };
+  let latest: { isTaken: boolean; kind: GoAssignmentKind; position: number } | undefined;
   for (let previous = scope.bodyStart + 1; previous < position; previous++) {
     const kind =
       tokens[previous]?.kind === GoTokenKind.Identifier &&

@@ -6,7 +6,7 @@ import type { PuzzleKind } from "genshin-world";
 export const toSeeliePlace = (
   mark: MapPointPlace<PuzzleKind>,
   hasCourt: boolean,
-): MapPointPlace<PuzzleKind> & { seelie: { isProvisional: boolean } } => ({
+): { seelie: { isProvisional: boolean } } & MapPointPlace<PuzzleKind> => ({
   ...mark,
   seelie: { isProvisional: !hasCourt },
 });

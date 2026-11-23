@@ -22,7 +22,7 @@ export const createReplyQueue = <T extends ReplyPiece>(
   let currentTurnId = "";
   const supersededTurnIds = new Set<string>();
   // The message being read and the index of its next piece; nothing between messages
-  let reading: undefined | { messageId: string; nextIndex: number; turnId: string };
+  let reading: { messageId: string; nextIndex: number; turnId: string } | undefined;
   let hold: ReturnType<typeof setTimeout> | undefined;
   let drain: Promise<void> = Promise.resolve();
   const takeNext = () => {

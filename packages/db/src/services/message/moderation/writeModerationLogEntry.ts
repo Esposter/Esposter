@@ -6,7 +6,7 @@ import { moderationLogsInMessage } from "@esposter/db-schema";
 // Scheduled-delivery function, so every entry is written by this one insert
 export const writeModerationLogEntry = async (
   db: Database,
-  entry: Pick<ModerationLogInMessage, "actorUserId" | "durationMs" | "targetUserId" | "type"> & { roomId: string },
+  entry: { roomId: string } & Pick<ModerationLogInMessage, "actorUserId" | "durationMs" | "targetUserId" | "type">,
 ): Promise<void> => {
   await db.insert(moderationLogsInMessage).values(entry);
 };

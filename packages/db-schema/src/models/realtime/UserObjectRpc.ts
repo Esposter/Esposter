@@ -11,9 +11,10 @@ import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMess
 import type { Except, SetNonNullable } from "type-fest";
 
 // A scheduled message the person's index names: its id is the scheduled message's, and its body is read from its room
-export type ScheduledMessageInUser = Pick<typeof scheduledMessagesInUser.$inferSelect, "roomId" | "runAt"> & {
-  id: string;
-};
+export type ScheduledMessageInUser = { id: string } & Pick<
+  typeof scheduledMessagesInUser.$inferSelect,
+  "roomId" | "runAt"
+>;
 
 // A reminder a person set for themselves, held until its alarm sends it. Its deep link is the room it was set in
 export type ScheduledReminder = typeof remindersInUser.$inferSelect;

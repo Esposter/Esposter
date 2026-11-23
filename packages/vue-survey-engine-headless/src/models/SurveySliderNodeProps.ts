@@ -14,12 +14,12 @@ export interface SurveySliderNodeProps extends SurveyQuestionBaseProps {
 
 // A step of zero would never move the slider, so the step is positive; a range whose min is above its max is left to the runner to show
 export const surveySliderNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     isValueVisible: z.ZodDefault<z.ZodBoolean>;
     max: z.ZodDefault<z.ZodNumber>;
     min: z.ZodDefault<z.ZodNumber>;
     step: z.ZodDefault<z.ZodNumber>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   isValueVisible: z.boolean().default(true),

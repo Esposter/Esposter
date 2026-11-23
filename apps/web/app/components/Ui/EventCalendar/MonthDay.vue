@@ -26,7 +26,7 @@ interface Props {
 // Dropped there moves onto it. A weekend is shaded, as Outlook shades the days outside the work week
 const { events, isCreatable } = defineProps<Props>();
 const emit = defineEmits<
-  Pick<UiCalendarSlotEmits, "dragStart" | "nudge" | "open"> & { create: []; drop: []; select: []; showDay: [] }
+  { create: []; drop: []; select: []; showDay: [] } & Pick<UiCalendarSlotEmits, "dragStart" | "nudge" | "open">
 >();
 // The events the cell draws, held as a computed so a drag over the cell, which re-renders it without moving its events,
 // Does not take the slice again
@@ -39,7 +39,7 @@ const create = () => {
 </script>
 
 <template>
-  <!-- eslint-disable-next-line a11y/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
+  <!-- oxlint-disable-next-line a11y/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
   <div
     class="day"
     :aria-selected="isSelected"

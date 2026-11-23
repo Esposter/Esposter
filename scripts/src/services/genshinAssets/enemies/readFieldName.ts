@@ -8,7 +8,7 @@ import { checkIsPunctuation } from "#src/services/genshinAssets/enemies/checkIsP
 export const readFieldName = (
   tokens: readonly LuaToken[],
   index: number,
-): undefined | { name: string; next: number } => {
+): { name: string; next: number } | undefined => {
   const [first, second, third, fourth] = tokens.slice(index, index + 4);
   if (first?.kind === LuaTokenKind.Name && checkIsPunctuation(second, "="))
     return { name: first.text, next: index + 2 };

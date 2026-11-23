@@ -20,13 +20,13 @@ export interface SurveyRatingNodeProps extends SurveyQuestionBaseProps {
 
 // A scale of one step asks nothing and one past twenty is more than a respondent reads at a glance, so the step count is bounded
 export const surveyRatingNodePropsSchema: z.ZodObject<
-  typeof surveyQuestionBasePropsShape & {
+  {
     maxRateDescription: z.ZodDefault<z.ZodString>;
     minRateDescription: z.ZodDefault<z.ZodString>;
     rateCount: z.ZodDefault<z.ZodInt>;
     rateMin: z.ZodDefault<z.ZodLiteral<0 | 1>>;
     rateType: z.ZodDefault<z.ZodEnum<typeof SurveyRatingType>>;
-  }
+  } & typeof surveyQuestionBasePropsShape
 > = z.object({
   ...surveyQuestionBasePropsShape,
   maxRateDescription: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),

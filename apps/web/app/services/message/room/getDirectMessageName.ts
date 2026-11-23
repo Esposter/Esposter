@@ -6,5 +6,5 @@ import { getResolvedDisplayName } from "#shared/services/room/getResolvedDisplay
 // Header and the invite dialog name a conversation the same way
 export const getDirectMessageName = (
   room: RoomInMessage,
-  participants: (Pick<PublicUser, "name"> & { displayName?: string })[],
+  participants: ({ displayName?: string } & Pick<PublicUser, "name">)[],
 ) => room.name || participants.map(({ displayName, name }) => getResolvedDisplayName(displayName, name)).join(", ");

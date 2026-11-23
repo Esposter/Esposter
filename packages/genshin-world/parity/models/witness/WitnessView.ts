@@ -4,7 +4,7 @@
 // And cloud sea; and how far each family of its parts stands off its laid-out place, in metres in three's axes, for a
 // Family's place to be solved on its edges (every family at its own place unless told)
 export interface WitnessView {
-  camera?: undefined | { fov: number; pitch: number; position: [number, number, number]; yaw: number };
+  camera?: { fov: number; pitch: number; position: [number, number, number]; yaw: number } | undefined;
   families?: string[];
   familyOffsets?: Record<string, [number, number, number]> | undefined;
   // How many times each family's parts are scaled about their own places, each at once

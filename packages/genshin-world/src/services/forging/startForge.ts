@@ -56,7 +56,7 @@ export const startForge = (
     resinParam: ResinParam;
     wallet: Wallet;
   },
-): undefined | { inventory: Inventory; progress: ForgeProgress; wallet: Wallet } => {
+): { inventory: Inventory; progress: ForgeProgress; wallet: Wallet } | undefined => {
   const resinCount = recipe.materials.find(({ id }) => id === ORIGINAL_RESIN_ITEM_ID)?.count ?? 0;
   const spentWallet = spendOriginalResin(wallet, resinCount * count, now, resinParam);
   const bagMaterials = recipe.materials.filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID);

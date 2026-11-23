@@ -5,4 +5,4 @@ import type { JsonSchema } from "@jsonforms/core";
 // Knows nothing of
 export const getSchemaFormLayout = (schema?: JsonSchema) =>
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- JSON Forms' JsonSchema types no key for the layout meta Zod writes beside its keywords, so the compiler cannot read it
-  (schema as undefined | { layout?: SchemaFormLayout })?.layout;
+  (schema as { layout?: SchemaFormLayout } | undefined)?.layout;

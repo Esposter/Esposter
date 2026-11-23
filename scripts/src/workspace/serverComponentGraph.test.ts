@@ -36,7 +36,7 @@ const readPackageSources = (): PackageSource[] =>
         exports = {},
         imports = {},
         name,
-      } = manifest as PackageManifest & { imports?: Record<string, string>; name: string };
+      } = manifest as { imports?: Record<string, string>; name: string } & PackageManifest;
       return { directory: resolve(REPOSITORY_ROOT, workspaceDirectory, directory), exports, imports, name };
     });
 

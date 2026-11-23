@@ -15,7 +15,7 @@ export interface KitStanceRecord {
   normalAttacks?: KitActionRecord[] | undefined;
   // The count the stance holds as it begins, which its dash and jump each drain by `drainPerAction`, and whose spending
   // To none ends the stance, if it holds one
-  resource?: undefined | { drainPerAction: KitParameter; startingCount: KitParameter };
+  resource?: { drainPerAction: KitParameter; startingCount: KitParameter } | undefined;
   skill?: KitActionRecord | undefined;
 }
 

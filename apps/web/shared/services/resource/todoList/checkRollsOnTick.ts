@@ -5,4 +5,4 @@ import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem
 // The agent's tick, so both take the same branch
 export const checkRollsOnTick = <T extends Pick<TodoListItem, "completedAt" | "dueAt" | "recurrence">>(
   item: T,
-): item is T & { dueAt: Date; recurrence: Recurrence } => Boolean(item.recurrence && item.dueAt && !item.completedAt);
+): item is { dueAt: Date; recurrence: Recurrence } & T => Boolean(item.recurrence && item.dueAt && !item.completedAt);

@@ -20,7 +20,7 @@ export const writeResourceActivities = (
     oldName,
     publishVersion,
     resourceIds,
-  }: Except<WriteResourceActivityInput, "resourceId"> & { resourceIds: string[] },
+  }: { resourceIds: string[] } & Except<WriteResourceActivityInput, "resourceId">,
 ) =>
   getResultAsync(async () => {
     if (resourceIds.length === 0) return;

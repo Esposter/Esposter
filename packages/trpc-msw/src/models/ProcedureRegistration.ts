@@ -3,8 +3,8 @@ import type { SubscriptionRegistration } from "#src/models/SubscriptionRegistrat
 import type { TRPCProcedureType } from "@trpc/server";
 
 export type ProcedureRegistration =
-  | SubscriptionRegistration
   | {
       resolver: (options: ProcedureResolverOptions<unknown, unknown>) => unknown;
       type: Exclude<TRPCProcedureType, "subscription">;
-    };
+    }
+  | SubscriptionRegistration;

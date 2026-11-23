@@ -80,7 +80,7 @@ const root = window.document.querySelector("#app");
 const sceneContext = shallowRef<SceneContext>();
 // The window the character packs download in, which the app runs in the opening before the world loads, so the load bench
 // Leaves it out of the world's requests
-let packWindow: undefined | { from: number; to: number };
+let packWindow: { from: number; to: number } | undefined;
 // A world screen draws its characters from the packs the cache holds, so the page fills the cache before the screen
 // Mounts. A download that fails throws, so the page records it and the screen never mounts with no character in it
 if (screen?.directory.startsWith("World/")) {

@@ -26,7 +26,7 @@ export const presignSigV4Url = async (
     method,
     signedAt = new Date(),
     url: urlInput,
-  }: SigV4Request & { expiresInMs: number },
+  }: { expiresInMs: number } & SigV4Request,
 ): Promise<string> => {
   const expiresInSeconds = Math.floor(expiresInMs / 1000);
   // Stated as the range it accepts, so a NaN, which fails every comparison, is refused rather than passed

@@ -13,7 +13,7 @@ export const startProcessing = (
   recipe: ProcessingRecipe,
   count: number,
   { inventory, job, now }: { inventory: Inventory; job?: ProcessingJob | undefined; now: Temporal.Instant },
-): undefined | { inventory: Inventory; job: ProcessingJob } => {
+): { inventory: Inventory; job: ProcessingJob } | undefined => {
   const queuedCount = job?.count ?? 0;
   if (
     !recipe.isDefaultUnlocked ||

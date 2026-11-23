@@ -153,7 +153,7 @@ export const useMutation = () => {
       key,
       onError,
       onSuccess,
-    }: BaseMutationOptions & { onSuccess?: ((result: TResult) => Promisable<void>) | undefined },
+    }: { onSuccess?: ((result: TResult) => Promisable<void>) | undefined } & BaseMutationOptions,
   ): Promise<MutationOutcome<TResult>> => {
     if (isExclusive && keyPendingCountMap.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
 

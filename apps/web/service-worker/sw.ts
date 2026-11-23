@@ -15,7 +15,7 @@ import { navigationDenylist } from "virtual:unplugin-pwa-nuxt/navigation-denylis
 // There is none: a page precached once, with no revision, would point at the files of the build it was cached from for as
 // Long as the worker lives. A route the server answers itself, such as an API route or a file it serves, is not a
 // Page, so the module hands over its routes as the denylist
-declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: PrecacheEntry[] };
+declare let self: { __WB_MANIFEST: PrecacheEntry[] } & ServiceWorkerGlobalScope;
 
 const MAX_CACHED_PAGES = 32;
 const NETWORK_TIMEOUT_SECONDS = 3;

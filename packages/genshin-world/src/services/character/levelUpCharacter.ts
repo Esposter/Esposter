@@ -42,7 +42,7 @@ export const levelUpCharacter = (
     maxLevel: number;
     wallet: Wallet;
   },
-): undefined | { character: Character; inventory: Inventory; wallet: Wallet } => {
+): { character: Character; inventory: Inventory; wallet: Wallet } | undefined => {
   const expNeeded = expToNext[character.level - 1];
   if (character.level >= maxLevel || expNeeded === undefined) return undefined;
   const plan = getExpMaterialPlan(expNeeded, inventory.items, expMaterials);

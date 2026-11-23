@@ -14,7 +14,7 @@ export const substituteGoTableCells = (
   text: string,
   lines: readonly string[],
   counter: number | undefined,
-): undefined | { cites: GcsimTableCite[]; text: string } => {
+): { cites: GcsimTableCite[]; text: string } | undefined => {
   const cites: GcsimTableCite[] = [];
   let isEvaluable = true;
   const substituted = text.replaceAll(

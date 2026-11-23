@@ -128,7 +128,7 @@ export const solveReferenceFog = async (
           weight: binPoints.length,
         })),
       );
-    const refine = (bins: ReturnType<typeof computeBins>): ReturnType<typeof solveFogColors> & { density: number } => {
+    const refine = (bins: ReturnType<typeof computeBins>): { density: number } & ReturnType<typeof solveFogColors> => {
       let [low, high] = [Math.log(DENSITY_RANGE[0]), Math.log(DENSITY_RANGE[1])];
       for (let step = 0; step < GOLDEN_STEPS; step++) {
         const first = high - GOLDEN_SHARE * (high - low);
