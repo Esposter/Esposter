@@ -12,7 +12,7 @@ describe(formatHostedAssetFilesDryRun, () => {
     const next = planHostedAssetFiles(TEST_FILENAME, filesPair);
 
     expect(formatHostedAssetFilesDryRun(TEST_FILENAME, current.lock, next.lock, next.records)).toMatchInlineSnapshot(`
-      "a: dry run, 1 objects would be published, nothing stored
+      "a: dry run, nothing stored, 1 to publish
         object a/a/a.png
         store a/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.png: 0 bytes"
     `);
