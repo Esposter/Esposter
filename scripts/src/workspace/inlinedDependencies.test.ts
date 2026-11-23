@@ -24,10 +24,10 @@ describe("inlinedDependencies", () => {
       const packageVersions = getImporterVersions(lockYaml, `${workspaceDirectory}/${directory}`);
       return Object.entries(manifest.inlinedDependencies ?? {}).flatMap(([dependencyName, recordedVersion]) => {
         const resolvedVersion = packageVersions.get(dependencyName) ?? rootVersions.get(dependencyName);
-        const recorded = [recordedVersion].flat().join(", ");
-        return resolvedVersion === undefined || recorded === resolvedVersion
+        const recorded = [recordedVersion].flat();
+        return resolvedVersion === undefined || recorded.includes(resolvedVersion)
           ? []
-          : [`${manifest.name}: ${dependencyName} records ${recorded}, resolves to ${resolvedVersion}`];
+          : [`${manifest.name}: ${dependencyName} records ${recorded.join(", ")}, resolves to ${resolvedVersion}`];
       });
     });
 
