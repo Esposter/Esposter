@@ -8,6 +8,8 @@ export interface HostedAssetProduct {
   lockPath: string;
   // The lock's path from the repository root, as git names it
   lockRepositoryPath: string;
+  // The name the tools address the product by, on the command line and in the keys a lock renders under
+  name: string;
   scopes: readonly string[];
   source: { folder: string; kind: "files" } | { kind: "records" };
 }

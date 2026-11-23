@@ -2,7 +2,7 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 import type { HostedAssetLock } from "hosted-assets";
 
 import { mergeHostedAssetLock } from "#src/services/hostedAssets/mergeHostedAssetLock";
-import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetLock";
+import { readPublishedHostedAssetLock } from "#src/services/hostedAssets/readPublishedHostedAssetLock";
 import { writeHostedAssetLock } from "#src/services/hostedAssets/writeHostedAssetLock";
 
 // Merges a publication's planned entries onto the lock as it stands now, not as it stood when the publication began: the
@@ -13,7 +13,7 @@ export const commitHostedAssetLock = async (
   scopes: string[],
   plannedLock: HostedAssetLock,
 ): Promise<HostedAssetLock> => {
-  const lock = mergeHostedAssetLock(product, await readHostedAssetLock(product.lockPath), scopes, plannedLock);
+  const lock = mergeHostedAssetLock(product, await readPublishedHostedAssetLock(product.lockPath), scopes, plannedLock);
   await writeHostedAssetLock(lock, product.lockPath);
   return lock;
 };

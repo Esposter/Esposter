@@ -24,6 +24,7 @@ describe(commitHostedAssetLock, () => {
       bucket: StorageBucket.PublicGenshinAssets,
       lockPath,
       lockRepositoryPath: TEST_FILENAME,
+      name: TEST_FILENAME,
       scopes: [GameDataset.BookBody, GameDataset.Login, GameDataset.Profile, GameDataset.Stats],
       source: { kind: "records" },
     };

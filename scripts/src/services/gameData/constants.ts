@@ -17,11 +17,14 @@ export const GAME_DATA_LOCK_PATH: string = join(
 );
 // The lock's path from the repository root, as git names it
 export const GAME_DATA_LOCK_REPOSITORY_PATH = "packages/genshin-world/src/generated/gameDataLock.json";
+// The product name the lock keys render under, which prefixes the keys constants and their types (`GameDataKeys`, `GameDataKey`)
+export const GAME_DATA_PRODUCT_NAME = "GameData";
 // Genshin's game data as one product: its objects in the public genshin bucket, each dataset a scope, named by its lock
 export const GAME_DATA_PRODUCT: HostedAssetProduct = {
   bucket: StorageBucket.PublicGenshinAssets,
   lockPath: GAME_DATA_LOCK_PATH,
   lockRepositoryPath: GAME_DATA_LOCK_REPOSITORY_PATH,
+  name: GAME_DATA_PRODUCT_NAME,
   scopes: Object.values(GameDataset),
   source: { kind: "records" },
 };
@@ -29,8 +32,6 @@ export const GAME_DATA_PRODUCT: HostedAssetProduct = {
 export const GAME_DATA_KEYS_FILE_NAME = "gameDataKeys.ts";
 export const GAME_DATA_KEYS_PATH: string = join(dirname(GAME_DATA_LOCK_PATH), GAME_DATA_KEYS_FILE_NAME);
 // The names of the two nested constants that file exports, which its readers find them by
-// The product name the lock keys render under, which prefixes the keys constants and their types (`GameDataKeys`, `GameDataKey`)
-export const GAME_DATA_PRODUCT_NAME = "GameData";
 export const GAME_DATA_KEYS_NAME = `${GAME_DATA_PRODUCT_NAME}Keys`;
 export const GAME_DATA_INDEX_KEYS_NAME = `${GAME_DATA_PRODUCT_NAME}IndexKeys`;
 // Where a step reads what another step published: the dev environment's public bucket, which holds every object the lock

@@ -44,6 +44,7 @@ describe(publishHostedAssets, () => {
     bucket: StorageBucket.PublicGenshinAssets,
     lockPath: TEST_FILENAME,
     lockRepositoryPath: TEST_FILENAME,
+    name: TEST_FILENAME,
     scopes,
     source: { kind: "records" },
   };
@@ -52,6 +53,7 @@ describe(publishHostedAssets, () => {
     bucket: StorageBucket.PublicHostedAssets,
     lockPath: TEST_FILENAME,
     lockRepositoryPath: TEST_FILENAME,
+    name: TEST_FILENAME,
     scopes: [filesScope],
     source: { folder: TEST_FILENAME, kind: "files" },
   };
@@ -357,6 +359,82 @@ describe(publishHostedAssets, () => {
         scopes,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[AggregateError: offline]`);
+  });
+
+  // A file's object is named by its bytes, so republishing the same bytes is the same object at the same url
+  test("republishing unchanged bytes keeps the url", async () => {
+    expect.hasAssertions();
+
+    const bytes = Buffer.from(TEST_FILENAME);
+    const files = [{ bytes, extension: ".png", key: TEST_FILENAME, sha256: getContentAddress(bytes) }];
+    const bucketClientMap = createBucketClientMap();
+    const currentLock = getPlannedLock(
+      await publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock: emptyLock,
+        otherLocks: [],
+        plan: planHostedAssetFiles(filesScope, files),
+        product: filesProduct,
+        scopes: [filesScope],
+      }),
+    );
+    const rerun = await publishHostedAssets({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock,
+      otherLocks: [],
+      plan: planHostedAssetFiles(filesScope, files),
+      product: filesProduct,
+      scopes: [filesScope],
+    });
+
+    expect(rerun).toStrictEqual({
+      outcome: HostedAssetPublishOutcome.Published,
+      plannedLock: currentLock,
+      storedObjectCount: 1,
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 0 },
+    });
+  });
+
+  // A changed file is a new object, so its lock entry names the new bytes under their own hash
+  test("changed bytes get a new url", async () => {
+    expect.hasAssertions();
+
+    const bucketClientMap = createBucketClientMap();
+    const changed = Buffer.from("");
+    const currentLock = getPlannedLock(
+      await publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock: emptyLock,
+        otherLocks: [],
+        plan: planHostedAssetFiles(filesScope, [
+          {
+            bytes: Buffer.from(TEST_FILENAME),
+            extension: ".png",
+            key: TEST_FILENAME,
+            sha256: getContentAddress(Buffer.from(TEST_FILENAME)),
+          },
+        ]),
+        product: filesProduct,
+        scopes: [filesScope],
+      }),
+    );
+    const result = await publishHostedAssets({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock,
+      otherLocks: [],
+      plan: planHostedAssetFiles(filesScope, [
+        { bytes: changed, extension: ".png", key: TEST_FILENAME, sha256: getContentAddress(changed) },
+      ]),
+      product: filesProduct,
+      scopes: [filesScope],
+    });
+
+    expect(getPlannedLock(result).objects[`${filesScope}/${TEST_FILENAME}`]).toStrictEqual({
+      bytes: changed.byteLength,
+      extension: ".png",
+      scope: filesScope,
+      sha256: getContentAddress(changed),
+    });
   });
 
   // The read back of each written object is what stands between a bucket that stored other bytes and a lock that names them
