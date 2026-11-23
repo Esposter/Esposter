@@ -38,6 +38,8 @@ const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
 describe(usePageBuilderInsert, () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    // A case that never inserts leaves its queued id unread, so the next case would take it for its own resource id
+    vi.mocked<() => string>(v7).mockReset();
   });
 
   test("an insert places the new node after the selected node", () => {

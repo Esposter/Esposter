@@ -48,6 +48,10 @@ export const usePageBuilderFrame = (
     cancelAnimationFrame(pendingFrame);
     pendingFrame = requestAnimationFrame(refreshFramePlacement);
   };
+  // A frame still pending when the scope ends would read a frame the page has left, so the scope takes it with it
+  onScopeDispose(() => {
+    cancelAnimationFrame(pendingFrame);
+  });
   // Captured so a scroll in any container of the app reaches it, not only the window's own
   useEventListener("scroll", scheduleFramePlacement, { capture: true, passive: true });
   // The pane's size moves the frame's scale, and the device toggle changes the frame's own width without changing the pane's

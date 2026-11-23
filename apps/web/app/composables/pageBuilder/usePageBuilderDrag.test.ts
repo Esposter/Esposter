@@ -23,7 +23,7 @@ import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
-import { describe, expect, onTestFinished, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { getBlockNode } from "vue-block-editor-headless";
 
 const createText = (id: string): TextNode => ({
@@ -38,6 +38,14 @@ const pressedWith = (type: string, x: number, y: number, pointerId: number) =>
   new PointerEvent(type, { clientX: x, clientY: y, pointerId });
 
 describe(usePageBuilderDrag, () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   const TEXT_ONE = TEST_ID;
   const TEXT_TWO = TEST_OTHER_ID;
   const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
@@ -351,10 +359,6 @@ describe(usePageBuilderDrag, () => {
   test("a finger that moves before it rests does not start a drag", async () => {
     expect.hasAssertions();
     const { drag } = await setup(ROOT_DOCUMENT);
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
-    onTestFinished(() => {
-      vi.useRealTimers();
-    });
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 600, 30, "touch"), () => createGeometry());
     window.dispatchEvent(pointerAt("pointermove", 700, 30));
@@ -366,10 +370,6 @@ describe(usePageBuilderDrag, () => {
   test("a finger that rests starts its drag, which is drawn where it rests", async () => {
     expect.hasAssertions();
     const { drag } = await setup(ROOT_DOCUMENT);
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
-    onTestFinished(() => {
-      vi.useRealTimers();
-    });
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 600, 30, "touch"), () => createGeometry());
     vi.advanceTimersByTime(TOUCH_DRAG_DELAY_MS);
@@ -383,10 +383,6 @@ describe(usePageBuilderDrag, () => {
   test("a finger that rests and lifts without moving has started a drag, so its control is not clicked", async () => {
     expect.hasAssertions();
     const { drag } = await setup(ROOT_DOCUMENT);
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
-    onTestFinished(() => {
-      vi.useRealTimers();
-    });
     const onClick = vi.fn<(event: MouseEvent) => void>();
     document.body.addEventListener("click", onClick);
     onTestFinished(() => {
