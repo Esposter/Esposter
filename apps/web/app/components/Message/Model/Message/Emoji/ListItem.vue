@@ -19,7 +19,7 @@ const session = authClient.useSession();
 const messageDialogStore = useMessageDialogStore();
 const { reactionsMessageId, reactionsRoomId } = storeToRefs(messageDialogStore);
 const emojiStore = useEmojiStore();
-const { toggleEmoji } = emojiStore;
+const { checkIsEmojiPending, toggleEmoji } = emojiStore;
 const { description } = useEmojiTag(() => emoji.emojiTag);
 const { getContextMenuProps } = useContextMenu();
 const isReacted = computed(() => {
@@ -48,6 +48,7 @@ const contextMenuProps = getContextMenuProps(emoji.emojiTag, () => [
       <UiButton
         :="mergeProps(activatorProps, contextMenuProps)"
         :aria-pressed="isReacted"
+        :is-pending="checkIsEmojiPending({ emojiTag: emoji.emojiTag, messageId: emoji.messageId, roomId })"
         :variant="UiButtonVariant.Field"
         ui-pill
         @click="toggleEmoji(roomId, emoji)"

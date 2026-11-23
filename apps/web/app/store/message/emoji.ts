@@ -45,7 +45,9 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   // A press on a reaction is not sent while the one before it is out, since the room has not yet answered what that one
   // Did. The reaction shows what the room holds until the answer lands, as an awaited write has no entry to show it
-  const { executeMutation } = useMutation();
+  const { checkIsPending, executeMutation } = useMutation();
+  // The reaction a press holds while its write is out, which is the one the reaction's button shows as pending
+  const checkIsEmojiPending = (input: ReactionIdentityInput) => checkIsPending(getEmojiKey(input));
   const awaitEmojiAnswer = async (input: ReactionIdentityInput, write: () => Promise<RoomReaction>) => {
     if (!session.value.data) return;
 
@@ -84,5 +86,5 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       );
   });
 
-  return { createEmoji, deleteEmoji, getEmojis, storeEmoji, toggleEmoji };
+  return { checkIsEmojiPending, createEmoji, deleteEmoji, getEmojis, storeEmoji, toggleEmoji };
 });

@@ -24,7 +24,7 @@ const isValid = ref(true);
 // Shown once, on the dialog that created it, and gone with the dialog
 const createdKey = ref("");
 const nameRules = [UiRules.required(), UiRules.maxLength(API_KEY_NAME_MAX_LENGTH)];
-const { answer } = useDialogAnswer(isOpen);
+const { answer, isPending } = useDialogAnswer(isOpen);
 </script>
 
 <template>
@@ -103,6 +103,7 @@ const { answer } = useDialogAnswer(isOpen);
         <UiButton
           :disabled="!isValid || mcpScopes.length === 0"
           :form="formId"
+          :is-pending
           type="submit"
           :variant="UiButtonVariant.Accent"
         >

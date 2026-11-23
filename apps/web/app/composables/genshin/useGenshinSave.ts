@@ -27,7 +27,7 @@ import { z } from "zod";
 // Is kept as an offset, which the world reads its timers by
 export const useGenshinSave = async () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation } = useMutation();
+  const { checkIsPending, executeMutation } = useMutation();
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const saveToLocalStorage = useSaveToLocalStorage();
@@ -296,6 +296,7 @@ export const useGenshinSave = async () => {
     initialSave,
     isReplaced,
     isSaveLoaded,
+    isStartPending: computed(() => checkIsPending(START_GENSHIN_MUTATION_KEY)),
     isStartRetrying,
     onWorldGrant: persist,
     onWorldSave,

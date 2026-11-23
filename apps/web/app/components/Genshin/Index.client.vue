@@ -54,6 +54,7 @@ const {
   initialSave,
   isReplaced,
   isSaveLoaded,
+  isStartPending,
   isStartRetrying,
   onWorldGrant,
   onWorldSave,
@@ -93,7 +94,9 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
     >
       <p>This game was started in another session, which now holds your save.</p>
       <template #footer>
-        <UiButton :variant="UiButtonVariant.Accent" @click="takeBack()">Take back</UiButton>
+        <UiButton :is-pending="isStartPending" :variant="UiButtonVariant.Accent" @click="takeBack()"
+          >Take back</UiButton
+        >
       </template>
     </UiDialog>
     <!-- A start that could not take the lease is retried with backoff, and the page's retry asks for it at once -->
@@ -105,7 +108,7 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
     >
       <p>Your save could not be loaded. The game waits here and tries again.</p>
       <template #footer>
-        <UiButton :variant="UiButtonVariant.Accent" @click="retryStart()">Retry</UiButton>
+        <UiButton :is-pending="isStartPending" :variant="UiButtonVariant.Accent" @click="retryStart()">Retry</UiButton>
       </template>
     </UiDialog>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
