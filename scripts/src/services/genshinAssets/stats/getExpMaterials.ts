@@ -10,7 +10,3 @@ export const getExpMaterials = (materialRows: ExcelMaterialRow[], useOp: string)
     const expUse = itemUse.find((use) => use.useOp === useOp);
     return expUse ? [expMaterialSchema.parse({ experience: Number(takeOne(expUse.useParam, 0)), id })] : [];
   });
-
-// Largest EXP first, the order a level is raised with its materials in
-export const compareExperienceDescending = (first: ExpMaterial, second: ExpMaterial): number =>
-  second.experience - first.experience;

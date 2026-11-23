@@ -9,6 +9,7 @@ import type { GameDataPublication } from "#src/models/shared/GameDataPublication
 
 import { RELIQUARY_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
+import { compareExperienceDescending } from "#src/services/genshinAssets/stats/compareExperienceDescending";
 import {
   ARTIFACT_EXP_ITEM_USE,
   AVATAR_LEVEL_TABLE_NAME,
@@ -23,7 +24,7 @@ import { getCharacterConstellationKits } from "#src/services/genshinAssets/stats
 import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacterDatas";
 import { getCharacterSkillKits } from "#src/services/genshinAssets/stats/getCharacterSkillKits";
 import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCharacterTalentKits";
-import { compareExperienceDescending, getExpMaterials } from "#src/services/genshinAssets/stats/getExpMaterials";
+import { getExpMaterials } from "#src/services/genshinAssets/stats/getExpMaterials";
 import { getItemCategoryRoomMap } from "#src/services/genshinAssets/stats/getItemCategoryRoomMap";
 import { getMasterlessLevelLifts } from "#src/services/genshinAssets/stats/getMasterlessLevelLifts";
 import { getResinParam } from "#src/services/genshinAssets/stats/getResinParam";
