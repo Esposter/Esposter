@@ -1,6 +1,7 @@
 import type { HostedAssetPlan } from "#src/models/hostedAssets/HostedAssetPlan";
 import type { HostedAssetSourceFile } from "#src/models/hostedAssets/HostedAssetSourceFile";
 
+import { getHostedAssetLockKey } from "#src/services/hostedAssets/getHostedAssetLockKey";
 import { toHostedAssetLockObject } from "#src/services/hostedAssets/toHostedAssetLockObject";
 import { getHostedAssetPath } from "hosted-assets";
 
@@ -10,7 +11,7 @@ import { getHostedAssetPath } from "hosted-assets";
 export const planHostedAssetFiles = (scope: string, files: HostedAssetSourceFile[]): HostedAssetPlan => {
   const entries = files.map(
     ({ bytes, extension, key, sha256 }) =>
-      [`${scope}/${key}`, { bytes, extension, isIndex: false, scope, sha256 }] as const,
+      [getHostedAssetLockKey(scope, key), { bytes, extension, isIndex: false, scope, sha256 }] as const,
   );
   return {
     lock: {

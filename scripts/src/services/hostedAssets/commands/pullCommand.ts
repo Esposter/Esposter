@@ -1,6 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
+import { getHostedAssetFileKey } from "#src/services/hostedAssets/getHostedAssetFileKey";
 import { pullHostedAssetFiles } from "#src/services/hostedAssets/pullHostedAssetFiles";
 import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetLock";
 import { readHostedAssetProduct } from "#src/services/hostedAssets/readHostedAssetProduct";
@@ -31,7 +32,9 @@ export const pullCommand: SubCommandsDef[string] = defineCommand({
     if (!args.all && args.key === undefined)
       throw new InvalidOperationError(Operation.Read, product.name, "needs a file key or --all");
     // The keys are the lock's keys under the product's scope, which a file's key under its folder is the rest of
-    const keys = args.all ? Object.keys(lock.objects).map((key) => key.slice(scope.length + 1)) : [args.key ?? ""];
+    const keys = args.all
+      ? Object.keys(lock.objects).map((lockKey) => getHostedAssetFileKey(scope, lockKey))
+      : [args.key ?? ""];
     const count = await pullHostedAssetFiles(
       () => createHostedAssetBucketClientMap(product.bucket)[CloudflareEnvironment.Development],
       product,

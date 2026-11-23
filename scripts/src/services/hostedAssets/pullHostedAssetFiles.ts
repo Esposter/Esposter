@@ -4,6 +4,7 @@ import type { HostedAssetLock } from "hosted-assets";
 
 import { MAX_CONCURRENT_OBJECT_BODIES } from "#src/services/hostedAssets/constants";
 import { getHostedAssetFilesFolder } from "#src/services/hostedAssets/getHostedAssetFilesFolder";
+import { getHostedAssetLockKey } from "#src/services/hostedAssets/getHostedAssetLockKey";
 import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 import { InvalidOperationError, Operation, settleAll, takeOne } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -25,7 +26,7 @@ export const pullHostedAssetFiles = async (
   const scope = takeOne(product.scopes);
   await settleAll(
     keys.map((key) => async () => {
-      const object = lock.objects[`${scope}/${key}`];
+      const object = lock.objects[getHostedAssetLockKey(scope, key)];
       if (object === undefined) throw new InvalidOperationError(Operation.Read, key, "is not a key of the lock");
       const path = join(repositoryRoot, folder, key);
       const bytes = await readHostedAssetBytes(bucketClient, object);
