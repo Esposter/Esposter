@@ -1,14 +1,13 @@
 import type { HostedAssetName } from "hosted-assets";
 
-import { fetchResponse } from "#src/services/shared/fetchResponse";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { readFileResponse } from "@esposter/shared";
 import {
   assertContentAddress,
   getContentAddress,
   HOSTED_ASSETS_MIRROR_DIRECTORY,
   readContentAddressedObject,
 } from "@esposter/shared-node/cache";
-import { getHostedAssetUrl } from "hosted-assets";
+import { getHostedAssetUrl, HOSTED_ASSETS_FETCH_TIMEOUT_MS } from "hosted-assets";
 
 // One hosted object's bytes through the machine-wide content cache, fetched from its origin on a miss. A cached object is
 // Checked as well, since the cache serves a hit without hashing it: a file that is not its name's bytes fails here rather
@@ -22,8 +21,8 @@ export const readMirroredHostedAsset = async (
   const bytes = await readContentAddressedObject(
     name.sha256,
     async () => {
-      const response = await fetchResponse(url);
-      if (!response.ok) throw new InvalidOperationError(Operation.Read, url, `responds ${response.status}`);
+      // Bounded as the store's downloads are, so one stalled object cannot hold a fill's slot for good
+      const response = await readFileResponse(url, HOSTED_ASSETS_FETCH_TIMEOUT_MS);
       return new Uint8Array(await response.arrayBuffer());
     },
     mirrorDirectory,
