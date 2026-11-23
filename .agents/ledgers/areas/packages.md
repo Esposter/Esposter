@@ -87,6 +87,7 @@
 - `packages/configuration/src/services` — `checkExcluded.ts`, `checkHasExport.ts`, `checkIsBenchmarkSmokeRun.ts`, `constants.test.ts`, `constants.ts`, `dropModulePathCommentsPlugin.ts`, `dynamicJsonImportPlugin.ts`, `fixtureConstants.test.ts`, `generateComponentBarrel.ts`, `generateExports.test.ts`, `generateExports.ts`, `generateSourceBarrel.ts`, `getBenchmarkReporters.test.ts`, `getBenchmarkReporters.ts`, `getBenchmarkTestConfiguration.ts`, `getComponentName.test.ts`, `getComponentName.ts`, `getPackagePatterns.ts`, `getSourceSpecifiers.ts`, `getSubpathExclusions.test.ts`, `getSubpathExclusions.ts`, `getTsdownConfiguration.test.ts`, `getTsdownConfiguration.ts`, `getTsdownConfigurationNode.ts`, `getTsdownConfigurationNuxtModule.ts`, `getTsdownConfigurationVue.ts`, `getVitestBrowserConfiguration.test.ts`, `getVitestBrowserConfiguration.ts`, `getVitestConfiguration.test.ts`, `getVitestConfiguration.ts`, `getVitestProjectName.ts`, `getVuePlugins.ts`, `getVueTestConfiguration.ts`, `mapGlobalStorePath.ts`, `mergeStylesheets.test.ts`, `mergeStylesheets.ts`, `mergeStylesheetsPlugin.ts`, `parseWorkspacePackageGlobs.test.ts`, `parseWorkspacePackageGlobs.ts`
 - `packages/configuration/src/services` — `autoImportDeclarationsPlugin.ts`, `DurationSequencer.test.ts`, `DurationSequencer.ts`, `generateBarrels.ts`, `readExportsGeneration.ts`
 - `packages/configuration/src/services` — `readApprovedImageNames.ts`, `readPackageManifest.test.ts`, `readPackageManifest.ts`, `removeDynamicJsonImportAttributes.test.ts`, `removeDynamicJsonImportAttributes.ts`, `toPascalCase.ts`, `writeBarrel.ts`
+- `packages/configuration/src/services` — `mapWorkspaceSiblingPath.test.ts`, `mapWorkspaceSiblingPath.ts`
 - `packages/configuration/types`, `packages/configuration/vitest`
 - `packages/configuration` — `CHANGELOG.md`, `README.md`, `package.json`, `tsconfig.base.json`, `tsconfig.browser.json`, `tsconfig.build.base.json`, `tsconfig.json`, `tsconfig.library.json`, `tsconfig.node.json`, `tsconfig.nuxt-module.json`, `tsconfig.vue.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/grid-engine-headless/src/internal/models`, `packages/grid-engine-headless/src/internal/services`
@@ -324,8 +325,10 @@
 - `apps/infra/src/cloudflare/resources` — `botManagements`, `d1Databases`, `dnsRecords`, `queueConsumers`
 - `apps/infra/src/cloudflare/resources` — `queues`, `r2BucketCors`
 - `apps/infra/src/cloudflare/resources` — `r2BucketEventNotifications`, `r2BucketLifecycles`, `r2Buckets`, `rulesets`, `workersCustomDomains`, `zoneDnssecs`, `zones`
+- `apps/infra/src/cloudflare/resources` — `r2CustomDomains`
 - `apps/infra/src/cloudflare/services` — `getR2BucketCorsRules.ts`
 - `apps/infra/src/cloudflare/services` — `createD1Database.ts`, `createDeadLetterQueueConsumer.ts`, `createQueueConsumer.ts`, `createR2Bucket.ts`, `queueJobResources.ts`
+- `apps/infra/src/cloudflare/services` — `getPublicR2BucketCorsRules.ts`
 - `apps/jobs/src/services/tombstone` — `purgeExpiredTombstones.test.ts`, `purgeExpiredTombstones.ts`
 - `packages/db-schema/scripts` — `generateRegistry.ts`, `rewriteObjectMigrations.ts`
 - `packages/db-schema/src/generated` — `relations.ts`, `schema.ts`
