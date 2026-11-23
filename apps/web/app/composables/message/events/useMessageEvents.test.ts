@@ -26,7 +26,6 @@ describe(useMessageEvents, () => {
     const roomId = v7();
     const otherRoomId = v7();
     const messageId = 1;
-    const message = "message";
     const scope = effectScope();
     scope.run(() => {
       useMessageEvents();
@@ -42,7 +41,7 @@ describe(useMessageEvents, () => {
     );
     const [, onFrame] = getLastOpenRealtimeSocketCall();
 
-    onFrame?.(JSON.stringify({ data: [createRoomMessage({ id: messageId, message })], type: "createMessage" }));
+    onFrame?.(JSON.stringify({ data: [createRoomMessage({ id: messageId })], type: "createMessage" }));
     await flushPromises();
 
     expect(getSlice(roomId).items.value).toHaveLength(0);
@@ -71,15 +70,13 @@ describe(useMessageEvents, () => {
       () => undefined,
     );
     const [, onFrame] = getLastOpenRealtimeSocketCall();
-    onFrame?.(
-      JSON.stringify({ data: [createRoomMessage({ id: messageId, message: "message" })], type: "createMessage" }),
-    );
+    onFrame?.(JSON.stringify({ data: [createRoomMessage({ id: messageId })], type: "createMessage" }));
     await flushPromises();
 
     expect(getSlice(roomId).items.value.map(({ id }) => id)).toStrictEqual([messageId]);
     onFrame?.(
       JSON.stringify({
-        data: { ...createRoomMessage({ id: messageId, message: "message" }), deletedAt: new Date(0) },
+        data: { ...createRoomMessage({ id: messageId }), deletedAt: new Date(0) },
         type: "deleteMessage",
       }),
     );
@@ -114,10 +111,7 @@ describe(useMessageEvents, () => {
     );
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     onFrame?.(
-      JSON.stringify({
-        data: [{ ...createRoomMessage({ id: messageId, message: "message" }), userId: v7() }],
-        type: "createMessage",
-      }),
+      JSON.stringify({ data: [{ ...createRoomMessage({ id: messageId }), userId: v7() }], type: "createMessage" }),
     );
     await waitForSynchronizedFunctions();
 

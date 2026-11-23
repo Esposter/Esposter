@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
 import { useTypingEvents } from "#src/composables/message/events/useTypingEvents";
+import { TYPING_WINDOW_MS } from "#src/services/message/constants";
 import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { useDataStore } from "#src/store/message/data";
 import { useConnectionStore } from "#src/store/realtime/connection";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -24,7 +26,7 @@ describe(useTypingEvents, () => {
     vi.useFakeTimers();
     const roomId = v7();
     const userId = v7();
-    Object.assign(useRouter().currentRoute.value.params, { id: roomId });
+    setRouteId(roomId);
     const scope = effectScope();
     scope.run(() => {
       useTypingEvents();
@@ -37,13 +39,13 @@ describe(useTypingEvents, () => {
       () => undefined,
     );
     const [, onFrame] = getLastOpenRealtimeSocketCall();
-    onFrame?.(JSON.stringify({ data: { roomId, userId, username: "username" }, type: "createTyping" }));
+    onFrame?.(JSON.stringify({ data: { roomId, userId, username: "a" }, type: "createTyping" }));
     await flushPromises();
     const dataStore = useDataStore();
     const { typings } = storeToRefs(dataStore);
     expect(typings.value.map((typing) => typing.userId)).toStrictEqual([userId]);
     scope.stop();
-    vi.advanceTimersByTime(Temporal.Duration.from({ seconds: 3 }).total("milliseconds"));
+    vi.advanceTimersByTime(TYPING_WINDOW_MS);
 
     expect(typings.value.map((typing) => typing.userId)).toStrictEqual([userId]);
   });

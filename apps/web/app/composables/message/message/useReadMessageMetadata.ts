@@ -1,6 +1,8 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { getDistinctIds } from "#src/services/message/getDistinctIds";
+
 // Everything a rendered message reads besides itself — its author, the message it replies to, its attachments'
 // Urls and its reactions — for a room's page read and a thread's read alike
 export const useReadMessageMetadata = () => {
@@ -27,7 +29,7 @@ export const useReadMessageMetadata = () => {
     };
     await Promise.all([
       readMessageCreators(roomId, messages),
-      readReplies(roomId, [...new Set(messages.flatMap(({ replyToId }) => (replyToId ? [replyToId] : [])))]),
+      readReplies(roomId, getDistinctIds(messages.map(({ replyToId }) => replyToId))),
       readFiles(
         roomId,
         messages.flatMap(({ files }) => files),

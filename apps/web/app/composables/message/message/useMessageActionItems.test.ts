@@ -41,14 +41,14 @@ describe(useMessageActionItems, () => {
   const { trpcMsw } = setupMswTrpc();
   setupSession(getMockSession().user.id);
   const roomId = v7();
-  const message = "message";
+  const markUnreadTitle = "Mark Unread From Here";
   const epoch = new Date(0);
   const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
   const dayAfter = new Date(Temporal.Duration.from({ days: 2 }).total("milliseconds"));
   const userToRoom = createUserToRoom({ roomId, userId: getMockSession().user.id });
   const createMessage = (createdAt: Date) => {
     const messageEntity = createOptimisticMessage(
-      { message, roomId, type: MessageType.Message },
+      { message: "", roomId, type: MessageType.Message },
       getMockSession().user.id,
     );
     messageEntity.createdAt = createdAt;
@@ -101,8 +101,8 @@ describe(useMessageActionItems, () => {
     const userToRoomStore = useUserToRoomStore();
     const { arriveUserToRooms, getMyUserToRoom } = userToRoomStore;
     arriveUserToRooms([userToRoom]);
-    const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
-    const rejectedItem = await mountActionItem(createMessage(dayAfter), "Mark Unread From Here");
+    const item = await mountActionItem(createMessage(nextDay), markUnreadTitle);
+    const rejectedItem = await mountActionItem(createMessage(dayAfter), markUnreadTitle);
     item.onClick?.(new MouseEvent("click"));
     rejectedItem.onClick?.(new MouseEvent("click"));
     await flushPromises();
@@ -127,7 +127,7 @@ describe(useMessageActionItems, () => {
       return userToRoom;
     });
     updateUserToRoom({ displayName: "queued", roomId });
-    const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
+    const item = await mountActionItem(createMessage(nextDay), markUnreadTitle);
     item.onClick?.(new MouseEvent("click"));
     await flushPromises();
 

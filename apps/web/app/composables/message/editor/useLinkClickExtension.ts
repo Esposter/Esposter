@@ -1,5 +1,6 @@
 import type { CSSProperties } from "vue";
 
+import { LINK_MODIFIER_KEYS } from "#src/services/message/constants";
 import { Plugin } from "@tiptap/pm/state";
 import { Extension } from "@tiptap/vue-3";
 
@@ -30,11 +31,11 @@ export const useLinkClickExtension = (cursorStyle: Ref<CSSProperties["cursor"]>)
                 return false;
               },
               keydown: (_view, event) => {
-                if (event.key === "Control" || event.key === "Meta") options.cursorStyle.value = "pointer";
+                if (LINK_MODIFIER_KEYS.includes(event.key)) options.cursorStyle.value = "pointer";
                 return false;
               },
               keyup: (_view, event) => {
-                if (event.key === "Control" || event.key === "Meta") options.cursorStyle.value = "text";
+                if (LINK_MODIFIER_KEYS.includes(event.key)) options.cursorStyle.value = "text";
                 return false;
               },
             },

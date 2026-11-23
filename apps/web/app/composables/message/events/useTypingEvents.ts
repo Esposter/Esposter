@@ -1,3 +1,4 @@
+import { TYPING_WINDOW_MS } from "#src/services/message/constants";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useConnectionStore } from "#src/store/realtime/connection";
@@ -32,13 +33,10 @@ export const useTypingEvents = () => {
 
       clearTypingTimeout(typing.userId);
 
-      const timeoutId = window.setTimeout(
-        () => {
-          typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
-          clearTypingTimeout(typing.userId);
-        },
-        Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
-      );
+      const timeoutId = window.setTimeout(() => {
+        typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
+        clearTypingTimeout(typing.userId);
+      }, TYPING_WINDOW_MS);
 
       typingTimeoutIdMap.set(typing.userId, timeoutId);
       if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);

@@ -23,7 +23,7 @@ vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: 
 // Thumbnail generation downscales through a canvas the test env has no renderer for, and every case here
 // Drives the upload outcome directly — so resolve it to a fixed blob rather than standing up a DOM.
 vi.mock(import("#src/services/file/generateImageThumbnail"), () => ({
-  generateImageThumbnail: () => Promise.resolve(new Blob(["thumbnail"])),
+  generateImageThumbnail: () => Promise.resolve(new Blob()),
 }));
 
 // Taken off the router rather than re-declared, so a change to the procedure's input fails here.
