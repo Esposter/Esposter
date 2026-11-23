@@ -21,7 +21,8 @@ const objectAttributeKindMap = {
   y: AttributeKind.RequiredNumber,
 } as const;
 
-// A rectangle until a shape child says otherwise. A gid's flip bits are read off it, and its id is the tile without them
+// A rectangle until a shape child says otherwise. A gid's flip bits are read off it, and its id is the tile without
+// Them
 export const createObject = (attributes: TMXAttributes): TMXObjectParsed => {
   const { gid, ...object } = readTmxAttributes(attributes, objectAttributeKindMap);
   const shaped: TMXObjectParsed = { ...object, shape: Shape.Rectangle };

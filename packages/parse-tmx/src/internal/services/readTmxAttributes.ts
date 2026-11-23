@@ -26,7 +26,8 @@ export const readTmxAttributes = <Table extends Record<string, AttributeKind>>(
     const isNumber = kind === AttributeKind.Number || kind === AttributeKind.RequiredNumber;
     const isRequired = kind === AttributeKind.RequiredNumber || kind === AttributeKind.RequiredString;
     const text = attributes[name];
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a TMX attribute as the file holds it, empty when absent
+    // A TMX
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- attribute as the file holds it, empty when absent
     if (text === undefined || (isNumber && text === "")) {
       if (isRequired) values[name] = isNumber ? 0 : "";
     } else if (isNumber) {
@@ -37,6 +38,7 @@ export const readTmxAttributes = <Table extends Record<string, AttributeKind>>(
     } else values[name] = text;
   }
   // The table names every required key, which the loop above always writes, so the record is the model's shape
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the keys come from the table at runtime, so the record is asserted to the model the table types; the loop above writes every required key
+  // The keys come from the table at runtime, so the record is asserted to the model the table
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- types; the loop above writes every required key
   return values as TMXAttributeValues<Table>;
 };

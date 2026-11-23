@@ -43,7 +43,8 @@ export const openTmxMapChild = (
     case TMXTagName.Properties:
       return openTmxProperties(map);
     case TMXTagName.Tileset: {
-      // A tileset that names a file is kept as the reference it is, and its file is not opened. Its children are not read.
+      // A tileset that names a file is kept as the reference it is, and its file is not opened. Its children are not
+      // Read.
       if (attributes.source !== undefined) {
         map.tilesets.push(readTmxAttributes(attributes, externalTilesetAttributeKindMap));
         return undefined;
