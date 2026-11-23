@@ -33,14 +33,14 @@ The binaries are different. They leave git after the first publish verifies them
 
 These key decisions touch a save:
 
-- **Carried:** the species key stays `MonsterKey` and its portrait is `getMonsterFileKey(key)`, the guarded read of `MonsterKeyFileKeyMap` that throws for a species the map lacks, so no saved monster is renamed and the battle label stays readable. The saved `asset` field is dropped from the plain `monsterSchema`, which parses old saves because zod strips unknown keys.
-- **Carried:** the capture ball's texture is `CaptureItemFileKeyMap` by item id, not an optional `Item.fileKey`, so a saved inventory without the field still captures.
-- **Carried:** `Attack.soundEffectKey` becomes `fileKey`, and every image, sound and font key collapses into `FileKey`.
-- **Carried:** the world's foreground is `TilemapForegroundFileKeyMap`, read by `PixelArtTextureKeys`.
-- **Carried:** `Asset` narrows to `SpritesheetKey` and moves to `app/models`.
-- **Not carried:** `MonsterFileKey` (`6875546bce`), which made the species key itself a `FileKey`. It renamed every saved monster, made `prettify` read "U I Monsters Iguanignite" in battle, and needed a type workaround for TS2589.
-- **Not carried:** the pack, its `setBaseURL` and the clearing of the base url on completion. The Phaser verdict below makes them unnecessary.
-- **Not carried:** the bundled spritesheets, tilesets and tilemaps the branch left in the bundle. The owner's scope covers every file Phaser loads.
+- **Kept:** the species key stays `MonsterKey` and its portrait is `getMonsterFileKey(key)`, the guarded read of `MonsterKeyFileKeyMap` that throws for a species the map lacks, so no saved monster is renamed and the battle label stays readable. The saved `asset` field is dropped from the plain `monsterSchema`, which parses old saves because zod strips unknown keys.
+- **Kept:** the capture ball's texture is `CaptureItemFileKeyMap` by item id, not an optional `Item.fileKey`, so a saved inventory without the field still captures.
+- **Kept:** `Attack.soundEffectKey` becomes `fileKey`, and every image, sound and font key collapses into `FileKey`.
+- **Kept:** the world's foreground is `TilemapForegroundFileKeyMap`, read by `PixelArtTextureKeys`.
+- **Kept:** `Asset` narrows to `SpritesheetKey` and moves to `app/models`.
+- **Dropped:** `MonsterFileKey` (`6875546bce`), which made the species key itself a `FileKey`. It renamed every saved monster, made `prettify` read "U I Monsters Iguanignite" in battle, and needed a type workaround for TS2589.
+- **Dropped:** the pack, its `setBaseURL` and the clearing of the base url on completion. The Phaser verdict below makes them unnecessary.
+- **Dropped:** the bundled spritesheets, tilesets and tilemaps the branch left in the bundle. The owner's scope covers every file Phaser loads.
 
 The stored data needs no backfill: no saved value changes shape. A saved value that names a species or an item id still resolves its texture through the map.
 
