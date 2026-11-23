@@ -123,3 +123,24 @@ The fix (`packages/unplugin-pwa-nuxt`, the build test asserts it) leaves the app
 The offline reload still raises the two exceptions in both runs, and the stacks of the after run place them in the engine's loader, which fetches `_nuxt/engine/*.gltf` and `.jpeg` by url, files the precache leaves out on purpose. They are not manifest reads. The requests the reload reports as aborted are the online reads' own, which the navigation tore down.
 
 **Not yet on the deployed dev site.** The Deploy of `ai/queue` is skipped: CI on the current head (`2251a4a81f`) is red in `scripts/src/workspace/oxlintPlugins.test.ts` (the `comments/no-over-width-comment` rule is not enabled), which is not this change. The same driven run against `https://dev.esposter.com` (`HOSTED=https://hosted.dev.esposter.com`) is the check once a Deploy carries this change.
+
+## 6.8: the local production run, after the terrain-worker, embedder-policy and TSL fixes
+
+The build is `CLOUDFLARE_ENV=dev pnpm -C apps/web build` at `ddeb84b392` (exit 0, 1m 06s), served by `wrangler dev --config .output/server/wrangler.json --port 8799` with `nodejs_compat` and `nodejs_compat_populate_process_env`. The eleven secret names are bound to placeholder values as `--var` arguments, and no secret is read. The `.env` file is not passed: under `--env-file` the environment validator in `apps/web/server/plugins/environment.ts` saw each secret as undefined, and every page answered 500. So `pnpm start` as written does not serve this build, and the preview's own configuration is the open point.
+
+Headers, `curl -sI --max-time 30`:
+
+- `/_nuxt/timer.worker-mMntE4pv.js`: `200`, `cross-origin-embedder-policy: credentialless`, `referrer-policy: no-referrer`.
+- `/_nuxt/x.js` (missing): `404`, `cache-control: no-store`, `cross-origin-embedder-policy: credentialless`, `referrer-policy: no-referrer`.
+
+A driven run of `/genshin` (the machine's Chrome, no `page.route` workaround):
+
+- `timer.worker` loads twice, `200`, `credentialless`; `terrainTileWorker` loads `200`, `credentialless`; no terrain-worker failure, no request failure, no page error.
+- `hosted.dev.esposter.com` answers all 733 requests `200` from the local origin, so the hosted origin's CORS needed no workaround.
+- Console: two errors, so the zero-error criterion is not met. The first is a `404` for `/data/genshin/exports/index.json`, and the second is the app's `InvalidOperationError` that logs it. One warning: the loading screen has waited 20 seconds on character packs.
+- The bar is drawn at 20 s at 0 and reaches 100 at 84 s. The title's `CLICK TO BEGIN` returns at 88 s, so the bar completes before the login scene.
+- After the login scene, a second bar reads 67 from 90 s to the end of the run at 100 s.
+
+The `404` is `GENSHIN_SCENE_EXPORT_BASE_URL` (`apps/web/shared/services/genshin/constants.ts`), a scene export the `serveGenshinExtractions` module serves under `nuxt dev` alone. The production build still requests it: `Index.client.vue` and `World.vue` pass an empty base outside development, and the request is made anyway. The reader that falls back to the path was not traced, and nothing here is changed for it.
+
+6.8 stays unticked. Its Verify holds on both clauses, the lock's total in the section above and the bar completing before the login scene in this run, but the opening logs the two console errors from that `404`, so the zero-console-error criterion for this run is not met.
