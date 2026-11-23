@@ -34,7 +34,6 @@ export const createSlider = (
   const onDrag = (_pointer: PhaserInput.Pointer, dragX: number, dragY: number) => {
     // A segment with no length has no direction to project a drag onto, so a drag leaves the value where it is
     if (segmentLengthSquared === 0) return;
-    // A segment with no length has no direction to project a drag onto, so a drag leaves the value where it is
     if (setValue(((dragX - start.x) * segmentX + (dragY - start.y) * segmentY) / segmentLengthSquared))
       onValueChange(currentValue);
   };
