@@ -6,7 +6,10 @@ import {
   HOSTED_ASSET_CACHE_CONTROL,
   HOSTED_ASSET_REUSE_WINDOW_MS,
   MAX_CONCURRENT_OBJECT_BODIES,
+  MAX_CONCURRENT_VERIFY_FETCHES,
 } from "#src/services/hostedAssets/constants";
+import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
+import { toHostedAssetLockObject } from "#src/services/hostedAssets/toHostedAssetLockObject";
 import { toHostedAssetPaths } from "#src/services/hostedAssets/toHostedAssetPaths";
 import { settleAll } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
@@ -51,6 +54,16 @@ export const publishHostedAssetsToBucket = async (
   const indexResults = await settleAll(
     indexWrites.map((write) => () => writeRecord(write)),
     MAX_CONCURRENT_OBJECT_BODIES,
+  );
+  // Each object asked for is read back from the bucket and checked against its name, so a bucket that stored other bytes
+  // Fails the publish before the lock that names them is committed
+  await settleAll(
+    writes.map(
+      ({ record }) =>
+        () =>
+          readHostedAssetBytes(bucketClient, toHostedAssetLockObject(record)),
+    ),
+    MAX_CONCURRENT_VERIFY_FETCHES,
   );
   return [...leafResults, ...indexResults].filter(Boolean).length;
 };

@@ -18,6 +18,19 @@ describe(readHostedAssetBytes, () => {
     expect(getContentAddress(await readHostedAssetBytes(bucketClient, object))).toBe(object.sha256);
   });
 
+  test("an object of another length than its lock records is refused on read back", async () => {
+    expect.hasAssertions();
+
+    const bucketClient = createMemoryR2BucketClient();
+    await bucketClient.put(getHostedAssetPath(object), bytes);
+
+    await expect(
+      readHostedAssetBytes(bucketClient, { ...object, bytes: bytes.byteLength + 1 }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: a/ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb.png, is 1 bytes, not the 2 its lock records]`,
+    );
+  });
+
   test("a mismatched object is refused on read back", async () => {
     expect.hasAssertions();
 

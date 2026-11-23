@@ -342,6 +342,32 @@ describe(publishHostedAssets, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[AggregateError: offline]`);
   });
 
+  // The read back of each written object is what stands between a bucket that stored other bytes and a lock that names them
+  test("a mismatched object stops the commit", async () => {
+    expect.hasAssertions();
+
+    const bucketClientMap = createBucketClientMap();
+    const productionBucket = bucketClientMap[CloudflareEnvironment.Production];
+    const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
+    const storedGet = productionBucket.get;
+    vi.spyOn(productionBucket, "get").mockImplementation((key) =>
+      key === alteredPath ? Promise.resolve(Buffer.from("altered")) : storedGet(key),
+    );
+
+    await expect(
+      publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock: emptyLock,
+        otherLocks: [],
+        product,
+        publication,
+        scopes,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: stats/weapons/49a64717d5d4cb19952e6eac2946415cf6879adacf9908e7d872332d32c6e684.json, does not hash to its name]`,
+    );
+  });
+
   test("rejects a scope another product's lock already declares", async () => {
     expect.hasAssertions();
 

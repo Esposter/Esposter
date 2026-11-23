@@ -1,8 +1,8 @@
 import type { HostedAssetName } from "hosted-assets";
 
+import { assertHostedAssetBytes } from "#src/services/hostedAssets/assertHostedAssetBytes";
 import { FETCH_TIMEOUT_MS } from "#src/services/shared/constants";
-import { InvalidOperationError, Operation, readFileResponse } from "@esposter/shared";
-import { assertContentAddress, getContentAddress } from "@esposter/shared-node/cache";
+import { readFileResponse } from "@esposter/shared";
 import { getHostedAssetUrl } from "hosted-assets";
 
 // Fetches one object anonymously from an origin and checks that the bytes it serves hash to the sha256 its name gives it.
@@ -16,12 +16,6 @@ export const verifyHostedAssetObject = async (
 ): Promise<Buffer> => {
   const url = getHostedAssetUrl(baseUrl, name);
   const bytes = Buffer.from(await (await readFileResponse(url, FETCH_TIMEOUT_MS)).arrayBuffer());
-  assertContentAddress(url, name.sha256, getContentAddress(bytes));
-  if (lockedBytes !== undefined && bytes.byteLength !== lockedBytes)
-    throw new InvalidOperationError(
-      Operation.Read,
-      url,
-      `is ${bytes.byteLength} bytes, not the ${lockedBytes} its lock records`,
-    );
+  assertHostedAssetBytes(url, name, bytes, lockedBytes);
   return bytes;
 };
