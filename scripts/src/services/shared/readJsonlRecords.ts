@@ -1,8 +1,8 @@
 import type { JsonlRecord } from "#src/models/shared/JsonlRecord";
 import type { z } from "zod";
 
-import { compareCodeUnits } from "#src/services/shared/compareCodeUnits";
 import { readJsonlRecord } from "#src/services/shared/readJsonlRecord";
+import { compareText } from "@esposter/shared";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -11,7 +11,7 @@ import { join } from "node:path";
 export const readJsonlRecords = <T>(directory: string, suffix: string, schema: z.ZodType<T>): JsonlRecord<T>[] =>
   readdirSync(directory)
     .filter((name) => name.endsWith(suffix))
-    .toSorted(compareCodeUnits)
+    .toSorted(compareText)
     .flatMap((name) =>
       readFileSync(join(directory, name), "utf8")
         .split("\n")

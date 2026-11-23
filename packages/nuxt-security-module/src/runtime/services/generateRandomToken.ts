@@ -4,8 +4,5 @@
 export const generateRandomToken = (byteLength: number): string => {
   const bytes = new Uint8Array(byteLength);
   globalThis.crypto.getRandomValues(bytes);
-  return btoa(String.fromCodePoint(...bytes))
-    .replaceAll("+", "-")
-    .replaceAll("/", "_")
-    .replace(/[=]+$/u, "");
+  return bytes.toBase64({ alphabet: "base64url", omitPadding: true });
 };

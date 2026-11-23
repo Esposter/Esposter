@@ -1,12 +1,11 @@
 import { BARREL_FILE } from "#src/services/constants";
-import { compare } from "natural-orderby";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 // The order `perfectionist/sort-exports` checks the barrel in: it sorts each export by its `./`-prefixed source path,
-// Lowercased, through natural-orderby — the comparator the rule itself calls. A code-unit sort would put
-// `WaterUniforms` before `WaterfallSheet`, which the rule reports
-const compareSourcePaths = compare({ locale: "en-US" });
+// Lowercased, with each run of digits read as a number. A code-unit sort would put `WaterUniforms` before `WaterfallSheet`,
+// Which the rule reports
+const compareSourcePaths = new Intl.Collator("en-US", { numeric: true }).compare;
 
 // Every line is `export *`, so two modules exporting one name are an ambiguity TypeScript reports (TS2308) in the
 // Package's own typecheck and in every consumer resolving its source — never a name quietly left out of the barrel.

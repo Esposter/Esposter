@@ -1,8 +1,7 @@
 import type { LedgerFixerUnit } from "#src/models/sweeps/ledgerCoverage/LedgerFixerUnit";
 import type { LedgerJudgedCell } from "#src/models/sweeps/ledgerCoverage/LedgerJudgedCell";
 
-import { compareCodeUnits } from "#src/services/shared/compareCodeUnits";
-import { getOrCreate } from "@esposter/shared";
+import { compareText, getOrCreate } from "@esposter/shared";
 
 // The units a fixer is handed, from the cells that were not clean: a unit's judgements are gathered together whatever
 // Their questions, and the units are ordered by the area they sit in, so a fixer file holds one area's neighbours
@@ -16,7 +15,7 @@ export const getLedgerFixerUnits = (
 
   return [...units.values()].toSorted(
     (firstUnit, secondUnit) =>
-      compareCodeUnits(unitAreas.get(firstUnit.unit) ?? "", unitAreas.get(secondUnit.unit) ?? "") ||
-      compareCodeUnits(firstUnit.unit, secondUnit.unit),
+      compareText(unitAreas.get(firstUnit.unit) ?? "", unitAreas.get(secondUnit.unit) ?? "") ||
+      compareText(firstUnit.unit, secondUnit.unit),
   );
 };

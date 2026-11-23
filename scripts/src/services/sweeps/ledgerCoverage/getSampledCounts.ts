@@ -4,7 +4,7 @@ import type { LedgerSampledCount } from "#src/models/sweeps/ledgerCoverage/Ledge
 
 import { LedgerFindingKind } from "#src/models/sweeps/ledgerCoverage/LedgerFindingKind";
 import { LedgerFixerOutcome } from "#src/models/sweeps/ledgerCoverage/LedgerFixerOutcome";
-import { compareCodeUnits } from "#src/services/shared/compareCodeUnits";
+import { compareText } from "@esposter/shared";
 
 // Each question's count in a sample: the cells the sample drew for it, and its defects, which are the ones a fixer fixed
 // In the code or settled in the rule that owns it. A refuted finding, and a tidy, are not defects
@@ -13,7 +13,7 @@ export const getSampledCounts = (
   results: readonly LedgerFixerResult[],
 ): LedgerSampledCount[] =>
   [...new Set(samples.flatMap(({ ledgers }) => ledgers))]
-    .toSorted(compareCodeUnits)
+    .toSorted(compareText)
     .map((ledger) => ({
       defects: results.filter(
         (result) =>

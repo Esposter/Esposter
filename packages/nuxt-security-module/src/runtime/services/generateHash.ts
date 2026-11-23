@@ -3,6 +3,6 @@
 export const generateHash = async (content: string | Uint8Array, hashAlgorithm: string): Promise<string> => {
   const bytes = typeof content === "string" ? new TextEncoder().encode(content) : new Uint8Array(content);
   const hashBuffer = await globalThis.crypto.subtle.digest(hashAlgorithm, bytes);
-  const base64 = btoa(String.fromCodePoint(...new Uint8Array(hashBuffer)));
+  const base64 = new Uint8Array(hashBuffer).toBase64();
   return `${hashAlgorithm.replace("-", "").toLowerCase()}-${base64}`;
 };

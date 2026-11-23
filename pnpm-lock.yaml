@@ -529,14 +529,11 @@ catalogs:
       specifier: ^1.8.2
       version: 1.8.2
     module-replacements:
-      specifier: ^2.11.0
-      version: 2.11.0
+      specifier: ^3.4.0
+      version: 3.4.0
     msw:
       specifier: ^3.0.7
       version: 3.0.7
-    natural-orderby:
-      specifier: ^5.0.0
-      version: 5.0.0
     neverthrow:
       specifier: ^8.2.0
       version: 8.2.0
@@ -1288,9 +1285,6 @@ importers:
       eslint-plugin-perfectionist:
         specifier: 'catalog:'
         version: 5.14.0(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      natural-orderby:
-        specifier: 'catalog:'
-        version: 5.0.0
       playwright:
         specifier: 'catalog:'
         version: 1.65.1
@@ -2316,7 +2310,7 @@ importers:
         version: link:../packages/keyframe-store
       module-replacements:
         specifier: 'catalog:'
-        version: 2.11.0
+        version: 3.4.0
       onnxruntime-common:
         specifier: 'catalog:'
         version: 1.31.1
@@ -9554,8 +9548,8 @@ packages:
   module-details-from-path@1.0.4:
     resolution: {integrity: sha512-EGWKgxALGMgzvxYF1UyGTy0HXX/2vHLkw6+NvDKW2jypWbHpjQuj4UMcqQWXHERJhVGKikolT06G3bcKe4fi7w==}
 
-  module-replacements@2.11.0:
-    resolution: {integrity: sha512-j5sNQm3VCpQQ7nTqGeOZtoJtV3uKERgCBm9QRhmGRiXiqkf7iRFOkfxdJRZWLkqYY8PNf4cDQF/WfXUYLENrRA==}
+  module-replacements@3.4.0:
+    resolution: {integrity: sha512-NKBNFM/uAUvSs+LOYfSly4EwrC9bgMoFuEnqNNjcDb910W+5IgS2KMB2ERLm5YZZm7R187jx1dMA9pOPvqbSbw==}
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -19992,7 +19986,7 @@ snapshots:
 
   module-details-from-path@1.0.4: {}
 
-  module-replacements@2.11.0: {}
+  module-replacements@3.4.0: {}
 
   mri@1.2.0: {}
 

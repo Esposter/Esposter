@@ -1,4 +1,3 @@
-import { encodeBase64 } from "#src/services/capture/encodeBase64";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const inlineFontFace = async (rule: CSSFontFaceRule) => {
@@ -13,7 +12,7 @@ export const inlineFontFace = async (rule: CSSFontFaceRule) => {
   if (!response.ok)
     throw new InvalidOperationError(Operation.Read, inlineFontFace.name, `Could not read font ${fontUrl.href}`);
   const contentType = response.headers.get("content-type") ?? "font/woff2";
-  const fontData = encodeBase64(new Uint8Array(await response.arrayBuffer()));
+  const fontData = new Uint8Array(await response.arrayBuffer()).toBase64();
   const descriptors = Array.from({ length: rule.style.length }, (_value, index) => rule.style.item(index))
     .filter((property) => property !== "src")
     .map((property) => `${property}:${rule.style.getPropertyValue(property)}`);

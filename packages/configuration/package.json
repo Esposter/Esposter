@@ -73,7 +73,6 @@
     "eslint": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
-    "natural-orderby": "catalog:",
     "playwright": "catalog:",
     "publint": "catalog:",
     "rolldown": "catalog:",

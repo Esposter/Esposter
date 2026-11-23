@@ -4,7 +4,6 @@ import type { Except } from "type-fest";
 
 import { computeLabelSimilarity } from "#parity/surfaceStatistics/computeLabelSimilarity";
 import { decodeBase64 } from "#parity/surfaceStatistics/decodeBase64";
-import { encodeBase64 } from "#parity/surfaceStatistics/encodeBase64";
 
 // The host's form of the input: each float array's bytes as base64, beside the sizes and label count
 interface EncodedLabelSimilarityInput extends Except<LabelSimilarityInput, "labels" | "reference" | "shot"> {
@@ -37,6 +36,10 @@ export const computeLabelSimilarityFromBase64 = async ({
   });
   return {
     labelSimilarities,
-    termMaps: termMaps.map(({ height, terms, width }) => ({ height, terms: encodeBase64(terms), width })),
+    termMaps: termMaps.map(({ height, terms, width }) => ({
+      height,
+      terms: new Uint8Array(terms.buffer, terms.byteOffset, terms.byteLength).toBase64(),
+      width,
+    })),
   };
 };

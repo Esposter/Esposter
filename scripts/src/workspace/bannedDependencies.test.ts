@@ -1,38 +1,34 @@
-import type { ModuleReplacement } from "module-replacements";
+import type { ModuleReplacementMapping } from "module-replacements";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { microUtilsReplacements, nativeReplacements, preferredReplacements } from "module-replacements";
+import { all } from "module-replacements";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 interface BannedDependency {
+  mapping: ModuleReplacementMapping;
   name: string;
-  replacement: ModuleReplacement;
 }
 interface PackageManifest {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
 }
 
-// A manifest names a banned dependency when its `dependencies` or `devDependencies` lists a package a replacement is
-// Recorded for. The ESLint rule this replaces, `depend/ban-dependencies`, took its replacements from the three manifests
-// Of `module-replacements` through its defaults: `depend.js` passes no options, so no preset is dropped, no name is
-// Allowed and no module is added. Its native-version gate reads `engines.node` of the closest manifest to the lint's
-// Working directory, the root, which declares none, so every native match is reported here too
+// A manifest names a banned dependency when its `dependencies` or `devDependencies` lists a package, or a subpath of one,
+// That `module-replacements` maps to a replacement in any of its manifests (`all`: native, micro-utilities, preferred)
 describe("bannedDependencies", () => {
   const DEPENDENCY_KEYS: (keyof PackageManifest)[] = ["dependencies", "devDependencies"];
-  const REPLACEMENTS: ModuleReplacement[] = [microUtilsReplacements, nativeReplacements, preferredReplacements].flatMap(
-    ({ moduleReplacements }) => moduleReplacements,
-  );
+  // A mapping kept on purpose: the ids are UUID v7, time-ordered so a table sorts by creation, and
+  // `crypto.randomUUID`, the replacement recorded for `uuid`, makes v4 only
+  const ALLOWED_MODULE_NAMES = new Set(["uuid"]);
+  const MAPPINGS = Object.values(all.mappings).filter(({ moduleName }) => !ALLOWED_MODULE_NAMES.has(moduleName));
   const getBannedDependencies = (manifest: PackageManifest): BannedDependency[] =>
     DEPENDENCY_KEYS.flatMap((key) => Object.keys(manifest[key] ?? {})).flatMap((name) => {
-      const replacement = REPLACEMENTS.find(
-        ({ moduleName }) => name === moduleName || name.startsWith(`${moduleName}/`),
-      );
-      return replacement ? [{ name, replacement }] : [];
+      const mapping = MAPPINGS.find(({ moduleName }) => name === moduleName || name.startsWith(`${moduleName}/`));
+      return mapping ? [{ mapping, name }] : [];
     });
 
   test("a manifest names a banned dependency", () => {
@@ -40,8 +36,13 @@ describe("bannedDependencies", () => {
 
     expect(getBannedDependencies({ dependencies: { moment: "^2.30.1" } })).toStrictEqual([
       {
+        mapping: {
+          moduleName: "moment",
+          replacements: ["day.js", "date-fns", "luxon", "Date", "Temporal"],
+          type: "module",
+          url: { id: "moment", type: "e18e" },
+        },
         name: "moment",
-        replacement: { category: "preferred", docPath: "moment", moduleName: "moment", type: "documented" },
       },
     ]);
   });
@@ -51,7 +52,7 @@ describe("bannedDependencies", () => {
 
     const bannedDependencies = readSweepFilePaths("*package.json").flatMap((path) =>
       getBannedDependencies(parseMachineJson<PackageManifest>(readFileSync(join(REPOSITORY_ROOT, path), "utf8"))).map(
-        ({ name, replacement }) => `${path} "${name}" is banned, replaced by ${JSON.stringify(replacement)}`,
+        ({ mapping, name }) => `${path} "${name}" is banned, replaced by ${mapping.replacements.join(", ")}`,
       ),
     );
 

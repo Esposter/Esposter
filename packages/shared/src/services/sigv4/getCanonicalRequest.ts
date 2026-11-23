@@ -1,7 +1,7 @@
-import { compareCodeUnits } from "#src/services/sigv4/compareCodeUnits";
 import { SIGV4_HOST_HEADER } from "#src/services/sigv4/constants";
 import { encodeSigV4Component } from "#src/services/sigv4/encodeSigV4Component";
 import { getSignedHeaders } from "#src/services/sigv4/getSignedHeaders";
+import { compareText } from "#src/util/text/compareText";
 
 // SigV4's canonical request, its query and the names of the headers it signs. S3 signs a path as it is: each segment is decoded
 // From the URL and encoded once, never normalised. The query is sorted by encoded name, then value, and every header
@@ -21,7 +21,7 @@ export const getCanonicalRequest = (
     ([name, value]) => [encodeSigV4Component(name), encodeSigV4Component(value)] as const,
   )
     .toSorted(([firstName, firstValue], [secondName, secondValue]) =>
-      firstName === secondName ? compareCodeUnits(firstValue, secondValue) : compareCodeUnits(firstName, secondName),
+      firstName === secondName ? compareText(firstValue, secondValue) : compareText(firstName, secondName),
     )
     .map(([name, value]) => `${name}=${value}`)
     .join("&");
