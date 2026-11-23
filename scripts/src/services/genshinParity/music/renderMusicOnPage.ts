@@ -2,6 +2,7 @@ import type { MusicVoice } from "genshin-engine";
 import type { Page } from "playwright";
 
 import { LISTEN_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
+import { decodeFloat32 } from "#src/services/genshinParity/witness/decodeFloat32";
 
 declare global {
   interface Window {
@@ -27,6 +28,5 @@ export const renderMusicOnPage = async (
       window.renderMusic(index, sampleRate, isSegmentLayered, segmentVoices),
     [segmentIndex, LISTEN_SAMPLE_RATE, isLayered, voices] as const,
   );
-  const bytes = Buffer.from(rendered, "base64");
-  return new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / Float32Array.BYTES_PER_ELEMENT);
+  return decodeFloat32(rendered);
 };
