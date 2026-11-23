@@ -6,13 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(getHostedAssetUrl, () => {
   const origin = "https://hosted.test";
   const sha256 = "0".repeat(64);
-  const object: HostedAssetObject = {
-    bytes: 4,
-    contentType: "image/png",
-    extension: ".png",
-    scope: "dungeons",
-    sha256,
-  };
+  const object: HostedAssetObject = { bytes: 4, extension: ".png", scope: "dungeons", sha256 };
 
   test("names an object by its origin, its scope, its sha256 and its extension", () => {
     expect.hasAssertions();
