@@ -9,8 +9,16 @@ import { mergeConfig } from "tsdown";
 // And most of them never open a database.
 // `workers` is the Workers test doubles, which are typed by the Workers globals and so stay out of the barrel. The entry
 // Names their folder, and the build leaves out what a subpath entry names, so the barrel never lists them.
+// `cache` is the in-memory Cache Storage two packages' suites share. It is its own entry because the barrel's
+// `createMockDatabase` loads Miniflare and `@esposter/db-schema` into any suite that imports it, and that suite would then
+// Be held to the Miniflare clock rule. The entry names its file, so the barrel never lists it.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
-  entry: { "cloudflare-workers": "src/cloudflareWorkers.ts", index: "src/index.ts", workers: "src/workers/index.ts" },
+  entry: {
+    cache: "src/services/createMockCache.ts",
+    "cloudflare-workers": "src/cloudflareWorkers.ts",
+    index: "src/index.ts",
+    workers: "src/workers/index.ts",
+  },
 });
 
 export default tsdownConfiguration;

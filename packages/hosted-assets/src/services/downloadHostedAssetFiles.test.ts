@@ -2,10 +2,10 @@ import type { HostedAssetDownloadFile } from "#src/models/HostedAssetDownloadFil
 import type { MockInstance } from "vitest";
 
 import { TEST_MODEL_URL, TEST_TERMS_URL } from "#src/services/constants.test";
-import { createHostedAssetCacheStub } from "#src/services/createHostedAssetCacheStub";
 import { downloadHostedAssetFiles } from "#src/services/downloadHostedAssetFiles";
 import { listHeldHostedAssetUrls } from "#src/services/listHeldHostedAssetUrls";
 import { planHostedAssetDownload } from "#src/services/planHostedAssetDownload";
+import { createMockCache } from "@esposter/db-mock/cache";
 import { noop } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -41,7 +41,7 @@ describe(downloadHostedAssetFiles, () => {
   test("retry fetches only what is missing", async () => {
     expect.hasAssertions();
 
-    const cache = createHostedAssetCacheStub();
+    const cache = createMockCache();
     const firstPlan = planHostedAssetDownload(files, new Set());
     const firstRun = downloadHostedAssetFiles(cache, firstPlan.files, noop);
     await vi.runAllTimersAsync();
@@ -65,7 +65,7 @@ describe(downloadHostedAssetFiles, () => {
   test("a terms file that fails all its attempts is not cached, and the download reports the failure", async () => {
     expect.hasAssertions();
 
-    const cache = createHostedAssetCacheStub();
+    const cache = createMockCache();
     const plan = planHostedAssetDownload(files, new Set());
     const run = downloadHostedAssetFiles(cache, plan.files, noop);
     await vi.runAllTimersAsync();

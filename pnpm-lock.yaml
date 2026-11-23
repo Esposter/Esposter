@@ -1511,6 +1511,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/db-mock':
+        specifier: workspace:*
+        version: link:../db-mock
       '@esposter/shared-node':
         specifier: workspace:*
         version: link:../shared-node
@@ -1573,6 +1576,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/db-mock':
+        specifier: workspace:*
+        version: link:../db-mock
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6

@@ -3,7 +3,7 @@ import type { CharacterPackIndex } from "#src/models/character/CharacterPackInde
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
 import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
 import { readCharacterPackReaders } from "#src/services/character/readCharacterPackReaders";
-import { createHostedAssetCacheStub } from "hosted-assets/createHostedAssetCacheStub";
+import { createMockCache } from "@esposter/db-mock/cache";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(readCharacterPackReaders, () => {
@@ -22,7 +22,7 @@ describe(readCharacterPackReaders, () => {
     };
     const fetchMock = vi.fn<typeof fetch>(() => Promise.resolve(Response.json(index)));
     vi.stubGlobal("fetch", fetchMock);
-    vi.stubGlobal("caches", { open: () => Promise.resolve(createHostedAssetCacheStub()) });
+    vi.stubGlobal("caches", { open: () => Promise.resolve(createMockCache()) });
 
     await readCharacterPackIndex(gameDataBaseUrl);
     const characterPackReaders = await readCharacterPackReaders(gameDataBaseUrl);

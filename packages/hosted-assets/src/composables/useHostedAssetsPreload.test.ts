@@ -3,8 +3,8 @@ import type { HostedAssetPreloadSet } from "#src/models/HostedAssetPreloadSet";
 import { useHostedAssetsPreload } from "#src/composables/useHostedAssetsPreload";
 import { HostedAssetPreloadStatus } from "#src/models/HostedAssetPreloadStatus";
 import { TEST_CHANGED_MODEL_URL, TEST_CHANGED_SHA256, TEST_MODEL_URL, TEST_ORIGIN } from "#src/services/constants.test";
-import { createHostedAssetCacheStub } from "#src/services/createHostedAssetCacheStub";
 import { listHeldHostedAssetUrls } from "#src/services/listHeldHostedAssetUrls";
+import { createMockCache } from "@esposter/db-mock/cache";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useHostedAssetsPreload, () => {
@@ -31,7 +31,7 @@ describe(useHostedAssetsPreload, () => {
   test("a file the host cannot serve fails the preload without calling onHeld", async () => {
     expect.hasAssertions();
 
-    vi.stubGlobal("caches", { open: () => Promise.resolve(createHostedAssetCacheStub()) });
+    vi.stubGlobal("caches", { open: () => Promise.resolve(createMockCache()) });
     const onHeld = vi.fn<() => void>();
     const { preload, status } = useHostedAssetsPreload(() => Promise.resolve(set), onHeld);
     const run = preload();
@@ -45,7 +45,7 @@ describe(useHostedAssetsPreload, () => {
   test("downloads are shown on the loading bar as the share held, whole once every file is held", async () => {
     expect.hasAssertions();
 
-    const cache = createHostedAssetCacheStub();
+    const cache = createMockCache();
     await cache.put(modelUrl, new Response(null));
     vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
 
@@ -63,7 +63,7 @@ describe(useHostedAssetsPreload, () => {
   test("every file already held is ready without a fetch", async () => {
     expect.hasAssertions();
 
-    const cache = createHostedAssetCacheStub();
+    const cache = createMockCache();
     await cache.put(modelUrl, new Response(null));
     vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
 
@@ -81,7 +81,7 @@ describe(useHostedAssetsPreload, () => {
   test("a successful preload evicts the stale entries of its own scope and keeps another product's", async () => {
     expect.hasAssertions();
 
-    const cache = createHostedAssetCacheStub();
+    const cache = createMockCache();
     const staleUrl = TEST_CHANGED_MODEL_URL;
     const otherProductUrl = `${TEST_ORIGIN}/b/${TEST_CHANGED_SHA256}.png`;
     await cache.put(modelUrl, new Response(null));
@@ -100,7 +100,7 @@ describe(useHostedAssetsPreload, () => {
   test("an eviction that fails once every file is held leaves the set ready and calls onHeld once", async () => {
     expect.hasAssertions();
 
-    const cache = createHostedAssetCacheStub();
+    const cache = createMockCache();
     const staleUrl = TEST_CHANGED_MODEL_URL;
     await cache.put(modelUrl, new Response(null));
     await cache.put(staleUrl, new Response(null));
@@ -120,7 +120,7 @@ describe(useHostedAssetsPreload, () => {
   test("a failed preload evicts nothing", async () => {
     expect.hasAssertions();
 
-    const cache = createHostedAssetCacheStub();
+    const cache = createMockCache();
     const staleUrl = TEST_CHANGED_MODEL_URL;
     await cache.put(staleUrl, new Response(null));
     vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });

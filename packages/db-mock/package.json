@@ -27,6 +27,10 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./cache": {
+      "source": "./src/services/createMockCache.ts",
+      "default": "./dist/cache.js"
+    },
     "./cloudflare-workers": {
       "source": "./src/cloudflareWorkers.ts",
       "default": "./dist/cloudflare-workers.js"
@@ -40,6 +44,7 @@
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./cache": "./dist/cache.js",
       "./cloudflare-workers": "./dist/cloudflare-workers.js",
       "./workers": "./dist/workers.js",
       "./package.json": "./package.json"

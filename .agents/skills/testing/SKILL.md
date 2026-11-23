@@ -21,7 +21,7 @@ Structure and helpers:
 - `references/suite-titles.md` — when a `describe`'s subject has no function reference, or its export is not camelCase.
 - `references/module-scope.md` — when a test declares anything outside its `describe`, or `constantScope.test.ts` reports one.
 - `references/case-tables.md` — when a test runs over a table of cases.
-- `references/test-helper-files.md` — when a helper, fixture or hook block is shared between suites: one function per file, `constants.test.ts`, `setup*` fixtures.
+- `references/test-helper-files.md` — when a helper, fixture or hook block is shared between suites: one function per file, `constants.test.ts`, `setup*` fixtures, and a helper two packages share, which is a module of `@esposter/db-mock`.
 - `references/wrapper-suites.md` — when two suites match modulo constants, or a suite tests a thin wrapper.
 - `references/type-tests.md` — when writing a `.test-d.ts`, or asserting a `void` return.
 - `references/router-test-setup.md` — when writing a tRPC router test: callers, mock sessions, seeded rows, naming.

@@ -33,16 +33,11 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./createHostedAssetCacheStub": {
-      "source": "./src/services/createHostedAssetCacheStub.ts",
-      "default": "./dist/createHostedAssetCacheStub.js"
-    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
-      "./createHostedAssetCacheStub": "./dist/createHostedAssetCacheStub.js",
       "./package.json": "./package.json"
     },
     "access": "public"
@@ -57,6 +52,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@esposter/db-mock": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "catalog:"
   },

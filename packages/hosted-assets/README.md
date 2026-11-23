@@ -27,14 +27,13 @@ pnpm i hosted-assets
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                                     | Kind     | Purpose                                                                                                              |
-| ------------------------------------------ | -------- | -------------------------------------------------------------------------------------------------------------------- |
-| `HOSTED_ASSETS_CACHE_NAME`                 | const    | The one Cache Storage every product's objects are kept in                                                            |
-| `HostedAssetPreloadStatus`                 | const    | Where a preload stands: idle, downloading, ready, or failed                                                          |
-| `getHostedAssetUrl`                        | function | The url an object is served at under an origin, named by its scope, its sha256 and its extension                     |
-| `hostedAssetLockSchema`                    | schema   | A product's committed lock: its `objects` and `indexes`, each entry a sha256, a byte count, a scope and an extension |
-| `useHostedAssetsPreload`                   | function | A product's preload behind its loading bar, with `downloadProgress`, `status` and `onHeld`                           |
-| `hosted-assets/createHostedAssetCacheStub` | function | An in-memory Cache Storage for tests, imported by its own subpath                                                    |
+| Export                     | Kind     | Purpose                                                                                                              |
+| -------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| `HOSTED_ASSETS_CACHE_NAME` | const    | The one Cache Storage every product's objects are kept in                                                            |
+| `HostedAssetPreloadStatus` | const    | Where a preload stands: idle, downloading, ready, or failed                                                          |
+| `getHostedAssetUrl`        | function | The url an object is served at under an origin, named by its scope, its sha256 and its extension                     |
+| `hostedAssetLockSchema`    | schema   | A product's committed lock: its `objects` and `indexes`, each entry a sha256, a byte count, a scope and an extension |
+| `useHostedAssetsPreload`   | function | A product's preload behind its loading bar, with `downloadProgress`, `status` and `onHeld`                           |
 
 ## <a name="license">⚖️ License</a>
 

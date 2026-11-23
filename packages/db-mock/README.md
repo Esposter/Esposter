@@ -21,6 +21,12 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 | `createMockDb` | function | Starts the file's Miniflare instance, applies the database's migrations and returns a `MockDatabase`. Calls in one file share the instance       |
 | `env`          | const    | The `cloudflare:workers` stand-in. `createMockDb` copies the instance's bindings into it, so code reached through a test reads the same bindings |
 
+The in-memory Cache Storage is the `@esposter/db-mock/cache` entry, not the main one, since the main entry's `createMockDb` loads Miniflare into any suite that imports it:
+
+| Export            | Kind     | Purpose                                                                                                                                                                 |
+| ----------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createMockCache` | function | An in-memory Cache Storage (`delete`, `keys`, `match`, `put`) for the suites that read a hosted product's files through a cache, shared by every package that tests one |
+
 The Workers test doubles are the `@esposter/db-mock/workers` entry, not the main one. Their types are the Workers globals, which only the packages that load the Workers types have, so the main entry stays free of them:
 
 | Export                           | Kind     | Purpose                                                                                                                                              |
