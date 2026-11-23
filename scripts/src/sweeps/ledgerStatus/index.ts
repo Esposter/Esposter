@@ -1,4 +1,3 @@
-/* oxlint-disable selector-ban/no-restricted-syntax -- a ledger name argument, empty when unset */
 import { UnitState } from "#src/models/sweeps/ledgerCoverage/UnitState";
 import { formatUnitCoverage } from "#src/services/sweeps/ledgerCoverage/formatUnitCoverage";
 import { getUnmatchedLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getUnmatchedLedgerEvents";
@@ -35,9 +34,9 @@ await runCommand(
       const unitsByLedger = readLedgerUnitsByLedger();
       const name = args.ledger ?? "";
       const status = readLedgerStatus(events, unitsByLedger).filter(
-        ({ ledger }) => name === "" || ledger === name || ledger.startsWith(`${name}/`),
+        ({ ledger }) => !name || ledger === name || ledger.startsWith(`${name}/`),
       );
-      if (name !== "") {
+      if (name) {
         for (const { ledger, units } of status)
           for (const unitCoverage of units)
             console.info(`${ledger} | ${unitCoverage.unit} | ${formatUnitCoverage(unitCoverage)}`);
