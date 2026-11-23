@@ -16,7 +16,7 @@ export const readAreaUnits = (text: string): string[] =>
   });
 
 // The units one area file names
-const readAreaFileUnits = (area: string): string[] =>
+export const readAreaFileUnits = (area: string): string[] =>
   readAreaUnits(readFileSync(join(REPOSITORY_ROOT, LEDGER_AREA_DIRECTORY, `${area}.md`), "utf8"));
 
 // The partition of the tracked files: the area list's units, then the openspec folder units the area list does not name
