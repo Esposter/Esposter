@@ -6,6 +6,7 @@ import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
 import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { CHROMA_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
 import { readAudioSamples } from "#src/services/genshinParity/shared/readAudioSamples";
+import { readFloat32Array } from "#src/services/shared/readFloat32Array";
 import { existsSync, readdirSync } from "node:fs";
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { join, parse } from "node:path";
@@ -43,7 +44,7 @@ export const readGameMusicChroma = async (): Promise<Map<number, Chroma>> => {
       const path = join(CHROMA_DIRECTORY, `${id}.bin`);
       if (!existsSync(path)) return;
       const data = await readFile(path);
-      const values = new Float32Array(data.buffer, data.byteOffset, data.byteLength / Float32Array.BYTES_PER_ELEMENT);
+      const values = readFloat32Array(data);
       const frameCount = values.length / 13;
       soundChromaMap.set(id, {
         classes: values.subarray(0, frameCount * 12),

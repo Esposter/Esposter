@@ -1,4 +1,5 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
+import { readFloat32Array } from "#src/services/shared/readFloat32Array";
 import { execFileAsync } from "@esposter/shared-node/child-process";
 
 // Any audio FFmpeg reads, a recording's or a decoded sound's, as one channel of 32-bit samples at a rate, its channels
@@ -26,5 +27,5 @@ export const readAudioSamples = async (path: string, sampleRate: number, startFr
     ],
     { encoding: "buffer", maxBuffer: 1024 ** 3 },
   );
-  return new Float32Array(output.buffer, output.byteOffset, output.byteLength / Float32Array.BYTES_PER_ELEMENT);
+  return readFloat32Array(output);
 };

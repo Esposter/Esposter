@@ -1,5 +1,6 @@
 import type { ModelReadings } from "pitch-transcription";
 
+import { readFloat32Array } from "#src/services/shared/readFloat32Array";
 import { existsSync } from "node:fs";
 import { readFile, rename, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -17,7 +18,7 @@ export const readMusicSourceNotes = async (
   let readings: Pick<ModelReadings, "frames" | "onsets">;
   if (existsSync(readingsPath)) {
     const data = await readFile(readingsPath);
-    const values = new Float32Array(data.buffer, data.byteOffset, data.byteLength / Float32Array.BYTES_PER_ELEMENT);
+    const values = readFloat32Array(data);
     const frameCount = values.length / ANNOTATIONS_SEMITONES / 2;
     const getRows = (offset: number): number[][] =>
       Array.from({ length: frameCount }, (_value, frame) => [

@@ -1,5 +1,4 @@
+import { readFloat32Array } from "#src/services/shared/readFloat32Array";
+
 // The bytes of a base64 float array, read as the host's floats
-export const decodeFloat32 = (encoded: string): Float32Array => {
-  const bytes = Buffer.from(encoded, "base64");
-  return new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / Float32Array.BYTES_PER_ELEMENT);
-};
+export const decodeFloat32 = (encoded: string): Float32Array => readFloat32Array(Buffer.from(encoded, "base64"));

@@ -4,6 +4,7 @@ import type { WitnessTarget } from "genshin-world/sceneExport";
 import type { Page } from "playwright";
 
 import { decodeTarget } from "#src/services/genshinParity/shared/decodeTarget";
+import { readFloat32Array } from "#src/services/shared/readFloat32Array";
 
 declare global {
   interface Window {
@@ -46,14 +47,7 @@ export const readWitnessTargetsInCall = async (
     targets: Object.fromEntries(
       Object.entries(targets).map(([name, base64 = ""]) => {
         const bytes = Buffer.from(base64, "base64");
-        return [
-          name,
-          decodeTarget(
-            name,
-            new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / Float32Array.BYTES_PER_ELEMENT),
-            positionLift,
-          ),
-        ];
+        return [name, decodeTarget(name, readFloat32Array(bytes), positionLift)];
       }),
     ),
     width,
