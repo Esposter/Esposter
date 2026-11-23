@@ -14,8 +14,7 @@ export const writeSaveEntries = async (archive: UserDataArchive, userId: UserInA
       return { game, save: await readJsonBlob(bucket, getSaveBlobName(userId)) };
     }),
   );
-  // @TODO: no upstream issue — oxc-project/oxc: no-await-in-loop skips an await under a loop body that is a bare `if` or
-  // `switch`; the reason below turns back into the rule's directive once it reports here
+  // @TODO: https://github.com/oxc-project/oxc/issues/30134 — the comment below becomes the directive's reason
   // Order is the contract: the archive takes one entry at a time, so its entries stay in order
   for (const { game, save } of saves) if (save) await archive.addEntry(`saves/${game}/save.json`, save);
 };

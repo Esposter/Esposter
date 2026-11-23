@@ -30,8 +30,7 @@ export const applyRealtimeKitActions = async (
     return appId;
   };
 
-  // @TODO: no upstream issue — oxc-project/oxc: no-await-in-loop skips an await under a loop body that is a bare `if` or
-  // `switch`; the reason below turns back into the rule's directive once it reports here
+  // @TODO: https://github.com/oxc-project/oxc/issues/30134 — the comment below becomes the directive's reason
   // Each step reads the last: createPreset and createWebhook need the app id createApp returned, and the app id
   // Reaches ESC before the next step reads it
   for (const action of actions)

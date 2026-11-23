@@ -57,7 +57,7 @@ Every root oxlint script passes `--debug=timings`, so each run ends with a table
 
 `no-deprecated` runs on every lint. An engine marks a call `@deprecated` a release before removing it, and the rule catches the call before it is committed.
 
-The type-aware rules read the `.ts` files of the program and never a component's `<script>` block, so no type-aware finding is reported in a `.vue` file. A cast there keeps its reason as a plain comment, since a directive for it would suppress nothing.
+The type-aware rules read the `.ts` files of the program and never a component's `<script>` block, so no type-aware finding is reported in a `.vue` file: oxlint sends the backend only the paths of script extensions ([oxc#30135](https://github.com/oxc-project/oxc/issues/30135)), whatever the content mapper types. A cast there keeps its reason as a plain comment, since a directive for it would suppress nothing.
 
 `packages/genshin-mods` and `packages/genshin-persona/mod` turn `typescript/strict-void-return` off through an `overrides` entry. Asking whether an async hook fits the engine's generic `On` overloads costs far more there than anywhere else in the repository. Every other type-aware rule still runs in those trees.
 
