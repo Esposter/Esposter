@@ -32,17 +32,19 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 // The slots whose textures are colours; every other slot holds data (a normal, a mask) and is read linearly
 const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
-// A component's exports laid out as `genshin:assets witness` wrote them, each mesh turned from the export's axes into
-// Three's (the export negates x, three negates z, together half a turn about y) and drawn at every placement with the
-// Material each of its submeshes names, laid over one the host makes, in a group per family of the scene's parts its
-// Mesh's name falls in; given families, a mesh none of them names is left out, and without them every mesh is drawn in
-// One unnamed family. A family's placements of one submesh in one material are one instanced mesh named by its mesh,
-// Set once, since they stand still: a capital places tens of thousands of parts, which the renderer would otherwise
-// Walk And project in every pass of every frame. A moving family's parts each stand in a group named by its mesh
-// Instead, For its scene to move, and a rigidly skinned family's in a group per piece its bones carry. The meshes and
-// Textures Are served beside the layout, by their export folders, and only those of the meshes drawn are loaded, each
-// Texture Once however many slots name it: a capital's exports run to over a gigabyte, most of it in meshes no family
-// Draws
+// A component's exports, laid out as `genshin:assets witness` wrote them, each mesh turned from the export's axes into
+// Three's: the export negates x and Three negates z, together half a turn about y.
+// Each mesh is drawn at every placement with the material each of its submeshes names, laid over one the host makes.
+// Placements are grouped in a group per family of the scene's parts, by the family its mesh's name falls in.
+// Given families, a mesh none of them names is left out; without them every mesh is drawn in one unnamed family.
+// A family's placements of one submesh in one material are one instanced mesh named by its mesh.
+// It is set once, since they stand still: a capital places tens of thousands of parts.
+// Left to the renderer, each would otherwise be walked and projected in every pass of every frame.
+// A moving family's parts each stand in a group named by its mesh instead, for its scene to move.
+// A rigidly skinned family's parts stand in a group per piece its bones carry.
+// The meshes and textures are served beside the layout, by their export folders.
+// Only those of the meshes drawn are loaded, and each texture once however many slots name it.
+// A capital's exports run to over a gigabyte, most of it in meshes no family draws.
 export const loadWitness = async (
   layoutUrl: string,
   createMaterial: WitnessMaterialFactory,

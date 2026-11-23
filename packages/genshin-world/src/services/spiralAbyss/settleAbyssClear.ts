@@ -14,8 +14,9 @@ import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 import { claimRewards } from "#src/services/reward/claimRewards";
 import { recordAbyssChamberClear } from "#src/services/spiralAbyss/recordAbyssChamberClear";
 
-// A chamber's clear recorded and its first-time rewards claimed together. A bag with no room for the rewards refuses
-// The whole Claim, so the clear records nothing and is settled again the next time the chamber is cleared
+// A chamber's clear recorded and its first-time rewards claimed together.
+// A bag with no room for the rewards refuses the whole claim.
+// The clear then records nothing and is settled again the next time the chamber is cleared.
 export const settleAbyssClear = ({
   challenge,
   chamber,

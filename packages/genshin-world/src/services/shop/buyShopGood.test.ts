@@ -361,8 +361,8 @@ describe(buyShopGood, () => {
     ).toBeUndefined();
   });
 
-  // The Card Shop sells its cards for Lucky Coins, a material the bag holds, here made up in the same shape as the
-  // Grocery
+  // The Card Shop sells its cards for Lucky Coins, a material the bag holds.
+  // Here it is made up in the same shape as the Grocery shop's.
   const LUCKY_COIN_ITEM_ID = 3200;
   const CARD_ITEM_ID = 3300;
   const CARD_NAME_TEXT_ID = "2";

@@ -1,7 +1,7 @@
 import { describe, vi } from "vitest";
 
-// The reads resolve in microtasks, and a read that imports its module first resolves once the import has settled, so
-// Once Those have settled and a macrotask has passed, every read has landed in its refs
+// The reads resolve in microtasks, and a read that imports its module first resolves once the import has settled.
+// Once those have settled and a macrotask has passed, every read has landed in its refs.
 export const flushReads = async () => {
   await vi.dynamicImportSettled();
   await new Promise((resolve) => {
