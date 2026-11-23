@@ -29,9 +29,10 @@ describe("unbundledBarrels", () => {
   const STYLESHEET_IMPORT_REGEX = /^import\s+(?:[^;]*?\sfrom\s+)?["'][^"']+\.css["']/mu;
   // Matches a pnpm store folder name that carries a peer suffix after its version, such as `vize@0.715.0_vue@3.5.45_…`
   const PEER_SUFFIX_FOLDER_REGEX = /^@?[^@]+@[^_]+_/u;
-  // The folders a machine names in a path: a pnpm store on macOS sits under `Library`, and a copy kept from one under
-  // `node_modules` is what `vendor` replaces
-  const MACHINE_FOLDER_NAMES = new Set(["Library", "node_modules"]);
+  // The folders a machine names in a path: a pnpm store on macOS sits under `Library`, a copy kept from one under
+  // `node_modules` is what `vendor` replaces, and the checkout's own path is the one a module outside its package carries
+  // Into the `dist` when a build names it from their common folder, which is the home folder once a store is among them
+  const MACHINE_FOLDER_NAMES = new Set(["Library", "node_modules", ...REPOSITORY_ROOT.split(sep)]);
   // Matches the path of a pnpm store, which only the machine that built a file has
   const STORE_PATH_REGEX = /pnpm\/store\/|links\/@\//u;
   const PACKAGE_PATHS = readTsdownPackagePaths();
