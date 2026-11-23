@@ -100,7 +100,7 @@ export const saveResourceContent = async (
   // Stored — a delta save is computed against exactly these — and the size a read picks its transport by, both of
   // The JSON rather than of the frame it is stored as. Written with the blob, so neither ever describes bytes that
   // Were not stored
-  const contentHash = getContentAddress(Buffer.from(serializedContent));
+  const contentHash = getContentAddress(serializedContent);
   const contentSize = Buffer.byteLength(serializedContent);
   // The content's links, projected here rather than in an after-save hook, which is best-effort by contract, and
   // Kept in step with the blob: `resolveIdentifiedToken` reads them to decide whether a participant token was
