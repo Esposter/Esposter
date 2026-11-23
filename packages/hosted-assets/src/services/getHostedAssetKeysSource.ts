@@ -14,7 +14,8 @@ export const getHostedAssetKeysSource = (
   const keysName = `${productName}Keys`;
   const indexKeysName = `${productName}IndexKeys`;
   return [
-    "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's keys, so each key keeps the spelling its lock entry gives it */",
+    "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's keys, so each key keeps the spelling its",
+    "   lock entry gives it */",
     'import type { ValueOfDeep } from "type-fest";',
     "",
     "// The lock's keys as a nested constant, each path nested by its segments.",
