@@ -2,10 +2,11 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetRecord";
 import type { HostedAssetSourceFile } from "#src/models/hostedAssets/HostedAssetSourceFile";
 
+import { filesProductBase } from "#src/services/hostedAssets/filesProductFixture.test";
 import { planHostedAssetFiles } from "#src/services/hostedAssets/planHostedAssetFiles";
 import { pullHostedAssetFiles } from "#src/services/hostedAssets/pullHostedAssetFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
-import { CloudflareEnvironment, HostedAssetOriginMap, StorageBucket } from "@esposter/db-schema";
+import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
 import { getContentAddress } from "@esposter/shared-node/cache";
 import { getHostedAssetUrl } from "hosted-assets";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
@@ -17,11 +18,7 @@ describe(pullHostedAssetFiles, () => {
   const baseUrl = HostedAssetOriginMap[CloudflareEnvironment.Development];
   const folder = TEST_FILENAME;
   const product: HostedAssetProduct = {
-    bucket: StorageBucket.PublicHostedAssets,
-    lockPath: TEST_FILENAME,
-    lockRepositoryPath: TEST_FILENAME,
-    name: TEST_FILENAME,
-    scopes: [TEST_FILENAME],
+    ...filesProductBase,
     source: { folder, kind: "files", unhostedExtensions: [] },
   };
   const bytesA = Buffer.from(TEST_FILENAME);

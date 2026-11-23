@@ -6,6 +6,7 @@ import type { HostedAssetLock } from "hosted-assets";
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
 import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { DAY_MS } from "#src/services/hostedAssets/constants";
+import { filesProductBase } from "#src/services/hostedAssets/filesProductFixture.test";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
 import { planHostedAssetFiles } from "#src/services/hostedAssets/planHostedAssetFiles";
 import { planHostedAssetPublication } from "#src/services/hostedAssets/planHostedAssetPublication";
@@ -50,11 +51,7 @@ describe(publishHostedAssets, () => {
   };
   const filesScope = TEST_FILENAME;
   const filesProduct: HostedAssetProduct = {
-    bucket: StorageBucket.PublicHostedAssets,
-    lockPath: TEST_FILENAME,
-    lockRepositoryPath: TEST_FILENAME,
-    name: TEST_FILENAME,
-    scopes: [filesScope],
+    ...filesProductBase,
     source: { folder: TEST_FILENAME, kind: "files", unhostedExtensions: [] },
   };
 

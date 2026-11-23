@@ -2,10 +2,11 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 import type { HostedAssetLock } from "hosted-assets";
 
 import { MAX_CONCURRENT_OBJECT_BODIES } from "#src/services/hostedAssets/constants";
+import { getHostedAssetFilesScope } from "#src/services/hostedAssets/getHostedAssetFilesScope";
 import { getHostedAssetFilesSource } from "#src/services/hostedAssets/getHostedAssetFilesSource";
 import { getHostedAssetLockKey } from "#src/services/hostedAssets/getHostedAssetLockKey";
 import { verifyHostedAssetObject } from "#src/services/hostedAssets/verifyHostedAssetObject";
-import { InvalidOperationError, Operation, settleAll, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, sep } from "node:path";
 
@@ -21,7 +22,7 @@ export const pullHostedAssetFiles = async (
 ): Promise<number> => {
   const { folder } = getHostedAssetFilesSource(product);
   const directory = join(repositoryRoot, folder);
-  const scope = takeOne(product.scopes);
+  const scope = getHostedAssetFilesScope(product);
   await settleAll(
     keys.map((key) => async () => {
       const object = lock.objects[getHostedAssetLockKey(scope, key)];

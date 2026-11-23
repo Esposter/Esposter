@@ -1,12 +1,13 @@
 import type { SubCommandsDef } from "citty";
 
-import { getHostedAssetFileKey } from "#src/services/hostedAssets/getHostedAssetFileKey";
+import { getHostedAssetFileKeys } from "#src/services/hostedAssets/getHostedAssetFileKeys";
+import { getHostedAssetFilesScope } from "#src/services/hostedAssets/getHostedAssetFilesScope";
 import { pullHostedAssetFiles } from "#src/services/hostedAssets/pullHostedAssetFiles";
 import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetLock";
 import { readHostedAssetProduct } from "#src/services/hostedAssets/readHostedAssetProduct";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 export const pullCommand: SubCommandsDef[string] = defineCommand({
@@ -27,13 +28,10 @@ export const pullCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const product = readHostedAssetProduct(args.product);
     const lock = await readHostedAssetLock(product.lockPath);
-    const scope = takeOne(product.scopes);
+    const scope = getHostedAssetFilesScope(product);
     if (!args.all && args.key === undefined)
       throw new InvalidOperationError(Operation.Read, product.name, "needs a file key or --all");
-    // The keys are the lock's keys under the product's scope, which a file's key under its folder is the rest of
-    const keys = args.all
-      ? Object.keys(lock.objects).map((lockKey) => getHostedAssetFileKey(scope, lockKey))
-      : [args.key ?? ""];
+    const keys = args.all ? getHostedAssetFileKeys(scope, lock) : [args.key ?? ""];
     const count = await pullHostedAssetFiles(
       HostedAssetOriginMap[CloudflareEnvironment.Development],
       product,
