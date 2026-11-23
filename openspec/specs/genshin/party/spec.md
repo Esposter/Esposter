@@ -165,13 +165,13 @@ A team SHALL be refused deployment when all its members are down.
 
 ### Requirement: Teams are added under the game's limit
 
-The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams.
+The player SHALL be able to add a team, up to fifteen teams. An added team has no name of its own and shows the game's standing-by text in the reader's language until it is renamed.
 
 #### Scenario: Team added
 
 - **GIVEN** fewer than fifteen teams exist
 - **WHEN** the player adds a team
-- **THEN** the team is named Team Standing By until it is renamed
+- **THEN** the team has no name of its own and shows the game's standing-by text in the reader's language until it is renamed
 
 #### Scenario: Sixteenth team refused
 
