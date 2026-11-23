@@ -171,7 +171,7 @@ The generic preloader takes a product's lock and its hosted origin, and it does 
 5. on success, call `onHeld` once, and delete the cache entries under this product's own scope prefixes that the lock does not name. The cache is shared by every product, so an entry under another product's prefix is neither read for eviction nor deleted;
 6. on failure, keep the previous entries and report the failure with the paths that failed.
 
-Genshin's composable's `downloadProgress`, `status` and `onHeld` keep their shape, so a loading bar takes the same prop for both products. The character-pack names move: `CHARACTER_PACK_CACHE_NAME` becomes the product's cache name, and `CHARACTER_PACK_DOWNLOAD_*` becomes the generic constants.
+Genshin's composable's `downloadProgress`, `status` and `onHeld` keep their shape, so a loading bar takes the same prop for both products. The character-pack names move: `CHARACTER_PACK_CACHE_NAME` becomes the shared `hosted-assets` cache name, which every product uses, and `CHARACTER_PACK_DOWNLOAD_*` becomes the generic constants.
 
 Each game preloads all of its own hosted objects behind its loading bar, before play. Nothing is preloaded app-wide, and nothing is fetched on demand mid-play. A game's preload begins when its route mounts and ends at its `onHeld`.
 
@@ -183,7 +183,7 @@ Three options, and the one that keeps `scene.load.image(key, url)` and `TextureL
 - **The HTTP cache under immutable headers.** The preloader's own `fetch` stores each response in the HTTP cache, and the engines' later requests hit it. Rejected because the HTTP cache cannot be listed, so the plan cannot tell which objects are held, and the browser may evict an entry for space without telling the page. The planner then re-downloads files it believes are held, or believes nothing is held when they are gone.
 - **Blob urls.** The preloader downloads the bytes, creates a `blob:` url for each, and hands the engines those urls. Rejected because every call site would take a map of blob urls instead of the key map's absolute urls, which changes each loader, and because the blob urls live in memory for one page only, so a reload downloads everything again.
 
-The worker's route is declared next to the product's cache name, and it does not read any product's lock. The Cache Storage name is one constant for every product, `hosted-assets`, because a url already embeds the product's scope.
+The worker's route is declared next to the shared cache name, and it does not read any product's lock. The Cache Storage name is one constant for every product, `hosted-assets`, because a url already embeds the product's scope.
 
 ### CORS and CSP
 
