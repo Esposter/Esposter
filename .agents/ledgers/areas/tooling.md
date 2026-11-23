@@ -207,6 +207,9 @@
 - `scripts/src/services/oxlint/sorting/computeNodesInCircularDependencies` — `computeDependencyEdges.ts`
 - `scripts/src/services/oxlint/sorting/computeModuleDependencies` — `checkHoldsStaticState.ts`, `checkIsClassElementRelevant.ts`, `checkIsClassOrEnumItem.ts`, `checkIsIgnoredReference.ts`, `checkIsSameNode.ts`, `computeAncestors.ts`, `computeRelatedNames.ts`
 - `scripts/src/services/oxlint/sorting/collectModuleItems` — `describeDeclared.ts`, `describeDeclaration.ts`, `describeStatement.ts`, `getGroupIndex.ts`
+- `scripts/src/services/oxlint/sorting/checkIsPureExpression` — `checkHasPureMembers.ts`
+- `scripts/src/services/oxlint/sorting/computeClassMemberGroup` — `parsePredefinedGroup.ts`
+- `scripts/src/services/oxlint/sorting/getOxlintDisabledLines` — `checkIsRuleCovered.ts`
 - `scripts/src/services/oxlint/sorting/checkIsNodeInsideDeferredFunction` — `checkIsFunctionDeferred.ts`
 - `scripts/src/services/oxlint/sorting/checkIsUnsortedObject` — `checkIsDeclarationOrCall.ts`
 - `scripts/src/services/oxlint/sorting/computeExpressionNumberValue` — `computeBinaryNumberValue.ts`, `computeUnaryNumberValue.ts`

@@ -1,20 +1,6 @@
 import type { ESTree } from "@oxlint/plugins";
 
-// Whether a class's definition runs no code: its heritage clause and the computed key of each member run when the class
-// Is defined, a static block does, and a static field or accessor does through its initialiser
-const checkHasPureMembers = (node: ESTree.Class): boolean =>
-  (!node.superClass || checkIsPureExpression(node.superClass)) &&
-  node.body.body.every((element) => {
-    if (element.type === "StaticBlock") return false;
-    if ("computed" in element && element.computed && !checkIsPureExpression(element.key)) return false;
-    if (
-      (element.type !== "PropertyDefinition" && element.type !== "AccessorProperty") ||
-      !element.static ||
-      !element.value
-    )
-      return true;
-    return checkIsPureExpression(element.value);
-  });
+import { checkHasPureMembers } from "#src/services/oxlint/sorting/checkIsPureExpression/checkHasPureMembers";
 
 // Whether evaluating an expression runs no code of its own. A call, `new`, an assignment or update, an `await`, a
 // `yield`, a tagged template, a `delete` and an `import()` can run code; every other form is pure when its parts are.
@@ -33,7 +19,7 @@ export const checkIsPureExpression = (node: ESTree.Node): boolean => {
     case "LogicalExpression":
       return checkIsPureExpression(node.left) && checkIsPureExpression(node.right);
     case "ClassExpression":
-      return checkHasPureMembers(node);
+      return checkHasPureMembers(node, checkIsPureExpression);
     case "ConditionalExpression":
       return (
         checkIsPureExpression(node.test) &&

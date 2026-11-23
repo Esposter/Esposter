@@ -1,10 +1,7 @@
 import type { Context } from "@oxlint/plugins";
 
+import { checkIsRuleCovered } from "#src/services/oxlint/sorting/getOxlintDisabledLines/checkIsRuleCovered";
 import { parseOxlintDirective } from "#src/services/oxlint/sorting/parseOxlintDirective";
-
-// Whether a directive's rule list covers the rule, by its bare name or any plugin's prefix of it
-const checkIsRuleCovered = (rules: "all" | string[], ruleName: string): boolean =>
-  rules === "all" || rules.some((rule) => rule === ruleName || rule.endsWith(`/${ruleName}`));
 
 // The lines a directive for the rule disables: its own line, or the line below it for a next-line one.
 // A block disables the lines after it up to its enable, or to the end of the file when it is never enabled.
