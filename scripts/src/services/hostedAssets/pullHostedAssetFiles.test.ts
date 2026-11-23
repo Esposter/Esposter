@@ -1,19 +1,20 @@
 import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetProduct";
+import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetRecord";
 import type { HostedAssetSourceFile } from "#src/models/hostedAssets/HostedAssetSourceFile";
 
-import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { planHostedAssetFiles } from "#src/services/hostedAssets/planHostedAssetFiles";
 import { pullHostedAssetFiles } from "#src/services/hostedAssets/pullHostedAssetFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
-import { StorageBucket } from "@esposter/db-schema";
+import { CloudflareEnvironment, HostedAssetOriginMap, StorageBucket } from "@esposter/db-schema";
 import { getContentAddress } from "@esposter/shared-node/cache";
-import { getHostedAssetPath } from "hosted-assets";
+import { getHostedAssetUrl } from "hosted-assets";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(pullHostedAssetFiles, () => {
+  const baseUrl = HostedAssetOriginMap[CloudflareEnvironment.Development];
   const folder = TEST_FILENAME;
   const product: HostedAssetProduct = {
     bucket: StorageBucket.PublicHostedAssets,
@@ -33,27 +34,34 @@ describe(pullHostedAssetFiles, () => {
   ];
   let repositoryRoot: string;
 
+  // The origin serves each stored object at its url, and answers any other url with a missing object
+  const serve = (records: HostedAssetRecord[]) => {
+    const bodies = new Map(records.map((record) => [getHostedAssetUrl(baseUrl, record), record.bytes]));
+    vi.spyOn(globalThis, "fetch").mockImplementation((url) => {
+      const bytes = typeof url === "string" ? bodies.get(url) : undefined;
+      return Promise.resolve(
+        bytes === undefined ? new Response(null, { status: 404 }) : new Response(new Uint8Array(bytes)),
+      );
+    });
+  };
+
   beforeEach(async () => {
     repositoryRoot = await mkdtemp(join(tmpdir(), "hosted-asset-pull-"));
   });
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     await rm(repositoryRoot, { force: true, recursive: true });
   });
 
   test("pull --all on a lock of two objects writes both", async () => {
     expect.hasAssertions();
 
-    // The objects as a publish stored them, and the lock that names them
+    // The objects as a publish stored them under the origin, and the lock that names them
     const { lock, records } = planHostedAssetFiles(TEST_FILENAME, files);
-    const bucketClient = createMemoryR2BucketClient();
-    await Promise.all(
-      records.map((record) => bucketClient.put(getHostedAssetPath(record), new Uint8Array(record.bytes))),
-    );
+    serve(records);
 
-    await expect(pullHostedAssetFiles(() => bucketClient, product, lock, [keyA, keyB], repositoryRoot)).resolves.toBe(
-      2,
-    );
+    await expect(pullHostedAssetFiles(baseUrl, product, lock, [keyA, keyB], repositoryRoot)).resolves.toBe(2);
     await expect(readFile(join(repositoryRoot, folder, keyA))).resolves.toStrictEqual(bytesA);
     await expect(readFile(join(repositoryRoot, folder, keyB))).resolves.toStrictEqual(bytesB);
   });
@@ -61,7 +69,7 @@ describe(pullHostedAssetFiles, () => {
   test("a lock key that leaves the folder is refused before any file is written", async () => {
     expect.hasAssertions();
 
-    // The lock names a key with a parent segment, and its object is in the bucket, so only the path check can refuse it
+    // The lock names a key with a parent segment, and its object is on the origin, so only the path check can refuse it
     const escaping = {
       bytes: bytesA,
       extension: ".png",
@@ -69,13 +77,10 @@ describe(pullHostedAssetFiles, () => {
       sha256: getContentAddress(bytesA),
     };
     const { lock, records } = planHostedAssetFiles(TEST_FILENAME, [escaping]);
-    const bucketClient = createMemoryR2BucketClient();
-    await Promise.all(
-      records.map((record) => bucketClient.put(getHostedAssetPath(record), new Uint8Array(record.bytes))),
-    );
+    serve(records);
 
     await expect(
-      pullHostedAssetFiles(() => bucketClient, product, lock, [escaping.key], repositoryRoot),
+      pullHostedAssetFiles(baseUrl, product, lock, [escaping.key], repositoryRoot),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: ../a.png, leaves its product's folder]`,
     );

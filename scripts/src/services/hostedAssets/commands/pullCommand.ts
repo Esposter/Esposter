@@ -1,12 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
 import { getHostedAssetFileKey } from "#src/services/hostedAssets/getHostedAssetFileKey";
 import { pullHostedAssetFiles } from "#src/services/hostedAssets/pullHostedAssetFiles";
 import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetLock";
 import { readHostedAssetProduct } from "#src/services/hostedAssets/readHostedAssetProduct";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { CloudflareEnvironment } from "@esposter/db-schema";
+import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -22,7 +21,7 @@ export const pullCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Restore a files product's working copy from its objects in the dev bucket, one file by its key or every file with --all",
+      "Restore a files product's working copy from its objects on the dev hosted origin, one file by its key or every file with --all",
     name: "pull",
   },
   run: async ({ args }) => {
@@ -36,7 +35,7 @@ export const pullCommand: SubCommandsDef[string] = defineCommand({
       ? Object.keys(lock.objects).map((lockKey) => getHostedAssetFileKey(scope, lockKey))
       : [args.key ?? ""];
     const count = await pullHostedAssetFiles(
-      () => createHostedAssetBucketClientMap(product.bucket)[CloudflareEnvironment.Development],
+      HostedAssetOriginMap[CloudflareEnvironment.Development],
       product,
       lock,
       keys,
