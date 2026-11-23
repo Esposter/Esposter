@@ -12,7 +12,7 @@ const { room } = defineProps<Props>();
 const { data: session } = await useAuthSession();
 const { hasMore, items, readMoreRoomInvites, readRoomInvites } = useReadRoomInvites(room.id);
 
-await readRoomInvites();
+const { isError, refresh } = await readRoomInvites();
 </script>
 
 <!-- Discord's invites panel: what the list is, beside the two things done to it, over one row per live link -->
@@ -33,6 +33,8 @@ await readRoomInvites();
         :room-id="room.id"
       />
     </div>
+    <!-- A failed first page is the error state, never the empty one it would otherwise read as -->
+    <UiErrorState v-else-if="isError" error="The invites could not be loaded." @retry="refresh()" />
     <!-- A page of lapsed links filters down to nothing while older usable ones are still to come, so the
          empty state waits until the walk is over rather than announcing itself between pages -->
     <UiEmptyState
