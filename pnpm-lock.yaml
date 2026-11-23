@@ -654,9 +654,6 @@ catalogs:
     vue:
       specifier: ^3.5.46
       version: 3.5.46
-    vue-eslint-parser:
-      specifier: ^10.4.2
-      version: 10.4.2
     vue-router:
       specifier: ^5.5.1
       version: 5.5.1
@@ -1321,9 +1318,6 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.5.46(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      vue-eslint-parser:
-        specifier: 'catalog:'
-        version: 10.4.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
       zod:
         specifier: 'catalog:'
         version: 4.6.7

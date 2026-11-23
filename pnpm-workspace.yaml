@@ -205,7 +205,6 @@ catalog:
   vitest-browser-vue: ^3.1.0
   vize: ^0.790.0
   vue: ^3.5.46
-  vue-eslint-parser: ^10.4.2
   vue-router: ^5.5.1
   web-push: ^4.0.0
   wrangler: ^4.166.0
