@@ -1,4 +1,4 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` needs the annotation the regex would infer */
 import { CACHE_DIRECTORY } from "#src/services/shared/constants";
 import { join } from "node:path";
 
