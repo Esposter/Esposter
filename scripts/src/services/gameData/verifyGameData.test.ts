@@ -56,4 +56,19 @@ describe(verifyGameData, () => {
     // Only the index was fetched, so none of the entries it names was
     expect(fetch).toHaveBeenCalledTimes(1);
   });
+
+  test("an object stored as other bytes than its name's is refused", async () => {
+    expect.hasAssertions();
+
+    const value = { name: "a" };
+    const record = createStoredRecord("profile/English", value);
+    // The same value indented: it parses to what the name hashes, but its own bytes do not hash to the name
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify(value, null, 2)));
+
+    await expect(
+      verifyGameData(baseUrl, { indexes: {}, objects: { "profile/English": record.hash } }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: https://bucket.example/public-genshin-assets/profile/English/d9d719b27480b55cd4918020e7473e716ed3569c8adafe926cf9b10b4f8ef064.json, does not hash to its name]`,
+    );
+  });
 });
