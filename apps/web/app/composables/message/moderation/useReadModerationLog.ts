@@ -12,8 +12,16 @@ export const useReadModerationLog = (
   const { $trpc } = useNuxtApp();
   const moderationLogStore = useModerationLogStore();
   const { readItems, readMoreItems } = moderationLogStore;
-  const readModerationLog = () =>
-    readItems(() => $trpc.message.moderation.readModerationLog.query({ roomId, ...filters() }));
+  // The state of the latest read, held here rather than read off each call's own refs: a filter read is issued after the
+  // First one, so a list bound to the first call's refs would never see the filter read in flight or failed
+  const isError = ref(false);
+  const isPending = ref(false);
+  const readModerationLog = async () => {
+    isPending.value = true;
+    const read = await readItems(() => $trpc.message.moderation.readModerationLog.query({ roomId, ...filters() }));
+    isError.value = read.isError.value;
+    isPending.value = false;
+  };
   const readMoreModerationLog = (onComplete: () => void) => {
     // Taken as the read is issued, so a retry after the filters changed still asks for the log their cursor came from
     const issuedFilters = filters();
@@ -22,5 +30,5 @@ export const useReadModerationLog = (
       onComplete,
     );
   };
-  return { readModerationLog, readMoreModerationLog };
+  return { isError, isPending, readModerationLog, readMoreModerationLog };
 };

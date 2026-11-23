@@ -17,12 +17,15 @@ const filters = computed(() => ({
   targetUserId: targetUserId.value,
   type: type.value,
 }));
-const { readModerationLog, readMoreModerationLog } = useReadModerationLog(room.id, () => filters.value);
+const { isError, isPending, readModerationLog, readMoreModerationLog } = useReadModerationLog(
+  room.id,
+  () => filters.value,
+);
 const moderationLogStore = useModerationLogStore();
 const { hasMore, items } = storeToRefs(moderationLogStore);
 const { readMembers } = useReadMembers();
 
-const [{ isError, refresh }] = await Promise.all([readModerationLog(), readMembers()]);
+await Promise.all([readModerationLog(), readMembers()]);
 </script>
 
 <template>
@@ -33,7 +36,9 @@ const [{ isError, refresh }] = await Promise.all([readModerationLog(), readMembe
       v-model:target-user-id="targetUserId"
       @update="readModerationLog()"
     />
-    <UiErrorState v-if="isError" error="The audit log could not be loaded." @retry="refresh()" />
+    <UiErrorState v-if="isError" error="The audit log could not be loaded." @retry="readModerationLog()" />
+    <!-- A read still out with no rows yet is the skeleton, never the empty state it has not earned -->
+    <MessageFriendsListSkeleton v-else-if="isPending && items.length === 0" />
     <UiEmptyState
       v-else-if="items.length === 0"
       :meaning="UiIconMeaning.Recent"
