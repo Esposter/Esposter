@@ -8,7 +8,7 @@ The packs' bundled terms still say not to redistribute (「请勿二次配布」
 
 ## Layout
 
-Each file of an avatar folder publishes to `public-genshin-assets` under `characterPacks/<avatar id>/<path>`, with the path kept inside the folder and written with forward slashes. That covers the model, its textures, its `sph` files, its terms files, and the pack's own `manifest.json`, which publishes unchanged. Both environments' buckets hold the same names. `genshin:data prune` reaches only the game data datasets, so it never deletes a pack.
+Each file of an avatar folder publishes to `public-hosted-assets` under `characterPacks/<avatar id>/<path>`, with the path kept inside the folder and written with forward slashes. That covers the model, its textures, its `sph` files, its terms files, and the pack's own `manifest.json`, which publishes unchanged. Both environments' buckets hold the same names. `genshin:data prune` reaches only the game data datasets, so it never deletes a pack.
 
 ## Publish
 
