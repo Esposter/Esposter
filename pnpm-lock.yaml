@@ -1880,6 +1880,9 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 3.0.7(@types/node@26.6.6)(supports-color@10.2.2)(typescript@6.0.3)(vite@8.4.0-beta.1(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.4)(yaml@2.9.1))
+      trpc-nuxt-module:
+        specifier: workspace:*
+        version: link:../trpc-nuxt-module
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1896,9 +1899,6 @@ importers:
       superjson:
         specifier: 'catalog:'
         version: 2.2.7
-      trpc-nuxt-module:
-        specifier: workspace:*
-        version: link:../trpc-nuxt-module
       tsdown:
         specifier: 'catalog:'
         version: 0.23.7(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.7)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@7.1.0-beta.tsrs4)(typescript@6.0.3)

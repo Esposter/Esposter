@@ -51,7 +51,8 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*"
+    "@esposter/shared": "workspace:*",
+    "trpc-nuxt-module": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -59,7 +60,6 @@
     "@trpc/client": "catalog:",
     "@types/node": "catalog:",
     "superjson": "catalog:",
-    "trpc-nuxt-module": "workspace:*",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
     "zod": "catalog:"
