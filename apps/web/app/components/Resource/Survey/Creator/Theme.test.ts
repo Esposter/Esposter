@@ -16,7 +16,7 @@ import { assert, describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyProgressBarPlacement } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
-  deleteFile: vi.fn<(url: string) => void>(),
+  deleteFile: vi.fn<(id: string, url: string) => void>(),
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -134,7 +134,7 @@ describe("resourceSurveyCreatorTheme", () => {
       await flushPromises();
       sweep(surveyDocument.value);
 
-      expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);
+      expect(deleteFile).toHaveBeenCalledExactlyOnceWith("", url);
     });
 
     test("owner uploads a background picture on the theme tab", async () => {

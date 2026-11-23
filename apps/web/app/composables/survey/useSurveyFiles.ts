@@ -14,26 +14,29 @@ import { getResultAsync } from "@esposter/shared";
 export const useSurveyFiles = () => {
   const resourceStore = useResourceStore();
   const { currentResourceId } = storeToRefs(resourceStore);
+  const { getOpening } = resourceStore;
   const getResourceId = () => currentResourceId.value;
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
-  const deleteFile = useDeleteResourceFile(ResourceType.Survey, getResourceId);
+  const deleteFile = useDeleteResourceFile(ResourceType.Survey);
   const surveyFilesStore = useSurveyFilesStore();
   const { fileUrls, isClosed } = storeToRefs(surveyFilesStore);
   const { addFileUrl, closeSession, openSession } = surveyFilesStore;
   // The editor is gone by the time a file is deleted, so nothing can alert: each delete logs its own failure, and the
   // Rest still go
-  const deleteUrls = (urls: string[]) => {
-    for (const url of urls) deleteFile(url);
+  const deleteUrls = (resourceId: string, urls: string[]) => {
+    for (const url of urls) deleteFile(resourceId, url);
   };
   // A file is validated before the upload, and a rejected one alerts itself, so the undefined it leaves uploads nothing.
-  // A file that lands after the editor closed is deleted at once, since the close has already swept, and is handed back
-  // To nothing
+  // A file belongs to the session it was uploaded in, so one that lands after that session closed, or after the open
+  // Resource became another opening, is deleted from the resource it went to and handed back to nothing
   const upload = async (file: File) => {
     if (!validateFileWithAlert(file)) return undefined;
 
+    const resourceId = getResourceId();
+    const opening = getOpening();
     const url = await uploadFile(file);
-    if (isClosed.value) {
-      deleteUrls([url]);
+    if (isClosed.value || getOpening() !== opening) {
+      deleteUrls(resourceId, [url]);
       return undefined;
     }
 
@@ -59,7 +62,7 @@ export const useSurveyFiles = () => {
     const referencedUrls = new Set(collectSurveyFileUrls(document));
     const orphanUrls = [...fileUrls.value].filter((url) => !referencedUrls.has(url));
     closeSession();
-    deleteUrls(orphanUrls);
+    deleteUrls(getResourceId(), orphanUrls);
   };
 
   return { sweep, track, upload, uploadPicked };

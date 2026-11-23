@@ -13,7 +13,7 @@ import { getBlockNode } from "vue-block-editor-headless";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
-  deleteFile: vi.fn<(url: string) => void>(),
+  deleteFile: vi.fn<(id: string, url: string) => void>(),
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -98,6 +98,6 @@ describe("resourceSurveyCreatorImageUpload", () => {
     await flushPromises();
     sweep(surveyDocument.value);
 
-    expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("", url);
   });
 });

@@ -1,11 +1,13 @@
 // @vitest-environment nuxt
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useSurveyFiles } from "#src/composables/survey/useSurveyFiles";
+import { useResourceStore } from "#src/store/resource/index";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
-  deleteFile: vi.fn<(url: string) => void>(),
+  deleteFile: vi.fn<(id: string, url: string) => void>(),
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -36,7 +38,7 @@ describe(useSurveyFiles, () => {
     track(createDocument("a", ""));
     sweep(createDocument("", ""));
 
-    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("a");
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("", "a");
   });
 
   test("a logo replaced in the session is deleted at the close, and the logo the document holds is kept", async () => {
@@ -48,7 +50,7 @@ describe(useSurveyFiles, () => {
     await upload(new File(["a"], "a"));
     sweep(createDocument("", "b"));
 
-    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("a");
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("", "a");
   });
 
   test("a file uploaded in the session and dropped before the close is deleted", async () => {
@@ -60,7 +62,7 @@ describe(useSurveyFiles, () => {
     await upload(new File(["a"], "a"));
     sweep(createDocument("", ""));
 
-    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("c");
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("", "c");
   });
 
   test("a file the document still references is kept at the close", () => {
@@ -86,7 +88,29 @@ describe(useSurveyFiles, () => {
     const url = await uploading;
 
     expect(url).toBeUndefined();
-    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("c");
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("", "c");
+  });
+
+  test("a picture whose upload lands after the next survey opened is deleted from the resource it went to, and kept by neither survey", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { applyResource, clearResource } = resourceStore;
+    const resource = createResourceListItem();
+    applyResource(resource, null, null);
+    const { sweep, track, upload } = useSurveyFiles();
+    track(createDocument("", ""));
+    uploadFile.mockImplementationOnce(() => {
+      clearResource(resource.id);
+      applyResource(createResourceListItem(), null, null);
+      track(createDocument("", ""));
+      return Promise.resolve("c");
+    });
+    const url = await upload(new File(["a"], "a"));
+    sweep(createDocument("", ""));
+
+    expect(url).toBeUndefined();
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith(resource.id, "c");
   });
 
   test("an empty file is rejected before the upload, which then never runs", async () => {

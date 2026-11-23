@@ -18,7 +18,7 @@ import { getBlockNode } from "vue-block-editor-headless";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
-  deleteFile: vi.fn<(url: string) => void>(),
+  deleteFile: vi.fn<(id: string, url: string) => void>(),
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -199,7 +199,7 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     sweep(surveyDocument.value);
 
     expect(getChoices(surveyDocument.value, pointer)).toStrictEqual([]);
-    expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("", url);
   });
 
   test("a picture that lands after its row is removed is reported, and written to no row", async () => {
