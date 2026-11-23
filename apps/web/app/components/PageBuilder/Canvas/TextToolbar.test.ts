@@ -3,6 +3,7 @@ import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensi
 import PageBuilderCanvasTextToolbar from "#src/components/PageBuilder/Canvas/TextToolbar.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/core";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, onTestFinished, test } from "vitest";
 
 // The buttons that act on a selection are enabled only while the editor is focused, so the editor's element is in the document
@@ -44,6 +45,7 @@ describe("pageBuilderCanvasTextToolbar", () => {
     await component.get("button[aria-label='Link']").trigger("click");
     await component.get("input").setValue("https://example.com");
     await component.get("form").trigger("submit");
+    await flushPromises();
 
     expect(editor.getHTML()).toBe(
       '<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://example.com">one</a> two</p>',
@@ -63,6 +65,7 @@ describe("pageBuilderCanvasTextToolbar", () => {
     expect(component.get<HTMLInputElement>("input").element.value).toBe("https://example.com");
     await component.get("input").setValue("");
     await component.get("form").trigger("submit");
+    await flushPromises();
 
     expect(editor.getHTML()).toBe("<p>one two</p>");
   });
