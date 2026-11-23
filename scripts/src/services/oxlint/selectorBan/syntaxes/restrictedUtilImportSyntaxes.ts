@@ -20,7 +20,7 @@ export const RESTRICTED_UTIL_IMPORT_SYNTAXES: SelectorBanList = {
     },
     {
       message: MESSAGE,
-      selector: `:matches(ExportAllDeclaration, ExportNamedDeclaration)[exportKind='value']${PACKAGE_SOURCE}`,
+      selector: `:matches(ExportAllDeclaration, ExportNamedDeclaration)[exportKind='value']${PACKAGE_SOURCE}:matches(:not(:has(> ExportSpecifier)), :has(> ExportSpecifier[exportKind='value']))`,
     },
   ],
   excludeFiles: TEST_FILE_PATTERNS,

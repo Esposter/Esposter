@@ -21,6 +21,18 @@ describe("restrictedUtilImportSyntaxes", () => {
       { filePath: "util/sideEffect.ts", name: "sideEffectImport", source: `import "zod";`, violations: 1 },
       { filePath: "util/reexport.ts", name: "packageReexport", source: `export { z } from "zod";`, violations: 1 },
       {
+        filePath: "util/inlineTypeReexport.ts",
+        name: "inlineTypeReexport",
+        source: `export { type ZodType } from "zod";`,
+        violations: 0,
+      },
+      {
+        filePath: "util/mixedReexport.ts",
+        name: "mixedReexport",
+        source: `export { type ZodType, z } from "zod";`,
+        violations: 1,
+      },
+      {
         filePath: "util/typeImport.ts",
         name: "typeImport",
         source: `import type { ZodType } from "zod";\nexport type A = ZodType;`,
