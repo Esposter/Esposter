@@ -106,7 +106,8 @@
   },
   "dependencies": {
     "genshin-interface": "workspace:*",
-    "genshin-text": "workspace:*"
+    "genshin-text": "workspace:*",
+    "type-fest": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -117,7 +118,6 @@
     "@types/three": "catalog:",
     "rolldown": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
     "uuid": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
@@ -135,8 +135,6 @@
     "zod": "catalog:"
   },
   "inlinedDependencies": {
-    "tagged-tag": "1.0.0",
-    "type-fest": "6.0.3",
     "vize": "0.790.0"
   }
 }

@@ -52,7 +52,8 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "@esposter/shared-node": "workspace:*"
+    "@esposter/shared-node": "workspace:*",
+    "type-fest": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -61,15 +62,10 @@
     "@types/node": "catalog:",
     "superjson": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
     "zod": "catalog:"
   },
   "peerDependencies": {
     "@trpc/server": "catalog:",
     "msw": "catalog:"
-  },
-  "inlinedDependencies": {
-    "tagged-tag": "1.0.0",
-    "type-fest": "6.0.3"
   }
 }

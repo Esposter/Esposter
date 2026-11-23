@@ -52,13 +52,13 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "parse-tmx": "workspace:*"
+    "parse-tmx": "workspace:*",
+    "type-fest": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@vue/test-utils": "catalog:",
-    "tsdown": "catalog:",
-    "type-fest": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "phaser": "catalog:",
@@ -66,8 +66,6 @@
     "vue": "catalog:"
   },
   "inlinedDependencies": {
-    "tagged-tag": "1.0.0",
-    "type-fest": "6.0.3",
     "vize": "0.790.0"
   }
 }

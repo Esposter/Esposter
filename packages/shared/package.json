@@ -54,7 +54,8 @@
     "mime-db": "catalog:",
     "neverthrow": "catalog:",
     "node-html-parser": "catalog:",
-    "parse5": "catalog:"
+    "parse5": "catalog:",
+    "type-fest": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -62,14 +63,10 @@
     "fake-indexeddb": "catalog:",
     "happy-dom": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
     "uuid": "catalog:",
     "vue": "catalog:"
   },
   "peerDependencies": {
     "zod": "catalog:"
-  },
-  "inlinedDependencies": {
-    "type-fest": "6.0.3"
   }
 }

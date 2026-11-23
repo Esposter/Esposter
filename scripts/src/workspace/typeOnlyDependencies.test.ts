@@ -96,6 +96,15 @@ describe("typeOnlyDependencies", () => {
           collectUsage(statement, valueNames, typeNames);
   };
 
+  // The names a package's own source under `src` loads, as values and as types alone
+  const collectPackageUsage = (packagePath: string, sourcePaths: readonly string[]) => {
+    const valueNames = new Set<string>();
+    const typeNames = new Set<string>();
+    for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/src/`)))
+      for (const script of readScripts(path)) collectScriptUsage(script, valueNames, typeNames);
+    return { typeNames, valueNames };
+  };
+
   const getAugmentedPackageName = (id: string): string | undefined => {
     if (BUNDLER_RESOLVED_REGEX.test(id)) return undefined;
     const name = getLoadablePackageName(id);
@@ -171,10 +180,7 @@ describe("typeOnlyDependencies", () => {
         (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
       );
       const unexternal = packages.flatMap(({ manifest, packagePath }) => {
-        const valueNames = new Set<string>();
-        const typeNames = new Set<string>();
-        for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/src/`)))
-          for (const script of readScripts(path)) collectScriptUsage(script, valueNames, typeNames);
+        const { typeNames, valueNames } = collectPackageUsage(packagePath, sourcePaths);
         const loadedNames = manifest.private === true ? valueNames : new Set([...valueNames, ...typeNames]);
         const externalNames = readHeldNames(manifest);
         return [...loadedNames]
@@ -183,6 +189,30 @@ describe("typeOnlyDependencies", () => {
       });
 
       expect(unexternal).toStrictEqual([]);
+    },
+  );
+
+  // A published package's declarations name the types its signatures take, and a consumer resolves those names from the
+  // Package's own lists. A type a devDependency supplies is named there with nothing installed beside it to resolve it
+  test(
+    "list a name a published package's types import only from devDependencies in dependencies",
+    { timeout: TREE_READ_TIMEOUT_MS },
+    () => {
+      expect.hasAssertions();
+
+      const packages = readPackages((manifest) => manifest.private !== true);
+      const sourcePaths = readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
+        (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
+      );
+      const misplaced = packages.flatMap(({ manifest, packagePath }) => {
+        const { typeNames, valueNames } = collectPackageUsage(packagePath, sourcePaths);
+        const heldNames = readHeldNames(manifest);
+        return Object.keys(manifest.devDependencies ?? {})
+          .filter((name) => typeNames.has(name) && !valueNames.has(name) && !heldNames.has(name))
+          .map((name) => `${manifest.name} -> ${name}`);
+      });
+
+      expect(misplaced).toStrictEqual([]);
     },
   );
 });
