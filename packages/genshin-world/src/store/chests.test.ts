@@ -28,7 +28,6 @@ import { ref, shallowReactive } from "vue";
 
 // Each region's record is served from the fetch the reader makes, so a record is read through its reader and its schema
 const { pathRecordsMap } = vi.hoisted(() => ({ pathRecordsMap: new Map<string, unknown[]>() }));
-const LIYUE_CHESTS_PATH = getGameDataRecordPath(GameDataKeys.chests.liyue);
 
 vi.mock(import("#src/services/data/readGameDataObject"), async (importOriginal) => {
   const { readGameDataObject: readHostedObject } = await importOriginal();
@@ -70,6 +69,7 @@ describe(useWorldChestsStore, () => {
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
   const LIYUE_REGION_ID = "liyue";
   const LIYUE_CHEST_ID = "chest-liyue";
+  const LIYUE_CHESTS_PATH = getGameDataRecordPath(GameDataKeys.chests.liyue);
   const TIME_TRIAL_ID = "time-trial";
   const puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0] = {
     monumentPlaces: [],

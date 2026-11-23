@@ -11,11 +11,11 @@ import { describe, expect, test } from "vitest";
 
 type Manifest = Partial<Record<DependencyField, Record<string, string>>>;
 
-const CODE_PATHSPECS = ["*.cjs", "*.cts", "*.js", "*.mjs", "*.mts", "*.ts", "*.tsx", "*.vue"];
-const ESLINT_DIRECTIVE_REGEX = /(?:\/\/|\/\*|<!--)\s*eslint-(?:disable|enable)/u;
-const CLASSIC_COMPILER = "typescript";
-
 describe("lintToolchain", () => {
+  const CODE_PATHSPECS = ["*.cjs", "*.cts", "*.js", "*.mjs", "*.mts", "*.ts", "*.tsx", "*.vue"];
+  const ESLINT_DIRECTIVE_REGEX = /(?:\/\/|\/\*|<!--)\s*eslint-(?:disable|enable)/u;
+  const CLASSIC_COMPILER = "typescript";
+
   test("linting the whole repository", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 

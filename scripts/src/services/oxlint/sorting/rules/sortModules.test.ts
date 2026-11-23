@@ -1,12 +1,12 @@
 import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.test";
 import { describe } from "vitest";
 
-// The declarations a group fixture keeps unexported, so each stays in its group, are read by one export list at the
-// End, which is a statement sort-modules does not read and so no partition
-const GROUP_EXPORTS =
-  "export { PlainEnum, DeclaredType, PlainInterface, PlainType, DeclaredClass, PlainClass, declaredFunction, plainFunction };";
-
 describe("sortModules", () => {
+  // The declarations a group fixture keeps unexported, so each stays in its group, are read by one export list at the
+  // End, which is a statement sort-modules does not read and so no partition
+  const GROUP_EXPORTS =
+    "export { PlainEnum, DeclaredType, PlainInterface, PlainType, DeclaredClass, PlainClass, declaredFunction, plainFunction };";
+
   setupPluginSuite({
     fixtures: [
       {
