@@ -18,7 +18,7 @@ A publish names the scopes it replaces. A **dataset scope** (`stats`) replaces e
 
 ## Datasets
 
-Every builder is a `pnpm -C scripts` command, and every one takes `--dry-run`. A reader is a function of `genshin-world` that takes the base URL and parses its record with its own schema (`packages/genshin-world/src/services/data/readGameData.ts`; the dry run is `scripts/src/services/gameData/publishGameDataStep.ts`).
+Every builder is a `pnpm -C scripts` command, and every one takes `--dry-run`. A reader is a function of `genshin-world` that takes the base URL and parses its record with its own schema (`packages/genshin-world/src/services/data/readGameData.ts`; the dry run is `scripts/src/services/gameData/publishGameDataPlan.ts`).
 
 The keys a dataset publishes are the lock's own (`packages/genshin-world/src/generated/gameDataLock.json`, its `indexes` and `objects`), and the `GameDataset` value set (`packages/genshin-world/src/models/data/GameDataset.ts`) names the datasets. Which builder publishes each one, and which reader reads it, are the `genshin:assets` commands and the functions under `packages/genshin-world/src/services/` and `scripts/src/services/genshinAssets/` that name them. The code shows a reader's absence only by search, so the datasets whose reader has no caller, or that has no reader, are listed here:
 
