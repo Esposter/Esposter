@@ -325,6 +325,8 @@ permissions:
     skills: true
   drizzle-kit:
     skills: true
+  genshin-persona:
+    skills: [genshin, genshin-author]
   phaser:
     skills: true
   tsdown:
@@ -336,4 +338,8 @@ shellEmulator: true
 # rather than one per checkout. This file is the one place the layout is set: a `vp run` task starts a pnpm of its own,
 # which reads this file and not the job's environment, so an environment override split the layout between the install
 # and the installs the tasks started, and those rebuilt the tree under the other tasks mid-run
+skills:
+  dirs:
+    - .agents/skills
+    - .claude/skills
 virtualStoreType: global
