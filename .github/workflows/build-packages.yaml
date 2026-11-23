@@ -26,11 +26,12 @@ jobs:
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
-      # Filtered to the libraries — the apps' trees are install work nothing here reads
+      # Filtered to the libraries and the scripts package, which the game data fill below runs from; the apps' trees are
+      # Install work nothing here reads
       - name: 📦 Install dependencies
         uses: ./.github/actions/install-projects
         with:
-          filter: ./packages/*
+          filter: ./{packages/*,scripts}
 
       - name: 🏗️ Build packages
         uses: ./.github/actions/run-cached-task
