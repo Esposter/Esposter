@@ -1,5 +1,5 @@
-import type { VueOptions } from "vize";
 import type { UserConfig } from "vite-plus";
+import type { VueOptions } from "vize";
 
 import { BUILD_TASKS } from "#vite/buildTasks";
 import { CHECK_TASKS } from "#vite/checkTasks";
