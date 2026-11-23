@@ -1,6 +1,6 @@
 import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetProduct";
 
-import { filesProductBase } from "#src/services/hostedAssets/filesProductFixture.test";
+import { filesProductBase } from "#src/services/hostedAssets/constants.test";
 import { publishHostedAssetFiles } from "#src/services/hostedAssets/publishHostedAssetFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { describe, expect, test } from "vitest";

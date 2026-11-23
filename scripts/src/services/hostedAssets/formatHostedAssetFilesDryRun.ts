@@ -16,7 +16,7 @@ export const formatHostedAssetFilesDryRun = (
   const namedPaths = toHostedAssetPaths([...Object.values(currentLock.objects), ...Object.values(currentLock.indexes)]);
   const storedRecords = records.filter((record) => !namedPaths.has(getHostedAssetPath(record)));
   return [
-    `${name}: dry run, nothing stored`,
+    `${name}: dry run, ${storedRecords.length} objects would be published, nothing stored`,
     ...getLockDifferences(nextLock, currentLock).map((difference) => `  ${difference}`),
     ...storedRecords.map((record) => `  store ${getHostedAssetPath(record)}: ${record.bytes.byteLength} bytes`),
   ].join("\n");

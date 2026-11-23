@@ -1,13 +1,12 @@
 import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetProduct";
 import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetRecord";
-import type { HostedAssetSourceFile } from "#src/models/hostedAssets/HostedAssetSourceFile";
 
-import { filesProductBase } from "#src/services/hostedAssets/filesProductFixture.test";
+import { filesPair, filesProductBase } from "#src/services/hostedAssets/constants.test";
 import { planHostedAssetFiles } from "#src/services/hostedAssets/planHostedAssetFiles";
 import { pullHostedAssetFiles } from "#src/services/hostedAssets/pullHostedAssetFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
-import { getContentAddress } from "@esposter/shared-node/cache";
+import { takeOne } from "@esposter/shared";
 import { getHostedAssetUrl } from "hosted-assets";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -21,14 +20,8 @@ describe(pullHostedAssetFiles, () => {
     ...filesProductBase,
     source: { folder, kind: "files", unhostedExtensions: [] },
   };
-  const bytesA = Buffer.from(TEST_FILENAME);
-  const bytesB = Buffer.from("");
-  const keyA = `${TEST_FILENAME}.png`;
-  const keyB = `${TEST_FILENAME}/${TEST_FILENAME}.png`;
-  const files: HostedAssetSourceFile[] = [
-    { bytes: bytesA, extension: ".png", key: keyA, sha256: getContentAddress(bytesA) },
-    { bytes: bytesB, extension: ".png", key: keyB, sha256: getContentAddress(bytesB) },
-  ];
+  const fileA = takeOne(filesPair, 0);
+  const fileB = takeOne(filesPair, 1);
   let repositoryRoot: string;
 
   // The origin serves each stored object at its url, and answers any other url with a missing object
@@ -55,24 +48,19 @@ describe(pullHostedAssetFiles, () => {
     expect.hasAssertions();
 
     // The objects as a publish stored them under the origin, and the lock that names them
-    const { lock, records } = planHostedAssetFiles(TEST_FILENAME, files);
+    const { lock, records } = planHostedAssetFiles(TEST_FILENAME, filesPair);
     serve(records);
 
-    await expect(pullHostedAssetFiles(baseUrl, product, lock, [keyA, keyB], repositoryRoot)).resolves.toBe(2);
-    await expect(readFile(join(repositoryRoot, folder, keyA))).resolves.toStrictEqual(bytesA);
-    await expect(readFile(join(repositoryRoot, folder, keyB))).resolves.toStrictEqual(bytesB);
+    await expect(pullHostedAssetFiles(baseUrl, product, lock, [fileA.key, fileB.key], repositoryRoot)).resolves.toBe(2);
+    await expect(readFile(join(repositoryRoot, folder, fileA.key))).resolves.toStrictEqual(fileA.bytes);
+    await expect(readFile(join(repositoryRoot, folder, fileB.key))).resolves.toStrictEqual(fileB.bytes);
   });
 
   test("a lock key that leaves the folder is refused before any file is written", async () => {
     expect.hasAssertions();
 
     // The lock names a key with a parent segment, and its object is on the origin, so only the path check can refuse it
-    const escaping = {
-      bytes: bytesA,
-      extension: ".png",
-      key: `../${TEST_FILENAME}.png`,
-      sha256: getContentAddress(bytesA),
-    };
+    const escaping = { ...fileA, key: `../${TEST_FILENAME}.png` };
     const { lock, records } = planHostedAssetFiles(TEST_FILENAME, [escaping]);
     serve(records);
 
