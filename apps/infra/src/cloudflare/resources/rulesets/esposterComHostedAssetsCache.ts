@@ -1,5 +1,6 @@
 import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
+import { toRulesSet } from "#src/cloudflare/services/toRulesSet";
 import { HostedAssetOriginMap } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -8,9 +9,6 @@ import * as cloudflare from "@pulumi/cloudflare";
 const HOSTED_TEXT_EXTENSIONS = ["json", "tmx", "tsx", "xml"];
 // Both environments' hosted hostnames, which share the zone
 const hostedHostnames = Object.values(HostedAssetOriginMap).map((origin) => new URL(origin).hostname);
-
-// A set in the rules language: each value quoted and space-separated, as `http.host in {...}` reads it
-const toRulesSet = (values: string[]): string => `{${values.map((value) => `"${value}"`).join(" ")}}`;
 
 // The origin's Cache-Control sets how long each object stays, since every hosted object carries max-age=31536000 and
 // Immutable, so the rule makes text eligible for the cache and leaves the lifetime to the origin
