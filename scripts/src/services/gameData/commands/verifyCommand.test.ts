@@ -39,7 +39,7 @@ describe("verifyCommand", () => {
     );
 
     await expect(verify()).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: game data lock, differs from the committed lock at object stats/weapons]`,
+      `[InvalidOperationError: Invalid operation: Read, name: GameData lock, differs from the committed lock at object stats/weapons]`,
     );
   });
 
