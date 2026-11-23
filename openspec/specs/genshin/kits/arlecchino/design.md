@@ -21,7 +21,7 @@ flowchart LR
   BONUS --> HOOKS["strike hooks on her Normal Attacks and burst"]
 ```
 
-- **Balemoon Rising resets her skill's cooldown 107 frames in.** gcsim's `{cache-root}/gcsim-v2.47.2/internal/characters/arlecchino/burst.go` queues `ResetActionCooldown(action.ActionSkill)` at that frame (`{cache-root}/gcsim-v2.47.2/internal/characters/arlecchino/burst.go`, line 43), and the kit schedules the same reset as a task that zeroes her party member's skill cooldown (`packages/genshin-world/src/services/kit/characters/arlecchinoKit.ts`).
+- **Balemoon Rising resets her skill's cooldown 107 frames in.** gcsim's `{cache-root}/gcsim-v2.47.2/internal/characters/arlecchino/burst.go` queues "ResetActionCooldown(action.ActionSkill)" at that frame (`{cache-root}/gcsim-v2.47.2/internal/characters/arlecchino/burst.go`, line 43), and the kit schedules the same reset as a task that zeroes her party member's skill cooldown (`packages/genshin-world/src/services/kit/characters/arlecchinoKit.ts`).
 
 ## Not built
 

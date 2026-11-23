@@ -13,7 +13,7 @@ flowchart TD
   RF --> OUT
 ```
 
-The house stands in for Mondstadt City's own buildings, the export's `Area_MdBuild_` and `Area_Mdbuild_` family, which the [witness](../parity/witness/design.md) draws with its terrain tiles as the ground (`packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`, the `BigWorldTerrain_` ground family). The export's other meshes are claimed undrawn by kind (`packages/genshin-world/src/services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`).
+The house stands in for Mondstadt City's own buildings, the export's "Area_MdBuild_" and `Area_Mdbuild_` family, which the [witness](../parity/witness/design.md) draws with its terrain tiles as the ground (`packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`, the `BigWorldTerrain_` ground family). The export's other meshes are claimed undrawn by kind (`packages/genshin-world/src/services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`).
 
 ## Parameters
 
@@ -41,9 +41,9 @@ Not built yet: the house's dressing (window boxes, shutters, lanterns and banner
 
 ## Sources
 
-- The game's Mondstadt City meshes in the `Area_MdBuild_` and `Area_Mdbuild_` families, under `{data-root}/genshin-parity/extracted/mondstadt/assets/Mesh/`: the export the house is to be compared with.
+- The game's Mondstadt City meshes in the "Area_MdBuild_" and `Area_Mdbuild_` families, under `{data-root}/genshin-parity/extracted/mondstadt/assets/Mesh/`: the export the house is to be compared with.
 - `packages/genshin-world/src/data/regions/mondstadt.json`, the `mondstadt-city` landmark's `Mondstadt` building kit and its options: the house's place in the region's data.
 
 ## Open
 
-- [ ] **The house stands in for Mondstadt City's buildings, whose export family is Area_MdBuild\_ and Area_Mdbuild\_** — no source yet: a comparison of the house with one of the `Area_MdBuild_` or `Area_Mdbuild_` meshes under `{data-root}/genshin-parity/extracted/mondstadt/assets/Mesh/`, which is not made.
+- [ ] **The house stands in for Mondstadt City's buildings, whose export family is Area_MdBuild\_ and Area_Mdbuild\_** — no source yet: a comparison of the house with one of the "Area_MdBuild_" or `Area_Mdbuild_` meshes under `{data-root}/genshin-parity/extracted/mondstadt/assets/Mesh/`, which is not made.
