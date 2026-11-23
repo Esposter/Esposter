@@ -1,6 +1,6 @@
 # Tasks
 
-Section 1 is the code, built by a session. Section 2 needs the bootstrap token and touches production, so the lead runs it, in order, once section 1 has landed. Section 3 is the last step and archives the change.
+Section 1 is the code, built by a session. Section 2 needs the bootstrap token and touches production, so the lead runs it, in order. Task 2.2 runs before section 1 lands, since section 1's CI reads the key it wires; every other task of section 2 runs once section 1 has landed. Section 3 is the last step and archives the change.
 
 Nothing here is ticked until its verify step has printed what it names.
 
