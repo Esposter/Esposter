@@ -3,7 +3,6 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
 import type { PhaserEvents } from "#src/models/phaser/PhaserEvents";
 import type { TypedEventEmitter } from "@esposter/shared";
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
@@ -12,6 +11,7 @@ import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
 import { CaptureItemResolver } from "#src/models/resolvers/dungeons/item/CaptureItemResolver";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useBallStore } from "#src/store/dungeons/battle/ball";
 import { useInventoryInfoPanelStore } from "#src/store/dungeons/inventory/infoPanel";
@@ -83,7 +83,7 @@ describe(CaptureItemResolver, () => {
     const ballStore = useBallStore();
     const { texture } = storeToRefs(ballStore);
     texture.value = FileKey.UIBallsCosmoBall;
-    const scene = {} as SceneWithPlugins;
+    const scene = createSceneWithPlugins();
     const damagedBallItem = { ...item, id: ItemId.DamagedBall };
     new CaptureItemResolver().handleItem(scene, ref(damagedBallItem), ref(monster));
 

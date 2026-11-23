@@ -1,7 +1,6 @@
 /* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed store has members this test never reads; A partial fake: the typed sound has members this test never reads */
 import type { TeleportTarget } from "#shared/generated/tiled/propertyTypes/class/TeleportTarget";
 import type { Types } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
@@ -9,6 +8,7 @@ import { Save } from "#shared/models/dungeons/data/Save";
 import { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
 import { TilemapAssetMap } from "#src/services/dungeons/loader/TilemapAssetMap";
 import { doorInteractionEffect } from "#src/services/dungeons/scene/world/interaction/effect/doorInteractionEffect";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { takeOne } from "@esposter/shared";
 import { createGridEngine, Direction } from "grid-engine-headless";
@@ -44,7 +44,7 @@ const getDoorObject = (
 
 describe(doorInteractionEffect, () => {
   const once = vi.fn<(event: unknown, listener: () => Promise<void>) => void>();
-  const scene = { cameras: { main: { once } } } as unknown as SceneWithPlugins;
+  const scene = Object.assign(createSceneWithPlugins(), { cameras: { main: { once } } });
 
   beforeEach(() => {
     setActivePinia(createPinia());

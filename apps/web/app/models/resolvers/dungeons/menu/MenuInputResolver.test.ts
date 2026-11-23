@@ -3,10 +3,11 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { MenuInputResolver } from "#src/models/resolvers/dungeons/menu/MenuInputResolver";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(MenuInputResolver, () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
 
   test("hands the input to the store it was given and returns its answer", () => {
     expect.hasAssertions();

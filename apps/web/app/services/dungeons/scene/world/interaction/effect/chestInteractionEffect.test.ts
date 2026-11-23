@@ -1,6 +1,5 @@
 /* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed store has members this test never reads; A partial fake: the typed sound has members this test never reads */
 import type { Types } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ChestObjectProperty } from "#shared/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
@@ -10,6 +9,7 @@ import { Chest } from "#shared/models/dungeons/data/world/Chest";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { chestInteractionEffect } from "#src/services/dungeons/scene/world/interaction/effect/chestInteractionEffect";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { Direction } from "grid-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
@@ -39,7 +39,7 @@ const getChestObject = (x: number, y: number): { x: number; y: number } & Types.
 });
 
 describe(chestInteractionEffect, () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
   const chestPosition = { x: 3, y: 4 };
 
   beforeEach(() => {

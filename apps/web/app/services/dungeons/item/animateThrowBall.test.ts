@@ -1,12 +1,12 @@
 /* oxlint-disable vitest/prefer-import-in-mock -- Partial fakes: the typed modules would load Phaser, which cannot initialise under the test environment, and the skip path reads none of their values */
 import type { GameObjects } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { AnimationsSetting } from "#shared/models/dungeons/data/settings/AnimationsSetting";
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
 import { animateThrowBall } from "#src/services/dungeons/item/animateThrowBall";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useBallStore } from "#src/store/dungeons/battle/ball";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { createPinia, setActivePinia } from "pinia";
@@ -19,7 +19,7 @@ vi.mock("phaser", () => ({}));
 vi.mock("vue-phaserjs", () => ({}));
 
 describe(animateThrowBall, () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
 
   beforeEach(() => {
     setActivePinia(createPinia());

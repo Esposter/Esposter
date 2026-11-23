@@ -1,9 +1,8 @@
-import type { SceneWithPlugins } from "vue-phaserjs";
-
 import { AnimationsSetting } from "#shared/models/dungeons/data/settings/AnimationsSetting";
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { getRowPosition } from "#src/store/dungeons/settings/getRowPosition.test";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
@@ -20,7 +19,7 @@ describe(useSettingsSceneStore, () => {
   const dungeonsStore = useDungeonsStore();
   const { saveDungeons } = dungeonsStore;
   // The scene is only read for special inputs, which these tests never send
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
 
   beforeEach(() => {
     setActivePinia(createPinia());

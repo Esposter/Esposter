@@ -8,6 +8,7 @@ import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { getExperienceGain } from "#src/services/dungeons/monster/getExperienceGain";
 import { getLevelExperience } from "#src/services/dungeons/monster/getLevelExperience";
 import { GainExperience } from "#src/services/dungeons/state/battle/states/GainExperience";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useDungeonsStore } from "#src/store/dungeons/index";
@@ -30,7 +31,7 @@ vi.mock("#src/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () =
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe("gainExperience", () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
   const enemyMonster = new Monster(MonsterKey.Iguanignite);
   const experienceGain = getExperienceGain(enemyMonster.statistics.baseExperience, enemyMonster.statistics.level);
   let playerMonster: Monster;

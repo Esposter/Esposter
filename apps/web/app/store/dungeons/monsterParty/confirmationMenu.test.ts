@@ -1,10 +1,10 @@
 /* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed dungeons store would load Phaser and its full store type, and the text animation drives Phaser's scene */
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";
 import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "#src/services/dungeons/scene/monsterParty/constants";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useConfirmationMenuStore } from "#src/store/dungeons/monsterParty/confirmationMenu";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
@@ -21,7 +21,7 @@ vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.tes
 vi.mock(import("#src/services/dungeons/text/animateText"), () => ({ animateText: () => Promise.resolve() }));
 
 describe(useConfirmationMenuStore, () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
 
   beforeEach(() => {
     setActivePinia(createPinia());

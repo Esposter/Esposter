@@ -8,6 +8,7 @@ import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { createCaptureResult } from "#src/services/dungeons/item/createCaptureResult";
 import { CatchMonster } from "#src/services/dungeons/state/battle/states/CatchMonster";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { prettify } from "#src/util/text/prettify";
@@ -38,7 +39,7 @@ vi.mock(import("#src/services/dungeons/item/createCaptureResult"), () => ({
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe("catchMonster", () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
   const wildMonsterName = prettify(MonsterKey.Iguanignite);
 
   beforeEach(() => {

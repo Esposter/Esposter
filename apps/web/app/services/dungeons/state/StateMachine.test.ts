@@ -1,12 +1,12 @@
 import type { StateMachineStateMap } from "#src/models/dungeons/state/StateMachineStateMap";
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { StateMachine } from "#src/services/dungeons/state/StateMachine";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(StateMachine, () => {
   // The scene is only passed through to the states, which these tests never read
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
 
   const createMachine = (stateMap: StateMachineStateMap<"idle" | "walk">) => {
     const stateMachine = new StateMachine<"idle" | "walk">();

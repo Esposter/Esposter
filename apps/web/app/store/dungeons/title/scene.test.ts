@@ -1,10 +1,9 @@
-import type { SceneWithPlugins } from "vue-phaserjs";
-
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerTitleMenuOption } from "#src/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useTitleSceneStore } from "#src/store/dungeons/title/scene";
 import { NotFoundError } from "@esposter/shared";
@@ -32,7 +31,7 @@ const selectOption = (option: PlayerTitleMenuOption) => {
 
 describe(useTitleSceneStore, () => {
   // The scene is only handed on to the switch, which these tests replace
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
 
   beforeEach(() => {
     setActivePinia(createPinia());

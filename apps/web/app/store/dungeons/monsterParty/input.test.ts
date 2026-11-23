@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import type { MockInstance } from "vitest";
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";
 import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
@@ -8,6 +7,7 @@ import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
@@ -57,7 +57,7 @@ const getFaintedMonster = () => {
 };
 
 describe(useMonsterPartyInputStore, () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
   let emitSpy: MockInstance<typeof phaserEventEmitter.emit>;
 
   // A fresh pinia per test, so the battle's active monster is read from the party as this test sets it

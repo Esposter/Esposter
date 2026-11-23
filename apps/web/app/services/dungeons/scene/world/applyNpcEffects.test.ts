@@ -8,6 +8,7 @@ import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { EffectType } from "#src/models/dungeons/npc/effect/EffectType";
 import { Npc } from "#src/models/dungeons/scene/world/Npc";
 import { applyNpcEffects } from "#src/services/dungeons/scene/world/applyNpcEffects";
+import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -30,7 +31,7 @@ vi.mock("vue-phaserjs", () => ({ sleepScene: () => Promise.resolve() }));
 const getNpc = (effects: Effect[]) => new Npc({ effects, name: NpcId.John });
 
 describe(applyNpcEffects, () => {
-  const scene = {} as SceneWithPlugins;
+  const scene = createSceneWithPlugins();
 
   beforeEach(() => {
     setActivePinia(createPinia());
