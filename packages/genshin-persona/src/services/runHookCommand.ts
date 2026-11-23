@@ -8,7 +8,8 @@ import { runCommand, showUsage } from "citty";
 // It answers `--help` here, as `runMain` would, since `runCommand` does not
 export const runHookCommand = async <T extends ArgsDef>(command: CommandDef<T>): Promise<void> => {
   registerQuietExit();
-  // oxlint-disable-next-line no-restricted-properties -- runCommand takes the hook's arguments from here, since runMain, which reads them itself, exits 1 on a throw
+  // `runCommand` takes the hook's arguments from here,
+  // oxlint-disable-next-line no-restricted-properties -- since runMain, which reads them itself, exits 1 on a throw
   const rawArgs = process.argv.slice(2);
   if (rawArgs.includes("--help") || rawArgs.includes("-h")) {
     await showUsage(command);

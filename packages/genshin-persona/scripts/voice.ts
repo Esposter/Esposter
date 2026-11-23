@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: lines synthesize and play back one after another; One device: a line plays once the one before it has */
+/* oxlint-disable no-await-in-loop -- One device: lines synthesize and play back one after another; One device: a
+   line plays once the one before it has */
 import type { AudioPlayer } from "#src/models/AudioPlayer";
 import type { PcmClip } from "#src/models/PcmClip";
 import type { SpeakerTensors } from "#src/models/SpeakerTensors";
@@ -180,7 +181,8 @@ server.on("connection", (socket) => {
   // `socket.on` is a third-party slot that takes no promise. The codebase's synchronized-function helper ships in
   // `@esposter/shared`, which this plugin's own install does not carry, and one call is no reason to add it
   socket.on("data", (chunk: string) => {
-    // oxlint-disable-next-line typescript/no-floating-promises -- `answer` settles every outcome and ends the socket on each
+    // `answer`
+    // oxlint-disable-next-line typescript/no-floating-promises -- settles every outcome and ends the socket on each
     answer(chunk);
   });
   // A hook, which hands its piece over and leaves before the answer

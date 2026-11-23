@@ -79,7 +79,8 @@ describe(register, () => {
     expect(update).not.toHaveBeenCalled();
   });
 
-  // A script the node process cannot start rejects its run, which the refresh runs off a timer slot with nothing to catch it
+  // A script the node process cannot start rejects its run, which the refresh runs off a timer slot with nothing to
+  // Catch it
   test.each(["status.mjs", "spinner.mjs"])(
     "a %s that cannot start resolves rather than rejecting unhandled",
     async (failedScript) => {

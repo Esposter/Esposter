@@ -69,7 +69,8 @@ export const createReplyQueue = <T extends ReplyPiece>(
         reading = piece.isFinal
           ? undefined
           : { messageId: piece.messageId, nextIndex: piece.index + 1, turnId: piece.turnId };
-      // oxlint-disable-next-line no-await-in-loop -- Order is the contract: a message's pieces are read in their index order, one piece at a time
+      // Order, one piece at a time
+      // oxlint-disable-next-line no-await-in-loop -- Order is the contract: a message's pieces are read in their index
       const status = await run(piece, createCheckIsSuperseded(piece));
       next.resolve(status);
     }
