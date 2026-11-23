@@ -94,3 +94,24 @@ The first run of the page did not click the title, so no bar was drawn (`genshin
 ## 6.6: the dev bucket emptied
 
 Before the emptying, the dev `public-genshin-assets` was listed by its top-level prefix against the dev `public-hosted-assets`. Every prefix the game reads held its objects in both; the old bucket's extra objects were versions no lock names. One prefix had no hosted copy: `parityObjects`, the parity loop's five reference objects, which `referencesPackCommand` now writes to the hosted bucket and `restoreManifestFiles` reads from the hosted origin. Each of the five was copied to the dev and prod hosted buckets, its bytes hashed against its name before the write and read back after it, and one answers 200 on both hosted domains. The dev `public-genshin-assets` was then emptied: 8,204 objects deleted, 0 left. The prod bucket waits for `main`.
+
+## 5.1 and 5.2: the worker activates, controls its page and answers hosted objects from its cache
+
+**Why the install failed.** The worker precached the build's app manifest, `_nuxt/builds/meta/<build id>.json`. Each deploy serves only its own manifest, so a worker whose build was superseded gets a 404 on that entry, and the precache (one file at a time) stops there and the worker never activates. The deployed dev worker's precache has 1053 entries and this one is the 231st. Against the live dev site, in a driven Chrome with `/sw.js` answered by that deployed worker:
+
+- the worker unchanged: installing for about 20 s, then `installing` and `active` null and no controller;
+- the same worker with that one entry removed: installs, activates and controls the page (about 55 s);
+- the other 1048 entries of that worker all answer 200 on the live site, so removing the manifest entry is the whole difference.
+
+The fix (`packages/unplugin-pwa-nuxt`, the build test asserts it) leaves the app manifest out of the precache. The built `sw.js` of this change names no `_nuxt/builds/meta` entry and 1052 entries in all.
+
+**The driven run.** The local production build of `apps/web` (`pnpm -C apps/web build` with `CLOUDFLARE_ENV=dev`, so the hosted origin is `hosted.dev.esposter.com`), served by `pnpm start` with placeholder values for the app's environment variable names. A throwaway Chrome, driven over CDP, with the first visit to `/dungeons`, a reload and a second visit, then the network disconnected for the page and the worker:
+
+- first visit: the worker is `activated` about 30 s after the navigation, and the page that installed it is `controlled` with no reload (5.2);
+- the `hosted-assets` cache holds 76 objects once the preloader has run;
+- reload: `controller` is set;
+- second visit: 87 hosted responses, all 87 answered by the worker's cache, none from the disk cache or the network, and no fetch by the worker to a hosted origin;
+- offline visit, network disconnected for the page and the worker: 87 hosted responses, all 87 answered by the worker's cache, none failed, no fetch by the worker to a hosted origin (5.1's claim, with the network disabled);
+- no page exception, no worker error, no hosted request failed in the online visits.
+
+**Not yet on the deployed dev site.** The Deploy of `ai/queue` is skipped: CI on the current head (`2251a4a81f`) is red in `scripts/src/workspace/oxlintPlugins.test.ts` (the `comments/no-over-width-comment` rule is not enabled), which is not this change. The same driven run against `https://dev.esposter.com` (`HOSTED=https://hosted.dev.esposter.com`) is the check once a Deploy carries this change.
