@@ -28,6 +28,7 @@ export const requireImportType: Rule = defineRule({
       if (specifier.type === "ImportSpecifier" && specifier.importKind === "type") return false;
       const [variable] = sourceCode.getDeclaredVariables(specifier);
       if (
+        !variable ||
         variable.references.length === 0 ||
         !variable.references.every((reference) => checkIsTypeOnlyReference(reference))
       )
