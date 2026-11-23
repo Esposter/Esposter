@@ -5,7 +5,7 @@ import { buildSortingNode } from "#src/services/oxlint/sorting/buildSortingNode"
 import { checkIsFunctionProperty } from "#src/services/oxlint/sorting/checkIsFunctionProperty";
 import { CLASS_MEMBER_GROUPS } from "#src/services/oxlint/sorting/classMemberGroups";
 import { computeClassMemberGroup } from "#src/services/oxlint/sorting/computeClassMemberGroup";
-import { computeKeyName } from "#src/services/oxlint/sorting/names/computeKeyName";
+import { computeKeyNameOrSource } from "#src/services/oxlint/sorting/names/computeKeyName";
 import { populateClassMemberDependencies } from "#src/services/oxlint/sorting/populateClassMemberDependencies";
 import { reportUnsortedByGroup } from "#src/services/oxlint/sorting/reportUnsortedByGroup";
 import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
@@ -29,7 +29,7 @@ const computeMemberName = (
   key: ESTree.PropertyDefinition["key"],
 ): { hasPrivateHash: boolean; name: string } => {
   if (key.type === "PrivateIdentifier") return { hasPrivateHash: true, name: `#${key.name}` };
-  return { hasPrivateHash: false, name: computeKeyName(key) ?? sourceCode.getText(key) };
+  return { hasPrivateHash: false, name: computeKeyNameOrSource(key, sourceCode) };
 };
 
 const computeMethodSelectors = (kind: ESTree.MethodDefinition["kind"]): string[] => {
