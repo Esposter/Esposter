@@ -1,6 +1,5 @@
 import type { BarrelLines } from "#src/models/precheck/BarrelLines";
 import type { GeneratedFileCheck } from "#src/models/precheck/GeneratedFileCheck";
-import type { ExportsGeneration } from "@esposter/configuration";
 
 import { generateBarrelLines } from "#src/services/precheck/generateBarrelLines";
 import { getBarrelFindings } from "#src/services/precheck/getBarrelFindings";
@@ -8,10 +7,10 @@ import { getExpectedLines } from "#src/services/precheck/getExpectedLines";
 import { getLazyDirectories } from "#src/services/precheck/getLazyDirectories";
 import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getSubpathExclusions, readPackageManifest } from "@esposter/configuration";
+import { ExportsGeneration, getSubpathExclusions, readPackageManifest } from "@esposter/configuration";
 import { BARREL_FILE, COMPONENTS_DIRECTORY, SOURCE_DIRECTORY_NAME } from "@esposter/configuration/constants";
 import { generateExports } from "@esposter/configuration/generate-exports";
-import { existsSync } from "node:fs";
+import { readExportsGeneration } from "@esposter/configuration/read-exports-generation";
 import { join } from "node:path";
 
 // One package's barrels against what its generator writes: each line the generator would write that a committed barrel
@@ -21,12 +20,9 @@ export const checkBarrel = (packageDirectory: string, fix: boolean): GeneratedFi
   const sourceDirectory = join(packageRoot, SOURCE_DIRECTORY_NAME);
   const barrelLabel = `${packageDirectory}/${SOURCE_DIRECTORY_NAME}/${BARREL_FILE}`;
   const componentsLabel = `${packageDirectory}/${SOURCE_DIRECTORY_NAME}/${COMPONENTS_DIRECTORY}/${BARREL_FILE}`;
-  // A package that generates no barrel has none on disk, so there is nothing to compare
-  if (!existsSync(join(sourceDirectory, BARREL_FILE))) return { findings: [], regenerated: [] };
-  // A Vue package's component barrel exists only where the Vue answer writes it
-  const exportsGeneration: ExportsGeneration = existsSync(join(sourceDirectory, COMPONENTS_DIRECTORY, BARREL_FILE))
-    ? "vue"
-    : "typescript";
+  const exportsGeneration = readExportsGeneration(packageRoot);
+  // A package that generates no barrel has none to compare
+  if (exportsGeneration === ExportsGeneration.None) return { findings: [], regenerated: [] };
   const committedLines: BarrelLines = {
     components: readBarrelLines(join(sourceDirectory, COMPONENTS_DIRECTORY, BARREL_FILE)),
     source: readBarrelLines(join(sourceDirectory, BARREL_FILE)),

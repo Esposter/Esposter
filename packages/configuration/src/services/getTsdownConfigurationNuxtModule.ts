@@ -1,6 +1,5 @@
 import type { UserConfig } from "tsdown";
 
-import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { NON_SOURCE_SUFFIXES } from "#src/services/constants";
 import { getTsdownConfigurationNode } from "#src/services/getTsdownConfigurationNode";
 import { mergeConfig } from "tsdown";
@@ -14,7 +13,7 @@ import { mergeConfig } from "tsdown";
 // Calls and the `models` that type them. A test, benchmark, fixture or reference beside a runtime file is no entry,
 // By the same list the barrels exclude. A package adds the runtime files its own `exports` map leaves out.
 export const getTsdownConfigurationNuxtModule = (excludedExports: string[]): UserConfig =>
-  mergeConfig(getTsdownConfigurationNode({ exportsGeneration: ExportsGeneration.None }), {
+  mergeConfig(getTsdownConfigurationNode(), {
     entry: [
       { index: "src/module.ts" },
       "src/runtime/**/*.ts",

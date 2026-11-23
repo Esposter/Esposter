@@ -1,12 +1,9 @@
-import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
-import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { HIDDEN_FOLDER_REGEX, PNPM_PEER_SUFFIX_REGEX, SOURCE_CONDITION } from "#src/services/constants";
 import { dropModulePathCommentsPlugin } from "#src/services/dropModulePathCommentsPlugin";
-import { generateExports } from "#src/services/generateExports";
+import { generateBarrels } from "#src/services/generateBarrels";
 import { getPackagePatterns } from "#src/services/getPackagePatterns";
-import { getSubpathExclusions } from "#src/services/getSubpathExclusions";
 import { mapGlobalStorePath } from "#src/services/mapGlobalStorePath";
 import { readPackageManifest } from "#src/services/readPackageManifest";
 import { mergeConfig } from "tsdown";
@@ -22,11 +19,9 @@ import { mergeConfig } from "tsdown";
 // Published package owes an installable promise to a stranger, and `publint` and `attw` are the gates that
 // Hold it to that promise. A private package owes nobody anything and gets neither.
 //
-// `exportsGeneration` says which barrel the build generates for itself, and the three answers it can give are
-// The whole of what a package may vary here.
-export const getTsdownConfiguration = ({
-  exportsGeneration = ExportsGeneration.TypeScript,
-}: TsdownConfigurationOptions = {}): UserConfig => {
+// Which barrel the build generates is read off the package by `readExportsGeneration`, so no option here states it
+// Beside the package's own source and manifest.
+export const getTsdownConfiguration = (): UserConfig => {
   const {
     dependencies,
     optionalDependencies,
@@ -86,7 +81,7 @@ export const getTsdownConfiguration = ({
     // Manifest names, so a subpath is declared once, where its consumers read it, and no config is loaded to find it.
     hooks: {
       "build:prepare": ({ options: { cwd } }) => {
-        generateExports(cwd, exportsGeneration, getSubpathExclusions(readPackageManifest(cwd)));
+        generateBarrels(cwd);
       },
     },
     // A consumer's bundler treats one file as one module, so a package built into one `dist/index.js` keeps every

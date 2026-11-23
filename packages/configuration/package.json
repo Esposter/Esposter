@@ -29,8 +29,10 @@
     },
     "./package.json": "./package.json",
     "./eslint/*": "./eslint/*",
+    "./generate-barrels": "./src/services/generateBarrels.ts",
     "./generate-exports": "./src/services/generateExports.ts",
     "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
+    "./read-exports-generation": "./src/services/readExportsGeneration.ts",
     "./types/global.d.ts": "./types/global.d.ts",
     "./vitest/*": "./vitest/*"
   },
@@ -43,8 +45,10 @@
       },
       "./package.json": "./package.json",
       "./eslint/*": "./eslint/*",
+      "./generate-barrels": "./src/services/generateBarrels.ts",
       "./generate-exports": "./src/services/generateExports.ts",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
+      "./read-exports-generation": "./src/services/readExportsGeneration.ts",
       "./types/global.d.ts": "./types/global.d.ts",
       "./vitest/*": "./vitest/*"
     }

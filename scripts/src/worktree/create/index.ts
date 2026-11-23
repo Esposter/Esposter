@@ -2,6 +2,7 @@ import { withInstallLock } from "#src/services/machine/withInstallLock";
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { runCommand } from "#src/services/timing/runCommand";
+import { timePhase } from "#src/services/timing/timePhase";
 import { timePhaseAsync } from "#src/services/timing/timePhaseAsync";
 import { buildDistributions } from "#src/services/worktree/create/buildDistributions";
 import { createWorktree } from "#src/services/worktree/create/createWorktree";
@@ -9,6 +10,7 @@ import { getBuildDirectories } from "#src/services/worktree/create/getBuildDirec
 import { installWorktree } from "#src/services/worktree/create/installWorktree";
 import { readMemoryGateShortfall } from "#src/services/worktree/create/readMemoryGateShortfall";
 import { seedTaskCache } from "#src/services/worktree/create/seedTaskCache";
+import { writeWorktreeBarrels } from "#src/services/worktree/create/writeWorktreeBarrels";
 import { getResultAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -39,6 +41,10 @@ await runCommand(
       const packageNames = args._.slice(1).map(String);
       const mainCheckoutRoot = readMainCheckoutRoot();
       const worktreePath = createWorktree(args.name, mainCheckoutRoot);
+      // Before the install, since the install and the builds read the barrels every package's `source` arm names
+      timePhase("barrels", () => {
+        writeWorktreeBarrels(worktreePath);
+      });
       // Under the machine's install lock, since every install writes the pnpm store that the others read and write. Its
       // Phase line counts the wait for the lock too, where the install line above it counts only the install
       await timePhaseAsync("install, lock wait included", () =>

@@ -1,7 +1,6 @@
 import type { VizeUnpluginOptions } from "@vizejs/unplugin";
 import type { UserConfig } from "tsdown";
 
-import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { STYLESHEET_REQUEST_REGEX, VUE_AUTO_IMPORTS } from "#src/services/constants";
 import { getTsdownConfiguration } from "#src/services/getTsdownConfiguration";
 import { mergeStylesheetsPlugin } from "#src/services/mergeStylesheetsPlugin";
@@ -21,7 +20,7 @@ import AutoImport from "unplugin-auto-import/rolldown";
 // No entrypoint imports, is in it through the tsconfig's own `include`. `runExternalCode` lets `tsrs` run the mapper.
 // A private package keeps the base's `dts: false`, for the reason the base gives: nothing types against its `dist`.
 export const getTsdownConfigurationVue = (vizeOptions: VizeUnpluginOptions = {}): UserConfig =>
-  mergeConfig(getTsdownConfiguration({ exportsGeneration: ExportsGeneration.Vue }), {
+  mergeConfig(getTsdownConfiguration(), {
     ...(readPackageManifest().private
       ? {}
       : { dts: { generator: "tsrs", tsconfig: "tsconfig.build.json", tsrs: { runExternalCode: true } } }),

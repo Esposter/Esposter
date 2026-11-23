@@ -30,8 +30,10 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
       // Barrel imports — most of a tooling script's startup
       "./constants": { default: "./dist/constants.js", source: "./src/services/constants.ts" },
       "./eslint/*": "./eslint/*",
+      "./generate-barrels": "./src/services/generateBarrels.ts",
       "./generate-exports": "./src/services/generateExports.ts",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
+      "./read-exports-generation": "./src/services/readExportsGeneration.ts",
       "./types/global.d.ts": "./types/global.d.ts",
       "./vitest/*": "./vitest/*",
     },
