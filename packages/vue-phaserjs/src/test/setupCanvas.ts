@@ -1,5 +1,5 @@
 import { noop } from "@esposter/shared";
-import { afterAll, vi } from "vitest";
+import { vi } from "vitest";
 
 /* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
    runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
@@ -99,6 +99,8 @@ const mockCanvasContext = {
   wordSpacing: "0px",
 } as unknown as CanvasRenderingContext2D;
 
+// The spies stay for the worker's life: Phaser's blend-mode check and its canvas pool outlive a file, so a canvas one file
+// Made must keep its mock context in the next, where a restored spy would leave it a null context
 vi.spyOn(window.document, "createElement").mockImplementation((tagName, options) => {
   const element = createElement(tagName, options);
   if (element instanceof HTMLCanvasElement)
@@ -125,7 +127,4 @@ vi.stubGlobal(
   },
 );
 
-afterAll(() => {
-  vi.restoreAllMocks();
-});
 /* eslint-enable no-restricted-syntax */
