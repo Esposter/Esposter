@@ -12,8 +12,7 @@ export const readRadixNumber = (state: MathExpressionParserState, prefix: string
   const checkBaseDigit = (character: string): boolean => baseDigits.test(character);
   state.index += 2;
   let digits = takeMathExpressionMatching(state, checkBaseDigit);
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a digit run the tokenizer read, never typed
-  if (digits === "") {
+  if (!digits) {
     state.index--;
     state.token = "0";
     state.tokenType = MathExpressionTokenType.Number;
