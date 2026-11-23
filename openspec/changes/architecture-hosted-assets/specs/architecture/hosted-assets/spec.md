@@ -137,3 +137,14 @@ A test SHALL read hosted objects from a local mirror keyed on the product's lock
 - **GIVEN** a suite that reads a product's objects
 - **WHEN** it runs with no network
 - **THEN** every object resolves from the mirror and the suite passes
+
+### Requirement: A lost object is restored from the other environment's bucket
+
+A repair SHALL copy each object or index a product's lock names that one environment's bucket lacks from the other environment's bucket, verifying the source against its name and the lock's length. A name that neither bucket holds SHALL fail the repair, named by its key.
+
+#### Scenario: A lost object is restored from the other bucket
+
+- **GIVEN** a product whose lock names an object the production bucket has lost, and the development bucket still holds
+- **WHEN** the product is repaired
+- **THEN** the object is copied into the production bucket
+- **AND** it reads back with the bytes its name gives

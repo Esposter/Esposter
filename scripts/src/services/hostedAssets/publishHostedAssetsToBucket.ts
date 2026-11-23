@@ -3,16 +3,16 @@ import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetReco
 import type { HostedAssetName } from "hosted-assets";
 
 import {
-  HOSTED_ASSET_CACHE_CONTROL,
   HOSTED_ASSET_REUSE_WINDOW_MS,
   MAX_CONCURRENT_OBJECT_BODIES,
   MAX_CONCURRENT_VERIFY_FETCHES,
 } from "#src/services/hostedAssets/constants";
+import { putHostedAsset } from "#src/services/hostedAssets/putHostedAsset";
 import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 import { toHostedAssetLockObject } from "#src/services/hostedAssets/toHostedAssetLockObject";
 import { toHostedAssetPaths } from "#src/services/hostedAssets/toHostedAssetPaths";
 import { settleAll } from "@esposter/shared";
-import { getHostedAssetPath, HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
+import { getHostedAssetPath } from "hosted-assets";
 
 // Stores what one bucket does not hold yet, and returns how many objects it wrote. A stored object is reused as it is when
 // The current lock reaches it or it is young, and otherwise rewritten with the same bytes, which restarts its age so no
@@ -38,15 +38,8 @@ export const publishHostedAssetsToBucket = async (
       );
     })
     .map(({ key, record }) => ({ isCreateOnly: !lastModifiedMap.has(key), key, record }));
-  const writeRecord = async ({ isCreateOnly, key, record }: (typeof writes)[number]) => {
-    const { body, contentEncoding } = await getEncoded(record);
-    return bucketClient.put(key, new Uint8Array(body), {
-      cacheControl: HOSTED_ASSET_CACHE_CONTROL,
-      contentEncoding,
-      contentType: HOSTED_ASSET_CONTENT_TYPES[record.extension],
-      createOnly: isCreateOnly,
-    });
-  };
+  const writeRecord = async ({ isCreateOnly, record }: (typeof writes)[number]) =>
+    putHostedAsset(bucketClient, record, await getEncoded(record), isCreateOnly);
   const leafWrites = writes.filter(({ record }) => !record.isIndex);
   const indexWrites = writes.filter(({ record }) => record.isIndex);
   const leafResults = await settleAll(

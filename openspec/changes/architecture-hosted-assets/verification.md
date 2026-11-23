@@ -45,3 +45,10 @@ After the switch, the opening preloads the lock's objects and indexes and the ch
 - Change: −135,324 bytes in all, −18,429 bytes in `public`.
 
 The record itself (`bundle-sizes.md`) is written by the review of `ai/queue` from its Linux build, so this session does not write it.
+
+## 2.7: the repair's dry runs
+
+`pnpm -C scripts hosted-assets repair <product> --dry-run`, with the four R2 credentials in the command's own environment, on the tree of this change:
+
+- `dungeons`: `nothing to copy`, exit 0.
+- `GameData`: `nothing to copy`, exit 0.

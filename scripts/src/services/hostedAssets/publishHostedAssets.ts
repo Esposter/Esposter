@@ -5,8 +5,7 @@ import type { PublishHostedAssetsOptions } from "#src/models/hostedAssets/Publis
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
 import { assertScopeUnclaimed } from "#src/services/hostedAssets/assertScopeUnclaimed";
 import { checkNamedByScopes } from "#src/services/hostedAssets/checkNamedByScopes";
-import { encodeHostedAssetObject } from "#src/services/hostedAssets/encodeHostedAssetObject";
-import { encodeHostedAssetRecord } from "#src/services/hostedAssets/encodeHostedAssetRecord";
+import { encodeStoredHostedAsset } from "#src/services/hostedAssets/encodeStoredHostedAsset";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
 import { mergeHostedAssetLock } from "#src/services/hostedAssets/mergeHostedAssetLock";
 import { publishHostedAssetsToBucket } from "#src/services/hostedAssets/publishHostedAssetsToBucket";
@@ -46,10 +45,7 @@ export const publishHostedAssets = async ({
     };
   // A publish that changes the lock lists each bucket, and stores only the objects it lacks
   const bucketClientMap = createBucketClientMap();
-  const encodeStored = (record: HostedAssetRecord) =>
-    product.source.kind === "records"
-      ? encodeHostedAssetRecord(record.bytes)
-      : encodeHostedAssetObject(record.extension, record.bytes);
+  const encodeStored = (record: HostedAssetRecord) => encodeStoredHostedAsset(product, record);
   const encodeMap = new Map<string, ReturnType<typeof encodeStored>>();
   // Encoded once per object and shared by both environments, which hold the same bytes
   const getEncoded = (record: HostedAssetRecord) =>
