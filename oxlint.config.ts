@@ -34,7 +34,7 @@ import { defineConfig } from "oxlint";
 // @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
 // vize evaluates this file through `vite.config.ts` and refuses a write over a variable already set, so each is set only
 // When absent
-// @TODO: no upstream issue — vize's config runtime throws on assigning a process.env variable that is already set (ubugeeei-prod/vize)
+// @TODO: https://github.com/ubugeeei-prod/vize/issues/13532 — assign plainly once the recorder's Proxy takes a write
 process.env.TSRS_FAST ??= "1";
 process.env.TSRS_LINT_RUN_EXTERNAL_CODE ??= "1";
 

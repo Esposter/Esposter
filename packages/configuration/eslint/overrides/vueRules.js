@@ -20,7 +20,7 @@ export default {
   // (Vuetify 0's `Select.Root`), since the library exports each compound as one namespace object. The
   // `registeredComponentsOnly` option is useless under Nuxt auto-imports (nothing is locally registered), so every
   // Non-HTML tag is checked.
-  // @TODO: no upstream issue — vize's vue/component-name-in-template-casing has no ignores for TresJS's <primitive> (ubugeeei-prod/vize)
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13537
   "vue/component-name-in-template-casing": [
     "error",
     "PascalCase",
@@ -29,13 +29,11 @@ export default {
       registeredComponentsOnly: false,
     },
   ],
-  // @TODO: no upstream issue — vize has no first-attribute-linebreak rule (ubugeeei-prod/vize)
-  "vue/first-attribute-linebreak": "warn",
   // The bare `@click.stop` ban reads the directive's modifiers, which vize's template tree does not expose
-  // @TODO: no upstream issue — vize's VDirectiveKey has no modifier nodes for vue/no-restricted-syntax to match (ubugeeei-prod/vize)
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13534 — move the ban to vize's list once its tree carries modifiers
   "vue/no-restricted-syntax": ["error", ...restrictedEventSyntaxes],
-  // @TODO: no upstream issue — vize has no padding-line-between-blocks rule (ubugeeei-prod/vize)
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13538
   "vue/padding-line-between-blocks": ["error", "always"],
-  // @TODO: no upstream issue — vize's vue/v-bind-style has no same-name shorthand option (ubugeeei-prod/vize)
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13535
   "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
 };

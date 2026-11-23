@@ -80,7 +80,7 @@ export const VUE_OPTIONS: VueOptions = {
         },
         // The three element bans are selectors rather than `vue/no-restricted-html-elements`, whose vize options name the
         // Elements and drop the message saying what to use instead
-        // @TODO: no upstream issue — vize's vue/no-restricted-html-elements takes no per-element message (ubugeeei-prod/vize)
+        // @TODO: https://github.com/ubugeeei-prod/vize/issues/13536 — move them to vue/no-restricted-html-elements once it takes a message
         {
           message:
             'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',

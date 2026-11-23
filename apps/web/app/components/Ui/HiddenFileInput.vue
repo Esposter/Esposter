@@ -17,7 +17,7 @@ defineExpose({
 </script>
 
 <template>
-  <!-- @TODO: no upstream issue — vize's a11y/no-aria-hidden-on-focusable counts a hidden element as focusable (ubugeeei-prod/vize) -->
+  <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/13533 -->
   <!-- eslint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
   <input
     ref="input"
