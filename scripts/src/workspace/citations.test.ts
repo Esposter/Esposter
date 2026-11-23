@@ -1,5 +1,8 @@
+import type { CitingPage } from "#src/models/shared/CitingPage";
+
 import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens";
 import { readCitingPages } from "#src/services/citations/readCitingPages";
+import { readSourceComments } from "#src/services/citations/readSourceComments";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
@@ -58,11 +61,9 @@ describe("citations", () => {
     return false;
   };
   const pages = readCitingPages();
-
-  test("every cited path exists", { timeout: TREE_READ_TIMEOUT_MS }, async () => {
-    expect.hasAssertions();
-
-    const citations = pages.flatMap(({ path, text }) =>
+  // A source comment cites a path the way a page does, and is judged the same way
+  const checkCitesResolve = async (citingPages: CitingPage[]) => {
+    const citations = citingPages.flatMap(({ path, text }) =>
       getBacktickedTokens(text)
         .filter((token) => checkIsRepositoryPath(token))
         .map((token) => ({ page: path, token })),
@@ -71,9 +72,19 @@ describe("citations", () => {
       citations.map(async ({ page, token }) => ({ isResolved: await checkIsResolved(token), page, token })),
     );
 
-    expect(
-      resolutions.filter(({ isResolved }) => !isResolved).map(({ page, token }) => `${page} → ${token}`),
-    ).toStrictEqual([]);
+    return resolutions.filter(({ isResolved }) => !isResolved).map(({ page, token }) => `${page} → ${token}`);
+  };
+
+  test("every cited path exists", { timeout: TREE_READ_TIMEOUT_MS }, async () => {
+    expect.hasAssertions();
+
+    await expect(checkCitesResolve(pages)).resolves.toStrictEqual([]);
+  });
+
+  test("every path a source comment cites exists", { timeout: TREE_READ_TIMEOUT_MS }, async () => {
+    expect.hasAssertions();
+
+    await expect(checkCitesResolve(readSourceComments())).resolves.toStrictEqual([]);
   });
 
   test("every cited skill exists", () => {

@@ -1,9 +1,8 @@
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
-import { readFileSync } from "node:fs";
 
-// Every word of a file, as an array so a cache can hold it
-export const readFileWords = (absolutePath: string): string[] => {
+// Every word of a source text, as an array so a cache can hold it
+export const readFileWords = (code: string): string[] => {
   const words = new Set<string>();
-  addWords(words, readFileSync(absolutePath, "utf8"));
+  addWords(words, code);
   return [...words];
 };

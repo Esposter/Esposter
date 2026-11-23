@@ -8,7 +8,7 @@ Read when moving a file, renaming a name that a spec or skill cites, or adding a
 
 ## A renamed name
 
-`scripts/src/workspace/staleNames.test.ts` fails on every backticked code name those trees cite that neither the tree (its source short of what the formatter ignores as generated, its paths, Nuxt's registered component names and generated declarations) nor an installed package's type declarations hold. **A backticked name is that claim**, so a name only an external system declares — an environment variable a runtime reads, a tool's error code, a config key the repo does not set — is written in quotes (`"NODE_OPTIONS"`), and a rule's invented example takes a placeholder stem (`skill-authoring` skill, `references/what-belongs.md`); a name cited to say the repo has no such thing is prose.
+`scripts/src/workspace/staleNames.test.ts` fails on every backticked code name those trees cite that neither the tree (its source short of what the formatter ignores as generated, its paths, Nuxt's registered component names and generated declarations) nor an installed package's type declarations hold, and the same for every backticked name in a source file's comments, judged against the code with its comments blanked so a comment cannot vouch for the name it cites (`scripts/src/workspace/citations.test.ts` does the same for the paths). **A backticked name is that claim**, so a name only an external system declares — an environment variable a runtime reads, a tool's error code, a config key the repo does not set — is written in quotes (`"NODE_OPTIONS"`), and a rule's invented example takes a placeholder stem (`skill-authoring` skill, `references/what-belongs.md`); a name cited to say the repo has no such thing is prose.
 
 ## An added page
 

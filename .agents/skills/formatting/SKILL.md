@@ -26,6 +26,7 @@ An object literal that fits the width is on one line — `oxfmt`'s `objectWrap: 
 - **No blank line before or after a `//` comment** — it attaches to its code and is the separator, at module scope too; consecutive `//` lines are one block, and deleting a leading comment puts its blank line back. Test files keep theirs (`references/comment-placement.md`).
 - **Comment only _exceptional_ behaviour** — never restate a convention a skill or doc already holds (`references/comment-content.md`).
 - **Comments describe the present, never the history**; git is the changelog (`references/comment-content.md`).
+- **A backticked name in a comment is a claim the code holds it**, checked like a page's citation: a name an external system declares is written in quotes (`"GITHUB_ENV"`), and an invented example takes a placeholder stem (the `openspec` skill, `references/moves-and-renames.md`).
 - **A comment explains the code, never the change that produced it** (`references/comment-content.md`).
 - **`/** */` is for a module-scope paragraph and for an exported API surface that already carries one; `//` for everything else, an export included** (`references/doc-blocks.md`).
 - **Tight and generic** — no baked-in example values; an actual error text a workaround addresses is kept (`references/comment-content.md`).
