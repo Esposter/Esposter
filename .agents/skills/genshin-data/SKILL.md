@@ -29,7 +29,7 @@ How it works, from a builder's publish to a reader's fetch, the full lifecycle a
 - **A step in `scripts` reads another step's publish through the lock on disk** (`readPublishedGameData`, or `readWorldData` for a world data file), never through `genshin-world`'s build, which `node` may load stale.
 - **A suite or fixture reads at `GAME_DATA_LOCAL_BASE_URL`**, which the vitest setup and the parity page's middleware answer from the mirror; CI fills the mirror ahead of the shards, keyed on the lock, so a new key needs nothing of a test but its read.
 - **`pnpm -C scripts genshin:data verify` follows every publish, once its lock is committed**: it fails on a lock on disk that differs from the committed one, and must pass on both accounts (`references/verify-and-retirement.md`).
-- **A hosted dataset's bytes are read from the shared hosted bucket's custom domain, which the design gives a Cache Rule to cache** — the direction, and the facts that overturned the rejected CDN record, are `openspec/changes/architecture-hosted-assets/design.md`, "Where the bytes are served from". The edge cache is the Cache Rule in `apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts`, and its effect is what tasks 4.3 and 4.4 of that change verify, so read those before relying on the edge cache.
+- **A hosted dataset's bytes are read from the shared hosted bucket's custom domain, and the zone caches them through the Cache Rule in `apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts`** — read that rule before relying on the edge cache's behaviour.
 
 ## Reference pages
 
