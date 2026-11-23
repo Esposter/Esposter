@@ -1,0 +1,26 @@
+// Perfectionist's default `groups` for a class's members, in the order the groups sort: a member sorts in the first
+// Entry naming its group, and a nested array is several groups that sort their members together
+export const CLASS_MEMBER_GROUPS: (string | string[])[] = [
+  "index-signature",
+  ["static-property", "static-accessor-property"],
+  ["static-get-method", "static-set-method"],
+  ["protected-static-property", "protected-static-accessor-property"],
+  ["protected-static-get-method", "protected-static-set-method"],
+  ["private-static-property", "private-static-accessor-property"],
+  ["private-static-get-method", "private-static-set-method"],
+  "static-block",
+  ["property", "accessor-property"],
+  ["get-method", "set-method"],
+  ["protected-property", "protected-accessor-property"],
+  ["protected-get-method", "protected-set-method"],
+  ["private-property", "private-accessor-property"],
+  ["private-get-method", "private-set-method"],
+  "constructor",
+  ["static-method", "static-function-property"],
+  ["protected-static-method", "protected-static-function-property"],
+  ["private-static-method", "private-static-function-property"],
+  ["method", "function-property"],
+  ["protected-method", "protected-function-property"],
+  ["private-method", "private-function-property"],
+  "unknown",
+];

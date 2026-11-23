@@ -1,0 +1,26 @@
+import type { Context, ESTree, Reference } from "@oxlint/plugins";
+
+import { findNodeContaining } from "#src/services/oxlint/sorting/findNodeContaining";
+import { getReferencesWithin } from "#src/services/oxlint/sorting/getReferencesWithin";
+
+// The names each item reads, gathered over the references the file's scopes make inside the items. `readNames` is given
+// The item a reference sits in, the reference, and the item its declaration sits in when that is one of the items
+export const collectReadNames = <T extends { node: ESTree.Node }>(
+  context: Context,
+  items: T[],
+  readNames: (referencingItem: T, reference: Reference, referencedItem: T | undefined) => string[],
+): Map<T, string[]> => {
+  const namesByItem = new Map<T, string[]>();
+  for (const reference of getReferencesWithin(context, items)) {
+    const { identifier, resolved } = reference;
+    if (!resolved) continue;
+    const referencingItem = findNodeContaining(items, identifier.range);
+    if (referencingItem === undefined) continue;
+    const [declaration] = resolved.identifiers;
+    const referencedItem = declaration ? findNodeContaining(items, declaration.range) : undefined;
+    const names = namesByItem.get(referencingItem) ?? [];
+    names.push(...readNames(referencingItem, reference, referencedItem));
+    namesByItem.set(referencingItem, names);
+  }
+  return namesByItem;
+};

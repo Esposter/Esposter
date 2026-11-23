@@ -15,14 +15,14 @@ const CHUNK_KNOWN_BITS = CHUNK_ID_BIT | CHUNK_RECORDS_BIT;
 // Bit 9 is a flag with no bytes. A mask with a bit past these ends its chunk, as no record of a placement carries one
 const RecordBit = {
   Flags: 1,
-  Instance: 1 << 7,
-  Parent: 1 << 8,
   PathHash: 1 << 1,
-  Position: 1 << 4,
   PrefabId: 1 << 2,
   Radius: 1 << 3,
+  Position: 1 << 4,
   Rotation: 1 << 5,
   Scale: 1 << 6,
+  Instance: 1 << 7,
+  Parent: 1 << 8,
 } as const;
 const RECORD_MASK_LIMIT = 1 << 10;
 // A vector's components each present where their bit of its own leading byte is set, x first
