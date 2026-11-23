@@ -7,7 +7,7 @@ declare module "phaser" {
       tilemapTiledJSONExternal: (configuration: {
         key: string;
         tilesetURLs: Record<string, string>;
-        url: object;
+        url: object | string;
       }) => LoaderPlugin;
     }
   }

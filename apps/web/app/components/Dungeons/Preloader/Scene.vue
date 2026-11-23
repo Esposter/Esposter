@@ -3,19 +3,9 @@ import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
-import { FontAssetMap } from "#src/services/dungeons/loader/FontAssetMap";
-import { ImageAssetMap } from "#src/services/dungeons/loader/image/ImageAssetMap";
-import { loadFonts } from "#src/services/dungeons/loader/loadFonts";
-import { loadImages } from "#src/services/dungeons/loader/loadImages";
-import { loadSounds } from "#src/services/dungeons/loader/loadSounds";
-import { loadSpritesheets } from "#src/services/dungeons/loader/loadSpritesheets";
-import { loadTilemaps } from "#src/services/dungeons/loader/loadTilemaps";
-import { loadTilesets } from "#src/services/dungeons/loader/loadTilesets";
+import { loadDungeonsFiles } from "#src/services/dungeons/loader/loadDungeonsFiles";
 import { PixelArtTextureKeys } from "#src/services/dungeons/loader/PixelArtTextureKeys";
-import { SoundAssetMap } from "#src/services/dungeons/loader/sound/SoundAssetMap";
-import { SpritesheetAssetMap } from "#src/services/dungeons/loader/spritesheet/SpritesheetAssetMap";
-import { TilemapAssetMap } from "#src/services/dungeons/loader/TilemapAssetMap";
-import { TilesetAssetMap } from "#src/services/dungeons/loader/TilesetAssetMap";
+import { readDungeonsPreloadSet } from "#src/services/dungeons/loader/readDungeonsPreloadSet";
 import {
   PROGRESS_BAR_HEIGHT,
   PROGRESS_BAR_MAX_WIDTH,
@@ -24,30 +14,39 @@ import {
 } from "#src/services/dungeons/scene/preloader/constants";
 import { prettify } from "#src/util/text/prettify";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
+import { HostedAssetPreloadStatus, useHostedAssetsPreload } from "hosted-assets";
 import { Textures } from "phaser";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
+const origin = useRuntimeConfig().public.hostedAssets.baseUrl;
 const x = ref<number>();
 const y = ref<number>();
-const percentageText = ref("0%");
-const assetText = ref("");
-const progressBarWidth = ref(0);
+const loadingAssetText = ref("");
+// The scene the files load into once every one is held, which is set when Phaser runs the preload
+let preloadScene: SceneWithPlugins | undefined;
 
-const preload = (scene: SceneWithPlugins) => {
-  const { height, width } = scene.cameras.main;
-  x.value = width / 2;
-  y.value = height / 2;
+// The bar follows the download of every file the cache lacks. Once each one is held, the Phaser pass loads them from the
+// Cache, so it only decodes them, and the game starts on its `complete`
+const {
+  downloadProgress,
+  preload: downloadFiles,
+  status,
+} = useHostedAssetsPreload(
+  async () => readDungeonsPreloadSet(origin),
+  () => {
+    if (preloadScene) startPhaserLoads(preloadScene);
+  },
+);
+const progressBarWidth = computed(() => PROGRESS_BAR_MAX_WIDTH * downloadProgress.value);
+const percentageText = computed(() => `${Math.trunc(downloadProgress.value * 100)}%`);
+const assetText = computed(() =>
+  status.value === HostedAssetPreloadStatus.Failed ? "Download failed" : loadingAssetText.value,
+);
 
+const startPhaserLoads = (scene: SceneWithPlugins) => {
   scene.load
-    .on("progress", (value: number) => {
-      progressBarWidth.value = PROGRESS_BAR_MAX_WIDTH * value;
-      percentageText.value = `${Math.trunc(value * 100)}%`;
-    })
-    .on("fileprogress", (file: Loader.File) => {
-      assetText.value = `Loading asset: ${prettify(file.key)}`;
-    })
     .once("complete", () => {
       for (const key of PixelArtTextureKeys) scene.textures.get(key).setFilter(Textures.FilterMode.NEAREST);
     })
@@ -55,13 +54,19 @@ const preload = (scene: SceneWithPlugins) => {
       "complete",
       getSynchronizedFunction(() => getResultAsync(() => switchToScene(SceneKey.Title)).match(noop, console.error)),
     );
+  loadDungeonsFiles(scene, origin);
+  scene.load.start();
+};
 
-  loadFonts(scene, FontAssetMap);
-  loadSounds(scene, SoundAssetMap);
-  loadSpritesheets(scene, SpritesheetAssetMap);
-  loadImages(scene, ImageAssetMap);
-  loadTilesets(scene, TilesetAssetMap);
-  loadTilemaps(scene, TilemapAssetMap);
+const preload = async (scene: SceneWithPlugins) => {
+  const { height, width } = scene.cameras.main;
+  x.value = width / 2;
+  y.value = height / 2;
+  preloadScene = scene;
+  scene.load.on("fileprogress", (file: Loader.File) => {
+    loadingAssetText.value = `Loading asset: ${prettify(file.key)}`;
+  });
+  await downloadFiles();
 };
 </script>
 

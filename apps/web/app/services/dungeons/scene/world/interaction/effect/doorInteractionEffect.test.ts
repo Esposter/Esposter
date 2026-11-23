@@ -5,8 +5,8 @@ import type { Types } from "phaser";
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { Save } from "#shared/models/dungeons/data/Save";
+import homeBuilding1 from "#src/assets/dungeons/scene/world/Home/HomeBuilding1/tilemap.json";
 import { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
-import { TilemapAssetMap } from "#src/services/dungeons/loader/TilemapAssetMap";
 import { doorInteractionEffect } from "#src/services/dungeons/scene/world/interaction/effect/doorInteractionEffect";
 import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { useDungeonsStore } from "#src/store/dungeons/index";
@@ -44,7 +44,10 @@ const getDoorObject = (
 
 describe(doorInteractionEffect, () => {
   const once = vi.fn<(event: unknown, listener: () => Promise<void>) => void>();
-  const scene = Object.assign(createSceneWithPlugins(), { cameras: { main: { once } } });
+  const scene = Object.assign(createSceneWithPlugins(), {
+    cache: { tilemap: { get: () => ({ data: homeBuilding1 }) } },
+    cameras: { main: { once } },
+  });
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -73,7 +76,7 @@ describe(doorInteractionEffect, () => {
     expect(save.value.player.position).toStrictEqual({ x: 5, y: 7 });
 
     // The remounted character joins the target tilemap's engine at that position, and can step from it
-    const { height, width } = TilemapAssetMap[TilemapKey.HomeBuilding1];
+    const { height, width } = homeBuilding1;
     const tiles = Array.from({ length: height }, () => Array.from({ length: width }, () => false));
     const playerPositionAfterStep = createGridEngine({ tiles }).andThen((gridEngine) =>
       gridEngine

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { ButtonTextStyle } from "#src/assets/dungeons/scene/monsterParty/styles/ButtonTextStyle";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
@@ -21,8 +21,8 @@ const isActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialIn
       :configuration="{
         origin: 0,
         texture: isActive
-          ? FileKey.ThirdPartyKenneysAssetsUIPackBlueButton01
-          : FileKey.ThirdPartyKenneysAssetsUIPackBlueButton00,
+          ? DungeonsKeys.ThirdPartyKenneysAssetsUIPackBlueButton01
+          : DungeonsKeys.ThirdPartyKenneysAssetsUIPackBlueButton00,
         scaleX: 0.7,
         alpha: isActive ? 1 : 0.7,
       }"

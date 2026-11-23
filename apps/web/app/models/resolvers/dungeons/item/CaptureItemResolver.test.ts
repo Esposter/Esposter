@@ -4,7 +4,7 @@ import type { Item } from "#shared/models/dungeons/item/Item";
 import type { PhaserEvents } from "#src/models/phaser/PhaserEvents";
 import type { TypedEventEmitter } from "@esposter/shared";
 
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
@@ -82,14 +82,14 @@ describe(CaptureItemResolver, () => {
 
     const ballStore = useBallStore();
     const { texture } = storeToRefs(ballStore);
-    texture.value = FileKey.UIBallsCosmoBall;
+    texture.value = DungeonsKeys.UIBallsCosmoBall;
     const scene = createSceneWithPlugins();
     const damagedBallItem = { ...item, id: ItemId.DamagedBall };
     new CaptureItemResolver().handleItem(scene, ref(damagedBallItem), ref(monster));
 
     const onComplete = vi.mocked(phaserEventEmitter.emit).mock.lastCall?.[4];
 
-    expect(texture.value).toBe(FileKey.UIBallsDamagedBall);
+    expect(texture.value).toBe(DungeonsKeys.UIBallsDamagedBall);
     expect(phaserEventEmitter.emit).toHaveBeenCalledExactlyOnceWith(
       "useItem",
       scene,

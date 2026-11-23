@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/ExperienceLabelTextStyle";
 import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
 import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
@@ -32,7 +32,7 @@ const { barPercentage: experienceBarPercentage } = useExperience(monster);
     <Image
       :configuration="{
         origin: 0,
-        texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI,
+        texture: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI,
         scaleY: isEnemy ? 0.8 : undefined,
       }"
     />

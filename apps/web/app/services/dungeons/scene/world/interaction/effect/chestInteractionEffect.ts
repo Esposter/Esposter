@@ -1,7 +1,7 @@
 import type { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import type { Effect } from "#src/models/dungeons/scene/world/interaction/Effect";
 
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { ChestObjectProperty } from "#shared/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
@@ -35,7 +35,7 @@ export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
   else inventory.value.push({ ...getItem(itemIdTiledObjectProperty.value), quantity: 1 });
   chest.isOpened = true;
 
-  getDungeonsSoundEffect(scene, FileKey.SoundOpenChest).play();
+  getDungeonsSoundEffect(scene, DungeonsKeys.SoundOpenChest).play();
   await showMessages(scene, [{ text: `You've obtained ${itemIdTiledObjectProperty.value}.` }]);
   return true;
 };

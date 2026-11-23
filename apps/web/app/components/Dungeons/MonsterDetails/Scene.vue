@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { MenuExperienceTextStyle } from "#src/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
 import { MenuTextStyle } from "#src/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
 import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/ExperienceLabelTextStyle";
@@ -27,7 +27,7 @@ const monsterName = computed(() => prettify(monster.value.key));
 
 <template>
   <DungeonsScene :scene-key="SceneKey.MonsterDetails" @update="onPlayerInput($event, controls.getInput(true))">
-    <Image :configuration="{ origin: 0, texture: FileKey.SceneMonsterPartyMonsterDetailsBackground }" />
+    <Image :configuration="{ origin: 0, texture: DungeonsKeys.SceneMonsterPartyMonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
       :configuration="{

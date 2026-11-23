@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import { getHealthBarPercentage } from "#src/services/dungeons/monster/getHealthBarPercentage";
@@ -32,7 +32,7 @@ const monsterName = computed(() => prettify(monster.key));
   <Container :configuration="{ x: columnIndex * 510, y: rowIndex * 150 + (columnIndex % 2) * 30 + 10 }">
     <Image
       :configuration="{
-        texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI,
+        texture: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI,
         origin: 0,
         scaleX: 1.1,
         scaleY: 1.2,

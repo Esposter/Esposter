@@ -28,7 +28,7 @@ describe(useHostedAssetsPreload, () => {
     vi.restoreAllMocks();
   });
 
-  test("a file the host cannot serve fails the preload without calling onHeld", async () => {
+  test("a failed download does not start the game", async () => {
     expect.hasAssertions();
 
     vi.stubGlobal("caches", { open: () => Promise.resolve(createMockCache()) });

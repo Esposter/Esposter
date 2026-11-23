@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
@@ -24,7 +24,7 @@ const { resetActiveMonster } = battlePlayerStore;
     @create="
       (scene) =>
         getResultAsync(async () => {
-          playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiDecisiveBattle);
+          playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiDecisiveBattle);
           battleStateMachine.scene = scene;
           battleStateMachine.stateMap = StateMap;
           resetActiveMonster();

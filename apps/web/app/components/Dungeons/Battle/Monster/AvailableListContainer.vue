@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { Container, Image, onCreate } from "vue-phaserjs";
@@ -30,7 +30,7 @@ onUnmounted(() => {
       :configuration="{
         visible: isVisible,
         x: -30 * index,
-        texture: FileKey.UIBallsCosmoBall,
+        texture: DungeonsKeys.UIBallsCosmoBall,
         scale: 0.8,
         alpha: checkIsMonsterFainted(monster) ? 0.4 : 1,
       }"

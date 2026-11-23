@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
 import { useDialogStore } from "#src/store/dungeons/dialog";
 import { Image } from "vue-phaserjs";
@@ -19,7 +19,7 @@ const { inputPromptCursorDisplayWidth, inputPromptCursorX, isInputPromptCursorVi
     :configuration="{
       visible: isInputPromptCursorVisible,
       x: inputPromptCursorX,
-      texture: FileKey.UICursorCursor,
+      texture: DungeonsKeys.UICursorCursor,
       angle: 90,
       scaleX: scale * 2,
       scaleY: scale * 1.5,

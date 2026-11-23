@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { Image } from "vue-phaserjs";
 
-const texture = FileKey.SceneBattleForestBackground;
+const texture = DungeonsKeys.SceneBattleForestBackground;
 </script>
 
 <template>

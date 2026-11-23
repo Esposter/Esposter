@@ -3,11 +3,11 @@ import type { Grid } from "#src/models/dungeons/Grid";
 import type { Position } from "grid-engine-headless";
 import type { ImageConfiguration } from "vue-phaserjs";
 
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { Image } from "vue-phaserjs";
 
 interface Props {
-  cursorFileKey?: typeof FileKey.UICursorCursor | typeof FileKey.UICursorCursorWhite | undefined;
+  cursorFileKey?: typeof DungeonsKeys.UICursorCursor | typeof DungeonsKeys.UICursorCursorWhite | undefined;
   grid: Grid<TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const {
-  cursorFileKey = FileKey.UICursorCursor,
+  cursorFileKey = DungeonsKeys.UICursorCursor,
   grid,
   initialPosition,
   positionIncrement,

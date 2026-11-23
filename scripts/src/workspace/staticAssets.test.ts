@@ -1,6 +1,7 @@
 import { UNCOMPRESSED_AUDIO_EXTENSIONS } from "#src/services/hostedAssets/constants";
 import { MEBIBYTE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { readRepositoryFile } from "#src/workspace/readRepositoryFile.test";
 import { statSync } from "node:fs";
 import { extname, join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -18,6 +19,10 @@ describe("staticAssets", () => {
   // (`apps/web/configuration/pwa.ts`). The bundle holds a file only up to the same figure, so one limit is the budget
   const SIZE_LIMIT_BYTES = 2 * MEBIBYTE;
 
+  const ENGINE_LOADER_PATHSPECS = ["apps/web/app/services/dungeons/loader"];
+  const IMPORT_SPECIFIER_REGEX = /\bfrom "(?<specifier>[^"]+)"/gu;
+  const HOSTED_MEDIA_REGEX = /\.(?:mp3|ogg|png|tmx|tsx|webp|woff2)(?:\?|$)|tilemap\.json(?:\?|$)/u;
+
   const checkIsOversizedOrUncompressed = (path: string): boolean =>
     statSync(join(REPOSITORY_ROOT, path)).size > SIZE_LIMIT_BYTES || UNCOMPRESSED_AUDIO_EXTENSIONS.has(extname(path));
 
@@ -34,6 +39,22 @@ describe("staticAssets", () => {
 
     expect(
       readSweepFilePaths(...PUBLIC_PATHSPECS).filter((path) => checkIsOversizedOrUncompressed(path)),
+    ).toStrictEqual([]);
+  });
+
+  // An engine loader reads each hosted file by its url from the key map, so a loader that imports one by its path puts the
+  // File back into the bundle, which the hosted objects exist to keep out
+  test("an engine-read texture is hosted", () => {
+    expect.hasAssertions();
+
+    expect(
+      readSweepFilePaths(...ENGINE_LOADER_PATHSPECS)
+        .filter((path) => extname(path) === ".ts")
+        .flatMap((path) =>
+          Array.from(readRepositoryFile(path).matchAll(IMPORT_SPECIFIER_REGEX), ({ groups }) => groups?.specifier ?? "")
+            .filter((specifier) => HOSTED_MEDIA_REGEX.test(specifier))
+            .map((specifier) => `${path}: ${specifier}`),
+        ),
     ).toStrictEqual([]);
   });
 });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { getActiveInputResolvers } from "#src/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "#src/services/dungeons/sound/playDungeonsBackgroundMusic";
@@ -16,7 +16,7 @@ const worldSceneStore = useWorldSceneStore();
 const { updateGridEngine } = worldSceneStore;
 
 const create = (scene: SceneWithPlugins) => {
-  playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiAndTheJourneyBegins);
+  playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiAndTheJourneyBegins);
   fadeIn(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
 };
 </script>

@@ -95,7 +95,7 @@ The Phaser pass is near-instant. It runs after every object is held in the cache
 ## Cleanup
 
 - `git rm` of every hosted binary: the 52 PNG, the 10 MP3, the 1 WebP and the 1 WOFF2 under `apps/web/app/assets/dungeons/`, once the first publish's byte check passes.
-- `git rm` of the asset-map files and `TilesetUrlMap.ts` with its test, and of `toXmlBlobUrl` at `apps/web/app/util/file/toXmlBlobUrl.ts`, which only `TilesetUrlMap` imports.
+- `git rm` of the asset-map files, the tileset url map with its test, and the blob-url helper, which only the tileset url map imported.
 - The path-named objects the file-pack generator listed in `public-dungeons-assets`, such as `Scene/Battle/ForestBackground.png` (the `url` column of the retired `files.json`), are not copied. They are deleted with the bucket's retirement, once the shared domain serves the game.
 - The file-pack generator: `apps/web/scripts/phaser/` with its `constants.ts`, `index.ts`, `filePack/createFilePack.ts`, its test and `services/remove.ts`; the `phaser:gen` script in `apps/web/package.json`; and the committed `apps/web/shared/generated/phaser/FileKey.ts` and `files.json`, which no file reads.
 - `openspec/specs/architecture/generated-artifacts/design.md`'s row for `pnpm phaser:gen` is removed by the architecture change, not this one.
@@ -115,8 +115,6 @@ The rows naming a file the prior art creates (the save-safe maps, the Preloader'
 | `apps/web/app/assets/dungeons/`                                             | the files this change moves out of git and the bundle, and the Tiled tree that stays      |
 | `apps/web/app/services/dungeons/loader/loadImages.ts`                       | the image loader, which takes keys and reads their urls                                   |
 | `apps/web/app/services/dungeons/loader/loadSounds.ts`                       | the sound loader, which reads its urls from the key map                                   |
-| `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                    | deleted: the tileset urls come from the key map                                           |
-| `apps/web/app/util/file/toXmlBlobUrl.ts`                                    | deleted: only the tileset map imports it                                                  |
 | `apps/web/app/components/Dungeons/Preloader/Scene.vue`                      | the one bar, driven by the generic preloader                                              |
 | "apps/web/app/services/dungeons/monster/MonsterKeyFileKeyMap.ts"            | the portrait of each species, the save-safe lookup                                        |
 | `apps/web/app/services/dungeons/monster/getMonsterFileKey.ts`               | the portrait lookup the monster components call, which throws for a species the map lacks |

@@ -1,8 +1,8 @@
-import type { FileKey } from "#shared/generated/phaser/FileKey";
+import type { DungeonsKey } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 
 export interface Attack {
-  fileKey: FileKey;
+  fileKey: DungeonsKey;
   id: AttackId;
   power: number;
 }

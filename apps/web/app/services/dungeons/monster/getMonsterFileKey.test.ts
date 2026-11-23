@@ -1,4 +1,4 @@
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { Monster, monsterSchema } from "#shared/models/dungeons/monster/Monster";
 import { getMonsterFileKey } from "#src/services/dungeons/monster/getMonsterFileKey";
@@ -14,7 +14,7 @@ describe(getMonsterFileKey, () => {
       asset: { key: MonsterKey.Iguanignite },
     });
 
-    expect(getMonsterFileKey(monsterSchema.parse(savedMonster).key)).toBe(FileKey.UIMonstersIguanignite);
+    expect(getMonsterFileKey(monsterSchema.parse(savedMonster).key)).toBe(DungeonsKeys.UIMonstersIguanignite);
   });
 
   test("an unknown species fails its lookup", () => {

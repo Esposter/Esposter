@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { SceneComponentEntries } from "#src/services/dungeons/scene/SceneComponentMap";
 import { checkIsMobile } from "#src/util/device/checkIsMobile";
@@ -15,7 +15,8 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
-defaultTextStyle.value = { fontFamily: FileKey.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow };
+// Phaser writes the family into the canvas font unquoted, and a lock key holds slashes and dots that the font parser rejects
+defaultTextStyle.value = { fontFamily: `"${DungeonsKeys.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow}"` };
 </script>
 
 <template>

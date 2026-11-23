@@ -1,11 +1,11 @@
-import type { FileKey } from "#shared/generated/phaser/FileKey";
+import type { DungeonsKey } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getDungeonsSound } from "#src/services/dungeons/sound/getDungeonsSound";
 
-let backgroundMusicKey: FileKey | undefined;
+let backgroundMusicKey: DungeonsKey | undefined;
 
-export const playDungeonsBackgroundMusic = (scene: SceneWithPlugins, key: FileKey) => {
+export const playDungeonsBackgroundMusic = (scene: SceneWithPlugins, key: DungeonsKey) => {
   if (key === backgroundMusicKey) return;
 
   const allPlayingSounds = scene.sound.getAllPlaying();

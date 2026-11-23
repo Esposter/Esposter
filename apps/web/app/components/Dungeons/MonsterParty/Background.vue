@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { onCreate, Rectangle, TileSprite } from "vue-phaserjs";
 
 const width = ref<number>();
@@ -13,5 +13,7 @@ onCreate((scene) => {
 
 <template>
   <Rectangle :configuration="{ origin: 0, width, height, fillColor: 0x000 }" />
-  <TileSprite :configuration="{ origin: 0, width, height, texture: FileKey.SceneMonsterPartyBackground, alpha: 0.7 }" />
+  <TileSprite
+    :configuration="{ origin: 0, width, height, texture: DungeonsKeys.SceneMonsterPartyBackground, alpha: 0.7 }"
+  />
 </template>

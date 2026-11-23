@@ -1,8 +1,10 @@
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import type { DungeonsKey } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
+
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { ThemeModeSetting } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
 
 export const ThemeModeGlassPanelFileKeyMap = {
-  [ThemeModeSetting.Blue]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanel,
-  [ThemeModeSetting.Green]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelGreen,
-  [ThemeModeSetting.Purple]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelPurple,
-} as const satisfies Record<ThemeModeSetting, FileKey>;
+  [ThemeModeSetting.Blue]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanel,
+  [ThemeModeSetting.Green]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelGreen,
+  [ThemeModeSetting.Purple]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelPurple,
+} as const satisfies Record<ThemeModeSetting, DungeonsKey>;

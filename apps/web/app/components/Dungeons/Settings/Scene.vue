@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { playDungeonsBackgroundMusic } from "#src/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useControlsStore } from "#src/store/dungeons/controls";
@@ -13,7 +13,7 @@ const settingsSceneStore = useSettingsSceneStore();
 const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
 const onCreate = (scene: SceneWithPlugins) => {
   restSettingsCursor();
-  playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiTitleTheme);
+  playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiTitleTheme);
 };
 </script>
 

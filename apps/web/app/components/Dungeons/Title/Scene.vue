@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { playDungeonsBackgroundMusic } from "#src/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useControlsStore } from "#src/store/dungeons/controls";
@@ -21,7 +21,7 @@ const versionY = ref<number>();
     :scene-key="SceneKey.Title"
     @create="
       (scene) => {
-        playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiTitleTheme);
+        playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiTitleTheme);
         x = scene.scale.width / 2;
         versionX = scene.scale.width - 150;
         versionY = scene.scale.height - 50;
@@ -29,9 +29,9 @@ const versionY = ref<number>();
     "
     @update="onPlayerInput($event, controls.getInput(true))"
   >
-    <Image :configuration="{ origin: 0, texture: FileKey.SceneTitleScreenBackground, scale: 0.58 }" />
-    <Image :configuration="{ x, y: 150, texture: FileKey.SceneTitleTextBackground, scale: 0.25, alpha: 0.5 }" />
-    <Image :configuration="{ x, y: 150, texture: FileKey.SceneTitleText, scale: 0.55, alpha: 0.5 }" />
+    <Image :configuration="{ origin: 0, texture: DungeonsKeys.SceneTitleScreenBackground, scale: 0.58 }" />
+    <Image :configuration="{ x, y: 150, texture: DungeonsKeys.SceneTitleTextBackground, scale: 0.25, alpha: 0.5 }" />
+    <Image :configuration="{ x, y: 150, texture: DungeonsKeys.SceneTitleText, scale: 0.55, alpha: 0.5 }" />
     <DungeonsTitleMenuContainer />
     <Text
       :configuration="{

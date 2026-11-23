@@ -1,16 +1,18 @@
-import { FileKey } from "#shared/generated/phaser/FileKey";
+import type { DungeonsKey } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
+
+import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { BarOrigin } from "#src/models/dungeons/UI/bar/BarOrigin";
 import { BarType } from "#src/models/dungeons/UI/bar/BarType";
 
 export const BarTextureMap = {
   [BarType.Experience]: {
-    [BarOrigin.Left]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft,
-    [BarOrigin.Middle]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid,
-    [BarOrigin.Right]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight,
+    [BarOrigin.Left]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft,
+    [BarOrigin.Middle]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid,
+    [BarOrigin.Right]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight,
   },
   [BarType.Health]: {
-    [BarOrigin.Left]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft,
-    [BarOrigin.Middle]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid,
-    [BarOrigin.Right]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight,
+    [BarOrigin.Left]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft,
+    [BarOrigin.Middle]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid,
+    [BarOrigin.Right]: DungeonsKeys.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight,
   },
-} as const satisfies Record<BarType, Record<BarOrigin, FileKey>>;
+} as const satisfies Record<BarType, Record<BarOrigin, DungeonsKey>>;
