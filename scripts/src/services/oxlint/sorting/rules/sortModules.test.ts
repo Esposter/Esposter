@@ -186,6 +186,11 @@ export class B {}
 export class A {}`,
         violations: 1,
       },
+      {
+        name: "decoratorReadIsDependencyOfExportedClass",
+        source: `export class Z {}\n@Dec(Z) export class A {}`,
+        violations: 0,
+      },
     ],
     plugin: "sorting",
     rules: ["sorting/sort-modules"],

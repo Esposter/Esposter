@@ -1,6 +1,7 @@
 import type { Rule } from "@oxlint/plugins";
 
 import { buildSortingNode } from "#src/services/oxlint/sorting/buildSortingNode";
+import { computePatternEvaluated } from "#src/services/oxlint/sorting/computePatternEvaluated";
 import { computeSortingDependencies } from "#src/services/oxlint/sorting/computeSortingDependencies";
 import { getOxlintDisabledLines } from "#src/services/oxlint/sorting/getOxlintDisabledLines";
 import { reportUnsortedByGroup } from "#src/services/oxlint/sorting/reportUnsortedByGroup";
@@ -10,7 +11,7 @@ import { defineRule } from "@oxlint/plugins";
 
 // A declaration's declarators by their name, each one after the declarators its initialiser and pattern read, as
 // Perfectionist's experimental dependency detection orders them. A pattern is named by its source text, and an
-// Initialiser that runs code keeps its place
+// Initialiser or a default the pattern reads that runs code keeps its place
 const sortVariableDeclarations: Rule = defineRule({
   create(context) {
     return {
@@ -21,7 +22,7 @@ const sortVariableDeclarations: Rule = defineRule({
           const name =
             declaration.id.type === "Identifier" ? declaration.id.name : context.sourceCode.getText(declaration.id);
           return buildSortingNode(name, declaration, {
-            ...withEvaluated(declaration.init ?? undefined),
+            ...withEvaluated(declaration.init, ...computePatternEvaluated(declaration.id)),
             isOxlintDisabled: oxlintDisabledLines.has(declaration.loc.start.line),
           });
         });

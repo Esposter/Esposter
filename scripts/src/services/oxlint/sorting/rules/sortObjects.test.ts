@@ -95,6 +95,28 @@ describe("sortObjects", () => {
         violations: 1,
       },
       { name: "impureValueKeepsItsPlace", source: `export const o = { b: next(), a: 1 };`, violations: 0 },
+      { name: "impureComputedKeysKeepTheirPlaces", source: `export const o = { [g()]: 1, [f()]: 2 };`, violations: 0 },
+      {
+        name: "impureNestedDefaultKeepsItsPlace",
+        source: `export const { v: { m = t("a") }, u: { n = t("b") } } = x;`,
+        violations: 0,
+      },
+      {
+        fixed: `export const { a = d, b = next(), d = next2() } = src;`,
+        name: "laterBindingReadAcrossImpureRunIsReported",
+        source: `export const { a = d, b = next(), d = next2() } = src;`,
+        violations: 1,
+      },
+      {
+        name: "disabledDependencyStaysBeforeItsReader",
+        source: `export const { z = 1,\n  // oxlint-disable-next-line sorting/sort-objects -- order\n  d = 2,\n  a = d } = src;`,
+        violations: 0,
+      },
+      {
+        name: "newArgumentReadIsDependency",
+        source: `export const { a: { x = new Promise((resolve) => resolve(z)) } = {}, z = 1 } = src;`,
+        violations: 1,
+      },
     ],
     plugin: "sorting",
     rules: ["sorting/sort-objects"],

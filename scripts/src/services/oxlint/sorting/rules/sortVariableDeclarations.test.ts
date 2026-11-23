@@ -32,6 +32,12 @@ describe("sortVariableDeclarations", () => {
         violations: 1,
       },
       { name: "impureInitialiserKeepsItsPlace", source: `export const z = next(), a = next();`, violations: 0 },
+      {
+        name: "impurePatternDefaultKeepsItsPlace",
+        source: `export const { y = f("a") } = p, { x = f("b") } = o;`,
+        violations: 0,
+      },
+      { name: "cycleKeepsOrderAndReaderWaits", source: `export var b = c ?? 1, c = b ?? 2, a = c;`, violations: 0 },
     ],
     plugin: "sorting",
     rules: ["sorting/sort-variable-declarations"],

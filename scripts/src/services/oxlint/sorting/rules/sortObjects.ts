@@ -10,6 +10,7 @@ import { compareNumericOrName } from "#src/services/oxlint/sorting/compareNumeri
 import { computeDeclarationName } from "#src/services/oxlint/sorting/computeDeclarationName";
 import { computeDependencyNames } from "#src/services/oxlint/sorting/computeDependencyNames";
 import { computeExpressionNumberValue } from "#src/services/oxlint/sorting/computeExpressionNumberValue";
+import { computePatternEvaluated } from "#src/services/oxlint/sorting/computePatternEvaluated";
 import { computeSortingDependencies } from "#src/services/oxlint/sorting/computeSortingDependencies";
 import { getOxlintDisabledLines } from "#src/services/oxlint/sorting/getOxlintDisabledLines";
 import { reportSortingPartitions } from "#src/services/oxlint/sorting/reportSortingPartitions";
@@ -18,12 +19,6 @@ import { defineRule } from "@oxlint/plugins";
 
 type Comparator = (left: SortingNode, right: SortingNode) => number;
 type ObjectNode = ESTree.ObjectExpression | ESTree.ObjectPattern;
-
-// The expression a property evaluates: its value, or a pattern's default, when it has one
-const computePropertyEvaluated = (value: ESTree.Node, isPattern: boolean): ESTree.Node | undefined => {
-  if (value.type === "AssignmentPattern") return value.right;
-  return isPattern ? undefined : value;
-};
 
 // A spread or rest element splits the members, each run of properties sorted on its own
 const partitionProperties = (
@@ -41,13 +36,17 @@ const partitionProperties = (
       partitions.push(partition);
       continue;
     }
+    // A computed key runs as the property is built, and a value runs with it, or for a pattern the defaults it reads
     partition.push(
       buildSortingNode(computeDeclarationName(property, sourceCode), property, {
         dependencyNames:
           node.type === "ObjectPattern"
             ? [...new Set(computeDependencyNames(property.value))]
             : [computeDeclarationName(property, sourceCode)],
-        ...withEvaluated(computePropertyEvaluated(property.value, node.type === "ObjectPattern")),
+        ...withEvaluated(
+          ...(property.computed ? [property.key] : []),
+          ...(node.type === "ObjectPattern" ? computePatternEvaluated(property.value) : [property.value]),
+        ),
         isOxlintDisabled: disabledLines.has(property.loc.start.line),
         value: isNumericSet ? (computeExpressionNumberValue(property.value)?.toString() ?? "") : "",
       }),
