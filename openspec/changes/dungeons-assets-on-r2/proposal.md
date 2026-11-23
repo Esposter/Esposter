@@ -27,4 +27,4 @@ This change depends on `architecture-hosted-assets`. It is the first product to 
 - **BREAKING for the public game bucket**: `public-dungeons-assets` is retired. The game reads its objects from the shared hosted domain, under the `dungeons/` prefix, and the old bucket's objects are deleted once the new ones verify and the game reads them.
 - The save shapes do not change. The prior art's decisions keep every saved monster and capture item readable, and no backfill is owed.
 - Prerequisite: the WAV-to-MP3 and over-2-MiB WebP re-encodes in progress elsewhere must land before the publish, since the publish refuses a WAV.
-- The prior-art branch `origin/migrate-assets` is ported onto `ai/queue` by this change, and the session deletes it once the port is verified, as the owner authorised.
+- The prior-art branch `origin/migrate-assets` is ported onto `ai/queue` by this change, and deleted, as the owner authorised.

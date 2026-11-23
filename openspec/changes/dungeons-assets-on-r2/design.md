@@ -103,7 +103,7 @@ The Phaser pass is near-instant. It runs after every object is held in the cache
 
 ## Notes
 
-- The prior-art branch `origin/migrate-assets` is the implementation's base. The change ports its commit onto `ai/queue` as a new commit, not a rebase. The session deletes the branch once the port is verified: each decision of the commit is checked as carried or recorded as dropped, then `git push origin --delete migrate-assets`, as the owner authorised.
+- The prior-art branch `origin/migrate-assets` is the implementation's base. The change ports its commit onto `ai/queue` as a new commit, not a rebase, and deletes the branch once each decision of the commit is checked as carried or recorded as dropped, as the owner authorised.
 - The driven-browser run covers the title, world and battle scenes against the bucket, with the bundle size before and after recorded as the architecture change records it.
 
 ## Key files
