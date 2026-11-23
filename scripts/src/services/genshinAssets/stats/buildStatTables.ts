@@ -1,9 +1,11 @@
 import type { ExcelAvatarLevelRow } from "#src/models/genshinAssets/stats/ExcelAvatarLevelRow";
 import type { ExcelCurveRow } from "#src/models/genshinAssets/stats/ExcelCurveRow";
+import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import {
   ARTIFACT_EXP_ITEM_USE,
   AVATAR_LEVEL_TABLE_NAME,
@@ -38,6 +40,7 @@ export const buildStatTables = (): { notes: string[]; publication: GameDataPubli
   const notes: string[] = [];
   const characterDatas = getCharacterDatas(notes);
   const weaponDatas = getWeaponDatas(notes);
+  const materialRows = readExcelTable<ExcelMaterialRow>(MATERIAL_TABLE_NAME);
   const proudSkillRows = readExcelTable<ExcelProudSkillRow>("ProudSkillExcelConfigData");
   const characterTalentKits = getCharacterTalentKits(proudSkillRows);
   const combatGroupIds = new Set(characterTalentKits.flatMap(({ talentGroupIds }) => Object.values(talentGroupIds)));
@@ -46,13 +49,13 @@ export const buildStatTables = (): { notes: string[]; publication: GameDataPubli
     ...toTalentTables(proudSkillRows, new Set(Object.values(talentGroupIds))),
   }));
   const tableMap = {
-    artifactExpMaterials: getExpMaterials(ARTIFACT_EXP_ITEM_USE),
+    artifactExpMaterials: getExpMaterials(materialRows, ARTIFACT_EXP_ITEM_USE),
     artifactMainAffixCurves: getArtifactMainAffixCurves(notes),
     artifactMainAffixPools: getArtifactMainAffixPools(),
     artifactRarities: getArtifactRarityDatas(),
     artifactSets: getArtifactSetDatas(notes),
     characterConstellationKits: getCharacterConstellationKits(notes),
-    characterExpMaterials: getExpMaterials(CHARACTER_EXP_ITEM_USE).toSorted(compareExperienceDescending),
+    characterExpMaterials: getExpMaterials(materialRows, CHARACTER_EXP_ITEM_USE).toSorted(compareExperienceDescending),
     characterExpToNext: toCharacterExpToNext(readExcelTable<ExcelAvatarLevelRow>(AVATAR_LEVEL_TABLE_NAME)),
     characterGrowCurves: toGrowCurves(
       readExcelTable<ExcelCurveRow>("AvatarCurveExcelConfigData"),
@@ -63,7 +66,7 @@ export const buildStatTables = (): { notes: string[]; publication: GameDataPubli
     characterTalentKits,
     masterlessLevelLifts: getMasterlessLevelLifts(),
     talentUpgrades: toTalentUpgradeMap(proudSkillRows, combatGroupIds),
-    weaponEnhancementOres: getExpMaterials(WEAPON_EXP_ITEM_USE).toSorted(compareExperienceDescending),
+    weaponEnhancementOres: getExpMaterials(materialRows, WEAPON_EXP_ITEM_USE).toSorted(compareExperienceDescending),
     weaponGrowCurves: toGrowCurves(
       readExcelTable<ExcelCurveRow>("WeaponCurveExcelConfigData"),
       new Set(weaponDatas.flatMap(({ growAttributes }) => growAttributes.map(({ curve }) => curve))),
