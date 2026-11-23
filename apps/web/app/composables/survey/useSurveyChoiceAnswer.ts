@@ -2,7 +2,7 @@ import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyChoiceOptionsProps, SurveyNoneChoiceProps } from "vue-survey-engine-headless";
 
 import { SURVEY_NONE_TITLE, SURVEY_OTHER_KEY, SURVEY_OTHER_TITLE } from "#src/services/resource/survey/constants";
-import { normalizeString } from "@esposter/shared";
+import { checkIsBlankText, normalizeString } from "@esposter/shared";
 import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "vue-survey-engine-headless";
 
 // What a choice question offers beside its choices: the other option every choice question may add, and the none
@@ -46,13 +46,13 @@ export const useSurveyChoiceAnswer = (
   });
   const pick = (key: string | undefined) => {
     isOtherChosen.value = key === SURVEY_OTHER_KEY;
-    if (key === SURVEY_OTHER_KEY) answer.value = normalizeString(otherText.value) === "" ? undefined : otherText.value;
+    if (key === SURVEY_OTHER_KEY) answer.value = checkIsBlankText(otherText.value) ? undefined : otherText.value;
     else if (key === SURVEY_NONE_ANSWER) answer.value = SURVEY_NONE_ANSWER;
     else answer.value = orderedChoices.value[Number(key)]?.value;
   };
   const updateOtherText = (value: string) => {
     otherText.value = value;
-    answer.value = normalizeString(value) === "" ? undefined : value;
+    answer.value = checkIsBlankText(value) ? undefined : value;
   };
 
   return {
