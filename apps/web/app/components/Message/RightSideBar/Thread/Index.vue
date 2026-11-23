@@ -7,8 +7,10 @@ import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const threadStore = useThreadStore();
 const { closeThread } = threadStore;
-const { activeThreadRootId, isReadThreadPending, threadMessages } = storeToRefs(threadStore);
+const { activeRoomId, activeThreadRootId, isReadThreadPending, threadMessages, threadReadError } =
+  storeToRefs(threadStore);
 const actionItems = useThreadActionItems();
+const openThread = useOpenThread();
 // Oldest first, so the thread reads top-down into the composer below it.
 // The root is the earliest message in its own thread, so it needs no special case to stay at the top
 const displayThreadMessages = computed(() => threadMessages.value.toSorted(compareCreatedAt));
@@ -26,6 +28,11 @@ const displayThreadMessages = computed(() => threadMessages.value.toSorted(compa
       <template v-if="isReadThreadPending">
         <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_PAGE_LIMIT" :key="i" p-4 />
       </template>
+      <UiErrorState
+        v-else-if="threadReadError"
+        :error="threadReadError"
+        @retry="openThread(activeRoomId, activeThreadRootId)"
+      />
       <MessageModelMessageSearchList v-else :messages="displayThreadMessages">
         <template #no-data>
           <UiEmptyState

@@ -21,6 +21,9 @@ export const useThreadStore = defineStore("message/thread", () => {
   // One key for the drawer, which reads one thread at a time, so a newer open's topic watch replaces the one before it
   const readThreadKey = Symbol("readThread");
   const isReadThreadPending = ref(false);
+  // A failed read is held as its message and drawn by the pane in place of its empty state, so no failure reads as a
+  // Thread with no replies
+  const threadReadError = ref("");
   const activeThreadRootId = ref<0 | ClientMessage["id"]>(0);
   // The open thread's read takes the room's deletes and edits made while it is in flight into its answer as it lands
   const inFlightChanges = createInFlightChanges();
@@ -63,11 +66,15 @@ export const useThreadStore = defineStore("message/thread", () => {
     layoutStore.isRightDrawerOpen = true;
     // The flag belongs to the newest read: a read a newer open superseded settles dropped, and that newer read clears it
     isReadThreadPending.value = true;
+    threadReadError.value = "";
     const readThread = async () => {
       const { status } = await executeQuery(
         () => inFlightChanges.read(roomId, readThreadMessages, (answer) => answer),
         {
           key: readThreadKey,
+          onError: (error) => {
+            threadReadError.value = error.message;
+          },
           onSuccess: ({ messages }) => {
             // The read spans the whole open, so the user can close the drawer while it is still in flight — a
             // Response applied afterwards reopens a thread they just dismissed
@@ -148,5 +155,6 @@ export const useThreadStore = defineStore("message/thread", () => {
     isReadThreadPending,
     openThread,
     threadMessages,
+    threadReadError,
   };
 });

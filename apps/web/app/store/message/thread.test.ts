@@ -17,6 +17,7 @@ import { useConnectionStore } from "#src/store/realtime/connection";
 import { getTopic, MessageType, TopicKind } from "@esposter/db-schema";
 import { Operation, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -158,6 +159,23 @@ describe(useThreadStore, () => {
     await laterOpen;
 
     expect(isReadThreadPending.value).toBe(false);
+  });
+
+  // A failed read is held as its message, so the pane draws the failure rather than an empty thread that has no replies
+  test("holds a failed thread read as its error rather than as a thread with no replies", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.readThread.query(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadReadError } = storeToRefs(threadStore);
+    const openThread = useOpenThread();
+
+    await openThread(roomId, threadRootId);
+
+    expect(threadReadError.value).not.toBe("");
   });
 
   // A reply renders its attachments, the message it quotes and its reactions from the room's metadata, and a thread
