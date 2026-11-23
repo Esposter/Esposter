@@ -3,11 +3,13 @@
 import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
+import { HostedAssetOriginMap } from "@esposter/db-schema";
 import { omitUndefined } from "@esposter/shared";
 import { ExpirationPlugin } from "@vite-pwa/workbox-swkit/expiration";
 import { cleanupOutdatedCaches, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
 import { NavigationRoute, registerRoute } from "@vite-pwa/workbox-swkit/routing";
 import { NetworkFirst } from "@vite-pwa/workbox-swkit/strategies";
+import { HOSTED_ASSETS_CACHE_NAME } from "hosted-assets";
 import { navigationDenylist } from "virtual:unplugin-pwa-nuxt/navigation-denylist";
 
 // The build replaces `__WB_MANIFEST` with the precache list of the build's own files, each named by its content or
@@ -37,6 +39,17 @@ registerRoute(
     }),
     { denylist: navigationDenylist },
   ),
+);
+
+// A hosted object is answered from the cache its preloader filled, and a miss goes to the network unstored, since the
+// Preloader alone decides what the cache holds. The url embeds the object's hash, so a cached answer is never stale
+const HOSTED_ORIGINS: readonly string[] = Object.values(HostedAssetOriginMap);
+registerRoute(
+  ({ url }) => HOSTED_ORIGINS.includes(url.origin),
+  async ({ request }) => {
+    const cache = await caches.open(HOSTED_ASSETS_CACHE_NAME);
+    return (await cache.match(request)) ?? fetch(request);
+  },
 );
 
 // The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control

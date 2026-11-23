@@ -41,7 +41,7 @@ Ordered by dependency. Each task names how it is verified: a test written first 
 
 ## 5. The service worker and the claim
 
-- [ ] 5.1 Add the cache-first route over the hosted origins to `apps/web/service-worker/sw.ts`, reading the `hosted-assets` cache. Verify: a driven browser run (the run-app skill) on the dev server shows a hosted request answered from the cache with the network disabled.
+- [x] 5.1 Add the cache-first route over the hosted origins to `apps/web/service-worker/sw.ts`, reading the `hosted-assets` cache. Verify: a driven browser run (the run-app skill) on the dev server shows a hosted request answered from the cache with the network disabled.
 - [ ] 5.2 Claim the clients on activation. Verify: the same driven run shows the page controlled by the worker after one navigation, not two.
 
 ## 6. Genshin
