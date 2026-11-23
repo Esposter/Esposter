@@ -34,6 +34,15 @@ export const RESTRICTED_SOURCE_SYNTAXES: SelectorBanList = {
       selector: "AwaitExpression > ImportExpression.argument",
     },
     {
+      // Slicing `.buffer` from a view's own byte offset copies bytes a view over the same buffer reads in place. A view
+      // Cannot start where the element size does not divide the offset, which is the one case a copy is needed, so that
+      // Case disables this rule with its reason rather than the rule allowing the copy.
+      message:
+        "Read the bytes through a view: `new Float32Array(x.buffer, x.byteOffset, x.byteLength / Float32Array.BYTES_PER_ELEMENT)` — `.buffer.slice(x.byteOffset, …)` copies them. A copy an unaligned offset needs disables this with that reason. See the runtime-efficiency skill.",
+      selector:
+        "CallExpression[callee.object.property.name='buffer'][callee.property.name='slice'][arguments.0.property.name='byteOffset']",
+    },
+    {
       // The double cast launders a value past every check the compiler would have run — the hole `no-explicit-any`
       // Closes, spelled another way. A test is where the genuine seams mostly live (a class fake standing in for an
       // SDK class), so only source is held to it; a seam source cannot model either disables this with what the

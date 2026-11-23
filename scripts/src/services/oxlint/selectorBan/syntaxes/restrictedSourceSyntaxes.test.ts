@@ -61,6 +61,19 @@ describe("restrictedSourceSyntaxes", () => {
         source: `export const aSchema = z.discriminatedUnion("a", []) satisfies z.ZodType<A>;`,
         violations: 0,
       },
+      {
+        filePath: "copiedBytes.ts",
+        name: "copiedBytes",
+        source: "export const a = new Float32Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));",
+        violations: 1,
+      },
+      {
+        filePath: "viewedBytes.ts",
+        name: "viewedBytes",
+        source:
+          "export const a = new Float32Array(b.buffer, b.byteOffset, b.byteLength / Float32Array.BYTES_PER_ELEMENT);",
+        violations: 0,
+      },
     ],
   });
 });
