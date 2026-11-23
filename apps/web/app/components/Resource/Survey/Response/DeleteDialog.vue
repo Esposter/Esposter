@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useNotificationStore } from "#src/store/notification";
 import { useSurveyResponseDialogStore } from "#src/store/resource/surveyResponseDialog";
 import { NotificationSeverity } from "@esposter/db-schema";
@@ -19,16 +20,23 @@ const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { isOpen } = useSingletonDialog(deletingResponseId);
 const deleteResponse = (responseId: string) =>
-  getResultAsync(() => $trpc.survey.deleteSurveyResponse.mutate({ id: surveyId, responseId })).match(() => {
-    createNotification({ severity: NotificationSeverity.Success, title: "Deleted response" });
-    emit("delete", responseId);
-    emit("refresh");
-  }, createErrorNotification);
+  getResultAsync(() => $trpc.survey.deleteSurveyResponse.mutate({ id: surveyId, responseId })).match(
+    () => {
+      createNotification({ severity: NotificationSeverity.Success, title: "Deleted response" });
+      emit("delete", responseId);
+      emit("refresh");
+    },
+    (error) => {
+      createErrorNotification(error);
+      return false;
+    },
+  );
 </script>
 
 <template>
   <UiConfirmDialog
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Delete"
     title="Delete response"
     :confirm="() => deleteResponse(deletingResponseId)"

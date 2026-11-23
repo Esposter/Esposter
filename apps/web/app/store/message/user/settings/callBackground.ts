@@ -63,9 +63,15 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
       },
     );
   };
-  const deleteCallBackground = async (slot: CallBackground["slot"]) => {
-    await getResultAsync(() => $trpc.user.deleteCallBackground.mutate({ slot })).match(noop, createErrorAlert);
-  };
+  // Answers whether the server deleted the slot, so the dialog that asked keeps its place over a refusal
+  const deleteCallBackground = (slot: CallBackground["slot"]) =>
+    getResultAsync(() => $trpc.user.deleteCallBackground.mutate({ slot })).match(
+      () => true,
+      (error) => {
+        createErrorAlert(error);
+        return false;
+      },
+    );
   // One selection, two kinds of background: a preset resolves to the static path it ships as, a slot to a
   // Freshly signed presigned read url, and anything resolving to neither is no background at all - the state the
   // Picker's None entry already selects. That is what makes a deleted slot degrade instead of publishing a

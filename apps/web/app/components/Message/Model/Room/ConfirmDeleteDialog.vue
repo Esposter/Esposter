@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useRoomStore } from "#src/store/message/room/index";
 
 interface Props {
@@ -19,6 +20,7 @@ const { deleteRoom, leaveRoom } = roomStore;
   <!-- Deleting a room is irreversible (all messages/members), so the creator must type the room name to confirm -->
   <UiConfirmDialog
     v-model="isOpen"
+    :awaited-because="isCreator ? AwaitedReason.IrreversibleStep : AwaitedReason.ServerDecidedOutcome"
     :confirm-label="isCreator ? 'Delete' : 'Leave'"
     :confirm-name="isCreator ? room.name : undefined"
     :title="isCreator ? 'Delete room' : 'Leave room'"

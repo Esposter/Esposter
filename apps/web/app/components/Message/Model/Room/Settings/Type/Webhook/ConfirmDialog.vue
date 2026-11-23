@@ -2,6 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { WebhookDialogAction } from "#src/models/message/room/WebhookDialogAction";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { WebhookDialogActionMetaMap } from "#src/services/message/room/WebhookDialogActionMetaMap";
 import { useWebhookStore } from "#src/store/message/room/webhook";
 import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
@@ -29,6 +30,7 @@ const { confirmLabel, title } = WebhookDialogActionMetaMap[action];
   <UiConfirmDialog
     v-if="webhook"
     v-model="isOpen"
+    :awaited-because="action === WebhookDialogAction.Delete ? undefined : AwaitedReason.ServerIssuedValue"
     :confirm-label
     :title
     :confirm="() => webhook && write({ id: webhook.id, roomId })"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RightDrawer } from "#src/models/message/RightDrawer";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
@@ -60,6 +61,7 @@ const isLeaveOpen = ref(false);
     <UiConfirmDialog
       v-if="removingParticipant"
       v-model="isRemoveOpen"
+      :awaited-because="AwaitedReason.ServerDecidedOutcome"
       confirm-label="Remove"
       :title="`Remove ${removingParticipant.displayName}`"
       :confirm="
@@ -73,6 +75,7 @@ const isLeaveOpen = ref(false);
     </UiConfirmDialog>
     <UiConfirmDialog
       v-model="isLeaveOpen"
+      :awaited-because="AwaitedReason.ServerDecidedOutcome"
       confirm-label="Leave"
       :title="`Leave ${directMessageName}`"
       :confirm="() => currentDirectMessage && leaveDirectMessage(currentDirectMessage.id)"

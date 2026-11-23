@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
@@ -96,6 +97,7 @@ onMounted(async () => {
     <UiConfirmDialog
       v-if="deletingCallBackground"
       v-model="isDeleteOpen"
+      :awaited-because="AwaitedReason.ServerDecidedOutcome"
       confirm-label="Delete"
       title="Delete background"
       :confirm="() => deletingCallBackground && deleteCallBackground(deletingCallBackground.slot)"
