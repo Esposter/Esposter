@@ -65,6 +65,5 @@ export const removeWorktree = (path: string, repositoryRoot: string = REPOSITORY
   if (isLinked) runGit(["worktree", "remove", worktreePath], repositoryRoot);
   else rmSync(worktreePath, { force: true, recursive: true });
   runGit(["worktree", "prune"], repositoryRoot);
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a branch name, empty when none
-  if (branch !== "") deleteBranch(branch, repositoryRoot);
+  if (branch) deleteBranch(branch, repositoryRoot);
 };
