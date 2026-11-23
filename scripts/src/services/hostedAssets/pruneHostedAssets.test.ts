@@ -2,6 +2,7 @@ import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemor
 import { CHARACTER_PACKS_PREFIX } from "#src/services/genshinAssets/characterPacks/constants";
 import { DAY_MS } from "#src/services/hostedAssets/constants";
 import { pruneHostedAssets } from "#src/services/hostedAssets/pruneHostedAssets";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { GameDataset } from "genshin-world";
 import { getHostedAssetPath } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -50,7 +51,7 @@ describe(pruneHostedAssets, () => {
   test("keeps an old object outside the product's scopes", async () => {
     expect.hasAssertions();
 
-    const packKey = `${CHARACTER_PACKS_PREFIX}/10000006/model.pmx`;
+    const packKey = `${CHARACTER_PACKS_PREFIX}/${TEST_FILENAME}`;
     await writeObject(packKey);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await pruneHostedAssets({

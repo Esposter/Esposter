@@ -15,6 +15,10 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 const createHash = (character: string) => character.repeat(64);
 
 describe(commitHostedAssetLock, () => {
+  const BOOK_BODY_ENGLISH_KEY = "bookBody/English";
+  const PROFILE_ENGLISH_KEY = "profile/English";
+  const STATS_WEAPONS_KEY = "stats/weapons";
+
   let lockPath: string;
   let product: HostedAssetProduct;
 
@@ -40,23 +44,23 @@ describe(commitHostedAssetLock, () => {
 
     await writeHostedAssetLock(
       {
-        indexes: { "profile/English": createHostedAssetLockObject("profile/English", createHash("b")) },
-        objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", createHash("a")) },
+        indexes: { [PROFILE_ENGLISH_KEY]: createHostedAssetLockObject(PROFILE_ENGLISH_KEY, createHash("b")) },
+        objects: { [STATS_WEAPONS_KEY]: createHostedAssetLockObject(STATS_WEAPONS_KEY, createHash("a")) },
       },
       lockPath,
     );
 
     await commitHostedAssetLock(product, [GameDataset.BookBody], {
-      indexes: { "bookBody/English": createHostedAssetLockObject("bookBody/English", createHash("c")) },
+      indexes: { [BOOK_BODY_ENGLISH_KEY]: createHostedAssetLockObject(BOOK_BODY_ENGLISH_KEY, createHash("c")) },
       objects: {},
     });
 
     await expect(readHostedAssetLock(lockPath)).resolves.toStrictEqual({
       indexes: {
-        "bookBody/English": createHostedAssetLockObject("bookBody/English", createHash("c")),
-        "profile/English": createHostedAssetLockObject("profile/English", createHash("b")),
+        [BOOK_BODY_ENGLISH_KEY]: createHostedAssetLockObject(BOOK_BODY_ENGLISH_KEY, createHash("c")),
+        [PROFILE_ENGLISH_KEY]: createHostedAssetLockObject(PROFILE_ENGLISH_KEY, createHash("b")),
       },
-      objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", createHash("a")) },
+      objects: { [STATS_WEAPONS_KEY]: createHostedAssetLockObject(STATS_WEAPONS_KEY, createHash("a")) },
     });
   });
 
@@ -65,20 +69,20 @@ describe(commitHostedAssetLock, () => {
 
     await writeHostedAssetLock(
       {
-        indexes: { "profile/English": createHostedAssetLockObject("profile/English", createHash("a")) },
-        objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", createHash("b")) },
+        indexes: { [PROFILE_ENGLISH_KEY]: createHostedAssetLockObject(PROFILE_ENGLISH_KEY, createHash("a")) },
+        objects: { [STATS_WEAPONS_KEY]: createHostedAssetLockObject(STATS_WEAPONS_KEY, createHash("b")) },
       },
       lockPath,
     );
 
     await commitHostedAssetLock(product, [GameDataset.Profile], {
-      indexes: { "profile/English": createHostedAssetLockObject("profile/English", createHash("c")) },
+      indexes: { [PROFILE_ENGLISH_KEY]: createHostedAssetLockObject(PROFILE_ENGLISH_KEY, createHash("c")) },
       objects: {},
     });
 
     await expect(readHostedAssetLock(lockPath)).resolves.toStrictEqual({
-      indexes: { "profile/English": createHostedAssetLockObject("profile/English", createHash("c")) },
-      objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", createHash("b")) },
+      indexes: { [PROFILE_ENGLISH_KEY]: createHostedAssetLockObject(PROFILE_ENGLISH_KEY, createHash("c")) },
+      objects: { [STATS_WEAPONS_KEY]: createHostedAssetLockObject(STATS_WEAPONS_KEY, createHash("b")) },
     });
   });
 

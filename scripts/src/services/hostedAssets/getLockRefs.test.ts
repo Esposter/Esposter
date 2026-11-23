@@ -10,6 +10,7 @@ describe(getLockRefs, () => {
   const baseUrl = "https://bucket.example/public-genshin-assets";
   const sha256 = "a".repeat(64);
   const entrySha256 = "b".repeat(64);
+  const ENGLISH_INDEX_KEY = "profile/English";
   const toUrl = (name: HostedAssetName) => getHostedAssetUrl(baseUrl, name);
 
   // A lock entry is named by its own scope and extension, which need not match its key, so the walk and a reader of
@@ -30,7 +31,7 @@ describe(getLockRefs, () => {
   test("names an index's entries by the index's scope and extension, not by its key", async () => {
     expect.hasAssertions();
 
-    const lock: HostedAssetLock = { indexes: { "profile/English": createIndex("profile", sha256) }, objects: {} };
+    const lock: HostedAssetLock = { indexes: { [ENGLISH_INDEX_KEY]: createIndex("profile", sha256) }, objects: {} };
     const { objects } = await getLockRefs([lock], () => Promise.resolve({ "10000002": entrySha256 }));
 
     expect(objects.map((name) => toUrl(name))).toStrictEqual([`${baseUrl}/profile/${entrySha256}.json`]);
@@ -42,7 +43,7 @@ describe(getLockRefs, () => {
 
     const lock: HostedAssetLock = {
       indexes: {
-        "profile/English": createIndex("profile", sha256),
+        [ENGLISH_INDEX_KEY]: createIndex("profile", sha256),
         "profile/Japanese": createIndex("profile", entrySha256),
         "profile/Korean": createIndex("profile", "c".repeat(64)),
       },
