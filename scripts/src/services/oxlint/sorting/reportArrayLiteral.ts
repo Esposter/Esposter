@@ -1,6 +1,6 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
-import { reportElementRuns } from "#src/services/oxlint/sorting/reportArrayLiteral/reportElementRuns";
+import { reportElementRuns } from "#src/services/oxlint/sorting/shared/reportElementRuns";
 import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { defineRule } from "@oxlint/plugins";
 

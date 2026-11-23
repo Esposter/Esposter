@@ -207,7 +207,7 @@
 - `scripts/src/services/oxlint/sorting/computeNodesInCircularDependencies` — `computeDependencyEdges.ts`
 - `scripts/src/services/oxlint/sorting/computeModuleDependencies` — `checkHoldsStaticState.ts`, `checkIsClassElementRelevant.ts`, `checkIsClassOrEnumItem.ts`, `checkIsIgnoredReference.ts`, `checkIsSameNode.ts`, `computeAncestors.ts`, `computeRelatedNames.ts`
 - `scripts/src/services/oxlint/sorting/collectModuleItems` — `describeDeclared.ts`, `describeDeclaration.ts`, `describeStatement.ts`, `getGroupIndex.ts`
-- `scripts/src/services/oxlint/sorting/reportArrayLiteral` — `reportElementRuns.ts`
+- `scripts/src/services/oxlint/sorting/shared` — `reportElementRuns.ts`
 - `scripts/src/services/oxlint/sorting/reportSortingPartitions` — `partitionAtBoundaries.ts`
 - `scripts/src/services/oxlint/sorting/names` — `computeComparableName.ts`, `computeKeyName.ts`, `stripTrailingSeparator.ts`
 - `scripts/src/services/oxlint/sorting/checkIsPureExpression` — `checkHasPureMembers.ts`
