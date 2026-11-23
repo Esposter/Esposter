@@ -1,6 +1,7 @@
 import { getAreaUnitFindings } from "#src/services/precheck/getAreaUnitFindings";
 import { getAreaUnitSizeFindings } from "#src/services/precheck/getAreaUnitSizeFindings";
 import { getLedgerUnitsFindings } from "#src/services/precheck/getLedgerUnitsFindings";
+import { getUnlistedFileFindings } from "#src/services/precheck/getUnlistedFileFindings";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 import { getUnitFiles } from "#src/services/sweeps/ledgerCoverage/getUnitFiles";
@@ -18,12 +19,14 @@ import { join } from "node:path";
 // Every notes table against the tree in this checkout, read as the working tree holds them: a derived ledger's against
 // Its listing, and a question's own file and each of its `<question>/<area>.md` files against the question's cells. Each
 // Area unit is held to the tracked files too, so a path a rename or a removal left behind is named as it stands, and every
-// Unit of the partition, the derived openspec folders included, to the cap a pass reads it in full under
+// Unit of the partition, the derived openspec folders included, to the cap a pass reads it in full under, and no tracked
+// File is left without a unit that holds it
 export const checkLedgerUnits = (): string[] => {
   const areas = readLedgerAreas();
   const unitsByArea = Object.fromEntries(areas.map((area) => [area, readAreaFileUnits(area)]));
   const partitionUnits = [...Object.values(unitsByArea).flat(), ...readOpenspecFolderUnits()];
   const trackedFiles = readTrackedFiles(readVendoredSkillNames());
+  const unitFiles = getUnitFiles(partitionUnits, trackedFiles);
   const questionUnitsByFile = Object.fromEntries(
     Object.entries(readQuestionUnits()).flatMap(([question, units]) =>
       [question, ...areas.map((area) => `${question}/${area}`)].map((file): [string, () => string[]] => [
@@ -41,6 +44,7 @@ export const checkLedgerUnits = (): string[] => {
       { ...questionUnitsByFile, ...LedgerUnitsMap },
     ),
     ...getAreaUnitFindings(unitsByArea, trackedFiles),
-    ...getAreaUnitSizeFindings(partitionUnits, getUnitFiles(partitionUnits, trackedFiles), readFileSize),
+    ...getAreaUnitSizeFindings(partitionUnits, unitFiles, readFileSize),
+    ...getUnlistedFileFindings(unitFiles, trackedFiles),
   ];
 };
