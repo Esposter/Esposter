@@ -9,9 +9,9 @@ import { join } from "node:path";
 const toDerivedName = (lockKey: string): string =>
   toHostedAssetFileKey(getHostedAssetFileKey(lockKey.slice(0, lockKey.indexOf("/")), lockKey));
 
-// The Nuxt module that writes a product's key map from its committed lock, once `nuxt prepare` has loaded the app
-// It is registered by its source path in `apps/web/configuration/modules.ts`, since `nuxt prepare` runs before any package is built
-// It lives under `internal`, so the build leaves it out of the entries, since it reads Node's file system
+// The Nuxt module that writes a product's key map from its committed lock, once `nuxt prepare` has loaded the app It is
+// Registered by its source path in `apps/web/configuration/modules.ts`, since `nuxt prepare` runs before any package is
+// Built It lives under `internal`, so the build leaves it out of the entries, since it reads Node's file system
 const hostedAssetKeysModule = (
   { isNameDerived, keysPath, lockPath, product }: HostedAssetKeysModuleOptions,
   nuxt: { hook: (name: "ready", callback: () => Promise<void>) => void; options: { rootDir: string } },

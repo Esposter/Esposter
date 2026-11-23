@@ -13,7 +13,8 @@ export const writeHostedAssetKeysFile = async (
   keysPath: string,
   toName: (lockKey: string) => string,
 ): Promise<void> => {
-  // oxlint-disable-next-line no-restricted-properties -- the install reads its lock before any workspace package is built, so @esposter/shared's date-aware parse is not loadable, and the lock holds no dates
+  // The install reads its lock before any workspace package is built, so @esposter/shared's
+  // oxlint-disable-next-line no-restricted-properties -- date-aware parse is not loadable, and the lock holds no dates
   const lock = hostedAssetLockSchema.parse(JSON.parse(await readFile(lockPath, "utf8")));
   await mkdir(dirname(keysPath), { recursive: true });
   await writeFile(

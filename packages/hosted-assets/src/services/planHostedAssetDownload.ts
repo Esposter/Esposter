@@ -1,8 +1,8 @@
 import type { HostedAssetDownloadFile } from "#src/models/HostedAssetDownloadFile";
 import type { HostedAssetDownloadPlan } from "#src/models/HostedAssetDownloadPlan";
 
-// The files the cache lacks, each matched by the url it is kept under, and the bytes they come to. A held url is matched
-// Exactly, so a republished file, keyed by its new hash, is planned again
+// The files the cache lacks, each matched by the url it is kept under, and the bytes they come to. A held url is
+// Matched Exactly, so a republished file, keyed by its new hash, is planned again
 export const planHostedAssetDownload = (
   files: readonly HostedAssetDownloadFile[],
   heldUrls: ReadonlySet<string>,

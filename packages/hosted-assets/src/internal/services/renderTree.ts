@@ -3,7 +3,8 @@ import type { KeyTree } from "#src/internal/models/KeyTree";
 import { renderName } from "#src/internal/services/renderName";
 import { RENDERED_LINE_WIDTH } from "#src/services/renderedLineWidth";
 
-// The order the lint sorts names by, the same as scripts' compareNaturally, which the install cannot import before a build
+// The order the lint sorts names by, the same as scripts' compareNaturally, which the install cannot import before a
+// Build
 const NATURAL_COLLATOR = new Intl.Collator("en-US", { numeric: true });
 
 export const renderTree = (tree: KeyTree, indentation: string): string =>
