@@ -2,11 +2,11 @@ import type { SortingNode } from "#src/models/oxlint/sorting/SortingNode";
 
 // Each node's edges: every node binding a name it reads, itself included when it reads a name it binds
 const computeDependencyEdges = (nodes: SortingNode[]): Map<SortingNode, SortingNode[]> => {
-  const bindersByName = new Map<string, SortingNode[]>();
+  const nameBindersMap = new Map<string, SortingNode[]>();
   for (const node of nodes)
-    for (const name of node.dependencyNames) bindersByName.set(name, [...(bindersByName.get(name) ?? []), node]);
+    for (const name of node.dependencyNames) nameBindersMap.set(name, [...(nameBindersMap.get(name) ?? []), node]);
   return new Map(
-    nodes.map((node) => [node, node.dependencies.flatMap((name) => bindersByName.get(name) ?? [])] as const),
+    nodes.map((node) => [node, node.dependencies.flatMap((name) => nameBindersMap.get(name) ?? [])] as const),
   );
 };
 
@@ -42,7 +42,7 @@ export const computeNodesInCircularDependencies = (nodes: SortingNode[]): Set<So
       component.push(member);
     } while (member !== node);
     if (component.length > 1 || (edges.get(node) ?? []).includes(node))
-      for (const member of component) nodesInCycles.add(member);
+      for (const componentMember of component) nodesInCycles.add(componentMember);
   };
   for (const node of nodes) if (!indexes.has(node)) strongConnect(node);
   return nodesInCycles;

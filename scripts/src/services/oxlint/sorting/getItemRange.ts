@@ -61,7 +61,7 @@ export const getItemRange = (context: Context, node: ESTree.Node): [number, numb
 export const getItemTrailer = (
   context: Context,
   node: ESTree.Node,
-): { anchor: ESTree.Node | Token; comment: Comment | undefined; separator: Token | undefined } => {
+): { anchor: ESTree.Node | Token; comment?: Comment | undefined; separator?: Token | undefined } => {
   const { sourceCode } = context;
   const { last } = computeBounds(context, node);
   const nextToken = sourceCode.getTokenAfter(last);
@@ -69,7 +69,6 @@ export const getItemTrailer = (
   const anchor = separator ?? last;
   const comment = sourceCode
     .getCommentsAfter(anchor)
-    .filter((candidate) => candidate.loc.start.line === anchor.loc.end.line)
-    .at(-1);
+    .findLast((candidate) => candidate.loc.start.line === anchor.loc.end.line);
   return { anchor, comment, separator };
 };

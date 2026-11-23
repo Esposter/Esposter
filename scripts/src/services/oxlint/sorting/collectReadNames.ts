@@ -11,7 +11,7 @@ export const collectReadNames = <T extends { node: ESTree.Node }>(
   items: T[],
   readNames: (referencingItem: T, reference: Reference, referencedItem: T | undefined) => string[],
 ): Map<T, string[]> => {
-  const namesByItem = new Map<T, string[]>();
+  const itemNamesMap = new Map<T, string[]>();
   const itemRanges = items.map((item) => ({ item, range: getItemRange(context, item.node) }));
   for (const reference of getReferencesWithin(context, items)) {
     const { identifier, resolved } = reference;
@@ -20,9 +20,9 @@ export const collectReadNames = <T extends { node: ESTree.Node }>(
     if (referencingItem === undefined) continue;
     const [declaration] = resolved.identifiers;
     const referencedItem = declaration ? findNodeContaining(itemRanges, declaration.range) : undefined;
-    const names = namesByItem.get(referencingItem) ?? [];
+    const names = itemNamesMap.get(referencingItem) ?? [];
     names.push(...readNames(referencingItem, reference, referencedItem));
-    namesByItem.set(referencingItem, names);
+    itemNamesMap.set(referencingItem, names);
   }
-  return namesByItem;
+  return itemNamesMap;
 };

@@ -40,15 +40,11 @@ const sortEnums: Rule = defineRule({
         }));
         const isNumericEnum = membersWithValues.every(({ numericValue }) => numericValue !== undefined);
         const sortingNodes = membersWithValues.map(({ member, numericValue }) =>
-          buildSortingNode(
-            member.id.type === "Literal" ? String(member.id.value) : sourceCode.getText(member.id),
-            member,
-            {
-              ...withEvaluated(member.initializer),
-              isOxlintDisabled: disabledLines.has(member.loc.start.line),
-              value: numericValue?.toString() ?? "",
-            },
-          ),
+          buildSortingNode(member.id.type === "Literal" ? member.id.value : sourceCode.getText(member.id), member, {
+            ...withEvaluated(member.initializer),
+            isOxlintDisabled: disabledLines.has(member.loc.start.line),
+            value: numericValue?.toString() ?? "",
+          }),
         );
         const partition = takeOne(
           computeSortingDependencies(context, [sortingNodes], {
