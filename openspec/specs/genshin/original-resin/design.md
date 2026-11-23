@@ -45,7 +45,8 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 | File                                                                                       | Role                                                                                                                     |
 | :----------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/originalResin/constants.ts`                           | The cap, the refill cap, the regeneration interval, the Primogem prices and the game's day                               |
+| `packages/genshin-world/src/services/originalResin/constants.ts`                           | The Fragile Resin restore, the Adventure EXP a point, the weekly boss prices, the Condensed Resin claims                 |
+| `packages/genshin-world/src/services/originalResin/readResinParam.ts`                      | The five resin figures of the record, read by key from `stats/resin`                                                     |
 | `packages/genshin-world/src/services/originalResin/regenerateOriginalResin.ts`             | The count and its moment read to now, a point each interval below the cap                                                |
 | `packages/genshin-world/src/services/originalResin/spendOriginalResin.ts`                  | A spend read to now, undefined where the resin is not held                                                               |
 | `packages/genshin-world/src/services/originalResin/refillOriginalResin.ts`                 | A refill added to the count, filling to the refill cap                                                                   |
@@ -62,7 +63,7 @@ The top bar's place and type are provisional until a recording measures them. Th
 | `packages/genshin-world/src/services/originalResin/checkIsMultiClaimBlossom.ts`            | A ley line or a domain, the blossoms that can be doubled or paid in Condensed Resin                                      |
 | `packages/genshin-world/src/models/originalResin/BlossomClaimOffer.ts`                     | One way to pay a claim: its claim count, its resin and its Condensed Resin                                               |
 | `packages/genshin-world/src/models/inventory/Wallet.ts`                                    | The count of each currency, the moment Original Resin last changed, and the day's refills                                |
-| `packages/genshin-world/src/services/inventory/constants.ts`                               | A new player's wallet, holding Original Resin at the cap                                                                 |
+| `packages/genshin-world/src/services/inventory/constants.ts`                               | A new player's wallet, Original Resin at zero, its cap set by createStartingGenshinSave                                  |
 | `packages/genshin-world/src/components/Map/Overlay/Resin/Index.vue`                        | The count on the map's top bar, read when the map opens                                                                  |
 | `packages/genshin-text/src/models/GameTextKey.ts`                                          | `OriginalResin`, the item's name in the game's text                                                                      |
 
