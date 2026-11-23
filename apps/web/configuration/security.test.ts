@@ -1,5 +1,5 @@
 import { CLOUDFLARE_INSIGHTS_URL, NUXT_IMAGE_ERROR_HANDLER } from "#configuration/constants";
-import { routeRules } from "#configuration/routeRules";
+import { IMMUTABLE_CACHE_CONTROL, routeRules } from "#configuration/routeRules";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -137,6 +137,10 @@ describe("security", () => {
   test("serves the build's folder under the embedder policy its pages send", () => {
     expect.hasAssertions();
 
-    expect(routeRules["/_nuxt/:file"]?.headers?.["Cross-Origin-Embedder-Policy"]).toBe("credentialless");
+    expect(routeRules["/_nuxt/:file"]?.headers).toStrictEqual({
+      "cache-control": IMMUTABLE_CACHE_CONTROL,
+      "Cross-Origin-Embedder-Policy": "credentialless",
+      "X-Robots-Tag": "noindex",
+    });
   });
 });
