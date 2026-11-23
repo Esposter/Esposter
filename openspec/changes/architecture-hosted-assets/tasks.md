@@ -19,7 +19,7 @@ Ordered by dependency. Each task names how it is verified: a test written first 
 - [x] 2.3 Add the content-type and encoding declaration per extension: Brotli for JSON, TSX and TMX, none for PNG, WebP, MP3 and WOFF2. Verify: a test that a published `.tsx` is stored with `Content-Encoding: br` and that its hash over the decoded bytes is its name, seen failing first.
 - [x] 2.4 Add the read-back verification: each object written is read from its bucket and hashed before the lock is committed. Verify: a test named after the scenario "A mismatched object stops the commit", in which a bucket returning one altered object fails the publish and leaves the lock unchanged, seen failing first.
 - [x] 2.5 Add `hosted-assets publish --dry-run`, which needs no credential, and the existing dry-run note. Verify: tests named after the scenarios "Republishing unchanged bytes keeps the url" and "Changed bytes get a new url", seen failing first, and `pnpm -C scripts hosted-assets publish --dry-run` with no credential prints `unchanged, no request made` on a clean lock.
-- [ ] 2.6 Add `hosted-assets pull <key>` and `pull --all`, which download objects by their hashes to a local working copy, so a changed original can be published again from R2. Verify: a test that a pulled object hashes to its key, seen failing first, and `pull --all` on a lock of two objects writes both.
+- [x] 2.6 Add `hosted-assets pull <key>` and `pull --all`, which download objects by their hashes to a local working copy, so a changed original can be published again from R2. Verify: a test that a pulled object hashes to its key, seen failing first, and `pull --all` on a lock of two objects writes both.
 
 ## 3. Generated artifacts and the sync check
 
