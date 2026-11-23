@@ -160,3 +160,39 @@ Resources:
 ```
 
 The four deletes are `dev-r2-esposter-public-genshin-assets`, `dev-r2-esposter-public-dungeons-assets`, `prod-r2-esposter-public-dungeons-assets` and `prod-r2-esposter-public-genshin-assets`, and the stack line shows no other change.
+
+## 6.8: the local production run, after the developer gate and the env-file path
+
+The build is `CLOUDFLARE_ENV=dev pnpm -C apps/web build` on `808c4dad99` with the fix of this section in the working tree, and it is served by `pnpm start` as the package now writes it. Nothing is passed to `wrangler` beyond the script: no placeholder bindings, no compatibility flag, no `--var`.
+
+**Why the run was in development.** The local `.env` sets `APP_ENV=development`. Nuxt loads `.env` for the build, so `configuration/vite.ts` makes the Vite mode `development`. The client bundle of the earlier build compiled `IS_PRODUCTION` to `xF.Production===\`development\``(false) and`IS_DEVELOPMENT`to`xF.Development===\`development\``(true). So the Genshin wrapper's gates read a development build, but Nuxt's`DevOnly`blocks and the dev-only route are stripped and left out by the command.`apps/web/shared/util/environment/constants.ts`now exports`IS_NUXT_DEVELOPMENT` (`import.meta.dev`), which the scene-export address and the world's developer surface read.
+
+**Before the fix** (`pnpm start` as written, the build without the fix, the same driver with the title and the door clicked in order, 200 s):
+
+- Console: two errors, `404` for `/data/genshin/exports/index.json` and the app's `InvalidOperationError` that logs it.
+- The login bar reaches 100 at 110.6 s. The door is clicked at 115.8 s, and the launch bar (`Loading...`) appears at 67 at 117.8 s. The world never mounts: no canvas, and the loading screen's `world ready` warning fires at 136.8 s.
+- So the driver did click the door. `ready` truly hangs, on `isWorldReady` in `World.vue`, which waits for the developer surface's registry. Nuxt strips that surface from the build, so no registry is ever handed up.
+
+**After the fix** (`pnpm start`, the same driver, 240 s, `/genshin` signed out, the reader's own Chrome, headless):
+
+- Console errors: 0. Page errors: 0. Requests to `/data/genshin/exports`: 0.
+- Requests to `hosted.dev.esposter.com`: 890, all `200`, none failed.
+- Workers: `timer.worker-mMntE4pv.js` `200` and `terrainTileWorker-COqF0qdH.js` `200`.
+- The login bar (download) reaches 100 at 91.3 s and is removed at 94.0 s. The door's prompt is up by the click at 97.1 s.
+- The launch bar reads `Loading...` at 67 at 99.5 s and reaches 100 at 102.0 s, then is removed at 103.1 s.
+- The world is shown: one canvas, and the screenshot is Windrise with the character and the HUD.
+
+**`pnpm start`.** The script runs `wrangler dev --config .output/server/wrangler.json --env-file .env` from `apps/web`, and wrangler resolves `--env-file` against the config's own folder, `.output/server`, where no `.env` exists. The secrets never load, and the validator answers 500 on every page (`apps/web/server/plugins/environment.ts`).
+
+- The deployed Worker's config is the same file: the deploy's redirect (`.wrangler/deploy/config.json`) names `.output/server/wrangler.json`, which holds `compatibility_flags: []` and compatibility date `2026-11-16`. So the deployed config has no populate flag, and the local start did not differ from it in config.
+- Adding `nodejs_compat_populate_process_env` to that file changed nothing: 500 again.
+- Running `wrangler` from `.output/server` with `--env-file ../../.env` (the env file relative to the config's folder, which is also the working folder) served `/` with 200 and no error.
+- The script now reads `cd .output/server && wrangler dev --config wrangler.json --env-file ../../.env`. From the package's own build, `pnpm start` serves `/` with `200`, zero errors in its log.
+
+**The 20 s warning on the character packs.** The warning is the loading screen's diagnostic: each step still running 20 s after the opening mounts is named. The download is 52 MiB of lock objects and 81 MiB of character packs, so it runs longer than 20 s on any connection this slow.
+
+- The bar rose a point at a time for the whole run (34 of its 37 changes were one point, the others a point more or a reset), with no gap longer than about three seconds, and every request answered `200`. Nothing waited.
+- Measured in the browser against the hosted origin, one pack file alone ran at 1.8 MB/s, six at once at 4.0 MB/s in total, and the preloader's read into a Blob and `Cache.put` at 3.3 MB/s. A direct `curl` of six files at once reached about 4 MB/s in total. The machine's load averages were 8 to 14 on 8 cores.
+- The preloader's own work is one copy into a Blob and one `Cache.put` per file, which the bytes must go through to be kept whole, and the copy costs about a fifth of the throughput. Nothing is wasted that the profile shows, so the preload is unchanged.
+
+**The criteria.** The zero-console-error criterion holds, the bar reaches 100 with the world shown, and the timer and terrain workers load. 6.8's Verify holds on both clauses, the lock's measured total in the section above and this run's bar completing before the world.
