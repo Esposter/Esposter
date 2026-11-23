@@ -225,7 +225,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       // The built source of genshin-world may not import the parity page's `#parity/*`. Its tests and fixtures are never
       // Built, so they keep the import. The excluded suffixes are the ones the barrel generator and the declaration program
       // Leave out (`NON_SOURCE_SUFFIXES` in `packages/configuration/src/services/constants.ts`), repeated here since this
-      // Config cannot import them
+      // Config cannot import them without a build, and pinned against it by
+      // `scripts/src/workspace/oxlintParityExcludes.test.ts`
       excludeFiles: [
         "**/*.bench.ts",
         "**/*.fixture.ts",
