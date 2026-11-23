@@ -17,7 +17,7 @@ import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { getContentAddress } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
-import { getHostedAssetPath } from "hosted-assets";
+import { getHostedAssetPath, HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Each environment's bucket is its own in-memory store, made fresh for each test, so a rerun reads what the test stored
@@ -35,10 +35,12 @@ const getPlannedLock = (result: HostedAssetPublishResult): HostedAssetLock => {
 
 describe(publishHostedAssets, () => {
   const emptyLock: HostedAssetLock = { indexes: {}, objects: {} };
+  const PROFILE_KEY = "profile/English";
+  const WEAPONS_KEY = "stats/weapons";
   // One object, and an index of two entries: four stored objects in all
   const publication: HostedAssetPublication = {
-    indexes: { "profile/English": { "10000002": { name: "a" }, "10000003": { name: "b" } } },
-    objects: { "stats/weapons": [1, 2] },
+    indexes: { [PROFILE_KEY]: { "10000002": { name: "a" }, "10000003": { name: "b" } } },
+    objects: { [WEAPONS_KEY]: [1, 2] },
   };
   const scopes = [GameDataset.Profile, GameDataset.Stats];
   const product: HostedAssetProduct = {
@@ -78,8 +80,8 @@ describe(publishHostedAssets, () => {
     });
 
     const plannedLock = getPlannedLock(result);
-    expect(Object.keys(plannedLock.objects)).toStrictEqual(["stats/weapons"]);
-    expect(Object.keys(plannedLock.indexes)).toStrictEqual(["profile/English"]);
+    expect(Object.keys(plannedLock.objects)).toStrictEqual([WEAPONS_KEY]);
+    expect(Object.keys(plannedLock.indexes)).toStrictEqual([PROFILE_KEY]);
     expect(result).toStrictEqual({
       outcome: HostedAssetPublishOutcome.Published,
       plannedLock,
@@ -208,7 +210,7 @@ describe(publishHostedAssets, () => {
     );
     const changedPublication: HostedAssetPublication = {
       ...publication,
-      indexes: { "profile/English": { ...publication.indexes["profile/English"], "10000003": { name: "c" } } },
+      indexes: { [PROFILE_KEY]: { ...publication.indexes[PROFILE_KEY], "10000003": { name: "c" } } },
     };
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
@@ -264,13 +266,13 @@ describe(publishHostedAssets, () => {
     expect.hasAssertions();
 
     const ascending: HostedAssetPublication = {
-      indexes: { "profile/English": { alpha: { name: "a" }, beta: { name: "b" } } },
+      indexes: { [PROFILE_KEY]: { alpha: { name: "a" }, beta: { name: "b" } } },
       objects: {},
     };
     // Inserted beta first, which an object literal would not keep in its written order
     const descending: HostedAssetPublication = {
       indexes: {
-        "profile/English": Object.fromEntries([
+        [PROFILE_KEY]: Object.fromEntries([
           ["beta", { name: "b" }],
           ["alpha", { name: "a" }],
         ]),
@@ -487,7 +489,7 @@ describe(publishHostedAssets, () => {
 
     const stored = bucketClientMap[CloudflareEnvironment.Production].store.get(`${filesScope}/${sha256}.tsx`);
     expect(stored?.contentEncoding).toBe("br");
-    expect(stored?.contentType).toBe("application/xml");
+    expect(stored?.contentType).toBe(HOSTED_ASSET_CONTENT_TYPES[".tsx"]);
     await expect(
       readHostedAssetBytes(bucketClientMap[CloudflareEnvironment.Production], {
         bytes: bytes.byteLength,
@@ -508,7 +510,7 @@ describe(publishHostedAssets, () => {
     const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
     const storedGet = productionBucket.get;
     vi.spyOn(productionBucket, "get").mockImplementation((key) =>
-      key === alteredPath ? Promise.resolve(Buffer.from("altered")) : storedGet(key),
+      key === alteredPath ? Promise.resolve(Buffer.from(" ")) : storedGet(key),
     );
 
     await expect(
@@ -564,10 +566,10 @@ describe(publishHostedAssets, () => {
     const otherLock: HostedAssetLock = {
       indexes: {},
       objects: {
-        "stats/weapons": {
+        [WEAPONS_KEY]: {
           bytes: 0,
           extension: ".json",
-          scope: "stats/weapons",
+          scope: WEAPONS_KEY,
           sha256: getContentAddress(Buffer.from(TEST_FILENAME)),
         },
       },
