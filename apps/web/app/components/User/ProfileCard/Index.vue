@@ -38,9 +38,9 @@ const profileCardValues = computed(() => {
 const profileCardRows = computed(() => {
   const { biography, image, name } = profileCardValues.value;
   return {
-    name: { type: RowValueType.Text, value: name },
     biography: { type: RowValueType.Textarea, value: biography },
     image: { type: RowValueType.Image, value: image },
+    name: { type: RowValueType.Text, value: name },
   } as const;
 });
 const editedProfileCardRows = ref(structuredClone(profileCardValues.value));

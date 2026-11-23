@@ -63,7 +63,7 @@ const scheduleMessage = async () => {
   >
     <UiDateField v-model="scheduledAt" is-time label="Run at" :min="minScheduledAt" />
     <section flex flex-col gap-1>
-      <h3 ui-heading text-muted>Message</h3>
+      <h3 text-muted ui-heading>Message</h3>
       <p px-3 py-2 ws-pre-wrap break-anywhere ui-field>{{ displayText }}</p>
     </section>
   </StyledFormDialog>

@@ -4,9 +4,9 @@ import type { Item } from "#src/models/shared/Item";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getScheduledMessageJobText } from "#src/services/message/draftsAndSent/getScheduledMessageJobText";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
-import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync, getSynchronizedFunction, noop, RoutePath } from "@esposter/shared";
 
 interface Props {
