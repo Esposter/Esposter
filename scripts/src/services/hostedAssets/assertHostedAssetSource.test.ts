@@ -30,9 +30,9 @@ describe(assertHostedAssetSource, () => {
     expect.hasAssertions();
 
     expect(() => {
-      assertHostedAssetSource({ bytes: 1, path: `${folder}/${TEST_FILENAME}.ogg` });
+      assertHostedAssetSource({ bytes: 1, path: `${folder}/${TEST_FILENAME}.gif` });
     }).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a/a.ogg, has an extension with no content type]`,
+      `[InvalidOperationError: Invalid operation: Read, name: a/a.gif, has an extension with no content type]`,
     );
   });
 

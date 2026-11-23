@@ -45,10 +45,10 @@ describe(readHostedAssetSourceFolder, () => {
   test("a file whose extension has no content type is refused", async () => {
     expect.hasAssertions();
 
-    await writeFile(join(repositoryRoot, folder, `${TEST_FILENAME}.ogg`), "");
+    await writeFile(join(repositoryRoot, folder, `${TEST_FILENAME}.gif`), "");
 
     await expect(readHostedAssetSourceFolder(repositoryRoot, folder, [])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a/a.ogg, has an extension with no content type]`,
+      `[InvalidOperationError: Invalid operation: Read, name: a/a.gif, has an extension with no content type]`,
     );
   });
 

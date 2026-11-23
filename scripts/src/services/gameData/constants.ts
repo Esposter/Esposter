@@ -2,6 +2,7 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { CloudflareEnvironment, HostedAssetOriginMap, StorageBucket } from "@esposter/db-schema";
+import { DATA_ROOT } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
 
@@ -45,3 +46,7 @@ export const CATALOGUE_KEY: string = `${GameDataset.Catalogue}/catalogue`;
 export const AGE_RATING_KEY = "login/ageRating";
 // The domains' challenge levels, which `genshin:data authored` publishes from their committed file for the world's gate
 export const DOMAIN_CHALLENGE_LEVELS_KEY = "domainChallengeLevels/levels";
+// The folder the login's music recordings are written to and published from: a working copy beside the machine's other data,
+// Since the lock names every recording once it is published, so no recording is kept in the repository
+export const LOGIN_RECORDINGS_FOLDER = "login-recordings";
+export const LOGIN_RECORDINGS_DIRECTORY: string = join(DATA_ROOT, LOGIN_RECORDINGS_FOLDER);

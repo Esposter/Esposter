@@ -14,6 +14,7 @@ export const HOSTED_ASSETS_LOCAL_BASE_URL = "/hosted-assets";
 export const HOSTED_ASSET_CONTENT_TYPES: Readonly<Record<string, string>> = {
   ".json": "application/json",
   ".mp3": "audio/mpeg",
+  ".ogg": "audio/ogg",
   ".png": "image/png",
   ".tmx": "application/xml",
   ".tsx": "application/xml",

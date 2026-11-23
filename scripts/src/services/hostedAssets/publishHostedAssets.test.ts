@@ -453,6 +453,32 @@ describe(publishHostedAssets, () => {
     ).resolves.toStrictEqual(bytes);
   });
 
+  // A records product's JSON records are zstd-compressed, and a binary file it publishes beside them is stored as its
+  // Own bytes
+  test("a binary file a records product publishes is stored unencoded under its content type", async () => {
+    expect.hasAssertions();
+
+    const bucketClientMap = createBucketClientMap();
+    const bytes = Buffer.from(TEST_FILENAME);
+    const sha256 = getContentAddress(bytes);
+    await publishHostedAssets({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock: emptyLock,
+      otherLocks: [],
+      plan: planHostedAssetFiles(GameDataset.LoginRecordings, [
+        { bytes, extension: ".ogg", key: `${TEST_FILENAME}.ogg`, sha256 },
+      ]),
+      product,
+      scopes: [GameDataset.LoginRecordings],
+    });
+
+    const stored = bucketClientMap[CloudflareEnvironment.Production].store.get(
+      `${GameDataset.LoginRecordings}/${sha256}.ogg`,
+    );
+    expect(stored?.contentEncoding).toBeUndefined();
+    expect(stored?.contentType).toBe("audio/ogg");
+  });
+
   // The read back of each object the lock names is what stands between a bucket that stored other bytes and a lock
   // That names them
   test("a mismatched object stops the commit", async () => {

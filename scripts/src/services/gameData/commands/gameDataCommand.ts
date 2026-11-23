@@ -3,6 +3,7 @@ import type { CommandDef } from "citty";
 import { authoredCommand } from "#src/services/gameData/commands/authoredCommand";
 import { keysCommand } from "#src/services/gameData/commands/keysCommand";
 import { pruneCommand } from "#src/services/gameData/commands/pruneCommand";
+import { recordingsCommand } from "#src/services/gameData/commands/recordingsCommand";
 import { verifyCommand } from "#src/services/gameData/commands/verifyCommand";
 import { defineCommand } from "citty";
 
@@ -14,5 +15,11 @@ export const gameDataCommand: CommandDef = defineCommand({
       "Check and prune the game data published to both accounts, which the lock names, and publish the world's authored files to it",
     name: "genshin:data",
   },
-  subCommands: { authored: authoredCommand, keys: keysCommand, prune: pruneCommand, verify: verifyCommand },
+  subCommands: {
+    authored: authoredCommand,
+    keys: keysCommand,
+    prune: pruneCommand,
+    recordings: recordingsCommand,
+    verify: verifyCommand,
+  },
 });

@@ -39,6 +39,7 @@ export const GameDataset = {
   KitSources: "kitSources",
   LeyLine: "leyLine",
   Login: "login",
+  LoginRecordings: "loginRecordings",
   Mail: "mail",
   MailText: "mailText",
   MapLabels: "mapLabels",
