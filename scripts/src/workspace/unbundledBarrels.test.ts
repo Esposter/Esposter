@@ -29,13 +29,28 @@ describe("unbundledBarrels", () => {
   const STYLESHEET_IMPORT_REGEX = /^import\s+(?:[^;]*?\sfrom\s+)?["'][^"']+\.css["']/mu;
   // Matches a pnpm store folder name that carries a peer suffix after its version, such as `vize@0.715.0_vue@3.5.45_…`
   const PEER_SUFFIX_FOLDER_REGEX = /^@?[^@]+@[^_]+_/u;
-  // The folders a machine names in a path: a pnpm store on macOS sits under `Library`, a copy kept from one under
-  // `node_modules` is what `vendor` replaces, and the checkout's own path is the one a module outside its package carries
-  // Into the `dist` when a build names it from their common folder, which is the home folder once a store is among them
-  const MACHINE_FOLDER_NAMES = new Set(["Library", "node_modules", ...REPOSITORY_ROOT.split(sep)]);
+  // The folders a machine names in a path: a pnpm store on macOS sits under `Library`, and a copy kept from one under
+  // `node_modules` is what `vendor` replaces
+  const MACHINE_FOLDER_NAMES = new Set(["Library", "node_modules"]);
+  // The checkout's own path is the one a module outside its package carries into the `dist` when a build names it from
+  // Their common folder, which is the home folder once a store is among them. It is matched as neighbouring folder
+  // Pairs, since one name alone would also match a checkout under a folder named like the build's own `vendor` or `pnpm`
+  const CHECKOUT_FOLDER_PAIRS = new Set(
+    REPOSITORY_ROOT.split(sep).flatMap((folder, index, folders) =>
+      index + 1 < folders.length ? [`${folder}${sep}${folders[index + 1]}`] : [],
+    ),
+  );
   // Matches the path of a pnpm store, which only the machine that built a file has
   const STORE_PATH_REGEX = /pnpm\/store\/|links\/@\//u;
   const PACKAGE_PATHS = readTsdownPackagePaths();
+  const isMachinePath = (path: string) => {
+    const segments = path.split(sep);
+    return segments.some(
+      (segment, index) =>
+        MACHINE_FOLDER_NAMES.has(segment) ||
+        (index + 1 < segments.length && CHECKOUT_FOLDER_PAIRS.has(`${segment}${sep}${segments[index + 1]}`)),
+    );
+  };
 
   const BUNDLE_TIMEOUT_MS = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
   const DB_SCHEMA_ENTRY = pathToFileURL(resolve(REPOSITORY_ROOT, "packages/db-schema/dist/index.js")).href;
@@ -138,7 +153,7 @@ describe("unbundledBarrels", () => {
     const machineFolders = distTrees.flatMap(({ distDirectory, entries, packagePath }) =>
       entries
         .map(({ name, parentPath }) => relative(distDirectory, resolve(parentPath, name)))
-        .filter((path) => path.split(sep).some((segment) => MACHINE_FOLDER_NAMES.has(segment)))
+        .filter((path) => isMachinePath(path))
         .map((path) => `${packagePath}: ${path}`),
     );
     const storePaths = distTrees.flatMap(({ distDirectory, entries, packagePath }) =>
