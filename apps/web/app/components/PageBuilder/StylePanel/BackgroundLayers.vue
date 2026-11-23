@@ -55,9 +55,9 @@ const addLayer = () => {
       @update:model-value="(value) => setLayer(layer.id, value)"
     >
       <template #trailing>
-        <!-- eslint-disable vue/no-restricted-syntax -- removes a layer from the unsaved page draft, which the page builder's undo history restores -->
+        <!-- oxlint-disable vue/no-restricted-syntax -- removes a layer from the unsaved page draft, which the page builder's undo history restores -->
         <UiButton @click="removeLayer(layer.id)">Remove</UiButton>
-        <!-- eslint-enable vue/no-restricted-syntax -->
+        <!-- oxlint-enable vue/no-restricted-syntax -->
       </template>
     </PageBuilderStylePanelField>
     <UiButton @click="addLayer()">Add a layer</UiButton>

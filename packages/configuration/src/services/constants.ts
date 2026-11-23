@@ -4,13 +4,13 @@
 // Not ignore the alias would enumerate the whole tree twice under two names.
 export const AGENT_DIRECTORY = ".agents";
 // The alias itself. Only a tool that follows directory symlinks has to ignore it: this is done by the root
-// TypeScript program and by oxlint, but not by oxfmt or VS Code's search, and ESLint inherits oxlint's list
-// Rather than stating its own. The configs that cannot import repeat the literal and are pinned against this
+// TypeScript program and by oxlint, but not by oxfmt or VS Code's search. The configs that cannot import repeat the
+// literal and are pinned against this
 // Constant by `scripts/src/workspace/agentDirectories.test.ts`.
 export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Agent tools run `git worktree add` into `<agent tree>/worktrees/<name>/`, so a live worktree is a full second copy of
-// This monorepo nested inside it. Every repo-wide walk — the root tsconfig program, the oxlint ignore list (which the
-// Shared ESLint config bridges), oxfmt and git itself — has to exclude it, or each one traverses the whole repo once
+// This monorepo nested inside it. Every repo-wide walk — the root tsconfig program, the oxlint ignore list,
+// oxfmt and git itself — has to exclude it, or each one traverses the whole repo once
 // More per live worktree: diagnostics reported at paths belonging to another branch, another branch's files rewritten
 // By a format run, and a checkout listed as untracked. The agent harness only ever hides these from git through the
 // Machine-local `.git/info/exclude`, which no clone, CI runner or non-git tool sees, so the exclusion is stated in

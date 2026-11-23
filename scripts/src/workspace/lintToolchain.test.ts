@@ -1,0 +1,69 @@
+import type { DependencyField } from "#src/models/shared/DependencyField";
+
+import { DEPENDENCY_FIELDS } from "#src/models/shared/DependencyField";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
+import { spawnSync } from "@esposter/shared-node/child-process";
+import { readFileSync } from "node:fs";
+import { join, matchesGlob } from "node:path";
+import { describe, expect, test } from "vitest";
+
+type Manifest = Partial<Record<DependencyField, Record<string, string>>>;
+
+const CODE_PATHSPECS = ["*.cjs", "*.cts", "*.js", "*.mjs", "*.mts", "*.ts", "*.tsx", "*.vue"];
+// unimport writes an ESLint header into the declarations it generates on every run, so no edit keeps it out. oxlint
+// Already ignores these files, and no other tracked file is generated
+const GENERATED_FILE_PATTERN = "**/auto-imports.d.ts";
+const ESLINT_DIRECTIVE_REGEX = /(?:\/\/|\/\*|<!--)\s*eslint-(?:disable|enable)/u;
+const CLASSIC_COMPILER = "typescript";
+
+const readRepositoryFile = (path: string): string => readFileSync(join(REPOSITORY_ROOT, path), "utf8");
+
+describe("lintToolchain", () => {
+  test("Linting the whole repository", { timeout: TREE_READ_TIMEOUT_MS }, () => {
+    expect.hasAssertions();
+
+    expect(readSweepFilePaths("*eslint.config.*")).toStrictEqual([]);
+    expect(
+      readSweepFilePaths(...CODE_PATHSPECS)
+        .filter((path) => !matchesGlob(path, GENERATED_FILE_PATTERN))
+        .filter((path) => ESLINT_DIRECTIVE_REGEX.test(readRepositoryFile(path))),
+    ).toStrictEqual([]);
+  });
+
+  test("Linting a workspace with no classic compiler", () => {
+    expect.hasAssertions();
+
+    const manifestListings = readSweepFilePaths("*package.json").flatMap((path) => {
+      const manifest = parseMachineJson<Manifest>(readRepositoryFile(path));
+      return DEPENDENCY_FIELDS.filter((field) => manifest[field]?.[CLASSIC_COMPILER] !== undefined).map(
+        (field) => `${path} ${field}`,
+      );
+    });
+    // The importers are the lockfile's section before its packages, where each dependency it installs is listed
+    const lockfile = readRepositoryFile("pnpm-lock.yaml");
+    const importers = lockfile.slice(0, lockfile.indexOf("\npackages:"));
+
+    expect(manifestListings).toStrictEqual([]);
+    expect(readRepositoryFile("pnpm-workspace.yaml")).not.toMatch(/^ {2}typescript:/mu);
+    expect(importers).not.toMatch(/^ {6}typescript:/mu);
+  });
+
+  test("A lint tool that needs the classic compiler", () => {
+    expect.hasAssertions();
+
+    // A lint tool that loads the classic compiler fails on a module it cannot find, and the failure names that module.
+    // The probe is a fresh process started in the workspace with NODE_PATH cleared: vitest's workers point NODE_PATH at
+    // their own dependency folders, which would resolve the compiler from there
+    const probe = spawnSync(process.execPath, ["-e", `require("${CLASSIC_COMPILER}")`], {
+      cwd: REPOSITORY_ROOT,
+      encoding: "utf8",
+      env: { ...process.env, NODE_PATH: "" },
+    });
+
+    expect(probe.status).not.toBe(0);
+    expect(probe.stderr).toContain(`'${CLASSIC_COMPILER}'`);
+  });
+});

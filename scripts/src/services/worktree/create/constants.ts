@@ -8,7 +8,7 @@ export const SCRIPTS_PACKAGE_NAME = "@esposter/scripts";
 export const WORKSPACE_PROTOCOL = "workspace:";
 // One full install, lifecycle scripts included: it settles the state a frozen install would leave looking outdated, so no
 // Later `pnpm` or `vp run` installs again inside a task and the task cache records only what the task wrote, and the app's
-// `nuxt prepare` postinstall generates the worktree's own ESLint configuration
+// `nuxt prepare` postinstall generates the worktree's own `.nuxt` tree
 export const INSTALL_ARGUMENTS: readonly string[] = ["i", "--prefer-offline"];
 // What git says when a fetch finds the ref it updates locked by another fetch of the same ref
 export const LOCKED_REF_REGEX: RegExp = /cannot lock ref/u;

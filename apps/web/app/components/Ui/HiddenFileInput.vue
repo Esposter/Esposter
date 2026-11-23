@@ -18,7 +18,7 @@ defineExpose({
 
 <template>
   <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/13533 -->
-  <!-- eslint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
+  <!-- oxlint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
   <input
     ref="input"
     type="file"

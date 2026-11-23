@@ -60,7 +60,7 @@ describe("comments/no-capitalized-identifier", () => {
 });
 
 describe("comments/require-directive-reason", () => {
-  const FILE_DIRECTIVE = "eslint-disable";
+  const FILE_DIRECTIVE = "oxlint-disable";
   const LINE_DIRECTIVE = "oxlint-disable-line";
   const NEXT_LINE_DIRECTIVE = "oxlint-disable-next-line";
   const RULE = "comments/require-directive-reason";
@@ -115,7 +115,7 @@ export const a = 0;`,
     // Closing a range is not a directive that needs defending
     {
       name: "enableDirective",
-      source: `/* eslint-enable a/b */
+      source: `/* oxlint-enable a/b */
 export const a = 0;`,
       violations: 0,
     },
@@ -163,7 +163,6 @@ describe("comments/no-trailing-comment", () => {
 });
 
 describe("comments/no-repeated-disable-next-line", () => {
-  const ESLINT_DIRECTIVE = "eslint-disable-next-line";
   const OXLINT_DIRECTIVE = "oxlint-disable-next-line";
   const RULE = "comments/no-repeated-disable-next-line";
   const FIXTURES = [
@@ -214,19 +213,6 @@ describe("comments/no-repeated-disable-next-line", () => {
       name: "occurrencesWithoutReason",
       source: `// ${OXLINT_DIRECTIVE} no-void\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-void\nvoid 1;`,
       violations: 1,
-    },
-    // The eslint prefix is its own group, and its file-level directive keeps it
-    {
-      fixed: `/* eslint-disable no-void -- a; b */\nvoid 0;\nvoid 1;`,
-      name: "eslintOccurrencesCollapse",
-      source: `// ${ESLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${ESLINT_DIRECTIVE} no-void -- b\nvoid 1;`,
-      violations: 1,
-    },
-    // An oxlint and an eslint directive for one rule are each read by one linter, so neither repeats the other
-    {
-      name: "oxlintAndEslintNotRepeated",
-      source: `// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${ESLINT_DIRECTIVE} no-void -- b\nvoid 1;`,
-      violations: 0,
     },
     {
       name: "differentRulesNotRepeated",

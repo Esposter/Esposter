@@ -27,7 +27,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
 </script>
 
 <template>
-  <!-- eslint-disable-next-line a11y/interactive-supports-focus -- the list's roving focus sets the option's tabindex -->
+  <!-- oxlint-disable-next-line a11y/interactive-supports-focus -- the list's roving focus sets the option's tabindex -->
   <div
     v-if="isSelected !== undefined"
     :id

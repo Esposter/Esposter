@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
-// Every `<template>` and `</template>` tag, root or nested. Counting how deep each one opens and closes is what finds the
-// Root block, since a nested `<template v-if>` ends before the root does
+// Every `<template>` and `</template>` tag, root or nested. Counting how deep each opens and closes finds the root.
+// A nested `<template v-if>` ends before the root does, so the root is the block that closes back at depth zero.
 const TEMPLATE_TAG_REGEX = /<(?<closing>\/?)template(?=[\s>])[^>]*>/gu;
 // A word of the template, the way a binding is named there: a whole word, with a hyphen joining a tag's kebab-case name
 const TEMPLATE_WORD_REGEX = /[\w$-]+/gu;

@@ -130,7 +130,7 @@ describe("vueTypeImports", () => {
       ),
       violations: 1,
     },
-    // A class's `implements` clause and a type literal's computed key are type positions, as typescript-eslint reads them
+    // A class's `implements` clause and a type literal's computed key are type positions
     {
       fixed: buildComponent(`import type { A } from "a";\nclass C implements A {}`),
       name: "classImplements",

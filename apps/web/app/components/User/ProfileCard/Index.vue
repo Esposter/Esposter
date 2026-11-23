@@ -1,4 +1,3 @@
-<!-- eslint-disable perfectionist/sort-objects -- the rows render in declaration order -->
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
@@ -37,13 +36,13 @@ const profileCardValues = computed(() => {
 });
 const profileCardRows = computed(() => {
   const { biography, image, name } = profileCardValues.value;
-  /* eslint-disable perfectionist/sort-objects -- the rows render in declaration order, and Name is the first row */
+  /* oxlint-disable sorting/sort-objects -- the rows render in declaration order, and Name is the first row */
   return {
     name: { type: RowValueType.Text, value: name },
     biography: { type: RowValueType.Textarea, value: biography },
     image: { type: RowValueType.Image, value: image },
   } as const;
-  /* eslint-enable perfectionist/sort-objects */
+  /* oxlint-enable sorting/sort-objects */
 });
 const editedProfileCardRows = ref(structuredClone(profileCardValues.value));
 const isEditMode = ref(false);

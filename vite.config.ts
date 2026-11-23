@@ -13,7 +13,7 @@ import oxlintConfiguration from "./oxlint.config.ts";
 // The bare binaries and the editor read directly, and the tasks in `vite/`, one module per kind. It configures no
 // Bundler: the app builds through `nuxt build` from the app's own nuxt.config.ts. vize reads its options only off this
 // File, so `vue` sits beside the keys Vite+ types, outside `defineConfig`.
-const configuration: UserConfig & { vue: VueOptions } = {
+const configuration: { vue: VueOptions } & UserConfig = {
   ...defineConfig({
     fmt: oxfmtConfiguration,
     lint: oxlintConfiguration,

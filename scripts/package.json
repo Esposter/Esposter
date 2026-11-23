@@ -85,8 +85,6 @@
     "worker-secrets:check": "node src/workerSecrets/index.ts",
     "wake-check:gaps": "node src/wakeCheck/index.ts",
     "graph:gen": "node src/dependencyGraph/index.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "outdated:dependencies": "node src/outdatedDependencies/index.ts",
     "realtimekit:provision": "node src/realtimeKit/provision/index.ts",
     "test": "vitest",

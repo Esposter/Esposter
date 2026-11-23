@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects -- Discord's filter order, which the search menu lists */
+/* oxlint-disable sorting/sort-objects -- Discord's filter order, which the search menu lists */
 import { z } from "zod";
 
 export const FilterType = {

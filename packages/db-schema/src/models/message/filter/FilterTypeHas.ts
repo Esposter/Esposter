@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects -- Discord's order, which the has-filter menu lists */
+/* oxlint-disable sorting/sort-objects -- Discord's order, which the has-filter menu lists */
 export const FilterTypeHas = {
   Link: "Link",
   Embed: "Embed",

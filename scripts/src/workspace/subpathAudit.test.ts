@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
 // Consumer, and every consumer of a private package is in the repo, so a file here must name it. A published package's
 // Arms are the surface outside consumers import, which no file in the repo names, so only a private package is audited.
 // A subpath is read by the specifier a file would import it by, the package name and the subpath, with a glob's `*`
-// Cut off so `./eslint/*` matches `@esposter/configuration/eslint/...`.
+// Cut off so `./vitest/*` matches `@esposter/configuration/vitest/...`.
 //
 // A file reads a subpath only when its text names the specifier, so the text is searched for the specifier rather than
 // Parsed. Docs and manifests are no consumer: a README that names an entry, or the manifest that declares it, is the

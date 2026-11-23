@@ -2,7 +2,6 @@ import type { CreatePackageOptions } from "#src/models/package/CreatePackageOpti
 
 import { PackageKind } from "#src/models/package/PackageKind";
 import {
-  ESLINT_CONFIG_SOURCE,
   NUXT_MODULE_CONSTANTS_PATH,
   PACKAGES_DIRECTORY,
   VITEST_CONFIG_SOURCE,
@@ -22,7 +21,6 @@ export const getPackageFiles = (options: CreatePackageOptions, version: string):
   const packageDirectory = `${PACKAGES_DIRECTORY}/${name}`;
   const files = new Map<string, string>([
     [`${packageDirectory}/${getModulePath(options)}`, getEntrySource(options)],
-    [`${packageDirectory}/eslint.config.js`, ESLINT_CONFIG_SOURCE],
     [`${packageDirectory}/package.json`, toJson(getManifest(options, version))],
     [`${packageDirectory}/README.md`, getReadme(options)],
     [`${packageDirectory}/tsconfig.json`, toJson(getTsconfig(kind))],

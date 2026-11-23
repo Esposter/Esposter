@@ -24,8 +24,8 @@ const oxfmtConfiguration: OxfmtConfig = defineConfig({
     { files: ["**/*.md"], options: { sortImports: false } },
   ],
   printWidth: 120,
-  // Mirrors perfectionist's default groups: a type import from a relative path sorts after the external value imports
-  // A `#` subpath import sorts with the packages, as perfectionist classifies it external
+  // Type imports, then value imports, each with the packages and `#` subpath imports ahead of the relative ones, so a
+  // Relative type import sorts after the external value imports
   sortImports: {
     groups: [
       ["type-builtin", "type-external", "type-subpath"],

@@ -42,7 +42,7 @@ describe(generateCharacterKitMap, () => {
     await expect(readdir(generatedDirectory)).resolves.toStrictEqual([MAP_FILE_NAME]);
   });
 
-  test("opens with a file-level eslint directive, its reason beside it", async () => {
+  test("opens with a file-level oxlint directive, its reason beside it", async () => {
     expect.hasAssertions();
 
     const text = await createMap();

@@ -14,11 +14,6 @@
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
-      "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once — a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
-      "enabled": false,
-      "matchPackageNames": ["typescript", "typescript-native-bridge"]
-    },
-    {
       "description": "`@tsdown/css` pins its tsdown peer to the exact same version, so the two move as one; a bump of either alone leaves the pair mismatched.",
       "groupName": "tsdown",
       "matchPackageNames": ["@tsdown/css", "tsdown"]

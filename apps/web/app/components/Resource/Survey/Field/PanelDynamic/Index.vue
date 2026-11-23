@@ -80,7 +80,7 @@ const addPanel = () => {
     And described by the error, the one message the shell draws for the panel, since a row's controls would each repeat it -->
     <template #default="{ describedBy, labelledBy }">
       <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy" flex flex-col gap-4>
-        <!-- eslint-disable vue/no-restricted-syntax -- removes a panel from the unsaved answer draft, which nothing persists until the survey is submitted -->
+        <!-- oxlint-disable vue/no-restricted-syntax -- removes a panel from the unsaved answer draft, which nothing persists until the survey is submitted -->
         <ResourceSurveyFieldPanelDynamicRow
           v-for="(row, panelIndex) of rows"
           :key="row.key"
@@ -92,7 +92,7 @@ const addPanel = () => {
           @remove="removePanel(panelIndex)"
           @update="(panel) => setPanel(panelIndex, panel)"
         />
-        <!-- eslint-enable vue/no-restricted-syntax -->
+        <!-- oxlint-enable vue/no-restricted-syntax -->
         <UiButton
           :disabled="isDisabled || panels.length >= node.props.maxPanelCount"
           type="button"

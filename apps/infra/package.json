@@ -36,8 +36,6 @@
     "infra:preview": "pnpm build && pulumi preview",
     "infra:refresh": "pnpm build && pulumi refresh",
     "infra:up": "pnpm build && pulumi up",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "typecheck": "tsrs --fast"
   },
   "dependencies": {

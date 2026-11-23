@@ -16,7 +16,7 @@ export const buildUnreadRemovalFix = (
   fixer: Fixer,
   sourceCode: SourceCode,
   declaration: ESTree.VariableDeclaration,
-  declarator: ESTree.VariableDeclarator & { id: ESTree.ObjectPattern; init: ESTree.CallExpression },
+  declarator: { id: ESTree.ObjectPattern; init: ESTree.CallExpression } & ESTree.VariableDeclarator,
   unreadProperties: ESTree.BindingProperty[],
 ): Fix[] | null => {
   const { properties } = declarator.id;

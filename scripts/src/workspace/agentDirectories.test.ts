@@ -16,9 +16,7 @@ const readGitignorePatterns = (): string[] =>
  * The configs below cannot import the constants — `.gitignore` has no imports, and the oxlint config is loaded by its
  * tool from the repository root, outside any package's import map — so they repeat the literal and these
  * tests are the only thing holding the copies to the owner — two of them have already been un-excluded once by an
- * unrelated edit widening a glob. ESLint states neither literal: the shared config bridges `oxlint.config.ts`'s
- * `ignorePatterns` into flat-config global `ignores` through `eslint-plugin-oxlint`, so the oxlint assertions
- * cover both linters.
+ * unrelated edit widening a glob. The oxlint assertions below read `oxlint.config.ts`'s `ignorePatterns` directly.
  */
 describe("agentDirectories", () => {
   // Only a tool that follows directory symlinks enumerates the tree a second time under the alias, which is why
@@ -26,7 +24,7 @@ describe("agentDirectories", () => {
   test.each([
     ["the alias", AGENT_ALIAS_DIRECTORY],
     ["the worktrees", AGENT_WORKTREES_DIRECTORY],
-  ])("excludes %s from the oxlint ignore patterns the shared eslint config bridges", (_label, directory) => {
+  ])("excludes %s from the oxlint ignore patterns", (_label, directory) => {
     expect.hasAssertions();
 
     expect(oxlintConfiguration.ignorePatterns).toContain(directory);

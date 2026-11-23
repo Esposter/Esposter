@@ -30,9 +30,9 @@ The gates, in the order the tree asks them:
 
 A plugin that passes every gate is still re-read against them when its scope is next touched: an exemption added to make a new site pass is the roster gate failing after the fact, and the answer is the same as it would have been on day one.
 
-## A third-party plugin loads as it is
+## A third-party plugin loads only without ESLint's runtime
 
-A plugin whose rules read only a script's syntax needs no copy of its own: its package name joins `THIRD_PARTY_PLUGINS` in `oxlint/jsPlugins.ts`, it is a root `devDependency`, and its rules are named `<meta.name>/<rule>` like ours. `eslint-plugin-pinia` is the one that does. Its preset's `rules` object is read in `oxlint.config.ts` rather than retyped, so a rule the plugin adds arrives with a bump; the preset's `warn` becomes `error`, since a warning fails nothing here, and a rule it leaves off stays off. A rule that listens on a template's nodes has no oxlint form, because oxlint hands a plugin no template: it belongs to vize's template pass (`vite/vueOptions.ts`). A rule over a non-JS language such as JSON is a workspace test instead (`references/json-linting.md`).
+Pinia's rules run in the local `pinia` plugin (`scripts/src/oxlint/pinia.ts`), not a package: `eslint-plugin-pinia` imports `@typescript-eslint/utils`, which requires `eslint` at load. A third-party plugin is listed in `oxlint/jsPlugins.ts` by package name, as a root `devDependency`, only when its rules read a script's syntax and it loads without ESLint's runtime. Its rules are named `<meta.name>/<rule>` like ours, and each is enabled in `oxlint.config.ts` with its severity, since no preset supplies them. A rule that listens on a template's nodes has no oxlint form, because oxlint hands a plugin no template: it belongs to vize's template pass (`vite/vueOptions.ts`). A rule over a non-JS language such as JSON is a workspace test instead (`references/json-linting.md`).
 
 ## Writing one
 

@@ -60,8 +60,6 @@
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "db:up": "drizzle-kit up",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "registry:gen": "node scripts/generateRegistry.ts",
     "test": "vitest",
     "typecheck": "tsrs --fast"

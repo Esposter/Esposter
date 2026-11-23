@@ -28,7 +28,6 @@
       "source": "./src/services/constants.ts"
     },
     "./package.json": "./package.json",
-    "./eslint/*": "./eslint/*",
     "./generate-barrels": "./src/services/generateBarrels.ts",
     "./generate-exports": "./src/services/generateExports.ts",
     "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
@@ -44,7 +43,6 @@
         "source": "./src/services/constants.ts"
       },
       "./package.json": "./package.json",
-      "./eslint/*": "./eslint/*",
       "./generate-barrels": "./src/services/generateBarrels.ts",
       "./generate-exports": "./src/services/generateExports.ts",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
@@ -55,8 +53,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "typecheck": "tsrs --fast"
   },
@@ -64,15 +60,10 @@
     "@arethetypeswrong/core": "catalog:",
     "@dxup/nuxt": "catalog:",
     "@dxup/unimport": "catalog:",
-    "@eslint/core": "catalog:",
     "@types/node": "catalog:",
-    "@unocss/eslint-config": "catalog:",
     "@vitest/browser-playwright": "catalog:",
     "@vizejs/unplugin": "catalog:",
     "@vizejs/vite-plugin": "catalog:",
-    "eslint": "catalog:",
-    "eslint-plugin-oxlint": "catalog:",
-    "eslint-plugin-perfectionist": "catalog:",
     "playwright": "catalog:",
     "publint": "catalog:",
     "rolldown": "catalog:",

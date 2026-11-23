@@ -30,5 +30,3 @@ const vitestConfiguration: ViteUserConfig = getVitestConfiguration(import.meta.d
 
 export default vitestConfiguration;
 `;
-export const ESLINT_CONFIG_SOURCE = `export { default } from "@esposter/configuration/eslint/index.typescript.js";
-`;

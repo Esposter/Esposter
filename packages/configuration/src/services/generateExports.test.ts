@@ -37,7 +37,7 @@ describe(generateExports, () => {
     );
   });
 
-  // The barrel is read in the order perfectionist's `sort-exports` checks it in, which is case-insensitive: a
+  // The barrel is read in the order `sorting/sort-exports` checks it in, which is case-insensitive: a
   // Code-unit sort would put `B` before `a`, and the lint rule reports that
   test("orders the barrel case-insensitively, as the lint rule sorts it", () => {
     expect.hasAssertions();

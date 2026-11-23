@@ -22,7 +22,7 @@ import { definePlugin } from "@oxlint/plugins";
  *
  * `require-directive-reason` enforces the oxlint skill's rule that every disable directive states its reason after
  * ` -- `. It reads the comment alone — the directive syntax both linters share — so it carries no list at all. A
- * `<!-- eslint-disable -->` in a `.vue` template is outside what oxlint parses, and is a workspace test's half
+ * `<!-- oxlint-disable -->` in a `.vue` template is outside what oxlint parses, and is a workspace test's half
  * (`scripts/src/workspace/templateDirectiveReasons.test.ts`). A bare directive naming no rule switches this one off
  * with the rest, so it is the one shape neither half sees; the only ones are generated files the lint ignores.
  *

@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "allowArbitraryExtensions": true,
-    "allowJs": true,
     "jsx": "preserve",
     "jsxImportSource": "vue",
     "lib": ["ESNext", "dom", "dom.iterable", "webworker"],

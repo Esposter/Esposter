@@ -94,8 +94,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "test:visual": "vitest --config vitest.browser.config.ts",
     "typecheck": "tsrs --fast --runExternalCode"

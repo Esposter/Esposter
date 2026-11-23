@@ -24,7 +24,6 @@ import {
 } from "#oxlint/importRestrictions";
 import { JS_PLUGINS } from "#oxlint/jsPlugins";
 import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "#oxlint/messages";
-import pinia from "eslint-plugin-pinia";
 import { defineConfig } from "oxlint";
 
 // The type-aware rules run on `tsrs-lint`, which oxlint launches with no flags, so its switches are set through the
@@ -38,17 +37,8 @@ import { defineConfig } from "oxlint";
 process.env.TSRS_FAST ??= "1";
 process.env.TSRS_LINT_RUN_EXTERNAL_CODE ??= "1";
 
-// The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
-// So the two passes never ignore different trees.
-export const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
-
-// The plugin's own `all-flat` preset decides which rules are on, so a rule it adds arrives without an edit here. The
-// Preset hands them over as warnings, which fail nothing, so each rule it turns on is an error and the rest stay off
-const PINIA_RULES = Object.fromEntries(
-  Object.entries(pinia.configs["all-flat"].rules).map(
-    ([ruleName, severity]) => [ruleName, severity === "off" ? "off" : "error"] as const,
-  ),
-);
+// The Tiled tileset `.tsx` files are XML, not code, so oxlint skips them.
+const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
 
 const oxlintConfiguration: OxlintConfig = defineConfig({
   categories: {
@@ -271,7 +261,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   ],
   plugins: ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
   rules: {
-    ...PINIA_RULES,
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
     "comments/no-repeated-disable-next-line": "error",
@@ -397,7 +386,11 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "oxc/no-rest-spread-properties": "off",
     "pass-through-helper/no-forwarding-wrapper": "error",
     "pinia-store/require-store-binding": "error",
-    "pinia/require-setup-store-properties-export": "off",
+    "pinia/never-export-initialized-store": "error",
+    "pinia/no-duplicate-store-ids": "error",
+    "pinia/no-return-global-properties": "error",
+    "pinia/no-store-to-refs-in-store": "error",
+    "pinia/prefer-use-store-naming-convention": "error",
     "prefer-destructuring": "off",
     "promise/avoid-new": "off",
     "promise/no-return-wrap": "off",
@@ -409,15 +402,35 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "require-await": "off",
     "routing/no-route-literal": "error",
     // Each list under `scripts/src/services/oxlint/selectorBan/syntaxes/` states the paths it runs over, so the rule needs
-    // No options and no override. The naming convention typescript-eslint once enforced here stays parked until oxlint
-    // Ships `naming-convention`: variables of a primitive or array type in camelCase, PascalCase or UPPER_CASE, with a
-    // Leading underscore allowed
+    // No options and no override
+    // @TODO: https://github.com/oxc-project/oxc/issues/2180 — enable `typescript/naming-convention` once oxlint ships it:
+    // Variables of a primitive or array type in camelCase, PascalCase or UPPER_CASE, with a leading underscore allowed
     "selector-ban/no-restricted-syntax": "error",
     "sequential-loops/no-async-self-call": "error",
     "sequential-loops/require-loop-shape": "error",
     "setup-scope/no-detached-mutation": "error",
     "sort-imports": "off",
     "sort-keys": "off",
+    "sorting/sort-array-includes": "error",
+    "sorting/sort-classes": "error",
+    "sorting/sort-enums": "error",
+    "sorting/sort-export-attributes": "error",
+    "sorting/sort-exports": "error",
+    "sorting/sort-heritage-clauses": "error",
+    "sorting/sort-import-attributes": "error",
+    "sorting/sort-interfaces": "error",
+    "sorting/sort-intersection-types": "error",
+    "sorting/sort-jsx-props": "error",
+    "sorting/sort-maps": "error",
+    "sorting/sort-modules": "error",
+    "sorting/sort-named-exports": "error",
+    "sorting/sort-named-imports": "error",
+    "sorting/sort-object-types": "error",
+    "sorting/sort-objects": "error",
+    "sorting/sort-sets": "error",
+    "sorting/sort-switch-case": "error",
+    "sorting/sort-union-types": "error",
+    "sorting/sort-variable-declarations": "error",
     "template-ref/require-ref-name": "error",
     "trpc-procedure/no-empty-input": "error",
     "typescript/ban-types": "off",

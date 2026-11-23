@@ -21,7 +21,7 @@ const isSelected = computed({
 
 <!-- The whole row names its checkbox, so a press anywhere on the room picks it -->
 <template>
-  <!-- eslint-disable-next-line a11y/label-has-for -- the checkbox inside is the control this label names -->
+  <!-- oxlint-disable-next-line a11y/label-has-for -- the checkbox inside is the control this label names -->
   <label ui-item>
     <UiItemContent :image="room.image ?? ''" :title="roomName">
       <template #append>

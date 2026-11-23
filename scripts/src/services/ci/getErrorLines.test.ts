@@ -10,12 +10,12 @@ describe(getErrorLines, () => {
     const prefix = `Lint\tRun lint\t${timestamp}`;
     const log = [
       `${prefix} packages/follow-ups lint: Done`,
-      `${prefix}   144:7  error  Expected order  perfectionist/sort-objects`,
+      `${prefix}   144:7  error  Expected order  sorting/sort-objects`,
       `${prefix} ##[error]Process completed with exit code 1.`,
     ].join("\n");
 
     expect(getErrorLines(log)).toStrictEqual([
-      "  144:7  error  Expected order  perfectionist/sort-objects",
+      "  144:7  error  Expected order  sorting/sort-objects",
       "##[error]Process completed with exit code 1.",
     ]);
   });

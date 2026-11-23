@@ -74,7 +74,7 @@ defineExpose({ element });
     flex-col
     gap-1
   >
-    <!-- eslint-disable-next-line a11y/label-has-for -- the control is the primitive's, which takes the id this label names -->
+    <!-- oxlint-disable-next-line a11y/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted
       >{{ label }} <UiRequiredMark v-if="isRequired" is-silent
     /></label>
@@ -91,7 +91,7 @@ defineExpose({ element });
           translate-y="-1/2"
         />
         <Input.Control #default="{ attrs }" renderless>
-          <!-- eslint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
+          <!-- oxlint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
           <!-- An email, a telephone number or a URL offers the browser's autofill for it -->
           <component
             :is="rows ? 'textarea' : 'input'"
@@ -119,7 +119,7 @@ defineExpose({ element });
               }
             "
           />
-          <!-- eslint-enable vue/no-restricted-syntax -->
+          <!-- oxlint-enable vue/no-restricted-syntax -->
         </Input.Control>
         <UiIconButton
           v-if="isSearch && modelValue && !isDisabled"

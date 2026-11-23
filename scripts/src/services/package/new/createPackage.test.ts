@@ -62,7 +62,6 @@ describe(createPackage, () => {
         "packages/demo-library/package.json",
         "packages/demo-library/tsconfig.json",
         "packages/demo-library/vitest.config.ts",
-        "packages/demo-library/eslint.config.js",
         "packages/demo-library/README.md",
         "packages/demo-library/src/demoLibrary.ts",
         "packages/demo-library/tsdown.config.ts",
@@ -79,7 +78,7 @@ describe(createPackage, () => {
     });
     expect(manifest.sideEffects).toBe(false);
     assert.exists(manifest.scripts);
-    expect(Object.keys(manifest.scripts)).toStrictEqual(["build", "lint", "lint:fix", "test", "typecheck"]);
+    expect(Object.keys(manifest.scripts)).toStrictEqual(["build", "test", "typecheck"]);
   });
 
   test("lists the library in the agent guide and the root README, cell by cell", () => {
@@ -115,13 +114,7 @@ describe(createPackage, () => {
 
     expect(manifest.dependencies).toStrictEqual({ "@nuxt/kit": "catalog:", "@nuxt/schema": "catalog:" });
     expect(manifest.peerDependencies).toStrictEqual({ nitro: "catalog:", nuxt: "catalog:" });
-    expect(manifest.scripts).toStrictEqual({
-      build: "tsdown",
-      lint: "eslint .",
-      "lint:fix": "eslint --fix .",
-      test: "vitest",
-      typecheck: "tsrs --fast",
-    });
+    expect(manifest.scripts).toStrictEqual({ build: "tsdown", test: "vitest", typecheck: "tsrs --fast" });
     expect(readFileSync(join(root, packageDirectory, "tsdown.config.ts"), "utf8"))
       .toBe(`import type { UserConfig } from "tsdown";
 

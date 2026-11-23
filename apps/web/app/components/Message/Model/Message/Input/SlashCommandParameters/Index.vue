@@ -69,7 +69,7 @@ const deleteLastParameter = () => {
         @blur="blur(COMMAND_INPUT_INDEX)"
       />
       <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
-        <!-- eslint-disable vue/no-restricted-syntax -- removes a parameter from the unsent command draft -->
+        <!-- oxlint-disable vue/no-restricted-syntax -- removes a parameter from the unsent command draft -->
         <MessageModelMessageInputSlashCommandParametersChip
           :is-required
           :name
@@ -83,9 +83,9 @@ const deleteLastParameter = () => {
           @focus="focus(index)"
           @blur="blur(index)"
         />
-        <!-- eslint-enable vue/no-restricted-syntax -->
+        <!-- oxlint-enable vue/no-restricted-syntax -->
       </template>
-      <!-- eslint-disable vue/no-restricted-syntax -- removes a parameter from the unsent command draft -->
+      <!-- oxlint-disable vue/no-restricted-syntax -- removes a parameter from the unsent command draft -->
       <MessageModelMessageInputSlashCommandParametersTrailingInput
         :is-focused="focusedIndex === activeParameters.length"
         @create-parameter="(name) => createParameter(name)"
@@ -97,7 +97,7 @@ const deleteLastParameter = () => {
         @focus="focus(activeParameters.length)"
         @blur="blur(activeParameters.length)"
       />
-      <!-- eslint-enable vue/no-restricted-syntax -->
+      <!-- oxlint-enable vue/no-restricted-syntax -->
       <MessageModelMessageInputSendMessageButton @click="submit()" />
     </div>
     <MessageModelMessageInputFooter text-muted px-1 />

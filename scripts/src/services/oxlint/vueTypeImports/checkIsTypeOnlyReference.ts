@@ -1,11 +1,10 @@
 import type { ESTree, Reference } from "@oxlint/plugins";
 
-// The parents an export keeps a binding's kind through, so `export { A }` of a binding read as both a type and a value
-// Stays a value import
+// The export parents that keep a binding read as both a type and a value a value, as `export { A }` does
 const EXPORT_PARENT_TYPES = new Set(["ExportDefaultDeclaration", "ExportSpecifier", "TSExportAssignment"]);
 
-// A value use that is still only a type's: the operand of `typeof`, and the computed key of a type literal. The
-// Member chain under either is walked up to its root, and any other parent makes the use a value
+// A value use that is still only a type's: the operand of `typeof`, or the computed key of a type literal.
+// The member chain under either is walked up to its root, and any other parent makes the use a value.
 const checkIsTypeOnlyValueUse = (identifier: Reference["identifier"]): boolean | undefined => {
   let child: ESTree.Node = identifier;
   let parent: ESTree.Node | null = identifier.parent;

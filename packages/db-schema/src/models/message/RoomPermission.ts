@@ -3,7 +3,7 @@
 // Adding one mid-list renumbers the bits after it, since a stored bitfield is read as the current shape.
 // What each bit grants is said once, on the screen that grants it, by
 // `apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`.
-/* eslint-disable perfectionist/sort-objects -- the list runs by category, not alphabetically */
+/* oxlint-disable sorting/sort-objects -- the list runs by category, not alphabetically */
 export const RoomPermission = {
   ReadMessages: 1n << 0n,
   SendMessages: 1n << 1n,
@@ -22,6 +22,6 @@ export const RoomPermission = {
   // `permissions` is a signed 64-bit bigint, so bit 62 is the highest bit the list can grow to
   Administrator: 1n << 14n,
 } as const;
-/* eslint-enable perfectionist/sort-objects */
+/* oxlint-enable sorting/sort-objects */
 
 export type RoomPermission = (typeof RoomPermission)[keyof typeof RoomPermission];

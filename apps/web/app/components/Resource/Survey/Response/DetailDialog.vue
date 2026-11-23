@@ -34,7 +34,7 @@ const { isOpen, item } = useSingletonDialog(detailResponseId, () =>
     <dl gap-x-6 gap-y-3 grid cols="[auto_1fr]">
       <template v-for="{ name } of columns" :key="name">
         <dt text-muted>{{ name }}</dt>
-        <!-- eslint-disable-next-line vue/no-restricted-syntax -- a response cell as the survey saved it, shown as the answer it holds -->
+        <!-- oxlint-disable-next-line vue/no-restricted-syntax -- a response cell as the survey saved it, shown as the answer it holds -->
         <dd v-if="item[name] === null || item[name] === ''" text-muted>—</dd>
         <dd v-else>{{ item[name] }}</dd>
       </template>

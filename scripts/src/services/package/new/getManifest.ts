@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects -- a package's export conditions are matched in the order written, so `source` must precede `default` */
+/* oxlint-disable sorting/sort-objects -- a package's export conditions are matched in the order written, so `source` must precede `default` */
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
 import { PackageKind } from "#src/models/package/PackageKind";
@@ -27,11 +27,7 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
     version,
   };
   if (checkIsPrivateKind(kind))
-    return {
-      ...manifest,
-      private: true,
-      scripts: { lint: "eslint .", "lint:fix": "eslint --fix .", test: "vitest", typecheck: "tsrs --fast" },
-    };
+    return { ...manifest, private: true, scripts: { test: "vitest", typecheck: "tsrs --fast" } };
 
   const isNuxtModule = kind === PackageKind.NuxtModule;
   return {
@@ -43,13 +39,7 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
     files: ["dist"],
     keywords: [],
     publishConfig: { access: "public", exports: { ".": "./dist/index.js", "./package.json": "./package.json" } },
-    scripts: {
-      build: "tsdown",
-      lint: "eslint .",
-      "lint:fix": "eslint --fix .",
-      test: "vitest",
-      typecheck: "tsrs --fast",
-    },
+    scripts: { build: "tsdown", test: "vitest", typecheck: "tsrs --fast" },
     sideEffects: false,
     types: "dist/index.d.ts",
     ...(isNuxtModule ? { dependencies: { [NUXT_KIT_PACKAGE_NAME]: "catalog:", "@nuxt/schema": "catalog:" } } : {}),

@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects -- declaration order is the unlock order the store lists */
+/* oxlint-disable sorting/sort-objects -- declaration order is the unlock order the store lists */
 import type { Building } from "#shared/models/clicker/data/building/Building";
 import type { Except } from "type-fest";
 

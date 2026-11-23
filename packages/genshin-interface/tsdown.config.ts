@@ -25,7 +25,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(),
         SHARED_STYLE_NAMES.map((name) => {
           const distStyle = `./dist/styles/${name}.css`;
           // A condition map resolves in its key order, so the source arm comes first, as devExports writes it
-          // eslint-disable-next-line perfectionist/sort-objects -- the source arm must resolve before the default
+          // oxlint-disable-next-line sorting/sort-objects -- the source arm must resolve before the default
           const devStyle = { source: `./src/styles/${name}.css`, default: distStyle };
           return [`./styles/${name}.css`, isPublish ? distStyle : devStyle];
         }),

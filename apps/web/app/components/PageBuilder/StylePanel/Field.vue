@@ -79,7 +79,7 @@ watch(draft, (value) => {
     @update:model-value="(amount) => setAmount(amount)"
   >
     <template #trailing>
-      <!-- eslint-disable vue/no-restricted-syntax -- a number input's amount is never whitespace -->
+      <!-- oxlint-disable vue/no-restricted-syntax -- a number input's amount is never whitespace -->
       <UiSelect
         :is-disabled="lengthParts.amount === ''"
         :items="unitItems"
@@ -87,7 +87,7 @@ watch(draft, (value) => {
         :model-value="unit"
         @update:model-value="(lengthUnit) => setUnit(lengthUnit)"
       />
-      <!-- eslint-enable vue/no-restricted-syntax -->
+      <!-- oxlint-enable vue/no-restricted-syntax -->
     </template>
   </UiTextField>
   <UiTextField

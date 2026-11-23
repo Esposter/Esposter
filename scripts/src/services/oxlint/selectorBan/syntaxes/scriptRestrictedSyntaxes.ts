@@ -206,7 +206,7 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
     {
       // An export list names a binding a second time, away from its declaration, so a reader finds what a module
       // Exports in two places. A re-export carries `from` and an empty `export {}` in a `.d.ts` carries no
-      // Specifier, so neither is matched — the generated barrels and every `eslint.config.js` stay as they are
+      // Specifier, so neither is matched — the generated barrels stay as they are
       message:
         "Export at the declaration — `export const`/`class`/`interface`/`type`/`function` — never an `export { … }` list. See the file-organization skill.",
       selector: "ExportNamedDeclaration[source=null][specifiers.length>0]",

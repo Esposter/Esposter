@@ -35,8 +35,6 @@
     "access": "public"
   },
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "validate": "claude plugin validate ."
   }

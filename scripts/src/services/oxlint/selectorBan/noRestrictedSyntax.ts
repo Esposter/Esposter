@@ -4,7 +4,7 @@ import { SELECTOR_BAN_LISTS } from "#src/services/oxlint/selectorBan/selectorBan
 import { defineRule } from "@oxlint/plugins";
 import { matchesGlob, relative } from "node:path";
 
-// ESLint's `no-restricted-syntax` as an oxlint visitor over the lists under `syntaxes/`. Each list states the paths it
+// The `no-restricted-syntax` rule as an oxlint visitor over the lists under `syntaxes/`. Each list states the paths it
 // Runs over, so a file takes every list whose scope matches it, and the configuration names the rule alone. oxlint
 // Matches each selector itself, so the rule keeps no matcher of its own: a selector is a visitor key, and bans sharing
 // One are grouped under it, since a key is unique

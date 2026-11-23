@@ -5,15 +5,17 @@ const IMPORT_KEYWORD_LENGTH = "import".length;
 const checkIsNamedSpecifier = (specifier: ESTree.ImportDeclarationSpecifier): specifier is ESTree.ImportSpecifier =>
   specifier.type === "ImportSpecifier";
 
-// The `separate-type-imports` style: each type-only binding moves to an `import type` ahead of the declaration, and what
-// Stays is the value import below it. A declaration with nothing left beside its bindings takes `type` after `import`,
-// Unless a default binding sits beside named or namespace ones, since `import type A, { B }` is not valid TypeScript
+// The `separate-type-imports` style: each type-only binding moves to an `import type` ahead of the declaration.
+// What stays is the value import below them, and a declaration with nothing left takes `type` after `import`.
+// The exception is a default beside named or namespace bindings, since `import type A, { B }` is not valid TypeScript.
 export const buildTypeImportFix = (
   fixer: Fixer,
   sourceCode: SourceCode,
   node: ESTree.ImportDeclaration,
   typeSpecifiers: ESTree.ImportDeclarationSpecifier[],
-): Fix => {
+): Fix | null => {
+  // A comment inside the declaration would be dropped by the rewrite, so the violation is reported with no fix
+  if (sourceCode.getCommentsInside(node).length > 0) return null;
   const valueSpecifiers = node.specifiers.filter((specifier) => !typeSpecifiers.includes(specifier));
   const hasDefaultSpecifier = node.specifiers.some((specifier) => specifier.type === "ImportDefaultSpecifier");
   if (valueSpecifiers.length === 0 && !(hasDefaultSpecifier && node.specifiers.length > 1))

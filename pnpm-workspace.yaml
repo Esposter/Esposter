@@ -39,7 +39,6 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@dxup/nuxt": ^0.5.11
   "@dxup/unimport": ^0.1.2
-  "@eslint/core": ^1.2.1
   "@fission-ai/openspec": ^2.1.1
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
@@ -53,7 +52,6 @@ catalog:
   "@lerna-lite/publish": ^5.9.0
   "@lezer/highlight": ^1.2.5
   "@modelcontextprotocol/sdk": ^1.32.2
-  "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^1.2.0
   "@nuxt/image": ^2.2.1
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
@@ -95,7 +93,6 @@ catalog:
   "@types/three": ^0.187.0
   "@types/web-push": ^3.6.4
   "@typesafe-ai/sdk": ^0.7.0
-  "@unocss/eslint-config": ^66.13.0
   "@unocss/nuxt": ^66.13.0
   "@unplugin-pwa/core": ^0.0.8
   "@unplugin-pwa/vite": ^0.0.8
@@ -129,10 +126,6 @@ catalog:
   drizzle-kit: 1.0.0-rc.6
   drizzle-orm: 1.0.0-rc.6
   emojilib: ^4.0.3
-  eslint: ^10.15.0
-  eslint-plugin-oxlint: ^1.94.0
-  eslint-plugin-perfectionist: ^5.14.0
-  eslint-plugin-pinia: ^0.4.2
   fake-indexeddb: ^6.2.8
   fflate: ^0.8.3
   h3: ^2.0.8
@@ -150,9 +143,8 @@ catalog:
   miniflare: 5.20261119.0-beta
   # The Nitro dev runner's miniflare, on the stable line its `latest` tag names: wrangler's 5 beta fails to load the
   # runner's entry under `nuxt dev`, so `apps/web/configuration/nitro.ts` points the runner at this install
-  # @TODO: no upstream issue — unjs/env-runner's module fallback answers miniflare 5's POST import request with a 404,
-  # so the dev entry does not load; file against unjs/env-runner. Nearest open issue, another fallback's:
-  # https://github.com/cloudflare/workers-sdk/issues/16381
+  # @TODO: https://github.com/unjs/env-runner/pull/114 — env-runner's module fallback reads only a GET query, so it
+  # answers miniflare 5's POST import request with a 404 and the dev entry does not load
   miniflare-dev: npm:miniflare@^4.20260730.0
   minisearch: ^7.2.0
   mjml: ^5.4.1
@@ -192,7 +184,6 @@ catalog:
   tsdown: ^0.23.7
   tsrs: ^7.1.0-beta.tsrs4
   type-fest: ^6.0.3
-  typescript: 6.0.3
   unicode-emoji-json: ^0.9.0
   unocss: ^66.13.0
   unplugin-auto-import: ^21.1.0
@@ -235,7 +226,6 @@ overrides:
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
   # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose
   oxc-parser: "catalog:"
-  typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   vite: "catalog:"
   # vp runs the catalog's tools rather than the exact copies vite-plus pins, so the lockfile holds one of each and
   # Renovate keeps owning their versions; its `vite`, aliased to Vite+'s own core, takes the global `vite` above.

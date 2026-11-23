@@ -75,7 +75,7 @@ const onUpdateFile = async (newFile?: File | File[]) => {
     </p>
     <div flex gap-2 min-w-0 items-center>
       <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/13533 -->
-      <!-- eslint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
+      <!-- oxlint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
       <input
         ref="fileInput"
         :accept="DATA_SOURCE_ACCEPT"

@@ -16,7 +16,7 @@ The root `lint` task depends on the four checks above. `lint:fix` runs the two t
 
 ## The passes
 
-- **Oxlint** runs once over the repository from `oxlint.config.ts`. Every category is listed explicitly at `error`, and `typeAware` runs the type-aware rules natively (see [The type-aware pass](#the-type-aware-pass)). Its rules are the native ones, the `selector-ban/no-restricted-syntax` lists, the local JS plugins and the preset of the third-party `eslint-plugin-pinia`. The local plugins are one entrypoint each under `scripts/src/oxlint/` (`selector-ban`, `sorting`, `props-interface`, `vue-type-imports` and the rest), and `oxlint/jsPlugins.ts` loads them by file, so a new one needs no entry.
+- **Oxlint** runs once over the repository from `oxlint.config.ts`. Every category is listed explicitly at `error`, and `typeAware` runs the type-aware rules natively (see [The type-aware pass](#the-type-aware-pass)). Its rules are the native ones, the `selector-ban/no-restricted-syntax` lists, the local JS plugins, the Pinia rules among them in the `pinia` plugin. The local plugins are one entrypoint each under `scripts/src/oxlint/` (`selector-ban`, `sorting`, `props-interface`, `vue-type-imports`, `pinia` and the rest), and `oxlint/jsPlugins.ts` loads them by file, so a new one needs no entry.
 - **Vize** runs each component's whole template from `vite/vueOptions.ts`. Its `incremental` preset runs only the rules that file names. Entries scope a rule set by path: the packages styled by scoped CSS alone take the template bans and the scoped-style bans, and the app takes its UnoCSS blocklist. The template ban lists are in `vite/services/`.
 - **Knip** reads `knip.config.ts`. Its entries include the oxlint plugins, since oxlint loads them by path.
 - **Actionlint** checks the workflows, with its shellcheck and pyflakes passes off.
@@ -28,7 +28,7 @@ The root `lint` task depends on the four checks above. `lint:fix` runs the two t
 Each pass has its own spelling, and both require a reason.
 
 - A script directive is `// oxlint-disable-next-line <rule> -- <reason>`, or `/* oxlint-disable <rule> -- <reason> */` on a file's first line. A local plugin's rule is named by its `meta.name`, as `selector-ban/no-restricted-syntax`. `comments/require-directive-reason` reports a directive without a reason.
-- A template directive is the HTML comment `<!-- eslint-disable-next-line <rule> -- <reason> -->`. Vize reads that spelling in templates, so it is written as is. Vize's tree carries no comment for a linter to read, so `scripts/src/workspace/templateDirectiveReasons.test.ts` checks the reason.
+- A template directive is the HTML comment `<!-- oxlint-disable-next-line <rule> -- <reason> -->`, the same spelling as a script's. Vize's tree carries no comment for a linter to read, so `scripts/src/workspace/templateDirectiveReasons.test.ts` checks the reason.
 
 ## Where a ban is written
 
@@ -76,6 +76,7 @@ Every root oxlint script passes `--debug=timings`, so each run ends with a table
 | `oxlint.config.ts`                                  | Categories, rules, `overrides`, `ignorePatterns` and the type-aware switches          |
 | `oxlint/`                                           | The lists `oxlint.config.ts` reads, and `jsPlugins.ts`, which loads the local plugins |
 | `scripts/src/oxlint/`                               | The local JS plugins, one entrypoint each                                             |
+| `scripts/src/oxlint/pinia.ts`                       | The Pinia rules enabled under `pinia/<rule>`                                          |
 | `scripts/src/services/oxlint/selectorBan/syntaxes/` | The selector-ban lists behind `selector-ban/no-restricted-syntax`                     |
 | `vite/vueOptions.ts`                                | Vize's rules and its per-path entries                                                 |
 | `vite/services/`                                    | Vize's template ban lists, and the HTML data behind the scoped-styles ban             |

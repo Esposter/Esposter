@@ -10,17 +10,23 @@ export const CODE_SHAPED_REGEX: RegExp = /^.[\w$]*[A-Z\d_$]/u;
 export const FUNCTION_PREFIX_REGEX: RegExp =
   /^(?:check|compute|count|create|delete|generate|get|has|is|on|read|search|set|store|update|use)[A-Z]/u;
 export const SENTENCE_END_REGEX: RegExp = /[.!?:]\s*$/u;
-// A directive either linter honours: the whole-file, next-line and same-line forms, never the `-enable` that closes one
-export const DIRECTIVE_REGEX: RegExp = /^\s*(?:eslint|oxlint)-disable(?:-next-line|-line)?(?:\s|$)/u;
+// A disable directive: the whole-file, next-line and same-line forms, never the `-enable` that closes one
+export const DIRECTIVE_REGEX: RegExp = /^\s*oxlint-disable(?:-next-line|-line)?(?:\s|$)/u;
+// The reason a directive states after ` -- `, which tells a load-bearing exception from a stale one. Both halves of the
+// directive-reason check read it: the script half in `comments/require-directive-reason`, and the template half in
+// `scripts/src/workspace/templateDirectiveReasons.test.ts`, so the two cannot disagree on what counts as a reason
+export const DIRECTIVE_REASON_REGEX: RegExp = /\s--\s+\S/u;
+export const DIRECTIVE_REASON_MESSAGE =
+  "A disable directive carries its reason after ` -- ` on the directive itself, so the next reader can tell a load-bearing exception from a stale one. See the oxlint skill.";
 export const TRAILING_COMMENT_MESSAGE =
   "A `//` comment goes on its own line above the code it describes, never trailing after code on the same line. See the formatting skill.";
 export const TERNARY_OPERATORS: ReadonlySet<string> = new Set([":", "?"]);
 // The one directive that has to share its line: a same-line disable names the line it sits on
-export const SAME_LINE_DIRECTIVE_REGEX: RegExp = /^\s*(?:eslint|oxlint)-disable-line(?:\s|$)/u;
-// A next-line disable of either linter, split at its rule list. `head` runs up to the list, `rules` is the list (absent
+export const SAME_LINE_DIRECTIVE_REGEX: RegExp = /^\s*oxlint-disable-line(?:\s|$)/u;
+// A next-line disable, split at its rule list. `head` runs up to the list, `rules` is the list (absent
 // For a bare directive, which names none), and `tail` is the ` -- reason` text, kept as written
 export const NEXT_LINE_DIRECTIVE_REGEX: RegExp =
-  /^(?<head>\s*(?<prefix>oxlint|eslint)-disable-next-line)(?<rules>\s[\s\S]*?)?(?<tail>\s--(?<reason>\s[\s\S]*)?)?$/u;
+  /^(?<head>\s*(?<prefix>oxlint)-disable-next-line)(?<rules>\s[\s\S]*?)?(?<tail>\s--(?<reason>\s[\s\S]*)?)?$/u;
 // A reason that only points at the reason above it, which the collapsed file-level directive already carries
 export const BACK_REFERENCE_REASON_REGEX: RegExp = /^as above$/iu;
 export const buildRepeatedDisableMessage = (prefix: string, rule: string): string =>

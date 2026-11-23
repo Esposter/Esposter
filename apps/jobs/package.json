@@ -21,8 +21,6 @@
     "build": "wrangler deploy --dry-run --outdir dist --env prod",
     "dev": "wrangler dev --env dev --env-file .env",
     "deploy:worker": "wrangler deploy",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "typecheck": "tsrs --fast"
   },

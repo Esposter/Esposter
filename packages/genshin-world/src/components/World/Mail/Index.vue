@@ -12,7 +12,7 @@ const { claim, claimAll, deleteGift, deleteRead, markMailRead, toggleMailPin } =
 </script>
 
 <template>
-  <!-- eslint-disable vue/no-restricted-syntax -- the Mail screen's own confirm dialog asks first and emits a delete only once the player confirms -->
+  <!-- oxlint-disable vue/no-restricted-syntax -- the Mail screen's own confirm dialog asks first and emits a delete only once the player confirms -->
   <MailScreen
     v-if="mailData"
     :birthday-mail-ids="mailData.birthdayMailIds"
@@ -33,5 +33,5 @@ const { claim, claimAll, deleteGift, deleteRead, markMailRead, toggleMailPin } =
     @read="(mail) => markMailRead(mail)"
     @pin="(mail) => toggleMailPin(mail)"
   />
-  <!-- eslint-enable vue/no-restricted-syntax -->
+  <!-- oxlint-enable vue/no-restricted-syntax -->
 </template>

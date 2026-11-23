@@ -1,11 +1,11 @@
 import type { SelectorBanList } from "#src/models/oxlint/selectorBan/SelectorBanList";
 
 import { SCRIPT_FILES } from "#src/services/oxlint/selectorBan/constants";
-import {
-  SERVER_COUNT_FIELDS,
-  SERVER_COUNT_ROLE_FIELD,
-  SERVER_COUNT_ROLE_LIST,
-} from "@esposter/configuration/eslint/serverCountFields.js";
+// The fields the server derives as counts. A role's count sits one level down, as `countsByTopRole[i].count`, and is
+// named by the list it is an item of
+const SERVER_COUNT_FIELDS = ["commentCount", "likeCount", "memberCount"];
+const SERVER_COUNT_ROLE_LIST = "countsByTopRole";
+const SERVER_COUNT_ROLE_FIELD = "count";
 
 const COUNT_FIELD_PATTERN = `/^(${SERVER_COUNT_FIELDS.join("|")})$/`;
 

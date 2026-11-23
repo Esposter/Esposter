@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects -- grouped by separator, the order the picker lists */
+/* oxlint-disable sorting/sort-objects -- grouped by separator, the order the picker lists */
 import { z } from "zod";
 
 export const DateFormat = {

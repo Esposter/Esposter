@@ -25,7 +25,6 @@ const trpcNuxtModule: [string, ModuleOptions] = [
 // E.g. unplugin-pwa-nuxt builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
 // Leaks an EnvironmentTeardownError after teardown, and nuxt-security-module adds headers/CSP nothing asserts.
 export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
-  "@nuxt/eslint",
   "@nuxt/fonts",
   "@nuxt/image",
   "@nuxt/scripts",

@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects -- declaration order is the settings nav order */
+/* oxlint-disable sorting/sort-objects -- declaration order is the settings nav order */
 export const UserSettingsType = {
   Account: "My Account",
   Appearance: "Appearance",

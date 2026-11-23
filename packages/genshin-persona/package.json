@@ -45,8 +45,6 @@
     "access": "public"
   },
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "typecheck": "tsrs --fast"
   },

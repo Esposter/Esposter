@@ -8,7 +8,7 @@ import type { ESTree, Variable } from "@oxlint/plugins";
 export const checkIsUnreadProperty = (
   property: ESTree.BindingProperty | ESTree.BindingRestElement,
   variables: Variable[],
-): property is ESTree.BindingProperty & { value: ESTree.BindingIdentifier } => {
+): property is { value: ESTree.BindingIdentifier } & ESTree.BindingProperty => {
   if (property.type !== "Property" || property.computed) return false;
   if (property.value.type !== "Identifier" || property.key.type !== "Identifier") return false;
   if (property.key.name !== property.value.name) return false;
