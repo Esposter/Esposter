@@ -100,9 +100,9 @@ The lint SHALL run every rule with no classic TypeScript compiler installed in t
 
 A finding in a component's template SHALL be reported on the template line that holds it.
 
-#### Scenario: A finding in a template-first component
+#### Scenario: A finding in a script-first component
 
-- **GIVEN** a component whose template comes before its script
+- **GIVEN** a component whose script comes before its template
 - **WHEN** lint runs over a template line that breaks a rule
 - **THEN** the finding is reported on that template line
 

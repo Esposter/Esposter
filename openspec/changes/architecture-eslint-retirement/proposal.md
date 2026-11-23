@@ -8,9 +8,9 @@ Most of what ESLint still does now has a native home. vize ships a lint catalogu
 
 ## What changes
 
-The retirement runs in four phases. Each phase moves one kind of rule, and only the last one deletes anything.
+The retirement runs in four phases. Each phase moves one kind of rule, and only the last one removes a package. A rule that cannot move yet is a blocker the change records, never a rule dropped unseen, and no phase leaves the lint slower than it found it.
 
-1. **The Vue template pass moves to vize.** vize lints every `.vue` template: the eslint-plugin-vue template rules we turn on, the accessibility rules, the template half of `vue/no-restricted-syntax`, and our two local template rules. The phase starts with a gate that proves where vize reports a template finding. A finding must land on the template line, in a template-first file and in a file with no script block.
+1. **The Vue template pass moves to vize.** vize lints every `.vue` template: the eslint-plugin-vue template rules we turn on, the accessibility rules, the template half of `vue/no-restricted-syntax`, and our two local template rules. The phase starts with a gate that proves where vize reports a template finding. A finding must land on the template line, in a script-first file and in a file with no script block.
 2. **The script rules move to oxlint.** The `no-restricted-syntax` selector lists run in a local oxlint JS plugin that reads the same lists, composed by path in `oxlint.config.ts` as `index.vue.js` composes them today. Perfectionist, the UnoCSS script rules and the Nuxt plugin's rules load through `jsPlugins`. The eslint-plugin-vue script rules map to oxlint's native `vue/*` rules or vize's `script/*` ones.
 3. **The JSON checks move to workspace tests.** oxlint reads no JSON, so the dependency ban and the JSON validity rules become workspace tests over the tracked JSON files and manifests.
 4. **ESLint and the classic compiler leave the workspace.** ESLint, `@nuxt/eslint`, `eslint-plugin-oxlint`, `vue-eslint-parser`, every ESLint plugin, every `eslint.config.*` file and `packages/configuration/eslint/` are deleted. Every `eslint-disable` directive is rewritten for the rule's new host. Then the `typescript-native-bridge` override and the `typescript` package go, which finishes the toolchain change's phases 3 and 4.
