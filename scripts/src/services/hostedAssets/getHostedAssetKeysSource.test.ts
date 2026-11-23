@@ -96,17 +96,13 @@ describe(getHostedAssetKeysSource, () => {
           ["a", createHostedAssetLockObject("a", HASH)],
         ]),
       }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Push, name: a, shares its self slot with a segment named self in the lock]`,
-    );
+    ).toThrowErrorMatchingInlineSnapshot(`[Error: a shares its self slot with a segment named self in the lock]`);
     expect(() =>
       getHostedAssetKeysSource("Fixture", {
         indexes: {},
         objects: { a: createHostedAssetLockObject("a", HASH), "a/self": createHostedAssetLockObject("a/self", HASH) },
       }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Push, name: a/self, shares its self slot with a segment named self in the lock]`,
-    );
+    ).toThrowErrorMatchingInlineSnapshot(`[Error: a/self shares its self slot with a segment named self in the lock]`);
   });
 
   test("reports a key whose self slot a literal self segment's branch holds, when that segment leads to a deeper branch", () => {
@@ -120,9 +116,7 @@ describe(getHostedAssetKeysSource, () => {
           ["a", createHostedAssetLockObject("a", HASH)],
         ]),
       }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Push, name: a, shares its self slot with a segment named self in the lock]`,
-    );
+    ).toThrowErrorMatchingInlineSnapshot(`[Error: a shares its self slot with a segment named self in the lock]`);
   });
 
   test("reports a key whose self slot a path through a literal self segment would move, when the key comes first", () => {
@@ -137,7 +131,7 @@ describe(getHostedAssetKeysSource, () => {
         ]),
       }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Push, name: a/self/x, shares its self slot with a segment named self in the lock]`,
+      `[Error: a/self/x shares its self slot with a segment named self in the lock]`,
     );
   });
 });

@@ -1,10 +1,9 @@
 import type { KeyTree } from "#src/models/hostedAssets/KeyTree";
 
 import { descendKeyTree } from "#src/services/hostedAssets/descendKeyTree";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const shareSelfSlot = (key: string) =>
-  new InvalidOperationError(Operation.Push, key, "shares its self slot with a segment named self in the lock");
+// oxlint-disable-next-line error-handling/no-bare-error -- the renderer runs from `nuxt prepare` before any workspace package is built, so it cannot import InvalidOperationError from @esposter/shared
+const shareSelfSlot = (key: string) => new Error(`${key} shares its self slot with a segment named self in the lock`);
 
 // A key that also prefixes other keys sits under `self`, since one node cannot be both a string and a branch; a literal `self` segment is the one collision
 export const insertKey = (tree: KeyTree, key: string): void => {
