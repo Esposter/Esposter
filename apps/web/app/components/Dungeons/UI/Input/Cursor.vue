@@ -7,7 +7,7 @@ import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Image } from "vue-phaserjs";
 
 interface Props {
-  cursorFileKey?: Extract<FileKey, "UICursorCursor" | "UICursorCursorWhite"> | undefined;
+  cursorFileKey?: typeof FileKey.UICursorCursor | typeof FileKey.UICursorCursorWhite | undefined;
   grid: Grid<TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;

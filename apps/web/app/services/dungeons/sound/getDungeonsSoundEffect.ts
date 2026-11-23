@@ -7,6 +7,6 @@ import { getDungeonsSound } from "#src/services/dungeons/sound/getDungeonsSound"
 
 export const getDungeonsSoundEffect = (
   scene: SceneWithPlugins,
-  soundEffectKey: FileKey,
+  fileKey: FileKey,
   options?: Except<Types.Sound.SoundConfig, "volume">,
-) => getDungeonsSound(scene, soundEffectKey, { ...options, volume: 5 });
+) => getDungeonsSound(scene, fileKey, { ...options, volume: 5 });
