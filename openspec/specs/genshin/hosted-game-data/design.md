@@ -300,6 +300,6 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 
 ## Open
 
-- [ ] **The number of entries the mirror fill reads from `domains` and `kitSources`** — no source yet: their objects are not in `{cache-root}/content`, while the other indexes of `packages/genshin-world/src/generated/gameDataLock.json` hold their entries there; `pnpm game-data:mirror` in `packages/genshin-world` would store the two, and their entries would then be counted.
+- [ ] **The number of entries the mirror fill reads from `domains` and `kitSources`** — no source yet: their objects are not in `{cache-root}/content`, while the other indexes of `packages/genshin-world/src/generated/gameDataLock.json` hold their entries there; `pnpm hosted-assets fill`, run from `scripts`, would store the two, and their entries would then be counted.
 - [ ] **A publish changes a handful of objects** — no source yet: the count a publish changes is printed by its dry run, and the "Creating a dataset" section of `openspec/specs/genshin/hosted-game-data/design.md` says each lock commit carries that report in its body, which `git log` of `packages/genshin-world/src/generated/gameDataLock.json` would print.
 - [ ] **Run in parallel, a record another fit was fetching outwaited its ten-second timeout** — no source yet: no record of the parallel run's timings is kept; the timeout is `DATA_FETCH_TIMEOUT_MS` in `packages/genshin-world/src/services/constants.ts`.
