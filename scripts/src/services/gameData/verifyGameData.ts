@@ -9,7 +9,11 @@ import { readGameDataReachableRefs } from "genshin-world";
 // Object the lock names or an index names is fetched once however many names reach it. Resolves to how many distinct
 // Objects were checked, the indexes included
 export const verifyGameData = async (baseUrl: string, lock: HostedAssetLock): Promise<number> => {
-  const { indexes, objects } = await readGameDataReachableRefs([lock], (index) => verifyGameDataObject(baseUrl, index));
+  const { indexes, objects } = await readGameDataReachableRefs(
+    [lock],
+    (index) => verifyGameDataObject(baseUrl, index),
+    MAX_CONCURRENT_VERIFY_FETCHES,
+  );
   await settleAll(
     objects.map((ref) => () => verifyGameDataObject(baseUrl, ref)),
     MAX_CONCURRENT_VERIFY_FETCHES,

@@ -8,10 +8,12 @@ import { settleAll } from "@esposter/shared";
 
 // Every object the locks reach: each index they name, then each object they name and each entry an index names. An
 // Index's entries are stored under that index's own dataset. `readIndex` reads an index's body however its store
-// Serves it, so each caller brings its own, and an index named by two locks is read once
+// Serves it, so each caller brings its own, and an index named by two locks is read once. `concurrencyLimit` caps the
+// Index reads in flight, and when it is absent every index is read at once
 export const readGameDataReachableRefs = async (
   locks: HostedAssetLock[],
   readIndex: (index: GameDataObjectRef) => Promise<unknown>,
+  concurrencyLimit?: number,
 ): Promise<{ indexes: GameDataObjectRef[]; objects: GameDataObjectRef[] }> => {
   const indexRefs = toUniqueGameDataObjectRefs(locks.flatMap((lock) => toGameDataObjectRefs(lock.indexes)));
   const entryRefs = (
@@ -23,6 +25,7 @@ export const readGameDataReachableRefs = async (
             hash,
           })),
       ),
+      concurrencyLimit,
     )
   ).flat();
   return {
