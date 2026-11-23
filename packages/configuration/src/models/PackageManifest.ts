@@ -6,6 +6,9 @@ export interface PackageManifest {
   engines?: Record<string, string>;
   // Each subpath's arm names its `source` file under `src`, which is the one place a package declares what a subpath is
   exports?: Record<string, Record<string, string> | string>;
+  // What the build vendored into each bundle, with the version it resolved. A name the tree holds at several versions
+  // Lists each one, so the value is a string or an array of them
+  inlinedDependencies?: Record<string, string | string[]>;
   // Declared by the one package a runtime host loads by convention rather than by resolution — the Functions app
   main?: string;
   name?: string;
