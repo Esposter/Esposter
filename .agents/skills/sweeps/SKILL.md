@@ -49,7 +49,7 @@ A sitting reads units, not ledgers: `pnpm ai:sweep:sample` prints the units to r
 judged for, and a unit is never left half-read. **Planning a sitting**, sampling a question, and why a resume that
 reports nothing is the sweep converging rather than failing, is `references/windows-and-convergence.md`.
 
-A sample sitting runs the steps `references/windows-and-convergence.md` ("Sampled clean") gives, in that order.
+A sample sitting runs the steps `references/windows-and-convergence.md` ("Sampled clean") gives, in that order. After a sync brings other sessions' commits, the cells they touched are read as a sitting of their own, drawn by `pnpm ai:sweep:sample --touched <range>` and never sampled (the same section).
 
 ## Draining beats scheduling
 
