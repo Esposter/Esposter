@@ -1,6 +1,7 @@
 import type { Context, ESTree, Fix, Fixer } from "@oxlint/plugins";
 
-import { getItemRange, getItemTrailer } from "#src/services/oxlint/sorting/getItemRange";
+import { getItemRange } from "#src/services/oxlint/sorting/getItemRange";
+import { getItemTrailer } from "#src/services/oxlint/sorting/getItemRange/getItemTrailer";
 import { takeOne } from "@esposter/shared";
 
 // Each slot takes the item sorted into its place: the item's text replaces the slot's text, and its trailing comment

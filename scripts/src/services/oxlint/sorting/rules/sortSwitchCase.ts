@@ -4,7 +4,8 @@ import type { Context, ESTree, Fixer, Rule } from "@oxlint/plugins";
 
 import { checkIsPureExpression } from "#src/services/oxlint/sorting/checkIsPureExpression";
 import { compareNames } from "#src/services/oxlint/sorting/compareNames";
-import { getItemRange, getItemTrailer } from "#src/services/oxlint/sorting/getItemRange";
+import { getItemRange } from "#src/services/oxlint/sorting/getItemRange";
+import { getItemTrailer } from "#src/services/oxlint/sorting/getItemRange/getItemTrailer";
 import { reportUnsorted } from "#src/services/oxlint/sorting/reportUnsorted";
 import { splitRuns } from "#src/services/oxlint/sorting/splitRuns";
 import { defineRule } from "@oxlint/plugins";
