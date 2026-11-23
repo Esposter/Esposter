@@ -56,6 +56,8 @@ Ordered by dependency. Each task names how it is verified: a test written first 
 - [ ] 6.8 Make Genshin's opening preload every object of its lock behind its loading bar, through the generic preloader. Verify: the measured total of the lock is recorded in the change's verification note before the switch, and a driven browser run of the opening shows the bar reach complete before the login scene.
 - [ ] 6.9 Replace the character packs' explicit `cache.match` reads with the plain hosted url, served by the worker. Verify: `pnpm -C packages/genshin-world exec vitest run src/services/character` passes, and `git grep -n "CHARACTER_PACK_CACHE_NAME" -- packages apps` returns no hit.
 
+- [ ] 6.10 Decide what becomes of the orphaned `genshin-character-pack-files` Cache Storage that a returning browser keeps from the previous build. The preload now opens only `hosted-assets` and evicts only its own scope, and `git grep` finds no reference to the old name, so its full pack files are never read, evicted or deleted. A one-time delete keeps the old name in code, which the no-compatibility-debt rule weighs against, so the owner chooses between that cleanup and accepting the storage. Verify: the decision is written into the design, and if a cleanup is chosen, a test seen failing first asserts the old cache is deleted once.
+
 ## 7. Documents and the bundle
 
 - [ ] 7.1 Replace the two-place rule in `openspec/specs/architecture/static-assets/design.md` with the placement rule, and update its Key files. Verify: `pnpm exec openspec validate architecture-hosted-assets --strict` passes, and the static-assets design names the hosted place.
