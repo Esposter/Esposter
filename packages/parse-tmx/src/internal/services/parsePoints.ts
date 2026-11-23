@@ -1,9 +1,8 @@
 // The `points` of a polygon or polyline: pairs written `x,y` and separated by spaces, and none when there are none to read
 export const parsePoints = (points: string): [number, number][] =>
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a points attribute the TMX file holds, empty when absent
-  points === ""
-    ? []
-    : points.split(" ").map((point) => {
+  points
+    ? points.split(" ").map((point) => {
         const [x = "", y = ""] = point.split(",");
         return [Number(x), Number(y)];
-      });
+      })
+    : [];
