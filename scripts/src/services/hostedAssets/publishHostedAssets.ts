@@ -13,7 +13,7 @@ import { mergeHostedAssetLock } from "#src/services/hostedAssets/mergeHostedAsse
 import { publishHostedAssetsToBucket } from "#src/services/hostedAssets/publishHostedAssetsToBucket";
 import { readHostedAssetReachableObjects } from "#src/services/hostedAssets/readHostedAssetReachableObjects";
 import { CloudflareEnvironment } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getOrCreate, InvalidOperationError, Operation } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
 // Stores what a plan names in every environment's bucket, and returns the entries it planned for the caller to merge into the
@@ -56,12 +56,8 @@ export const publishHostedAssets = async ({
       : encodeHostedAssetObject(record.extension, record.bytes);
   const encodeMap = new Map<string, ReturnType<typeof encodeStored>>();
   // Encoded once per object and shared by both environments, which hold the same bytes
-  const getEncoded = (record: HostedAssetRecord) => {
-    const path = getHostedAssetPath(record);
-    const encoded = encodeMap.get(path) ?? encodeStored(record);
-    encodeMap.set(path, encoded);
-    return encoded;
-  };
+  const getEncoded = (record: HostedAssetRecord) =>
+    getOrCreate(encodeMap, getHostedAssetPath(record), () => encodeStored(record));
   const publishBucket = async (bucketClient: (typeof bucketClientMap)[CloudflareEnvironment]) => {
     const reachableObjects = await readHostedAssetReachableObjects(
       bucketClient,
