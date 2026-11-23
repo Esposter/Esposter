@@ -124,4 +124,20 @@ describe(getHostedAssetKeysSource, () => {
       `[InvalidOperationError: Invalid operation: Push, name: a, shares its self slot with a segment named self in the lock]`,
     );
   });
+
+  test("reports a key whose self slot a path through a literal self segment would move, when the key comes first", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      getHostedAssetKeysSource("Fixture", {
+        indexes: {},
+        objects: Object.fromEntries([
+          ["a", createHostedAssetLockObject("a", HASH)],
+          ["a/self/x", createHostedAssetLockObject("a/self/x", HASH)],
+        ]),
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Push, name: a/self/x, shares its self slot with a segment named self in the lock]`,
+    );
+  });
 });
