@@ -35,6 +35,18 @@ describe("scopedStyles", () => {
     { name: "component", template: `<GameScreen size-full />`, violations: 0 },
     // SVG's own elements share some of HTML's names, and their attributes are SVG's
     { name: "svgAttribute", template: `<svg viewBox="0 0 1 1"><a href="a" /><path d="M0 0" /></svg>`, violations: 0 },
+    { name: "svgChildAttribute", template: `<svg><g><span size-full /></g></svg>`, violations: 0 },
+    // A foreignObject holds HTML again, so its elements are checked, and an svg nested in it is SVG's once more
+    {
+      name: "foreignObjectElementAttribute",
+      template: `<svg><foreignObject><div size-full /></foreignObject></svg>`,
+      violations: 1,
+    },
+    {
+      name: "nestedSvgInForeignObjectAttribute",
+      template: `<svg><foreignObject><svg><g><span size-full /></g></svg></foreignObject></svg>`,
+      violations: 0,
+    },
     { name: "slotProp", template: `<slot :item="a" />`, violations: 0 },
   ];
   let root: string;

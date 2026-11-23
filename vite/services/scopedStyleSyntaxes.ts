@@ -4,10 +4,14 @@ import { htmlTagNames } from "#vite/services/htmlTagNames";
 // A package styled by scoped CSS has no UnoCSS to read an attribute as a utility, so an attribute the HTML standard does
 // Not define on a native element (`size-full`, `p="2"`) styles nothing, and the element takes the browser's defaults.
 // It accepts the standard's attributes (global and per element), WAI-ARIA's `role` and `aria-*`, custom data, and the
-// Two Vue keeps for itself. vize's tree carries no namespace, so SVG and MathML are told apart by their root: no element
-// Under one is HTML's. Vue's `<template>` and `<slot>` share HTML's names but are the framework's outlets, whose bound
-// Attributes are slot props. Elements accepting the same attributes share one selector
+// Two Vue keeps for itself. vize's tree carries no namespace, so SVG and MathML are told apart by their root: an element
+// Under one is not HTML's, unless a `foreignObject` holds it. Vue's `<template>` and `<slot>` share HTML's names but are
+// The framework's outlets, whose bound Attributes are slot props. Elements accepting the same attributes share one selector
 const FOREIGN_ROOT_NAMES = ["math", "svg"];
+// An SVG `foreignObject` holds HTML again, and an svg nested in it is foreign once more; a `foreignObject` nested inside
+// That inner svg is not followed back to HTML
+const FOREIGN_OBJECT_SELECTOR = "VElement[rawName=/^foreignObject$/i]";
+const FOREIGN_ROOT_SELECTOR = `VElement[rawName=/^(?:${FOREIGN_ROOT_NAMES.join("|")})$/]`;
 const VUE_OUTLET_NAMES = new Set(["slot", "template"]);
 const VUE_RESERVED_ATTRIBUTE_NAMES = ["key", "ref"];
 const MESSAGE =
@@ -29,7 +33,7 @@ export const SCOPED_STYLE_SYNTAXES: { message: string; selector: string }[] = [.
     const knownAttributeRegex = `/^(?:${attributeNames.join("|")}|aria-.*|data-.*)$/i`;
     return {
       message: MESSAGE,
-      selector: `VElement[rawName=/^(?:${tagNames.join("|")})$/]:not(VElement[rawName=/^(?:${FOREIGN_ROOT_NAMES.join("|")})$/] VElement) > VStartTag > VAttribute:matches([directive=false]:not([key.name=${knownAttributeRegex}]), [directive=true][key.name.name='bind'][key.argument.type='VIdentifier']:not([key.argument.name=${knownAttributeRegex}]))`,
+      selector: `VElement[rawName=/^(?:${tagNames.join("|")})$/]:not(${FOREIGN_ROOT_SELECTOR} VElement:not(${FOREIGN_OBJECT_SELECTOR} VElement), ${FOREIGN_OBJECT_SELECTOR} ${FOREIGN_ROOT_SELECTOR} VElement) > VStartTag > VAttribute:matches([directive=false]:not([key.name=${knownAttributeRegex}]), [directive=true][key.name.name='bind'][key.argument.type='VIdentifier']:not([key.argument.name=${knownAttributeRegex}]))`,
     };
   },
 );
