@@ -9,9 +9,10 @@ import { createRowResponse } from "#src/services/shared/overlay/createRowRespons
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
 
-// Favorites are server-side from day one — a star that vanishes on another device reads as data loss. A star is a row on the
-// Overlay. Every resource read answers each of its rows with the viewer's star, which lands beside the row, so a row shows
-// Its star wherever it is listed, and the favorites list is a page of the starred rows, drawn from the overlay like any list
+// Favorites are server-side from day one — a star that vanishes on another device reads as data loss. A star is a row
+// On the Overlay. Every resource read answers each of its rows with the viewer's star, which lands beside the row, so a
+// Row shows Its star wherever it is listed, and the favorites list is a page of the starred rows, drawn from the
+// Overlay like any list
 export const useFavoriteStore = defineStore("resource/favorite", () => {
   const { $trpc } = useNuxtApp();
   const userId = useSessionUserId();

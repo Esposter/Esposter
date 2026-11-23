@@ -6,7 +6,8 @@ import type { WhiteboardPlacement } from "#src/models/whiteboard/WhiteboardPlace
 import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
 import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 
-// A press with a placing tool holds the element it would place: its id is fixed at the press, and its origin is the press's document point
+// A press with a placing tool holds the element it would place: its id is fixed at the press, and its origin is the
+// Press's document point
 export const startPlacingGesture = (
   state: WhiteboardGestureState,
   event: GesturePointerEvent,

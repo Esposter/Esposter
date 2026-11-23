@@ -1,4 +1,5 @@
-/* oxlint-disable no-underscore-dangle -- marker property name is owned by @nuxt/test-utils; Pinia's store registry has no public accessor, and `$dispose` removes each entry */
+/* oxlint-disable no-underscore-dangle -- marker property name is owned by @nuxt/test-utils; Pinia's store registry
+   has no public accessor, and `$dispose` removes each entry */
 import type { Pinia } from "pinia";
 
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
@@ -51,9 +52,9 @@ vi.mock(import("#server/services/realtime/publishTopicsBestEffort"), async (impo
   Object.assign(env, { TOPIC: mockTopicNamespace });
   return importOriginal();
 });
-// The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
-// Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
-// File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
+// The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a
+// `vi.mock` Is hoisted only within the file that writes it, so one registered from an imported module never intercepts
+// A test File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
 // Registering once here covers both. The factory is lazy, so a test that touches no user object pays nothing.
 vi.mock(
   import("#server/composables/realtime/useUserObject"),
@@ -76,11 +77,12 @@ vi.mock(import("#server/auth"), () => import("#server/auth.test"));
 // The global database reads its Worker binding when its module loads, before a suite has made the mock database that
 // Fills the binding, so it is registered over a double that reads the binding on first use
 vi.mock(import("#server/db/index"), () => import("#server/db/index.test"));
-// Every suite's caller runs through the live topic wake check, which asks each read again after a write and fails a read
-// Whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`). The check
-// Registers its own hooks as it loads, so only a file that builds a caller loads it and the schema it reads
+// Every suite's caller runs through the live topic wake check, which asks each read again after a write and fails a
+// Read Whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`). The
+// Check Registers its own hooks as it loads, so only a file that builds a caller loads it and the schema it reads
 vi.mock(import("#server/trpc/index"), () => import("#server/trpc/indexWithWakeCheck.test"));
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type
+// The stubbed `useRuntimeConfig` returns a fraction of the config, which
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed `import()` form holds to the real return type
 vi.mock("nuxt/server", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   useRuntimeConfig: () => ({
@@ -101,7 +103,8 @@ vi.mock("nuxt/server", async (importOriginal) => ({
 // (`checkIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
 // Plain happy-dom files (a `window` but no Nuxt app) skip it via the env's own marker — mounting there would crash.
 let isNuxtRuntimeWarm = false;
-// oxlint-disable-next-line selector-ban/no-restricted-syntax -- a genuine top-level fork: checkIsServer() guards the read, and the marker is set only on the happy-dom environment, so the read is the environment question itself
+// A genuine top-level fork: checkIsServer() guards the read, and the marker is set only on the happy-dom environment,
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- so the read is the environment question itself
 if (!checkIsServer() && "__NUXT_VITEST_ENVIRONMENT__" in window && window.__NUXT_VITEST_ENVIRONMENT__)
   beforeEach(async () => {
     const [{ mountSuspended }, { useNuxtApp, useRouter }, { setActivePinia }, { defineComponent, h }] =
@@ -118,7 +121,8 @@ if (!checkIsServer() && "__NUXT_VITEST_ENVIRONMENT__" in window && window.__NUXT
     // Its store belongs to, and the app calls actions on its own stores whenever it likes (a plugin's head-render or
     // `afterEach` hook), so a suite holding a second Pinia of its own reads the app's from that moment on.
     // `@pinia/nuxt` types `$pinia` only for the app's own tsconfig, so `shared/` reads it as `unknown`
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the $pinia augmentation of @pinia/nuxt is in the app's tsconfig only, so this tsconfig reads the app's Pinia as unknown
+    // The $pinia augmentation of @pinia/nuxt is in the app's tsconfig only,
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- so this tsconfig reads the app's Pinia as unknown
     const $pinia = useNuxtApp().$pinia as Pinia;
     for (const store of $pinia._s.values()) store.$dispose();
     $pinia.state.value = {};
@@ -132,11 +136,13 @@ if (!checkIsServer()) {
 }
 // Stubbed before every test rather than once, since the config restores every stubbed variable after each one. A test
 // That needs a variable different, or absent, stubs it itself after this runs
-// oxlint-disable-next-line vitest/no-duplicate-hooks -- the nuxt environment's hook above is registered only inside its own guard, so this one cannot join it
+// The nuxt environment's hook above is registered
+// oxlint-disable-next-line vitest/no-duplicate-hooks -- only inside its own guard, so this one cannot join it
 beforeEach(() => {
   for (const [name, value] of Object.entries(MOCK_ENVIRONMENT_VARIABLES)) vi.stubEnv(name, value);
-  // A server test's clock is frozen at the instant it starts, so an answer that holds a presigned address, or any time it reads
-  // From the clock, is the same when the wake check asks it again. Only `Date` is faked, so timers run as they do
+  // A server test's clock is frozen at the instant it starts, so an answer that holds a presigned address, or any time
+  // It reads From the clock, is the same when the wake check asks it again. Only `Date` is faked, so timers run as they
+  // Do
   if (checkIsServer()) vi.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
 });
 

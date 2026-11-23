@@ -32,8 +32,8 @@ describe("searchMessagesInputSchema", () => {
     ).toBe(true);
   });
 
-  // A cursor holds one value per key of the order its search runs in, so one of another length is not a cursor this search
-  // Issued, and a read that named an in: filter by a value other than a room id is not a search of rooms at all
+  // A cursor holds one value per key of the order its search runs in, so one of another length is not a cursor this
+  // Search Issued, and a read that named an in: filter by a value other than a room id is not a search of rooms at all
   test("refuses a cursor that does not match the order of its search, and an in: filter that names no room", () => {
     expect.hasAssertions();
 

@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-misused-promises, typescript/strict-void-return -- the key listener and the hotkey composable both ignore what their callbacks return */
+/* oxlint-disable typescript/no-misused-promises, typescript/strict-void-return -- the key listener and the hotkey
+   composable both ignore what their callbacks return */
 import type { UiCommand } from "#src/models/ui/UiCommand";
 
 import { getAltLetterChordMatcher } from "#src/services/ui/getAltLetterChordMatcher";

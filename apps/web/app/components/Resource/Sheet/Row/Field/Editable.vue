@@ -30,8 +30,8 @@ const editableColumns = computed(() =>
 );
 const editedValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
-// The row is written as the edit is left, and focusCell focuses the next cell straight after this, so the write is never
-// Waited on and the focus never stalls behind it
+// The row is written as the edit is left, and focusCell focuses the next cell straight after this, so the write is
+// Never Waited on and the focus never stalls behind it
 const submitEdit = () => {
   if (isSubmitted) return;
   isSubmitted = true;

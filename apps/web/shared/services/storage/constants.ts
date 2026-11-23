@@ -1,7 +1,7 @@
-// A presigned write url carries no length constraint, and the PUT never passes back
-// Through Nitro, so MAX_FILE_REQUEST_SIZE bounds the declaration and not the payload: one under-declared upload
-// Overshoots by however much the client sends, until the object-create notification charges its real size. What this caps is how
-// Many such uploads a user may have in flight at once — without it a tiny declaration buys unlimited holds.
+// A presigned write url carries no length constraint, and the PUT never passes back Through Nitro, so
+// MAX_FILE_REQUEST_SIZE bounds the declaration and not the payload: one under-declared upload Overshoots by however
+// Much the client sends, until the object-create notification charges its real size. What this caps is how Many such
+// Uploads a user may have in flight at once — without it a tiny declaration buys unlimited holds.
 export const MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES = 64;
 
 export const STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE = "You have run out of storage.";

@@ -128,7 +128,8 @@ const getMediaSource = (resourceId: string) => {
 
 describe("pageBuilderContentPanel", () => {
   const { trpcMsw } = setupMswTrpc();
-  // The picker reads the resource's files as it mounts, so each test answers that read with none unless it says otherwise
+  // The picker reads the resource's files as it mounts, so each test answers that read with none unless it says
+  // Otherwise
   beforeEach(() => {
     uploadFileMock.mockReset();
     trpcMsw.webpage.readResourceFiles.query(() => []);

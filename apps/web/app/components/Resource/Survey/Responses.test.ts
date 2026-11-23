@@ -76,7 +76,8 @@ describe("resourceSurveyResponses", () => {
     // The blade reads its id off the resource page's route, which the auth middleware guards
     useSession.mockReturnValue({ data: ref({ user: { id: v7() } }) });
     Object.assign(useRouter().currentRoute.value.params, { id: surveyId });
-    // The dialogs' targets are keyed by the open resource, so the blade is opened on its survey as the resource page does
+    // The dialogs' targets are keyed by the open resource, so the blade is opened on its survey as the resource page
+    // Does
     const resourceStore = useResourceStore();
     const { applyResource } = resourceStore;
     applyResource(createResourceListItem({ id: surveyId, type: ResourceType.Survey }), null, null);
@@ -112,7 +113,8 @@ describe("resourceSurveyResponses", () => {
     expect(component.findComponent(UiEmptyState).exists()).toBe(false);
   });
 
-  // The survey is read only for the summary, so a survey that cannot be read leaves the responses to the Individual view
+  // The survey is read only for the summary, so a survey that cannot be read leaves the responses to the Individual
+  // View
   test("keeps the individual responses when the survey itself cannot be read", async () => {
     expect.hasAssertions();
 
@@ -131,7 +133,8 @@ describe("resourceSurveyResponses", () => {
     expect(cellTexts).toStrictEqual(["Teal", "Response actionsView response Delete response"]);
   });
 
-  // A question named like the actions column is a column of answers, so it keeps its own cells and gets no menu of its own
+  // A question named like the actions column is a column of answers, so it keeps its own cells and gets no menu of its
+  // Own
   test("a question named actions shows its answers, not the response menu", async () => {
     expect.hasAssertions();
 
@@ -174,7 +177,8 @@ describe("resourceSurveyResponses", () => {
     expect(listedWhileDeleting).toContain("Teal");
   });
 
-  // The delete refreshes the table once it lands, so a read that was in flight before the delete cannot put the response back
+  // The delete refreshes the table once it lands, so a read that was in flight before the delete cannot put the
+  // Response back
   test("a read in flight when the delete lands does not bring the deleted response back", async () => {
     expect.hasAssertions();
 

@@ -30,8 +30,9 @@ describe(getScaleOperations, () => {
   test("dragging a corner of several shapes scales each of them", () => {
     expect.hasAssertions();
 
-    // The three shapes cover a box from (100, 100) to (350, 400), so the bottom-right corner is at (350, 400). The drag of (250, 150) doubles
-    // The width and scales the height by one and a half, each shape about the top-left corner of the box
+    // The three shapes cover a box from (100, 100) to (350, 400), so the bottom-right corner is at (350, 400). The drag
+    // Of (250, 150) doubles The width and scales the height by one and a half, each shape about the top-left corner of
+    // The box
     const document: PositionedDocument = {
       elements: [
         createShape(FIRST_ID, 100, 100, 100, 50),
@@ -54,8 +55,9 @@ describe(getScaleOperations, () => {
   test("an arrow bound to a resized shape follows it", () => {
     expect.hasAssertions();
 
-    // The shape's right connection point is at (200, 125), where the arrow starts, and its free end is at (300, 300). The box of the two covers
-    // (100, 100) to (300, 300), so a drag of 100 to the right stretches it to 1.5 times its width, the top-left corner holding still
+    // The shape's right connection point is at (200, 125), where the arrow starts, and its free end is at (300, 300).
+    // The box of the two covers (100, 100) to (300, 300), so a drag of 100 to the right stretches it to 1.5 times its
+    // Width, the top-left corner holding still
     const shape = createShape(FIRST_ID, 100, 100, 100, 50);
     const arrow: ArrowElement = {
       ...WHITEBOARD_ARROW,
@@ -79,7 +81,8 @@ describe(getScaleOperations, () => {
   test("a resize of several stops where the smallest element stops", () => {
     expect.hasAssertions();
 
-    // The small shape is 40 wide and the large one 200, so the scale on the width stops at the minimum size of the small one, which is 0.4
+    // The small shape is 40 wide and the large one 200, so the scale on the width stops at the minimum size of the
+    // Small one, which is 0.4
     const document: PositionedDocument = {
       elements: [createShape(SMALL_ID, 100, 100, 40, 40), createShape(LARGE_ID, 160, 100, 200, 100)],
     };
@@ -94,7 +97,8 @@ describe(getScaleOperations, () => {
   test("a stroke in a selection scales its points with it", () => {
     expect.hasAssertions();
 
-    // The shape and the stroke cover (0, 0) to (150, 100), and a drag of 150 to the right doubles the width about the left side
+    // The shape and the stroke cover (0, 0) to (150, 100), and a drag of 150 to the right doubles the width about the
+    // Left side
     const stroke: StrokeElement = {
       color: "",
       id: STROKE_ID,

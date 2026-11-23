@@ -32,7 +32,8 @@ const statusItems = SelectableStatusDefinitionList.map(({ label, status, subtitl
 const selectedStatuses = computed(() => [editedStatus.value.status]);
 const isValid = ref(true);
 const save = () => {
-  // The write is filed under the person's own row, so without a session there is nothing to file it under and none is sent
+  // The write is filed under the person's own row, so without a session there is nothing to file it under and none is
+  // Sent
   if (!userId.value) return;
 
   emit("save");

@@ -80,7 +80,8 @@ import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType, TextSize } from "vue-block-editor-headless";
 
-// A caller of a type with the fileAssets capability, and of a publishable one: each adds its group beside the base procedures
+// A caller of a type with the fileAssets capability, and of a publishable one: each adds its group beside the base
+// Procedures
 type FileAssetsCaller<TType extends FileAssetsResourceType> = FileAssetsResourceCaller & ResourceTypeCaller<TType>;
 // The procedures a type with the fileAssets capability generates beside the base ones
 interface FileAssetsResourceCaller {
@@ -102,9 +103,9 @@ interface PublishableResourceCaller<TContent> {
   readResourceViewCount: (input: { id: string }) => Promise<number>;
   unpublishResource: (input: { id: string }) => Promise<ResourcePublicationInResource | undefined>;
 }
-// The procedures every type's factory generates, over that type's content. The content is the one thing a type narrows, so the
-// Caller is generic in it: a save takes the content the type holds, and a read answers it. Each type's router is checked against
-// This shape at its own entry in the caller map, so a procedure a router renames or drops fails there
+// The procedures every type's factory generates, over that type's content. The content is the one thing a type narrows,
+// So the Caller is generic in it: a save takes the content the type holds, and a read answers it. Each type's router is
+// Checked against This shape at its own entry in the caller map, so a procedure a router renames or drops fails there
 interface ResourceCaller<TContent> {
   createResource: (input: { name: string }) => Promise<ResourceInResource>;
   deleteResource: (input: { id: string }) => Promise<ResourceInResource>;
@@ -155,8 +156,9 @@ describe(createResourceProcedures, () => {
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     return newResource;
   };
-  // Each type's caller, made by its own router over the mock context once its row runs. Each entry is checked at its own
-  // Router against the procedures its capabilities generate, so a router that renames or drops one fails at that entry
+  // Each type's caller, made by its own router over the mock context once its row runs. Each entry is checked at its
+  // Own Router against the procedures its capabilities generate, so a router that renames or drops one fails at that
+  // Entry
   const resourceTypeCallerMap = {
     [ResourceType.Blueprint]: () =>
       createCallerFactory(blueprintRouter)(mockContext) satisfies ResourceTypeCaller<typeof ResourceType.Blueprint>,
@@ -183,8 +185,8 @@ describe(createResourceProcedures, () => {
     [ResourceType.Whiteboard]: () =>
       createCallerFactory(whiteboardRouter)(mockContext) satisfies FileAssetsCaller<typeof ResourceType.Whiteboard>,
   } satisfies { [TType in ResourceType]: () => ResourceTypeCaller<TType> };
-  // The starting content each type's editor saves on first use. A model's own default where its store builds the model from
-  // Its constructor, and the factory its store starts from everywhere else
+  // The starting content each type's editor saves on first use. A model's own default where its store builds the model
+  // From Its constructor, and the factory its store starts from everywhere else
   const resourceTypeCreateContentMap = {
     [ResourceType.Blueprint]: createEmptyBlueprint,
     [ResourceType.Dashboard]: () => new Dashboard(),
@@ -197,8 +199,8 @@ describe(createResourceProcedures, () => {
     [ResourceType.Webpage]: () => new WebpageEditor(),
     [ResourceType.Whiteboard]: createEmptyWhiteboard,
   } satisfies { [TType in ResourceType]: () => ResourceContent<TType> };
-  // The content each type's delta test changes its starting content to: the one field that makes it differ, built through
-  // The type's own factory or constructor, and valid under its content schema
+  // The content each type's delta test changes its starting content to: the one field that makes it differ, built
+  // Through The type's own factory or constructor, and valid under its content schema
   const resourceTypeChangedContentMap = {
     [ResourceType.Blueprint]: () => ({
       ...createEmptyBlueprint(),
@@ -242,8 +244,8 @@ describe(createResourceProcedures, () => {
       ],
     }),
   } satisfies { [TType in ResourceType]: () => ResourceContent<TType> };
-  // Uploads a staged save the way the client does — through the write target its presigned url query reserves — and hands
-  // Back the hash its commit names
+  // Uploads a staged save the way the client does — through the write target its presigned url query reserves — and
+  // Hands Back the hash its commit names
   const stageContent = async (
     stagingCaller: Pick<ResourceCaller<ResourceContent<ResourceType>>, "generateUploadContentPresignedUrl">,
     id: string,
@@ -254,9 +256,9 @@ describe(createResourceProcedures, () => {
     return createHash("sha256").update(compressedContent).digest("hex");
   };
 
-  // Routes the bucket's `head` through `head` and every other call to the store, for the one call a race has to land between.
-  // A spy on the bucket's own method does not reach the call, so the bucket the procedure reads is replaced for the test
-  // The commit reads only a staged object's etag and size, so an intercepted measurement names those two
+  // Routes the bucket's `head` through `head` and every other call to the store, for the one call a race has to land
+  // Between. A spy on the bucket's own method does not reach the call, so the bucket the procedure reads is replaced
+  // For the test The commit reads only a staged object's etag and size, so an intercepted measurement names those two
   const interceptHead = (head: (blobName: string) => Promise<null | Pick<R2Object, "etag" | "size">>) => {
     mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
       get: (target, property: keyof R2Bucket) => {
@@ -267,7 +269,8 @@ describe(createResourceProcedures, () => {
     });
   };
 
-  // Routes the bucket's `put` through `afterPut`, which runs once the object is stored: the one call a race has to land after
+  // Routes the bucket's `put` through `afterPut`, which runs once the object is stored: the one call a race has to land
+  // After
   const interceptPut = (afterPut: () => Promise<void>) => {
     mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
       get: (target, property: keyof R2Bucket) => {
@@ -687,8 +690,8 @@ describe(createResourceProcedures, () => {
     ).resolves.toStrictEqual([]);
   });
 
-  // An unpublish keeps the publication as a tombstone at the version its removal left, so a client still holding the live
-  // Publication loses to the removal, and a republish revives the same row at the next version
+  // An unpublish keeps the publication as a tombstone at the version its removal left, so a client still holding the
+  // Live Publication loses to the removal, and a republish revives the same row at the next version
   test("a removed publication is a tombstone that a republish revives at a higher version", async () => {
     expect.hasAssertions();
 
@@ -759,8 +762,8 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await createSavedResource();
-    // The delete lands once the publish has passed its owner guard and stored its object, and before the batch that writes
-    // The publication: the window a delete from another request can take
+    // The delete lands once the publish has passed its owner guard and stored its object, and before the batch that
+    // Writes The publication: the window a delete from another request can take
     interceptPut(async () => {
       await softDeleteResources(mockContext.db, eq(resourcesInResource.id, newResource.id));
     });
@@ -791,11 +794,13 @@ describe(createResourceProcedures, () => {
 
     // View counting rides the publishable capability, so it is gated by the same seam
     const publishProcedures = new Set(PublishProcedureNames);
-    // Sheet has commands of its own beside the generic matrix, so this also checks that none of them is a publish procedure
+    // Sheet has commands of its own beside the generic matrix, so this also checks that none of them is a publish
+    // Procedure
     expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(publishProcedures);
   });
 
-  // A public read's view is written before the read returns, so the owner's count, which the owner read before it, is woken
+  // A public read's view is written before the read returns, so the owner's count, which the owner read before it, is
+  // Woken
   test("a public read's view is in the owner's count once the read returns", async () => {
     expect.hasAssertions();
 
@@ -909,7 +914,8 @@ describe(createResourceProcedures, () => {
     ]);
   });
 
-  // An svg can carry script, so no image a survey takes may be one, and the upload refuses it before a write url is signed
+  // An svg can carry script, so no image a survey takes may be one, and the upload refuses it before a write url is
+  // Signed
   test("fails generate upload file presigned url entities with an svg image on a survey", async () => {
     expect.hasAssertions();
 
@@ -925,7 +931,8 @@ describe(createResourceProcedures, () => {
     );
   });
 
-  // The same refusal on a webpage, whose list holds its videos beside its images, so the svg is refused against the images alone
+  // The same refusal on a webpage, whose list holds its videos beside its images, so the svg is refused against the
+  // Images alone
   test("fails generate upload file presigned url entities with an svg image on a webpage", async () => {
     expect.hasAssertions();
 
@@ -1055,9 +1062,9 @@ describe(createResourceProcedures, () => {
     expect(nonFileAssetsProcedures.difference(fileAssetsProcedures)).toStrictEqual(new Set());
   });
 
-  // One type's row of the generic procedures every type's factory generates, run through that type's own caller. The row's
-  // Type is a literal, so its caller and content are that type's own: a save takes the type's content, which no row widens
-  // To the union of every type's content, as a single shared caller would have to accept
+  // One type's row of the generic procedures every type's factory generates, run through that type's own caller. The
+  // Row's Type is a literal, so its caller and content are that type's own: a save takes the type's content, which no
+  // Row widens To the union of every type's content, as a single shared caller would have to accept
   const createResourceTypeRow = <TType extends ResourceType>(
     type: TType,
     createCaller: () => ResourceTypeCaller<TType>,
@@ -1282,8 +1289,8 @@ describe(createResourceProcedures, () => {
     type,
   });
 
-  // Each type's row, built from its literal so the row's caller and content are that type's own. The map's satisfies fails at
-  // A type it leaves out, so a type cannot drop out of the matrix unnoticed
+  // Each type's row, built from its literal so the row's caller and content are that type's own. The map's satisfies
+  // Fails at A type it leaves out, so a type cannot drop out of the matrix unnoticed
   const resourceTypeRowMap = {
     [ResourceType.Blueprint]: createResourceTypeRow(
       ResourceType.Blueprint,

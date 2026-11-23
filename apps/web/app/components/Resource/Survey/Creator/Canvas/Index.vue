@@ -8,19 +8,22 @@ import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { checkIsBlankText } from "@esposter/shared";
 import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
-// The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over its
-// Elements, a page and every element is chosen by a click or Enter, and the chosen one takes an accent line inside its edge
+// The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over
+// Its Elements, a page and every element is chosen by a click or Enter, and the chosen one takes an accent line inside
+// Its edge
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { getSelectionBindings } = useSurveyCanvasSelection();
 const { draggedType, dragPoint, registerSlots } = useSurveyCreatorDrag();
 const { insertNodeAt, updateNodeProps } = useSurveyCreatorCommands();
 const canvas = useTemplateRef("canvas");
-// A drag reads the boxes once, as it starts, from the rendered DOM. The canvas registers the measuring while it is mounted
+// A drag reads the boxes once, as it starts, from the rendered DOM. The canvas registers the measuring while it is
+// Mounted
 registerSlots(() => getSurveyDropSlots(canvas.value ?? undefined, surveyDocument.value));
 const getPagePointer = (pageIndex: number) => `/content/${pageIndex}`;
 const getSlotPointer = (pageIndex: number) => `${getPagePointer(pageIndex)}/props/children`;
-// The ellipsis beside a page's add control offers the kinds a question can be added as, each inserted at the end of that page
+// The ellipsis beside a page's add control offers the kinds a question can be added as, each inserted at the end of
+// That page
 const getKindItems = (pageIndex: number, childrenCount: number) =>
   getSurveyKindItems(SURVEY_ANSWERING_PALETTE_TYPES, (type) => {
     insertNodeAt(type, getSlotPointer(pageIndex), childrenCount);

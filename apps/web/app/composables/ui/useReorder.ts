@@ -22,7 +22,8 @@ export const useReorder = () => {
     } else announcement.value = message;
   };
   // A key's move of one value within its group: the new order goes to onReorder and is read out, and focus goes back to
-  // The value once it is drawn in its new place, since a moved element loses focus on the way. Undefined when no key moved it
+  // The value once it is drawn in its new place, since a moved element loses focus on the way. Undefined when no key
+  // Moved it
   const reorderByKey = <T>(
     event: KeyboardEvent,
     values: T[],

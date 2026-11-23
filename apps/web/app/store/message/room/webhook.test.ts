@@ -55,7 +55,8 @@ describe(useWebhookStore, () => {
     ]);
   });
 
-  // The list is the room's live webhooks, newest first, and a deleted one is held as a tombstone that the list leaves out
+  // The list is the room's live webhooks, newest first, and a deleted one is held as a tombstone that the list leaves
+  // Out
   test("lists the room's live webhooks newest first, and leaves out a tombstone", async () => {
     expect.hasAssertions();
 

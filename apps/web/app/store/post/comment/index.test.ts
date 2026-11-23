@@ -52,8 +52,8 @@ describe(useCommentStore, () => {
     expect(takeOne(branchComments.value).description).toBe(newDescription);
   });
 
-  // Two edits of one comment are written to its row in issue order, so a refused edit drops its own entry and leaves the
-  // Row at the edit the server kept
+  // Two edits of one comment are written to its row in issue order, so a refused edit drops its own entry and leaves
+  // The Row at the edit the server kept
   test("leaves the branch on the edit the server kept when a later edit is refused", async () => {
     expect.hasAssertions();
 
@@ -107,8 +107,8 @@ describe(useCommentStore, () => {
     expect(takeOne(branchComments.value).id).toBe(comment.id);
   });
 
-  // A delete cascades, so the rows beneath the one removed are gone server-side whether or not anybody had expanded them.
-  // A store that dropped the row alone would leave its replies rendering under a parent that is not there
+  // A delete cascades, so the rows beneath the one removed are gone server-side whether or not anybody had expanded
+  // Them. A store that dropped the row alone would leave its replies rendering under a parent that is not there
   test("drops every loaded reply beneath a deleted comment", async () => {
     expect.hasAssertions();
 
@@ -217,8 +217,8 @@ describe(useCommentStore, () => {
     expect(takeOne(items.value).id).toBe(postId);
   });
 
-  // A count is held at the version it was read at, so an edit answered at an older version does not put back the count a
-  // Newer read already holds
+  // A count is held at the version it was read at, so an edit answered at an older version does not put back the count
+  // A Newer read already holds
   test("keeps a count a newer read holds over an edit's older answer", async () => {
     expect.hasAssertions();
 

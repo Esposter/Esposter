@@ -36,7 +36,8 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
   let etag: string | undefined;
   // T defaults to TState when toSave is omitted, which TypeScript cannot follow — the single `as never` is the
   // Centralized cost
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- without toSave the caller's T is TState, a relation the function's own generics do not state
+  // Without toSave the caller's T is TState,
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a relation the function's own generics do not state
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));
   // Snapshot of the last persisted state — save() skips the API call/localStorage write when nothing changed
   let lastSavedJson = getSnapshotJson(getSaveValue());

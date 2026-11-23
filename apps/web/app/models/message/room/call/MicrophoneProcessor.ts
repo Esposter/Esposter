@@ -96,7 +96,8 @@ export class MicrophoneProcessor {
       isPushToTalkKeyHeld: this.#isPushToTalkKeyHeld,
       microphoneVolumePercentage: this.#microphoneVolumePercentage,
     } satisfies MicrophoneGateSettings;
-    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a MessagePort's postMessage takes no origin
+    // A
+    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- MessagePort's postMessage takes no origin
     this.#processor?.port.postMessage(settings);
   }
 }

@@ -2,7 +2,8 @@ import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 
-// The contrast a text must reach against its background, the WCAG normal-text threshold, held for every text in this version
+// The contrast a text must reach against its background, the WCAG normal-text threshold, held for every text in this
+// Version
 export const MIN_TEXT_CONTRAST_RATIO = 4.5;
 // The ratio is rounded to ten decimal places, so floating-point error cannot move an exact 4.5 under the threshold
 export const CONTRAST_RATIO_SCALE = 1e10;

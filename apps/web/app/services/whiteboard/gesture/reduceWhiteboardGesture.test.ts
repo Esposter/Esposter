@@ -169,7 +169,8 @@ describe(reduceWhiteboardGesture, () => {
   test("a dragged element snaps its edge to a neighbour's edge", () => {
     expect.hasAssertions();
 
-    // The neighbour's left edge is 3 units left of the shape's left edge, and the pointer takes the shape 6 units right of its press
+    // The neighbour's left edge is 3 units left of the shape's left edge, and the pointer takes the shape 6 units right
+    // Of its press
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 103, y: 300 });
     const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
@@ -184,7 +185,8 @@ describe(reduceWhiteboardGesture, () => {
   test("an element outside the snap distance does not snap", () => {
     expect.hasAssertions();
 
-    // The neighbour's left edge is 7 units right of the shape's left edge once the pointer has moved it by 5, past the snap distance
+    // The neighbour's left edge is 7 units right of the shape's left edge once the pointer has moved it by 5, past the
+    // Snap distance
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 20, x: 112, y: 300 });
     const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
@@ -199,7 +201,8 @@ describe(reduceWhiteboardGesture, () => {
   test("a dragged element snaps its centre to a neighbour's edge midpoint", () => {
     expect.hasAssertions();
 
-    // The neighbour's bottom edge midpoint is (250, 260). The shape's centre is pointed 2 units short of it on each axis, so it snaps onto it
+    // The neighbour's bottom edge midpoint is (250, 260). The shape's centre is pointed 2 units short of it on each
+    // Axis, so it snaps onto it
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 100, x: 200, y: 220 });
     const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
@@ -214,7 +217,8 @@ describe(reduceWhiteboardGesture, () => {
   test("holding Alt places the element exactly where the pointer is", () => {
     expect.hasAssertions();
 
-    // The same neighbour as the edge snap, with Alt held through the move and the release, so the shape lands 6 units right of its press
+    // The same neighbour as the edge snap, with Alt held through the move and the release, so the shape lands 6 units
+    // Right of its press
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 103, y: 300 });
     const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
@@ -235,7 +239,8 @@ describe(reduceWhiteboardGesture, () => {
   test("the snap distance is held in screen pixels, so a zoomed-in drag snaps less far in document units", () => {
     expect.hasAssertions();
 
-    // At twice the scale a document unit is two screen pixels, so the neighbour's edge 4 units away is 8 screen pixels off, past the snap distance
+    // At twice the scale a document unit is two screen pixels, so the neighbour's edge 4 units away is 8 screen pixels
+    // Off, past the snap distance
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 102, y: 300 });
     const state = createState(
@@ -253,7 +258,8 @@ describe(reduceWhiteboardGesture, () => {
   test("a guide shows while the drag holds an alignment and clears at its end", () => {
     expect.hasAssertions();
 
-    // The shape's left edge snaps onto the neighbour's, so the guide runs down that edge from the shape's top to the neighbour's bottom
+    // The shape's left edge snaps onto the neighbour's, so the guide runs down that edge from the shape's top to the
+    // Neighbour's bottom
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 103, y: 300 });
     const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
@@ -381,7 +387,8 @@ describe(reduceWhiteboardGesture, () => {
   test("space and a drag pan", () => {
     expect.hasAssertions();
 
-    // The press lands on the process, which a Select drag would move. With Space held the same drag pans the view and leaves the document alone
+    // The press lands on the process, which a Select drag would move. With Space held the same drag pans the view and
+    // Leaves the document alone
     const document: PositionedDocument = { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] };
     const state = createState(document, { isSpaceHeld: true });
 
@@ -575,8 +582,8 @@ describe(reduceWhiteboardGesture, () => {
   test("a press on the handle of several shapes scales each of them in one edit", () => {
     expect.hasAssertions();
 
-    // The two shapes cover (100, 100) to (300, 150), so the bottom-right handle is at (300, 150). A drag of (100, 50) scales the width by one and a
-    // Half and the height by two, each shape about the top-left corner
+    // The two shapes cover (100, 100) to (300, 150), so the bottom-right handle is at (300, 150). A drag of (100, 50)
+    // Scales the width by one and a Half and the height by two, each shape about the top-left corner
     const firstShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const secondShape = createProcess(SECOND_PROCESS_ID, { height: 50, width: 50, x: 250, y: 100 });
     const state = createState(
@@ -676,7 +683,8 @@ describe(reduceWhiteboardGesture, () => {
       createPointer(GesturePointerAction.Up, { x: 200, y: 155 }, false, true),
     );
 
-    // The shape's copy moves to (150, 130), so its right connection point moves to (250, 155), where the arrow copy's start is rerouted
+    // The shape's copy moves to (150, 130), so its right connection point moves to (250, 155), where the arrow copy's
+    // Start is rerouted
     expect(up.state.document).toStrictEqual({
       elements: [
         processShape,
@@ -970,7 +978,8 @@ describe(reduceWhiteboardGesture, () => {
     };
     const state = createState({ elements: [processShape, arrow] }, { selectedIds: [NEW_ARROW_ID] });
 
-    // A press on a bound end's point finds no handle, so it is a press on the arrow itself, and the handle the press did not find is no end drag
+    // A press on a bound end's point finds no handle, so it is a press on the arrow itself, and the handle the press
+    // Did not find is no end drag
     const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 50 }));
 
     expect(down.state.gesture).toHaveProperty("elementId", NEW_ARROW_ID);
@@ -984,7 +993,8 @@ describe(reduceWhiteboardGesture, () => {
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const state = createState({ elements: [processShape] }, { selectedIds: [PROCESS_ID] });
 
-    // A press on the bottom connection point, which sits a gap beyond the shape's frame, is taken as a connection gesture
+    // A press on the bottom connection point, which sits a gap beyond the shape's frame, is taken as a connection
+    // Gesture
     const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
 
     expect(down.state.gesture).toHaveProperty("connectionIndex", 2);
@@ -998,7 +1008,8 @@ describe(reduceWhiteboardGesture, () => {
     const annotation: ShapeElement = { ...createProcess(ANNOTATION_ID, PROCESS_BOUNDS), kind: ShapeKind.Annotation };
     const state = createState({ elements: [annotation] }, { selectedIds: [ANNOTATION_ID] });
 
-    // The annotation takes no connection, so a press where its bottom handle would sit is a press on the annotation itself
+    // The annotation takes no connection, so a press where its bottom handle would sit is a press on the annotation
+    // Itself
     const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
 
     expect(down.state.gesture).toHaveProperty("phase", GesturePhase.Pressed);
@@ -1013,7 +1024,8 @@ describe(reduceWhiteboardGesture, () => {
       { createId: createIdsInOrder([NEW_ARROW_ID, PLACED_SHAPE_ID]), selectedIds: [PROCESS_ID] },
     );
 
-    // The bottom handle of the process is dragged to an empty point and released, so a process is added there, joined by an arrow
+    // The bottom handle of the process is dragged to an empty point and released, so a process is added there, joined
+    // By an arrow
     const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
     const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 150, y: 300 }));
     const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 150, y: 300 }));
@@ -1048,7 +1060,8 @@ describe(reduceWhiteboardGesture, () => {
       { createId: () => NEW_ARROW_ID, selectedIds: [PROCESS_ID] },
     );
 
-    // The bottom handle is released on the decision, whose top connection point is the nearest one the release lands near
+    // The bottom handle is released on the decision, whose top connection point is the nearest one the release lands
+    // Near
     const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
     const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 150, y: 320 }));
     const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 150, y: 320 }));

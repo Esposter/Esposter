@@ -38,7 +38,8 @@ const onReorder = (keys: string[]) => {
 <template>
   <ResourceSurveyFieldShell :error :question="node.props">
     <template #default="{ describedBy, labelledBy, title }">
-      <!-- The rows are the choices in their order, each marked with its place; Alt and an arrow moves the focused one -->
+      <!-- The rows are the choices in their order, each marked with its place; Alt and an arrow moves the focused
+        one -->
       <UiList
         :aria-describedby="describedBy"
         :aria-labelledby="labelledBy"

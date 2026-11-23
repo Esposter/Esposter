@@ -3,7 +3,8 @@ import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-// The type tags a schema accepts, read from its structure: a lazy's target, an array's element, a union's options and a node's literal type
+// The type tags a schema accepts, read from its structure: a lazy's target, an array's element, a union's options and a
+// Node's literal type
 const getAcceptedTypes = (schema: unknown): string[] => {
   if (schema instanceof z.ZodLazy) return getAcceptedTypes(schema.unwrap());
   if (schema instanceof z.ZodArray) return getAcceptedTypes(schema.element);

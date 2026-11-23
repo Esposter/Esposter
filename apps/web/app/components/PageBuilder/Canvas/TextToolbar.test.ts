@@ -6,7 +6,8 @@ import { Editor } from "@tiptap/core";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, onTestFinished, test } from "vitest";
 
-// The buttons that act on a selection are enabled only while the editor is focused, so the editor's element is in the document
+// The buttons that act on a selection are enabled only while the editor is focused, so the editor's element is in the
+// Document
 const createFocusedEditor = (content: string, selection: { from: number; to: number } | number) => {
   const element = window.document.createElement("div");
   window.document.body.append(element);

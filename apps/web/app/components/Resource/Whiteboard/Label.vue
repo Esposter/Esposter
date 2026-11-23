@@ -8,7 +8,8 @@ import { getPositionedElementText, getTextLayout, getTextPlacement, TEXT_FONT_FA
 interface Props {
   element: PositionedElement;
 }
-// The text of an element, drawn as the export draws it, at the size and alignment the element sets. It is left out while the element is edited in place, so the editor over it is the only copy
+// The text of an element, drawn as the export draws it, at the size and alignment the element sets. It is left out
+// While the element is edited in place, so the editor over it is the only copy
 
 const { element } = defineProps<Props>();
 const whiteboardEditorStore = useWhiteboardEditorStore();
@@ -17,7 +18,8 @@ const placement = computed(() => getTextPlacement(element));
 const labelText = computed(() => getPositionedElementText(element));
 // The label takes its element's colour, or the page's text colour when the element has none
 const labelColor = computed(() => getElementStrokeAttributes(element).stroke);
-// The layout the export sets this text out with, so the editor and the export wrap a label at the same words and put it on the same baseline and line steps
+// The layout the export sets this text out with, so the editor and the export wrap a label at the same words and put it
+// On the same baseline and line steps
 const layout = computed(() =>
   placement.value && labelText.value ? getTextLayout(labelText.value, placement.value) : undefined,
 );

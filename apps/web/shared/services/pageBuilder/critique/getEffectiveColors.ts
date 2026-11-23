@@ -7,7 +7,8 @@ import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { getEffectiveColor } from "#shared/services/pageBuilder/critique/getEffectiveColor";
 import { getNodeStyle } from "#shared/services/pageBuilder/critique/getNodeStyle";
 
-// The colours a node is drawn in at the desktop breakpoint, where its own text colour and background override what it inherits
+// The colours a node is drawn in at the desktop breakpoint, where its own text colour and background override what it
+// Inherits
 export const getEffectiveColors = (
   node: WebpageNode,
   inherited: EffectiveColors,

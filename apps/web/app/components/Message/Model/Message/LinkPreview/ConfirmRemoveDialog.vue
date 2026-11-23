@@ -13,7 +13,8 @@ const { isOpen, item: message } = useSingletonDialog(removingMessageId, () =>
 </script>
 
 <template>
-  <!-- The embed leaves the message once the room answers the removal, and a refused removal leaves it under the alert -->
+  <!-- The embed leaves the message once the room answers the removal, and a refused removal leaves it under the
+    alert -->
   <UiConfirmDialog
     v-if="message"
     v-model="isOpen"

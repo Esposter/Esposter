@@ -12,7 +12,8 @@ export interface GesturePressed {
   isAdditive: boolean;
   // The press's document point, which a move or a resize is measured from
   origin: Point;
-  // The copy id of each element the press selects, when Alt was held on an element: a drag that starts from it copies the selection instead
+  // The copy id of each element the press selects, when Alt was held on an element: a drag that starts from it copies
+  // The selection instead
   originalIdCopyIdMap?: Record<string, string> | undefined;
   phase: typeof GesturePhase.Pressed;
   pointerId: number;

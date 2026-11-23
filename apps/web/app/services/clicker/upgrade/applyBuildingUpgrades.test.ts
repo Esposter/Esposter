@@ -7,7 +7,8 @@ import { createUpgrade } from "#src/services/clicker/upgrade/createUpgrade.test"
 import { describe, expect, test } from "vitest";
 
 describe(applyBuildingUpgrades, () => {
-  // Each owned building adds its own upgraded power to the base, so the upgraded building's and the plain one's both count
+  // Each owned building adds its own upgraded power to the base, so the upgraded building's and the plain one's both
+  // Count
   test("adds each owned building's upgraded power onto the base", () => {
     expect.hasAssertions();
 

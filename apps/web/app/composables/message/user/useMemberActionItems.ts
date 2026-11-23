@@ -99,8 +99,8 @@ export const useMemberActionItems = (
       checkHasPermission(manageablePermissions.value.permissions, permission, manageablePermissions.value.isRoomOwner),
     );
   const isKickable = computed(() => checkHasManageablePermission(RoomPermission.KickMembers));
-  // The display name leads, since it is the one action here that punishes no one. The rest run mildest first, as Discord
-  // Orders them: a note, a warning, a timeout, then the three that remove the member
+  // The display name leads, since it is the one action here that punishes no one. The rest run mildest first, as
+  // Discord Orders them: a note, a warning, a timeout, then the three that remove the member
   const moderationItems = computed(() => {
     const noteCount = getModerationNoteCount(toValue(user).id);
     const items: Item[] = [

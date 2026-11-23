@@ -30,7 +30,8 @@ import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
-// A direct message the viewer and one other member share, which the viewer's sidebar lists unless the viewer has hidden it
+// A direct message the viewer and one other member share, which the viewer's sidebar lists unless the viewer has hidden
+// It
 const createSharedDirectMessage = async (
   context: Awaited<ReturnType<typeof createMockContext>>,
   { isHidden = false }: { isHidden?: boolean } = {},
@@ -96,7 +97,8 @@ const getRecordedWokenTopics = async (
 
 describe("topicMatch", () => {
   // A read's read set names every table its SQL reads. A table the walker misses is one the read never watches, and no
-  // Test of a single read's rows would show it, so the five reads the golden read sets pin are checked against their SQL
+  // Test of a single read's rows would show it, so the five reads the golden read sets pin are checked against their
+  // SQL
   test("every table a read's SQL names is one its read set names, for each of the five reads", async () => {
     expect.hasAssertions();
 
@@ -144,8 +146,8 @@ describe("topicMatch", () => {
     expect(uncoveredTables).toStrictEqual([]);
   });
 
-  // The dock reads a bookmarked resource's owner, type and recycle-bin state through a join, never its name, so a rename of
-  // The resource changes no column the dock reads and wakes it through no topic
+  // The dock reads a bookmarked resource's owner, type and recycle-bin state through a join, never its name, so a
+  // Rename of The resource changes no column the dock reads and wakes it through no topic
   test("a rename of a bookmarked resource wakes no one, since the bookmark dock does not read the resource's name", async () => {
     expect.hasAssertions();
 
@@ -167,8 +169,8 @@ describe("topicMatch", () => {
     await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([]);
   });
 
-  // The dock reads the viewer's own memberships of the rooms it bookmarks, by their room and their user. Removing one is a
-  // Row-set change, which wakes the dock whichever columns it reads
+  // The dock reads the viewer's own memberships of the rooms it bookmarks, by their room and their user. Removing one
+  // Is a Row-set change, which wakes the dock whichever columns it reads
   test("the viewer leaving a room the bookmark dock reads wakes the dock through the viewer's membership", async () => {
     expect.hasAssertions();
 
@@ -264,8 +266,8 @@ describe("topicMatch", () => {
     ]);
   });
 
-  // The sidebar names the memberships of each room it lists by that room, so another member joining a listed room wakes the
-  // Sidebar through that room's topic, not the memberships table's
+  // The sidebar names the memberships of each room it lists by that room, so another member joining a listed room wakes
+  // The Sidebar through that room's topic, not the memberships table's
   test("another member joining a room the viewer lists wakes the sidebar through that room's topic", async () => {
     expect.hasAssertions();
 
@@ -287,8 +289,9 @@ describe("topicMatch", () => {
     ]);
   });
 
-  // A direct message the viewer has hidden is not in the sidebar. Unhiding it is a write to the viewer's own membership, which
-  // Wakes the sidebar through the viewer's scope, and the sidebar's refetch names the participants of the room it now shows
+  // A direct message the viewer has hidden is not in the sidebar. Unhiding it is a write to the viewer's own
+  // Membership, which Wakes the sidebar through the viewer's scope, and the sidebar's refetch names the participants of
+  // The room it now shows
   test("unhiding a direct message wakes the sidebar, and its refetch names that room's participants", async () => {
     expect.hasAssertions();
 
@@ -318,9 +321,9 @@ describe("topicMatch", () => {
     expect(refetchTopics).not.toContain("message_usersToRooms:*");
   });
 
-  // The read inner-joins the memberships, so it returns the rooms that have a member and names the memberships by those rooms.
-  // A room with no member yet gains its first, a membership of a value the read does not return, so only the memberships'
-  // Own table topic reaches the read
+  // The read inner-joins the memberships, so it returns the rooms that have a member and names the memberships by those
+  // Rooms. A room with no member yet gains its first, a membership of a value the read does not return, so only the
+  // Memberships' Own table topic reaches the read
   test("a room gaining its first member wakes a read that inner-joins the memberships", async () => {
     expect.hasAssertions();
 
@@ -349,9 +352,9 @@ describe("topicMatch", () => {
     await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
-  // The read filters the memberships to the ones not hidden, so it returns the rooms whose membership is visible and names
-  // Them by those rooms. Unhiding a hidden membership brings its room back, a value the read does not return, so only the
-  // Memberships' own table topic reaches the read
+  // The read filters the memberships to the ones not hidden, so it returns the rooms whose membership is visible and
+  // Names Them by those rooms. Unhiding a hidden membership brings its room back, a value the read does not return, so
+  // Only the Memberships' own table topic reaches the read
   test("unhiding a membership wakes a read that filters the memberships by it", async () => {
     expect.hasAssertions();
 
@@ -383,8 +386,9 @@ describe("topicMatch", () => {
     await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
-  // The sidebar names the viewer's membership of each room it lists by that room, so a member joining or leaving it wakes the
-  // Sidebar through the room's scope topic, and a participant's name is one of its display names, so a rename wakes it too
+  // The sidebar names the viewer's membership of each room it lists by that room, so a member joining or leaving it
+  // Wakes the Sidebar through the room's scope topic, and a participant's name is one of its display names, so a rename
+  // Wakes it too
   test("a member joining a shared direct message wakes the sidebar through the room it lists", async () => {
     expect.hasAssertions();
 
@@ -420,8 +424,8 @@ describe("topicMatch", () => {
     ]);
   });
 
-  // The sidebar reads a membership's display name and its visibility, not its last read time, so another member's last-read
-  // Update names a column no sidebar read holds, and wakes no sidebar through the room's topic
+  // The sidebar reads a membership's display name and its visibility, not its last read time, so another member's
+  // `last-read` Update names a column no sidebar read holds, and wakes no sidebar through the room's topic
   test("another member's last-read update wakes no sidebar that lists the room", async () => {
     expect.hasAssertions();
 
@@ -438,8 +442,8 @@ describe("topicMatch", () => {
     await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([]);
   });
 
-  // The sidebar shows each participant by the display name the membership holds, so another member renaming it wakes the
-  // Sidebar through the room's topic that names the membership
+  // The sidebar shows each participant by the display name the membership holds, so another member renaming it wakes
+  // The Sidebar through the room's topic that names the membership
   test("another member's display-name update wakes the sidebar through the room it lists", async () => {
     expect.hasAssertions();
 

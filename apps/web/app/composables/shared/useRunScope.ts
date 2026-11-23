@@ -2,11 +2,11 @@ import type { Promisable } from "type-fest";
 
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
-// The run scope of local work that has no version. A new run aborts the run before it of its own key, and only the newest
-// Run of a key commits its result. A run that names no key is one run of the scope. The task receives the signal for its
-// Own awaits and never checks it: a superseded run applies nothing, and its result goes to `release` instead, so what the
-// Task built for it is let go, as a scope that is torn down does too. A commit that is still applying holds the scope's
-// Next commit until it settles, so two commits of one scope never overlap
+// The run scope of local work that has no version. A new run aborts the run before it of its own key, and only the
+// Newest Run of a key commits its result. A run that names no key is one run of the scope. The task receives the signal
+// For its Own awaits and never checks it: a superseded run applies nothing, and its result goes to `release` instead,
+// So what the Task built for it is let go, as a scope that is torn down does too. A commit that is still applying holds
+// The scope's Next commit until it settles, so two commits of one scope never overlap
 export const useRunScope = () => {
   // The run each key is on. A run leaves the map once it settles, so the map holds only the keys with a run in flight
   const currentRunMap = new Map<PropertyKey | undefined, AbortController>();

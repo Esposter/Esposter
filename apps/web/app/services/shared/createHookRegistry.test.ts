@@ -47,7 +47,8 @@ describe(createHookRegistry, () => {
     expect(hook).not.toHaveBeenCalled();
   });
 
-  // Unregistering twice must leave the other hooks alone: with the index missing, `splice(-1, 1)` would drop the last one
+  // Unregistering twice must leave the other hooks alone: with the index missing, `splice(-1, 1)` would drop the last
+  // One
   test("unregisters only its own hook when called twice", async () => {
     expect.hasAssertions();
 

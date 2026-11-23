@@ -4,8 +4,8 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 import { getBookmarkTarget } from "#shared/services/bookmark/getBookmarkTarget";
 import { bookmarkTable } from "#src/services/bookmark/overlay/constants";
 
-// The bookmark a toggle makes is the row the entry writes: a live one for a page not bookmarked, the tombstone lifted for
-// A page whose removal the reader holds. The server's row confirms it
+// The bookmark a toggle makes is the row the entry writes: a live one for a page not bookmarked, the tombstone lifted
+// For A page whose removal the reader holds. The server's row confirms it
 export const getToggleBookmarkEntry =
   (userId: string, input: ToggleBookmarkInput, now: Date): Entry =>
   (view) => {

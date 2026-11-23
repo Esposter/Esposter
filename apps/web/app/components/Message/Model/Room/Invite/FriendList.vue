@@ -31,8 +31,8 @@ const recipients = computed(() =>
 );
 const recipientItems = computed(() => searchItems(recipients.value, searchQuery.value, ({ name }) => ({ name })));
 // Which friends are already members is read once the friends are, since a member row reads Joined and is disabled. With
-// No friends there is nobody to ask about, and the read would refuse an empty list. The read names a friend who has left
-// The room too, so membership is the `isMember` flag and not the row's presence
+// No friends there is nobody to ask about, and the read would refuse an empty list. The read names a friend who has
+// Left The room too, so membership is the `isMember` flag and not the row's presence
 const { data: roomUsers, refresh: readRoomUsers } = useQuery(
   () => $trpc.room.readUsersByIds.query({ roomId: room.id, userIds: friends.value.map(({ id }) => id) }),
   { isLazy: true },

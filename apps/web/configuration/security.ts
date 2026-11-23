@@ -57,15 +57,15 @@ export const security: NonNullable<NuxtConfig["security"]> = {
       "font-src": ["'self'", HOSTED_ASSET_ORIGIN],
       // Desmos
       "script-src": ["'unsafe-eval'"],
-      // An event handler attribute runs only when its hash is listed under 'unsafe-hashes', and the one handler allowed is
-      // `NuxtImg`'s error marker, so every other inline handler stays blocked
+      // An event handler attribute runs only when its hash is listed under 'unsafe-hashes', and the one handler allowed
+      // Is `NuxtImg`'s error marker, so every other inline handler stays blocked
       "script-src-attr": [
         "'unsafe-hashes'",
         `'sha256-${createHash("sha256").update(NUXT_IMAGE_ERROR_HANDLER).digest("base64")}'`,
       ],
       "script-src-elem": [
-        // Nuxt data hydration, and the inline scripts a published page's sandboxed srcdoc iframe carries, which inherits
-        // This policy and has no nonce of the response to carry
+        // Nuxt data hydration, and the inline scripts a published page's sandboxed srcdoc iframe carries, which
+        // Inherits This policy and has no nonce of the response to carry
         "'unsafe-inline'",
         // Nuxt vite client
         "'self'",

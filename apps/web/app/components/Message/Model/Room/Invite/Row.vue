@@ -50,8 +50,8 @@ const { countdown, isExpired } = useCountdown(() => invite.expiresAt);
       </UiItemContent>
     </div>
     <UiCopyButton :source="getInviteLink(runtimeConfig.public.baseUrl, invite.id)" :variant="UiButtonVariant.Quiet" />
-    <!-- Editing replaces the reader's own link, so it is only offered on the row that is theirs, and to a reader holding
-         ManageInvites, the permission the replacement is minted under -->
+    <!-- Editing replaces the reader's own link, so it is only offered on the row that is theirs, and to a reader
+      holding ManageInvites, the permission the replacement is minted under -->
     <MessageModelRoomInviteEditButton
       v-if="isCreator && checkHasMyPermission(roomId, RoomPermission.ManageInvites)"
       :room-id

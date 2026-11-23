@@ -69,11 +69,13 @@ export const useResourceStore = defineStore("resource", () => {
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const getResourceRouter = useResourceRouter();
   const { currentRoute } = useRouter();
-  // Leaving the deleted resource is fire-and-forget: the blade moves on at once and nothing waits for the route to settle
+  // Leaving the deleted resource is fire-and-forget: the blade moves on at once and nothing waits for the route to
+  // Settle
   const navigateToExplorer = getSynchronizedFunction(async () => {
     await navigateTo(RoutePath.ResourceExplorerAll);
   });
-  // The open resource is its id. Its row and its publication are held on the overlay, so the blade keeps no copy of either
+  // The open resource is its id. Its row and its publication are held on the overlay, so the blade keeps no copy of
+  // Either
   const resourceId = ref("");
   // The open resource's row. It is absent until its read lands
   const resource = computed(() => getHeldResource(resourceRows.value, resourceId.value));
@@ -89,12 +91,12 @@ export const useResourceStore = defineStore("resource", () => {
     const heldPublication = getHeldPublication(resourceId.value);
     return heldPublication?.deletedAt ? undefined : heldPublication;
   });
-  // A write is keyed by the resource it targets, not by whichever one the blade has open when it settles, so
-  // Everything it applies — an optimistic value, the server's row — lands only while that resource is still the loaded one.
+  // A write is keyed by the resource it targets, not by whichever one the blade has open when it settles, so Everything
+  // It applies — an optimistic value, the server's row — lands only while that resource is still the loaded one.
   // Applied to another, it would carry the first resource's fields into the second
   const checkIsLoaded = (id: string) => currentResourceId.value === id;
-  // The save in flight for each resource, with the settlement a caller waits on. Saves of one resource are ordered on the
-  // Overlay, so the settlement of the latest is the settlement of all of them
+  // The save in flight for each resource, with the settlement a caller waits on. Saves of one resource are ordered on
+  // The Overlay, so the settlement of the latest is the settlement of all of them
   const contentSaves = ref(new Map<string, Promise<void>>());
   const checkIsSavePending = (id: string) => contentSaves.value.has(id);
   const whenContentSaved = (id: string) => contentSaves.value.get(id) ?? Promise.resolve();
@@ -116,7 +118,8 @@ export const useResourceStore = defineStore("resource", () => {
   // Save would write that content under the fresh contentVersion. A refresh of the open resource is the same
   // Opening: its in-flight writes are still the ones on screen
   let opening = Symbol("opening");
-  // A late result is for the opening it was issued under, so the check it captures holds only while that opening is still open
+  // A late result is for the opening it was issued under, so the check it captures holds only while that opening is
+  // Still open
   const captureOpeningCheck = () => {
     const issuedUnder = opening;
     return () => opening === issuedUnder;
@@ -134,20 +137,21 @@ export const useResourceStore = defineStore("resource", () => {
   // Stored as. The open row names the hash of the content its latest write left, so a row that names this one names no
   // Content the store lacks
   let persistedContentHash: string | undefined;
-  // The version of each resource's content the opening confirmed: the one a read of its content was taken at, or the one a
-  // Save of that opening wrote. A save sends that version whether or not its resource is loaded, and never a row's version,
-  // Since a row another device moved on, or a Recent read brought, can be ahead of the content in hand. Held per opening, so
-  // A reopened read's version never reaches a save its own opening left queued
+  // The version of each resource's content the opening confirmed: the one a read of its content was taken at, or the
+  // One a Save of that opening wrote. A save sends that version whether or not its resource is loaded, and never a
+  // Row's version, Since a row another device moved on, or a Recent read brought, can be ahead of the content in hand.
+  // Held per opening, so A reopened read's version never reaches a save its own opening left queued
   let confirmedContentVersions = new Map<string, number>();
   // A new opening takes its own identity and no confirmed versions, so nothing the one before it issued reaches it
   const startOpening = () => {
     opening = Symbol("opening");
     confirmedContentVersions = new Map<string, number>();
   };
-  // Held while the resource is loaded or a save of it is queued, and dropped once neither holds, so the map does not grow
-  // Across the resources a session opens. The content in hand belongs to a resource only while its version is held, so
-  // Dropping the version drops that claim too: reopening the resource reads its content again rather than saving it without a version.
-  // A save queued past its opening keeps the map that opening held, which is why this drop never reaches it
+  // Held while the resource is loaded or a save of it is queued, and dropped once neither holds, so the map does not
+  // Grow Across the resources a session opens. The content in hand belongs to a resource only while its version is
+  // Held, so Dropping the version drops that claim too: reopening the resource reads its content again rather than
+  // Saving it without a version. A save queued past its opening keeps the map that opening held, which is why this drop
+  // Never reaches it
   const forgetConfirmedContentVersion = (id: string) => {
     if (checkIsLoaded(id) || checkIsSavePending(id)) return;
 
@@ -188,15 +192,15 @@ export const useResourceStore = defineStore("resource", () => {
   // Save are the same write. See openspec/specs/resource/resource-save-state/design.md
   const saveState = computed(() => {
     if (isContentStale.value) return ResourceSaveState.Stale;
-    // Asked of this resource rather than of every save: one issued before the blade moved on is still in flight, and read
-    // In aggregate it would show this resource saving work that belongs to another
+    // Asked of this resource rather than of every save: one issued before the blade moved on is still in flight, and
+    // Read In aggregate it would show this resource saving work that belongs to another
     else if (checkIsSavePending(currentResourceId.value) || hasUnwrittenContent.value) return ResourceSaveState.Saving;
     else if (isSaveContentFailed.value) return ResourceSaveState.Failed;
     else return ResourceSaveState.Saved;
   });
   // The block a row lands in, whichever read fetched it. A row that is not the one open starts a new opening, and takes
-  // The content state with it: a fresh row carries the current contentVersion, so saving is meaningful again, and what it
-  // Carries is by definition what is written
+  // The content state with it: a fresh row carries the current contentVersion, so saving is meaningful again, and what
+  // It Carries is by definition what is written
   const assignResource = (
     newResource: ResourceInResource,
     newFavorite: null | ResourceFavoriteInResource,
@@ -215,11 +219,12 @@ export const useResourceStore = defineStore("resource", () => {
     isSaveContentFailed.value = false;
   };
 
-  // The open resource's read, issued through the executor its caller holds. The route names what to read, and a route with
-  // No resource segment names nothing, since the empty sentinel would reach the server as a uuid that fails validation. The
-  // Answer applies only while the route still names that resource: reads for two resources are not one target, so a navigation
-  // Away can let the earlier one land last. The executor is the caller's, because a read's topic watch ends with the scope of
-  // The useMutation() instance that issued it, so the page's watched read ends with the page and the store's read holds none
+  // The open resource's read, issued through the executor its caller holds. The route names what to read, and a route
+  // With No resource segment names nothing, since the empty sentinel would reach the server as a uuid that fails
+  // Validation. The Answer applies only while the route still names that resource: reads for two resources are not one
+  // Target, so a navigation Away can let the earlier one land last. The executor is the caller's, because a read's
+  // Topic watch ends with the scope of The useMutation() instance that issued it, so the page's watched read ends with
+  // The page and the store's read holds none
   const readOpenResource = async (
     executeRead: ReturnType<typeof useMutation>["executeQuery"],
     {
@@ -265,7 +270,8 @@ export const useResourceStore = defineStore("resource", () => {
   const reloadKey = Symbol("reloadResource");
   const reloadResource = () =>
     readOpenResource(executeReloadQuery, {
-      // The store outlives the page, and the page's own read keeps the open row live, so this one-shot read holds no watch
+      // The store outlives the page, and the page's own read keeps the open row live, so this one-shot read holds no
+      // Watch
       isUnwatched: true,
       key: reloadKey,
       onRead: assignResource,
@@ -327,9 +333,9 @@ export const useResourceStore = defineStore("resource", () => {
     const { contentHash, contentSize, contentVersion, id, type } = resourceValue;
     const readOpening = opening;
     const resourceRouter = getResourceRouter(type);
-    // A read crosses the way a save of the same document would: through the server while one body carries it,
-    // Straight from R2 above that (openspec/specs/architecture/large-documents/design.md). The stored bytes are then the
-    // Delta baseline as well, so a session's first large save can already be a delta
+    // A read crosses the way a save of the same document would: through the server while one body carries it, Straight
+    // From R2 above that (openspec/specs/architecture/large-documents/design.md). The stored bytes are then the Delta
+    // Baseline as well, so a session's first large save can already be a delta
     await rethrowFailedRead(
       executeContentQuery(
         async () => {
@@ -339,24 +345,27 @@ export const useResourceStore = defineStore("resource", () => {
           const bytes = await readStoredResourceContent(resourceRouter, id);
           const storedContent: ContentBaseline = { bytes, hash: await getSha256Hex(bytes), id };
           const serializedContent = new TextDecoder().decode(bytes);
-          // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive
+          // The content schema
+          // oxlint-disable-next-line no-restricted-properties -- owns date coercion, so free-text ISO strings survive
           const content: unknown = ResourceDefinitionMap[type].contentSchema.parse(JSON.parse(serializedContent));
           return { content, storedContent };
         },
         {
           key: contentReadKey,
           onSuccess: ({ content, storedContent }) => {
-            // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a later
-            // Read of the same opening — holds content that is not the open blade's
+            // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a
+            // Later Read of the same opening — holds content that is not the open blade's
             if (opening !== readOpening) return;
 
             contentResourceId = id;
-            // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the hash behind
-            // The content, and the next refetch of the row reads it again rather than missing it
+            // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the
+            // Hash behind The content, and the next refetch of the row reads it again rather than missing it
             persistedContentHash = contentHash;
             confirmedContentVersions.set(id, contentVersion);
             if (storedContent) contentBaseline = storedContent;
-            // oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved
+            // The content read is the resource type TType the caller names, which the store's runtime type cannot carry
+            // To the compiler; the union of every type's content write takes the one argument each arm accepts,
+            // oxlint-disable typescript/no-unsafe-type-assertion -- so the input is named as never where it is saved
             applyContent(content as ResourceContent<TType> | undefined);
             // oxlint-enable typescript/no-unsafe-type-assertion
           },
@@ -377,18 +386,18 @@ export const useResourceStore = defineStore("resource", () => {
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
   };
-  // Another writer changed the content the store holds: the open row names a hash the store does not hold. The content is
-  // Adopted through the two stages a restore runs, which the reload leaves to adopt the document. Taken through a
+  // Another writer changed the content the store holds: the open row names a hash the store does not hold. The content
+  // Is Adopted through the two stages a restore runs, which the reload leaves to adopt the document. Taken through a
   // Synchronized function, so the adoption is awaited by whatever drains the store's work, and a failed read is logged
   // Rather than left unhandled
   const adoptOtherContent = getSynchronizedFunction(() =>
     getResultAsync(() => adoptResourceContent()).match(noop, console.error),
   );
   // The page's watch of the open row brings the row here, and every write to the content publishes that row, so this is
-  // Where another device's save, an agent's and a restore's reach the editor. The blob is read only for a hash the store
-  // Does not hold. A row that lands while a save of this store's own is in flight waits: that save's answer sets the hash
-  // The row is compared against, and a row another writer committed on top of it is compared once the saves settle, not
-  // Dropped. Only the latest row is held, since it names the newest state
+  // Where another device's save, an agent's and a restore's reach the editor. The blob is read only for a hash the
+  // Store Does not hold. A row that lands while a save of this store's own is in flight waits: that save's answer sets
+  // The hash The row is compared against, and a row another writer committed on top of it is compared once the saves
+  // Settle, not Dropped. Only the latest row is held, since it names the newest state
   const applyOtherContent = (newResource: ResourceInResource): void => {
     heldOtherRow = undefined;
     if (!checkIsContentRead() || newResource.contentHash === persistedContentHash) return;
@@ -413,9 +422,9 @@ export const useResourceStore = defineStore("resource", () => {
 
     adoptOtherContent();
   };
-  // The page's read of the open row lands here. A read of the resource already open is a refresh: its row and publication
-  // Arrive as any other row does, and the content is then checked against the hash the store holds. A reset would drop the
-  // Notice another save is held behind
+  // The page's read of the open row lands here. A read of the resource already open is a refresh: its row and
+  // Publication Arrive as any other row does, and the content is then checked against the hash the store holds. A reset
+  // Would drop the Notice another save is held behind
   const applyResource = (
     newResource: ResourceInResource,
     newFavorite: null | ResourceFavoriteInResource,
@@ -451,8 +460,8 @@ export const useResourceStore = defineStore("resource", () => {
     isContentStale.value = false;
     await ResourceContentHookMap.Keep.run(resourceValue.type);
   };
-  // The content is already on screen, so the save gives its caller nothing to await. A refused save leaves the change on
-  // Screen and the state reads Not saved, since a blob write has no optimistic entry and nothing to restore
+  // The content is already on screen, so the save gives its caller nothing to await. A refused save leaves the change
+  // On Screen and the state reads Not saved, since a blob write has no optimistic entry and nothing to restore
   const saveContent = (content: ResourceContent<ResourceType>) => {
     const resourceValue = resource.value;
     // Only content read for this resource is written. A debounced autosave can fire after a read swapped
@@ -460,16 +469,17 @@ export const useResourceStore = defineStore("resource", () => {
     // Then still the previous resource's; a store that never read at all holds its empty default. Either write
     // Would replace this resource's document with one that is not its own, under this one's id and version
     if (!resourceValue || isContentStale.value || !checkIsContentRead()) return;
-    // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
-    // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
-    // Saved (openspec/specs/resource/resource-save-state/design.md). The unchanged-content path below is a save all the same: it
-    // Wrote nothing because there was nothing left to write
+    // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes Through — a
+    // Dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses Saved
+    // (openspec/specs/resource/resource-save-state/design.md). The unchanged-content path below is a save all the same:
+    // It Wrote nothing because there was nothing left to write
     if (unwrittenContentResourceId.value === resourceValue.id) unwrittenContentResourceId.value = "";
     const contentJson = JSON.stringify(content);
     // The baseline is the last content the server confirmed, so while a write of this resource is still in flight it
     // Can be about to replace that content — a revert to the baseline has to be written behind it, not skipped
     if (contentJson === persistedContentJson && !checkIsSavePending(resourceValue.id)) {
-      // The server already holds this content, so a failed or refused save before it is replaced by this one, and nothing is left unsaved
+      // The server already holds this content, so a failed or refused save before it is replaced by this one, and
+      // Nothing is left unsaved
       isSaveContentFailed.value = false;
       return;
     }
@@ -488,12 +498,13 @@ export const useResourceStore = defineStore("resource", () => {
     // Rather than the object as it stands when a save queued behind another comes up. Otherwise the server would
     // Hold an edit the persisted baseline does not name, and a revert to the issued content would be skipped
     const issuedContent = contentBytes.byteLength < MAX_REQUEST_SIZE ? structuredClone(toRawDeep(content)) : undefined;
-    // Saves of different resources are different writes, so this one can settle after the blade has moved on. What it carries
-    // Back is its own resource's: the row it returns reaches the overlay for that row, and the content state is applied only
-    // While that resource is still loaded. The notifications are not scoped, since the write failed for the owner either way
-    // (openspec/specs/resource/resource-save-state/design.md)
+    // Saves of different resources are different writes, so this one can settle after the blade has moved on. What it
+    // Carries Back is its own resource's: the row it returns reaches the overlay for that row, and the content state is
+    // Applied only While that resource is still loaded. The notifications are not scoped, since the write failed for
+    // The owner either way (openspec/specs/resource/resource-save-state/design.md)
     const { id } = resourceValue;
-    // The versions of the opening this save is issued in, so a save left queued when the resource closes keeps reading its own
+    // The versions of the opening this save is issued in, so a save left queued when the resource closes keeps reading
+    // Its own
     const issuedVersions = confirmedContentVersions;
     const { promise: settled, resolve: release } = Promise.withResolvers<void>();
     contentSaves.value.set(id, settled);
@@ -506,13 +517,14 @@ export const useResourceStore = defineStore("resource", () => {
     };
     writeOptimistic(
       async () => {
-        // Read when the write is sent rather than when it was issued: a save that queued behind another carries the version
-        // That one answered. It is the version its own opening last confirmed, loaded or not, since a row can land before
-        // The other device's save is adopted, and a save sent with that row's version would overwrite it
+        // Read when the write is sent rather than when it was issued: a save that queued behind another carries the
+        // Version That one answered. It is the version its own opening last confirmed, loaded or not, since a row can
+        // Land before The other device's save is adopted, and a save sent with that row's version would overwrite it
         const target = getHeldResource(resourceRows.value, id) ?? resourceValue;
         const resourceRouter = getResourceRouter(target.type);
-        // The version the content it sends was read or saved at, which is what the server compares. A large save takes the
-        // Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told of
+        // The version the content it sends was read or saved at, which is what the server compares. A large save takes
+        // The Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told
+        // Of
         const contentVersion = issuedVersions.get(id);
         if (contentVersion === undefined)
           throw new InvalidOperationError(Operation.Update, id, "has no confirmed content version");
@@ -530,7 +542,9 @@ export const useResourceStore = defineStore("resource", () => {
               (await saveStagedResourceContent(resourceRouter, contentBytes, sent)))
             : // Calling the union of every type's content write needs an argument every arm accepts, so the
               // Content is narrowed the same way the read above widens it
-              // oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved
+              // The content read is the resource type TType the caller names, which the store's runtime type cannot
+              // Carry to the compiler; the union of every type's content write takes the one argument each arm accepts,
+              // oxlint-disable typescript/no-unsafe-type-assertion -- so the input is named as never where it is saved
               await resourceRouter.saveResourceContent.mutate(input as never);
         // oxlint-enable typescript/no-unsafe-type-assertion
         // The server stores its own serialization of the parsed document, which a content schema's transforms can
@@ -580,8 +594,8 @@ export const useResourceStore = defineStore("resource", () => {
   };
 
   // An editor's own check refused the save before it reached saveContent, so no write was issued and the edit it held
-  // Is dropped rather than landed. The state reads Not saved, and the held edit is cleared as a write would clear it, so
-  // It does not keep reading as Saving
+  // Is dropped rather than landed. The state reads Not saved, and the held edit is cleared as a write would clear it,
+  // So It does not keep reading as Saving
   const refuseSaveContent = () => {
     if (unwrittenContentResourceId.value === currentResourceId.value) unwrittenContentResourceId.value = "";
     isSaveContentFailed.value = true;
@@ -592,8 +606,8 @@ export const useResourceStore = defineStore("resource", () => {
 
     resourceWrite.updateResource(resourceValue, { name });
   };
-  // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag. Only the tags are
-  // Sent, so an edit queued behind a rename never puts back the name the rename replaced
+  // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag. Only the tags
+  // Are Sent, so an edit queued behind a rename never puts back the name the rename replaced
   const updateResourceTags = (tags: ResourceTags) => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
@@ -688,7 +702,8 @@ export const useResourceStore = defineStore("resource", () => {
         withFinalizerAsync(
           async () => {
             const removedPublication = await resourceRouter.unpublishResource.mutate({ id });
-            // An unpublish that removed nothing answers no row, so its entry is confirmed at once with nothing to arrive
+            // An unpublish that removed nothing answers no row, so its entry is confirmed at once with nothing to
+            // Arrive
             return removedPublication
               ? createRowResponse(publicationTable, removedPublication)
               : { arrivals: [], confirmed: [] };

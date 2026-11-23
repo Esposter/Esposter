@@ -18,8 +18,9 @@ const threadFollowStore = useThreadFollowStore();
 const { unfollowThread } = threadFollowStore;
 </script>
 
-<!-- One thread as a row that opens it: who started it and what they said, how much and how lately it has been answered,
-     and the chevron of somewhere to go. Unfollowing sits beside the row rather than inside it, as a list row's actions do -->
+<!-- One thread as a row that opens it: who started it and what they said, how much and how lately it has been
+  answered, and the chevron of somewhere to go. Unfollowing sits beside the row rather than inside it, as a list
+  row's actions do -->
 <template>
   <div v-if="creator" role="listitem" pr-2 flex items-center>
     <button type="button" ui-item flex-1 min-w-0 @click="openThread(thread.roomId, thread.id)">

@@ -42,10 +42,10 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
               DatabaseEntityType.Achievement,
               name,
             );
-            // The increment is done in SQL so concurrent mutations each claim a distinct amount instead of
-            // Overwriting one another with a read-then-write. setWhere freezes an already unlocked achievement,
-            // And its empty RETURNING is the short-circuit that keeps a completed achievement from re-emitting
-            // The unlock instant is bound from here as epoch milliseconds, the form the column stores, not read from the database clock
+            // The increment is done in SQL so concurrent mutations each claim a distinct amount instead of Overwriting
+            // One another with a read-then-write. setWhere freezes an already unlocked achievement, And its empty
+            // RETURNING is the short-circuit that keeps a completed achievement from re-emitting The unlock instant is
+            // Bound from here as epoch milliseconds, the form the column stores, not read from the database clock
             const now = new Date();
             const [userAchievement] = await ctx.db
               .insert(userAchievementsInAchievement)

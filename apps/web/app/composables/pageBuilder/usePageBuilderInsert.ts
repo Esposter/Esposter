@@ -30,7 +30,8 @@ export const usePageBuilderInsert = <
     const nodeId = getSelectedNodeId(resourceIdValue);
     return nodeId ? getNodePointer(kind, document, nodeId) : undefined;
   };
-  // A palette item may insert a block its type builds differently, such as a merge field's text, so its node is built by the caller
+  // A palette item may insert a block its type builds differently, such as a merge field's text, so its node is built
+  // By the caller
   const insert = (type: TNode["type"], createNode: (id: string) => TNode = (id) => kind.createNode(type, id)) => {
     const resourceIdValue = toValue(resourceId);
     const document = getDocument();

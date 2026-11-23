@@ -56,8 +56,8 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     rows.value = [...rows.value, ...items.map((item) => createRow(item))];
     commit();
   };
-  // The add field's text is held here, and a parse of it names one row, several or none. Text naming none adds nothing and
-  // Stays as typed, and the field clears once its rows land
+  // The add field's text is held here, and a parse of it names one row, several or none. Text naming none adds nothing
+  // And Stays as typed, and the field clears once its rows land
   const addText = ref("");
   const addFromText = (parse: (text: string) => T | T[] | undefined) => {
     const items = [parse(addText.value)].flat().filter((item): item is T => item !== undefined);
@@ -66,7 +66,8 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     addItems(items);
     addText.value = "";
   };
-  // Returns whether a row held the id, so a caller whose row an edit has since removed can tell its update landed nowhere
+  // Returns whether a row held the id, so a caller whose row an edit has since removed can tell its update landed
+  // Nowhere
   const updateItem = (id: string, update: Partial<T>) => {
     const isApplied = rows.value.some((row) => row.id === id);
     rows.value = rows.value.map((row) => (row.id === id ? { ...row, item: { ...row.item, ...update } } : row));

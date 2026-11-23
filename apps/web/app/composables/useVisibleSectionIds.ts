@@ -34,7 +34,8 @@ export const useVisibleSectionIds = (
     }
 
     const firstSection = sections.value.at(0);
-    // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("112px"), Number() would be NaN
+    // Computed styles
+    // oxlint-disable-next-line unicorn/prefer-number-coercion -- are px-suffixed ("112px"), Number() would be NaN
     const scrollMarginTop = firstSection ? Number.parseFloat(window.getComputedStyle(firstSection).scrollMarginTop) : 0;
     return { bottom: window.innerHeight, top: scrollMarginTop || 0 };
   };

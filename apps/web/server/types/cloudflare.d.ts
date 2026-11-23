@@ -24,8 +24,8 @@ import type { ScreamingSnakeCase } from "type-fest";
 // `app/types/cloudflareWorkers.d.ts`
 export interface CloudflareEnv extends Bindings, Record<QueueJobBindingName, Queue> {}
 
-// The binding names `nitro.ts` derives from the same enum: a bucket is bound under its SCREAMING_SNAKE name. Producers sit
-// On `Env` beside the bindings, one per job, under the names `QueueJobBindingNameMap` gives
+// The binding names `nitro.ts` derives from the same enum: a bucket is bound under its SCREAMING_SNAKE name. Producers
+// Sit On `Env` beside the bindings, one per job, under the names `QueueJobBindingNameMap` gives
 interface Bindings extends BucketBindings, RateLimiterBindings {
   ASSETS: Fetcher;
   CALL: DurableObjectNamespace<CallObjectRpc & Rpc.DurableObjectBranded>;

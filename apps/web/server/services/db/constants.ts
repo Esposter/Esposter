@@ -1,7 +1,7 @@
 import type { styleText } from "node:util";
 
-// The words the query log paints as keywords: the set SQLite documents for its own SQL.
-// The keyword page is at https://www.sqlite.org/lang_keywords.html. A word not on this list is left unpainted, never guessed at
+// The words the query log paints as keywords: the set SQLite documents for its own SQL. The keyword page is at
+// `https://www.sqlite.org/lang_keywords.html`. A word not on this list is left unpainted, never guessed at
 export const SQLITE_KEYWORDS = [
   "ABORT",
   "ACTION",

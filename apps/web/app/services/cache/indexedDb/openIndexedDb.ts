@@ -51,8 +51,8 @@ export const openIndexedDb = () => {
         [IndexedDbStoreName.UserToRooms]: UserToRoomIndexedDbStoreConfiguration,
       } satisfies Record<IndexedDbStoreName, IndexedDbStoreConfiguration<IndexedDbStoreName>>;
       const storeConfigurations = Object.values(configurations);
-      // A store an earlier version created was keyed by a different key path, and a store this version adds does not exist
-      // Yet. A cache is refilled from the server, so every store that exists is cleared rather than migrated
+      // A store an earlier version created was keyed by a different key path, and a store this version adds does not
+      // Exist Yet. A cache is refilled from the server, so every store that exists is cleared rather than migrated
       for (const storeName of database.objectStoreNames) database.deleteObjectStore(storeName);
       for (const { indexName, keyPath, storeName } of storeConfigurations) {
         const objects = database.createObjectStore(storeName, { keyPath });

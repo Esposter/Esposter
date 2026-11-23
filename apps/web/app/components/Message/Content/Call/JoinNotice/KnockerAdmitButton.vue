@@ -18,8 +18,8 @@ const isPending = ref(false);
 </script>
 
 <template>
-  <!-- The server decides the admission, so the button is pending until it answers, and clears whichever way it ends so a
-    Failed admit does not leave its spinner running -->
+  <!-- The server decides the admission, so the button is pending until it answers, and clears whichever way it ends
+    so a Failed admit does not leave its spinner running -->
   <UiButton
     :is-pending
     @click="

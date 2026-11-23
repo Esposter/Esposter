@@ -24,7 +24,8 @@ const getDrawnKeys = (wrapper: VueWrapper) => {
 const getSelectItems = (uiSelect: VueWrapper) =>
   (uiSelect.props() as { items: { title: string; value: string }[] }).items;
 
-// The select a rating's first step is drawn by: the one whose options include zero, which no other select of a rating offers
+// The select a rating's first step is drawn by: the one whose options include zero, which no other select of a rating
+// Offers
 const findFirstStepSelect = (wrapper: VueWrapper) =>
   takeOne(
     wrapper

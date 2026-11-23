@@ -10,14 +10,15 @@ import { checkIsResizablePositionedElement, getElementBounds } from "vue-block-e
 const getAxisExtent = ({ height, width, x, y }: Bounds, axis: SnapAxis): { size: number; start: number } =>
   axis === SnapAxis.X ? { size: width, start: x } : { size: height, start: y };
 
-// The lines a box aligns on along one axis: its start edge, its centre and its end edge. An edge midpoint lies on two of these lines, so it snaps
-// The same way an edge or centre does
+// The lines a box aligns on along one axis: its start edge, its centre and its end edge. An edge midpoint lies on two
+// Of these lines, so it snaps The same way an edge or centre does
 const getAxisLines = (bounds: Bounds, axis: SnapAxis): number[] => {
   const { size, start } = getAxisExtent(bounds, axis);
   return [start, start + size / 2, start + size];
 };
 
-// The offset that brings a line of the moved box onto the nearest line of another element, or undefined when no pair of lines is within the distance
+// The offset that brings a line of the moved box onto the nearest line of another element, or undefined when no pair of
+// Lines is within the distance
 const getAxisOffset = (movedLines: number[], targetLines: number[], distance: number): number | undefined => {
   const offsets = movedLines
     .flatMap((movedLine) => targetLines.map((targetLine) => targetLine - movedLine))
@@ -39,8 +40,9 @@ const getSnapOffset = (axis: SnapAxis, proposedBounds: Bounds, targetBounds: Bou
 const checkIsOnLine = (bounds: Bounds, axis: SnapAxis, position: number): boolean =>
   getAxisLines(bounds, axis).some((line) => Math.abs(line - position) <= ALIGNMENT_TOLERANCE);
 
-// The guides of the alignments a snapped box holds along one axis. Each position where a line of the box lies on a line of another element gets one
-// Guide, which runs along the other axis across the box and each element that lies on the same line
+// The guides of the alignments a snapped box holds along one axis. Each position where a line of the box lies on a line
+// Of another element gets one Guide, which runs along the other axis across the box and each element that lies on the
+// Same line
 const getAxisGuides = (axis: SnapAxis, snappedBounds: Bounds, targetBounds: Bounds[]): SnapGuide[] => {
   const otherAxis = axis === SnapAxis.X ? SnapAxis.Y : SnapAxis.X;
   const alignedPositions = getAxisLines(snappedBounds, axis).filter((position) =>
@@ -58,9 +60,10 @@ const getAxisGuides = (axis: SnapAxis, snappedBounds: Bounds, targetBounds: Boun
   });
 };
 
-// The offset a moved box snaps by on each axis, to the nearest edge, centre or edge midpoint of the other elements within the snap distance, with the
-// Guides of the alignments the snapped box then holds. The snap distance is held in screen pixels, so it is divided by the scale to take document
-// Units. The moving elements are left out of the lines the box snaps to, and an axis with nothing in range takes no offset
+// The offset a moved box snaps by on each axis, to the nearest edge, centre or edge midpoint of the other elements
+// Within the snap distance, with the Guides of the alignments the snapped box then holds. The snap distance is held in
+// Screen pixels, so it is divided by the scale to take document Units. The moving elements are left out of the lines
+// The box snaps to, and an axis with nothing in range takes no offset
 export const getSnap = (
   document: PositionedDocument,
   movingIds: string[],

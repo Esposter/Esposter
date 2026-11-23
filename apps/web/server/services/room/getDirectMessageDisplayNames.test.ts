@@ -37,8 +37,8 @@ describe(getDirectMessageDisplayNames, () => {
     );
   });
 
-  // A direct message the viewer is alone in has no other participant to name, so its name is empty, but it keeps a row keyed
-  // By its own room, rather than sharing a null room's row with every other such direct message
+  // A direct message the viewer is alone in has no other participant to name, so its name is empty, but it keeps a row
+  // Keyed By its own room, rather than sharing a null room's row with every other such direct message
   test("a direct message with no other participant keeps its own row, not a null room's", async () => {
     expect.hasAssertions();
 

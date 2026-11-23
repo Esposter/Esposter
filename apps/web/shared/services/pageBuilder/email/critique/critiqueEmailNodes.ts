@@ -9,8 +9,8 @@ import { getEmailBackground } from "#shared/services/pageBuilder/email/critique/
 import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeChildren";
 import { getBlockSlots } from "vue-block-editor-headless";
 
-// Each node's own findings before those of its children, so the list reads in document order. The background passed down is the
-// One the node's containers set, which a child inherits unless it sets its own
+// Each node's own findings before those of its children, so the list reads in document order. The background passed
+// Down is the One the node's containers set, which a child inherits unless it sets its own
 export const critiqueEmailNodes = (
   nodes: readonly MjmlNode[],
   inherited: SrgbColor | undefined,

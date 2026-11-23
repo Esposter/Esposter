@@ -5,7 +5,8 @@ import { WHITEBOARD_IMAGE_SIZE } from "#src/services/whiteboard/palette/constant
 import { v7 } from "uuid";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// A new image element for an uploaded file, centred on a point. It holds the file's id and none of its bytes, and no alt text yet
+// A new image element for an uploaded file, centred on a point. It holds the file's id and none of its bytes, and no
+// Alt text yet
 export const createWhiteboardImageElement = (fileId: string, centre: Point): ImageElement => ({
   altText: "",
   fileId,

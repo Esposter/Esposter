@@ -6,9 +6,10 @@ import { getLivePublicationWhere } from "@esposter/db";
 import { resourcePublicationsInResource, resourcesInResource } from "@esposter/db-schema";
 import { inArray } from "drizzle-orm";
 
-// Soft: the rows, their content blobs and their {id}/ directories all survive the Recycle bin window, which is
-// What makes restore possible, and purge is what destroys them. One batch, so a soft-deleted resource can never linger
-// Publicly served. The publication is tombstoned first, so its subquery still matches the rows the update is about to soft-delete
+// Soft: the rows, their content blobs and their {id}/ directories all survive the Recycle bin window, which is What
+// Makes restore possible, and purge is what destroys them. One batch, so a soft-deleted resource can never linger
+// Publicly served. The publication is tombstoned first, so its subquery still matches the rows the update is about to
+// `soft-delete`
 export const softDeleteResources = async (db: Context["db"], where: SQL | undefined): Promise<ResourceInResource[]> => {
   const [, deletedResources] = await db.batch([
     db

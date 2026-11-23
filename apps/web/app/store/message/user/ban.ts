@@ -18,8 +18,8 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const overlayStore = useOverlayStore();
   const { arrive, view, writeOptimistic } = overlayStore;
   const bans = view(banTable);
-  // Keyed by room, like the member and invite lists: the Bans panel reads one room's bans, and an unban that is answered
-  // Or refused lands on the room it lifted the ban from, whichever room has been loaded since
+  // Keyed by room, like the member and invite lists: the Bans panel reads one room's bans, and an unban that is
+  // Answered Or refused lands on the room it lifted the ban from, whichever room has been loaded since
   const { getSliceOperationData, items: listedBanKeys } = useCursorPaginationDataMap<BanKey>(
     () => roomStore.scopedRoomId,
   );
@@ -31,7 +31,8 @@ export const useBanStore = defineStore("message/user/ban", () => {
       );
       return ban ? [ban] : [];
     });
-  // A page of a room's bans arrives row by row, and the list keeps the keys the page named, in the order the server gave them
+  // A page of a room's bans arrives row by row, and the list keeps the keys the page named, in the order the server
+  // Gave them
   const readBanPage = ({ items: pageBans, ...page }: Page<BanInRoom>): Page<BanKey> => {
     for (const ban of pageBans) arrive(banTable, ban);
     return { ...page, items: pageBans.map(({ roomId, userId }) => ({ roomId, userId })) };
@@ -43,8 +44,8 @@ export const useBanStore = defineStore("message/user/ban", () => {
     writeOptimistic(
       async () => {
         const { rowVersions } = await collectRowVersions(() => $trpc.message.moderation.deleteBan.mutate(input));
-        // The header names the ban row it removed at the version it left it, so the entry is confirmed by its own write. The
-        // List's own read brings the tombstone to the rows it holds
+        // The header names the ban row it removed at the version it left it, so the entry is confirmed by its own
+        // Write. The List's own read brings the tombstone to the rows it holds
         return { arrivals: [], confirmed: createHeaderConfirmations([banTable], rowVersions) };
       },
       { entry: getDeleteBanEntry(input.roomId, input.userId, new Date()), onError: createErrorAlert },

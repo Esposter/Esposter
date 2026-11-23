@@ -13,7 +13,8 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Visual extends AItemEntity implements ItemEntityType<VisualType>, LayoutItem {
-  // What a screen reader reads for the visual on the published dashboard, in place of its label. Empty, the label stands
+  // What a screen reader reads for the visual on the published dashboard, in place of its label. Empty, the label
+  // Stands
   altText = "";
   chart = new Chart();
   dataset?: undefined | VisualDatasetBinding;
@@ -33,7 +34,9 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   }
 }
 
-// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- VisualType (VisualType.ts:4) and the chart enums (chart/type/ChartType.ts:8) are the same declarations on both sides; the rule flags a nested zod shape even on an exact enum match
+// VisualType (VisualType.ts:4) and the chart enums (chart/type/ChartType.ts:8) are the same declarations on both sides;
+// The rule
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- flags a nested zod shape even on an exact enum match
 export const visualSchema = z
   .object({
     ...aItemEntitySchema.shape,

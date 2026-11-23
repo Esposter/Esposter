@@ -12,7 +12,8 @@ defineProps<Props>();
 <template>
   <span flex shrink-0 relative>
     <UiAvatar :image="participant.image ?? undefined" :name="participant.name" />
-    <!-- A raised hand is a dot in the warning colour on the avatar's corner, too small a mark for the hand's own glyph -->
+    <!-- A raised hand is a dot in the warning colour on the avatar's corner, too small a mark for the hand's own
+      glyph -->
     <span
       v-if="participant.isHandRaised"
       aria-label="Hand raised"

@@ -13,7 +13,8 @@ const creator = useCreator(() => message);
 const scrollToMessage = useScrollToMessage();
 </script>
 
-<!-- A found message is a card picked as a whole, as Discord's results are: pressing it jumps to the message in its room -->
+<!-- A found message is a card picked as a whole, as Discord's results are: pressing it jumps to the message in its
+  room -->
 <template>
   <div
     v-if="creator"

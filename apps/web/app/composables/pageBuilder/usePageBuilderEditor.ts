@@ -5,11 +5,12 @@ import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { getSynchronizedFunction } from "@esposter/shared";
 
-// The editing of one open page builder document, which every arrangement of the builder shares: what a screen reader hears, the
-// Keys, the history and style commands, and the drag from the palette or a merge field onto the canvas. An arrangement draws the
-// Palette, the canvas and the rest, and passes them what this answers. The canvas is the template ref "canvas", and getRoot answers
-// The element the layers tree sits in, which a text edit's end returns focus to. revealLayers shows the tree's tab before that, where
-// The tree is a tab, since a tab's content is not in the DOM until it is shown
+// The editing of one open page builder document, which every arrangement of the builder shares: what a screen reader
+// Hears, the Keys, the history and style commands, and the drag from the palette or a merge field onto the canvas. An
+// Arrangement draws the Palette, the canvas and the rest, and passes them what this answers. The canvas is the template
+// Ref "canvas", and getRoot answers The element the layers tree sits in, which a text edit's end returns focus to.
+// `revealLayers` shows the tree's tab before that, where The tree is a tab, since a tab's content is not in the DOM
+// Until It is shown
 export const usePageBuilderEditor = (
   kind: AnyPageBuilderKind,
   resourceId: string,
@@ -21,8 +22,9 @@ export const usePageBuilderEditor = (
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getEditingNodeId } = pageBuilderCanvasStore;
   const getPageDocument = () => getHeldDocument(resourceId)?.document;
-  // The one live region every announcement goes through. Clearing first lets a repeat of the same text be announced again
-  // Each component takes announce as a sync callback, so the tick runs through getSynchronizedFunction rather than a promise each caller awaits
+  // The one live region every announcement goes through. Clearing first lets a repeat of the same text be announced
+  // Again Each component takes announce as a sync callback, so the tick runs through getSynchronizedFunction rather
+  // Than a promise each caller awaits
   const announcement = ref("");
   const announce = getSynchronizedFunction(async (message: string) => {
     announcement.value = "";
@@ -55,13 +57,15 @@ export const usePageBuilderEditor = (
   watch(refusal, (message) => {
     if (message) announce(message);
   });
-  // A composable cannot read the template, so the ref names only the method it calls. Naming the canvas component's whole
-  // Instance type closed a type cycle through this file, which the checker could not resolve
+  // A composable cannot read the template, so the ref names only the method it calls. Naming the canvas component's
+  // Whole Instance type closed a type cycle through this file, which the checker could not resolve
   const canvas = useTemplateRef<{ getFrameGeometry: () => FrameGeometry | undefined }>("canvas");
-  // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
+  // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a
+  // Click
   const getFrameGeometry = () => canvas.value?.getFrameGeometry();
-  // Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame. A tab's
-  // Content is not in the DOM until the tab is shown, so the tab is revealed first and the row is focused on the next tick
+  // Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame. A
+  // Tab's Content is not in the DOM until the tab is shown, so the tab is revealed first and the row is focused on the
+  // Next tick
   watch(
     () => getEditingNodeId(resourceId),
     async (nodeId, previousNodeId) => {

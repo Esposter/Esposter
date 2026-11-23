@@ -29,10 +29,11 @@ const grid = useTemplateRef("grid");
 const visualStore = useVisualStore();
 const { visuals: dashboardVisuals } = storeToRefs(visualStore);
 const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, tiles } = useGridLayout(grid, () => ({
-  // A body drag is refused by the group it is dropped on when the move would put the visual in itself or nest it past the cap
+  // A body drag is refused by the group it is dropped on when the move would put the visual in itself or nest it past
+  // The cap
   checkIsRefused: (item, target) => checkIsMoveRefused(dashboardVisuals.value, item.id, target.dataset.groupId),
-  // A group is solid in the grid it sits in, so no other visual's drag pushes it: a landing over it is refused, and a visual
-  // Joins the group by its body alone
+  // A group is solid in the grid it sits in, so no other visual's drag pushes it: a landing over it is refused, and a
+  // Visual Joins the group by its body alone
   checkIsSolid: (visual) => visual.type === VisualType.Group,
   collision,
   columnNumber,

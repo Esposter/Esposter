@@ -22,8 +22,8 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   // Keyed by room: a read for the room the reader just left is filed under it rather than over the list on screen
   // A list names each invite by its id, and the rows themselves are the overlay's
   const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteInMessage["id"]>();
-  // The rows the keys name, with each creator's user. The view leaves a tombstone out, and so is a link that has lapsed,
-  // As the read that carried it did before the overlay
+  // The rows the keys name, with each creator's user. The view leaves a tombstone out, and so is a link that has
+  // Lapsed, As the read that carried it did before the overlay
   const toListedInvites = (keys: readonly InviteInMessage["id"][]) =>
     keys.flatMap((id) => {
       const invite = inviteRows.value.find((row): row is InviteInMessage => row.id === id && checkIsVersioned(row));

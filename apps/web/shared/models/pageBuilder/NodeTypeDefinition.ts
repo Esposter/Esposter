@@ -4,7 +4,8 @@ import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 import type { z } from "zod";
 
-// The shared half of a webpage node type, typed by the node it defines: what the server renders when it publishes and what the editor edits
+// The shared half of a webpage node type, typed by the node it defines: what the server renders when it publishes and
+// What the editor edits
 export interface NodeTypeDefinition<TNode extends BlockNode = BlockNode> extends BlockTypeDefinition<TNode> {
   // Structural CSS emitted once per document holding the type, or empty when it has none
   css: string;

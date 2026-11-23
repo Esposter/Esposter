@@ -43,7 +43,8 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   );
   const readRoomEmojiRows = useOverlayRead(roomEmojiTable, (roomEmoji: RoomEmojiWithPresignedUrl) => roomEmoji);
   // The room's set with its tombstones, so a removal the answer names reaches the emoji the room's subscription missed
-  // A failed read is held as its message, so the panel draws the failure rather than reading as no emoji, and it still alerts
+  // A failed read is held as its message, so the panel draws the failure rather than reading as no emoji, and it still
+  // Alerts
   const roomEmojisError = ref("");
   const isRoomEmojisPending = ref(false);
   // The room whose set has landed. A room's set is read once its socket is open, so until then nothing says whether the

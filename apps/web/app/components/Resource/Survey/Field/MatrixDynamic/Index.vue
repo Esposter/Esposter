@@ -73,7 +73,8 @@ const removeRow = (rowIndex: number) => {
           </tr>
         </thead>
         <tbody>
-          <!-- oxlint-disable vue/no-restricted-syntax -- removes a row from the unsaved answer draft, which nothing persists until the survey is submitted -->
+          <!-- oxlint-disable vue/no-restricted-syntax -- removes a row from the unsaved answer draft, which nothing
+            persists until the survey is submitted -->
           <ResourceSurveyFieldMatrixDynamicRow
             v-for="(row, rowIndex) of rows"
             :key="rowIndex"

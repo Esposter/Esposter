@@ -151,8 +151,9 @@ describe(useCursorPaginationOperationData, () => {
     expect(rowItems.value).toStrictEqual([{ ...firstRow, description }, laterRow]);
   });
 
-  // A list whose new rows arrive by the write itself passes its own handler: the refresh it is handed adds the row a write
-  // Made, at the head, where the default would leave it out, and the page after the first stays as the reader paged it
+  // A list whose new rows arrive by the write itself passes its own handler: the refresh it is handed adds the row a
+  // Write Made, at the head, where the default would leave it out, and the page after the first stays as the reader
+  // Paged it
   test("adds the rows a topic change brings in at the head, and keeps the pages after the first", async () => {
     expect.hasAssertions();
 
@@ -200,8 +201,8 @@ describe(useCursorPaginationOperationData, () => {
     expect(rowItems.value).toStrictEqual([addedRow, heldRow, laterRow]);
   });
 
-  // Two reads of one first page that name one topic are the one query watching it, so a change to the topic refetches the
-  // Query once, not once per read
+  // Two reads of one first page that name one topic are the one query watching it, so a change to the topic refetches
+  // The Query once, not once per read
   test("refetches once when two reads of its first page name one topic", async () => {
     expect.hasAssertions();
 

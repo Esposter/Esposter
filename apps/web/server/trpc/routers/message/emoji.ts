@@ -27,8 +27,8 @@ export const emojiRouter = router({
   readReactions: getMemberProcedure(readReactionsInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes reaction changes to its sockets as typed events" })
     .query<RoomReaction[]>(({ input: { messageIds, roomId } }) => useRoomObject(roomId).readReactions(messageIds)),
-  // The reaction as the room now holds it is the answer, with the caller off it, so a removal the last reactor made answers
-  // The reaction with no reactor at the version the removal raised
+  // The reaction as the room now holds it is the answer, with the caller off it, so a removal the last reactor made
+  // Answers The reaction with no reactor at the version the removal raised
   removeReaction: getMemberProcedure(reactionIdentityInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes the reaction it now holds to its sockets as a typed event" })
     .mutation<RoomReaction>(({ ctx, input }) =>

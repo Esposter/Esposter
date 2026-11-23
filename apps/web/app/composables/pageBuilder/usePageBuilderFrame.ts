@@ -10,8 +10,9 @@ import { getFrameScale } from "vue-canvas-frame-headless";
 // The frame is scaled to fit its pane, so the scale maps the frame's own pixels to the app's viewport
 const getFrameScaleOf = (frameElement: HTMLIFrameElement) =>
   getFrameScale(frameElement.parentElement?.clientWidth ?? 0, frameElement.offsetWidth);
-// The canvas's frame as the page builder reads it: a node's element in the frame, the frame's geometry for a palette drag, and
-// Where the selection's toolbar sits in the app's viewport. The frame is the document the content root is drawn in
+// The canvas's frame as the page builder reads it: a node's element in the frame, the frame's geometry for a palette
+// Drag, and Where the selection's toolbar sits in the app's viewport. The frame is the document the content root is
+// Drawn in
 export const usePageBuilderFrame = (
   contentRoot: Readonly<ShallowRef<HTMLElement | null>>,
   selectionBox: Readonly<Ref<OverlayBox | undefined>>,
@@ -24,8 +25,9 @@ export const usePageBuilderFrame = (
   };
   // Whether a slot's owner lays its children out in a row, read from the owner's element in the frame
   const checkIsHorizontalOwner = (ownerId: string) => checkIsHorizontalFlow(getElement(ownerId));
-  // The frame moves in the app's viewport when the app scrolls or its pane resizes, and neither changes the selection box, so
-  // Its placement is read again on each. The toolbar sits in the app's document and is placed from that placement
+  // The frame moves in the app's viewport when the app scrolls or its pane resizes, and neither changes the selection
+  // Box, so Its placement is read again on each. The toolbar sits in the app's document and is placed from that
+  // Placement
   const framePlacement = shallowRef<FramePlacement>();
   const refreshFramePlacement = () => {
     const frameElement = getFrameElement();
@@ -54,7 +56,8 @@ export const usePageBuilderFrame = (
   });
   // Captured so a scroll in any container of the app reaches it, not only the window's own
   useEventListener("scroll", scheduleFramePlacement, { capture: true, passive: true });
-  // The pane's size moves the frame's scale, and the device toggle changes the frame's own width without changing the pane's
+  // The pane's size moves the frame's scale, and the device toggle changes the frame's own width without changing the
+  // Pane's
   useResizeObserver(() => getFrameElement()?.parentElement, scheduleFramePlacement);
   useResizeObserver(getFrameElement, scheduleFramePlacement);
   watch(contentRoot, refreshFramePlacement, { flush: "post" });
@@ -74,7 +77,8 @@ export const usePageBuilderFrame = (
       checkIsHorizontalOwner,
       frameRect: { height: frameRect.height, left: frameRect.left, top: frameRect.top, width: frameRect.width },
       getChildRect: (nodeId) => getElement(nodeId)?.getBoundingClientRect(),
-      // Read from the frame's own document, since a drag lets the pointer pass through the frame and no hover reaches it
+      // Read from the frame's own document, since a drag lets the pointer pass through the frame and no hover reaches
+      // It
       getNodeIdAt: ({ x, y }) => getNodeIdFromElement(contentRoot.value?.ownerDocument.elementFromPoint(x, y) ?? null),
       getScrollTop: () => frameElement.contentWindow?.scrollY ?? 0,
       scale: getFrameScaleOf(frameElement),

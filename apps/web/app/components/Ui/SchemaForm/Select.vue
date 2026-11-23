@@ -11,22 +11,26 @@ import { toTitleCase } from "#src/util/text/toTitleCase";
 interface Props extends UiSchemaFormRendererProps {}
 const props = withDefaults(defineProps<Props>(), unsetRendererState);
 const { change, control, issue, layout, uiSchemaFormConfiguration } = useSchemaFormControl(props);
-// The values a field's schema names for its options, in the schema's own type, so a pick writes the value as the schema holds it
+// The values a field's schema names for its options, in the schema's own type, so a pick writes the value as the schema
+// Holds it
 const schemaValues = computed<unknown[]>(() => {
   const { enum: values, oneOf } = control.value.schema;
   if (values) return values;
   return (oneOf ?? []).map((option: JsonSchema) => option.const);
 });
-// A select picks by its text, so a text that names a schema value is written back as that value, and any other text as itself
+// A select picks by its text, so a text that names a schema value is written back as that value, and any other text as
+// Itself
 const getPickedValue = (text: string): unknown => schemaValues.value.find((value) => String(value) === text) ?? text;
-// The items a field names from its dialog's context, or else its schema's own options: an enum's values, or the
-// Titled constants of an enum written as one of several literals. An option the schema names carries no mark of its own,
-// So each takes the one mark an option does
+// The items a field names from its dialog's context, or else its schema's own options: an enum's values, or the Titled
+// Constants of an enum written as one of several literals. An option the schema names carries no mark of its own, So
+// Each takes the one mark an option does
 const items = computed<UiSelectItem<string>[]>(() => {
   // A context is the dialog's own interface, whose keys the schema names as strings
   if (layout.value.itemsKey)
     return (
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the dialog's context is an object whose keys the schema names as strings, so the value read by one is what the dialog put under that key, which the compiler cannot type
+      // The dialog's context is an object whose keys the schema names as strings, so the value read by one is what the
+      // Dialog put
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- under that key, which the compiler cannot type
       (Reflect.get(uiSchemaFormConfiguration.value.context, layout.value.itemsKey) as
         | UiSelectItem<string>[]
         | undefined) ?? []

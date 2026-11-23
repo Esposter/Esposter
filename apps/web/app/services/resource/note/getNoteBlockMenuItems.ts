@@ -3,8 +3,9 @@ import type { Item } from "#src/models/shared/Item";
 import type { Editor } from "@tiptap/core";
 
 // The block-level items the Note's menu bar and its slash menu both offer, in the order both draw them. The list items
-// Are the shared ones, and the text marks are the composer's, so only the Note's own blocks are listed here. A text block
-// Takes every block but the task list, which needs a block of its own, so its toolbar passes `isTaskListOffered: false`
+// Are the shared ones, and the text marks are the composer's, so only the Note's own blocks are listed here. A text
+// Block Takes every block but the task list, which needs a block of its own, so its toolbar passes `isTaskListOffered:
+// False`
 export const getNoteBlockMenuItems = (
   editor: Editor | undefined,
   { isTaskListOffered = true }: { isTaskListOffered?: boolean } = {},

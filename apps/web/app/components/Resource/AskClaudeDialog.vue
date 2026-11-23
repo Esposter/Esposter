@@ -28,7 +28,8 @@ const {
   isPending,
   refresh,
 } = useQuery(() => requireAuthData(list()), { isInlineError: true });
-// The body draws its loading or error state until the read settles, so the steps and the prompt come only from a settled read
+// The body draws its loading or error state until the read settles, so the steps and the prompt come only from a
+// Settled read
 const hasResourcesKey = computed(() => (apiKeysData.value ? checkHasResourcesKey(apiKeysData.value.apiKeys) : true));
 const line = ref("");
 const lineRules = [UiRules.required()];

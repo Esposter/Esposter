@@ -15,7 +15,8 @@ const summarizeContent =
   <TSchema extends z.ZodType>(contentSchema: TSchema, summarize: (content: z.infer<TSchema>) => string) =>
   (serializedContent: string): string => {
     const parsedContent = getResult(() =>
-      // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, exactly as readResourceContent relies on
+      // The content schema owns
+      // oxlint-disable-next-line no-restricted-properties -- date coercion, exactly as readResourceContent relies on
       contentSchema.safeParse(JSON.parse(serializedContent)),
     ).unwrapOr(undefined);
     if (parsedContent?.success) return summarize(parsedContent.data);

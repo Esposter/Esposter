@@ -30,8 +30,8 @@ export const vite: NonNullable<NuxtConfig["vite"]> = {
       // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.
       "three/examples/jsm/inspector/Inspector.js",
     ],
-    // JSON Forms' Ajv is CommonJS and the schema forms only load in a dialog, so it is named through its importer, whose
-    // Own copy it is
+    // JSON Forms' Ajv is CommonJS and the schema forms only load in a dialog, so it is named through its importer,
+    // Whose Own copy it is
     include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats"],
   },
 };

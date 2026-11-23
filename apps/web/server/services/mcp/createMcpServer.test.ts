@@ -169,8 +169,9 @@ describe(createMcpServer, () => {
     expect(tools).toStrictEqual([]);
   });
 
-  // A procedure the owner alone performs is refused by name to a key holding every scope, as though it did not exist, so
-  // The mutation that would purge is never reached. Its opt-in is set here, so the refusal is the declaration's alone
+  // A procedure the owner alone performs is refused by name to a key holding every scope, as though it did not exist,
+  // So The mutation that would purge is never reached. Its opt-in is set here, so the refusal is the declaration's
+  // Alone
   test("a key cannot call a human-only operation by name", async () => {
     expect.hasAssertions();
 

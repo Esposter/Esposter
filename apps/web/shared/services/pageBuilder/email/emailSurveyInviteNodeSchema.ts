@@ -5,7 +5,8 @@ import { emailSurveyInvitePropsSchema } from "#shared/services/pageBuilder/email
 import { createMjmlNodeBranch } from "mjml-blocks";
 import { z } from "zod";
 
-// The survey invite leaf's node schema: the webpage invite's props without an element id, strict over the id, under the email's type tag
+// The survey invite leaf's node schema: the webpage invite's props without an element id, strict over the id, under the
+// Email's type tag
 export const emailSurveyInviteNodeSchema = createMjmlNodeBranch(
   EmailNodeType.SurveyInvite,
   z.strictObject(emailSurveyInvitePropsSchema.shape),

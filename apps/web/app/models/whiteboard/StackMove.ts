@@ -1,4 +1,5 @@
-// A step the stacking controls take a selection: one step forward or back in the element list, or to its front or its back
+// A step the stacking controls take a selection: one step forward or back in the element list, or to its front or its
+// Back
 export const StackMove = {
   BringForward: "bringForward",
   BringToFront: "bringToFront",

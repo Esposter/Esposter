@@ -28,7 +28,8 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
     historyMap.value = new Map(historyMap.value).set(resourceId, history);
   };
   // The operations apply to the document under its own type, and the result carries that type and kind with the new
-  // Document, so the commit that lands the edit holds it the same way. An edit a document refuses is returned as an error
+  // Document, so the commit that lands the edit holds it the same way. An edit a document refuses is returned as an
+  // Error
   const applyOperations = (resourceId: string, operations: JsonPatchOperation[]) =>
     getResult(() => {
       const open = getHeldDocument(resourceId);
@@ -54,7 +55,8 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
       previewMap.value = new Map(previewMap.value).set(resourceId, document);
     }, console.error);
   };
-  // The document and the history an edit leaves land together, so neither is ever ahead of the other, and a preview ends
+  // The document and the history an edit leaves land together, so neither is ever ahead of the other, and a preview
+  // Ends
   const commitEdit = (resourceId: string, held: OpenPageBuilderDocument, history: History<PageBuilderHistoryEntry>) => {
     if (held.type === ResourceType.Email) setEmailDocument(resourceId, held.kind, held.document);
     else setDocument(resourceId, held.kind, held.document);

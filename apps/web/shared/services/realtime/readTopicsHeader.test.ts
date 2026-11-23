@@ -28,8 +28,8 @@ describe(readTopicsHeader, () => {
     ]);
   });
 
-  // The signature the server made over a read is what its watch carries, so it reads back with the read it signed, and a
-  // Read with no person to sign for (a read by a signed-out person) reads back with an empty one
+  // The signature the server made over a read is what its watch carries, so it reads back with the read it signed, and
+  // A Read with no person to sign for (a read by a signed-out person) reads back with an empty one
   test("a read's signature reads back with its topics, and an empty one reads back empty", () => {
     expect.hasAssertions();
 

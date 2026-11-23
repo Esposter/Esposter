@@ -6,8 +6,8 @@ import { getElementIndexById } from "#src/services/whiteboard/gesture/getElement
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
 import { bindPositionedArrowEnd, getElementPointer, PositionedElementType } from "vue-block-editor-headless";
 
-// The operations that move a free arrow end to where the pointer releases it, and bind it when that release lands on a shape. An end released on empty
-// Canvas is moved and left free, so the move and any binding are one list
+// The operations that move a free arrow end to where the pointer releases it, and bind it when that release lands on a
+// Shape. An end released on empty Canvas is moved and left free, so the move and any binding are one list
 export const getEndOperations = (
   document: PositionedDocument,
   arrowId: string,

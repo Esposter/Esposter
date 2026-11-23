@@ -54,8 +54,9 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
 });
 </script>
 
-<!-- A kept place wears its bookmark at half size in its corner, in the accent, so the reader's own places read apart
-     from the ones only visited often, wherever the two are drawn. One that cannot be reached is a button drawn muted -->
+<!-- A kept place wears its bookmark at half size in its corner, in the accent, so the reader's own places read
+  apart from the ones only visited often, wherever the two are drawn. One that cannot be reached is a button drawn
+  muted -->
 <template>
   <UiTooltip #default="{ activatorProps }" :label="isUnavailable ? UNAVAILABLE_PAGE_LABEL : label">
     <component

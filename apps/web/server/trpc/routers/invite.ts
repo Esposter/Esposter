@@ -68,12 +68,14 @@ export const inviteRouter = router({
       for (let attempt = 0; attempt < MAX_INVITE_ID_RETRIES; attempt++) {
         const id = generateSecretToken();
         // Each attempt is one batch, so a collision refuses the whole batch and the old link comes back with it. Only a
-        // Collision is retried — anything else is the database itself, and re-rolling the id through it hides the report
-        // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one collided
+        // Collision is retried — anything else is the database itself, and re-rolling the id through it hides the
+        // Report
+        // Collided
+        // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one
         const invite = await getResultAsync(() =>
           ctx.db.batch([
-            // One live invite per member per room — creating with new options replaces the old link, which is tombstoned
-            // So the answer names it at its version and no reader keeps offering it
+            // One live invite per member per room — creating with new options replaces the old link, which is
+            // Tombstoned So the answer names it at its version and no reader keeps offering it
             ctx.db
               .update(invitesInMessage)
               .set({ deletedAt: new Date() })
@@ -123,12 +125,13 @@ export const inviteRouter = router({
   readInvite: standardAuthedProcedure
     .input(readInviteInputSchema)
     .query<ReadInviteResult | undefined>(async ({ ctx, input }) => {
-      // An expired, exhausted, paused or banned link reads as an unknown token, so the landing page cannot tell them apart
+      // An expired, exhausted, paused or banned link reads as an unknown token, so the landing page cannot tell them
+      // Apart
       const invite = await resolveLiveInvite(ctx.db, input, ctx.user.id);
       if (!invite) return undefined;
 
-      // The landing page shows the room's name and how many are in it, never who: the room is read by its name alone, and
-      // The count is taken here, since the memberships are never read
+      // The landing page shows the room's name and how many are in it, never who: the room is read by its name alone,
+      // And The count is taken here, since the memberships are never read
       const [room, user, membership, memberCount] = await Promise.all([
         requireEntity(
           ctx.db.query.roomsInMessage.findFirst({ columns: { name: true }, where: { id: { eq: invite.roomId } } }),
@@ -176,7 +179,8 @@ export const inviteRouter = router({
       nextCursor: page.nextCursor,
     };
   }),
-  // A revoke tombstones the link and answers it at its version, so a reader holding the live link drops it on the answer
+  // A revoke tombstones the link and answers it at its version, so a reader holding the live link drops it on the
+  // Answer
   revokeInvite: getMemberProcedure(revokeInviteInputSchema, "roomId").mutation<InviteInMessage>(
     async ({ ctx, input: { id, roomId } }) => {
       // A member revokes their own link; revoking anybody's is `ManageRoom`, not `ManageInvites`. The default

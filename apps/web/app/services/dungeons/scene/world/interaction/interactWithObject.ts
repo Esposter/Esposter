@@ -15,7 +15,8 @@ export const interactWithObject = async (scene: SceneWithPlugins) => {
     if (!objectLayer) continue;
 
     const objects = getObjects(tilemap.value, objectLayer);
-    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: the first effect that consumes the interaction ends it
+    // Ends it
+    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: the first effect that consumes the interaction
     if (await ObjectInteractionEffectMap[objectgroupName]?.(scene, objects)) return true;
   }
 

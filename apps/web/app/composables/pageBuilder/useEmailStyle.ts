@@ -52,7 +52,8 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
     });
   });
   const sections = computed(() => getEmailStyleSections(fields.value));
-  // A write lands on the node it names, which is the selected one unless the caller names the node its value was picked for
+  // A write lands on the node it names, which is the selected one unless the caller names the node its value was picked
+  // For
   const setField = (attribute: string, value: string, nodeId = getSelectedNodeId(toValue(resourceId))) => {
     const writeTarget = getTarget(nodeId);
     // Clearing a field the node never set has nothing to remove, so it records no edit

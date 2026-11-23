@@ -14,10 +14,11 @@ import {
   PositionedElementType,
 } from "vue-block-editor-headless";
 
-// The operations a connection handle's release makes, as one list so one undo removes what they add together. A release on another shape joins the
-// Arrow alone, from the handle's connection point to the connection point of that shape nearest the release. A release on empty canvas inserts a
-// Shape of the source's kind centred on the release, at the default size and fill a placed shape takes, and joins the arrow to the connection point
-// Of that shape nearest the source's handle
+// The operations a connection handle's release makes, as one list so one undo removes what they add together. A release
+// On another shape joins the Arrow alone, from the handle's connection point to the connection point of that shape
+// Nearest the release. A release on empty canvas inserts a Shape of the source's kind centred on the release, at the
+// Default size and fill a placed shape takes, and joins the arrow to the connection point Of that shape nearest the
+// Source's handle
 export const getConnectOperations = (
   document: PositionedDocument,
   source: ShapeElement,
@@ -25,7 +26,8 @@ export const getConnectOperations = (
   options: { arrowId: string; release: Point; shapeId: string; target?: ArrowBinding | undefined },
 ): JsonPatchOperation[] => {
   const { arrowId, release, shapeId, target } = options;
-  // The arrow leaves the source and points at the joined shape, so only its end takes an arrowhead, as an arrow drawn by the tool does
+  // The arrow leaves the source and points at the joined shape, so only its end takes an arrowhead, as an arrow drawn
+  // By the tool does
   const start: ArrowEnd = {
     binding: { connectionPointIndex: connectionIndex, elementId: source.id },
     point: getConnectionPoint(getElementBounds(source), connectionIndex),

@@ -30,8 +30,8 @@ export const useCallParticipantActions = () => {
     ): Extract<Item, { icon: string }> => ({
       icon,
       onClick: async () => {
-        // The server decides what a moderation action does to the target, so the item waits on its answer. The target's row
-        // Changes through the call's own events, so the answer carries no row and nothing is shown before it
+        // The server decides what a moderation action does to the target, so the item waits on its answer. The target's
+        // Row Changes through the call's own events, so the answer carries no row and nothing is shown before it
         await executeAdminAction((actionRoomId) => ({ roomId: actionRoomId, targetUserId: userId, type }));
       },
       title,

@@ -1,6 +1,7 @@
 import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
-// An element's box placed inside the frame's body, from the viewport rects both are measured in. The size is the element's own
+// An element's box placed inside the frame's body, from the viewport rects both are measured in. The size is the
+// Element's own
 export const getOverlayBox = (
   elementRect: Pick<OverlayBox, "height" | "left" | "top" | "width">,
   bodyRect: Pick<OverlayBox, "left" | "top">,

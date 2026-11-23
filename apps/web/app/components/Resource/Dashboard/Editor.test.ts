@@ -100,7 +100,8 @@ describe("resourceDashboardEditor", () => {
     return wrapper;
   };
 
-  // The editor's changes are saved on the autosave cadence, so a visual added and left alone is written with no save control
+  // The editor's changes are saved on the autosave cadence, so a visual added and left alone is written with no save
+  // Control
   test("a visual added to the dashboard is autosaved", async () => {
     expect.hasAssertions();
 
@@ -115,7 +116,8 @@ describe("resourceDashboardEditor", () => {
       savedVisualTypes.push(dashboard.value.visuals.map(({ type }) => type));
     });
     await mountSuspended(ResourceDashboardEditor);
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- the autosave debounce is counted by the clock; the afterEach above restores the real timers before the harness waits a turn on setTimeout
+    // The autosave debounce is counted by the clock; the afterEach above restores the real
+    // oxlint-disable-next-line testing/no-faked-set-timeout -- timers before the harness waits a turn on setTimeout
     vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
     const visualStore = useVisualStore();
     const { createVisual } = visualStore;
@@ -127,7 +129,8 @@ describe("resourceDashboardEditor", () => {
     expect(savedVisualTypes).toStrictEqual([[VisualType.Card]]);
   });
 
-  // The inspector takes the selected visual's form, and the grid stays drawn beside it so the change is seen on the canvas
+  // The inspector takes the selected visual's form, and the grid stays drawn beside it so the change is seen on the
+  // Canvas
   test("selecting a visual shows its edit form in the inspector", async () => {
     expect.hasAssertions();
 
@@ -142,7 +145,8 @@ describe("resourceDashboardEditor", () => {
     }).toStrictEqual({ form: true, grid: true, settings: false });
   });
 
-  // The form's change is written onto the visual while the canvas is in view, so the tile it draws redraws as the type changes
+  // The form's change is written onto the visual while the canvas is in view, so the tile it draws redraws as the type
+  // Changes
   test("a visual type picked in the form is written onto the visual", async () => {
     expect.hasAssertions();
 
@@ -190,8 +194,8 @@ describe("resourceDashboardEditor", () => {
     }).toStrictEqual({ labels: ["Packing", "Overlaps"], settings: true });
   });
 
-  // A compact window draws the palette as a sheet that stays shut until the reader opens it. The shell's button for it is
-  // Not yet drawn, so the test opens the region through the shell's own function, the one the button will call
+  // A compact window draws the palette as a sheet that stays shut until the reader opens it. The shell's button for it
+  // Is Not yet drawn, so the test opens the region through the shell's own function, the one the button will call
   test("the palette is a region the reader opens", async () => {
     expect.hasAssertions();
 

@@ -73,8 +73,9 @@ const onGridKeydown = useGridKeyboard({
         text-center
       />
     </div>
-    <!-- A new month's days fade in over the old one's place, as the navigator's do, so a step reads as a turn of the page.
-      A week is a row for assistive technology alone, so the days still lay out on the one grid of seven columns -->
+    <!-- A new month's days fade in over the old one's place, as the navigator's do, so a step reads as a turn of
+      the page. A week is a row for assistive technology alone, so the days still lay out on the one grid of seven
+      columns -->
     <div
       ref="grid"
       :key="month.toString()"

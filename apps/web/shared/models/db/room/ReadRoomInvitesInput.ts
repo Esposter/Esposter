@@ -3,8 +3,8 @@ import type { PageSort } from "@esposter/db-schema";
 import { createPageInputSchema, roomIdSchema, SortOrder } from "@esposter/db-schema";
 import { z } from "zod";
 
-// Newest first. An invite's id is a random secret rather than a time-ordered one, so creation time leads and the id only
-// Breaks its ties
+// Newest first. An invite's id is a random secret rather than a time-ordered one, so creation time leads and the id
+// Only Breaks its ties
 export const ROOM_INVITE_PAGE_SORT = { keys: ["createdAt", "id"], order: SortOrder.Desc } as const satisfies PageSort<
   "createdAt" | "id"
 >;

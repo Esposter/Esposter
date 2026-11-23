@@ -11,8 +11,9 @@ interface Props {
   index: number;
 }
 
-// An arrow's route, the arrowhead at each of its ends, and the detach of each end bound to a shape. A detach is one commit. An end's box sets its
-// Arrowhead to the default triangle or clears it, and once an end has one, its kind is chosen beside the box
+// An arrow's route, the arrowhead at each of its ends, and the detach of each end bound to a shape. A detach is one
+// Commit. An end's box sets its Arrowhead to the default triangle or clears it, and once an end has one, its kind is
+// Chosen beside the box
 const { index } = defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations, updateElementProperty } = whiteboardStore;

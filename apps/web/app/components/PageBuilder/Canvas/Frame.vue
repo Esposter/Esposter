@@ -23,7 +23,8 @@ const { frameBody, frameStyle } = useCanvasFrame({
 });
 </script>
 
-<!-- The page draws in its own document at its device's width, scaled down to fit a narrower pane rather than reflowed -->
+<!-- The page draws in its own document at its device's width, scaled down to fit a narrower pane rather than
+  reflowed -->
 <template>
   <div ref="pane" h-full w-full of-hidden>
     <iframe ref="frame" b-0 sandbox="allow-same-origin" :srcdoc="CANVAS_FRAME_SRCDOC" :style="frameStyle" :title />

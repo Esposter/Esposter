@@ -36,7 +36,8 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   const userId = v7();
   const resourceId = v7();
-  // The file's bytes and the address they hash to. A held address is trusted only as far as the bytes under it hash to it
+  // The file's bytes and the address they hash to. A held address is trusted only as far as the bytes under it hash to
+  // It
   const bytes = new Uint8Array(1);
   const hash = createHash("sha256").update(bytes).digest("hex");
   const blobName = `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;
@@ -87,8 +88,8 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
     expect(reserveStorageBytesMock).toHaveBeenNthCalledWith(2, db, userId, StorageBucket.ResourceAssets, []);
   });
 
-  // The grace window the collection honours is measured from the last write, so re-uploading held bytes is what keeps an
-  // Object a save is about to reference from being collected
+  // The grace window the collection honours is measured from the last write, so re-uploading held bytes is what keeps
+  // An Object a save is about to reference from being collected
   test("a held object is touched without a new reservation", async () => {
     expect.hasAssertions();
 
@@ -141,8 +142,8 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
     ]);
   });
 
-  // A held name is trusted on existence alone only if nothing checked what it holds: bytes other than the file's under the
-  // Same address must not skip the PUT, and must be removed so the file's own bytes can take the name
+  // A held name is trusted on existence alone only if nothing checked what it holds: bytes other than the file's under
+  // The Same address must not skip the PUT, and must be removed so the file's own bytes can take the name
   test("a held address whose stored bytes do not hash to it is removed and uploaded again", async () => {
     expect.hasAssertions();
 

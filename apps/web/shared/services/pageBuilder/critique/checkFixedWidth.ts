@@ -8,7 +8,8 @@ import { NARROWEST_DEVICE_WIDTH } from "#shared/services/pageBuilder/critique/co
 import { getLengthInPixels } from "#shared/services/pageBuilder/critique/getLengthInPixels";
 import { getNodeStyle } from "#shared/services/pageBuilder/critique/getNodeStyle";
 
-// The width a node takes at the phone is the one its narrowest override sets, since a tablet override applies at the phone's width too
+// The width a node takes at the phone is the one its narrowest override sets, since a tablet override applies at the
+// Phone's width too
 export const checkFixedWidth = (node: WebpageNode): CritiqueFinding[] => {
   const style = getNodeStyle(node);
   const phoneWidth = STYLE_BREAKPOINT_ORDER.flatMap((breakpoint) => {

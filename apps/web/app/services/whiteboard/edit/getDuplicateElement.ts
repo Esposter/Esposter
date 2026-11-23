@@ -4,7 +4,8 @@ import { getDuplicateArrowEnd } from "#src/services/whiteboard/edit/getDuplicate
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// A copy of an element under the id its original maps to, moved by the offset. An arrow's ends follow the copies of the shapes they are bound to
+// A copy of an element under the id its original maps to, moved by the offset. An arrow's ends follow the copies of the
+// Shapes they are bound to
 export const getDuplicateElement = (
   element: PositionedElement,
   originalIdCopyIdMap: Record<string, string>,

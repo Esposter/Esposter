@@ -66,8 +66,8 @@ describe(useConnectionStore, () => {
     expect(openRealtimeSocket).toHaveBeenCalledTimes(1);
   });
 
-  // A room's frame reaches its handler with the room its socket was opened for, since a message is named by its room and
-  // Its integer id and the frame names neither
+  // A room's frame reaches its handler with the room its socket was opened for, since a message is named by its room
+  // And Its integer id and the frame names neither
   test("dispatches a room frame to the handlers of its type with the room the socket was opened for", async () => {
     expect.hasAssertions();
 
@@ -133,8 +133,8 @@ describe(useConnectionStore, () => {
     expect(readSentFrames()).toStrictEqual([watchFrame(read), { data: { topics: [topic] }, type: "unwatch" }]);
   });
 
-  // A frame carries one read's topics as that read signed them, so the columns of another read are never merged into it:
-  // A merged frame would name a topic set no single read produced, and the server's signature would not cover it
+  // A frame carries one read's topics as that read signed them, so the columns of another read are never merged into
+  // It: A merged frame would name a topic set no single read produced, and the server's signature would not cover it
   test("sends a read's frame with its own columns, never merged with the columns of another read of its topic", () => {
     expect.hasAssertions();
 
@@ -187,8 +187,8 @@ describe(useConnectionStore, () => {
     expect(readSentFrames()).toStrictEqual([watchFrame(newerRead), watchFrame(olderRead)]);
   });
 
-  // A new socket holds nothing the old one sent, so the first read a query makes after a reconnect is watched again even
-  // When its topic was watched before, since the server may have refused the stored read for its age
+  // A new socket holds nothing the old one sent, so the first read a query makes after a reconnect is watched again
+  // Even When its topic was watched before, since the server may have refused the stored read for its age
   test("a read taken after a reconnect is watched again", () => {
     expect.hasAssertions();
 
@@ -206,12 +206,13 @@ describe(useConnectionStore, () => {
     expect(readSentFrames()).toStrictEqual([watchFrame(refetchedRead)]);
   });
 
-  // A friend list's read names the rows it selected, and a removal by another person publishes those rows, so the topic the
-  // Read named reaches this person's socket as an invalidation and the store refetches the read through it
+  // A friend list's read names the rows it selected, and a removal by another person publishes those rows, so the topic
+  // The Read named reaches this person's socket as an invalidation and the store refetches the read through it
   test("another person's friendship removal refetches the friend list through the connection store", async () => {
     expect.hasAssertions();
 
-    // The write's publish reads its topic binding from the workers env, which this environment does not get from the shared setup
+    // The write's publish reads its topic binding from the workers env, which this environment does not get from the
+    // Shared setup
     const previousTopic = env.TOPIC;
     onTestFinished(() => {
       Object.assign(env, { TOPIC: previousTopic });

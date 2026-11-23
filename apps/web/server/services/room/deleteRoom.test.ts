@@ -15,8 +15,8 @@ describe(deleteRoom, () => {
   const { createMember, getMockContext, getRoleCaller, getRoomId } = setupRoomSuite();
   const name = "name";
 
-  // The roles and the override are kept as tombstones, so the room's rows are counted whole after the deletion, and only
-  // The live ones are read out of them
+  // The roles and the override are kept as tombstones, so the room's rows are counted whole after the deletion, and
+  // Only The live ones are read out of them
   test("tombstones the room's roles and every member's override with it", async () => {
     expect.hasAssertions();
 

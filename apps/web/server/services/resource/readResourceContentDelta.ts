@@ -50,6 +50,7 @@ export const readResourceContentDelta = async (
       );
     },
   );
-  // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive
+  // The content
+  // oxlint-disable-next-line no-restricted-properties -- schema owns date coercion, so free-text ISO strings survive
   return JSON.parse(serializedContent);
 };

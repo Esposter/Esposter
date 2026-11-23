@@ -4,8 +4,8 @@ import type { Bounds, Size } from "vue-block-editor-headless";
 import { WHITEBOARD_FIT_MAX_SCALE } from "#src/services/whiteboard/viewport/constants";
 import { getClampedScale } from "#src/services/whiteboard/viewport/getClampedScale";
 
-// The viewport that shows a box of the document entirely within a canvas of a size, centred on the box. A fit never enlarges the
-// Box past its own size, so a small document sits at full size rather than filling the canvas
+// The viewport that shows a box of the document entirely within a canvas of a size, centred on the box. A fit never
+// Enlarges the Box past its own size, so a small document sits at full size rather than filling the canvas
 export const getFitViewport = (bounds: Bounds, size: Size): Viewport => {
   const scale = getClampedScale(
     Math.min(WHITEBOARD_FIT_MAX_SCALE, size.width / bounds.width, size.height / bounds.height),

@@ -10,7 +10,8 @@ interface Props {
   // The visual's alternative text, which names the published tile in place of its label while it is empty
   altText: string;
   geometry: GridGeometry;
-  // Takes its height from the content it draws, so the tile is as tall as that content and reports it, and it resizes its width only
+  // Takes its height from the content it draws, so the tile is as tall as that content and reports it, and it resizes
+  // Its width only
   isAutoHeight: boolean;
   // A chart takes the image role on the published tile, so its name stands for the drawing rather than its cells
   isChart: boolean;

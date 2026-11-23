@@ -24,7 +24,8 @@ describe(getDistributeOperations, () => {
   test("distributing horizontally makes every gap equal", () => {
     expect.hasAssertions();
 
-    // The three shapes span from 0 to 580 and their widths total 230, so the two gaps share the 350 left over, 175 each. The first and last hold still
+    // The three shapes span from 0 to 580 and their widths total 230, so the two gaps share the 350 left over, 175
+    // Each. The first and last hold still
     const document: PositionedDocument = {
       elements: [
         createShape(THIRD_ID, 500, 0, 80, 100),
@@ -73,8 +74,9 @@ describe(getDistributeOperations, () => {
   test("distribute of boxes that do not span the others is unchanged", () => {
     expect.hasAssertions();
 
-    // The first box starts first but ends at 120, before the last box ends at 500, and the last box ends last but starts at 400, after the first.
-    // The three widths total 420 of the 500 span, so the gaps share the other 80, 40 each, and the middle box moves from 150 to 160
+    // The first box starts first but ends at 120, before the last box ends at 500, and the last box ends last but
+    // Starts at 400, after the first. The three widths total 420 of the 500 span, so the gaps share the other 80, 40
+    // Each, and the middle box moves from 150 to 160
     const document: PositionedDocument = {
       elements: [
         createShape(FIRST_ID, 0, 0, 120, 100),
@@ -94,7 +96,8 @@ describe(getDistributeOperations, () => {
   test("a box lying inside another's span never moves the box that ends furthest", () => {
     expect.hasAssertions();
 
-    // The second shape ends furthest, at 250, though the third starts after it, so the third is spaced and the second holds still
+    // The second shape ends furthest, at 250, though the third starts after it, so the third is spaced and the second
+    // Holds still
     const document: PositionedDocument = {
       elements: [
         createShape(FIRST_ID, 0, 0, 100, 100),
@@ -113,7 +116,8 @@ describe(getDistributeOperations, () => {
   test("a box that spans the others disables distribute", () => {
     expect.hasAssertions();
 
-    // The first shape starts at the left of the others and ends at the right of them, so it is both outer edges and there is no outer pair to keep
+    // The first shape starts at the left of the others and ends at the right of them, so it is both outer edges and
+    // There is no outer pair to keep
     const document: PositionedDocument = {
       elements: [
         createShape(FIRST_ID, 0, 0, 500, 100),

@@ -23,7 +23,8 @@ export const SURVEY_CONDITION_SECTIONS: readonly { label: string; prop: SurveyCo
   { label: "Required if", prop: SurveyConditionProp.RequiredIf },
 ];
 
-// The comparison each binary operator of the expression language is, where an operator with no condition row is not in the map
+// The comparison each binary operator of the expression language is, where an operator with no condition row is not in
+// The map
 export const SURVEY_CONDITION_BINARY_OPERATORS: Readonly<
   Partial<Record<SurveyExpressionBinaryOperator, SurveyConditionOperator>>
 > = {
@@ -109,7 +110,8 @@ export const SURVEY_CALCULATED_VALUE_NAME = "value";
 export const SURVEY_CALCULATED_VALUE_EXPRESSION = "0";
 
 // The kinds that order their choices by the session's seed, so each takes the seed the runner passes down. Read off
-// Each kind's form, where a choice order is declared, so a kind that gains one takes the seed without a list to add it to
+// Each kind's form, where a choice order is declared, so a kind that gains one takes the seed without a list to add it
+// To
 export const SURVEY_SEEDED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set(
   Object.values(SurveyNodeType).filter((type) => "choicesOrder" in surveyNodeTypeDefinitionMap[type].formSchema.shape),
 );
@@ -133,8 +135,8 @@ export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
   UiIconMeaning.SmileyVeryHappy,
 ];
 
-// The input types the library's text field draws as its own control, for a text question and for each item of a multiple
-// Text question, which takes a narrower list of them; the rest are typed as plain text
+// The input types the library's text field draws as its own control, for a text question and for each item of a
+// Multiple Text question, which takes a narrower list of them; the rest are typed as plain text
 export const SURVEY_TEXT_FIELD_TYPES: Readonly<
   Partial<Record<SurveyMultipleTextItemInputType | SurveyTextInputType, UiTextFieldType>>
 > = {
@@ -180,7 +182,8 @@ export const SURVEY_PREVIEW_MODE = "Preview";
 // The pixel height of the bar across the top of the creator, one row of its touch-sized controls
 export const SURVEY_BAR_HEIGHT = 48;
 
-// The key the other option of a choice question is drawn under, with its title, and the title its none option falls back to
+// The key the other option of a choice question is drawn under, with its title, and the title its none option falls
+// Back to
 export const SURVEY_OTHER_KEY = "other";
 export const SURVEY_OTHER_TITLE = "Other";
 export const SURVEY_NONE_TITLE = "None";

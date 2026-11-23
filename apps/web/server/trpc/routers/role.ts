@@ -50,8 +50,9 @@ import { Operation } from "@esposter/shared";
 import { and, eq, isNotNull, sql } from "drizzle-orm";
 
 export const roleRouter = router({
-  // A role a revocation or a deletion left as a tombstone is revived by the insert's conflict branch, and a live assignment is
-  // Already the answer, so it is read back rather than returned by the write. Either way the answer names the row it holds
+  // A role a revocation or a deletion left as a tombstone is revived by the insert's conflict branch, and a live
+  // Assignment is Already the answer, so it is read back rather than returned by the write. Either way the answer names
+  // The row it holds
   assignRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     assignRoleInputSchema,
@@ -150,8 +151,8 @@ export const roleRouter = router({
       )
       .returning();
   }),
-  // The role is deleted as a tombstone, and so are the assignments it held, in one batch. A revival of the role under the
-  // Same id then starts with no member holding it, rather than handing the old holders back
+  // The role is deleted as a tombstone, and so are the assignments it held, in one batch. A revival of the role under
+  // The Same id then starts with no member holding it, rather than handing the old holders back
   deleteRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     deleteRoleInputSchema,
@@ -232,10 +233,10 @@ export const roleRouter = router({
         where: { RAW: (role) => inJsonArray(role.roomId, roomIds) },
       });
     }),
-  // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role — rather than for
-  // A row, and it returns nothing to be missing. Two moderators revoking at once, or one revoking against a member list
-  // That has already moved on, would otherwise be refused for arriving at exactly what they asked for. The assignments it
-  // Tombstones are returned, which may be none
+  // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role — rather than
+  // For A row, and it returns nothing to be missing. Two moderators revoking at once, or one revoking against a member
+  // List That has already moved on, would otherwise be refused for arriving at exactly what they asked for. The
+  // Assignments it Tombstones are returned, which may be none
   revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation<
     UserToRoomRoleInMessage[]
   >(async ({ ctx, input: { roleId, roomId, userId } }) => {

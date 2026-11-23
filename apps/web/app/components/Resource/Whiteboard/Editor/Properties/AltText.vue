@@ -8,9 +8,9 @@ interface Props {
   index: number;
 }
 
-// The alt text of one image, which names it to assistive technology. The field holds a draft that is committed once, when the owner leaves the field or
-// Presses Enter, so a typed name is one edit, and an edit with no change to the name makes none. A change the store makes to the alt text, such as an undo,
-// Shows in the field
+// The alt text of one image, which names it to assistive technology. The field holds a draft that is committed once,
+// When the owner leaves the field or Presses Enter, so a typed name is one edit, and an edit with no change to the name
+// Makes none. A change the store makes to the alt text, such as an undo, Shows in the field
 const { element, index } = defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { updateElementProperty } = whiteboardStore;

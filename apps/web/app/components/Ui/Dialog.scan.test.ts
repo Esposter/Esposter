@@ -63,7 +63,8 @@ describe("dialog regions", () => {
   ]);
 
   // The elements a dialog draws as its body: its children less the templates that fill a named slot, unwrapping a
-  // Template that fills `#default` or nothing to what it holds. `v-if` and `v-for` stay props of the element they sit on
+  // Template that fills `#default` or nothing to what it holds. `v-if` and `v-for` stay props of the element they sit
+  // On
   const getBodyRoots = (nodes: TemplateChildNode[]): ElementNode[] =>
     nodes.flatMap((node) => {
       if (node.type !== NodeTypes.ELEMENT) return [];

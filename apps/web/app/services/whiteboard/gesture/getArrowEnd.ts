@@ -7,9 +7,9 @@ import { getHitTolerance } from "#src/services/whiteboard/gesture/getHitToleranc
 import { getNearestConnectionPointIndex } from "#src/services/whiteboard/gesture/getNearestConnectionPointIndex";
 import { getBindableShape, getConnectionPoint, getElementBounds } from "vue-block-editor-headless";
 
-// The end an arrow takes where a point lands: bound to the connection point nearest the point on the shape the point hits, or free at the point.
-// An annotation takes no connection, and the shape an arrow starts from is left free by its own end, so either leaves the end free. The end holds
-// No arrowhead, since the caller gives each end its own
+// The end an arrow takes where a point lands: bound to the connection point nearest the point on the shape the point
+// Hits, or free at the point. An annotation takes no connection, and the shape an arrow starts from is left free by its
+// Own end, so either leaves the end free. The end holds No arrowhead, since the caller gives each end its own
 export const getArrowEnd = (
   state: WhiteboardGestureState,
   point: Point,

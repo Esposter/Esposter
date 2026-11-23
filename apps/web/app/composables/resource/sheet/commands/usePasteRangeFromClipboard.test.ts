@@ -196,7 +196,8 @@ describe(usePasteRangeFromClipboard, () => {
     expect(otherDataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
   });
 
-  // A reopened sheet has the same id as the one closed, so the id cannot tell its paste from one issued before the close
+  // A reopened sheet has the same id as the one closed, so the id cannot tell its paste from one issued before the
+  // Close
   test("writes nothing to a sheet closed and reopened while the clipboard is read", async () => {
     expect.hasAssertions();
 

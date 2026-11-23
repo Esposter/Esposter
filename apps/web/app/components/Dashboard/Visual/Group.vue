@@ -15,13 +15,14 @@ import { getGroupTitle } from "#src/services/dashboard/visual/getGroupTitle";
 interface Props {
   collision: CollisionMode;
   compactType: CompactType;
-  // Drawn for editing, where the grid takes edits and the header always shows, since it is the group's place to be grabbed
+  // Drawn for editing, where the grid takes edits and the header always shows, since it is the group's place to be
+  // Grabbed
   isEditable?: true | undefined;
   visual: Visual;
 }
 
-// The panel's border is the renderer's frame around it. Each child is drawn by the caller's child slot, so the group draws it
-// The way its own dashboard does
+// The panel's border is the renderer's frame around it. Each child is drawn by the caller's child slot, so the group
+// Draws it The way its own dashboard does
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 const { isEditable, visual } = defineProps<Props>();
 const emit = defineEmits<DashboardVisualEmits>();
@@ -50,8 +51,9 @@ const columnNumber = computed(() => (isEditable ? DASHBOARD_NO_COLUMNS : getBrea
         description="Or choose Move to in a visual's menu"
         title="Drop a visual here"
       />
-      <!-- The grid takes its own presses, so a press inside it is the grid's and the group is moved by its header and frame.
-        The grid's root is the nested interaction the outer grid's click passes over, so a click on a child opens the child -->
+      <!-- The grid takes its own presses, so a press inside it is the grid's and the group is moved by its header
+        and frame. The grid's root is the nested interaction the outer grid's click passes over, so a click on a
+        child opens the child -->
       <DashboardGrid
         v-if="isEditable || width"
         :collision

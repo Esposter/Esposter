@@ -110,8 +110,8 @@ const { customEmojis } = useRoomEmojiStore();
     };
   };
 
-  // The project is the app's own tsconfig, extended by a virtual one that adds the fixtures and the `.vue` scan texts as
-  // Files. They live in a layer over the disk, so the checker types them against the real stores and Nuxt's globals
+  // The project is the app's own tsconfig, extended by a virtual one that adds the fixtures and the `.vue` scan texts
+  // As Files. They live in a layer over the disk, so the checker types them against the real stores and Nuxt's globals
   const openStoreProject = (api: API, virtualSources: Map<string, string>) => {
     const configurationPath = join(WEB_ROOT, "storeRefDestructure.tsconfig.json");
     const configurationText = JSON.stringify({

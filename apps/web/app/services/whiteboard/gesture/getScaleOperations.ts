@@ -17,18 +17,20 @@ import {
   resizePositionedElementBounds,
 } from "vue-block-editor-headless";
 
-// The change in the box's extent on an axis that the sides a handle moves make: the end side moves with the travel, and the start side against it
+// The change in the box's extent on an axis that the sides a handle moves make: the end side moves with the travel, and
+// The start side against it
 const getExtentChange = (isStartMoved: boolean, isEndMoved: boolean, travel: number): number => {
   if (isEndMoved) return travel;
   return isStartMoved ? -travel : 0;
 };
 
-// The extent the scale on an axis stops at, the smallest of the elements that take a size on it, or the box's own extent when none does
+// The extent the scale on an axis stops at, the smallest of the elements that take a size on it, or the box's own
+// Extent when none does
 const getLimitingExtent = (extents: number[], boxExtent: number): number =>
   extents.length === 0 ? boxExtent : extents.reduce((smallest, extent) => Math.min(smallest, extent));
 
-// The factor an axis scales the selection by. It stops where the smallest element reaches the minimum size, and an axis of no extent, or one no side
-// Of the handle moves on, takes no scale
+// The factor an axis scales the selection by. It stops where the smallest element reaches the minimum size, and an axis
+// Of no extent, or one no side Of the handle moves on, takes no scale
 const getAxisScale = (extent: number, extentChange: number, limitingExtent: number): number => {
   if (extent === 0 || extentChange === 0) return 1;
 
@@ -36,12 +38,14 @@ const getAxisScale = (extent: number, extentChange: number, limitingExtent: numb
   return Math.max(minimumScale, (extent + extentChange) / extent);
 };
 
-// A coordinate scaled about the anchor, which a scale of one leaves as it is, so an axis that is not scaled keeps its exact value
+// A coordinate scaled about the anchor, which a scale of one leaves as it is, so an axis that is not scaled keeps its
+// Exact value
 const getScaledValue = (value: number, anchor: number, scale: number): number =>
   scale === 1 ? value : anchor + (value - anchor) * scale;
 
-// The operations that scale one element of a selection about the anchor, by a factor on each axis. A box scales its position and its size, a stroke
-// Scales its points, and an arrow scales each end that is free, since a bound end follows its shape through the reroute the resize makes
+// The operations that scale one element of a selection about the anchor, by a factor on each axis. A box scales its
+// Position and its size, a stroke Scales its points, and an arrow scales each end that is free, since a bound end
+// Follows its shape through the reroute the resize makes
 const getScaleElementOperations = (
   document: PositionedDocument,
   elementId: string,
@@ -91,8 +95,9 @@ const getScaleElementOperations = (
   }
 };
 
-// The operations that scale each element of a selection by a drag of one handle of the selection's box, in one list. The side opposite the handle
-// Holds still, so each element keeps its place relative to it. A text box stores no height, so only its width scales with a drag along its height
+// The operations that scale each element of a selection by a drag of one handle of the selection's box, in one list.
+// The side opposite the handle Holds still, so each element keeps its place relative to it. A text box stores no
+// Height, so only its width scales with a drag along its height
 export const getScaleOperations = (
   document: PositionedDocument,
   elementIds: string[],

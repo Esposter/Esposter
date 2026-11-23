@@ -4,8 +4,8 @@ import type { Item } from "#src/models/shared/Item";
 import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // A resource with several formats gets one command named by its verb, which opens the formats beneath it in the same
-// Menu, each against its own icon: a flat row of "Import Csv" and "Export Csv" per format would bury the commands around
-// Them. A lone format is the command itself, since a group of one is a click spent on nothing
+// Menu, each against its own icon: a flat row of "Import Csv" and "Export Csv" per format would bury the commands
+// Around Them. A lone format is the command itself, since a group of one is a click spent on nothing
 export const createPortableFormatItems = (
   verb: string,
   meaning: UiIconMeaning,

@@ -41,7 +41,8 @@ const { checkIsHorizontalOwner, draggedNodeId, dropTarget, getElement, hoveredNo
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
 const pageOpen = computed(() => getHeldDocument(resourceId));
-// The name a hovered node's outline carries: the title the layers tree gives the node, read from the document the layer draws
+// The name a hovered node's outline carries: the title the layers tree gives the node, read from the document the layer
+// Draws
 const hoverTitle = computed(() => {
   const open = pageOpen.value;
   if (!open || !hoveredNodeId) return "";
@@ -57,7 +58,8 @@ const hoverBox = shallowRef<OverlayBox>();
 const previewBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
 // The library's accent and the background it pairs with for text, read from the app's own document each time the theme
-// Or style that sets them changes, since the frame holds none of the app's tokens and the layer passes them on to its boxes
+// Or style that sets them changes, since the frame holds none of the app's tokens and the layer passes them on to its
+// Boxes
 const accent = shallowRef("");
 const background = shallowRef("");
 const readTokens = () => {
@@ -87,7 +89,8 @@ const getNodeBox = (nodeId: string | undefined): OverlayBox | undefined => {
 
   return getOverlayBox(element.getBoundingClientRect(), layer.value.getBoundingClientRect());
 };
-// The box an empty slot's indicator outlines: the node holding the slot, or the whole layer when the slot is the page's content
+// The box an empty slot's indicator outlines: the node holding the slot, or the whole layer when the slot is the page's
+// Content
 const getSlotOwnerBox = (
   kind: AnyPageBuilderKind,
   document: BlockDocument,
@@ -117,7 +120,8 @@ const getDropIndicator = (): DropIndicator | undefined => {
     ownerBox: getSlotOwnerBox(kind, document, dropTarget.slotPointer),
   });
 };
-// The drop line is the fallback for a drop whose preview the frame does not draw, since the preview shows the block in place
+// The drop line is the fallback for a drop whose preview the frame does not draw, since the preview shows the block in
+// Place
 const redraw = () => {
   hoverBox.value = getNodeBox(hoveredNodeId);
   selectionBox.value = getNodeBox(selectedNodeId);

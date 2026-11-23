@@ -69,9 +69,9 @@ export const useReadResources = (
     getFilterInput,
     // The total depends on the filter alone, so the filter the user picked is exactly what it is keyed by
     getFilterKey: () => getResourceFilterKey(getFilterValues()),
-    // Each row a page answers is held on the overlay as it arrives, with its star, so an edit or a removal of the row, by
-    // This list or any other surface, reaches the list without a patch of its own. The last access is the read's, not the
-    // Row's, so it is left off the held row and kept on the page beside it
+    // Each row a page answers is held on the overlay as it arrives, with its star, so an edit or a removal of the row,
+    // By This list or any other surface, reaches the list without a patch of its own. The last access is the read's,
+    // Not the Row's, so it is left off the held row and kept on the page beside it
     readPage: async (cursor, filterInput, { itemsPerPage, sortBy }) => {
       const page = await readListPage({ cursor, limit: itemsPerPage, sortBy }, filterInput);
       arriveResourceListItems(page.items);

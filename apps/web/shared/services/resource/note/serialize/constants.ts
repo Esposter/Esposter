@@ -11,8 +11,8 @@ export const LINE_START_MARKER_REGEX = /^(?<indent>[ \t]*\d*)(?<marker>[#>+\-.)=
 export const LINE_START_WHITESPACE_REGEX = /^[ \t]+/gmu;
 export const BACKTICK_RUN_REGEX = /`+/gu;
 export const BACKTICK_EDGE_REGEX = /^`|`$/u;
-// A code span whose text starts and ends with a space, and holds another character, loses one from each side on read-back, so it is padded
-// A span of only spaces keeps them all on read-back, so it is not
+// A code span whose text starts and ends with a space, and holds another character, loses one from each side on
+// `read-back`, so it is padded A span of only spaces keeps them all on read-back, so it is not
 export const SPACE_EDGE_REGEX = /^ .*[^ ].* $/su;
 // A closing hash run ends a heading unless it is escaped, so the last hash of a heading's text is
 export const HEADING_CLOSING_HASH_REGEX = /#(?=\s*$)/u;

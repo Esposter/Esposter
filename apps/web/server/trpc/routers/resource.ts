@@ -214,8 +214,8 @@ export const resourceRouter = router({
         .limit(limit + 1);
       return toPage(activities, RESOURCE_ACTIVITY_SORT, cursor, limit);
     }),
-  // The critique the owner's editor shows as its problems, answered beside the content version it was read at. A type that declares
-  // No critique is refused by name, so an empty list is never read as a clean page
+  // The critique the owner's editor shows as its problems, answered beside the content version it was read at. A type
+  // That declares No critique is refused by name, so an empty list is never read as a clean page
   readCritique: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
     .meta({
       mcp: {
@@ -237,8 +237,8 @@ export const resourceRouter = router({
     .query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
       readDeletedResourcePage(ctx.db, { cursor, limit, sort, userId: ctx.user.id }),
     ),
-  // The viewer's live stars a page at a time, the most recently set first. Each row answers its own star, so a list shows
-  // Every star from the page it holds, and a star removed elsewhere reaches a row as its tombstone
+  // The viewer's live stars a page at a time, the most recently set first. Each row answers its own star, so a list
+  // Shows Every star from the page it holds, and a star removed elsewhere reaches a row as its tombstone
   readFavorites: standardAuthedProcedure
     .input(readFavoritesInputSchema)
     .query<Page<ResourceListItemWithFavorite>>(async ({ ctx, input: { cursor, limit } }) => {
@@ -273,7 +273,8 @@ export const resourceRouter = router({
       return { ...page, items: page.items.map(({ favorite, resource }) => ({ ...resource, favorite })) };
     }),
   // Publish state and the viewer's star ride the row rather than answering a second request: `resourcePublications` and
-  // `resourceFavorites` are each one table for every type, so this cross-type read resolves them whatever the resource is
+  // `resourceFavorites` are each one table for every type, so this cross-type read resolves them whatever the resource
+  // Is
   readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
     .meta({
       mcp: {
@@ -527,9 +528,9 @@ export const resourceRouter = router({
   saveResourceRevision: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<number | undefined>(
     ({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport),
   ),
-  // The row it answers is the star's own, so a client reads whether the star is set from its deletedAt. A removal keeps the
-  // Row as a tombstone at the version the removal left, and a star made again revives that row with the new time, which is
-  // Where the list places it
+  // The row it answers is the star's own, so a client reads whether the star is set from its deletedAt. A removal keeps
+  // The Row as a tombstone at the version the removal left, and a star made again revives that row with the new time,
+  // Which is Where the list places it
   toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<ResourceFavoriteInResource>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.user.id;

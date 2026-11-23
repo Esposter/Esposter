@@ -27,7 +27,8 @@ const overflowWidth = ref(0);
 const gap = ref(0);
 // Nothing folds until the observer has read the toolbar's width
 const availableWidth = ref(Number.POSITIVE_INFINITY);
-// The variant each slot last drew, by its group's label. A variant in hand is the one its slot draws, whether a click or a key put it there
+// The variant each slot last drew, by its group's label. A variant in hand is the one its slot draws, whether a click
+// Or a key put it there
 const usedVariantValues = shallowReactive(new Map<string, string>());
 const flatEntries = computed(() =>
   groups.flatMap(({ items, kind, label: groupLabel }) => items.map((item) => ({ item, kind, label: groupLabel }))),
@@ -35,8 +36,8 @@ const flatEntries = computed(() =>
 // The items always held in the overflow menu, which the bar never draws
 const heldEntries = computed(() => flatEntries.value.filter(({ item }) => item.isInOverflow));
 const isOverflowHeld = computed(() => heldEntries.value.length > 0);
-// The items the bar draws and measures, in the order it draws them. An item held in the overflow menu is never drawn, so it
-// Takes no width and is not one of the measured items
+// The items the bar draws and measures, in the order it draws them. An item held in the overflow menu is never drawn,
+// So it Takes no width and is not one of the measured items
 const drawnEntries = computed(() => flatEntries.value.filter(({ item }) => !item.isInOverflow));
 const drawnFolds = computed(() => {
   if (isMeasuring.value) return drawnEntries.value.map(() => false);
@@ -161,7 +162,8 @@ const measure = async () => {
   overflowWidth.value = toolbar.value?.querySelector("[data-toolbar-overflow]")?.getBoundingClientRect().width ?? 0;
   const bar = toolbar.value;
   // A gap the browser does not report (a computed style with none, as happy-dom gives) reads NaN, which is no gap
-  // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("4px"), Number() would be NaN
+  // Computed
+  // oxlint-disable-next-line unicorn/prefer-number-coercion -- styles are px-suffixed ("4px"), Number() would be NaN
   gap.value = bar ? Number.parseFloat(window.getComputedStyle(bar).columnGap) || 0 : 0;
   isMeasuring.value = false;
 };
@@ -176,7 +178,8 @@ onMounted(async () => {
 watch(flatEntries, async () => {
   await measure();
 });
-// The slot of a variant in hand draws that variant from then on, so a choice a key makes is the one the slot shows once the tool moves on
+// The slot of a variant in hand draws that variant from then on, so a choice a key makes is the one the slot shows once
+// The tool moves on
 watchImmediate(modelValue, (value) => {
   for (const { items, label: groupLabel } of groups) {
     const [family] = items;

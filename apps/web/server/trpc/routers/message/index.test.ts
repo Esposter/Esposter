@@ -125,8 +125,8 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
   };
 });
 
-// The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the stub
-// It stands in for. Only the calls a test makes are checked, through the typed fake above
+// The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the
+// Stub It stands in for. Only the calls a test makes are checked, through the typed fake above
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: (roomId: string) => useRoomObjectMock(roomId) as unknown as ReturnType<typeof useRoomObject>,
 }));
@@ -170,7 +170,8 @@ describe("messageRouter", () => {
     mockContext = getMockContext();
     messageCaller = createCallerFactory(messageRouter)(mockContext);
     roomCaller = getRoomCaller();
-    // A forward reads the message-assets bucket before it writes anything, so the suite makes one for the bucket to answer
+    // A forward reads the message-assets bucket before it writes anything, so the suite makes one for the bucket to
+    // Answer
     const messageAssets = await createMockBucket(StorageBucket.MessageAssets);
     mockBuckets[StorageBucket.MessageAssets] = messageAssets.bucket;
     disposeMessageAssets = messageAssets.dispose;
@@ -223,8 +224,8 @@ describe("messageRouter", () => {
     ]);
   });
 
-  // The sanitizer would rewrite a poll's JSON, turning an ampersand into an entity, so the room would hold a question its
-  // Sender never wrote
+  // The sanitizer would rewrite a poll's JSON, turning an ampersand into an entity, so the room would hold a question
+  // Its Sender never wrote
   test("creates a poll with its question as its sender wrote it", async () => {
     expect.hasAssertions();
 
@@ -294,8 +295,8 @@ describe("messageRouter", () => {
     expect(answer).toStrictEqual(updatedMessage);
   });
 
-  // A count a message made stands only for a member who was in the room when the message was sent. A member joins at the
-  // Epoch the message is dated at unless a test dates the join
+  // A count a message made stands only for a member who was in the room when the message was sent. A member joins at
+  // The Epoch the message is dated at unless a test dates the join
   const getMentionCount = async (memberId: string) =>
     (
       await mockContext.db
@@ -399,8 +400,8 @@ describe("messageRouter", () => {
     await expect(getMentionCount(member.id)).resolves.toBe(0);
   });
 
-  // The edit counts the mention of a member who joined after the message was sent, so a delete takes that count back only
-  // By reading the edit's time, which is the time the count was made, rather than the send's
+  // The edit counts the mention of a member who joined after the message was sent, so a delete takes that count back
+  // Only By reading the edit's time, which is the time the count was made, rather than the send's
   test("takes back the mention count an edit made for a member who joined after the message was sent, when it is deleted", async () => {
     expect.hasAssertions();
 
@@ -615,7 +616,8 @@ describe("messageRouter", () => {
     expect(followedThreads).toStrictEqual({ follows: [unfollowedRow], threads: [] });
   });
 
-  // The unfollow's row is read back with its version, so a read that lands after the unfollow cannot list the thread again
+  // The unfollow's row is read back with its version, so a read that lands after the unfollow cannot list the thread
+  // Again
   test("reads an unfollowed thread's follow row with the version the unfollow left it at", async () => {
     expect.hasAssertions();
 
@@ -629,7 +631,8 @@ describe("messageRouter", () => {
     expect(threads).toStrictEqual([]);
   });
 
-  // The follow's header names its row by the thread's root id as the row holds it, a number, so the entry touches the row
+  // The follow's header names its row by the thread's root id as the row holds it, a number, so the entry touches the
+  // Row
   test("the follow's entry covers the follow row its header names", async () => {
     expect.hasAssertions();
 
@@ -667,8 +670,8 @@ describe("messageRouter", () => {
 
     const newerRoot = { ...createRoomMessage({ id: messageId + 1 }), replyCount: 0 };
     roomObject.readThreads.mockReturnValue([newerRoot]);
-    // Followed newer first, so a read that returns the follows latest-first hands the room the older root ahead of the newer
-    // One, and only the router's own sort puts the newer root first
+    // Followed newer first, so a read that returns the follows latest-first hands the room the older root ahead of the
+    // Newer One, and only the router's own sort puts the newer root first
     await messageCaller.followThread({ roomId, threadRootId: newerRoot.id });
     await messageCaller.followThread({ roomId, threadRootId: messageId });
 
@@ -698,8 +701,8 @@ describe("messageRouter", () => {
     });
   });
 
-  // A room opened at one of its messages reads the messages around it both ways: the anchor starts the older side, and the
-  // Newer side reads from the anchor backward, so each side hands its own cursor on
+  // A room opened at one of its messages reads the messages around it both ways: the anchor starts the older side, and
+  // The Newer side reads from the anchor backward, so each side hands its own cursor on
   test("opens a room at a message, reading the messages on each side of it with a cursor each way", async () => {
     expect.hasAssertions();
 
@@ -758,7 +761,8 @@ describe("messageRouter", () => {
   test("fails forward to a room the sender is not in, writing to no room", async () => {
     expect.hasAssertions();
 
-    // The room belongs to another person, so the sender is not in it and the forward is refused before any room is written
+    // The room belongs to another person, so the sender is not in it and the forward is refused before any room is
+    // Written
     const otherAuthSession = await createMockAuthSession(mockContext.db);
     const otherRoomCaller = createCallerFactory(roomRouter)(await createMockContext(otherAuthSession));
     const otherRoom = await otherRoomCaller.createRoom({ name });
@@ -798,7 +802,8 @@ describe("messageRouter", () => {
     const blockedRoom = await roomCaller.createRoom({ name });
     const openRoom = await roomCaller.createRoom({ name });
     await roomCaller.filter.upsertRoomFilter({ roomId: blockedRoom.id, words: [filteredWord] });
-    // The filter never applies to someone who can manage messages, so the forward is sent by a plain member of both rooms
+    // The filter never applies to someone who can manage messages, so the forward is sent by a plain member of both
+    // Rooms
     const member = await createMember();
     await createRoomMember(mockContext, blockedRoom.id, member);
     await createRoomMember(mockContext, openRoom.id, member);

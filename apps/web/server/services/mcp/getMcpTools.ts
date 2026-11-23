@@ -13,13 +13,15 @@ import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 export const getMcpTools = (router: AnyRouter, mcpScopes: McpScope[]): McpTool[] =>
   Object.entries<AnyProcedure>(router._def.procedures).flatMap(([path, { _def }]) => {
     // A built procedure types its meta as unknown; the root declares it as `Meta`
-    // oxlint-disable typescript/no-unsafe-type-assertion -- a built procedure types its meta as unknown, and the root's Meta is the one shape every procedure's meta is written to
+    // A built procedure types its meta as unknown, and the root's
+    // oxlint-disable typescript/no-unsafe-type-assertion -- Meta is the one shape every procedure's meta is written to
     const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
     // oxlint-enable typescript/no-unsafe-type-assertion
-    // A tool outside the scopes the caller's key holds is dropped before its input schema is derived, since that derivation is the cost
+    // A tool outside the scopes the caller's key holds is dropped before its input schema is derived, since that
+    // Derivation is the cost
     if (!mcp || humanOnly || _def.type === "subscription" || !mcpScopes.includes(mcp.scope)) return [];
-    // One input whose written side is an object, defaulted, transformed or not, which `getMcpTools.test.ts` holds for every
-    // Procedure that opts in, since a tool's input schema must be an object
+    // One input whose written side is an object, defaulted, transformed or not, which `getMcpTools.test.ts` holds for
+    // Every Procedure that opts in, since a tool's input schema must be an object
     const [input] = _def.inputs;
     return [
       {
@@ -27,7 +29,8 @@ export const getMcpTools = (router: AnyRouter, mcpScopes: McpScope[]): McpTool[]
         // Client can let every read through while it keeps asking about writes
         annotations: { readOnlyHint: _def.type === "query" },
         description: mcp.description,
-        // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types an input as a parser union, and the MCP endpoint serves only zod inputs, each held to an object schema by getMcpTools.test.ts
+        // `tRPC` types an input as a parser union, and the MCP endpoint serves only zod inputs,
+        // oxlint-disable typescript/no-unsafe-type-assertion -- each held to an object schema by getMcpTools.test.ts
         inputSchema: getAgentJsonSchema(input as z.ZodType) as Tool["inputSchema"],
         // oxlint-enable typescript/no-unsafe-type-assertion
         name: path.replaceAll(".", "_"),

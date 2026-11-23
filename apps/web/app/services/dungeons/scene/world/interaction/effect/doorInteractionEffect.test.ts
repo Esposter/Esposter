@@ -1,4 +1,6 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed store has members this test never reads; A partial fake: the typed sound has members this test never reads */
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full
+   store type; A partial fake: the typed store has members this test never reads; A partial fake: the typed sound has
+   members this test never reads */
 import type { TeleportTarget } from "#shared/generated/tiled/propertyTypes/class/TeleportTarget";
 import type { Types } from "phaser";
 
@@ -19,7 +21,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+// A partial fake:
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 // Sound plays through Phaser's scene, which is not run here

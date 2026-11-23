@@ -9,7 +9,8 @@ export const createCounter = () => {
     for (;;) {
       if (!(value < target)) return;
 
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each wait ends on an increment, and the check after it reads the count that increment moved
+      // Check after it reads the count that increment moved
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each wait ends on an increment, and the
       await changed.promise;
     }
   };

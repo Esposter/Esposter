@@ -1,4 +1,5 @@
-/* oxlint-disable selector-ban/no-restricted-syntax -- a number filter bound, from a number input that holds no spaces */
+/* oxlint-disable selector-ban/no-restricted-syntax -- a number filter bound, from a number input that holds no
+   spaces */
 import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
 import type { ColumnFilterOfType } from "#src/models/resource/sheet/column/ColumnFilterOfType";
 import type { ColumnFilterPredicate } from "#src/models/resource/sheet/column/ColumnFilterPredicate";

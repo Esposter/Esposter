@@ -9,8 +9,8 @@ import { McpScope, ResourceType } from "@esposter/db-schema";
 
 export const whiteboardRouter = router({
   ...createResourceProcedures(ResourceType.Whiteboard),
-  // The one typed write a whiteboard takes beside the generic patch: a patch moves a shape but cannot reroute the arrows bound
-  // To it, so the move names the shape and its point and the arrows follow in the same save
+  // The one typed write a whiteboard takes beside the generic patch: a patch moves a shape but cannot reroute the
+  // Arrows bound To it, so the move names the shape and its point and the arrows follow in the same save
   moveWhiteboardElement: getOwnerProcedure(ResourceType.Whiteboard, moveWhiteboardElementInputSchema, "id")
     .meta({
       mcp: {

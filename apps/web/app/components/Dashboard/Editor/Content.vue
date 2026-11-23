@@ -24,11 +24,12 @@ const canvas = useTemplateRef("canvas");
 onClickExceptDrag(canvas, () => {
   clearSelection();
 });
-// Every grid of the editor takes these keys and binds none, so the editor registers them once, however many groups it holds
-// The keys are registered only while the editor draws a grid, since the empty dashboard has no visual for them to act on
+// Every grid of the editor takes these keys and binds none, so the editor registers them once, however many groups it
+// Holds The keys are registered only while the editor draws a grid, since the empty dashboard has no visual for them to
+// Act on
 useCommands(() => (isEmpty.value ? [] : DASHBOARD_GRID_COMMANDS));
-// The dashboard's grid and every group's grid write through these, so a nested commit, open or transfer is the same write
-// By id as the dashboard's own, wherever the visual sits
+// The dashboard's grid and every group's grid write through these, so a nested commit, open or transfer is the same
+// Write By id as the dashboard's own, wherever the visual sits
 const commitVisuals = (changes: GridBlock[]) => {
   for (const change of changes) updateVisual(change);
 };

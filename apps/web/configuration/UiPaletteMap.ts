@@ -13,11 +13,11 @@ export const UiPaletteMap = {
   // Radix's slate for the neutrals — app background, a panel a tone above it, a lifted panel a tone further, the
   // Divider a step fainter than the border, muted and text — and Vue's green as the one accent: the bright mint of the
   // Script setup Vue logo's face in dark. Light's panel sits a tone below the background, as Material's surface
-  // Containers do, and what is lifted is white. The accent, error, info and warning are each the most saturated colour of
-  // Their hue that still passes the contrast tests below on every surface, as a link's blue is, so one colour serves a
-  // Fill, a label's text and a mark alike; in light that puts a green far deeper than the logo's, since a green as bright
-  // As it cannot be read on white. Success is a leaf green a hue yellower than the accent's mint, so a saved mark and an
-  // Accent button beside it never read as one colour
+  // Containers do, and what is lifted is white. The accent, error, info and warning are each the most saturated colour
+  // Of Their hue that still passes the contrast tests below on every surface, as a link's blue is, so one colour serves
+  // A Fill, a label's text and a mark alike; in light that puts a green far deeper than the logo's, since a green as
+  // Bright As it cannot be read on white. Success is a leaf green a hue yellower than the accent's mint, so a saved
+  // Mark and an Accent button beside it never read as one colour
   [UiStyle.Standard]: {
     [ThemeMode.Dark]: {
       [UiToken.Accent]: "#28e498",

@@ -18,8 +18,8 @@ const checkIsWithinGrace = async (bucket: R2Bucket, blobName: string) => {
 };
 // The one release every path takes: an eviction, an unpublish, a file delete and a content write each name the asset
 // Hashes they may have just left unreferenced. A candidate is deleted only when no version row and no working-copy row
-// Of the resource names it, and it is outside the grace window. Under the resource's object lease, so a write reserving an
-// Asset is either committed before the rows are read or not started until the release has finished
+// Of the resource names it, and it is outside the grace window. Under the resource's object lease, so a write reserving
+// An Asset is either committed before the rows are read or not started until the release has finished
 export const releaseResourceAssets = async (
   db: Context["db"],
   resourceId: ResourceInResource["id"],
@@ -28,7 +28,8 @@ export const releaseResourceAssets = async (
   if (candidateHashes.length === 0) return;
 
   await withResourceObjectLock(db, resourceId, async () => {
-    // Taken before the rows are read, so a reference written after the read is dated after this decision and its blob is kept
+    // Taken before the rows are read, so a reference written after the read is dated after this decision and its blob
+    // Is kept
     const decidedAt = new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS);
     const survivors = await readReferencedAssetHashes(db, resourceId);
     const unclaimedHashes = [...new Set(candidateHashes)].filter((hash) => !survivors.has(hash));

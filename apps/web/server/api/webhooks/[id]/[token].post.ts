@@ -39,8 +39,10 @@ export default defineEventHandler(async (event) => {
       return { message: "Webhook not found." };
     }
 
-    // The payload is checked here, before anything is queued, so a malformed one is answered rather than failing its job
-    // oxlint-disable-next-line no-restricted-properties -- an external sender's payload is content, whose date-shaped strings stay strings
+    // The payload is checked here, before anything is queued, so a malformed one is answered rather than failing its
+    // Job
+    // An external sender's
+    // oxlint-disable-next-line no-restricted-properties -- payload is content, whose date-shaped strings stay strings
     const payload = getResult(() => webhookPayloadSchema.parse(JSON.parse(body))).match(
       (parsedPayload) => parsedPayload,
       () => null,
@@ -50,8 +52,8 @@ export default defineEventHandler(async (event) => {
       return { message: "Invalid payload." };
     }
 
-    // Accepted once queued. The push is queued under the id it is accepted as, so a redelivery of it writes the message once
-    // The job is handed the room and its app user alone, never the credential
+    // Accepted once queued. The push is queued under the id it is accepted as, so a redelivery of it writes the message
+    // Once The job is handed the room and its app user alone, never the credential
     await getJobQueue(QueueJob.ProcessWebhook).send({
       deliveryId: v7(),
       payload,

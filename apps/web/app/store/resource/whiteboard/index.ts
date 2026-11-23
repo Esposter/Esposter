@@ -15,8 +15,8 @@ import { ResourceType } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 import { insertPositionedElement, updatePositionedElementProperty, useEditSession } from "vue-block-editor-headless";
 
-// A whiteboard's saved document, with the undo history of the edits made to it this session. Each edit is one commit, so one undo step.
-// A document read from the server starts a fresh history
+// A whiteboard's saved document, with the undo history of the edits made to it this session. Each edit is one commit,
+// So one undo step. A document read from the server starts a fresh history
 export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { selectElement } = whiteboardEditorStore;
@@ -28,7 +28,8 @@ export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
     ResourceType.Whiteboard,
     (data) => data ?? createEmptyWhiteboard(),
   );
-  // The session clears the history whenever the content is set from outside a commit, so a read from the server starts afresh
+  // The session clears the history whenever the content is set from outside a commit, so a read from the server starts
+  // Afresh
   const { commit, history } = useEditSession<PositionedDocument, WhiteboardHistoryEntry>(
     whiteboard,
     MAX_WHITEBOARD_HISTORY_SIZE,

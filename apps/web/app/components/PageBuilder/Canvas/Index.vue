@@ -59,8 +59,8 @@ const drawnOpen = shallowRef<OpenPageBuilderDocument>();
 watchImmediate([pageOpen, editingNodeId], ([open, nodeId]) => {
   if (!nodeId) drawnOpen.value = open;
 });
-// A palette block being dragged is drawn in the slot it would land in, so the page previews the drop. The preview is derived
-// Here, so the store and its history never hold it
+// A palette block being dragged is drawn in the slot it would land in, so the page previews the drop. The preview is
+// Derived Here, so the store and its history never hold it
 const renderedOpen = computed((): OpenPageBuilderDocument | undefined => {
   const open = drawnOpen.value;
   if (!open || draggedType === undefined || !dropTarget) return open;
@@ -94,14 +94,16 @@ watch(
 // The editor of the text being edited, which the text toolbar formats in place of the node toolbar
 const textEditor = useTemplateRef("textEditor");
 const editingEditor = computed(() => textEditor.value?.editor);
-// The arrows and Escape, unmodified, are the canvas's own: the next node, the previous one and the parent. Every other key is
-// Handed to the editor, and a text edit's own keys stay with it, so an Alt chord still reaches the editor's commands
+// The arrows and Escape, unmodified, are the canvas's own: the next node, the previous one and the parent. Every other
+// Key is Handed to the editor, and a text edit's own keys stay with it, so an Alt chord still reaches the editor's
+// Commands
 const frameKeyActions: Partial<Record<string, () => void>> = {
   ArrowDown: () => selectAdjacentNode(1),
   ArrowUp: () => selectAdjacentNode(-1),
   Escape: selectParent,
 };
-// Listed in the shortcuts dialog and never bound, since the arrows also walk the layers tree and the palette, so only the frame takes them
+// Listed in the shortcuts dialog and never bound, since the arrows also walk the layers tree and the palette, so only
+// The frame takes them
 useCommands((): UiCommand[] => [
   {
     group: PAGE_BUILDER_COMMAND_GROUP,
@@ -140,13 +142,13 @@ const onFrameKeydown = (event: KeyboardEvent) => {
 // The frame's document is the one the keys are pressed in, so its listener follows the content root drawn in it
 useEventListener(() => contentRoot.value?.ownerDocument, "keydown", onFrameKeydown);
 defineExpose({ getFrameGeometry });
-// While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the node
-// The style a drag is previewing is drawn over the document's, so the page follows the drag before it is recorded
-// An email is drawn with the inline styles MJML writes, so only a webpage has a sheet of its own to draw. The drag preview's rule
-// Is in either sheet, since its node is drawn in either document
+// While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the
+// Node The style a drag is previewing is drawn over the document's, so the page follows the drag before it is recorded
+// An email is drawn with the inline styles MJML writes, so only a webpage has a sheet of its own to draw. The drag
+// Preview's rule Is in either sheet, since its node is drawn in either document
 const css = computed(() => {
-  // An empty block has no height to outline, so the preview gets a minimum one. Its pointer events pass through it, so hover and
-  // Hit-testing reach the node it sits in, and it is faded so it reads as a preview
+  // An empty block has no height to outline, so the preview gets a minimum one. Its pointer events pass through it, so
+  // Hover and Hit-testing reach the node it sits in, and it is faded so it reads as a preview
   const previewCss = `[data-node-id="${DRAG_PREVIEW_NODE_ID}"] { min-height: 2.5rem; opacity: 0.5; pointer-events: none; }`;
   const open = drawnOpen.value;
   if (open?.type !== ResourceType.Webpage) return previewCss;
@@ -207,7 +209,8 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
       />
     </div>
   </PageBuilderCanvasFrame>
-  <!-- A text being edited takes the text toolbar in place of the node toolbar, so the two are never stacked over the text -->
+  <!-- A text being edited takes the text toolbar in place of the node toolbar, so the two are never stacked over
+    the text -->
   <PageBuilderCanvasNodeToolbar
     v-if="selectedNodeId && !editingNodeId && toolbarPosition"
     v-model:is-delete-open="isDeleteOpen"

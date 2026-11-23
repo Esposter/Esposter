@@ -34,7 +34,8 @@ describe("dashboardVisualPreviewMoveDialog", () => {
     }).toStrictEqual({ closed: [[false]], layout: [[visual.id]] });
   });
 
-  // The dialog names no cell, so the store places the visual at the first free cell of the group, past the card at its first
+  // The dialog names no cell, so the store places the visual at the first free cell of the group, past the card at its
+  // First
   test("choosing a group places the visual at the group's first free cell", async () => {
     expect.hasAssertions();
 

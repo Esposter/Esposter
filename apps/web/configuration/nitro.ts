@@ -15,8 +15,8 @@ import { dirname, join } from "node:path";
 const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("genshin-world/package.json"));
 // The PDF renderer's own folder of character maps, fonts and decoders, served from its install rather than a copy
 const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs-dist/package.json"));
-// The Workers runtime the dev runner emulates Workers with: the catalog's miniflare, which `@esposter/db-mock` installs,
-// Reached through that package's manifest since the app declares no miniflare of its own
+// The Workers runtime the dev runner emulates Workers with: the catalog's miniflare, which `@esposter/db-mock`
+// Installs, Reached through that package's manifest since the app declares no miniflare of its own
 const dbMockDirectory = dirname(createRequire(import.meta.url).resolve("@esposter/db-mock/package.json"));
 const miniflareDirectory = dirname(
   createRequire(join(dbMockDirectory, "package.json")).resolve("miniflare/package.json"),
@@ -25,25 +25,25 @@ const miniflareDirectory = dirname(
 export const nitro: NonNullable<NuxtConfig["nitro"]> = {
   // The Worker's own wrangler configuration, written beside the build. A build is made for one environment (CI sets
   // CLOUDFLARE_ENV by its branch, a local build is prod and the dev server development), so the file holds that
-  // Environment alone: wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the
-  // Realtime Worker's Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
+  // Environment alone: wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is
+  // The Realtime Worker's Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
   cloudflare: {
     deployConfig: true,
     nodeCompat: true,
     wrangler: { compatibility_date: compatibilityDate, ...getEnvironmentWrangler(getCloudflareEnvironment()) },
   },
-  // The dev runner loads `miniflare` by name from the app root, where nothing resolves it, so it is pointed at the install
-  // Of the catalog's miniflare that `@esposter/db-mock` holds
+  // The dev runner loads `miniflare` by name from the app root, where nothing resolves it, so it is pointed at the
+  // Install Of the catalog's miniflare that `@esposter/db-mock` holds
   deps: { paths: { miniflare: miniflareDirectory } },
   // A package resolves the build the Workers runtime runs, as wrangler's own bundler resolves it: a Worker is a web
   // Runtime, so a package's browser build is taken over its Node one. The preset names `workerd` and `worker` alone, so
-  // Cheerio, which mjml reaches through juice, resolved its Node build, whose undici compiles WebAssembly the runtime refuses.
-  // Vitest runs the app in Node, where msw intercepts Node's own requests, so its suites keep the Node builds: under
-  // `browser`, msw's interceptors resolve their Node entries to nothing
+  // Cheerio, which mjml reaches through juice, resolved its Node build, whose undici compiles WebAssembly the runtime
+  // Refuses. Vitest runs the app in Node, where msw intercepts Node's own requests, so its suites keep the Node builds:
+  // Under `browser`, msw's interceptors resolve their Node entries to nothing
   exportConditions: process.env.VITEST ? [] : ["workerd", "worker", "browser"],
   hooks: {
-    // Nitro's Vite builder, the one Nuxt 5 builds through, prints no size summary, so each
-    // Output directory's size is logged once the build is written. Source maps are left out, since they are never uploaded
+    // Nitro's Vite builder, the one Nuxt 5 builds through, prints no size summary, so each Output directory's size is
+    // Logged once the build is written. Source maps are left out, since they are never uploaded
     compiled: async ({ logger, options: { output } }) => {
       const directorySizes = await Promise.all(
         Object.entries({ public: output.publicDir, server: output.serverDir }).map(async ([name, directory]) => {

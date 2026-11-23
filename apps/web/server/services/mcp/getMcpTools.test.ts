@@ -32,7 +32,8 @@ const getUndeclaredTypeProcedurePaths = (anyRouter: AnyRouter) =>
 
 describe(getMcpTools, () => {
   // A tool's input schema must be one object, and a subscription has no tool call to answer, so a procedure opting in
-  // Any other way would list a tool no client can call. A defaulted object converts to the object, its default beside it
+  // Any other way would list a tool no client can call. A defaulted object converts to the object, its default beside
+  // It
   test("every procedure that opts in is a query or mutation with exactly one input an agent writes as an object", () => {
     expect.hasAssertions();
 
@@ -125,8 +126,8 @@ describe(getMcpTools, () => {
     expect(getMcpTools(humanOnlyRouter, McpScopes)).toStrictEqual([]);
   });
 
-  // A type's own procedure decides what a key may do: a description serves it to the Agent, and a human-only reason keeps
-  // It from every key. Every procedure the trpc router holds today declares one
+  // A type's own procedure decides what a key may do: a description serves it to the Agent, and a human-only reason
+  // Keeps It from every key. Every procedure the trpc router holds today declares one
   test("every type-specific procedure declares its key access", () => {
     expect.hasAssertions();
 

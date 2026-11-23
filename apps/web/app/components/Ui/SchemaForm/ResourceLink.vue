@@ -48,7 +48,8 @@ const unpublishedResource = computed(() => {
 });
 </script>
 
-<!-- A field that names another resource, drawn as the select of that resource's type, with what its binding says beside it -->
+<!-- A field that names another resource, drawn as the select of that resource's type, with what its binding says
+  beside it -->
 <template>
   <ResourceLinkSelect
     :is-required="control.required"

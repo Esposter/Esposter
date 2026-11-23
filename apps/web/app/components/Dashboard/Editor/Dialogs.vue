@@ -22,8 +22,9 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
 </script>
 
 <template>
-  <!-- Mounted once for the editor, not in each tile: a tile's Delete names its visual in the dialog store, and the confirm opens
-    on that. Outside the grid's branch, so a delete that empties the editor still leaves through its transition -->
+  <!-- Mounted once for the editor, not in each tile: a tile's Delete names its visual in the dialog store, and the
+    confirm opens on that. Outside the grid's branch, so a delete that empties the editor still leaves through its
+    transition -->
   <UiConfirmDialog
     v-if="deletingVisual"
     v-model="isDeleteOpen"

@@ -43,7 +43,8 @@ const getElementNames = (document: SurveyDocument) =>
       return name === undefined ? [] : [name];
     }),
   );
-// The first name from a base that no element holds. The name joins the set, so the next name from the same base skips it
+// The first name from a base that no element holds. The name joins the set, so the next name from the same base skips
+// It
 const addUniqueName = (base: string, names: Set<string>) => {
   let index = 1;
   while (names.has(`${base}${index}`)) index += 1;
@@ -52,8 +53,9 @@ const addUniqueName = (base: string, names: Set<string>) => {
   names.add(name);
   return name;
 };
-// The commands the creator's panes and shortcuts run over its document. Each gesture is one of the core's commands, applied
-// Through the survey's document schema as one history entry. A command the core or the schema refuses changes nothing and returns false
+// The commands the creator's panes and shortcuts run over its document. Each gesture is one of the core's commands,
+// Applied Through the survey's document schema as one history entry. A command the core or the schema refuses changes
+// Nothing and returns false
 export const useSurveyCreatorCommands = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
   const { document, history, selectedPointer } = storeToRefs(surveyCreatorStore);
@@ -89,7 +91,8 @@ export const useSurveyCreatorCommands = () => {
   const select = (nodePointer: string) => {
     selectedPointer.value = nodePointer;
   };
-  // A kind inserted at an index of a slot, as one history entry, and selected. The core refuses a slot that takes no node of its kind
+  // A kind inserted at an index of a slot, as one history entry, and selected. The core refuses a slot that takes no
+  // Node of its kind
   const insertNodeAt = (type: SurveyNodeType, slotPointer: string, index: number) => {
     const node = createSurveyNode(type, v7(), addUniqueName("question", getElementNames(document.value)));
     if (node === undefined) return false;
@@ -106,8 +109,8 @@ export const useSurveyCreatorCommands = () => {
     return target !== undefined && insertNodeAt(type, target.slotPointer, target.index);
   };
   const moveElement = (operations: JsonPatchOperation[]) => applyEdit(operations, "Move element");
-  // The move a node takes from its place. A move the selection cannot take has no operations, so it changes nothing, and the menu that
-  // Offers the move reads the same refusal from getSurveyNodeMove
+  // The move a node takes from its place. A move the selection cannot take has no operations, so it changes nothing,
+  // And the menu that Offers the move reads the same refusal from getSurveyNodeMove
   const moveNode = (nodePointer: string, moveType: SurveyNodeMoveType) => {
     const { operations } = getSurveyNodeMove(document.value, nodePointer, moveType);
     return moveElement(operations);
@@ -167,7 +170,8 @@ export const useSurveyCreatorCommands = () => {
     if (isRemoved && isSelectionRemoved) selectedPointer.value = focusPointer;
     return isRemoved;
   };
-  // The node a kind change makes of the question, written over it as one history entry. The question keeps its id and its place, so it stays selected
+  // The node a kind change makes of the question, written over it as one history entry. The question keeps its id and
+  // Its place, so it stays selected
   const convertNodeKind = (nodePointer: string, type: SurveyNodeType) => {
     const node = getBlockNode(document.value, nodePointer, surveyNodeChildren);
     const change = node && convertSurveyNodeKind(node, type);
@@ -178,15 +182,16 @@ export const useSurveyCreatorCommands = () => {
       "Change element kind",
     );
   };
-  // A run of edits to the same props of one node, a field typed into key by key, is one interaction and so one undo step
+  // A run of edits to the same props of one node, a field typed into key by key, is one interaction and so one undo
+  // Step
   const updateNodeProps = (nodePointer: string, props: Record<string, unknown>) =>
     applyEdit(
       updateBlockNodeProps<BlockNodeProps>(nodePointer, props),
       "Edit element",
       `props:${nodePointer}:${Object.keys(props).toSorted().join(",")}`,
     );
-  // The core's node-props command takes a node's id as one of its props, which the root does not hold, so the root's props are
-  // Written at the root's own pointer
+  // The core's node-props command takes a node's id as one of its props, which the root does not hold, so the root's
+  // Props are Written at the root's own pointer
   const updateRootProps = (props: Partial<SurveyRootProps>) =>
     applyEdit(
       Object.entries<unknown>(props).map(([key, value]) => ({

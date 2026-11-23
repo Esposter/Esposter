@@ -6,7 +6,8 @@ import { useWhiteboardDialogStore } from "#src/store/resource/whiteboard/dialog"
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
-// Duplicate and delete the selection from the panel, as the keys do. Delete names the selection for the editor's confirmation, which asks first
+// Duplicate and delete the selection from the panel, as the keys do. Delete names the selection for the editor's
+// Confirmation, which asks first
 const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
 const whiteboardEditorStore = useWhiteboardEditorStore();

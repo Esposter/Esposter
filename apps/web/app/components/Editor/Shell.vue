@@ -142,8 +142,8 @@ defineExpose({ setActivePanel, toggleRegion });
       @resize="(newSize) => resizeRegion(region.id, newSize)"
       @select-panel="(panelId) => setActivePanel(region.id, panelId)"
     />
-    <!-- A sheet closes from its own close button or Escape, and its control takes focus only once the close has drawn, since the
-      open modal leaves that control inert until then -->
+    <!-- A sheet closes from its own close button or Escape, and its control takes focus only once the close has
+      drawn, since the open modal leaves that control inert until then -->
     <EditorRegion
       v-for="region in sheetRegions"
       :key="region.id"

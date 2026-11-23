@@ -10,9 +10,10 @@ import { checkIsEditableTarget } from "#src/util/dom/checkIsEditableTarget";
 import { checkIsElementTarget } from "#src/util/dom/checkIsElementTarget";
 import { defaultWindow } from "@vueuse/core";
 
-// The keys that move a whiteboard's view: Ctrl or Cmd with 0 resets the zoom about the view's centre, Shift with 1 fits the content and Shift
-// With 2 the selection. A fit of nothing has no bounds to show, so an empty board leaves the view where it is. Space is read by its key down
-// And up instead, since it is held: it pans for as long as it is down, and a key typed into a field is text, so Space there is left alone
+// The keys that move a whiteboard's view: Ctrl or Cmd with 0 resets the zoom about the view's centre, Shift with 1 fits
+// The content and Shift With 2 the selection. A fit of nothing has no bounds to show, so an empty board leaves the view
+// Where it is. Space is read by its key down And up instead, since it is held: it pans for as long as it is down, and a
+// Key typed into a field is text, so Space there is left alone
 export const useWhiteboardViewportKeyboard = () => {
   const whiteboardStore = useWhiteboardStore();
   const { editState } = storeToRefs(whiteboardStore);

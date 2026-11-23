@@ -22,7 +22,8 @@ const createRefresh = () => {
   return { isCalled, refresh };
 };
 
-// The row a removal answers with: the resource as the server holds it once deleted, at the version the removal raised it to
+// The row a removal answers with: the resource as the server holds it once deleted, at the version the removal raised
+// It to
 const createRemovedRow = (resource: ResourceListItem) => ({
   ...resource,
   deletedAt: new Date(0),
@@ -127,8 +128,8 @@ describe(useDeleteResources, () => {
     expect(getLiveIds()).toStrictEqual([resource.id]);
   });
 
-  // A chunk the server answers lands as it is answered, so a later chunk the server refuses leaves the earlier chunk's rows
-  // Deleted on screen as they are on the server, rather than holding them live behind the refused write
+  // A chunk the server answers lands as it is answered, so a later chunk the server refuses leaves the earlier chunk's
+  // Rows Deleted on screen as they are on the server, rather than holding them live behind the refused write
   test("keeps the rows an earlier chunk deleted removed when a later chunk is refused", async () => {
     expect.hasAssertions();
 

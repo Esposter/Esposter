@@ -12,9 +12,11 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { node } = defineProps<Props>();
-// The answer is a record from each row's value to the value of the column chosen in it, read as the empty record until one is given
+// The answer is a record from each row's value to the value of the column chosen in it, read as the empty record until
+// One is given
 const answers = useSurveyRecordAnswer(answer);
-// Each column is keyed by its place in the question, since two values may read alike and a radio group keys its options by text
+// Each column is keyed by its place in the question, since two values may read alike and a radio group keys its options
+// By text
 const columnItems = computed(() =>
   node.props.columns.map((column, index) => ({ title: getSurveyChoiceText(column), value: String(index) })),
 );
@@ -34,8 +36,8 @@ const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
   <ResourceSurveyFieldShell :error :question="node.props">
     <template #default="{ describedBy, labelledBy }">
       <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy">
-        <!-- One row of the table per row choice, its radio group choosing one column of that row. A table wider than the
-          field scrolls in its own wrapper, as the dynamic matrix's does -->
+        <!-- One row of the table per row choice, its radio group choosing one column of that row. A table wider
+          than the field scrolls in its own wrapper, as the dynamic matrix's does -->
         <div of-x-auto>
           <table w-full>
             <tbody>

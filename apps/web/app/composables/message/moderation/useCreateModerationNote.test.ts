@@ -51,7 +51,8 @@ describe(useCreateModerationNote, () => {
     expect(isSecondKept).toBe(false);
   });
 
-  // The field keeps the note until the server has it, so a refusal resolves to false and leaves the note to be sent again
+  // The field keeps the note until the server has it, so a refusal resolves to false and leaves the note to be sent
+  // Again
   test("resolves to false, with an alert, when the server refuses the note", async () => {
     expect.hasAssertions();
 

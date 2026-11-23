@@ -25,12 +25,14 @@ const modelValue = defineModel<string>({ required: true });
 const { property } = defineProps<Props>();
 const draft = ref(modelValue.value);
 const rules = [() => getStyleValueError(property, draft.value) ?? true];
-// A length is drawn as its number and a unit select, where the number is what the arrows step. A draft that is not a length stays text
+// A length is drawn as its number and a unit select, where the number is what the arrows step. A draft that is not a
+// Length stays text
 const lengthUnits = property === "border-width" ? STYLE_BORDER_WIDTH_UNITS : STYLE_LENGTH_UNITS;
 const lengthParts = computed(() =>
   STYLE_LENGTH_PROPERTIES.includes(property) ? splitStyleLength(draft.value, lengthUnits) : undefined,
 );
-// The unit is held apart from the draft, since an empty number drafts no unit, so clearing a number keeps the one chosen
+// The unit is held apart from the draft, since an empty number drafts no unit, so clearing a number keeps the one
+// Chosen
 const unit = ref(splitStyleLength(draft.value, lengthUnits)?.unit || DEFAULT_LENGTH_UNIT);
 const unitItems = lengthUnits.map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit }));
 // Typing in the text field can empty it into a length, which would swap the field out from under the caret, so the

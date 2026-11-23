@@ -108,9 +108,8 @@ describe(useDirectMessageStore, () => {
     expect(alerts.value).toHaveLength(1);
   });
 
-  // A participant's row is a membership, so a removal is its tombstone arriving.
-  // A read of the list answered before the removal still names that participant live, at the version the removal superseded.
-  // So it must not put them back.
+  // A participant's row is a membership, so a removal is its tombstone arriving. A read of the list answered before the
+  // Removal still names that participant live, at the version the removal superseded. So it must not put them back.
   test("a late participants read does not re-add a participant a removal has tombstoned", async () => {
     expect.hasAssertions();
 
@@ -339,9 +338,9 @@ describe(useDirectMessageStore, () => {
     ]);
   });
 
-  // A participant who joins reaches the list through the room's membership topic, which the list's read names beside its rows and participants.
-  // The join itself reads nothing, so the list's refresh is the one read that brings the new participant.
-  // The participants come with it rather than from a read of their own.
+  // A participant who joins reaches the list through the room's membership topic, which the list's read names beside
+  // Its rows and participants. The join itself reads nothing, so the list's refresh is the one read that brings the new
+  // Participant. The participants come with it rather than from a read of their own.
   test("refreshes a direct message's participants from a join through the list, with no read of the participants of its own", async () => {
     expect.hasAssertions();
 

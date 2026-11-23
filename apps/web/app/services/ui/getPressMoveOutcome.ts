@@ -1,9 +1,10 @@
 import { PressMoveOutcome } from "#src/models/ui/PressMoveOutcome";
 import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "#src/services/ui/constants";
 
-// What a press does on a pointer move before its drag has begun. A mouse or pen press starts the drag once it moves the drag
-// Start distance. A finger that drifts past the long press tolerance has not rested, so it is scrolling and its press is
-// Cancelled. A finger inside the tolerance waits, since its drag starts once it has rested the touch delay, which the caller times
+// What a press does on a pointer move before its drag has begun. A mouse or pen press starts the drag once it moves the
+// Drag Start distance. A finger that drifts past the long press tolerance has not rested, so it is scrolling and its
+// Press is Cancelled. A finger inside the tolerance waits, since its drag starts once it has rested the touch delay,
+// Which the caller times
 export const getPressMoveOutcome = (pointerType: string, distance: number): PressMoveOutcome => {
   if (pointerType === "touch")
     return distance > LONG_PRESS_MOVE_TOLERANCE ? PressMoveOutcome.Cancel : PressMoveOutcome.Wait;

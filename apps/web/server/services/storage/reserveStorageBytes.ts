@@ -21,12 +21,12 @@ import {
 import { TRPCError } from "@trpc/server";
 import { and, eq, gt, isNull, lte, ne, or, sql } from "drizzle-orm";
 
-// The gate every upload presigned url passes through. A read-then-check would let a client firing many upload requests at once
-// Have them all read the same low usage and all pass. So the check is the insert's own guard: one statement inserts
-// Every reservation from the user's row only while the quota and the outstanding-reservation cap still hold over the
-// Holds other than these, and the batch is atomic, so a refused reserve leaves no hold behind. The counter itself only
-// Ever carries bytes that are actually stored, and a hold that has not landed yet lives in the ledger and is summed in
-// Here (openspec/specs/resource/storage-quotas/design.md)
+// The gate every upload presigned url passes through. A read-then-check would let a client firing many upload requests
+// At once Have them all read the same low usage and all pass. So the check is the insert's own guard: one statement
+// Inserts Every reservation from the user's row only while the quota and the outstanding-reservation cap still hold
+// Over the Holds other than these, and the batch is atomic, so a refused reserve leaves no hold behind. The counter
+// Itself only Ever carries bytes that are actually stored, and a hold that has not landed yet lives in the ledger and
+// Is summed in Here (openspec/specs/resource/storage-quotas/design.md)
 export const reserveStorageBytes = async (
   db: Context["db"],
   userId: UserInAuth["id"],
@@ -38,9 +38,9 @@ export const reserveStorageBytes = async (
   const declaredBytes = reservations.reduce((total, { declaredBytes: bytes }) => total + bytes, 0);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + WRITE_PRESIGNED_URL_DURATION_MS);
-  // A row must outlive every object-create notification that can still name it, or a retry of one whose blob did land finds
-  // No row, charges nothing and reports no failure. The completion allowance is the presigned url's own duration reused, so
-  // Nothing new can drift from the policy (openspec/specs/resource/storage-quotas/design.md)
+  // A row must outlive every object-create notification that can still name it, or a retry of one whose blob did land
+  // Finds No row, charges nothing and reports no failure. The completion allowance is the presigned url's own duration
+  // Reused, so Nothing new can drift from the policy (openspec/specs/resource/storage-quotas/design.md)
   const collectableBefore = new Date(now.getTime() - (QUEUE_DELIVERY_TTL_MS + WRITE_PRESIGNED_URL_DURATION_MS));
   // The reservations travel as one JSON bind, so the statement's parameters do not grow with the number of blobs
   const reservationsJson = JSON.stringify(reservations);
@@ -63,8 +63,8 @@ export const reserveStorageBytes = async (
     sql` `,
   )} END`;
   const isWithinQuota = sql`${usersInAuth.id} = ${userId} AND ${usersInAuth.storageBytesUsed} + ${pendingBytes} + ${declaredBytes} <= ${quotaBytes} AND ${pendingReservationCount} + ${reservations.length} <= ${MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES}`;
-  // The collectable holds are dropped first, as the write path always did, and their drop stands even when the reserve is
-  // Refused: they are holds no event can still settle, so there is nothing to give back by undoing it
+  // The collectable holds are dropped first, as the write path always did, and their drop stands even when the reserve
+  // Is Refused: they are holds no event can still settle, so there is nothing to give back by undoing it
   const [, reservedRows] = await db.batch([
     db
       .delete(storageLedgerInStorage)

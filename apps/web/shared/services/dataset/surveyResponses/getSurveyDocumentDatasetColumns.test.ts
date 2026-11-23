@@ -142,7 +142,8 @@ describe(getSurveyDocumentDatasetColumns, () => {
     ).toStrictEqual([]);
   });
 
-  // The template's number question is the answer inside each panel, not a column of the survey, so only the panel is one
+  // The template's number question is the answer inside each panel, not a column of the survey, so only the panel is
+  // One
   test("gives a dynamic panel one string column, whatever its template holds", () => {
     expect.hasAssertions();
 

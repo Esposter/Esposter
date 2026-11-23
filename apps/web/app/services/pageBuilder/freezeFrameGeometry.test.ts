@@ -31,7 +31,8 @@ describe(freezeFrameGeometry, () => {
 
     let scrollTop = 30;
     // A browser's rect holds its sides as getters on its prototype, which a spread does not copy
-    /* oxlint-disable typescript/class-literal-property-style -- A readonly field is an own property, which a spread copies, so only a getter reproduces the browser's rect */
+    /* oxlint-disable typescript/class-literal-property-style -- A readonly field is an own property, which a spread
+       copies, so only a getter reproduces the browser's rect */
     class BrowserRect {
       get height() {
         return 20;

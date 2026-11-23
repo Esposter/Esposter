@@ -41,12 +41,14 @@ const settleOpacity = (value: number) => {
 const { colors, fonts } = usePageBuilderTheme(() => resourceId);
 // A font stack the theme holds is offered as a choice, which stores a reference to it, as a colour swatch does
 const fontItems = computed(() => fonts.value.map(({ name }) => ({ title: name, value: `var(--${name})` })));
-// A colour field shows the value the property sets, else the one it inherits, else black, since a colour input holds a colour
+// A colour field shows the value the property sets, else the one it inherits, else black, since a colour input holds a
+// Colour
 const getColorValue = (property: StyleProperty) => {
   const { inheritedValue, value } = getField(property);
   return value || inheritedValue || DEFAULT_THEME_COLOR;
 };
-// Each choice of a property is a segment of its toggle group, titled as the value it sets, built once rather than per render
+// Each choice of a property is a segment of its toggle group, titled as the value it sets, built once rather than per
+// Render
 const choiceItemsMap = Object.fromEntries(
   Object.entries(STYLE_CHOICES).map<[string, { title: string; value: string }[]]>(([property, choices = []]) => [
     property,

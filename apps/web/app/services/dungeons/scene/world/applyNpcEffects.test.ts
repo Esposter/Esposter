@@ -1,4 +1,7 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed store has members this test never reads; Phaser cannot initialise under the test environment, and no test reads its values; vue-phaserjs loads Phaser, and only the fade effect sleeps the scene */
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full
+   store type; A partial fake: the typed store has members this test never reads; Phaser cannot initialise under the
+   test environment, and no test reads its values; vue-phaserjs loads Phaser, and only the fade effect sleeps the
+   scene */
 import type { Effect } from "#src/models/dungeons/npc/effect/Effect";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
@@ -18,7 +21,8 @@ const { showMessages } = vi.hoisted(() => ({
 }));
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+// A partial fake:
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded

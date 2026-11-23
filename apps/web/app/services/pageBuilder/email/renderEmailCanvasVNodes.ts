@@ -9,8 +9,8 @@ import { EmailCanvasDrawingMap } from "#src/services/pageBuilder/email/canvasDra
 import { cloneVNode } from "vue";
 import { renderBlockNodes } from "vue-block-editor-headless";
 
-// The CSS property each MJML attribute the canvas draws is written as. An attribute its node's component does not take is
-// Not drawn, so a link's href or an image's source never reaches the style
+// The CSS property each MJML attribute the canvas draws is written as. An attribute its node's component does not take
+// Is Not drawn, so a link's href or an image's source never reaches the style
 const CANVAS_STYLE_PROPERTY_MAP: Readonly<Record<string, string>> = Object.freeze({
   align: "textAlign",
   "background-color": "backgroundColor",
@@ -39,7 +39,8 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
     );
     const context: EmailCanvasContext = { attribute, childNodes: Object.values(slots).flat(), isStacked, kind, style };
     const drawing = dispatchByType(EmailCanvasDrawingMap, node, context);
-    // Each drawn node's root element carries the node's id, so the canvas can outline it on hover and select it on click
+    // Each drawn node's root element carries the node's id, so the canvas can outline it on hover and select it on
+    // Click
     return cloneVNode(drawing, { "data-node-id": node.props.id });
   });
 };

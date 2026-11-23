@@ -33,9 +33,11 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
       tilemapValue.value = newTilemap;
     },
   });
-  // The tilemap's grid engine is made with the tilemap and marked raw where it is set, and it is released with the scene
+  // The tilemap's grid engine is made with the tilemap and marked raw where it is set, and it is released with the
+  // Scene
   const gridEngine = ref<GridEngine>();
-  // Each character's sprite writer, keyed by its id. Each frame the engine steps first, then every writer draws its sprite
+  // Each character's sprite writer, keyed by its id. Each frame the engine steps first, then every writer draws its
+  // Sprite
   const characterIdSpriteWriterMap = new Map<string, () => void>();
   const updateGridEngine = (delta: number) => {
     gridEngine.value?.update(delta);

@@ -14,17 +14,17 @@ import {
 } from "#src/services/pageBuilder/pageBuilderLayout";
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
-// The bar is one row as tall as its preview text field, which stacks a label, an input and a counter. A narrow window scrolls the
-// Row sideways, so the bar is held at that one size and its handle has nothing to move
+// The bar is one row as tall as its preview text field, which stacks a label, an input and a counter. A narrow window
+// Scrolls the Row sideways, so the bar is held at that one size and its handle has nothing to move
 const EMAIL_BAR_SIZE = 112;
 const BAR_SIZE = { defaultSize: EMAIL_BAR_SIZE, maximumSize: EMAIL_BAR_SIZE, minimumSize: EMAIL_BAR_SIZE };
-// The blocks region holds the layers tree as its structure tab, so a text edit's end shows that tab before it returns focus to
-// The tree. The ids are named here, so the editor's reveal and the layout name the same panel
+// The blocks region holds the layers tree as its structure tab, so a text edit's end shows that tab before it returns
+// Focus to The tree. The ids are named here, so the editor's reveal and the layout name the same panel
 export const EMAIL_BLOCKS_REGION_ID = "blocks";
 export const EMAIL_STRUCTURE_PANEL_ID = "structure";
-// The email's arrangement: the bar over the canvas, the blocks at the start and the inspector at the end. The blocks and the
-// Inspector are drawn in Design alone, so Preview shows the compiled message with nothing editing beside it. With nothing selected
-// The inspector asks for a selection and offers the email's settings beside that request
+// The email's arrangement: the bar over the canvas, the blocks at the start and the inspector at the end. The blocks
+// And the Inspector are drawn in Design alone, so Preview shows the compiled message with nothing editing beside it.
+// With nothing selected The inspector asks for a selection and offers the email's settings beside that request
 export const emailLayout: Layout = {
   canvasId: "canvas",
   panels: [
@@ -105,7 +105,8 @@ export const emailLayout: Layout = {
     },
   ],
 };
-// The name each region is announced by, and each panel's tab is labelled by. A panel with no tab of its own is named too
+// The name each region is announced by, and each panel's tab is labelled by. A panel with no tab of its own is named
+// Too
 export const emailRegionNameMap: Record<string, string> = {
   bar: "Email bar",
   [EMAIL_BLOCKS_REGION_ID]: "Blocks",

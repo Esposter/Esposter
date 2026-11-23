@@ -28,7 +28,8 @@ defineProps<Props>();
           </Breadcrumbs.Activator>
         </Breadcrumbs.Ellipsis>
         <Breadcrumbs.Item text-nowrap>
-          <!-- A link, tinted behind while hovered as a quiet button is, so the crumb under the pointer reads as a target -->
+          <!-- A link, tinted behind while hovered as a quiet button is, so the crumb under the pointer reads as a
+            target -->
           <NuxtLink
             :to
             rd="[var(--ui-control-radius)]"

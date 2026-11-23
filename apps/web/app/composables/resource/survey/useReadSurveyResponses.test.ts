@@ -32,8 +32,8 @@ describe(useReadSurveyResponses, () => {
     totalRows: 1,
   };
 
-  // A response submitted elsewhere publishes the survey's topic, which the records read names in its answer, so the read
-  // Runs again and the table reaches the new response without the owner refreshing
+  // A response submitted elsewhere publishes the survey's topic, which the records read names in its answer, so the
+  // Read Runs again and the table reaches the new response without the owner refreshing
   test("reads the responses again when a topic its answer names is published", async () => {
     expect.hasAssertions();
 

@@ -9,7 +9,8 @@ interface Props {
   index: number;
 }
 
-// The fill of a shape or a sticky note, changed as the picker is moved. A shape can also clear its fill back to none, which a sticky note keeps
+// The fill of a shape or a sticky note, changed as the picker is moved. A shape can also clear its fill back to none,
+// Which a sticky note keeps
 defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { updateElementProperty } = whiteboardStore;

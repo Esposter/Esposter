@@ -110,7 +110,8 @@ describe("webpageRouter", () => {
     );
   });
 
-  // The working copy's image is the one the published page names, so unpublishing leaves the file for the owner's editor
+  // The working copy's image is the one the published page names, so unpublishing leaves the file for the owner's
+  // Editor
   test("unpublishing keeps an image the working copy still uses", async () => {
     expect.hasAssertions();
 
@@ -133,7 +134,8 @@ describe("webpageRouter", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 
-  // The survey invite's survey is indexed as a link when the page saves, so the survey's own delete reads the page as its consumer
+  // The survey invite's survey is indexed as a link when the page saves, so the survey's own delete reads the page as
+  // Its consumer
   test("deleting a surveyed invite's survey names the webpage", async () => {
     expect.hasAssertions();
 

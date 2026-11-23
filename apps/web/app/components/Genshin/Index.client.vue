@@ -18,7 +18,8 @@ const isLoaded = ref(false);
 const isReady = ref(false);
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
-// Whether every character pack the opening downloads is held, which the world waits on, since it draws each model from them
+// Whether every character pack the opening downloads is held, which the world waits on, since it draws each model from
+// Them
 const isPacksHeld = ref(false);
 // A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
 // So a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too, and
@@ -80,7 +81,8 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
         @save="(save) => onWorldSave(save)"
       />
     </ClientOnly>
-    <!-- The replacing session holds the save now, so this page stops saving and pauses the world, and a take back starts the lease again -->
+    <!-- The replacing session holds the save now, so this page stops saving and pauses the world, and a take back
+      starts the lease again -->
     <UiDialog
       :model-value="isReplaced"
       :placement="UiDialogPlacement.Middle"

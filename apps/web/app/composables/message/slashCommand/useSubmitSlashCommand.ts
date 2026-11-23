@@ -37,7 +37,8 @@ export const useSubmitSlashCommand = () => {
     }
     // The store holds the pending command's type and its values as two fields, so the compiler cannot see that the
     // Values are the ones that type declares — the pair is rebuilt as the command union it came from
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the pair's type and values are two fields of the store, so no correlation between them reaches the compiler
+    // The pair's type and values are two fields of the store, so
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- no correlation between them reaches the compiler
     const command = { parameterValues: parameterValues.value, type: pendingSlashCommand.value.type } as {
       [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P };
     }[SlashCommandType];

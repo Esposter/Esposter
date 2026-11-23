@@ -268,7 +268,8 @@ describe(getSurveyDocumentSummaryCards, () => {
     ]);
   });
 
-  // A multiple picker's answer lists the pictures picked, and each picture is labelled by its text rather than its value
+  // A multiple picker's answer lists the pictures picked, and each picture is labelled by its text rather than its
+  // Value
   test("counts each picture a multiple image picker holds by its text", () => {
     expect.hasAssertions();
 

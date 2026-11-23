@@ -4,7 +4,8 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
 import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
 
-// Each resource is held as a tombstone until its answer arrives, and so is its publication, which the removal takes with it
+// Each resource is held as a tombstone until its answer arrives, and so is its publication, which the removal takes
+// With it
 export const getDeleteResourcesEntry =
   (ids: ResourceInResource["id"][], deletedAt: Date): Entry =>
   (view) => {

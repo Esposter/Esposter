@@ -1,5 +1,5 @@
-// The tool a press is read by: draw an arrow between shapes, select and move elements, draw a freehand stroke, pan the canvas, or place a
-// Shape, a sticky note or a text box where the press lands
+// The tool a press is read by: draw an arrow between shapes, select and move elements, draw a freehand stroke, pan the
+// Canvas, or place a Shape, a sticky note or a text box where the press lands
 export const GestureTool = {
   Arrow: "arrow",
   Freehand: "freehand",

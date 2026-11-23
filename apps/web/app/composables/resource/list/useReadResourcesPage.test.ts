@@ -63,7 +63,8 @@ describe(useReadResourcesPage, () => {
     expect(isPending.value).toBe(false);
   });
 
-  // The total arrives with the first page, and a page change within one filter walks to its cursor without counting again
+  // The total arrives with the first page, and a page change within one filter walks to its cursor without counting
+  // Again
   test("takes the total from the first page and reuses it for a page change", async () => {
     expect.hasAssertions();
 

@@ -13,9 +13,9 @@ const skinTone = defineModel<SkinTone>("skinTone", { required: true });
 defineProps<Props>();
 </script>
 
-<!-- One thing at a time, Slack's shape: the hovered emoji takes the whole bar and the standing controls take it back the
-     moment the pointer leaves the grid. The bar states its own height, so which of the two is showing never moves
-     anything around it -->
+<!-- One thing at a time, Slack's shape: the hovered emoji takes the whole bar and the standing controls take it
+  back the moment the pointer leaves the grid. The bar states its own height, so which of the two is showing never
+  moves anything around it -->
 <template>
   <div flex gap-2 h-10 items-center>
     <template v-if="emoji">

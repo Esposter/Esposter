@@ -13,7 +13,8 @@ export type Item = {
   // Drawn after the title in the muted colour, and for a disabled action, the reason it cannot be taken
   description?: string;
   disabled?: boolean | undefined;
-  // A setting that is on or off, drawn with its mark while on, as a checkbox is: an item of its own, not a choice in a group
+  // A setting that is on or off, drawn with its mark while on, as a checkbox is: an item of its own, not a choice in a
+  // Group
   isChecked?: boolean | undefined;
   // Drawn in the error colour, for an action that destroys what it acts on
   isDanger?: boolean;

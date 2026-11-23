@@ -105,7 +105,8 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
   });
 
-  // A refused save leaves the edit on screen, since the blob write has no entry to take back and the save state reads Failed
+  // A refused save leaves the edit on screen, since the blob write has no entry to take back and the save state reads
+  // Failed
   test("keeps a new todo on screen when its save fails", async () => {
     expect.hasAssertions();
 
@@ -186,8 +187,8 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
   });
 
-  // A row written with no dialog is refused the same way while the list reloads, and the reloaded value is what stands —
-  // This write never reached it, so there is nothing of it to put back
+  // A row written with no dialog is refused the same way while the list reloads, and the reloaded value is what stands
+  // — This write never reached it, so there is nothing of it to put back
   test("keeps a reloaded todo's completion when its row write is refused", async () => {
     expect.hasAssertions();
 

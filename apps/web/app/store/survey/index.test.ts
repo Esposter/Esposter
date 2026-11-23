@@ -76,7 +76,8 @@ describe(useSurveyStore, () => {
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     saveDocument(newDocument);
-    // The first save's answer is the version it leaves the resource on, which is what the second save is checked against
+    // The first save's answer is the version it leaves the resource on, which is what the second save is checked
+    // Against
     await until(() => resource.value?.contentVersion).toBe(1);
     await flushPromises();
     saveDocument(newDocument);

@@ -14,7 +14,8 @@ export const createCallSessionId = async (
   userId: string,
   threadRootId: CallSessionInMessage["threadRootId"] = 0,
 ): Promise<string> => {
-  // oxlint-disable no-await-in-loop -- Retry: the next attempt runs only because this one lost the race for the room's id
+  // Id
+  // oxlint-disable no-await-in-loop -- Retry: the next attempt runs only because this one lost the race for the room's
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
     const existingCallSessionId = await readCallSessionId(db, roomId, threadRootId);
     if (existingCallSessionId) return existingCallSessionId;

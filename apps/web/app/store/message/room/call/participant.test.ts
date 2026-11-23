@@ -51,7 +51,8 @@ describe(useParticipantStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const callSessionId = createId(CALL_ID_LENGTH);
 
-  // A tombstone past its retention is forgotten by the client's clock, so the clock is the epoch the tombstones are dated from
+  // A tombstone past its retention is forgotten by the client's clock, so the clock is the epoch the tombstones are
+  // Dated from
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });

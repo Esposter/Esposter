@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Retry: a save that landed in between makes this update stale, so each attempt reads the content that save left */
+/* oxlint-disable no-await-in-loop -- Retry: a save that landed in between makes this update stale, so each attempt
+   reads the content that save left */
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceContentUpdate } from "#server/models/resource/ResourceContentUpdate";
 import type { SavedResourceContentUpdate } from "#server/models/resource/SavedResourceContentUpdate";

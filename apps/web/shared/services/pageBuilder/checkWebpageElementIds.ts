@@ -6,9 +6,9 @@ import { getTabPanelId } from "#shared/services/pageBuilder/getTabPanelId";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { getBlockSlots } from "vue-block-editor-headless";
 
-// Refuses an element id an earlier node holds, in any slot, since a fragment link goes to the first element with that id.
-// A tab publishes its panel's id, which falls back to a generated one, so that is the id it holds.
-// Its callers refine only a parse that raised no issue, so the nodes it is handed are the schema's typed output
+// Refuses an element id an earlier node holds, in any slot, since a fragment link goes to the first element with that
+// Id. A tab publishes its panel's id, which falls back to a generated one, so that is the id it holds. Its callers
+// Refine only a parse that raised no issue, so the nodes it is handed are the schema's typed output
 export const checkWebpageElementIds = (
   context: z.RefinementCtx,
   nodes: readonly WebpageNode[],

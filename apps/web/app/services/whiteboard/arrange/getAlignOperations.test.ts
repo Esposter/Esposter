@@ -67,7 +67,8 @@ describe(getAlignOperations, () => {
   test("aligning a bound box reroutes the arrow bound to it in the same edit", () => {
     expect.hasAssertions();
 
-    // The second shape's bottom connection point is at (250, 110) before the align, and at (250, 60) once its top edge is level with the first's
+    // The second shape's bottom connection point is at (250, 110) before the align, and at (250, 60) once its top edge
+    // Is level with the first's
     const arrow: ArrowElement = {
       ...WHITEBOARD_ARROW,
       id: ARROW_ID,

@@ -58,10 +58,10 @@ interface ReadItemsOptions<TItem> {
   // For every such page — once for the html, once again as hydration replays the same setup client-side
   key?: string;
   onComplete?: (data: Page<TItem>) => Promisable<void>;
-  // What a write that changed a topic the first page came from does, in place of the default. It is handed a refresh that
-  // Reads the first page again and adds the rows it has that the reader does not, at the head, updating the rest by id
-  // As the default does, so the pages after the first stay. A list whose new rows arrive by that write (the notifications
-  // Bell) passes one, and makes what it toasts from the rows that refresh brings in
+  // What a write that changed a topic the first page came from does, in place of the default. It is handed a refresh
+  // That Reads the first page again and adds the rows it has that the reader does not, at the head, updating the rest
+  // By id As the default does, so the pages after the first stay. A list whose new rows arrive by that write (the
+  // Notifications Bell) passes one, and makes what it toasts from the rows that refresh brings in
   onTopicChange?: (refreshWithNewRows: () => Promise<void>) => Promisable<void>;
 }
 
@@ -157,8 +157,8 @@ export const useCursorPaginationOperationData = <TItem>(
         ];
       }).match(noop, console.error);
     };
-    // What a write that changed a topic the first page came from does: the list's own handler when it passed one, which is
-    // Handed the refresh that also adds the rows the page has and the reader does not; the row update by default
+    // What a write that changed a topic the first page came from does: the list's own handler when it passed one, which
+    // Is Handed the refresh that also adds the rows the page has and the reader does not; the row update by default
     const changeOnTopic = async () => {
       await (onTopicChange ? onTopicChange(() => refreshRows(true)) : refreshRows());
     };

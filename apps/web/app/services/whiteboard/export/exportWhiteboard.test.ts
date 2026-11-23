@@ -32,7 +32,8 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
 
-// The canvas is missing from the test environment, so the rasterizer is replaced by one that resolves the PNG the test gives it
+// The canvas is missing from the test environment, so the rasterizer is replaced by one that resolves the PNG the test
+// Gives it
 vi.mock(import("#src/services/capture/rasterizeSvg"), () => ({ rasterizeSvg: vi.fn<typeof rasterizeSvg>() }));
 
 describe(exportWhiteboard, () => {
@@ -121,7 +122,8 @@ describe(exportWhiteboard, () => {
       y: 0,
     };
     trpcMsw.whiteboard.readResourceContent.query(() => ({ elements: [...positionedDocument.elements, imageElement] }));
-    // The image's file is missing from storage, so its fetch is answered not found, and every other request passes through
+    // The image's file is missing from storage, so its fetch is answered not found, and every other request passes
+    // Through
     const nuxtFetch = globalThis.fetch;
     const imageAssetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, IMAGE_FILE_ID));
     const fetchSpy = vi
@@ -139,7 +141,8 @@ describe(exportWhiteboard, () => {
 
     await exportWhiteboard(WhiteboardExportFormat.Png);
 
-    // The file is drawn from the whiteboard without the failed image's element, and the owner is told how many were left out
+    // The file is drawn from the whiteboard without the failed image's element, and the owner is told how many were
+    // Left out
     const [svgBlob] = vi.mocked(rasterizeSvg).mock.lastCall ?? [];
     assert.instanceOf(svgBlob, Blob);
     await expect(svgBlob.text()).resolves.toBe(toPositionedSvg(positionedDocument, () => ""));

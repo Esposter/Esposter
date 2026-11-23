@@ -151,7 +151,8 @@ describe("likeRouter", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  // A removal keeps the vote as a tombstone, so the version it leaves is the one a later arrival of the row is ordered against
+  // A removal keeps the vote as a tombstone, so the version it leaves is the one a later arrival of the row is ordered
+  // Against
   test("deletes as a tombstone at a higher version", async () => {
     expect.hasAssertions();
 

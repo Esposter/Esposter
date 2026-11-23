@@ -2,8 +2,8 @@ import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren } from "vue-survey-engine-headless";
 
-// The node a pointer names in the creator's document, with the writes to its props and the picture uploads its files take,
-// So an editor of one node reads it and writes it at its own pointer
+// The node a pointer names in the creator's document, with the writes to its props and the picture uploads its files
+// Take, So an editor of one node reads it and writes it at its own pointer
 export const useSurveyPointerNode = (pointer: MaybeRefOrGetter<string>) => {
   const surveyCreatorStore = useSurveyCreatorStore();
   const { document } = storeToRefs(surveyCreatorStore);

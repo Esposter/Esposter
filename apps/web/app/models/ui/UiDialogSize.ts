@@ -1,5 +1,5 @@
-// How wide a dialog stands, from Small to Full. The base dialog owns each width, so a call site names a size rather than
-// A width literal of its own
+// How wide a dialog stands, from Small to Full. The base dialog owns each width, so a call site names a size rather
+// Than A width literal of its own
 export const UiDialogSize = {
   ExtraLarge: "ExtraLarge",
   Full: "Full",

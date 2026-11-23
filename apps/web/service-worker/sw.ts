@@ -16,8 +16,8 @@ import { navigationDenylist } from "virtual:unplugin-pwa-nuxt/navigation-denylis
 
 // The build replaces `__WB_MANIFEST` with the precache list of the build's own files, each named by its content or
 // Carrying its revision. A page is server-rendered, so it comes from the network first and is kept for the moments
-// There is none: a page precached once, with no revision, would point at the files of the build it was cached from for as
-// Long as the worker lives. A route the server answers itself, such as an API route or a file it serves, is not a
+// There is none: a page precached once, with no revision, would point at the files of the build it was cached from for
+// As Long as the worker lives. A route the server answers itself, such as an API route or a file it serves, is not a
 // Page, so the module hands over its routes as the denylist
 declare let self: { __WB_MANIFEST: PrecacheEntry[] } & ServiceWorkerGlobalScope;
 
@@ -26,9 +26,9 @@ const MAX_CACHED_APP_MANIFESTS = 8;
 const MAX_CACHED_PAGES = 32;
 const NETWORK_TIMEOUT_SECONDS = 3;
 const PAGES_CACHE_NAME = "pages";
-// The caches this worker owns: its precache, the pages and app manifests it keeps, and the hosted objects its preloader fills.
-// Activation deletes every other cache of the origin, so a cache an earlier build or an earlier product left under another name
-// Is not kept
+// The caches this worker owns: its precache, the pages and app manifests it keeps, and the hosted objects its preloader
+// Fills. Activation deletes every other cache of the origin, so a cache an earlier build or an earlier product left
+// Under another name Is not kept
 const OWNED_CACHE_NAMES: ReadonlySet<string> = new Set([
   APP_MANIFESTS_CACHE_NAME,
   cacheNames.precache,
@@ -57,9 +57,10 @@ registerRoute(
   ),
 );
 
-// The app manifest is fetched fresh while online, and that answer is kept for offline. A build's meta is named by its id, so
-// Its copy is never stale. latest.json is not: the server revalidates it, and its request still skips the browser's cache,
-// So each check reads the deployed copy. Its key drops the timestamp the outdated-build check adds, so one copy is kept, not one per check
+// The app manifest is fetched fresh while online, and that answer is kept for offline. A build's meta is named by its
+// Id, so Its copy is never stale. latest.json is not: the server revalidates it, and its request still skips the
+// Browser's cache, So each check reads the deployed copy. Its key drops the timestamp the outdated-build check adds, so
+// One copy is kept, not one per check
 const appManifests = new NetworkFirst({
   cacheName: APP_MANIFESTS_CACHE_NAME,
   fetchOptions: { cache: "no-store" },
@@ -87,8 +88,8 @@ self.addEventListener("message", (event) => {
 });
 
 // A worker takes the open pages at activation, so the page that installed it is controlled without a second navigation,
-// And its hosted requests reach the cache. It deletes the caches it does not own first, so the one an earlier build kept
-// Under a name this worker no longer uses is not kept for good
+// And its hosted requests reach the cache. It deletes the caches it does not own first, so the one an earlier build
+// Kept Under a name this worker no longer uses is not kept for good
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
@@ -109,7 +110,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     (async () => {
       const clients = await self.clients.matchAll({ includeUncontrolled: true });
-      // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Client takes no target origin: it is the matched window itself
+      // A Client takes no target
+      // oxlint-disable-next-line unicorn/require-post-message-target-origin -- origin: it is the matched window itself
       for (const client of clients) client.postMessage(payload);
       await self.registration.showNotification(title ?? "", { body, data, ...(icon ? { icon } : {}) });
     })(),

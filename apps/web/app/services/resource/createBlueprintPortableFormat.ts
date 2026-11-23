@@ -37,7 +37,8 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
   import: async () => {
     const resourceStore = useResourceStore();
     const { captureOpeningCheck } = resourceStore;
-    // The opening the import was picked under, so a file read after the same resource was closed and reopened lands nowhere
+    // The opening the import was picked under, so a file read after the same resource was closed and reopened lands
+    // Nowhere
     const isStillOpen = captureOpeningCheck();
     const blueprintStore = useBlueprintStore();
     const { loadContent, setManifestJson } = blueprintStore;
@@ -49,8 +50,8 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
       if (!validateFileWithAlert(file)) return;
 
       const manifest = parseBlueprintManifest(await file.text());
-      // A file read after the owner moved to another resource, or reopened this one, is an import for the opening it was
-      // Picked under, and must not fill the one open now
+      // A file read after the owner moved to another resource, or reopened this one, is an import for the opening it
+      // Was Picked under, and must not fill the one open now
       if (!isStillOpen()) return;
       // The safety net an import takes before it replaces the draft, so the saved manifest it replaces stays in version
       // History whenever the owner saves the import. A failed revision leaves the Editor's text as it was

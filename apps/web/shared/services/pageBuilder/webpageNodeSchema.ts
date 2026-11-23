@@ -42,10 +42,12 @@ import { z } from "zod";
 // A node's children are bounded by the most nodes a webpage may hold, so no slot can hold more than a document can
 const boundedChildren = <TSchema extends z.ZodType>(schema: TSchema) => z.array(schema).max(MAX_WEBPAGE_NODES);
 
-// A node's id is bounded and restricted wherever a node holds one, since the id names the node's class in the emitted CSS, which sits inside a `<style>` element
+// A node's id is bounded and restricted wherever a node holds one, since the id names the node's class in the emitted
+// CSS, which sits inside a `<style>` element
 const nodeIdSchema = z.string().max(MAX_NODE_ID_LENGTH).regex(NODE_ID_REGEX);
 
-// A placeable node's schema, reached lazily since a placeable node holds placeable nodes, so the recursion closes through the union below
+// A placeable node's schema, reached lazily since a placeable node holds placeable nodes, so the recursion closes
+// Through the union below
 const placeableNodeSchema = z.lazy((): z.ZodType<WebpagePlaceableNode> => webpagePlaceableNodeSchema);
 
 const buttonNodeSchema = z.object({

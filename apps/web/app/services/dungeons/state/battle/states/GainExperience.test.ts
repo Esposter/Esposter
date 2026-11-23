@@ -1,4 +1,5 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed state machine, dialog and dungeons store have members this test never reads, and the dungeons store would load Phaser */
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed state machine, dialog and dungeons store
+   have members this test never reads, and the dungeons store would load Phaser */
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";
@@ -27,7 +28,8 @@ vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battl
 vi.mock("#src/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () => ({ showMessages }) }));
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+// A partial fake:
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe("gainExperience", () => {

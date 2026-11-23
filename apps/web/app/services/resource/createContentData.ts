@@ -4,11 +4,11 @@ import type { ResourceType } from "@esposter/db-schema";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
 import { useResourceStore } from "#src/store/resource/index";
 
-// The load/save half every content store shares: rebuild the content from the open resource's blob, and seed
-// The dirty check so the editor's own load echo compares equal instead of writing back and bumping
-// ContentVersion for nothing. `createContent` is the one place a type says what its blob means — called with
-// No data for the empty document a store holds before its first load. `onRead` runs after each read, the first load and a
-// Reload alike, for a store that holds a copy of the content it has to hand over again
+// The load/save half every content store shares: rebuild the content from the open resource's blob, and seed The dirty
+// Check so the editor's own load echo compares equal instead of writing back and bumping ContentVersion for nothing.
+// `createContent` is the one place a type says what its blob means — called with No data for the empty document a store
+// Holds before its first load. `onRead` runs after each read, the first load and a Reload alike, for a store that holds
+// A copy of the content it has to hand over again
 export const createContentData = <
   TType extends ResourceType,
   TContent extends ResourceContent<TType> = ResourceContent<TType>,
@@ -26,7 +26,8 @@ export const createContentData = <
     setPersistedContent,
   } = resourceStore;
   // The cast avoids the excessively deep UnwrapRef instantiation on content types with nested class members
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- UnwrapRef over the generic content type is deferred, so the compiler cannot prove the ref holds the TContent it is typed as
+  // UnwrapRef over the generic content type is deferred, so the compiler cannot
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- prove the ref holds the TContent it is typed as
   const content = ref(createContent()) as Ref<TContent>;
   const readContentData = () =>
     readContent<TType>((data) => {
@@ -43,8 +44,8 @@ export const createContentData = <
   ResourceContentHookMap.Reload.register(async (reloadedType) => {
     if (reloadedType === type) await readContentData();
   });
-  // The store has already changed its content, so the save hands back nothing to wait on. A refused save leaves the change
-  // On screen, and the save state reads Failed until a save lands
+  // The store has already changed its content, so the save hands back nothing to wait on. A refused save leaves the
+  // Change On screen, and the save state reads Failed until a save lands
   const saveContent = () => {
     saveResourceContent(content.value);
   };

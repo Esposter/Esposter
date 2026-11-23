@@ -14,9 +14,10 @@ import { reducePreviewOrCommitGesture } from "#src/services/whiteboard/gesture/r
 import { getPlacedBounds } from "#src/services/whiteboard/getPlacedBounds";
 import { insertPositionedElement } from "vue-block-editor-headless";
 
-// A placing press previews its element once the pointer has travelled the drag start distance, sized by the drag. A release places the element
-// As one edit and selects it: at the default size centred on the press for a click, or at the size of the drag. The tool returns to select
-// Unless it is locked. The composable keeps this selection only when the document accepts the edit
+// A placing press previews its element once the pointer has travelled the drag start distance, sized by the drag. A
+// Release places the element As one edit and selects it: at the default size centred on the press for a click, or at
+// The size of the drag. The tool returns to select Unless it is locked. The composable keeps this selection only when
+// The document accepts the edit
 export const reducePlacingGesture = (
   state: WhiteboardGestureState,
   gesture: GesturePlacing,

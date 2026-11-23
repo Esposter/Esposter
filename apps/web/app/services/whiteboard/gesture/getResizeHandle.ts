@@ -6,7 +6,8 @@ import { getResizeHandlePoint } from "#src/services/whiteboard/gesture/getResize
 import { getSelectionBounds } from "#src/services/whiteboard/gesture/getSelectionBounds";
 import { getSelectionResizeHandles } from "#src/services/whiteboard/gesture/getSelectionResizeHandles";
 
-// The handle of the selection a point lands on, corners first, or undefined when it lands on none of the selection's handles
+// The handle of the selection a point lands on, corners first, or undefined when it lands on none of the selection's
+// Handles
 export const getResizeHandle = (
   document: PositionedDocument,
   selectedIds: string[],

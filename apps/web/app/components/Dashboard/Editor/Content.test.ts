@@ -64,7 +64,8 @@ describe("dashboardEditorContent", () => {
     return wrapper;
   };
 
-  // A menu's item picked on the tile of one visual, opened from the keyboard the way the overflow menu's own test opens it
+  // A menu's item picked on the tile of one visual, opened from the keyboard the way the overflow menu's own test opens
+  // It
   const pickTileMenuItem = async (wrapper: VueWrapper, visualId: Visual["id"], title: string) => {
     const menu = wrapper
       .findAllComponents(DashboardVisualPreviewActionsMenu)
@@ -253,7 +254,8 @@ describe("dashboardEditorContent", () => {
     ]);
   });
 
-  // A visual inside a group keeps its own tile and menu, so the group's grid draws each child the way the dashboard's grid does
+  // A visual inside a group keeps its own tile and menu, so the group's grid draws each child the way the dashboard's
+  // Grid does
   test("a visual inside a group gets its own menu in the editor", async () => {
     expect.hasAssertions();
 

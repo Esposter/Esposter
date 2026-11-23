@@ -2,8 +2,8 @@ import type { SurveyExpressionBinaryOperator, SurveyExpressionNode } from "surve
 
 import { SurveyExpressionNodeType } from "survey-expression";
 
-// The operands a chain of one connective holds, read down its left side. A connective on the right is a group of its own,
-// So it stays one operand, which the row conversion then refuses
+// The operands a chain of one connective holds, read down its left side. A connective on the right is a group of its
+// Own, So it stays one operand, which the row conversion then refuses
 export const getSurveyConditionOperands = (
   node: SurveyExpressionNode,
   operator: SurveyExpressionBinaryOperator,

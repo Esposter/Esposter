@@ -29,7 +29,8 @@ const selectedEmoji = computed(
 <template>
   <!-- High, as a dialog whose rail swaps panels of other lengths stands, so the rail never moves under the pointer -->
   <UiDialog v-model="isOpen" is-tall title="Reactions" :size="UiDialogSize.Medium">
-    <!-- The row fills the body, and the list beside the rail is the one scroller, so the rail stays in view as the list is read -->
+    <!-- The row fills the body, and the list beside the rail is the one scroller, so the rail stays in view as the
+      list is read -->
     <div v-if="selectedEmoji" flex flex-1 gap-3 h-full>
       <MessageModelMessageReactionsDialogRail
         :emojis="displayEmojis"

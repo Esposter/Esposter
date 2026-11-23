@@ -63,7 +63,8 @@ describe(computeDatasetVisualPropsData, () => {
     });
   });
 
-  // The order ranks the categories by the number the chart draws, so the largest comes first whichever row was named first
+  // The order ranks the categories by the number the chart draws, so the largest comes first whichever row was named
+  // First
   test("categories sort by a series, largest first", () => {
     expect.hasAssertions();
 

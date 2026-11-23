@@ -22,9 +22,9 @@ import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { noop, parseArrayIndex, parseJsonPointer } from "@esposter/shared";
 import { getBlockLayerRows, getBlockNode, moveBlockNode } from "vue-block-editor-headless";
 
-// The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
-// The document is not held or no slot takes the type. A node a handle is moving is named by its id, which keeps it out of
-// The slots it cannot land in
+// The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or
+// When The document is not held or no slot takes the type. A node a handle is moving is named by its id, which keeps it
+// Out of The slots it cannot land in
 const getDropTargetAt = <
   TNode extends BlockNode,
   TRoot extends object,
@@ -52,12 +52,12 @@ const getDropTargetAt = <
   });
 };
 
-// A palette block or a merge field dragged to the point under the pointer. The drop indicator's target is held here for the
-// Canvas to draw, and a release with a target inserts the block there, announced once. A merge field released over a text
-// Is appended to that text. A press that never moves past the threshold is a click that the palette's own button handles,
-// So the drag does nothing; Escape, a cancel or a release with no target inserts nothing. A finger's drag starts once it has
-// Rested, and a finger that moves first is scrolling. The frame scrolls while the pointer is at its edge
-// The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
+// A palette block or a merge field dragged to the point under the pointer. The drop indicator's target is held here for
+// The Canvas to draw, and a release with a target inserts the block there, announced once. A merge field released over
+// A text Is appended to that text. A press that never moves past the threshold is a click that the palette's own button
+// Handles, So the drag does nothing; Escape, a cancel or a release with no target inserts nothing. A finger's drag
+// Starts once it has Rested, and a finger that moves first is scrolling. The frame scrolls while the pointer is at its
+// Edge The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
 // `jscpd:ignore-start`
 export const usePageBuilderDrag = <
   TNode extends BlockNode,
@@ -78,8 +78,8 @@ export const usePageBuilderDrag = <
   const draggedNodeId = shallowRef("");
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
-  // The press's own state: whether it has passed the threshold, so the editor can let the pointer pass through the canvas frame,
-  // Whose document would take it, and the viewport point the pointer is at, where the ghost is drawn
+  // The press's own state: whether it has passed the threshold, so the editor can let the pointer pass through the
+  // Canvas frame, Whose document would take it, and the viewport point the pointer is at, where the ghost is drawn
   const { cancel: cancelDrag, isDragging, point: dragPoint, startPress } = usePressDrag();
   // Why a block is refused while the pointer is over the frame and no slot takes it, and empty otherwise
   const refusal = shallowRef("");
@@ -106,15 +106,16 @@ export const usePageBuilderDrag = <
       },
     ];
   });
-  // Tracks a press until its release, a cancel or Escape, through the shared press tracker. Each move of the drag reaches
-  // `onMove`, and the release reaches `onRelease` with its point only while the press was dragging
+  // Tracks a press until its release, a cancel or Escape, through the shared press tracker. Each move of the drag
+  // Reaches `onMove`, and the release reaches `onRelease` with its point only while the press was dragging
   const trackDrag = (
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
     onMove: (point: { x: number; y: number }) => void,
     onRelease: (point: { x: number; y: number }) => void,
   ) => {
-    // Scrolls the frame toward the edge the pointer is near, then resolves the drop again, as the content moved under it
+    // Scrolls the frame toward the edge the pointer is near, then resolves the drop again, as the content moved under
+    // It
     const scrollToEdge = (delta: number) => {
       const geometry = getFrameGeometry();
       const point = dragPoint.value;
@@ -157,8 +158,8 @@ export const usePageBuilderDrag = <
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
   ) => {
-    // The frame's boxes are read once, as the drag starts and before its preview is drawn, so the preview moves none of the
-    // Boxes a later move resolves against
+    // The frame's boxes are read once, as the drag starts and before its preview is drawn, so the preview moves none of
+    // The Boxes a later move resolves against
     let frozenGeometry: FrameGeometry | undefined;
     trackDrag(
       event,
@@ -192,7 +193,8 @@ export const usePageBuilderDrag = <
       },
     );
   };
-  // A merge field released over a text is appended to it, and the release over no text, or outside the frame, appends nothing
+  // A merge field released over a text is appended to it, and the release over no text, or outside the frame, appends
+  // Nothing
   const startMergeFieldDrag = (
     columnName: string,
     event: PointerEvent,
@@ -215,9 +217,10 @@ export const usePageBuilderDrag = <
     });
   };
 
-  // A node on the canvas moved by its handle lands in the slot under the pointer, through the palette drag's hit test. Over the
-  // Node itself or a node it holds there is no slot, so a release there, or where no slot takes the node, leaves it in place.
-  // A release back where the node stands changes nothing, and a landed move is one edit, announced as the keyboard move is
+  // A node on the canvas moved by its handle lands in the slot under the pointer, through the palette drag's hit test.
+  // Over the Node itself or a node it holds there is no slot, so a release there, or where no slot takes the node,
+  // Leaves it in place. A release back where the node stands changes nothing, and a landed move is one edit, announced
+  // As the keyboard move is
   const startNodeDrag = (nodeId: string, event: PointerEvent, getFrameGeometry: () => FrameGeometry | undefined) => {
     const document = getDocument();
     if (!document) return;

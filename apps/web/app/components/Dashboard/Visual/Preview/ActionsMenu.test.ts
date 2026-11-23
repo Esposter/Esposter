@@ -157,7 +157,8 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     ]);
   });
 
-  // Move to is offered only where the visual has a list to move into: a visual beside a group has one, and a group alone has none
+  // Move to is offered only where the visual has a list to move into: a visual beside a group has one, and a group
+  // Alone has none
   test("move to is offered only where the visual has somewhere else to go", async () => {
     expect.hasAssertions();
 

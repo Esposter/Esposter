@@ -105,8 +105,8 @@ describe("security", () => {
     ]);
   });
 
-  // The page blocks an inline handler its policy does not list, so the one NuxtImg renders is allowed by the hash of its
-  // Exact text and nothing else
+  // The page blocks an inline handler its policy does not list, so the one NuxtImg renders is allowed by the hash of
+  // Its Exact text and nothing else
   test("allows the image error handler by its hash and no other inline handler", async () => {
     expect.hasAssertions();
 
@@ -133,7 +133,8 @@ describe("security", () => {
   });
 
   // A dedicated worker's script is refused unless its response carries the embedder policy its page sends. The build's
-  // Scripts are served from the static assets, which never reach the Worker's request hook, so the policy is a route rule
+  // Scripts are served from the static assets, which never reach the Worker's request hook, so the policy is a route
+  // Rule
   test("serves the build's folder under the embedder policy its pages send", () => {
     expect.hasAssertions();
 

@@ -29,7 +29,8 @@ import { SurveyNodeType } from "vue-survey-engine-headless";
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { updateNodeProps } = useSurveyCreatorCommands();
-// The conditions the selected node holds, each the text it saves under its prop, so a prop the node lacks is no condition of it
+// The conditions the selected node holds, each the text it saves under its prop, so a prop the node lacks is no
+// Condition of it
 const conditions = computed<Partial<Record<SurveyConditionProp, string>>>(() => selectedNode.value?.props ?? {});
 const sections = computed(() => SURVEY_CONDITION_SECTIONS.filter(({ prop }) => Object.hasOwn(conditions.value, prop)));
 const answers = computed(() => getSurveyConditionAnswers(surveyDocument.value));
@@ -58,7 +59,8 @@ const writeCondition = (prop: SurveyConditionProp, text: string): void => {
   drafts.set(prop, { base: getSavedText(prop), fault: fault ?? SURVEY_REFUSED_MESSAGE, text });
 };
 const getRows = (prop: SurveyConditionProp) => parseSurveyConditionRows(getSavedText(prop));
-// Each section's rows are parsed once per change to the conditions, since the template reads them several times a render
+// Each section's rows are parsed once per change to the conditions, since the template reads them several times a
+// Render
 const propRowsMap = computed(
   () =>
     new Map(

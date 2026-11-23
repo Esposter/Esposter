@@ -1,4 +1,6 @@
-/* oxlint-disable typescript/no-floating-promises -- loadAccountSave settles every failure itself, so nothing waits on the run it returns, and persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
+/* oxlint-disable typescript/no-floating-promises -- loadAccountSave settles every failure itself, so nothing waits
+   on the run it returns, and persist settles every failure itself, so the promise it returns cannot reject and
+   nothing waits on it */
 import type { GenshinSave } from "genshin-world/save";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
@@ -28,9 +30,9 @@ import { v7 } from "uuid";
 import { z } from "zod";
 
 // The save the Genshin page plays, loaded before the world is made. Signed in, it is the account's blob under the lease
-// The start took, and the page waits on its loading screen until that start takes; signed out, it is this browser's copy.
-// A change is saved on the clock's autosave cadence, at once after a grant, and when the page is left. The server's clock
-// Is kept as an offset, which the world reads its timers by
+// The start took, and the page waits on its loading screen until that start takes; signed out, it is this browser's
+// Copy. A change is saved on the clock's autosave cadence, at once after a grant, and when the page is left. The
+// Server's clock Is kept as an offset, which the world reads its timers by
 export const useGenshinSave = async () => {
   const { $trpc } = useNuxtApp();
   const { checkIsPending, executeMutation } = useMutation();
@@ -53,13 +55,14 @@ export const useGenshinSave = async () => {
     listenToStorageChanges: false,
     serializer: StorageSerializers.string,
   });
-  // The lease this page holds, empty while the page plays the browser's save, and the ETag of the blob as the last start
-  // Or save acknowledged it, which the next save is conditioned on
+  // The lease this page holds, empty while the page plays the browser's save, and the ETag of the blob as the last
+  // Start Or save acknowledged it, which the next save is conditioned on
   let sessionId = "";
   let etag: string | undefined;
   // The save the page holds, and the JSON of the save the account or the browser last stored, so an unchanged save is
   // Never sent again. This is not `useSave`'s skip: its baseline is the state it was handed, while this one is the
-  // Account's save as the start read it, which the journal and the lease's ETag are kept against, sent through a single flight
+  // Account's save as the start read it, which the journal and the lease's ETag are kept against, sent through a single
+  // Flight
   let latestSave: GenshinSave = EMPTY_GENSHIN_SAVE;
   let persistedJson = "";
   // Resolves the wait between two start attempts early, when the page's retry asks for it
@@ -73,7 +76,8 @@ export const useGenshinSave = async () => {
   const startLease = async (startSessionId: string) => {
     const sentAt = Date.now();
     const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: startSessionId }), {
-      // The session, its etag and the clock are the server's, and the page holds its loading screen until the start takes
+      // The session, its etag and the clock are the server's, and the page holds its loading screen until the start
+      // Takes
       awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: START_GENSHIN_MUTATION_KEY,
     });
@@ -85,9 +89,9 @@ export const useGenshinSave = async () => {
     etag = outcome.result.etag;
     return outcome.result;
   };
-  // A start that fails is retried with backoff until it takes, the page's loading screen held meanwhile, and the wait is
-  // Cut short by the page's retry or by the run's abort once the page is left. No copy of the browser's save stands in
-  // For the account's while it waits
+  // A start that fails is retried with backoff until it takes, the page's loading screen held meanwhile, and the wait
+  // Is Cut short by the page's retry or by the run's abort once the page is left. No copy of the browser's save stands
+  // In For the account's while it waits
   const waitForStartRetry = (delayMs: number, signal: AbortSignal) => {
     const { promise, resolve } = Promise.withResolvers<void>();
     retryStartNow = () => {
@@ -105,9 +109,10 @@ export const useGenshinSave = async () => {
     }, delayMs);
     return promise;
   };
-  // Every attempt sends the page's one session id, so an attempt whose write landed and whose response was lost is retried
-  // As the same start, which the server answers without taking the lease again
-  // oxlint-disable no-await-in-loop -- Retry: each attempt runs only because the one before it failed, and the wait between them is its backoff
+  // Every attempt sends the page's one session id, so an attempt whose write landed and whose response was lost is
+  // Retried As the same start, which the server answers without taking the lease again
+  // Between them is its backoff
+  // oxlint-disable no-await-in-loop -- Retry: each attempt runs only because the one before it failed, and the wait
   const startUntilStarted = async (startSessionId: string, signal: AbortSignal) => {
     for (let attempt = 0; ; attempt++) {
       if (signal.aborted) return undefined;
@@ -194,9 +199,9 @@ export const useGenshinSave = async () => {
     syncJournal();
   };
   const persist = createSingleFlight(sendSave);
-  // Signed out, the page plays the browser's save. Signed in, the account's save is loaded, and a guest save the browser
-  // Holds is uploaded when the account has none, or merged into the account's when it has one
-  // A guest with no save of their own starts as a new player, whose Original Resin is the game's cap as its record gives it
+  // Signed out, the page plays the browser's save. Signed in, the account's save is loaded, and a guest save the
+  // Browser Holds is uploaded when the account has none, or merged into the account's when it has one A guest with no
+  // Save of their own starts as a new player, whose Original Resin is the game's cap as its record gives it
   const readLocalSave = async () => {
     initialSave.value = readGuestSave() ?? createStartingGenshinSave(await readResinParam(gameDataBaseUrl));
     latestSave = initialSave.value;
@@ -212,12 +217,13 @@ export const useGenshinSave = async () => {
         if (!start) return;
         // The journal is read from the browser as it stands now, not from the copy this page cached when it was keyed,
         // Since another window of the browser may have written it since. It is adopted only by the start that replaced
-        // The session which wrote it, since only then is the save it holds the one the account would have kept. Any other
-        // Journal is out of date, so it is discarded. A browser that blocks its storage throws on this read, which is
-        // Logged and read as no journal, so the load still lands
+        // The session which wrote it, since only then is the save it holds the one the account would have kept. Any
+        // Other Journal is out of date, so it is discarded. A browser that blocks its storage throws on this read,
+        // Which is Logged and read as no journal, so the load still lands
         const journal = parseGenshinJournal(
           getResult(
-            // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy
+            // The journal is the offline save system's, read imperatively the
+            // oxlint-disable-next-line selector-ban/no-restricted-syntax -- way `readGuestSave` reads the guest's copy
             () => window.localStorage.getItem(LocalStorageKey.GenshinPending(accountUserId)),
           )
             .orTee(console.error)

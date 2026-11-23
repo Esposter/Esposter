@@ -14,7 +14,8 @@ export const insertRows = async <TTable extends SQLiteTable>(
   const statements = chunk(rows, getRowsPerStatement(table)).map((batch) => db.insert(table).values(batch));
   for (const group of chunk(statements, 100)) {
     const [firstStatement, ...restStatements] = group;
-    // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed batch stops the groups behind it, and the groups before it stay committed
+    // Groups before it stay committed
+    // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed batch stops the groups behind it, and the
     if (firstStatement) await db.batch([firstStatement, ...restStatements]);
   }
 };

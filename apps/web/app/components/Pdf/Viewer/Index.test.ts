@@ -13,7 +13,8 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { usePdfViewer } from "vue-pdfjs-headless";
 
-// The viewer's module never loads here unless a test settles it, so each test sees the dialog at the state its props give
+// The viewer's module never loads here unless a test settles it, so each test sees the dialog at the state its props
+// Give
 vi.mock(import("#src/services/pdf/loadPdfViewer"), () => ({
   loadPdfViewer: vi.fn<typeof loadPdfViewer>(() => new Promise(() => {})),
 }));
@@ -47,7 +48,8 @@ const EventBus = function () {
 };
 const PDFFindController = function ({ eventBus }: { eventBus: ReturnType<typeof EventBus> }) {
   eventBus.on("find", (event: unknown) => {
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a fake event's query, built by the test rather than typed
+    // A fake
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- event's query, built by the test rather than typed
     const total = (event as { query: string }).query === "" ? 0 : 2;
 
     eventBus.dispatch("updatefindmatchescount", { matchesCount: { current: total > 0 ? 1 : 0, total } });

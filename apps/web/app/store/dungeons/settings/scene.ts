@@ -39,8 +39,8 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
   // A row with only its name has no value cells: Volume and Theme Mode have their own controls, Close has no value
   const checkHasValueCells = (rowIndex: number) => settingsOptionGrid.getColumnSize(rowIndex) > 1;
-  // A row with value cells rests on the cell holding its current setting, so the cursor's column always shows the value.
-  // A row without them rests on its name
+  // A row with value cells rests on the cell holding its current setting, so the cursor's column always shows the
+  // Value. A row without them rests on its name
   const getRestingPosition = (rowIndex: number): Position => {
     const option = getSettingsOption(rowIndex);
     if (!checkHasValueCells(rowIndex) || !checkIsSettingsOptionWithValue(option)) return { x: 0, y: rowIndex };

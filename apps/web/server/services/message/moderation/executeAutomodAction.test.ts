@@ -87,8 +87,8 @@ describe(executeAutomodAction, () => {
     await expect(readTimeoutUntil(roomId, userId)).resolves.toStrictEqual(new Date(timeoutDurationMs));
   });
 
-  // The action writes the room's moderation log, which the moderators' log reads. The write runs through the handle it is
-  // Given, so the log it writes is named by its room, and that is the topic an open log watches
+  // The action writes the room's moderation log, which the moderators' log reads. The write runs through the handle it
+  // Is Given, so the log it writes is named by its room, and that is the topic an open log watches
   test("names the moderation log it writes by its room, through the handle it runs through", async () => {
     expect.hasAssertions();
 

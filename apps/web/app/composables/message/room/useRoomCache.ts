@@ -14,7 +14,8 @@ export const useRoomCache = () => {
     getSlice,
     partitionKey: () => userId.value,
   });
-  // The rooms show only with their memberships, so the viewer's memberships are cached beside them and restored at their versions
+  // The rooms show only with their memberships, so the viewer's memberships are cached beside them and restored at
+  // Their versions
   const userToRoomStore = useUserToRoomStore();
   const { getSlice: getUserToRoomSlice } = userToRoomStore;
   usePaginationCache({

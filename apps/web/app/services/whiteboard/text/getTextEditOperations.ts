@@ -6,7 +6,8 @@ import { getElementIndexById } from "#src/services/whiteboard/gesture/getElement
 import { takeOne } from "@esposter/shared";
 import { getPositionedElementText, updatePositionedElementText } from "vue-block-editor-headless";
 
-// The operations that write a text edit's draft to its element, or none when the element is gone or already holds the draft as its text
+// The operations that write a text edit's draft to its element, or none when the element is gone or already holds the
+// Draft as its text
 export const getTextEditOperations = (
   document: PositionedDocument,
   textEdit: WhiteboardTextEdit,

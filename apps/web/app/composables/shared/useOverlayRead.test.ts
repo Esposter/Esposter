@@ -12,8 +12,8 @@ describe(useOverlayRead, () => {
   const olderRow = { deletedAt: null, id: rowId, name: "", version: 0 };
   const newerRow = { deletedAt: null, id: rowId, name: " ", version: 1 };
 
-  // The two reads take different keys, so the key does not order them: the arrival gate alone keeps the older answer out
-  // Of the view
+  // The two reads take different keys, so the key does not order them: the arrival gate alone keeps the older answer
+  // Out Of the view
   test("a slow read that answers after a newer read leaves the newer row held", async () => {
     expect.hasAssertions();
 

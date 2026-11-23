@@ -27,7 +27,8 @@ describe(useDashboardStore, () => {
     await readResource();
   });
 
-  // The first save is held in flight and refused. The second write queues behind it and succeeds, so the collision it chose stands
+  // The first save is held in flight and refused. The second write queues behind it and succeeds, so the collision it
+  // Chose stands
   test("a refused save leaves a later change standing", async () => {
     expect.hasAssertions();
 

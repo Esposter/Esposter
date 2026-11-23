@@ -105,7 +105,8 @@ describe("resourceBlueprintEditor", () => {
     const saveButton = component.findAll("button").find((button) => button.text() === "Save");
     assert.exists(saveButton);
     await saveButton.trigger("click");
-    // The save is held in flight, so the Deploy button turns on from the manifest the store adopted as the save was sent
+    // The save is held in flight, so the Deploy button turns on from the manifest the store adopted as the save was
+    // Sent
     await saveRequested;
     await nextTick();
     const savedDeployButton = findDeployButton();
@@ -151,7 +152,8 @@ describe("resourceBlueprintEditor", () => {
     expect(writes).toStrictEqual(["revision", "save"]);
   });
 
-  // A listed parameter is drawn as a choice of its values with its default chosen, where a text field would take any text
+  // A listed parameter is drawn as a choice of its values with its default chosen, where a text field would take any
+  // Text
   test("the dialog offers a listed parameter as a choice", async () => {
     expect.hasAssertions();
 

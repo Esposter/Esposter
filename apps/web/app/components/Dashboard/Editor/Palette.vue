@@ -2,8 +2,8 @@
 import { VisualTypeCategoryDefinitions } from "#src/services/dashboard/VisualTypeCategoryDefinitions";
 </script>
 
-<!-- The visuals palette is the Visuals region: the shell draws it beside the grid, or as a sheet on a narrow window, where
-  the reader opens it. Its tiles add a visual where they are pressed or dropped -->
+<!-- The visuals palette is the Visuals region: the shell draws it beside the grid, or as a sheet on a narrow
+  window, where the reader opens it. Its tiles add a visual where they are pressed or dropped -->
 <template>
   <div p-3 flex flex-1 flex-col gap-3 min-h-0 of-y-auto>
     <section v-for="{ items, title } of VisualTypeCategoryDefinitions" :key="title" flex flex-col gap-2>

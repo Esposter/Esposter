@@ -28,8 +28,9 @@ describe(useRoomCache, () => {
     await resetIndexedDb();
   });
 
-  // The room list shows a room only while its membership is held, so an offline reload restores the memberships beside the
-  // Rooms, each at its version, or the list shows none of them. Both caches are seeded as an online session leaves them
+  // The room list shows a room only while its membership is held, so an offline reload restores the memberships beside
+  // The Rooms, each at its version, or the list shows none of them. Both caches are seeded as an online session leaves
+  // Them
   test("an offline reload shows the rooms its cache restored, with their memberships", async () => {
     expect.hasAssertions();
 

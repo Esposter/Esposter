@@ -14,7 +14,8 @@ interface Props {
 // The background-image value, its layers joined by commas. A background's colour is its own field beside the list
 const modelValue = defineModel<string>({ required: true });
 defineProps<Props>();
-// Each layer is keyed by its own id rather than its place, so removing one keeps the unsaved draft of the layers after it
+// Each layer is keyed by its own id rather than its place, so removing one keeps the unsaved draft of the layers after
+// It
 const toLayers = (value: string): Layer[] => splitBackgroundLayers(value).map((layer) => ({ id: v7(), value: layer }));
 // An added layer stays in the list until it holds a value, since an empty one joins to nothing
 const layers = ref(toLayers(modelValue.value));
@@ -55,7 +56,8 @@ const addLayer = () => {
       @update:model-value="(value) => setLayer(layer.id, value)"
     >
       <template #trailing>
-        <!-- oxlint-disable vue/no-restricted-syntax -- removes a layer from the unsaved page draft, which the page builder's undo history restores -->
+        <!-- oxlint-disable vue/no-restricted-syntax -- removes a layer from the unsaved page draft, which the page
+          builder's undo history restores -->
         <UiButton @click="removeLayer(layer.id)">Remove</UiButton>
         <!-- oxlint-enable vue/no-restricted-syntax -->
       </template>

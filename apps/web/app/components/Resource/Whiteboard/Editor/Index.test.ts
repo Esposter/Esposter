@@ -42,7 +42,8 @@ const { display, uploadResourceFileMock } = vi.hoisted(() => ({
 vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
-// The editor's size class is read from the display composable, so a test says how small the window is before the editor mounts
+// The editor's size class is read from the display composable, so a test says how small the window is before the editor
+// Mounts
 vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const { useUiDisplay } = await importOriginal();
   return {
@@ -93,9 +94,9 @@ describe("resourceWhiteboardEditor", () => {
     const { readResource } = useReadOpenResource();
     await readResource();
   });
-  // Registered after setupMswTrpc, so it runs before the harness checks for late requests. An edit the autosave still holds
-  // Is written here, and its write awaited: the editor writes a held edit when it unmounts, and that unmount runs in the
-  // Shared teardown outside this suite, where no handler is left to answer the write
+  // Registered after setupMswTrpc, so it runs before the harness checks for late requests. An edit the autosave still
+  // Holds Is written here, and its write awaited: the editor writes a held edit when it unmounts, and that unmount runs
+  // In the Shared teardown outside this suite, where no handler is left to answer the write
   afterEach(async () => {
     if (!vi.isFakeTimers()) return;
 
@@ -105,11 +106,13 @@ describe("resourceWhiteboardEditor", () => {
     vi.useRealTimers();
   });
 
-  // The autosave debounce is counted by setTimeout, and an edit's timer is set once the editor has mounted, so the clock is faked from there
+  // The autosave debounce is counted by setTimeout, and an edit's timer is set once the editor has mounted, so the
+  // Clock is faked from there
   const mountEditor = async (elements: PositionedElement[]) => {
     trpcMsw.whiteboard.readResourceContent.query(() => ({ elements }));
     const component = await mountSuspended(ResourceWhiteboardEditor);
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- the afterEach moves the clock to write any edit still held, then restores the real timers
+    // The afterEach moves the clock to
+    // oxlint-disable-next-line testing/no-faked-set-timeout -- write any edit still held, then restores the real timers
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     return component;
   };
@@ -263,7 +266,8 @@ describe("resourceWhiteboardEditor", () => {
   test("a right-click on a selection of several lists the stacking that moves it", async () => {
     expect.hasAssertions();
 
-    // The third shape is drawn above the selected pair, so the pair can move forward and to the front, but not back, since it holds the bottom element
+    // The third shape is drawn above the selected pair, so the pair can move forward and to the front, but not back,
+    // Since it holds the bottom element
     const THIRD_SHAPE_ID = v7();
     const component = await mountEditor([
       createShape(FIRST_SHAPE_ID, 0),
@@ -325,7 +329,8 @@ describe("resourceWhiteboardEditor", () => {
     expect(component.findComponent(UiConfirmDialog).props("modelValue")).toBe(true);
   });
 
-  // A paste is an image file's clipboard event, which the canvas inserts unless the paste comes from the text box being edited
+  // A paste is an image file's clipboard event, which the canvas inserts unless the paste comes from the text box being
+  // Edited
   test("pasting an image into the text box being edited adds no image to the canvas", async () => {
     expect.hasAssertions();
 
@@ -345,7 +350,8 @@ describe("resourceWhiteboardEditor", () => {
     expect(uploadResourceFileMock).not.toHaveBeenCalled();
   });
 
-  // A paste on the canvas reads its clipboard text, which lands as copies of the elements when the text carries the marker
+  // A paste on the canvas reads its clipboard text, which lands as copies of the elements when the text carries the
+  // Marker
   test("pasting marked text on the canvas adds its elements as copies", async () => {
     expect.hasAssertions();
 
@@ -514,7 +520,8 @@ describe("resourceWhiteboardEditor", () => {
     });
     const file = new File(["a"], "a", { type: MimeType.Png });
     const fileId = await getSha256Hex(new Uint8Array(await file.arrayBuffer()));
-    // The file's bytes are hashed before the upload, a step a flush does not outlast, so the test awaits the upload itself
+    // The file's bytes are hashed before the upload, a step a flush does not outlast, so the test awaits the upload
+    // Itself
     const { promise: isUploaded, resolve: onUploaded } = Promise.withResolvers<void>();
     uploadResourceFileMock.mockImplementationOnce(() => {
       onUploaded();
@@ -623,7 +630,8 @@ describe("resourceWhiteboardEditor", () => {
     expect(whiteboard.value.elements.map(({ id }) => id)).toStrictEqual([SECOND_SHAPE_ID, FIRST_SHAPE_ID]);
   });
 
-  // An edit the autosave holds is written once its clock runs out, and the write reaches the server as the whiteboard it changed
+  // An edit the autosave holds is written once its clock runs out, and the write reaches the server as the whiteboard
+  // It changed
   test("an edit is autosaved on the shared cadence with the whiteboard it changed", async () => {
     expect.hasAssertions();
 

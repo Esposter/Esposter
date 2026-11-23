@@ -21,8 +21,8 @@ const emit = defineEmits<{ parse: [name: string] }>();
 const dropZone = useTemplateRef("dropZone");
 const fileInput = useTemplateRef("fileInput");
 const file = ref<File>();
-// A file picked or dropped while one is still parsing waits behind it, since the picker is off until it lands, so two parses
-// Never race for the form's sheet
+// A file picked or dropped while one is still parsing waits behind it, since the picker is off until it lands, so two
+// Parses Never race for the form's sheet
 const parseFile = async (newFile: File) => {
   if (isParsing.value) return;
 

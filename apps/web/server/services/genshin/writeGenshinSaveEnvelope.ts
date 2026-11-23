@@ -7,9 +7,9 @@ import { getSaveBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-// Writes the envelope under the ETag read, through the shared blob-state write. A blob that changed under the read means
-// The lease was lost, to a save or a start from another session alike, so its CONFLICT is refused as a replacement
-// Rather than retried
+// Writes the envelope under the ETag read, through the shared blob-state write. A blob that changed under the read
+// Means The lease was lost, to a save or a start from another session alike, so its CONFLICT is refused as a
+// Replacement Rather than retried
 export const writeGenshinSaveEnvelope = (
   bucket: R2Bucket,
   userId: string,

@@ -19,7 +19,8 @@ const stepNameRules = [UiRules.required(), UiRules.maxLength(ITEM_NAME_MAX_LENGT
   <li flex gap-2 items-center>
     <UiCheckbox :label="step.name" :model-value="Boolean(step.completedAt)" @update:model-value="emit('toggle')" />
     <div :class="{ 'text-muted': step.completedAt }" flex-1 min-w-0>
-      <!-- The remove sits in the field's trailing slot, so it lines up with the input box while an error line grows beneath -->
+      <!-- The remove sits in the field's trailing slot, so it lines up with the input box while an error line grows
+        beneath -->
       <UiTextField
         :model-value="step.name"
         is-label-hidden

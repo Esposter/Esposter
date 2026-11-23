@@ -32,7 +32,8 @@ export class EmailEditor extends AItemEntity {
   }
 }
 
-// The document's schema, which takes the body and head alone, with the dataset binding and the published html beside them
+// The document's schema, which takes the body and head alone, with the dataset binding and the published html beside
+// Them
 export const emailEditorSchema = emailDocumentSchema.and(
   z.object({
     ...aItemEntitySchema.shape,

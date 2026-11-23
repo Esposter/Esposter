@@ -103,7 +103,8 @@ describe(usePageBuilderClipboard, () => {
 
   test("a clipboard copied from the webpage editor is refused in an email", async () => {
     expect.hasAssertions();
-    // A webpage's node types never parse as an email's, so the paste is refused on the editor the clipboard was copied from
+    // A webpage's node types never parse as an email's, so the paste is refused on the editor the clipboard was copied
+    // From
     const clipboard = stubClipboard();
     clipboard.text = serializeClipboardNodes({ editor: PageBuilderEditor.Webpage, nodes: [] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();

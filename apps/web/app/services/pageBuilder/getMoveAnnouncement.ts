@@ -5,8 +5,8 @@ import { getNodeTitle } from "#src/services/pageBuilder/getNodeTitle";
 import { getSlotPath } from "#src/services/pageBuilder/getSlotPath";
 import { parseArrayIndex, parseJsonPointer, readJsonValue } from "@esposter/shared";
 
-// The announcement of a node that has just moved: its title, its 1-based position among its slot's children and the slot's
-// Path. Empty when the node has no title or no position in a slot
+// The announcement of a node that has just moved: its title, its 1-based position among its slot's children and the
+// Slot's Path. Empty when the node has no title or no position in a slot
 export const getMoveAnnouncement: PageBuilderHelper<string, [nodePointer: string]> = (kind, document, nodePointer) => {
   const segments = parseJsonPointer(nodePointer);
   const siblings = readJsonValue(document, segments.slice(0, -1));

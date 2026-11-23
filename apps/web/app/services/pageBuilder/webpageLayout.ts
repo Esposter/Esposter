@@ -11,8 +11,8 @@ import {
   PAGE_BUILDER_SELECTION_KIND_MAP,
 } from "#src/services/pageBuilder/pageBuilderLayout";
 
-// The webpage's arrangement on the shell. Its settings tabs follow the selection: with nothing selected the page's own settings
-// And its theme, and with a node its content and its style for the device the toggle in the bar chose
+// The webpage's arrangement on the shell. Its settings tabs follow the selection: with nothing selected the page's own
+// Settings And its theme, and with a node its content and its style for the device the toggle in the bar chose
 export const webpageLayout: PageBuilderLayout = {
   layout: {
     canvasId: PAGE_BUILDER_CANVAS_ID,

@@ -67,7 +67,8 @@ const choices = computed(() => ("choices" in node.props ? node.props.choices : u
       </div>
     </template>
     <ResourceSurveyCreatorCanvasAdorner v-if="isSelected" :node :pointer />
-    <!-- The handle is drawn on the selected element only, and touch-none keeps a finger on it from scrolling the canvas -->
+    <!-- The handle is drawn on the selected element only, and touch-none keeps a finger on it from scrolling the
+      canvas -->
     <UiIconButton
       v-if="isSelected"
       cursor-move

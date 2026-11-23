@@ -7,6 +7,7 @@ import { EN_US_WORD_SEGMENTER } from "#src/services/resource/note/constants";
 export const getNoteTextCounts = (doc: Node, from: number, to: number): NoteTextCounts => {
   const text = doc.textBetween(from, to, " ");
   const words = [...EN_US_WORD_SEGMENTER.segment(text)].filter(({ isWordLike }) => isWordLike).length;
-  // oxlint-disable-next-line typescript/no-misused-spread -- characters are counted by code point, the unit the count names
+  // Characters
+  // oxlint-disable-next-line typescript/no-misused-spread -- are counted by code point, the unit the count names
   return { characters: [...text].length, words };
 };

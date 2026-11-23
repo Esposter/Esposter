@@ -58,8 +58,9 @@ describe(cloneContentAssets, () => {
   const threeDestinationBlobNames = [hash, otherHash, thirdHash]
     .map((assetHash) => `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`)
     .toSorted();
-  // The owner's copy is answered by its ownership lookup alone, so this stub serves every case that reads an owned resource.
-  // A stranger's copy also reads the publication, which the stub does not serve, so those cases seed the real database
+  // The owner's copy is answered by its ownership lookup alone, so this stub serves every case that reads an owned
+  // Resource. A stranger's copy also reads the publication, which the stub does not serve, so those cases seed the real
+  // Database
   const createOwnerDatabase = () =>
     ({
       query: {
@@ -205,8 +206,8 @@ describe(cloneContentAssets, () => {
     expect(clonedContent).toStrictEqual({ html: `<img src="${getResourceAssetUrl(sourceBlobName)}">` });
   });
 
-  // A whiteboard names its image by the bare hash of its file, with no url for the url scan to find, so the copy must take
-  // The file the element names in the form it is stored
+  // A whiteboard names its image by the bare hash of its file, with no url for the url scan to find, so the copy must
+  // Take The file the element names in the form it is stored
   test("duplicating a whiteboard copies the file its element names by bare id", async () => {
     expect.hasAssertions();
 

@@ -18,7 +18,8 @@ const memberName = computed(() => getRoomMemberName(roomId, userId));
 </script>
 
 <template>
-  <!-- The account's own name follows only when a displayName is standing in front of it, which is Discord's rule too -->
+  <!-- The account's own name follows only when a displayName is standing in front of it, which is Discord's rule
+    too -->
   <div role="listitem" ui-row>
     <UiItemContent
       :description="user && user.name !== memberName ? user.name : undefined"

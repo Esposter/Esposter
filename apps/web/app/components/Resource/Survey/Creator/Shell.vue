@@ -20,7 +20,8 @@ import { useSurveyCreatorStore } from "#src/store/survey/creator";
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, isPreview, selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { moveNodeDown, moveNodeIntoPrevious, moveNodeOut, moveNodeUp, redo, undo } = useSurveyCreatorCommands();
-// What the layout is resolved for: the mode, and what is selected, which is one node or nothing. The survey has no tool in hand
+// What the layout is resolved for: the mode, and what is selected, which is one node or nothing. The survey has no tool
+// In hand
 const context = computed<Context>(() => ({
   mode: isPreview.value ? SURVEY_PREVIEW_MODE : SURVEY_DESIGN_MODE,
   selectionCount: selectedNode.value ? 1 : 0,
@@ -31,7 +32,8 @@ const context = computed<Context>(() => ({
 const moveSelected = (move: (pointer: string) => unknown) => () => {
   if (selectedPointer.value) move(selectedPointer.value);
 };
-// The keyboard's moves of the selected element and its history, bound while the creator is mounted, whichever region has focus
+// The keyboard's moves of the selected element and its history, bound while the creator is mounted, whichever region
+// Has focus
 useCommands([
   ...getHistoryCommands({
     group: SURVEY_CREATOR_COMMAND_GROUP,

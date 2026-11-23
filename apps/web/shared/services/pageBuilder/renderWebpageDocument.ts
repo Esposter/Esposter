@@ -17,8 +17,8 @@ import { escapeAttribute } from "@esposter/shared";
 import { renderBlockNodes } from "vue-block-editor-headless";
 
 // A pure render: one HTML document, with each type the page holds contributing its CSS once and its script once, so the
-// Output runs the same in the browser that exports it and on the server that publishes it. The document is parsed first,
-// So a style value or a URL the schema refuses throws rather than being written into the page
+// Output runs the same in the browser that exports it and on the server that publishes it. The document is parsed
+// First, So a style value or a URL the schema refuses throws rather than being written into the page
 export const renderWebpageDocument = (input: WebpageDocument, context: RenderContext): string => {
   const document = webpageDocumentSchema.parse(input);
   const content: HtmlNode[] = renderBlockNodes(

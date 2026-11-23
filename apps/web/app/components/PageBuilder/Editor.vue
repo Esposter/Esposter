@@ -31,7 +31,8 @@ const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getSelectedNodeId } = pageBuilderCanvasStore;
 const shell = useTemplateRef("shell");
 const editorShell = useTemplateRef("editorShell");
-// The layers tree is a tab of the blocks region, so that tab is shown before a text edit's end focuses the node's row in it
+// The layers tree is a tab of the blocks region, so that tab is shown before a text edit's end focuses the node's row
+// In it
 const {
   announce,
   announcement,
@@ -66,7 +67,8 @@ const context = computed<Context>(() => {
     tool: "",
   };
 });
-// The findings the critique holds for the page, which the bar's problems surface lists, and the title of each finding's node
+// The findings the critique holds for the page, which the bar's problems surface lists, and the title of each finding's
+// Node
 const { findings, getFindingNodeTitle } = usePageBuilderCritique(() => resourceId);
 // What fills each panel, by the content key the layout names it with
 const registry: EditorRegistry = {

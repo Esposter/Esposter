@@ -12,8 +12,9 @@ import { ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { movePositionedElement } from "vue-block-editor-headless";
 
-// The core's move, which reroutes each arrow bound to a moved shape in the same patch, saved as one write at the version
-// Read. A whiteboard never saved holds no elements, so a move of it names none and is refused like any other index that moves nothing
+// The core's move, which reroutes each arrow bound to a moved shape in the same patch, saved as one write at the
+// Version Read. A whiteboard never saved holds no elements, so a move of it names none and is refused like any other
+// Index that moves nothing
 export const moveWhiteboardElement = async (
   ctx: AuthedContext,
   resource: ResourceInResource,

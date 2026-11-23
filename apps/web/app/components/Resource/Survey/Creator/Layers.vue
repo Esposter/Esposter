@@ -44,8 +44,8 @@ const layerItems = computed<LayerItem[]>(() =>
 const getSlotPath = (slotPointer: string) => {
   if (slotPointer === "/content") return "The survey";
 
-  // A node's pointer is its slot's pointer plus one index, so the owning node sits two segments before the slot's own key
-  // And each node on the way down is three segments after the one before it
+  // A node's pointer is its slot's pointer plus one index, so the owning node sits two segments before the slot's own
+  // Key And each node on the way down is three segments after the one before it
   const ownerSegments = parseJsonPointer(slotPointer).slice(0, -2);
   const titles: string[] = [];
   for (let length = 2; length <= ownerSegments.length; length += 3) {
@@ -54,7 +54,8 @@ const getSlotPath = (slotPointer: string) => {
   }
   return titles.join(" › ");
 };
-// The places the node being moved may go, each a slot that accepts its type, so Move to is one choice rather than a search
+// The places the node being moved may go, each a slot that accepts its type, so Move to is one choice rather than a
+// Search
 const movingPointer = ref("");
 const isMoveOpen = ref(false);
 const moveItems = computed<UiListItem<string>[]>(() =>
@@ -80,12 +81,14 @@ const askRemove = (pointer: string) => {
   removingPointer.value = pointer;
   isRemoveOpen.value = true;
 };
-// A move a row's menu offers, disabled with the reason it is refused as its description where the selection cannot take it
+// A move a row's menu offers, disabled with the reason it is refused as its description where the selection cannot take
+// It
 const getMoveAction = (pointer: string, moveType: SurveyNodeMoveType) => {
   const { refusal } = getSurveyNodeMove(surveyDocument.value, pointer, moveType);
   return { description: refusal, disabled: Boolean(refusal) };
 };
-// What a row's overflow menu does to the node it is of: copy it, move it a step or to a chosen place, or ask to remove it
+// What a row's overflow menu does to the node it is of: copy it, move it a step or to a chosen place, or ask to remove
+// It
 const getActionItems = (pointer: string): Item[] => [
   {
     meaning: UiIconMeaning.Copy,
@@ -149,8 +152,8 @@ const actionItemsMap = computed(
 );
 // The row being dragged, held while a drag is under way and empty otherwise
 const draggedPointer = ref("");
-// A drop beside a row, before it or after it by the half of the row the pointer is over, places the held node in that row's
-// Slot. The core refuses a slot that takes no node of its type, and a slot inside the node itself
+// A drop beside a row, before it or after it by the half of the row the pointer is over, places the held node in that
+// Row's Slot. The core refuses a slot that takes no node of its type, and a slot inside the node itself
 const moveBeside = (targetPointer: string, event: DragEvent) => {
   const targetIndex = getIndex(targetPointer);
   if (!draggedPointer.value || targetIndex === undefined || !(event.currentTarget instanceof HTMLElement)) return;
@@ -164,7 +167,8 @@ const moveBeside = (targetPointer: string, event: DragEvent) => {
     index -= 1;
   moveNodeTo(draggedPointer.value, slotPointer, index);
 };
-// A row is dragged by its own press, and dropped beside another row to move there. The keyboard moves the selected node instead
+// A row is dragged by its own press, and dropped beside another row to move there. The keyboard moves the selected node
+// Instead
 const getRowProps = ({ value }: UiListItem<string>): Record<string, unknown> => ({
   "data-pointer": value,
   draggable: true,
@@ -184,7 +188,8 @@ const getRowProps = ({ value }: UiListItem<string>): Record<string, unknown> => 
   },
 });
 const layers = useTemplateRef("layers");
-// A move re-renders the moved row under its new pointer, so keyboard focus that was on it follows the node to its new row
+// A move re-renders the moved row under its new pointer, so keyboard focus that was on it follows the node to its new
+// Row
 watch(selectedPointer, async (pointer) => {
   if (!layers.value?.contains(window.document.activeElement)) return;
 

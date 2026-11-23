@@ -29,7 +29,8 @@ const { formSchema, formValue, setFormValue } = usePageBuilderContent(
   () => getHeldDocument(resourceId)?.document,
   () => resourceId,
 );
-// A block whose content is edited on the canvas, as an email's text block's is, or that has none, as a column has none, holds no field
+// A block whose content is edited on the canvas, as an email's text block's is, or that has none, as a column has none,
+// Holds no field
 const hasFields = computed(
   () => formSchema.value instanceof z.ZodObject && Object.keys(formSchema.value.shape).length > 0,
 );
@@ -42,8 +43,8 @@ const mediaCategory = computed(() => {
   if (node?.type === WebpageNodeType.Video) return MimeCategory.Video;
   return undefined;
 });
-// The address a file sets is written to the node it was picked for, which the selection may have left by the time an upload
-// Lands. An edit records its history against that node's content, as a form edit does
+// The address a file sets is written to the node it was picked for, which the selection may have left by the time an
+// Upload Lands. An edit records its history against that node's content, as a form edit does
 const setSource = (nodeId: string, src: string) => {
   const document = getHeldDocument(resourceId)?.document;
   const pointer = document && getNodePointer(kind, document, nodeId);

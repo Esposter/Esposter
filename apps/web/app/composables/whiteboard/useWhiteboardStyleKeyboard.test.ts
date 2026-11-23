@@ -137,7 +137,8 @@ describe(useWhiteboardStyleKeyboard, () => {
     pressKey(COPY_KEYS);
     const copiedBefore = copiedStyle.value;
 
-    // The first element in the document is the one a copy of several would take, and its colour differs from the copied look
+    // The first element in the document is the one a copy of several would take, and its colour differs from the copied
+    // Look
     selectedIds.value = [FIRST_ID, SECOND_ID];
     await nextTick();
     pressKey(COPY_KEYS);

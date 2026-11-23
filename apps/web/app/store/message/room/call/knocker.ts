@@ -18,13 +18,13 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const connectionStore = useConnectionStore();
   const { openCall } = connectionStore;
   const knockingCallSessionId = ref("");
-  // The calls a knock is out for, until the server answers it. A page that leaves cancels them, so the answer finds no knock
-  // To take and shows no waiting screen for it
+  // The calls a knock is out for, until the server answers it. A page that leaves cancels them, so the answer finds no
+  // Knock To take and shows no waiting screen for it
   const pendingKnockCallSessionIds = ref(new Set<string>());
   const joinCallOptions = ref<JoinCallOptions>(getDefaultJoinCallOptions());
-  // The call whose lobby is shown, and the knockers the lobby was told of. The overlay keeps every knocker row it was sent,
-  // So a lobby begun again shows only the knockers it was told of since it began, and not those the call let go when its
-  // Last participant left while the doorkeeper was away
+  // The call whose lobby is shown, and the knockers the lobby was told of. The overlay keeps every knocker row it was
+  // Sent, So a lobby begun again shows only the knockers it was told of since it began, and not those the call let go
+  // When its Last participant left while the doorkeeper was away
   const lobbyCallSessionId = ref("");
   const lobbyKnockerIds = ref(new Set<string>());
   const lobbyKnockers = view(knockerTable);
@@ -42,7 +42,8 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
         writeAwaited(
           async () => {
             await $trpc.callSession.knocker.knockCall.mutate({ id: callId });
-            // A knock its page cancelled while the server had it is taken by nothing, so no waiting screen and no socket
+            // A knock its page cancelled while the server had it is taken by nothing, so no waiting screen and no
+            // Socket
             if (!pendingKnockCallSessionIds.value.has(callId)) return [];
 
             knockingCallSessionId.value = callId;

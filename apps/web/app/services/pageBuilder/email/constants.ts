@@ -5,8 +5,8 @@ import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { MjmlNodeType } from "mjml-blocks";
 
-// The groups the email palette lists its node types in, in the order shown. A block is inserted into the first slot that
-// Accepts it, so the groups name what a reader can add and not where it goes
+// The groups the email palette lists its node types in, in the order shown. A block is inserted into the first slot
+// That Accepts it, so the groups name what a reader can add and not where it goes
 export const EMAIL_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<MjmlNode>[] = Object.freeze([
   Object.freeze({
     category: "Layout",
@@ -36,7 +36,8 @@ export const EMAIL_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<MjmlN
     ]),
   }),
 ]);
-// The icon each email node type is drawn by in the palette, by the meaning it stands for, so each block reads at a glance
+// The icon each email node type is drawn by in the palette, by the meaning it stands for, so each block reads at a
+// Glance
 export const EMAIL_NODE_TYPE_ICON_MAP: Readonly<Record<EmailNodeType | MjmlNodeType, UiIconMeaning>> = Object.freeze({
   [EmailNodeType.SurveyInvite]: UiIconMeaning.Survey,
   [MjmlNodeType.Accordion]: UiIconMeaning.Disclosure,

@@ -55,7 +55,8 @@ describe(createHttpBatchingLink, () => {
     await firstRead;
   });
 
-  // The server names the tab a write came from by this header, so the tab's own echo can be left out of its socket alone
+  // The server names the tab a write came from by this header, so the tab's own echo can be left out of its socket
+  // Alone
   test("names the tab that sent the request in the device header", async () => {
     expect.hasAssertions();
 

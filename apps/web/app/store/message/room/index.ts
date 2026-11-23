@@ -26,7 +26,8 @@ export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
   const overlayStore = useOverlayStore();
   const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
-  // The cursor keeps the ids of the last page, for paging. The rows are the overlay's, read into it as each page answers
+  // The cursor keeps the ids of the last page, for paging. The rows are the overlay's, read into it as each page
+  // Answers
   const {
     getSlice: getPageSlice,
     items: _pageRoomIds,
@@ -56,8 +57,8 @@ export const useRoomStore = defineStore("message/room", () => {
   const arriveRooms = (newRooms: RoomInMessage[]) => {
     for (const room of newRooms) arrive(roomTable, room);
   };
-  // The offline cache persists and restores the rows the list shows, so its slice holds rows: a cached page arrives each
-  // Row at its version, and the page's ids follow them, since the cursor keeps only the ids of its pages
+  // The offline cache persists and restores the rows the list shows, so its slice holds rows: a cached page arrives
+  // Each Row at its version, and the page's ids follow them, since the cursor keeps only the ids of its pages
   const getSlice = (): CursorPaginationSlice<RoomInMessage> => {
     const { initializeCursorPaginationData, isLoaded, resetCursorPaginationData } = getPageSlice();
     return {
@@ -87,7 +88,8 @@ export const useRoomStore = defineStore("message/room", () => {
   });
   const session = authClient.useSession();
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
-  // A room the viewer has just joined or created is listed by its membership, which the server answers apart from the room
+  // A room the viewer has just joined or created is listed by its membership, which the server answers apart from the
+  // Room
   const readMyMembershipArrivals = async (roomId: RoomInMessage["id"]) => {
     const [userToRoom] = await $trpc.userToRoom.readMyUsersToRooms.query({ roomIds: [roomId] });
     return userToRoom ? [createArrival(userToRoomTable, userToRoom)] : [];

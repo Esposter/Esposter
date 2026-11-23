@@ -1,7 +1,7 @@
 import type { EmailKind } from "#src/models/pageBuilder/EmailKind";
 
-// What a drawing reads besides its own node: its attributes resolved through the MJML cascade, its drawn children, and the
-// Email's kind and width state a section lays its columns out by
+// What a drawing reads besides its own node: its attributes resolved through the MJML cascade, its drawn children, and
+// The Email's kind and width state a section lays its columns out by
 export interface EmailCanvasContext {
   attribute: (name: string) => string;
   childNodes: VNode[];

@@ -94,8 +94,8 @@ export const useMutation = () => {
   // Write that changed one runs the same read again — which is why every read of a query procedure goes through here
   const watchTopics = useWatchTopics();
   // Reads are ordered by the run scope the caller holds: a newer read of the key aborts the one before it, and only the
-  // Read the scope holds current commits its answer and its topic watch, so an older answer that lands last replaces neither
-  // The read is handed its run's signal, so a request it makes is aborted by the newer read that supersedes it
+  // Read the scope holds current commits its answer and its topic watch, so an older answer that lands last replaces
+  // Neither The read is handed its run's signal, so a request it makes is aborted by the newer read that supersedes it
   const executeQuery = <TResult>(
     query: (signal: AbortSignal) => Promise<TResult>,
     options: QueryOptions<TResult>,
@@ -110,7 +110,8 @@ export const useMutation = () => {
     // This read is the newest for the target now, so whatever was joinable is an answer it supersedes: that run commits
     // Nothing, and a later caller joining it would resolve holding nothing. It issues its own read instead
     keySharedQueryMap.delete(key);
-    // The outcome of this read once its run commits. A run the scope superseded or aborted commits nothing and is dropped
+    // The outcome of this read once its run commits. A run the scope superseded or aborted commits nothing and is
+    // Dropped
     let committed: MutationOutcome<TResult> = { status: MutationStatus.Dropped };
     const commit = async ({ reads, result }: { reads: TopicRead[]; result: TResult }) => {
       committed = { result, status: MutationStatus.Succeeded };
@@ -140,7 +141,8 @@ export const useMutation = () => {
     );
     // The compiler cannot state that a target's entry carries the result type its registrant read — the map is
     // Heterogeneous by key, which is the contract every caller sharing one key already lives under
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The shared query map is keyed by target and holds each caller's result type, which no single map type states
+    // The shared query map is keyed by target and holds each caller's
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- result type, which no single map type states
     if (isExclusive) keySharedQueryMap.set(key, outcome as Promise<MutationOutcome<never>>);
     return outcome;
   };

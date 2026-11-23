@@ -13,7 +13,8 @@ interface Props {
   index: number;
 }
 
-// The sketch level of one outline, and for a shape its corners, which an ellipse does not take since it has none. Each one commit
+// The sketch level of one outline, and for a shape its corners, which an ellipse does not take since it has none. Each
+// One commit
 defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { updateElementProperty } = whiteboardStore;

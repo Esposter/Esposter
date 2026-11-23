@@ -41,8 +41,8 @@ export const useContextMenu = () => {
     press = undefined;
     stop();
   };
-  // A target whose items cost too much to build for every row hands the point on instead, to whatever builds them
-  // The flag says whether a pointer opened the menu, since a menu at the element's corner has no point of its own to act on
+  // A target whose items cost too much to build for every row hands the point on instead, to whatever builds them The
+  // Flag says whether a pointer opened the menu, since a menu at the element's corner has no point of its own to act on
   const getContextMenuGestureProps = (onOpen: (point: UiContextMenuPoint, isFromPointer: boolean) => void) => {
     const openAtCorner = (opener: HTMLElement) => {
       const { bottom, left } = opener.getBoundingClientRect();

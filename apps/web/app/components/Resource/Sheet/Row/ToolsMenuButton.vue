@@ -72,10 +72,10 @@ const items = computed<Item[]>(() => [
 ]);
 </script>
 
-<!-- One menu rather than a row of icons: these are the sheet's data tools, which is how the reference spreadsheets group
-  them too — a Data menu you open when you want to clean the sheet, not a permanent rail the reader scans past on the
-  way to the table. Add row and Clear filters stay outside it: the first is the primary create action, and the second
-  only appears while a filter is on, where it is the state indicator -->
+<!-- One menu rather than a row of icons: these are the sheet's data tools, which is how the reference spreadsheets
+  group them too — a Data menu you open when you want to clean the sheet, not a permanent rail the reader scans past
+  on the way to the table. Add row and Clear filters stay outside it: the first is the primary create action, and
+  the second only appears while a filter is on, where it is the state indicator -->
 <template>
   <UiOverflowMenu :items label="Data tools" :meaning="UiIconMeaning.Tools" />
   <ResourceSheetColumnStatisticsDialog v-model="isStatisticsOpen" />

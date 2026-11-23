@@ -27,7 +27,8 @@ const findButton = (component: VueWrapper, text: string) =>
   component.findAll("button").find((button) => button.text() === text);
 const findTab = (component: VueWrapper, text: string) =>
   component.findAll('[role="tab"]').find((tab) => tab.text() === text);
-// The one-page survey of a text question answered "Ana" and a rating answered four, completed through its Complete button
+// The one-page survey of a text question answered "Ana" and a rating answered four, completed through its Complete
+// Button
 const completeFirstPage = async (component: VueWrapper) => {
   await component.get("input").setValue("Ana");
   await findButton(component, "4")?.trigger("click");

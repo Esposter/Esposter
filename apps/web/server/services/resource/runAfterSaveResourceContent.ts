@@ -17,7 +17,9 @@ export const runAfterSaveResourceContent = (
   // Reached through a runtime resource type, so the hook's parameters collapse to the intersection of every
   // Content shape; both contents were parsed by that same type's contentSchema on the way in, so they are pinned
   // Back to what the hook declares
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the hook is reached through a runtime key, so its parameters collapse to the intersection of every content shape; the contents are the type's own, parsed by its schema on the way in
+  // The hook is reached through a runtime key, so its parameters collapse to the intersection of every content shape;
+  // The contents are
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the type's own, parsed by its schema on the way in
   const runHook = afterSaveResourceContent as (
     ctx: AuthedContext,
     resource: ResourceInResource,

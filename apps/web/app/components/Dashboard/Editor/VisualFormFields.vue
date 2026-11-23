@@ -13,7 +13,8 @@ import { VisualTypeCategoryDefinitions } from "#src/services/dashboard/VisualTyp
 import { useVisualStore } from "#src/store/dashboard/visual";
 import { prettify } from "#src/util/text/prettify";
 
-// The draft of the selected visual, which the store copied when the visual was selected and which is not the visual itself
+// The draft of the selected visual, which the store copied when the visual was selected and which is not the visual
+// Itself
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
 const { applyEdit } = visualStore;
@@ -21,8 +22,9 @@ const schema = useZodSchema(
   () => editedItem.value.chart.type,
   () => editedItem.value.type,
 );
-// A valid draft is written onto its visual as it changes, so the tile redraws at once and the dashboard's autosave persists
-// It. A draft the schema refuses stays in the form and is written nowhere, so an invalid value reaches neither the tile nor a save
+// A valid draft is written onto its visual as it changes, so the tile redraws at once and the dashboard's autosave
+// Persists It. A draft the schema refuses stays in the form and is written nowhere, so an invalid value reaches neither
+// The tile nor a save
 watchDeep(editedItem, (newEditedItem) => {
   if (schema.value.safeParse(newEditedItem.chart.configuration).success) applyEdit(newEditedItem);
 });
@@ -67,8 +69,8 @@ const chartTypeItems = computed(() =>
     </p>
     <DashboardVisualPreviewDatasetBindingForm v-else v-model="editedItem.dataset" />
     <UiSchemaForm v-if="isChartVisual" v-model="editedItem.chart.configuration" :schema />
-    <!-- A card's label is the title its chart configuration holds, so it saves with the rest of the visual and reads back
-      as the card's heading. An empty label falls back to the aggregation of the card's column -->
+    <!-- A card's label is the title its chart configuration holds, so it saves with the rest of the visual and
+      reads back as the card's heading. An empty label falls back to the aggregation of the card's column -->
     <UiTextField
       v-else-if="editedItem.type === VisualType.Card"
       v-model="editedItem.chart.configuration.title"

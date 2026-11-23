@@ -11,7 +11,8 @@ export const WHITEBOARD_CONTENT_KEY = {
   Tools: "tools",
   View: "view",
 } as const;
-// The regions of the whiteboard: the toolbar, the properties panel the selection opens and the view's zoom and history controls
+// The regions of the whiteboard: the toolbar, the properties panel the selection opens and the view's zoom and history
+// Controls
 export const WHITEBOARD_REGION_ID = { Properties: "properties", Tools: "tools", View: "view" } as const;
 // The selection kind of a selection of more than one element. A single element's kind is its type
 export const WHITEBOARD_SEVERAL_SELECTION_KIND = "several";
@@ -32,8 +33,9 @@ const WHITEBOARD_OVERLAY_PRESENTATION_MAP = {
   [SizeClass.Medium]: RegionPresentation.Overlay,
 };
 
-// The layout the shell draws the whiteboard by: the tools float over the top of the canvas and dock at the bottom on a compact window, the
-// Properties panel opens at the start edge for a selection and is a sheet on a compact window, and the view floats at the bottom
+// The layout the shell draws the whiteboard by: the tools float over the top of the canvas and dock at the bottom on a
+// Compact window, the Properties panel opens at the start edge for a selection and is a sheet on a compact window, and
+// The view floats at the bottom
 export const WHITEBOARD_LAYOUT: Layout = {
   canvasId: "canvas",
   panels: [

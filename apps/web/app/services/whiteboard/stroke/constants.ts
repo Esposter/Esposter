@@ -8,13 +8,15 @@ export const WHITEBOARD_STROKE_WIDTH_ITEMS: UiMenuItem<StrokeWidth>[] = [
   { title: "Medium", value: StrokeWidth.Medium },
   { title: "Bold", value: StrokeWidth.Bold },
 ];
-// The dash patterns a shape's or a sticky note's outline and an arrow's route take, each named as the properties panel offers it
+// The dash patterns a shape's or a sticky note's outline and an arrow's route take, each named as the properties panel
+// Offers it
 export const WHITEBOARD_DASH_PATTERN_ITEMS: UiMenuItem<DashPattern>[] = [
   { title: "Solid", value: DashPattern.Solid },
   { title: "Dashed", value: DashPattern.Dashed },
   { title: "Dotted", value: DashPattern.Dotted },
 ];
-// The sketch levels a shape's, a sticky note's or an arrow's outline takes, each named as the properties panel offers it
+// The sketch levels a shape's, a sticky note's or an arrow's outline takes, each named as the properties panel offers
+// It
 export const WHITEBOARD_SKETCH_LEVEL_ITEMS: UiMenuItem<SketchLevel>[] = [
   { title: "Architect", value: SketchLevel.Architect },
   { title: "Artist", value: SketchLevel.Artist },

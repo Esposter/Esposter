@@ -53,8 +53,9 @@ export const WEBPAGE_NODE_TYPE_ICON_MAP: Readonly<Record<WebpageNodeType, UiIcon
 });
 // The thickness of the line a drop indicator draws between two children
 export const LINE_THICKNESS = 2;
-// The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are listed
-// Too, though only a Columns or a Tabs slot takes them, so the palette offers each one only where its container is the place
+// The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are
+// Listed Too, though only a Columns or a Tabs slot takes them, so the palette offers each one only where its container
+// Is the place
 export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<WebpageNode>[] = Object.freeze([
   Object.freeze({
     category: "Layout",
@@ -179,7 +180,8 @@ export const STYLE_SECTORS = [
   { properties: ["border-width", "border-style", "border-color", "border-radius"], title: "Border" },
   { properties: ["opacity", "box-shadow", "transform", "transition", "cursor"], title: "Effects" },
 ] satisfies { properties: StyleProperty[]; title: string }[];
-// The title of the sector an email attribute that no webpage sector names is drawn under, after every sector that holds one
+// The title of the sector an email attribute that no webpage sector names is drawn under, after every sector that holds
+// One
 export const OTHER_STYLE_SECTOR_TITLE = "Other";
 // The accent every box the overlay draws is coloured by, read from the layer's own custom property
 const OVERLAY_ACCENT = "var(--ui-accent, currentColor)";
@@ -193,7 +195,8 @@ export const OVERLAY_HOVER_STYLE = {
   outline: `${OVERLAY_HAIRLINE_WIDTH} solid ${OVERLAY_ACCENT}`,
   position: "absolute",
 } as const;
-// The name a hovered node's outline carries, set at the outline's top left inside it, so a node at the top of the frame keeps its name
+// The name a hovered node's outline carries, set at the outline's top left inside it, so a node at the top of the frame
+// Keeps its name
 export const OVERLAY_HOVER_LABEL_STYLE = {
   background: OVERLAY_ACCENT,
   color: "var(--ui-background, white)",
@@ -215,6 +218,6 @@ export const OVERLAY_SELECTION_STYLE = {
   outline: `${OVERLAY_HAIRLINE_WIDTH} solid white`,
   position: "absolute",
 } as const;
-// The prefix a palette item's kind carries when it names a merge field's column rather than a block type, so a click or a
-// Drag tells the two apart
+// The prefix a palette item's kind carries when it names a merge field's column rather than a block type, so a click or
+// A Drag tells the two apart
 export const MERGE_FIELD_KIND_PREFIX = "merge-field:";

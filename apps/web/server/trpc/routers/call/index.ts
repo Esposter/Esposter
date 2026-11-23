@@ -63,7 +63,8 @@ const baseCallRouter = router({
         sessionId: session.id,
       });
       if (!join) throw getForbiddenError("Must be admitted to join this call");
-      // No D1 row names who was admitted to a call without a room, so the person's object keeps it for a revoked session
+      // No D1 row names who was admitted to a call without a room, so the person's object keeps it for a revoked
+      // Session
       if (!isCreator) await useUserObject(user.id).addJoinedCall(id);
 
       return {

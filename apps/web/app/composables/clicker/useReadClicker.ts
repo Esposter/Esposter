@@ -32,7 +32,9 @@ export const useReadClicker = async () => {
   await useReadData(
     () => {
       isRead = false;
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it — see openspec/specs/architecture/browser-execution/design.md
+      // The offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be
+      // A second owner of it — see openspec/specs/architecture/browser-execution/design.md
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- see the comment above
       const clickerJson = window.localStorage.getItem(clickerLocalSave.key);
       // A guest's save lives only in this browser, so one that no longer parses starts a fresh game
       const savedClicker = clickerJson ? parseJsonWithSchema(clickerJson, clickerLocalSave.schema) : undefined;

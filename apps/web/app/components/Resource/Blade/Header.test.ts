@@ -9,7 +9,8 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("resourceBladeHeader", () => {
-  // Every type's blade shares this header, so Ask Claude is offered in every type's editor, in the toolbar and the palette
+  // Every type's blade shares this header, so Ask Claude is offered in every type's editor, in the toolbar and the
+  // Palette
   test.each(Object.values(ResourceType))("offers Ask Claude in the %s blade header and palette", async (type) => {
     expect.hasAssertions();
 

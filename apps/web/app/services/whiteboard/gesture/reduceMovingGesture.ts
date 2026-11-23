@@ -14,8 +14,8 @@ import { getSnap } from "#src/services/whiteboard/gesture/getSnap";
 import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 import { reducePreviewOrCommitGesture } from "#src/services/whiteboard/gesture/reducePreviewOrCommitGesture";
 
-// The snap a move takes at the pointer's delta: the boxes of the moving elements, moved by the delta, snapped to the other elements. Alt turns the snap
-// Off, and a move of nothing that takes a box has nothing to snap
+// The snap a move takes at the pointer's delta: the boxes of the moving elements, moved by the delta, snapped to the
+// Other elements. Alt turns the snap Off, and a move of nothing that takes a box has nothing to snap
 const getMoveSnap = (
   document: PositionedDocument,
   movingIds: string[],
@@ -34,9 +34,10 @@ const getMoveSnap = (
   );
 };
 
-// A move previews the selection shifted by the pointer's travel from the press, snapped to the other elements, or the copies of it an Alt drag
-// Makes, and holds the guides of the alignments it snapped to. A release commits the shift as one edit and clears the guides. A cancel of an Alt
-// Drag restores the originals as the selection, since its copies are never made
+// A move previews the selection shifted by the pointer's travel from the press, snapped to the other elements, or the
+// Copies of it an Alt drag Makes, and holds the guides of the alignments it snapped to. A release commits the shift as
+// One edit and clears the guides. A cancel of an Alt Drag restores the originals as the selection, since its copies are
+// Never made
 export const reduceMovingGesture = (
   state: WhiteboardGestureState,
   gesture: GestureMoving,
@@ -56,8 +57,9 @@ export const reduceMovingGesture = (
   return reducePreviewOrCommitGesture(state, event, (action) => {
     const point = getWorldPoint(event.screen, state.viewport);
     const delta = { x: point.x - gesture.origin.x, y: point.y - gesture.origin.y };
-    // An Alt drag's copies snap as the originals they were made from, which are the elements that move. Alt is read on each event, so holding it
-    // Places the move where the pointer is for that event, and releasing it lets the next move snap again
+    // An Alt drag's copies snap as the originals they were made from, which are the elements that move. Alt is read on
+    // Each event, so holding it Places the move where the pointer is for that event, and releasing it lets the next
+    // Move snap again
     const movingIds = gesture.originalIdCopyIdMap ? Object.keys(gesture.originalIdCopyIdMap) : state.selectedIds;
     const snap = getMoveSnap(state.document, movingIds, delta, state.viewport.scale, event.isAltKey);
     const snappedDelta = { x: delta.x + snap.offset.x, y: delta.y + snap.offset.y };

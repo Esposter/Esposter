@@ -54,7 +54,8 @@ if (outcome.status === MutationStatus.Succeeded) openPost(outcome.result);
       />
       <section v-else aria-label="Comments" flex flex-col gap-2>
         <PostCommentSortSelect self-start />
-        <!-- A new sort is read from the first page, which a branch does only when it is mounted, so the thread remounts -->
+        <!-- A new sort is read from the first page, which a branch does only when it is mounted, so the thread
+          remounts -->
         <PostCommentBranch :key="commentSortType" :parent-id="currentPost.id" :depth="0" />
       </section>
       <PostConfirmDeleteDialog />

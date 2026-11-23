@@ -12,9 +12,9 @@ import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 import { reducePointerGesture } from "#src/services/whiteboard/gesture/reducePointerGesture";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// A drag from a connection handle previews the arrow it would draw, and a release commits it as one edit. A release on another shape joins that shape
-// Alone, and a release on empty canvas adds a shape of the source's kind there, joined by the arrow. A press released before it has travelled the drag
-// Start distance is a click, which adds nothing
+// A drag from a connection handle previews the arrow it would draw, and a release commits it as one edit. A release on
+// Another shape joins that shape Alone, and a release on empty canvas adds a shape of the source's kind there, joined
+// By the arrow. A press released before it has travelled the drag Start distance is a click, which adds nothing
 export const reduceConnectGesture = (
   state: WhiteboardGestureState,
   gesture: GestureConnecting,
@@ -28,9 +28,11 @@ export const reduceConnectGesture = (
     if (source?.type !== PositionedElementType.Shape) return [];
 
     const release = getWorldPoint(event.screen, state.viewport);
-    // The release joins the shape it lands on by the rule drawing uses, so the source itself and an empty canvas both leave it unbound
+    // The release joins the shape it lands on by the rule drawing uses, so the source itself and an empty canvas both
+    // Leave it unbound
     const target = getArrowEnd(state, release, gesture.elementId).binding;
-    // A release on an element it cannot join, the source itself or one that takes no connection, adds nothing, since a new shape there would stack on it
+    // A release on an element it cannot join, the source itself or one that takes no connection, adds nothing, since a
+    // New shape there would stack on it
     if (
       target === undefined &&
       getHitElementId(state.document, release, getHitTolerance(state.viewport.scale)) !== undefined

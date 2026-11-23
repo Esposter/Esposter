@@ -18,10 +18,11 @@ export const writeResourceActivity = (ctx: AuthedContext, { resourceId, ...rest 
     const userId = ctx.user.id;
     const apiKeyId = ctx.apiKey?.id ?? null;
     const apiKeyName = ctx.apiKey?.name ?? "";
-    // A save inside the window of the same user's save of this resource, by the same key, writes no entry. The check and
-    // The insert are one statement selecting from the resource, so an entry is written only when the resource is there and
-    // No save of its own is recent. Two saves racing inside the window can both find nothing and both write, which costs
-    // The trail one extra line. Per key as well as per user, so an agent's run of saves and the owner's typing stay apart
+    // A save inside the window of the same user's save of this resource, by the same key, writes no entry. The check
+    // And The insert are one statement selecting from the resource, so an entry is written only when the resource is
+    // There and No save of its own is recent. Two saves racing inside the window can both find nothing and both write,
+    // Which costs The trail one extra line. Per key as well as per user, so an agent's run of saves and the owner's
+    // Typing stay apart
     const recentEntries = ctx.db
       .select({ id: resourceActivitiesInResource.id })
       .from(resourceActivitiesInResource)

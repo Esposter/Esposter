@@ -10,8 +10,8 @@ const { shortcut } = defineProps<Props>();
 const displayShortcutKeyLabels = computed(() => getShortcutKeyLabels(shortcut));
 </script>
 
-<!-- One key cap per key, in a field's tone and the muted colour so a row's shortcut never competes with its title: those
-  held together sit side by side, and each step of a sequence after a gap -->
+<!-- One key cap per key, in a field's tone and the muted colour so a row's shortcut never competes with its title:
+  those held together sit side by side, and each step of a sequence after a gap -->
 <template>
   <kbd flex shrink-0 gap-2 items-center>
     <span v-for="(keyLabels, index) of displayShortcutKeyLabels" :key="index" flex gap-1>

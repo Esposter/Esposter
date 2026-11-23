@@ -54,8 +54,8 @@ export const pwa: NonNullable<NuxtConfig["pwa"]> = {
   // Update toast in `ToastStack` is that choice
   registerType: "prompt",
   strategies: "buildSW",
-  // A file past the 2 MiB precache limit is left out of the list with a warning, and the page fetches it when it needs it,
-  // Since the default fails the build on the one large chunk. The engine moved this option to the root of the plugin
-  // Options, so `buildSW` does not take it
+  // A file past the 2 MiB precache limit is left out of the list with a warning, and the page fetches it when it needs
+  // It, Since the default fails the build on the one large chunk. The engine moved this option to the root of the
+  // Plugin Options, so `buildSW` does not take it
   throwMaximumFileSizeToCacheInBytes: false,
 };

@@ -76,8 +76,8 @@ describe(usePostStore, () => {
     updatePost({ id: post.id, title: newTitle });
     updatePost({ id: post.id, title: failingTitle });
 
-    // The refused edit is drawn over the kept one until its refusal drops it, so the feed shows the kept title only once
-    // Both are settled
+    // The refused edit is drawn over the kept one until its refusal drops it, so the feed shows the kept title only
+    // Once Both are settled
     await until(() => takeOne(items.value).title).toBe(newTitle);
     expect(takeOne(items.value).version).toBe(1);
   });
@@ -112,8 +112,8 @@ describe(usePostStore, () => {
   test("does not relist a removed post when a read answered before the removal arrives after it", async () => {
     expect.hasAssertions();
 
-    // The tombstone is dated now, as the server dates a removal: one dated past the retention counts as nothing held, and
-    // A read that arrives late would then bring the post back
+    // The tombstone is dated now, as the server dates a removal: one dated past the retention counts as nothing held,
+    // And A read that arrives late would then bring the post back
     trpcMsw.post.deletePost.mutation(() => [{ ...createRemovedPost(post), deletedAt: new Date() }]);
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);

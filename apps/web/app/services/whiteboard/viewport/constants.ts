@@ -7,5 +7,6 @@ export const WHITEBOARD_ZOOM_FACTOR = 1.25;
 export const WHITEBOARD_RESET_SCALE = 1;
 // How fast a Ctrl or Cmd wheel turn zooms: the scale is multiplied by e to the power of minus this rate times the turn
 export const WHITEBOARD_WHEEL_ZOOM_RATE = 0.002;
-// The largest scale a fit takes, which is the document's own size: a fit shrinks a large document but never enlarges a small one
+// The largest scale a fit takes, which is the document's own size: a fit shrinks a large document but never enlarges a
+// Small one
 export const WHITEBOARD_FIT_MAX_SCALE = 1;

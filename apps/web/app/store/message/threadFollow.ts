@@ -56,8 +56,8 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
         roots.filter((root) => root.id !== id),
       );
   });
-  // The drawer's list: the live follows of the room on screen, newest root first, each drawn by its root. A follow whose
-  // Root is not held yet is not listed, and a failed follow leaves no row, so it leaves the list with no rollback
+  // The drawer's list: the live follows of the room on screen, newest root first, each drawn by its root. A follow
+  // Whose Root is not held yet is not listed, and a failed follow leaves no row, so it leaves the list with no rollback
   const followedThreads = computed(() => {
     const roomId = roomStore.currentRoomId;
     const roots = followedRoots.value;
@@ -69,9 +69,10 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
         return root ? [root] : [];
       });
   });
-  // Cached per room rather than per session — the key is the roomId, and one response holds the room's follows and roots.
-  // Every follow button in the room joins that one read rather than each issuing its own, so a caller handed nothing
-  // Renders an unfollowed star for a thread the user follows. Untagged: nothing a resource write does changes who follows
+  // Cached per room rather than per session — the key is the roomId, and one response holds the room's follows and
+  // Roots. Every follow button in the room joins that one read rather than each issuing its own, so a caller handed
+  // Nothing Renders an unfollowed star for a thread the user follows. Untagged: nothing a resource write does changes
+  // Who follows
   const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(
     async (roomId) => {
       const { answer, messages } = await inFlightChanges.read(
@@ -88,7 +89,8 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     {
       onSuccess: ({ follows, threads }, roomId) => {
         for (const follow of follows) arrive(threadFollowTable, follow);
-        // A root followThread pushed while this read was in flight is not in its answer, so the answer merges into the held roots
+        // A root followThread pushed while this read was in flight is not in its answer, so the answer merges into the
+        // Held roots
         const readRootIds = new Set(threads.map(({ id }) => id));
         setFollowedRoots(roomId, [
           ...threads,

@@ -4,7 +4,8 @@ import type { Input } from "phaser";
 
 import { Direction } from "grid-engine-headless";
 
-// Four directions and no diagonals, on purpose (openspec/rejected/dungeons/diagonal-movement/design.md): one key per direction
+// Four directions and no diagonals, on purpose (openspec/rejected/dungeons/diagonal-movement/design.md): one key per
+// Direction
 export const getDirectionCursorKeyMap = (
   cursorKeys: BaseCursorKeys,
 ): Record<InteractableDirection, Input.Keyboard.Key> => ({

@@ -69,8 +69,8 @@ describe(useScheduledMessageJobStore, () => {
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([id, otherId]);
   });
 
-  // A read that started before a cancel can land after its answer. The tombstone the cancel held is at a higher version than
-  // The row that read names, so the read's older row is discarded and the job stays gone
+  // A read that started before a cancel can land after its answer. The tombstone the cancel held is at a higher version
+  // Than The row that read names, so the read's older row is discarded and the job stays gone
   test("does not list a job again when a read that started before its cancel lands after the cancel's answer", async () => {
     expect.hasAssertions();
 

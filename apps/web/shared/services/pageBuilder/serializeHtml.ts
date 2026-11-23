@@ -4,7 +4,8 @@ import { checkIsHtmlElement } from "#shared/services/pageBuilder/checkIsHtmlElem
 import { WEBPAGE_VOID_TAGS } from "#shared/services/pageBuilder/constants";
 import { escapeAttribute, escapeText } from "@esposter/shared";
 
-// Writes a render's tree as HTML: text escaped, raw HTML as it is, every attribute value escaped, and no closing tag for a void element
+// Writes a render's tree as HTML: text escaped, raw HTML as it is, every attribute value escaped, and no closing tag
+// For a void element
 export const serializeHtml = (nodes: HtmlNode[]): string =>
   nodes
     .map((node) => {

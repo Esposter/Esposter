@@ -51,8 +51,8 @@ describe(useEmojiStore, () => {
     expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId], 2)]);
   });
 
-  // The room's answer to a removal keeps the reaction with no reactor at its version, so a read that answered before the
-  // Removal and arrives after it is older, and cannot put the reaction back
+  // The room's answer to a removal keeps the reaction with no reactor at its version, so a read that answered before
+  // The Removal and arrives after it is older, and cannot put the reaction back
   test("a late read does not re-add a reaction the room has since removed", async () => {
     expect.hasAssertions();
 
@@ -75,8 +75,8 @@ describe(useEmojiStore, () => {
     expect(getEmojis(roomId, messageId)).toStrictEqual([]);
   });
 
-  // A deleted message's reactions go with it and the room sends no removal for them, so a read answered after the delete
-  // Finds no row for them and leaves none of them held
+  // A deleted message's reactions go with it and the room sends no removal for them, so a read answered after the
+  // Delete Finds no row for them and leaves none of them held
   test("a deleted message's reactions leave the store, and a read after the delete does not bring them back", async () => {
     expect.hasAssertions();
 
@@ -189,8 +189,8 @@ describe(useEmojiStore, () => {
     expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId], 1)]);
   });
 
-  // A message's id is numbered within its room, so the same id in another room is another reaction, and a press there is
-  // Sent while the press in this room is still out
+  // A message's id is numbered within its room, so the same id in another room is another reaction, and a press there
+  // Is Sent while the press in this room is still out
   test("sends a press on the same message id in another room while the one in this room is in flight", async () => {
     expect.hasAssertions();
 

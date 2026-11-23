@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: each press moves the tab stop the next press starts from, and the focus settles before the next press reads it */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each press moves the tab stop the next press starts
+   from, and the focus settles before the next press reads it */
 // @vitest-environment nuxt
 import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 import type { VueWrapper } from "@vue/test-utils";
@@ -149,7 +150,8 @@ describe("styledEmojiPickerPanel", () => {
     expect(getGridEmojis(component)).toStrictEqual(getCategoryCharacters(EmojiGroup.AnimalsAndNature));
   });
 
-  // The grid is one stop in the tab order, so Tab crosses it once rather than once per emoji, and the arrows walk from it
+  // The grid is one stop in the tab order, so Tab crosses it once rather than once per emoji, and the arrows walk from
+  // It
   test("#258 the grid has one tab stop, on its first emoji", async () => {
     expect.hasAssertions();
 

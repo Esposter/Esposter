@@ -21,7 +21,9 @@ export class Dashboard extends AItemEntity {
   }
 }
 
-// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the visual enums are the same declarations Visual.ts:28 names (VisualType.ts:4, chart/type/ChartType.ts:8); the rule flags a zod object nested in an array even on an exact enum match
+// The visual enums are the same declarations Visual.ts:28 names (VisualType.ts:4, chart/type/ChartType.ts:8); the rule
+// Flags a zod object
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- nested in an array even on an exact enum match
 export const dashboardSchema = z.object({
   ...aItemEntitySchema.shape,
   collision: z.enum(CollisionMode),
@@ -36,7 +38,8 @@ export const dashboardSchema = z.object({
       if (new Set(ids).size !== ids.length) context.addIssue({ code: "custom", message: "Array items must be unique" });
       if (ids.length > MAX_RESOURCE_CONTENT_SIZE)
         context.addIssue({ code: "custom", message: "The visuals across every group exceed the content limit" });
-      // Whether a group sits deeper than the depth cap somewhere in the tree of the level given, counted from that level
+      // Whether a group sits deeper than the depth cap somewhere in the tree of the level given, counted from that
+      // Level
       const checkIsTreeTooDeep = (levelVisuals: typeof visuals, depth: number): boolean =>
         levelVisuals.some(
           (visual) =>

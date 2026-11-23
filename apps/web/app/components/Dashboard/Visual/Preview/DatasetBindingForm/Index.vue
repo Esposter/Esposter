@@ -67,7 +67,8 @@ watch(dataset, (newDataset) => {
         <UiSelect v-model="modelValue.query.xColumn" :items="columnItems" label="X column" />
       </div>
       <!-- A row edits its series in place, so the bound query holds each change without a write back -->
-      <!-- oxlint-disable vue/no-restricted-syntax -- removes a series from the binding draft the form edits, which the store writes to the visual only once it is valid -->
+      <!-- oxlint-disable vue/no-restricted-syntax -- removes a series from the binding draft the form edits, which
+        the store writes to the visual only once it is valid -->
       <DashboardVisualPreviewDatasetBindingFormSeries
         v-for="(series, index) of modelValue.query.series"
         :key="index"

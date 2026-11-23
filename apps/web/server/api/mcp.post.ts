@@ -26,8 +26,8 @@ export default defineEventHandler(async (event) => {
     return { message: "An API key is required as a bearer token." };
   }
 
-  // A key matching no row has no budget of its own, and checking one costs a lookup, so every request spends its address
-  // First: the address is the one key a caller cannot choose
+  // A key matching no row has no budget of its own, and checking one costs a lookup, so every request spends its
+  // Address First: the address is the one key a caller cannot choose
   if (!(await consumeRequestAddressRateLimit(event))) {
     event.res.status = 429;
     return { message: "Rate limit exceeded." };

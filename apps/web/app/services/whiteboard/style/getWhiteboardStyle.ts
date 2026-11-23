@@ -2,8 +2,9 @@ import type { PositionedElement, PositionedElementProperty } from "vue-block-edi
 
 import { ArrowEndKey, checkIsPositionedElementPropertyHeld, PositionedElementType } from "vue-block-editor-headless";
 
-// The look an element holds, as the property changes a paste applies to another element. Each field is read only where the holding rule says the
-// Element holds it, so a copy carries exactly what a paste will apply. An alignment the element has not set is left out, so a paste keeps the target's own
+// The look an element holds, as the property changes a paste applies to another element. Each field is read only where
+// The holding rule says the Element holds it, so a copy carries exactly what a paste will apply. An alignment the
+// Element has not set is left out, so a paste keeps the target's own
 export const getWhiteboardStyle = (element: PositionedElement): PositionedElementProperty[] => {
   const style: PositionedElementProperty[] = [];
   // Each `in` test narrows the element to the kinds that carry the field, so its value reads as the field's own type
@@ -33,7 +34,8 @@ export const getWhiteboardStyle = (element: PositionedElement): PositionedElemen
     checkIsPositionedElementPropertyHeld(element, "verticalAlignment")
   )
     style.push({ property: "verticalAlignment", value: element.verticalAlignment });
-  // Both ends are carried, an end with no arrowhead included, so a paste clears the arrowhead a target holds at an end the copy lacks
+  // Both ends are carried, an end with no arrowhead included, so a paste clears the arrowhead a target holds at an end
+  // The copy lacks
   if (element.type === PositionedElementType.Arrow && checkIsPositionedElementPropertyHeld(element, "arrowhead"))
     for (const end of [ArrowEndKey.Start, ArrowEndKey.End])
       style.push({ end, property: "arrowhead", value: element[end].arrowhead });

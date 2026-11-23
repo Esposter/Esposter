@@ -5,10 +5,10 @@ interface Props {
   // The dialog's accessible name: whose settings these are
   title: string;
 }
-// The frame a settings dialog is drawn in, the user's and a room's alike: a sidebar of what can be set beside the
-// Panel of the one picked, with the body bare so the sidebar runs to the frame's edges. The frame is tall, so the dialog
-// Does not grow with the panel, and the sidebar and the panel each scroll inside it. The header over the panel names it
-// And closes the dialog, so the dialog's own title bar is dropped
+// The frame a settings dialog is drawn in, the user's and a room's alike: a sidebar of what can be set beside the Panel
+// Of the one picked, with the body bare so the sidebar runs to the frame's edges. The frame is tall, so the dialog Does
+// Not grow with the panel, and the sidebar and the panel each scroll inside it. The header over the panel names it And
+// Closes the dialog, so the dialog's own title bar is dropped
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 defineProps<Props>();

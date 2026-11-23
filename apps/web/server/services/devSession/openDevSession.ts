@@ -5,19 +5,21 @@ import { checkIsDevSessionOpen } from "#server/services/devSession/checkIsDevSes
 import { signSessionToken } from "#server/services/devSession/signSessionToken";
 import { DRIVEN_USER_ID } from "@esposter/shared";
 
-// Signs the driven user in through better-auth's own context: its internal adapter creates the session, its secret signs
-// The token and its session cookie definition names the cookie. A refused request resolves to undefined and writes nothing,
-// Since the gate and the seeded-user check both run before the session is created
+// Signs the driven user in through better-auth's own context: its internal adapter creates the session, its secret
+// Signs The token and its session cookie definition names the cookie. A refused request resolves to undefined and
+// Writes nothing, Since the gate and the seeded-user check both run before the session is created
 export const openDevSession = async (context: Awaited<typeof auth.$context>): Promise<DevSessionCookie | undefined> => {
   if (!checkIsDevSessionOpen()) return undefined;
   const user = await context.internalAdapter.findUserById(DRIVEN_USER_ID);
   if (!user) return undefined;
   const session = await context.internalAdapter.createSession(user.id, false);
   const { attributes, name } = context.authCookies.sessionToken;
-  // Better-auth's type admits a capitalised same-site value that the cookie writer's type does not, and the writer reads
-  // Either case
+  // Better-auth's type admits a capitalised same-site value that the cookie writer's type does not, and the writer
+  // Reads Either case
   return {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- better-auth's sameSite admits a capitalised value the cookie writer's type does not, and the writer reads either case, so the attributes are the writer's own type
+    // `better-auth's` sameSite admits a capitalised value the cookie writer's type does not, and the writer reads
+    // Either
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- case, so the attributes are the writer's own type
     attributes: attributes as DevSessionCookie["attributes"],
     name,
     value: await signSessionToken(session.token, context.secret),

@@ -6,9 +6,9 @@ import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/d1";
 import { describe } from "vitest";
 
-// The production `db` is drizzle over the Worker's core binding, made when its module loads. A test's binding arrives with
-// `createMockDb`, which runs after the modules importing `db` have loaded, so this double makes the drizzle instance on first
-// Use and remakes it when the binding changes. Every access reads the file's own Miniflare binding
+// The production `db` is drizzle over the Worker's core binding, made when its module loads. A test's binding arrives
+// With `createMockDb`, which runs after the modules importing `db` have loaded, so this double makes the drizzle
+// Instance on first Use and remakes it when the binding changes. Every access reads the file's own Miniflare binding
 let current: { binding: typeof env.CORE; database: Database } | undefined;
 const getDatabase = (): Database => {
   if (current?.binding === env.CORE) return current.database;

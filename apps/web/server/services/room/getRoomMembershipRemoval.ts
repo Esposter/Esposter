@@ -7,10 +7,11 @@ import { usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, isNotNull } from "drizzle-orm";
 
 // The statements that remove one member from one room, for the caller to batch. The membership stays as a tombstone, so
-// Its version rises and a late arrival of the row loses to the removal. It is the first statement, and `extraWhere` guards
-// Only it: the roles and overrides it held follow it, tombstoned by its cascade once the membership is tombstoned, so a
-// Client holding them sees the removal, and a later grant of the same role revives its own row. A caller may batch a
-// Statement between the membership and its cascade, since the cascade reads the membership's own tombstone
+// Its version rises and a late arrival of the row loses to the removal. It is the first statement, and `extraWhere`
+// Guards Only it: the roles and overrides it held follow it, tombstoned by its cascade once the membership is
+// Tombstoned, so a Client holding them sees the removal, and a later grant of the same role revives its own row. A
+// Caller may batch a Statement between the membership and its cascade, since the cascade reads the membership's own
+// Tombstone
 export const getRoomMembershipRemoval = (db: Context["db"], roomId: string, userId: string, extraWhere?: SQL) =>
   [
     db

@@ -2,8 +2,9 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { useMemberStore } from "#src/store/message/user/member";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
-// The rooms a person is in change on the person's own socket: every room event that concerns the list reaches each of the
-// Person's tabs, and the row it names is the one written to. A direct message is a room too, so its list reads the same rows
+// The rooms a person is in change on the person's own socket: every room event that concerns the list reaches each of
+// The Person's tabs, and the row it names is the one written to. A direct message is a room too, so its list reads the
+// Same rows
 export const useRoomListEvents = () => {
   const roomStore = useRoomStore();
   const { arriveRooms } = roomStore;
@@ -29,7 +30,8 @@ export const useRoomListEvents = () => {
       arriveJoinedMember(joinedMember);
     }),
   );
-  // A removal is the tombstone it left, which takes a participant off a conversation and the reader off a room they left
+  // A removal is the tombstone it left, which takes a participant off a conversation and the reader off a room they
+  // Left
   onScopeDispose(
     onUserEvent("leaveRoom", (leftMember) => {
       arriveLeftMember(leftMember);

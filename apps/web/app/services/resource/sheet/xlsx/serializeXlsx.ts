@@ -5,7 +5,8 @@ import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSet
 import { takeOne } from "@esposter/shared";
 
 export const serializeXlsx = async (dataSource: DataSource, _settings: XlsxFileSettings, _mimeType: MimeType) => {
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- same as the reader: the workbook writer is fetched only when an xlsx is written, not on every resource page
+  // Same as the reader: the workbook writer is fetched only
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- when an xlsx is written, not on every resource page
   const { default: writeXlsxFile } = await import("write-excel-file/browser");
   const headerRow = dataSource.columns.map((column) => column.name);
   const dataRows = dataSource.rows.map((row) => dataSource.columns.map((column) => takeOne(row.data, column.name)));

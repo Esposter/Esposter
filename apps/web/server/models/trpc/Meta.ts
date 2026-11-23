@@ -8,7 +8,7 @@ export interface Meta {
   // Opts the procedure into the MCP endpoint as a tool. The description is what an agent chooses the tool by, and the
   // Scope which keys reach it: a key lists and calls only the tools of the scopes it holds
   mcp?: { description: string; scope: McpScope };
-  // Why the procedure is watched by no live topic: its state is pushed as typed events by a realtime object, or it reads
-  // Or changes nothing another reader shows
+  // Why the procedure is watched by no live topic: its state is pushed as typed events by a realtime object, or it
+  // Reads Or changes nothing another reader shows
   staticReason?: string;
 }

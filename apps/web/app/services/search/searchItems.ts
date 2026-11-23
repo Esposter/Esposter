@@ -2,8 +2,8 @@ import { takeOne } from "@esposter/shared";
 import MiniSearch from "minisearch";
 
 // A search over a list already in memory: MiniSearch over the fields the caller names, every term required and each
-// Read as a prefix, ranked — the one client-side index the repo searches with (openspec/specs/architecture/search/design.md). An empty
-// Query is no filter at all
+// Read as a prefix, ranked — the one client-side index the repo searches with
+// (openspec/specs/architecture/search/design.md). An empty Query is no filter at all
 export const searchItems = <TItem>(
   items: readonly TItem[],
   query: string,

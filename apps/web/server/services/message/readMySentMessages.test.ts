@@ -90,7 +90,8 @@ describe(readMySentMessages, () => {
     expect(nextCursor).toBe(encodePageCursor({ isBackward: false, values: [0, otherRoomId, 2] }));
   });
 
-  // A message its room no longer holds is deleted, so the page is shorter by that one and no later entry takes its place
+  // A message its room no longer holds is deleted, so the page is shorter by that one and no later entry takes its
+  // Place
   test("leaves out a sent message its room no longer holds, with nothing taken in its place", async () => {
     expect.hasAssertions();
 
@@ -107,7 +108,8 @@ describe(readMySentMessages, () => {
     expect(items.map(({ message }) => message.id)).toStrictEqual([1]);
   });
 
-  // Every message of a page can be gone, so the cursor names the index's last entry, and the next page still starts past it
+  // Every message of a page can be gone, so the cursor names the index's last entry, and the next page still starts
+  // Past it
   test("names the index's last entry as the cursor, even when none of the page's messages survived", async () => {
     expect.hasAssertions();
 

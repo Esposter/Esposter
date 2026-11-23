@@ -94,7 +94,8 @@ const baseMessageRouter = router({
     .mutation<RoomMessage>(({ ctx, input: { timeZone: _timeZone, ...input } }) =>
       createUserMessage(ctx.db, getRoomActor(ctx), input),
     ),
-  // oxlint-disable-next-line trpc-procedure/require-query-verb -- typing earns no achievement, and a mutation runs the achievement plugin on every keystroke
+  // Typing earns no achievement, and a mutation
+  // oxlint-disable-next-line trpc-procedure/require-query-verb -- runs the achievement plugin on every keystroke
   createTyping: getMemberProcedure(roomIdSchema, "roomId")
     .meta({ staticReason: "The room object pushes who is typing to its sockets as a typed event" })
     // Query, not mutation: emitting has no ordering/concurrency concerns.
@@ -178,7 +179,8 @@ const baseMessageRouter = router({
         console.error,
       );
     }),
-  // The bell is the member's own decision, so it clears any unfollow they recorded earlier. Its row comes back with its version
+  // The bell is the member's own decision, so it clears any unfollow they recorded earlier. Its row comes back with its
+  // Version
   followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<ThreadFollowInMessage>(
     async ({ ctx, input: { roomId, threadRootId } }) =>
       takeOne(await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.user.id }, true)),
@@ -205,8 +207,8 @@ const baseMessageRouter = router({
       // First per-room block is surfaced — never an all-rooms pre-flight that times out and then posts nothing.
       const results = await Promise.allSettled(
         roomIds.map(async (targetRoomId) => {
-          // A forward is a send like any other: it takes the slowmode claim a live send takes, with the guards, before the
-          // Write, so it can never fail open behind an already-persisted forward
+          // A forward is a send like any other: it takes the slowmode claim a live send takes, with the guards, before
+          // The Write, so it can never fail open behind an already-persisted forward
           await rejectMessageCreation(
             ctx.db,
             userId,
@@ -222,8 +224,8 @@ const baseMessageRouter = router({
             roomId,
             targetRoomId,
           );
-          // A forward is echoed to the tab that sent it as well, since it has no optimistic copy there to replace, so the
-          // Actor names no device
+          // A forward is echoed to the tab that sent it as well, since it has no optimistic copy there to replace, so
+          // The Actor names no device
           const actor = { userId };
           const roomObject = useRoomObject(targetRoomId);
           const forwardedRoomMessage = await roomObject.createMessage(
@@ -287,18 +289,18 @@ const baseMessageRouter = router({
         DatabaseEntityType.Room,
         roomId,
       );
-      // The mime category is checked here on the declared type only: the presigned write url's content type is a response
-      // Header override applied when the url is read, so it does not limit what the PUT stores. Nor does the size —
-      // `size` is whatever the client declared, an upload presigned url carries no length constraint, and the block PUT never
-      // Passes back through Nitro, so a client that under-declares can write past this cap until the presigned url expires.
-      // Checking it here rejects the honest oversized drop early; it is not a defence against a client that lies.
-      // See openspec/specs/esbabbler/file-media/design.md.
+      // The mime category is checked here on the declared type only: the presigned write url's content type is a
+      // Response Header override applied when the url is read, so it does not limit what the PUT stores. Nor does the
+      // Size — `size` is whatever the client declared, an upload presigned url carries no length constraint, and the
+      // Block PUT never Passes back through Nitro, so a client that under-declares can write past this cap until the
+      // Presigned url expires. Checking it here rejects the honest oversized drop early; it is not a defence against a
+      // Client that lies. See openspec/specs/esbabbler/file-media/design.md.
       const maxFileSizeBytes = Math.min(room.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
       for (const { mimetype, size } of files)
         if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
-      // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong to
-      // Whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
+      // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong
+      // To Whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
       const filePresignedUrlEntities = await generateReservedMessageFilePresignedUrlEntities(
         ctx.db,
         ctx.user.id,
@@ -330,9 +332,9 @@ const baseMessageRouter = router({
       }).match(noop, console.error);
       return pinnedMessage;
     }),
-  // One read for both shapes the client needs: `follows` is the follow state, every row the member holds in the room, with the
-  // Unfollowed ones kept as rows so a read cannot list a thread the member has since left. `threads` is the drawer's roots, for
-  // The live follows only, and drops deleted roots so the drawer never lists a dangling follow
+  // One read for both shapes the client needs: `follows` is the follow state, every row the member holds in the room,
+  // With the Unfollowed ones kept as rows so a read cannot list a thread the member has since left. `threads` is the
+  // Drawer's roots, for The live follows only, and drops deleted roots so the drawer never lists a dangling follow
   readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<ReadFollowedThreadsResult>(
     async ({ ctx, input: { roomId } }) => {
       const follows = await readThreadFollows(ctx.db, roomId, ctx.user.id);
@@ -353,8 +355,8 @@ const baseMessageRouter = router({
         limit,
       ),
     ),
-  // A room opened at one of its messages: the message and the messages around it, read both ways from it. The older side
-  // Starts at the anchor itself, so the anchor is the first of it, and the newer side starts just past it
+  // A room opened at one of its messages: the message and the messages around it, read both ways from it. The older
+  // Side Starts at the anchor itself, so the anchor is the first of it, and the newer side starts just past it
   readMessagesAround: getMemberProcedure(readMessagesAroundInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes its messages to its sockets as typed events" })
     .query<AnchoredPage<RoomMessage>>(async ({ input: { limit, messageId, roomId } }) => {
@@ -389,7 +391,8 @@ const baseMessageRouter = router({
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId")
     .meta({ staticReason: "A search answered once for its input, and never kept live" })
     .query<SearchMessagesResult>(async ({ ctx, input }) => {
-      // The schema names every `in:` value a room id, so the rooms a search reads are bounded here and checked for membership
+      // The schema names every `in:` value a room id, so the rooms a search reads are bounded here and checked for
+      // Membership
       const inFilterRoomIds = getInFilterRoomIds(input.filters);
       if (inFilterRoomIds.length > MAX_SEARCH_ROOMS)
         throw getInvalidOperationError(
@@ -417,8 +420,8 @@ const baseMessageRouter = router({
     .meta({ staticReason: "The room object pushes the edited message to its sockets as a typed event" })
     .mutation<RoomMessage>(async ({ ctx, input }) => {
       // The object stamps the message as edited and names the members its new text names. It answers the message as it
-      // Stood inside that write, so the mention counts its old text made are taken back, and the message it stores is the
-      // Answer, since the object sends the edit to every socket but this device's own
+      // Stood inside that write, so the mention counts its old text made are taken back, and the message it stores is
+      // The Answer, since the object sends the edit to every socket but this device's own
       const { message: updatedMessage, previousMessage } = await requireEntity(
         useRoomObject(input.roomId).updateMessage({ id: input.id, message: input.message }, getRoomActor(ctx)),
         DatabaseEntityType.Message,

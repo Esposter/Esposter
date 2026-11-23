@@ -15,7 +15,8 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
-// Phaser writes the family into the canvas font unquoted, and a lock key holds slashes and dots that the font parser rejects
+// Phaser writes the family into the canvas font unquoted, and a lock key holds slashes and dots that the font parser
+// Rejects
 defaultTextStyle.value = { fontFamily: `"${DungeonsKeys.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow}"` };
 </script>
 

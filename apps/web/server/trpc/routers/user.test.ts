@@ -338,7 +338,8 @@ describe("userRouter", () => {
     );
   });
 
-  // An svg is an image type that can carry script, and it is served from the public assets host, so a profile never takes one
+  // An svg is an image type that can carry script, and it is served from the public assets host, so a profile never
+  // Takes one
   test("fails generateProfileImageUploadUrl with an svg image", async () => {
     expect.hasAssertions();
 
@@ -405,7 +406,8 @@ describe("userRouter", () => {
     expect(members.items.map((member) => member.name)).toStrictEqual([savedName]);
   });
 
-  // A pending request shows the saver's name on the receiver's list, so the save wakes the list the receiver read before it
+  // A pending request shows the saver's name on the receiver's list, so the save wakes the list the receiver read
+  // Before it
   test("a save shows its new name on the pending requests its receiver lists", async () => {
     expect.hasAssertions();
 
@@ -710,7 +712,8 @@ describe("userRouter", () => {
     );
   });
 
-  // The settings row is named by the user's id, the primary key, so the entry the store issues is the row the header names
+  // The settings row is named by the user's id, the primary key, so the entry the store issues is the row the header
+  // Names
   test("the settings update's entry covers the settings row its header names", async () => {
     expect.hasAssertions();
 

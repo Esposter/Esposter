@@ -4,7 +4,8 @@ import type { PositionedDocument } from "vue-block-editor-headless";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
-// A control that changes the selection: whether its change would move nothing, so it is disabled, and its commit, which is one undo step
+// A control that changes the selection: whether its change would move nothing, so it is disabled, and its commit, which
+// Is one undo step
 export const useWhiteboardSelectionOperations = <TInput>(
   getOperations: (document: PositionedDocument, selectedIds: string[], input: TInput) => JsonPatchOperation[],
 ) => {

@@ -49,9 +49,9 @@ const displayThreadMessages = computed(() => threadMessages.value.toSorted(compa
           />
         </template>
       </MessageModelMessageSearchList>
-      <!-- Pinned under the replies, so the composer stays in view while they scroll. Keyed by the thread so opening another
-         one starts on an empty editor: tiptap seeds its content once at setup, so a composer that merely rebinds would keep
-         showing the reply typed for the previous thread -->
+      <!-- Pinned under the replies, so the composer stays in view while they scroll. Keyed by the thread so opening
+        another one starts on an empty editor: tiptap seeds its content once at setup, so a composer that merely
+        rebinds would keep showing the reply typed for the previous thread -->
       <template v-if="activeThreadRootId" #footer>
         <MessageRightSideBarThreadInput :key="activeThreadRootId" />
       </template>

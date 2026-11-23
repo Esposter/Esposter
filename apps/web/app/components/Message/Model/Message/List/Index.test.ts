@@ -28,7 +28,8 @@ describe("messageModelMessageList", () => {
   // The newest message first, which is also the order a column-reversed list draws them in
   const rowIds = [3, 2, 1];
 
-  // The list is one tab stop: the arrows move it between rows, from the newest, which Tab lands on, to the older and back
+  // The list is one tab stop: the arrows move it between rows, from the newest, which Tab lands on, to the older and
+  // Back
   test("walks one tab stop through the rows with the arrows", async () => {
     expect.hasAssertions();
 

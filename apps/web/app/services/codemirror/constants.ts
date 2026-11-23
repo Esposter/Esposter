@@ -7,7 +7,8 @@ export const EXTENDED_LANGUAGES = [
   LanguageDescription.of({
     extensions: ["vue"],
     load: async () => {
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- LanguageDescription.load is codemirror's lazy-loader contract: the Vue grammar loads when a .vue file first opens
+      // LanguageDescription.load is codemirror's lazy-loader contract: the
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- Vue grammar loads when a .vue file first opens
       const { vue } = await import("@codemirror/lang-vue");
       return vue();
     },

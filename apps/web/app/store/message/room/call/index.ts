@@ -62,8 +62,9 @@ export const useCallStore = defineStore("message/room/call", () => {
   usePushToTalk(isInCall);
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
-  // A toggle is a write the screen shows at once: its entry sets the flag on the row, and the answer's row confirms the flag at
-  // The version the call object left it. Writes to one row queue behind each other, so a lower of a hand waits behind a raise
+  // A toggle is a write the screen shows at once: its entry sets the flag on the row, and the answer's row confirms the
+  // Flag at The version the call object left it. Writes to one row queue behind each other, so a lower of a hand waits
+  // Behind a raise
   const writeParticipantFlag = (
     participantId: string,
     flags: Parameters<typeof getParticipantFlagEntry>[1],
@@ -156,9 +157,9 @@ export const useCallStore = defineStore("message/room/call", () => {
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
-      // The call is connected by here, so these only sync the participant row, which is drawn at once and unwinds itself
-      // If it is refused — a rejected flag must not tear down a call that is already up. The camera's device step is its
-      // Own result, so a device that refuses it logs and the join keeps the call
+      // The call is connected by here, so these only sync the participant row, which is drawn at once and unwinds
+      // Itself If it is refused — a rejected flag must not tear down a call that is already up. The camera's device
+      // Step is its Own result, so a device that refuses it logs and the join keeps the call
       if (!isMicrophoneEnabled) setMuted(true);
       if (isCameraEnabled)
         await getResultAsync(() => setCamera(true)).match(() => {
@@ -198,8 +199,8 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, (error) => unwindJoin(isJoined, error));
     isConnecting.value = false;
   };
-  // The local teardown a leave runs. A rejected disconnect is reported rather than thrown, so it cannot strand the call's
-  // Notices and speakers
+  // The local teardown a leave runs. A rejected disconnect is reported rather than thrown, so it cannot strand the
+  // Call's Notices and speakers
   const teardownCall = async () => {
     resetKnockerState();
     closeCall();
@@ -210,9 +211,9 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   // The screen lets go of the call as the leave is sent: the call view closes and the joined call is forgotten, and the
   // Socket and the media come down before the server is told, so no teardown is left to land on a call joined after it.
-  // Only the send waits for the writes still in flight on the participant's row. A refused leave changes nothing back: the
-  // Local call is already down, and the session reaps the participant row on its own, so the refusal is logged rather than
-  // Alerting a call that visibly ended
+  // Only the send waits for the writes still in flight on the participant's row. A refused leave changes nothing back:
+  // The Local call is already down, and the session reaps the participant row on its own, so the refusal is logged
+  // Rather than Alerting a call that visibly ended
   const leaveCall = () => {
     const callSessionId = activeCallSessionId.value;
     // A second press finds the call already let go, so it sends nothing
@@ -307,8 +308,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   ])
     registerCallAdminActionHook(adminActionType, leaveCall);
   // The mute is written to the call the user is actually in, which is the thread's session during a Thread call —
-  // `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here. The write is the same one
-  // The user's own toggle sends, so the other members see the forced mute on the row too
+  // `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here. The write is the same
+  // One The user's own toggle sends, so the other members see the forced mute on the row too
   registerCallAdminActionHook(AdminActionType.ForceMute, async () => {
     setMuted(true);
     await setMicrophone(false);

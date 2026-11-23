@@ -41,14 +41,17 @@ const { currentResourceId } = storeToRefs(resourceStore);
 const resourceId = currentResourceId.value;
 const emailDocument = computed(() => getEmailDocument(resourceId));
 await loadContent();
-// The page builder's edits are saved through the content store's own autosave cadence, which the document's deep watch drives
+// The page builder's edits are saved through the content store's own autosave cadence, which the document's deep watch
+// Drives
 watchAutosave(emailDocument, () => saveEmail(resourceId));
 const { dataset, error } = useDataset(() => datasetReference.value);
 const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name) ?? []);
-// The page builder offers the bound dataset's columns as merge fields, so this blade holds them in the store under its email
+// The page builder offers the bound dataset's columns as merge fields, so this blade holds them in the store under its
+// Email
 watchImmediate(columnNames, (newColumnNames) => setMergeFieldColumns(resourceId, newColumnNames));
-// Design and Preview are modes of one editor: Preview removes the editing regions and draws the compiled message. The design stays
-// Mounted beneath it, so its edits and selection survive, and the preview compiles in Design too, so its findings reach the bar
+// Design and Preview are modes of one editor: Preview removes the editing regions and draws the compiled message. The
+// Design stays Mounted beneath it, so its edits and selection survive, and the preview compiles in Design too, so its
+// Findings reach the bar
 const view = ref<EmailView>(EmailView.Design);
 const emailExportDialogStore = useEmailExportDialogStore();
 const { setPendingDataset } = emailExportDialogStore;
@@ -127,8 +130,8 @@ const registry: Record<EmailContentKey, Component> = {
       startMergeFieldDrag,
       startPaletteDrag,
     }),
-  // The email has no document settings of its own, so with nothing selected the inspector asks for a selection and the canvas
-  // Keeps its width when one is made
+  // The email has no document settings of its own, so with nothing selected the inspector asks for a selection and the
+  // Canvas Keeps its width when one is made
   [EmailContentKey.Prompt]: () =>
     h(UiEmptyState, {
       description: "Select a block on the canvas to edit its content and style.",

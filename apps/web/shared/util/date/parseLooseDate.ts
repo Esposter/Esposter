@@ -14,8 +14,8 @@ const DAY_CANDIDATE_REGEX = /(?<![\d:])\d{1,2}(?![\d:])/gu;
 // The year the engine gives a text with none, a common one, so a yearless 29 February reads as 1 March
 const ENGINE_DEFAULT_YEAR = 2001;
 
-// The engine rolls a day its named month lacks into the next month, so "30 Feb 2026" reads as 2 March. The text names its
-// Month, so it is refused when none of its numbers that could be its day fits that month. It is never judged by the
+// The engine rolls a day its named month lacks into the next month, so "30 Feb 2026" reads as 2 March. The text names
+// Its Month, so it is refused when none of its numbers that could be its day fits that month. It is never judged by the
 // Engine's own day, which a time zone or a time moves across a month's edge without the text being wrong
 const checkIsDayRolled = (value: string) => {
   const month = MONTH_NAME_REGEX.exec(value)?.groups?.month;
@@ -29,8 +29,8 @@ const checkIsDayRolled = (value: string) => {
   return days.length > 0 && days.every((day) => day > daysInMonth);
 };
 
-// The engine guesses the order of a bare number's parts, so it reads only what names its date: text with a letter in it,
-// A month or a weekday, whose day its month has, or a leading ISO date that exists
+// The engine guesses the order of a bare number's parts, so it reads only what names its date: text with a letter in
+// It, A month or a weekday, whose day its month has, or a leading ISO date that exists
 const checkIsEngineReadable = (value: string) =>
   ISO_LEADING_DATE_REGEX.test(value)
     ? parseDate(value.slice(0, ISO_DATE_FORMAT.length), ISO_DATE_FORMAT) !== undefined

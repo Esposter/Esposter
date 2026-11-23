@@ -20,7 +20,8 @@ describe("nuxt-security-module rateLimiter", () => {
     expect.hasAssertions();
 
     // The module's route rules, resolved the way its Nitro plugin resolves them on the first request. The plugin's only
-    // Dependencies on the app are the request hook it registers and the routeRules hook it calls, which has no listener here
+    // Dependencies on the app are the request hook it registers and the routeRules hook it calls, which has no listener
+    // Here
     let resolveRoutes: (() => Promise<void>) | undefined;
     const routeRulesPlugin = createRouteRulesPlugin({
       "/**": {

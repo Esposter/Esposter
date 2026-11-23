@@ -11,10 +11,10 @@ type EventData<TEvent extends { data: unknown; type: string }, TType extends TEv
   { type: TType }
 >["data"];
 
-// The handlers a scope's frames reach, keyed by the frame's type. A frame is parsed by its scope's schema before any handler
-// Sees it, and a frame that fails the schema is logged and dropped. Handlers are held outside reactive state, since none is read.
-// The context is what the socket that carried the frame was opened for: a room's socket names its room, since a message is
-// Named by its room and its integer id, and a frame carries neither
+// The handlers a scope's frames reach, keyed by the frame's type. A frame is parsed by its scope's schema before any
+// Handler Sees it, and a frame that fails the schema is logged and dropped. Handlers are held outside reactive state,
+// Since none is read. The context is what the socket that carried the frame was opened for: a room's socket names its
+// Room, since a message is Named by its room and its integer id, and a frame carries neither
 const createEventHub = <TEvent extends { data: unknown; type: string }, TContext = undefined>(
   schema: z.ZodType<TEvent>,
 ) => {
@@ -34,7 +34,8 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
   const dispatch = (text: string, context: TContext) => {
     const frame = schema.safeParse(jsonDateParse(text));
     if (frame.success)
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- handlers are held by the frame's runtime type, so a handler takes the union of the frames' data it is handed, which no one handler's data type accepts
+      // Handlers are held by the frame's runtime type, so a handler takes the union of the frames' data it is handed,
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- which no one handler's data type accepts
       for (const handler of handlers.get(frame.data.type) ?? []) handler(frame.data.data as never, context);
     else console.error(frame.error);
   };
@@ -42,7 +43,8 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
   return { dispatch, on };
 };
 
-// The frame a read's watch sends up the user socket: the read's time, its signature and its topics, as the server signed them
+// The frame a read's watch sends up the user socket: the read's time, its signature and its topics, as the server
+// Signed them
 const createWatchFrame = ({ readAt, signature, topics }: TopicRead): UserClientFrame => ({
   data: { readAt, signature, topics },
   type: "watch",
@@ -127,20 +129,21 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     ));
     return promise;
   };
-  // The reads the mounted queries watch, each as the server signed it for the person, with the refetch of the query that
-  // Made it. A read is watched up the user socket as its first query mounts and unwatched as its last unmounts, and a frame
-  // Carries one read's topics as that read signed them, never merged with another read's. The socket is sent a read only when
-  // The read adds to what it holds: a topic it does not watch, a column it does not yet name, or a time before the one the
-  // Topic is watched from. A reconnect sends every read again, since a new socket holds nothing, and refetches each query,
-  // Since an invalidation sent while the socket was closed never arrived
+  // The reads the mounted queries watch, each as the server signed it for the person, with the refetch of the query
+  // That Made it. A read is watched up the user socket as its first query mounts and unwatched as its last unmounts,
+  // And a frame Carries one read's topics as that read signed them, never merged with another read's. The socket is
+  // Sent a read only when The read adds to what it holds: a topic it does not watch, a column it does not yet name, or
+  // A time before the one the Topic is watched from. A reconnect sends every read again, since a new socket holds
+  // Nothing, and refetches each query, Since an invalidation sent while the socket was closed never arrived
   const watchedReads = new Set<{ read: TopicRead; refetch: () => void }>();
-  // What the socket holds of each topic: the columns the reads sent name together, and the earliest time it is watched from
+  // What the socket holds of each topic: the columns the reads sent name together, and the earliest time it is watched
+  // From
   const heldTopics = new Map<Topic, { columns?: string[] | undefined; readAt: number }>();
   const sendUserFrame = (frame: UserClientFrame) => {
     sendUserSocketFrame?.(JSON.stringify(frame));
   };
-  // Whether a read adds to what the socket holds: a topic it does not hold, a time before the one it holds it from, or a
-  // Column the held one does not name
+  // Whether a read adds to what the socket holds: a topic it does not hold, a time before the one it holds it from, or
+  // A Column the held one does not name
   const checkAddsToHeld = ({ readAt, topics }: TopicRead) =>
     topics.some(({ columns, topic }) => {
       const heldTopic = heldTopics.get(topic);

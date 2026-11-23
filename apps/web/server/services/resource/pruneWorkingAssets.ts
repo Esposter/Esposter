@@ -6,8 +6,8 @@ import { resourceWorkingAssetsInResource } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 // The second half of a content write, taken with the write once its blob has landed. The rows the new content no longer
-// Embeds are dropped, so the rows name exactly what the stored content embeds. The caller releases the hashes handed back,
-// After its own commit, through the one release every path takes
+// Embeds are dropped, so the rows name exactly what the stored content embeds. The caller releases the hashes handed
+// Back, After its own commit, through the one release every path takes
 export const pruneWorkingAssets = async (
   db: Context["db"],
   resourceId: ResourceInResource["id"],

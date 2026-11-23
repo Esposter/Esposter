@@ -4,10 +4,10 @@ import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
-// The socket of the room on screen, open while that room is the current one. It opens before the room's messages are read.
-// So a change made while the read is in flight arrives over the socket rather than in the gap between the two.
-// A reconnect replays from the newest message the page holds, then re-reads the loaded window.
-// That is needed because an edit or a delete made while the socket was closed is not replayed
+// The socket of the room on screen, open while that room is the current one. It opens before the room's messages are
+// Read. So a change made while the read is in flight arrives over the socket rather than in the gap between the two. A
+// Reconnect replays from the newest message the page holds, then re-reads the loaded window. That is needed because an
+// Edit or a delete made while the socket was closed is not replayed
 export const useRoomSocket = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);

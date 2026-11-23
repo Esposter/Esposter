@@ -19,8 +19,9 @@ import { Operation, takeOne } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
 export const notificationRouter = router({
-  // Each write answers the unread count it leaves, read in the same batch, so the bell takes the settled value. A dismissal
-  // Keeps its row as a tombstone, so its version rises and a read that lands later loses to it, and the answer names the row
+  // Each write answers the unread count it leaves, read in the same batch, so the bell takes the settled value. A
+  // Dismissal Keeps its row as a tombstone, so its version rises and a read that lands later loses to it, and the
+  // Answer names the row
   deleteNotification: standardAuthedProcedure
     .input(selectNotificationInNotificationSchema.shape.id)
     .mutation<DeleteNotificationResult>(async ({ ctx, input }) => {

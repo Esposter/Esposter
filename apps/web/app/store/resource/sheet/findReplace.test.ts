@@ -60,7 +60,8 @@ describe(useFindReplaceStore, () => {
   });
 
   // A switch re-keys the search before the other sheet's content is read, so until that read the occurrences are the
-  // Previous sheet's matches, and clamping the saved occurrence against them would reset it before the new sheet's exist
+  // Previous sheet's matches, and clamping the saved occurrence against them would reset it before the new sheet's
+  // Exist
   test("holds a search's occurrence while the other sheet's content is not yet read", async () => {
     expect.hasAssertions();
 

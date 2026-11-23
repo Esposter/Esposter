@@ -6,8 +6,9 @@ import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGe
 import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// A pan moves the viewport's origin against the pointer's travel, in document units at the viewport's scale, so the document point
-// Under the press stays under the pointer. A pan never changes the document, so a release commits nothing
+// A pan moves the viewport's origin against the pointer's travel, in document units at the viewport's scale, so the
+// Document point Under the press stays under the pointer. A pan never changes the document, so a release commits
+// Nothing
 export const reducePanningGesture = (
   state: WhiteboardGestureState,
   gesture: GesturePanning,

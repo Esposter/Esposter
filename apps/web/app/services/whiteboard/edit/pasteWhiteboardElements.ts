@@ -3,8 +3,9 @@ import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditS
 import { copyWhiteboardElements } from "#src/services/whiteboard/edit/copyWhiteboardElements";
 import { parseClipboardElements } from "#src/services/whiteboard/serializeClipboardElements";
 
-// The state after clipboard text is pasted as copies of the elements it carries, with the copies' ids to select as one edit. Text that
-// Carries no whiteboard elements pastes nothing, so none is returned for it and the state is left as it was
+// The state after clipboard text is pasted as copies of the elements it carries, with the copies' ids to select as one
+// Edit. Text that Carries no whiteboard elements pastes nothing, so none is returned for it and the state is left as it
+// Was
 export const pasteWhiteboardElements = (
   state: WhiteboardEditState,
   text: string,

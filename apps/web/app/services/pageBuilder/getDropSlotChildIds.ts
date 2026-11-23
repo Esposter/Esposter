@@ -2,8 +2,8 @@ import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelpe
 
 import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
 
-// The children of a slot a drop lands among. A node a handle is moving leaves its own slot's children, so an index counts the
-// Slot as it stands once that node is removed, as the move that lands it does
+// The children of a slot a drop lands among. A node a handle is moving leaves its own slot's children, so an index
+// Counts the Slot as it stands once that node is removed, as the move that lands it does
 export const getDropSlotChildIds: PageBuilderHelper<string[], [slotPointer: string, draggedNodeId: string]> = (
   kind,
   document,

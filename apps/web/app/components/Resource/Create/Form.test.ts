@@ -38,7 +38,8 @@ describe("resourceCreateForm", () => {
 
     expect(navigateToMock).toHaveBeenCalledExactlyOnceWith(RoutePath.Resource(resourceId));
 
-    // The new resource opens on the Whiteboard editor, where a freshly created one has no content blob and so an empty canvas
+    // The new resource opens on the Whiteboard editor, where a freshly created one has no content blob and so an empty
+    // Canvas
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Whiteboard }),
       favorite: null,

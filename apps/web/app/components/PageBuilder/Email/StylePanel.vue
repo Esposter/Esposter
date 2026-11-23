@@ -5,7 +5,8 @@ import { MimeCategory, ResourceType } from "@esposter/db-schema";
 interface Props {
   resourceId: string;
 }
-// An email node has no breakpoint or state to choose, so its style is its attribute fields alone, grouped in the webpage's sectors
+// An email node has no breakpoint or state to choose, so its style is its attribute fields alone, grouped in the
+// Webpage's sectors
 const { resourceId } = defineProps<Props>();
 const { hasNode, sections, setField } = useEmailStyle(() => resourceId);
 // Every sector starts open, and a reader's collapses are kept for the session

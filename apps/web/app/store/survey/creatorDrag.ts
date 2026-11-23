@@ -2,8 +2,9 @@ import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
 import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 import type { SurveyNodeType } from "vue-survey-engine-headless";
 
-// The drag a creator pane starts from the palette or the canvas. The palette starts it and the canvas draws it.
-// The drag is held here rather than in either pane. The composable owns the press that starts it and the release that lands it
+// The drag a creator pane starts from the palette or the canvas. The palette starts it and the canvas draws it. The
+// Drag is held here rather than in either pane. The composable owns the press that starts it and the release that lands
+// It
 export const useSurveyCreatorDragStore = defineStore("survey/creatorDrag", () => {
   const draggedType = shallowRef<SurveyNodeType>();
   // The id of the node being moved, or "" for a kind the palette inserts

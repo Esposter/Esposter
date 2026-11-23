@@ -297,7 +297,8 @@ describe("resourceRouter", () => {
   test("a name match ranks above a tag-only match", async () => {
     expect.hasAssertions();
 
-    // The name match is created first (older), so without the name ranking ahead of the tag the newer tagged resource would lead
+    // The name match is created first (older), so without the name ranking ahead of the tag the newer tagged resource
+    // Would lead
     const nameResource = await dashboardCaller.createResource({ name: "ai" });
     vi.advanceTimersByTime(1);
     const taggedResource = await sheetCaller.createResource({ name: "Ask" });
@@ -681,9 +682,10 @@ describe("resourceRouter", () => {
     expect(references.dependencies).toStrictEqual([{ id: sheet.id, name, type: ResourceType.Sheet }]);
   });
 
-  // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises an object-create notification for
-  // A blob no reserve ever ledgered, so the counter would never move. The assets it names are the working copy's own
-  // Objects, already charged when they were uploaded, so a publish adds only the snapshot
+  // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises an
+  // `object-create` notification for A blob no reserve ever ledgered, so the counter would never move. The assets it
+  // Names are the working copy's own Objects, already charged when they were uploaded, so a publish adds only the
+  // Snapshot
   test("charges the owner for the snapshot a publish takes, not for the assets it names", async () => {
     expect.hasAssertions();
 
@@ -716,7 +718,8 @@ describe("resourceRouter", () => {
     assert.exists(content);
 
     const publication = await webpageCaller.readResourcePublication({ id: duplicatedResource.id });
-    // The copy owns its assets: the file is copied under the same hash in the copy's files directory and the url rewritten to it
+    // The copy owns its assets: the file is copied under the same hash in the copy's files directory and the url
+    // Rewritten to it
     const duplicatedBlobName = takeOne(await readFilesBlobNames(duplicatedResource.id));
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
@@ -867,8 +870,8 @@ describe("resourceRouter", () => {
     expect(takeOne(items).id).toBe(nearMatchResource.id);
   });
 
-  // A row read answers each row with the viewer's own star beside it: a starred row its live star, a row never starred null,
-  // And a removed star its tombstone, so a client applies the removal
+  // A row read answers each row with the viewer's own star beside it: a starred row its live star, a row never starred
+  // Null, And a removed star its tombstone, so a client applies the removal
   test("answers each row's star, a removed one as its tombstone", async () => {
     expect.hasAssertions();
 
@@ -920,8 +923,8 @@ describe("resourceRouter", () => {
     expect(secondPage.nextCursor).toBe("");
   });
 
-  // An unstar leaves its favorite as a tombstone at the version the removal left, so a read still holding the star loses to
-  // The removal, and a star made again revives the same row at the next version
+  // An unstar leaves its favorite as a tombstone at the version the removal left, so a read still holding the star
+  // Loses to The removal, and a star made again revives the same row at the next version
   test("an unstar leaves a tombstone that a re-star revives at a higher version", async () => {
     expect.hasAssertions();
 
@@ -1591,7 +1594,8 @@ describe("resourceRouter", () => {
     });
   });
 
-  // Every case names the read-only path it reaches, written to or taken from; what lies under it is the path check's own
+  // Every case names the read-only path it reaches, written to or taken from; what lies under it is the path check's
+  // Own
   test.each<[string, JsonPatchOperation]>([
     ["writing", { op: JsonPatchOperationType.Replace, path: "/settings/type", value: "" }],
     ["removing", { op: JsonPatchOperationType.Remove, path: "/settings/type" }],
@@ -1722,7 +1726,8 @@ describe("resourceRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  // The write's entry is the one the store issues, and the cross-check reads the rows the write names against the keys it touches
+  // The write's entry is the one the store issues, and the cross-check reads the rows the write names against the keys
+  // It touches
   test("the rename entry covers every row the rename names", async () => {
     expect.hasAssertions();
 
@@ -1740,8 +1745,8 @@ describe("resourceRouter", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches that key.
-  // The toggle writes that row both ways, so the star and the unstar are each checked
+  // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches that
+  // Key. The toggle writes that row both ways, so the star and the unstar are each checked
   test.each([false, true])(
     "the toggle's entry covers the favorite row its header names when starred is %s",
     async (isStarred) => {
@@ -1839,8 +1844,8 @@ describe("resourceRouter", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  // The save's entry is the one the store issues. The save also names the owner's row, which carries the storage total it
-  // Moves, so the entry reads that row by its key beside the resource's own
+  // The save's entry is the one the store issues. The save also names the owner's row, which carries the storage total
+  // It Moves, so the entry reads that row by its key beside the resource's own
   test("the content save entry covers every row a save names", async () => {
     expect.hasAssertions();
 

@@ -16,7 +16,8 @@ interface Props {
   // The list's accessible name: what its rows are
   label: string;
 }
-// The call site's attributes go on the list itself, not its wrapper, so its name and its relations stay on the element that holds the rows
+// The call site's attributes go on the list itself, not its wrapper, so its name and its relations stay on the element
+// That holds the rows
 defineOptions({ inheritAttrs: false });
 // A list of rows, one stop in the tab order: the arrows, Home, End and typeahead walk it, and Enter or Space picks the
 // Focused row. Bound to a selection, it is a listbox whose rows are its options, as the listbox pattern has it: a pick
@@ -69,8 +70,8 @@ const pick = (value: T, event: KeyboardEvent | MouseEvent) => {
       :="$attrs"
       @keydown="(event) => onListKeydown(event)"
     >
-      <!-- A group is a list item holding a list named by its heading, or a listbox's named group; rows with none sit in a
-         Wrapper assistive technology passes over -->
+      <!-- A group is a list item holding a list named by its heading, or a listbox's named group; rows with none
+        sit in a Wrapper assistive technology passes over -->
       <div
         v-for="({ group, items: groupItems }, index) of groups"
         :key="index"

@@ -10,14 +10,17 @@ import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The sheet's content is held as its data shape, the plain JSON the blob carries, so its columns and rows are that shape too
+// The sheet's content is held as its data shape, the plain JSON the blob carries, so its columns and rows are that
+// Shape too
 export interface DataSource {
   columns: ToData<Column>[];
   metadata: Metadata;
   rows: ToData<Row>[];
 }
 
-// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- ColumnType, DataSourceType (DataSourceType.ts:3) and DatasetProviderType (Metadata.ts:1) are the same declarations on both sides; the rule flags a zod object nested in an array even on an exact enum match
+// ColumnType, DataSourceType (DataSourceType.ts:3) and DatasetProviderType (Metadata.ts:1) are the same declarations on
+// Both sides; the rule flags a zod object
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- nested in an array even on an exact enum match
 export const dataSourceSchema = z.object({
   columns: createUniqueArraySchema(columnSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),
   metadata: metadataSchema,

@@ -5,8 +5,8 @@ import { getOrCreate } from "@esposter/shared";
 import { describe } from "vitest";
 
 // This double is the send-only `QueueProducer` the shared schema states, which is what the app's getJobQueue returns.
-// The Workers double in `@esposter/db-mock/workers` is the whole binding, and only apps/jobs and apps/realtime import that entry.
-// So this one stays beside its only consumer, and its messages land in the map every job's test reads.
+// The Workers double in `@esposter/db-mock/workers` is the whole binding, and only apps/jobs and apps/realtime import
+// That entry. So this one stays beside its only consumer, and its messages land in the map every job's test reads.
 export class MockJobQueue implements QueueProducer<unknown> {
   readonly job: QueueJob;
 

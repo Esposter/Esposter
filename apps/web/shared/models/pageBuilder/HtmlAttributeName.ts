@@ -1,4 +1,5 @@
-// The attributes a node type's render writes. No event handler, style or srcdoc is named, so the renderer cannot write one
+// The attributes a node type's render writes. No event handler, style or srcdoc is named, so the renderer cannot write
+// One
 export const HtmlAttributeName = {
   Alt: "alt",
   AriaAtomic: "aria-atomic",

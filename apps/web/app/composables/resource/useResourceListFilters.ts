@@ -46,8 +46,8 @@ export const useResourceListFilters = (defaultSortBy: readonly SortItem<keyof Re
   const updatedFilter = useEnumRouteQuery<"" | ResourceUpdatedFilter>("updated", ResourceUpdatedFilters, "");
   const updatedAfter = createUpdatedBound("updatedAfter");
   const updatedBefore = createUpdatedBound("updatedBefore");
-  // The widths the reader dragged the columns to are the address's too, as "key:width,...", so a reload or a shared link
-  // Lays the list out the same
+  // The widths the reader dragged the columns to are the address's too, as "key:width,...", so a reload or a shared
+  // Link Lays the list out the same
   const columnWidthsQuery = useRouteQuery("columnWidths", "", { transform: String });
   const columnKeyWidthMap = computed({
     get: () => deserializeResourceColumnKeyWidthMap(columnWidthsQuery.value),

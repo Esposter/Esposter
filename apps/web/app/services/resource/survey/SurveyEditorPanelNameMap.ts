@@ -1,6 +1,7 @@
 import { SurveyEditorPanel } from "#src/models/resource/survey/SurveyEditorPanel";
 
-// The title each panel's tab is drawn with. The bar's panel is never a tab, so its title is only the one its region names
+// The title each panel's tab is drawn with. The bar's panel is never a tab, so its title is only the one its region
+// Names
 export const SurveyEditorPanelNameMap = {
   [SurveyEditorPanel.Add]: "Add",
   [SurveyEditorPanel.Bar]: "Survey bar",

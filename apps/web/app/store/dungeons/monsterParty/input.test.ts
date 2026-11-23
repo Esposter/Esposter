@@ -17,7 +17,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+// A partial fake:
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 // The scene switch belongs to Phaser, so only its calls are recorded

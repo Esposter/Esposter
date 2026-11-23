@@ -16,7 +16,8 @@ describe(getDraftPlacement, () => {
   test("the element shows the draft as the owner types", () => {
     expect.hasAssertions();
 
-    // An unwrapped text box is as wide as the draft's widest line while it is typed, so the draft breaks where the commit will
+    // An unwrapped text box is as wide as the draft's widest line while it is typed, so the draft breaks where the
+    // Commit will
     const draft = "Review the order\nnow";
     const textBox: TextElement = {
       color: "",

@@ -3,7 +3,8 @@ import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditS
 import { redoHistory } from "@esposter/shared";
 import { applyBlockEdit, positionedDocumentSchema } from "vue-block-editor-headless";
 
-// Reapplies the newest undone edit by applying its operations, or leaves the state as it was when there is no undone edit to reapply
+// Reapplies the newest undone edit by applying its operations, or leaves the state as it was when there is no undone
+// Edit to reapply
 export const redoWhiteboardEdit = (state: WhiteboardEditState): WhiteboardEditState => {
   const { entry, history } = redoHistory(state.history);
   if (entry === undefined) return state;

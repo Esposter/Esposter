@@ -145,7 +145,8 @@ watch(totalLength, (newTotalLength) => {
   if (newTotalLength > 0 && page.value > pageCount.value) page.value = pageCount.value;
 });
 const pageIds = computed(() => pageItems.value.map(({ id }) => id));
-// The selection as a set, so a row asks whether it is selected in constant time rather than by searching every selected id
+// The selection as a set, so a row asks whether it is selected in constant time rather than by searching every selected
+// Id
 const selectedIdSet = computed(() => new Set(selectedIds.value));
 const selectedPageIdCount = computed(() => pageIds.value.filter((id) => selectedIdSet.value.has(id)).length);
 const isPageSelected = computed(() => pageIds.value.length > 0 && selectedPageIdCount.value === pageIds.value.length);

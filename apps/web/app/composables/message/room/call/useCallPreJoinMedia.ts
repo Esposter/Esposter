@@ -49,7 +49,8 @@ export const useCallPreJoinMedia = () => {
   });
   const startCamera = async () => {
     const outcome = await startDevice("camera", startCameraStream);
-    // A page left during the permission prompt has no owner for the stream that prompt then delivers, so it is stopped here
+    // A page left during the permission prompt has no owner for the stream that prompt then delivers, so it is stopped
+    // Here
     if (isDisposed) {
       stopCameraStream();
       return;

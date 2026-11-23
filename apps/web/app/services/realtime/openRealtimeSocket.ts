@@ -6,8 +6,8 @@ const INITIAL_RETRY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseco
 const MAX_RETRY_MS = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 
 // A socket its caller holds open: a close the caller did not ask for is retried with doubling delays, and the delay
-// Starts again once a connection opens. The url is read at every connect, so a reconnect carries the room's
-// Latest message id. `close` closes the socket and stops every retry still pending, and `send` writes a frame up an open
+// Starts again once a connection opens. The url is read at every connect, so a reconnect carries the room's Latest
+// Message id. `close` closes the socket and stops every retry still pending, and `send` writes a frame up an open
 // Socket and drops one while it is closed, which is why `onOpen` runs at every open: what the server must hold is sent
 // Again there
 export const openRealtimeSocket = (

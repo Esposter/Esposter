@@ -37,7 +37,8 @@ describe("messageModelMemberActionDialogDisplayName", () => {
   const memberRow: MemberRowInRoom = { ...user, deletedAt: null, displayName, roomId, userId: user.id, version: 0 };
   const expectedUpdate = { displayName: newDisplayName, roomId, targetUserId: user.id };
   // The member the dialog was opened on, as the room's first page read left it: the person, and the membership row the
-  // Page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets the route
+  // Page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets
+  // The route
   const seedMember = async () => {
     setRouteId(roomId);
     const userStore = useUserStore();
@@ -115,7 +116,8 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith(expectedUpdate);
   });
 
-  // A blank name is stored as the account's own name, so the row shows that name from the save, before the server answers
+  // A blank name is stored as the account's own name, so the row shows that name from the save, before the server
+  // Answers
   test("a blank display name shows the account's name at once", async () => {
     expect.hasAssertions();
 

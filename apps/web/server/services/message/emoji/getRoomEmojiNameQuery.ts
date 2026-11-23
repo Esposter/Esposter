@@ -4,9 +4,9 @@ import type { RoomEmojiInMessage } from "@esposter/db-schema";
 import { getLiveRowWhere, roomEmojisInMessage } from "@esposter/db-schema";
 import { and, eq, ne } from "drizzle-orm";
 
-// The room's emoji answering to a name, as a subquery so the check and the write are one statement. An update leaves out
-// The emoji it renames, which may keep its own name. A create leaves out nothing, so a replayed id the room already holds
-// Is refused as the name the room uses, not left to the primary key
+// The room's emoji answering to a name, as a subquery so the check and the write are one statement. An update leaves
+// Out The emoji it renames, which may keep its own name. A create leaves out nothing, so a replayed id the room already
+// Holds Is refused as the name the room uses, not left to the primary key
 export const getRoomEmojiNameQuery = (
   db: Context["db"],
   roomId: RoomEmojiInMessage["roomId"],

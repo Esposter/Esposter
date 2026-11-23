@@ -3,7 +3,8 @@ import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelpe
 import { getHoldingSlotPointers } from "#src/services/pageBuilder/getHoldingSlotPointers";
 import { getBlockNode, getBlockPropPointer, getBlockTypeDefinition } from "vue-block-editor-headless";
 
-// The pointers of the slots a node holds its own children in, then the slot holding the node and each ancestor's slot in turn
+// The pointers of the slots a node holds its own children in, then the slot holding the node and each ancestor's slot
+// In turn
 export const getCandidateSlotPointers: PageBuilderHelper<string[], [nodePointer: string]> = (
   kind,
   document,

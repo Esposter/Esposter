@@ -1,12 +1,14 @@
 import { animateOrSkip } from "#src/services/dungeons/animation/animateOrSkip";
 import { describe, expect, test, vi } from "vitest";
 
-// The flag is held in a ref, as the store holds its computed flag, and the suite keeps the writable ref the double hands out
+// The flag is held in a ref, as the store holds its computed flag, and the suite keeps the writable ref the double
+// Hands out
 const { isSkipAnimations } = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   return { isSkipAnimations: ref(false) };
 });
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- The settings store loads Phaser, which the test environment cannot start
+// The settings
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- store loads Phaser, which the test environment cannot start
 vi.mock("#src/store/dungeons/settings/index", () => ({ useSettingsStore: () => ({ isSkipAnimations }) }));
 
 describe(animateOrSkip, () => {

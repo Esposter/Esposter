@@ -74,7 +74,8 @@ const getItemLabel = (item: unknown, index: number) => {
             :variant="UiButtonVariant.Quiet"
             @click="moveDown?.(control.path, index)()"
           />
-          <!-- oxlint-disable vue/no-restricted-syntax -- removes an item from the unsaved form draft, which JSON Forms names removeItems -->
+          <!-- oxlint-disable vue/no-restricted-syntax -- removes an item from the unsaved form draft, which JSON
+            Forms names removeItems -->
           <UiIconButton
             :disabled="!control.enabled || isMinItems"
             :label="`Remove ${getItemLabel(item, index)}`"

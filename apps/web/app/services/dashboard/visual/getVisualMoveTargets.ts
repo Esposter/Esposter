@@ -17,8 +17,8 @@ export const getVisualMoveTargets = (visuals: Visual[], id: Visual["id"]) => {
   const groups = listVisuals(visuals).filter(
     (group) => group.id !== location.group?.id && !checkIsMoveRefused(visuals, id, group.id),
   );
-  // Every group's own title is reserved before any suffix is chosen.
-  // So a numbered label never equals a title another group holds, and the dashboard's own option is taken from the start
+  // Every group's own title is reserved before any suffix is chosen. So a numbered label never equals a title another
+  // Group holds, and the dashboard's own option is taken from the start
   const reservedTitles = new Set(groups.map((group) => getGroupTitle(group)));
   const takenLabels = new Set<string>(location.group ? [DASHBOARD_OPTION_TITLE] : []);
   const groupTargets = groups.map((group) => {

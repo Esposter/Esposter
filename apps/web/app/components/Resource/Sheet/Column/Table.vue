@@ -45,7 +45,8 @@ const { getContextMenuProps } = useContextMenu();
 
 <template>
   <div flex flex-col gap-2>
-    <!-- The selection toolbar takes the search field's place rather than a row of its own, so the table holds still when a selection starts -->
+    <!-- The selection toolbar takes the search field's place rather than a row of its own, so the table holds still
+      when a selection starts -->
     <UiTextField
       v-if="selectedColumnIds.length === 0"
       v-model="search"

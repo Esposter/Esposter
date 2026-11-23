@@ -18,14 +18,14 @@ export interface PreparedSnapshotVersion {
   writtenVersion: WrittenVersion;
 }
 
-// The blob side of a version write: the content goes into the store against the channel's current anchor, and the assets
-// It names are touched, refused or kept. Nothing here writes a row. The caller writes the row in one batch after this
-// Returns, so a version is never visible before its object is stored. A published version is what a reader is served,
-// So it is refused while a url of this resource's own file names one the store does not hold. A bare id is never refused,
-// Since a 64-hex token can be a digest in text rather than a file. Any other channel keeps what the user wrote, since a
-// Revision or a restore naming a gone file is data rather than a broken page. A touch restarts the grace window of an
-// Asset nothing references, so only the assets no row of the resource names are touched, which keeps a document of pasted
-// Digests at one touch each the first time rather than on every write
+// The blob side of a version write: the content goes into the store against the channel's current anchor, and the
+// Assets It names are touched, refused or kept. Nothing here writes a row. The caller writes the row in one batch after
+// This Returns, so a version is never visible before its object is stored. A published version is what a reader is
+// Served, So it is refused while a url of this resource's own file names one the store does not hold. A bare id is
+// Never refused, Since a 64-hex token can be a digest in text rather than a file. Any other channel keeps what the user
+// Wrote, since a Revision or a restore naming a gone file is data rather than a broken page. A touch restarts the grace
+// Window of an Asset nothing references, so only the assets no row of the resource names are touched, which keeps a
+// Document of pasted Digests at one touch each the first time rather than on every write
 export const prepareSnapshotVersion = async (
   db: Context["db"],
   resource: Pick<ResourceInResource, "id" | "type">,

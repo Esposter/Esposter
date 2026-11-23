@@ -4,8 +4,8 @@ import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { checkIsBlankText, JsonPatchOperationType, noop, normalizeString } from "@esposter/shared";
 
-// The page's colour and font-stack tokens, edited through the page builder's history. A new token takes the next free name
-// Of its kind, and no token can be deleted here, so a name is never given to two tokens
+// The page's colour and font-stack tokens, edited through the page builder's history. A new token takes the next free
+// Name Of its kind, and no token can be deleted here, so a name is never given to two tokens
 export const usePageBuilderTheme = (resourceId: MaybeRefOrGetter<string>) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
@@ -31,7 +31,8 @@ export const usePageBuilderTheme = (resourceId: MaybeRefOrGetter<string>) => {
   const addColor = () => {
     setTokenValue(`${COLOR_TOKEN_PREFIX}new-${colors.value.length + 1}`, DEFAULT_THEME_COLOR, "Add colour");
   };
-  // An empty stack is not saved: a custom property with no value would make every use of it fall back to the initial value
+  // An empty stack is not saved: a custom property with no value would make every use of it fall back to the initial
+  // Value
   const setFontStack = (name: string, value: string) => {
     const fontStack = normalizeString(value);
     if (!checkIsBlankText(fontStack)) setTokenValue(name, fontStack, "Edit font stack");

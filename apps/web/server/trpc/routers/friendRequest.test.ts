@@ -171,7 +171,8 @@ describe("friendRequestRouter", () => {
     );
   });
 
-  // The accept's entry shows the request it tombstones and the friendship it holds, so the optimistic change covers both rows
+  // The accept's entry shows the request it tombstones and the friendship it holds, so the optimistic change covers
+  // Both rows
   test("the accept entry touches the request and the friendship the accept writes", async () => {
     expect.hasAssertions();
 
@@ -308,7 +309,8 @@ describe("friendRequestRouter", () => {
     expect(friendRequest.receiverId).toBe(blockerUser.id);
   });
 
-  // A removed friendship no longer stands between the two users, and the request revives the request row the accept left
+  // A removed friendship no longer stands between the two users, and the request revives the request row the accept
+  // Left
   test("sends friend request once the friendship between the two users is removed", async () => {
     expect.hasAssertions();
 

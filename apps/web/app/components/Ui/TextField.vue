@@ -16,8 +16,8 @@ interface Props {
   error?: string | undefined;
   // A line under the field saying how to fill it, which describes it to assistive technology and gives way to an error
   hint?: string | undefined;
-  // Takes focus as it appears: the browser's own autofocus when a dialog opens onto it, and `useAutofocus` when it mounts
-  // Into a page, which leaves a reader who is typing elsewhere alone
+  // Takes focus as it appears: the browser's own autofocus when a dialog opens onto it, and `useAutofocus` when it
+  // Mounts Into a page, which leaves a reader who is typing elsewhere alone
   isAutofocus?: true | undefined;
   // Shown at the disabled opacity and never focused or typed in, as a native disabled control is
   isDisabled?: true | undefined;
@@ -93,7 +93,8 @@ defineExpose({ element });
           translate-y="-1/2"
         />
         <Input.Control #default="{ attrs }" renderless>
-          <!-- oxlint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
+          <!-- oxlint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus
+            for its dialog, which call sites ask for with is-autofocus -->
           <!-- An email, a telephone number or a URL offers the browser's autofill for it -->
           <component
             :is="rows ? 'textarea' : 'input'"

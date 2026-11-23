@@ -34,7 +34,8 @@ describe("typedTextNodeType", () => {
   test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
-    // The texts are written as a JSON attribute, so a quote in one is escaped twice: once as JSON and once as the attribute
+    // The texts are written as a JSON attribute, so a quote in one is escaped twice: once as JSON and once as the
+    // Attribute
     expect([
       serializeHtml([
         typedTextNodeType.render({

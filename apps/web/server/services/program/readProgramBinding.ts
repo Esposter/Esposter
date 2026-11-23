@@ -5,7 +5,8 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 
 // The audience, key column and survey a program is bound to, which every read that issues or reads its participants
-// Needs. A program missing any of them is a dangling binding, and that error is raised here, so the check is written once
+// Needs. A program missing any of them is a dangling binding, and that error is raised here, so the check is written
+// Once
 export const readProgramBinding = async (programId: ResourceInResource["id"]) => {
   const content = await readResourceContent(programResourceSchema, programId);
   if (!content?.audience || !content.keyColumn || !content.surveyId) throw getDanglingProgramBindingError();

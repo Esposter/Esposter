@@ -8,8 +8,8 @@ import {
 } from "@esposter/db-schema";
 import { z } from "zod";
 
-// The sidebar lists rooms by when their last message was sent, and a search lists them by the name each shows. A message
-// Time is not unique, and neither is a name, so the id breaks the ties of both
+// The sidebar lists rooms by when their last message was sent, and a search lists them by the name each shows. A
+// Message Time is not unique, and neither is a name, so the id breaks the ties of both
 const readRoomsPageSorts = {
   displayName: { keys: ["displayName", "id"], order: SortOrder.Asc },
   lastMessageAt: { keys: ["lastMessageAt", "id"], order: SortOrder.Desc },

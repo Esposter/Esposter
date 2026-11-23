@@ -8,8 +8,9 @@ import { z } from "zod";
 // The most scope columns any table declares, which bounds the entries a row's key can hold
 const MAX_ROW_KEY_ENTRIES = 4;
 
-// A row as the header carries it: its key's values, its table and the version its write left it at. A key value is the row's
-// Own, a string or a number as its column holds it, and a string can be any text, a file's path a person chose among them
+// A row as the header carries it: its key's values, its table and the version its write left it at. A key value is the
+// Row's Own, a string or a number as its column holds it, and a string can be any text, a file's path a person chose
+// Among them
 const rowVersionSchema = z.object({
   key: createRecordSchema(z.string().min(1), z.union([z.string(), z.number()]), MAX_ROW_KEY_ENTRIES),
   table: z.string().min(1),
@@ -22,7 +23,8 @@ const readRowVersion = (text: string): RowVersion | undefined => {
   const json = getDecodedUriComponent(text, undefined);
   if (json === undefined) return undefined;
 
-  // oxlint-disable-next-line no-restricted-properties -- a scope value can be a path a person named, and a date reviver would turn an ISO-shaped one into a Date the string schema refuses
+  // A scope value can be a path a person named, and a date reviver would
+  // oxlint-disable-next-line no-restricted-properties -- turn an ISO-shaped one into a Date the string schema refuses
   const parsedJson = getResult<unknown>(() => JSON.parse(json)).unwrapOr(undefined);
   const parsedRowVersion = rowVersionSchema.safeParse(parsedJson);
   return parsedRowVersion.success ? parsedRowVersion.data : undefined;

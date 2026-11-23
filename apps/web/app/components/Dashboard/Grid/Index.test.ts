@@ -28,7 +28,8 @@ vi.mock(import("vue-grid-layout-headless"), async (importOriginal) => {
 });
 
 describe("dashboardGrid", () => {
-  // Twelve columns across 970px with the dashboard's 10px gap and padding start 80px apart, and rows 40px high 50px apart
+  // Twelve columns across 970px with the dashboard's 10px gap and padding start 80px apart, and rows 40px high 50px
+  // Apart
   const columnNumber = 12;
   const gridWidth = 970;
   const columnPitch = 80;
@@ -148,7 +149,8 @@ describe("dashboardGrid", () => {
     const wrapper = await mountSuspended(DashboardGrid, {
       props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
     });
-    // A touch moves the visual, so the release asks which grid is under the pointer, and this DOM has no hit test to answer
+    // A touch moves the visual, so the release asks which grid is under the pointer, and this DOM has no hit test to
+    // Answer
     stubElementAtPoint(wrapper.element);
     const handle = wrapper.get('[data-edge="SouthEast"]');
     await handle.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId, pointerType: "touch" });
@@ -214,7 +216,8 @@ describe("dashboardGrid", () => {
   });
 
   // A body drag released over another grid is handed to it with the group that grid stands for, read from its root. The
-  // Grid under the pointer is stubbed, since a DOM without layout has no hit test, and the target mounts as a group's grid does
+  // Grid under the pointer is stubbed, since a DOM without layout has no hit test, and the target mounts as a group's
+  // Grid does
   test.each([
     ["a group's grid", v7()],
     ["the dashboard's own grid", undefined],
@@ -245,8 +248,9 @@ describe("dashboardGrid", () => {
     },
   );
 
-  // The group at the depth cap holds one visual, which the drop lands on. The dragged group holds a group of its own, so a move
-  // Into the cap group would nest it past the cap, and the grid it is dropped on refuses it before that visual is pushed aside
+  // The group at the depth cap holds one visual, which the drop lands on. The dragged group holds a group of its own,
+  // So a move Into the cap group would nest it past the cap, and the grid it is dropped on refuses it before that
+  // Visual is pushed aside
   test("a body drag into a group its move would nest past the depth cap changes no visual's cell", async () => {
     expect.hasAssertions();
 
@@ -343,7 +347,8 @@ describe("dashboardGrid", () => {
     ]);
   });
 
-  // The top-left handle moves the west and north edges, so a drag past the bottom-right corner clamps the visual to one cell
+  // The top-left handle moves the west and north edges, so a drag past the bottom-right corner clamps the visual to one
+  // Cell
   test("shrinking a visual to nothing", async () => {
     expect.hasAssertions();
 
@@ -408,7 +413,8 @@ describe("dashboardGrid", () => {
     const wrapper = await mountSuspended(DashboardGrid, {
       props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
     });
-    // The tile's content is measured once it mounts, and that measure is a commit of its own, so the step is read against it
+    // The tile's content is measured once it mounts, and that measure is a commit of its own, so the step is read
+    // Against it
     await flushPromises();
     const commits = wrapper.emitted("commit");
     assert.exists(commits);

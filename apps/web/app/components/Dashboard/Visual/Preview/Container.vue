@@ -13,8 +13,8 @@ interface Props {
 }
 
 const { visual } = defineProps<Props>();
-// A group's commits, opens and transfers come up from its grid, and a child group's come up from its own container, so each
-// Container passes what it hears from either on to its caller
+// A group's commits, opens and transfers come up from its grid, and a child group's come up from its own container, so
+// Each Container passes what it hears from either on to its caller
 const emit = defineEmits<DashboardVisualEmits>();
 const visualStore = useVisualStore();
 const { editItem } = visualStore;
@@ -41,8 +41,9 @@ onClickExceptDrag(
         @transfer="(transfer) => emit('transfer', transfer)"
       >
         <template #actions="{ dataset }">
-          <!-- Clicking the tile opens its edit form, which nothing on screen says on its own, so the one menu on the corner
-            holds the edit beside the occasional actions. A press here never reaches the tile's drag tracking -->
+          <!-- Clicking the tile opens its edit form, which nothing on screen says on its own, so the one menu on
+            the corner holds the edit beside the occasional actions. A press here never reaches the tile's drag
+            tracking -->
           <div data-nested-interaction="true" flex @mousedown.stop @mousemove.stop>
             <DashboardVisualPreviewActionsMenu :dataset :visual />
           </div>

@@ -62,7 +62,8 @@ export const useMemberStore = defineStore("message/user/member", () => {
   } = useCursorPaginationDataMap<MemberKey>(() => roomStore.scopedRoomId);
   // Sorted the way the server pages them: a display name compared case-insensitively and then byte by byte, the same
   // Comparison on the same display name, and then the id. The list is one order whether it was read in pages or joined
-  // Live. A locale collation has no SQLite counterpart, so a list sorted by one would not be the order the cursor advances
+  // Live. A locale collation has no SQLite counterpart, so a list sorted by one would not be the order the cursor
+  // Advances
   const members = computed(() => {
     const roomMemberRows = getRoomMemberRows(memberRows.value, roomStore.scopedRoomId);
     return joinListedMembers(listedMemberKeys.value, roomMemberRows, userStore.userMap, (user, row) => ({
@@ -81,8 +82,8 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const memberCount = computed(() => memberCounts.value.memberCount);
   const memberCountsByTopRole = computed(() => memberCounts.value.countsByTopRole);
   // The totals are never adjusted by a delta: a delta applied on top of a read that already counted the change counts
-  // It twice, and a delta applied to a group the store never saw the member in is wrong for good. Every change marks its
-  // Room, and the batched refresh re-reads the marked rooms one run at a time, so no two reads of a room overlap
+  // It twice, and a delta applied to a group the store never saw the member in is wrong for good. Every change marks
+  // Its Room, and the batched refresh re-reads the marked rooms one run at a time, so no two reads of a room overlap
   const refreshMemberCounts = createBatchedRefresh(async (roomIds: string[]) => {
     await Promise.all(
       roomIds.map(async (roomId) => {
@@ -103,8 +104,8 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Reach them through the same path. The room is the one the write happened in, not necessarily the one open
   // On Screen — a role assigned from a profile card in one room while another is open belongs to that room's totals
   memberRoleChangeHooks.register(refreshMemberCountsInBackground);
-  // A page of a room's members arrives row by row, and the page's keys keep the order the server gave them, so the cursor
-  // Advances from the place the page left and the list shows each row the overlay holds for its key
+  // A page of a room's members arrives row by row, and the page's keys keep the order the server gave them, so the
+  // Cursor Advances from the place the page left and the list shows each row the overlay holds for its key
   const arriveMemberPage = ({ items: pageMembers, ...page }: Page<MemberRowInRoom>): Page<MemberKey> => {
     for (const member of pageMembers) arrive(memberTable, toMemberRow(member));
     return { ...page, items: pageMembers.map(({ roomId, userId }) => ({ roomId, userId })) };
@@ -118,14 +119,14 @@ export const useMemberStore = defineStore("message/user/member", () => {
     if (!items.value.some((key) => key.userId === userId)) items.value.push({ roomId, userId });
     refreshMemberCountsInBackground(roomId);
   };
-  // A member who leaves arrives as the tombstone the removal left, which the list drops once it is held. Their roles go with
-  // Them, and the role change's own hook re-reads the room's totals
+  // A member who leaves arrives as the tombstone the removal left, which the list drops once it is held. Their roles go
+  // With Them, and the role change's own hook re-reads the room's totals
   const arriveLeftMember = (leftMember: MemberRow) => {
     arrive(memberTable, toMemberRow(leftMember));
     notifyMemberRoleChange(leftMember.roomId);
   };
-  // A saved display name is an optimistic write over the member's row. The entry shows the name the server will resolve,
-  // And the answer is the row itself, which arrives at the version it names and settles the write
+  // A saved display name is an optimistic write over the member's row. The entry shows the name the server will
+  // Resolve, And the answer is the row itself, which arrives at the version it names and settles the write
   const renameMember = (roomId: string, userId: string, displayName: string) => {
     const accountName = userStore.userMap.get(userId)?.name ?? "";
     writeOptimistic(
@@ -134,7 +135,8 @@ export const useMemberStore = defineStore("message/user/member", () => {
           $trpc.userToRoom.updateUserToRoom.mutate({ displayName, roomId, targetUserId: userId }),
         );
         const row = toMemberRow(updatedMembership);
-        // The room's names follow the row the answer holds, so the messages a member wrote show the name the room now gives them
+        // The room's names follow the row the answer holds, so the messages a member wrote show the name the room now
+        // Gives them
         const user = userStore.userMap.get(userId);
         if (user) storeRoomMembers(roomId, [{ ...user, displayName: row.displayName }]);
         return {
@@ -145,8 +147,8 @@ export const useMemberStore = defineStore("message/user/member", () => {
       { entry: getRenameMemberEntry(roomId, userId, displayName, accountName), onError: createErrorAlert },
     );
   };
-  // The offline cache keeps a room's members as the rows they are shown with, and restores them into the overlay by their
-  // Versions, so the list's keys follow the restored rows. The rows are the ones the overlay shows for the room
+  // The offline cache keeps a room's members as the rows they are shown with, and restores them into the overlay by
+  // Their Versions, so the list's keys follow the restored rows. The rows are the ones the overlay shows for the room
   const getCacheSlice = (roomId: string): CursorPaginationSlice<MemberRowInRoom> => {
     const slice = getSlice(roomId);
     return {

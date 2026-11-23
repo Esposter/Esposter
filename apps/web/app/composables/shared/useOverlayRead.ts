@@ -12,8 +12,8 @@ interface OverlayReadOptions<TReadRow> {
   // Runs after the rows the read returned have arrived
   onSuccess?: (readRows: TReadRow[]) => Promisable<void>;
 }
-// A read whose rows arrive in one table of the overlay. Each row the read returns goes through `toRow`, which stores the
-// Related rows the row carries and returns the row the table holds, so none arrives without them
+// A read whose rows arrive in one table of the overlay. Each row the read returns goes through `toRow`, which stores
+// The Related rows the row carries and returns the row the table holds, so none arrives without them
 export const useOverlayRead = <TRow extends Versioned, TReadRow>(
   table: Table<TRow>,
   toRow: (readRow: TReadRow) => TRow,

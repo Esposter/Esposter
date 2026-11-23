@@ -3,7 +3,8 @@ import type { SurveyInviteNodeProps } from "#shared/models/pageBuilder/SurveyInv
 import type { Except } from "type-fest";
 import type { BlockNode } from "vue-block-editor-headless";
 
-// A survey invite node of an email: the webpage's invite props without an element id, under the email's own type tag, held by the MJML registry as a leaf
+// A survey invite node of an email: the webpage's invite props without an element id, under the email's own type tag,
+// Held by the MJML registry as a leaf
 export type EmailSurveyInviteNode = BlockNode<
   typeof EmailNodeType.SurveyInvite,
   Except<SurveyInviteNodeProps, "elementId">

@@ -12,8 +12,8 @@ defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 </script>
 
-<!-- An attachment's own actions, over its corner. They sit over the picture, so they take the raised default rather than
-     the quiet look, which would not read over it, and a press stops at them rather than opening the viewer -->
+<!-- An attachment's own actions, over its corner. They sit over the picture, so they take the raised default rather
+  than the quiet look, which would not read over it, and a press stops at them rather than opening the viewer -->
 <template>
   <div aria-label="Attachment actions" role="group" flex gap-1>
     <UiIconButton label="Download" :meaning="UiIconMeaning.Download" @click.stop="downloadUrl(url, filename)" />

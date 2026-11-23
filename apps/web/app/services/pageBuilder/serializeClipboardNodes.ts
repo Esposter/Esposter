@@ -36,7 +36,8 @@ export const parseClipboardNodes = <
   kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
   text: string,
 ) => {
-  // oxlint-disable-next-line no-restricted-properties -- a node's text can look like an ISO datetime, which reviving would turn into a Date
+  // A node's text can look
+  // oxlint-disable-next-line no-restricted-properties -- like an ISO datetime, which reviving would turn into a Date
   const clipboardValue = getResult<unknown>(() => JSON.parse(text)).unwrapOr(undefined);
 
   const result = getClipboardNodesSchema(kind).safeParse(clipboardValue);

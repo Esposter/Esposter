@@ -27,7 +27,8 @@ const countdownPropsSchema = z.object({
 }) satisfies z.ZodType<OwnProps<CountdownNodeProps>>;
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. A date-only value is local
-// Midnight, as the input means it, and the date and time forms are read field by field, since Safari rejects the space form
+// Midnight, as the input means it, and the date and time forms are read field by field, since Safari rejects the space
+// Form
 const countdownScript = () => {
   const SECOND = 1000;
   const MINUTE = 60 * SECOND;

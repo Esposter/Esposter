@@ -3,7 +3,8 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { SheetSettings } from "#shared/models/resource/sheet/SheetSettings";
 import type { z } from "zod";
 
-/* oxlint-disable typescript/method-signature-style -- method signatures required for bivariant parameter checking so DataSourceConfiguration<Subtype> is assignable to DataSourceConfiguration<SheetSettings> in the map */
+/* oxlint-disable typescript/method-signature-style -- method signatures required for bivariant parameter checking so
+   DataSourceConfiguration<Subtype> is assignable to DataSourceConfiguration<SheetSettings> in the map */
 export interface DataSourceConfiguration<TSheetSettings extends SheetSettings> {
   accept: string;
   deserialize(file: File, settings: TSheetSettings): Promise<DataSource>;

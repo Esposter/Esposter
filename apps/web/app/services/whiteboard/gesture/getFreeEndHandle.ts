@@ -4,8 +4,9 @@ import { getFreeEndHandleItems } from "#src/services/whiteboard/gesture/getFreeE
 import { getPointDistance } from "#src/services/whiteboard/gesture/getPointDistance";
 import { takeOne } from "@esposter/shared";
 
-// The free end of the one selected arrow a point lands on: the arrow and which of its ends, or undefined when the point lands on none. A bound end
-// Shows no handle, since its point is the connection point its binding names, and a free end's point is the one the handle moves
+// The free end of the one selected arrow a point lands on: the arrow and which of its ends, or undefined when the point
+// Lands on none. A bound end Shows no handle, since its point is the connection point its binding names, and a free
+// End's point is the one the handle moves
 export interface FreeEndHandle {
   arrowId: string;
   endKey: ArrowEndKey;

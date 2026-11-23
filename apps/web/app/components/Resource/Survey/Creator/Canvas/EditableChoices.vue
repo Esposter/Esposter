@@ -20,7 +20,8 @@ const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 const { updateNodeProps } = useSurveyCreatorCommands();
 // A row added by Enter opens for typing as it is drawn, so its value is held until the row mounts
 const addedValue = ref<SurveyChoice["value"]>();
-// Each edit reads the choices the store holds, since a commit can be followed by another write before the props catch up
+// Each edit reads the choices the store holds, since a commit can be followed by another write before the props catch
+// Up
 const readChoices = (): SurveyChoice[] => {
   const node = getBlockNode(surveyDocument.value, pointer, surveyNodeChildren);
   return node && "choices" in node.props ? node.props.choices : [];
@@ -37,8 +38,8 @@ const updateText = (index: number, text: string) => {
   }
   writeChoices(currentChoices.toSpliced(index, 1, { ...choice, text }));
 };
-// A choice a row leaves with no text is removed as it is emptied. A blur that changes nothing reports no edit, so an added
-// Choice left empty would otherwise stay in the document
+// A choice a row leaves with no text is removed as it is emptied. A blur that changes nothing reports no edit, so an
+// Added Choice left empty would otherwise stay in the document
 const onChoiceFocusout = (index: number) => {
   if (checkIsBlankText(readChoices().at(index)?.text)) updateText(index, "");
 };
@@ -58,7 +59,8 @@ const submitChoice = (index: number, text: string) => {
   addedValue.value = value;
   writeChoices([...currentChoices, { text: "", value }]);
 };
-// Alt with the up or down arrow moves the choice one place. The key stops at the choice, so the element does not move with it
+// Alt with the up or down arrow moves the choice one place. The key stops at the choice, so the element does not move
+// With it
 const onChoiceKeydown = (event: KeyboardEvent, index: number) => {
   if (!event.altKey || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) return;
 

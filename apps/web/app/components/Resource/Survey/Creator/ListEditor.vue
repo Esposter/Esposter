@@ -12,7 +12,8 @@ interface Props {
   noun: string;
 }
 
-// A row's controls take its error and its row, and a row's own nested list, if it holds one, is drawn beneath its controls
+// A row's controls take its error and its row, and a row's own nested list, if it holds one, is drawn beneath its
+// Controls
 defineSlots<{
   add: () => VNode;
   below?: (props: { index: number; row: SurveyListRow<TItem> }) => VNode;

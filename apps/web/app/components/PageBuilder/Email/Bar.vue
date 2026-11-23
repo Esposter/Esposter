@@ -73,7 +73,8 @@ const overflowItems: Item[] = [
 </script>
 
 <template>
-  <!-- One row at every width: a narrow window scrolls it sideways, so no control wraps below the bar or hides behind the canvas -->
+  <!-- One row at every width: a narrow window scrolls it sideways, so no control wraps below the bar or hides
+    behind the canvas -->
   <div ui-bar of-x-auto>
     <div px-4 py-2 flex gap-4 min-w-full w-max items-center>
       <DatasetReferencePicker

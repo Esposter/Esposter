@@ -37,8 +37,8 @@ const items = computed<UiSelectItem<string>[]>(() =>
 );
 </script>
 
-<!-- One of a union's variants, chosen in the library's select, over the chosen variant's own fields. Switching keeps what
-     The variants share and anything the schema does not describe, such as a column's id -->
+<!-- One of a union's variants, chosen in the library's select, over the chosen variant's own fields. Switching
+  keeps what The variants share and anything the schema does not describe, such as a column's id -->
 <template>
   <div flex flex-col gap-4>
     <div flex flex-col gap-1>

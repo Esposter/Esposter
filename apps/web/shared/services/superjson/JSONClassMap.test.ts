@@ -29,8 +29,8 @@ describe("jsonClassMap", () => {
     ]);
   });
 
-  // A top-level instance crosses the wire as its own class, holding the fields it was made with. The marker is a field no
-  // Class declares, so a class whose constructor drops the revived fields cannot pass by holding its defaults
+  // A top-level instance crosses the wire as its own class, holding the fields it was made with. The marker is a field
+  // No Class declares, so a class whose constructor drops the revived fields cannot pass by holding its defaults
   test.each(Object.keys(JSONClassMap))("revives a top-level %s with the fields it was made with", (name) => {
     expect.hasAssertions();
 

@@ -26,8 +26,8 @@ const name = ref("");
 const files = ref<File[]>([]);
 const file = computed(() => files.value.at(0));
 const isFull = computed(() => items.value.length >= MAX_ROOM_EMOJIS);
-// The same cap the presigned write url is minted under, so an oversized image is refused here rather than by the upload it
-// Would otherwise spend
+// The same cap the presigned write url is minted under, so an oversized image is refused here rather than by the upload
+// It Would otherwise spend
 const fileValidation = computed(() =>
   file.value ? validateFile(file.value.size, MAX_ROOM_EMOJI_SIZE_BYTES) : undefined,
 );

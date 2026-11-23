@@ -43,7 +43,8 @@ describe("dashboardIndex", () => {
     vi.unstubAllGlobals();
   });
 
-  // The published dashboard exports what it published, so a viewer's file is the snapshot's rows and no live read is made
+  // The published dashboard exports what it published, so a viewer's file is the snapshot's rows and no live read is
+  // Made
   test("a published visual's CSV is the snapshot's rows, with no live read of the source", async () => {
     expect.hasAssertions();
 
@@ -64,8 +65,8 @@ describe("dashboardIndex", () => {
     );
   });
 
-  // A dashboard laid out over the editor's twelve columns takes the two a phone has
-  // The visual spanning the width fills them, and the one at the right edge moves in to the left column, beneath the first
+  // A dashboard laid out over the editor's twelve columns takes the two a phone has The visual spanning the width fills
+  // Them, and the one at the right edge moves in to the left column, beneath the first
   test("opening a dashboard on a phone", async () => {
     expect.hasAssertions();
 
@@ -88,7 +89,8 @@ describe("dashboardIndex", () => {
     ]);
   });
 
-  // A group draws its children as the page does, so a bound child keeps its export and the group, which has no data, offers none
+  // A group draws its children as the page does, so a bound child keeps its export and the group, which has no data,
+  // Offers none
   test("a published group draws its bound child with the child's export", async () => {
     expect.hasAssertions();
 

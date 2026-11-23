@@ -9,10 +9,10 @@ import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
-// The FileAssets round-trip for one file: the file is addressed by the hash of its bytes, uploaded only when the server does
-// Not already hold that object, and the stable asset url is handed back for the editor to embed. Reads resolve through
-// /api/resource-assets, so content never carries a signature. Only a FileAssets type can upload, so the capability is the
-// Parameter type rather than a check that throws once the upload runs
+// The FileAssets round-trip for one file: the file is addressed by the hash of its bytes, uploaded only when the server
+// Does Not already hold that object, and the stable asset url is handed back for the editor to embed. Reads resolve
+// Through /api/resource-assets, so content never carries a signature. Only a FileAssets type can upload, so the
+// Capability is the Parameter type rather than a check that throws once the upload runs
 export const useUploadResourceFile = (type: FileAssetsResourceType, id: MaybeRefOrGetter<string>) => {
   const getResourceRouter = useResourceRouter();
   return async (file: File, hash?: string) => {

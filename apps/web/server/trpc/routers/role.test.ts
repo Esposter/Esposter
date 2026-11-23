@@ -100,7 +100,8 @@ describe("roleRouter", () => {
     expect(deletedRole.deletedAt).not.toBeNull();
   });
 
-  // A deleted role is a tombstone, so a create under its id revives it at a higher version rather than conflicting with it
+  // A deleted role is a tombstone, so a create under its id revives it at a higher version rather than conflicting with
+  // It
   test("revives a deleted role under the id it was created with, at a higher version", async () => {
     expect.hasAssertions();
 
@@ -488,8 +489,8 @@ describe("roleRouter", () => {
     expect(overrides.map(({ deletedAt }) => deletedAt !== null)).toStrictEqual([true]);
   });
 
-  // Each role write's optimistic entry shows every row its answer names, checked against the seeded state: the entry the store
-  // Issues covers the header's rows, so a row it leaves out is a gap the cross-check reports
+  // Each role write's optimistic entry shows every row its answer names, checked against the seeded state: the entry
+  // The store Issues covers the header's rows, so a row it leaves out is a gap the cross-check reports
   test("the role create's entry covers the role row the server names", async () => {
     expect.hasAssertions();
 

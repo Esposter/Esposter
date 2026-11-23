@@ -68,8 +68,8 @@ describe(useVisualStore, () => {
     });
   });
 
-  // The draft was copied when its form opened, so an apply writes the form's own fields and never the place or size the grid
-  // Has moved the visual to since
+  // The draft was copied when its form opened, so an apply writes the form's own fields and never the place or size the
+  // Grid Has moved the visual to since
   test("an applied edit keeps the visual's place and size", async () => {
     expect.hasAssertions();
 
@@ -123,7 +123,8 @@ describe(useVisualStore, () => {
     expect(duplicatedVisual.isAutoHeight).toBe(true);
   });
 
-  // A visual removed while its form was open has nothing to write onto, so the edit is refused and the dashboard is left as it was
+  // A visual removed while its form was open has nothing to write onto, so the edit is refused and the dashboard is
+  // Left as it was
   test("refuses an edit whose visual was removed", async () => {
     expect.hasAssertions();
 
@@ -281,7 +282,8 @@ describe(useVisualStore, () => {
     expect(takeOne(visuals.value).isAutoHeight).toBe(true);
   });
 
-  // A selection the reader makes while a delete's save is in flight is the reader's, and a refused save does not change it
+  // A selection the reader makes while a delete's save is in flight is the reader's, and a refused save does not change
+  // It
   test("keeps a selection made while a refused delete's save is in flight", async () => {
     expect.hasAssertions();
 
@@ -306,8 +308,9 @@ describe(useVisualStore, () => {
     });
   });
 
-  // The delete clears the selection to none, and a reader who presses another visual then the empty canvas during the save
-  // Ends on none again: that none is the reader's, so the refusal does not put the deleted visual back as the selection
+  // The delete clears the selection to none, and a reader who presses another visual then the empty canvas during the
+  // Save Ends on none again: that none is the reader's, so the refusal does not put the deleted visual back as the
+  // Selection
   test("keeps a selection of none that the reader returns to while a refused delete's save is in flight", async () => {
     expect.hasAssertions();
 
@@ -332,8 +335,8 @@ describe(useVisualStore, () => {
     });
   });
 
-  // The delete clears the selection to none, and a press on the empty canvas during the save writes none again. That write
-  // Is the reader's and changes no value, so the refusal still keeps the selection of none
+  // The delete clears the selection to none, and a press on the empty canvas during the save writes none again. That
+  // Write Is the reader's and changes no value, so the refusal still keeps the selection of none
   test("keeps a selection of none that the reader writes again, unchanged, while a refused delete's save is in flight", async () => {
     expect.hasAssertions();
 

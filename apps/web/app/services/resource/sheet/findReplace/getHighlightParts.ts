@@ -1,4 +1,5 @@
-// The text cut at each occurrence of the search, every part flagged as a match or not, so a highlight can wrap the matches
+// The text cut at each occurrence of the search, every part flagged as a match or not, so a highlight can wrap the
+// Matches
 export const getHighlightParts = (text: string, search: string): { isMatch: boolean; text: string }[] => {
   if (!search) return [{ isMatch: false, text }];
   const highlightParts: { isMatch: boolean; text: string }[] = [];

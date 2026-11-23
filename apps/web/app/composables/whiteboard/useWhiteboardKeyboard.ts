@@ -28,10 +28,11 @@ import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardT
 import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 
-// The keys of a whiteboard's canvas, registered as its commands over its edit state and selection.
-// Delete and Backspace do not delete at once. They name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it.
-// The selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas.
-// A tool's key chooses the tool in hand, and a shape's key chooses the shape tool with the shape it names. Each key is the one its item carries
+// The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace
+// Do not delete at once. They name the selection in deletingIds, the target of the confirmation dialog, and
+// `confirmDelete` runs the deletion once the owner answers it. The selection's commands are bound only while there is a
+// Selection, and none is bound while that dialog asks, so its keys never reach the canvas. A tool's key chooses the
+// Tool in hand, and a shape's key chooses the shape tool with the shape it names. Each key is the one its item carries
 export const useWhiteboardKeyboard = (
   editState: Ref<WhiteboardEditState>,
   selectedIds: Ref<string[]>,
@@ -55,8 +56,8 @@ export const useWhiteboardKeyboard = (
   const copySelectionToClipboard = async () => {
     await writeSelectionToClipboard(editState.value.document, selectedIds.value);
   };
-  // A cut deletes only once the clipboard has taken the elements, so a refused write leaves the board as it was, and a board
-  // Switched to during the write is left alone, since the elements were cut from the board it held
+  // A cut deletes only once the clipboard has taken the elements, so a refused write leaves the board as it was, and a
+  // Board Switched to during the write is left alone, since the elements were cut from the board it held
   const cutSelection = async () => {
     const cutIds = selectedIds.value;
     const isStillOpen = captureOpeningCheck();
@@ -71,7 +72,8 @@ export const useWhiteboardKeyboard = (
   const duplicateSelection = () => {
     copySelection(editState, selectedIds);
   };
-  // The clipboard text the canvas's paste event hands over. Text without the marker pastes nothing, so the selection is left as it was
+  // The clipboard text the canvas's paste event hands over. Text without the marker pastes nothing, so the selection is
+  // Left as it was
   const pasteClipboardText = (text: string) => {
     const pasted = pasteWhiteboardElements(editState.value, text);
     if (pasted === undefined) return;
@@ -103,8 +105,8 @@ export const useWhiteboardKeyboard = (
     undo,
     undoTitle: "Undo",
   });
-  // Select all is bound with or without a selection, and the paste is listed with its shortcut but never bound: the canvas's paste
-  // Event takes it, since a bound key would prevent the native paste the image handler also reads
+  // Select all is bound with or without a selection, and the paste is listed with its shortcut but never bound: the
+  // Canvas's paste Event takes it, since a bound key would prevent the native paste the image handler also reads
   const editCommands: UiCommand[] = [
     {
       group: WHITEBOARD_COMMAND_GROUP,

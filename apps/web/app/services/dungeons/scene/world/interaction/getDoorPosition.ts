@@ -10,8 +10,8 @@ import { getObjectUnitPosition } from "#src/services/dungeons/tilemap/getObjectU
 import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
 import { NotFoundError } from "@esposter/shared";
 
-// A door's tile, read from its tilemap's Tiled JSON as the preload cached it rather than the built tilemap, so the player
-// Can be placed on the tilemap in the same write that switches to it, before the tilemap has been built
+// A door's tile, read from its tilemap's Tiled JSON as the preload cached it rather than the built tilemap, so the
+// Player Can be placed on the tilemap in the same write that switches to it, before the tilemap has been built
 export const getDoorPosition = (
   scene: SceneWithPlugins,
   tilemapKey: TilemapKey,

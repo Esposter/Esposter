@@ -41,8 +41,8 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
   };
 });
 
-// The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the stub
-// It stands in for
+// The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the
+// Stub It stands in for
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: (roomId: string) => useRoomObjectMock(roomId) as unknown as ReturnType<typeof useRoomObject>,
 }));
@@ -113,8 +113,8 @@ describe("scheduledMessageJobRouter", () => {
     expect(scheduledMessageJobCount).toBe(2);
   });
 
-  // The person's reminders and scheduled messages are one list, soonest first. Each kind is read from its own keyset, and a
-  // Scheduled message's text is read from its room for the page alone
+  // The person's reminders and scheduled messages are one list, soonest first. Each kind is read from its own keyset,
+  // And a Scheduled message's text is read from its room for the page alone
   test("merges my reminders and scheduled messages soonest first, reading the page's messages from their rooms", async () => {
     expect.hasAssertions();
 
@@ -161,8 +161,8 @@ describe("scheduledMessageJobRouter", () => {
     expect(roomObject.readScheduledMessages).not.toHaveBeenCalled();
   });
 
-  // A reminder in a room the person has left is not listed: its room's name and image are its members' to see, and leaving
-  // Takes the reminder out of the person's object, so this is what a read finds if that removal missed
+  // A reminder in a room the person has left is not listed: its room's name and image are its members' to see, and
+  // Leaving Takes the reminder out of the person's object, so this is what a read finds if that removal missed
   test("does not list a reminder in a room I have left", async () => {
     expect.hasAssertions();
 
@@ -189,7 +189,8 @@ describe("scheduledMessageJobRouter", () => {
     expect(userObject.removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(id);
   });
 
-  // A cancel answers with the row it left as a tombstone, tagged by its kind, so the client confirms its entry at that version
+  // A cancel answers with the row it left as a tombstone, tagged by its kind, so the client confirms its entry at that
+  // Version
   test("cancels a reminder in the person's own object without asking its room, and answers with its tombstone", async () => {
     expect.hasAssertions();
 

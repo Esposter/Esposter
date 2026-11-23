@@ -19,8 +19,8 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   const overlayStore = useOverlayStore();
   const { arrive, view, writeAwaited } = overlayStore;
   const searchHistories = view(searchHistoryTable);
-  // The cursor carries the paging and the loading state of the room's history. The rows are the overlay's, so a search the
-  // Server answered is drawn at once, with no page to place it on
+  // The cursor carries the paging and the loading state of the room's history. The rows are the overlay's, so a search
+  // The Server answered is drawn at once, with no page to place it on
   const cursor = useCursorPaginationDataMap<SearchHistoryKey>(() => roomStore.currentRoomId);
   // The reader's searches in the room they are on, newest first on the id, which is creation order
   const items = computed(() =>
@@ -36,7 +36,8 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
     for (const searchHistory of pageSearchHistories) arrive(searchHistoryTable, searchHistory);
     return { ...page, items: pageSearchHistories.map(({ id }) => ({ id })) };
   };
-  // The server mints the search's id, so the search is drawn once its answer arrives, and the answer confirms nothing else
+  // The server mints the search's id, so the search is drawn once its answer arrives, and the answer confirms nothing
+  // Else
   const createSearchHistory = (input: CreateSearchHistoryInput) =>
     writeAwaited(
       async () => [createArrival(searchHistoryTable, await $trpc.searchHistory.createSearchHistory.mutate(input))],

@@ -1,4 +1,5 @@
-// The selection kinds the survey's layout names. Nothing selected is the empty kind, which the layout context carries as "", and
-// Every selected node is one kind, since a node's own settings are drawn by its kind's schema inside the Properties tab
+// The selection kinds the survey's layout names. Nothing selected is the empty kind, which the layout context carries
+// As "", and Every selected node is one kind, since a node's own settings are drawn by its kind's schema inside the
+// Properties tab
 export const SurveyEditorSelectionKind = { Node: "node" } as const;
 export type SurveyEditorSelectionKind = (typeof SurveyEditorSelectionKind)[keyof typeof SurveyEditorSelectionKind];

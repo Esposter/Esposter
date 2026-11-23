@@ -13,16 +13,17 @@ import { v7 } from "uuid";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
 
-// The node a drag moves: its pointer, and the slot and index it sits at, which its own slot loses from the boxes a drop reads
+// The node a drag moves: its pointer, and the slot and index it sits at, which its own slot loses from the boxes a drop
+// Reads
 interface DragSource {
   index: number;
   nodePointer: string;
   slotPointer: string;
 }
-// The drag a palette kind or a canvas node starts, shared by every pane through the store, so the canvas draws what the palette
-// Starts. A press is a click until it moves the drag distance, or, for a finger, until it rests the touch delay; a finger that
-// Moves first is scrolling, so its press ends there. A release over a slot lands the drag as one command, and a release over
-// No slot, Escape or a cancel changes nothing
+// The drag a palette kind or a canvas node starts, shared by every pane through the store, so the canvas draws what the
+// Palette Starts. A press is a click until it moves the drag distance, or, for a finger, until it rests the touch
+// Delay; a finger that Moves first is scrolling, so its press ends there. A release over a slot lands the drag as one
+// Command, and a release over No slot, Escape or a cancel changes nothing
 export const useSurveyCreatorDrag = () => {
   const surveyCreatorDragStore = useSurveyCreatorDragStore();
   const { draggedNodeId, draggedType, dragPoint, dropTarget } = storeToRefs(surveyCreatorDragStore);
@@ -31,9 +32,9 @@ export const useSurveyCreatorDrag = () => {
   const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
   const { insertNodeAt, moveNodeTo } = useSurveyCreatorCommands();
   const { startPress } = usePressDrag();
-  // The slots a drag lands in, read off the canvas as the drag starts, so the preview it draws moves no box a move reads. A node
-  // Cannot land inside itself, and its own slot loses the node's box, so the index a drop resolves is the one the core takes once
-  // The node is removed
+  // The slots a drag lands in, read off the canvas as the drag starts, so the preview it draws moves no box a move
+  // Reads. A node Cannot land inside itself, and its own slot loses the node's box, so the index a drop resolves is the
+  // One the core takes once The node is removed
   const getDropSlots = (source?: DragSource): SurveyDropSlot[] => {
     const slots = measureSlots();
     if (source === undefined) return slots;
@@ -101,7 +102,8 @@ export const useSurveyCreatorDrag = () => {
       source,
     });
   };
-  // The element a palette drag would insert, drawn in the place it would land while the drag is over a slot. A node drag draws none
+  // The element a palette drag would insert, drawn in the place it would land while the drag is over a slot. A node
+  // Drag draws none
   const previewNode = computed<SurveyPlaceableNode | undefined>(() => {
     // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a node id the editor holds, never typed
     if (draggedType.value === undefined || draggedNodeId.value !== "") return undefined;

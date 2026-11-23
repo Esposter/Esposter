@@ -45,7 +45,8 @@ describe(useResourceWrite, () => {
     expect(refresh.announce).toHaveBeenCalledExactlyOnceWith();
   });
 
-  // The notice a write shows as it is sent is withdrawn when the write is refused, leaving the error it raised in its place
+  // The notice a write shows as it is sent is withdrawn when the write is refused, leaving the error it raised in its
+  // Place
   test("withdraws the notice a refused write showed", async () => {
     expect.hasAssertions();
 

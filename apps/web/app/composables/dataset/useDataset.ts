@@ -3,9 +3,9 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 
 import { getDatasetErrorMessage } from "#src/services/dataset/getDatasetErrorMessage";
 
-// A read of a reference goes through executeQuery, so the topics its answer names are watched and a publish reads it again.
-// A reference read after one aborts the read in flight on the run scope, and only the newest read's answer is shown, so one
-// Instance shows one dataset
+// A read of a reference goes through executeQuery, so the topics its answer names are watched and a publish reads it
+// Again. A reference read after one aborts the read in flight on the run scope, and only the newest read's answer is
+// Shown, so one Instance shows one dataset
 export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefined>) => {
   const { $trpc } = useNuxtApp();
   const { executeQuery, isPending } = useMutation();

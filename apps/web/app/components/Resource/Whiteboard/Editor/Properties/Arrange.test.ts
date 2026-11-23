@@ -50,7 +50,8 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
     selectedIds.value = [FIRST_ID, SECOND_ID];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesArrange);
 
-    // The two shapes differ in x alone, so the left, centre and right edges would move one and the top, middle and bottom edges already line up
+    // The two shapes differ in x alone, so the left, centre and right edges would move one and the top, middle and
+    // Bottom edges already line up
     for (const label of ALIGN_LABELS.slice(0, 3))
       expect(wrapper.get(`button[aria-label="${label}"]`).attributes("disabled")).toBeUndefined();
     for (const label of ALIGN_LABELS.slice(3))

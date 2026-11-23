@@ -3,10 +3,9 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 // The open room's topic is watched, since a person's name or image is published on the topic of each room they are in.
-// Each publish re-reads the users that room shows, so a rename reaches the names on screen.
-// The refresh is a read of the room's users, so the watch its answer names is the one a read makes, from the time the read began.
-// Opening a room re-reads the users it still holds too.
-// A room that closes releases its watch by reading nothing under its key
+// Each publish re-reads the users that room shows, so a rename reaches the names on screen. The refresh is a read of
+// The room's users, so the watch its answer names is the one a read makes, from the time the read began. Opening a room
+// `re-reads` the users it still holds too. A room that closes releases its watch by reading nothing under its key
 export const useRoomUserSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);

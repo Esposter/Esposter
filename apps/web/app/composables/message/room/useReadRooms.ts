@@ -35,9 +35,9 @@ export const useReadRooms = async () => {
     markMyUserToRoomsLoaded();
     return { ...page, items: page.items.map(({ id }) => ({ id })) };
   };
-  // The page names only the rooms that are live, so a room the list shows that the page leaves out may have been removed
-  // While the reader was offline. Absence never removes a row, so each one's membership is read, and its answer is the
-  // Removal's tombstone, which takes the room off the list
+  // The page names only the rooms that are live, so a room the list shows that the page leaves out may have been
+  // Removed While the reader was offline. Absence never removes a row, so each one's membership is read, and its answer
+  // Is the Removal's tombstone, which takes the room off the list
   const readUnlistedMemberships = (listedRoomIds: RoomInMessage["id"][]) => {
     const listedRoomIdSet = new Set(listedRoomIds);
     const unlistedRoomIds = rooms.value.map(({ id }) => id).filter((roomId) => !listedRoomIdSet.has(roomId));

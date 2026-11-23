@@ -21,8 +21,9 @@ import { Operation } from "@esposter/shared";
 
 export const emailRouter = router({
   ...createResourceProcedures(ResourceType.Email, { transformPublishedContent: transformPublishedEmail }),
-  // Preview's compile: the open document as the server compiles it, or the validator's message when its markup is refused.
-  // A mutation, so the document rides the request body: as a query it rode the URL, which a long email outgrows
+  // Preview's compile: the open document as the server compiles it, or the validator's message when its markup is
+  // Refused. A mutation, so the document rides the request body: as a query it rode the URL, which a long email
+  // Outgrows
   compile: standardAuthedProcedure
     .input(emailDocumentSchema)
     .meta({

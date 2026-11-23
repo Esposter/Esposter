@@ -8,7 +8,8 @@ describe(getSnapshotAssetHashes, () => {
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const assetUrl = getResourceAssetUrl(`${resourceId}/files/${assetHash}`);
 
-  // A whiteboard image stores the hash of its file as the bare id of the element, with no url for a scan of urls to read
+  // A whiteboard image stores the hash of its file as the bare id of the element, with no url for a scan of urls to
+  // Read
   test("finds the file an element names by its bare id", () => {
     expect.hasAssertions();
 

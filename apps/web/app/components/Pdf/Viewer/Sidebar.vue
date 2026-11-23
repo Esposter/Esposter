@@ -37,8 +37,8 @@ const items: UiTabItem<PdfSidebarTab>[] = [
 </script>
 
 <template>
-  <!-- A column beside the pages from md, and an overlay over them below it, so the pages keep the whole width on a phone.
-    The z-index lifts the overlay above the pages it covers, since the sidebar comes first in the tab order -->
+  <!-- A column beside the pages from md, and an overlay over them below it, so the pages keep the whole width on a
+    phone. The z-index lifts the overlay above the pages it covers, since the sidebar comes first in the tab order -->
   <div
     w="[min(18rem,85%)]"
     p-2

@@ -21,8 +21,8 @@ import { Operation } from "@esposter/shared";
 // Deleted here: the file's hash is handed to the release path, which deletes it only once no stored version names it
 export const createFileAssetsProcedures = (type: ResourceType) =>
   ({
-    // Deleting a file publishes the resource's topics, as does the save that writes an uploaded file's address, so an open
-    // Listing of the files reads the set again
+    // Deleting a file publishes the resource's topics, as does the save that writes an uploaded file's address, so an
+    // Open Listing of the files reads the set again
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation<void>(
       async ({ ctx, input: { blobPath, id } }) => {
         // The path is the file's hash (ASSET_HASH_REGEX), so the release sees exactly the address that was removed

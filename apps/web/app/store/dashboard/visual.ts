@@ -44,7 +44,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     }
     return parent.visuals;
   };
-  // A new visual of a type takes the first cell its span fits in on the dashboard, so an added visual never moves the ones there are
+  // A new visual of a type takes the first cell its span fits in on the dashboard, so an added visual never moves the
+  // Ones there are
   const createVisual = (type: VisualType = VisualType.Area) => {
     const span = new Visual({ type });
     visuals.value.push(createNewVisual(type, getFirstFreeCell(visuals.value, DASHBOARD_NO_COLUMNS, span)));
@@ -54,7 +55,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const targetVisuals = getNewVisualList(type, parentId);
     if (targetVisuals) targetVisuals.push(createNewVisual(type, cell));
   };
-  // The visual the reader selected last, "" for nothing. Opening a visual selects it, and a press on the canvas clears it
+  // The visual the reader selected last, "" for nothing. Opening a visual selects it, and a press on the canvas clears
+  // It
   const selectedVisualId = customRef<Visual["id"]>((track, trigger) => {
     let value: Visual["id"] = "";
     return {
@@ -68,8 +70,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       },
     };
   });
-  // The form's draft of the selected visual. Every open of a form goes through the primitive's editItem, a press, a menu's
-  // Edit and a link's restore alike, so each one selects the visual it opens
+  // The form's draft of the selected visual. Every open of a form goes through the primitive's editItem, a press, a
+  // Menu's Edit and a link's restore alike, so each one selects the visual it opens
   const { editedItem, editItem, resetItem } = createEditFormData(
     computed(() => listVisuals(visuals.value)),
     ["id"],
@@ -77,7 +79,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       selectedVisualId.value = ids.id;
     },
   );
-  // Clearing the selection closes the form it opened and the query that restores it, so a reload does not reopen the form
+  // Clearing the selection closes the form it opened and the query that restores it, so a reload does not reopen the
+  // Form
   const clearSelection = () => {
     selectedVisualId.value = "";
     getSynchronizedFunction(resetItem)();
@@ -87,9 +90,10 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const target = findVisual(visuals.value, visual);
     if (target) Object.assign(target, visual);
   };
-  // The form's draft written onto its visual as the form changes: the type, chart and dataset the form edits, and nothing
-  // Else. The place and size, fit height and a group's visuals are the grid's and the menu's, so a draft copied before one
-  // Of them moved never puts it back. The dashboard's autosave persists what is written, so this is not a save of its own
+  // The form's draft written onto its visual as the form changes: the type, chart and dataset the form edits, and
+  // Nothing Else. The place and size, fit height and a group's visuals are the grid's and the menu's, so a draft copied
+  // Before one Of them moved never puts it back. The dashboard's autosave persists what is written, so this is not a
+  // Save of its own
   const applyEdit = (editedVisual: Visual) => {
     const targetVisual = findVisual(visuals.value, editedVisual);
     // A visual removed while its form was open has nothing to write onto, so the edit is refused and nothing changes
@@ -151,9 +155,9 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     getVisualList(dashboard, location.group).push(duplicatedVisual);
     saveDashboard();
   };
-  // Moves a visual, with every visual it holds, into another group's list, or into the dashboard's own list when there is
-  // No target group. It lands at the cell given, or at the first free cell of the list it moves into when none is given.
-  // A move the move rule refuses changes nothing. Within one list the grid commits the move, not this
+  // Moves a visual, with every visual it holds, into another group's list, or into the dashboard's own list when there
+  // Is No target group. It lands at the cell given, or at the first free cell of the list it moves into when none is
+  // Given. A move the move rule refuses changes nothing. Within one list the grid commits the move, not this
   const moveVisual = (ids: { id: Visual["id"] }, targetGroupId: undefined | Visual["id"], cell?: GridCell) => {
     const dashboard = dashboardStore.dashboard;
     const location = findVisualLocation(dashboard.visuals, ids.id);

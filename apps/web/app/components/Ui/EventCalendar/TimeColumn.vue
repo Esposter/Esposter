@@ -95,7 +95,8 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
         }
       "
     >
-      <!-- An empty slot is named by its day and time, which only the slot holding the tab stop is ever focused to read -->
+      <!-- An empty slot is named by its day and time, which only the slot holding the tab stop is ever focused to
+        read -->
       <NuxtTime
         v-if="focusedIndex === index"
         :datetime="day.toPlainDateTime(slotStart).toZonedDateTime('UTC').epochMilliseconds"

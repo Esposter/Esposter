@@ -6,8 +6,8 @@ import { PAGE_TEXT_COLOR } from "#shared/services/pageBuilder/critique/constants
 import { ALL_ATTRIBUTES_KEY, MjmlNodeType } from "mjml-blocks";
 import { getBlockPropValue } from "vue-block-editor-headless";
 
-// The colour a text is drawn in: its own, read through the caller's reader, else black, the colour its component defaults to. A
-// Colour a head default sets is unchecked, since the check cannot attribute that colour to this text
+// The colour a text is drawn in: its own, read through the caller's reader, else black, the colour its component
+// Defaults to. A Colour a head default sets is unchecked, since the check cannot attribute that colour to this text
 export const getEmailTextColor = (
   node: MjmlTextNode,
   attributes: MjmlRootProps["attributes"],

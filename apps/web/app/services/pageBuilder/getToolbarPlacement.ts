@@ -3,8 +3,9 @@ import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
 // The height a toolbar takes in the app's viewport, so that above its node it clears the node's top edge
 export const TOOLBAR_HEIGHT = 40;
-// Where the selection's toolbar sits in the app's viewport. Above the node when the frame has room for it, below the node when
-// It does not, and nowhere once the node has scrolled out of the frame, so the toolbar never floats over content it is not for
+// Where the selection's toolbar sits in the app's viewport. Above the node when the frame has room for it, below the
+// Node when It does not, and nowhere once the node has scrolled out of the frame, so the toolbar never floats over
+// Content it is not for
 export const getToolbarPlacement = (box: OverlayBox, frame: FramePlacement) => {
   const top = frame.top + box.top * frame.scale;
   const bottom = top + box.height * frame.scale;

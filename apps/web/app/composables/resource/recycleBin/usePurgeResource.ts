@@ -6,8 +6,8 @@ import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 
-// A purge is an awaited write. The bin's page is a plain read rather than an overlay list, so the row stays on it until the
-// Purge is answered, and the re-read that follows takes the row away and reads the count the bin shows again
+// A purge is an awaited write. The bin's page is a plain read rather than an overlay list, so the row stays on it until
+// The Purge is answered, and the re-read that follows takes the row away and reads the count the bin shows again
 export const usePurgeResource = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const notificationStore = useNotificationStore();

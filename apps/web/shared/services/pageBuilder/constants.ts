@@ -24,7 +24,8 @@ export const MAX_STYLE_VALUE_LENGTH = 200;
 // The most characters a node's id may hold, and each of its text props: a label, a text, alt text or a title
 export const MAX_NODE_ID_LENGTH = 64;
 export const MAX_NODE_TEXT_LENGTH = 2000;
-// The characters a node's id may hold, the ones a CSS class name takes, so an id cannot close the <style> element its class sits in
+// The characters a node's id may hold, the ones a CSS class name takes, so an id cannot close the <style> element its
+// Class sits in
 export const NODE_ID_REGEX = /^[\w-]+$/u;
 // The most characters a custom HTML block's markup and a webpage's language tag may hold
 export const MAX_NODE_HTML_LENGTH = 100_000;
@@ -38,7 +39,8 @@ export const COLOR_TOKEN_PREFIX = "color-";
 export const FONT_TOKEN_PREFIX = "font-";
 // The most texts a typed text node cycles through
 export const MAX_TYPED_TEXT_COUNT = 50;
-// The CSS properties the style panel offers, in the panel's sector order: layout, spacing, size, position, typography, background, border and effects
+// The CSS properties the style panel offers, in the panel's sector order: layout, spacing, size, position, typography,
+// Background, border and effects
 export const STYLE_PROPERTY_NAMES = [
   "display",
   "flex-direction",
@@ -97,7 +99,8 @@ export const TABLET_BREAKPOINT_WIDTH = 991;
 export const MOBILE_BREAKPOINT_WIDTH = 478;
 // The narrowest desktop canvas, one pixel above the tablet breakpoint so the canvas's media queries always read desktop
 export const DESKTOP_MIN_WIDTH = TABLET_BREAKPOINT_WIDTH + 1;
-// The breakpoints from the widest to the narrowest, the order their rules are written in, so a narrower override comes after a wider one
+// The breakpoints from the widest to the narrowest, the order their rules are written in, so a narrower override comes
+// After a wider one
 export const STYLE_BREAKPOINT_ORDER = [StyleBreakpoint.Base, StyleBreakpoint.Tablet, StyleBreakpoint.Mobile] as const;
 // The pixel width each device other than desktop draws the page at, inside its own breakpoint
 export const DEVICE_WIDTH_MAP: Readonly<Record<Exclude<PageBuilderDevice, typeof PageBuilderDevice.Desktop>, number>> =
@@ -105,8 +108,8 @@ export const DEVICE_WIDTH_MAP: Readonly<Record<Exclude<PageBuilderDevice, typeof
 
 // A UUID that names no survey, the one value a survey invite's id takes until its author chooses a survey
 export const NO_SURVEY_ID = ZERO_UUID;
-// The picture an inserted image or video shows until its author chooses a file. It is the app's own file, so a page that is
-// Only opened in the editor requests no third-party origin
+// The picture an inserted image or video shows until its author chooses a file. It is the app's own file, so a page
+// That is Only opened in the editor requests no third-party origin
 export const PLACEHOLDER_MEDIA_URL = "/page-builder/placeholder.svg";
 // The video types a webpage video takes, which its upload and its picker both accept
 export const WEBPAGE_VIDEO_MIME_TYPES: string[] = [MimeType.VideoMp4, MimeType.VideoWebm];

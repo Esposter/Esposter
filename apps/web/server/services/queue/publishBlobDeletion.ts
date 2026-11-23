@@ -32,7 +32,8 @@ export const publishBlobDeletion = (
         storageBucket,
         ...(decidedAt && { decidedAt }),
       };
-      // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed chunk stops the ones behind it, and every chunk before it stays durable for a redelivery
+      // Every chunk before it stays durable for a redelivery
+      // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed chunk stops the ones behind it, and
       await getJobQueue(QueueJob.ProcessBlobDeletion).send(blobDeletionQueueMessage);
     }
   });

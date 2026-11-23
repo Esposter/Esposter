@@ -9,8 +9,8 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const overlayStore = useOverlayStore();
   const { arrive, view } = overlayStore;
   const heldParticipants = view(participantTable);
-  // Every participant the overlay holds that has not left, by the call each is in. The map is computed, so a row arriving or
-  // A write's entry shows in it at once, and a tombstone is hidden from it
+  // Every participant the overlay holds that has not left, by the call each is in. The map is computed, so a row
+  // Arriving or A write's entry shows in it at once, and a tombstone is hidden from it
   const callSessionParticipantsMap = computed(() => {
     const sessionParticipantsMap = new Map<string, Map<string, CallParticipant>>();
     for (const participant of heldParticipants.value)
@@ -32,14 +32,15 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     if (participant.deletedAt && joinNoticeParticipant.value?.id === participant.id)
       joinNoticeParticipant.value = undefined;
   };
-  // A join is the one event that announces a participant, so only it raises the notice, and only for a row the call did not
-  // Already hold
+  // A join is the one event that announces a participant, so only it raises the notice, and only for a row the call did
+  // Not Already hold
   const storeJoinedCallParticipant = (callSessionId: string, participant: CallParticipantRow) => {
     const isNewToCall = !callSessionParticipantsMap.value.get(callSessionId)?.has(participant.id);
     storeCallParticipant(callSessionId, participant);
     if (isNewToCall && participant.id !== participantId.value) joinNoticeParticipant.value = participant;
   };
-  // The read is handed in, as a thread's is. Its rows arrive at their versions, so the read cannot overwrite a newer row
+  // The read is handed in, as a thread's is. Its rows arrive at their versions, so the read cannot overwrite a newer
+  // Row
   const readCallParticipants = (callSessionId: string, read: () => Promise<Map<string, CallParticipantRow>>) =>
     readParticipants(async () =>
       Array.from((await read()).values(), (participant) => ({ ...participant, callSessionId })),

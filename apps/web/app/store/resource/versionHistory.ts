@@ -23,7 +23,8 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const { reloadResourceContent } = resourceStore;
   const overlayStore = useOverlayStore();
   const { writeAwaited } = overlayStore;
-  // The timeline is one read of the open resource, so a read for another resource, or a newer read of this one, aborts it
+  // The timeline is one read of the open resource, so a read for another resource, or a newer read of this one, aborts
+  // It
   const { executeQuery } = useMutation();
   const runScope = useRunScope();
   const key = Symbol("readSnapshotHistory");
@@ -122,7 +123,8 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
     if (!resource) return false;
 
     let isSaved = false;
-    // The revision's answer is a version number, which no row holds, so the write arrives nothing and the history is re-read
+    // The revision's answer is a version number, which no row holds, so the write arrives nothing and the history is
+    // `re-read`
     await writeAwaited(
       async () => {
         await $trpc.resource.saveResourceRevision.mutate({ id: resource.id });

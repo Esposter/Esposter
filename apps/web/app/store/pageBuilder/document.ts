@@ -6,7 +6,8 @@ import type { WebpageKind } from "#src/models/pageBuilder/WebpageKind";
 import { ResourceType } from "@esposter/db-schema";
 
 export type OpenPageBuilderDocument = OpenEmailDocument | OpenWebpageDocument;
-// An email held beside its kind, the same as a webpage, so a resource's document and its kind are always opened together
+// An email held beside its kind, the same as a webpage, so a resource's document and its kind are always opened
+// Together
 interface OpenEmailDocument {
   document: EmailDocument;
   kind: EmailKind;
@@ -44,8 +45,8 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
   const setEmailDocument = (resourceId: string, kind: EmailKind, document: EmailDocument) => {
     documentMap.value.set(resourceId, { document, kind: markRaw(kind), type: ResourceType.Email });
   };
-  // The merge fields an email offers, which are the columns of the dataset it is bound to. Its blade holds them under its
-  // Resource while mounted and clears them on unmount, so an email with no dataset bound offers none
+  // The merge fields an email offers, which are the columns of the dataset it is bound to. Its blade holds them under
+  // Its Resource while mounted and clears them on unmount, so an email with no dataset bound offers none
   const mergeFieldColumnsMap = ref(new Map<string, string[]>());
   const getMergeFieldColumnsRef = (resourceId: MaybeRefOrGetter<string>) =>
     computed({

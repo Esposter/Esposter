@@ -86,8 +86,8 @@ describe("uiDialog", () => {
       expect(component.find('[aria-label="Full screen"]').exists()).toBe(false);
     });
 
-    // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so the
-    // Class is what is checked
+    // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so
+    // The Class is what is checked
     test.each(Object.values(UiDialogSize))("each named size draws its own width class: %s", async (size) => {
       expect.hasAssertions();
 
@@ -168,8 +168,8 @@ describe("uiDialog", () => {
       expect(dialog.open).toBe(true);
     });
 
-    // A tall frame stands at its placement's height rather than only being capped by it, so a two-pane body has a height
-    // To divide and each pane scrolls on its own
+    // A tall frame stands at its placement's height rather than only being capped by it, so a two-pane body has a
+    // Height To divide and each pane scrolls on its own
     test.each([UiDialogPlacement.High, UiDialogPlacement.Middle])(
       "a tall dialog stands at a definite height: %s",
       async (placement) => {
@@ -247,7 +247,8 @@ describe("uiDialog", () => {
       expect(component.get("[ui-region-body]").classes()).toStrictEqual([]);
     });
 
-    // The footer is drawn after the body rather than inside it, so a long body scrolls above the actions and not over them
+    // The footer is drawn after the body rather than inside it, so a long body scrolls above the actions and not over
+    // Them
     test("the footer stays in view", async () => {
       expect.hasAssertions();
 

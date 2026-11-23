@@ -204,7 +204,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
         onError: console.error,
         onSuccess: async (overrides) => {
           // An override names no one, so the rows of the users it holds are read alongside it. Its failure is logged
-          // Rather than thrown, since a refresh that throws has no caller to catch it. A tombstone names no user to read
+          // Rather than thrown, since a refresh that throws has no caller to catch it. A tombstone names no user to
+          // Read
           const overriddenUserIds = overrides.filter(({ deletedAt }) => !deletedAt).map(({ userId }) => userId);
           if (overriddenUserIds.length === 0) return;
 
@@ -217,8 +218,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
       }),
     );
   };
-  // The role is drawn under the id the client gives it, at a placeholder with no version. The server's row arrives in its
-  // Answer, and the header confirms the placeholder at the version it names. The role is selected at once
+  // The role is drawn under the id the client gives it, at a placeholder with no version. The server's row arrives in
+  // Its Answer, and the header confirms the placeholder at the version it names. The role is selected at once
   const createRole = (input: Except<CreateRoleInput, "id">) => {
     const now = new Date();
     const roomRole: RoomRoleInMessage = {

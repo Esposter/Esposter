@@ -1,8 +1,9 @@
 import type { GesturePhase } from "#src/models/whiteboard/GesturePhase";
 import type { ArrowEnd, Point } from "vue-block-editor-headless";
 
-// An arrow drawn by a press and a drag: its id is fixed at the press, and its start is the end the press took, bound to the connection point
-// Of the shape it landed on or free where it landed. The press's screen point is what the drag start distance is measured from
+// An arrow drawn by a press and a drag: its id is fixed at the press, and its start is the end the press took, bound to
+// The connection point Of the shape it landed on or free where it landed. The press's screen point is what the drag
+// Start distance is measured from
 export interface GestureArrow {
   elementId: string;
   phase: typeof GesturePhase.Arrow;

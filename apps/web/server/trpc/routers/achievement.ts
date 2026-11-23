@@ -31,8 +31,8 @@ export const achievementRouter = router({
         with: UserAchievementInAchievementRelations,
       });
       // The map ships the fields a client takes, named one by one: the trigger's zod schema and the predicates are
-      // Server-only, and the schema's cycles cannot be sent as JSON. A field a definition gains is withheld until it is named
-      // Here, so it cannot reach the client by omission
+      // Server-only, and the schema's cycles cannot be sent as JSON. A field a definition gains is withheld until it is
+      // Named Here, so it cannot reach the client by omission
       return Object.fromEntries(
         Object.entries(AchievementDefinitionMap).map(([achievementName, definition]) => [
           achievementName,

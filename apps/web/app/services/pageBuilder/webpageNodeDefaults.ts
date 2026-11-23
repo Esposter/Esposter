@@ -7,8 +7,8 @@ import { PLACEHOLDER_MEDIA_URL } from "#shared/services/pageBuilder/constants";
 import { createSurveyInviteProps } from "#shared/services/pageBuilder/createSurveyInviteProps";
 
 const PLACEHOLDER_URL = "https://example.com/";
-// The node a freshly inserted node of each type is, under the id the caller mints for it: each the smallest props its schema accepts,
-// And each keyed by its type so the node it builds is the type it is keyed by
+// The node a freshly inserted node of each type is, under the id the caller mints for it: each the smallest props its
+// Schema accepts, And each keyed by its type so the node it builds is the type it is keyed by
 const webpageNodeDefaultsMap: { [K in WebpageNodeType]: (id: string) => Extract<WebpageNode, { type: K }> } = {
   [WebpageNodeType.Button]: (id) => ({
     props: { elementId: "", href: PLACEHOLDER_URL, id, label: "Button", target: ButtonTarget.SameTab },

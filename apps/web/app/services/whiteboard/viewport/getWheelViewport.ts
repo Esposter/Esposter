@@ -4,8 +4,9 @@ import type { Viewport } from "#src/models/whiteboard/Viewport";
 import { WHITEBOARD_WHEEL_ZOOM_RATE } from "#src/services/whiteboard/viewport/constants";
 import { getZoomedViewport } from "#src/services/whiteboard/viewport/getZoomedViewport";
 
-// The viewport a wheel turn leaves. A plain wheel pans it by the turn, in screen pixels at the viewport's scale. A wheel with Ctrl or Cmd
-// Held, which a trackpad pinch also is, zooms about the pointer by a factor that grows with the turn
+// The viewport a wheel turn leaves. A plain wheel pans it by the turn, in screen pixels at the viewport's scale. A
+// Wheel with Ctrl or Cmd Held, which a trackpad pinch also is, zooms about the pointer by a factor that grows with the
+// Turn
 export const getWheelViewport = (viewport: Viewport, event: GestureWheelEvent): Viewport => {
   if (!event.isZoomKey)
     return {

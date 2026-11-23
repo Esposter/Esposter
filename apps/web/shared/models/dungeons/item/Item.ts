@@ -14,7 +14,9 @@ export interface Item extends Description {
   quantity: number;
 }
 
-// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- ItemEffectType (ItemEffectType.ts:3) and ItemId (generated/tiled/propertyTypes/enum/ItemId.ts:1) are the same declarations on both sides (ItemEffect.ts:1); the rule flags a nested zod shape even on an exact enum match
+// ItemEffectType (ItemEffectType.ts:3) and ItemId (generated/tiled/propertyTypes/enum/ItemId.ts:1) are the same
+// Declarations on both sides (ItemEffect.ts:1); the rule
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- flags a nested zod shape even on an exact enum match
 export const itemSchema = z.object({
   ...descriptionSchema.shape,
   // An item without a description is a blank tooltip, so this one tightens the shared optional-text field

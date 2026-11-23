@@ -5,8 +5,8 @@ import { MIN_TEXT_CONTRAST_RATIO } from "#shared/services/pageBuilder/critique/c
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// What a finding says, and the meaning its row is marked with: a failed check is a warning, and a check that could not run
-// Is information, since it is never a pass
+// What a finding says, and the meaning its row is marked with: a failed check is a warning, and a check that could not
+// Run Is information, since it is never a pass
 export const getCritiqueFindingSummary = (
   finding: CritiqueFinding,
 ): { description: string; meaning: UiIconMeaning } => {

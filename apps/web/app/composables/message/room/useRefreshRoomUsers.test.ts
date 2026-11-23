@@ -16,8 +16,9 @@ describe(useRefreshRoomUsers, () => {
   const emptyRoomId = v7();
   const user = createUser({ name: "accountName" });
 
-  // A room with no member and no loaded author still reads once, with no ids. That read is what the room's topic watch is
-  // Taken from, so a member who joins later is watched from the start rather than only once the room has someone to read
+  // A room with no member and no loaded author still reads once, with no ids. That read is what the room's topic watch
+  // Is Taken from, so a member who joins later is watched from the start rather than only once the room has someone to
+  // Read
   test("reads an empty room once with no ids, so its topic watch is taken before anyone is in it", async () => {
     expect.hasAssertions();
 

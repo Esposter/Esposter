@@ -157,7 +157,8 @@ describe(useWhiteboardTextEdit, () => {
   test("committing does not move the text", () => {
     expect.hasAssertions();
 
-    // A right-aligned box is anchored at its right edge, so a box that grew on commit would move a text drawn from its old edge
+    // A right-aligned box is anchored at its right edge, so a box that grew on commit would move a text drawn from its
+    // Old edge
     const textBox: TextElement = {
       color: "",
       horizontalAlignment: HorizontalAlignment.Right,

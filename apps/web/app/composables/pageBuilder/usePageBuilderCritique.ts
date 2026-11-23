@@ -9,9 +9,9 @@ import { readBrowserColor } from "#src/services/shared/readBrowserColor";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { MAX_READ_LIMIT, parseJsonPointer } from "@esposter/shared";
 
-// The critique of the open webpage, unsaved edits included, as the findings the problems surface lists. A survey is published
-// When the owner's published surveys list it. Until that list is read, or when it is cut short before the survey, the invite is
-// Unchecked rather than reported as unpublished
+// The critique of the open webpage, unsaved edits included, as the findings the problems surface lists. A survey is
+// Published When the owner's published surveys list it. Until that list is read, or when it is cut short before the
+// Survey, the invite is Unchecked rather than reported as unpublished
 export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -35,8 +35,8 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
     else return surveys.nextCursor ? SurveyPublishState.Unreadable : SurveyPublishState.Unpublished;
   };
   const critiqueSources = { lookupSurveyPublishState, readColor: readBrowserColor };
-  // The critique as the problems surface's findings, computed once the document settles as every editor's check is. Each
-  // Is a warning, and the save never reads them, so a finding informs and nothing waits on it
+  // The critique as the problems surface's findings, computed once the document settles as every editor's check is.
+  // Each Is a warning, and the save never reads them, so a finding informs and nothing waits on it
   const findings = useEditorFindings(
     () => getDocument(toValue(resourceId)),
     (document) => {

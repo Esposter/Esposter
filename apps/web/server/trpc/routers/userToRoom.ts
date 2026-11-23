@@ -25,8 +25,9 @@ export const userToRoomRouter = router({
     if (updatedUserToRoom)
       await callUserObjects([updatedUserToRoom.userId], (userObject) => userObject.updateUserToRoom(updatedUserToRoom));
   }),
-  // The caller's membership rows are the state of their room list. A row a removal tombstoned is answered too, so a reader
-  // Offline across the removal drops the room by it. The rows are the caller's own alone, so there is no membership to assert
+  // The caller's membership rows are the state of their room list. A row a removal tombstoned is answered too, so a
+  // Reader Offline across the removal drops the room by it. The rows are the caller's own alone, so there is no
+  // Membership to assert
   readMyUsersToRooms: standardAuthedProcedure
     .input(readMyUsersToRoomsInputSchema)
     .query<UserToRoomInMessage[]>(({ ctx, input }) =>

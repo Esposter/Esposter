@@ -136,8 +136,8 @@ export const saveResourceContent = async (
   // No links is the set that can never be wrong — it authorizes nothing — so a clear is safe to apply anywhere
   const clearResourceLinks = (where?: ReturnType<typeof isCurrentContentVersion>) =>
     ctx.db.delete(resourceLinksInResource).where(and(eq(resourceLinksInResource.sourceId, id), where));
-  // The clear and the write are one batch, the write guarded on the version as the clear is, so the set is either the one this
-  // Save wrote or the one the save that superseded it wrote
+  // The clear and the write are one batch, the write guarded on the version as the clear is, so the set is either the
+  // One this Save wrote or the one the save that superseded it wrote
   const writeResourceLinks = (expectedContentVersion: number) => {
     const now = Date.now();
     return ctx.db.batch([
@@ -156,22 +156,19 @@ export const saveResourceContent = async (
       ),
     ]);
   };
-  // The links are cleared before the upload and written after the charge, so they never claim what the blob does not back. A
-  // Cleared set rejects the survey's tokens until the next save that lands writes it again — every partial outcome lands there
-  // Rather than on a stale set:
-  //
-  // - the version check loses to a concurrent save: nothing was claimed, so no link is cleared
-  // - the upload fails: the version bump is put back and the links are cleared, since for an unbind the content may have landed
-  //   And keeping the old set would be fail-open
-  // - it succeeds: the new links are written after, once the content they describe is durable
-  //
-  // The assets the content embeds, named by the working copy's reference rows before the upload and settled to them
-  // After it. Scanned from the serialized content, the bytes the blob is written from
+  // The links are cleared before the upload and written after the charge, so they never claim what the blob does not
+  // Back. A Cleared set rejects the survey's tokens until the next save that lands writes it again — every partial
+  // Outcome lands there Rather than on a stale set: - the version check loses to a concurrent save: nothing was
+  // Claimed, so no link is cleared - the upload fails: the version bump is put back and the links are cleared, since
+  // For an unbind the content may have landed And keeping the old set would be fail-open - it succeeds: the new links
+  // Are written after, once the content they describe is durable The assets the content embeds, named by the working
+  // Copy's reference rows before the upload and settled to them After it. Scanned from the serialized content, the
+  // Bytes the blob is written from
   const assetHashes = getSnapshotAssetHashes(serializedContent);
   await reserveWorkingAssets(ctx.db, id, assetHashes);
-  // The bump is claimed before the upload, so a save that loses the version check writes no content. A failed upload puts it
-  // Back, so a write that did not land never leaves a version every client caches against advanced. A first write has no
-  // Version to protect and claims none
+  // The bump is claimed before the upload, so a save that loses the version check writes no content. A failed upload
+  // Puts it Back, so a write that did not land never leaves a version every client caches against advanced. A first
+  // Write has no Version to protect and claims none
   let savedResource: ResourceInResource;
   // The rows dropped once the blob has landed, released after the write so a dropped asset is collected like any other
   let removedAssetHashes: string[] = [];
@@ -218,9 +215,9 @@ export const saveResourceContent = async (
       throw error;
     });
   }
-  // The owner is charged for their own content as for any upload, from here because this write knows its size
-  // And a blob with no reserve behind it has no ledger row for the object-create notification to find. `resource.userId`, not the
-  // Caller: a blueprint deploy or a restore writes on the owner's behalf. After the content write, because the
+  // The owner is charged for their own content as for any upload, from here because this write knows its size And a
+  // Blob with no reserve behind it has no ledger row for the object-create notification to find. `resource.userId`, not
+  // The Caller: a blueprint deploy or a restore writes on the owner's behalf. After the content write, because the
   // Charge takes the ledger row's lock and then the user's, and a save that kept its writes open across those would be
   // A connection waiting on locks it will not release (openspec/specs/resource/storage-quotas/design.md)
   await chargeAndEmitStorageLedgerEntry(
@@ -230,16 +227,17 @@ export const saveResourceContent = async (
     contentBlobName,
     storedContentSize,
   );
-  // Guarded on the version this save established: the bump is what orders two saves, and this write lands after the bump, so
-  // Unguarded a save that committed first could overwrite a later one's links. A failed write clears the set rather than
-  // Keeping the previous one, which the committed content no longer backs
+  // Guarded on the version this save established: the bump is what orders two saves, and this write lands after the
+  // Bump, so Unguarded a save that committed first could overwrite a later one's links. A failed write clears the set
+  // Rather than Keeping the previous one, which the committed content no longer backs
   if (hasResourceLinksChanged)
     await getResultAsync(() => writeResourceLinks(savedResource.contentVersion)).match(noop, async (error) => {
       await clearResourceLinks();
       throw error;
     });
 
-  // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it again
+  // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it
+  // Again
   await getResultAsync(() => releaseResourceAssets(ctx.db, id, removedAssetHashes)).match(noop, console.error);
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on
   // Every write the user is waiting on

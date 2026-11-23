@@ -263,7 +263,8 @@ describe(saveResourceContent, () => {
     // Well inside the interval, so no save here is ever the first after a quiet spell
     for (let saveCount = 0; saveCount < 6; saveCount++) {
       vi.advanceTimersByTime(SNAPSHOT_INTERVAL_MS / 2);
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every save lands after the timer advance before it
+      // Before it
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every save lands after the timer advance
       await saveLatestResourceContent({ items: saveCount % 2 === 0 ? [] : [item] });
     }
 
@@ -288,8 +289,8 @@ describe(saveResourceContent, () => {
     expect(getReminderCalls()).toStrictEqual([createReminderCall(resource)]);
   });
 
-  // Every save rewrites the same blob name and raises its own object-create notification behind it, which settles that name
-  // Seconds later, from the jobs worker. So the counter has to follow the save that comes after one of those
+  // Every save rewrites the same blob name and raises its own object-create notification behind it, which settles that
+  // Name Seconds later, from the jobs worker. So the counter has to follow the save that comes after one of those
   // Notifications, or the owner's meter moves on their first save of a resource and never again
   test("keeps the counter in step with a save that follows the blob's own event", async () => {
     expect.hasAssertions();

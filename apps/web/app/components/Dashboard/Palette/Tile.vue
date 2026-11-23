@@ -17,8 +17,8 @@ const visualStore = useVisualStore();
 const { addVisual, createVisual } = visualStore;
 const { visuals: dashboardVisuals } = storeToRefs(visualStore);
 const button = useTemplateRef("button");
-// A press that moves is a drag that drops the visual where it is released, and a press that does not is a click that adds
-// The first free cell, so the drag never adds a second visual through its click
+// A press that moves is a drag that drops the visual where it is released, and a press that does not is a click that
+// Adds The first free cell, so the drag never adds a second visual through its click
 onClickExceptDrag(
   computed(() => button.value?.element),
   () => {

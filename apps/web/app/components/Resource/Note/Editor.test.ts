@@ -20,8 +20,8 @@ const { uploadResourceFileMock } = vi.hoisted(() => ({
   uploadResourceFileMock: vi.fn<(file: File) => Promise<string>>(),
 }));
 
-// The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here, and the paste reaches it
-// Through the editor's own file handler
+// The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here, and the paste reaches
+// It Through the editor's own file handler
 vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
@@ -90,8 +90,8 @@ describe("resourceNoteEditor", () => {
     expect(component.findAll(".ProseMirror img").map((image) => image.attributes("src"))).toStrictEqual([assetUrl]);
   });
 
-  // The drop arrives as a drag event on the editor, which the file handler reads for its files and the point it lands on.
-  // Happy-dom lays out no box, so that point is the one the test gives the editor's own lookup
+  // The drop arrives as a drag event on the editor, which the file handler reads for its files and the point it lands
+  // On. Happy-dom lays out no box, so that point is the one the test gives the editor's own lookup
   test("dropping an image file onto the note adds it", async () => {
     expect.hasAssertions();
 

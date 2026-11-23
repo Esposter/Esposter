@@ -20,7 +20,8 @@ const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
 
 <template>
   <!-- A toggle: pressed while it is the reader's vote, which pressing again withdraws -->
-  <!-- oxlint-disable vue/no-restricted-syntax -- withdrawing a vote is pressing the toggle again, not deleting anything a person made -->
+  <!-- oxlint-disable vue/no-restricted-syntax -- withdrawing a vote is pressing the toggle again, not deleting
+    anything a person made -->
   <UiIconButton
     :aria-pressed="isCast"
     :label="voteDefinition.label"

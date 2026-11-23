@@ -43,8 +43,9 @@ const renderAs = <TNode extends WebpageNode>(
   context: RenderContext,
 ): HtmlNode => definition.render(node, slots, context);
 
-// Renders one node by its type tag, with the definition of that type. The core hands each node its rendered slots by name,
-// And a slot a node's type declares is always present, so a slot read falls back to nothing only for a type with no slot
+// Renders one node by its type tag, with the definition of that type. The core hands each node its rendered slots by
+// Name, And a slot a node's type declares is always present, so a slot read falls back to nothing only for a type with
+// No slot
 export const renderWebpageNode = (
   node: WebpageNode,
   slots: Record<string, HtmlNode[]>,

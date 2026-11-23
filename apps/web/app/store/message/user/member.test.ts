@@ -280,7 +280,8 @@ describe(useMemberStore, () => {
   // Another client renames this member. Its write publishes the room's membership topic, which the list's first page
   // Watches, and it sends the member the user event of the row it changed. The list re-reads the page on the topic, so
   // The event needs no read of the user by id, which is the read this test holds the subscribable to. The page is read
-  // Through the store's own watched read, since a topic is named only while the read runs and an msw answer cannot name one
+  // Through the store's own watched read, since a topic is named only while the read runs and an msw answer cannot name
+  // One
   test("refreshes a renamed member from another client's write with no read of the user by id", async () => {
     expect.hasAssertions();
 

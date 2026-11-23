@@ -17,7 +17,8 @@ describe(useSearchHistoryStore, () => {
     setRouteId(roomId);
   });
 
-  // The server mints the search's id, so the search is drawn once its answer arrives, and only in the room it was made for
+  // The server mints the search's id, so the search is drawn once its answer arrives, and only in the room it was made
+  // For
   test("draws a search the server answered, in the room it was made for", async () => {
     expect.hasAssertions();
 

@@ -71,8 +71,8 @@ export const moderationRouter = router({
       await ctx.db.insert(moderationNotesInMessage).values({ actorUserId, note, roomId, targetUserId }).returning(),
     );
   }),
-  // The unban is a tombstone at a higher version, so the ban list reads the removal back. The update's own returning() reports
-  // Whether a live ban existed, so there is no separate existence read to race against a concurrent unban
+  // The unban is a tombstone at a higher version, so the ban list reads the removal back. The update's own returning()
+  // Reports Whether a live ban existed, so there is no separate existence read to race against a concurrent unban
   deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation<BanInMessage>(
     async ({ ctx, input: { roomId, userId } }) =>
       requireMutation(
@@ -127,9 +127,10 @@ export const moderationRouter = router({
           const deletedMember = await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
           if (deletedMember)
             await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, RoomMemberRemovalAction.Banned);
-          // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect that
-          // Must not be lost. The purge is the member's messages in the room, tombstoned a page at a time, and the blobs
-          // Those messages named are queued for deletion behind it, while each one's mention counts are taken back
+          // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect
+          // That Must not be lost. The purge is the member's messages in the room, tombstoned a page at a time, and the
+          // Blobs Those messages named are queued for deletion behind it, while each one's mention counts are taken
+          // Back
           if (input.type === AdminActionType.SoftBan)
             await getResultAsync(async () => {
               const purgedMessages = await deleteUserMessagesInPages(roomId, targetUserId);
@@ -143,8 +144,8 @@ export const moderationRouter = router({
           await evictAfterRemoval();
           break;
         }
-        // Enforced at RealtimeKit, since the targeted client applying the action to itself is only a courtesy — one that
-        // Ignored it would keep talking or presenting
+        // Enforced at RealtimeKit, since the targeted client applying the action to itself is only a courtesy — one
+        // That Ignored it would keep talking or presenting
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
         case AdminActionType.StopScreenShare: {
@@ -194,7 +195,8 @@ export const moderationRouter = router({
     }),
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<Page<BanInRoom>>(
     async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
-      // A ban has no id of its own: it is paged newest-first on creation, tied on the banned user, which with the room is its key
+      // A ban has no id of its own: it is paged newest-first on creation, tied on the banned user, which with the room
+      // Is its key
       const sort = createPageSort({ createdAt: bansInMessage.createdAt, userId: bansInMessage.userId }, BAN_PAGE_SORT);
       const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), getPageWhere(sort, cursor)];
       // The join below already brings the banned user's name into scope, so the predicate costs nothing extra

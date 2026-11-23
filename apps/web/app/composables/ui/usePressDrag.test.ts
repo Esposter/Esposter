@@ -12,8 +12,8 @@ const createHandlers = () => ({
 
 describe(usePressDrag, () => {
   const POINTER_ID = 1;
-  // A press a test leaves open keeps its window listeners until the environment's scope stops them, and by then the window
-  // Is gone, so each test's presses are cancelled behind it
+  // A press a test leaves open keeps its window listeners until the environment's scope stops them, and by then the
+  // Window Is gone, so each test's presses are cancelled behind it
   const trackedCancels: (() => void)[] = [];
   const trackPress = (event: PointerEvent, handlers: ReturnType<typeof createHandlers>) => {
     const { cancel, startPress } = usePressDrag();

@@ -12,6 +12,7 @@ export const createSystemRoomMessage = (
   roomId: string,
   userId: string,
   message: string,
-  // A line that points at another message (a pin, a call in a thread) is worded by its target rather than by text of its own
+  // A line that points at another message (a pin, a call in a thread) is worded by its target rather than by text of
+  // Its own
   { replyToId, type = MessageType.System }: { replyToId?: number | undefined; type?: MessageType } = {},
 ) => getResultAsync(() => useRoomObject(roomId).createMessage({ message, replyToId, type }, { userId }));

@@ -1,4 +1,5 @@
-// Each check the critique of a page or an email reports: a failure, or a check that could not run, which is never a pass
+// Each check the critique of a page or an email reports: a failure, or a check that could not run, which is never a
+// Pass
 export const CritiqueFindingKind = {
   EmptyHeading: "EmptyHeading",
   LinkWithoutAddress: "LinkWithoutAddress",

@@ -11,7 +11,8 @@ const getSrgbColor = (hexColor: string): SrgbColor => [
   Number.parseInt(hexColor.slice(5, 7), 16) / MAX_COLOR_CHANNEL,
 ];
 
-// The black or white hex colour that contrasts more with a six-digit hex fill, so a mark drawn over the fill reads on it
+// The black or white hex colour that contrasts more with a six-digit hex fill, so a mark drawn over the fill reads on
+// It
 export const getContrastingColor = (fill: string): string => {
   const srgbFill = getSrgbColor(fill);
   const blackRatio = getContrastRatio(srgbFill, getSrgbColor(CONTRAST_BLACK));

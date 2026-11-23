@@ -20,7 +20,8 @@ export const useOnGridClick = <TGrid extends readonly (readonly unknown[])[]>(
   };
   return () => {
     const positionValue = toValue(position);
-    // A cell the grid does not validate is not one the cursor may rest on, so a click on it does nothing, as a key press does
+    // A cell the grid does not validate is not one the cursor may rest on, so a click on it does nothing, as a key
+    // Press does
     if (!unref(grid.validate(positionValue))) return;
 
     if (checkIsDeepEqual(positionValue, grid.position.value)) (onConfirm ?? defaultOnConfirm)();

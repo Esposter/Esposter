@@ -19,7 +19,8 @@ const enumItems = computed(() =>
 );
 </script>
 
-<!-- One control per attribute kind, each writing its value as the string MJML reads. Reset clears what the node sets -->
+<!-- One control per attribute kind, each writing its value as the string MJML reads. Reset clears what the node
+  sets -->
 <template>
   <div flex flex-col gap-2>
     <UiSelect

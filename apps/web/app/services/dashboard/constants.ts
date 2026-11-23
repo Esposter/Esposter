@@ -2,8 +2,8 @@ import type { UiCommand } from "#src/models/ui/UiCommand";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
-// The grid the editor lays visuals out on. The published dashboard reflows from the same cells, so a visual's stored x/w
-// Lands where it was placed the moment it is viewed, and only a narrower screen takes fewer columns
+// The grid the editor lays visuals out on. The published dashboard reflows from the same cells, so a visual's stored
+// `x/w` Lands where it was placed the moment it is viewed, and only a narrower screen takes fewer columns
 export const DASHBOARD_NO_COLUMNS = 12;
 export const DASHBOARD_EDITOR_ROW_HEIGHT = 40;
 export const DASHBOARD_PUBLISHED_ROW_HEIGHT = 50;
@@ -21,8 +21,9 @@ export const DASHBOARD_BREAKPOINTS = [
 export const DASHBOARD_TABLE_CATEGORY_KEY = "category";
 // The name a group shows while it has no title, in its header, its menu's move list and its delete confirm
 export const DASHBOARD_UNTITLED_GROUP_TITLE = "Untitled group";
-// The editor's regions, in the pixels a resize handle reports. The bar is one control row of 8 steps with its padding either
-// Side, so it is held at that height, and the two side regions are sized to hold their content between their limits
+// The editor's regions, in the pixels a resize handle reports. The bar is one control row of 8 steps with its padding
+// Either Side, so it is held at that height, and the two side regions are sized to hold their content between their
+// Limits
 export const DASHBOARD_EDITOR_BAR_HEIGHT = 48;
 export const DASHBOARD_EDITOR_PALETTE_WIDTH = 256;
 export const DASHBOARD_EDITOR_PALETTE_MINIMUM_WIDTH = 192;

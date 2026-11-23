@@ -1,7 +1,7 @@
 import { OTHER_STYLE_SECTOR_TITLE } from "#src/services/pageBuilder/constants";
 
-// The webpage sector each email attribute is drawn under, by the visual property it sets. An attribute left out names no
-// Visual sector, such as an address, a title or a name, and is drawn under Other
+// The webpage sector each email attribute is drawn under, by the visual property it sets. An attribute left out names
+// No Visual sector, such as an address, a title or a name, and is drawn under Other
 const ATTRIBUTE_SECTOR_TITLE_MAP: Readonly<Record<string, string>> = Object.freeze({
   align: "Layout",
   "background-color": "Background",

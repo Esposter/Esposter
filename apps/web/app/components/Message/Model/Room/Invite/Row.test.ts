@@ -30,8 +30,8 @@ describe("messageModelRoomInviteRow", () => {
     version: 0,
   };
 
-  // Editing regenerates the reader's own link, which is minted under ManageInvites, so the Edit is offered to the creator
-  // Only while the reader holds it
+  // Editing regenerates the reader's own link, which is minted under ManageInvites, so the Edit is offered to the
+  // Creator Only while the reader holds it
   test.each([
     [RoomPermission.ManageRoom, false],
     [RoomPermission.ManageRoom | RoomPermission.ManageInvites, true],

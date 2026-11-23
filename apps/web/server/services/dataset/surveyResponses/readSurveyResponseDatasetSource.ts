@@ -8,9 +8,9 @@ import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResp
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import { getSurveyDocumentDatasetColumns } from "#shared/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns";
 
-// The one read behind both the dataset and the Responses blade, so a row and its key always come from
-// The same snapshot — two independent reads could interleave a submit or a delete and drift apart.
-// It carries the total and whether that total is a floor too, so neither surface can show a truncated table without saying so
+// The one read behind both the dataset and the Responses blade, so a row and its key always come from The same snapshot
+// — two independent reads could interleave a submit or a delete and drift apart. It carries the total and whether that
+// Total is a floor too, so neither surface can show a truncated table without saying so
 export const readSurveyResponseDatasetSource = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],

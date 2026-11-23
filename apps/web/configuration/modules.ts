@@ -11,7 +11,8 @@ const NUXT_SECURITY_MODULE_PATH = "../../packages/nuxt-security-module/src/modul
 const TRESJS_NUXT_MODULE_PATH = "../../packages/tresjs-nuxt/src/module.ts";
 const UNPLUGIN_PWA_NUXT_MODULE_PATH = "../../packages/unplugin-pwa-nuxt/src/module.ts";
 const HOSTED_ASSETS_KEYS_MODULE_PATH = "../../packages/hosted-assets/src/internal/module.ts";
-// The dungeons game's key map is written at install from its committed lock, with each key named by its path under the scope
+// The dungeons game's key map is written at install from its committed lock, with each key named by its path under the
+// Scope
 const dungeonsKeysModule: [string, HostedAssetKeysModuleOptions] = [
   HOSTED_ASSETS_KEYS_MODULE_PATH,
   {
@@ -31,11 +32,12 @@ const trpcNuxtModule: [string, ModuleOptions] = [
     router: { from: "#server/trpc/routers/index", name: "trpcRouter" },
   },
 ];
-// @TODO: https://github.com/vitest-dev/vitest/issues/11842 — add unplugin-pwa-nuxt to the Vitest branch below once a virtual id starting with `/` loads under Vitest on Windows
-// Unit tests need only the modules whose runtime/auto-imports they actually exercise. The rest are
-// SSR/build/styling concerns that don't run under Vitest but DO break or slow Nuxt config resolution —
-// E.g. unplugin-pwa-nuxt builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
-// Leaks an EnvironmentTeardownError after teardown, and nuxt-security-module adds headers/CSP nothing asserts.
+// @TODO: https://github.com/vitest-dev/vitest/issues/11842 — add unplugin-pwa-nuxt to the Vitest branch below once a
+// Virtual id starting with `/` loads under Vitest on Windows Unit tests need only the modules whose
+// `runtime/auto-imports` they actually exercise. The rest are SSR/build/styling concerns that don't run under Vitest
+// But DO break or slow Nuxt config resolution — E.g. unplugin-pwa-nuxt builds a service worker, @nuxtjs/seo's
+// `nuxt-schema-org` plugin Leaks an EnvironmentTeardownError after teardown, and nuxt-security-module adds headers/CSP
+// Nothing asserts.
 export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   "@nuxt/fonts",
   "@nuxt/image",

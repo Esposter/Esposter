@@ -43,7 +43,8 @@ describe("resourceBladeOutlet", () => {
     expect(body.element.contains(component.get("p").element)).toBe(true);
   });
 
-  // The editor is a full-bleed canvas that lays out its own regions, so the outlet draws it with no wrapper and no padding
+  // The editor is a full-bleed canvas that lays out its own regions, so the outlet draws it with no wrapper and no
+  // Padding
   test("the editor blade is full-bleed and keeps no wrapper", async () => {
     expect.hasAssertions();
 

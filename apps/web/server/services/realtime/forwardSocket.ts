@@ -4,14 +4,15 @@ import type { RequestEvent } from "nuxt/server";
 
 import { SOCKET_IDENTITY_HEADER, SOCKET_IDENTITY_HEADER_PREFIX } from "@esposter/db-schema";
 
-// Forwards a socket's upgrade to the object that holds it, with the identity the Worker verified. Every identity header the
-// Client sent is dropped first, so the object reads only the identity written here. An upgrade is a bodiless GET, so its
-// Address and headers are the whole request.
-// @TODO: https://github.com/h3js/h3/pull/1629 — h3 2.0.8 rebuilds a returned response that has prepared headers to merge,
-// And the rebuild drops the object's socket, so the headers prepared before the handler are cleared here and the headers
-// Rule that writes after it is removed on `/ws/**` (`configuration/routeRules.ts`)
+// Forwards a socket's upgrade to the object that holds it, with the identity the Worker verified. Every identity header
+// The Client sent is dropped first, so the object reads only the identity written here. An upgrade is a bodiless GET,
+// So its Address and headers are the whole request. @TODO: https://github.com/h3js/h3/pull/1629 — h3 2.0.8 rebuilds a
+// Returned response that has prepared headers to merge, And the rebuild drops the object's socket, so the headers
+// Prepared before the handler are cleared here and the headers Rule that writes after it is removed on `/ws/**`
+// (`configuration/routeRules.ts`)
 export const forwardSocket = (event: RequestEvent, stub: DurableObjectStub, identity: SocketIdentity) => {
-  // The names are copied first, since deleting from the headers while iterating them skips the name after each one deleted
+  // The names are copied first, since deleting from the headers while iterating them skips the name after each one
+  // Deleted
   for (const name of new Set(event.res.headers.keys())) event.res.headers.delete(name);
   return stub.fetch(event.req.url, {
     headers: {

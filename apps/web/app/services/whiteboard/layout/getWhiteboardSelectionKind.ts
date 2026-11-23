@@ -3,7 +3,8 @@ import type { PositionedDocument } from "vue-block-editor-headless";
 import { getSelectedElement } from "#src/services/whiteboard/getSelectedElement";
 import { WHITEBOARD_SEVERAL_SELECTION_KIND } from "#src/services/whiteboard/layout/constants";
 
-// The selection kind the layout's panels are keyed by: the one element's type, several for a selection of several, and "" for none
+// The selection kind the layout's panels are keyed by: the one element's type, several for a selection of several, and
+// "" for none
 export const getWhiteboardSelectionKind = (document: PositionedDocument, selectedIds: string[]): string => {
   if (selectedIds.length > 1) return WHITEBOARD_SEVERAL_SELECTION_KIND;
   return getSelectedElement(document, selectedIds)?.element.type ?? "";

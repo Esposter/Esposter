@@ -4,7 +4,8 @@ import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
 import { useAlertStore } from "#src/store/alert";
 import { downloadFile, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
-// The page as it is drawn: the grid holds every tile, and the capture reads it at its rendered size once the fonts are in
+// The page as it is drawn: the grid holds every tile, and the capture reads it at its rendered size once the fonts are
+// In
 export const exportDashboardPng = async (name: string) => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;

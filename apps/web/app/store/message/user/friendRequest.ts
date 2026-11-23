@@ -37,7 +37,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   // Store's checkIsFriend, and asked by the same surfaces
   const checkHasSentFriendRequest = (targetUserId: PublicUser["id"]) =>
     friendRequests.value.some(({ receiverId, senderId }) => senderId === userId.value && receiverId === targetUserId);
-  // Answered requests come back as tombstones, which the arrival keeps, so an older copy of a request cannot bring it back
+  // Answered requests come back as tombstones, which the arrival keeps, so an older copy of a request cannot bring it
+  // Back
   const readFriendRequestRows = useOverlayRead(
     friendRequestTable,
     ({ sender, ...friendRequest }: FriendRequestInSocialWithRelations) => {

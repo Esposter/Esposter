@@ -12,7 +12,8 @@ import { getResult } from "@esposter/shared";
 // Is, since the save is the player's only copy, and a fresh game written over it would be the loss
 const parseEnvelope = (json: Buffer): GenshinSaveEnvelope =>
   // Parsed as plain JSON, because the save holds its instants as ISO strings a date revival would turn into Dates
-  // oxlint-disable-next-line no-restricted-properties -- the envelope schema owns date coercion, so free-text ISO strings survive
+  // The envelope
+  // oxlint-disable-next-line no-restricted-properties -- schema owns date coercion, so free-text ISO strings survive
   getResult(() => JSON.parse(json.toString()))
     .andThen((parsedJson) => getResult(() => genshinSaveEnvelopeSchema.parse(parsedJson)))
     .orTee(console.error)

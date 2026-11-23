@@ -23,8 +23,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const overlayStore = useOverlayStore();
   const { arrive, view, writeOptimistic } = overlayStore;
   const roomCategoryRows = view(roomCategoryTable);
-  // A category the client drew before the server answered carries NO_ROW_VERSION. The server appends a new category below
-  // The rows it holds, so such a placeholder is listed after them, in issue order, whatever position it carries
+  // A category the client drew before the server answered carries NO_ROW_VERSION. The server appends a new category
+  // Below The rows it holds, so such a placeholder is listed after them, in issue order, whatever position it carries
   const roomCategories = computed(() =>
     roomCategoryRows.value
       .filter((roomCategory) => checkIsVersioned(roomCategory))

@@ -19,7 +19,8 @@ interface Props {
 }
 const { category, resourceId, type } = defineProps<Props>();
 // The picked file's address goes to the node that was selected when the file was picked, since an upload can land after
-// The selection has moved on. A file the field does not take, or one over the upload limit, is refused before it is sent
+// The selection has moved on. A file the field does not take, or one over the upload limit, is refused before it is
+// Sent
 const emit = defineEmits<{ update: [src: string, nodeId: string] }>();
 const acceptedMimetypes = category === MimeCategory.Video ? WEBPAGE_VIDEO_MIME_TYPES : IMAGE_UPLOAD_MIME_TYPES;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();

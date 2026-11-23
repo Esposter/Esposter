@@ -5,9 +5,9 @@ import type { SurveyNodeType } from "vue-survey-engine-headless";
 import { checkIsInsideBox } from "#src/services/pageBuilder/checkIsInsideBox";
 import { getDropIndex } from "#src/services/pageBuilder/getDropIndex";
 
-// The slot a kind dropped at a viewport point lands in: the nearest slot whose box holds the point and whose accepted types
-// Take the kind, nearest being the smallest box, since a nested slot's box lies within its owner's. The index is the first
-// Child whose midpoint the pointer has not crossed. Undefined when no slot holding the point takes the kind
+// The slot a kind dropped at a viewport point lands in: the nearest slot whose box holds the point and whose accepted
+// Types Take the kind, nearest being the smallest box, since a nested slot's box lies within its owner's. The index is
+// The first Child whose midpoint the pointer has not crossed. Undefined when no slot holding the point takes the kind
 export const resolveSurveyDropTarget = ({
   draggedType,
   point,

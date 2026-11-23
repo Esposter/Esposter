@@ -4,8 +4,8 @@ import { useAlertStore } from "#src/store/alert";
 import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { useResourceStore } from "#src/store/resource/index";
 
-// An export reads the email the server holds, so the open email's latest edit is saved first. A save the server refuses leaves the
-// Stored copy behind the editor, so the export stops and says so rather than downloading the older copy
+// An export reads the email the server holds, so the open email's latest edit is saved first. A save the server refuses
+// Leaves the Stored copy behind the editor, so the export stops and says so rather than downloading the older copy
 export const saveEmailForExport = async (resourceId: string): Promise<boolean> => {
   const emailEditorStore = useEmailEditorStore();
   const { saveEmail } = emailEditorStore;

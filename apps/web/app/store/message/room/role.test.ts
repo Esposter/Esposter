@@ -28,7 +28,8 @@ describe(useRoleStore, () => {
   const second = createRoomRole({ name: "name", position: 2, roomId });
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-  // Every role is its own target, so a settings panel's writes overlap and a rejected edit leaves only its own role as it was
+  // Every role is its own target, so a settings panel's writes overlap and a rejected edit leaves only its own role as
+  // It was
   test("keeps the role whose edit was rejected as the server holds it", async () => {
     expect.hasAssertions();
 
@@ -65,7 +66,8 @@ describe(useRoleStore, () => {
     expect(getRoles(roomId)).toStrictEqual([first]);
   });
 
-  // An edit and a deletion of one role share its target, and both are rejected, so the role is listed as the server holds it
+  // An edit and a deletion of one role share its target, and both are rejected, so the role is listed as the server
+  // Holds it
   test("keeps a role listed when a rejected edit and a rejected deletion both wrote to it", async () => {
     expect.hasAssertions();
 
@@ -85,8 +87,8 @@ describe(useRoleStore, () => {
     expect(getRoles(roomId)).toStrictEqual([second, first]);
   });
 
-  // A member's roles are written through per-role targets, so an assignment and a revocation for the same member run side by
-  // Side, and each one's rejection leaves only the role it wrote to as the server holds it
+  // A member's roles are written through per-role targets, so an assignment and a revocation for the same member run
+  // Side by Side, and each one's rejection leaves only the role it wrote to as the server holds it
   test("keeps the member's role whose revocation was rejected, and drops the one revoked", async () => {
     expect.hasAssertions();
 
@@ -172,7 +174,8 @@ describe(useRoleStore, () => {
     expect(getMemberRoles(roomId, userId)).toStrictEqual([]);
   });
 
-  // Two rooms' roles read together both land: a read keyed by the table would let the second room's read supersede the first
+  // Two rooms' roles read together both land: a read keyed by the table would let the second room's read supersede the
+  // First
   test("a read of two rooms' roles lands the roles of both", async () => {
     expect.hasAssertions();
 
@@ -187,8 +190,8 @@ describe(useRoleStore, () => {
     expect(getRoles(otherRoomId)).toStrictEqual([otherRole]);
   });
 
-  // Two members' roles read on one surface, issued together, both mark their members read: a read keyed by the table would
-  // Let the second read supersede the first
+  // Two members' roles read on one surface, issued together, both mark their members read: a read keyed by the table
+  // Would Let the second read supersede the first
   test("a read of one member's roles does not supersede a read of another member's", async () => {
     expect.hasAssertions();
 

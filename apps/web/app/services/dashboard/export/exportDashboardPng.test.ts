@@ -12,7 +12,8 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
 
-// The real rasteriser runs in no test here, since a PNG needs a canvas the test environment does not draw, so the PNG tests take its answer from a resolved once-value
+// The real rasteriser runs in no test here, since a PNG needs a canvas the test environment does not draw, so the PNG
+// Tests take its answer from a resolved once-value
 vi.mock(import("#src/services/capture/rasterizeSvg"), async (importOriginal) => {
   const { rasterizeSvg: rasterizeOriginal } = await importOriginal();
   return { rasterizeSvg: vi.fn<typeof rasterizeOriginal>(rasterizeOriginal) };

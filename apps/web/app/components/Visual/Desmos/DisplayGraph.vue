@@ -20,7 +20,8 @@ const isAnimating = ref(false);
 // Whether the calculator has drawn: the drawing's shape stands over the element until then
 const isDrawn = ref(false);
 // The script's own load slot calls back once the API is in, so the calculator waits for that here. A calculator that
-// Fails to build shows its failure in place of the drawing, as a script that fails to load does through its status below
+// Fails to build shows its failure in place of the drawing, as a script that fails to load does through its status
+// Below
 const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
   const { GraphingCalculator } = await new Promise<typeof Desmos>((resolve) => {
     onLoaded(resolve);
@@ -40,7 +41,8 @@ const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
     showYAxis: false,
     trace: false,
   });
-  // Built while the drawing unmounted, it has no owner to tear it down, so it is destroyed here rather than left running
+  // Built while the drawing unmounted, it has no owner to tear it down, so it is destroyed here rather than left
+  // Running
   if (signal.aborted) {
     newCalculator.destroy();
     signal.throwIfAborted();
@@ -51,7 +53,8 @@ const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
   return newCalculator;
 });
 
-// Created at setup, where its teardown registers with the component, and started by an animation rather than by mounting
+// Created at setup, where its teardown registers with the component, and started by an animation rather than by
+// Mounting
 const drawingTimeMs = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 let expressionIndex = 0;
 const { pause, resume } = useIntervalFn(

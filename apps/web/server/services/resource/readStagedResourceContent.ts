@@ -20,10 +20,10 @@ const gunzipWithinLimit = async (compressedContent: Uint8Array<ArrayBuffer>) => 
   }
   return new Blob(chunks).text();
 };
-// A presigned write url carries no length, so the staged bytes are measured here rather than trusted: the size before the
-// Download is allocated, the hash against what the client says it uploaded, and the inflation capped so a small
-// Archive that expands past the content limit stops at it instead of filling the heap. The gzip of a document
-// Under the limit is smaller than the document, so the limit bounds both
+// A presigned write url carries no length, so the staged bytes are measured here rather than trusted: the size before
+// The Download is allocated, the hash against what the client says it uploaded, and the inflation capped so a small
+// Archive that expands past the content limit stops at it instead of filling the heap. The gzip of a document Under the
+// Limit is smaller than the document, so the limit bounds both
 export const readStagedResourceContent = async (id: ResourceInResource["id"], hash: string): Promise<unknown> => {
   const bucket = getBucket(StorageBucket.ResourceAssets);
   const blobName = getStagingContentBlobName(id);
@@ -44,11 +44,11 @@ export const readStagedResourceContent = async (id: ResourceInResource["id"], ha
     DatabaseEntityType.Resource,
     "staged content does not match its hash",
   );
-  // A mismatch is another device's upload landing on the same name between this one's PUT and its commit, which reads as
-  // The same mismatch rather than as bytes the measurement did not describe. The object read back names the etag it holds,
-  // So one that is not the measured version is refused before its bytes are read, and a blob gone since the measurement
-  // Answers nothing; both take the mismatch path. The etag is compared rather than probed for a body, since probing a
-  // Body's presence consumes it under the local emulator
+  // A mismatch is another device's upload landing on the same name between this one's PUT and its commit, which reads
+  // As The same mismatch rather than as bytes the measurement did not describe. The object read back names the etag it
+  // Holds, So one that is not the measured version is refused before its bytes are read, and a blob gone since the
+  // Measurement Answers nothing; both take the mismatch path. The etag is compared rather than probed for a body, since
+  // Probing a Body's presence consumes it under the local emulator
   const compressedObject = await bucket.get(blobName);
   if (compressedObject?.etag !== etag) throw hashMismatchError;
 
@@ -65,6 +65,7 @@ export const readStagedResourceContent = async (id: ResourceInResource["id"], ha
       );
     },
   );
-  // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive
+  // The content
+  // oxlint-disable-next-line no-restricted-properties -- schema owns date coercion, so free-text ISO strings survive
   return JSON.parse(serializedContent);
 };

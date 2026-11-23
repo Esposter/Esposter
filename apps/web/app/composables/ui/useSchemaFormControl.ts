@@ -11,7 +11,8 @@ export const useSchemaFormControl = (props: UiSchemaFormRendererProps) => {
   const control = computed(() => ({ ...props, ...mapStateToControlProps(props.form.state, omitUndefined(props)) }));
   const { handleChange } = mapDispatchToControlProps(props.form.dispatch);
   const isChanged = ref(false);
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- JSON Forms types the config it carries as unknown, and this is the UiSchemaFormConfiguration the schema form put on it
+  // JSON Forms types the config it carries as unknown, and this is the
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- UiSchemaFormConfiguration the schema form put on it
   const uiSchemaFormConfiguration = computed(() => control.value.config as UiSchemaFormConfiguration);
   const layout = computed(() => getSchemaFormLayout(control.value.schema) ?? {});
   const issue = computed(() =>

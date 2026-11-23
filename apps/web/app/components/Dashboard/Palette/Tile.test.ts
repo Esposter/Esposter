@@ -19,7 +19,8 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-// The palette writes into the dashboard the store holds, so each test starts from the visuals it is given rather than a read
+// The palette writes into the dashboard the store holds, so each test starts from the visuals it is given rather than a
+// Read
 const loadDashboard = (visuals: Visual[] = []) => {
   const dashboardStore = useDashboardStore();
   const { dashboard } = storeToRefs(dashboardStore);
@@ -152,7 +153,8 @@ describe("dashboardPaletteTile", () => {
     tile.unmount();
   });
 
-  // The group's grid is the one under the release, and its root names the group, so the visual is added inside that group
+  // The group's grid is the one under the release, and its root names the group, so the visual is added inside that
+  // Group
   test("a tile dropped on a group's grid adds a visual inside that group", async () => {
     expect.hasAssertions();
 
@@ -187,8 +189,8 @@ describe("dashboardPaletteTile", () => {
     tile.unmount();
   });
 
-  // A group added to the group at the depth cap would sit one level past it, so the drop is refused before the visual the
-  // Release lands on is pushed aside, and nothing is added
+  // A group added to the group at the depth cap would sit one level past it, so the drop is refused before the visual
+  // The Release lands on is pushed aside, and nothing is added
   test("a group tile dropped on a group at the depth cap adds nothing and pushes nothing", async () => {
     expect.hasAssertions();
 

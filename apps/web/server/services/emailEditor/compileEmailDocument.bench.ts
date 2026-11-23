@@ -6,7 +6,8 @@ import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { renderMjmlDocument } from "mjml-blocks";
 import { describe, test } from "vitest";
 
-// The starter email as a reader's compile sees it: the whole compile, against the MJML render alone so the report shows what the compile spends its time on
+// The starter email as a reader's compile sees it: the whole compile, against the MJML render alone so the report shows
+// What the compile spends its time on
 describe(compileEmailDocument, () => {
   test("the starter email", async ({ bench }) => {
     const starter = readStarterEmail();

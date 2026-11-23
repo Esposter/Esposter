@@ -24,8 +24,9 @@ const contentComponent = computed(
     blade.value?.component ??
     (activeBlade === ResourceBladeType.Editor ? ResourceEditorComponentMap[resource.type] : undefined),
 );
-// The outlet's body pads and scrolls the blade, so a blade writes its content only. The editor is a full-bleed canvas that
-// Lays out its own regions, and a blade that draws a table owns its own scroll, so each is drawn bare with its own padding
+// The outlet's body pads and scrolls the blade, so a blade writes its content only. The editor is a full-bleed canvas
+// That Lays out its own regions, and a blade that draws a table owns its own scroll, so each is drawn bare with its own
+// Padding
 const isBodyBare = computed(() => activeBlade === ResourceBladeType.Editor || blade.value?.isBodyBare);
 </script>
 
@@ -49,7 +50,8 @@ const isBodyBare = computed(() => activeBlade === ResourceBladeType.Editor || bl
       chunk arriving — is ever seen as one -->
     <Suspense v-else-if="contentComponent" :timeout="0">
       <component :is="contentComponent" :key="`${resource.id}${ID_SEPARATOR}${activeBlade}`" />
-      <!-- A blade may be a sheet, a calendar or an editor, so no one skeleton is its shape: the spinner says it is coming -->
+      <!-- A blade may be a sheet, a calendar or an editor, so no one skeleton is its shape: the spinner says it is
+        coming -->
       <template #fallback>
         <p text-muted p-8 flex gap-2 items-center justify-center role="status">
           <UiSpinner />

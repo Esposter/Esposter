@@ -47,7 +47,8 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
-// The editor's keys are bound on the page's window, so a key is pressed on the element that has focus and bubbles up to it
+// The editor's keys are bound on the page's window, so a key is pressed on the element that has focus and bubbles up to
+// It
 const pressKey = (init: KeyboardEventInit, target: EventTarget = document.body) => {
   target.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, ...init }));
   return nextTick();
@@ -80,9 +81,9 @@ describe("pageBuilderEditor", () => {
     trpcMsw.survey.readResources.query(() => createEmptyPage());
   });
 
-  // Real timers are back before the mock server's own afterEach waits on one, which hooks registered later run ahead of.
-  // No global is unstubbed here: the mock server stubs fetch and Headers in its beforeAll.
-  // Unstubbing every global would restore the real fetch, so each later request would miss the mock and hang
+  // Real timers are back before the mock server's own afterEach waits on one, which hooks registered later run ahead
+  // Of. No global is unstubbed here: the mock server stubs fetch and Headers in its beforeAll. Unstubbing every global
+  // Would restore the real fetch, so each later request would miss the mock and hang
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
@@ -309,7 +310,8 @@ describe("pageBuilderEditor", () => {
   test("an unsaved edit changes the findings", async () => {
     expect.hasAssertions();
     // The findings settle on the autosave's cadence, so the test moves the clock past it rather than waiting for it
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- the findings debounce is counted by the clock; the afterEach above restores the real timers before the harness waits a turn on setTimeout
+    // The findings debounce is counted by the clock; the afterEach above restores the real
+    // oxlint-disable-next-line testing/no-faked-set-timeout -- timers before the harness waits a turn on setTimeout
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setDocument } = pageBuilderDocumentStore;

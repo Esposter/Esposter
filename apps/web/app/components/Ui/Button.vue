@@ -26,7 +26,8 @@ defineExpose({ element });
 
 <template>
   <Button.Root #default="{ attrs }" :disabled="disabled || isPending" renderless>
-    <!-- oxlint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
+    <!-- oxlint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for
+      its dialog, which call sites ask for with is-autofocus -->
     <button
       ref="element"
       :="{ ...attrs, ...$attrs }"

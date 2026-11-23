@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-// A card and a table lead the picker, since they are the plainest visuals: one number, and the exact values behind a chart
+// A card and a table lead the picker, since they are the plainest visuals: one number, and the exact values behind a
+// Chart
 export const VisualType = {
   Area: "Area",
   Bar: "Bar",

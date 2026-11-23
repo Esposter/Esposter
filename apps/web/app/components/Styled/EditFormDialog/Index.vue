@@ -16,7 +16,8 @@ interface Props<T> {
   originalItem?: T | undefined;
   // Deleting the original item, offered only when there is one
   remove?: (() => Promisable<unknown>) | undefined;
-  // Sent as the dialog closes, or waited on when it names a reason (useDialogAnswer); a refused save is answered by its alert
+  // Sent as the dialog closes, or waited on when it names a reason (useDialogAnswer); a refused save is answered by its
+  // Alert
   save: () => Promisable<unknown>;
   schema: z.ZodType;
   // What the item is called as it is being edited, so the title follows the name field as the reader types

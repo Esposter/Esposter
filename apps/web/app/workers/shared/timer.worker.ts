@@ -9,7 +9,8 @@ import { TimerMethod } from "#src/models/shared/TimerMethod";
 const handles = new Map<number, ReturnType<typeof setInterval>>();
 
 const reportFire = (id: number) => {
-  // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a dedicated worker's postMessage takes a transfer list, not a target origin
+  // A dedicated worker's postMessage
+  // oxlint-disable-next-line unicorn/require-post-message-target-origin -- takes a transfer list, not a target origin
   self.postMessage({ id } satisfies TimerResponse);
 };
 

@@ -13,11 +13,13 @@ import { URL_MAX_LENGTH } from "@esposter/db-schema";
 import { z } from "zod";
 
 // A webpage's working copy: the page builder's document, its tree and root, with the share preview the published page
-// Unfurls with over the site's own. The image is one of the webpage's file assets, so duplicating the page clones it with the rest
+// Unfurls with over the site's own. The image is one of the webpage's file assets, so duplicating the page clones it
+// With the rest
 export class WebpageEditor extends AItemEntity {
   content: WebpageNode[] = [];
   description = "";
-  // The baked document of a published snapshot. The server renders it from the tree at publish, so no working copy holds it
+  // The baked document of a published snapshot. The server renders it from the tree at publish, so no working copy
+  // Holds it
   html?: string | undefined;
   imageUrl = "";
   // Whether search engines may list the published page, on for a new webpage until its owner turns it off

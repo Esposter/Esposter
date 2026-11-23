@@ -28,7 +28,8 @@ interface UncoveredWritesInput<TRows extends Versioned[]> {
   tables: TablesOf<TRows>;
 }
 
-// A row the database holds for a table, checked against the table's select model. The row is held as the table's own row
+// A row the database holds for a table, checked against the table's select model. The row is held as the table's own
+// Row
 const checkIsRowOf = <TRow extends Versioned>(table: Table<TRow>, row: unknown): row is TRow =>
   createSelectSchema(table.source).safeParse(row).success;
 
@@ -39,8 +40,8 @@ const seedTable = async <TRow extends Versioned>(db: Context["db"], slotFor: Slo
 };
 
 // The rows a write named in its response, and those of them its entry does not touch, at the state the seeded database
-// Holds. A row the entry shows nothing of is a gap: the write changed a row no optimistic change of it is shown on. A row of
-// A table the write does not involve is a gap too, since no entry it makes can show that row
+// Holds. A row the entry shows nothing of is a gap: the write changed a row no optimistic change of it is shown on. A
+// Row of A table the write does not involve is a gap too, since no entry it makes can show that row
 export const getUncoveredWrites = async <TRows extends Versioned[]>({
   call,
   context,

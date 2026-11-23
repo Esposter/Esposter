@@ -5,8 +5,8 @@ import { getSurveyNodeLocation } from "#src/services/resource/survey/getSurveyNo
 import { moveIntoPreviousSibling } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "vue-survey-engine-headless";
 
-// The move of a node to the end of the first slot of the element before it that takes its kind. Refused when nothing sits before the node,
-// And when the element before it holds no slot that takes the node
+// The move of a node to the end of the first slot of the element before it that takes its kind. Refused when nothing
+// Sits before the node, And when the element before it holds no slot that takes the node
 export const getSurveyIntoPreviousMove = (document: SurveyDocument, nodePointer: string): SurveyNodeMove => {
   const operations = moveIntoPreviousSibling(document, surveyRegistry, surveyNodeChildren, nodePointer);
   if (operations.length > 0) return { operations, refusal: "" };

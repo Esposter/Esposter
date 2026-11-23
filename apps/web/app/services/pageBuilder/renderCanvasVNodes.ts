@@ -12,9 +12,10 @@ import { createStaticVNode, createTextVNode } from "vue";
 import { renderBlockNodes } from "vue-block-editor-headless";
 
 const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !checkIsHtmlElement(node);
-// Renders a webpage's document as the canvas's VNodes, folding its nodes through the same registry and render the published
-// Page uses, so the canvas shows the layout the page has. Each node's root element carries its id in the canvas only, so an
-// Overlay can find the node's box, and no script runs there, since the raw type's markup is inserted as inner HTML
+// Renders a webpage's document as the canvas's VNodes, folding its nodes through the same registry and render the
+// Published Page uses, so the canvas shows the layout the page has. Each node's root element carries its id in the
+// Canvas only, so an Overlay can find the node's box, and no script runs there, since the raw type's markup is inserted
+// As inner HTML
 export const renderCanvasVNodes = (kind: WebpageKind, document: WebpageDocument, context: RenderContext): VNode[] => {
   const nodeIds = new WeakMap<HtmlElement, string>();
   const content: HtmlNode[] = renderBlockNodes(

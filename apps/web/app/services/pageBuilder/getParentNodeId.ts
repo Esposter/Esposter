@@ -6,7 +6,8 @@ import { getSlotOwnerId } from "#src/services/pageBuilder/getSlotOwnerId";
 import { parseJsonPointer } from "@esposter/shared";
 
 // The id of the node whose slot holds the node, or the empty id for a node in the page's own content, or none when the
-// Document holds no node with that id. A slot sits at a node's props, so the container's pointer is the slot's minus two segments
+// Document holds no node with that id. A slot sits at a node's props, so the container's pointer is the slot's minus
+// Two segments
 export const getParentNodeId: PageBuilderHelper<string | undefined, [nodeId: string]> = (kind, document, nodeId) => {
   const nodePointer = getNodePointer(kind, document, nodeId);
   if (nodePointer === undefined) return undefined;

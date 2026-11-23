@@ -45,7 +45,8 @@ export const usePageBuilderClipboard = <
     const node = getBlockNode(document, nodePointer, kind.children);
     return node && { node, nodeId, title: getNodeTitle(kind, document, parseJsonPointer(nodePointer)) };
   };
-  // Writes the node to the system clipboard and reports whether it landed; a clipboard that refuses announces that instead
+  // Writes the node to the system clipboard and reports whether it landed; a clipboard that refuses announces that
+  // Instead
   const writeToClipboard = (node: TNode) =>
     getResultAsync(() =>
       window.navigator.clipboard.writeText(serializeClipboardNodes({ editor: kind.editor, nodes: [node] })),
@@ -83,10 +84,12 @@ export const usePageBuilderClipboard = <
   };
   const pasteSelected = async () => {
     const resourceIdValue = toValue(resourceId);
-    // The edit is applied to the resource it was issued on, so the document it is read from must still be that resource's
+    // The edit is applied to the resource it was issued on, so the document it is read from must still be that
+    // Resource's
     const checkIsOpen = () => toValue(resourceId) === resourceIdValue;
     const text = await readFromClipboard();
-    // The document is read once the clipboard has answered, since the clipboard read waits and the document may have moved on
+    // The document is read once the clipboard has answered, since the clipboard read waits and the document may have
+    // Moved on
     const open = checkIsOpen() ? getOpenDocument() : undefined;
     if (text === undefined || !open) return;
 

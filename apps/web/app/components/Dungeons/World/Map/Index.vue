@@ -10,7 +10,8 @@ import { onCreate, onShutdown, Tilemap } from "vue-phaserjs";
 const worldSceneStore = useWorldSceneStore();
 const { releaseGridEngine } = worldSceneStore;
 const { tilemapKey } = storeToRefs(worldSceneStore);
-// Runs on every tilemap the component builds, so the bounds follow the tilemap's own size rather than a number kept here
+// Runs on every tilemap the component builds, so the bounds follow the tilemap's own size rather than a number kept
+// Here
 const initializeBounds = (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => {
   if (tilemapKey.value === TilemapKey.Home)
     scene.cameras.main.setBounds(0, 0, tilemap.widthInPixels, tilemap.heightInPixels);

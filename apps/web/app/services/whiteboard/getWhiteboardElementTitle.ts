@@ -5,7 +5,8 @@ import { WhiteboardShapeItemMap } from "#src/services/whiteboard/tool/Whiteboard
 import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardToolItemMap";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// The title a properties panel names one element by: a shape by its kind's name, and every other element by the tool that places it
+// The title a properties panel names one element by: a shape by its kind's name, and every other element by the tool
+// That places it
 export const getWhiteboardElementTitle = (element: PositionedElement): string => {
   if (element.type === PositionedElementType.Shape) return WhiteboardShapeItemMap[element.kind].title;
   if (element.type === PositionedElementType.Arrow) return WhiteboardToolItemMap[GestureTool.Arrow].title;

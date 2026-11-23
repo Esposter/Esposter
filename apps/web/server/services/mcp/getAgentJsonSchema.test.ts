@@ -148,7 +148,8 @@ describe(getAgentJsonSchema, () => {
     );
   });
 
-  // A slot's content is a union with one branch per type it takes, and a slot that recurses reads its branch by reference
+  // A slot's content is a union with one branch per type it takes, and a slot that recurses reads its branch by
+  // Reference
   test("lists the types a webpage root's content takes, a branch by reference where a slot recurses", () => {
     expect.hasAssertions();
 

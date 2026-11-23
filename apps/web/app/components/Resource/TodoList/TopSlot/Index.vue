@@ -25,7 +25,8 @@ const sortItems = computed<Item[]>(() =>
 );
 </script>
 
-<!-- Search stays a button beside the add field until it is opened or holds a query, when its field sits beside this one -->
+<!-- Search stays a button beside the add field until it is opened or holds a query, when its field sits beside this
+  one -->
 <template>
   <div flex gap-2 items-center>
     <ResourceTodoListTopSlotAddForm />

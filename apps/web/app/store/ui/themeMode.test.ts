@@ -8,7 +8,8 @@ describe(useThemeModeStore, () => {
   test("reads a mode no longer offered as the system's", () => {
     expect.hasAssertions();
 
-    // oxlint-disable-next-line unicorn/no-document-cookie -- the store decodes the raw header, so a browser's own cookie is what the test writes
+    // The store decodes the raw
+    // oxlint-disable-next-line unicorn/no-document-cookie -- header, so a browser's own cookie is what the test writes
     window.document.cookie = `${THEME_COOKIE_NAME}=${THEME_COOKIE_NAME}`;
     const themeModeStore = useThemeModeStore();
     const { themeMode } = storeToRefs(themeModeStore);

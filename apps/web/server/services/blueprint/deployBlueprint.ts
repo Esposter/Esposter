@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: entries deploy in topological order, and a later entry's content names an earlier entry's id */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: entries deploy in topological order, and a later
+   entry's content names an earlier entry's id */
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";

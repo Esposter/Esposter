@@ -51,8 +51,8 @@ const TEXT_ENTRY_SELECTOR = `:is(input:not([type="checkbox"], [type="radio"], [t
 // Its surface — a chip, a track, a key cap. A container rounds by the container radius, a control by the control
 // Radius. A popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the
 // Browser's own popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused
-// Field is active on a stronger fill where the reader types, and elsewhere takes the document's ring just inside its edge,
-// As a row does, with its tint over the fill, so a neighbour or a clipped container never cuts the ring off
+// Field is active on a stronger fill where the reader types, and elsewhere takes the document's ring just inside its
+// Edge, As a row does, with its tint over the fill, so a neighbour or a clipped container never cuts the ring off
 const uiSurfaceUtilities = {
   "ui-field": [
     {
@@ -63,10 +63,10 @@ const uiSurfaceUtilities = {
       font: "inherit",
     },
     {
-      // Focus makes a text field active: a stronger fill, never a ring or a tint. At rest it is drawn as it always is, so it
-      // Still reads as somewhere to click, and the controls that act only inside it, such as a rich text editor's
-      // Formatting, are disabled until it is focused. A field around an editable of its own is active while the editable
-      // Is focused or a panel one of its buttons opened is showing
+      // Focus makes a text field active: a stronger fill, never a ring or a tint. At rest it is drawn as it always is,
+      // So it Still reads as somewhere to click, and the controls that act only inside it, such as a rich text editor's
+      // Formatting, are disabled until it is focused. A field around an editable of its own is active while the
+      // Editable Is focused or a panel one of its buttons opened is showing
       "background-color": "var(--ui-field-active-background)",
       // Transparent rather than none, so forced colours, which drop the fill, still paint a ring where the focus is
       outline: "var(--ui-focus-width) solid transparent",
@@ -141,11 +141,11 @@ const uiShapeUtilities = { "ui-pill": { "border-radius": "var(--ui-pill-radius)"
   string,
   Record<string, string>
 >;
-// The library's type: five utilities, four sizes and the lede, each read from the style tier with its face and weight. Each
-// Reads a face token, so the readable-text setting swaps the tokens and no component knows about it; every size above the
-// Body is a heading, in the heading face, weight and colour. The lede is the heading's size set as body text, and sets no
-// Colour, so it reads the text colour it sits in and `text-muted` can quiet it: the line under a heading or a card's title,
-// Larger than the body
+// The library's type: five utilities, four sizes and the lede, each read from the style tier with its face and weight.
+// Each Reads a face token, so the readable-text setting swaps the tokens and no component knows about it; every size
+// Above the Body is a heading, in the heading face, weight and colour. The lede is the heading's size set as body text,
+// And sets no Colour, so it reads the text colour it sits in and `text-muted` can quiet it: the line under a heading or
+// A card's title, Larger than the body
 const getUiTypeTokens = (
   size: string,
   fontFamily = "var(--ui-font-heading)",
@@ -189,9 +189,10 @@ export default defineConfig({
   // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather
   // Than a stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that
   // Reads a colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep
-  // Dawn's edge. The inset focus ring is derived from the style's width on the same scope, so a field's and a row's ring
-  // Is drawn inside its edge by one token rather than each spelling the calculation. The ring's paint is one token on the
-  // Same scope, so a field and the base `:focus-visible` ring draw it alike. The base ring stays outside its edge
+  // Dawn's edge. The inset focus ring is derived from the style's width on the same scope, so a field's and a row's
+  // Ring Is drawn inside its edge by one token rather than each spelling the calculation. The ring's paint is one token
+  // On the Same scope, so a field and the base `:focus-visible` ring draw it alike. The base ring stays outside its
+  // Edge
   preflights: Object.entries(UiStyleMap).map(([uiStyle, styleTokens]) => ({
     getCSS: () =>
       `[data-ui-style="${uiStyle}"]{${Object.entries(styleTokens)
@@ -266,8 +267,8 @@ export default defineConfig({
       "data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
       "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
       "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
-      // A step of a rating scale is its mark alone: no surface, no overlay under the pointer and no fill while chosen, since the
-      // Scale fills the marks up to the step it shows. It takes the colour of the scale it sits in
+      // A step of a rating scale is its mark alone: no surface, no overlay under the pointer and no fill while chosen,
+      // Since the Scale fills the marks up to the step it shows. It takes the colour of the scale it sits in
       "data-[variant=Rating]:bg-transparent data-[variant=Rating]:shadow-none data-[variant=Rating]:text-current data-[variant=Rating]:hover:[background-image:none] data-[variant=Rating]:hover:[filter:none] data-[variant=Rating]:active:[background-image:none] data-[variant=Rating]:aria-checked:bg-transparent data-[variant=Rating]:aria-checked:text-current",
     ].join(" "),
     // A card: a thing a reader picks among others as a whole — a post, a type to create, a type's count, a recent
@@ -276,7 +277,8 @@ export default defineConfig({
       "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
-    // The open trigger of a collapsible that heads a sector, drawn as a selected header tab is: in the full text colour under a heavier indicator
+    // The open trigger of a collapsible that heads a sector, drawn as a selected header tab is: in the full text colour
+    // Under a heavier indicator
     "ui-header-trigger":
       "data-[variant=Header]:aria-[expanded=true]:text-text data-[variant=Header]:aria-[expanded=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
     // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected,
@@ -285,10 +287,11 @@ export default defineConfig({
       "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
     // The scrolling list of a popover's items, lifted off the popover and held to the upper part of the screen at most
     "ui-popover-list": "max-h-[40dvh] py-1 flex flex-col overflow-y-auto ui-lifted",
-    // The body of a dialog or a popover's panel: a column of its content, and the one region that scrolls once it
-    // Is taller than the frame or panel holding it. Its flex column shrinks it to the room under the title bar and above
-    // The footer, so a short body keeps its content's height and a long one scrolls inside its own edges. The padding is not here:
-    // A container adds it, since a bare body leaves it out and a utility cannot reliably undo one a shortcut sets
+    // The body of a dialog or a popover's panel: a column of its content, and the one region that scrolls once it Is
+    // Taller than the frame or panel holding it. Its flex column shrinks it to the room under the title bar and above
+    // The footer, so a short body keeps its content's height and a long one scrolls inside its own edges. The padding
+    // Is not here: A container adds it, since a bare body leaves it out and a utility cannot reliably undo one a
+    // Shortcut sets
     "ui-region-body": "flex flex-1 flex-col gap-3 min-h-0 of-y-auto",
     // The row of actions under a dialog's body: padded, laid out in a row and pinned, so it never scrolls with the body
     "ui-region-footer": "p-3 flex gap-2 items-center justify-end shrink-0",
@@ -303,8 +306,8 @@ export default defineConfig({
     // A selection drawn as an accent line just inside a control's edge, where the focus ring is drawn outside it
     "ui-selected": "shadow-[inset_0_0_0_var(--ui-indicator-width)_var(--ui-accent)]",
     // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line
-    // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger. A header tab is also the chosen radio of a toggle
-    // Group drawn as one
+    // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger. A
+    // Header tab is also the chosen radio of a toggle Group drawn as one
     "ui-tab":
       "px-3 py-1 [@media(pointer:coarse)]:min-h-11 flex items-center text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[variant=Header]:data-[selected]:text-text data-[variant=Header]:data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)] data-[variant=Header]:aria-[checked=true]:text-text data-[variant=Header]:aria-[checked=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",

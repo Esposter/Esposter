@@ -26,9 +26,9 @@ export const useSurveyFiles = () => {
   const deleteUrls = (resourceId: string, urls: string[]) => {
     for (const url of urls) deleteFile(resourceId, url);
   };
-  // A file is validated before the upload, and a rejected one alerts itself, so the undefined it leaves uploads nothing.
-  // A file belongs to the session it was uploaded in, so one that lands after that session closed, or after the open
-  // Resource became another opening, is deleted from the resource it went to and handed back to nothing
+  // A file is validated before the upload, and a rejected one alerts itself, so the undefined it leaves uploads
+  // Nothing. A file belongs to the session it was uploaded in, so one that lands after that session closed, or after
+  // The open Resource became another opening, is deleted from the resource it went to and handed back to nothing
   const upload = async (file: File) => {
     if (!validateFileWithAlert(file)) return undefined;
 

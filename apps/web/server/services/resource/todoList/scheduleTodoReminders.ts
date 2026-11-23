@@ -24,7 +24,8 @@ export const scheduleTodoReminders = (
       if (completedAt || !dueAt || dueAt.getTime() <= now || previousDueAtMap.get(id) === dueAt.getTime()) return [];
       else return [{ dueAt, itemId: id, resourceId: resource.id }];
     });
-    // A rescheduled item's row is replaced by the reconcile, so only the reminders that stop standing are cancelled here
+    // A rescheduled item's row is replaced by the reconcile, so only the reminders that stop standing are cancelled
+    // Here
     const rescheduledItemIds = new Set(reminders.map(({ itemId }) => itemId));
     const cancelledItemIds = [...previousDueAtMap.keys()].filter(
       (itemId) => currentDueAtMap.get(itemId) !== previousDueAtMap.get(itemId) && !rescheduledItemIds.has(itemId),

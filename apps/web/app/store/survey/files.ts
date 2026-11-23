@@ -2,7 +2,8 @@
 // One uploaded since. The editor's components and its close share them, and none of them owns the set, so it is a store
 export const useSurveyFilesStore = defineStore("survey/files", () => {
   const fileUrls = ref(new Set<string>());
-  // Set when the editor closes, since the close ends the session: a file that lands after it has no session to be held by
+  // Set when the editor closes, since the close ends the session: a file that lands after it has no session to be held
+  // By
   const isClosed = ref(false);
   const openSession = (urls: string[]) => {
     fileUrls.value = new Set(urls);

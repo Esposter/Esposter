@@ -1,5 +1,5 @@
-// The short words a reader types to find a block, keyed by the block's menu title. A block with no entry is found by its
-// Title alone
+// The short words a reader types to find a block, keyed by the block's menu title. A block with no entry is found by
+// Its Title alone
 export const NoteSlashAliasMap: Record<string, string[]> = {
   Blockquote: ["quote"],
   "Bullet List": ["bullet", "ul"],

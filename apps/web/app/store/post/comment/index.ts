@@ -37,8 +37,8 @@ export const useCommentStore = defineStore("post/comment", () => {
   const commentSortType = ref<PostSortType>(PostSortType.Hot);
   // Held here rather than in each card, so a card a re-read remounts comes back open
   const expandedCommentIds = ref(new Set<string>());
-  // Keyed by the post whose replies the partition holds, the route's own post included. A partition holds the ids of its
-  // Replies in the order its pages named them, and the rows are the overlay's
+  // Keyed by the post whose replies the partition holds, the route's own post included. A partition holds the ids of
+  // Its Replies in the order its pages named them, and the rows are the overlay's
   const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostKey>();
   const toBranchPosts = (branchKeys: PostKey[]) =>
     branchKeys.flatMap(({ id }) => {
@@ -62,7 +62,8 @@ export const useCommentStore = defineStore("post/comment", () => {
       branch.items.value = branch.items.value.filter(({ id }) => !removedIdSet.has(id));
     }
   };
-  // Every loaded branch is read again under the new order, from its first page, so none keeps the rows the old order read
+  // Every loaded branch is read again under the new order, from its first page, so none keeps the rows the old order
+  // Read
   const setCommentSortType = (sortType: PostSortType) => {
     commentSortType.value = sortType;
     for (const key of keys.value) getSlice(key).resetCursorPaginationData();
@@ -81,8 +82,8 @@ export const useCommentStore = defineStore("post/comment", () => {
       const { isLoaded, items: branchItems } = getSlice(key);
       for (const { id } of branchItems.value) deleteLoadedBranch(id);
       branchItems.value = [];
-      // Emptied rather than kept: a branch that still says it is loaded is one a re-expansion will not read again, and the
-      // Removal that calls this has taken the replies it held
+      // Emptied rather than kept: a branch that still says it is loaded is one a re-expansion will not read again, and
+      // The Removal that calls this has taken the replies it held
       isLoaded.value = false;
     };
     deleteLoadedBranch(parentId);
@@ -99,9 +100,9 @@ export const useCommentStore = defineStore("post/comment", () => {
     arrive(postTable, storePostRelations(post));
   };
 
-  // The comment is drawn as it is sent: the reader is its author, it inherits its parent's chain, and a new reply has no
-  // Votes or replies of its own. The counts it moves on the posts above it are the server's, so they are read back once
-  // It lands. `onRefused` hands the composer its text back
+  // The comment is drawn as it is sent: the reader is its author, it inherits its parent's chain, and a new reply has
+  // No Votes or replies of its own. The counts it moves on the posts above it are the server's, so they are read back
+  // Once It lands. `onRefused` hands the composer its text back
   const createComment = (input: Except<CreateCommentInput, "id">, onRefused?: () => void) => {
     if (EMPTY_TEXT_REGEX.test(input.description)) return;
 
@@ -171,9 +172,9 @@ export const useCommentStore = defineStore("post/comment", () => {
         return false;
       },
     );
-  // The answer names each reply a removal takes as well as the comment and the posts above it, and no entry can name the
-  // Replies, so the removal waits for the answer. The branch beneath the comment is emptied only once the server keeps the
-  // Removal, and the counters above it are read back then
+  // The answer names each reply a removal takes as well as the comment and the posts above it, and no entry can name
+  // The Replies, so the removal waits for the answer. The branch beneath the comment is emptied only once the server
+  // Keeps the Removal, and the counters above it are read back then
   const deleteComment = async (input: DeleteCommentInput) =>
     writeAwaited(
       async () => {

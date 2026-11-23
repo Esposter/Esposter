@@ -207,7 +207,8 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     // The braces open after a space, as the suggestion only opens where a word begins
     editor.commands.insertContent(" {{");
-    // The suggestion's items resolve after the keystroke, so the list is read once the promises it waits on have settled
+    // The suggestion's items resolve after the keystroke, so the list is read once the promises it waits on have
+    // Settled
     await flushPromises();
     const richTextSuggestionStore = useRichTextSuggestionStore();
     const { suggestion } = storeToRefs(richTextSuggestionStore);

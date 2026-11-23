@@ -26,8 +26,8 @@ const checkEmailSource = (source: string): string | true =>
   );
 
 // Replaces the open email's body and head with a source the email's types take, as one edit the history records under
-// One label. The field runs the check as the source is typed, so the dialog only sends a source the email takes; a refusal
-// That reaches the import is alerted with the same wording, and leaves the email as it was
+// One label. The field runs the check as the source is typed, so the dialog only sends a source the email takes; a
+// Refusal That reaches the import is alerted with the same wording, and leaves the email as it was
 export const useImportEmailSource = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;

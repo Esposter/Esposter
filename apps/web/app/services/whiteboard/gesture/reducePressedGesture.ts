@@ -15,8 +15,9 @@ import { reduceMovingGesture } from "#src/services/whiteboard/gesture/reduceMovi
 import { reduceResizingGesture } from "#src/services/whiteboard/gesture/reduceResizingGesture";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// A press released before it has travelled the drag start distance is a click. Past that distance the press becomes a marquee
-// On the canvas, a resize from a handle, or a move of the selection, and the event that starts it is read by the new phase
+// A press released before it has travelled the drag start distance is a click. Past that distance the press becomes a
+// Marquee On the canvas, a resize from a handle, or a move of the selection, and the event that starts it is read by
+// The new phase
 export const reducePressedGesture = (
   state: WhiteboardGestureState,
   gesture: GesturePressed,

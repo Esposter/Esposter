@@ -9,17 +9,19 @@ export const LocalStorageKey = {
   // That Map is the storage, rather than a key per composer the store has to enumerate to find
   Drafts: "drafts",
   DungeonsStore: "dungeons-store",
-  // Every editor type's reader state in one record, so an editor reopens with the sizes and open regions the reader left
+  // Every editor type's reader state in one record, so an editor reopens with the sizes and open regions the reader
+  // Left
   EditorReaderStates: "editor-reader-states",
   EmojiSkinTone: "emoji-skin-tone",
   // The developer console's lines and their results, kept with the browser so a reload still shows them
   GenshinDevConsoleHistory: "genshin-dev-console-history",
   // The developer panel's open tab, kept with the browser
   GenshinDevPanelTab: "genshin-dev-panel-tab",
-  // The Genshin save an account has not had acknowledged, kept per account with the session that held it, until it is, so a
-  // Page left mid-save leaves it for the next start to adopt
+  // The Genshin save an account has not had acknowledged, kept per account with the session that held it, until it is,
+  // So a Page left mid-save leaves it for the next start to adopt
   GenshinPending: (userId: string) => `genshin-pending${LOCAL_STORAGE_KEY_SEPARATOR}${userId}`,
-  // The Genshin save a signed-out player plays, kept with the browser until a sign-in uploads or merges it into the account
+  // The Genshin save a signed-out player plays, kept with the browser until a sign-in uploads or merges it into the
+  // Account
   GenshinSave: "genshin-save",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",

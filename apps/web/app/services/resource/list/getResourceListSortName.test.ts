@@ -8,8 +8,8 @@ import { describe, expect, test } from "vitest";
 describe(getResourceListSortName, () => {
   const lastAccessedDesc: SortItem<keyof ResourceListItem>[] = [{ key: "lastAccessedAt", order: SortOrder.Desc }];
 
-  // The server refuses a last-accessed order without the accessed filter, so a list that is not accessed-only falls back
-  // To its default instead of sending a name the read would reject
+  // The server refuses a last-accessed order without the accessed filter, so a list that is not accessed-only falls
+  // Back To its default instead of sending a name the read would reject
   test.each([
     ["a list of every resource", {}, "updatedAt-desc"],
     ["the accessed filter", { isAccessed: true }, "lastAccessedAt-desc"],

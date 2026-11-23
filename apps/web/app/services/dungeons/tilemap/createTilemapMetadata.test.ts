@@ -1,4 +1,5 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed tilemap has members this test never reads */
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full
+   store type; A partial fake: the typed tilemap has members this test never reads */
 import type { Tilemaps } from "phaser";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
@@ -8,7 +9,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+// A partial fake:
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe(createTilemapMetadata, () => {
@@ -19,7 +21,8 @@ describe(createTilemapMetadata, () => {
   test("each tile layer takes the depth of its place in the tilemap, not its place in the layer names", () => {
     expect.hasAssertions();
 
-    // The names are read in alphabetical order, so Building is created before Ground, though Ground comes first in the tilemap
+    // The names are read in alphabetical order, so Building is created before Ground, though Ground comes first in the
+    // Tilemap
     const depthMap = new Map<string, number>();
     const worldSceneStore = useWorldSceneStore();
     const { tilemap } = storeToRefs(worldSceneStore);

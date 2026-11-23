@@ -1,4 +1,5 @@
-/* oxlint-disable sorting/sort-switch-case -- the cardinal moves read in their pairs, and the diagonals fall through together */
+/* oxlint-disable sorting/sort-switch-case -- the cardinal moves read in their pairs, and the diagonals fall through
+   together */
 import type { GridValue } from "#src/models/dungeons/GridValue";
 import type { Position } from "grid-engine-headless";
 import type { SetRequired } from "type-fest";

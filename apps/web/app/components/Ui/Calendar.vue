@@ -18,8 +18,8 @@ interface Props {
   min?: Temporal.PlainDate | undefined;
 }
 // A month of days as the WAI-ARIA date grid draws one: a grid of buttons, one stop in the tab order on the focused day,
-// Walked by arrow a day or a week at a time, by Home and End to the week's ends and by Page Up and Page Down a month at a
-// Time, a year with Shift. Its days are plain dates, so a time zone never moves one
+// Walked by arrow a day or a week at a time, by Home and End to the week's ends and by Page Up and Page Down a month at
+// A Time, a year with Shift. Its days are plain dates, so a time zone never moves one
 const modelValue = defineModel<Temporal.PlainDate | undefined>();
 const from = defineModel<Temporal.PlainDate | undefined>("from");
 const to = defineModel<Temporal.PlainDate | undefined>("to");
@@ -56,8 +56,8 @@ const selection = computed(() => {
   else if (to.value) return { end: to.value.toString(), start: from.value.toString() };
   else return { start: from.value.toString() };
 });
-// One grid per month the calendar can show, all made up front so a second month appears without a grid being made mid-press.
-// Each draws its month's six weeks, Monday first, and reads the selection the models hold
+// One grid per month the calendar can show, all made up front so a second month appears without a grid being made
+// `mid-press`. Each draws its month's six weeks, Monday first, and reads the selection the models hold
 const grids = Array.from({ length: maxMonthCount }, (_grid, index) =>
   createCalendar({
     disabled: checkIsOutOfBounds,

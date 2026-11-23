@@ -2,8 +2,9 @@ import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleF
 import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { withFinalizerAsync } from "@esposter/shared";
 
-// Mints a presigned url for the single file, puts it there, and hands back the public url — returned rather than written,
-// Because each caller owns a different model. `isLoading` clears on a failed upload as well as a successful one
+// Mints a presigned url for the single file, puts it there, and hands back the public url — returned rather than
+// Written, Because each caller owns a different model. `isLoading` clears on a failed upload as well as a successful
+// One
 export const useUploadImage = (
   generateUploadUrl: (file: File) => Promise<{ presignedUrl: string; publicUrl: string }>,
 ) => {

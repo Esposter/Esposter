@@ -136,7 +136,8 @@ describe("resourceSurveyCreatorPalette", () => {
 
     const surveyCreatorStore = useSurveyCreatorStore();
     const { load } = surveyCreatorStore;
-    // A survey with no page has nothing selected to insert after, so the insertion point is the survey's top level, which takes pages alone
+    // A survey with no page has nothing selected to insert after, so the insertion point is the survey's top level,
+    // Which takes pages alone
     load({ ...createSurveyDocument(), content: [] });
     const component = await mountSuspended(ResourceSurveyCreatorPalette);
 

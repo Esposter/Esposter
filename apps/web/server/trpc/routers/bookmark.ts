@@ -22,9 +22,10 @@ import { Operation } from "@esposter/shared";
 import { and, asc, eq, getTableColumns, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const bookmarkRouter = router({
-  // Every bookmark the reader holds, a removed one included as its tombstone, with the fields the read joins in from the
-  // Targets: whether the page is reachable, and the mark that names it. A resource in the recycle bin is unreachable until it
-  // Is restored, and its bookmark is still answered, so it is drawn unavailable rather than left out
+  // Every bookmark the reader holds, a removed one included as its tombstone, with the fields the read joins in from
+  // The Targets: whether the page is reachable, and the mark that names it. A resource in the recycle bin is
+  // Unreachable until it Is restored, and its bookmark is still answered, so it is drawn unavailable rather than left
+  // Out
   readBookmarks: standardAuthedProcedure.query<ReadBookmark[]>(async ({ ctx }) => {
     const userId = ctx.user.id;
     const userBookmarks = await ctx.db
@@ -68,13 +69,14 @@ export const bookmarkRouter = router({
       },
     );
   }),
-  // Answers the row as it now stands: a live one when the page is bookmarked, its tombstone when the removal just left it
+  // Answers the row as it now stands: a live one when the page is bookmarked, its tombstone when the removal just left
+  // It
   toggleBookmark: standardAuthedProcedure
     .input(toggleBookmarkInputSchema)
     .mutation<BookmarkInApp>(async ({ ctx, input }) => {
       const userId = ctx.user.id;
-      // A removal leaves the row as a tombstone, so its version rises and a read that lands later loses to it. Only a page
-      // That is not bookmarked live falls through to the insert
+      // A removal leaves the row as a tombstone, so its version rises and a read that lands later loses to it. Only a
+      // Page That is not bookmarked live falls through to the insert
       const [removedBookmark] = await ctx.db
         .update(bookmarksInApp)
         .set({ deletedAt: new Date() })
@@ -84,9 +86,10 @@ export const bookmarkRouter = router({
         .returning();
       if (removedBookmark) return removedBookmark;
 
-      // The cap counts the live rows, so a tombstone revived under it is one more. The insert is only selected while the
-      // User is under the cap, and it revives this page's tombstone rather than conflicting with it. The batch reads the live
-      // Row back, which tells a page another device just bookmarked (kept) from a full list (refused), with no read ahead of the write
+      // The cap counts the live rows, so a tombstone revived under it is one more. The insert is only selected while
+      // The User is under the cap, and it revives this page's tombstone rather than conflicting with it. The batch
+      // Reads the live Row back, which tells a page another device just bookmarked (kept) from a full list (refused),
+      // With no read ahead of the write
       const target = getBookmarkTarget(input.mark);
       const [, bookmarkRows] = await ctx.db.batch([
         ctx.db

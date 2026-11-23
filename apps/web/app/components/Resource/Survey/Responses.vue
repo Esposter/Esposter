@@ -119,7 +119,8 @@ await refreshResponses();
         </template>
       </UiTabs>
       <ResourceSurveyResponseDetailDialog :columns="records?.columns ?? []" :items="records?.rows ?? []" />
-      <!-- A deleted response leaves the table when the server answers its delete, so the table does not wait on a read to drop it -->
+      <!-- A deleted response leaves the table when the server answers its delete, so the table does not wait on a
+        read to drop it -->
       <ResourceSurveyResponseDeleteDialog
         :survey-id="id"
         @delete="

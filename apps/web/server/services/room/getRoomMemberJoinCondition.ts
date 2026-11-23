@@ -1,7 +1,8 @@
 import { getLiveRowWhere, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
-// The join from an account to its membership row in one room, left-joined so an account with no membership still returns
+// The join from an account to its membership row in one room, left-joined so an account with no membership still
+// Returns
 export const getRoomMemberJoinCondition = (roomId: string) =>
   and(
     eq(usersToRoomsInMessage.userId, usersInAuth.id),

@@ -50,7 +50,8 @@ const onSelect = (keys: string[] | undefined = []) => {
 <template>
   <ResourceSurveyFieldShell :error :question="node.props">
     <template #default="{ describedBy, title }">
-      <!-- Each picture is a row of the list, so the arrows and Enter or Space pick it as they pick any listbox option -->
+      <!-- Each picture is a row of the list, so the arrows and Enter or Space pick it as they pick any listbox
+        option -->
       <UiList
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"

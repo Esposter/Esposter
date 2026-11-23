@@ -5,8 +5,9 @@ import { getChainedOperations } from "#src/services/whiteboard/edit/getChainedOp
 import { getDuplicateElement } from "#src/services/whiteboard/edit/getDuplicateElement";
 import { insertPositionedElement, PositionedElementType } from "vue-block-editor-headless";
 
-// The operations that insert a copy of each original on top of the element list, as one list, each copy under the id its original maps to and moved
-// By the offset. The shape copies are inserted before the arrow copies, so an arrow copy finds the shape copy its binding names
+// The operations that insert a copy of each original on top of the element list, as one list, each copy under the id
+// Its original maps to and moved By the offset. The shape copies are inserted before the arrow copies, so an arrow copy
+// Finds the shape copy its binding names
 export const getCopyOperations = (
   document: PositionedDocument,
   originals: PositionedElement[],

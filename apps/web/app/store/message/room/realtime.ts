@@ -211,8 +211,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     });
     meeting.self.on("roomLeft", ({ state }) => {
       connectionState.value = ConnectionState.Disconnected;
-      // The server's kick is not the call ending: a moderator's kick ends the call through its admin action, and a revoke's
-      // Kick is followed by the token to rejoin with, so the call is not left here
+      // The server's kick is not the call ending: a moderator's kick ends the call through its admin action, and a
+      // Revoke's Kick is followed by the token to rejoin with, so the call is not left here
       if (state !== "kicked") onDisconnected();
     });
     meeting.meta.on("socketConnectionUpdate", ({ state }) => {
@@ -256,9 +256,10 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     else if (isScreenSharing) await activeMeeting.self.enableScreenShare();
     else await activeMeeting.self.disableScreenShare();
   };
-  // Applies a pick's change to the meeting's video. It is the pick's commit, and the run scope holds the next commit until
-  // This one settles, so each remove-and-add completes before the next starts and one pick never composites over another.
-  // `onApplied` runs once the video has taken the change, so a background the video refused is never saved. A failure alerts
+  // Applies a pick's change to the meeting's video. It is the pick's commit, and the run scope holds the next commit
+  // Until This one settles, so each remove-and-add completes before the next starts and one pick never composites over
+  // Another. `onApplied` runs once the video has taken the change, so a background the video refused is never saved. A
+  // Failure alerts
   const applyVirtualBackgroundChange = (
     meeting: RealtimeKitClient,
     { middleware }: VideoChange,
@@ -274,8 +275,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
       setLocalVideo(meeting.self);
       onApplied();
     }).match(noop, createErrorAlert);
-  // The pipeline's awaits, which change nothing on their own: what it resolves is the commit's to apply. A transformer it
-  // Builds goes out with the pick, so the commit keeps it and a run that does not commit releases it
+  // The pipeline's awaits, which change nothing on their own: what it resolves is the commit's to apply. A transformer
+  // It Builds goes out with the pick, so the commit keeps it and a run that does not commit releases it
   const readVirtualBackgroundPick = async (virtualBackground: string): Promise<undefined | VirtualBackgroundPick> => {
     const meeting = activeMeeting;
     if (!meeting?.self.videoEnabled) return undefined;
@@ -309,8 +310,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
         },
       );
   };
-  // The one commit of a pick. A pick made for a meeting that has since been left releases what it built and saves nothing.
-  // A pick with no change to apply has nothing the video could refuse, so its setting is saved at once
+  // The one commit of a pick. A pick made for a meeting that has since been left releases what it built and saves
+  // Nothing. A pick with no change to apply has nothing the video could refuse, so its setting is saved at once
   const commitVirtualBackgroundPick = (
     pick: undefined | VirtualBackgroundPick,
     onApplied: () => void,
@@ -323,10 +324,11 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     } else releaseVirtualBackgroundPick(pick);
     return Promise.resolve();
   };
-  // Clicking through the background picker means only the last pick matters, so each pick is a run in one scope: a later
-  // Pick aborts this one, and only the newest pick commits. The pick is drawn as it is made, and a pipeline that fails
-  // Leaves no pick in its place, since the one it replaced is not put back. `onApplied` runs for the pick in force only,
-  // So a slow selection that a later one has overtaken never writes the settings row naming a background the call is not showing
+  // Clicking through the background picker means only the last pick matters, so each pick is a run in one scope: a
+  // Later Pick aborts this one, and only the newest pick commits. The pick is drawn as it is made, and a pipeline that
+  // Fails Leaves no pick in its place, since the one it replaced is not put back. `onApplied` runs for the pick in
+  // Force only, So a slow selection that a later one has overtaken never writes the settings row naming a background
+  // The call is not showing
   const applyVirtualBackground = (virtualBackground: string, onApplied: () => void) => {
     mediaStore.selectedVirtualBackground = virtualBackground;
     getSynchronizedFunction(() =>
@@ -342,7 +344,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
       }),
     )();
   };
-  // The pick the user actually made is the only one worth remembering, so it is persisted once the pipeline has taken it
+  // The pick the user actually made is the only one worth remembering, so it is persisted once the pipeline has taken
+  // It
   const setVirtualBackground = (virtualBackground: string) => {
     applyVirtualBackground(virtualBackground, () => {
       updateUserSettings({ virtualBackground });
@@ -392,7 +395,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     microphoneProcessor = new MicrophoneProcessor();
     applyMicrophoneSettings();
     await meeting.self.addAudioMiddleware(microphoneProcessor.audioMiddleware);
-    // oxlint-disable-next-line unicorn/require-array-join-separator -- RealtimeKit's meeting.join() is not Array#join and takes no separator
+    // RealtimeKit's meeting.join()
+    // oxlint-disable-next-line unicorn/require-array-join-separator -- is not Array#join and takes no separator
     await meeting.join();
     // Participants already in the meeting are attached here, and the listeners that follow are registered in the same
     // Tick, so no join or leave can land between the two
@@ -423,11 +427,12 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     // Leaving releases the local tracks and the media handler, so it is the last step
     await meeting?.leave();
   };
-  // A revoke that narrows the connection replaces it, and its user joins the meeting again with the token it was handed.
-  // The devices carry across, the microphone only where the new preset still allows it, and the camera comes back on if
-  // It was on. A screen share ends with the connection it was shared on, since the browser's picker has to be answered
-  // Afresh. Each rejoin waits for the one before it, since each replaces the meeting the next one reads: a second revoke's
-  // Token joins once the first meeting is left, rather than being dropped while that meeting is still being replaced
+  // A revoke that narrows the connection replaces it, and its user joins the meeting again with the token it was
+  // Handed. The devices carry across, the microphone only where the new preset still allows it, and the camera comes
+  // Back on if It was on. A screen share ends with the connection it was shared on, since the browser's picker has to
+  // Be answered Afresh. Each rejoin waits for the one before it, since each replaces the meeting the next one reads: a
+  // Second revoke's Token joins once the first meeting is left, rather than being dropped while that meeting is still
+  // Being replaced
   const rejoinMeeting = (authToken: string, canPublishMicrophone: boolean) =>
     getResultAsync(async () => {
       const meeting = activeMeeting;

@@ -39,8 +39,8 @@ const datePartTransformationFormSchema = datePartTransformationSchema
 const mathVariableFormSchema = mathVariableSchema.safeExtend(
   createSourceColumnIdFormShape(ColumnFormContextPropertyNames.numberColumnItems),
 );
-// The parse runs here rather than in the stored schema, so a stored formula the parser refuses never stops a sheet opening.
-// A name the formula reads before it assigns it must be a variable, or every cell of the column is empty
+// The parse runs here rather than in the stored schema, so a stored formula the parser refuses never stops a sheet
+// Opening. A name the formula reads before it assigns it must be a variable, or every cell of the column is empty
 const mathTransformationFormSchema = mathTransformationSchema
   .safeExtend({
     [mathTransformationSchema.keyof().enum.variables]: createUniqueArraySchema(mathVariableFormSchema, "name"),

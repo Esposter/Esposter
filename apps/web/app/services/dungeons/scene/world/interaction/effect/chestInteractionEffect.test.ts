@@ -1,4 +1,6 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed store has members this test never reads; A partial fake: the typed sound has members this test never reads */
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full
+   store type; A partial fake: the typed store has members this test never reads; A partial fake: the typed sound has
+   members this test never reads */
 import type { Types } from "phaser";
 
 import { ChestObjectProperty } from "#shared/generated/tiled/propertyTypes/class/ChestObjectProperty";
@@ -18,7 +20,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 const { showMessages } = vi.hoisted(() => ({ showMessages: vi.fn<() => Promise<void>>(() => Promise.resolve()) }));
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+// A partial fake:
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded

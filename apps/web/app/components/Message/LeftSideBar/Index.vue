@@ -43,7 +43,8 @@ const displayBadges = computed(() =>
     .filter(({ count }) => count > 0),
 );
 
-// A badge is an ancillary read, so the sidebar renders before its count lands, and the count fills the store when it does
+// A badge is an ancillary read, so the sidebar renders before its count lands, and the count fills the store when it
+// Does
 onMounted(() => readScheduledMessageJobCount());
 </script>
 

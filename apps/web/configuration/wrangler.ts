@@ -22,9 +22,10 @@ import { RateLimiterPointsMap } from "../../../packages/db-schema/src/services/c
 import { getStorageBucketBindingName } from "../../../packages/db-schema/src/services/storage/getStorageBucketBindingName.ts";
 
 // The environment the app's bindings are for: CI sets CLOUDFLARE_ENV by its branch, and without it `nuxt dev` binds the
-// Development environment, which Nuxt marks by setting NODE_ENV before it loads this configuration, and a build binds prod.
-// The dev server, the dev seed and the tests' mock database then open one local D1 file, the development database's. Any
-// Other value is a typo that would deploy one environment's bindings under another's name, so it fails the build
+// Development environment, which Nuxt marks by setting NODE_ENV before it loads this configuration, and a build binds
+// Prod. The dev server, the dev seed and the tests' mock database then open one local D1 file, the development
+// Database's. Any Other value is a typo that would deploy one environment's bindings under another's name, so it fails
+// The build
 export const getCloudflareEnvironment = (): CloudflareEnvironment => {
   const value =
     process.env.CLOUDFLARE_ENV ??
@@ -33,15 +34,16 @@ export const getCloudflareEnvironment = (): CloudflareEnvironment => {
       : CloudflareEnvironment.Production);
   const environment = CloudflareEnvironments.find((cloudflareEnvironment) => cloudflareEnvironment === value);
   if (!environment)
-    // oxlint-disable-next-line error-handling/no-bare-error -- the Nuxt configuration loads before `@esposter/shared` is built
+    // The Nuxt
+    // oxlint-disable-next-line error-handling/no-bare-error -- configuration loads before `@esposter/shared` is built
     throw new Error(`CLOUDFLARE_ENV must be one of ${CloudflareEnvironments.join(", ")}, got ${value}`);
   return environment;
 };
 
 // One environment's wrangler block. Wrangler does not inherit a binding, or a var, into an `env` block, so each carries
-// Its own, and every resource name is the one function both Pulumi and the Workers call for the environment. A binding's
-// Name is the same in both environments, so no code branches on the environment to reach a resource. The vars are the
-// Variables the environment's name fixes; the rest of the web Worker's variables are secrets a deploy uploads
+// Its own, and every resource name is the one function both Pulumi and the Workers call for the environment. A
+// Binding's Name is the same in both environments, so no code branches on the environment to reach a resource. The vars
+// Are the Variables the environment's name fixes; the rest of the web Worker's variables are secrets a deploy uploads
 export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
   const isDevelopment = environment === CloudflareEnvironment.Development;
   // The realtime Worker exports the objects and runs them: the web Worker calls each across by its name

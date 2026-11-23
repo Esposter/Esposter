@@ -8,6 +8,7 @@ export interface ReadResourceContentResult {
   memberSizes?: Record<string, number>;
   // The cursor of the array's next page, "" when the page reaches its end or the value is not an array
   nextCursor: string;
-  // Past the read cap, a leaf's size in place of its content: the UTF-8 byte length of its JSON encoding, quotes included
+  // Past the read cap, a leaf's size in place of its content: the UTF-8 byte length of its JSON encoding, quotes
+  // Included
   size?: number;
 }

@@ -13,9 +13,9 @@ import { DatabaseEntityType, ResourceType, SnapshotChannel } from "@esposter/db-
 import { Operation } from "@esposter/shared";
 import { SurveyAnswerValidationMode, validateSurveyAnswers } from "vue-survey-engine-headless";
 
-// The single write boundary for both response mutations — client state can never bypass it.
-// Costs two blob reads per submission, the live settings and the published snapshot it is checked against; submissions are
-// Rate-limited and low-volume, so no caching until measured
+// The single write boundary for both response mutations — client state can never bypass it. Costs two blob reads per
+// Submission, the live settings and the published snapshot it is checked against; submissions are Rate-limited and
+// `low-volume`, so no caching until measured
 export const resolveSurveyResponseWrite = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
@@ -38,7 +38,8 @@ export const resolveSurveyResponseWrite = async (
     surveyId,
     participantToken,
   );
-  // The write is checked against the publication a respondent is served now, not the working copy the owner may have edited since
+  // The write is checked against the publication a respondent is served now, not the working copy the owner may have
+  // Edited since
   if (!survey.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, surveyId);
   const publishedContent = await readSnapshotVersionContent(
     db,

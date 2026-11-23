@@ -53,7 +53,8 @@ describe(useImportEmailSource, () => {
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { undo } = pageBuilderHistoryStore;
     const { importEmailSource } = useImportEmailSource();
-    // Every node the import reads is minted an id, and the parser refuses a repeated one, so each mint is handed its own in turn
+    // Every node the import reads is minted an id, and the parser refuses a repeated one, so each mint is handed its
+    // Own in turn
     const sectionId = v7();
     const columnId = v7();
     const buttonId = v7();

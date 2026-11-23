@@ -1,4 +1,5 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- Partial fakes: the typed modules would load Phaser, which cannot initialise under the test environment, and the skip path reads none of their values */
+/* oxlint-disable vitest/prefer-import-in-mock -- Partial fakes: the typed modules would load Phaser, which cannot
+   initialise under the test environment, and the skip path reads none of their values */
 import type { GameObjects } from "phaser";
 
 import { AnimationsSetting } from "#shared/models/dungeons/data/settings/AnimationsSetting";

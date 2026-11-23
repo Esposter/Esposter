@@ -14,9 +14,9 @@ import {
   unlockLandmarkArgumentsSchema,
 } from "genshin-world";
 
-// The developer's save commands, `give`, `level`, `ar` and `unlock`, registered once the game's names and rules are read.
-// Each reads the save the world last wrote, and writes the save field the game's own act writes.
-// The new save is handed to the page, which applies it. A refused line writes nothing
+// The developer's save commands, `give`, `level`, `ar` and `unlock`, registered once the game's names and rules are
+// Read. Each reads the save the world last wrote, and writes the save field the game's own act writes. The new save is
+// Handed to the page, which applies it. A refused line writes nothing
 export const useGenshinDevSaveCommands = ({
   applySave,
   devRegistry,
@@ -38,7 +38,8 @@ export const useGenshinDevSaveCommands = ({
   };
 
   const createCommands = (tables: DevSaveTables): DevCommand[] => {
-    // Each command is typed by its own schema, so its `run` takes the arguments that schema parses rather than the list's
+    // Each command is typed by its own schema, so its `run` takes the arguments that schema parses rather than the
+    // List's
     const giveCommand: DevCommand<typeof giveItemArgs> = {
       args: giveItemArgs,
       argumentNames: ["item", "count"],

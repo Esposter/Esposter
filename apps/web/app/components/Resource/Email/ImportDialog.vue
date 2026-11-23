@@ -9,12 +9,13 @@ const { isImportOpen } = storeToRefs(emailImportDialogStore);
 const { closeImport } = emailImportDialogStore;
 const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
-// The email this blade shows is the one the import answers for, read at setup so a close after the reader has left still names it
+// The email this blade shows is the one the import answers for, read at setup so a close after the reader has left
+// Still names it
 const resourceId = currentResourceId.value;
 const { checkEmailSource, importEmailSource } = useImportEmailSource();
 const source = ref("");
-// The source is checked as it is typed, so a source the email's types refuse keeps the dialog open with its reason in the
-// Field, and the import is sent only for one they take. A blank source is the empty field the confirm already holds
+// The source is checked as it is typed, so a source the email's types refuse keeps the dialog open with its reason in
+// The Field, and the import is sent only for one they take. A blank source is the empty field the confirm already holds
 const sourceRules = [(value: string) => checkIsBlankText(value) || checkEmailSource(value)];
 const isOpen = computed({
   get: () => isImportOpen.value,

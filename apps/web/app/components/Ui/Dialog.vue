@@ -11,8 +11,9 @@ import { Dialog } from "@vuetify/v0";
 interface Props {
   // A body that is one full-bleed child, such as a listbox, drops the body's padding and keeps its scroll
   isBodyBare?: true | undefined;
-  // A decision about one thing, a confirmation, keeps its size: every other dialog standing in the page can be taken over
-  // The whole page and back by a button beside its close, so whatever it holds can have all the room the reader gives it
+  // A decision about one thing, a confirmation, keeps its size: every other dialog standing in the page can be taken
+  // Over The whole page and back by a button beside its close, so whatever it holds can have all the room the reader
+  // Gives it
   isSizeFixed?: true | undefined;
   // Stands at a fixed height in the page rather than only being capped by it, so a two-pane body divides a height and
   // Each pane scrolls on its own. A drawer and the full screen already stand at their edge's height, so they ignore it
@@ -43,7 +44,8 @@ const isExpanded = defineModel<boolean>("isExpanded", { default: false });
 const { isSizeFixed, isTall, placement = UiDialogPlacement.High, size } = defineProps<Props>();
 // The body and the footer both take this id, so a footer's submit names the form the body holds
 const formId = useId();
-// A dialog standing in the page rather than at an edge: only it has a page to take, and only it keeps the size a call site gives it
+// A dialog standing in the page rather than at an edge: only it has a page to take, and only it keeps the size a call
+// Site gives it
 const isStandingInPage = (value: UiDialogPlacement) =>
   value === UiDialogPlacement.High || value === UiDialogPlacement.Middle;
 // A drawer and the full screen already stand at their edges, so only a dialog standing in the page has a page to take
@@ -51,7 +53,8 @@ const isExpandable = computed(() => !isSizeFixed && isStandingInPage(placement))
 const displayPlacement = computed(() =>
   isExpandable.value && isExpanded.value ? UiDialogPlacement.FullScreen : placement,
 );
-// oxlint-disable-next-line no-restricted-globals -- the dialog is its subtree's context, which its commands read wherever a body draws them
+// The dialog is its subtree's
+// oxlint-disable-next-line no-restricted-globals -- context, which its commands read wherever a body draws them
 provide(UI_DIALOG_INJECTION_KEY, { isExpandable, isExpanded, isOpen });
 // A tall frame takes its placement's fixed height, and otherwise keeps the height its placement gives it
 const frameClass = computed(() => {

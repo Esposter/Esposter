@@ -43,7 +43,8 @@ const createFixtureDocument = (): WebpageDocument => ({
 
 type DocumentStore = ReturnType<typeof usePageBuilderDocumentStore>;
 
-// Seeds one open resource of the kind through `seed`, selects the node, and wires the moves to read it back through `read`
+// Seeds one open resource of the kind through `seed`, selects the node, and wires the moves to read it back through
+// `read`
 const setupMoves = <
   TNode extends BlockNode,
   TRoot extends object,

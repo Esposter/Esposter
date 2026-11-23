@@ -5,8 +5,9 @@ import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { withFinalizerAsync } from "@esposter/shared";
 
-// A note is a server-minted row the notes list holds outside the overlay, so its write is awaited: nothing is drawn before
-// The answer, and the list is read again once the server has kept the note. Resolves to whether the server kept it
+// A note is a server-minted row the notes list holds outside the overlay, so its write is awaited: nothing is drawn
+// Before The answer, and the list is read again once the server has kept the note. Resolves to whether the server kept
+// It
 export const useCreateModerationNote = (roomId: RoomInMessage["id"], targetUserId: () => PublicUser["id"]) => {
   const { $trpc } = useNuxtApp();
   const overlayStore = useOverlayStore();

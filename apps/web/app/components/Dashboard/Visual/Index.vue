@@ -40,7 +40,8 @@ useResizeObserver(container, (entries) => {
 });
 
 const { error, isPending, refresh, resolvedDataset, truncation, visualPropsData } = useVisualPropsData(() => visual);
-// The rows a visual draws, which the editor's menu and a viewer's export both take, and nothing for a demo or a failed read
+// The rows a visual draws, which the editor's menu and a viewer's export both take, and nothing for a demo or a failed
+// Read
 const drawnDataset = computed(() => (visualPropsData.value ? resolvedDataset.value : undefined));
 const isGroup = computed(() => visual.type === VisualType.Group);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
@@ -86,7 +87,8 @@ const { copy } = clipboardStore;
     </DashboardVisualGroup>
     <div v-else ref="container" h-full relative>
       <UiErrorState v-if="error" pointer-events-auto :error @retry="refresh()" />
-      <!-- A bound visual's own data is on its way: the tile's shape rather than the demo data it would otherwise show -->
+      <!-- A bound visual's own data is on its way: the tile's shape rather than the demo data it would otherwise
+        show -->
       <div v-else-if="visual.dataset && !visualPropsData && isPending" p-3 size-full>
         <UiSkeleton size-full />
       </div>

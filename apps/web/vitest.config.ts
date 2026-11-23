@@ -15,11 +15,10 @@ const { test } = getVitestConfiguration(import.meta.dirname, {
   // Cold "setupNuxt()" (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
   // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
   hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
-  // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
-  // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
-  // The node environment run without a DOM. Neither environment has IndexedDB at all, so `fake-indexeddb/auto`
-  // Installs `indexedDB` and the IDB* constructors the app's IndexedDB cache needs; it's cheap and harmless where unused,
-  // So it stays global.
+  // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`) Build their own
+  // `happy-dom` window, so no manual happy-dom registration is needed, and tests in The node environment run without a
+  // DOM. Neither environment has IndexedDB at all, so `fake-indexeddb/auto` Installs `indexedDB` and the IDB*
+  // Constructors the app's IndexedDB cache needs; it's cheap and harmless where unused, So it stays global.
   setupFiles: ["fake-indexeddb/auto", "./shared/test/setup.ts", "./app/test/setup.ts"],
   // A `mountSuspended` in the nuxt environment costs a few seconds on its own, so a component test sits close
   // To Vitest's 5s default before the run is even parallel — and with sixteen workers sharing a machine the
@@ -34,8 +33,8 @@ const vitestConfig = await defineVitestProject({ test });
 // Intact, so per-file directives still resolve the nuxt environment.
 vitestConfig.test ??= {};
 vitestConfig.test.environment = "node";
-// The live topic wake check's run-level half: it clears the records of an earlier run, then fails a full run that leaves a
-// Watched procedure uncalled by every suite (`server/trpc/liveTopicWakeCheckGlobal.ts`)
+// The live topic wake check's run-level half: it clears the records of an earlier run, then fails a full run that
+// Leaves a Watched procedure uncalled by every suite (`server/trpc/liveTopicWakeCheckGlobal.ts`)
 vitestConfig.test.globalSetup = ["./server/trpc/liveTopicWakeCheckGlobal.ts"];
 // `cloudflare:workers` exists only in the Workers runtime, so the server's imports of it resolve to the package whose
 // `env` `createMockDb` fills with the file's Miniflare bindings

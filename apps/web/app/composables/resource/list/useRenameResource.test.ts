@@ -79,7 +79,8 @@ describe(useRenameResource, () => {
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 
-  // The favorites list draws each row from the overlay, so the rename shows on it as the rename is sent, with no re-read
+  // The favorites list draws each row from the overlay, so the rename shows on it as the rename is sent, with no
+  // `re-read`
   test("shows the new name on the favorites list as the rename is sent", async () => {
     expect.hasAssertions();
 

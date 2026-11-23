@@ -12,7 +12,8 @@ import { getBlockNode, getBlockTypeDefinition } from "vue-block-editor-headless"
 interface ContentTarget<TValue, TProps> {
   formSchema: z.ZodType;
   interactionId: string;
-  // The props the form edits, which a type's props schema describes: the node's without its id and its slots, or the root's
+  // The props the form edits, which a type's props schema describes: the node's without its id and its slots, or the
+  // Root's
   ownProps: object;
   pointer: string;
   // The props the target holds in full, which an edit writes back whole so the slots and the id it keeps are untouched
@@ -97,8 +98,8 @@ export const usePageBuilderContent = <
     const targetValue = target.value;
     if (!targetValue || checkIsDeepEqual(value, savedValue.value)) return;
 
-    // The form edits a part of the props, so the props it edits with its change are the ones checked, and the props that are
-    // Written keep the id and the slots
+    // The form edits a part of the props, so the props it edits with its change are the ones checked, and the props
+    // That are Written keep the id and the slots
     if (!targetValue.propsSchema.safeParse({ ...targetValue.ownProps, ...value }).success) return;
 
     const props = { ...targetValue.props, ...value };

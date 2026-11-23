@@ -25,7 +25,8 @@ describe(removeDatasetQuerySeries, () => {
     });
   });
 
-  // An order ranking by the series removed has nothing left to rank by, so the categories fall back to their first-seen order
+  // An order ranking by the series removed has nothing left to rank by, so the categories fall back to their first-seen
+  // Order
   test("removing the series an order ranks by drops the order", () => {
     expect.hasAssertions();
 

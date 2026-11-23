@@ -62,8 +62,8 @@ describe("blockRouter", () => {
     expect(takeOne(friendships).deletedAt).not.toBeNull();
   });
 
-  // The block's entry shows the friendship, the request and the block row it writes, so the optimistic change covers every
-  // Row the server names
+  // The block's entry shows the friendship, the request and the block row it writes, so the optimistic change covers
+  // Every Row the server names
   test("the block entry touches every row a block writes over a friendship", async () => {
     expect.hasAssertions();
 

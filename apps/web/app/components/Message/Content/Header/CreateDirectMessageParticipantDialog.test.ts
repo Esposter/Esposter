@@ -19,8 +19,8 @@ describe("messageContentHeaderCreateDirectMessageParticipantDialog", () => {
   const appUser = createUser();
   const friend = createUser();
 
-  // The dialog awaits `useAuthSession()`, which reads the fetcher form (an object holding `data`), while the friend store
-  // Reads `useSessionUserId()`, the ref form, so the double answers both with the same signed-in user
+  // The dialog awaits `useAuthSession()`, which reads the fetcher form (an object holding `data`), while the friend
+  // Store Reads `useSessionUserId()`, the ref form, so the double answers both with the same signed-in user
   beforeEach(() => {
     const session = { user: { id: appUser.id } };
     useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));

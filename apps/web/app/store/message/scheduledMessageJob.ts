@@ -19,8 +19,8 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   const { arrive, view, writeOptimistic } = overlayStore;
   const reminders = view(reminderTable);
   const scheduledMessages = view(scheduledMessageTable);
-  // The page names the jobs in the order the server gives them. Each job's row arrives at the version its page read it at,
-  // So a read that lands after a cancel cannot list the job again
+  // The page names the jobs in the order the server gives them. Each job's row arrives at the version its page read it
+  // At, So a read that lands after a cancel cannot list the job again
   const {
     items: pageItems,
     readItems: readPageItems,
@@ -38,8 +38,8 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
           version: job.version,
         });
   };
-  // A job is listed while its row is live in the overlay. The page is the membership, and the view holds only live rows, so
-  // A cancel or a send that tombstones a job's row takes it off the list the moment that write is sent
+  // A job is listed while its row is live in the overlay. The page is the membership, and the view holds only live
+  // Rows, so A cancel or a send that tombstones a job's row takes it off the list the moment that write is sent
   const items = computed(() => {
     const liveIds = new Set([...reminders.value, ...scheduledMessages.value].map(({ id }) => id));
     return pageItems.value.filter(({ id }) => liveIds.has(id));
@@ -63,9 +63,9 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
       arriveJobs(page);
       return page;
     }, onComplete);
-  // A cancel is drawn at once. The tombstone its answer names confirms the entry, and a refused cancel drops the entry, so
-  // The job is listed again with nothing restored. `onCancelled` runs once the server has answered, so a caller's own
-  // Follow-up never runs for a cancel that was refused
+  // A cancel is drawn at once. The tombstone its answer names confirms the entry, and a refused cancel drops the entry,
+  // So The job is listed again with nothing restored. `onCancelled` runs once the server has answered, so a caller's
+  // Own Follow-up never runs for a cancel that was refused
   const cancelScheduledMessageJob = (job: ScheduledMessageJobWithRoom, onCancelled?: () => void) => {
     const deletedAt = new Date();
     writeOptimistic(

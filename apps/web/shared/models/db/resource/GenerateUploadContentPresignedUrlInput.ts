@@ -4,9 +4,9 @@ import { z } from "zod";
 
 export const generateUploadContentPresignedUrlInputSchema = z.object({
   id: selectResourceInResourceSchema.shape.id,
-  // The gzip's byte length, which the quota holds against. Bounded here for the reason every declared size is —
-  // A negative or non-finite one would shrink the pending sum — and by the content limit because the gzip of a
-  // Document under it is smaller still. The commit measures the real bytes (openspec/specs/resource/storage-quotas/design.md)
+  // The gzip's byte length, which the quota holds against. Bounded here for the reason every declared size is — A
+  // Negative or non-finite one would shrink the pending sum — and by the content limit because the gzip of a Document
+  // Under it is smaller still. The commit measures the real bytes (openspec/specs/resource/storage-quotas/design.md)
   size: z.int().positive().max(MAX_RESOURCE_CONTENT_SIZE),
 });
 export type GenerateUploadContentPresignedUrlInput = z.infer<typeof generateUploadContentPresignedUrlInputSchema>;

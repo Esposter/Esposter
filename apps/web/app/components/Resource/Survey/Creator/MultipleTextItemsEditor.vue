@@ -8,8 +8,8 @@ interface Props {
   // The list's name, drawn above its rows, such as "Items"
   label: string;
 }
-// An item is one input of the question, held under its name, which an answer is keyed by, so a name is unique within the
-// List and each item's own settings are checked by its schema
+// An item is one input of the question, held under its name, which an answer is keyed by, so a name is unique within
+// The List and each item's own settings are checked by its schema
 const modelValue = defineModel<SurveyMultipleTextItem[]>({ required: true });
 defineProps<Props>();
 const editor = useSurveyListEditor(modelValue, {

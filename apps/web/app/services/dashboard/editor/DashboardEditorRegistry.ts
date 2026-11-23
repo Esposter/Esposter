@@ -7,7 +7,8 @@ import DashboardEditorSettings from "#src/components/Dashboard/Editor/Settings.v
 import DashboardEditorVisualForm from "#src/components/Dashboard/Editor/VisualForm.vue";
 import { DashboardEditorContent } from "#src/models/dashboard/DashboardEditorContent";
 
-// The component each content key of the dashboard's layout draws. The layout check reports a key the layout names with no entry here
+// The component each content key of the dashboard's layout draws. The layout check reports a key the layout names with
+// No entry here
 export const DashboardEditorRegistry = {
   [DashboardEditorContent.Bar]: DashboardEditorHeader,
   [DashboardEditorContent.GroupForm]: DashboardEditorGroupForm,

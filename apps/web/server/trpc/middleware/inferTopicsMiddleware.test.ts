@@ -151,7 +151,8 @@ describe("inferTopicsMiddleware", () => {
     ]);
   });
 
-  // A mutation names each row it changed by its key and version, so its answer settles the entry the write made at that version
+  // A mutation names each row it changed by its key and version, so its answer settles the entry the write made at that
+  // Version
   test("names each row a mutation changed by its key and version in the row versions header", async () => {
     expect.hasAssertions();
 
@@ -177,8 +178,9 @@ describe("inferTopicsMiddleware", () => {
     );
   });
 
-  // A write names its rows in the header only while they fit it: one that changed more rows than the header's budget names none,
-  // So the header never grows with the write. Its entry drops on the answer, and its rows come back through the topic refetch
+  // A write names its rows in the header only while they fit it: one that changed more rows than the header's budget
+  // Names none, So the header never grows with the write. Its entry drops on the answer, and its rows come back through
+  // The topic refetch
   test("names none of a mutation's rows once it changed more than the header can name", async () => {
     expect.hasAssertions();
 
@@ -210,7 +212,8 @@ describe("inferTopicsMiddleware", () => {
     expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)?.split(", ")).toHaveLength(MAX_WRITE_ROW_VERSIONS);
   });
 
-  // An invite is keyed by its code, a credential, so the header names no invite row: neither the code nor its digest reaches it
+  // An invite is keyed by its code, a credential, so the header names no invite row: neither the code nor its digest
+  // Reaches it
   test("names no invite row in the row versions header, so the credential never reaches it", async () => {
     expect.hasAssertions();
 
@@ -224,8 +227,9 @@ describe("inferTopicsMiddleware", () => {
     expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBeNull();
   });
 
-  // A read's topics are watched only by the person who read them, so the header signs them for that person: the realtime
-  // Object takes a watch for them only when the signature covers the topics, the read's time and the person it names
+  // A read's topics are watched only by the person who read them, so the header signs them for that person: the
+  // Realtime Object takes a watch for them only when the signature covers the topics, the read's time and the person it
+  // Names
   test("a signed-in query's topics are signed for the person who read them", async () => {
     expect.hasAssertions();
 
@@ -311,8 +315,8 @@ describe("inferTopicsMiddleware", () => {
     ).toStrictEqual([`${userTable}:id=${firstUserId}`, `${userTable}:id=${secondUserId}`].toSorted());
   });
 
-  // A list past the budget names no row of its own: its table's row topics collapse to the table-wide topic, which every write
-  // To the table publishes, so the read is still woken by a write to any of its rows
+  // A list past the budget names no row of its own: its table's row topics collapse to the table-wide topic, which
+  // Every write To the table publishes, so the read is still woken by a write to any of its rows
   test("collapses a table a list names past the header's budget to its table-wide topic", async () => {
     expect.hasAssertions();
 
@@ -344,8 +348,8 @@ describe("inferTopicsMiddleware", () => {
     ).toStrictEqual([`${userTable}:*`]);
   });
 
-  // A join returns a row per membership, and each row names the room its membership is in. A join past the budget's rows
-  // Collapses the table it reads, which is the table holding the most row topics
+  // A join returns a row per membership, and each row names the room its membership is in. A join past the budget's
+  // Rows Collapses the table it reads, which is the table holding the most row topics
   test("collapses a table a join returns more rows of than the header's budget", async () => {
     expect.hasAssertions();
 
@@ -371,8 +375,9 @@ describe("inferTopicsMiddleware", () => {
     ).toStrictEqual([`${roomTable}:*`, `${usersToRoomTable}:*`]);
   });
 
-  // A read names one topic per room it reads, each the room's own messages. Past the header's budget those collapse to the room
-  // Kind's table topic, which every room's write publishes, so the read still fits and is woken by a write in any room
+  // A read names one topic per room it reads, each the room's own messages. Past the header's budget those collapse to
+  // The room Kind's table topic, which every room's write publishes, so the read still fits and is woken by a write in
+  // Any room
   test("collapses a read over more rooms than the header's budget to the room kind's table topic", async () => {
     expect.hasAssertions();
 
@@ -405,8 +410,8 @@ describe("inferTopicsMiddleware", () => {
     expect(getWokenTopics(readTopics, MockPublishedTopics)).toStrictEqual([`${userTable}:*`]);
   });
 
-  // A read names one blob topic per key it reads. Past the header's budget its keys collapse to their bucket's root, which every
-  // Write to the bucket publishes, as a table's rows collapse to its table-wide topic
+  // A read names one blob topic per key it reads. Past the header's budget its keys collapse to their bucket's root,
+  // Which every Write to the bucket publishes, as a table's rows collapse to its table-wide topic
   test("collapses a bucket a read names past the header's budget to the bucket's root topic", async () => {
     expect.hasAssertions();
 
@@ -418,7 +423,8 @@ describe("inferTopicsMiddleware", () => {
     ).toStrictEqual([userAssetsRootTopic]);
   });
 
-  // The root is published by a write to any key of the bucket, so a collapsed read is woken by a write to a key it did not name
+  // The root is published by a write to any key of the bucket, so a collapsed read is woken by a write to a key it did
+  // Not name
   test("wakes a read whose blobs collapsed for a write to a key it did not name", async () => {
     expect.hasAssertions();
 
@@ -430,8 +436,8 @@ describe("inferTopicsMiddleware", () => {
     expect(getWokenTopics(readTopics, MockPublishedTopics)).toStrictEqual([userAssetsRootTopic]);
   });
 
-  // A presigned upload lands in R2 without its bucket binding, so the PUT itself publishes nothing. The confirm that records the key
-  // Publishes its write as a put's topics do, so a read of the key wakes once the upload is confirmed
+  // A presigned upload lands in R2 without its bucket binding, so the PUT itself publishes nothing. The confirm that
+  // Records the key Publishes its write as a put's topics do, so a read of the key wakes once the upload is confirmed
   test("wakes a read of a key once a confirm records the presigned upload that landed there", async () => {
     expect.hasAssertions();
 

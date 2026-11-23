@@ -64,7 +64,8 @@ export const useThreadStore = defineStore("message/thread", () => {
       messageLayoutStore.previousRightDrawer = messageLayoutStore.rightDrawer;
     messageLayoutStore.rightDrawer = RightDrawer.Thread;
     layoutStore.isRightDrawerOpen = true;
-    // The flag belongs to the newest read: a read a newer open superseded settles dropped, and that newer read clears it
+    // The flag belongs to the newest read: a read a newer open superseded settles dropped, and that newer read clears
+    // It
     isReadThreadPending.value = true;
     threadReadError.value = "";
     const readThread = async () => {

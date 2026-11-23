@@ -10,8 +10,8 @@ import { DIALOG_BODY_TRANSITION_DURATION } from "#src/services/ui/constants";
 interface Props {
   // Why the confirm waits for the server, from the closed set; without one the dialog closes as its write is sent
   awaitedBecause?: AwaitedReason | undefined;
-  // What confirming does, closing the dialog as it is called unless it names a reason to wait (useDialogAnswer). A dialog
-  // Whose confirm submits a form leaves it to the form's own submit
+  // What confirming does, closing the dialog as it is called unless it names a reason to wait (useDialogAnswer). A
+  // Dialog Whose confirm submits a form leaves it to the form's own submit
   confirm?: (() => Promisable<unknown>) | undefined;
   // What confirming does, in the confirm variant: "Save". Absent when the dialog has nothing to confirm — a reference
   // Sheet. The whole actions row goes with it, cancel included: there is no pending change for cancel to abandon, and
@@ -29,7 +29,8 @@ interface Props {
 }
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
-// The body is handed the dialog's own answer, so a form inside it submits through the one pending state the confirm shows
+// The body is handed the dialog's own answer, so a form inside it submits through the one pending state the confirm
+// Shows
 defineSlots<{
   default?: (props: { answer: ReturnType<typeof useDialogAnswer>["answer"] }) => VNode;
   "prepend-actions"?: () => VNode;
@@ -52,7 +53,8 @@ const { answer, isPending } = useDialogAnswer(isOpen);
         </div>
       </Transition>
     </template>
-    <!-- Read here rather than in a computed, since a slot's presence is not reactive and a computed would keep the first answer -->
+    <!-- Read here rather than in a computed, since a slot's presence is not reactive and a computed would keep the
+      first answer -->
     <template v-if="confirmLabel || $slots['prepend-actions'] || $slots['prepend-confirm']" #footer>
       <!-- The actions row is the dialog's footer, held through its leave as the body is -->
       <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">

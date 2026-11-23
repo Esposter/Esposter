@@ -1,4 +1,5 @@
-// A closing delimiter preceded by a space is not right-flanking, so the edge whitespace is written outside the delimiters
+// A closing delimiter preceded by a space is not right-flanking, so the edge whitespace is written outside the
+// Delimiters
 export const wrapEmphasis = (delimiter: string) => (text: string) => {
   const start = text.length - text.trimStart().length;
   const end = text.trimEnd().length;

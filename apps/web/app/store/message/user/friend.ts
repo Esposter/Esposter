@@ -49,7 +49,8 @@ export const useFriendStore = defineStore("message/user/friend", () => {
       return friendship;
     },
   );
-  // A failed read is held as its message and drawn by the list in place of its empty state, so no failure reads as no friends
+  // A failed read is held as its message and drawn by the list in place of its empty state, so no failure reads as no
+  // Friends
   const friendsError = ref("");
   const readFriends = (read: () => Promise<FriendInSocialWithRelations[]>) =>
     readFriendRows(read, {

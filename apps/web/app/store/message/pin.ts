@@ -17,8 +17,8 @@ export const usePinStore = defineStore("message/pin", () => {
   const { getSlice, items, ...restData } = useCursorPaginationDataMap<ClientMessage>(() => roomStore.currentRoomId);
   const dataStore = useDataStore();
   const { getSlice: getDataSlice } = dataStore;
-  // The room pages its pins newest message first, by id, and a pin takes its place in that order. Editing a pin does not
-  // Move it, since the order is the room's and not the time of the last change to the message
+  // The room pages its pins newest message first, by id, and a pin takes its place in that order. Editing a pin does
+  // Not Move it, since the order is the room's and not the time of the last change to the message
   const placePin = (roomId: ClientMessage["roomId"], message: ClientMessage) => {
     const { items: roomItems } = getSlice(roomId);
     if (roomItems.value.some(({ id }) => id === message.id)) return;
@@ -26,7 +26,8 @@ export const usePinStore = defineStore("message/pin", () => {
     roomItems.value = getInsertedItems(roomItems.value, message, ({ id }) => id < message.id);
   };
   // The pinned list holds its own rows, since a pin read from the server reaches past the messages the room has loaded.
-  // Each row takes the changes the room's messages take, so an edit or a deletion reaches the pane as it reaches the room
+  // Each row takes the changes the room's messages take, so an edit or a deletion reaches the pane as it reaches the
+  // Room
   messageHolderRegistry.register((roomId, hold) => {
     hold(getSlice(roomId).items.value);
   });
@@ -42,9 +43,9 @@ export const usePinStore = defineStore("message/pin", () => {
     updateMessageCopy(pinnedMessage, input);
     if (!input.isPinned) return;
 
-    // The source message is read from its own room's slice: `dataStore.items` is the room on screen, so a pin toggled from
-    // A search result or a thread in another room would find nothing there. The window takes this update after the hooks,
-    // So the copy is the message with the pin applied to it, and a pin older than that copy places nothing
+    // The source message is read from its own room's slice: `dataStore.items` is the room on screen, so a pin toggled
+    // From A search result or a thread in another room would find nothing there. The window takes this update after the
+    // Hooks, So the copy is the message with the pin applied to it, and a pin older than that copy places nothing
     const message = getDataSlice(input.roomId).items.value.find(
       getEntityIdEqualComparator<ClientMessage>(["id"], input),
     );

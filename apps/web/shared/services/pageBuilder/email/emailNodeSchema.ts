@@ -3,7 +3,8 @@ import { emailSurveyInviteNodeSchema } from "#shared/services/pageBuilder/email/
 import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { createMjmlNodeSchema } from "mjml-blocks";
 
-// The email's schemas: MJML's built-in nodes with the survey invite beside them, and the Note's writing kit as rich text
+// The email's schemas: MJML's built-in nodes with the survey invite beside them, and the Note's writing kit as rich
+// Text
 const emailSchemas = createMjmlNodeSchema({
   leafNodeSchema: emailSurveyInviteNodeSchema,
   maxChildren: MAX_EMAIL_NODES,

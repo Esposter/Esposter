@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join replaces the room's invite (createRoomMember); Each step reads the last: each note takes the clock set just before it */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join replaces the room's invite
+   (createRoomMember); Each step reads the last: each note takes the clock set just before it */
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
@@ -265,8 +266,8 @@ describe("moderationRouter", () => {
     });
   });
 
-  // A purged message's mention counts are taken back with it, as a delete takes them back, so the member it named is not left
-  // Holding a badge for a message that no longer reads
+  // A purged message's mention counts are taken back with it, as a delete takes them back, so the member it named is
+  // Not left Holding a badge for a message that no longer reads
   test(`executeAdminAction ${AdminActionType.SoftBan} takes back the mention counts its purged messages made`, async () => {
     expect.hasAssertions();
 
@@ -402,8 +403,8 @@ describe("moderationRouter", () => {
     expect(takeOne(result.items).actorUserId).toBe(owner.id);
   });
 
-  // An unban is a tombstone at a higher version, so the ban list reads it back as a removal and a read that lands after the
-  // Unban cannot list the ban again
+  // An unban is a tombstone at a higher version, so the ban list reads it back as a removal and a read that lands after
+  // The Unban cannot list the ban again
   test("deleteBan leaves the ban as a tombstone at a higher version, which the ban list reads back", async () => {
     expect.hasAssertions();
 
@@ -424,7 +425,8 @@ describe("moderationRouter", () => {
     ]);
   });
 
-  // A member banned again after an unban is the same ban row, revived: its removal is cleared and its version keeps climbing
+  // A member banned again after an unban is the same ban row, revived: its removal is cleared and its version keeps
+  // Climbing
   test("a ban made again after an unban revives its row at a higher version", async () => {
     expect.hasAssertions();
 

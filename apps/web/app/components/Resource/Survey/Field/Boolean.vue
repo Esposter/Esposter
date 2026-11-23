@@ -13,8 +13,8 @@ interface Props {
   node: SurveyBooleanNode;
 }
 
-// The default is what keeps an unanswered question undefined: a boolean prop left out of a mount is cast to false, which
-// Would read as an answer of No and pre-select that option
+// The default is what keeps an unanswered question undefined: a boolean prop left out of a mount is cast to false,
+// Which Would read as an answer of No and pre-select that option
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { node } = defineProps<Props>();
 const isChecked = computed({

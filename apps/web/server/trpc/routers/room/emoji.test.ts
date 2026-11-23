@@ -136,7 +136,8 @@ describe("emojiRouter", () => {
     expect(roomEmoji.presignedUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
   });
 
-  // The uploader chose the object's type, so a navigation to its read url downloads instead of rendering on the storage origin
+  // The uploader chose the object's type, so a navigation to its read url downloads instead of rendering on the storage
+  // Origin
   test("hands back a read url that answers as a download, so an uploaded svg is not rendered by navigation", async () => {
     expect.hasAssertions();
 

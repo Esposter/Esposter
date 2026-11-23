@@ -37,11 +37,10 @@ type MoveKind<
   TDocument extends BlockDocument<TNode, TRoot>,
 > = PageBuilderKind<TNode, TRoot, TDefinition, TDocument>;
 // The keyboard and command moves of the selected node in one open resource's webpage: Alt with an arrow moves it among
-// Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete removes
-// It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each landed edit is
-// Announced once through `announce`.
-// The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
-// `jscpd:ignore-start`
+// Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete
+// Removes It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each
+// Landed edit is Announced once through `announce`. The kind's signature, which each composable lists as its own
+// Inputs, so the duplicate-code gate skips it `jscpd:ignore-start`
 export const usePageBuilderMoves = <
   TNode extends BlockNode,
   TRoot extends object,
@@ -125,7 +124,8 @@ export const usePageBuilderMoves = <
       );
     });
   };
-  // Each slot that accepts the selected node, named by its path, so Move to is one search rather than a chain of Alt presses
+  // Each slot that accepts the selected node, named by its path, so Move to is one search rather than a chain of Alt
+  // Presses
   const moveToScope: UiCommandScope = {
     commands: () => {
       const selection = getSelection();
@@ -150,8 +150,9 @@ export const usePageBuilderMoves = <
     query: ref(""),
     title: "Move to",
   };
-  // The reason the selected node cannot take a move, from the same function that gives the move its operations, or none when
-  // It can or nothing is selected. A move the selection cannot take is shown unavailable with this reason, never hidden
+  // The reason the selected node cannot take a move, from the same function that gives the move its operations, or none
+  // When It can or nothing is selected. A move the selection cannot take is shown unavailable with this reason, never
+  // Hidden
   const getSelectedRefusal = (
     getRefusal: (
       kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
@@ -173,7 +174,8 @@ export const usePageBuilderMoves = <
     );
   const getMoveLeftRefusal = () => getSelectedRefusal(getMoveOutRefusal);
   const getMoveRightRefusal = () => getSelectedRefusal(getMoveIntoRefusal);
-  // The copy is the node placed straight after the selected one in its slot, so it is selected and announced once it lands
+  // The copy is the node placed straight after the selected one in its slot, so it is selected and announced once it
+  // Lands
   const duplicateSelected = () => {
     const selection = getSelection();
     if (!selection) return;
@@ -197,8 +199,9 @@ export const usePageBuilderMoves = <
       if (title) announce(`Duplicated ${title}`);
     }, console.error);
   };
-  // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer clears the selection.
-  // Returns whether the removal landed, so a caller announcing the delete knows a node was actually removed
+  // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer
+  // Clears the selection. Returns whether the removal landed, so a caller announcing the delete knows a node was
+  // Actually removed
   const deleteNode = (nodeId: string) => {
     const resourceIdValue = toValue(resourceId);
     const open = getOpenDocument();
@@ -212,7 +215,8 @@ export const usePageBuilderMoves = <
       () => {
         const focus = getOpenDocument();
         setSelectedNodeId(resourceIdValue, focus ? getNodeIdAt(focus.kind, focus.document, focusPointer) : "");
-        // A text edit ends with the node it edits, or with a node above it that was removed, since its editor has nothing left to write into
+        // A text edit ends with the node it edits, or with a node above it that was removed, since its editor has
+        // Nothing left to write into
         const editingNodeId = getEditingNodeId(resourceIdValue);
         if (editingNodeId && (!focus || getNodePointer(focus.kind, focus.document, editingNodeId) === undefined))
           setEditingNodeId(resourceIdValue, "");

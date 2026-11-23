@@ -61,7 +61,8 @@ describe(usePageBuilderDrag, () => {
     scale: 1,
   });
 
-  // The drag's cancel is a command, which only a mounted surface binds, so each drag is composed inside a mounted component
+  // The drag's cancel is a command, which only a mounted surface binds, so each drag is composed inside a mounted
+  // Component
   const setup = async (document: WebpageDocument) => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -450,7 +451,8 @@ describe(usePageBuilderDrag, () => {
 
     expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([]);
     expect(document && getSlotChildIds(webpageKind, document, COLUMN_TWO_SLOT)).toStrictEqual([TEXT_TWO, TEXT_ONE]);
-    // The moved text shares its slot with a text, so its title carries its position among them, as a keyboard move's does
+    // The moved text shares its slot with a text, so its title carries its position among them, as a keyboard move's
+    // Does
     expect(announce).toHaveBeenCalledExactlyOnceWith(`Moved ${TEXT_TITLE} 2 to position 2 of 2 in Columns › Column 2`);
   });
 

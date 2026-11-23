@@ -8,8 +8,8 @@ import { ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { env } from "cloudflare:workers";
 
-// A rate limit binding answers only whether a key is within its budget, so a refusal is the whole answer: the points left and
-// The time to the reset are not known to the Worker, and no rate limit header is written
+// A rate limit binding answers only whether a key is within its budget, so a refusal is the whole answer: the points
+// Left and The time to the reset are not known to the Worker, and no rate limit header is written
 export const getRateLimitedMiddleware = (type: RateLimiterType) =>
   middleware(async ({ ctx: { ipAddress, user }, next, path }) => {
     if (!IS_PRODUCTION) return next();

@@ -25,7 +25,8 @@ const mountCard = () =>
   });
 
 describe("userDataExportCard", () => {
-  // Only the date is pinned: the card's expiry check reads the clock, and the flushes between steps still run on real timers
+  // Only the date is pinned: the card's expiry check reads the clock, and the flushes between steps still run on real
+  // Timers
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });

@@ -1,5 +1,5 @@
-// The panels of the survey's editor layout, each one a tab of its region or the bar itself. A panel's id is the key the reader's
-// Choice of tab is kept under, so it does not change
+// The panels of the survey's editor layout, each one a tab of its region or the bar itself. A panel's id is the key the
+// Reader's Choice of tab is kept under, so it does not change
 export const SurveyEditorPanel = {
   Add: "add",
   Bar: "bar",

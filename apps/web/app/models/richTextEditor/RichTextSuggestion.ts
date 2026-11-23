@@ -8,6 +8,7 @@ export interface RichTextSuggestion {
   editor: Editor;
   // Where the caret is now, which moves as the reader types
   getRect: () => DOMRect | undefined;
-  // What the suggestion plugin hands the list: its items, its query and the command that takes one, without the rect it positions by
+  // What the suggestion plugin hands the list: its items, its query and the command that takes one, without the rect it
+  // Positions by
   props: Except<SuggestionProps, "clientRect">;
 }

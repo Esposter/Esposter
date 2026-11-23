@@ -12,7 +12,8 @@ export const banRoomMember = async (db: Context["db"], actorUserId: string, room
     db
       .insert(bansInMessage)
       .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
-      // A ban made again revives the tombstone an unban left, taking the new moderator and time. A live ban is left as it is
+      // A ban made again revives the tombstone an unban left, taking the new moderator and time. A live ban is left as
+      // It is
       .onConflictDoUpdate({
         set: { bannedByUserId: actorUserId, createdAt: new Date(), deletedAt: null },
         setWhere: isNotNull(bansInMessage.deletedAt),

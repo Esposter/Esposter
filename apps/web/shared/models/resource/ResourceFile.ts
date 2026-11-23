@@ -1,4 +1,5 @@
-// A file a resource holds, as its listing reads it: the type its upload declared, its size, and the address it is embedded at
+// A file a resource holds, as its listing reads it: the type its upload declared, its size, and the address it is
+// Embedded at
 export interface ResourceFile {
   mimetype: string;
   size: number;

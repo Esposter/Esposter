@@ -5,9 +5,9 @@ import { getLiveBlockWhere } from "#server/services/friend/getLiveBlockWhere";
 import { blocksInSocial } from "@esposter/db-schema";
 import { notInArray } from "drizzle-orm";
 
-// Hides posts/comments authored by users the viewer has blocked — they are hidden, not erased,
-// So denormalized counters (`likeCount`/`commentCount`) intentionally keep counting them. A removed block is a tombstone, so
-// Only the live ones hide
+// Hides posts/comments authored by users the viewer has blocked — they are hidden, not erased, So denormalized counters
+// (`likeCount`/`commentCount`) intentionally keep counting them. A removed block is a tombstone, so Only the live ones
+// Hide
 export const getNotBlockedWhere = (postsTable: typeof postsInPost, db: Context["db"], userId: UserInAuth["id"]) =>
   notInArray(
     postsTable.userId,

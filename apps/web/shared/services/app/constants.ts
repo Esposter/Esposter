@@ -1,4 +1,5 @@
-// oxlint-disable-next-line naming/no-site-name-literal -- `nuxt.config` reads this copy, and importing the `@esposter/shared` barrel there drags the runtime graph into config evaluation
+// `nuxt.config` reads this copy, and importing the `@esposter/shared`
+// oxlint-disable-next-line naming/no-site-name-literal -- barrel there drags the runtime graph into config evaluation
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
 export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";
@@ -10,8 +11,9 @@ export const RIGHT_DRAWER_WIDTH = 256;
 // Graph (zod, neverthrow, node-html-parser) into config evaluation
 export const KIBIBYTE = 2 ** 10;
 export const MEGABYTE = KIBIBYTE ** 2;
-// The request body limit, which the request size limiter answers with a 413 before reading the body, whatever Content-Type
-// The request claims. A body that can outgrow it — a large resource's content — is committed by reference instead (openspec/specs/architecture/file-uploads/design.md)
+// The request body limit, which the request size limiter answers with a 413 before reading the body, whatever
+// Content-Type The request claims. A body that can outgrow it — a large resource's content — is committed by reference
+// Instead (openspec/specs/architecture/file-uploads/design.md)
 export const MAX_REQUEST_SIZE = 2_000_000;
 export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE;
 

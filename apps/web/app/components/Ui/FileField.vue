@@ -18,7 +18,8 @@ const { accept, isMultiple } = defineProps<Props>();
 const id = useId();
 const dropZone = useTemplateRef("dropZone");
 const input = useTemplateRef("input");
-// A pick or a drop replaces what the field holds only when some of it is accepted, so a choice with none of it leaves the field as it was
+// A pick or a drop replaces what the field holds only when some of it is accepted, so a choice with none of it leaves
+// The field as it was
 const takeAccepted = (files: File[]) => {
   const acceptedFiles = files.filter((file) => checkIsFileAccepted(file, accept));
   if (acceptedFiles.length > 0) modelValue.value = acceptedFiles;
@@ -72,7 +73,8 @@ const { isOverDropZone } = useDropZone(dropZone, {
         "
       />
     </div>
-    <!-- The button is the labelled way in, so the picker's own input stays out of the accessibility tree and the tab order -->
+    <!-- The button is the labelled way in, so the picker's own input stays out of the accessibility tree and the
+      tab order -->
     <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/13533 -->
     <!-- oxlint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
     <input

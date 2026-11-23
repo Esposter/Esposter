@@ -1,5 +1,6 @@
 <script setup lang="ts">
-/* oxlint-disable selector-ban/no-restricted-syntax -- removes a row from the unsaved note editor draft; removes a column from the unsaved note editor draft; removes a table from the unsaved note editor draft */
+/* oxlint-disable selector-ban/no-restricted-syntax -- removes a row from the unsaved note editor draft; removes a
+   column from the unsaved note editor draft; removes a table from the unsaved note editor draft */
 import type { Item } from "#src/models/shared/Item";
 import type { Editor } from "@tiptap/core";
 

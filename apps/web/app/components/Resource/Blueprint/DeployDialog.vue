@@ -106,7 +106,8 @@ const isDeployBlocked = computed(() => deployReviews.value.some(({ isNameEmpty }
       </UiForm>
       <div v-else flex flex-col gap-3>
         <p>Created {{ deployments.length }} {{ pluralize("resource", deployments.length) }}:</p>
-        <!-- Each created resource is a row leading with its type's mark, the manifest alias it came from after its name -->
+        <!-- Each created resource is a row leading with its type's mark, the manifest alias it came from after its
+          name -->
         <ul flex flex-col>
           <li v-for="{ key, resource: deployed } of deployments" :key="deployed.id">
             <NuxtLink :to="RoutePath.Resource(deployed.id)" ui-item>

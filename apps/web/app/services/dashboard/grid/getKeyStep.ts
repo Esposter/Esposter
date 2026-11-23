@@ -1,6 +1,7 @@
 import type { GridStep } from "vue-grid-layout-headless";
 
-// An arrow key moves a focused visual one cell, and with Shift it resizes the visual one cell from its bottom-right corner
+// An arrow key moves a focused visual one cell, and with Shift it resizes the visual one cell from its bottom-right
+// Corner
 const STEP_MAP = new Map<string, { move: GridStep; resize: GridStep }>([
   ["ArrowDown", { move: { dy: 1 }, resize: { dh: 1 } }],
   ["ArrowLeft", { move: { dx: -1 }, resize: { dw: -1 } }],

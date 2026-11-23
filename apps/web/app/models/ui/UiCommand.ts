@@ -4,7 +4,8 @@ import type { RouteLocationRaw } from "vue-router";
 
 // One thing the reader can do or reach: a page, an action, a search result, or a key a surface handles itself. The
 // Palette offers what it can reach or run, and the shortcuts dialog lists what has a shortcut. Every row leads with a
-// Mark: what its icon says, drawn in the nearest style's glyph, a whole class for a glyph no meaning names, or a picture
+// Mark: what its icon says, drawn in the nearest style's glyph, a whole class for a glyph no meaning names, or a
+// Picture
 export type UiCommand = {
   // A line after the title saying more: a resource's type
   description?: string | undefined;

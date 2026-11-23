@@ -20,8 +20,8 @@ const layoutStore = useLayoutStore();
 const { isDesktop } = storeToRefs(layoutStore);
 </script>
 
-<!-- A wide screen docks the drawer as a column of the page's grid, open or closed, in the column its edge names. A narrow
-     screen shows the same content as a sheet over the page instead -->
+<!-- A wide screen docks the drawer as a column of the page's grid, open or closed, in the column its edge names. A
+  narrow screen shows the same content as a sheet over the page instead -->
 <template>
   <aside
     v-if="isDesktop"

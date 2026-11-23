@@ -17,8 +17,8 @@ export const copySelection = (editState: Ref<WhiteboardEditState>, selectedIds: 
   editState.value = state;
   selectedIds.value = copiedIds;
 };
-// Writes the selected elements to the clipboard as marked text, and resolves to whether the clipboard took them. A refused write is
-// Logged and reported as not written, so a cut deletes nothing the clipboard did not take
+// Writes the selected elements to the clipboard as marked text, and resolves to whether the clipboard took them. A
+// Refused write is Logged and reported as not written, so a cut deletes nothing the clipboard did not take
 export const writeSelectionToClipboard = (document: PositionedDocument, selectedIds: string[]) =>
   getResultAsync(() =>
     window.navigator.clipboard.writeText(

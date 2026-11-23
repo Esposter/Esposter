@@ -5,7 +5,8 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { exhaustiveGuard } from "@esposter/shared";
 import { NO_BLOCK_SLOTS } from "vue-block-editor-headless";
 
-// The children port of a webpage: each node type's slots as the typed list of nodes that slot holds, switched on the type tag
+// The children port of a webpage: each node type's slots as the typed list of nodes that slot holds, switched on the
+// Type tag
 export const webpageNodeChildren: BlockChildren<WebpageNode> = (node) => {
   switch (node.type) {
     case WebpageNodeType.Button:

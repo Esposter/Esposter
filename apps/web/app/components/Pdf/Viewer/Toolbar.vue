@@ -40,8 +40,8 @@ const isDisabled = computed(() => pagesCount.value === 0);
 const { cloned: pageInput } = useCloned(() => (currentPageNumber.value ? String(currentPageNumber.value) : ""));
 // The readout is the reset as well as the scale, and reads nothing before a document sets one
 const zoomPercent = computed(() => (scale.value ? `${Math.round(scale.value * 100)}%` : ""));
-// The file's text is imported. A refusal alerts the reader with the file's name and the reason it was refused, and a file
-// That cannot be read is a failure the error alert names
+// The file's text is imported. A refusal alerts the reader with the file's name and the reason it was refused, and a
+// File That cannot be read is a failure the error alert names
 const importAnnotations = async (file: File) => {
   await getResultAsync(() => file.text()).match(
     (xfdf) =>

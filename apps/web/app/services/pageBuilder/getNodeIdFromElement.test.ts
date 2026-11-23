@@ -19,7 +19,8 @@ describe(getNodeIdFromElement, () => {
   test("a click inside a node of another realm selects that node", () => {
     expect.hasAssertions();
 
-    // An element built in another JavaScript realm, as the PiP window's is: its prototypes are not this window's, so instanceof fails
+    // An element built in another JavaScript realm, as the PiP window's is: its prototypes are not this window's, so
+    // Instanceof fails
     const foreignElement: EventTarget = runInNewContext(
       "({ tagName: 'SPAN', closest: () => ({ dataset: { nodeId } }) })",
       { nodeId: TEST_ID },

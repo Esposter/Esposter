@@ -7,8 +7,8 @@ import {
 } from "#src/services/editor/constants";
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
-// The parts the page builder's layout is built from: a bar over the page, the blocks at the start, the settings at the end and
-// The canvas in the rest. The webpage's layout adds its settings tabs to these
+// The parts the page builder's layout is built from: a bar over the page, the blocks at the start, the settings at the
+// End and The canvas in the rest. The webpage's layout adds its settings tabs to these
 export const PAGE_BUILDER_CANVAS_ID = "canvas";
 export const PAGE_BUILDER_REGION_ID_MAP = { Bar: "bar", Blocks: "blocks", Inspector: "inspector" } as const;
 export const PAGE_BUILDER_PANEL_ID_MAP = {
@@ -20,7 +20,8 @@ export const PAGE_BUILDER_PANEL_ID_MAP = {
   Style: "style",
   Theme: "theme",
 } as const;
-// The content key each panel draws in the editor's registry, so the layout check reads each one the editor must register
+// The content key each panel draws in the editor's registry, so the layout check reads each one the editor must
+// Register
 export const PAGE_BUILDER_CONTENT_KEY_MAP = {
   Bar: "bar",
   Blocks: "blocks",
@@ -29,7 +30,8 @@ export const PAGE_BUILDER_CONTENT_KEY_MAP = {
   Style: "style",
   Theme: "theme",
 } as const;
-// The selection kinds a page builder layout names: a node, and nothing, which the layout's context answers as the empty kind
+// The selection kinds a page builder layout names: a node, and nothing, which the layout's context answers as the empty
+// Kind
 export const PAGE_BUILDER_SELECTION_KIND_MAP = { Node: "node", Nothing: "" } as const;
 // The name each side region is announced by, and the sheet it opens as is titled
 export const PAGE_BUILDER_REGION_NAME_MAP = {
@@ -68,7 +70,8 @@ export const PAGE_BUILDER_REGIONS: Region[] = [
     sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,
   },
 ];
-// The panels every page builder layout holds: the bar, the palette and the layers tree, each shown whatever the selection
+// The panels every page builder layout holds: the bar, the palette and the layers tree, each shown whatever the
+// Selection
 export const PAGE_BUILDER_BASE_PANELS: Panel[] = [
   {
     condition: {},

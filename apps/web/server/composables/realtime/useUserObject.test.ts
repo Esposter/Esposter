@@ -14,15 +14,15 @@ export interface UserObjectCall {
 const userObjectCallsHolder = vi.hoisted(() => ({ userObjectCalls: [] as UserObjectCall[] }));
 export const userObjectCalls = userObjectCallsHolder.userObjectCalls;
 
-// Answers one call the way the person's `invoke` does. A read answers with nothing held, since the double keeps no state of
-// Its own, so its read and write sets are empty as well
+// Answers one call the way the person's `invoke` does. A read answers with nothing held, since the double keeps no
+// State of Its own, so its read and write sets are empty as well
 const invokeUserObject = (userId: string, method: string, args: unknown[]): Promise<ObjectInvocation> => {
   userObjectCalls.push({ args, method, userId });
   return Promise.resolve({ readSet: [], result: method.startsWith("read") ? [] : undefined, writeSet: [] });
 };
 
-// The stub a person resolves to: `invoke` answers every RPC method, and `fetch` is the socket's upgrade, which the wrapper
-// Forwards to the stub itself rather than through `invoke`
+// The stub a person resolves to: `invoke` answers every RPC method, and `fetch` is the socket's upgrade, which the
+// Wrapper Forwards to the stub itself rather than through `invoke`
 const createUserObjectStub = (userId: string) =>
   new Proxy({} as ReturnType<typeof useRealUserObject>, {
     get: (_target, member: string) => {

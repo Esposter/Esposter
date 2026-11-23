@@ -4,6 +4,7 @@ import type { WriteResponse } from "#src/models/shared/overlay/WriteResponse";
 
 import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 
-// The answer of a write that returns one row: the row arrives, and the write's entry is confirmed at the version it names
+// The answer of a write that returns one row: the row arrives, and the write's entry is confirmed at the version it
+// Names
 export const createRowResponse = <TRow extends Versioned>(table: Table<TRow>, row: TRow): WriteResponse =>
   createRowsResponse(table, [row]);

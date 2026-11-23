@@ -79,7 +79,8 @@ describe(useVotePoll, () => {
     expect(isVoting.value).toBe(false);
   });
 
-  // A message id is only unique within its room, so a poll with the same id in another room is not voting while this one is
+  // A message id is only unique within its room, so a poll with the same id in another room is not voting while this
+  // One is
   test("reports voting only for the room the vote was cast in", async () => {
     expect.hasAssertions();
 

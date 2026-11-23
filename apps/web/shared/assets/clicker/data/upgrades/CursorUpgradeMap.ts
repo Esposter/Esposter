@@ -7,8 +7,8 @@ import { Target } from "#shared/models/clicker/data/Target";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
 import { pluralize } from "#shared/util/text/pluralize";
 
-// Each fingers upgrade multiplies the gain from the Thousand Fingers by its own value, so its description and effect are
-// Written once from that value
+// Each fingers upgrade multiplies the gain from the Thousand Fingers by its own value, so its description and effect
+// Are Written once from that value
 const getFingersMultiplier = (value: number): Pick<Upgrade<CursorUpgradeId>, "description" | "effects"> => ({
   description: `Multiplies the gain from ${CursorUpgradeId.ThousandFingers} by **${value}**.`,
   effects: [

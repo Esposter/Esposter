@@ -17,8 +17,9 @@ export interface SaveGenshinResult {
 
 // The common save is one write under the ETag this session's last start or save returned. That ETag was minted by a
 // Write of this session, so a blob still carrying it is unchanged since, and its lease is still this session's: nothing
-// Is read or parsed. A refused write is answered by one read, where a write of this session that landed before is written
-// Over under the fresh ETag, and any other session's write is a replacement, as is that second write refused in turn
+// Is read or parsed. A refused write is answered by one read, where a write of this session that landed before is
+// Written Over under the fresh ETag, and any other session's write is a replacement, as is that second write refused in
+// Turn
 export const saveGenshin = async (
   userId: string,
   { etag, save, sessionId }: SaveGenshinInput,

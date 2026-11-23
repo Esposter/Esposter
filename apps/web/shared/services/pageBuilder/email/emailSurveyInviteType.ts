@@ -11,7 +11,8 @@ import {
 import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
 import { escapeAttribute, escapeText } from "@esposter/shared";
 
-// A survey invite in an email, drawn as an MJML button linking to the published survey at the origin the email is compiled for
+// A survey invite in an email, drawn as an MJML button linking to the published survey at the origin the email is
+// Compiled for
 export const emailSurveyInviteType = {
   allowedAttributes: {},
   defaultAttributes: {},

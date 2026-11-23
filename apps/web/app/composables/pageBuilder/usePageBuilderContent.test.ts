@@ -15,7 +15,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
-// The email's settings are its root's props, which the root form writes with nothing selected, so the compile reads each change
+// The email's settings are its root's props, which the root form writes with nothing selected, so the compile reads
+// Each change
 const createEmailSettings = () => {
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();

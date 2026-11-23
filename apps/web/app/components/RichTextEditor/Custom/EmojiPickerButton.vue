@@ -12,7 +12,8 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- The room's custom emoji are empty wherever there is no room in scope — a post's comment editor gets the dataset alone -->
+  <!-- The room's custom emoji are empty wherever there is no room in scope — a post's comment editor gets the
+    dataset alone -->
   <MessageModelMessageEmojiPicker
     @select="
       (emojiTag: string, emoji: PickableEmoji) =>

@@ -14,8 +14,8 @@ import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The autosave runs on the timer worker, which the test environment has no equivalent for, so its stand-in runs the same
-// Intervals on window's timers
+// The autosave runs on the timer worker, which the test environment has no equivalent for, so its stand-in runs the
+// Same Intervals on window's timers
 vi.mock(
   import("#src/services/shared/getWorkerTimers"),
   () => import("#src/services/shared/getWorkerTimersStandIn.test"),
@@ -94,8 +94,8 @@ describe(useGenshinSave, () => {
     expect(retriedSessionId).toBe(firstSessionId);
   });
 
-  // Another window of the browser can write the journal while this page's start is in flight, and the journal it wrote is
-  // The one the start adopts
+  // Another window of the browser can write the journal while this page's start is in flight, and the journal it wrote
+  // Is The one the start adopts
   test("adopts the journal as the browser holds it when the start answers, not as the page first read it", async () => {
     expect.hasAssertions();
 

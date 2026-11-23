@@ -20,7 +20,8 @@ export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("m
 export const LOADING_BAR_BLOCK_COUNT = 16;
 // The page size that shows every row, named All by a table's footer and the size its page starts at
 export const DATA_TABLE_ALL_ROWS = -1;
-// How a data table's sort compares cell text: numbers as numbers, and one collator for every comparison rather than one each
+// How a data table's sort compares cell text: numbers as numbers, and one collator for every comparison rather than one
+// Each
 export const DATA_TABLE_COLLATOR = new Intl.Collator(undefined, { numeric: true });
 // The page sizes a table that holds every row offers, the last of them every row
 export const DATA_TABLE_ITEMS_PER_PAGE_OPTIONS: [number, ...number[]] = [10, 25, 50, 100, DATA_TABLE_ALL_ROWS];
@@ -55,8 +56,8 @@ export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
 // How long a finger rests on a touch screen before a drag starts under it, so a swipe that starts on a draggable row
 // Scrolls instead. Shorter than the long press, so a finger that holds still still opens the context menu
 export const TOUCH_DRAG_DELAY_MS = 200;
-// How long after a drag's release the click it raises is still swallowed. The browser dispatches that click straight after
-// The release, so a touch drag, which raises none, does not leave the swallow armed for a click raised later
+// How long after a drag's release the click it raises is still swallowed. The browser dispatches that click straight
+// After The release, so a touch drag, which raises none, does not leave the swallow armed for a click raised later
 export const SWALLOW_WINDOW_MS = 250;
 // How far a mouse or pen press moves, in CSS pixels, before it is a drag rather than a click
 export const DRAG_START_DISTANCE = 4;
@@ -102,8 +103,8 @@ export const UI_DIALOG_INJECTION_KEY: InjectionKey<UiDialogContext> = Symbol("ui
 export const BREAKPOINTS_NAMESPACE = "ui:breakpoints";
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";
-// The day a calendar's week starts on, Monday, ISO 8601's first day, in the number Vuetify 0's calendar takes, where 0 is
-// Sunday. Every grid starts its rows on it, so a month reads the same from one screen to the next
+// The day a calendar's week starts on, Monday, ISO 8601's first day, in the number Vuetify 0's calendar takes, where 0
+// Is Sunday. Every grid starts its rows on it, so a month reads the same from one screen to the next
 export const CALENDAR_FIRST_DAY_OF_WEEK = 1;
 // How many events a day of an event calendar's month lists before the rest fold into a count that opens the day
 export const CALENDAR_DAY_EVENT_LIMIT = 3;
@@ -117,8 +118,8 @@ export const CALENDAR_CLOSING_HOUR = 17;
 export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;
 // Width nudged per arrow press on a resize handle, in the px the width model is kept in
 export const RESIZE_HANDLE_KEYBOARD_STEP = 16;
-// The narrowest and widest a resizable side pane is, in CSS pixels, shared by the message layout's sidebars and the page
-// Builder's panes
+// The narrowest and widest a resizable side pane is, in CSS pixels, shared by the message layout's sidebars and the
+// Page Builder's panes
 export const MIN_SIDE_PANE_WIDTH = 200;
 export const MAX_SIDE_PANE_WIDTH = 480;
 // The width a resizable side pane starts at, in CSS pixels, within the bounds above

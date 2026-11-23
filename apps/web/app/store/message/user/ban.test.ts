@@ -38,7 +38,8 @@ describe(useBanStore, () => {
     vi.useRealTimers();
   });
 
-  // The panel's list is the page's keys, and the rows are the overlay's, so an unban the list draws is the row's removal
+  // The panel's list is the page's keys, and the rows are the overlay's, so an unban the list draws is the row's
+  // Removal
   test("drops an unbanned ban from the list before the server answers", async () => {
     expect.hasAssertions();
 

@@ -42,8 +42,8 @@ import { Operation, RoutePath } from "@esposter/shared";
 // The type's rather than the union of every type's
 export const createBaseProcedures = <TType extends ResourceType>(type: TType) => {
   const contentSchema = getResourceContentSchema(type);
-  // The input side is the accessor's declared input rather than zod's default, since defaulting it to unknown would erase
-  // The procedure's input type for consumers like achievement condition paths
+  // The input side is the accessor's declared input rather than zod's default, since defaulting it to unknown would
+  // Erase The procedure's input type for consumers like achievement condition paths
   const saveResourceContentInputSchema = createSaveResourceContentInputSchema(contentSchema);
   return {
     createResource: standardAuthedProcedure
@@ -128,8 +128,8 @@ export const createBaseProcedures = <TType extends ResourceType>(type: TType) =>
         resource: ctx.resource,
       });
     }),
-    // A document too large for one request body is uploaded straight to R2 first and committed here by
-    // Reference, reaching the same door with the same version check (openspec/specs/architecture/file-uploads/design.md)
+    // A document too large for one request body is uploaded straight to R2 first and committed here by Reference,
+    // Reaching the same door with the same version check (openspec/specs/architecture/file-uploads/design.md)
     saveStagedResourceContent: getOwnerProcedure(
       type,
       saveStagedResourceContentInputSchema,

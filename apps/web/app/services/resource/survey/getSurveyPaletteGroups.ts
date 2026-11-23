@@ -6,8 +6,8 @@ import { getSurveyInsertTarget } from "#src/services/resource/survey/getSurveyIn
 import { SurveyNodeTypeIconMap } from "#src/services/resource/survey/SurveyNodeTypeIconMap";
 import { surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
-// The palette's groups of the survey kinds an insertion at the selection takes, each kind listed under its icon and the label its definition
-// Gives it. A group none of whose kinds is taken is dropped, so no heading stands over nothing
+// The palette's groups of the survey kinds an insertion at the selection takes, each kind listed under its icon and the
+// Label its definition Gives it. A group none of whose kinds is taken is dropped, so no heading stands over nothing
 export const getSurveyPaletteGroups = (document: SurveyDocument, selectedPointer: string): PaletteGroup[] =>
   SURVEY_PALETTE_GROUPS.map(({ title, types }) => ({
     items: types

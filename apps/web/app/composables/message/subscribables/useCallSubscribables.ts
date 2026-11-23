@@ -18,7 +18,8 @@ export const useCallSubscribables = () => {
 
       setCurrentRoomCallSessionId(await $trpc.callSession.readCallSessionId.query({ roomId }));
       return () => {
-        // The speakers belong to the joined call and leaveCall clears them, so leaving the viewed room leaves them alone
+        // The speakers belong to the joined call and leaveCall clears them, so leaving the viewed room leaves them
+        // Alone
         setCurrentRoomCallSessionId("");
       };
     },

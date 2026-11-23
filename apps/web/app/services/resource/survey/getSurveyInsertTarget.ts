@@ -5,8 +5,9 @@ import { getSurveyInsertPlaces } from "#src/services/resource/survey/getSurveyIn
 import { getAcceptedTypes } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "vue-survey-engine-headless";
 
-// Where an element of a kind lands for a selection: the first place along the selection whose slot the core's accepted types take the kind
-// In. A kind no place takes has no target, so an insertion lands only where the core would accept it
+// Where an element of a kind lands for a selection: the first place along the selection whose slot the core's accepted
+// Types take the kind In. A kind no place takes has no target, so an insertion lands only where the core would accept
+// It
 export const getSurveyInsertTarget = (
   document: SurveyDocument,
   selectedPointer: string,

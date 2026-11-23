@@ -1,4 +1,5 @@
 import { HIT_TOLERANCE } from "#src/services/whiteboard/gesture/constants";
 
-// The distance in document units a pointer hits an element within at a scale, since the tolerance is held in screen pixels
+// The distance in document units a pointer hits an element within at a scale, since the tolerance is held in screen
+// Pixels
 export const getHitTolerance = (scale: number): number => HIT_TOLERANCE / scale;

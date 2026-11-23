@@ -445,7 +445,8 @@ describe(useMutation, () => {
     expect(secondOnSuccess).toHaveBeenCalledTimes(1);
   });
 
-  // A one-shot read takes no watch, so a change to the topics it named reads nothing: the screen that keeps the row live owns that
+  // A one-shot read takes no watch, so a change to the topics it named reads nothing: the screen that keeps the row
+  // Live owns that
   test("takes no topic watch for a read marked unwatched", async () => {
     expect.hasAssertions();
 

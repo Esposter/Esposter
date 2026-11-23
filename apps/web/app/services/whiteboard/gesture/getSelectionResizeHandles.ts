@@ -17,8 +17,8 @@ const ALL_RESIZE_HANDLES: ResizeHandle[] = [
   ResizeHandle.Left,
 ];
 
-// The handles one selected element takes: none for an arrow or a stroke, which hold no size of their own, and only the left and right ones for
-// A text box, whose height its text sets. A selection of several takes every handle
+// The handles one selected element takes: none for an arrow or a stroke, which hold no size of their own, and only the
+// Left and right ones for A text box, whose height its text sets. A selection of several takes every handle
 const getTakenResizeHandles = (document: PositionedDocument, selectedIds: string[]): ResizeHandle[] => {
   if (selectedIds.length !== 1) return ALL_RESIZE_HANDLES;
 
@@ -31,7 +31,8 @@ const getTakenResizeHandles = (document: PositionedDocument, selectedIds: string
   return element.type === PositionedElementType.Text ? [ResizeHandle.Left, ResizeHandle.Right] : ALL_RESIZE_HANDLES;
 };
 
-// A handle is left out when the box has no extent along the sides it moves, since a box with no height has no ratio to scale its height by
+// A handle is left out when the box has no extent along the sides it moves, since a box with no height has no ratio to
+// Scale its height by
 const checkHasHandleExtent = ({ height, width }: Bounds, handle: ResizeHandle): boolean => {
   const sides = getResizedSides(handle);
   const isHorizontal = sides.left || sides.right;
@@ -39,7 +40,8 @@ const checkHasHandleExtent = ({ height, width }: Bounds, handle: ResizeHandle): 
   return (!isHorizontal || width > 0) && (!isVertical || height > 0);
 };
 
-// The handles a selection shows around its box, corners first. A handle is shown only when the box has the extent it moves along
+// The handles a selection shows around its box, corners first. A handle is shown only when the box has the extent it
+// Moves along
 export const getSelectionResizeHandles = (document: PositionedDocument, selectedIds: string[]): ResizeHandle[] => {
   const bounds = getSelectionBounds(document, selectedIds);
   if (bounds === undefined) return [];

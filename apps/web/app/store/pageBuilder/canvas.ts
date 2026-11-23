@@ -1,7 +1,8 @@
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 
-// The canvas's selection, device and style state in each open resource, so two webpages open at once keep their own selected node, device and style state
+// The canvas's selection, device and style state in each open resource, so two webpages open at once keep their own
+// Selected node, device and style state
 export const usePageBuilderCanvasStore = defineStore("pageBuilder/canvas", () => {
   const selectedNodeIdMap = ref(new Map<string, string>());
   const deviceMap = ref(new Map<string, PageBuilderDevice>());

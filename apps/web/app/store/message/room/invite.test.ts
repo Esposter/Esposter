@@ -59,7 +59,8 @@ describe(useInviteStore, () => {
     expect(checkIsCreateInvitePending(roomId)).toBe(false);
   });
 
-  // The link a create replaces is answered as its tombstone, so the link held before it stops being offered on the same answer
+  // The link a create replaces is answered as its tombstone, so the link held before it stops being offered on the same
+  // Answer
   test("a create answers the link it replaces as a tombstone, which removes the link held before", async () => {
     expect.hasAssertions();
 

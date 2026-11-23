@@ -4,8 +4,8 @@ import { getElementIndexById } from "#src/services/whiteboard/gesture/getElement
 import { takeOne } from "@esposter/shared";
 import { ArrowEndKey, PositionedElementType } from "vue-block-editor-headless";
 
-// Each free end handle the one selected arrow shows, with the end it moves and the point the handle is drawn at. A bound end shows none, since its
-// Point is the connection point its binding names
+// Each free end handle the one selected arrow shows, with the end it moves and the point the handle is drawn at. A
+// Bound end shows none, since its Point is the connection point its binding names
 export const getFreeEndHandleItems = (
   document: PositionedDocument,
   selectedIds: string[],

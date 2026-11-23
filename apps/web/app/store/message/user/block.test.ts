@@ -99,8 +99,9 @@ describe(useBlockStore, () => {
     expect(blockedUsers.value).toStrictEqual([first]);
   });
 
-  // Blocking and unblocking one user write the same block row, so the block queues behind the unblock. The block's answer
-  // Holds the row live again, so the user is listed once, and the rejected unblock drops its entry without undoing it
+  // Blocking and unblocking one user write the same block row, so the block queues behind the unblock. The block's
+  // Answer Holds the row live again, so the user is listed once, and the rejected unblock drops its entry without
+  // Undoing it
   test("does not list a user twice when a rejected unblock overlaps a block", async () => {
     expect.hasAssertions();
 

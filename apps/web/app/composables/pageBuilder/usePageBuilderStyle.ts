@@ -24,7 +24,8 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const { getDevice, getSelectedNodeId, getStyleState } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit, setPreview } = pageBuilderHistoryStore;
-  // The copied style is read through its ref, since destructuring the value would keep the style as it was when this ran
+  // The copied style is read through its ref, since destructuring the value would keep the style as it was when this
+  // Ran
   const pageBuilderStyleClipboardStore = usePageBuilderStyleClipboardStore();
   const { copiedStyle } = storeToRefs(pageBuilderStyleClipboardStore);
   const { setCopiedStyle } = pageBuilderStyleClipboardStore;
@@ -54,7 +55,8 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
       value: targetValue?.style?.[breakpoint]?.[state]?.[property] ?? "",
     };
   };
-  // The edit that writes a field's value, shared by a commit and a preview so the two never disagree about what is written
+  // The edit that writes a field's value, shared by a commit and a preview so the two never disagree about what is
+  // Written
   const getFieldEdit = (property: StyleProperty, field: string): FieldEdit | undefined => {
     // A blank field is a reset, so the value is read without its surrounding whitespace
     const value = normalizeString(field);
@@ -85,7 +87,8 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
 
     applyEdit(toValue(resourceId), edit.operations, edit.label, edit.interactionId).match(noop, console.error);
   };
-  // A value a drag is passing through: drawn on the canvas at once, and recorded only when the drag settles via setField
+  // A value a drag is passing through: drawn on the canvas at once, and recorded only when the drag settles via
+  // `setField`
   const previewField = (property: StyleProperty, value: string) => {
     const edit = getFieldEdit(property, value);
     if (edit) setPreview(toValue(resourceId), edit.operations);
@@ -93,8 +96,8 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const resetField = (property: StyleProperty) => {
     setField(property, "");
   };
-  // Copy takes the selected node's whole style, and paste replaces the selected node's style with the copied one, so the
-  // Two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
+  // Copy takes the selected node's whole style, and paste replaces the selected node's style with the copied one, so
+  // The Two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
   const copyStyle = () => {
     const targetValue = target.value;
     if (targetValue) setCopiedStyle(targetValue.style ?? {});

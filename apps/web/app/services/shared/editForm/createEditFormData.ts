@@ -6,11 +6,12 @@ import type { ToData } from "@esposter/shared";
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
 import { checkIsDeepEqual, toRawDeep, typedFromEntries } from "@esposter/shared";
 
-// `onEdit` hears every open of an item, a press, a menu's Edit and a restore from the query params alike, so a caller that
-// Keeps a selection of its own writes it in one place
+// `onEdit` hears every open of an item, a press, a menu's Edit and a restore from the query params alike, so a caller
+// That Keeps a selection of its own writes it in one place
 export const createEditFormData = <
   TItem extends ToData<AItemEntity>,
-  // The id keys are also keys of TItem, which EntityIdKeys alone does not say for a generic TItem, since it stays a deferred conditional
+  // The id keys are also keys of TItem, which EntityIdKeys alone does not say for a generic TItem, since it stays a
+  // Deferred conditional
   TIdKeys extends (keyof TItem & string)[] & EntityIdKeys<TItem>,
 >(
   items: ComputedRef<TItem[]>,

@@ -5,9 +5,9 @@ import { getDecodedUriComponent } from "#shared/util/text/getDecodedUriComponent
 import { getResourceFilesPrefix } from "@esposter/db-schema";
 import { ASSET_HASH_REGEX } from "@esposter/shared";
 
-// Only a FileAssets type has files to delete, so the capability is the parameter type — a type without it is
-// Rejected where the composable is called rather than silently doing nothing once it runs. The resource is named at each
-// Delete, since a file can outlive the resource that was open when it was uploaded
+// Only a FileAssets type has files to delete, so the capability is the parameter type — a type without it is Rejected
+// Where the composable is called rather than silently doing nothing once it runs. The resource is named at each Delete,
+// Since a file can outlive the resource that was open when it was uploaded
 export const useDeleteResourceFile = (type: FileAssetsResourceType) => {
   const getResourceRouter = useResourceRouter();
   const { executeBackgroundMutation } = useMutation();
@@ -22,8 +22,8 @@ export const useDeleteResourceFile = (type: FileAssetsResourceType) => {
     const blobPath = getDecodedUriComponent(url.slice(filesDirectoryPrefix.length), "");
     if (!ASSET_HASH_REGEX.test(blobPath)) return;
     executeBackgroundMutation(() => getResourceRouter(type).deleteFile.mutate({ blobPath, id }), {
-      // Nothing on screen waits on the delete, and the editor that asked for it may be gone by the time it answers, so a
-      // Failure is logged rather than alerted
+      // Nothing on screen waits on the delete, and the editor that asked for it may be gone by the time it answers, so
+      // A Failure is logged rather than alerted
       key: blobPath,
       onError: console.error,
     });

@@ -38,8 +38,8 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
         ),
       {
         entry: getRestoreResourcesEntry(ids),
-        // The toast shows at once, while the rows it brings back are the server's to return, in its order. A batch is back
-        // In the list it was deleted from, so only a single resource names where it went
+        // The toast shows at once, while the rows it brings back are the server's to return, in its order. A batch is
+        // Back In the list it was deleted from, so only a single resource names where it went
         notification: {
           ...(resources.length === 1
             ? { action: { title: GO_TO_RESOURCE_TITLE, to: RoutePath.Resource(firstResource.id) } }

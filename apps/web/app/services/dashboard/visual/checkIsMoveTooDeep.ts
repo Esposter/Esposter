@@ -6,7 +6,8 @@ import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { findVisual } from "#src/services/dashboard/visual/findVisual";
 
 // Whether moving a visual, with the visuals it holds, into a group, or onto the dashboard when there is no group, would
-// Nest any group it carries past the depth cap. The store refuses such a move, and the menu offers only the groups it allows
+// Nest any group it carries past the depth cap. The store refuses such a move, and the menu offers only the groups it
+// Allows
 export const checkIsMoveTooDeep = (visuals: Visual[], id: Visual["id"], targetGroupId: undefined | Visual["id"]) => {
   const visual = findVisual(visuals, { id });
   if (!visual) return false;

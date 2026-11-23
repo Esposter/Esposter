@@ -1,4 +1,5 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type */
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full
+   store type */
 // @vitest-environment nuxt
 import type { Item } from "#shared/models/dungeons/item/Item";
 import type { PhaserEvents } from "#src/models/phaser/PhaserEvents";
@@ -28,8 +29,8 @@ vi.mock("#src/store/dungeons/player", async () => {
 // The capture only reads the party and the info panel, so the monster party's panel store, which loads the dialog and
 // With it Phaser, is faked out
 vi.mock("#src/store/dungeons/monsterParty/infoPanel", () => ({ useMonsterPartyInfoPanelStore: () => ({}) }));
-// The battle and its event emitter load Phaser, which cannot initialise under the test environment. A capture reaches them
-// Only once it goes ahead, so these fakes stand in for them
+// The battle and its event emitter load Phaser, which cannot initialise under the test environment. A capture reaches
+// Them Only once it goes ahead, so these fakes stand in for them
 vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: {} }));
 vi.mock("#src/services/phaser/phaserEventEmitter", () => ({
   phaserEventEmitter: { emit: vi.fn<TypedEventEmitter<PhaserEvents>["emit"]>() },

@@ -15,7 +15,8 @@ import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-// Signed with fixed credentials, so the write targets are real presigned urls and nothing reads the account's environment
+// Signed with fixed credentials, so the write targets are real presigned urls and nothing reads the account's
+// Environment
 vi.mock(import("#server/services/storage/getStorageCredentials"), () => ({
   getStorageCredentials: () => ({
     accessKeyId: "accessKeyId",

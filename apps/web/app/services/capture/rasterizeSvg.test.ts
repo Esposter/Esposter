@@ -7,8 +7,9 @@ import { noop } from "@esposter/shared";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(rasterizeSvg, () => {
-  // The browser's canvas is missing from the node environment, so the test stands in for it, and for the image: the image
-  // Loads on the next tick, and the canvas records the size it is drawn at. The export draws at the device pixel ratio times two, and the ratio is stood in as one
+  // The browser's canvas is missing from the node environment, so the test stands in for it, and for the image: the
+  // Image Loads on the next tick, and the canvas records the size it is drawn at. The export draws at the device pixel
+  // Ratio times two, and the ratio is stood in as one
   const DEVICE_PIXEL_RATIO = 1;
   const EXPORT_SCALE = DEVICE_PIXEL_RATIO * 2;
   const BLOB_URL = "blob:svg";

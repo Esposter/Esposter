@@ -1,4 +1,5 @@
-// A comparison a condition row makes, each member's value spelled as the expression language writes it, so a row's operator is its own text
+// A comparison a condition row makes, each member's value spelled as the expression language writes it, so a row's
+// Operator is its own text
 export const SurveyConditionOperator = {
   Contains: "contains",
   Empty: "empty",

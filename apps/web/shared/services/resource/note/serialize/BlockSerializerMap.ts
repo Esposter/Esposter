@@ -17,7 +17,8 @@ export const BlockSerializerMap: Record<string, (node: JSONContent, serializeBlo
   heading: (node) =>
     `${"#".repeat(Number(node.attrs?.level ?? 1))} ${serializeInline(node.content ?? []).replace(HEADING_CLOSING_HASH_REGEX, String.raw`\#`)}`,
   horizontalRule: () => "---",
-  // An image is stored at the app's own address, which a file cannot carry, so the file keeps the words the image was given
+  // An image is stored at the app's own address, which a file cannot carry, so the file keeps the words the image was
+  // Given
   image: (node) => serializeParagraph({ content: [{ text: String(node.attrs?.alt ?? ""), type: "text" }] }),
   orderedList: (node, serializeBlocks) => {
     const start = Number(node.attrs?.start ?? 1);

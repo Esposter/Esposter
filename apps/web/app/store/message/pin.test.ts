@@ -73,7 +73,8 @@ describe(usePinStore, () => {
     ]);
   });
 
-  // A pin answer older than the room's copy of its message is a late echo of a change already past, so it places nothing
+  // A pin answer older than the room's copy of its message is a late echo of a change already past, so it places
+  // Nothing
   test("does not pin a message from an answer older than the copy it would pin", async () => {
     expect.hasAssertions();
 

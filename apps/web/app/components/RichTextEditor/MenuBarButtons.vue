@@ -26,10 +26,11 @@ defineProps<Props>();
       self-center
     />
     <UiTooltip v-else #default="{ activatorProps }" :label="item.title">
-      <!-- A mark that says whether it is on, such as bold, is a toggle; one that only acts, such as undo, is not. Each acts
-        on the editor's selection, which exists only while the editor is focused, so the buttons are disabled outside it,
-        except an item that needs no selection. Focus and blur each dispatch a transaction, which re-renders the bar, and a
-        press keeps the focus where it is so the button stays enabled through its own click -->
+      <!-- A mark that says whether it is on, such as bold, is a toggle; one that only acts, such as undo, is not.
+        Each acts on the editor's selection, which exists only while the editor is focused, so the buttons are
+        disabled outside it, except an item that needs no selection. Focus and blur each dispatch a transaction,
+        which re-renders the bar, and a press keeps the focus where it is so the button stays enabled through its
+        own click -->
       <UiButton
         :="activatorProps"
         :aria-label="item.title"

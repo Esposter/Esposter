@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Retry: a concurrent override that got there first makes this one lose, so each attempt reads the row that beat it */
+/* oxlint-disable no-await-in-loop -- Retry: a concurrent override that got there first makes this one lose, so each
+   attempt reads the row that beat it */
 import type { Context } from "#server/trpc/context";
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 

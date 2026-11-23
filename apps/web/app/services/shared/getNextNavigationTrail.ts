@@ -3,7 +3,8 @@ import { NavigationTrailPageMap } from "#src/services/shared/NavigationTrailPage
 import { RoutePath } from "@esposter/shared";
 
 // A page absent from the map can be navigated from without ever becoming a crumb — that is how a page opts out. The
-// Pages are walked through their own value set, so each is indexed as the page it is rather than as an Object.entries string
+// Pages are walked through their own value set, so each is indexed as the page it is rather than as an Object.entries
+// String
 const getPage = (path: string) =>
   Object.values(NavigationTrailPage).find((page) => NavigationTrailPageMap[page].path === path);
 // A page and its own sub-views (a resource and its blades) share these leading segments, which is what tells

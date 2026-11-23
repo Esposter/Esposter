@@ -13,11 +13,13 @@ import { getBlockNode } from "vue-block-editor-headless";
 // A focused button or link takes Enter as its own activation rather than a text edit
 const checkIsControlTarget = (target: EventTarget | null) =>
   checkIsElementTarget(target) && target.closest("button, a[href]") !== null;
-// A move the selection cannot take stays listed, unavailable with the reason it cannot, so the reader sees why it is not taken
+// A move the selection cannot take stays listed, unavailable with the reason it cannot, so the reader sees why it is
+// Not taken
 const getMoveProps = (refusal: string | undefined) => ({ description: refusal, isDisabled: refusal !== undefined });
-// The editor's keys over the selected node. Its moves, its clipboard and its delete are commands, bound for as long as the editor is
-// Mounted and unbound while a node's delete asks. Enter is listed but never bound, since a focused button or link must keep it, and
-// The canvas's frame is a document of its own, so the keys it passes on are pressed again on the window where the commands are bound
+// The editor's keys over the selected node. Its moves, its clipboard and its delete are commands, bound for as long as
+// The editor is Mounted and unbound while a node's delete asks. Enter is listed but never bound, since a focused button
+// Or link must keep it, and The canvas's frame is a document of its own, so the keys it passes on are pressed again on
+// The window where the commands are bound
 export const usePageBuilderKeyCommands = (
   kind: AnyPageBuilderKind,
   getPageDocument: () => BlockDocument | undefined,
@@ -62,8 +64,9 @@ export const usePageBuilderKeyCommands = (
 
     startTextEdit();
   };
-  // The canvas takes its arrows and Escape and hands every other key here. Enter starts a text edit, and each key is pressed again
-  // On the window, where its command is bound, so a command that takes the key prevents its default in the frame too
+  // The canvas takes its arrows and Escape and hands every other key here. Enter starts a text edit, and each key is
+  // Pressed again On the window, where its command is bound, so a command that takes the key prevents its default in
+  // The frame too
   const handleCanvasKeydown = (event: KeyboardEvent) => {
     handleEnterKeydown(event);
     const forwardedEvent = new KeyboardEvent("keydown", {
@@ -77,7 +80,8 @@ export const usePageBuilderKeyCommands = (
     });
     if (!window.dispatchEvent(forwardedEvent)) event.preventDefault();
   };
-  // Paste needs no selection, since it lands where nothing is selected too, so it is bound whenever the editor is and no delete asks
+  // Paste needs no selection, since it lands where nothing is selected too, so it is bound whenever the editor is and
+  // No delete asks
   const pasteCommand: UiCommand = {
     group: PAGE_BUILDER_COMMAND_GROUP,
     id: "page-builder-paste",

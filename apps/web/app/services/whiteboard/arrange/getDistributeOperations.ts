@@ -16,9 +16,10 @@ const getExtent = (bounds: Bounds, axis: DistributeAxis): number =>
 const getPointAt = (bounds: Bounds, axis: DistributeAxis, start: number): Point =>
   axis === DistributeAxis.Horizontal ? { x: start, y: bounds.y } : { x: bounds.x, y: start };
 
-// The operations that space the boxes of a selection with equal gaps between neighbours, keeping the outermost two in place. The gap is what the
-// Outermost two leave once the boxes' extents are taken out, so the gaps are equal however the boxes differ in size. A selection in which one box
-// Spans the rest has no outer pair to keep, so it is given no operations
+// The operations that space the boxes of a selection with equal gaps between neighbours, keeping the outermost two in
+// Place. The gap is what the Outermost two leave once the boxes' extents are taken out, so the gaps are equal however
+// The boxes differ in size. A selection in which one box Spans the rest has no outer pair to keep, so it is given no
+// Operations
 export const getDistributeOperations = (
   document: PositionedDocument,
   selectedIds: string[],
@@ -26,7 +27,8 @@ export const getDistributeOperations = (
 ): JsonPatchOperation[] => {
   const boxes = getSelectedBoxes(document, selectedIds);
   if (boxes.length < WHITEBOARD_DISTRIBUTE_MINIMUM_BOXES) return [];
-  // A box that starts no later and ends no earlier than every other box is both outer edges, so there is no outer pair to keep and nothing is moved
+  // A box that starts no later and ends no earlier than every other box is both outer edges, so there is no outer pair
+  // To keep and nothing is moved
   const hasSpanningBox = boxes.some(({ bounds }) =>
     boxes.every(
       ({ bounds: otherBounds }) =>
@@ -36,8 +38,8 @@ export const getDistributeOperations = (
   );
   if (hasSpanningBox) return [];
 
-  // The box that ends furthest along the axis is the last, even when it starts before another does, so a box lying inside another's span is never the
-  // One that is taken for the outer edge
+  // The box that ends furthest along the axis is the last, even when it starts before another does, so a box lying
+  // Inside another's span is never the One that is taken for the outer edge
   const lastBox = boxes.reduce((furthest, box) =>
     getStart(box.bounds, axis) + getExtent(box.bounds, axis) >
     getStart(furthest.bounds, axis) + getExtent(furthest.bounds, axis)
@@ -56,7 +58,8 @@ export const getDistributeOperations = (
     (getStart(lastBox.bounds, axis) + getExtent(lastBox.bounds, axis) - firstStart - totalExtent) /
     (sortedBoxes.length - 1);
   return sortedBoxes.flatMap(({ bounds, index }, position) => {
-    // The first and the last hold still. Each box between them starts after the extents of the boxes before it, and one gap for each of those boxes
+    // The first and the last hold still. Each box between them starts after the extents of the boxes before it, and one
+    // Gap for each of those boxes
     if (position === 0 || position === sortedBoxes.length - 1) return [];
 
     const extentsBefore = sortedBoxes

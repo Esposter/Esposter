@@ -13,7 +13,8 @@ import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+// A partial fake:
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe(useSettingsOnGridClick, () => {
@@ -50,7 +51,8 @@ describe(useSettingsOnGridClick, () => {
     expect(controls.setInput).not.toHaveBeenCalled();
   });
 
-  // An option's name is a row to select, not a value to save, so a click on it moves the cursor to that row's resting cell
+  // An option's name is a row to select, not a value to save, so a click on it moves the cursor to that row's resting
+  // Cell
   test("a click on an option's name selects its row and saves nothing", () => {
     expect.hasAssertions();
 

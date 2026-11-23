@@ -17,9 +17,9 @@ import { startPlacingGesture } from "#src/services/whiteboard/gesture/startPlaci
 import { applyPatches, exhaustiveGuard } from "@esposter/shared";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// An idle canvas takes a press. The middle button, the hand tool and Space held pan, the freehand tool starts a stroke, and the arrow tool
-// Starts an arrow from the press. A shape, sticky note or text tool starts a placement at the press. The select tool takes the press on a
-// Resize handle, an element or the canvas. Any other event changes nothing
+// An idle canvas takes a press. The middle button, the hand tool and Space held pan, the freehand tool starts a stroke,
+// And the arrow tool Starts an arrow from the press. A shape, sticky note or text tool starts a placement at the press.
+// The select tool takes the press on a Resize handle, an element or the canvas. Any other event changes nothing
 export const startWhiteboardGesture = (
   state: WhiteboardGestureState,
   event: GesturePointerEvent,
@@ -114,7 +114,8 @@ export const startWhiteboardGesture = (
         !elementId || handle !== undefined
           ? state.selectedIds
           : getPressedSelection(state.selectedIds, elementId, event.isShiftKey);
-      // Alt on an element fixes the copy id of each element the press leaves selected, so a drag that starts from the press copies them under those ids
+      // Alt on an element fixes the copy id of each element the press leaves selected, so a drag that starts from the
+      // Press copies them under those ids
       const originalIdCopyIdMap =
         event.isAltKey && elementId
           ? Object.fromEntries(selectedIds.map((selectedId): [string, string] => [selectedId, state.createId()]))

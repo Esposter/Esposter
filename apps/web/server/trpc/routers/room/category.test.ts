@@ -130,8 +130,8 @@ describe("categoryRouter", () => {
     expect(takeOne(roomCategories).deletedAt).not.toBeNull();
   });
 
-  // A deletion keeps the category as a tombstone, so the version it leaves is the one a later arrival of the row loses to.
-  // The read returns the tombstone, so a client holding the row removes it
+  // A deletion keeps the category as a tombstone, so the version it leaves is the one a later arrival of the row loses
+  // To. The read returns the tombstone, so a client holding the row removes it
   test("deletes as a tombstone at a higher version, which the read returns with its deletedAt", async () => {
     expect.hasAssertions();
 

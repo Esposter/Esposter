@@ -38,18 +38,19 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     for (;;) {
       if (pendingResourceId === undefined) return;
 
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: an edit typed while a write is in flight is held for the next one
+      // Is held for the next one
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: an edit typed while a write is in flight
       await writePending();
     }
   };
   tryOnScopeDispose(beforeEach(writeHeldEdits));
 
   return () => {
-    // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
-    // Between the keystroke and the write there is nothing in flight to read — the toolbar would call a tab
-    // Full of unwritten edits saved (openspec/specs/resource/resource-save-state/design.md). Only set here: `saveContent` is the
-    // One door every save goes through, so clearing it is its, and a save this refuses never reaches it — which
-    // Is the point, since a refused save is an edit that was dropped rather than one that landed
+    // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so Between the
+    // Keystroke and the write there is nothing in flight to read — the toolbar would call a tab Full of unwritten edits
+    // Saved (openspec/specs/resource/resource-save-state/design.md). Only set here: `saveContent` is the One door every
+    // Save goes through, so clearing it is its, and a save this refuses never reaches it — which Is the point, since a
+    // Refused save is an edit that was dropped rather than one that landed
     const resourceId = getRouteParam(currentRoute.value.params, "id");
     unwrittenContentResourceId.value = resourceId;
     pendingResourceId = resourceId;

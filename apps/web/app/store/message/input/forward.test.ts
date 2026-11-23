@@ -76,8 +76,8 @@ describe(useForwardStore, () => {
     expect(roomIds.value).toStrictEqual([pickedRoomId]);
   });
 
-  // The panel's forward is one write, so the store drops a send made while the one before it is out, from whichever dialog
-  // Asks, and the server receives the forward once
+  // The panel's forward is one write, so the store drops a send made while the one before it is out, from whichever
+  // Dialog Asks, and the server receives the forward once
   test("drops a send made while the forward for its panel is out", async () => {
     expect.hasAssertions();
 

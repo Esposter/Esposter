@@ -8,7 +8,8 @@ import { deviceIdSchema } from "#shared/models/realtime/DeviceId";
 import { callSessionIdSchema } from "@esposter/db-schema";
 import { createError, defineEventHandler, getQuery } from "nuxt/server";
 
-// A call's socket, for a connection the call admits: the call object holds it with everyone joined to or knocking on the call
+// A call's socket, for a connection the call admits: the call object holds it with everyone joined to or knocking on
+// The call
 export default defineEventHandler(async (event) => {
   const authSession = await readSocketSession(event);
 

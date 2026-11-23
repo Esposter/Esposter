@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: each chunk waits for the last, so the proxy never holds them all */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: each chunk waits for the last, so the proxy never holds
+   them all */
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
@@ -95,7 +96,8 @@ describe("roomRouter", () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
   let messageAssets: R2Bucket;
-  // An empty attachment under a room's prefix, written outside the loops that write many, which may not close over a let
+  // An empty attachment under a room's prefix, written outside the loops that write many, which may not close over a
+  // Let
   const putBlob = (blobName: string) => messageAssets.put(blobName, Buffer.alloc(0));
   let publicUserAssets: R2Bucket;
   let disposeMessageAssets: () => Promise<void>;
@@ -792,8 +794,8 @@ describe("roomRouter", () => {
     );
   });
 
-  // Two joins at once by a stranger through a link with uses to spare count one use, since the second finds the membership
-  // The first wrote, and the link's count is taken only once
+  // Two joins at once by a stranger through a link with uses to spare count one use, since the second finds the
+  // Membership The first wrote, and the link's count is taken only once
   test("two joins at once through a link with uses to spare count one use, and the second is refused as the member", async () => {
     expect.hasAssertions();
 
@@ -1134,7 +1136,8 @@ describe("roomRouter", () => {
     });
   });
 
-  // A leave keeps the membership as a tombstone, so the version it leaves is the one a later arrival of the row loses to
+  // A leave keeps the membership as a tombstone, so the version it leaves is the one a later arrival of the row loses
+  // To
   test("a leave keeps the membership as a tombstone at a higher version", async () => {
     expect.hasAssertions();
 
@@ -1370,8 +1373,8 @@ describe("roomRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  // A room with no one to read still answers its refresh: an empty list reads no user, and the membership check ahead of it
-  // Is what the answer's topic is taken from
+  // A room with no one to read still answers its refresh: an empty list reads no user, and the membership check ahead
+  // Of it Is what the answer's topic is taken from
   test("answers an empty list of user ids with no users", async () => {
     expect.hasAssertions();
 

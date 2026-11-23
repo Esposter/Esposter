@@ -7,7 +7,8 @@ import ResourceWhiteboardEditorPropertiesSeveralPanel from "#src/components/Reso
 import ResourceWhiteboardEditorToolbar from "#src/components/Resource/Whiteboard/Editor/Toolbar.vue";
 import { WHITEBOARD_CONTENT_KEY } from "#src/services/whiteboard/layout/constants";
 
-// The component each content key of the whiteboard's layout draws, which the layout check holds to the keys the layout names
+// The component each content key of the whiteboard's layout draws, which the layout check holds to the keys the layout
+// Names
 export const WhiteboardContentComponentMap: EditorRegistry = {
   [WHITEBOARD_CONTENT_KEY.Arrow]: ResourceWhiteboardEditorPropertiesArrowPanel,
   [WHITEBOARD_CONTENT_KEY.Element]: ResourceWhiteboardEditorPropertiesPanel,

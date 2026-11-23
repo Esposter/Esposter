@@ -22,14 +22,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ? PublishableResourceProcedureOptions<ResourceContent<TType>>
     : never,
 ): ResourceProcedures<TType> => {
-  // The groups are gated on the same runtime checks the conditional states at the type level, which is why the object is
-  // Right for every type, and why the cast is the one the compiler leaves: TS2322 refuses a concrete object as a value of
-  // `ResourceProcedures<TType>`, a conditional over the generic `TType`
+  // The groups are gated on the same runtime checks the conditional states at the type level, which is why the object
+  // Is Right for every type, and why the cast is the one the compiler leaves: TS2322 refuses a concrete object as a
+  // Value of `ResourceProcedures<TType>`, a conditional over the generic `TType`
   const procedures = {
     ...createBaseProcedures(type),
     ...(checkHasCapability(type, "fileAssets") ? createFileAssetsProcedures(type) : {}),
     ...(checkHasCapability(type, "publishable") ? createPublishProcedures(type, options) : {}),
   };
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a conditional over the generic TType, which no concrete object is assignable to (TS2322); each group is gated on checkHasCapability above
+  // A conditional over the generic TType, which no concrete object is assignable to (TS2322);
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- each group is gated on checkHasCapability above
   return procedures as ResourceProcedures<TType>;
 };

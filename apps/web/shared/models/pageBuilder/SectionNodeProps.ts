@@ -3,7 +3,8 @@ import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePla
 import type { SECTION_TAGS } from "#shared/services/pageBuilder/constants";
 import type { BlockNodeProps } from "vue-block-editor-headless";
 
-// The props a Section node holds: the semantic tag it renders under, the style it is drawn with, and the placeable nodes it holds
+// The props a Section node holds: the semantic tag it renders under, the style it is drawn with, and the placeable
+// Nodes it holds
 export interface SectionNodeProps extends BlockNodeProps {
   children: WebpagePlaceableNode[];
   elementId: string;

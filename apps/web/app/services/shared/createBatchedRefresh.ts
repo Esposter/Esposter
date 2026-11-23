@@ -2,7 +2,8 @@ import { BATCHED_REFRESH_BASE_DELAY_MS, BATCHED_REFRESH_MAX_DELAY_MS } from "#sr
 import { createSingleFlight } from "#src/services/shared/createSingleFlight";
 import { createExponentialBackoff, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 
-// A server that stays down is not asked forever: past this many retries in a row the keys stay dirty until the next mark
+// A server that stays down is not asked forever: past this many retries in a row the keys stay dirty until the next
+// Mark
 const MAX_RETRIES = 5;
 // Re-reads the keys marked as changed, one run at a time. A key marked while a run is in flight is taken by the run
 // Owed after it, so a change is read once however many marks land during a run, and no two reads of the same keys

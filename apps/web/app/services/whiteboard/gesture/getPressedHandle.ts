@@ -5,15 +5,16 @@ import { getConnectionHandle } from "#src/services/whiteboard/gesture/getConnect
 import { getFreeEndHandle } from "#src/services/whiteboard/gesture/getFreeEndHandle";
 import { getResizeHandle } from "#src/services/whiteboard/gesture/getResizeHandle";
 
-// A handle a press on the select tool lands on: a resize of the selection, a connection of a shape, or a drag of a free arrow end. Each one is
-// The gesture the press starts, and a press on none falls through to the element or the canvas beneath it
+// A handle a press on the select tool lands on: a resize of the selection, a connection of a shape, or a drag of a free
+// Arrow end. Each one is The gesture the press starts, and a press on none falls through to the element or the canvas
+// Beneath it
 export type PressedHandle =
   | { arrowId: string; endKey: ArrowEndKey; kind: "end" }
   | { connectionIndex: number; elementId: string; kind: "connection" }
   | { handle: ResizeHandle; kind: "resize" };
 
-// The handle a press lands on, in the order the handles are drawn over each other: the resize handles on a selection's box first, then the connection
-// Handles beyond its frame, then a free arrow end on the arrow's own line
+// The handle a press lands on, in the order the handles are drawn over each other: the resize handles on a selection's
+// Box first, then the connection Handles beyond its frame, then a free arrow end on the arrow's own line
 export const getPressedHandle = (
   document: PositionedDocument,
   selectedIds: string[],

@@ -114,7 +114,8 @@ describe(createBlueprintPortableFormat, () => {
     expect(manifestJson.value).toBe(savedJson);
   });
 
-  // Closing and reopening the resource loads the same id, so only the opening tells the import's file from the reopened one's
+  // Closing and reopening the resource loads the same id, so only the opening tells the import's file from the reopened
+  // One's
   test("a manifest file read after its resource is closed and reopened changes nothing", async () => {
     expect.hasAssertions();
 
@@ -140,7 +141,8 @@ describe(createBlueprintPortableFormat, () => {
     expect(manifestJson.value).toBe(savedJson);
   });
 
-  // The export is the file an import reads back, so a copy of a manifest between accounts is the manifest that was saved
+  // The export is the file an import reads back, so a copy of a manifest between accounts is the manifest that was
+  // Saved
   test("a manifest exported and imported again is unchanged", async () => {
     expect.hasAssertions();
 

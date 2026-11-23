@@ -15,13 +15,12 @@ import { resourcesInResource, resourceVersionsInResource, SnapshotChannel, Snaps
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 
-// A point the owner can return to, taken from the working copy as it stands. Returns the version it wrote, or
-// Undefined when there was nothing to take — a resource whose content blob does not exist yet has no state worth
-// A revision, and the paths that take one before overwriting a draft must not fail on an empty draft. It throws,
-// So only a caller that can proceed without a revision swallows it (openspec/specs/resource/resource-snapshots/design.md)
-//
-// The bytes are copied rather than parsed and re-serialized: a revision is what the working copy was, so a field
-// A later version of the type stopped declaring must not be filtered out of the snapshot taken to recover it
+// A point the owner can return to, taken from the working copy as it stands. Returns the version it wrote, or Undefined
+// When there was nothing to take — a resource whose content blob does not exist yet has no state worth A revision, and
+// The paths that take one before overwriting a draft must not fail on an empty draft. It throws, So only a caller that
+// Can proceed without a revision swallows it (openspec/specs/resource/resource-snapshots/design.md) The bytes are
+// Copied rather than parsed and re-serialized: a revision is what the working copy was, so a field A later version of
+// The type stopped declaring must not be filtered out of the snapshot taken to recover it
 export const takeResourceRevision = async (
   ctx: AuthedContext,
   resource: ResourceInResource,

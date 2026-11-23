@@ -11,7 +11,8 @@ interface Props {
   seed: string;
 }
 
-// The control the kind draws is the default slot's, given the pick the choice answer makes and the title the shell draws
+// The control the kind draws is the default slot's, given the pick the choice answer makes and the title the shell
+// Draws
 defineSlots<{
   default: (props: {
     describedBy?: string;

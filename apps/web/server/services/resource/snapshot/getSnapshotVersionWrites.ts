@@ -38,7 +38,8 @@ export const getSnapshotVersionWrites = (
           resourceVersionsInResource.version,
         ],
       }),
-    // A write at a version that already has a row replaces it, so the references it named are dropped before the new ones
+    // A write at a version that already has a row replaces it, so the references it named are dropped before the new
+    // Ones
     db
       .delete(resourceVersionAssetsInResource)
       .where(

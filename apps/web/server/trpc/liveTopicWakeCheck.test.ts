@@ -18,8 +18,8 @@ import { afterAll, afterEach, describe, expect } from "vitest";
 // The caller factory the wake check wraps, as tRPC's own `createCallerFactory` answers it
 export type RawCallerFactory = (router: AnyRouter) => (context: Context) => unknown;
 
-// A read answered by a query that published nothing, kept to be asked again after a later write. It is asked again as the
-// Context it was answered in, so it is answered for the viewer it was answered for
+// A read answered by a query that published nothing, kept to be asked again after a later write. It is asked again as
+// The Context it was answered in, so it is answered for the viewer it was answered for
 interface ObservedRead {
   answer: string;
   args: unknown;
@@ -30,7 +30,8 @@ interface ObservedRead {
   topics: ColumnTopic[];
 }
 
-// What one call answered: its value or the error it threw, the topics header its response carried, and the publishes it made
+// What one call answered: its value or the error it threw, the topics header its response carried, and the publishes it
+// Made
 interface Outcome {
   error?: unknown;
   headers: Headers;
@@ -43,14 +44,15 @@ interface Outcome {
 let failures: string[] = [];
 // The reads of the running test, each the latest answer it gave
 let reads = new Map<string, ObservedRead>();
-// The procedures this file called, as the router each was built in holds them. A suite builds its caller from its own router,
-// So the app's path for a procedure is found from the app's router once the file's tests are done, not during them
+// The procedures this file called, as the router each was built in holds them. A suite builds its caller from its own
+// Router, So the app's path for a procedure is found from the app's router once the file's tests are done, not during
+// Them
 const calledProcedures = new Set<unknown>();
 // What the wake check saw in this file, summed across the run by its teardown
 const counts = { changed: 0, reruns: 0, writes: 0 };
 
-// The app's procedures keyed by their own identity, which a suite's router shares with the app's: the path each is called by
-// In the app's router, and whether the run-level check requires a suite to call it (no static reason)
+// The app's procedures keyed by their own identity, which a suite's router shares with the app's: the path each is
+// Called by In the app's router, and whether the run-level check requires a suite to call it (no static reason)
 const getAppProcedures = async () => {
   const { trpcRouter }: { trpcRouter: AnyRouter } = await import("#server/trpc/routers/index");
   return Object.entries(trpcRouter._def.procedures).map(([path, procedure]) => ({
@@ -67,9 +69,9 @@ const formatColumnTopic = ({ columns, topic }: ColumnTopic) => (columns ? `${top
 const getTopicsOf = (headers: Headers, path: string): ColumnTopic[] =>
   readTopicsHeader(headers, path).flatMap(({ topics }) => topics);
 
-// The answer a call gave as its text, an error as the error's name and message
-// An answer is compared as the app's transformer carries it over the wire, so a BigInt (a role's permission bits) and a class
-// Instance compare as the client would see them, not as JSON drops them
+// The answer a call gave as its text, an error as the error's name and message An answer is compared as the app's
+// Transformer carries it over the wire, so a BigInt (a role's permission bits) and a class Instance compare as the
+// Client would see them, not as JSON drops them
 const getAnswer = ({ error, ok, value }: Outcome) =>
   ok ? transformer.stringify(value) : `error: ${error instanceof Error ? error.message : String(error)}`;
 
@@ -100,8 +102,9 @@ const callProcedure = async (
 // The writes a rerun was refused, counted so a read that tried to write is recognised whatever became of its error
 let refusedWrites = 0;
 
-// A database a rerun reads through: a write is refused before it is built, so asking a read again cannot change what the next
-// Read answers. A procedure that writes after its answer (a view count, say) is refused the same way, through its own call
+// A database a rerun reads through: a write is refused before it is built, so asking a read again cannot change what
+// The next Read answers. A procedure that writes after its answer (a view count, say) is refused the same way, through
+// Its own call
 const readOnlyDatabase = <T extends object>(database: T): T =>
   new Proxy(database, {
     get: (target, property) => {
@@ -114,10 +117,11 @@ const readOnlyDatabase = <T extends object>(database: T): T =>
     },
   });
 
-// Asks every read the test answered again, after a write published `published`. A read whose answer changed must be one a
-// Topic the write published wakes, by the topics the read watched before the write. A read that tried to write is no read, so
-// It is dropped rather than compared. The reads are asked one after another: a rerun's refused writes are counted in one shared
-// Counter, and its publishes are sliced from one shared record, so two reruns in flight would count each other's
+// Asks every read the test answered again, after a write published `published`. A read whose answer changed must be one
+// A Topic the write published wakes, by the topics the read watched before the write. A read that tried to write is no
+// Read, so It is dropped rather than compared. The reads are asked one after another: a rerun's refused writes are
+// Counted in one shared Counter, and its publishes are sliced from one shared record, so two reruns in flight would
+// Count each other's
 const rerunReads = async (published: ColumnTopic[], writePath: string, writeArgs: unknown) =>
   [...reads].reduce<Promise<void>>(async (previous, [key, read]) => {
     await previous;
@@ -144,15 +148,16 @@ const rerunReads = async (published: ColumnTopic[], writePath: string, writeArgs
         );
     }
     read.answer = answer;
-    // A read that now answers an error, or names no topic, keeps the topics it watched, since no write it watched is gone
+    // A read that now answers an error, or names no topic, keeps the topics it watched, since no write it watched is
+    // Gone
     const topics = getTopicsOf(outcome.headers, read.path);
     if (outcome.ok && topics.length > 0) read.topics = topics;
   }, Promise.resolve());
 
-// Calls a procedure through its caller and, if it published anything or is a mutation, asks every read again. A query that
-// Published nothing is a read, kept for the rerun; a call that published is a write, which a query can be, and is never asked
-// Again. A mutation is asked whether or not it published: a write made outside the recorder publishes nothing, and that miss
-// Is what the check exists to find
+// Calls a procedure through its caller and, if it published anything or is a mutation, asks every read again. A query
+// That Published nothing is a read, kept for the rerun; a call that published is a write, which a query can be, and is
+// Never asked Again. A mutation is asked whether or not it published: a write made outside the recorder publishes
+// Nothing, and that miss Is what the check exists to find
 const invokeProcedure = async (
   createCaller: RawCallerFactory,
   router: AnyRouter,
@@ -189,8 +194,8 @@ const invokeProcedure = async (
   return outcome.value;
 };
 
-// A caller whose every procedure call runs through the wake check. The proxy answers each property with its path, so a call
-// Names the procedure it runs, and a property that is a router's namespace answers a further proxy
+// A caller whose every procedure call runs through the wake check. The proxy answers each property with its path, so a
+// Call Names the procedure it runs, and a property that is a router's namespace answers a further proxy
 export const createWakeCheckedCaller = (
   createCaller: RawCallerFactory,
   router: AnyRouter,
@@ -236,8 +241,8 @@ const writeWakeRecord = async () => {
   writeFileSync(join(directory, `${file}.json`), JSON.stringify(record));
 };
 
-// Registered as the check loads, which is during the collection of a file whose caller reaches it, so a file that builds
-// No caller never loads the check
+// Registered as the check loads, which is during the collection of a file whose caller reaches it, so a file that
+// Builds No caller never loads the check
 afterEach(verifyWakes);
 
 afterAll(writeWakeRecord);

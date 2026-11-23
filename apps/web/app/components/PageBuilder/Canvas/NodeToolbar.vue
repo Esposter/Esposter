@@ -17,20 +17,23 @@ interface Props {
 // The delete's confirm is held by the editor, which binds no key while it asks
 const isDeleteOpen = defineModel<boolean>("isDeleteOpen", { default: false });
 const { announce, kind, resourceId } = defineProps<Props>();
-// The press on the move handle, which the canvas starts the node's drag from, since the drag's state is held above the canvas
+// The press on the move handle, which the canvas starts the node's drag from, since the drag's state is held above the
+// Canvas
 const emit = defineEmits<{ drag: [event: PointerEvent] }>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
-// The document the resource holds under either kind, as the shell's keyboard commands read it, so a webpage's and an email's toolbar act alike
+// The document the resource holds under either kind, as the shell's keyboard commands read it, so a webpage's and an
+// Email's toolbar act alike
 const getPageDocument = () => getHeldDocument(resourceId)?.document;
 const { deleteSelected, duplicateSelected, getMoveDownRefusal, getMoveUpRefusal, moveDown, moveToScope, moveUp } =
   usePageBuilderMoves(kind, getPageDocument, () => resourceId, announce);
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
 const { selectParent } = usePageBuilderSelection(kind, getPageDocument, () => resourceId);
-// A confirm open when its toolbar goes is gone with it, so the editor's keys are bound again rather than held by a dialog nobody sees
+// A confirm open when its toolbar goes is gone with it, so the editor's keys are bound again rather than held by a
+// Dialog nobody sees
 onBeforeUnmount(() => {
   isDeleteOpen.value = false;
 });

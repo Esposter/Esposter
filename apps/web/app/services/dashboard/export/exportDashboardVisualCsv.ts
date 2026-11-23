@@ -14,10 +14,9 @@ import { getDatasetTruncationText } from "#src/services/dataset/getDatasetTrunca
 import { useAlertStore } from "#src/store/alert";
 import { downloadFile, takeOne } from "@esposter/shared";
 
-// The rows a bound visual draws, as a CSV named after the visual. A card's file is its one value.
-// A pie or a radial bar draws only its first series, so its file holds that one column.
-// Every other visual with categories writes the grouped rows its table draws, which are the numbers its chart draws too.
-// No visual reads a second query.
+// The rows a bound visual draws, as a CSV named after the visual. A card's file is its one value. A pie or a radial bar
+// Draws only its first series, so its file holds that one column. Every other visual with categories writes the grouped
+// Rows its table draws, which are the numbers its chart draws too. No visual reads a second query.
 export const exportDashboardVisualCsv = (visual: Visual, dataset: Dataset) => {
   const query = visual.dataset?.query;
   const shape = VisualTypeDatasetShapeMap[visual.type];

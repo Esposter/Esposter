@@ -15,8 +15,8 @@ interface Props {
 
 const modelValue = defineModel<FriendPickerModelValue<TMultiple>>();
 const { excludedUserIds = [], isMultiple } = defineProps<Props>();
-// The prop's type is the generic, so Vue gives it no Boolean runtime type and a bare `is-multiple` arrives as `""`. Present
-// Is on, as for an HTML attribute; only an absent or bound-false prop picks one
+// The prop's type is the generic, so Vue gives it no Boolean runtime type and a bare `is-multiple` arrives as `""`.
+// Present Is on, as for an HTML attribute; only an absent or bound-false prop picks one
 const isMultipleMode = computed(() => isMultiple !== undefined && isMultiple !== false);
 const friendStore = useFriendStore();
 const { friends, friendsError } = storeToRefs(friendStore);
@@ -31,7 +31,9 @@ const friendItems = computed(() =>
 );
 // The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
 // The model are read and written here, in one place, rather than cast at every binding
-// oxlint-disable typescript/no-unsafe-type-assertion -- the model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime flag; the value written is the shape the mode holds, which FriendPickerModelValue<TMultiple> selects at runtime
+// The model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime
+// Flag; the value written is the shape the mode holds,
+// oxlint-disable typescript/no-unsafe-type-assertion -- which FriendPickerModelValue<TMultiple> selects at runtime
 const readModelValue = () => modelValue.value as string | string[] | undefined;
 const writeModelValue = (value: string | string[] | undefined) => {
   modelValue.value = value as FriendPickerModelValue<TMultiple>;

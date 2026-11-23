@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/method-signature-style -- method signatures required for bivariant parameter checking so a kind over a narrower node type stays assignable to the shared kind a shell holds */
+/* oxlint-disable typescript/method-signature-style -- method signatures required for bivariant parameter checking so
+   a kind over a narrower node type stays assignable to the shared kind a shell holds */
 import type { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
 import type { PageBuilderPaletteCategory } from "#src/models/pageBuilder/PageBuilderPaletteCategory";
 import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
@@ -6,8 +7,8 @@ import type { BlockNode, BlockRegistry, BlockSlots, BlockTypeDefinition } from "
 import type { z } from "zod";
 
 // A kind of document the page builder shell edits, over its node, root props, node definition and document types. The
-// Shell reads a document through its kind: the schema a loaded document is parsed by, the registry of its block types and
-// The children port that walks its tree. The webpage's and the email's kinds are the two that hold these
+// Shell reads a document through its kind: the schema a loaded document is parsed by, the registry of its block types
+// And The children port that walks its tree. The webpage's and the email's kinds are the two that hold these
 export interface PageBuilderKind<
   TNode extends BlockNode,
   TRoot extends object,

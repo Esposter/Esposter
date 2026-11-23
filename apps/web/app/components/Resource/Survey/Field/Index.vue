@@ -13,7 +13,8 @@ import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {
   error: string;
-  // The runner's view of a dynamic panel's template questions for one row, given to a dynamic panel only. Absent where no runner decides a row
+  // The runner's view of a dynamic panel's template questions for one row, given to a dynamic panel only. Absent where
+  // No runner decides a row
   getRowViews?: ((node: SurveyPanelDynamicNode, row: SurveyAnswers) => SurveyPanelRowView[]) | undefined;
   isDisabled: boolean;
   node: SurveyQuestionNode;
@@ -22,7 +23,8 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { getRowViews, node, seed } = defineProps<Props>();
-// A kind takes only the props it reads: the seed when it orders its choices, and the row views when it is a dynamic panel
+// A kind takes only the props it reads: the seed when it orders its choices, and the row views when it is a dynamic
+// Panel
 const kindProps = computed(() => {
   if (node.type === SurveyNodeType.PanelDynamic) return { getRowViews, seed };
 

@@ -8,7 +8,8 @@ import { getDragTranslate } from "#src/services/ui/dragReorder/getDragTranslate"
 import { moveDragSiblings } from "#src/services/ui/dragReorder/moveDragSiblings";
 import { takeOne } from "@esposter/shared";
 
-// Moves the held row to the pointer and the rows it passes aside, then asks for the autoscroll a pointer at an edge needs
+// Moves the held row to the pointer and the rows it passes aside, then asks for the autoscroll a pointer at an edge
+// Needs
 export const moveDrag = (context: DragReorderContext, press: Press, drag: Drag) => {
   drag.translate = getDragTranslate(press, drag);
   takeOne(press.items, press.index).style.translate = `0 ${drag.translate / drag.scale}px`;

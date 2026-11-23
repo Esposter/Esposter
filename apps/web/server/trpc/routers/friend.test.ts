@@ -75,7 +75,8 @@ describe("friendRouter", () => {
     expect(takeOne(friendships).version).toBe(tombstone.version);
   });
 
-  // A removal keeps the friendship as a tombstone, so the version it leaves is the one a later arrival is ordered against
+  // A removal keeps the friendship as a tombstone, so the version it leaves is the one a later arrival is ordered
+  // Against
   test("deletes friend as a tombstone at a higher version", async () => {
     expect.hasAssertions();
 
@@ -98,7 +99,8 @@ describe("friendRouter", () => {
     expect(friendship?.version).toBe(tombstone.version + 1);
   });
 
-  // The removal's write returns the row it changed, so the row versions header names the tombstone at the version it left
+  // The removal's write returns the row it changed, so the row versions header names the tombstone at the version it
+  // Left
   test("names a removed friendship at its tombstone version in the row versions header", async () => {
     expect.hasAssertions();
 
@@ -119,7 +121,8 @@ describe("friendRouter", () => {
     });
   });
 
-  // The unfriend's entry shows the friendship row the removal writes, so the optimistic change covers every row the server names
+  // The unfriend's entry shows the friendship row the removal writes, so the optimistic change covers every row the
+  // Server names
   test("the unfriend entry touches every row the removal writes", async () => {
     expect.hasAssertions();
 

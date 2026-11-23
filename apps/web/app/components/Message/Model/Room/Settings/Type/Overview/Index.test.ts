@@ -75,7 +75,8 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
   });
 
   // The server trims the topic it stores, and its copy of the row reaches the store through the room subscription
-  // Before the save answers. Settling against that copy must clear the edit, or the next blur writes the same topic again
+  // Before the save answers. Settling against that copy must clear the edit, or the next blur writes the same topic
+  // Again
   test("writes a topic once when the server trims it to the value already stored", async () => {
     expect.hasAssertions();
 

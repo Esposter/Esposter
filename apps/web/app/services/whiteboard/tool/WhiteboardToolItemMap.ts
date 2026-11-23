@@ -3,8 +3,8 @@ import type { WhiteboardToolItem } from "#src/models/whiteboard/WhiteboardToolIt
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { GestureTool } from "#src/models/whiteboard/GestureTool";
 
-// The tools the toolbar chooses between, each with its mark, its title and the key that chooses it. The shape tool is the shape slot,
-// Which holds the shapes, so it is not a member here
+// The tools the toolbar chooses between, each with its mark, its title and the key that chooses it. The shape tool is
+// The shape slot, Which holds the shapes, so it is not a member here
 export const WhiteboardToolItemMap: Record<Exclude<GestureTool, typeof GestureTool.Shape>, WhiteboardToolItem> = {
   [GestureTool.Arrow]: { meaning: UiIconMeaning.Arrow, shortcut: "a", title: "Arrow", value: GestureTool.Arrow },
   [GestureTool.Freehand]: { meaning: UiIconMeaning.Pen, shortcut: "p", title: "Freehand", value: GestureTool.Freehand },

@@ -103,8 +103,8 @@ describe(useCallStore, () => {
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participantId)?.isMuted).toBe(false);
   });
 
-  // A toggle the server refuses is revoked: its entry drops, and the row shows what the server last held. The server's own
-  // Arrival of the row at a newer version is what the screen shows then, and an older arrival of it does not
+  // A toggle the server refuses is revoked: its entry drops, and the row shows what the server last held. The server's
+  // Own Arrival of the row at a newer version is what the screen shows then, and an older arrival of it does not
   test("a revoked toggle's arrival wins over the toggle, and an older arrival does not", async () => {
     expect.hasAssertions();
 
@@ -346,7 +346,8 @@ describe(useCallStore, () => {
     expect(callRoute.value).toBe(RoutePath.Calls(callSessionId));
   });
 
-  // The screen lets go of the call as the leave is sent, so a second press finds no call left to leave and sends nothing
+  // The screen lets go of the call as the leave is sent, so a second press finds no call left to leave and sends
+  // Nothing
   test("sends one leave for a second press while the first is out", async () => {
     expect.hasAssertions();
 
@@ -467,7 +468,8 @@ describe(useCallStore, () => {
     expect(handRaisedSent).toStrictEqual([true, false]);
   });
 
-  // The server decides a kick, and nothing is shown ahead of its answer, so a refused kick leaves the participant in the call
+  // The server decides a kick, and nothing is shown ahead of its answer, so a refused kick leaves the participant in
+  // The call
   test("a refused kick leaves the participant in the call", async () => {
     expect.hasAssertions();
 

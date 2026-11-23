@@ -11,8 +11,8 @@ import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 import { reducePreviewOrCommitGesture } from "#src/services/whiteboard/gesture/reducePreviewOrCommitGesture";
 import { takeOne } from "@esposter/shared";
 
-// A stroke takes each point the pointer passes once it has moved a sample distance from the last one, and a release commits
-// The stroke as one element, its last point the point released at
+// A stroke takes each point the pointer passes once it has moved a sample distance from the last one, and a release
+// Commits The stroke as one element, its last point the point released at
 export const reduceDrawingGesture = (
   state: WhiteboardGestureState,
   gesture: GestureDrawing,

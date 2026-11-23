@@ -42,7 +42,9 @@ const time = computed({
     choose(zonedDateTime.value.withPlainTime(Temporal.PlainTime.from(value)));
   },
 });
-// oxlint-disable typescript/no-unsafe-type-assertion -- a picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined too when it is clearable, which the compiler cannot relate to TModel
+// A picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined
+// Too when
+// oxlint-disable typescript/no-unsafe-type-assertion -- it is clearable, which the compiler cannot relate to TModel
 const writeModelValue = (value: Date | undefined) => {
   modelValue.value = value as TModel;
 };

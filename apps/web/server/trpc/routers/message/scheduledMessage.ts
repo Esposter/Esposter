@@ -39,9 +39,9 @@ export const scheduledMessageRouter = router({
       if (!deletedScheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
     },
   ),
-  // The claim is the object's tombstone, so a message the object is already sending cannot be sent a second time from here.
-  // Every guard createUserMessage would reject runs before the claim, because a claim the guards then refuse would burn
-  // The scheduled message without ever sending it
+  // The claim is the object's tombstone, so a message the object is already sending cannot be sent a second time from
+  // Here. Every guard createUserMessage would reject runs before the claim, because a claim the guards then refuse
+  // Would burn The scheduled message without ever sending it
   sendScheduledMessageNow: getMemberProcedure(
     scheduledMessageIdentityInputSchema,
     "roomId",
@@ -51,9 +51,9 @@ export const scheduledMessageRouter = router({
     const [scheduledMessage] = await roomObject.readScheduledMessages({ ids: [input.id], userId: actor.userId });
     if (!scheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
 
-    // The word filter is the exception: it already applied the room's automod action, and its inputs are both stored, so
-    // Leaving the message scheduled hands the object the same block when it comes due — a second timeout and a second
-    // Audit row for one message. Claim it here instead, so it is burnt
+    // The word filter is the exception: it already applied the room's automod action, and its inputs are both stored,
+    // So Leaving the message scheduled hands the object the same block when it comes due — a second timeout and a
+    // Second Audit row for one message. Claim it here instead, so it is burnt
     await getResultAsync(() =>
       assertCanCreateMessage(ctx.db, actor.userId, input.roomId, scheduledMessage.message),
     ).match(noop, async (error) => {
@@ -67,8 +67,8 @@ export const scheduledMessageRouter = router({
     if (!claimedScheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
 
     // A send that fails past the guards — a transient write, a serialization error — must not burn the message: putting
-    // It back leaves it scheduled, so the caller's error means "not sent", never "lost". The word filter can still block
-    // Here, and that one is never put back, for the same reason as above
+    // It back leaves it scheduled, so the caller's error means "not sent", never "lost". The word filter can still
+    // Block Here, and that one is never put back, for the same reason as above
     return getResultAsync(() =>
       createUserMessage(ctx.db, actor, {
         files: [],
@@ -81,7 +81,8 @@ export const scheduledMessageRouter = router({
       () => claimedScheduledMessage,
       async (error) => {
         if (error instanceof TRPCError && error.cause instanceof WordFilteredError) throw error;
-        // A put-back that fails too is logged, and the caller still hears why the send failed rather than why the put-back did
+        // A put-back that fails too is logged, and the caller still hears why the send failed rather than why the
+        // `put-back` did
         await getResultAsync(() =>
           roomObject.createScheduledMessage(
             {

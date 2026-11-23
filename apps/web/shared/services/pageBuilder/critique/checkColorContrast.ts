@@ -5,7 +5,8 @@ import { CritiqueFindingKind } from "#shared/models/pageBuilder/CritiqueFindingK
 import { MIN_TEXT_CONTRAST_RATIO } from "#shared/services/pageBuilder/critique/constants";
 import { getContrastRatio } from "#shared/services/pageBuilder/critique/getContrastRatio";
 
-// The contrast finding of a text's colours: a ratio under the threshold, or unchecked when one of its colours could not be read
+// The contrast finding of a text's colours: a ratio under the threshold, or unchecked when one of its colours could not
+// Be read
 export const checkColorContrast = (nodeId: string, colors: EffectiveColors): CritiqueFinding[] => {
   if (colors.textColor === undefined || colors.background === undefined)
     return [{ kind: CritiqueFindingKind.UncheckedContrast, nodeId }];

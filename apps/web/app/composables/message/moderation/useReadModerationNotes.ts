@@ -20,7 +20,8 @@ export const useReadModerationNotes = (roomId: RoomInMessage["id"], targetUserId
       return moderationNotes;
     });
   const readMoreModerationNotes = (onComplete: () => void) => {
-    // Taken as the read is issued, so a retry after the dialog moved to another target still asks for this target's notes
+    // Taken as the read is issued, so a retry after the dialog moved to another target still asks for this target's
+    // Notes
     const issuedTargetUserId = targetUserId();
     return readMoreItems(
       (cursor) =>

@@ -31,7 +31,8 @@ const nodeFormSchema = computed(() => {
   return nodeDefinition.value?.formSchema.omit(omitted);
 });
 // The root's form draws the survey's texts: the calculated values are the Logic tab's, and the theme's keys the Theme
-// Tab's. It is loose, as a node's props schema is, so a prop the form does not draw is never refused on this form's behalf
+// Tab's. It is loose, as a node's props schema is, so a prop the form does not draw is never refused on this form's
+// Behalf
 const rootFormSchema = surveyRootPropsSchema
   .omit({
     accentColor: true,

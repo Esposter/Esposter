@@ -37,8 +37,8 @@ const findAddButton = (component: Awaited<ReturnType<typeof mountPanelDynamic>>)
 };
 
 describe("resourceSurveyFieldPanelDynamic", () => {
-  // A row's field loads on demand through a dynamic import, which is module I/O rather than a microtask, so the text and
-  // Checkbox fields' modules are awaited once up front and each mount resolves them within its flush
+  // A row's field loads on demand through a dynamic import, which is module I/O rather than a microtask, so the text
+  // And Checkbox fields' modules are awaited once up front and each mount resolves them within its flush
   beforeAll(async () => {
     await import("#src/components/Resource/Survey/Field/Text.vue");
     await import("#src/components/Resource/Survey/Field/Checkbox.vue");

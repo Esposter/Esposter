@@ -10,13 +10,14 @@ import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
-// The canvas draws the document in z-order under its viewport, or the preview of the gesture in progress in its place. Its overlay slot is drawn
-// Over the elements in the document's coordinates, and its html slot over the page, for whatever a gesture or a text edit shows while it lasts.
-// Each pointer event leaves as a gesture event, in screen pixels from the canvas's top left, so the gesture reducer reads the canvas and no DOM.
-// The canvas selects no text, so a drag on it is a gesture and never a highlight of the page under it.
-// A paste leaves as its clipboard text too, which the whiteboard reads for elements, while the image paste is taken here as before. Image files dropped
-// Here are placed at the document point they land on, through the same insert the paste takes, and a drop that carries no file is left to its target, such
-// As text dropped into the editor's textarea
+// The canvas draws the document in z-order under its viewport, or the preview of the gesture in progress in its place.
+// Its overlay slot is drawn Over the elements in the document's coordinates, and its html slot over the page, for
+// Whatever a gesture or a text edit shows while it lasts. Each pointer event leaves as a gesture event, in screen
+// Pixels from the canvas's top left, so the gesture reducer reads the canvas and no DOM. The canvas selects no text, so
+// A drag on it is a gesture and never a highlight of the page under it. A paste leaves as its clipboard text too, which
+// The whiteboard reads for elements, while the image paste is taken here as before. Image files dropped Here are placed
+// At the document point they land on, through the same insert the paste takes, and a drop that carries no file is left
+// To its target, such As text dropped into the editor's textarea
 defineSlots<{ html?: () => VNode; overlay?: () => VNode }>();
 const emit = defineEmits<{
   doubleClick: [screen: Point];

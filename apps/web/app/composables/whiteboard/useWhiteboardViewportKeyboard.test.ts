@@ -12,7 +12,8 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test } from "vitest";
 
-// The viewport keyboard mounted as a surface, so its commands and key listeners are bound for as long as the mount lasts
+// The viewport keyboard mounted as a surface, so its commands and key listeners are bound for as long as the mount
+// Lasts
 const mountViewportKeyboard = () =>
   mountSuspended(
     defineComponent({
@@ -101,7 +102,8 @@ describe(useWhiteboardViewportKeyboard, () => {
 
     pressKey({ bubbles: true, ctrlKey: true, key: "0" });
 
-    // At scale 2 the canvas centre sits over the document point 100 across and down, and that point stays under the centre at scale 1
+    // At scale 2 the canvas centre sits over the document point 100 across and down, and that point stays under the
+    // Centre at scale 1
     expect(viewport.value).toStrictEqual({ scale: 1, x: -100, y: -100 });
   });
 

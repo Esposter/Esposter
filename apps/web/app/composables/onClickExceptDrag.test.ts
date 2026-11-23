@@ -3,7 +3,8 @@ import { onClickExceptDrag } from "#src/composables/onClickExceptDrag";
 import { describe, expect, test, vi } from "vitest";
 
 describe(onClickExceptDrag, () => {
-  // A press released off the element sends it no click, so the click after it must not be swallowed as the end of a drag
+  // A press released off the element sends it no click, so the click after it must not be swallowed as the end of a
+  // Drag
   test.each([
     {
       description: "re-entered after a release off it",

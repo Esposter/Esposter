@@ -15,9 +15,10 @@ interface Props {
   element: PositionedElement;
 }
 
-// The text being edited in place, which is the only copy of the text while it is edited: the canvas leaves the element's own text out. It is
-// Laid over the element where the text is drawn, in the layout and the colour the commit gives the text: its size, its alignment and its wrap, scaled with the viewport.
-// An unwrapped text box is as wide as the draft's widest line, so it grows as the owner types. It has no box of its own, so it reads as the text itself,
+// The text being edited in place, which is the only copy of the text while it is edited: the canvas leaves the
+// Element's own text out. It is Laid over the element where the text is drawn, in the layout and the colour the commit
+// Gives the text: its size, its alignment and its wrap, scaled with the viewport. An unwrapped text box is as wide as
+// The draft's widest line, so it grows as the owner types. It has no box of its own, so it reads as the text itself,
 // And it takes focus as it opens. A press or a double click in it is no gesture of the canvas
 const draft = defineModel<string>({ required: true });
 const { element } = defineProps<Props>();
@@ -43,7 +44,8 @@ const style = computed<CSSProperties | undefined>(() => {
     top: `${(placement.point.y - viewport.value.y) * scale}px`,
     transform: `translate(${shift}, ${WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP[placement.verticalAlignment]})`,
     whiteSpace: placement.isWrapped ? undefined : "pre",
-    // An unwrapped draft is sized by its own text, so a glyph wider than the estimate is never clipped while it is typed
+    // An unwrapped draft is sized by its own text, so a glyph wider than the estimate is never clipped while it is
+    // Typed
     width: placement.isWrapped ? `${placement.width * scale}px` : undefined,
   };
 });

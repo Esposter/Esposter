@@ -2,7 +2,8 @@ import type { ArrowEnd, Point } from "vue-block-editor-headless";
 
 import { takeOne } from "@esposter/shared";
 
-// An arrow end of a copy, moved by the offset. It stays bound to the copy of the shape it was bound to, when that shape is copied with it, and is free otherwise
+// An arrow end of a copy, moved by the offset. It stays bound to the copy of the shape it was bound to, when that shape
+// Is copied with it, and is free otherwise
 export const getDuplicateArrowEnd = (
   arrowEnd: ArrowEnd,
   originalIdCopyIdMap: Record<string, string>,

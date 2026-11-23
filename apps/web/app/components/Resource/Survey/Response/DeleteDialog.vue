@@ -10,8 +10,8 @@ interface Props {
 }
 
 const { surveyId } = defineProps<Props>();
-// The row leaves the table once the server has deleted the response, and the table is read again then. That read runs on
-// The table's run scope, so a read that was in flight before the delete cannot put the response back
+// The row leaves the table once the server has deleted the response, and the table is read again then. That read runs
+// On The table's run scope, so a read that was in flight before the delete cannot put the response back
 const emit = defineEmits<{ delete: [responseId: string]; refresh: [] }>();
 const { $trpc } = useNuxtApp();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();

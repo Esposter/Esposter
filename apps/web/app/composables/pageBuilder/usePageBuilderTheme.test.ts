@@ -13,7 +13,8 @@ describe(usePageBuilderTheme, () => {
     setActivePinia(createPinia());
   });
 
-  // A blank stack is never saved, since a custom property with no value makes every use of it fall back to the initial value
+  // A blank stack is never saved, since a custom property with no value makes every use of it fall back to the initial
+  // Value
   test("a blank font stack saves nothing", () => {
     expect.hasAssertions();
 

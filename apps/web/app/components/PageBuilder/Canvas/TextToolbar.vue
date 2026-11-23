@@ -15,8 +15,9 @@ interface Props {
 
 const { editor } = defineProps<Props>();
 const items = shallowRef<MenuItem[]>([]);
-// Tiptap keeps no reactive state of its own, so the items are drawn again from each transaction: a mark's toggle, a block's
-// Change and a focus change each dispatch one, and the buttons that act on the selection are enabled only while it is focused
+// Tiptap keeps no reactive state of its own, so the items are drawn again from each transaction: a mark's toggle, a
+// Block's Change and a focus change each dispatch one, and the buttons that act on the selection are enabled only while
+// It is focused
 watchImmediate(
   () => editor,
   (currentEditor, _previousEditor, onCleanup) => {

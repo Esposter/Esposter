@@ -42,7 +42,8 @@ export const computeDatasetVisualPropsData = (
       DatasetAggregationComputeMap[aggregation](rows.map((row) => row[column] ?? null)),
     ),
   }));
-  // The order ranks the aggregated values, never the rows, and its sort is stable, so categories that tie keep their first-seen order
+  // The order ranks the aggregated values, never the rows, and its sort is stable, so categories that tie keep their
+  // `first-seen` order
   const orderedEntries = query.order
     ? categoryEntries.toSorted(getCategoryComparator(categoryEntries, query.order))
     : categoryEntries;

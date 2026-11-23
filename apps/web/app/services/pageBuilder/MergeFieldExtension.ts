@@ -6,8 +6,9 @@ import { Extension } from "@tiptap/core";
 import { PluginKey } from "@tiptap/pm/state";
 import { Suggestion } from "@tiptap/suggestion";
 
-// Typing two braces offers the bound dataset's columns that match what follows them, and a chosen column takes the braces'
-// Place with its merge field. The columns are read when the list is drawn, so a change to the dataset reaches the list
+// Typing two braces offers the bound dataset's columns that match what follows them, and a chosen column takes the
+// Braces' Place with its merge field. The columns are read when the list is drawn, so a change to the dataset reaches
+// The list
 export const MergeFieldExtension = Extension.create<{ getColumns: () => string[] }>({
   addOptions: () => ({ getColumns: () => [] }),
   addProseMirrorPlugins() {

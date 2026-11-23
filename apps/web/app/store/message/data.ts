@@ -61,11 +61,12 @@ export const useDataStore = defineStore("message/data", () => {
   );
   const previousCursor = computed(() => ambientPreviousCursor.value);
   const online = useOnline();
-  // The waypoint re-arms on completion even when a newer page fails, so retries are paced the way the older side paces them
+  // The waypoint re-arms on completion even when a newer page fails, so retries are paced the way the older side paces
+  // Them
   const executeNewerWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
-  // Reads the newer side of a room's list from the cursor the room holds, and places its page ahead of the rows it has. A
-  // Page is held only while the cursor it was read from is still the room's: a newer read or a fresh load that replaced
-  // That chain leaves its page belonging to a window the list no longer holds, so it is dropped
+  // Reads the newer side of a room's list from the cursor the room holds, and places its page ahead of the rows it has.
+  // A Page is held only while the cursor it was read from is still the room's: a newer read or a fresh load that
+  // Replaced That chain leaves its page belonging to a window the list no longer holds, so it is dropped
   const readMoreNewerItems = (
     roomId: ClientMessage["roomId"],
     query: (cursor: string) => Promise<Page<ClientMessage>>,
@@ -136,26 +137,26 @@ export const useDataStore = defineStore("message/data", () => {
         // The server has the message, so the attachments held since the bubble are dropped for good — with them
         // Go the grants that authorize reclaiming their blobs, which only a rejection could have needed back
         await MessageHookMap[MessageHook.CommitSend].run(target, sentFileIds);
-        // The server auto-follows the thread a reply lands in, so the room's follows are read again — the follow state is loaded
-        // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread. Best-effort, since
-        // The message already exists on the server and a failed read of the follows is no reason to fail the send
+        // The server auto-follows the thread a reply lands in, so the room's follows are read again — the follow state
+        // Is loaded Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
+        // Best-effort, since The message already exists on the server and a failed read of the follows is no reason to
+        // Fail the send
         const { replyToId } = input;
         if (replyToId) await getResultAsync(() => refetchFollowedThreads(input.roomId)).match(noop, console.error);
         return true;
       },
       async (error) => {
-        // The mutation spans the server commit, so nothing here may roll the bubble back out: a rejection can
-        // Just as well be a lost response for a message that landed, and deleting it then hides a sent message
-        // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
-        // It) and invites the duplicate resend openspec/specs/architecture/persist-then-notify/design.md exists to prevent. The
-        // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
-        // So it holds its loading state and the alert says what happened.
-        // The composer's attachments come back, held rather than discarded since the bubble — so the user retries
-        // With the files already uploaded instead of re-picking them, and their grants can still reclaim the
-        // Blobs. The cost is the lost-response case: a message that did land keeps a composer copy whose delete
-        // Affordance would reclaim blobs it is still using. That trades a rare broken attachment the user chose
-        // Against a certain leak plus lost work on every deterministic rejection, which is what slowmode and the
-        // Word filter are
+        // The mutation spans the server commit, so nothing here may roll the bubble back out: a rejection can Just as
+        // Well be a lost response for a message that landed, and deleting it then hides a sent message From its own
+        // Sender (the subscription echo is filtered for the sending session, so nothing restores It) and invites the
+        // Duplicate resend openspec/specs/architecture/persist-then-notify/design.md exists to prevent. The Bubble also
+        // Stays the sender's copy of a genuinely rejected message — the composer is already reset — So it holds its
+        // Loading state and the alert says what happened. The composer's attachments come back, held rather than
+        // Discarded since the bubble — so the user retries With the files already uploaded instead of re-picking them,
+        // And their grants can still reclaim the Blobs. The cost is the lost-response case: a message that did land
+        // Keeps a composer copy whose delete Affordance would reclaim blobs it is still using. That trades a rare
+        // Broken attachment the user chose Against a certain leak plus lost work on every deterministic rejection,
+        // Which is what slowmode and the Word filter are
         await MessageHookMap[MessageHook.RollbackSend].run(target, sentFileIds);
         createErrorAlert(error);
         return false;
@@ -202,8 +203,8 @@ export const useDataStore = defineStore("message/data", () => {
         return false;
       },
     );
-  // The polls with a vote out. A second vote on one poll is not sent while the first is, and the poll's radio group reads
-  // Its own key only
+  // The polls with a vote out. A second vote on one poll is not sent while the first is, and the poll's radio group
+  // Reads Its own key only
   const { checkIsPending, executeMutation } = useMutation();
   const checkIsVotePending = (message: ClientMessage) => checkIsPending(getVotingPollKey(message));
   const votePoll = (input: VotePollInput) =>
@@ -227,8 +228,8 @@ export const useDataStore = defineStore("message/data", () => {
       baseStoreCreateMessage(message, true);
     }
   };
-  // Every copy of a message the client holds for a room: the window's, and each holder's. An arrival is judged against all
-  // Of them, since a thread pane holds replies the window does not
+  // Every copy of a message the client holds for a room: the window's, and each holder's. An arrival is judged against
+  // All Of them, since a thread pane holds replies the window does not
   const listHeldMessages = (roomId: ClientMessage["roomId"]) => {
     const heldMessages = [...getSlice(roomId).items.value];
     for (const holder of messageHolderRegistry.hooks)

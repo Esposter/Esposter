@@ -87,9 +87,9 @@ export const webhookRouter = router({
       webhook: requireMutation(webhookRows[0], Operation.Create, DatabaseEntityType.Webhook, webhookContext),
     };
   }),
-  // The webhook and the app user it posts as are tombstoned together. A hard delete of the app user would cascade the webhook
-  // Away with no tombstone to answer for it. The app user is named by the live webhook, so its statement runs first, while
-  // The webhook is still live, and the webhook's own statement then tombstones the row the answer names
+  // The webhook and the app user it posts as are tombstoned together. A hard delete of the app user would cascade the
+  // Webhook Away with no tombstone to answer for it. The app user is named by the live webhook, so its statement runs
+  // First, while The webhook is still live, and the webhook's own statement then tombstones the row the answer names
   deleteWebhook: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
     deleteWebhookInputSchema,

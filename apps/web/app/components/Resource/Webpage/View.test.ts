@@ -7,7 +7,8 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
-// The head entries the page sets, read by the robots meta each one carries rather than by the order unhead keeps them in
+// The head entries the page sets, read by the robots meta each one carries rather than by the order unhead keeps them
+// In
 const readRobotsMetas = () => {
   const head = injectHead();
   assert.exists(head);

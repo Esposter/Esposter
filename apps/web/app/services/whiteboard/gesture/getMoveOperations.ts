@@ -5,7 +5,8 @@ import { getElementIndexById } from "#src/services/whiteboard/gesture/getElement
 import { takeOne } from "@esposter/shared";
 import { getElementBounds, movePositionedElement } from "vue-block-editor-headless";
 
-// The operations that move each element of a selection by a delta in document units. Each arrow bound to a moved shape is rerouted in the same edit
+// The operations that move each element of a selection by a delta in document units. Each arrow bound to a moved shape
+// Is rerouted in the same edit
 export const getMoveOperations = (
   document: PositionedDocument,
   elementIds: string[],

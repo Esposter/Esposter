@@ -14,7 +14,8 @@ export const useReadData = async (
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
   const { data: session } = await useAuthSession();
-  // The watch runs after the await above, so Vue has no component to hand a failed read to, and it is alerted here instead
+  // The watch runs after the await above, so Vue has no component to hand a failed read to, and it is alerted here
+  // Instead
   const stop = watch(
     () => session.value,
     (newSessionData) =>

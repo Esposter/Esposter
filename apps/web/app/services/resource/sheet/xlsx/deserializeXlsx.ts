@@ -6,7 +6,8 @@ import { getSourceColumnName } from "#src/services/resource/sheet/dataSource/get
 import { getCellText } from "#src/services/resource/sheet/xlsx/getCellText";
 
 export const deserializeXlsx = async (file: File, settings: XlsxFileSettings) => {
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the command bar reaches this codec on every resource page, so the workbook parser is fetched only when an xlsx is read
+  // The command bar reaches this codec on every resource page, so the
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- workbook parser is fetched only when an xlsx is read
   const { readSheet } = await import("read-excel-file/browser");
   const cellRows = await readSheet(file, settings.configuration.sheetIndex + 1);
   const [headerCells, ...bodyCells] = cellRows;

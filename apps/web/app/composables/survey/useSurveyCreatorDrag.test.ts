@@ -31,7 +31,8 @@ const createPageSlot = (): SurveyDropSlot => ({
 });
 const createPointerEvent = (type: string, clientX: number, clientY: number) =>
   new PointerEvent(type, { bubbles: true, cancelable: true, clientX, clientY, pointerId: 1, pointerType: "mouse" });
-// Loads a survey of the pages given, then hands back the drag with the store's refs and the commands the assertions read
+// Loads a survey of the pages given, then hands back the drag with the store's refs and the commands the assertions
+// Read
 const setup = (content: SurveyPageNode[]) => {
   setActivePinia(createPinia());
   const surveyCreatorStore = useSurveyCreatorStore();

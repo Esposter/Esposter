@@ -6,7 +6,8 @@ import { useRowDialogStore } from "#src/store/resource/sheet/rowDialog";
 import { describe, expect, test } from "vitest";
 
 describe(useRowDialogStore, () => {
-  // A duplicated sheet keeps its rows' ids, so an app-lifetime target would re-open the dialog over the copy's same rows
+  // A duplicated sheet keeps its rows' ids, so an app-lifetime target would re-open the dialog over the copy's same
+  // Rows
   test("keeps a sheet's dialog targets to that sheet", () => {
     expect.hasAssertions();
 

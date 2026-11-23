@@ -162,8 +162,8 @@ describe("programRouter", () => {
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const { participants: reissuedParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
-    // Re-running never rotates a token, since a rotated token would dead-link a link already sent out. A stored credential
-    // Is a hash, so the repeat has no credential to answer with
+    // Re-running never rotates a token, since a rotated token would dead-link a link already sent out. A stored
+    // Credential Is a hash, so the repeat has no credential to answer with
     expect(participants.map((participant) => participant.keyValue)).toStrictEqual([" ", "a"]);
     expect(reissuedParticipants).toStrictEqual([]);
   });
@@ -172,8 +172,8 @@ describe("programRouter", () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram();
-    // Neither run sees the other's rows, so both try to issue every credential — the storage key is what makes one of them
-    // Lose, and each participant is answered by the one run that won it
+    // Neither run sees the other's rows, so both try to issue every credential — the storage key is what makes one of
+    // Them Lose, and each participant is answered by the one run that won it
     const [{ participants }, { participants: concurrentParticipants }] = await Promise.all([
       caller.generateProgramParticipants({ id: program.id }),
       caller.generateProgramParticipants({ id: program.id }),
@@ -200,7 +200,8 @@ describe("programRouter", () => {
     });
     const { participants: grownParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
-    // Only the participant the audience grew by is issued a credential, and the one already issued is not answered again
+    // Only the participant the audience grew by is issued a credential, and the one already issued is not answered
+    // Again
     expect(grownParticipants.map((participant) => participant.keyValue)).toStrictEqual(["a"]);
     expect(takeOne(participants).keyValue).toBe(" ");
   });
@@ -403,7 +404,8 @@ describe("programRouter", () => {
     expect(missingDependencyCount).toBe(1);
   });
 
-  // A program bound to one email as its working copy holds it: a survey invite to the survey, or a button that links nowhere
+  // A program bound to one email as its working copy holds it: a survey invite to the survey, or a button that links
+  // Nowhere
   const createInviteProgram = async (linksSurvey = true, audienceKeyValues = ["a", "b"]) => {
     const survey = await createSurvey(surveyCaller, name, { document, settings: identifiedSettings });
     const sheet = await createAudienceSheet(sheetCaller, name, audienceKeyValues);
@@ -490,7 +492,8 @@ describe("programRouter", () => {
     expect(invites.map(({ keyValue: inviteKeyValue }) => inviteKeyValue)).toStrictEqual(["b"]);
   });
 
-  // A link already sent is retired by a new one, and the answer given under the old link still belongs to its participant
+  // A link already sent is retired by a new one, and the answer given under the old link still belongs to its
+  // Participant
   test("regenerating a link retires the one it replaces and keeps the answer given under it", async () => {
     expect.hasAssertions();
 

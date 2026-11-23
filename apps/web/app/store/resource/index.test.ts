@@ -40,8 +40,8 @@ import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vites
 vi.mock(import("#src/services/resource/encodeContentDelta"), () => ({
   encodeContentDelta: () => Promise.resolve(new Uint8Array(1)),
 }));
-// The write is an XMLHttpRequest, which the test environment does not answer at the network the way fetch is. The staged
-// Path's own steps are what these tests hold, so the PUT is a stored success rather than a request
+// The write is an XMLHttpRequest, which the test environment does not answer at the network the way fetch is. The
+// Staged Path's own steps are what these tests hold, so the PUT is a stored success rather than a request
 const { uploadFileToUrlMock } = vi.hoisted(() => ({
   uploadFileToUrlMock: vi.fn<typeof uploadFileToUrl>(() => Promise.resolve()),
 }));
@@ -115,8 +115,8 @@ describe(useResourceStore, () => {
     return { generateUploadContentPresignedUrl, saveStagedResourceContent };
   };
 
-  // A write for a resource that is no longer the loaded one has no state to wait on, so the wait is for its request to be
-  // Answered: msw reports the request's end, and the client applies the answer once the promises it chained have run
+  // A write for a resource that is no longer the loaded one has no state to wait on, so the wait is for its request to
+  // Be Answered: msw reports the request's end, and the client applies the answer once the promises it chained have run
   const settleRequest = async () => {
     await new Promise<void>((resolve) => {
       const onRequestEnd = () => {
@@ -683,8 +683,9 @@ describe(useResourceStore, () => {
     expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
   });
 
-  // A save keeps the version its own opening confirmed. A reopened read confirms the resource's newer version, which is not
-  // The version the save was issued at, so the queued save is refused as stale rather than written over that version
+  // A save keeps the version its own opening confirmed. A reopened read confirms the resource's newer version, which is
+  // Not The version the save was issued at, so the queued save is refused as stale rather than written over that
+  // Version
   test("sends a save queued before the resource closed the version its opening confirmed, not the one a reopened read confirmed", async () => {
     expect.hasAssertions();
 
@@ -875,8 +876,9 @@ describe(useResourceStore, () => {
     expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
   });
 
-  // An explicit reload is a read like any other: its answer can land after a newer read has held a newer version. When the
-  // Row it answers with is older, it applies nothing, so it must not clear the stale latch a save raised after that read
+  // An explicit reload is a read like any other: its answer can land after a newer read has held a newer version. When
+  // The Row it answers with is older, it applies nothing, so it must not clear the stale latch a save raised after that
+  // Read
   test("an older reload answer leaves a stale latch raised after a newer read", async () => {
     expect.hasAssertions();
 
@@ -1043,8 +1045,8 @@ describe(useResourceStore, () => {
     ]);
   });
 
-  // A second unpublish queues behind the first on the publication row, and its refusal leaves the tombstone the first one
-  // Answered in place. Nothing is put back, so no public link the server no longer serves comes back on screen
+  // A second unpublish queues behind the first on the publication row, and its refusal leaves the tombstone the first
+  // One Answered in place. Nothing is put back, so no public link the server no longer serves comes back on screen
   test("keeps the removal a refused second unpublish follows", async () => {
     expect.hasAssertions();
 
@@ -1073,7 +1075,8 @@ describe(useResourceStore, () => {
   });
 
   // Publishing and unpublishing end the same publication row. The publish is awaited, so it arrives the publication it
-  // Created, and a refused unpublish sent behind it takes nothing back: the resource the server published shows as published
+  // Created, and a refused unpublish sent behind it takes nothing back: the resource the server published shows as
+  // Published
   test("keeps the publication a publish answered when an unpublish behind it is refused", async () => {
     expect.hasAssertions();
 
@@ -1239,8 +1242,9 @@ describe(useResourceStore, () => {
     expect(resource.value?.id).toBe(otherResourceId);
   });
 
-  // A save that settles while its resource is closed drops the version the content was confirmed at, so the content in hand
-  // Stops belonging to that resource. Reopening it must read the content again, not claim it still, or the next save has no version
+  // A save that settles while its resource is closed drops the version the content was confirmed at, so the content in
+  // Hand Stops belonging to that resource. Reopening it must read the content again, not claim it still, or the next
+  // Save has no version
   test("reopening a resource whose save settled while it was away reads its content again", async () => {
     expect.hasAssertions();
 
@@ -1336,8 +1340,8 @@ describe(useResourceStore, () => {
   };
   const otherDeviceHash = "other-device-content-hash";
 
-  // The store holds the hash of the content it read or wrote, so the watch's refetch of an editor's own save finds a hash
-  // The store already holds: it reads no blob and applies nothing
+  // The store holds the hash of the content it read or wrote, so the watch's refetch of an editor's own save finds a
+  // Hash The store already holds: it reads no blob and applies nothing
   test("an editor's own save applies nothing when its watch fires for it", async () => {
     expect.hasAssertions();
 
@@ -1392,9 +1396,9 @@ describe(useResourceStore, () => {
     expect(applyContent).toHaveBeenCalledTimes(2);
   });
 
-  // Another writer's commit lands on top of this store's own save while that save is still in flight, so the watch's refetch
-  // Of the row lands during it. The row is compared once the save has answered, since the answer sets the hash it is
-  // Compared against, and the other writer's content is adopted
+  // Another writer's commit lands on top of this store's own save while that save is still in flight, so the watch's
+  // Refetch Of the row lands during it. The row is compared once the save has answered, since the answer sets the hash
+  // It is Compared against, and the other writer's content is adopted
   test("adopts another writer's commit that lands on top of an own save still in flight", async () => {
     expect.hasAssertions();
 

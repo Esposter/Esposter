@@ -51,8 +51,8 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     expect(textField.element.value).toBe(text);
   });
 
-  // The schedule the server keeps empties the text it was sent with. Text the reader typed while the server had it is the
-  // Next schedule's, so it stays in the dialog when it is opened again
+  // The schedule the server keeps empties the text it was sent with. Text the reader typed while the server had it is
+  // The Next schedule's, so it stays in the dialog when it is opened again
   test("a kept schedule keeps the text typed while the server had it", async () => {
     expect.hasAssertions();
 

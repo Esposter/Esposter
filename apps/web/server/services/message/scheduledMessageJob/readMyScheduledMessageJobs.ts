@@ -17,12 +17,12 @@ import {
 import { getOrCreate, getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
-// The Scheduled tab's rows are both kinds of scheduled item, each held where its owner is: the person's reminders and the
-// Index of their scheduled messages, both in their own object. The page is the first rows of the two merged soonest first,
-// Read from each owner's keyset. A row is listed only while the person is still a member of its room, which is where its
-// Room's details are read from, since leaving the room takes its rows out of the person's object. A scheduled message's text
-// And time are read from its room, and a scheduled message whose room no longer holds it is pruned from the index, so the
-// List and its count stop naming it
+// The Scheduled tab's rows are both kinds of scheduled item, each held where its owner is: the person's reminders and
+// The Index of their scheduled messages, both in their own object. The page is the first rows of the two merged soonest
+// First, Read from each owner's keyset. A row is listed only while the person is still a member of its room, which is
+// Where its Room's details are read from, since leaving the room takes its rows out of the person's object. A scheduled
+// Message's text And time are read from its room, and a scheduled message whose room no longer holds it is pruned from
+// The index, so the List and its count stop naming it
 export const readMyScheduledMessageJobs = async (
   db: Context["db"],
   userId: string,
@@ -43,8 +43,8 @@ export const readMyScheduledMessageJobs = async (
     limit,
   );
 
-  // The rooms the page names are read only for the ones the person is still a member of, so a room they have left gives its
-  // Details to nobody
+  // The rooms the page names are read only for the ones the person is still a member of, so a room they have left gives
+  // Its Details to nobody
   const roomIds = [...new Set(page.items.map(({ roomId }) => roomId))];
   const memberRooms =
     roomIds.length > 0

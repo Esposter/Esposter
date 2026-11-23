@@ -4,7 +4,8 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { pluralize } from "#shared/util/text/pluralize";
 
-// What the delete confirm says of a visual. A group names itself and counts every visual of its tree, since all of them go
+// What the delete confirm says of a visual. A group names itself and counts every visual of its tree, since all of them
+// Go
 export const getVisualDeleteDescription = (visual: Visual) => {
   if (visual.type !== VisualType.Group) return "Delete this visual from the dashboard?";
 

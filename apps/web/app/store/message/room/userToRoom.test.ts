@@ -39,7 +39,8 @@ describe(useUserToRoomStore, () => {
     expect(getMyUserToRoom(roomId)).toStrictEqual({ ...userToRoom, displayName, version: 1 });
   });
 
-  // A write that names another member patches that member's row, so the viewer's own row keeps its value until it answers
+  // A write that names another member patches that member's row, so the viewer's own row keeps its value until it
+  // Answers
   test("leaves the viewer's own row as it was when the write names another member", async () => {
     expect.hasAssertions();
 

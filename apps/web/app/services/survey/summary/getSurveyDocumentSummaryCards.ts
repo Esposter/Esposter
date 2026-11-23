@@ -180,8 +180,8 @@ const getQuestionCard = (
   };
 };
 
-// One card per question that holds an answer, in the survey's own order and drawn by what kind of question it is. A choice
-// Is shown by its label rather than the value stored for it
+// One card per question that holds an answer, in the survey's own order and drawn by what kind of question it is. A
+// Choice Is shown by its label rather than the value stored for it
 export const getSurveyDocumentSummaryCards = (
   questions: SurveyQuestionNode[],
   rows: SurveyResponseRecord[],

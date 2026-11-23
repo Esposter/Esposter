@@ -7,9 +7,10 @@ interface Props {
   registry: DevRegistry;
 }
 
-// The stats overlay, a frame at the top left: the median frame time, and the draw calls and triangles the renderer counted
-// For the last frame. It reads the renderer on each frame the browser draws while it is mounted, and the sampler answers
-// Stats only on the frames it samples, so an overlay that is switched off, and so unmounted, costs no frame at all
+// The stats overlay, a frame at the top left: the median frame time, and the draw calls and triangles the renderer
+// Counted For the last frame. It reads the renderer on each frame the browser draws while it is mounted, and the
+// Sampler answers Stats only on the frames it samples, so an overlay that is switched off, and so unmounted, costs no
+// Frame at all
 const { registry } = defineProps<Props>();
 const sampler = createFrameStatsSampler();
 const frameStats = shallowRef<DevFrameStats>();
