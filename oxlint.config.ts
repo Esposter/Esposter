@@ -32,7 +32,7 @@ import { defineConfig } from "oxlint";
 // They are `--runExternalCode` and `--fast`, the two the typecheck scripts pass. The first runs the content mapper that
 // Nuxt's generated tsconfig and the Vue packages' `tsconfig.vue.json` name, and the second is the fast preset.
 // @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
-// vize evaluates this file through `vite.config.ts` and refuses a write over a variable already set, so each is set only
+// Vize evaluates this file through `vite.config.ts` and refuses a write over a variable already set, so each is set only
 // When absent
 // @TODO: https://github.com/ubugeeei-prod/vize/issues/13532 — assign plainly once the recorder's Proxy takes a write
 process.env.TSRS_FAST ??= "1";
@@ -278,6 +278,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     curly: ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",
     "error-handling/no-bare-error": "error",
+    "error-handling/no-uncommented-fallback": "error",
+    "error-handling/no-unfinalized-resource": "error",
     "func-names": "off",
     "id-denylist": ["error", "acc", "created", "curr", "dir", "existing", "idx", "me", "myId", "parsed", "updated"],
     "id-length": "off",

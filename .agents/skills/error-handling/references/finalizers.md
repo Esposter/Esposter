@@ -45,3 +45,5 @@ No `async`/`await` is added to reach that shape — `withFinalizerAsync` already
 after the `await` run on every path, which is what the finalizer existed to guarantee. So when the finalizer only
 resets local state — a flag, an emit, a ref — terminate first and put those lines after the await, and the
 finalizer disappears rather than being nested.
+
+**Nothing is awaited between a resource and its finalizer.** A binding an `await` made, that the finalizer then releases, leaks when any `await` between the two rejects: the rejection never reaches the finalizer. So the finalizer is set straight after the `await` that opens the resource, and the rest of its use runs inside it. A binding gathered by `Promise.all` is the same shape, since a sibling's rejection leaves the opened one open, so it is opened alone and its siblings are read inside the finalizer. `error-handling/no-unfinalized-resource` enforces it; an `await` in a nested function is not between, since it runs when that function is called.
