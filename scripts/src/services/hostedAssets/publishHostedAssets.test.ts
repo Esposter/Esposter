@@ -466,7 +466,8 @@ describe(publishHostedAssets, () => {
     ).resolves.toStrictEqual(bytes);
   });
 
-  // The read back of each written object is what stands between a bucket that stored other bytes and a lock that names them
+  // The read back of each object the lock names is what stands between a bucket that stored other bytes and a lock
+  // That names them
   test("a mismatched object stops the commit", async () => {
     expect.hasAssertions();
 
@@ -482,6 +483,39 @@ describe(publishHostedAssets, () => {
       publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
+        otherLocks: [],
+        product,
+        plan: planHostedAssetPublication(publication),
+        scopes,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: stats/weapons/49a64717d5d4cb19952e6eac2946415cf6879adacf9908e7d872332d32c6e684.json, does not hash to its name]`,
+    );
+  });
+
+  // A stored object the current lock already names is reused, not written, so only the read back catches other bytes
+  // Stored under its name
+  test("a reused object whose stored bytes are altered stops the commit", async () => {
+    expect.hasAssertions();
+
+    const bucketClientMap = createBucketClientMap();
+    const currentLock = getPlannedLock(
+      await publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock: emptyLock,
+        otherLocks: [],
+        product,
+        plan: planHostedAssetPublication(publication),
+        scopes,
+      }),
+    );
+    const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
+    await bucketClientMap[CloudflareEnvironment.Production].put(alteredPath, new Uint8Array(Buffer.from(" ")));
+
+    await expect(
+      publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock,
         otherLocks: [],
         product,
         plan: planHostedAssetPublication(publication),
