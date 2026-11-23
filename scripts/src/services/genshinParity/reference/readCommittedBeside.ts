@@ -1,8 +1,8 @@
 import type { FixtureScreenRow } from "#src/models/genshinParity/fixtures/FixtureScreenRow";
 
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
-import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { getFixtureReferenceFilePath } from "#src/services/genshinParity/shared/getFixtureReferenceFilePath";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -18,7 +18,7 @@ export const readCommittedBeside = async (
     fixtureRows.map(async ({ directory, variant }) => {
       const path = getFixtureReferenceFilePath(join(componentsDirectory, directory), variant);
       if (!existsSync(path)) return undefined;
-      const sha256 = await sha256File(path);
+      const sha256 = await getFileSha256(path);
       const ids = manifestRows.filter((row) => row.sha256 === sha256).map(({ id }) => id);
       return ids.length > 0 ? ([path, ids] as const) : undefined;
     }),

@@ -4,7 +4,7 @@ import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/referenc
 import { downloadObjectTo } from "#src/services/genshinParity/reference/downloadObjectTo";
 import { getObjectKey } from "#src/services/genshinParity/reference/getObjectKey";
 import { getRecordDestination } from "#src/services/genshinParity/reference/getRecordDestination";
-import { sha256File } from "#src/services/genshinParity/reference/sha256File";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { settleAll } from "@esposter/shared";
 import { existsSync } from "node:fs";
 
@@ -22,7 +22,7 @@ export const restoreManifestFiles = async (
   }));
   const fetched = await settleAll(
     files.map(({ destination, extension, sha256 }) => async () => {
-      if (existsSync(destination) && (await sha256File(destination)) === sha256) return false;
+      if (existsSync(destination) && (await getFileSha256(destination)) === sha256) return false;
       await downloadObjectTo(getObjectKey(sha256, extension), destination, sha256);
       return true;
     }),

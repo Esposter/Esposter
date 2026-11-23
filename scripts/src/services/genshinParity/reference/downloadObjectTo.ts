@@ -2,7 +2,7 @@ import type { ReadableStream } from "node:stream/web";
 
 import { GAME_DATA_DEV_BASE_URL } from "#src/services/gameData/constants";
 import { OBJECT_DOWNLOAD_TIMEOUT_MS } from "#src/services/genshinParity/reference/constants";
-import { sha256File } from "#src/services/genshinParity/reference/sha256File";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { writePartialThenMove } from "@esposter/shared-node/cache";
@@ -19,7 +19,7 @@ export const downloadObjectTo = async (key: string, destination: string, sha256:
   await writePartialThenMove(destination, async (partialPath) => {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the response body is the platform's stream, which Node's typings of Readable.fromWeb do not accept as their own web stream
     await pipeline(Readable.fromWeb(response.body as ReadableStream), createWriteStream(partialPath));
-    if ((await sha256File(partialPath)) !== sha256)
+    if ((await getFileSha256(partialPath)) !== sha256)
       throw new InvalidOperationError(Operation.Read, key, "does not hash to its name");
   });
 };

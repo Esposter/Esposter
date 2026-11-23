@@ -3,7 +3,7 @@ import type { ReferenceEntryImage } from "#src/models/genshinParity/reference/Re
 
 import { getCollision } from "#src/services/genshinParity/reference/getCollision";
 import { packScratchImage } from "#src/services/genshinParity/reference/packScratchImage";
-import { sha256File } from "#src/services/genshinParity/reference/sha256File";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { existsSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 
@@ -18,7 +18,7 @@ export const readEntryImage = async (
   held: ParityReferenceManifestImage | undefined,
   committedPath: string,
 ): Promise<ReferenceEntryImage | undefined> => {
-  const committedSha256 = existsSync(committedPath) ? await sha256File(committedPath) : undefined;
+  const committedSha256 = existsSync(committedPath) ? await getFileSha256(committedPath) : undefined;
   if (!existsSync(scratchPath)) {
     if (held === undefined || committedSha256 === undefined) return undefined;
     // With no scratch copy the held image is the local claim, so a committed file differing from it is the collision.

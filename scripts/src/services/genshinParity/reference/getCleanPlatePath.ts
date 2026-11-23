@@ -2,8 +2,8 @@ import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 import { fillCleanPlate } from "#src/services/genshinParity/reference/fillCleanPlate";
 import { getCleanPlateDigest } from "#src/services/genshinParity/reference/getCleanPlateDigest";
-import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { writePartialThenMove } from "@esposter/shared-node/cache";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
@@ -20,7 +20,7 @@ export const getCleanPlatePath = async (
   regions: ImageRegion[],
   { height, width }: { height: number; width: number },
 ): Promise<string> => {
-  const digest = getCleanPlateDigest(await sha256File(referencePath), regions);
+  const digest = getCleanPlateDigest(await getFileSha256(referencePath), regions);
   const platePath = join(REFERENCE_SCRATCH_DIRECTORY, `${referenceId}.plate-${digest}.png`);
   if (existsSync(platePath)) return platePath;
   const plate = await fillCleanPlate(referencePath, regions, { height, width });

@@ -3,12 +3,12 @@ import { composeUiEntries } from "#src/services/genshinAssets/ui/composeUiEntrie
 import { UI_INDEX_EXPORT_DIRECTORY } from "#src/services/genshinAssets/ui/constants";
 import { exportUiBlock } from "#src/services/genshinAssets/ui/exportUiBlock";
 import { getUiIndexPath } from "#src/services/genshinAssets/ui/getUiIndexPath";
-import { hashBlockFile } from "#src/services/genshinAssets/ui/hashBlockFile";
 import { readUiBlockDumps } from "#src/services/genshinAssets/ui/readUiBlockDumps";
 import { readUiBlockManifest } from "#src/services/genshinAssets/ui/readUiBlockManifest";
 import { toUiBlockFileName } from "#src/services/genshinAssets/ui/toUiBlockFileName";
 import { writeUiBlockIndex } from "#src/services/genshinAssets/ui/writeUiBlockIndex";
 import { writeUiBlockManifest } from "#src/services/genshinAssets/ui/writeUiBlockManifest";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
@@ -20,7 +20,7 @@ import { join } from "node:path";
 export const readUiBlockIndex = async (block: string): Promise<string> => {
   const blockPath = join(INSTALLED_BLOCKS_DIRECTORY, block);
   if (!existsSync(blockPath)) throw new InvalidOperationError(Operation.Read, block, "is not an installed block");
-  const contentHash = await hashBlockFile(blockPath);
+  const contentHash = await getFileSha256(blockPath);
   const indexPath = getUiIndexPath(block);
   const manifest = await readUiBlockManifest(block);
   if (manifest?.contentHash === contentHash && existsSync(indexPath)) return indexPath;

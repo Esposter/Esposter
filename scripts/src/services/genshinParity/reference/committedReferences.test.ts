@@ -4,11 +4,11 @@ import { REFERENCE_FILE_EXTENSION, REFERENCE_FILE_MAX_BYTES } from "#src/service
 import { getVariantEntries } from "#src/services/genshinParity/reference/getVariantEntries";
 import { readReferenceFiles } from "#src/services/genshinParity/reference/readReferenceFiles";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
-import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { REFERENCE_FILES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { getFixtureReferenceFilePath } from "#src/services/genshinParity/shared/getFixtureReferenceFilePath";
 import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
@@ -110,7 +110,7 @@ describe("committedReferences", () => {
             ? undefined
             : `${id}: ${toRepositoryPath(path)} is named by its manifest row, but absent`;
         if (sha256 === undefined) return `${id}: ${toRepositoryPath(path)} has no manifest row`;
-        return (await sha256File(path)) === sha256
+        return (await getFileSha256(path)) === sha256
           ? undefined
           : `${id}: ${toRepositoryPath(path)} differs from its manifest row`;
       }),
