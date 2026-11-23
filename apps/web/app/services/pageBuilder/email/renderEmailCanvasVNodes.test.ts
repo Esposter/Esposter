@@ -1,4 +1,3 @@
-/* oxlint-disable selector-ban/no-restricted-syntax -- a generated id, which a test asserts is set; a rendered output line, generated rather than typed */
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
@@ -137,7 +136,7 @@ describe(renderEmailCanvasVNodes, () => {
     const text = takeOne(childrenOf(column));
     const ids = [section, column, text].map((vnode) => vnode.props?.["data-node-id"]);
 
-    expect(ids.every((id) => typeof id === "string" && id !== "")).toBe(true);
+    expect(ids.every((id) => typeof id === "string" && Boolean(id))).toBe(true);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
@@ -166,7 +165,7 @@ describe(renderEmailCanvasVNodes, () => {
       .replaceAll(/<[^>]*>/gu, "\n")
       .split("\n")
       .map((line) => line.trim())
-      .filter((line) => line !== "");
+      .filter(Boolean);
 
     // The social row keeps its type-name box, the design's one drawing for content the canvas cannot show
     expect(visibleText).toStrictEqual([
