@@ -72,6 +72,12 @@ describe("sequential-loops/require-loop-shape", () => {
       source: `${LOOP}    // oxlint-disable-next-line no-await-in-loop -- Polling: each reading follows the last wait\n    await f(c);\n  }\n};`,
       violations: 1,
     },
+    // A reason wrapped inside a shape's name still names it, since the line break is layout and not the reason's text
+    {
+      name: "namesShapeAcrossWrap",
+      source: `${LOOP}    /* oxlint-disable-next-line no-await-in-loop -- Order is the contract: each frame lands before the next steps; Each step reads\n       the last: the check reads what the frame just drew */\n    await f(c);\n  }\n};`,
+      violations: 0,
+    },
   ];
   setupPluginSuite({ fixtures: FIXTURES, plugin: "sequentialLoops", rules: [RULE] });
 });

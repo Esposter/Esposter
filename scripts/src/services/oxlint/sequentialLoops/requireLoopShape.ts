@@ -19,8 +19,10 @@ export const requireLoopShape: Rule = defineRule({
           if (!DIRECTIVE_REGEX.test(comment.value)) continue;
           const separatorIndex = comment.value.indexOf(REASON_SEPARATOR);
           if (separatorIndex === -1 || !NO_AWAIT_IN_LOOP_REGEX.test(comment.value.slice(0, separatorIndex))) continue;
+          // A reason may wrap across a block comment's lines, so its words are read with the line breaks as spaces
           const clauses = comment.value
             .slice(separatorIndex + REASON_SEPARATOR.length)
+            .replaceAll(/\s+/gu, " ")
             .trim()
             .split(REASON_CLAUSE_SEPARATOR);
           if (!clauses.every((clause) => SEQUENTIAL_LOOP_SHAPES.some((shape) => clause.startsWith(`${shape}: `))))
