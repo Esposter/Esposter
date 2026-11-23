@@ -31,7 +31,7 @@ The binaries are different. They leave git after the first publish verifies them
 
 ## Save-safe key decisions
 
-The prior art's decisions on keys are carried. The branch's reasons are in its commit message (`158d95e9d1`), and these are the parts that touch a save:
+These key decisions touch a save:
 
 - **Carried:** the species key stays `MonsterKey` and its portrait is `getMonsterFileKey(key)`, the guarded read of `MonsterKeyFileKeyMap` that throws for a species the map lacks, so no saved monster is renamed and the battle label stays readable. The saved `asset` field is dropped from the plain `monsterSchema`, which parses old saves because zod strips unknown keys.
 - **Carried:** the capture ball's texture is `CaptureItemFileKeyMap` by item id, not an optional `Item.fileKey`, so a saved inventory without the field still captures.
@@ -64,7 +64,7 @@ The design had to settle whether a pack file can mix remote and local assets (ph
 
 `LoaderPlugin.js`'s `setBaseURL` and `setPath` only store their values (`this.baseURL = url;`, `this.path = path;`), and `addPack` sets the base url around the files it adds and then restores it. Because a file reads `loader.baseURL` when it loads, the base url that `addPack` set has gone by then, and a file the pack named relatively gets whichever base url is current at its own load. That is the cause of the report.
 
-**Verdict:** an absolute `https://` url for a file skips both the base url and the path. Both constructors and `GetURL` return it unchanged. So the design loads every file by its absolute url from the typed key map, with no pack file, no `setBaseURL` and no custom loader. The `@TODO` question in the prior art goes away with the pack.
+**Verdict:** an absolute `https://` url for a file skips both the base url and the path. Both constructors and `GetURL` return it unchanged. So the design loads every file by its absolute url from the typed key map, with no pack file, no `setBaseURL` and no custom loader.
 
 ### Crossorigin
 
@@ -99,16 +99,15 @@ The Phaser pass is near-instant. It runs after every object is held in the cache
 - The path-named objects the file-pack generator listed in `public-dungeons-assets`, such as `Scene/Battle/ForestBackground.png` (the `url` column of the retired `files.json`), are not copied. They are deleted with the bucket's retirement, once the shared domain serves the game.
 - The file-pack generator, its test and its `phaser:gen` script, and the committed `FileKey.ts` and `files.json` it wrote, which no file reads.
 - `openspec/specs/architecture/generated-artifacts/design.md`'s row for `pnpm phaser:gen` is removed by the architecture change, not this one.
-- `openspec/specs/dungeons/monsters-and-items/design.md` and `openspec/specs/dungeons/scenes-and-input/design.md` name the key maps the prior art edited, and read against the code they describe.
+- `openspec/specs/dungeons/monsters-and-items/design.md` and `openspec/specs/dungeons/scenes-and-input/design.md` name the key maps, and read against the code they describe.
 
 ## Notes
 
-- The prior-art branch `origin/migrate-assets` is the implementation's base. The change ports its commit onto `ai/queue` as a new commit, not a rebase, and deletes the branch once each decision of the commit is checked as carried or recorded as dropped, as the owner authorised.
 - The driven-browser run covers the title, world and battle scenes against the bucket, with the bundle size before and after recorded as the architecture change records it.
 
 ## Key files
 
-The rows naming a file the prior art creates (the save-safe maps, the Preloader's loaders and the third-party folder) describe what this change creates; every other row is a file that exists now.
+Every row is a file that exists now.
 
 | File                                                                        | Role                                                                                      |
 | :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |

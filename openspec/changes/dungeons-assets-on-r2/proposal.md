@@ -14,7 +14,7 @@ This change depends on `architecture-hosted-assets`. It is the first product to 
 
 - Every file Phaser loads is published as a hosted object: the images, the audio, the WOFF2 font, the tileset definitions and the tilemaps. The bundle holds none of them.
 - The Preloader scene shows the generic preloader's download progress as its one bar, then starts the title scene once Phaser's own load completes.
-- The prior art, `origin/migrate-assets` at `158d95e9d1`, is carried for its save-safe key decisions. Its pack and base url are dropped, because the Phaser source gives every file its own absolute url (see the design).
+- Each file gets its own absolute url from the Phaser source, with no file pack and no base url (see the design).
 - The dead file-pack generator under "apps/web/scripts/phaser" and its generated `FileKey.ts` and `files.json` are removed.
 - The third-party notices move out of the app's asset folder, since no code imports them.
 
@@ -25,6 +25,5 @@ This change depends on `architecture-hosted-assets`. It is the first product to 
 ## Impact
 
 - **BREAKING for the public game bucket**: `public-dungeons-assets` is retired. The game reads its objects from the shared hosted domain, under the `dungeons/` prefix, and the old bucket's objects are deleted once the new ones verify and the game reads them.
-- The save shapes do not change. The prior art's decisions keep every saved monster and capture item readable, and no backfill is owed.
+- The save shapes do not change. The key decisions keep every saved monster and capture item readable, and no backfill is owed.
 - Prerequisite: the WAV-to-MP3 and over-2-MiB WebP re-encodes in progress elsewhere must land before the publish, since the publish refuses a WAV.
-- The prior-art branch `origin/migrate-assets` is ported onto `ai/queue` by this change, and deleted, as the owner authorised.
