@@ -6,80 +6,101 @@
         {
           "benchmarks": [
             {
-              "mean": 450.1014999999995,
+              "mean": 340.00595833333983,
               "name": "ai:sweep:kit-design",
-              "p99": 460.4692040000006,
-              "rme": 5.179843002800479,
+              "p99": 365.09680750001104,
+              "rme": 24.51541054212399,
               "sampleCount": 3
             },
             {
-              "mean": 538.152999999996,
-              "name": "ai:sweep:composable-without-reactivity",
-              "p99": 541.0411440000016,
-              "rme": 1.4897199604768505,
+              "mean": 388.0250416666483,
+              "name": "ai:sweep:genshin-evidence",
+              "p99": 454.8931671799754,
+              "rme": 38.26924327431046,
               "sampleCount": 3
             },
             {
-              "mean": 601.8653666666651,
+              "mean": 498.52084699999733,
               "name": "ai:sweep:repeated-list-items",
-              "p99": 603.3370960000003,
-              "rme": 0.6964518645833161,
+              "p99": 608.9679601799929,
+              "rme": 49.12887880676205,
               "sampleCount": 3
             },
             {
-              "mean": 691.9569666666599,
+              "mean": 897.8450700000006,
+              "name": "ai:sweep:composable-without-reactivity",
+              "p99": 1108.116846499997,
+              "rme": 69.35466780014336,
+              "sampleCount": 3
+            },
+            {
+              "mean": 2025.8856666666688,
+              "name": "ai:sweep:duplicate-literal",
+              "p99": 2066.284541339989,
+              "rme": 4.563412998606727,
+              "sampleCount": 3
+            },
+            {
+              "mean": 3312.9915000000037,
               "name": "ai:sweep:skill-docs",
-              "p99": 710.2973339999863,
-              "rme": 6.152980976183951,
+              "p99": 4581.47528282002,
+              "rme": 122.93253886321256,
               "sampleCount": 3
             },
             {
-              "mean": 2419.755999999999,
+              "mean": 3771.5155413333364,
               "name": "ai:sweep:duplicate-code",
-              "p99": 2426.569899999993,
-              "rme": 0.8399163309407461,
+              "p99": 4527.832805819985,
+              "rme": 44.475688847109915,
               "sampleCount": 3
             },
             {
-              "mean": 2600.786033333328,
-              "name": "ai:sweep:constant-scope",
-              "p99": 2612.481929999998,
-              "rme": 1.094803507874313,
-              "sampleCount": 3
-            },
-            {
-              "mean": 3512.3657999999946,
+              "mean": 4624.94780533332,
               "name": "ai:sweep:duplicate-prose",
-              "p99": 3538.0040199999903,
-              "rme": 1.674347359228877,
+              "p99": 5963.444296339986,
+              "rme": 64.54451240908543,
               "sampleCount": 3
             },
             {
-              "mean": 3602.9785333333275,
-              "name": "ai:sweep:shared-export-consumers",
-              "p99": 3632.898447999987,
-              "rme": 1.8684345062963095,
+              "mean": 7029.152653000002,
+              "name": "ai:sweep:constant-scope",
+              "p99": 8526.886182840015,
+              "rme": 80.6277383588512,
               "sampleCount": 3
             },
             {
-              "mean": 4830.3266666666705,
-              "name": "ai:sweep:status",
-              "p99": 4865.097734000001,
-              "rme": 1.6175001896938637,
-              "sampleCount": 3
-            },
-            {
-              "mean": 6973.3993,
-              "name": "ai:sweep:unterminated-results",
-              "p99": 7146.480111999996,
-              "rme": 5.562096988672921,
-              "sampleCount": 3
-            },
-            {
-              "mean": 7020.245266666665,
+              "mean": 15357.233610666668,
               "name": "ai:sweep:file-organization",
-              "p99": 7035.670449999994,
-              "rme": 0.5483415721732233,
+              "p99": 21003.438027680008,
+              "rme": 112.08989128354587,
+              "sampleCount": 3
+            },
+            {
+              "mean": 28302.93215233334,
+              "name": "ai:sweep:shared-export-consumers",
+              "p99": 42834.63291465998,
+              "rme": 117.0754883156985,
+              "sampleCount": 3
+            },
+            {
+              "mean": 30167.818444666686,
+              "name": "ai:sweep:sample",
+              "p99": 39962.124520840036,
+              "rme": 81.32700186416983,
+              "sampleCount": 3
+            },
+            {
+              "mean": 51207.7599166667,
+              "name": "ai:sweep:unterminated-results",
+              "p99": 74506.05040450003,
+              "rme": 106.97203611555818,
+              "sampleCount": 3
+            },
+            {
+              "mean": 78869.67116699998,
+              "name": "ai:sweep:status",
+              "p99": 138025.9868039799,
+              "rme": 166.3282270431146,
               "sampleCount": 3
             }
           ],

@@ -9,24 +9,27 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 484b77810a
+- Commit: a2f816423c
 - Node: v26.13.1
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
 ## ai:sweep commands end to end
 
-| task                                   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| -------------------------------------- | ------- | --------- | ------ | --------- | ------- |
-| ai:sweep:kit-design                    | 1.00×   | 450.1015  | ±5.18% | 460.4692  | 3       |
-| ai:sweep:composable-without-reactivity | 0.84×   | 538.1530  | ±1.49% | 541.0411  | 3       |
-| ai:sweep:repeated-list-items           | 0.75×   | 601.8654  | ±0.70% | 603.3371  | 3       |
-| ai:sweep:skill-docs                    | 0.65×   | 691.9570  | ±6.15% | 710.2973  | 3       |
-| ai:sweep:duplicate-code                | 0.19×   | 2419.7560 | ±0.84% | 2426.5699 | 3       |
-| ai:sweep:constant-scope                | 0.17×   | 2600.7860 | ±1.09% | 2612.4819 | 3       |
-| ai:sweep:duplicate-prose               | 0.13×   | 3512.3658 | ±1.67% | 3538.0040 | 3       |
-| ai:sweep:shared-export-consumers       | 0.12×   | 3602.9785 | ±1.87% | 3632.8984 | 3       |
-| ai:sweep:status                        | 0.093×  | 4830.3267 | ±1.62% | 4865.0977 | 3       |
-| ai:sweep:unterminated-results          | 0.065×  | 6973.3993 | ±5.56% | 7146.4801 | 3       |
-| ai:sweep:file-organization             | 0.064×  | 7020.2453 | ±0.55% | 7035.6704 | 3       |
+| task                                   | vs base | mean (ms)  | ±rme     | p99 (ms)    | samples |
+| -------------------------------------- | ------- | ---------- | -------- | ----------- | ------- |
+| ai:sweep:kit-design                    | 1.00×   | 340.0060   | ±24.52%  | 365.0968    | 3       |
+| ai:sweep:genshin-evidence              | 0.88×   | 388.0250   | ±38.27%  | 454.8932    | 3       |
+| ai:sweep:repeated-list-items           | 0.68×   | 498.5208   | ±49.13%  | 608.9680    | 3       |
+| ai:sweep:composable-without-reactivity | 0.38×   | 897.8451   | ±69.35%  | 1108.1168   | 3       |
+| ai:sweep:duplicate-literal             | 0.17×   | 2025.8857  | ±4.56%   | 2066.2845   | 3       |
+| ai:sweep:skill-docs                    | 0.1×    | 3312.9915  | ±122.93% | 4581.4753   | 3       |
+| ai:sweep:duplicate-code                | 0.09×   | 3771.5155  | ±44.48%  | 4527.8328   | 3       |
+| ai:sweep:duplicate-prose               | 0.074×  | 4624.9478  | ±64.54%  | 5963.4443   | 3       |
+| ai:sweep:constant-scope                | 0.048×  | 7029.1527  | ±80.63%  | 8526.8862   | 3       |
+| ai:sweep:file-organization             | 0.022×  | 15357.2336 | ±112.09% | 21003.4380  | 3       |
+| ai:sweep:shared-export-consumers       | 0.012×  | 28302.9322 | ±117.08% | 42834.6329  | 3       |
+| ai:sweep:sample                        | 0.011×  | 30167.8184 | ±81.33%  | 39962.1245  | 3       |
+| ai:sweep:unterminated-results          | 0.0066× | 51207.7599 | ±106.97% | 74506.0504  | 3       |
+| ai:sweep:status                        | 0.0043× | 78869.6712 | ±166.33% | 138025.9868 | 3       |
