@@ -18,6 +18,7 @@ import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/Der
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
+import { readComponentRoots } from "#src/services/genshinAssets/shared/readComponentRoots";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
@@ -46,7 +47,8 @@ import { join } from "node:path";
 // Returned as counts, with every pointer that could not be resolved
 export const extractComponent = async (component: DerivedAssetComponent): Promise<string> => {
   const options = DerivedAssetComponentMap[component];
-  const { roots: componentRoots, spawns = [] } = options;
+  const componentRoots = await readComponentRoots(component);
+  const { spawns = [] } = options;
   // A landmark's mesh is exported by its name too, so `pose` finds it where no pointer reaches it
   const landmarkMeshes = getLandmarkMeshes(component);
   const landmarkPattern = landmarkMeshes.length > 0 ? `^(${landmarkMeshes.join("|")})$` : "";

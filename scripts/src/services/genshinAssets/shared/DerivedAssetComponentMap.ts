@@ -7,7 +7,6 @@ import {
   SCENE_POINT_CATEGORY,
   SCENE_POINT_FILE,
 } from "#src/services/genshinAssets/shared/constants";
-import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
 
 // The one definition every capital and sub-area of the open world shares: a part derived from its place,
 // With no root of its own
@@ -187,15 +186,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.WatatsumiIsland]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.WavechaserPlain]: DERIVED_WORLD_OPTIONS,
   // The weapons' screen. Its roots are the prefabs whose renderers draw the held weapons' meshes, which `weapon-roots`
-  // Derives from the layouts of the blocks the asset index puts those meshes in and writes to a record beside this map.
-  // The icons its fit traces are exported by `weapon-icons` from the weapon table. Read on access, not at import, so the
-  // Command that rewrites the record can still run while the record is missing or invalid
-  [DerivedAssetComponent.Weapons]: {
-    get roots() {
-      return readWeaponRoots();
-    },
-    screen: "WeaponScreen",
-  },
+  // Derives from the layouts of the blocks the asset index puts those meshes in and publishes, so `readComponentRoots`
+  // Reads them rather than this map. The icons its fit traces are exported by `weapon-icons` from the weapon table
+  [DerivedAssetComponent.Weapons]: { roots: [], screen: "WeaponScreen" },
   [DerivedAssetComponent.WindrestPeak]: DERIVED_WORLD_OPTIONS,
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the

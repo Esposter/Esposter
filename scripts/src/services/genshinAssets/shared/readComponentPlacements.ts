@@ -6,6 +6,7 @@ import { composeAssetPlacements } from "#src/services/genshinAssets/shared/compo
 import { copySpawns } from "#src/services/genshinAssets/shared/copySpawns";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
+import { readComponentRoots } from "#src/services/genshinAssets/shared/readComponentRoots";
 import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
 import { placeWorldPrefabs } from "#src/services/genshinAssets/world/placeWorldPrefabs";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
@@ -28,7 +29,7 @@ export const readComponentPlacements = async (
     readWorldOptions(component),
   ]);
   const rootNames =
-    roots ?? [...DerivedAssetComponentMap[component].roots, ...getWorldRoots(world)].map(({ name }) => name);
+    roots ?? [...(await readComponentRoots(component)), ...getWorldRoots(world)].map(({ name }) => name);
   const spawned = isCopied ? copySpawns(objects, DerivedAssetComponentMap[component].spawns ?? []) : objects;
   const laidOut = dropUnplacedSpawns(placeWorldPrefabs(spawned, worldPlacements), gameObjectDrawingMap);
   return composeAssetPlacements(laidOut, gameObjectDrawingMap).filter(({ root }) => rootNames.includes(root));

@@ -71,6 +71,7 @@ export const GameDataset = {
   Tips: "tips",
   TipText: "tipText",
   TransPoints: "transPoints",
+  WeaponRoots: "weaponRoots",
   WeaponShapes: "weaponShapes",
   Wildlife: "wildlife",
   Windrise: "windrise",

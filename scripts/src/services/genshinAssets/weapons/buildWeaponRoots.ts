@@ -1,3 +1,5 @@
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -11,24 +13,22 @@ import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBl
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import { checkIsHeldWeaponMesh } from "#src/services/genshinAssets/weapons/checkIsHeldWeaponMesh";
-import { HELD_WEAPON_ANIMATOR_REGEX, WEAPON_ROOTS_PATH } from "#src/services/genshinAssets/weapons/constants";
+import { HELD_WEAPON_ANIMATOR_REGEX, WEAPON_ROOTS_KEY } from "#src/services/genshinAssets/weapons/constants";
 import { deriveWeaponRoots } from "#src/services/genshinAssets/weapons/deriveWeaponRoots";
 import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
-import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
-import { toJson } from "#src/services/shared/toJson";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
 // The root of every prefab that holds a held weapon's mesh, derived from the layouts of the blocks the index puts the
 // Meshes and the weapons' animators in and of the blocks of the prefab files depending on the meshes' (the files the
-// Index lists nothing in, which `readPrefabBlocks` follows), and written to the record the weapons' component reads.
-// The layouts are dumped where `extract` dumps the component's, so the extract that follows reads them again.
-// Each held mesh that no game object of those layouts draws is reported in the result, since no root reaches it, and
-// Each block the install lacks is skipped and named too
-export const exportWeaponRoots = async (): Promise<string> => {
+// Index lists nothing in, which `readPrefabBlocks` follows), and published as the record the weapons' component reads.
+// The layouts are dumped where `extract` dumps the component's, so the extract that follows reads them again. Each held
+// Mesh that no game object of those layouts draws is noted, since no root reaches it, and each block the install lacks
+// Is skipped and noted too
+export const buildWeaponRoots = async (): Promise<{ notes: string[]; publication: GameDataPublication }> => {
   const assets = await readIndexedAssets(
     (asset) =>
       checkIsHeldWeaponMesh(asset) ||
@@ -41,7 +41,7 @@ export const exportWeaponRoots = async (): Promise<string> => {
   const { layout } = getComponentDirectory(DerivedAssetComponent.Weapons);
   await rm(layout, { force: true, recursive: true });
   await mkdir(layout, { recursive: true });
-  // The index lists blocks of the game's other builds, so a block the install lacks is skipped and named, not fatal
+  // The index lists blocks of the game's other builds, so a block the install lacks is skipped and noted, not fatal
   const blocks = [...new Set([...prefabBlockMap.values()].flat())];
   const absentBlocks: string[] = [];
   for (const block of blocks)
@@ -51,16 +51,18 @@ export const exportWeaponRoots = async (): Promise<string> => {
     else absentBlocks.push(block);
   const sceneLayout = await readSceneLayout(layout);
   const { roots, unreachedMeshes } = deriveWeaponRoots(sceneLayout, cabMap, heldMeshes);
-  await writeFile(WEAPON_ROOTS_PATH, await formatGeneratedSource(WEAPON_ROOTS_PATH, toJson(roots)));
-  return [
-    ...(absentBlocks.length > 0
-      ? [`${absentBlocks.length} blocks the install lacks, skipped: ${absentBlocks.join(", ")}`]
-      : []),
-    `${roots.length} roots hold ${heldMeshes.length - unreachedMeshes.length} of ${heldMeshes.length} held meshes, written to ${WEAPON_ROOTS_PATH}`,
-    ...(unreachedMeshes.length > 0
-      ? [
-          `${unreachedMeshes.length} held meshes no game object draws: ${unreachedMeshes.map(({ name }) => name).join(", ")}`,
-        ]
-      : []),
-  ].join("\n");
+  return {
+    notes: [
+      ...(absentBlocks.length > 0
+        ? [`${absentBlocks.length} blocks the install lacks, skipped: ${absentBlocks.join(", ")}`]
+        : []),
+      `${roots.length} roots hold ${heldMeshes.length - unreachedMeshes.length} of ${heldMeshes.length} held meshes`,
+      ...(unreachedMeshes.length > 0
+        ? [
+            `${unreachedMeshes.length} held meshes no game object draws: ${unreachedMeshes.map(({ name }) => name).join(", ")}`,
+          ]
+        : []),
+    ],
+    publication: { indexes: {}, objects: { [WEAPON_ROOTS_KEY]: roots } },
+  };
 };

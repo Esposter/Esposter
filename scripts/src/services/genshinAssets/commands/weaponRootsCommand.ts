@@ -1,15 +1,23 @@
 import type { SubCommandsDef } from "citty";
 
-import { exportWeaponRoots } from "#src/services/genshinAssets/weapons/exportWeaponRoots";
+import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
+import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
+import { buildWeaponRoots } from "#src/services/genshinAssets/weapons/buildWeaponRoots";
 import { defineCommand } from "citty";
+import { GameDataset } from "genshin-world";
 
 export const weaponRootsCommand: SubCommandsDef[string] = defineCommand({
+  args: { ...dryRunArgs },
   meta: {
     description:
-      "Derive the roots that hold the held weapons' meshes from the layouts of the blocks the asset index puts them in, write them to the record the weapons' component reads, and report each mesh no game object draws",
+      "Derive the roots that hold the held weapons' meshes from the layouts of the blocks the asset index puts them in, publish them to the game data for the weapons' component to read, and report each mesh no game object draws",
     name: "weapon-roots",
   },
-  run: async () => {
-    console.log(await exportWeaponRoots());
+  run: async ({ args }) => {
+    const { notes, publication } = await buildWeaponRoots();
+    for (const note of notes) console.log(note);
+    console.log(
+      await publishGameDataStep({ isDryRun: args["dry-run"], publication, scopes: [GameDataset.WeaponRoots] }),
+    );
   },
 });

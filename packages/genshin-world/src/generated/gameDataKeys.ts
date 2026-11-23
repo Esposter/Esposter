@@ -557,6 +557,7 @@ export const GameDataKeys = {
     Vietnamese: "tipText/Vietnamese",
   },
   transPoints: { scene3: "transPoints/scene3", unlock: "transPoints/unlock" },
+  weaponRoots: { roots: "weaponRoots/roots" },
   wildlife: {
     fontaine: "wildlife/fontaine",
     inazuma: "wildlife/inazuma",
