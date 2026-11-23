@@ -1,6 +1,5 @@
 import { WIKI_FETCH_TIMEOUT_MS, WIKI_USER_AGENT } from "#src/services/constants";
 import { readBoundedBody } from "#src/services/readBoundedBody";
-import { Readable } from "node:stream";
 
 // Every read the plugin makes of the wiki's API goes through here: the user agent the wiki asks a client to name itself
 // By, and the timeout that keeps a host which takes the connection and never finishes from holding the hook a reply
@@ -17,7 +16,7 @@ export const readWikiJson = async <T>(
     headers: { "user-agent": WIKI_USER_AGENT },
     signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
   });
-  const bytes = await readBoundedBody(response.body ? Readable.from(response.body) : null, maxBytes);
+  const bytes = await readBoundedBody(response.body, maxBytes);
   if (!bytes) return undefined;
 
   const json: unknown = await new Response(bytes).json();
