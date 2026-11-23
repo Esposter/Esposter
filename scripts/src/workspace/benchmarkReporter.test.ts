@@ -14,11 +14,12 @@ import { describe, expect, test } from "vitest";
  * that would have caught it rewrites its own `*.bench.md` and sits in no check suite. The failure surfaces a
  * workflow later as `Failed to load custom Reporter from @esposter/shared-node/reporter`.
  */
-const readDevDependencies = (manifestPath: string): Record<string, unknown> => {
-  const { devDependencies } = parseMachineJson<{ devDependencies?: Record<string, unknown> }>(
-    readFileSync(manifestPath, "utf8"),
-  );
-  return devDependencies ?? {};
+const readDeclaredDependencies = (manifestPath: string): Record<string, unknown> => {
+  const { dependencies, devDependencies } = parseMachineJson<{
+    dependencies?: Record<string, unknown>;
+    devDependencies?: Record<string, unknown>;
+  }>(readFileSync(manifestPath, "utf8"));
+  return { ...dependencies, ...devDependencies };
 };
 
 describe("benchmarkReporter", () => {
@@ -40,7 +41,9 @@ describe("benchmarkReporter", () => {
     // Named rather than counted: the manifest that cannot resolve the reporter names itself in the failure.
     const undeclaredDirectories = RUN_DIRECTORIES.filter(
       (directory) =>
-        !(REPORTER_PACKAGE_NAME in readDevDependencies(resolve(REPOSITORY_ROOT, directory, PACKAGE_JSON_FILENAME))),
+        !(
+          REPORTER_PACKAGE_NAME in readDeclaredDependencies(resolve(REPOSITORY_ROOT, directory, PACKAGE_JSON_FILENAME))
+        ),
     );
 
     expect(undeclaredDirectories).toStrictEqual([]);
