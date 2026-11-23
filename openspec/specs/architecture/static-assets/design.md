@@ -102,4 +102,5 @@ Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web
 
 ## Notes
 
+- **The build folder's lifetimes are named per file.** Cloudflare joins every `_headers` rule a path matches, so the folder's one immutable rule would also stamp `builds/latest.json`, which the outdated-build check polls. `apps/web/configuration/routeRules.ts` gives the hashed files their rules by placeholder, so `builds/:file` alone carries the revalidating lifetime. A new subfolder under `_nuxt/` needs its own rule, or its files get no lifetime.
 - **Settings that hold a path rather than a preset id match no preset.** They read as no background, and nothing migrates them, since the app keeps no compatibility shims for saved values.

@@ -1,10 +1,26 @@
 // oxlint-disable routing/no-route-literal -- the Nuxt configuration loads before `@esposter/shared` is built
 import type { NuxtConfig } from "nuxt/schema";
 
+const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
+// A file of the build folder, which carries the robots header and the lifetime its rule gives it
+const buildFileRule = (cacheControl: string) => ({
+  headers: { "cache-control": cacheControl, "X-Robots-Tag": "noindex" },
+});
+
 // Client-only pages that touch window/localStorage during setup stay out of SSR and indexing.
 // Defined globally because inline defineRouteRules (experimental.inlineRouteRules) is not
 // Reliably applied, leaving "window is not defined" SSR crashes.
 export const routeRules: NonNullable<NuxtConfig["routeRules"]> = {
+  // Nitro stamps the build folder `/**` immutable, and Cloudflare joins every `_headers` rule a path matches, so the build
+  // List would carry that year beside its own lifetime. The folder's rules name its files instead: a placeholder matches
+  // One path segment, so `builds/:file` is the list alone and the hashed files are the rules beside it
+  "/_nuxt/:file": buildFileRule(IMMUTABLE_CACHE_CONTROL),
+  "/_nuxt/**": { headers: false },
+  "/_nuxt/builds/:file": buildFileRule("public, max-age=0, must-revalidate"),
+  "/_nuxt/builds/**": { headers: false },
+  "/_nuxt/builds/meta/**": buildFileRule(IMMUTABLE_CACHE_CONTROL),
+  "/_nuxt/engine/**": buildFileRule(IMMUTABLE_CACHE_CONTROL),
+  "/_nuxt/fonts/**": buildFileRule(IMMUTABLE_CACHE_CONTROL),
   // A public bucket's objects are read by every page and by other sites — an image in an email, a shared link — so they
   // Are served to any origin: the app's default resource policy is same-origin, which would block them on the app's own host
   "/assets/**": {

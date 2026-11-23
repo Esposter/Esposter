@@ -58,8 +58,8 @@ registerRoute(
 );
 
 // The app manifest is fetched fresh while online, and that answer is kept for offline. A build's meta is named by its id, so
-// Its copy is never stale. latest.json is not: its request skips the browser's cache, which holds the one-year copy the server
-// Stamps on it, and its key drops the timestamp the outdated-build check adds, so one copy is kept rather than one per check
+// Its copy is never stale. latest.json is not: the server revalidates it, and its request still skips the browser's cache,
+// So each check reads the deployed copy. Its key drops the timestamp the outdated-build check adds, so one copy is kept, not one per check
 const appManifests = new NetworkFirst({
   cacheName: APP_MANIFESTS_CACHE_NAME,
   fetchOptions: { cache: "no-store" },
