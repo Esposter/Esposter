@@ -418,8 +418,9 @@ const EMPTY_PARTY_SAVE: PartySave = {
     name: "",
   })),
 };
-// A new player's save: the wallet as a new player's holds it, its Original Resin at the cap from the epoch, and nothing
-// Else. The instants are ISO strings, as the save stores them
+// A new player's save: the wallet as a new player's holds it, its Original Resin at zero, and nothing Else. The starting
+// Original Resin is the game's cap, which createStartingGenshinSave sets from the record. The instants are ISO strings,
+// As the save stores them
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
