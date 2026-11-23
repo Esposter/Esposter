@@ -8,7 +8,8 @@ const LINK_PREFIX = "link:";
 // The version each direct dependency of an importer resolves to, without the peer suffix in parentheses. A link runs to
 // A workspace package, and a version there is no registry version to hold anything to
 export const getImporterVersions = (lockYaml: string, importerPath: string): Map<string, string> => {
-  const tree = parseLockTree(lockYaml.slice(lockYaml.lastIndexOf(TREE_DOCUMENT_MARKER)));
+  const treeStart = lockYaml.lastIndexOf(TREE_DOCUMENT_MARKER);
+  const tree = parseLockTree(treeStart === -1 ? lockYaml : lockYaml.slice(treeStart));
   const importer = tree.children.get("importers")?.children.get(importerPath);
   return new Map(
     IMPORTER_DEPENDENCY_FIELDS.flatMap((field) =>
