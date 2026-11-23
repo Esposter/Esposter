@@ -2,11 +2,10 @@ import type { SubCommandsDef } from "citty";
 
 import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { getHostedAssetBaseUrl } from "#src/services/hostedAssets/getHostedAssetBaseUrl";
 import { getLockDifferences } from "#src/services/hostedAssets/getLockDifferences";
 import { readLockAt } from "#src/services/hostedAssets/readLockAt";
 import { verifyHostedAssets } from "#src/services/hostedAssets/verifyHostedAssets";
-import { CloudflareEnvironment } from "@esposter/db-schema";
+import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -31,9 +30,7 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
     // The buckets are read-only and independent, so they are checked together, and each failure is named by its
     // Environment, since a network error from fetch carries no URL of its own
     const settled = await Promise.allSettled(
-      environments.map((environment) =>
-        verifyHostedAssets(getHostedAssetBaseUrl(environment, GAME_DATA_PRODUCT.bucket), lock),
-      ),
+      environments.map((environment) => verifyHostedAssets(HostedAssetOriginMap[environment], lock)),
     );
     const failures: string[] = [];
     for (const [index, result] of settled.entries()) {

@@ -1,0 +1,26 @@
+# Verification note
+
+The evidence the change's tasks name, recorded where it was taken.
+
+## 6.5: Genshin's origin is the hosted domain
+
+A driven run of the Genshin page on the dev server (`pnpm dev --port 3001`, Chrome under Playwright, the driven user signed in, the page read for 240 s after it mounted), on the rebuilt packages:
+
+- `hosted.dev.esposter.com`: 154 requests, all 200, none with a doubled slash.
+- `public-genshin-assets`: no request on any host.
+- The region data and the login's recordings are served by the dev server's own `publicAssets` mounts (`apps/web/configuration/nitro.ts`), not the bucket. The recordings move with 6.7, and the region data is authored source the design keeps.
+
+A first pass showed 408 character-pack requests as `//characterPacks/...` and 404 from the hosted origin: `new URL(origin).href` ends in a slash. `readCharacterPackPreloadSet` drops it, and the rerun is clean.
+
+The local Miniflare bucket holds no `stats/resin` record, so `startGenshin` answers "is not stored in the game data" on the dev server, and the save panel stays on "Save not loaded". The hosted bucket holds the record (copied by 6.3), so the deployed run reads it.
+
+## 6.8: the lock's measured total, before the preload is turned on
+
+The lock on disk (`packages/genshin-world/src/generated/gameDataLock.json`):
+
+- 536 entries: 499 objects and 37 index entries, each a distinct object.
+- 54,601,223 bytes (52.07 MiB).
+
+The character packs are outside the lock, named by the index `characterPackIndex/index`:
+
+- 13 avatars, 136 files, 84,982,707 bytes (81.05 MiB).

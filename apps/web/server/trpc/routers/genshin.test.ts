@@ -21,7 +21,7 @@ describe("genshinRouter", () => {
   let bucket: R2Bucket;
   let dispose: () => Promise<void>;
   let disposePublic: () => Promise<void>;
-  // The game's record the new player's save starts from, stored in the public genshin assets bucket it is published to
+  // The game's record the new player's save starts from, stored in the shared hosted bucket it is published to
   const resinRecord = {
     originalResinCap: 123,
     originalResinRefillCap: 2000,
@@ -36,8 +36,8 @@ describe("genshinRouter", () => {
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.GenshinAssets));
     mockBuckets[StorageBucket.GenshinAssets] = bucket;
-    const publicBucket = await createMockBucket(StorageBucket.PublicGenshinAssets);
-    mockBuckets[StorageBucket.PublicGenshinAssets] = publicBucket.bucket;
+    const publicBucket = await createMockBucket(StorageBucket.PublicHostedAssets);
+    mockBuckets[StorageBucket.PublicHostedAssets] = publicBucket.bucket;
     disposePublic = publicBucket.dispose;
     await publicBucket.bucket.put(getResinParamPath(), zstdCompressSync(JSON.stringify(resinRecord)));
     mockContext = await createMockContext();

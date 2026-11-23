@@ -1,7 +1,6 @@
 /* oxlint-disable typescript/no-floating-promises -- loadAccountSave settles every failure itself, so nothing waits on the run it returns, and persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
 import type { GenshinSave } from "genshin-world/save";
 
-import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { clearGuestSave } from "#src/services/genshin/clearGuestSave";
@@ -41,7 +40,7 @@ export const useGenshinSave = async () => {
   // The account's load is a run of this scope, so leaving the page aborts a start still being retried
   const runScope = useRunScope();
   const initialSave = shallowRef<GenshinSave>(EMPTY_GENSHIN_SAVE);
-  const gameDataBaseUrl = getGenshinGameDataBaseUrl(useRuntimeConfig().public.publicAssets.baseUrl);
+  const gameDataBaseUrl = useRuntimeConfig().public.hostedAssets.baseUrl;
   const isReplaced = ref(false);
   const isSaveLoaded = ref(false);
   const isStartRetrying = ref(false);

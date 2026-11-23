@@ -1,10 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
 import { fillHostedAssetMirror } from "#src/services/hostedAssets/fillHostedAssetMirror";
-import { getHostedAssetBaseUrl } from "#src/services/hostedAssets/getHostedAssetBaseUrl";
 import { getHostedAssetProducts } from "#src/services/hostedAssets/getHostedAssetProducts";
 import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetLock";
-import { CloudflareEnvironment } from "@esposter/db-schema";
+import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
 import { defineCommand } from "citty";
 
 export const fillCommand: SubCommandsDef[string] = defineCommand({
@@ -19,10 +18,7 @@ export const fillCommand: SubCommandsDef[string] = defineCommand({
     const lines = await Promise.all(
       getHostedAssetProducts().map(async (product) => {
         const lock = await readHostedAssetLock(product.lockPath);
-        const count = await fillHostedAssetMirror(
-          getHostedAssetBaseUrl(CloudflareEnvironment.Development, product.bucket),
-          lock,
-        );
+        const count = await fillHostedAssetMirror(HostedAssetOriginMap[CloudflareEnvironment.Development], lock);
         return `${product.lockRepositoryPath}: ${count} objects in the mirror, 0 failures`;
       }),
     );

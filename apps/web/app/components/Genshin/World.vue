@@ -4,7 +4,6 @@ import type { DevRegistry } from "genshin-world";
 import type { GenshinSave } from "genshin-world/save";
 
 import { GENSHIN_REGION_DATA_BASE_URL, GENSHIN_SCENE_EXPORT_BASE_URL } from "#shared/services/genshin/constants";
-import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { authClient } from "#src/services/auth/authClient";
 import { GENSHIN_QUALITY_TIER } from "#src/services/genshin/constants";
@@ -28,8 +27,7 @@ interface Props {
 
 const { save } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
-const assetsBaseUrl = useRuntimeConfig().public.publicAssets.baseUrl;
-const gameDataBaseUrl = getGenshinGameDataBaseUrl(assetsBaseUrl);
+const gameDataBaseUrl = useRuntimeConfig().public.hostedAssets.baseUrl;
 // The signed-in player's picture and name, which the world's profile card shows
 const session = authClient.useSession();
 // The developer surface sits in a DevOnly block of the template, which a production build strips out, and its registry is

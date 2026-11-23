@@ -4,7 +4,6 @@ import {
   GENSHIN_SCENE_EXPORT_BASE_URL,
   LOADING_STALL_WARNING_SECONDS,
 } from "#shared/services/genshin/constants";
-import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
@@ -46,8 +45,8 @@ const { start: startStallWarning } = useTimeoutFn(
 );
 watch(isDoorOpened, () => startStallWarning(), { once: true });
 const gameText = await useGameText();
-// The account the page reads, whose hosted game data the opening reads its title logo and its login screen from
-const assetsBaseUrl = useRuntimeConfig().public.publicAssets.baseUrl;
+// The origin the page reads its hosted game data from: the opening reads its title logo and its login screen from it
+const gameDataBaseUrl = useRuntimeConfig().public.hostedAssets.baseUrl;
 // The player's save, which the world starts from once it is loaded, and the lease the page holds for it. A start that
 // Fails is retried until it takes, the page waiting on its save meanwhile
 const {
@@ -113,7 +112,7 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
     </UiDialog>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
-        :game-data-base-url="getGenshinGameDataBaseUrl(assetsBaseUrl)"
+        :game-data-base-url="gameDataBaseUrl"
         :game-text="gameText.text"
         :language="gameText.language"
         :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"
