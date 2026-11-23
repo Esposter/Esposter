@@ -46,6 +46,10 @@ export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, OXFMT_CONF
 // The formatter's answer for a file type it has no parser for. The pre-commit hook passes such a file by path, and the
 // Formatter skips it there, so the scripts skip it too rather than keep a list of the extensions it formats
 export const OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE = "Unsupported file type for stdin-filepath";
+// The most characters of paths one formatter run takes on its command line. Windows refuses a command line past 32,767
+// Characters without spawning it, so a changed set is formatted in runs of at most this, the rest of the line being the
+// Binary, the configuration and the flags
+export const OXFMT_ARGUMENTS_MAX_LENGTH: number = 24 * KIBIBYTE;
 // Beside pnpm's own cache directories, under the install it is derived from: what the scripts keep between runs
 export const CACHE_DIRECTORY: string = join(REPOSITORY_ROOT, "node_modules", ".cache", "@esposter", "scripts");
 // The wiki answers this many titles in one imageinfo call, and this many file reads at once is as many as a run asks of

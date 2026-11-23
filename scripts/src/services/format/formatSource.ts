@@ -1,25 +1,15 @@
+import { spawnFormatter } from "#src/services/format/spawnFormatter";
 import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
-import {
-  CHILD_PROCESS_TIMEOUT_MS,
-  MAX_BUFFER_BYTES,
-  OXFMT_BINARY_RELATIVE_PATH,
-  OXFMT_CONFIGURATION_FILE,
-  OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE,
-} from "#src/services/shared/constants";
+import { CHILD_PROCESS_TIMEOUT_MS, OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE } from "#src/services/shared/constants";
 import { readFirstLine } from "#src/services/shared/readFirstLine";
 import { timedOutError } from "#src/services/shared/timedOutError";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "@esposter/shared-node/child-process";
-import { join } from "node:path";
 
-// The repository's formatter binary runs from the main checkout, which holds its install, over the source on stdin.
-// The configuration and the working directory are both the checkout the file is in.
-// The formatter matches its ignore patterns against the path it is given from the working directory.
-// From the main checkout, a worktree's `generated/` file would match none of them and be rewritten.
-// The path is repository-relative, since a worktree's own path sits under `.agents/worktrees`, which the config ignores.
-// A file type the formatter has no parser for is undefined, not an error, since the pre-commit hook skips it the same way
-// A formatter still running past its `timeout` is killed with SIGKILL, since a spawn waits for a child that ignores
-// SIGTERM to exit, and the call throws naming the file and the command
+// The source a single file formats to, over its stdin, under its repository path, so the formatter applies the ignore
+// Patterns and the parser that path names. The formatter matches its ignore patterns against the path it is given, and
+// From the main checkout a worktree's `generated/` file would match none of them and be rewritten, which is why the path is
+// Repository-relative. A file type the formatter has no parser for is undefined, not an error, since the pre-commit hook
+// Skips it the same way. A formatter still running past its `timeout` throws naming the file and the command
 export const formatSource = (
   source: string,
   relativePath: string,
@@ -27,23 +17,12 @@ export const formatSource = (
   mainCheckoutRoot: string,
   timeout: number = CHILD_PROCESS_TIMEOUT_MS,
 ): string | undefined => {
-  const { error, status, stderr, stdout } = spawnSync(
-    process.execPath,
-    [
-      join(mainCheckoutRoot, OXFMT_BINARY_RELATIVE_PATH),
-      "--config",
-      join(repositoryRoot, OXFMT_CONFIGURATION_FILE),
-      "--stdin-filepath",
-      relativePath,
-    ],
-    {
-      cwd: repositoryRoot,
-      encoding: "utf8",
-      input: source,
-      killSignal: "SIGKILL",
-      maxBuffer: MAX_BUFFER_BYTES,
-      timeout,
-    },
+  const { error, status, stderr, stdout } = spawnFormatter(
+    ["--stdin-filepath", relativePath],
+    repositoryRoot,
+    mainCheckoutRoot,
+    timeout,
+    source,
   );
   if (checkIsTimedOut(error))
     throw timedOutError(Operation.Read, relativePath, timeout, `oxfmt --stdin-filepath ${relativePath}`);

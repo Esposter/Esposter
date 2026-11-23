@@ -6,6 +6,9 @@ export const GENERATED_PATH = "packages/example/src/generated/kit/Map.ts";
 export const OUTSIDE_PATH = "packages/example/src/kit/Map.ts";
 export const UNFORMATTED_SOURCE = "export const answer=42\n";
 export const FORMATTED_SOURCE = "export const answer = 42;\n";
+// A file the formatter cannot parse, which stops a run that holds it
+export const UNPARSABLE_PATH = "packages/example/src/kit/Broken.ts";
+export const UNPARSABLE_SOURCE = "export const = ;\n";
 
 // Fixtures only: a suite here would run again in every file that imports them
 describe.todo("constants");
