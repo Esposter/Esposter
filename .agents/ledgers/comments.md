@@ -40,7 +40,7 @@ Notes on a tree several units share:
 
 Greps, per unit:
 
-1. `^\s*//.{85,}` over `*.ts`, `*.vue`
+1. Comment length is not a grep: `comments/no-over-width-comment` is an error across the repo, reading the width from `PRINT_WIDTH` in the shared oxfmt configuration.
 2. `\n[ \t]*\n[ \t]*//` multiline (skip `.test.ts`/`.test-d.ts`, the import→body boundary and a file-level
    `/* … */` directive). **Module scope included** — a declaration, a blank line and then a commented declaration
    is a hit, not a paragraph break; the first pass read it as one and left it standing in every constants file,
@@ -64,4 +64,4 @@ Never swept anywhere: 3-line `//` blocks with every line short.
 
 Excluded: `apps/web/app/types/desmos.d.ts`, `packages/configuration/types/global.d.ts`, `packages/vue-phaserjs/auto-imports.d.ts` (vendored/generated) · `apps/web/app/util/math/random/getRandomValues.ts` (source-URL references) · `*/tsdown.config.ts`, `@ts-expect-error` / `oxlint-disable` lines (directives) · doc blocks copied verbatim from an upstream type (the Desmos enums) — they are kept diff-identical to their source, same ground as an unimplemented interface stub.
 
-Enforceable next: comment length and blank-before-comment, via a custom oxlint plugin — oxlint excludes layout rules by design, so this needs a JS plugin rather than a stock rule. SFC block padding is no lint rule: it is the report-only check in `scripts/src/workspace/templateTextRules.test.ts`.
+Enforceable next: blank-before-comment, via a custom oxlint plugin — oxlint excludes layout rules by design, so this needs a JS plugin rather than a stock rule. Comment length is enforced now (`comments/no-over-width-comment`). SFC block padding is no lint rule: it is the report-only check in `scripts/src/workspace/templateTextRules.test.ts`.
