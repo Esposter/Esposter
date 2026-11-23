@@ -11,12 +11,10 @@ import { z } from "zod";
 
 const appSchema = z.object({ id: z.string(), name: z.string() });
 const presetSchema = z.object({ id: z.string(), name: z.string() });
-const tokenSchema = z.object({ id: z.string(), name: z.string() });
 const webhookSchema = z.object({ enabled: z.boolean(), events: z.array(z.string()), id: z.string(), url: z.string() });
 
-// What the environment's app, presets, webhook and token already are, and what ESC holds of the two values the Workers
-// Read. A token's value is never read back, only whether ESC holds one. Every listing asks for a page large enough for
-// The few items an environment holds
+// What the environment's app, presets and webhook already are, and what ESC holds of the app id the Workers read. Every
+// Listing asks for a page large enough for the few items an environment holds
 export const readRealtimeKitExisting = async (
   credentials: CloudflareCredentials,
   environment: CloudflareEnvironment,
@@ -48,14 +46,7 @@ export const readRealtimeKitExisting = async (
             schema: z.object({ data: z.array(webhookSchema) }),
           })
         ).data;
-  const { result: tokens } = await requestCloudflare(credentials, {
-    method: RequestMethod.Get,
-    path: "/tokens?per_page=100",
-    schema: z.object({ result: z.array(tokenSchema) }),
-  });
-  const token = tokens.find(({ name }) => name === desired.tokenName);
   const escAppId = await readEscValue(getEscKey(environment, "REALTIMEKIT_APP_ID"));
-  const escToken = await readEscValue(getEscKey(environment, "REALTIMEKIT_API_TOKEN"));
 
-  return { app, escAppId, isEscTokenSet: escToken !== undefined, presets, token, webhooks };
+  return { app, escAppId, presets, webhooks };
 };

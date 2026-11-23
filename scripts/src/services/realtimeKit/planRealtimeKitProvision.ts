@@ -24,11 +24,6 @@ export const planRealtimeKitProvision = (
   else if (!checkIsWebhookCurrent(webhook, desired.webhookEvents))
     actions.push({ id: webhook.id, kind: "updateWebhook" });
 
-  // A token's value is only ever returned when it is made, so a token that exists is rolled when ESC does not hold its
-  // Value, and left alone when it does
-  if (!existingState.token) actions.push({ kind: "createToken" });
-  else if (!existingState.isEscTokenSet) actions.push({ id: existingState.token.id, kind: "rollToken" });
-
   if (!existingState.app || existingState.escAppId !== existingState.app.id) actions.push({ kind: "setAppId" });
   return actions;
 };

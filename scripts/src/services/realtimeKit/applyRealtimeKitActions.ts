@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: createPreset and createWebhook need the app id createApp returned, and the app id and token reach ESC before the next step reads them */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: createPreset and createWebhook need the app id createApp returned, and the app id reaches ESC before the next step reads it */
 import type { CloudflareCredentials } from "#src/models/realtimeKit/CloudflareCredentials";
 import type { RealtimeKitAction } from "#src/models/realtimeKit/RealtimeKitAction";
 import type { RealtimeKitDesired } from "#src/models/realtimeKit/RealtimeKitDesired";
@@ -10,20 +10,16 @@ import { getEscKey } from "#src/services/realtimeKit/getEscKey";
 import { getRealtimeKitPresetBody } from "#src/services/realtimeKit/getRealtimeKitPresetBody";
 import { requestCloudflare } from "#src/services/realtimeKit/requestCloudflare";
 import { setEscValue } from "#src/services/realtimeKit/setEscValue";
-import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
 const successSchema = z.object({ success: z.literal(true) });
 
-// Makes each change in order, against RealtimeKit's REST API and Cloudflare's token API. A token's value is written to
-// ESC the moment it is made or rolled, since a value not written is lost: a run that stops after it is then repaired by
-// The next run, which finds the token and no value for it, and rolls it
+// Makes each change in order, against RealtimeKit's REST API. The app id is written to ESC as soon as it is known
 export const applyRealtimeKitActions = async (
   credentials: CloudflareCredentials,
   environment: CloudflareEnvironment,
   desired: RealtimeKitDesired,
-  permissionGroupId: string,
   existingState: RealtimeKitExisting,
   actions: RealtimeKitAction[],
 ): Promise<void> => {
@@ -55,25 +51,6 @@ export const applyRealtimeKitActions = async (
           schema: successSchema,
         });
         break;
-      case "createToken": {
-        const { result } = await requestCloudflare(credentials, {
-          body: {
-            name: desired.tokenName,
-            policies: [
-              {
-                effect: "allow",
-                permission_groups: [{ id: permissionGroupId }],
-                resources: { [`com.cloudflare.api.account.${CLOUDFLARE_ACCOUNT_ID}`]: "*" },
-              },
-            ],
-          },
-          method: RequestMethod.Post,
-          path: "/tokens",
-          schema: z.object({ result: z.object({ value: z.string() }) }),
-        });
-        await setEscValue(getEscKey(environment, "REALTIMEKIT_API_TOKEN"), result.value);
-        break;
-      }
       case "createWebhook":
         await requestCloudflare(credentials, {
           body: { enabled: true, events: desired.webhookEvents, name: desired.appName, url: desired.webhookUrl },
@@ -82,15 +59,6 @@ export const applyRealtimeKitActions = async (
           schema: successSchema,
         });
         break;
-      case "rollToken": {
-        const { result } = await requestCloudflare(credentials, {
-          method: RequestMethod.Put,
-          path: `/tokens/${action.id}/value`,
-          schema: z.object({ result: z.string() }),
-        });
-        await setEscValue(getEscKey(environment, "REALTIMEKIT_API_TOKEN"), result);
-        break;
-      }
       case "setAppId":
         await setEscValue(getEscKey(environment, "REALTIMEKIT_APP_ID"), requireAppId());
         break;

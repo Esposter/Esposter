@@ -5,7 +5,6 @@ import type { RealtimeKitWebhookEvent } from "@esposter/shared";
 export interface RealtimeKitDesired {
   appName: string;
   presets: RealtimeKitPreset[];
-  tokenName: string;
   webhookEvents: readonly RealtimeKitWebhookEvent[];
   webhookUrl: string;
 }

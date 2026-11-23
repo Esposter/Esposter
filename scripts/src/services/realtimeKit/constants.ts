@@ -24,9 +24,6 @@ export const REALTIMEKIT_PRESETS: RealtimeKitPreset[] = [
   },
   { isMicrophoneAllowed: false, isScreenshareAllowed: true, name: `${SITE_NAME.toLowerCase()}-camera-screenshare` },
 ];
-// The dashboard's name for the permission group the token is granted, which the RealtimeKit REST API accepts. The name is
-// Looked up before any write, so a dry run confirms it against the account
-export const REALTIMEKIT_TOKEN_PERMISSION_GROUP_NAME = "Realtime Admin";
 export const CLOUDFLARE_API_ORIGIN = "https://api.cloudflare.com/client/v4";
 // Both environments' values sit in one ESC environment, under a key per environment (`dev_` and `prod_`), which the
 // Deploy job reads the same way

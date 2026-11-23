@@ -4,8 +4,8 @@ import { CloudflareEnvironment } from "@esposter/db-schema";
 import { defineCommand } from "citty";
 
 // `pnpm -C scripts realtimekit:provision --environment <dev|prod> [--dry-run]`. Idempotent: it creates what is missing and
-// Changes nothing that matches, so a second run plans nothing. Reads CLOUDFLARE_API_TOKEN from the environment, and writes
-// The values the Workers read to Pulumi ESC, never to the log
+// Changes nothing that matches, so a second run plans nothing. Calls RealtimeKit with the environment's token from ESC,
+// and writes the app id the Workers read back to ESC, never to the log
 await runCommand(
   defineCommand({
     args: {
@@ -22,7 +22,7 @@ await runCommand(
       },
     },
     meta: {
-      description: "Create or update one environment's RealtimeKit app, presets, webhook and token",
+      description: "Create or update one environment's RealtimeKit app, presets and webhook",
       name: "realtimekit:provision",
     },
     run: ({ args }) => provisionRealtimeKit(args.environment, args["dry-run"]),

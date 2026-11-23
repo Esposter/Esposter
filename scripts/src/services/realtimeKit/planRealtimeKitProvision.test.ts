@@ -9,25 +9,21 @@ import { describe, expect, test } from "vitest";
 describe(planRealtimeKitProvision, () => {
   const desired = getRealtimeKitDesired(CloudflareEnvironment.Development);
   const appId = v7();
-  const tokenId = v7();
   const webhook = { enabled: true, events: desired.webhookEvents, id: v7(), url: desired.webhookUrl };
   const provisioned: RealtimeKitExisting = {
     app: { id: appId, name: desired.appName },
     escAppId: appId,
-    isEscTokenSet: true,
     presets: desired.presets.map(({ name }) => ({ id: v7(), name })),
-    token: { id: tokenId, name: desired.tokenName },
     webhooks: [webhook],
   };
 
-  test("creates the app, then its presets and webhook, then the token and the app id, when nothing exists", () => {
+  test("creates the app, then its presets and webhook, then the app id, when nothing exists", () => {
     expect.hasAssertions();
 
-    expect(planRealtimeKitProvision(desired, { isEscTokenSet: false, presets: [], webhooks: [] })).toStrictEqual([
+    expect(planRealtimeKitProvision(desired, { presets: [], webhooks: [] })).toStrictEqual([
       { kind: "createApp" },
       ...desired.presets.map((preset) => ({ kind: "createPreset", preset })),
       { kind: "createWebhook" },
-      { kind: "createToken" },
       { kind: "setAppId" },
     ]);
   });
@@ -61,14 +57,6 @@ describe(planRealtimeKitProvision, () => {
     expect(planRealtimeKitProvision(desired, { ...provisioned, webhooks: [{ ...webhook, events: [] }] })).toStrictEqual(
       [{ id: webhook.id, kind: "updateWebhook" }],
     );
-  });
-
-  test("rolls an existing token when ESC does not hold its value, since that value is never read back", () => {
-    expect.hasAssertions();
-
-    expect(planRealtimeKitProvision(desired, { ...provisioned, isEscTokenSet: false })).toStrictEqual([
-      { id: tokenId, kind: "rollToken" },
-    ]);
   });
 
   test("writes the app id when ESC holds a different one", () => {

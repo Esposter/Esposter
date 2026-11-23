@@ -5,17 +5,15 @@ import { describeRealtimeKitAction } from "#src/services/realtimeKit/describeRea
 import { getRealtimeKitDesired } from "#src/services/realtimeKit/getRealtimeKitDesired";
 import { planRealtimeKitProvision } from "#src/services/realtimeKit/planRealtimeKitProvision";
 import { readCloudflareCredentials } from "#src/services/realtimeKit/readCloudflareCredentials";
-import { readPermissionGroupId } from "#src/services/realtimeKit/readPermissionGroupId";
 import { readRealtimeKitExisting } from "#src/services/realtimeKit/readRealtimeKitExisting";
 import { requirePulumiLogin } from "#src/services/realtimeKit/requirePulumiLogin";
 
 // Brings one environment's RealtimeKit to what the calls code expects, reading everything first so the plan is made
 // Against the state it will change. A dry run prints the plan and stops before the first write
 export const provisionRealtimeKit = async (environment: CloudflareEnvironment, isDryRun: boolean): Promise<void> => {
-  const credentials = readCloudflareCredentials();
   await requirePulumiLogin();
+  const credentials = await readCloudflareCredentials(environment);
   const desired = getRealtimeKitDesired(environment);
-  const permissionGroupId = await readPermissionGroupId(credentials);
   const existingState = await readRealtimeKitExisting(credentials, environment, desired);
   const actions = planRealtimeKitProvision(desired, existingState);
 
@@ -29,6 +27,6 @@ export const provisionRealtimeKit = async (environment: CloudflareEnvironment, i
     console.log(`Dry run for ${environment}: nothing was written.`);
     return;
   }
-  await applyRealtimeKitActions(credentials, environment, desired, permissionGroupId, existingState, actions);
+  await applyRealtimeKitActions(credentials, environment, desired, existingState, actions);
   console.log(`RealtimeKit for ${environment} is provisioned.`);
 };

@@ -5,12 +5,11 @@ import { REALTIMEKIT_PRESETS, REALTIMEKIT_WEBHOOK_PATH, WEB_ORIGIN_MAP } from "#
 import { CloudflareAssetType, getCloudflareResourceName } from "@esposter/db-schema";
 import { RealtimeKitWebhookEvent } from "@esposter/shared";
 
-// What an environment's RealtimeKit must hold: the app and token named by the naming function, and the webhook at the
-// Origin that environment's web Worker is served under
+// What an environment's RealtimeKit must hold: the app named by the naming function, and the webhook at the origin that
+// Environment's web Worker is served under
 export const getRealtimeKitDesired = (environment: CloudflareEnvironment): RealtimeKitDesired => ({
   appName: getCloudflareResourceName(environment, CloudflareAssetType.RealtimeKitApp, "calls"),
   presets: REALTIMEKIT_PRESETS,
-  tokenName: getCloudflareResourceName(environment, CloudflareAssetType.Token, "realtimekit"),
   webhookEvents: Object.values(RealtimeKitWebhookEvent),
   webhookUrl: `${WEB_ORIGIN_MAP[environment]}${REALTIMEKIT_WEBHOOK_PATH}`,
 });

@@ -10,12 +10,8 @@ export const describeRealtimeKitAction = (action: RealtimeKitAction, desired: Re
       return `Create app ${desired.appName}`;
     case "createPreset":
       return `Create preset ${action.preset.name}`;
-    case "createToken":
-      return `Create token ${desired.tokenName} and write its value to ESC`;
     case "createWebhook":
       return `Create webhook ${desired.webhookUrl}`;
-    case "rollToken":
-      return `Roll token ${desired.tokenName} and write its value to ESC`;
     case "setAppId":
       return "Write the app id to ESC";
     case "updateWebhook":

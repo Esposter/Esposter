@@ -19,7 +19,6 @@ const METHOD_OPERATION_MAP: Record<RequestMethod, Operation> = {
   [RequestMethod.Get]: Operation.Read,
   [RequestMethod.Patch]: Operation.Update,
   [RequestMethod.Post]: Operation.Create,
-  [RequestMethod.Put]: Operation.Update,
 };
 
 // Every Cloudflare call the provisioning makes, under the account's token. The reply is checked against the envelope the
