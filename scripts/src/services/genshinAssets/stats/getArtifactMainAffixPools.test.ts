@@ -7,20 +7,20 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
-const CIRCLET_DEPOT = 3000;
-const FLOWER_DEPOT = 4000;
-const GOBLET_DEPOT = 5000;
-const PLUME_DEPOT = 2000;
-const SANDS_DEPOT = 1000;
-const slotMainPropDepots = new Map<ArtifactSlot, number>([
-  [ArtifactSlot.CircletOfLogos, CIRCLET_DEPOT],
-  [ArtifactSlot.FlowerOfLife, FLOWER_DEPOT],
-  [ArtifactSlot.GobletOfEonothem, GOBLET_DEPOT],
-  [ArtifactSlot.PlumeOfDeath, PLUME_DEPOT],
-  [ArtifactSlot.SandsOfEon, SANDS_DEPOT],
-]);
-
 describe(getArtifactMainAffixPools, () => {
+  const CIRCLET_DEPOT = 3000;
+  const FLOWER_DEPOT = 4000;
+  const GOBLET_DEPOT = 5000;
+  const PLUME_DEPOT = 2000;
+  const SANDS_DEPOT = 1000;
+  const slotMainPropDepots = new Map<ArtifactSlot, number>([
+    [ArtifactSlot.CircletOfLogos, CIRCLET_DEPOT],
+    [ArtifactSlot.FlowerOfLife, FLOWER_DEPOT],
+    [ArtifactSlot.GobletOfEonothem, GOBLET_DEPOT],
+    [ArtifactSlot.PlumeOfDeath, PLUME_DEPOT],
+    [ArtifactSlot.SandsOfEon, SANDS_DEPOT],
+  ]);
+
   test("each slot's pool holds the attributes its depot holds that its main affix can be, in the depot's order", () => {
     expect.hasAssertions();
 

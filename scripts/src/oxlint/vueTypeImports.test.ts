@@ -1,13 +1,13 @@
 import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.test";
 import { describe } from "vitest";
 
-const RULE = "vue-type-imports/require-import-type";
-const DEFAULT_TEMPLATE = "<template>\n  <div />\n</template>";
-// Each fixture is the whole single-file component, since the template is what a binding can be named from
-const buildComponent = (script: string, template = DEFAULT_TEMPLATE): string =>
-  `<script setup lang="ts">\n${script}\n</script>\n\n${template}`;
-
 describe("vueTypeImports", () => {
+  const RULE = "vue-type-imports/require-import-type";
+  const DEFAULT_TEMPLATE = "<template>\n  <div />\n</template>";
+  // Each fixture is the whole single-file component, since the template is what a binding can be named from
+  const buildComponent = (script: string, template = DEFAULT_TEMPLATE): string =>
+    `<script setup lang="ts">\n${script}\n</script>\n\n${template}`;
+
   const FIXTURES = [
     {
       fixed: buildComponent(`import type { A } from "a";\nconst b: A | undefined = undefined;`),
