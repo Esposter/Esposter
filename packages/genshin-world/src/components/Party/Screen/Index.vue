@@ -37,12 +37,12 @@ const { characterDataMap, characters, gameText, nameText, party, travelerName } 
 const emit = defineEmits<{ close: [] }>();
 // Party Setup opens on the deployed team, and the arrows step from there
 const teamIndex = ref(party.deployedTeamIndex);
-// The name a team shows: its own, else the game's name for the default team at its place, none past the defaults
+// The name a team shows: its own, else the game's name for it, Party 1 to 4 for a default team and the standing-by name
+// For an added one
 const teamNameAt = (index: number) => {
   const name = party.teams[index]?.name;
   if (name) return name;
-  const defaultNameKey = DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS[index];
-  return defaultNameKey ? gameText[defaultNameKey] : "";
+  return gameText[DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS[index] ?? GameTextKey.PartyAddedName];
 };
 const slots = computed<PartySetupSlot[]>(() => {
   const team = party.teams[teamIndex.value];

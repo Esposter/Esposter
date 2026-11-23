@@ -537,6 +537,8 @@ export const GameTextKey = {
   Paimon: "NPC_EXPNAME_12911",
   // Paimon's Bargains, the shop the Paimon menu's Shop entry opens, which sells the Fates and the month's rotation
   PaimonsBargains: "SHOP_TYPE_PAIMON",
+  // The name a team added in Party Setup holds until it is renamed, the game's standing-by name for a team
+  PartyAddedName: "UI_TEXT_TEAM_ALTERNATE",
   // The four teams every player starts with, each named Party 1 to 4 until it is renamed
   PartyDefaultName1: "UI_TEAM_DEFAULT_NAME1",
   PartyDefaultName2: "UI_TEAM_DEFAULT_NAME2",

@@ -1,6 +1,6 @@
 import { PartyTeamResult } from "#src/models/party/PartyTeamResult";
 import { addPartyTeam } from "#src/services/party/addPartyTeam";
-import { PARTY_ADDED_TEAM_NAME, PARTY_TEAM_MAX_COUNT } from "#src/services/party/constants";
+import { PARTY_TEAM_MAX_COUNT } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
@@ -13,7 +13,7 @@ describe(addPartyTeam, () => {
     const full = addPartyTeam(party);
 
     expect({ added: party.teams.at(-1), full, length: party.teams.length }).toStrictEqual({
-      added: { characterIds: [], name: PARTY_ADDED_TEAM_NAME },
+      added: { characterIds: [], name: "" },
       full: PartyTeamResult.Full,
       length: PARTY_TEAM_MAX_COUNT,
     });

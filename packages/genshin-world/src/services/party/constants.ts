@@ -25,9 +25,6 @@ export const DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS: readonly GameTextKey[] = [
   GameTextKey.PartyDefaultName3,
   GameTextKey.PartyDefaultName4,
 ];
-// The name an added team is given until it is renamed
-// Provisional: the game's own words for it, to be taken from its text id in the decoded client
-export const PARTY_ADDED_TEAM_NAME = "Team Standing By";
 // The members of one element a full team needs to give that element's resonance
 export const PARTY_RESONANCE_MEMBER_COUNT = 2;
 // The CRIT Rate Shattering Ice adds against an enemy Frozen or affected by Cryo, as the Elemental Resonance page of the
