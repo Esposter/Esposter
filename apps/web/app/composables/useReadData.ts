@@ -3,6 +3,9 @@ import type { Promisable } from "type-fest";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync, noop } from "@esposter/shared";
 
+// Both the watch and onMounted alert a failed read through this one chain
+const readAlerted = (read: () => Promisable<void>) => getResultAsync(async () => read()).match(noop, createErrorAlert);
+
 // The signed-in reader is handed the account's id from the session read here, so it never reads a session of its own
 export const useReadData = async (
   unauthedReader: () => Promisable<void>,
@@ -15,10 +18,10 @@ export const useReadData = async (
   const stop = watch(
     () => session.value,
     (newSessionData) =>
-      getResultAsync(async () => {
+      readAlerted(async () => {
         if (newSessionData) await authedReader(newSessionData.user.id);
         else await unauthedReader();
-      }).match(noop, createErrorAlert),
+      }),
   );
   onUnmounted(() => {
     stop();
@@ -26,8 +29,5 @@ export const useReadData = async (
 
   if (session.value) await authedReader(session.value.user.id);
   // Unauthenticated means reading data from local storage, which must happen onMounted.
-  else
-    onMounted(async () => {
-      await getResultAsync(async () => unauthedReader()).match(noop, createErrorAlert);
-    }, currentInstance);
+  else onMounted(() => readAlerted(unauthedReader), currentInstance);
 };
