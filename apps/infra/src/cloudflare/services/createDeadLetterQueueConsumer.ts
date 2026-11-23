@@ -12,7 +12,8 @@ import {
 } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
-// A dead-letter queue's consumer, which replays its messages through the jobs Worker. It has no dead-letter queue of its own
+// A dead-letter queue's consumer, which replays its messages through the jobs Worker. It has no dead-letter queue of
+// Its own
 export const createDeadLetterQueueConsumer = (
   environment: CloudflareEnvironment,
   queueJob: QueueJob,

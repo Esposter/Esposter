@@ -18,7 +18,8 @@ export const repository: github.Repository = new github.Repository(
     allowSquashMerge: true,
     allowUpdateBranch: true,
     // Native auto-delete bypasses rulesets and would delete a long-lived branch that a pull request heads. Disabled
-    // Here; the Delete Merged Branch workflow cleans up head branches while excluding long-lived branches (main, ai/queue).
+    // Here; the Delete Merged Branch workflow cleans up head branches while excluding long-lived branches (main,
+    // `ai/queue`).
     deleteBranchOnMerge: false,
     description: "A nice and casual place for posting random things.",
     hasDiscussions: true,
