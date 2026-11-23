@@ -10,8 +10,11 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { createSeededRandom } from "genshin-engine";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
@@ -55,6 +58,7 @@ export const props = {
   random: createSeededRandom(WORLD_RANDOM_SEED),
   recipes,
   reliquaryPieceEntryMap: new Map(),
+  resinParam,
   strongboxes: [],
   wallet: { ...EMPTY_WALLET, [Currency.Mora]: 2_945_208, [Currency.OriginalResin]: 160 },
   weaponDataMap: new Map(),

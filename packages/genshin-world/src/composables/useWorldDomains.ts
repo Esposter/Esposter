@@ -408,7 +408,14 @@ export const useWorldDomains = ({
   // Pressing F at the raised tree offers the claims the held resin affords, and offers none where it affords none
   const openDomainTreeClaim = (now: Temporal.Instant) => {
     if (!isDomainTreeRaised.value) return;
-    const { offers } = computeBlossomClaimPrompt(BlossomKind.Domain, 0, wallet.value, inventory.value, now);
+    const { offers } = computeBlossomClaimPrompt(
+      BlossomKind.Domain,
+      0,
+      wallet.value,
+      inventory.value,
+      now,
+      worldSessionStore.resinParam,
+    );
     domainClaimOffers.value = offers.length > 0 ? offers : undefined;
   };
   const closeDomainTreeClaim = () => {
@@ -443,6 +450,7 @@ export const useWorldDomains = ({
       now,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.resinParam,
     );
     if (!claim) return;
     // Each artifact goes into the bag as an entry of its own with the stats it rolled, so each one keeps its own

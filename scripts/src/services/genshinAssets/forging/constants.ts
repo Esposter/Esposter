@@ -4,8 +4,7 @@ import { ForgeRecipeKind } from "genshin-world";
 export const FORGE_TABLE_NAME = "ForgeExcelConfigData";
 // The game's forge random table, the items a drop-table recipe draws each unit from, read by its name
 export const FORGE_RANDOM_TABLE_NAME = "ForgeRandomExcelConfigData";
-// The game's constant table, and the constant of it that holds the most forge points a game day may forge
-export const CONST_VALUE_TABLE_NAME = "ConstValueExcelConfigData";
+// The constant of the game's constant table that holds the most forge points a game day may forge
 export const FORGE_DAILY_POINT_CAP_CONST_NAME = "CONST_VALUE_FORGE_POINT_DAY_LIMIT";
 // The forge random table each drop id a forge row names draws from. The dump holds no table of drop ids, so the Mystic
 // Enhancement Ore's drop id is mapped to the one random table whose Mystic Enhancement Ore count is the row's own, six

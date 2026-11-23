@@ -28,6 +28,7 @@ import { readRegionCityIds } from "#src/services/leyLine/readRegionCityIds";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { pairSeelieCourts } from "#src/services/puzzle/pairSeelieCourts";
 import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuzzlePlaces";
 import { readMondstadtShrineKeySources } from "#src/services/puzzle/readMondstadtShrineKeySources";
@@ -112,6 +113,7 @@ getResultAsync(() =>
       measureLoadStep("tip-text", TipTextLoaderMap[props.language](props.gameDataBaseUrl)),
       measureLoadStep("tips", readTips(props.gameDataBaseUrl)),
       measureLoadStep("character-pack-readers", readCharacterPackReaders(props.gameDataBaseUrl)),
+      measureLoadStep("resin-param", readResinParam(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -140,6 +142,7 @@ getResultAsync(() =>
     tipText,
     tips,
     characterPackReaders,
+    resinParam,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -159,6 +162,7 @@ getResultAsync(() =>
       regionCityIds,
       reliquaryPieceEntryMap: createReliquaryPieceEntryMap(reliquarySets),
       reliquarySets,
+      resinParam,
       seelies: pairSeelieCourts(
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),

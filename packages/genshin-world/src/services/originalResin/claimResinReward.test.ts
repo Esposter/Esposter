@@ -10,8 +10,11 @@ import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
@@ -71,6 +74,7 @@ describe(claimResinReward, () => {
         epoch,
         names,
         new Map(),
+        resinParam,
       ),
     ).toStrictEqual({
       adventureExp: RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -97,6 +101,7 @@ describe(claimResinReward, () => {
         epoch,
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
+        resinParam,
       ),
     ).toStrictEqual({
       adventureExp: RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -137,6 +142,7 @@ describe(claimResinReward, () => {
         epoch,
         names,
         new Map(),
+        resinParam,
       ),
     ).toStrictEqual({
       adventureExp: 0,
@@ -160,6 +166,7 @@ describe(claimResinReward, () => {
         epoch,
         names,
         new Map(),
+        resinParam,
       ),
     ).toBeUndefined();
   });
@@ -179,6 +186,7 @@ describe(claimResinReward, () => {
         epoch,
         names,
         new Map(),
+        resinParam,
       ),
     ).toBeUndefined();
   });

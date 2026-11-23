@@ -71,3 +71,5 @@ export const TALENT_CONFIG_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, AVATAR_
 // The last digit of a skill's proud skill group is the slot a constellation names the skill by: 1 the normal attack, 2 the
 // Elemental Skill and 9 the burst, as the dump numbers them
 export const PROUD_SKILL_SLOT_MODULUS = 10;
+// The game's constant table row holding the Original Resin constants, in the order its values give them
+export const RESIN_PARAM_CONST_NAME = "CONST_VALUE_RESIN_PARAM";

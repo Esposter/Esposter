@@ -1,11 +1,7 @@
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { Currency } from "#src/models/inventory/Currency";
-import {
-  ORIGINAL_RESIN_REFILL_CAP,
-  PRIMOGEM_RESIN_REFILL_PRICES,
-  PRIMOGEM_RESIN_RESTORE,
-} from "#src/services/originalResin/constants";
 import { refillOriginalResin } from "#src/services/originalResin/refillOriginalResin";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { computeGameDay } from "#src/services/time/computeGameDay";
@@ -14,19 +10,23 @@ import { computeGameDay } from "#src/services/time/computeGameDay";
 // The Primogems held fall short of the next price, or the refill would pass the refill cap, as the game refuses it above
 // The cap less one refill. The day's refills count
 // From the game's day, which starts at its hour in the game's time zone, and restart when that day changes
-export const refillOriginalResinWithPrimogems = (wallet: Wallet, now: Temporal.Instant): undefined | Wallet => {
+export const refillOriginalResinWithPrimogems = (
+  wallet: Wallet,
+  now: Temporal.Instant,
+  resinParam: ResinParam,
+): undefined | Wallet => {
   const gameDay = computeGameDay(now);
   const refillCount = wallet.primogemResinRefillDay.equals(gameDay) ? wallet.primogemResinRefillCount : 0;
-  const price = PRIMOGEM_RESIN_REFILL_PRICES[refillCount];
-  const originalResin = regenerateOriginalResin(wallet, now)[Currency.OriginalResin];
+  const price = resinParam.primogemResinRefillPrices[refillCount];
+  const originalResin = regenerateOriginalResin(wallet, now, resinParam)[Currency.OriginalResin];
   if (
     price === undefined ||
     wallet[Currency.Primogem] < price ||
-    originalResin + PRIMOGEM_RESIN_RESTORE > ORIGINAL_RESIN_REFILL_CAP
+    originalResin + resinParam.primogemResinRestore > resinParam.originalResinRefillCap
   )
     return undefined;
   return {
-    ...refillOriginalResin(wallet, PRIMOGEM_RESIN_RESTORE, now),
+    ...refillOriginalResin(wallet, resinParam.primogemResinRestore, now, resinParam),
     [Currency.Primogem]: wallet[Currency.Primogem] - price,
     primogemResinRefillCount: refillCount + 1,
     primogemResinRefillDay: gameDay,

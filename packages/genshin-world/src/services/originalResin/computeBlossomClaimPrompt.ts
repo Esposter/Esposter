@@ -2,6 +2,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { BlossomKind } from "#src/models/originalResin/BlossomKind";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { CONDENSED_RESIN_ITEM_ID } from "#src/services/crafting/constants";
@@ -19,8 +20,9 @@ export const computeBlossomClaimPrompt = (
   wallet: Wallet,
   inventory: Inventory,
   now: Temporal.Instant,
+  resinParam: ResinParam,
 ): BlossomClaimPrompt => {
-  const originalResin = regenerateOriginalResin(wallet, now)[Currency.OriginalResin];
+  const originalResin = regenerateOriginalResin(wallet, now, resinParam)[Currency.OriginalResin];
   const offers = computeAffordableBlossomClaimOffers(
     kind,
     weeklyBossClaimsMade,

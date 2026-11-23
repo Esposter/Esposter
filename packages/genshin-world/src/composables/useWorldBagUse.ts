@@ -48,6 +48,7 @@ export const useWorldBagUse = ({
       kitEffectState: kitContext.kitEffectState,
       now: getWorldNow(),
       party,
+      resinParam: worldSessionStore.resinParam,
       wallet: wallet.value,
     });
     if (!use) return;

@@ -3,6 +3,7 @@ import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinClaim } from "#src/models/originalResin/ResinClaim";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { spendOriginalResin } from "#src/services/originalResin/spendOriginalResin";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
@@ -18,8 +19,9 @@ export const claimTrounceBlossom = (
   now: Temporal.Instant,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  resinParam: ResinParam,
 ): Pick<ResinClaim, "inventory" | "wallet"> | undefined => {
-  const spentWallet = spendOriginalResin(wallet, resin, now);
+  const spentWallet = spendOriginalResin(wallet, resin, now, resinParam);
   if (!spentWallet) return undefined;
   return grantRewardItems(spentWallet, inventory, rewards, names, materialDataMap);
 };

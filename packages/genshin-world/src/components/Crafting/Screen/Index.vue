@@ -8,6 +8,7 @@ import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickU
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { CraftingCell, CraftingMaterial } from "genshin-interface";
@@ -60,6 +61,8 @@ interface Props {
   recipes: CraftingRecipe[];
   // The pieces of each artifact set by item id, which the Mystic Offering's strongbox artifact is taken into the bag with
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  // The Original Resin constants of the game, which the cap, the regeneration and the refills are read by
+  resinParam: ResinParam;
   // The Mystic Offering's strongboxes, one for each set the player may choose
   strongboxes: CraftingStrongboxData[];
   // The weapons by item id, which the bag's entries are defined from
@@ -81,6 +84,7 @@ const {
   progress,
   random,
   recipes,
+  resinParam,
 } = defineProps<Props>();
 const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
 const amount = ref(1);
@@ -121,7 +125,7 @@ const pickedRecipe = computed(
 const amountMaximum = computed(() => {
   if (!pickedRecipe.value) return 1;
   return Math.max(
-    computeCraftableCount(pickedRecipe.value, { inventory: inventory.value, wallet: wallet.value }, now),
+    computeCraftableCount(pickedRecipe.value, { inventory: inventory.value, resinParam, wallet: wallet.value }, now),
     1,
   );
 });
@@ -134,7 +138,7 @@ const materials = computed<CraftingMaterial[]>(() =>
     id: material.id,
     owned:
       material.id === ORIGINAL_RESIN_ITEM_ID
-        ? regenerateOriginalResin(wallet.value, now)[Currency.OriginalResin]
+        ? regenerateOriginalResin(wallet.value, now, resinParam)[Currency.OriginalResin]
         : countInventoryItem(inventory.value.items, material.id),
     required: material.count,
   })),
@@ -168,6 +172,7 @@ const craft = () => {
     inventory: inventory.value,
     now: getWorldNow(),
     progress,
+    resinParam,
     wallet: wallet.value,
   });
   if (!crafted) return;

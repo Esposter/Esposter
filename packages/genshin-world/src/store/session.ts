@@ -31,6 +31,7 @@ export const useWorldSessionStore = defineStore("world/session", () => {
   const nameText = computed(() => getContext().nameText);
   const reliquaryPieceEntryMap = computed(() => getContext().reliquaryPieceEntryMap);
   const reliquarySets = computed(() => getContext().reliquarySets);
+  const resinParam = computed(() => getContext().resinParam);
   const weaponDataMap = computed(() => getContext().weaponDataMap);
   const worldNow = computed(() => getContext().worldNow.value);
   const getWorldNow = () => getContext().getWorldNow();
@@ -70,6 +71,7 @@ export const useWorldSessionStore = defineStore("world/session", () => {
     nameText,
     reliquaryPieceEntryMap,
     reliquarySets,
+    resinParam,
     setInventory,
     setWallet,
     start,

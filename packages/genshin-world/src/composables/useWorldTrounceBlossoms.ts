@@ -123,6 +123,7 @@ export const useWorldTrounceBlossoms = ({
       wallet.value,
       inventory.value,
       now,
+      worldSessionStore.resinParam,
     );
     claimPrompt.value = offers.length > 0 ? { offers, spawnKey } : undefined;
   };
@@ -169,6 +170,7 @@ export const useWorldTrounceBlossoms = ({
       now,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.resinParam,
     );
     if (!claim) return;
     setWallet(claim.wallet);

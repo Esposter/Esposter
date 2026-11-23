@@ -1,13 +1,3 @@
-// The most Original Resin regenerates to, a point each regeneration interval while it is below
-export const ORIGINAL_RESIN_CAP = 200;
-// The most Original Resin a refill fills to, past the regeneration cap
-export const ORIGINAL_RESIN_REFILL_CAP = 2000;
-// The minutes one point of Original Resin takes to regenerate
-export const ORIGINAL_RESIN_REGEN_MINUTES = 8;
-// The Original Resin a Primogem refill restores
-export const PRIMOGEM_RESIN_RESTORE = 60;
-// The Primogems each refill of a game day costs, in order, and a day holds as many refills as this has prices
-export const PRIMOGEM_RESIN_REFILL_PRICES: readonly number[] = [50, 100, 100, 150, 200, 200];
 // The Companionship EXP item a claim's reward preview lists beside its items, which the claim leaves out of its draw
 export const COMPANIONSHIP_EXP_ITEM_ID = 105;
 // The item id of Fragile Resin, a stack in the bag whose use restores the Original Resin below

@@ -110,6 +110,7 @@ export const useWorldCommissionClaims = ({
       longTermEncounterPoints: longTermEncounterPoints.value,
       majorVersion: LONG_TERM_MAJOR_VERSION,
       now,
+      resinParam: worldSessionStore.resinParam,
       storage: computeEncounterPointStorage(commissionDay.value, commissionSlice.value),
       wallet: wallet.value,
     });

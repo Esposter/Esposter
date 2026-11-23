@@ -3,6 +3,7 @@ import type { InventoryEntryUse } from "#src/models/inventory/InventoryEntryUse"
 import type { InventoryUseContext } from "#src/models/inventory/InventoryUseContext";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { Party } from "#src/models/party/Party";
 
 import { eatDish } from "#src/services/cooking/eatDish";
@@ -25,13 +26,14 @@ export const useInventoryEntry = (
     kitEffectState: KitEffectState;
     now: Temporal.Instant;
     party: Party;
+    resinParam: ResinParam;
     wallet: Wallet;
   },
 ): InventoryEntryUse | undefined => {
-  const { count = 1, dishUseMap, eaterId, getMaxHealth, kitEffectState, now, party, wallet } = context;
+  const { count = 1, dishUseMap, eaterId, getMaxHealth, kitEffectState, now, party, resinParam, wallet } = context;
   const item = inventory.items.find(({ id }) => id === entryId);
   if (item === undefined) return undefined;
-  if (checkIsFragileResin(item)) return refillOriginalResinWithFragileResin(inventory, wallet, now);
+  if (checkIsFragileResin(item)) return refillOriginalResinWithFragileResin(inventory, wallet, now, resinParam);
   const learning = getInventoryItemLearning(item, context);
   if (learning !== undefined) return learning.learn(inventory);
   switch (item.definition.category) {

@@ -1,10 +1,14 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import CraftingScreenContainer from "#src/components/Crafting/Screen/Index.vue";
 import { MYSTIC_OFFERING_ADVENTURE_RANK } from "#src/services/crafting/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 describe("craftingScreen", () => {
   // The Mystic Offering at its Adventure Rank with no recipe open, so the offering's tab is the bench's only one, and
@@ -31,6 +35,7 @@ describe("craftingScreen", () => {
         random: () => 0,
         recipes: [],
         reliquaryPieceEntryMap: new Map(),
+        resinParam,
         strongboxes: [],
         wallet: EMPTY_WALLET,
         weaponDataMap: new Map(),

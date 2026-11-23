@@ -4,7 +4,6 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import { Currency } from "#src/models/inventory/Currency";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
-import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { ItemCategory } from "genshin-interface/save";
 
 // The tabs whose every weapon or artifact is an entry of its own, never stacked, sorted by level or quality as chosen
@@ -25,9 +24,9 @@ export const PRECIOUS_CURRENCIES: readonly Currency[] = [
   Currency.AcquaintFate,
   Currency.MasterlessStellaFortuna,
 ];
-// A new player's bag holds nothing, and their wallet nothing but Original Resin at its regeneration cap, from the epoch
+// A new player's bag holds nothing
 export const EMPTY_INVENTORY: Readonly<Inventory> = { items: [], nextId: 0, quickSwapItemIds: [] };
-// A new player's currencies, every one at zero but Original Resin, at its regeneration cap
+// A new player's currencies, every one at zero: the starting save gives Original Resin the game's cap from the resin record
 export const EMPTY_CURRENCIES: Readonly<Record<Currency, number>> = {
   [Currency.AcquaintFate]: 0,
   [Currency.AnemoSigil]: 0,
@@ -43,7 +42,7 @@ export const EMPTY_CURRENCIES: Readonly<Record<Currency, number>> = {
   [Currency.MasterlessStarglitter]: 0,
   [Currency.MasterlessStellaFortuna]: 0,
   [Currency.Mora]: 0,
-  [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
+  [Currency.OriginalResin]: 0,
   [Currency.Primogem]: 0,
   [Currency.PyroSigil]: 0,
   [Currency.RealmCurrency]: 0,

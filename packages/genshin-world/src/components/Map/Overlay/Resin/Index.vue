@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
-import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { GameTextKey } from "genshin-text";
 
@@ -12,18 +12,20 @@ interface Props {
   gameText: GameText;
   // The world's clock as the map shows it, which the Original Resin the top bar counts is read at
   now: Temporal.Instant;
+  // The Original Resin constants of the game, whose cap the top bar counts to
+  resinParam: ResinParam;
   // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
   wallet: Wallet;
 }
 
-const { now, wallet } = defineProps<Props>();
-const originalResin = computed(() => regenerateOriginalResin(wallet, now)[Currency.OriginalResin]);
+const { now, resinParam, wallet } = defineProps<Props>();
+const originalResin = computed(() => regenerateOriginalResin(wallet, now, resinParam)[Currency.OriginalResin]);
 </script>
 
 <template>
   <p class="resin">
     <span>{{ gameText[GameTextKey.OriginalResin] }}</span>
-    <span>{{ originalResin }}/{{ ORIGINAL_RESIN_CAP }}</span>
+    <span>{{ originalResin }}/{{ resinParam.originalResinCap }}</span>
   </p>
 </template>
 

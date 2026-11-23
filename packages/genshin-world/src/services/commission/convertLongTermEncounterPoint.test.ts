@@ -2,11 +2,15 @@ import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
 import { LONG_TERM_MAJOR_VERSION, LONG_TERM_RESIN_COST } from "#src/services/commission/constants";
 import { convertLongTermEncounterPoint } from "#src/services/commission/convertLongTermEncounterPoint";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { describe, expect, test } from "vitest";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const createLongTermPoints = (halfPoints: number, majorVersion = LONG_TERM_MAJOR_VERSION): LongTermEncounterPoints => ({
   halfPoints,
@@ -33,6 +37,7 @@ describe(convertLongTermEncounterPoint, () => {
       longTermEncounterPoints,
       majorVersion: LONG_TERM_MAJOR_VERSION,
       now: NOW,
+      resinParam,
       storage: STORAGE,
       wallet: createWallet(resin),
     });

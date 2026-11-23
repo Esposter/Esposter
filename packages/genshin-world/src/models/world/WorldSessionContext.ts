@@ -1,6 +1,7 @@
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
@@ -21,6 +22,7 @@ export interface WorldSessionContext {
   nameText: Readonly<Record<string, string>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
+  resinParam: ResinParam;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
   worldNow: Readonly<Ref<Temporal.Instant>>;
 }

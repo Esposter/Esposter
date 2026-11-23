@@ -9,7 +9,7 @@ describe(startGenshinSession, () => {
   test("a new player starts on the empty save under the session", () => {
     expect.hasAssertions();
 
-    const envelope = startGenshinSession(undefined, "first");
+    const envelope = startGenshinSession(undefined, "first", EMPTY_GENSHIN_SAVE);
 
     expect(envelope).toStrictEqual({ save: EMPTY_GENSHIN_SAVE, sessionId: "first" });
   });
@@ -17,8 +17,8 @@ describe(startGenshinSession, () => {
   test("a newer session supersedes the older one and keeps the save it started over", () => {
     expect.hasAssertions();
 
-    const firstEnvelope = startGenshinSession(undefined, "first");
-    const secondEnvelope = startGenshinSession(firstEnvelope, "second");
+    const firstEnvelope = startGenshinSession(undefined, "first", EMPTY_GENSHIN_SAVE);
+    const secondEnvelope = startGenshinSession(firstEnvelope, "second", EMPTY_GENSHIN_SAVE);
 
     expect(secondEnvelope).toStrictEqual({ previousSessionId: "first", save: EMPTY_GENSHIN_SAVE, sessionId: "second" });
     expect(checkIsGenshinSessionCurrent(secondEnvelope, "first")).toBe(false);

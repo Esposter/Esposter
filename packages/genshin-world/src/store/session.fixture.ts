@@ -2,12 +2,16 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { WorldSessionContext } from "#src/models/world/WorldSessionContext";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { getServerNow } from "#src/services/time/getServerNow";
 import { useWorldSessionStore } from "#src/store/session";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 import { createPinia, setActivePinia } from "pinia";
 import { shallowRef } from "vue";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const getWorldNow = () => getServerNow(0);
 
@@ -34,6 +38,7 @@ export const startTestWorldSession = (
       nameText: {},
       reliquaryPieceEntryMap: new Map(),
       reliquarySets: [],
+      resinParam,
       weaponDataMap: new Map(),
       worldNow: shallowRef(getWorldNow()),
       ...overrides,

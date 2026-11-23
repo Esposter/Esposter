@@ -198,7 +198,7 @@ export const useWorldOutcrops = ({
   // Pressing F at a cleared outcrop's blossom offers the claims the held resin affords, and offers none where it affords
   // None
   const showOutcropClaim = (placeId: number, held: Wallet, bag: Inventory, now: Temporal.Instant) => {
-    const prompt = computeBlossomClaimPrompt(BlossomKind.LeyLine, 0, held, bag, now);
+    const prompt = computeBlossomClaimPrompt(BlossomKind.LeyLine, 0, held, bag, now, worldSessionStore.resinParam);
     claimPrompt.value = prompt.offers.length > 0 || prompt.canRestore ? { ...prompt, placeId } : undefined;
   };
   const openOutcropClaim = (placeId: number, now: Temporal.Instant) => {
@@ -213,7 +213,12 @@ export const useWorldOutcrops = ({
   const restoreOutcropClaim = (now: Temporal.Instant) => {
     const prompt = claimPrompt.value;
     if (!prompt?.canRestore) return;
-    const restored = refillOriginalResinWithFragileResin(inventory.value, wallet.value, now);
+    const restored = refillOriginalResinWithFragileResin(
+      inventory.value,
+      wallet.value,
+      now,
+      worldSessionStore.resinParam,
+    );
     if (!restored) return;
     setWallet(restored.wallet);
     setInventory(restored.inventory);
@@ -246,6 +251,7 @@ export const useWorldOutcrops = ({
       now,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.resinParam,
     );
     if (!claim) return;
     setWallet(claim.wallet);

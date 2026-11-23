@@ -7,6 +7,7 @@ import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { ForgeQueueCell, ForgeRecipeCell, ForgeTab } from "genshin-interface";
 import type { GameText } from "genshin-text";
@@ -47,6 +48,8 @@ interface Props {
   random: () => number;
   // Every recipe the forge holds, in the game's order; the ones the player has not opened are shown disabled
   recipes: ForgeRecipe[];
+  // The Original Resin constants of the game, which the cap, the regeneration and the refills are read by
+  resinParam: ResinParam;
   // The four-star weapons by their item ids, which a weapon recipe yields as a weapon
   weapons: Map<number, Pick<ItemDefinition, "name"> & WeaponData>;
 }
@@ -71,6 +74,7 @@ const {
   partyCharacterIds,
   random,
   recipes,
+  resinParam,
   weapons,
 } = defineProps<Props>();
 const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
@@ -186,6 +190,7 @@ const start = () => {
     now,
     partyCharacterIds,
     progress: progress.value,
+    resinParam,
     wallet: wallet.value,
   });
   if (!started) return;

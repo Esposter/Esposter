@@ -1,6 +1,7 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
@@ -13,10 +14,10 @@ import { regenerateOriginalResin } from "#src/services/originalResin/regenerateO
 // Resin is paid from the wallet regenerated to `now`, not from the bag
 export const computeCraftableCount = (
   recipe: CraftingRecipe,
-  { inventory, wallet }: { inventory: Inventory; wallet: Wallet },
+  { inventory, resinParam, wallet }: { inventory: Inventory; resinParam: ResinParam; wallet: Wallet },
   now: Temporal.Instant,
 ): number => {
-  const regeneratedWallet = regenerateOriginalResin(wallet, now);
+  const regeneratedWallet = regenerateOriginalResin(wallet, now, resinParam);
   const moraCount = recipe.mora === 0 ? Infinity : Math.floor(wallet[Currency.Mora] / recipe.mora);
   return recipe.materials.reduce((count, material) => {
     const heldCount =

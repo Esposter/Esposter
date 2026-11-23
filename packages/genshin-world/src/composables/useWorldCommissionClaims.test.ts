@@ -7,6 +7,7 @@ import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
@@ -16,7 +17,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { LONG_TERM_MAJOR_VERSION, LONG_TERM_RESIN_COST } from "#src/services/commission/constants";
 import { createEmptyBands } from "#src/services/commission/createEmptyBands.test";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
-import { ORIGINAL_RESIN_REGEN_MINUTES } from "#src/services/originalResin/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
@@ -26,6 +27,8 @@ import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { describe, expect, test } from "vitest";
 import { computed, shallowRef } from "vue";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 describe(useWorldCommissionClaims, () => {
   // No Adventure EXP is routed by these claims, so the rank's tables are left empty rather than read from the game data
@@ -223,7 +226,7 @@ describe(useWorldCommissionClaims, () => {
     });
     expect(claims.isLongTermPointConvertible.value).toBe(false);
 
-    clock.moveTo(NOW.add({ minutes: ORIGINAL_RESIN_REGEN_MINUTES }));
+    clock.moveTo(NOW.add({ minutes: resinParam.originalResinRegenMinutes }));
 
     expect(claims.isLongTermPointConvertible.value).toBe(true);
   });

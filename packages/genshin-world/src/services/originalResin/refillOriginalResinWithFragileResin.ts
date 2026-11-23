@@ -1,6 +1,7 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { FragileResinUse } from "#src/models/originalResin/FragileResinUse";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
@@ -13,10 +14,11 @@ export const refillOriginalResinWithFragileResin = (
   inventory: Inventory,
   wallet: Wallet,
   now: Temporal.Instant,
+  resinParam: ResinParam,
 ): FragileResinUse | undefined => {
   if (countInventoryItem(inventory.items, FRAGILE_RESIN_ITEM_ID) < 1) return undefined;
   return {
     inventory: { ...inventory, items: takeInventoryItems(inventory.items, FRAGILE_RESIN_ITEM_ID, 1) },
-    wallet: refillOriginalResin(wallet, FRAGILE_RESIN_RESTORE, now),
+    wallet: refillOriginalResin(wallet, FRAGILE_RESIN_RESTORE, now, resinParam),
   };
 };

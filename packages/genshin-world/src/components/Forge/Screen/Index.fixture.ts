@@ -18,11 +18,14 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { computeGameDay } from "#src/services/time/computeGameDay";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { ForgeTab } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
@@ -124,6 +127,7 @@ export const props = {
   random: createSeededRandom(WORLD_RANDOM_SEED),
   recipeId: 11_001,
   recipes,
+  resinParam,
   tab: ForgeTab.Materials,
   wallet: createWallet(375_527),
   weapons,

@@ -8,6 +8,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { DishTarget } from "#src/models/cooking/DishTarget";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
@@ -29,12 +30,15 @@ import {
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { grantQuestRewards } from "#src/services/quest/grantQuestRewards";
 import { buyShopGood } from "#src/services/shop/buyShopGood";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 describe(useInventoryEntry, () => {
   const ENTRY_ID = 1;
@@ -71,6 +75,7 @@ describe(useInventoryEntry, () => {
     kitEffectState: { effects: [] },
     now: NOW,
     party,
+    resinParam,
     wallet,
   });
 
@@ -97,6 +102,7 @@ describe(useInventoryEntry, () => {
     const use = useInventoryEntry(createInventory(DISH_ID, ItemCategory.Food, 3), ENTRY_ID, {
       ...createContext(new Map([[DISH_ID, dishUse]]), party),
       count: 2,
+      resinParam,
     });
 
     expect(use?.inventory.items.map(({ quantity }) => quantity)).toStrictEqual([1]);
@@ -187,6 +193,7 @@ describe(useInventoryEntry, () => {
     const use = useInventoryEntry(createInventory(FORGE_DIAGRAM_ID, ItemCategory.Material), ENTRY_ID, {
       ...createContext(new Map()),
       forgeRecipeMap: new Map([[FORGE_DIAGRAM_ID, FORGE_RECIPE]]),
+      resinParam,
     });
 
     expect(use?.forgeProgress?.learnedRecipeIds).toStrictEqual([FORGE_RECIPE.id]);
@@ -199,6 +206,7 @@ describe(useInventoryEntry, () => {
     const use = useInventoryEntry(createInventory(CRAFTING_INSTRUCTION_ID, ItemCategory.Material), ENTRY_ID, {
       ...createContext(new Map()),
       craftingRecipeMap: new Map([[CRAFTING_INSTRUCTION_ID, CRAFTING_RECIPE]]),
+      resinParam,
     });
 
     expect(use?.craftingProgress?.learnedRecipeIds).toStrictEqual([CRAFTING_RECIPE.id]);
@@ -211,6 +219,7 @@ describe(useInventoryEntry, () => {
     const use = useInventoryEntry(createInventory(BLUEPRINT_DIAGRAM_ID, ItemCategory.Material), ENTRY_ID, {
       ...createContext(new Map()),
       blueprintMap: new Map([[BLUEPRINT_DIAGRAM_ID, HOME_BLUEPRINT]]),
+      resinParam,
     });
 
     expect(use?.homeProgress?.learnedBlueprintIds).toStrictEqual([HOME_BLUEPRINT.id]);

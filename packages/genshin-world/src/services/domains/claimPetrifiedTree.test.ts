@@ -11,9 +11,12 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { claimPetrifiedTree } from "#src/services/domains/claimPetrifiedTree";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { ADVENTURE_EXP_PER_RESIN, COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { createParty } from "#src/services/party/createParty";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
@@ -87,6 +90,7 @@ describe(claimPetrifiedTree, () => {
         epoch,
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
+        resinParam,
       ),
     ).toStrictEqual({
       adventureExp: DOMAIN_RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -135,6 +139,7 @@ describe(claimPetrifiedTree, () => {
         epoch,
         {},
         materialDataMap,
+        resinParam,
       ),
     ).toStrictEqual({
       adventureExp: DOMAIN_RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -169,6 +174,7 @@ describe(claimPetrifiedTree, () => {
         epoch,
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
+        resinParam,
       ),
     ).toStrictEqual({
       adventureExp: 2 * DOMAIN_RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -216,6 +222,7 @@ describe(claimPetrifiedTree, () => {
         epoch,
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
+        resinParam,
       )?.inventory.items,
     ).toStrictEqual([
       {
@@ -252,6 +259,7 @@ describe(claimPetrifiedTree, () => {
         epoch,
         {},
         new Map(),
+        resinParam,
       ),
     ).toBeUndefined();
   });

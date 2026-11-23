@@ -3,6 +3,7 @@ import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -45,6 +46,8 @@ interface Props {
   now: Temporal.Instant;
   // The doings the save records as done, which an area counts alongside the statues its unlocked landmarks light
   recordedDoingIds: ReadonlySet<string>;
+  // The Original Resin constants of the game, which the cap, the regeneration and the refills are read by
+  resinParam: ResinParam;
   // Each subarea's label as the open world publishes it, named by its text id.
   // It is drawn while the view is no further out than MAP_REFERENCE_ZOOM_METRES
   subareaLabels: MapSubareaLabel[];
@@ -160,7 +163,7 @@ const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegment
     </ul>
     <MapJumpList class="jumps" :catalogue :game-text :landmarks @jump="(landmark) => chooseLandmark(landmark)" />
     <MapOverlayRegionTag v-if="regionTag" :name="regionTag.name" :progress-segments="regionTag.progressSegments" />
-    <MapOverlayResin :game-text :now :wallet />
+    <MapOverlayResin :game-text :now :resin-param :wallet />
     <MapOverlayDomainsOnly :game-text />
     <MapOverlayTeleport v-model:landmark="chosenLandmark" :catalogue :game-text @jump="(pose) => emit('jump', pose)" />
     <MapOverlayClose :game-text @close="emit('close')" />

@@ -5,6 +5,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinClaim } from "#src/models/originalResin/ResinClaim";
 import type { ResinCost } from "#src/models/originalResin/ResinCost";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { CONDENSED_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -28,6 +29,7 @@ export const claimResinReward = (
   now: Temporal.Instant,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  resinParam: ResinParam,
 ): ResinClaim | undefined => {
   if (cost.condensedResinCount > 0) {
     if (countInventoryItem(inventory.items, CONDENSED_RESIN_ITEM_ID) < cost.condensedResinCount) return undefined;
@@ -43,7 +45,7 @@ export const claimResinReward = (
       materialDataMap,
     );
   }
-  const spentWallet = spendOriginalResin(wallet, cost.resin, now);
+  const spentWallet = spendOriginalResin(wallet, cost.resin, now, resinParam);
   if (!spentWallet) return undefined;
   return routeRewardItems(
     adventureRankTables,

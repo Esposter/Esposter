@@ -171,6 +171,7 @@ const {
   regionDataBaseUrl,
   reliquaryPieceEntryMap,
   reliquarySets,
+  resinParam,
   save,
   seelies,
   serverClockOffsetMs,
@@ -245,6 +246,7 @@ start(
     nameText,
     reliquaryPieceEntryMap,
     reliquarySets,
+    resinParam,
     weaponDataMap: statTables.weaponDataMap,
     worldNow,
   },
@@ -1277,6 +1279,7 @@ useWorldSaveSync({
           :name-text
           :recorded-doing-ids
           :now="worldNow"
+          :resin-param
           :subarea-labels
           :wallet
           @close="closeScreen()"
@@ -1693,6 +1696,7 @@ useWorldSaveSync({
       :random="kitContext.random"
       :recipes="records.craftingRecipes"
       :reliquary-piece-entry-map
+      :resin-param
       :strongboxes="records.craftingStrongboxes"
       :wallet
       :weapon-data-map="statTables.weaponDataMap"
@@ -1719,6 +1723,7 @@ useWorldSaveSync({
       :is-in-realm="false"
       :now="forgeNow"
       :party-character-ids="deployedCharacterIds"
+      :resin-param
       :random="kitContext.random"
       :recipes="forgeRecipes"
       :wallet

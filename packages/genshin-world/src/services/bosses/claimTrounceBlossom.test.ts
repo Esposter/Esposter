@@ -1,5 +1,6 @@
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
@@ -7,7 +8,10 @@ import { claimTrounceBlossom } from "#src/services/bosses/claimTrounceBlossom";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { describe, expect, test } from "vitest";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 describe(claimTrounceBlossom, () => {
   const epoch = Temporal.Instant.fromEpochMilliseconds(0);
@@ -43,6 +47,7 @@ describe(claimTrounceBlossom, () => {
       epoch,
       names,
       materialDataMap,
+      resinParam,
     );
 
     expect(claim?.wallet[Currency.OriginalResin]).toBe(1);
@@ -62,6 +67,7 @@ describe(claimTrounceBlossom, () => {
         epoch,
         names,
         materialDataMap,
+        resinParam,
       ),
     ).toBeUndefined();
   });

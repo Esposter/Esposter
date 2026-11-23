@@ -3,13 +3,17 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CraftingRecipeKind } from "#src/models/crafting/CraftingRecipeKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
+
+const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const createDefinition = (id: number, stackLimit = 99): ItemDefinition => ({
   category: ItemCategory.Material,
@@ -66,6 +70,7 @@ describe(craftRecipe, () => {
     inventory,
     now: EPOCH,
     progress,
+    resinParam,
     wallet,
   });
 
@@ -80,6 +85,7 @@ describe(craftRecipe, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 200 };
     const result = craftRecipe(tierRecipe, 2, resultDefinition, {
       ...craftingState(inventory, wallet, { learnedRecipeIds: [] }),
+      resinParam,
     });
 
     expect(result?.inventory).toStrictEqual({

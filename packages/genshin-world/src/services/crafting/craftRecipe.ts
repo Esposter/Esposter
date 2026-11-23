@@ -3,6 +3,7 @@ import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { checkIsRecipeOpen } from "#src/services/crafting/checkIsRecipeOpen";
@@ -25,18 +26,26 @@ export const craftRecipe = (
     inventory,
     now,
     progress,
+    resinParam,
     wallet,
-  }: { adventureRank: number; inventory: Inventory; now: Temporal.Instant; progress: CraftingProgress; wallet: Wallet },
+  }: {
+    adventureRank: number;
+    inventory: Inventory;
+    now: Temporal.Instant;
+    progress: CraftingProgress;
+    resinParam: ResinParam;
+    wallet: Wallet;
+  },
 ): undefined | { inventory: Inventory; wallet: Wallet } => {
   if (
     !checkIsRecipeOpen(recipe, progress, adventureRank) ||
     !Number.isInteger(count) ||
     count < 1 ||
-    count > computeCraftableCount(recipe, { inventory, wallet }, now)
+    count > computeCraftableCount(recipe, { inventory, resinParam, wallet }, now)
   )
     return undefined;
   const resinCount = recipe.materials.find(({ id }) => id === ORIGINAL_RESIN_ITEM_ID)?.count ?? 0;
-  const spentWallet = spendOriginalResin(wallet, resinCount * count, now);
+  const spentWallet = spendOriginalResin(wallet, resinCount * count, now, resinParam);
   if (!spentWallet) return undefined;
   const items = recipe.materials
     .filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID)

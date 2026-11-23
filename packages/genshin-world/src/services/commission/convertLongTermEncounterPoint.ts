@@ -2,6 +2,7 @@ import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPointConversion } from "#src/models/commission/LongTermEncounterPointConversion";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { HALF_POINTS_PER_ENCOUNTER_POINT, LONG_TERM_RESIN_COST } from "#src/services/commission/constants";
 import { readEncounterPoints } from "#src/services/commission/readEncounterPoints";
@@ -16,6 +17,7 @@ export const convertLongTermEncounterPoint = ({
   longTermEncounterPoints,
   majorVersion,
   now,
+  resinParam,
   storage,
   wallet,
 }: {
@@ -23,6 +25,7 @@ export const convertLongTermEncounterPoint = ({
   longTermEncounterPoints: LongTermEncounterPoints;
   majorVersion: number;
   now: Temporal.Instant;
+  resinParam: ResinParam;
   storage: number;
   wallet: Wallet;
 }): LongTermEncounterPointConversion | undefined => {
@@ -30,7 +33,7 @@ export const convertLongTermEncounterPoint = ({
   if (longTerm.halfPoints < HALF_POINTS_PER_ENCOUNTER_POINT) return undefined;
   const points = readEncounterPoints(encounterPoints, now);
   if (points.halfPoints + HALF_POINTS_PER_ENCOUNTER_POINT > storage) return undefined;
-  const paidWallet = spendOriginalResin(wallet, LONG_TERM_RESIN_COST, now);
+  const paidWallet = spendOriginalResin(wallet, LONG_TERM_RESIN_COST, now, resinParam);
   if (!paidWallet) return undefined;
   return {
     encounterPoints: { ...points, halfPoints: points.halfPoints + HALF_POINTS_PER_ENCOUNTER_POINT },

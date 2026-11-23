@@ -1,3 +1,4 @@
+import { getGameDataObjectPath } from "#src/services/data/getGameDataObjectPath";
 import { readJson } from "#src/services/shared/readJson";
 import { createEvictingPromiseCache } from "@esposter/shared";
 
@@ -8,4 +9,4 @@ const readCachedGameDataObject = createEvictingPromiseCache((url: string) => url
 // The parsed JSON of the object a hash names under its dataset's key, at the host's base, before any reader's schema
 // Has been applied to it
 export const readGameDataObject = (gameDataBaseUrl: string, dataset: string, hash: string): Promise<unknown> =>
-  readCachedGameDataObject(`${gameDataBaseUrl}/${dataset}/${hash}.json`);
+  readCachedGameDataObject(`${gameDataBaseUrl}/${getGameDataObjectPath(dataset, hash)}`);

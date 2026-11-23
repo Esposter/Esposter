@@ -5,6 +5,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { Party } from "#src/models/party/Party";
 import type { RewardItem } from "#src/models/reward/RewardItem";
 import type { RewardRouting } from "#src/models/reward/RewardRouting";
@@ -32,6 +33,7 @@ export const claimPetrifiedTree = (
   now: Temporal.Instant,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  resinParam: ResinParam,
 ): RewardRouting | undefined => {
   const rewards = Array.from({ length: offer.claimCount }, () => drawRewardItems(treeRewards, random)).flat();
   const claim = claimResinReward(
@@ -45,6 +47,7 @@ export const claimPetrifiedTree = (
     now,
     names,
     materialDataMap,
+    resinParam,
   );
   if (!claim) return undefined;
   return { ...claim, characters: gainDeployedCompanionshipExp(characters, rewards, party, friendshipLevels) };

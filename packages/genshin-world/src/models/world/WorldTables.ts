@@ -13,6 +13,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { RegionCityIds } from "#src/models/leyLine/RegionCityIds";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
@@ -62,6 +63,8 @@ export interface WorldTables {
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   // The artifact sets of the reliquary tables, each with its pieces, which the chests roll their artifacts from
   reliquarySets: readonly ReliquarySetData[];
+  // The Original Resin constants the game's constant table holds, which the cap, the regeneration and the refills are read by
+  resinParam: ResinParam;
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
   seelies: Seelie[];
   // The Shrine of Depths keys of Mondstadt's region, each opening the shrines of that region

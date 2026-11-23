@@ -3,6 +3,7 @@ import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ResinParam } from "#src/models/originalResin/ResinParam";
 
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
 import { Currency } from "#src/models/inventory/Currency";
@@ -37,6 +38,7 @@ export const startForge = (
     now,
     partyCharacterIds,
     progress,
+    resinParam,
     wallet,
   }: {
     adventureRank: number;
@@ -48,11 +50,12 @@ export const startForge = (
     now: Temporal.Instant;
     partyCharacterIds: number[];
     progress: ForgeProgress;
+    resinParam: ResinParam;
     wallet: Wallet;
   },
 ): undefined | { inventory: Inventory; progress: ForgeProgress; wallet: Wallet } => {
   const resinCount = recipe.materials.find(({ id }) => id === ORIGINAL_RESIN_ITEM_ID)?.count ?? 0;
-  const spentWallet = spendOriginalResin(wallet, resinCount * count, now);
+  const spentWallet = spendOriginalResin(wallet, resinCount * count, now, resinParam);
   const bagMaterials = recipe.materials.filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID);
   const queueCount = computeForgeQueueCount(adventureRank, forgeQueuePlayerLevels);
   const queueId = Array.from({ length: queueCount }, (_value, index) => index + 1).find(
