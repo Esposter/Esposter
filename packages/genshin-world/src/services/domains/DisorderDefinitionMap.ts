@@ -36,7 +36,12 @@ const DENDRO_REACTIONS: ReadonlySet<ReactionType> = new Set([
   ReactionType.Spread,
 ]);
 
-// The ley line disorders the fight models, by the game's name for each
+// The ley line disorders the fight models, by the game's name for each. Their values stay here, not in a dataset:
+// The dump's AbilityOverrideExcelConfigData names the values of only three of the twelve, which are
+// LevelBuff_LoopDungeon_ElemReactIce_7_0, LevelBuff_TowerBuff_GrassReaction_ElemMasteryDelta and
+// LevelEntity_LoopDungeon_MasteryUp_WindDamageUp_V3.3, whose rows match the amounts here.
+// The other nine have no ability row under their own name, and their level entities in DungeonLevelEntityConfigData
+// Link to no ability row either, so the dump does not tie each disorder to its values
 export const DisorderDefinitionMap: Readonly<Record<string, DomainDisorder>> = {
   LevelBuff_LoopDungeon_ElementAddHurt_Water: {
     amount: 0.1,
