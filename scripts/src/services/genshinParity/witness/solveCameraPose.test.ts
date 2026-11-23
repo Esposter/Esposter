@@ -27,7 +27,7 @@ describe(solveCameraPose, () => {
     const solved = solveCameraPose(correspondences, width, height);
 
     expect(solved.rms).toBeLessThan(1e-3);
-    expect(solved.pose.map((value) => Number(value.toFixed(2)) + 0)).toStrictEqual(pose);
+    for (const [index, value] of pose.entries()) expect(solved.pose[index]).toBeCloseTo(value, 2);
   });
 
   test("refines a pose from a start given for fewer points", () => {
