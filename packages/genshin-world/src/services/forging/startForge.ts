@@ -30,6 +30,7 @@ export const startForge = (
   {
     adventureRank,
     definitions,
+    forgeQueuePlayerLevels,
     inventory,
     isInRealm,
     now,
@@ -39,6 +40,7 @@ export const startForge = (
   }: {
     adventureRank: number;
     definitions: Map<number, ItemDefinition>;
+    forgeQueuePlayerLevels: readonly number[];
     inventory: Inventory;
     isInRealm: boolean;
     now: Temporal.Instant;
@@ -50,7 +52,7 @@ export const startForge = (
   const resinCount = recipe.materials.find(({ id }) => id === ORIGINAL_RESIN_ITEM_ID)?.count ?? 0;
   const spentWallet = spendOriginalResin(wallet, resinCount * count, now);
   const bagMaterials = recipe.materials.filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID);
-  const queueCount = computeForgeQueueCount(adventureRank);
+  const queueCount = computeForgeQueueCount(adventureRank, forgeQueuePlayerLevels);
   const queueId = Array.from({ length: queueCount }, (_value, index) => index + 1).find(
     (id) => !progress.orders.some((order) => order.queueId === id),
   );

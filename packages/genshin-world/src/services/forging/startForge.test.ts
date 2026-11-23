@@ -2,8 +2,10 @@ import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { FORGE_ENHANCEMENT_TYPE, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "#src/services/forging/constants";
 import { startForge } from "#src/services/forging/startForge";
@@ -13,6 +15,8 @@ import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
+
+const { forgeQueuePlayerLevels } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createDefinition = (id: number): ItemDefinition => ({
   category: ItemCategory.Material,
@@ -57,6 +61,7 @@ describe(startForge, () => {
   const startArguments = {
     adventureRank: 2,
     definitions,
+    forgeQueuePlayerLevels,
     inventory: createInventory(6),
     isInRealm: false,
     now: EPOCH,

@@ -2,18 +2,18 @@ import type { ForgeOrder } from "#src/models/forging/ForgeOrder";
 import type { ForgeQueueSlot } from "#src/models/forging/ForgeQueueSlot";
 
 import { computeForgeOrderDoneCount } from "#src/services/forging/computeForgeOrderDoneCount";
-import { FORGE_QUEUE_PLAYER_LEVELS } from "#src/services/forging/constants";
 import { ForgeQueueState } from "genshin-interface";
 
 // The queues at the blacksmith at `now`, one for each rank that opens one, each holding the order whose `queueId` names it:
 // Forging while units are left, complete once every unit is done and waits to be obtained, idle while no order is in it,
-// And locked until the Adventure Rank that opens it
+// And locked until the Adventure Rank that opens it, the ranks being those of `forgeQueuePlayerLevels`
 export const computeForgeQueueSlots = (
   orders: ForgeOrder[],
   adventureRank: number,
   now: Temporal.Instant,
+  forgeQueuePlayerLevels: readonly number[],
 ): ForgeQueueSlot[] =>
-  FORGE_QUEUE_PLAYER_LEVELS.map((unlockRank, index) => {
+  forgeQueuePlayerLevels.map((unlockRank, index) => {
     const id = index + 1;
     const order = orders.find((queueOrder) => queueOrder.queueId === id);
     if (!order)

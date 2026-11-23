@@ -8,6 +8,7 @@ export interface RawStatTables {
   characterExpToNext: unknown;
   characterGrowCurves: unknown;
   characters: unknown;
+  forgeQueuePlayerLevels: unknown;
   masterlessLevelLifts: unknown;
   weaponEnhancementOres: unknown;
   weaponGrowCurves: unknown;

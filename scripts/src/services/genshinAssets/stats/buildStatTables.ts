@@ -1,5 +1,6 @@
 import type { ExcelAvatarLevelRow } from "#src/models/genshinAssets/stats/ExcelAvatarLevelRow";
 import type { ExcelCurveRow } from "#src/models/genshinAssets/stats/ExcelCurveRow";
+import type { ExcelForgeUpdateRow } from "#src/models/genshinAssets/stats/ExcelForgeUpdateRow";
 import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
@@ -24,6 +25,7 @@ import { compareExperienceDescending, getExpMaterials } from "#src/services/gens
 import { getMasterlessLevelLifts } from "#src/services/genshinAssets/stats/getMasterlessLevelLifts";
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
 import { toCharacterExpToNext } from "#src/services/genshinAssets/stats/toCharacterExpToNext";
+import { toForgeQueuePlayerLevels } from "#src/services/genshinAssets/stats/toForgeQueuePlayerLevels";
 import { toGrowCurves } from "#src/services/genshinAssets/stats/toGrowCurves";
 import { toTalentTables } from "#src/services/genshinAssets/stats/toTalentTables";
 import { toTalentUpgradeMap } from "#src/services/genshinAssets/stats/toTalentUpgradeMap";
@@ -64,6 +66,7 @@ export const buildStatTables = (): { notes: string[]; publication: GameDataPubli
     characters: characterDatas,
     characterSkillKits: getCharacterSkillKits(),
     characterTalentKits,
+    forgeQueuePlayerLevels: toForgeQueuePlayerLevels(readExcelTable<ExcelForgeUpdateRow>("ForgeUpdateExcelConfigData")),
     masterlessLevelLifts: getMasterlessLevelLifts(),
     talentUpgrades: toTalentUpgradeMap(proudSkillRows, combatGroupIds),
     weaponEnhancementOres: getExpMaterials(materialRows, WEAPON_EXP_ITEM_USE).toSorted(compareExperienceDescending),

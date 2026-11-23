@@ -1712,6 +1712,7 @@ useWorldSaveSync({
       :adventure-rank-tables
       :completed-main-quest-ids
       :definitions="forgeDefinitions"
+      :forge-queue-player-levels="statTables.forgeQueuePlayerLevels"
       :game-text
       :inventory
       :is-in-realm="false"

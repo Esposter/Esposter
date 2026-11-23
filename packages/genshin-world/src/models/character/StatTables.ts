@@ -22,6 +22,8 @@ export interface StatTables {
   // The EXP each level needs to rise past it, by its level less one
   characterExpToNext: readonly number[];
   characterGrowCurveMap: ReadonlyMap<string, readonly number[]>;
+  // The Adventure Rank each queue at the blacksmith opens at, the first queue's at rank one
+  forgeQueuePlayerLevels: readonly number[];
   // The lifts past a level cap with Masterless Stella Fortuna, each by the level it lifts from
   masterlessLevelLiftMap: ReadonlyMap<number, MasterlessLevelLift>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;

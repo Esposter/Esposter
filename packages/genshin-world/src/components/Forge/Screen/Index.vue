@@ -31,6 +31,8 @@ interface Props {
   completedMainQuestIds: ReadonlySet<string>;
   // The items the forge yields and refunds, by their item ids
   definitions: Map<number, ItemDefinition>;
+  // The Adventure Rank each queue at the blacksmith opens at, the first queue's at rank one, as the game's forge update table holds them
+  forgeQueuePlayerLevels: readonly number[];
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the player is in the Serenitea Pot's realm, which refuses a recipe that takes a Magical Crystal Chunk
@@ -59,6 +61,7 @@ const {
   adventureRankTables,
   completedMainQuestIds,
   definitions,
+  forgeQueuePlayerLevels,
   gameText,
   isInRealm,
   now,
@@ -98,7 +101,9 @@ const materialCountLabel = computed(() => {
 const refusalLabel = computed(() =>
   pickedRecipe.value ? computeForgeRefusalLabel(pickedRecipe.value, amount.value, progress.value, now, gameText) : "",
 );
-const queueSlots = computed(() => computeForgeQueueSlots(progress.value.orders, adventureRank, now));
+const queueSlots = computed(() =>
+  computeForgeQueueSlots(progress.value.orders, adventureRank, now, forgeQueuePlayerLevels),
+);
 // A queue holds an order while it forges, or once the order is done and waits to be obtained
 const isQueueOccupied = ({ state }: ForgeQueueSlot) =>
   state === ForgeQueueState.Forging || state === ForgeQueueState.Complete;
@@ -169,6 +174,7 @@ const start = () => {
   const started = startForge(recipe, amount.value, {
     adventureRank,
     definitions,
+    forgeQueuePlayerLevels,
     inventory: inventory.value,
     isInRealm,
     now,

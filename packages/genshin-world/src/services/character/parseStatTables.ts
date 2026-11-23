@@ -21,6 +21,7 @@ export const parseStatTables = ({
   characterExpToNext,
   characterGrowCurves,
   characters,
+  forgeQueuePlayerLevels,
   masterlessLevelLifts,
   weaponEnhancementOres,
   weaponGrowCurves,
@@ -54,6 +55,7 @@ export const parseStatTables = ({
   characterExpMaterials: z.array(expMaterialSchema).parse(characterExpMaterials),
   characterExpToNext: z.array(z.number()).parse(characterExpToNext),
   characterGrowCurveMap: new Map(Object.entries(growCurveRecordSchema.parse(characterGrowCurves))),
+  forgeQueuePlayerLevels: z.array(z.int().positive()).parse(forgeQueuePlayerLevels),
   masterlessLevelLiftMap: new Map(
     z
       .array(masterlessLevelLiftSchema)

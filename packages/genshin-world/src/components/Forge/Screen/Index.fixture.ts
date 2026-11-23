@@ -25,7 +25,8 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
-const { weaponDataMap } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const { weaponDataMap } = statTables;
 // Every recipe the Materials tab lists, in the game's order, the enhancement ores and the weapons alike
 const recipes: ForgeRecipe[] = await readForgeRecipes(GAME_DATA_LOCAL_BASE_URL);
 // The weapons the recipes yield, each named in English, as the world's forge screen reads them
@@ -109,6 +110,7 @@ export const props = {
   amount: 5,
   completedMainQuestIds: new Set<string>(),
   definitions,
+  forgeQueuePlayerLevels: statTables.forgeQueuePlayerLevels,
   gameText: ENGLISH_GAME_TEXT,
   inventory: createBag(createOreEntry(0, 38)),
   isInRealm: false,
