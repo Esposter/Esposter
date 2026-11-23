@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildForgingDailyPointCap } from "#src/services/genshinAssets/forging/buildForgingDailyPointCap";
 import { buildForgingRecipes } from "#src/services/genshinAssets/forging/buildForgingRecipes";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

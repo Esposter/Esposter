@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishHostedAssetFiles } from "#src/services/hostedAssets/publishHostedAssetFiles";
 import { readHostedAssetProduct } from "#src/services/hostedAssets/readHostedAssetProduct";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 
 export const publishCommand: SubCommandsDef[string] = defineCommand({

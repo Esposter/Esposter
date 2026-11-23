@@ -1,6 +1,5 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildEnemyDropSources } from "#src/services/genshinAssets/enemies/buildEnemyDropSources";
 import { buildEnemyKinds } from "#src/services/genshinAssets/enemies/buildEnemyKinds";
@@ -9,6 +8,7 @@ import { parseEnemyKinds } from "#src/services/genshinAssets/enemies/parseEnemyK
 import { readMaterialIdsByName } from "#src/services/genshinAssets/enemies/readMaterialIdsByName";
 import { toDropFamilyLines } from "#src/services/genshinAssets/enemies/toDropFamilyLines";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameLanguage } from "genshin-text";
 import { GameDataset } from "genshin-world";

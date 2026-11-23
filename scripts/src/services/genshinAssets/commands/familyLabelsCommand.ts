@@ -1,6 +1,5 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { buildFamilyLabelEnemyKindIdMap } from "#src/services/genshinAssets/camps/buildFamilyLabelEnemyKindIdMap";
 import {
   ENEMY_FAMILY_PAGE_TITLES,
@@ -17,6 +16,7 @@ import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants
 import { INTERACTIVE_MAP_ENEMY_CATEGORY_ID } from "#src/services/genshinAssets/points/constants";
 import { readInteractiveMapLabels } from "#src/services/genshinAssets/points/readInteractiveMapLabels";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { formatText } from "#src/services/shared/formatText";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";

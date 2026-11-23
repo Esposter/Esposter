@@ -1,6 +1,5 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildFishingAssociationGoods } from "#src/services/genshinAssets/shops/buildFishingAssociationGoods";
 import { buildGcgCardShopGoods } from "#src/services/genshinAssets/shops/buildGcgCardShopGoods";
@@ -11,6 +10,7 @@ import { buildPaimonsBargainsGoods } from "#src/services/genshinAssets/shops/bui
 import { buildPaimonsBargainsRotation } from "#src/services/genshinAssets/shops/buildPaimonsBargainsRotation";
 import { buildRealmDepotGoods } from "#src/services/genshinAssets/shops/buildRealmDepotGoods";
 import { buildSouvenirGoods } from "#src/services/genshinAssets/shops/buildSouvenirGoods";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
 import { PaletteRegion } from "#src/models/genshinAssets/palette/PaletteRegion";
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishObjectsStep } from "#src/services/gameData/publishObjectsStep";
 import { sampleRegionPalette } from "#src/services/genshinAssets/palette/sampleRegionPalette";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 

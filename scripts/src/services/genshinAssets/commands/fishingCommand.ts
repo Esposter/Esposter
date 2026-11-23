@@ -1,12 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildFishingPoints } from "#src/services/genshinAssets/fishing/buildFishingPoints";
 import { buildFishingProps } from "#src/services/genshinAssets/fishing/buildFishingProps";
 import { buildFishingTables } from "#src/services/genshinAssets/fishing/buildFishingTables";
 import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRegionMap";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

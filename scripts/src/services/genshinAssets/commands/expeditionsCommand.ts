@@ -1,11 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildExpeditionBonuses } from "#src/services/genshinAssets/expeditions/buildExpeditionBonuses";
 import { buildExpeditionLimits } from "#src/services/genshinAssets/expeditions/buildExpeditionLimits";
 import { buildExpeditionPassives } from "#src/services/genshinAssets/expeditions/buildExpeditionPassives";
 import { buildMondstadtExpeditions } from "#src/services/genshinAssets/expeditions/buildMondstadtExpeditions";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

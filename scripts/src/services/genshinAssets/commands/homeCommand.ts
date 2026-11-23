@@ -1,12 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildHomeAreas } from "#src/services/genshinAssets/home/buildHomeAreas";
 import { buildHomeEvents } from "#src/services/genshinAssets/home/buildHomeEvents";
 import { buildHomeFurnishings } from "#src/services/genshinAssets/home/buildHomeFurnishings";
 import { buildHomeGardens } from "#src/services/genshinAssets/home/buildHomeGardens";
 import { buildHomeRules } from "#src/services/genshinAssets/home/buildHomeRules";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

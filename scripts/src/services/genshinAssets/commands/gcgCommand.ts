@@ -1,12 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildGcgDeck } from "#src/services/genshinAssets/gcg/buildGcgDeck";
 import { buildGcgGames } from "#src/services/genshinAssets/gcg/buildGcgGames";
 import { buildGcgLevels } from "#src/services/genshinAssets/gcg/buildGcgLevels";
 import { buildGcgStandardRule } from "#src/services/genshinAssets/gcg/buildGcgStandardRule";
 import { GcgDeckIdCreatedCardIdsMap } from "#src/services/genshinAssets/gcg/constants";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

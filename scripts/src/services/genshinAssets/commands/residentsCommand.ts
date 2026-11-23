@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { writeResidents } from "#src/services/genshinAssets/residents/writeResidents";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 
 export const residentsCommand: SubCommandsDef[string] = defineCommand({

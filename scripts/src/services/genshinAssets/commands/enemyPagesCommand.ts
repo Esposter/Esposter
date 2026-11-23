@@ -1,11 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { buildEnemyKinds } from "#src/services/genshinAssets/enemies/buildEnemyKinds";
 import { parseEnemyKinds } from "#src/services/genshinAssets/enemies/parseEnemyKinds";
 import { readEnemyWikiPages } from "#src/services/genshinAssets/enemies/readEnemyWikiPages";
 import { toEnemyWikiPageTitles } from "#src/services/genshinAssets/enemies/toEnemyWikiPageTitles";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameLanguage } from "genshin-text";
 

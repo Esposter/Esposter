@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { fitRegionCamps } from "#src/services/genshinAssets/fit/fitRegionCamps";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 
 export const enemyCampsCommand: SubCommandsDef[string] = defineCommand({

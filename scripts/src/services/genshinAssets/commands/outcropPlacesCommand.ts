@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { fitRegionOutcrops } from "#src/services/genshinAssets/fit/fitRegionOutcrops";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 
 export const outcropPlacesCommand: SubCommandsDef[string] = defineCommand({

@@ -1,12 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { formatMeasurement } from "#src/services/genshinAssets/commands/formatMeasurement";
 import { measureAvatarHeight } from "#src/services/genshinAssets/measure/measureAvatarHeight";
 import { measureVerticalExtent } from "#src/services/genshinAssets/measure/measureVerticalExtent";
 import { publishCharacterScale } from "#src/services/genshinAssets/measure/publishCharacterScale";
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { defineCommand } from "citty";
 import { parsePmx } from "genshin-engine";

@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCraftingBenchPlaces } from "#src/services/genshinAssets/crafting/buildCraftingBenchPlaces";
 import { buildCraftingRecipes } from "#src/services/genshinAssets/crafting/buildCraftingRecipes";
 import { buildCraftingStrongboxes } from "#src/services/genshinAssets/crafting/buildCraftingStrongboxes";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

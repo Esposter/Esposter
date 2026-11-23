@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildFrostbearingTreePlaces } from "#src/services/genshinAssets/offerings/buildFrostbearingTreePlaces";
 import { buildOfferingLevels } from "#src/services/genshinAssets/offerings/buildOfferingLevels";
 import { buildOfferingPlaces } from "#src/services/genshinAssets/offerings/buildOfferingPlaces";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

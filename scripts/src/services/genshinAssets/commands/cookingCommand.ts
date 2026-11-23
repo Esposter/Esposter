@@ -1,12 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCookingRecipes } from "#src/services/genshinAssets/cooking/buildCookingRecipes";
 import { buildCookingTalents } from "#src/services/genshinAssets/cooking/buildCookingTalents";
 import { buildDishes } from "#src/services/genshinAssets/cooking/buildDishes";
 import { buildProcessingRecipes } from "#src/services/genshinAssets/cooking/buildProcessingRecipes";
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

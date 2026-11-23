@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishObjectsStep } from "#src/services/gameData/publishObjectsStep";
 import { readAuthoredGameData } from "#src/services/gameData/readAuthoredGameData";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 
 export const authoredCommand: SubCommandsDef[string] = defineCommand({

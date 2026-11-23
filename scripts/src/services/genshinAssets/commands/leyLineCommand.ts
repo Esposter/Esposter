@@ -4,7 +4,6 @@ import type { ExcelBlossomSectionOrderRow } from "#src/models/genshinAssets/leyL
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { REWARD_PREVIEW_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
 import { buildLeyLineRegions } from "#src/services/genshinAssets/leyLine/buildLeyLineRegions";
@@ -12,6 +11,7 @@ import { toLeyLineRegions } from "#src/services/genshinAssets/leyLine/toLeyLineR
 import { toRegionCityIds } from "#src/services/genshinAssets/leyLine/toRegionCityIds";
 import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRegionMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

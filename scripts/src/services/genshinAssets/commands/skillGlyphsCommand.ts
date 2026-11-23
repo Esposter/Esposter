@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildSkillGlyphs } from "#src/services/genshinAssets/skillGlyphs/buildSkillGlyphs";
 import { SKILL_GLYPHS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/skillGlyphs/constants";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 import { mkdirSync, writeFileSync } from "node:fs";

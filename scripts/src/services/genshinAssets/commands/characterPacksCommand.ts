@@ -1,6 +1,5 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCharacterPackIndex } from "#src/services/genshinAssets/characterPacks/buildCharacterPackIndex";
@@ -8,6 +7,7 @@ import { CHARACTER_PACKS_DIRECTORY } from "#src/services/genshinAssets/character
 import { publishCharacterPacks } from "#src/services/genshinAssets/characterPacks/publishCharacterPacks";
 import { readCharacterPackFiles } from "#src/services/genshinAssets/characterPacks/readCharacterPackFiles";
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";

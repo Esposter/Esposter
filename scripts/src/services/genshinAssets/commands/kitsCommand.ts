@@ -1,11 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildKitPublication } from "#src/services/genshinAssets/kits/buildKitPublication";
 import { compareKits } from "#src/services/genshinAssets/kits/compareKits";
 import { GCSIM_CACHE_DIRECTORY, GCSIM_TAG, WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { readKitInputs } from "#src/services/genshinAssets/kits/readKitInputs";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

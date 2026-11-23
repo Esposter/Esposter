@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildArchive } from "#src/services/genshinAssets/archive/buildArchive";
 import { buildArchiveText } from "#src/services/genshinAssets/archive/buildArchiveText";
 import { buildBookBodyPublication } from "#src/services/genshinAssets/archive/buildBookBodyPublication";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 

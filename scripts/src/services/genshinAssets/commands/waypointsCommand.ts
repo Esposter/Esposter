@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { fitRegionWaypoints } from "#src/services/genshinAssets/fit/fitRegionWaypoints";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 
 export const waypointsCommand: SubCommandsDef[string] = defineCommand({

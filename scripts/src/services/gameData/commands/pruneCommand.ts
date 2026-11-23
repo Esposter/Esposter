@@ -2,13 +2,13 @@
 import type { SubCommandsDef } from "citty";
 
 import { HostedAssetMissingIndexPolicy } from "#src/models/hostedAssets/HostedAssetMissingIndexPolicy";
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
 import { pruneHostedAssets } from "#src/services/hostedAssets/pruneHostedAssets";
 import { readHostedAssetReachableObjects } from "#src/services/hostedAssets/readHostedAssetReachableObjects";
 import { readLiveHostedAssetLocks } from "#src/services/hostedAssets/readLiveHostedAssetLocks";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { runGit } from "#src/services/shared/runGit";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";

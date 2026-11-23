@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { describeSpriteAssets, exportSpritesByName } from "#src/services/genshinAssets/sprites/exportSpritesByName";
+import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
 
