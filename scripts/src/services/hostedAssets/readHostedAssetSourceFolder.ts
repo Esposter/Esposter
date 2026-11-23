@@ -19,7 +19,9 @@ export const readHostedAssetSourceFolder = async (
   unhostedExtensions: readonly string[],
 ): Promise<HostedAssetSourceFile[]> => {
   const directory = join(repositoryRoot, folder);
-  const entries = await readdir(directory, { recursive: true, withFileTypes: true });
+  const entries = (await readdir(directory, { recursive: true, withFileTypes: true })).filter(
+    (entry) => !unhostedExtensions.includes(extname(entry.name)),
+  );
   // A symbolic link is refused by name, since a walk that skipped it would drop its key from the lock without a word
   const link = entries.find((entry) => entry.isSymbolicLink());
   if (link !== undefined)
@@ -29,7 +31,7 @@ export const readHostedAssetSourceFolder = async (
       "is a symbolic link, which a publish does not follow",
     );
   const paths = entries
-    .filter((entry) => entry.isFile() && !unhostedExtensions.includes(extname(entry.name)))
+    .filter((entry) => entry.isFile())
     .map((entry) => join(entry.parentPath, entry.name))
     .toSorted();
   return settleAll(

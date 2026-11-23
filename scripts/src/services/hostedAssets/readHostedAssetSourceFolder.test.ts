@@ -73,6 +73,18 @@ describe(readHostedAssetSourceFolder, () => {
     expect(files.map(({ key }) => key)).toStrictEqual(["tile.png"]);
   });
 
+  // The link is an unhosted file's, which the walk never publishes, so its refusal would fail a publish over nothing
+  test("a symbolic link of an unhosted extension is not refused", async () => {
+    expect.hasAssertions();
+
+    await writeFile(join(repositoryRoot, folder, "tile.png"), "b");
+    await symlink(join(repositoryRoot, "elsewhere.ts"), join(repositoryRoot, folder, "map.ts"));
+
+    const files = await readHostedAssetSourceFolder(repositoryRoot, folder, [".ts"]);
+
+    expect(files.map(({ key }) => key)).toStrictEqual(["tile.png"]);
+  });
+
   test("every file is read in key order, named by the hash of its bytes", async () => {
     expect.hasAssertions();
 
