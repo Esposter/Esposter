@@ -34,4 +34,4 @@ Run each command from the repository root unless it changes directory. The token
 
 ## 3. Archive
 
-- [ ] 3.1 Once 2.1 to 2.10 have passed, archive the change: `pnpm exec openspec archive infra-tokens-as-code --yes`. The spec moves to "openspec/specs/infra/cloudflare-tokens/", and `openspec/specs/infra/README.md` gains its index line. Verify: `pnpm exec openspec validate --all --strict --no-interactive` passes, and `openspec/changes/infra-tokens-as-code` no longer exists.
+- [x] 3.1 Once 2.1 to 2.10 have passed, archive the change: `pnpm exec openspec archive infra-tokens-as-code --yes`. The spec moves to "openspec/specs/infra/cloudflare-tokens/", and `openspec/specs/infra/README.md` gains its index line. Verify: `pnpm exec openspec validate --all --strict --no-interactive` passes, and `openspec/changes/infra-tokens-as-code` no longer exists.

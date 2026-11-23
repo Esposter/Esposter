@@ -4,6 +4,7 @@
 
 - [Pulumi layout](pulumi-layout/design.md) — how resources are laid out in Pulumi: one resource per file, folders by resource type, names built by one function, the provider split.
 - [Pulumi source of truth](pulumi-source-of-truth/design.md) — the Workers' configuration, declared in code, with its secrets read from the secrets environment.
+- [Cloudflare tokens](cloudflare-tokens/design.md) — every Cloudflare account token declared in the program, each consumer holding only the permission groups its calls need, with the bootstrap token the one made by hand.
 - [Branch namespaces](branch-namespaces/design.md) — whose a branch is, read off its name alone, and the rulesets that make the name the rule.
 - [Claude interface](claude-interface/README.md) — Claude Code given a personality and a voice: a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice, and a set of mods in the persona's colours.
 - [Cost & Security Posture](cost-and-security-posture/design.md) — the cost ceiling the estate runs under, and the posture decisions it keeps on purpose.

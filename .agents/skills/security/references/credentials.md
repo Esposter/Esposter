@@ -1,6 +1,6 @@
 # Credentials
 
-Read when a change adds, widens, renames, rotates or deletes a credential: a Cloudflare token, an ESC key, a GitHub Actions secret or a Worker secret. It also owns how a session handles a value it is given to use. The Cloudflare token list, its consumers and the bootstrap order are not on this page: they are the spec's, in the change that owns them (`openspec/changes/infra-tokens-as-code/`, archived into "openspec/specs/infra/cloudflare-tokens/").
+Read when a change adds, widens, renames, rotates or deletes a credential: a Cloudflare token, an ESC key, a GitHub Actions secret or a Worker secret. It also owns how a session handles a value it is given to use. The Cloudflare token list, its consumers and the bootstrap order are not on this page: they are the spec's, in `openspec/specs/infra/cloudflare-tokens/design.md`.
 
 ## Where a secret lives
 
