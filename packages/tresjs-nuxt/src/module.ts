@@ -53,8 +53,10 @@ const tresjsModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>(
     addComponent({ filePath: await resolvePath(resolve("./runtime/TresCanvas.client")), name: TRES_CANVAS_NAME });
     addComponent({ filePath: await resolvePath(resolve("./runtime/TresCanvas.server")), name: TRES_CANVAS_NAME });
     if (options.glsl) {
-      // The plugin is an optional peer, so it is loaded only when enabled: a static import would fail every consumer that leaves it out
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- an optional peer, loaded only when the option asks for it
+      // The plugin is an optional peer, so it is loaded only when enabled: a static import would fail every consumer
+      // That leaves it out
+      // An optional
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- peer, loaded only when the option asks for it
       const { default: glsl } = await import(GLSL_PACKAGE_NAME);
       addVitePlugin(glsl());
     }

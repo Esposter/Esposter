@@ -3,7 +3,8 @@ import { getDependencyNames } from "#src/services/getDependencyNames";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-// The app's own manifest and the one above it when the app sits in a monorepo, where a @tresjs package is often installed
+// The app's own manifest and the one above it when the app sits in a monorepo, where a @tresjs package is often
+// Installed
 export const getTresPackageNames = async (rootDirectory: string): Promise<string[]> => {
   const parentDirectory = dirname(rootDirectory);
   const directories = existsSync(join(parentDirectory, "package.json"))
