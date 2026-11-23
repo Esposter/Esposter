@@ -1436,6 +1436,132 @@
       "scope": "login/walkway",
       "sha256": "7ffee328bf0ef48dfcc62475d5573f0479a2c7fcb789cd9cf8340cf3dde2cc4c"
     },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-a-2-v2-rr1.ogg": {
+      "bytes": 36678,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "41bf32d93b9e4b868c38f91d0ae7b3bb5ebef3cd7c1f35388e2f00a87c85ff60"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-c3-v2-rr1.ogg": {
+      "bytes": 35336,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "fbe01e29d222a5f524a8ff9f00dc3c31f06b05efc7d4a65e3ca8b544c6ad9890"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-c3-v3-rr1.ogg": {
+      "bytes": 34838,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "5b52bb9a26c7e35da2f5dea21da4ef5a5e58d58fb9053a72d9487c8aa68bce8a"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-d3-v2-rr1.ogg": {
+      "bytes": 38531,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "501948fc4bfb825cadb74044dae0e70f75f0aa9ed7fb9de9f65e6de14c8c3886"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-e3-v2-rr1.ogg": {
+      "bytes": 43336,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "ee3c8cd95896f3ee0c000aefed9bff34952174230d3c14760f18cb2f39833526"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-e3-v3-rr1.ogg": {
+      "bytes": 36501,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "34a11fe122eed244a118b9f407fd23e7ee52472d93c57cee037047ce682b7558"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-f-3-v2-rr1.ogg": {
+      "bytes": 39213,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "c9d10a7bf12cd1d181e79d0877842f82e96bf1e9a8124042c21084ccf1bf7357"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-f-3-v3-rr1.ogg": {
+      "bytes": 38130,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "f5e2c83cafa27e3ec480c64fbc840f25bd4370bb4d9b203db36d6e57f3d38dd1"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-g-3-v2-rr1.ogg": {
+      "bytes": 27950,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "d7f2ce0f337bb981b0bc20f348252dca7a05b9da678a0007f4b14617705faeb6"
+    },
+    "loginRecordings/vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-g-3-v3-rr1.ogg": {
+      "bytes": 32541,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "47d9354e9aa355d86c75f7ea174a8585f7993505629f2b4ea68fdd38bce5671d"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-a-3-r01-main.ogg": {
+      "bytes": 55473,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "f206d9d4bbbd0ed9248d2be63d03a61a450b1f1b1ab238583bb429c9ea188834"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-a4-r01-main.ogg": {
+      "bytes": 52069,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "6f71b89d428422c72015436e40b500b0e1ca168967101f5a7d0ea87d6c4e429d"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-c3-r01-main.ogg": {
+      "bytes": 102640,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "802c50a08798c6fffaf4ab228237772c984a9afbf836f7042ee5c37824f3f9f3"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-c4-r01-main.ogg": {
+      "bytes": 60150,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "1c7c1161e00ead33435ebcc6bfda50c29f02cc705c2e63e97b6d71174954d0ed"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-c5-r01-main.ogg": {
+      "bytes": 45745,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "d586374df77388cd6c86f17037c795603efcbf4c02b391e236f439b39691930d"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-d4-r01-main.ogg": {
+      "bytes": 62529,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "d6ca58298c8d219dd84d6c14d8ffe6f8e2a1aaa137de5571f363174a43d1ba39"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-d5-r01-main.ogg": {
+      "bytes": 52813,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "5e33457b8859234ece4d27ddb4ea9cfc67e9315b6f7473d17a3a4d5337adb820"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-e4-r01-main.ogg": {
+      "bytes": 53147,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "7458728b99a8ddd9493766c0a30a6028a7cd9047652cbffab4d11abdc8bbe44a"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-e5-r01-main.ogg": {
+      "bytes": 49235,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "330b8b3674215e14bfd989211ac3b0c4a3c9c63faac08cd5e36b0d434653934c"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-f-4-r01-main.ogg": {
+      "bytes": 44980,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "acca53605e98e96183eeb6e8fb86d9a6e562e5dc1253eb61d7a22dd78720201e"
+    },
+    "loginRecordings/vcsl-idiophones-struck-idiophones-hand-chimes-sus-g-4-r01-main.ogg": {
+      "bytes": 47171,
+      "extension": ".ogg",
+      "scope": "loginRecordings",
+      "sha256": "d5bb24f93ff01f4dc19df048e48df11771787152b4a8726dda4f0c4e0d40dbcd"
+    },
     "mail/maxCount": {
       "bytes": 4,
       "extension": ".json",
