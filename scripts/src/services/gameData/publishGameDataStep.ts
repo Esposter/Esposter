@@ -6,6 +6,7 @@ import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
 import { commitHostedAssetLock } from "#src/services/hostedAssets/commitHostedAssetLock";
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
+import { formatIdleHostedAssetPublish } from "#src/services/hostedAssets/formatIdleHostedAssetPublish";
 import { planHostedAssetPublication } from "#src/services/hostedAssets/planHostedAssetPublication";
 import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
 import { readOtherHostedAssetLocks } from "#src/services/hostedAssets/readOtherHostedAssetLocks";
@@ -31,8 +32,8 @@ export const publishGameDataStep = async ({
     product: GAME_DATA_PRODUCT,
     scopes,
   });
-  if (result.outcome === HostedAssetPublishOutcome.Unchanged) return `${label}: unchanged, no request made`;
-  if (result.outcome === HostedAssetPublishOutcome.Empty) return `${label}: nothing published, no request made`;
+  if (result.outcome === HostedAssetPublishOutcome.Unchanged || result.outcome === HostedAssetPublishOutcome.Empty)
+    return formatIdleHostedAssetPublish(label, result.outcome);
   if (result.outcome === HostedAssetPublishOutcome.DryRun)
     return [
       `${label}: dry run, ${result.storedObjectCount} records would be published`,
