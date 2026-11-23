@@ -17,8 +17,8 @@ describe(createTRPCMsw, () => {
   const endpoint = "http://localhost/trpc";
   const webSocketUrl = "ws://localhost/trpc";
   const t = initTRPC.context<{ authorization: string; responseHeaders: Headers }>().create({
-    // Visible in every rejection below, which is what proves the real formatter ran rather than a copy of its shape. The
-    // Stack is the call site of each host, so it is dropped to let a mock body equal the real server body
+    // Visible in every rejection below, which is what proves the real formatter ran rather than a copy of its shape.
+    // The Stack is the call site of each host, so it is dropped to let a mock body equal the real server body
     errorFormatter: ({ shape }) => {
       const { stack: _stack, ...data } = shape.data;
       return { ...shape, data, message: `formatted ${shape.message}` };
