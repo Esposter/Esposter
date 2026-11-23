@@ -32,7 +32,7 @@ A token's value a person or a workflow needs is a stack output under `apps/infra
 pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:dev_R2_ACCESS_KEY_ID "$(cd apps/infra && pulumi stack output devR2AccessKeyId --show-secrets)" --secret
 ```
 
-The keys this writes are `<env>_R2_ACCESS_KEY_ID` and `<env>_R2_SECRET_ACCESS_KEY` for an environment's R2 publishers, and `<env>_REALTIMEKIT_API_TOKEN` for its RealtimeKit token, which the realtime Worker and `realtimekit:provision` read. `realtimekit:provision` writes the app id to `<env>_REALTIMEKIT_APP_ID` itself.
+The keys this writes are `<env>_R2_ACCESS_KEY_ID` and `<env>_R2_SECRET_ACCESS_KEY` for an environment's R2 publishers, and `<env>_REALTIMEKIT_API_TOKEN` for its RealtimeKit token, which the realtime Worker and `realtimekit:provision` read. `realtimekit:provision` writes the app id to `<env>_REALTIMEKIT_APP_ID` itself. The backfill token's key is `CLOUDFLARE_BACKFILL_API_TOKEN`, written from the `backfillApiToken` output, and a backfill run loads it as `CLOUDFLARE_API_TOKEN`.
 
 Every environment and account Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`), and a Pulumi logical name is that name. The zone, its DNS records, its rulesets and the Workers custom domains are named from their domain as literals instead, as that page's Pulumi section sets out. A resource applied under a different name previews as a delete and a create, and `protect: true` blocks the delete. Those resources hold data, so the move is the create, cutover and delete sequence on the pulumi-infra migrations page, not an alias.
 
