@@ -12,7 +12,7 @@ export const assertHostedAssetSource = ({ bytes, path }: { bytes: number; path: 
     throw new InvalidOperationError(
       Operation.Read,
       path,
-      "is lossless or uncompressed audio, which is published as MP3 instead",
+      "is lossless or uncompressed audio, which is published as MP3 or Ogg instead",
     );
   if (bytes > HOSTED_OBJECT_MAX_BYTES)
     throw new InvalidOperationError(Operation.Read, path, `is over the ${HOSTED_OBJECT_MAX_BYTES} byte cap`);

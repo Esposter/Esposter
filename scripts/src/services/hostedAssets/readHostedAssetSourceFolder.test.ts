@@ -26,7 +26,7 @@ describe(readHostedAssetSourceFolder, () => {
     await writeFile(join(repositoryRoot, folder, `${TEST_FILENAME}.wav`), "");
 
     await expect(readHostedAssetSourceFolder(repositoryRoot, folder, [])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a/a.wav, is lossless or uncompressed audio, which is published as MP3 instead]`,
+      `[InvalidOperationError: Invalid operation: Read, name: a/a.wav, is lossless or uncompressed audio, which is published as MP3 or Ogg instead]`,
     );
   });
 
