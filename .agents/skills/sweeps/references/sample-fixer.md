@@ -42,4 +42,4 @@ One JSON line per finding, in the result file beside the unit file, `<n>.result.
 
 A defect counts toward its question's sample unless its outcome is `refuted`, since a defect left open is a defect found, so be exact. The sampled count reads these lines and refuses any other outcome, naming the line.
 
-The final reply is one line: `fixer <id>: units <n>, fixed <a>, refuted <b>, skill <c>, commits <d>, landed yes|no`.
+The final reply is one line: `fixer <id>: units <n>, fixed <a>, refuted <b>, skill <c>, open <e>, commits <d>, landed yes|no`. Every finding is counted in exactly one of `fixed`, `refuted`, `skill` or `open`, so the counts sum to the findings in the units.
