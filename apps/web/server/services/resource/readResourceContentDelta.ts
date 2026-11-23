@@ -9,8 +9,8 @@ import {
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { DatabaseEntityType, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, getWindowLog, Operation } from "@esposter/shared";
+import { getContentAddress } from "@esposter/shared-node/cache";
 import { TRPCError } from "@trpc/server";
-import { createHash } from "node:crypto";
 import { promisify } from "node:util";
 import { constants, zstdDecompress } from "node:zlib";
 
@@ -31,7 +31,7 @@ export const readResourceContentDelta = async (
 
   const bucket = getBucket(StorageBucket.ResourceAssets);
   const baseline = await readJsonBlob(bucket, getContentBlobName(resource.id));
-  if (!baseline || createHash("sha256").update(baseline).digest("hex") !== baselineHash)
+  if (!baseline || getContentAddress(baseline) !== baselineHash)
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 
   const serializedContent = await getResultAsync(() =>

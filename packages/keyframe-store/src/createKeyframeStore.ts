@@ -7,9 +7,9 @@ import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
 import { DEFAULT_PROMOTION_RATIO, DEFAULT_SEGMENT_BUDGET_RATIO } from "#src/services/constants";
 import { decodeVerifiedObject } from "#src/services/decodeVerifiedObject";
 import { encodeObject } from "#src/services/encodeObject";
-import { getContentAddress } from "#src/services/getContentAddress";
 import { parseObject } from "#src/services/parseObject";
 import { DEFAULT_COMPRESSION_LEVEL, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getContentAddress } from "@esposter/shared-node/cache";
 
 // The store: immutable objects addressed by the hash of their plaintext, each either a keyframe compressed
 // On its own or a delta compressed against exactly one keyframe. No chains, no generations, no rewriting —

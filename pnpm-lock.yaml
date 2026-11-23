@@ -986,6 +986,9 @@ importers:
       grid-engine-headless:
         specifier: workspace:*
         version: link:../../packages/grid-engine-headless
+      hosted-assets:
+        specifier: workspace:*
+        version: link:../../packages/hosted-assets
       keyframe-store:
         specifier: workspace:*
         version: link:../../packages/keyframe-store
@@ -1486,6 +1489,9 @@ importers:
       genshin-text:
         specifier: workspace:*
         version: link:../genshin-text
+      hosted-assets:
+        specifier: workspace:*
+        version: link:../hosted-assets
       pinia:
         specifier: 'catalog:'
         version: 4.1.0(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.46(typescript@6.0.3))
@@ -1554,6 +1560,9 @@ importers:
 
   packages/hosted-assets:
     dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
       vue:
         specifier: 'catalog:'
         version: 3.5.46(typescript@6.0.3)
@@ -1576,6 +1585,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
       neverthrow:
         specifier: 'catalog:'
         version: 8.2.0
@@ -1583,9 +1595,6 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
-      '@esposter/shared-node':
-        specifier: workspace:*
-        version: link:../shared-node
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6

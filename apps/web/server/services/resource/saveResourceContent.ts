@@ -29,9 +29,9 @@ import {
   StorageBucket,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
+import { getContentAddress } from "@esposter/shared-node/cache";
 import { TRPCError } from "@trpc/server";
 import { and, eq, exists, sql } from "drizzle-orm";
-import { createHash } from "node:crypto";
 
 // The durable write and everything that must follow it, as one unit: the activity entry and the Type's after-save
 // Hook. Every door — editor save, blueprint deploy, duplicate, restore — writes through here,
@@ -100,7 +100,7 @@ export const saveResourceContent = async (
   // Stored — a delta save is computed against exactly these — and the size a read picks its transport by, both of
   // The JSON rather than of the frame it is stored as. Written with the blob, so neither ever describes bytes that
   // Were not stored
-  const contentHash = createHash("sha256").update(serializedContent).digest("hex");
+  const contentHash = getContentAddress(Buffer.from(serializedContent));
   const contentSize = Buffer.byteLength(serializedContent);
   // The content's links, projected here rather than in an after-save hook, which is best-effort by contract, and
   // Kept in step with the blob: `resolveIdentifiedToken` reads them to decide whether a participant token was

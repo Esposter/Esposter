@@ -1,7 +1,7 @@
 import { CONTENT_CACHE_DIRECTORY } from "#src/services/cache/constants";
+import { getContentAddress } from "#src/services/cache/getContentAddress";
 import { writePartialThenMove } from "#src/services/cache/writePartialThenMove";
 import { ASSET_HASH_REGEX, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -20,7 +20,7 @@ export const readContentAddressedObject = async (
   const path = join(directory, hash);
   if (existsSync(path)) return readFile(path);
   const bytes = Buffer.from(await download());
-  if (createHash("sha256").update(bytes).digest("hex") !== hash)
+  if (getContentAddress(bytes) !== hash)
     throw new InvalidOperationError(Operation.Read, hash, "does not hash to its name");
   await getResultAsync(() => writePartialThenMove(path, (partialPath) => writeFile(partialPath, bytes))).match(
     noop,

@@ -1,5 +1,5 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { createHash } from "node:crypto";
+import { getContentAddress } from "@esposter/shared-node/cache";
 import { writeFile } from "node:fs/promises";
 
 // A toolchain or a source archive is used only once its bytes match the checksum its publisher states
@@ -8,7 +8,7 @@ export const downloadVerifiedFile = async (url: string, sha256: string, path: st
   if (!response.ok) throw new InvalidOperationError(Operation.Read, url, `download failed with ${response.status}`);
 
   const bytes = new Uint8Array(await response.arrayBuffer());
-  const digest = createHash("sha256").update(bytes).digest("hex");
+  const digest = getContentAddress(bytes);
   if (digest !== sha256) throw new InvalidOperationError(Operation.Read, url, `checksum ${digest} is not ${sha256}`);
 
   await writeFile(path, bytes);

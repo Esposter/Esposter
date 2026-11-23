@@ -1,8 +1,8 @@
 import type { ParsedObject } from "#src/models/ParsedObject";
 
 import { decodeObject } from "#src/services/decodeObject";
-import { getContentAddress } from "#src/services/getContentAddress";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getContentAddress } from "@esposter/shared-node/cache";
 
 // The only decode this store makes, so no read path can hand back plaintext its key was never checked against.
 // Cheap, because the hash is already computed on every write, and it turns the one failure this format can

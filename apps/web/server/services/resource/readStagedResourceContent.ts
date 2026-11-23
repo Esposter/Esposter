@@ -6,7 +6,7 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { DatabaseEntityType, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
-import { createHash } from "node:crypto";
+import { getContentAddress } from "@esposter/shared-node/cache";
 
 // The inflation is counted as it streams, so an archive that expands past the content limit stops at the chunk it
 // Crosses rather than filling the heap; leaving the loop cancels the stream, so nothing past it is inflated
@@ -53,7 +53,7 @@ export const readStagedResourceContent = async (id: ResourceInResource["id"], ha
   if (compressedObject?.etag !== etag) throw hashMismatchError;
 
   const compressedContent = new Uint8Array(await compressedObject.arrayBuffer());
-  if (createHash("sha256").update(compressedContent).digest("hex") !== hash) throw hashMismatchError;
+  if (getContentAddress(compressedContent) !== hash) throw hashMismatchError;
 
   const serializedContent = await getResultAsync(() => gunzipWithinLimit(compressedContent)).match(
     (content) => content,
