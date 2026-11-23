@@ -158,7 +158,7 @@ catalog:
   mjml: ^5.4.1
   mjml-preset-core: ^5.4.1
   mlly: ^1.8.2
-  module-replacements: ^2.11.0
+  module-replacements: ^3.4.0
   msw: ^3.0.7
   natural-orderby: ^5.0.0
   neverthrow: ^8.2.0
