@@ -8,6 +8,13 @@ The one-line rule is in `SKILL.md`; this page is its reasoning.
 
 What the account kit shows as the player signs in is in the kit's own strings, which `write` reads beside the text map by the kit's key.
 
+## A key no code names can still be read
+
+A key nothing in the code names is not necessarily unread: a published record carries a key as a value, and the schema checks it against the
+set. The region data's landmark `titleTextKey` values are `UI_DUNGEON_ENTRY_<N>` keys (`DomainEntrance<N>`) that no code names by member, so a
+removal read only through `GameTextKey.<member>` dropped 38 of them and failed the region tests. Before a key is dropped as unread, search
+the committed data (`packages/genshin-world/src/data`) for its value as well as the code for its member.
+
 ## Keys in the value set and attributes
 
 `write` reads the value set through the package's `dist`, so `pnpm -C packages/genshin-text exec tsdown --no-clean` runs first, or the new key is silently left out of every chunk. An attribute's name is filed under its own `FIGHT_PROP_*` id, the value `genshin-world`'s `Attribute` already takes, so `find` lists it first among the matches of its English. A manual-map label whose hash the English text map lacks (the combine types' `COMBINE_TYPE_NAME6` and `COMBINE_TYPE_NAME12`) is missing from `find`, and its English is read from `TextMap/TextMap_MediumEN.json` under the manual map's hash.
