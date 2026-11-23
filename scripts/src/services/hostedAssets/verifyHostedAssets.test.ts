@@ -29,8 +29,8 @@ describe(verifyHostedAssets, () => {
 
     await expect(
       verifyHostedAssets(baseUrl, {
-        indexes: { "profile/English": createHostedAssetLockObject("profile/English", index.sha256) },
-        objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", shared.sha256) },
+        indexes: { "profile/English": createHostedAssetLockObject("profile/English", index.sha256, index.bytes) },
+        objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", shared.sha256, shared.bytes) },
       }),
     ).resolves.toBe(3);
     // Three calls naming three distinct URLs, so each object is fetched exactly once
@@ -74,6 +74,22 @@ describe(verifyHostedAssets, () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: https://bucket.example/public-genshin-assets/profile/English/03b541ca8efb6e8040c2153af7b9c1128c1a5dbf84cc91ae28d0db952e95e667.json, does not hash to its name]`,
+    );
+  });
+
+  test("an object whose decoded length is not its lock's bytes is refused", async () => {
+    expect.hasAssertions();
+
+    const record = createStoredHostedAssetRecord(baseUrl, "stats/weapons", [1, 2]);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(record.json));
+
+    await expect(
+      verifyHostedAssets(baseUrl, {
+        indexes: {},
+        objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", record.sha256, record.bytes + 1) },
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: https://bucket.example/public-genshin-assets/stats/weapons/49a64717d5d4cb19952e6eac2946415cf6879adacf9908e7d872332d32c6e684.json, is 5 bytes, not the 6 its lock records]`,
     );
   });
 });

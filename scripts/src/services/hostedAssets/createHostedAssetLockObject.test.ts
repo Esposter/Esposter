@@ -3,8 +3,8 @@ import type { HostedAssetObject } from "hosted-assets";
 import { describe } from "vitest";
 
 // A lock entry for the record a key names: the key is its scope, and the sha256 is the one the test names the record by
-export const createHostedAssetLockObject = (key: string, sha256: string): HostedAssetObject => ({
-  bytes: 0,
+export const createHostedAssetLockObject = (key: string, sha256: string, bytes = 0): HostedAssetObject => ({
+  bytes,
   extension: ".json",
   scope: key,
   sha256,
