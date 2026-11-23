@@ -1,7 +1,12 @@
 import type { PublishGameDataStepOptions } from "#src/models/gameData/PublishGameDataStepOptions";
 
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
-import { GAME_DATA_KEYS_PATH, GAME_DATA_PRODUCT, GAME_DATA_PRODUCT_NAME } from "#src/services/gameData/constants";
+import {
+  GAME_DATA_KEYS_PATH,
+  GAME_DATA_LOCK_FILE_NAME,
+  GAME_DATA_PRODUCT,
+  GAME_DATA_PRODUCT_NAME,
+} from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
 import { commitHostedAssetLock } from "#src/services/hostedAssets/commitHostedAssetLock";
@@ -40,7 +45,7 @@ export const publishGameDataStep = async ({
       ...(await summarizeGameDataChanges(currentLock, result.nextLock, result.records)),
     ].join("\n");
   const lock = await commitHostedAssetLock(GAME_DATA_PRODUCT, scopes, result.plannedLock);
-  await writeHostedAssetKeys(GAME_DATA_PRODUCT_NAME, lock, GAME_DATA_KEYS_PATH);
+  await writeHostedAssetKeys(GAME_DATA_PRODUCT_NAME, GAME_DATA_LOCK_FILE_NAME, lock, GAME_DATA_KEYS_PATH);
   const { uploadedCountMap } = result;
   return `${label}: ${result.storedObjectCount} records published, ${uploadedCountMap[CloudflareEnvironment.Development]} objects uploaded to dev and ${uploadedCountMap[CloudflareEnvironment.Production]} to prod`;
 };

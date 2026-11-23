@@ -5,6 +5,8 @@ import { CloudflareEnvironment, HostedAssetOriginMap, StorageBucket } from "@esp
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
 
+// The lock's file name, which the keys file it renders names in its header
+export const GAME_DATA_LOCK_FILE_NAME = "gameDataLock.json";
 // The lock is the one committed file that names every published object, and the only one a publish rewrites
 export const GAME_DATA_LOCK_PATH: string = join(
   REPOSITORY_ROOT,
@@ -12,7 +14,7 @@ export const GAME_DATA_LOCK_PATH: string = join(
   "genshin-world",
   "src",
   "generated",
-  "gameDataLock.json",
+  GAME_DATA_LOCK_FILE_NAME,
 );
 // The lock's path from the repository root, as git names it
 export const GAME_DATA_LOCK_REPOSITORY_PATH = "packages/genshin-world/src/generated/gameDataLock.json";

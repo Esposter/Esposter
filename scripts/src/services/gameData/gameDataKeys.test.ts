@@ -1,4 +1,9 @@
-import { GAME_DATA_KEYS_PATH, GAME_DATA_LOCK_PATH, GAME_DATA_PRODUCT_NAME } from "#src/services/gameData/constants";
+import {
+  GAME_DATA_KEYS_PATH,
+  GAME_DATA_LOCK_FILE_NAME,
+  GAME_DATA_LOCK_PATH,
+  GAME_DATA_PRODUCT_NAME,
+} from "#src/services/gameData/constants";
 import { getHostedAssetLockKeysSource } from "#src/services/hostedAssets/getHostedAssetLockKeysSource";
 import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetLock";
 import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
@@ -14,7 +19,10 @@ describe(getHostedAssetLockKeysSource, () => {
     const lock = await readHostedAssetLock(GAME_DATA_LOCK_PATH);
 
     await expect(readFile(GAME_DATA_KEYS_PATH, "utf8")).resolves.toBe(
-      await formatGeneratedSource(GAME_DATA_KEYS_PATH, getHostedAssetLockKeysSource(GAME_DATA_PRODUCT_NAME, lock)),
+      await formatGeneratedSource(
+        GAME_DATA_KEYS_PATH,
+        getHostedAssetLockKeysSource(GAME_DATA_PRODUCT_NAME, GAME_DATA_LOCK_FILE_NAME, lock),
+      ),
     );
   });
 });

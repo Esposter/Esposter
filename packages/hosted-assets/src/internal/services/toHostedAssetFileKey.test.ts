@@ -1,4 +1,4 @@
-import { toHostedAssetFileKey } from "#src/services/hostedAssets/toHostedAssetFileKey";
+import { toHostedAssetFileKey } from "#src/internal/services/toHostedAssetFileKey";
 import { describe, expect, test } from "vitest";
 
 describe(toHostedAssetFileKey, () => {

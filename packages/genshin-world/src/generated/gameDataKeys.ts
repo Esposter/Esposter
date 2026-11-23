@@ -1,9 +1,9 @@
-/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's own keys, which a reader looks up by a dataset's name at runtime, so a key keeps the spelling the data gives it */
+/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's keys, so each key keeps the spelling its lock entry gives it */
 import type { ValueOfDeep } from "type-fest";
 
 // The lock's keys as a nested constant, each path nested by its segments.
 // GameDataKey is the union of its leaf paths, which readers may use to name a key.
-// Generated from gameDataLock.json on every publish.
+// Generated from gameDataLock.json by the hosted-assets keys renderer; do not edit
 export const GameDataKeys = {
   achievements: { achievements: "achievements/achievements", categories: "achievements/categories" },
   achievementText: {

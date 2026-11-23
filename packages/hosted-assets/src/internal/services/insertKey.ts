@@ -1,6 +1,6 @@
-import type { KeyTree } from "#src/models/hostedAssets/KeyTree";
+import type { KeyTree } from "#src/internal/models/KeyTree";
 
-import { descendKeyTree } from "#src/services/hostedAssets/descendKeyTree";
+import { descendKeyTree } from "#src/internal/services/descendKeyTree";
 
 // oxlint-disable-next-line error-handling/no-bare-error -- the renderer runs from `nuxt prepare` before any workspace package is built, so it cannot import InvalidOperationError from @esposter/shared
 const shareSelfSlot = (name: string) => new Error(`${name} shares its self slot with a segment named self in the lock`);

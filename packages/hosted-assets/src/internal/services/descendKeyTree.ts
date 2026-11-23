@@ -1,6 +1,6 @@
-import type { KeyTree } from "#src/models/hostedAssets/KeyTree";
+import type { KeyTree } from "#src/internal/models/KeyTree";
 
-import { createKeyTreeNode } from "#src/services/hostedAssets/createKeyTreeNode";
+import { createKeyTreeNode } from "#src/internal/services/createKeyTreeNode";
 
 // The node a segment leads to, made if it is not there yet
 export const descendKeyTree = (node: KeyTree, segment: string): KeyTree => {

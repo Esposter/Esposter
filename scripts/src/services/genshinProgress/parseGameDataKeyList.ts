@@ -1,8 +1,7 @@
 import type { GenshinLockKeys } from "#src/models/genshinProgress/GenshinLockKeys";
 
 import { GAME_DATA_INDEX_KEYS_NAME, GAME_DATA_KEYS_NAME } from "#src/services/gameData/constants";
-import { RENDERED_CONSTANT_CLOSING } from "#src/services/hostedAssets/renderConstantClosing";
-import { renderConstantOpening } from "#src/services/hostedAssets/renderConstantOpening";
+import { renderConstantOpening, RENDERED_CONSTANT_CLOSING } from "hosted-assets";
 
 // A key is the quoted path a leaf takes after its colon, never a quoted property name such as `"nod-krai": {`
 const KEY_REGEX = /: "(?<key>[^"]+)"/gu;

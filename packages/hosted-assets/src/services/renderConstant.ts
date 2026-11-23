@@ -1,8 +1,8 @@
-import { createKeyTreeNode } from "#src/services/hostedAssets/createKeyTreeNode";
-import { insertKey } from "#src/services/hostedAssets/insertKey";
-import { RENDERED_CONSTANT_CLOSING } from "#src/services/hostedAssets/renderConstantClosing";
-import { renderConstantOpening } from "#src/services/hostedAssets/renderConstantOpening";
-import { renderTree } from "#src/services/hostedAssets/renderTree";
+import { createKeyTreeNode } from "#src/internal/services/createKeyTreeNode";
+import { insertKey } from "#src/internal/services/insertKey";
+import { renderTree } from "#src/internal/services/renderTree";
+import { RENDERED_CONSTANT_CLOSING } from "#src/services/renderConstantClosing";
+import { renderConstantOpening } from "#src/services/renderConstantOpening";
 
 export const renderConstant = (name: string, pairs: [name: string, lockKey: string][]): string => {
   const tree = createKeyTreeNode();

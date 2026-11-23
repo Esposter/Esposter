@@ -1,4 +1,4 @@
-import { getHostedAssetKeysSource } from "#src/services/hostedAssets/getHostedAssetKeysSource";
+import { getHostedAssetKeysSource } from "#src/services/getHostedAssetKeysSource";
 import { describe, expect, test } from "vitest";
 
 describe(getHostedAssetKeysSource, () => {
@@ -7,6 +7,7 @@ describe(getHostedAssetKeysSource, () => {
 
     const source = getHostedAssetKeysSource(
       "Fixture",
+      "fixtureLock.json",
       [
         ["domains", "domains"],
         ["domains/weeklyBosses", "domains/weeklyBosses"],
@@ -16,12 +17,12 @@ describe(getHostedAssetKeysSource, () => {
     );
 
     expect(source).toMatchInlineSnapshot(`
-      "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's own keys, which a reader looks up by a dataset's name at runtime, so a key keeps the spelling the data gives it */
+      "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's keys, so each key keeps the spelling its lock entry gives it */
       import type { ValueOfDeep } from "type-fest";
 
       // The lock's keys as a nested constant, each path nested by its segments.
       // FixtureKey is the union of its leaf paths, which readers may use to name a key.
-      // Generated from fixtureLock.json on every publish.
+      // Generated from fixtureLock.json by the hosted-assets keys renderer; do not edit
       export const FixtureKeys = {
         domains: {
           self: "domains",
@@ -50,6 +51,7 @@ describe(getHostedAssetKeysSource, () => {
 
     const source = getHostedAssetKeysSource(
       "Fixture",
+      "fixtureLock.json",
       [["SceneBattleForestBackground", "dungeons/Scene/Battle/ForestBackground.png"]],
       [],
     );
@@ -64,6 +66,7 @@ describe(getHostedAssetKeysSource, () => {
 
     const source = getHostedAssetKeysSource(
       "Fixture",
+      "fixtureLock.json",
       [
         ["__proto__", "__proto__"],
         ["a/constructor", "a/constructor"],
@@ -73,12 +76,12 @@ describe(getHostedAssetKeysSource, () => {
     );
 
     expect(source).toMatchInlineSnapshot(`
-      "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's own keys, which a reader looks up by a dataset's name at runtime, so a key keeps the spelling the data gives it */
+      "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's keys, so each key keeps the spelling its lock entry gives it */
       import type { ValueOfDeep } from "type-fest";
 
       // The lock's keys as a nested constant, each path nested by its segments.
       // FixtureKey is the union of its leaf paths, which readers may use to name a key.
-      // Generated from fixtureLock.json on every publish.
+      // Generated from fixtureLock.json by the hosted-assets keys renderer; do not edit
       export const FixtureKeys = {
         ["__proto__"]: "__proto__",
         a: {
@@ -104,6 +107,7 @@ describe(getHostedAssetKeysSource, () => {
     expect(() =>
       getHostedAssetKeysSource(
         "Fixture",
+        "fixtureLock.json",
         [
           ["ForestBackground", "dungeons/forestBackground.png"],
           ["ForestBackground", "dungeons/ForestBackground.png"],
@@ -121,6 +125,7 @@ describe(getHostedAssetKeysSource, () => {
     expect(() =>
       getHostedAssetKeysSource(
         "Fixture",
+        "fixtureLock.json",
         [
           ["a/self", "a/self"],
           ["a", "a"],
@@ -131,6 +136,7 @@ describe(getHostedAssetKeysSource, () => {
     expect(() =>
       getHostedAssetKeysSource(
         "Fixture",
+        "fixtureLock.json",
         [
           ["a", "a"],
           ["a/self", "a/self"],
@@ -146,6 +152,7 @@ describe(getHostedAssetKeysSource, () => {
     expect(() =>
       getHostedAssetKeysSource(
         "Fixture",
+        "fixtureLock.json",
         [
           ["a/self/x", "a/self/x"],
           ["a", "a"],
@@ -161,6 +168,7 @@ describe(getHostedAssetKeysSource, () => {
     expect(() =>
       getHostedAssetKeysSource(
         "Fixture",
+        "fixtureLock.json",
         [
           ["a", "a"],
           ["a/self/x", "a/self/x"],
