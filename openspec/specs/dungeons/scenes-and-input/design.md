@@ -4,13 +4,13 @@ Every Phaser scene is a Vue component registered in `SceneComponentMap` and rend
 
 ## How it works
 
-The Preloader scene loads every asset from the asset tables (`services/dungeons/loader/` — images, spritesheets, tilemaps, sounds, fonts, each keyed by value sets) through one loader per kind, then hands off to the Title scene. Title offers New Game / Continue / Settings; both game options land in the World scene, and battles swap World for Battle. `fadeSwitchToScene` on the dungeons store wraps every transition in a camera fade.
+The Preloader scene downloads every object of the dungeons lock that the browser's cache lacks, from the hosted origin, and shows the share held on its bar. Once every object is held, one loader per kind (`services/dungeons/loader/`: images, spritesheets, tilesets, tilemaps, sounds, fonts) loads each file by its absolute url from the generated key map, and the Title scene starts on Phaser's `complete`. A failed download leaves the Preloader on its bar, so the game never starts. Title offers New Game / Continue / Settings; both game options land in the World scene, and battles swap World for Battle. `fadeSwitchToScene` on the dungeons store wraps every transition in a camera fade.
 
 The game holds pixel art beside painted art, so filtering is chosen per texture rather than by Phaser's global `pixelArt`, which would turn smoothing off for every texture at once. `PixelArtTextureKeys` names the textures drawn on a pixel grid, each picked by looking at the sheet enlarged: every tileset and spritesheet, the world's foregrounds, the cosmo ball and the monster party's grid. The Preloader filters those nearest once loading completes. The monsters, the painted backgrounds, the title art and Kenney's UI keep linear filtering. A world character rounds its vertices to whole pixels (`fullAuto`), because the world camera's zoom scales every sprite and the default rounding skips a scaled one.
 
 ```mermaid
 flowchart LR
-  pre[Preloader<br/>asset loader maps] --> title[Title]
+  pre[Preloader<br/>hosted download] --> title[Title]
   title -->|New Game / Continue| world[World]
   title -->|Settings| settings[Settings]
   world -->|encounter| battle[Battle]
@@ -39,6 +39,8 @@ Paths relative to `apps/web/app`.
 | `models/resolvers/dungeons/AInputResolver.ts`     | resolver base; scene folders hold concrete chains |
 | `models/dungeons/Grid.ts`                         | menu option grid                                  |
 | `store/dungeons/index.ts`                         | `fadeSwitchToScene`, save root                    |
+| `components/Dungeons/Preloader/Scene.vue`         | the download bar, then the Phaser pass            |
+| `services/dungeons/loader/loadDungeonsFiles.ts`   | one loader per kind, each file by its hosted url  |
 | `services/dungeons/loader/PixelArtTextureKeys.ts` | the textures filtered nearest                     |
 
 ## Notes
