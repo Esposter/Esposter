@@ -8,7 +8,7 @@ interface Props {
   editor?: Editor | undefined;
 }
 
-const { editor } = defineProps<Props>();
+defineProps<Props>();
 const isAltTextMenuOpen = ref(false);
 const altText = ref("");
 </script>

@@ -10,7 +10,7 @@ interface Props {
   step: TodoListStep;
 }
 
-const { step } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ remove: []; rename: [name: string]; toggle: [] }>();
 const stepNameRules = [UiRules.required(), UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
 </script>

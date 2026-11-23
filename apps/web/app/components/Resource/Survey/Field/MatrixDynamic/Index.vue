@@ -18,7 +18,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { error, node } = defineProps<Props>();
 const errorId = useId();
 // A column's header names the cells that take no aria-required, so a required column's word reaches speech through it
 const headerId = useId();

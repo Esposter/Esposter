@@ -8,7 +8,7 @@ interface Props {
   editor?: Editor | undefined;
 }
 
-const { editor } = defineProps<Props>();
+defineProps<Props>();
 const isLinkMenuOpen = ref(false);
 const linkUrl = ref("");
 </script>
