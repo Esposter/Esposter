@@ -20,9 +20,9 @@ import {
   CAB_MAP_PATH,
   GENSHIN_ASSETS_PRODUCER_PATHS,
 } from "#src/services/genshinAssets/shared/constants";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
+import { readComponentRoots } from "#src/services/genshinAssets/shared/readComponentRoots";
 import { readObjectNames } from "#src/services/genshinAssets/shared/readObjectNames";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
@@ -44,7 +44,7 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
   const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
   const { objects } = await readComponentLayout(component);
   const objectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
-  const [modelRoot] = DerivedAssetComponentMap[component].roots;
+  const [modelRoot] = await readComponentRoots(component);
   const rootObjects = objects.filter(
     ({ gameObjectId, name }) => gameObjectId === modelRoot?.pathId && name === modelRoot.name,
   );
