@@ -8,7 +8,8 @@ import { filterSrcset } from "#src/services/sanitizeHtml/filterSrcset";
 import { filterStyle } from "#src/services/sanitizeHtml/filterStyle";
 import { getOwnValue } from "#src/util/object/getOwnValue";
 
-// A meta refresh navigates to the URL its content names, so that content is never kept: without it the refresh does nothing
+// A meta refresh navigates to the URL its content names, so that content is never kept: without it the refresh does
+// Nothing
 const checkIsMetaRefresh = (tagName: string, attributes: Record<string, string>): boolean =>
   tagName === "meta" && attributes["http-equiv"]?.trim().toLowerCase() === "refresh";
 

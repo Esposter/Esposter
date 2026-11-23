@@ -5,8 +5,8 @@ import type { PanzoomPoint } from "#src/models/panzoom/PanzoomPoint";
 import { PANZOOM_DEFAULT_PAN_THRESHOLD } from "#src/services/panzoom/constants";
 import { panPanzoom } from "#src/services/panzoom/panPanzoom";
 
-// A drag pans by the pointer's distance from its anchor over the scale, once the pointer has travelled past the threshold
-// From the point it went down on. The pan is absolute and not animated, whatever relative means for a call
+// A drag pans by the pointer's distance from its anchor over the scale, once the pointer has travelled past the
+// Threshold From the point it went down on. The pan is absolute and not animated, whatever relative means for a call
 export const movePanzoomDrag = (
   context: PanzoomContext,
   drag: PanzoomDrag,

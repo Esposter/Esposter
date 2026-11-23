@@ -19,5 +19,6 @@ const clone = (data: unknown, copies: WeakMap<object, unknown>): unknown => {
 // Instance passes through where `structuredClone` would throw on it or strip its prototype. A value reached twice is
 // Copied once, so a cycle stays a cycle in the copy. Reading through a reactive Proxy yields plain copies, so the
 // Result holds no proxy
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a deep copy has its input's type, which a recursive walk over unknown values cannot compute
+// A deep copy has its input's type, which
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a recursive walk over unknown values cannot compute
 export const clonePlainDeep = <T>(data: T): T => clone(data, new WeakMap()) as T;

@@ -1,4 +1,6 @@
-/* oxlint-disable typescript/no-floating-promises -- the first put succeeds before the second aborts the transaction, so its promise cannot reject and the upgrade has nothing to await it; match() handles both branches, so the promise it returns cannot reject and the upgrade has nothing to await it */
+/* oxlint-disable typescript/no-floating-promises -- the first put succeeds before the second aborts the transaction,
+   so its promise cannot reject and the upgrade has nothing to await it; match() handles both branches, so the
+   promise it returns cannot reject and the upgrade has nothing to await it */
 import type { DatabaseSchema } from "#src/models/indexedDb/DatabaseSchema";
 
 import { getResultAsync } from "#src/services/error/getResultAsync";

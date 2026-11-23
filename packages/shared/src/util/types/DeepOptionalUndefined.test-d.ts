@@ -23,7 +23,8 @@ describe("deepOptionalUndefined type", () => {
   test("optionalizes property", () => {
     expect.hasAssertions();
 
-    /* oxlint-disable selector-ban/no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
+    /* oxlint-disable selector-ban/no-restricted-syntax -- the non-optional input is the fixture this utility
+       transforms */
     expectTypeOf<DeepOptionalUndefined<{ "": undefined | unknown }>>().toEqualTypeOf<{ ""?: unknown }>();
     /* oxlint-enable selector-ban/no-restricted-syntax */
   });
@@ -31,7 +32,8 @@ describe("deepOptionalUndefined type", () => {
   test("optionalizes nested property", () => {
     expect.hasAssertions();
 
-    /* oxlint-disable selector-ban/no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
+    /* oxlint-disable selector-ban/no-restricted-syntax -- the non-optional input is the fixture this utility
+       transforms */
     expectTypeOf<DeepOptionalUndefined<{ "": { "": undefined | unknown } }>>().toEqualTypeOf<{
       "": { ""?: unknown };
     }>();

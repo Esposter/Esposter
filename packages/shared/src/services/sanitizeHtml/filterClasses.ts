@@ -1,7 +1,7 @@
 import { matchesClassPattern } from "#src/services/sanitizeHtml/matchesClassPattern";
 
-// Only the classes a tag's patterns name survive, since a class reaches the app's own stylesheet and an arbitrary one would
-// Let markup borrow its utilities. Nothing surviving means the attribute is dropped
+// Only the classes a tag's patterns name survive, since a class reaches the app's own stylesheet and an arbitrary one
+// Would Let markup borrow its utilities. Nothing surviving means the attribute is dropped
 export const filterClasses = (value: string, patterns: string[] | undefined): string | undefined => {
   if (!patterns) return undefined;
 

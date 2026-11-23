@@ -15,9 +15,9 @@ import { getCredentialScope } from "#src/services/sigv4/getCredentialScope";
 import { getSignedHeaders } from "#src/services/sigv4/getSignedHeaders";
 import { getSigV4Signature } from "#src/services/sigv4/getSigV4Signature";
 
-// A URL carrying its own SigV4 signature in the query, good for `expiresInMs` from now, so a browser can send the request
-// With no credentials of its own. The headers given are signed, so the request must send them with those values; the
-// Payload is unsigned
+// A URL carrying its own SigV4 signature in the query, good for `expiresInMs` from now, so a browser can send the
+// Request With no credentials of its own. The headers given are signed, so the request must send them with those
+// Values; the Payload is unsigned
 export const presignSigV4Url = async (
   credentials: SigV4Credentials,
   {

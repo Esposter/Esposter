@@ -5,8 +5,8 @@ const textEncoder = new TextEncoder();
 const scratch = new Uint8Array(SCRATCH_BYTES);
 
 // The UTF-8 byte length of a text, without allocating its bytes: `encode(text).byteLength` builds a buffer only to read
-// Its length, where `encodeInto` writes into one buffer kept for every call. It never splits a surrogate pair across two
-// Parts, so the parts add up to the whole text's length
+// Its length, where `encodeInto` writes into one buffer kept for every call. It never splits a surrogate pair across
+// Two Parts, so the parts add up to the whole text's length
 export const getUtf8ByteLength = (text: string): number => {
   let byteLength = 0;
   let offset = 0;

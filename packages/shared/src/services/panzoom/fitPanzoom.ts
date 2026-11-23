@@ -14,7 +14,8 @@ import { getPanzoomMeasure } from "#src/services/panzoom/getPanzoomMeasure";
 import { reanchorPanzoomDrag } from "#src/services/panzoom/reanchorPanzoomDrag";
 import { writePanzoomState } from "#src/services/panzoom/writePanzoomState";
 
-// Scales the element to fit its parent's content box and centres it there, as a zoom: forced unless the call says otherwise
+// Scales the element to fit its parent's content box and centres it there, as a zoom: forced unless the call says
+// Otherwise
 export const fitPanzoom = (context: PanzoomContext, callOptions: PanzoomZoomOptions): PanzoomEventDetail => {
   const options = getPanzoomCallOptions(context, { force: true, ...callOptions });
   const { element, parent, state } = context;

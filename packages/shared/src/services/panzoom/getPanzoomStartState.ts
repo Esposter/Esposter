@@ -6,8 +6,9 @@ import { PANZOOM_DEFAULT_START_PAN } from "#src/services/panzoom/constants";
 import { constrainPanzoomPan } from "#src/services/panzoom/constrainPanzoomPan";
 import { getPanzoomStartScale } from "#src/services/panzoom/getPanzoomStartScale";
 
-// The state a start or a reset lands on: the start scale clamped and contained, then the start pan contained at that scale.
-// The pan is forced and absolute, since a start is never refused by disablePan or read relative to the current pan
+// The state a start or a reset lands on: the start scale clamped and contained, then the start pan contained at that
+// Scale. The pan is forced and absolute, since a start is never refused by disablePan or read relative to the current
+// Pan
 export const getPanzoomStartState = (
   state: PanzoomState,
   measure: PanzoomMeasure,

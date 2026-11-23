@@ -4,8 +4,8 @@ import { SIGV4_FETCH_FIRST_RETRY_CEILING_MS, SIGV4_FETCH_RETRY_COUNT } from "#sr
 import { signSigV4Request } from "#src/services/sigv4/signSigV4Request";
 import { sleep } from "#src/util/time/sleep";
 
-// A fetch that signs each request with the credentials. A 5xx or a 429 is sent again after a wait drawn at random below a
-// Ceiling that doubles each time, each attempt signed afresh, and the last answer is returned whatever it is. A body
+// A fetch that signs each request with the credentials. A 5xx or a 429 is sent again after a wait drawn at random below
+// A Ceiling that doubles each time, each attempt signed afresh, and the last answer is returned whatever it is. A body
 // That is a stream is spent by the first attempt, so a request carrying one is sent once
 export const createSigV4Fetch =
   (

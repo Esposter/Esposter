@@ -3,7 +3,8 @@ import type { ProfanityOptions } from "#src/models/profanity/ProfanityOptions";
 import { englishProfaneWords } from "#src/services/profanity/englishProfaneWords";
 
 // A letter, a number or a combining mark is part of a word, so a profane word that touches one is not whole. An
-// Underscore, a hyphen, a space, punctuation and an emoji all end a word, which is why `butt_face` and `butt-head` count
+// Underscore, a hyphen, a space, punctuation and an emoji all end a word, which is why `butt_face` and `butt-head`
+// Count
 const WORD_CHARACTER_CLASS = String.raw`\p{L}\p{N}\p{M}`;
 const PROFANE_WORD_ALTERNATION = englishProfaneWords
   .map((word) => word.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`))

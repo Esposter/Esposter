@@ -3,9 +3,9 @@ import { encodeSigV4Component } from "#src/services/sigv4/encodeSigV4Component";
 import { getSignedHeaders } from "#src/services/sigv4/getSignedHeaders";
 import { compareText } from "#src/util/text/compareText";
 
-// SigV4's canonical request, its query and the names of the headers it signs. S3 signs a path as it is: each segment is decoded
-// From the URL and encoded once, never normalised. The query is sorted by encoded name, then value, and every header
-// The request carries is signed with its value trimmed and its runs of spaces collapsed, the host among them
+// SigV4's canonical request, its query and the names of the headers it signs. S3 signs a path as it is: each segment is
+// Decoded From the URL and encoded once, never normalised. The query is sorted by encoded name, then value, and every
+// Header The request carries is signed with its value trimmed and its runs of spaces collapsed, the host among them
 export const getCanonicalRequest = (
   method: string,
   url: URL,

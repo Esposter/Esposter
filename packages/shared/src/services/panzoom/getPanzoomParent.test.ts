@@ -31,7 +31,8 @@ describe(getPanzoomParent, () => {
     const shadowRoot = host.attachShadow({ mode: "open" });
     const element = document.createElement("div");
     shadowRoot.append(element);
-    // A root from another window is not an instance of this window's ShadowRoot, so only its node type and host identify it
+    // A root from another window is not an instance of this window's ShadowRoot, so only its node type and host
+    // Identify it
     Object.setPrototypeOf(shadowRoot, DocumentFragment.prototype);
     Object.defineProperty(shadowRoot, "host", { value: host });
 

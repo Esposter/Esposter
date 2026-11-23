@@ -3,11 +3,12 @@ import { SANITIZER_ADVISORY_WATCH_SINCE } from "#src/services/sanitizeHtml/const
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-// The sanitiser's upstream feed, watched rather than polled: the suite reads GitHub's advisories for the two packages it
-// Answers to, and an advisory published after the day the sanitiser recorded fails it. The failure is the watch firing:
-// Port the fix, pin it with a regression test that names the advisory, then move the date to the day the port landed.
-// Only a new advisory fails it. A feed that cannot be read (an outage, the unauthenticated rate limit) skips the run, so
-// The watch never holds a push hostage to GitHub's availability; the next run with a reachable feed reads it again
+// The sanitiser's upstream feed, watched rather than polled: the suite reads GitHub's advisories for the two packages
+// It Answers to, and an advisory published after the day the sanitiser recorded fails it. The failure is the watch
+// Firing: Port the fix, pin it with a regression test that names the advisory, then move the date to the day the port
+// Landed. Only a new advisory fails it. A feed that cannot be read (an outage, the unauthenticated rate limit) skips
+// The run, so The watch never holds a push hostage to GitHub's availability; the next run with a reachable feed reads
+// It again
 describe("sanitizerAdvisoryWatch", () => {
   const ADVISORIES_URL = "https://api.github.com/advisories?ecosystem=npm&affects=sanitize-html,dompurify&per_page=100";
   const REQUEST_TIMEOUT = Temporal.Duration.from({ seconds: 30 });

@@ -4,7 +4,8 @@ import type { PanzoomElement } from "#src/models/panzoom/PanzoomElement";
 import { describe, vi } from "vitest";
 
 // Happy-dom lays nothing out, so an element's drawn rectangle is its layout box scaled and moved by the transform its
-// Panzoom wrote, about its centre. The stub reads that transform on every call, so a rectangle read after a write is current
+// Panzoom wrote, about its centre. The stub reads that transform on every call, so a rectangle read after a write is
+// Current
 export const stubPanzoomLayout = (element: PanzoomElement, layout: PanzoomBox): void => {
   vi.spyOn(element, "getBoundingClientRect").mockImplementation(() => {
     const groups = /scale\((?<scale>[^)]+)\) translate\((?<x>[^p]+)px, (?<y>[^p]+)px\)/u.exec(

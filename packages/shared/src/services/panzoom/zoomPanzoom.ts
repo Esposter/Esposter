@@ -12,7 +12,8 @@ import { getPanzoomZoomedState } from "#src/services/panzoom/getPanzoomZoomedSta
 import { reanchorPanzoomDrag } from "#src/services/panzoom/reanchorPanzoomDrag";
 import { writePanzoomState } from "#src/services/panzoom/writePanzoomState";
 
-// Zooms to the scale, about the focal point when the call names one. A disabled zoom returns the values it found, unless forced
+// Zooms to the scale, about the focal point when the call names one. A disabled zoom returns the values it found,
+// Unless forced
 export const zoomPanzoom = (
   context: PanzoomContext,
   scale: number,

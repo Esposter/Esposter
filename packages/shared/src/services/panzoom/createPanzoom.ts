@@ -25,8 +25,9 @@ import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 import { zoomPanzoom } from "#src/services/panzoom/zoomPanzoom";
 import { zoomPanzoomStep } from "#src/services/panzoom/zoomPanzoomStep";
 
-// One panzoom on an element: it moves the element by writing its transform, and reads the element and its parent to contain it.
-// Construction applies the start state synchronously and sends no event, so a pan made on the next line is not overwritten
+// One panzoom on an element: it moves the element by writing its transform, and reads the element and its parent to
+// Contain it. Construction applies the start state synchronously and sends no event, so a pan made on the next line is
+// Not overwritten
 export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions = {}): Panzoom => {
   if (element.nodeType !== Node.ELEMENT_NODE)
     throw new InvalidOperationError(Operation.Create, createPanzoom.name, "the element is not an Element");
@@ -47,7 +48,8 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
     state: { scale: 1, x: 0, y: 0 },
     styles: new Map(),
   };
-  // The identity transform is written first, so the start state is taken from a measure of the element as it is laid out
+  // The identity transform is written first, so the start state is taken from a measure of the element as it is laid
+  // Out
   writePanzoomState(context, context.state, { animate: false });
   const start = getPanzoomStartState(context.state, getPanzoomMeasure(element, parent, context.state), context.options);
   writePanzoomState(context, start, { animate: false });

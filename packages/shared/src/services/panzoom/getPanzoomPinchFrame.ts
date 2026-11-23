@@ -3,7 +3,8 @@ import type { PanzoomPoint } from "#src/models/panzoom/PanzoomPoint";
 
 import { takeOne } from "#src/util/array/takeOne";
 
-// The distance between the first two pointers down, and the point halfway between them, which a pinch scales by and zooms about
+// The distance between the first two pointers down, and the point halfway between them, which a pinch scales by and
+// Zooms about
 export const getPanzoomPinchFrame = (pointers: Map<number, PanzoomPoint>): PanzoomPinchFrame => {
   const points = [...pointers.values()];
   const first = takeOne(points, 0);

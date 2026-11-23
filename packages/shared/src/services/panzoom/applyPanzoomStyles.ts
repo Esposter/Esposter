@@ -9,8 +9,9 @@ import { getPanzoomTarget } from "#src/services/panzoom/getPanzoomTarget";
 import { restorePanzoomStyles } from "#src/services/panzoom/restorePanzoomStyles";
 import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 
-// Writes the styles the options name: the parent's overflow and touch action, the element's touch action, and the cursor
-// On the target while panning is possible. A disabled pan leaves the cursor to the stylesheet, so any written one is restored
+// Writes the styles the options name: the parent's overflow and touch action, the element's touch action, and the
+// Cursor On the target while panning is possible. A disabled pan leaves the cursor to the stylesheet, so any written
+// One is restored
 export const applyPanzoomStyles = (context: PanzoomContext): void => {
   const { element, options, parent } = context;
   const touchAction = options.touchAction ?? PANZOOM_DEFAULT_TOUCH_ACTION;

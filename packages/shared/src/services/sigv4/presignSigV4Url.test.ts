@@ -2,7 +2,8 @@ import { presignSigV4Url } from "#src/services/sigv4/presignSigV4Url";
 import { describe, expect, test } from "vitest";
 
 describe(presignSigV4Url, () => {
-  // AWS's own example of a presigned S3 GET, from "Authenticating Requests: Using Query Parameters", signed on 2013-05-24
+  // AWS's own example of a presigned S3 GET, from "Authenticating Requests: Using Query Parameters", signed on
+  // 2013-05-24
   const credentials = {
     accessKeyId: "AKIAIOSFODNN7EXAMPLE",
     region: "us-east-1",

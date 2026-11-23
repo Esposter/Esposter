@@ -9,7 +9,8 @@ import { wrapUpgradeDatabase } from "#src/services/indexedDb/wrapUpgradeDatabase
 import { wrapUpgradeTransaction } from "#src/services/indexedDb/wrapUpgradeTransaction";
 import { noop } from "#src/util/function/noop";
 
-// Reads `indexedDB` only when called, so importing this module on the server or in a test without the global is harmless
+// Reads `indexedDB` only when called, so importing this module on the server or in a test without the global is
+// Harmless
 export const openDatabase = <TSchema extends DatabaseSchema = DatabaseSchema>(
   name: string,
   version: number,
@@ -25,8 +26,8 @@ export const openDatabase = <TSchema extends DatabaseSchema = DatabaseSchema>(
       const { transaction } = request;
       if (!transaction) return;
 
-      // An upgrade that throws would otherwise leave the version applied with half its stores, so the failure aborts the
-      // Transaction and the open request rejects with the abort
+      // An upgrade that throws would otherwise leave the version applied with half its stores, so the failure aborts
+      // The Transaction and the open request rejects with the abort
       getResult(() =>
         options.upgrade?.(
           wrapUpgradeDatabase<TSchema>(request.result),

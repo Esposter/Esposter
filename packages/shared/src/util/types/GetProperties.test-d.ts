@@ -59,7 +59,8 @@ describe("getProperties type", () => {
       | { path: "description.length"; value: number }
       | {
           path: "description";
-          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- mirrors GetPrimitiveProps' emitted shape exactly
+          // Mirrors
+          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- GetPrimitiveProps' emitted shape exactly
           value: string | undefined;
         }
     >();

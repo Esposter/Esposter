@@ -4,11 +4,13 @@ import type { PanzoomState } from "#src/models/panzoom/PanzoomState";
 
 // The border and padding on one side of an element, both of which sit inside its rectangle
 const getInset = (border: string, padding: string) =>
-  // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("8px"), Number() would be NaN
+  // Computed
+  // oxlint-disable-next-line unicorn/prefer-number-coercion -- styles are px-suffixed ("8px"), Number() would be NaN
   Number.parseFloat(border) + Number.parseFloat(padding);
 
-// One read of the element's and the parent's rectangles. The layout centre is the rectangle's centre less the scaled pan,
-// The unscaled size is the rectangle over the scale, and the parent's content box is its rectangle less its border and padding
+// One read of the element's and the parent's rectangles. The layout centre is the rectangle's centre less the scaled
+// Pan, The unscaled size is the rectangle over the scale, and the parent's content box is its rectangle less its border
+// And padding
 export const getPanzoomMeasure = (
   element: PanzoomElement,
   parent: PanzoomElement,

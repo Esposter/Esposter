@@ -11,8 +11,8 @@ import { getPanzoomEventDetail } from "#src/services/panzoom/getPanzoomEventDeta
 import { getPanzoomMeasure } from "#src/services/panzoom/getPanzoomMeasure";
 import { writePanzoomState } from "#src/services/panzoom/writePanzoomState";
 
-// Pans to the point the call asks for, held on a disabled axis and contained at the current scale. The pan is sent only when
-// X or Y moved, and a call that moves neither returns the values it found
+// Pans to the point the call asks for, held on a disabled axis and contained at the current scale. The pan is sent only
+// When X or Y moved, and a call that moves neither returns the values it found
 export const panPanzoom = (
   context: PanzoomContext,
   point: PanzoomPoint,

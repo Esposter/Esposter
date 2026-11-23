@@ -3,10 +3,10 @@ import type { PanzoomAxis } from "#src/models/panzoom/PanzoomAxis";
 import { PanzoomContain } from "#src/models/panzoom/PanzoomContain";
 import { checkIsContainableLength } from "#src/services/panzoom/checkIsContainableLength";
 
-// The leading and trailing pans put the element's edges on its parent's edges
-// Inside takes the leading pan as the lower bound and outside the trailing one, so an element larger than the area it
-// Is contained in resolves to the lower bound. Automatic is inside on an axis the scaled element fits, and outside on one it overflows.
-// A parent side that is zero or non-finite contains nothing on its axis, so the value stands
+// The leading and trailing pans put the element's edges on its parent's edges Inside takes the leading pan as the lower
+// Bound and outside the trailing one, so an element larger than the area it Is contained in resolves to the lower
+// Bound. Automatic is inside on an axis the scaled element fits, and outside on one it overflows. A parent side that is
+// Zero or non-finite contains nothing on its axis, so the value stands
 export const constrainPanzoomAxis = (
   value: number,
   axis: PanzoomAxis,

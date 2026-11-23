@@ -5,8 +5,9 @@ import type { PanzoomPinch } from "#src/models/panzoom/PanzoomPinch";
 import type { PanzoomPoint } from "#src/models/panzoom/PanzoomPoint";
 import type { PanzoomState } from "#src/models/panzoom/PanzoomState";
 
-// What one panzoom keeps and every function acting on it shares: the element and its parent, the options and the transform's values.
-// The pointers down and the gesture they make, and each inline style it wrote with the value that style held before the write
+// What one panzoom keeps and every function acting on it shares: the element and its parent, the options and the
+// Transform's values. The pointers down and the gesture they make, and each inline style it wrote with the value that
+// Style held before the write
 export interface PanzoomContext {
   drag?: PanzoomDrag | undefined;
   element: PanzoomElement;

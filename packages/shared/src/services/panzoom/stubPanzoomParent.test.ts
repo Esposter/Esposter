@@ -3,7 +3,8 @@ import type { PanzoomElement } from "#src/models/panzoom/PanzoomElement";
 
 import { describe, vi } from "vitest";
 
-// Happy-dom resolves no computed border or padding, so the parent's inset is stubbed with its rectangle, the same on every side
+// Happy-dom resolves no computed border or padding, so the parent's inset is stubbed with its rectangle, the same on
+// Every side
 export const stubPanzoomParent = (
   parent: PanzoomElement,
   box: PanzoomBox,

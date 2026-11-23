@@ -6,9 +6,10 @@ const COMMA = ",";
 const OPENING_PARENTHESIS = "(";
 const CLOSING_PARENTHESIS = ")";
 
-// Reads a srcset the way the HTML standard does: a candidate's URL is the run of non-space characters, so a comma inside
-// It (a CDN's transform list) stays in the URL, and only a comma that ends the URL or ends the descriptors separates
-// Candidates. A candidate whose URL the schemes refuse, or whose descriptor the standard does not allow, is dropped
+// Reads a srcset the way the HTML standard does: a candidate's URL is the run of non-space characters, so a comma
+// Inside It (a CDN's transform list) stays in the URL, and only a comma that ends the URL or ends the descriptors
+// Separates Candidates. A candidate whose URL the schemes refuse, or whose descriptor the standard does not allow, is
+// Dropped
 export const filterSrcset = (value: string, allowedSchemes: string[]): string | undefined => {
   const candidates: string[] = [];
   let position = 0;

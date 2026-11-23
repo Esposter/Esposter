@@ -7,7 +7,8 @@ import { stubPanzoomLayout } from "#src/services/panzoom/stubPanzoomLayout.test"
 import { stubPanzoomParent } from "#src/services/panzoom/stubPanzoomParent.test";
 import { describe, expect, test, vi } from "vitest";
 
-// Happy-dom's WheelEvent drops clientX and clientY from its init, so the point is defined on the event as a browser sets it
+// Happy-dom's WheelEvent drops clientX and clientY from its init, so the point is defined on the event as a browser
+// Sets it
 const wheelAt = (point: { x: number; y: number }, deltaY: number): WheelEvent => {
   const event = new WheelEvent("wheel", { deltaY });
   Object.defineProperties(event, { clientX: { value: point.x }, clientY: { value: point.y } });

@@ -13,7 +13,8 @@ import { getCredentialScope } from "#src/services/sigv4/getCredentialScope";
 import { getSigV4Signature } from "#src/services/sigv4/getSigV4Signature";
 
 // The request's headers with its SigV4 `Authorization` added, signed now. Every header it carries is signed, so one the
-// Runtime adds later (the length, the user agent) is left out. The payload is unsigned unless the request names its hash
+// Runtime adds later (the length, the user agent) is left out. The payload is unsigned unless the request names its
+// Hash
 export const signSigV4Request = async (
   credentials: SigV4Credentials,
   { headers: headersInit, method, signedAt = new Date(), url }: SigV4Request,

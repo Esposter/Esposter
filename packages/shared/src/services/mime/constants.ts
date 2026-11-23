@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal
+   would otherwise infer */
 // The media type a Content-Type value leads with, up to its parameters or the whitespace after it
 export const MEDIA_TYPE_REGEX: RegExp = /^\s*(?<mediaType>[^;\s]*)(?:;|\s|$)/u;
 // A path's separators, which Windows paths use as well as posix ones
@@ -7,7 +8,8 @@ export const TEXT_MEDIA_TYPE_REGEX: RegExp = /^text\//iu;
 // A charset parameter by its own name, so a parameter that only contains the word leaves the default in place
 export const CHARSET_PARAMETER_REGEX: RegExp = /;\s*charset=/iu;
 // The charset a text type gets when the dataset names none
-// oxlint-disable-next-line unicorn/text-encoding-identifier-case -- `UTF-8` is the spelling a Content-Type header and the upstream report, and `utf8` would change the value
+// `UTF-8` is the spelling a Content-Type header and the
+// oxlint-disable-next-line unicorn/text-encoding-identifier-case -- upstream report, and `utf8` would change the value
 export const DEFAULT_TEXT_CHARSET = "UTF-8";
 
 // The score of each part of a type, from mime-score: a higher score is the more official type
@@ -24,7 +26,8 @@ export const SourceScoreMap: ReadonlyMap<string, number> = new Map<string, numbe
   ["nginx", 10],
 ]);
 export const DEFAULT_SOURCE_SCORE = 30;
-// Prefer application/xml over text/xml, font/woff over application/font-woff, and video/mp4 over audio/mp4 over application/mp4
+// Prefer application/xml over text/xml, font/woff over application/font-woff, and video/mp4 over audio/mp4 over
+// `application/mp4`
 export const TypeScoreMap: ReadonlyMap<string, number> = new Map<string, number>([
   ["application", 1],
   ["audio", 2],

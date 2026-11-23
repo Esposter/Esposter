@@ -3,7 +3,8 @@ import { getExponentialBackoffDelayMs } from "#src/util/time/getExponentialBacko
 import { sleep } from "#src/util/time/sleep";
 
 // Runs an operation, and after each failure waits longer before the next attempt, until one succeeds and resets the
-// Wait. The wait is taken before an attempt rather than after a failure, so the caller decides whether to attempt at all
+// Wait. The wait is taken before an attempt rather than after a failure, so the caller decides whether to attempt at
+// All
 export const createExponentialBackoff = (
   baseDelayMs: number,
   maxDelayMs: number,

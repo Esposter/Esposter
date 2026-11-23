@@ -136,8 +136,8 @@ export const URL_ATTRIBUTES: string[] = [
 
 export const SRCSET_ATTRIBUTE = "srcset";
 
-// Anchored at its one bang, so the expression reads the value once: a run of spaces before the bang is not rescanned from
-// Each of its positions, which a leading whitespace class would do
+// Anchored at its one bang, so the expression reads the value once: a run of spaces before the bang is not rescanned
+// From Each of its positions, which a leading whitespace class would do
 export const IMPORTANT_REGEX: RegExp = /!\s*important$/iu;
 
 // The deepest element the filter renders. Deeper content is dropped rather than rendered, since a render recursion that
@@ -149,6 +149,6 @@ export const SRCSET_DESCRIPTOR_REGEX: RegExp = /^(?:\d+w|\d*\.?\d+x|\d+h)$/u;
 export const ESCAPED_TEXT_CHARACTERS_REGEX: RegExp = /[&<>]/gu;
 export const ESCAPED_ATTRIBUTE_CHARACTERS_REGEX: RegExp = /[&"<>]/gu;
 
-// The day the sanitiser last read its packages' advisories. Its advisory watch test fails on any advisory for sanitize-html
-// Or dompurify published after it, so a new one starts a session through the next CI run
+// The day the sanitiser last read its packages' advisories. Its advisory watch test fails on any advisory for
+// `sanitize-html` Or dompurify published after it, so a new one starts a session through the next CI run
 export const SANITIZER_ADVISORY_WATCH_SINCE = "2026-10-23";

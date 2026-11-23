@@ -3,8 +3,8 @@ import { signSigV4Request } from "#src/services/sigv4/signSigV4Request";
 import { describe, expect, test } from "vitest";
 
 describe(signSigV4Request, () => {
-  // AWS's own example of a header-signed S3 GET, from "Authenticating Requests: Using the Authorization Header", signed on
-  // 2013-05-24
+  // AWS's own example of a header-signed S3 GET, from "Authenticating Requests: Using the Authorization Header", signed
+  // On 2013-05-24
   const credentials = {
     accessKeyId: "AKIAIOSFODNN7EXAMPLE",
     region: "us-east-1",

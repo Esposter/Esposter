@@ -19,8 +19,8 @@ describe(checkIsLocalUrl, () => {
     expect(checkIsLocalUrl(`postgres://localhost?${parameterName}=remote.example`)).toBe(false);
   });
 
-  // The URL standard starts a fragment at the first hash, while a database driver reads the authority up to a slash or a
-  // Question mark, so a fragment can hide a remote host after a loopback one
+  // The URL standard starts a fragment at the first hash, while a database driver reads the authority up to a slash or
+  // A Question mark, so a fragment can hide a remote host after a loopback one
   test("a loopback authority with a fragment is not local", () => {
     expect.hasAssertions();
     expect(checkIsLocalUrl("postgres://localhost#@remote.example/a")).toBe(false);
