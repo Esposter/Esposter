@@ -27,16 +27,16 @@ export const checkIsDeepEqual = (first: unknown, second: unknown): boolean => {
   if (checkIsBinary(first) && checkIsBinary(second)) return checkIsSameBytes(first, second);
   if (first instanceof RegExp && second instanceof RegExp)
     return first.source === second.source && first.flags === second.flags;
-  // A weak collection, a promise or a blob has no entries or bytes to compare synchronously, so only its identity says
-  // Whether two are the same
+  // A weak collection, a promise or a blob has no entries or bytes to compare synchronously.
+  // Only its identity says whether two are the same.
   if (first instanceof WeakMap || first instanceof WeakSet || first instanceof Promise || first instanceof Blob)
     return false;
 
   if (checkIsCustomMethod(first, ObjectMethod.ValueOf) && checkIsCustomMethod(second, ObjectMethod.ValueOf))
     return checkIsSameValueZero(first.valueOf(), second.valueOf());
   if (checkIsCustomMethod(first, ObjectMethod.ToString) && checkIsCustomMethod(second, ObjectMethod.ToString))
-    // `checkIsCustomMethod` has confirmed
-    // oxlint-disable-next-line typescript/no-base-to-string -- the toString is the value's own, not Object.prototype's
+    // `checkIsCustomMethod` has confirmed the toString is the value's own.
+    // oxlint-disable-next-line typescript/no-base-to-string -- Object.prototype's toString is not the one called here
     return first.toString() === second.toString();
 
   if (first instanceof Map && second instanceof Map) {

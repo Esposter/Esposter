@@ -32,7 +32,6 @@ export const wrapObjectStore = <
       objectStore.createIndex(name, keyPath, options);
     },
   };
-  // The mode is the caller's and selects which
   // oxlint-disable typescript/no-unsafe-type-assertion -- methods the type keeps, which this function cannot resolve
   // The mode is the caller's and selects which of these methods the type keeps, so this
   // oxlint-disable-next-line selector-ban/no-restricted-syntax -- function cannot resolve the conditional it returns

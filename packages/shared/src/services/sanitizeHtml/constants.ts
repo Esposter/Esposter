@@ -136,12 +136,12 @@ export const URL_ATTRIBUTES: string[] = [
 
 export const SRCSET_ATTRIBUTE = "srcset";
 
-// Anchored at its one bang, so the expression reads the value once: a run of spaces before the bang is not rescanned
-// From Each of its positions, which a leading whitespace class would do
+// Anchored at its one bang, so the expression reads the value once.
+// A run of spaces before the bang is not rescanned from each position, as a leading whitespace class would do.
 export const IMPORTANT_REGEX: RegExp = /!\s*important$/iu;
 
-// The deepest element the filter renders. Deeper content is dropped rather than rendered, since a render recursion that
-// Runs past the stack would throw on input a caller sent
+// The deepest element the filter renders.
+// Deeper content is dropped, since a render recursion that runs past the stack would throw on input a caller sent.
 export const MAX_NESTING_DEPTH = 256;
 
 export const SRCSET_DESCRIPTOR_REGEX: RegExp = /^(?:\d+w|\d*\.?\d+x|\d+h)$/u;

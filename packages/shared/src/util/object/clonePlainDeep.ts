@@ -15,10 +15,10 @@ const clone = (data: unknown, copies: WeakMap<object, unknown>): unknown => {
     return copy;
   }
 };
-// Copies every array and plain object in the tree and shares every other value, so a function, a date or a class
-// Instance passes through where `structuredClone` would throw on it or strip its prototype. A value reached twice is
-// Copied once, so a cycle stays a cycle in the copy. Reading through a reactive Proxy yields plain copies, so the
-// Result holds no proxy
-// A deep copy has its input's type, which
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a recursive walk over unknown values cannot compute
+// Copies every array and plain object in the tree and shares every other value.
+// Functions, dates and class instances pass through, where `structuredClone` would throw or strip the prototype.
+// A value reached twice is copied once, so a cycle stays a cycle in the copy.
+// Reading through a reactive Proxy yields plain copies, so the result holds no proxy.
+// A deep copy has its input's type.
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a recursive walk over unknown values cannot type it
 export const clonePlainDeep = <T>(data: T): T => clone(data, new WeakMap()) as T;

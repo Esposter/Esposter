@@ -2,9 +2,9 @@ import { getResultAsync } from "#src/services/error/getResultAsync";
 import { getExponentialBackoffDelayMs } from "#src/util/time/getExponentialBackoffDelayMs";
 import { sleep } from "#src/util/time/sleep";
 
-// Runs an operation, and after each failure waits longer before the next attempt, until one succeeds and resets the
-// Wait. The wait is taken before an attempt rather than after a failure, so the caller decides whether to attempt at
-// All
+// Runs an operation, and after each failure waits longer before the next attempt.
+// One success resets the wait.
+// The wait is taken before an attempt, not after a failure, so the caller decides whether to attempt at all.
 export const createExponentialBackoff = (
   baseDelayMs: number,
   maxDelayMs: number,
