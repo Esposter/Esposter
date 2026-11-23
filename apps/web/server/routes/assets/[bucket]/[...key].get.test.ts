@@ -2,6 +2,7 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { RequestEvent } from "nuxt/server";
 
 import assetRoute from "#server/routes/assets/[bucket]/[...key].get";
+import { TEST_FILENAME } from "#server/routes/assets/[bucket]/constants.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockBuckets } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
@@ -11,11 +12,10 @@ const createEvent = (bucket: string, key: string) =>
   ({ context: { params: { bucket, key } }, res: { headers: new Headers() } }) as unknown as RequestEvent;
 
 describe("routes/assets/[bucket]/[...key]", () => {
-  const key = "sample.bin";
-  const body = "stored bytes";
+  const key = TEST_FILENAME;
+  const body = " ";
   const storageBuckets = [
     StorageBucket.PublicDungeonsAssets,
-    StorageBucket.PublicGenshinAssets,
     StorageBucket.PublicHostedAssets,
     StorageBucket.PublicUserAssets,
   ];
