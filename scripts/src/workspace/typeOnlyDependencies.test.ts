@@ -9,6 +9,7 @@ import { readVueSegments } from "#src/services/shared/readVueSegments";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
+import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { NON_SOURCE_SUFFIXES } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -151,6 +152,40 @@ describe("typeOnlyDependencies", () => {
       });
 
       expect(unheld).toStrictEqual([]);
+    },
+  );
+
+  // A workspace sibling a built package loads is kept external by its runtime fields alone: tsdown bundles a devDependency
+  // Its source imports, which copies the sibling's modules into this package's `dist`. A published package's declarations
+  // Name the types it imports, so its consumers resolve those names as well
+  test(
+    "list each workspace sibling a built package loads in dependencies or peerDependencies",
+    { timeout: TREE_READ_TIMEOUT_MS },
+    () => {
+      expect.hasAssertions();
+
+      const builtPackagePaths = new Set(readTsdownPackagePaths());
+      const siblingNames = new Set(readWorkspacePackages(REPOSITORY_ROOT).map(({ manifest }) => manifest.name));
+      const packages = readPackages(() => true).filter(({ packagePath }) => builtPackagePaths.has(packagePath));
+      const sourcePaths = readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
+        (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
+      );
+      const unexternal = packages.flatMap(({ manifest, packagePath }) => {
+        const valueNames = new Set<string>();
+        const typeNames = new Set<string>();
+        for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/src/`)))
+          for (const script of readScripts(path)) collectScriptUsage(script, valueNames, typeNames);
+        const loadedNames = manifest.private === true ? valueNames : new Set([...valueNames, ...typeNames]);
+        const externalNames = new Set([
+          ...Object.keys(manifest.dependencies ?? {}),
+          ...Object.keys(manifest.peerDependencies ?? {}),
+        ]);
+        return [...loadedNames]
+          .filter((name) => siblingNames.has(name) && !externalNames.has(name))
+          .map((name) => `${manifest.name} -> ${name}`);
+      });
+
+      expect(unexternal).toStrictEqual([]);
     },
   );
 });
