@@ -5,8 +5,8 @@ import { readSurveyLogicPath } from "#src/services/evaluator/readSurveyLogicPath
 import { getOwnValue } from "@esposter/shared";
 
 // A name reads the answer under its exact key first. Failing that, its first part may name a scope the caller passes.
-// The rest of the name is read inside that scope as a top-level name is read: its exact key, then its path.
-// Any other name is a path through the answers, so a nested answer is read by its dotted keys, its indexes and its length
+// The rest of the name is read inside that scope as a top-level name is read: its exact key, then its path. Any other
+// Name is a path through the answers, so a nested answer is read by its dotted keys, its indexes and its length
 export const readSurveyLogicReference = (name: string, context: SurveyLogicContext): SurveyLogicValue => {
   const answer = getOwnValue(context.values, name);
   if (answer !== undefined) return answer;

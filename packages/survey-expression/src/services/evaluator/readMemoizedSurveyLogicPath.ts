@@ -4,8 +4,9 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 import { readSurveyLogicPathUncached } from "#src/services/evaluator/readSurveyLogicPathUncached";
 import { getOrCreate } from "@esposter/shared";
 
-// Each (container, tail) pair is read once per call: a name's dotted splits reach the same tail through several heads, so
-// Without it an unresolved name costs 2^dots reads. The memo is kept only for the one call, since a value may change between calls
+// Each (container, tail) pair is read once per call: a name's dotted splits reach the same tail through several heads,
+// So Without it an unresolved name costs 2^dots reads. The memo is kept only for the one call, since a value may change
+// Between calls
 export const readMemoizedSurveyLogicPath = (
   container: SurveyLogicValue,
   name: string,

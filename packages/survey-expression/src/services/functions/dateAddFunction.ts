@@ -7,8 +7,8 @@ import { toSurveyLogicDate } from "#src/services/shared/toSurveyLogicDate";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 import { getOwnValue } from "@esposter/shared";
 
-// Each interval moves a date through its own unit: days by the calendar day, hours, minutes and seconds by the wall clock,
-// And months and years by whole calendar months
+// Each interval moves a date through its own unit: days by the calendar day, hours, minutes and seconds by the wall
+// Clock, And months and years by whole calendar months
 const unitAdditionMap: Record<string, (date: Date, amount: number) => void> = {
   days: (date, amount) => {
     date.setUTCDate(date.getUTCDate() + amount);
@@ -30,8 +30,8 @@ const unitAdditionMap: Record<string, (date: Date, amount: number) => void> = {
   },
 };
 
-// The date moved by a whole number of an interval, in days by default. An empty interval is days; an unknown one, an empty amount
-// And a date that names no date have no result. A zero amount is the date itself
+// The date moved by a whole number of an interval, in days by default. An empty interval is days; an unknown one, an
+// Empty amount And a date that names no date have no result. A zero amount is the date itself
 export const dateAddFunction: SurveyLogicFunction = ([dateValue, amountValue, intervalValue]) => {
   const date = parseSurveyLogicDate(dateValue);
   const amount = toSurveyLogicNumber(amountValue);

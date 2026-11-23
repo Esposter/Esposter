@@ -5,7 +5,8 @@ import { getSurveyDateUnit } from "#src/services/shared/getSurveyDateUnit";
 import { parseSurveyLogicDate } from "#src/services/shared/parseSurveyLogicDate";
 import { toSurveyLogicWallClock } from "#src/services/shared/toSurveyLogicWallClock";
 
-// The whole years from a birthdate to the clock, or the time in the interval the argument names. A birthdate after the clock has no age
+// The whole years from a birthdate to the clock, or the time in the interval the argument names. A birthdate after the
+// Clock has no age
 export const ageFunction: SurveyLogicFunction = ([birthdateValue, intervalValue], context) => {
   const birthdate = parseSurveyLogicDate(birthdateValue);
   const now = toSurveyLogicWallClock(context.now);

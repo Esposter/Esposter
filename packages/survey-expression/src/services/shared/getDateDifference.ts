@@ -9,8 +9,9 @@ const millisecondsPerUnitMap: Record<string, number> = {
   seconds: MILLISECONDS_PER_SECOND,
 };
 
-// The time from one wall-clock date to another in a unit: the calendar days, the whole months or years, or the hours, minutes
-// Or seconds rounded up. The order of the two dates does not matter. Undefined for a unit the language does not know
+// The time from one wall-clock date to another in a unit: the calendar days, the whole months or years, or the hours,
+// Minutes Or seconds rounded up. The order of the two dates does not matter. Undefined for a unit the language does not
+// Know
 export const getDateDifference = (first: Date, second: Date, unit: string): number | undefined => {
   const [from, to] = first.getTime() <= second.getTime() ? [first, second] : [second, first];
   if (unit === "days") return getSurveyLogicDayNumber(to) - getSurveyLogicDayNumber(from);

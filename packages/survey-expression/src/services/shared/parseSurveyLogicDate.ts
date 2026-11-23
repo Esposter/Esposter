@@ -4,13 +4,15 @@ import { checkIsCalendarDay } from "#src/services/shared/checkIsCalendarDay";
 import { createSurveyLogicWallClock } from "#src/services/shared/createSurveyLogicWallClock";
 import { toSurveyLogicWallClock } from "#src/services/shared/toSurveyLogicWallClock";
 
-// An ISO date, with an optional time of day: the separator is a T or the space RFC 3339 allows, the seconds and the fraction are
-// Optional, and a zone is Z or an offset. The whole text must match, so a date with a word after it is not a date
+// An ISO date, with an optional time of day: the separator is a T or the space RFC 3339 allows, the seconds and the
+// Fraction are Optional, and a zone is Z or an offset. The whole text must match, so a date with a word after it is not
+// A date
 const DATE_TEXT_REGEX =
   /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})(?:[T ](?<hour>\d{2}):(?<minute>\d{2})(?::(?<second>\d{2})(?:\.(?<fraction>\d+))?)?(?<zone>Z|[+-]\d{2}:\d{2})?)?$/u;
 
-// The date an ISO text names, or undefined when the text names none. A text with no zone is its wall clock, read as written, so
-// No zone or daylight saving change moves it. A text with a zone is the moment it names, read on the local clock
+// The date an ISO text names, or undefined when the text names none. A text with no zone is its wall clock, read as
+// Written, so No zone or daylight saving change moves it. A text with a zone is the moment it names, read on the local
+// Clock
 export const parseSurveyLogicDate = (value: SurveyLogicValue): Date | undefined => {
   if (typeof value !== "string") return undefined;
 

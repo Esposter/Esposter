@@ -2,9 +2,10 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { readSurveyLogicPart } from "#src/services/evaluator/readSurveyLogicPart";
 
-// A name read as a path through a value, without a memo: the whole name is tried first as one part, then each dotted split
-// Reads its head as a part and hands its tail to `readTail`, which reads it through the memo. A tail of `length` is no
-// Read of its own: a missing one is read by the caller, once the whole name has failed, so a zero never counts as a value here
+// A name read as a path through a value, without a memo: the whole name is tried first as one part, then each dotted
+// Split Reads its head as a part and hands its tail to `readTail`, which reads it through the memo. A tail of `length`
+// Is no Read of its own: a missing one is read by the caller, once the whole name has failed, so a zero never counts as
+// A value here
 export const readSurveyLogicPathUncached = (
   container: SurveyLogicValue,
   name: string,

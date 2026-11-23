@@ -2,8 +2,8 @@
 const BASIC_PLANE_LAST_CODE_POINT = 0xffff;
 
 // Two texts compare by code point, so a character past the basic plane sorts after every character in it, where UTF-16
-// Code units would sort it among the surrogates. Each text is walked by its code points, so nothing is copied to compare
-// Them. The result has the sign a sort takes
+// Code units would sort it among the surrogates. Each text is walked by its code points, so nothing is copied to
+// Compare Them. The result has the sign a sort takes
 export const compareSurveyLogicTexts = (first: string, second: string): number => {
   let firstIndex = 0;
   let secondIndex = 0;

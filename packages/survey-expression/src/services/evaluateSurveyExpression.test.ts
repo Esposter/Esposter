@@ -6,8 +6,9 @@ import { runSurveyExpression } from "#src/services/runSurveyExpression";
 import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswers";
 import { describe, expect, test } from "vitest";
 
-// Every expected value below follows this package's rules, not SurveyJS's: undefined is the one absent value, and a storage null reads as undefined.
-// A text is read as a number only where an operation needs one. SurveyJS parity is the fixture replay's job, not this file's.
+// Every expected value below follows this package's rules, not SurveyJS's: undefined is the one absent value, and a
+// Storage null reads as undefined. A text is read as a number only where an operation needs one. SurveyJS parity is the
+// Fixture replay's job, not this file's.
 describe(evaluateSurveyExpression, () => {
   const now = new Date(0);
 
@@ -165,7 +166,8 @@ describe(evaluateSurveyExpression, () => {
     expect(evaluate(source, values)).toStrictEqual(expected);
   });
 
-  // `and`, `or` and `not` are boolean: an operand counts only when it is `true`, so any other value counts as false (R8)
+  // `and`, `or` and `not` are boolean: an operand counts only when it is `true`, so any other value counts as false
+  // (R8)
   test.each([
     ["and of two truthy numbers is false", "1 and 2", {}, false],
     ["and of zero is false", "0 and 1", {}, false],
@@ -192,8 +194,9 @@ describe(evaluateSurveyExpression, () => {
     expect(evaluate(source, values)).toStrictEqual(expected);
   });
 
-  // Arithmetic reads each operand as a number, and an operand that reads as none has no result.
-  // A division or a remainder by zero has no result either. The one exception is `+`, which joins two texts when both are non-empty and neither reads as a number
+  // Arithmetic reads each operand as a number, and an operand that reads as none has no result. A division or a
+  // Remainder by zero has no result either. The one exception is `+`, which joins two texts when both are non-empty and
+  // Neither reads as a number
   test.each([
     ["a sum of numbers", "1 + 2", {}, 3],
     ["a numeric text literal adds as a number", "'5' + 3", {}, 8],
