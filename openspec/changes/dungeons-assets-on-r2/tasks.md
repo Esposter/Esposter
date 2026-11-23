@@ -14,7 +14,7 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 
 - [x] 2.1 Make the first publish from the repository's files: the PNG, MP3, WebP and WOFF2 binaries, the `.tsx` tilesets and the `tilemap.json` exports, each read from its repository path. Verify: `pnpm -C scripts hosted-assets publish --dry-run dungeons` lists one record per file, names no attribution notice (the scenario "A file the code never loads is not hosted"), and refuses nothing, since no WAV is left in the repository.
 - [x] 2.2 Run `hosted-assets publish --dry-run dungeons` and read the output: each record named, each key added, and no refusal. Verify: the dry run exits zero and prints the object count.
-- [ ] 2.3 Publish to dev, then prod, then commit the lock. Verify: `pnpm -C scripts hosted-assets verify dungeons` prints the object count from both environments with no failure, and a script hashing each repository file equals its object's name for every file, the owner's byte check.
+- [x] 2.3 Publish to dev, then prod, then commit the lock. Verify: `pnpm -C scripts hosted-assets verify dungeons` prints the object count from both environments with no failure, and a script hashing each repository file equals its object's name for every file, the owner's byte check.
 - [ ] 2.4 `git rm` the repository copies of the hosted binaries, after 2.3's byte check passes. Verify: `git ls-files apps/web/app/assets/dungeons | grep -E '\.(png|webp|mp3|woff2)$'` prints nothing.
 
 ## 3. Key map and save-safe lookups

@@ -1,0 +1,467 @@
+{
+  "indexes": {},
+  "objects": {
+    "dungeons/UI/balls/cosmoBall.png": {
+      "bytes": 2010,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "fa08289e3b330516cbffe0b503f747a6279c349f10cb60f5ad29e554e3e4f759"
+    },
+    "dungeons/UI/balls/damagedBall.png": {
+      "bytes": 477483,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "06dc56fccdfda8380d358b409bd49c69ec6553e80c6ca65a69af87125c4eef9f"
+    },
+    "dungeons/UI/cursor/cursor.png": {
+      "bytes": 126,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "ea0095ec8b4469ebf47de5b5f24a94107d87952708f922a78955a13db162b7fa"
+    },
+    "dungeons/UI/cursor/cursorWhite.png": {
+      "bytes": 126,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "d0f5f29ac3d20d4716ba8e62b1392cc8fbc13fe903412a0b275a3b3969cdf38f"
+    },
+    "dungeons/UI/joystick/base.png": {
+      "bytes": 36872,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "5d3472088d27e236cc98cef5e9cb7c8617f0f147bd29f162354962964bfda779"
+    },
+    "dungeons/UI/joystick/thumb.png": {
+      "bytes": 20650,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "69871744a37d7603621ea49678a6bbfa445d8402180d420a5c4c33699a75a4c0"
+    },
+    "dungeons/UI/monsters/aquavalor.png": {
+      "bytes": 15702,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "fb1ac976d3a6ba9f6083a6ec91535f709d9bdd9723cbc4842a7e85ae4d4c64e6"
+    },
+    "dungeons/UI/monsters/carnodusk.png": {
+      "bytes": 84626,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "3087200cc078d4d906a48c7b7c15fb0741be1806f6814bb62a47449a9c36e194"
+    },
+    "dungeons/UI/monsters/frostsaber.png": {
+      "bytes": 18848,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "4a8fb7cb01ba5df30ce55c1c6112ce5098c7130991083d6d09401bb1046b8854"
+    },
+    "dungeons/UI/monsters/ignivolt.png": {
+      "bytes": 20972,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "a98dc5dcfd496d2e714f17ef688139a1e1c8fcda8c33b7dae1c1b3236f654e0f"
+    },
+    "dungeons/UI/monsters/iguanignite.png": {
+      "bytes": 57313,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "ebd9fb3e1b69ffbb7b4f3d9773c8ebd7e32de17455ad3c54325bf5b66fdb1387"
+    },
+    "dungeons/scene/battle/forestBackground.png": {
+      "bytes": 393605,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "c8ccef527cd6a360fcc19ff1412733814b79e872c6103565a7b25409e52e5d6a"
+    },
+    "dungeons/scene/inventory/background.png": {
+      "bytes": 179930,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "dcc3d8572347d1042ebec12767088a788841ec84fd22f1bc5f2e659d951b3bbc"
+    },
+    "dungeons/scene/inventory/bag.png": {
+      "bytes": 227360,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "1419568a203fb0cb028724cc8209bc31f143803907958b4787ce32cb452874d3"
+    },
+    "dungeons/scene/monsterParty/background.png": {
+      "bytes": 135,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "5bfa6884eec41bcb0c8fbc44e6eb584119f35758ba1bf0f9de44e2e9777bf303"
+    },
+    "dungeons/scene/monsterParty/monsterDetailsBackground.png": {
+      "bytes": 20210,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "ccfb5522c441ad6bb37fd7810d98098d1496a511558e55f99a224c7d6eabd2b7"
+    },
+    "dungeons/scene/title/screenBackground.webp": {
+      "bytes": 1826066,
+      "extension": ".webp",
+      "scope": "dungeons",
+      "sha256": "3d28699fdb366c7187a58cceb599a1ab5590f8c71eca529426c4ae5b86a5ae3c"
+    },
+    "dungeons/scene/title/text.png": {
+      "bytes": 100534,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "93876646946731bfba857861ccaab9f17bb0b880d95298e7d030c7bc4feaeee9"
+    },
+    "dungeons/scene/title/textBackground.png": {
+      "bytes": 1371564,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "f7889fc6c185c579a3ba3bdfecda76a764ed8498e5ce00561633b0da517b8080"
+    },
+    "dungeons/scene/world/Home/HomeBuilding1/foreground.png": {
+      "bytes": 2149,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "85541842938f5d8c5795b6e5c118aaefa5da108dce3584ffb1c0ea4c02c0ac6f"
+    },
+    "dungeons/scene/world/Home/HomeBuilding1/tilemap.json": {
+      "bytes": 7753,
+      "extension": ".json",
+      "scope": "dungeons",
+      "sha256": "e79349230c815f8764d837cc22f8c80734549cd5343a514e1eaff403f3d57407"
+    },
+    "dungeons/scene/world/Home/HomeBuilding2/foreground.png": {
+      "bytes": 2149,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "85541842938f5d8c5795b6e5c118aaefa5da108dce3584ffb1c0ea4c02c0ac6f"
+    },
+    "dungeons/scene/world/Home/HomeBuilding2/tilemap.json": {
+      "bytes": 6526,
+      "extension": ".json",
+      "scope": "dungeons",
+      "sha256": "41e1b175b3925b103d51adb2126d4449aa00abd5a3b950a2ec837412254fe920"
+    },
+    "dungeons/scene/world/Home/foreground.png": {
+      "bytes": 14163,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "a31b64251586034acc1e67a32468afc461a4fd853fd551badce26af51ce2620b"
+    },
+    "dungeons/scene/world/Home/tilemap.json": {
+      "bytes": 49697,
+      "extension": ".json",
+      "scope": "dungeons",
+      "sha256": "d41f63522732612ac02e5fec7a40d867738c6022e9b95eeb1737f01360defb97"
+    },
+    "dungeons/sound/openChest.mp3": {
+      "bytes": 26112,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "56cac9e5ccc07355dd02eb9011378e3b35c8caed0dbdc7574a16c1f6413d1d7c"
+    },
+    "dungeons/sound/openDoor.mp3": {
+      "bytes": 92296,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "21717440ff7519a0bd3bb087eef63b68f30d1c0775267c161a58737445036449"
+    },
+    "dungeons/sound/textBlip.mp3": {
+      "bytes": 50155,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "71b6ad248b77e3f729e77328245b05b31eb5452a367658a280eac25139420e01"
+    },
+    "dungeons/thirdParty/axulart/character/custom.png": {
+      "bytes": 5916,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "c51b6b8b2a6912512c2aa9a5a5cb315514f60199b68bc49ffff25f36b4211739"
+    },
+    "dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png": {
+      "bytes": 530,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "0d0c8f3754309171cb31c32b9fc41054fea81b224357f6875d3fb47eb69bc165"
+    },
+    "dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png": {
+      "bytes": 447,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "9fe632c0117a57c0fa4b94a94530a6b301ea3be381b2df245b4b748e4ae0e65f"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png": {
+      "bytes": 245,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "cad4eb0bdf2eebd6501d662f68956fe564dd7babdac62d441088e6f581771da6"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueMid.png": {
+      "bytes": 165,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "939f6fb040bc993f060811e7905ebf16387140b696dccdaa28acfda6c74b6cc2"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueRight.png": {
+      "bytes": 251,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "471adb38e56a449e72ca1175861d319373ac883c84413682e7a9c2e8b8aadff7"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png": {
+      "bytes": 243,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "3f7bdd493f43a2addc8adf5855b95dc161ac3f728b63d00b9e0850bbb1426516"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png": {
+      "bytes": 165,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "f1e9d082f9038a4156e10ec50102e222a74ffd4166322a39913dc46cb0e798b4"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png": {
+      "bytes": 251,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "8d6e0ca991175db6949874a11e86ed9eba334f6c2a9172fa8930a498171d32db"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowLeft.png": {
+      "bytes": 175,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "3288c11f10228eadbaa722730b5e3506bf459e4732beb3d033209dd3c9247e63"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png": {
+      "bytes": 145,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "6d58df5c16cfc2e43e9596ac9be017a80d7c95d35f6b01920872a258ec6b7a57"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png": {
+      "bytes": 172,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "0d786a45d2483b3257c93306a126d2c9e1eca22559b9939a116445183325dfea"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/customUI.png": {
+      "bytes": 2735,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "55fd29c7d581073f937fcb4ea272457ec39d008ec402f44a62e8fd8ba0d4f3e3"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanel.png": {
+      "bytes": 636,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "26353b89bd144ce88f9a446a91b3116b86a730451d6dcead8d8687cfa8448d4d"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelGreen.png": {
+      "bytes": 1127,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "6e6b635636bf1fa4acd06be90791363d011247fe6ea5140dd0a9a1a8494816b9"
+    },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelPurple.png": {
+      "bytes": 1114,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "f5b16862c6b5fce5db7e68f6a076f74f23073a238e3b42ff59343f740c5faecc"
+    },
+    "dungeons/thirdParty/kenneysAssets/fonts/KenneyFutureNarrow.woff2": {
+      "bytes": 3320,
+      "extension": ".woff2",
+      "scope": "dungeons",
+      "sha256": "6b3eba8b046b9d470e34d2e98a0445838ec17a095d879d8fa689bf0e5610add7"
+    },
+    "dungeons/thirdParty/leohpaz/claw.mp3": {
+      "bytes": 10599,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "b80bd6ec5815680e6d9834ac0d276c5dcf16d08154959bd70ff53f894fbf84e8"
+    },
+    "dungeons/thirdParty/leohpaz/flee.mp3": {
+      "bytes": 10559,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "1dd201d64699d9fb75c9df6e8116c1b79252bc0fdeeb90031efad4c5ef75e6f3"
+    },
+    "dungeons/thirdParty/leohpaz/iceExplosion.mp3": {
+      "bytes": 32149,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "f43eb5f1f440f784fb313ca2df24d53829b67dfa584850c3601d51904e7bd955"
+    },
+    "dungeons/thirdParty/leohpaz/stepGrass.mp3": {
+      "bytes": 4596,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "985fbc4fd8096738c98e9f421e2c13194ff4b3b282a0ba715947522706db97b5"
+    },
+    "dungeons/thirdParty/parabellumGames/characters.png": {
+      "bytes": 22664,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "f1fefe36d327a9a73f03187499478d8a40274b469012201cf0a7202d920da7d8"
+    },
+    "dungeons/thirdParty/pimen/iceAttack/active.png": {
+      "bytes": 1149,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "c3e9a719b5e4c200e8536dd6a5a93683db1b59877a384a0d03ddb6eeddd45cd3"
+    },
+    "dungeons/thirdParty/pimen/iceAttack/start.png": {
+      "bytes": 941,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "3fa3f07350256f9ea5b46f37d8a77064c1785f67c02f992f956693718f347bfc"
+    },
+    "dungeons/thirdParty/pimen/slash.png": {
+      "bytes": 471,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "a1e28b8951857d94f474b88b9bbd3bc6565b213a3cc7c0aeeeccc17d1fac9768"
+    },
+    "dungeons/thirdParty/xDeviruchi/andTheJourneyBegins.mp3": {
+      "bytes": 1921857,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "b0dc57f397279b5e292f38f5044f0acaa255e5dcc07bb8a0e7c7319235034d3a"
+    },
+    "dungeons/thirdParty/xDeviruchi/decisiveBattle.mp3": {
+      "bytes": 1848917,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "db80655357ea363e2dcc28dc15be942a0eb5b74de1c826bdeb15c29514af5548"
+    },
+    "dungeons/thirdParty/xDeviruchi/titleTheme.mp3": {
+      "bytes": 1827355,
+      "extension": ".mp3",
+      "scope": "dungeons",
+      "sha256": "d63b0f383df49847c45c13dcac447b148789913cefd95c044a11af6a720603a9"
+    },
+    "dungeons/tilesets/axulart/BasicPlains.png": {
+      "bytes": 15617,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "2d9741c6d8fc5a9124136ce72c7c03e49ee3528cb4c150d7602ddaba70c376be"
+    },
+    "dungeons/tilesets/axulart/BasicPlains.tsx": {
+      "bytes": 234,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "158c112542731984921a9cd91175386ec89b0582feb79141f061a16b18e8a36f"
+    },
+    "dungeons/tilesets/axulart/BeachAndCaves.png": {
+      "bytes": 35999,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "b0c26dee062381274ca95a6c199cf8493ba30f2593186cab4417f037ad986f2d"
+    },
+    "dungeons/tilesets/axulart/BeachAndCaves.tsx": {
+      "bytes": 240,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "0f812d292d0c7b834668465fc7355513cac8ab6471d7d9945f6c709230dcaea3"
+    },
+    "dungeons/tilesets/axulart/House.png": {
+      "bytes": 4197,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "f43a9cfa5a21d2445d033c557e22fde89ffa816ef9c4a614917ae1a353942fb8"
+    },
+    "dungeons/tilesets/axulart/House.tsx": {
+      "bytes": 222,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "a0a884a416bb4955be5dc132b8fee3bb89739ce57bee272eb0f473839bf55b63"
+    },
+    "dungeons/tilesets/axulart/HouseInterior.png": {
+      "bytes": 18506,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "8696f5cb7ac429125aaea5b82a4788289dc40ba311ce5c2712ef53c5ed9bac3f"
+    },
+    "dungeons/tilesets/axulart/HouseInterior.tsx": {
+      "bytes": 240,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "3d1017ec8a593c157bd8a14cee481170fad7f17736cdb3b1c48abdeaa7946d84"
+    },
+    "dungeons/tilesets/firstParty/Bushes.png": {
+      "bytes": 1632,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "0f9dcba590cd7ce49288dbf6c58d4a18e15f15b8763cef7bcd8acc52aa165757"
+    },
+    "dungeons/tilesets/firstParty/Bushes.tsx": {
+      "bytes": 223,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "efde3f89658a7ce13ea50cf74c2e677aa6229091c4ea05dff507426f868ce991"
+    },
+    "dungeons/tilesets/firstParty/Collision.png": {
+      "bytes": 198,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "bfe5ba0d9c78d0375450eafa5d966dee0d8087026b752ddc7ef7129d72680b59"
+    },
+    "dungeons/tilesets/firstParty/Collision.tsx": {
+      "bytes": 339,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "b14eff737112f8c7a744ff46a5d4e61dfee51d6a2ba15d7660377f2d60e9db21"
+    },
+    "dungeons/tilesets/firstParty/Dungeon.png": {
+      "bytes": 35383,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "d045e3f0c02d9b55d001f942671778795fbe9ba9bfdae6b7409286737693c878"
+    },
+    "dungeons/tilesets/firstParty/Encounter.png": {
+      "bytes": 201,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "bf1689522e3f7111f972d4db341f1516d17e9c7eabd124872598947f5225eda4"
+    },
+    "dungeons/tilesets/firstParty/Encounter.tsx": {
+      "bytes": 302,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "1178772579bc9f6d5e2ed6d911aad23de25f6b4fd81d5d85745c9a5ce872791d"
+    },
+    "dungeons/tilesets/firstParty/Entrance.png": {
+      "bytes": 714,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "bd8cec76f2deb5f3abaa7ec67912ff7f0cf2db0760a189dd28675e4ff6493d49"
+    },
+    "dungeons/tilesets/firstParty/Entrance.tsx": {
+      "bytes": 226,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "50ac76711e5ebc718c6077153048892dda98ff7bab6aff10a4b49a8a8ebbb3ce"
+    },
+    "dungeons/tilesets/firstParty/Grass.png": {
+      "bytes": 1114,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "6caf216cd7776328e5410426f952f7266d3ca6798ebdc9471cbffb890bfac6e6"
+    },
+    "dungeons/tilesets/firstParty/Grass.tsx": {
+      "bytes": 221,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "193e3b42ee7bffcae91ed3c35a429ed26dcfdcc645124a89f08f013d03943520"
+    },
+    "dungeons/tilesets/firstParty/Teleport.png": {
+      "bytes": 235,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "55ba487db54429c3944f1927edc254caaf5fa935e31a2381b106efec86408a1b"
+    },
+    "dungeons/tilesets/firstParty/Teleport.tsx": {
+      "bytes": 274,
+      "extension": ".tsx",
+      "scope": "dungeons",
+      "sha256": "2381272adea485e04e65d8c92eba9ba1df028099b7e6c4ef632ed9a1a8733f97"
+    }
+  }
+}
