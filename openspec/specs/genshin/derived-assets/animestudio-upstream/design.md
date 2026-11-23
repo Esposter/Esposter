@@ -73,6 +73,12 @@ public sealed class AnimatorController : RuntimeAnimatorController
 | `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`              | Applies the Ooz copy and Leviathan offset edits, and the controller export patch, to the clone the defects are found in, at build |
 | `scripts/src/services/recreation/animeStudio/patchAnimatorControllerExport.ts` | Keeps the parsed controller as a public `m_Controller` field, so the JSON export writes it                                        |
 
+## Sources
+
+- [AnimeStudio](https://github.com/Escartem/AnimeStudio) at the pinned commit `db860e1f9bf0e0314b892782304d44f3ac42c261`, cached at `{cache-root}/animestudio-db860e1f`: its Ooz source `AnimeStudio.Ooz/kraken.cpp` (the `COPY_64` macro and the Leviathan literal functions) and `AnimeStudio/Classes/AnimatorController.cs`, the two files the defects are drafted against.
+- The game 7.1.0 blocks each repro names (`00/10850306.blk`, `00/06104869.blk` and `00/11877482.blk`), read by `AnimeStudio.CLI` with the flags the repro gives.
+- The build edits the drafts describe: `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts` and `scripts/src/services/recreation/animeStudio/patchAnimatorControllerExport.ts`.
+
 ## Open
 
 The open item that nothing is filed upstream is recorded with its requirement in [the spec](spec.md).

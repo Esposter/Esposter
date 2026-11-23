@@ -39,6 +39,13 @@ flowchart TD
 | `scripts/src/services/recreation/animeStudio/patches/OodleHelper.patch`    | The one patch applied to the checked-out tree: the Oodle fingerprint hook, against the pinned commit             |
 | `scripts/src/services/recreation/animeStudio/readAnimeStudioExceptions.ts` | Reads the exception lines off the CLI's output, so a run that skipped an asset does not read as clean            |
 
+## Sources
+
+- [AnimeStudio](https://github.com/Escartem/AnimeStudio) at the pinned commit `db860e1f9bf0e0314b892782304d44f3ac42c261`, its CLI and its Ooz and ACL sources, which the build fetches and edits: `scripts/src/services/recreation/animeStudio/constants.ts`.
+- [Texture2DDecoder](https://github.com/KiruyaMomochi/Texture2DDecoder) at the pinned commit `c974dbda1209a6af34cb03941fa0b999627c3623`, the native behind the `Kyaru.Texture2DDecoder` wrapper: `scripts/src/services/recreation/animeStudio/constants.ts`.
+- The Oodle fingerprint hook, `scripts/src/services/recreation/animeStudio/patches/OodleHelper.patch`, applied to the working clone at `{data-root}/tools/AnimeStudio-src`.
+- The Windows AnimeStudio CLI and its `Maps` folder, unpacked by hand under `{home}/Downloads/AnimeStudio`: the file counts each reference block of `PARITY_REFERENCE_BLOCKS` (`scripts/src/services/genshinAssets/shared/constants.ts`) is checked against, on game 7.1.0.
+
 ## Open
 
 The gate that keeps Windows-only steps off Apple silicon is open in [the spec](spec.md).
