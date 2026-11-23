@@ -6,9 +6,9 @@ import type { Node, PassNode } from "three/webgpu";
 
 import { WitnessRole } from "#parity/models/witness/WitnessRole";
 import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
-import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
 import { checkIsRideCopy } from "#parity/witness/checkIsRideCopy";
 import { checkIsWitnessDrawn } from "#parity/witness/checkIsWitnessDrawn";
+import { WitnessTarget, WitnessTargets } from "#src/models/witness/WitnessTarget";
 import { asVec3Node } from "#src/services/scene/asVec3Node";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { readUserData } from "#src/services/scene/readUserData";
