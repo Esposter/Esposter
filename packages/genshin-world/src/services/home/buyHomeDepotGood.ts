@@ -28,5 +28,5 @@ export const buyHomeDepotGood = (
     wallet: Wallet;
   },
   itemRooms: ItemCategoryRoomMap,
-): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } =>
+): { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } | undefined =>
   buyShopGood(wallet, inventory, () => itemDefinition, purchases, good, adventureRank, now, itemRooms);

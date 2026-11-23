@@ -8,6 +8,15 @@ export const noReturnGlobalProperties: Rule = defineRule({
     // The names bound to a global call. A destructured binding names nothing, so it adds none
     const globalNames = new Set<string>();
     return {
+      ReturnStatement(node) {
+        if (node.argument?.type !== "ObjectExpression") return;
+
+        for (const property of node.argument.properties) {
+          if (property.type !== "Property" || property.value.type !== "Identifier") continue;
+          if (globalNames.has(property.value.name))
+            context.report({ message: buildGlobalPropertyMessage(property.value.name), node: property });
+        }
+      },
       VariableDeclaration(node) {
         for (const { id, init } of node.declarations) {
           if (
@@ -17,15 +26,6 @@ export const noReturnGlobalProperties: Rule = defineRule({
             GLOBAL_CALLEE_NAMES.has(init.callee.name)
           )
             globalNames.add(id.name);
-        }
-      },
-      ReturnStatement(node) {
-        if (node.argument?.type !== "ObjectExpression") return;
-
-        for (const property of node.argument.properties) {
-          if (property.type !== "Property" || property.value.type !== "Identifier") continue;
-          if (globalNames.has(property.value.name))
-            context.report({ message: buildGlobalPropertyMessage(property.value.name), node: property });
         }
       },
     };

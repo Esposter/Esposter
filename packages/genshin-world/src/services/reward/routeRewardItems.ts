@@ -25,7 +25,7 @@ export const routeRewardItems = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
   itemRooms: ItemCategoryRoomMap,
-): undefined | { adventureExp: number; inventory: Inventory; wallet: Wallet } => {
+): { adventureExp: number; inventory: Inventory; wallet: Wallet } | undefined => {
   const gain = gainAdventureExp(adventureRankTables, adventureExp, gainedAdventureExp, completedMainQuestIds);
   const granted = grantRewardItems(
     { ...wallet, [Currency.Mora]: wallet[Currency.Mora] + gain.moraPaid },

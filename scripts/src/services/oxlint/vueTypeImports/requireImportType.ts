@@ -12,7 +12,7 @@ import {
 import { readTemplateWords } from "#src/services/oxlint/vueTypeImports/readTemplateWords";
 import { defineRule } from "@oxlint/plugins";
 
-// The typescript-eslint rule's classification and fix, for a .vue file whose script block oxlint's own rule never reads.
+// The consistent-type-imports classification and fix, for a .vue file whose script block oxlint's own rule never reads.
 // A binding the template names is a value there, so a component or an enum read by the template is never typed away.
 export const requireImportType: Rule = defineRule({
   create(context) {

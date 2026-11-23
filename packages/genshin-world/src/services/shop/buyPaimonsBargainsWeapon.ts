@@ -20,7 +20,7 @@ export const buyPaimonsBargainsWeapon = (
   getWeaponDefinition: (weaponId: number) => ItemDefinition,
   now: Temporal.Instant,
   itemRooms: ItemCategoryRoomMap,
-): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
+): { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } | undefined => {
   if (!checkIsCurrencyOnlyGood(good)) return undefined;
   const paid = payShopGoodCosts(wallet, inventory, purchases, good, now);
   if (!paid) return undefined;

@@ -18,8 +18,8 @@ export const grantRewardItems = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
   itemRooms: ItemCategoryRoomMap,
-): undefined | { inventory: Inventory; wallet: Wallet } => {
-  let granted: undefined | { inventory: Inventory; wallet: Wallet } = { inventory, wallet };
+): { inventory: Inventory; wallet: Wallet } | undefined => {
+  let granted: { inventory: Inventory; wallet: Wallet } | undefined = { inventory, wallet };
   for (const reward of rewards) {
     if (reward.id === ADVENTURE_EXP_ITEM_ID || reward.id === COMPANIONSHIP_EXP_ITEM_ID) continue;
     granted = addRewardItem(granted, reward, names, materialDataMap, itemRooms);

@@ -19,7 +19,7 @@ export const addRewardItem = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
   itemRooms: ItemCategoryRoomMap,
-): undefined | { inventory: Inventory; wallet: Wallet } => {
+): { inventory: Inventory; wallet: Wallet } | undefined => {
   if (!WALLET_ITEM_IDS.includes(id)) {
     const addition = addInventoryItem(inventory, getItemDefinition(id, names, materialDataMap), count, itemRooms);
     return addition.overflow > 0 ? undefined : { inventory: addition.inventory, wallet };

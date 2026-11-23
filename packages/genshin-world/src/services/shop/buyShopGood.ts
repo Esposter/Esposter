@@ -22,7 +22,7 @@ export const buyShopGood = (
   adventureRank: number,
   now: Temporal.Instant,
   itemRooms: ItemCategoryRoomMap,
-): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
+): { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } | undefined => {
   if (!checkIsShopGoodOffered(good, adventureRank, now)) return undefined;
   const paid = payShopGoodCosts(wallet, inventory, purchases, good, now);
   if (!paid) return undefined;

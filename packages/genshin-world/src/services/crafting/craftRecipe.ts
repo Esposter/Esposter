@@ -39,7 +39,7 @@ export const craftRecipe = (
     resinParam: ResinParam;
     wallet: Wallet;
   },
-): undefined | { inventory: Inventory; wallet: Wallet } => {
+): { inventory: Inventory; wallet: Wallet } | undefined => {
   if (
     !checkIsRecipeOpen(recipe, progress, adventureRank) ||
     !Number.isInteger(count) ||

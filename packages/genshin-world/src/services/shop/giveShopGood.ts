@@ -15,7 +15,7 @@ export const giveShopGood = (
   getGoodItemDefinition: (itemId: number) => ItemDefinition,
   good: ShopGood,
   itemRooms: ItemCategoryRoomMap,
-): undefined | { inventory: Inventory; wallet: Wallet } => {
+): { inventory: Inventory; wallet: Wallet } | undefined => {
   const itemCurrency = ShopItemCurrencyMap[good.itemId];
   if (itemCurrency !== undefined)
     return { inventory, wallet: { ...wallet, [itemCurrency]: wallet[itemCurrency] + good.itemCount } };
