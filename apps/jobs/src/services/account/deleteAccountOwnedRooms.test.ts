@@ -31,6 +31,7 @@ import { takeOne } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { z } from "zod";
 
 vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
@@ -48,6 +49,7 @@ describe(deleteAccountOwnedRooms, () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     MockPublishedTopics.length = 0;
     await clearMockBuckets();
     clearRoomObjectCalls();
@@ -123,6 +125,7 @@ describe(deleteAccountOwnedRooms, () => {
   test("tombstones each member's membership in an owned room and sends the tombstone to that member's object", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const userId = v7();
     const memberUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
@@ -131,9 +134,15 @@ describe(deleteAccountOwnedRooms, () => {
 
     await runUnit(() => deleteAccountOwnedRooms(userId));
 
-    expect(userObjectCalls).toStrictEqual([
+    expect(
+      userObjectCalls.map(({ args, method, objectId }) => ({
+        args: [z.object({ deletedAt: z.date(), roomId: z.string(), userId: z.string() }).parse(args[0])],
+        method,
+        objectId,
+      })),
+    ).toStrictEqual([
       {
-        args: [expect.objectContaining({ deletedAt: expect.any(Date), roomId: ownedRoom.id, userId: memberUserId })],
+        args: [{ deletedAt: new Date(0), roomId: ownedRoom.id, userId: memberUserId }],
         method: "updateUserToRoom",
         objectId: memberUserId,
       },

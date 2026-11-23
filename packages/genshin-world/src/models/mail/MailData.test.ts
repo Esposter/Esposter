@@ -6,6 +6,8 @@ describe("birthdayMailRowsSchema", () => {
   test("refuses a birthday mail row whose effective date is not a date-time", () => {
     expect.hasAssertions();
 
-    expect(() => birthdayMailRowsSchema.parse([{ effectiveDate: "not a date", mailId: 1 }])).toThrow();
+    expect(() =>
+      birthdayMailRowsSchema.parse([{ effectiveDate: "not a date", mailId: 1 }]),
+    ).toThrowErrorMatchingInlineSnapshot(`[RangeError: Temporal error: Invalid character while parsing year value.]`);
   });
 });

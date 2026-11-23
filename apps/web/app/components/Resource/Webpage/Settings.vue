@@ -24,8 +24,9 @@ watch(shareImageFiles, async (files) => {
   const [file] = files;
   if (!file) return;
   shareImageFiles.value = [];
-  // The picture is written to the webpage that was open when it was picked. One that lands after another webpage opened
-  // is deleted from the webpage it was written to, since the page open now never shows it
+  // The picture is written to the webpage that was open when it was picked.
+  // One that lands after another webpage opened is deleted from the webpage it was written to.
+  // The page open now never shows it.
   const isStillOpen = captureOpeningCheck();
   const resourceId = currentResourceId.value;
   const uploadResult = await getResultAsync(() => uploadFile(file));
