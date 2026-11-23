@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-This package is a Nuxt PWA module on [`@unplugin-pwa/vite`](https://github.com/vite-pwa/unplugin-pwa), for Nuxt 5 and Nitro 3 only. It builds your service worker once Nitro has copied the app into its public folder, so its precache lists every file the server serves, keeps the worker from answering a navigation to a route your server owns, links the manifest in the page's head and registers the worker with a client plugin that provides `$pwa`.
+This package is a Nuxt PWA module on [`@unplugin-pwa/vite`](https://github.com/vite-pwa/unplugin-pwa), for Nuxt 5 and Nitro 3 only. It builds your service worker once Nitro has copied the app into its public folder, so its precache lists the code, styles, images and fonts the server serves, keeps the worker from answering a navigation to a route your server owns, links the manifest in the page's head and registers the worker with a client plugin that provides `$pwa`.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/unplugin-pwa-nuxt).
 

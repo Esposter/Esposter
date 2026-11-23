@@ -36,6 +36,15 @@ describe("build", () => {
     expect(urls.some((url) => /^_nuxt\/builds\/meta\/[^/]+\.json$/u.test(url ?? ""))).toBe(true);
   });
 
+  // A manifest icon is precached whatever the glob, so the image here is one only the glob can list
+  test("precache the images the app serves, not only its manifest icons", () => {
+    expect.hasAssertions();
+
+    const urls = Array.from(serviceWorker.matchAll(/url:`(?<url>[^`]+)`/gu), ({ groups }) => groups?.url);
+
+    expect(urls).toContain("logo.svg");
+  });
+
   test("never answer a navigation to a route the server answers with the shell", () => {
     expect.hasAssertions();
 

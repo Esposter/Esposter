@@ -77,6 +77,18 @@ The service worker SHALL precache the build's assets and the home page at instal
 - **WHEN** the reader navigates to any page route
 - **THEN** the app shell answers, and the client router renders the route
 
+#### Scenario: An image of the app is drawn offline
+
+- **GIVEN** the reader has installed the app and is offline
+- **WHEN** a page draws one of the app's own images or fonts
+- **THEN** the file is served from the precache
+
+#### Scenario: A game's files are not precached
+
+- **GIVEN** a game loads its own assets by URL
+- **WHEN** the service worker installs
+- **THEN** those files are not in the precache, and the game fetches them when it opens
+
 #### Scenario: A server route is opened
 
 - **GIVEN** a route the server answers itself, such as an API route

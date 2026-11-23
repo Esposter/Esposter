@@ -57,3 +57,47 @@ describe("viteHooks", () => {
     expect((await extendConfig())(filename, context)).toBe(nuxtUrl);
   });
 });
+
+// Nuxt names each bundled file under its build folder, from the chunk's name and a content hash
+const nuxtAssetFileNames = (asset: { names: string[] }) => `_nuxt/${asset.names[0]}.[hash].[ext]`;
+
+describe("viteHooks assetFileNames", () => {
+  test.each([
+    [
+      "a dungeon's asset",
+      "aquavalor",
+      "assets/dungeons/UI/monsters/aquavalor.png",
+      "_nuxt/engine/aquavalor.[hash].[ext]",
+    ],
+    [
+      "a visual scene's texture",
+      "roughness",
+      "assets/visual/textures/roughness.jpeg",
+      "_nuxt/engine/roughness.[hash].[ext]",
+    ],
+    ["an app asset", "anime", "assets/icons/anime.svg", "_nuxt/anime.[hash].[ext]"],
+  ])(
+    "names %s under the build folder, with an engine's under the engine folder",
+    async (_name, chunkName, path, expected) => {
+      expect.hasAssertions();
+
+      const config: ViteConfig = { build: { rolldownOptions: { output: { assetFileNames: nuxtAssetFileNames } } } };
+      const extend = viteHooks?.["vite:extend"];
+      assert.exists(extend);
+      await extend({
+        config,
+        entry: "",
+        nuxt: { options: { app: { buildAssetsDir: "/_nuxt/" } } } as Nuxt,
+      } as Parameters<typeof extend>[0]);
+      const output = config.build?.rolldownOptions?.output;
+      assert.exists(output);
+      assert(!Array.isArray(output));
+      const { assetFileNames } = output;
+      assert(typeof assetFileNames === "function");
+
+      expect(assetFileNames({ names: [chunkName], originalFileNames: [path], source: "", type: "asset" })).toBe(
+        expected,
+      );
+    },
+  );
+});

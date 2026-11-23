@@ -2,7 +2,7 @@ import type { PwaContext } from "#src/models/PwaContext";
 import type { Nuxt } from "@nuxt/schema";
 import type { Nitro } from "nitro/types";
 
-import { BUILD_META_DIRECTORY } from "#src/services/constants";
+import { BUILD_META_DIRECTORY, PRECACHE_EXTENSIONS } from "#src/services/constants";
 import { createManifestTransform } from "#src/services/createManifestTransform";
 import { getImmutableAssets } from "#src/services/getImmutableAssets";
 import { getNitroNavigationDenylist } from "#src/services/getNitroNavigationDenylist";
@@ -27,7 +27,7 @@ export const buildServiceWorker = async (context: PwaContext, nuxt: Nuxt, nitro:
     const payloadPatterns =
       globSync(PAYLOAD_PATTERN, { cwd: nitro.options.output.publicDir }).length > 0 ? [PAYLOAD_PATTERN] : [];
     options.globPatterns ??= [
-      "**/*.{js,css,html}",
+      `**/*.{${PRECACHE_EXTENSIONS.join(",")}}`,
       ...payloadPatterns,
       `${immutableAssets}/${BUILD_META_DIRECTORY}/*.json`,
     ];

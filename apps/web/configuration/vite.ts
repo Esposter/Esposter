@@ -1,5 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
+import { ENGINE_ASSETS_DIRECTORY } from "#configuration/constants";
+
 export const vite: NonNullable<NuxtConfig["vite"]> = {
   // A glTF model is imported for its URL like an image, which Vite knows as an asset only by this
   assetsInclude: ["**/*.gltf"],
@@ -37,11 +39,26 @@ export const vite: NonNullable<NuxtConfig["vite"]> = {
 // Nuxt resolves a client chunk's imported asset against the chunk (`new URL(file, import.meta.url)`, an absolute URL
 // Once read) where the server render writes it through `__buildAssetsURL`, root-relative: every server-rendered
 // `<img>` of an imported asset then hydrated as a mismatch. The client resolves its assets through the same helper
+// The app assets a game or 3D engine loads by URL at runtime: Phaser's dungeons and the three.js scenes' textures
+const ENGINE_ASSET_REGEX = /(?:^|[/\\])assets[/\\](?:dungeons|visual)[/\\]/u;
+
 export const viteHooks: NuxtConfig["hooks"] = {
   "vite:extend": ({ config, nuxt }) => {
+    const buildAssetsDirectory = `${nuxt.options.app.buildAssetsDir.replaceAll(/^\/|\/$/gu, "")}/`;
+    // The service worker's precache leaves the engine folder out, so an engine's file is named under it. A dev build
+    // Names its assets by Vite's own rule and has no `assetFileNames` function here, so it is left as it is
+    const output = config.build?.rolldownOptions?.output;
+    if (output && !Array.isArray(output) && typeof output.assetFileNames === "function") {
+      const assetFileNames = output.assetFileNames;
+      output.assetFileNames = (asset) => {
+        const fileName = assetFileNames(asset);
+        return asset.originalFileNames.some((path) => ENGINE_ASSET_REGEX.test(path))
+          ? fileName.replace(buildAssetsDirectory, `${buildAssetsDirectory}${ENGINE_ASSETS_DIRECTORY}/`)
+          : fileName;
+      };
+    }
     const renderBuiltUrl = config.experimental?.renderBuiltUrl;
     if (!renderBuiltUrl) return;
-    const buildAssetsDirectory = `${nuxt.options.app.buildAssetsDir.replaceAll(/^\/|\/$/gu, "")}/`;
     config.experimental = {
       ...config.experimental,
       renderBuiltUrl: (filename, context) =>
