@@ -15,7 +15,12 @@ const SWEEP_SCRIPT_PREFIX = "ai:sweep:";
 const { scripts } = parseMachineJson<{ scripts: Record<string, string> }>(
   readFileSync(resolve(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME), "utf8"),
 );
-const sweepScriptNames = Object.keys(scripts).filter((name) => name.startsWith(SWEEP_SCRIPT_PREFIX));
+// A sample sitting's later steps, each reading the files an earlier step or the sitting's readers wrote and writing
+// Files of its own, so none has an input to run on alone and none is a command an agent types to sweep
+const SITTING_STEP_SCRIPT_NAMES = new Set(["ai:sweep:batch", "ai:sweep:record", "ai:sweep:sampled"]);
+const sweepScriptNames = Object.keys(scripts).filter(
+  (name) => name.startsWith(SWEEP_SCRIPT_PREFIX) && !SITTING_STEP_SCRIPT_NAMES.has(name),
+);
 // The argument a command cannot run without, as an agent would type it: the kit the kit-differs-from-source ledger's
 // Own recipe names
 const SWEEP_SCRIPT_ARGUMENTS: Partial<Record<string, string>> = { "ai:sweep:kit-design": "arataki-itto" };
