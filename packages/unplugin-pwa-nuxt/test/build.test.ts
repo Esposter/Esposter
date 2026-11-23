@@ -15,6 +15,7 @@ describe("build", () => {
   const BUILD_TIMEOUT: number = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
   const PUBLIC_DIRECTORY = join(FIXTURE_DIRECTORY, ".output", "public");
   let serviceWorker = "";
+  let precachedUrls: (string | undefined)[] = [];
 
   beforeAll(() => {
     const { status, stderr } = spawnSync(process.execPath, [NUXT_BINARY, "build", FIXTURE_DIRECTORY], {
@@ -24,26 +25,23 @@ describe("build", () => {
     assert.strictEqual(stderr, "");
     assert.strictEqual(status, 0);
     serviceWorker = readFileSync(join(PUBLIC_DIRECTORY, "sw.js"), "utf8");
+    precachedUrls = Array.from(serviceWorker.matchAll(/url:`(?<url>[^`]+)`/gu), ({ groups }) => groups?.url);
   }, BUILD_TIMEOUT);
 
   test("precache what Nitro served: the manifest and the shell, never the build's app manifest", () => {
     expect.hasAssertions();
 
-    const urls = Array.from(serviceWorker.matchAll(/url:`(?<url>[^`]+)`/gu), ({ groups }) => groups?.url);
-
-    expect(urls).toContain("manifest.webmanifest");
-    expect(urls).toContain("/");
+    expect(precachedUrls).toContain("manifest.webmanifest");
+    expect(precachedUrls).toContain("/");
     // The next deploy replaces the app manifest, so a worker of this build would fail its install once it is superseded
-    expect(urls.some((url) => url?.startsWith("_nuxt/builds/meta/"))).toBe(false);
+    expect(precachedUrls.some((url) => url?.startsWith("_nuxt/builds/meta/"))).toBe(false);
   });
 
   // A manifest icon is precached whatever the glob, so the image here is one only the glob can list
   test("precache the images the app serves, not only its manifest icons", () => {
     expect.hasAssertions();
 
-    const urls = Array.from(serviceWorker.matchAll(/url:`(?<url>[^`]+)`/gu), ({ groups }) => groups?.url);
-
-    expect(urls).toContain("logo.svg");
+    expect(precachedUrls).toContain("logo.svg");
   });
 
   test("never answer a navigation to a route the server answers with the shell", () => {
