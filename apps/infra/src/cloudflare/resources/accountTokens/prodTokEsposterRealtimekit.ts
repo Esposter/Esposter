@@ -1,5 +1,6 @@
 import { tokenAdminProvider } from "#src/cloudflare/providers/tokenAdminProvider";
 import { getAccountTokenPermissionGroupId } from "#src/cloudflare/services/getAccountTokenPermissionGroupId";
+import { getAccountWideResources } from "#src/cloudflare/services/getAccountWideResources";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -19,7 +20,7 @@ export const prodTokEsposterRealtimekit: cloudflare.AccountToken = new cloudflar
       {
         effect: "allow",
         permissionGroups: [{ id: getAccountTokenPermissionGroupId("Realtime Admin") }],
-        resources: JSON.stringify({ [`com.cloudflare.api.account.${CLOUDFLARE_ACCOUNT_ID}`]: "*" }),
+        resources: JSON.stringify(getAccountWideResources()),
       },
     ],
   },

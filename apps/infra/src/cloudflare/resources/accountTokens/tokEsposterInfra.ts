@@ -1,5 +1,6 @@
 import { tokenAdminProvider } from "#src/cloudflare/providers/tokenAdminProvider";
 import { getAccountTokenPermissionGroupId } from "#src/cloudflare/services/getAccountTokenPermissionGroupId";
+import { getAccountWideResources } from "#src/cloudflare/services/getAccountWideResources";
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareAssetType, getCloudflareAccountResourceName } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -21,7 +22,7 @@ export const tokEsposterInfra: cloudflare.AccountToken = new cloudflare.AccountT
           "Workers R2 Storage Write",
           "Workers Scripts Write",
         ].map((name) => ({ id: getAccountTokenPermissionGroupId(name) })),
-        resources: JSON.stringify({ [`com.cloudflare.api.account.${CLOUDFLARE_ACCOUNT_ID}`]: "*" }),
+        resources: JSON.stringify(getAccountWideResources()),
       },
       {
         effect: "allow",
