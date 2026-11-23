@@ -3,6 +3,9 @@ import type { OxfmtConfig } from "oxfmt";
 import { AGENT_WORKTREES_DIRECTORY } from "#src/services/constants";
 import { defineConfig } from "oxfmt";
 
+// The print width the formatter wraps code at, and the width a comment line keeps (`comments/no-over-width-comment`)
+export const PRINT_WIDTH = 120;
+
 const oxfmtConfiguration: OxfmtConfig = defineConfig({
   ignorePatterns: [
     AGENT_WORKTREES_DIRECTORY,
@@ -23,7 +26,7 @@ const oxfmtConfiguration: OxfmtConfig = defineConfig({
     // The import sort is for source; a Markdown code block keeps the import order its author wrote
     { files: ["**/*.md"], options: { sortImports: false } },
   ],
-  printWidth: 120,
+  printWidth: PRINT_WIDTH,
   // Type imports, then value imports, each with the packages and `#` subpath imports ahead of the relative ones, so a
   // Relative type import sorts after the external value imports
   sortImports: {

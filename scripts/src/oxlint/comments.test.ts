@@ -229,3 +229,21 @@ describe("comments/no-repeated-disable-next-line", () => {
   ];
   setupPluginSuite({ fixtures: FIXTURES, plugin: "comments", rules: [RULE] });
 });
+
+describe("comments/no-over-width-comment", () => {
+  // The line counts from its first column, so a `// ` lead is part of the width the formatter's printWidth sets
+  const AT_WIDTH = "a".repeat(117);
+  const OVER_WIDTH = "a".repeat(118);
+  const RULE = "comments/no-over-width-comment";
+  const FIXTURES = [
+    { name: "lineAtWidthNotReported", source: `// ${AT_WIDTH}\nexport const a = 0;`, violations: 0 },
+    { name: "lineOverWidthReported", source: `// ${OVER_WIDTH}\nexport const a = 0;`, violations: 1 },
+    { name: "blockLineOverWidthReported", source: `/*\n * ${OVER_WIDTH}\n */\nexport const a = 0;`, violations: 1 },
+    // Each over-width line of one block comment is its own report
+    { name: "eachBlockLineReported", source: `/* ${OVER_WIDTH}\n${OVER_WIDTH} */\nexport const a = 0;`, violations: 2 },
+    // A comment that shares its line with code is that line's, and the formatter's to settle
+    { name: "trailingCommentNotReported", source: `export const a = 0; // ${OVER_WIDTH}`, violations: 0 },
+    { name: "stringNotReported", source: `export const a = "// ${OVER_WIDTH}";`, violations: 0 },
+  ];
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "comments", rules: [RULE] });
+});

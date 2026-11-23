@@ -1,6 +1,7 @@
 import type { Plugin } from "@oxlint/plugins";
 
 import { noCapitalizedIdentifier } from "#src/services/oxlint/comments/noCapitalizedIdentifier";
+import { noOverWidthComment } from "#src/services/oxlint/comments/noOverWidthComment";
 import { noRepeatedDisableNextLine } from "#src/services/oxlint/comments/noRepeatedDisableNextLine";
 import { noTrailingComment } from "#src/services/oxlint/comments/noTrailingComment";
 import { requireDirectiveReason } from "#src/services/oxlint/comments/requireDirectiveReason";
@@ -31,6 +32,9 @@ import { definePlugin } from "@oxlint/plugins";
  * comments alone: the grouping is by linter prefix and rule name, and the fix writes the
  * file-level directive from the reasons the repeats already carry, so no list either.
  *
+ * `no-over-width-comment` enforces the formatting skill's rule that a comment line keeps the formatter's print width,
+ * which oxfmt does not wrap for a comment. It reads the width from the shared oxfmt configuration, so the two never differ.
+ *
  * `no-trailing-comment` enforces the formatting skill's rule that a `//` comment sits on its own line above its
  * code. Stock `no-inline-comments` reads block comments too, and so fires on the `@vue-ignore` block a props
  * interface needs inline; this reads `//` lines only, and passes the same-line disable directive, which names the
@@ -40,6 +44,7 @@ const plugin: Plugin = definePlugin({
   meta: { name: "comments" },
   rules: {
     "no-capitalized-identifier": noCapitalizedIdentifier,
+    "no-over-width-comment": noOverWidthComment,
     "no-repeated-disable-next-line": noRepeatedDisableNextLine,
     "no-trailing-comment": noTrailingComment,
     "require-directive-reason": requireDirectiveReason,

@@ -1,4 +1,7 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would
+   otherwise infer */
+import { PRINT_WIDTH } from "@esposter/configuration/oxfmt";
+
 export const MESSAGE =
   "A `//` line opens on a function or binding name capitalised into one that does not exist — `capitalized-comments` uppercases every line's first letter. Rewrap so the line opens on prose, or backtick the name; never lowercase it. See the formatting skill.";
 export const OPENING_CAPITALISED_WORD_REGEX: RegExp = /^\s*(?<word>[A-Z][\w$]*)/u;
@@ -18,6 +21,7 @@ export const DIRECTIVE_REGEX: RegExp = /^\s*oxlint-disable(?:-next-line|-line)?(
 export const DIRECTIVE_REASON_REGEX: RegExp = /\s--\s+\S/u;
 export const DIRECTIVE_REASON_MESSAGE =
   "A disable directive carries its reason after ` -- ` on the directive itself, so the next reader can tell a load-bearing exception from a stale one. See the oxlint skill.";
+export const OVER_WIDTH_COMMENT_MESSAGE = `A comment line runs past the ${PRINT_WIDTH}-column print width the formatter sets. Rewrap the comment so every line fits, each continuation line of a \`//\` comment opening on a capital (\`capitalized-comments\`). See the formatting skill.`;
 export const TRAILING_COMMENT_MESSAGE =
   "A `//` comment goes on its own line above the code it describes, never trailing after code on the same line. See the formatting skill.";
 export const TERNARY_OPERATORS: ReadonlySet<string> = new Set([":", "?"]);
