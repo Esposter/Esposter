@@ -26,8 +26,8 @@ export const IMAGINARIUM_STELLAS_PER_REWARD = 3;
 export const IMAGINARIUM_BATTLE_FLOWERS = 90;
 // The Alternate Cast members a Battle Event offers to join the Principal Cast, one of them chosen
 export const IMAGINARIUM_BATTLE_CHOICE_COUNT = 2;
-// The Fantasia Flowers a Companion: Select or Companion: Random event costs. Select's 80 is the dump's two Companion effect rows'
-// Price, and Random's is the wiki's
+// The Fantasia Flowers a Companion: Select or Companion: Random event costs. The installed dump holds no Imaginarium table,
+// So Select's 80 is not read from it, and Random's is the wiki's
 export const IMAGINARIUM_COMPANION_FLOWER_PRICE = 80;
 // The Invite event: six characters of any element, offered for 100 Fantasia Flowers
 export const IMAGINARIUM_INVITE_COMPANION_EVENT: ImaginariumCompanionEvent = {
