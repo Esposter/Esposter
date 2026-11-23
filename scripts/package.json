@@ -78,6 +78,7 @@
     "genshin:parity": "node src/genshinParity/index.ts",
     "genshin:text": "node src/genshinText/index.ts",
     "genshin:version": "node src/gameVersion/index.ts",
+    "hosted-assets": "node src/hostedAssets/index.ts",
     "recreation": "node src/recreation/index.ts",
     "globe:gen": "node src/globeLandMask/index.ts",
     "bundle-sizes:gen": "node src/bundleSizes/index.ts",

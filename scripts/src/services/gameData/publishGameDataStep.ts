@@ -1,11 +1,13 @@
 import type { PublishGameDataStepOptions } from "#src/models/gameData/PublishGameDataStepOptions";
 
-import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
-import { commitGameDataLock } from "#src/services/gameData/commitGameDataLock";
-import { createGameDataBucketClientMap } from "#src/services/gameData/createGameDataBucketClientMap";
-import { publishGameData } from "#src/services/gameData/publishGameData";
+import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
+import { GAME_DATA_KEYS_PATH, GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
+import { writeGameDataKeys } from "#src/services/gameData/writeGameDataKeys";
+import { commitHostedAssetLock } from "#src/services/hostedAssets/commitHostedAssetLock";
+import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
+import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 
 // One generator's publish: the scopes it replaces are stored in both environments' buckets, and the lock is committed only
@@ -19,20 +21,22 @@ export const publishGameDataStep = async ({
 }: PublishGameDataStepOptions): Promise<string> => {
   const label = scopes.join(", ");
   const currentLock = await readGameDataLock();
-  const result = await publishGameData({
-    createBucketClientMap: isDryRun ? undefined : createGameDataBucketClientMap,
+  const result = await publishHostedAssets({
+    createBucketClientMap: isDryRun ? undefined : () => createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket),
     currentLock,
+    product: GAME_DATA_PRODUCT,
     publication,
     scopes,
   });
-  if (result.outcome === GameDataPublishOutcome.Unchanged) return `${label}: unchanged, no request made`;
-  if (result.outcome === GameDataPublishOutcome.Empty) return `${label}: nothing published, no request made`;
-  if (result.outcome === GameDataPublishOutcome.DryRun)
+  if (result.outcome === HostedAssetPublishOutcome.Unchanged) return `${label}: unchanged, no request made`;
+  if (result.outcome === HostedAssetPublishOutcome.Empty) return `${label}: nothing published, no request made`;
+  if (result.outcome === HostedAssetPublishOutcome.DryRun)
     return [
       `${label}: dry run, ${result.storedObjectCount} records would be published`,
       ...(await summarizeGameDataChanges(currentLock, result.nextLock, result.records)),
     ].join("\n");
-  await commitGameDataLock(scopes, result.plannedLock);
+  const lock = await commitHostedAssetLock(GAME_DATA_PRODUCT, scopes, result.plannedLock);
+  await writeGameDataKeys(lock, GAME_DATA_KEYS_PATH);
   const { uploadedCountMap } = result;
   return `${label}: ${result.storedObjectCount} records published, ${uploadedCountMap[CloudflareEnvironment.Development]} objects uploaded to dev and ${uploadedCountMap[CloudflareEnvironment.Production]} to prod`;
 };

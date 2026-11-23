@@ -1,4 +1,4 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 import type { SkillGlyphs } from "genshin-world";
 
 import { SkillGlyphTonesMap, TALENT_ICON_TRACE_SCALE } from "#src/services/genshinAssets/skillGlyphs/constants";
@@ -27,7 +27,7 @@ const TALENT_TRACE_CONCURRENCY = 4;
 export const buildSkillGlyphs = async (): Promise<{
   loaderMapSource: string;
   notes: string[];
-  publication: GameDataPublication;
+  publication: HostedAssetPublication;
 }> => {
   const skillDepotMap = readSkillDepotMap();
   const skillMap = readSkillMap();

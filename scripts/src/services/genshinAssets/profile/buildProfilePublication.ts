@@ -2,7 +2,7 @@ import type { ExcelFetterStoryRow } from "#src/models/genshinAssets/profile/Exce
 import type { ExcelFetterVoiceRow } from "#src/models/genshinAssets/profile/ExcelFetterVoiceRow";
 import type { ExcelNamecardMaterialRow } from "#src/models/genshinAssets/profile/ExcelNamecardMaterialRow";
 import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/shared/ExcelFetterCharacterCardRow";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 import type { ProfileText } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
@@ -23,7 +23,7 @@ import { z } from "zod";
 // Every playable character's profile, its stories by fetter and its namecard, one entry a character in each language's index
 // Of the game data, every entry checked by the profile reader's schema before it is published. The characters are read from
 // The game data their stats step published. Returns the publication and a note of the count
-export const buildProfilePublication = async (): Promise<{ note: string; publication: GameDataPublication }> => {
+export const buildProfilePublication = async (): Promise<{ note: string; publication: HostedAssetPublication }> => {
   const characters = z.array(characterDataSchema).parse(await readPublishedGameData("stats/characters"));
   const characterIds = characters.map(({ id }) => id).toSorted((firstId, secondId) => firstId - secondId);
   const storyRows = selectFetterStoryRows(

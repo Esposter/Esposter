@@ -63,8 +63,8 @@ jobs:
       # downloads only what that mirror lacks
       - name: 📥 Fill the game data mirror
         if: steps.game-data-mirror.outputs.cache-hit != 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue')
-        working-directory: packages/genshin-world
-        run: pnpm game-data:mirror
+        working-directory: scripts
+        run: pnpm hosted-assets fill
       - name: 💾 Save the game data mirror
         if: steps.game-data-mirror.outputs.cache-hit != 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue')
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0

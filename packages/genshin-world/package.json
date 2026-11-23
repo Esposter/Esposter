@@ -98,7 +98,6 @@
     "bench": "vitest bench --run",
     "build": "tsdown",
     "build:parity": "vite build --config parity/vite.config.ts --mode production --outDir parity-build --emptyOutDir",
-    "game-data:mirror": "node scripts/gameData/mirror/index.ts",
     "parity": "vite --config parity/vite.config.ts",
     "test": "vitest",
     "test:visual": "vitest --config vitest.browser.config.ts",

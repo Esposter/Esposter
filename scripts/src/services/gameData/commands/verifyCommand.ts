@@ -1,10 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { getGameDataBaseUrl } from "#src/services/gameData/getGameDataBaseUrl";
-import { getGameDataLockDifferences } from "#src/services/gameData/getGameDataLockDifferences";
+import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { readLockAt } from "#src/services/gameData/readLockAt";
-import { verifyGameData } from "#src/services/gameData/verifyGameData";
+import { getHostedAssetBaseUrl } from "#src/services/hostedAssets/getHostedAssetBaseUrl";
+import { getLockDifferences } from "#src/services/hostedAssets/getLockDifferences";
+import { readLockAt } from "#src/services/hostedAssets/readLockAt";
+import { verifyHostedAssets } from "#src/services/hostedAssets/verifyHostedAssets";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -19,7 +20,7 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
     const lock = await readGameDataLock();
     // The lock on disk is the one a publish wrote, and it must be the one committed, since every checkout reads the committed
     // One, so a publish whose lock was not committed fails here before any bucket is read
-    const differences = getGameDataLockDifferences(lock, readLockAt("HEAD"));
+    const differences = getLockDifferences(lock, readLockAt(GAME_DATA_PRODUCT, "HEAD"));
     if (differences.length > 0)
       throw new InvalidOperationError(
         Operation.Read,
@@ -30,7 +31,9 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
     // The buckets are read-only and independent, so they are checked together, and each failure is named by its
     // Environment, since a network error from fetch carries no URL of its own
     const settled = await Promise.allSettled(
-      environments.map((environment) => verifyGameData(getGameDataBaseUrl(environment), lock)),
+      environments.map((environment) =>
+        verifyHostedAssets(getHostedAssetBaseUrl(environment, GAME_DATA_PRODUCT.bucket), lock),
+      ),
     );
     const failures: string[] = [];
     for (const [index, result] of settled.entries()) {

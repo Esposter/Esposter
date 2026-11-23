@@ -2,11 +2,12 @@
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
-import { createGameDataBucketClientMap } from "#src/services/gameData/createGameDataBucketClientMap";
-import { pruneGameData } from "#src/services/gameData/pruneGameData";
+import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { readGameDataReachableObjects } from "#src/services/gameData/readGameDataReachableObjects";
-import { readLiveGameDataLocks } from "#src/services/gameData/readLiveGameDataLocks";
+import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
+import { pruneHostedAssets } from "#src/services/hostedAssets/pruneHostedAssets";
+import { readHostedAssetReachableObjects } from "#src/services/hostedAssets/readHostedAssetReachableObjects";
+import { readLiveHostedAssetLocks } from "#src/services/hostedAssets/readLiveHostedAssetLocks";
 import { runGit } from "#src/services/shared/runGit";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
@@ -33,12 +34,18 @@ export const pruneCommand: SubCommandsDef[string] = defineCommand({
       process.exitCode = 1;
       return;
     }
-    const locks = readLiveGameDataLocks(await readGameDataLock());
-    const bucketClientMap = createGameDataBucketClientMap();
+    const locks = readLiveHostedAssetLocks(GAME_DATA_PRODUCT, await readGameDataLock());
+    const bucketClientMap = createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket);
     for (const environment of Object.values(CloudflareEnvironment)) {
       const bucketClient = bucketClientMap[environment];
-      const liveObjects = await readGameDataReachableObjects(bucketClient, locks);
-      const result = await pruneGameData({ bucketClient, isDryRun: args["dry-run"], liveObjects, now: Date.now() });
+      const liveObjects = await readHostedAssetReachableObjects(bucketClient, locks);
+      const result = await pruneHostedAssets({
+        bucketClient,
+        isDryRun: args["dry-run"],
+        liveObjects,
+        now: Date.now(),
+        scopes: GAME_DATA_PRODUCT.scopes,
+      });
       console.log(
         `${environment}: ${result.candidateCount} past retention, ${result.deletedCount} deleted, ${result.keptCount} kept by a write since the listing`,
       );

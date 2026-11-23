@@ -5,7 +5,7 @@ import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMate
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
 import { RELIQUARY_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
@@ -44,7 +44,7 @@ import { GameDataset } from "genshin-world";
 // The curves they grow along, only those any of them names. Every table is checked against the World's schema as it is
 // Built, and each character's talent tables become entries of the talent indexes. What the run noted, a property no
 // Attribute names among it, is returned once each
-export const buildStatTables = (): { notes: string[]; publication: GameDataPublication } => {
+export const buildStatTables = (): { notes: string[]; publication: HostedAssetPublication } => {
   const notes: string[] = [];
   const characterDatas = getCharacterDatas(notes);
   const weaponDatas = getWeaponDatas(notes);

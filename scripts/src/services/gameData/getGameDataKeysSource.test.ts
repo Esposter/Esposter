@@ -1,5 +1,5 @@
-import { createGameDataLockObject } from "#src/services/gameData/createGameDataLockObject.test";
 import { getGameDataKeysSource } from "#src/services/gameData/getGameDataKeysSource";
+import { createHostedAssetLockObject } from "#src/services/hostedAssets/createHostedAssetLockObject.test";
 import { describe, expect, test } from "vitest";
 
 describe(getGameDataKeysSource, () => {
@@ -9,11 +9,11 @@ describe(getGameDataKeysSource, () => {
     expect.hasAssertions();
 
     const source = getGameDataKeysSource({
-      indexes: { "bookBody/English": createGameDataLockObject("bookBody/English", HASH) },
+      indexes: { "bookBody/English": createHostedAssetLockObject("bookBody/English", HASH) },
       objects: {
-        domains: createGameDataLockObject("domains", HASH),
-        "domains/weeklyBosses": createGameDataLockObject("domains/weeklyBosses", HASH),
-        "quests/11018": createGameDataLockObject("quests/11018", HASH),
+        domains: createHostedAssetLockObject("domains", HASH),
+        "domains/weeklyBosses": createHostedAssetLockObject("domains/weeklyBosses", HASH),
+        "quests/11018": createHostedAssetLockObject("quests/11018", HASH),
       },
     });
 
@@ -53,9 +53,9 @@ describe(getGameDataKeysSource, () => {
     const source = getGameDataKeysSource({
       indexes: {},
       objects: {
-        ["__proto__"]: createGameDataLockObject("__proto__", HASH),
-        "a/constructor": createGameDataLockObject("a/constructor", HASH),
-        "a/toString": createGameDataLockObject("a/toString", HASH),
+        ["__proto__"]: createHostedAssetLockObject("__proto__", HASH),
+        "a/constructor": createHostedAssetLockObject("a/constructor", HASH),
+        "a/toString": createHostedAssetLockObject("a/toString", HASH),
       },
     });
 
@@ -92,8 +92,8 @@ describe(getGameDataKeysSource, () => {
       getGameDataKeysSource({
         indexes: {},
         objects: Object.fromEntries([
-          ["a/self", createGameDataLockObject("a/self", HASH)],
-          ["a", createGameDataLockObject("a", HASH)],
+          ["a/self", createHostedAssetLockObject("a/self", HASH)],
+          ["a", createHostedAssetLockObject("a", HASH)],
         ]),
       }),
     ).toThrowErrorMatchingInlineSnapshot(
@@ -102,7 +102,7 @@ describe(getGameDataKeysSource, () => {
     expect(() =>
       getGameDataKeysSource({
         indexes: {},
-        objects: { a: createGameDataLockObject("a", HASH), "a/self": createGameDataLockObject("a/self", HASH) },
+        objects: { a: createHostedAssetLockObject("a", HASH), "a/self": createHostedAssetLockObject("a/self", HASH) },
       }),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Push, name: a/self, shares its self slot with a segment named self in the lock]`,
@@ -116,8 +116,8 @@ describe(getGameDataKeysSource, () => {
       getGameDataKeysSource({
         indexes: {},
         objects: Object.fromEntries([
-          ["a/self/x", createGameDataLockObject("a/self/x", HASH)],
-          ["a", createGameDataLockObject("a", HASH)],
+          ["a/self/x", createHostedAssetLockObject("a/self/x", HASH)],
+          ["a", createHostedAssetLockObject("a", HASH)],
         ]),
       }),
     ).toThrowErrorMatchingInlineSnapshot(

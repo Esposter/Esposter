@@ -1,0 +1,7 @@
+// What a prune of one bucket found and did: the objects no live lock names and that are past retention, how many the
+// Prune deleted, and how many a write since the listing kept
+export interface HostedAssetPruneResult {
+  candidateCount: number;
+  deletedCount: number;
+  keptCount: number;
+}

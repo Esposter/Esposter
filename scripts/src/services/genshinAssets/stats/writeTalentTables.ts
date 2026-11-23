@@ -1,5 +1,5 @@
 import type { TalentTables } from "#src/models/genshinAssets/stats/TalentTables";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
 import { TALENT_MULTIPLIER_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
 import { getTalentMultiplierLoaderMapSource } from "#src/services/genshinAssets/stats/getTalentMultiplierLoaderMapSource";
@@ -10,7 +10,7 @@ import { join } from "node:path";
 // Writes the loader map whose entries read each character's multipliers from the hosted index, the one generated file that
 // Stays committed TS. Returns each character's multipliers and labels as the entries of the two indexes that publish them,
 // Keyed by the character's id
-export const writeTalentTables = (talentTables: readonly TalentTables[]): GameDataPublication["indexes"] => {
+export const writeTalentTables = (talentTables: readonly TalentTables[]): HostedAssetPublication["indexes"] => {
   writeFileSync(
     join(TALENT_MULTIPLIER_GENERATED_DIRECTORY, "TalentMultiplierLoaderMap.ts"),
     getTalentMultiplierLoaderMapSource(talentTables.map(({ characterId }) => characterId)),

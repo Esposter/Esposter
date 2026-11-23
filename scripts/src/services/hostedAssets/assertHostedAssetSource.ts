@@ -1,4 +1,4 @@
-import { HOSTED_BANNED_EXTENSIONS, HOSTED_OBJECT_MAX_BYTES } from "#src/services/hostedAssets/constants";
+import { HOSTED_OBJECT_MAX_BYTES, UNCOMPRESSED_AUDIO_EXTENSIONS } from "#src/services/hostedAssets/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 import { extname } from "node:path";
@@ -7,7 +7,7 @@ import { extname } from "node:path";
 // A product's sources are read from its own folder only, and an extension no content type names has no object to serve as
 export const assertHostedAssetSource = (folder: string, { bytes, path }: { bytes: number; path: string }): void => {
   const extension = extname(path);
-  if (HOSTED_BANNED_EXTENSIONS.has(extension))
+  if (UNCOMPRESSED_AUDIO_EXTENSIONS.has(extension))
     throw new InvalidOperationError(Operation.Read, path, "is uncompressed audio, which is published as MP3 instead");
   if (bytes > HOSTED_OBJECT_MAX_BYTES)
     throw new InvalidOperationError(Operation.Read, path, `is over the ${HOSTED_OBJECT_MAX_BYTES} byte cap`);

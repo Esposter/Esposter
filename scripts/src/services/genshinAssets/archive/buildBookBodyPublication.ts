@@ -1,5 +1,5 @@
 import type { ExcelLocalizationRow } from "#src/models/genshinAssets/archive/ExcelLocalizationRow";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
 import { LOCALIZATION_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { readBookBody } from "#src/services/genshinAssets/archive/readBookBody";
@@ -13,7 +13,7 @@ import { bookBodySchema, GameDataset } from "genshin-world";
 // Returns the publication and a note of the count
 export const buildBookBodyPublication = (
   bodyIds: readonly number[],
-): { note: string; publication: GameDataPublication } => {
+): { note: string; publication: HostedAssetPublication } => {
   const localizationRowMap = new Map(
     readExcelTable<ExcelLocalizationRow>(LOCALIZATION_TABLE_NAME).map((localizationRow) => [
       localizationRow.id,

@@ -1,4 +1,4 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
@@ -28,7 +28,7 @@ import { join } from "node:path";
 // The layouts are dumped where `extract` dumps the component's, so the extract that follows reads them again. Each held
 // Mesh that no game object of those layouts draws is noted, since no root reaches it, and each block the install lacks
 // Is skipped and noted too
-export const buildWeaponRoots = async (): Promise<{ notes: string[]; publication: GameDataPublication }> => {
+export const buildWeaponRoots = async (): Promise<{ notes: string[]; publication: HostedAssetPublication }> => {
   const assets = await readIndexedAssets(
     (asset) =>
       checkIsHeldWeaponMesh(asset) ||

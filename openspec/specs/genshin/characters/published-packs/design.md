@@ -60,7 +60,7 @@ The game's first bar is the plain bar on its login screen, which follows the tit
 | `packages/genshin-world/src/services/character/readCharacterPackReaders.ts`    | Each avatar's reader, read from the cache when the world opens                             |
 | `packages/genshin-world/src/services/character/createCharacterPackReader.ts`   | A pack's model, terms and textures, each found by the pack's own names                     |
 | `scripts/src/models/genshinAssets/characterPacks/CharacterPackFile.ts`         | One file read from disk, with its object key and size                                      |
-| `scripts/src/services/gameData/createGameDataBucketClientMap.ts`               | The bucket client each environment is published through, shared with the game data publish |
+| `scripts/src/services/hostedAssets/createHostedAssetBucketClientMap.ts`        | The bucket client each environment is published through, shared with the game data publish |
 | `packages/genshin-text/src/models/GameTextKey.ts`                              | The launch loading bar's failure line and retry, by their text ids                         |
 
 ## Sources

@@ -1,6 +1,6 @@
 import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
 import { buildKitRecordWithDonors } from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import { omitConstellation } from "#src/services/genshinAssets/kits/omitConstellation";
@@ -24,7 +24,7 @@ import {
 export const buildKitPublication = async (
   inputs: readonly KitInput[],
   changedCharacterIds: readonly number[] = [],
-): Promise<GameDataPublication> => {
+): Promise<HostedAssetPublication> => {
   const inputMap = new Map(inputs.map((input) => [input.characterId, input]));
   const builtMap = new Map<number, BuiltKit>();
   const kits: Record<string, unknown> = {};

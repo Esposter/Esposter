@@ -5,7 +5,7 @@ import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/shared/ExcelE
 import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/shared/ExcelReliquarySetRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
 import { EQUIP_AFFIX_TABLE_NAME, RELIQUARY_SET_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import {
@@ -29,7 +29,7 @@ import { GameDataset } from "genshin-world";
 // Every challenge domain's kind and levels, each domain by its entrance's entry id, as the index the domain screen reads
 // One entrance at a time from. The levels come from the dungeon table, the reward previews and the entry table, and a
 // Blessing domain's from its entrance point
-export const buildDomainLevels = async (): Promise<{ notes: string[]; publication: GameDataPublication }> => {
+export const buildDomainLevels = async (): Promise<{ notes: string[]; publication: HostedAssetPublication }> => {
   const points = await readDomainEntrancePoints();
   const entries = readExcelTable<ExcelDungeonEntryRow>(DUNGEON_ENTRY_TABLE_NAME);
   const dungeons = readExcelTable<ExcelDungeonRow>(DUNGEON_TABLE_NAME);

@@ -97,10 +97,10 @@ sequenceDiagram
 - **Verification by hash.** Each object is read back from its bucket and its bytes are hashed. The hash must equal the sha256 in its name, and for an encoded object (Brotli or zstd) the decoded bytes are hashed, as the genshin verify already does. The check runs before the lock is committed, so the lock names only objects that were checked.
 - **Scope and first publish.** The first publish of a product reads its files from the repository, and a repository file is removed only after each object's sha256 equals its file's. Later edits go through `pull`, which restores a working copy from the lock. A publish writes only under the product's declared scope prefixes.
 - **Refusals.** A publish refuses, before any dry run writes its output:
-  - a WAV file, since audio is published as MP3, which the lock names; the format ban is a banned-extension list, `.wav` first;
+  - uncompressed audio (WAV, AIFF or FLAC), since audio is published as MP3, which the lock names; the format ban is one list, `UNCOMPRESSED_AUDIO_EXTENSIONS`, which the bundle check reads too;
   - a file over `HOSTED_OBJECT_MAX_BYTES`, which is 16 MiB. The number is a policy: one request per object, and a bound on what a preload holds in memory. A 21 MB WAV is refused, and its MP3 is well under the cap. The owner may change the number;
   - a file whose source is not in its product's declared folder;
-  - an object under a scope prefix another product's lock already declares;
+  - an object whose scope overlaps a scope another product's lock already declares, a prefix of it or under it, so the products' scopes stay disjoint prefixes in both directions;
   - an object whose extension has no content type in the product's declaration.
 
 ## Url builder and cache contract
@@ -217,7 +217,7 @@ What checks the invariant today, for Genshin's lock:
 
 The change makes one generic check over every product's lock, and places it in the fill, which already reads every object:
 
-- The change makes the fill verify the sha256 of each object it stores, with the publish's own `verifyGameDataObject`, and fail on a mismatch. An object the bucket lacks fails the fill too.
+- The fill verifies the sha256 of each object it reads, cached or fetched, through `assertContentAddress` (`@esposter/shared-node/cache`), and fails on a mismatch. An object the bucket lacks fails the fill too.
 - Each product's fill runs over its own lock, so a product added later is covered by its declaration with nothing else edited.
 - The fill reads the public origins and needs no credential. A HEAD would show that a name exists without checking its bytes, so the fill's GET is the check, and no HEAD-only pass is added.
 
@@ -251,7 +251,7 @@ Tasks per migrating group are in `tasks.md`.
 
 The placement rule has two checks, and both extend the test the other agent is adding for WAV files and files over 2 MiB, rather than restating it:
 
-- **The bundle check** fails any file under `apps/web/app/assets/` that is over 2 MiB or has a banned extension, which is `.wav` first. A file the bundle cannot hold is hosted instead.
+- **The bundle check** fails any file under `apps/web/app/assets/` that is over 2 MiB or has an uncompressed-audio extension, the list `UNCOMPRESSED_AUDIO_EXTENSIONS` (`.aiff`, `.flac`, `.wav`). A file the bundle cannot hold is hosted instead.
 - **The hosted check** is a separate test over the engine loaders. It fails when a loader module imports a media file (`.png`, `.webp`, `.mp3`, `.ogg`, `.woff2`, `.tsx`, `.tmx`, `.json` of a map) by its path, since such a file is read by url from the product's key map. It also fails when a key a loader names has no entry in the product's lock.
 
 Each check is one test, sharing the file-walking helper the bundle check uses. Neither runs a new CI step: both are workspace tests in the Coverage job's single run.
@@ -287,8 +287,8 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 | `apps/web/configuration/security.ts`                                           | the `connect-src`, `font-src` and `media-src` directives over the environment's hosted origin |
 | `apps/web/service-worker/sw.ts`                                                | the cache-first route over the hosted origins, and the claim on activation                    |
 | `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`                | the precache globs, which `**/*.{js,css,html}` keeps off hosted objects                       |
-| `scripts/src/services/gameData/publishGameData.ts`                             | the publish pipeline the generic publish generalises                                          |
-| `scripts/src/services/gameData/verifyGameDataObject.ts`                        | the per-object hash check the fill reuses                                                     |
+| `scripts/src/services/hostedAssets/publishHostedAssets.ts`                     | the publish pipeline the generic publish generalises                                          |
+| `scripts/src/services/hostedAssets/verifyHostedAssetObject.ts`                 | the per-object hash check the fill reuses                                                     |
 | `scripts/src/services/gameData/writeGameDataKeys.ts`                           | the keys renderer the generic renderer generalises                                            |
 | `scripts/src/services/gameData/getGameDataKeysSource.ts`                       | the keys source, and the one committed generated file this change keeps                       |
 | `packages/genshin-world/src/generated/gameDataLock.json`                       | Genshin's lock, which the generic lock format replaces in place                               |

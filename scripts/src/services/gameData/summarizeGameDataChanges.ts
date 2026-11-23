@@ -1,11 +1,11 @@
-import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
+import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetRecord";
 import type { HostedAssetLock } from "hosted-assets";
 
 import { countGameDataPathChanges } from "#src/services/gameData/countGameDataPathChanges";
 import { diffEntries } from "#src/services/gameData/diffEntries";
 import { formatDiff } from "#src/services/gameData/formatDiff";
 import { readPublishedGameDataObjectIfStored } from "#src/services/gameData/readPublishedGameDataObjectIfStored";
-import { toLockHashes } from "#src/services/gameData/toLockHashes";
+import { toLockHashes } from "#src/services/hostedAssets/toLockHashes";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
@@ -18,9 +18,9 @@ const SHOWN_PATH_COUNT = 20;
 export const summarizeGameDataChanges = async (
   currentLock: HostedAssetLock,
   nextLock: HostedAssetLock,
-  records: GameDataRecord[],
+  records: HostedAssetRecord[],
 ): Promise<string[]> => {
-  const recordJsonMap = new Map(records.map(({ hash, json }) => [hash, json]));
+  const recordJsonMap = new Map(records.map(({ json, sha256 }) => [sha256, json]));
   // A hash the next lock names under a dataset is one this publication planned, or one the current lock published
   const readNext = <T>(dataset: string, hash: string): Promise<T | undefined> => {
     const json = recordJsonMap.get(hash);

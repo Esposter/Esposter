@@ -2,7 +2,7 @@ import type { HostedAssetLock } from "hosted-assets";
 
 import { verifyCommand } from "#src/services/gameData/commands/verifyCommand";
 import { GAME_DATA_LOCK_REPOSITORY_PATH } from "#src/services/gameData/constants";
-import { createGameDataLockObject } from "#src/services/gameData/createGameDataLockObject.test";
+import { createHostedAssetLockObject } from "#src/services/hostedAssets/createHostedAssetLockObject.test";
 import { defineCommand, runCommand } from "citty";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -10,8 +10,8 @@ const { readGameDataLock } = vi.hoisted(() => ({ readGameDataLock: vi.fn<() => P
 const { runGit } = vi.hoisted(() => ({ runGit: vi.fn<(args: string[]) => string>() }));
 
 vi.mock(import("#src/services/gameData/readGameDataLock"), () => ({ readGameDataLock }));
-vi.mock(import("#src/services/gameData/verifyGameData"), () => ({
-  verifyGameData: vi.fn<() => Promise<number>>(() => Promise.resolve(1)),
+vi.mock(import("#src/services/hostedAssets/verifyHostedAssets"), () => ({
+  verifyHostedAssets: vi.fn<() => Promise<number>>(() => Promise.resolve(1)),
 }));
 vi.mock(import("#src/services/shared/runGit"), () => ({ runGit }));
 
@@ -32,10 +32,10 @@ describe("verifyCommand", () => {
 
     readGameDataLock.mockResolvedValue({
       indexes: {},
-      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", OTHER_HASH) },
+      objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", OTHER_HASH) },
     });
     runGit.mockReturnValue(
-      JSON.stringify({ indexes: {}, objects: { "stats/weapons": createGameDataLockObject("stats/weapons", HASH) } }),
+      JSON.stringify({ indexes: {}, objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", HASH) } }),
     );
 
     await expect(verify()).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -48,7 +48,7 @@ describe("verifyCommand", () => {
 
     const lock: HostedAssetLock = {
       indexes: {},
-      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", HASH) },
+      objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", HASH) },
     };
     readGameDataLock.mockResolvedValue(lock);
     runGit.mockReturnValue(JSON.stringify(lock));

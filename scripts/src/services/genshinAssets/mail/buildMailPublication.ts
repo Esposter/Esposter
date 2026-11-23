@@ -1,6 +1,6 @@
 import type { ExcelBirthdayMailRow } from "#src/models/genshinAssets/mail/ExcelBirthdayMailRow";
 import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 
 import { toMails } from "#src/services/genshinAssets/mail/toMails";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
@@ -13,7 +13,7 @@ import { GameDataset } from "genshin-world";
 // The mail table as one entry per mail, keyed by its id, with the birthday mail table kept under its own entry, and every
 // Mail's title, sender and body in every language under the mail text dataset. A mail with a key the reader cannot name
 // Is left out and counted in the note
-export const buildMailPublication = (): { note: string; publication: GameDataPublication } => {
+export const buildMailPublication = (): { note: string; publication: HostedAssetPublication } => {
   const { mails, skipped } = toMails(readExcelTable<ExcelMailRow>("MailExcelConfigData"), readRewardMap());
   const birthdayMails = readExcelTable<ExcelBirthdayMailRow>("BirthdayMailExcelConfigData").map(
     ({ effectiveDate, mailId }) => ({ effectiveDate, mailId }),

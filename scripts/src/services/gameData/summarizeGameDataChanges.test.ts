@@ -1,8 +1,8 @@
-import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
+import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetRecord";
 import type { HostedAssetLock } from "hosted-assets";
 
-import { createGameDataLockObject } from "#src/services/gameData/createGameDataLockObject.test";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
+import { createHostedAssetLockObject } from "#src/services/hostedAssets/createHostedAssetLockObject.test";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(summarizeGameDataChanges, () => {
@@ -17,14 +17,20 @@ describe(summarizeGameDataChanges, () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 404 }));
     const currentLock: HostedAssetLock = {
       indexes: {},
-      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", "1".repeat(64)) },
+      objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", "1".repeat(64)) },
     };
     const nextLock: HostedAssetLock = {
       indexes: {},
-      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", "2".repeat(64)) },
+      objects: { "stats/weapons": createHostedAssetLockObject("stats/weapons", "2".repeat(64)) },
     };
-    const records: GameDataRecord[] = [
-      { dataset: "stats/weapons", hash: "2".repeat(64), isIndex: false, json: '{"attack":1,"defense":2}' },
+    const records: HostedAssetRecord[] = [
+      {
+        extension: ".json",
+        isIndex: false,
+        json: '{"attack":1,"defense":2}',
+        scope: "stats/weapons",
+        sha256: "2".repeat(64),
+      },
     ];
 
     const summary = await summarizeGameDataChanges(currentLock, nextLock, records);

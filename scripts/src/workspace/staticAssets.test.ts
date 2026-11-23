@@ -1,3 +1,4 @@
+import { UNCOMPRESSED_AUDIO_EXTENSIONS } from "#src/services/hostedAssets/constants";
 import { MEBIBYTE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { statSync } from "node:fs";
@@ -16,7 +17,6 @@ describe("staticAssets", () => {
   // The service worker precaches a build's js, css and html only up to this size, and leaves a larger one out of the list
   // (`apps/web/configuration/pwa.ts`). The bundle holds a file only up to the same figure, so one limit is the budget
   const SIZE_LIMIT_BYTES = 2 * MEBIBYTE;
-  const UNCOMPRESSED_AUDIO_EXTENSIONS = new Set([".aiff", ".flac", ".wav"]);
 
   const checkIsOversizedOrUncompressed = (path: string): boolean =>
     statSync(join(REPOSITORY_ROOT, path)).size > SIZE_LIMIT_BYTES || UNCOMPRESSED_AUDIO_EXTENSIONS.has(extname(path));

@@ -1,8 +1,8 @@
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
+import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAssetPublication";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 export interface PublishGameDataStepOptions extends DryRunOptions {
-  publication: GameDataPublication;
+  publication: HostedAssetPublication;
   scopes: GameDataScope[];
 }

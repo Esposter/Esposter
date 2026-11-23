@@ -1,7 +1,7 @@
 import type { GameDataIndexKey } from "#src/generated/gameDataKeys";
 import type { z } from "zod";
 
-import { getGameDataObjectName } from "#src/services/data/getGameDataObjectName";
+import { getGameDataEntryName } from "#src/services/data/getGameDataEntryName";
 import { readGameDataIndex } from "#src/services/data/readGameDataIndex";
 import { readGameDataObject } from "#src/services/data/readGameDataObject";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -20,6 +20,6 @@ export const readGameDataEntry = async <T>(
   if (hash === undefined)
     throw new InvalidOperationError(Operation.Read, `${indexKey}/${entryId}`, "is not in its index");
   return schema.parse(
-    await readGameDataObject(getHostedAssetUrl(gameDataBaseUrl, getGameDataObjectName(indexKey, hash))),
+    await readGameDataObject(getHostedAssetUrl(gameDataBaseUrl, getGameDataEntryName(indexKey, hash))),
   );
 };
