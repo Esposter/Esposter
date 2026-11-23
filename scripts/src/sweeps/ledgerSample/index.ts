@@ -5,10 +5,8 @@ import { getTouchedLedgerSample } from "#src/services/sweeps/ledgerCoverage/getT
 import { readLedgerEvents } from "#src/services/sweeps/ledgerCoverage/readLedgerEvents";
 import { readLedgerStatus } from "#src/services/sweeps/ledgerCoverage/readLedgerStatus";
 import { readPartitionUnits } from "#src/services/sweeps/ledgerCoverage/readPartitionUnits";
-import { readQuestionUnits } from "#src/services/sweeps/ledgerCoverage/readQuestionUnits";
 import { readRangeChangedPaths } from "#src/services/sweeps/ledgerCoverage/readRangeChangedPaths";
-import { readTrackedFiles } from "#src/services/sweeps/ledgerCoverage/readTrackedFiles";
-import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNames";
+import { readTrackedQuestionUnits } from "#src/services/sweeps/ledgerCoverage/readTrackedQuestionUnits";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
@@ -38,10 +36,7 @@ await runCommand(
       name: "ai:sweep:sample",
     },
     run: ({ args }) => {
-      const ledgerCoverages = readLedgerStatus(
-        readLedgerEvents(),
-        readQuestionUnits(readTrackedFiles(readVendoredSkillNames())),
-      );
+      const ledgerCoverages = readLedgerStatus(readLedgerEvents(), readTrackedQuestionUnits());
       const ledgerSamples =
         args.touched === undefined
           ? getLedgerSample(ledgerCoverages, args.seed, SAMPLE_SIZE)
