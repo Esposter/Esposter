@@ -17,7 +17,7 @@ describe(pruneHostedAssets, () => {
   const toPath = (sha256: string) => getHostedAssetPath({ extension: ".json", scope, sha256 });
 
   // Each object is written at the instant the clock stands at, so the test moves the clock to age them
-  const writeObject = (key: string) => bucketClient.put(key, Buffer.from("{}"));
+  const writeObject = (key: string) => bucketClient.put(key, Buffer.from(""));
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
