@@ -1,6 +1,7 @@
 import type { Rule } from "@oxlint/plugins";
 
 import { buildSortingNode } from "#src/services/oxlint/sorting/buildSortingNode";
+import { computeDeclarationName } from "#src/services/oxlint/sorting/computeDeclarationName";
 import { computePatternEvaluated } from "#src/services/oxlint/sorting/computePatternEvaluated";
 import { computeSortingDependencies } from "#src/services/oxlint/sorting/computeSortingDependencies";
 import { getOxlintDisabledLines } from "#src/services/oxlint/sorting/getOxlintDisabledLines";
@@ -14,18 +15,16 @@ import { defineRule } from "@oxlint/plugins";
 // Initialiser or a default the pattern reads that runs code keeps its place
 const sortVariableDeclarations: Rule = defineRule({
   create(context) {
+    const oxlintDisabledLines = getOxlintDisabledLines(context, "sort-variable-declarations");
     return {
       VariableDeclaration(node) {
         if (node.declarations.length < 2) return;
-        const oxlintDisabledLines = getOxlintDisabledLines(context, "sort-variable-declarations");
-        const declarators = node.declarations.map((declaration) => {
-          const name =
-            declaration.id.type === "Identifier" ? declaration.id.name : context.sourceCode.getText(declaration.id);
-          return buildSortingNode(name, declaration, {
+        const declarators = node.declarations.map((declaration) =>
+          buildSortingNode(computeDeclarationName(declaration, context.sourceCode), declaration, {
             ...withEvaluated(declaration.init, ...computePatternEvaluated(declaration.id)),
             isOxlintDisabled: oxlintDisabledLines.has(declaration.loc.start.line),
-          });
-        });
+          }),
+        );
         const sortingNodes = takeOne(
           computeSortingDependencies(context, [declarators], { ignoreDeferredFunctions: true }),
         );
