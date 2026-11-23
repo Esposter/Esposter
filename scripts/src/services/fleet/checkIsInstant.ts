@@ -6,5 +6,6 @@ export const checkIsInstant = (value: unknown): boolean =>
   typeof value === "string" &&
   getResult(() => Temporal.Instant.from(value)).match(
     () => true,
+    // A value Temporal refuses is not an instant, which is the answer this check gives
     () => false,
   );

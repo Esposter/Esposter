@@ -19,6 +19,7 @@ export const getProcessStartedAt = (processId: number): number | undefined => {
     ),
   ).match(
     (text) => text.trim(),
+    // A process that is gone makes `ps` or PowerShell fail, which reads as no start time below
     () => "",
   );
   const startedAt = isWindows ? Number(output) : Date.parse(output);

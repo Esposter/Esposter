@@ -14,6 +14,7 @@ export const readMachineState = (): MachineStateFile | undefined =>
     (text) =>
       getResult(() => machineStateFileSchema.safeParse(parseMachineJson(text))).match(
         (result) => (result.success ? result.data : undefined),
+        // A file that is not a state is none, as the header above says
         () => undefined,
       ),
     (error) => {

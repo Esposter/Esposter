@@ -8,6 +8,7 @@ import { getResultAsync } from "@esposter/shared";
 export const readStampedOutput = async (stampPath: string): Promise<StampedOutput> => {
   const provenance = await getResultAsync(() => readStamp(stampPath)).match(
     (stamp) => stamp,
+    // An unreadable stamp has no output, which the command below names by its path
     () => undefined,
   );
   return { command: provenance ? provenance.command : `unreadable stamp at ${stampPath}`, provenance };

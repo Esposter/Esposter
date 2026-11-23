@@ -30,6 +30,7 @@ export const readExportedShaders = async (component: DerivedAssetComponent): Pro
             ? undefined
             : getResult(() => parseSerializedShader(data)).match(
                 (shader) => shader,
+                // A form that does not read is kept with no shader, as the header above says
                 () => undefined,
               ),
       });

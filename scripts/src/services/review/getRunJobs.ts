@@ -11,5 +11,6 @@ const runJobsSchema: z.ZodType<{ jobs: ReviewRunJob[] }> = z.object({ jobs: z.ar
 export const getRunJobs = (runId: string): ReviewRunJob[] =>
   getResult(() => runJobsSchema.parse(jsonDateParse(runGh(["run", "view", runId, "--json", "jobs"])))).match(
     ({ jobs }) => jobs,
+    // A run that cannot be read, a deleted one, holds no jobs, as the header above says
     () => [],
   );

@@ -7,5 +7,6 @@ import { getResult } from "@esposter/shared";
 export const checkIsMainAncestor = (commit: string, cwd?: string): boolean =>
   getResult(() => runGit(["merge-base", "--is-ancestor", REMOTE_MAIN_REF, commit], cwd)).match(
     () => true,
+    // Git exits non-zero when `main` is not an ancestor, which is the answer false
     () => false,
   );

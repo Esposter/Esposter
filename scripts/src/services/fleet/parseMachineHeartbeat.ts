@@ -8,5 +8,6 @@ import { getResult } from "@esposter/shared";
 export const parseMachineHeartbeat = (message: string): MachineHeartbeat | undefined =>
   getResult(() => parseMachineJson(message)).match(
     (heartbeatValue) => (checkIsHeartbeat(heartbeatValue) ? heartbeatValue : undefined),
+    // A commit message that is not JSON is not a heartbeat, which reads as none
     () => undefined,
   );

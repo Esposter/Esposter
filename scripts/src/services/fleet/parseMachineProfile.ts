@@ -8,5 +8,6 @@ import { getResult } from "@esposter/shared";
 export const parseMachineProfile = (json: string): MachineProfile | undefined =>
   getResult(() => parseMachineJson(json)).match(
     (profileValue) => (checkIsMachineProfile(profileValue) ? profileValue : undefined),
+    // A file that is not JSON is not a profile, which reads as none
     () => undefined,
   );

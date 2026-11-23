@@ -6,5 +6,6 @@ import { getResultAsync } from "@esposter/shared";
 export const readKnownGameVersion = (): Promise<string | undefined> =>
   getResultAsync(() => readGameVersion()).match(
     (version) => version,
+    // An install never read is left out, as the header above says
     () => undefined,
   );

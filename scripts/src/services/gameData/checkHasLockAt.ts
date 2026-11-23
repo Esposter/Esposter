@@ -8,6 +8,7 @@ export const checkHasLockAt = (revision: string): boolean =>
   getResult(() => runGit(["cat-file", "-e", `${revision}:${GAME_DATA_LOCK_REPOSITORY_PATH}`])).match(
     () => true,
     () => {
+      // The commit is proved by the call below, so a lock git cannot find in it is missing rather than unreadable
       runGit(["cat-file", "-e", `${revision}^{commit}`]);
       return false;
     },

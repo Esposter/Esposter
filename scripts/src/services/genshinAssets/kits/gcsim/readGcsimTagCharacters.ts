@@ -22,6 +22,7 @@ export const readGcsimTagCharacters = (directory: string): Map<string, GcsimChar
   if (!existsSync(charactersDirectory))
     runGit(["clone", "--depth", "1", "--branch", GCSIM_TAG, "--quiet", GCSIM_REPOSITORY_URL, directory], process.cwd());
   const checkedOutTag = getResult(() => runGit(["describe", "--tags", "--exact-match", "HEAD"], directory).trim());
+  // A HEAD no tag names fails describe, which the throw below reports as a clone not at the tag
   if (checkedOutTag.unwrapOr(undefined) !== GCSIM_TAG)
     throw new InvalidOperationError(Operation.Read, directory, `is not a clone of gcsim checked out at ${GCSIM_TAG}`);
   return new Map(

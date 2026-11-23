@@ -142,6 +142,7 @@ describe("packageScripts", () => {
         const text = readFileSync(path, "utf8");
         const isStrippable = getResult(() => stripTypeScriptTypes(text)).match(
           () => true,
+          // A file the type stripper refuses is listed as a failure below, not thrown
           () => false,
         );
         if (!isStrippable) return [toFailure(relative(REPOSITORY_ROOT, path).replaceAll("\\", "/"))];

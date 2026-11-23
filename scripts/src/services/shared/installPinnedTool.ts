@@ -37,6 +37,7 @@ export const installPinnedTool = async ({
   } else await writeFile(join(partialDirectory, executablePattern), archive);
   const isPublished = await getResultAsync(() => rename(partialDirectory, directory)).match(
     () => true,
+    // A rename that fails is a directory another run published first, which the check below takes over
     () => false,
   );
   if (!isPublished) {

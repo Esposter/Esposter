@@ -9,5 +9,6 @@ import { getResult } from "@esposter/shared";
 export const parseClaimMessage = (message: string): ClaimMessage | undefined =>
   getResult(() => parseMachineJson(message)).match(
     (claimValue) => (checkIsClaimMessage(claimValue) ? { ...claimValue, worker: claimValue.worker ?? "" } : undefined),
+    // A commit message that is not JSON is not a claim, which reads as none
     () => undefined,
   );

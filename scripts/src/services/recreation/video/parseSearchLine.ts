@@ -11,5 +11,6 @@ export const parseSearchLine = (line: string): SearchCandidate | undefined =>
       const parsedResult = searchResultSchema.safeParse(json);
       return parsedResult.success ? toSearchCandidate(parsedResult.data) : undefined;
     },
+    // A line that is not JSON is not a search result, so there is none
     () => undefined,
   );

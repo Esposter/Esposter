@@ -9,5 +9,6 @@ export const checkIsParityPage = (root: string): Promise<boolean> =>
     return (await response.text()).includes(PARITY_PAGE_TITLE);
   }).match(
     (isParity) => isParity,
+    // A port that answers nothing, or answers as another server, is not the parity page
     () => false,
   );

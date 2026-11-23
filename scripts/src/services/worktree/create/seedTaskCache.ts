@@ -23,8 +23,7 @@ export const seedTaskCache = async (
   const buildPaths = buildDirectories
     .filter((directory) => directory !== PACKAGES_DIRECTORY)
     .map((directory) => `${PACKAGES_DIRECTORY}/${directory}`);
-  // A sibling removed between the listing and its reads is no candidate, rather than a failed create. Only a sibling of this
-  // Layout is asked which build directories it changed, since each question is a git call
+  // Only a sibling of this layout is asked which build directories it changed, since each question is a git call
   const sameLayout = listSiblingCachePaths(mainCheckoutRoot, worktreePath).flatMap((siblingPath) =>
     getResult(() => ({
       layout: readInstallLayout(siblingPath),
@@ -32,6 +31,7 @@ export const seedTaskCache = async (
       recordedAt: readRecordedAt(siblingPath),
     })).match(
       (sibling) => (sibling.layout === layout ? [sibling] : []),
+      // A sibling removed between the listing and its reads is no candidate, rather than a failed create
       () => [],
     ),
   );
@@ -42,6 +42,7 @@ export const seedTaskCache = async (
       recordedAt,
     })).match(
       (candidate) => [candidate],
+      // A sibling whose reads fail is no candidate, as one removed mid-read is
       () => [],
     ),
   );

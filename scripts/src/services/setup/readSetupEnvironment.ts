@@ -12,8 +12,8 @@ export const readSetupEnvironment = (platform: NodeJS.Platform): SetupEnvironmen
   const isThroughShell = platform === "win32";
   return {
     claudeProjectsDirectory: CLAUDE_PROJECTS_DIRECTORY,
-    // A path that is not a folder, or cannot be read as one, is absent like a missing one
     countFiles: (path) =>
+      // A path that is not a folder, or cannot be read as one, is absent like a missing one
       getResult(() => readdirSync(path, { withFileTypes: true }))
         .map((entries) => entries.filter((entry) => entry.isFile()).length)
         .unwrapOr(undefined),

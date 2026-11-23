@@ -14,6 +14,7 @@ import { getResultAsync } from "@esposter/shared";
 export const startFreshPageServer = async (): Promise<ParityServer | undefined> => {
   const pageRoot = (await getResultAsync(() => resolveParityPageRoot())).match(
     (root) => root,
+    // No page answering is the undefined the header above names, which the run reports for itself
     () => undefined,
   );
   if (pageRoot === undefined) return undefined;

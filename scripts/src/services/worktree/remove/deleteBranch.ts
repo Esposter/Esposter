@@ -9,6 +9,7 @@ export const deleteBranch = (branch: string, repositoryRoot: string): void => {
     runGit(["merge-base", "--fork-point", REMOTE_QUEUE_REF, branch], repositoryRoot),
   ).match(
     (point) => point.trim(),
+    // No fork point with the queue is one `-d` decides, below
     () => "",
   );
   const tip = runGit(["rev-parse", branch], repositoryRoot).trim();

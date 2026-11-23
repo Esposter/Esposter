@@ -6,5 +6,6 @@ import { getResult } from "@esposter/shared";
 export const checkIsAncestor = (ancestor: string, descendant: string, cwd?: string): boolean =>
   getResult(() => runGit(["merge-base", "--is-ancestor", ancestor, descendant], cwd)).match(
     () => true,
+    // The exit code is the answer: 1 is not an ancestor, and a ref git cannot read is none either
     () => false,
   );

@@ -46,6 +46,7 @@ export const removeWorktree = (path: string, repositoryRoot: string = REPOSITORY
   const branch = isLinked
     ? getResult(() => runGit(["symbolic-ref", "--quiet", "--short", "HEAD"], worktreePath)).match(
         (ref) => ref.trim(),
+        // A detached HEAD names no branch, so there is none to delete
         () => "",
       )
     : "";
