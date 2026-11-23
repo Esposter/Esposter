@@ -5,8 +5,8 @@ import type { GameLanguage, GameText } from "genshin-text";
 import LoadingStartup from "#src/components/Loading/Startup/Index.vue";
 import LoginScreen from "#src/components/Login/Screen/Index.vue";
 import SplashSequence from "#src/components/Splash/Sequence/Index.vue";
-import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreload";
 import { OpeningPhase } from "#src/models/game/OpeningPhase";
+import { readCharacterPackPreloadSet } from "#src/services/character/readCharacterPackPreloadSet";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { getLoginTimeOfDay } from "#src/services/login/getLoginTimeOfDay";
 import { readLoginData } from "#src/services/login/readLoginData";
@@ -14,7 +14,7 @@ import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitle
 import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
 import { getResultAsync } from "@esposter/shared";
 import { GameScreen } from "genshin-interface";
-import { HostedAssetPreloadStatus } from "hosted-assets";
+import { HostedAssetPreloadStatus, useHostedAssetsPreload } from "hosted-assets";
 
 interface Props {
   // Where the hosted game data is read from: the title logo and the login screen's records
@@ -68,7 +68,10 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
 );
 // The published character packs download from the moment the opening mounts, so the splashes and the title play while
 // The bytes arrive, and the launch loading bar reports them once the game starts preparing
-const { downloadProgress, preload, status } = useCharacterPackPreload(gameDataBaseUrl, () => emit("held"));
+const { downloadProgress, preload, status } = useHostedAssetsPreload(
+  () => readCharacterPackPreloadSet(gameDataBaseUrl),
+  () => emit("held"),
+);
 onMounted(preload);
 </script>
 

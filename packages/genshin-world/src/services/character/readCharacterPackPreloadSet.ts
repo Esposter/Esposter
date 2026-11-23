@@ -1,0 +1,16 @@
+import type { HostedAssetPreloadSet } from "hosted-assets";
+
+import { CHARACTER_PACKS_FOLDER } from "#src/services/character/constants";
+import { getCharacterPackDownloadFiles } from "#src/services/character/getCharacterPackDownloadFiles";
+import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
+
+// The files of every published character pack, with the scope their cache entries are kept under, which a successful
+// Preload evicts stale entries from. The cache lists its keys as absolute urls, so the base is made absolute the same way
+export const readCharacterPackPreloadSet = async (gameDataBaseUrl: string): Promise<HostedAssetPreloadSet> => {
+  const index = await readCharacterPackIndex(gameDataBaseUrl);
+  const absoluteGameDataBaseUrl = new URL(gameDataBaseUrl, window.location.href).href;
+  return {
+    files: getCharacterPackDownloadFiles(index, absoluteGameDataBaseUrl),
+    scopePrefixes: [`${absoluteGameDataBaseUrl}/${CHARACTER_PACKS_FOLDER}/`],
+  };
+};
