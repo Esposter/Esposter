@@ -63,7 +63,8 @@
 - `apps/web/app/services/emailEditor`
 - `apps/web/app/store/webpageEditor`
 - `apps/web/app/store/pageBuilder`
-- `apps/web/app/composables/pageBuilder` — `useEmailStyle.ts`, `usePageBuilderClipboard.test.ts`, `usePageBuilderClipboard.ts`, `usePageBuilderContent.test.ts`, `usePageBuilderContent.ts`, `usePageBuilderCritique.ts`, `usePageBuilderDrag.test.ts`, `usePageBuilderDrag.ts`, `usePageBuilderEditor.ts`, `usePageBuilderFrame.ts`, `usePageBuilderHistoryCommands.test.ts`, `usePageBuilderHistoryCommands.ts`, `usePageBuilderInsert.test.ts`, `usePageBuilderInsert.ts`, `usePageBuilderKeyCommands.test.ts`, `usePageBuilderKeyCommands.ts`, `usePageBuilderMoves.test.ts`, `usePageBuilderMoves.ts`, `usePageBuilderSelectedNode.ts`, `usePageBuilderSelection.test.ts`
+- `apps/web/app/composables/pageBuilder` — `useEmailStyle.ts`, `usePageBuilderClipboard.test.ts`, `usePageBuilderClipboard.ts`, `usePageBuilderContent.test.ts`, `usePageBuilderContent.ts`, `usePageBuilderCritique.ts`, `usePageBuilderDrag.test.ts`, `usePageBuilderDrag.ts`
+- `apps/web/app/composables/pageBuilder` — `usePageBuilderEditor.ts`, `usePageBuilderFrame.ts`, `usePageBuilderHistoryCommands.test.ts`, `usePageBuilderHistoryCommands.ts`, `usePageBuilderInsert.test.ts`, `usePageBuilderInsert.ts`, `usePageBuilderKeyCommands.test.ts`, `usePageBuilderKeyCommands.ts`, `usePageBuilderMoves.test.ts`, `usePageBuilderMoves.ts`, `usePageBuilderSelectedNode.ts`, `usePageBuilderSelection.test.ts`
 - `apps/web/app/composables/pageBuilder` — `usePageBuilderTheme.test.ts`
 - `apps/web/app/composables/pageBuilder` — `usePageBuilderSelection.ts`, `usePageBuilderStyle.test.ts`, `usePageBuilderStyle.ts`, `usePageBuilderStyleCommands.ts`, `usePageBuilderTheme.ts`
 - `apps/web/app/services/pageBuilder/email`
