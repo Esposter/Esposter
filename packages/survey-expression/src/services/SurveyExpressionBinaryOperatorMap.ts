@@ -3,7 +3,7 @@ import type { SurveyExpressionBinaryOperatorDefinition } from "#src/models/Surve
 import { SurveyExpressionBinaryOperator } from "#src/models/SurveyExpressionBinaryOperator";
 
 // Every spelling of a binary operator, keyed by its text as the tokenizer lowercases it.
-// The list is in alphabetical order of spelling, not of power: each entry's power sets how tightly it binds, from `or` (1) up to `^` (6)
+// The list is in the sorting plugin's collation of spelling (`Intl.Collator`, so punctuation sorts before letters), not of power: each entry's power sets how tightly it binds, from `or` (1) up to `^` (6)
 export const SurveyExpressionBinaryOperatorMap: Readonly<Record<string, SurveyExpressionBinaryOperatorDefinition>> = {
   "-": { operator: SurveyExpressionBinaryOperator.Subtract, power: 4 },
   "!=": { operator: SurveyExpressionBinaryOperator.NotEqual, power: 3 },
