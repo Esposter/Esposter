@@ -28,6 +28,7 @@ ESLint still runs a short list of rule families once the bridge has switched off
 | `jsonc/*` and `@eslint/json`                                          | JSON and JSONC files            | a workspace test over the tracked JSON files                                                      |
 | `no-octal`                                                            | `.ts`, `.vue`                   | deleted: every file here is an ES module, where a legacy octal literal is already a syntax error  |
 | `no-useless-assignment`, `@typescript-eslint/consistent-type-imports` | `.ts`, `.vue`                   | already run by oxlint; the ESLint copy goes with ESLint                                           |
+| `no-restricted-imports`, the `util/` package ban                      | `util/` `.ts`                   | a selector-ban list, matching a package source unless every specifier is type-only                |
 
 ## The template pass
 

@@ -85,6 +85,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     {
       files: ["**/*.vue"],
       rules: {
+        // A component's script bindings are read by its template, which oxlint does not see
+        "no-useless-assignment": "off",
         "props-interface/no-exported-type": "error",
         "props-interface/no-unread-destructure": "error",
         "props-interface/require-props-name": "error",
@@ -384,6 +386,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "no-underscore-dangle": ["error", { allow: ["_def"] }],
     "no-unused-expressions": ["error", { allowShortCircuit: true, allowTernary: true }],
     "no-use-before-define": "off",
+    "no-useless-assignment": "error",
     "no-useless-return": "off",
     "one-var": "off",
     "oxc/no-async-await": "off",

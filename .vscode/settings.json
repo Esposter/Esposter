@@ -21,6 +21,5 @@
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
   "search.followSymlinks": false,
-  "vize.lint.enable": false,
   "vize.typecheck.enable": false
 }

@@ -1,8 +1,7 @@
-import ignores, { TEST_FILE_PATTERNS } from "@esposter/configuration/eslint/ignores.js";
+import ignores from "@esposter/configuration/eslint/ignores.js";
 import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
-import restrictedUtilImports from "@esposter/configuration/eslint/restrictedUtilImports.js";
 import { removeRetiredNuxtRules } from "@esposter/configuration/eslint/retiredNuxtRules.js";
 
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
@@ -12,9 +11,4 @@ import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 export default removeRetiredNuxtRules(withNuxt(plugins).remove("nuxt/vue/single-root"))
   .overrides(nuxtOverrides)
   .append(oxlint)
-  .append({
-    files: ["**/util/**/*.ts"],
-    ignores: TEST_FILE_PATTERNS,
-    rules: { "no-restricted-imports": ["error", restrictedUtilImports] },
-  })
   .append(ignores);

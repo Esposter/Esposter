@@ -27,7 +27,7 @@ ordinary service function (`createDefaultSheetSettings`).
 ## `util/` — truly universal utilities only
 
 Math, string, regex, type utilities, Node/browser engine extensions with no external dependency. If the helper
-imports a third-party package, it belongs in `services/` — `no-restricted-imports` over `**/util/**` refuses the import, with a type-only import allowed. Generic browser utilities go in `app/util/` (e.g.
+imports a third-party package, it belongs in `services/` — oxlint's `selector-ban/no-restricted-syntax` over `**/util/**` refuses the import (`restrictedUtilImportSyntaxes.ts`), with a type-only import allowed. Generic browser utilities go in `app/util/` (e.g.
 `readFoo.ts`).
 
 **Singular `util/`, never `utils/`.** Nuxt auto-imports every export under a `utils/` folder in `app/` into the global namespace,
