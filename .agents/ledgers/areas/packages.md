@@ -47,6 +47,9 @@
 - `apps/realtime/src` — `worker.ts`, `wrangler.test.ts`
 - `apps/realtime/types`
 - `apps/realtime` — `.env.example`, `CHANGELOG.md`, `package.json`, `tsconfig.json`, `vitest.config.ts`, `wrangler.jsonc`
+- `packages/hosted-assets` — `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
+- `packages/hosted-assets/src/models` — `HostedAssetLock.test.ts`, `HostedAssetLock.ts`, `HostedAssetObject.ts`
+- `packages/hosted-assets/src/services` — `getHostedAssetUrl.test.ts`, `getHostedAssetUrl.ts`
 - `packages/parse-tmx/maps`
 - `packages/parse-tmx/src/models`
 - `packages/parse-tmx/src/internal/models`
