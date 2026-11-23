@@ -1,5 +1,6 @@
 import AssetsDevEsposterComHostname from "#src/cloudflare/constants/AssetsDevEsposterComHostname";
 import AssetsEsposterComHostname from "#src/cloudflare/constants/AssetsEsposterComHostname";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -22,5 +23,5 @@ export const esposterComUrlRewrites: cloudflare.Ruleset = new cloudflare.Ruleset
     })),
     zoneId: esposterCom.id,
   },
-  { parent: esposterCom, protect: true },
+  { parent: esposterCom, protect: true, provider: cloudflareProvider },
 );

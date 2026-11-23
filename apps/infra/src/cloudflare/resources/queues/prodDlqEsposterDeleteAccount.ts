@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -16,5 +17,5 @@ const deadLetterQueueName = getCloudflareResourceName(
 export const prodDlqEsposterDeleteAccount: cloudflare.Queue = new cloudflare.Queue(
   deadLetterQueueName,
   { accountId: CLOUDFLARE_ACCOUNT_ID, queueName: deadLetterQueueName },
-  { protect: true },
+  { protect: true, provider: cloudflareProvider },
 );

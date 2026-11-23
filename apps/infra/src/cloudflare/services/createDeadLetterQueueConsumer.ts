@@ -2,6 +2,7 @@ import type { CloudflareEnvironment, QueueJob } from "@esposter/db-schema";
 
 import JobsWorkerScriptNameMap from "#src/cloudflare/constants/JobsWorkerScriptNameMap";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { queueJobResources } from "#src/cloudflare/services/queueJobResources";
 import {
   CLOUDFLARE_ACCOUNT_ID,
@@ -27,6 +28,6 @@ export const createDeadLetterQueueConsumer = (
       settings: { maxRetries: DEAD_LETTER_CONSUMER_MAX_RETRIES, retryDelay: QueueConsumerRetryDelay },
       type: "worker",
     },
-    { parent: deadLetterQueue, protect: true },
+    { parent: deadLetterQueue, protect: true, provider: cloudflareProvider },
   );
 };

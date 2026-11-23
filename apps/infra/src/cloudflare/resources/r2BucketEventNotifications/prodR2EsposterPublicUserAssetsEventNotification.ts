@@ -1,4 +1,5 @@
 import R2BucketEventNotificationActions from "#src/cloudflare/constants/R2BucketEventNotificationActions";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { prodQEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodQEsposterDeleteOrphanedProfileImage";
 import { prodR2EsposterPublicUserAssets } from "#src/cloudflare/resources/r2Buckets/prodR2EsposterPublicUserAssets";
 import {
@@ -24,5 +25,5 @@ export const prodR2EsposterPublicUserAssetsEventNotification: cloudflare.R2Bucke
       queueId: prodQEsposterDeleteOrphanedProfileImage.queueId,
       rules: [{ actions: R2BucketEventNotificationActions }],
     },
-    { parent: prodR2EsposterPublicUserAssets, protect: true },
+    { parent: prodR2EsposterPublicUserAssets, protect: true, provider: cloudflareProvider },
   );

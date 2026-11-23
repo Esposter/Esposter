@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -10,5 +11,5 @@ import * as cloudflare from "@pulumi/cloudflare";
 export const esposterComBotManagement: cloudflare.BotManagement = new cloudflare.BotManagement(
   "esposter.com-bot-management",
   { aiBotsProtection: "disabled", enableJs: false, fightMode: false, zoneId: esposterCom.id },
-  { parent: esposterCom, protect: true },
+  { parent: esposterCom, protect: true, provider: cloudflareProvider },
 );

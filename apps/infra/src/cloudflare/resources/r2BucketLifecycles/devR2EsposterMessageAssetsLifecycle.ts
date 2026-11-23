@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { devR2EsposterMessageAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterMessageAssets";
 import {
   CLOUDFLARE_ACCOUNT_ID,
@@ -34,5 +35,5 @@ export const devR2EsposterMessageAssetsLifecycle: cloudflare.R2BucketLifecycle =
       },
     ],
   },
-  { parent: devR2EsposterMessageAssets, protect: true },
+  { parent: devR2EsposterMessageAssets, protect: true, provider: cloudflareProvider },
 );

@@ -1,5 +1,6 @@
 import EsposterComDomain from "#src/cloudflare/constants/EsposterComDomain";
 import WwwEsposterComHostname from "#src/cloudflare/constants/WwwEsposterComHostname";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -26,5 +27,5 @@ export const esposterComRedirects: cloudflare.Ruleset = new cloudflare.Ruleset(
     ],
     zoneId: esposterCom.id,
   },
-  { parent: esposterCom, protect: true },
+  { parent: esposterCom, protect: true, provider: cloudflareProvider },
 );

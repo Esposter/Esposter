@@ -1,5 +1,6 @@
 import AssetsDevEsposterComHostname from "#src/cloudflare/constants/AssetsDevEsposterComHostname";
 import DevWebWorkerScriptName from "#src/cloudflare/constants/DevWebWorkerScriptName";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
@@ -12,5 +13,5 @@ export const assetsDevEsposterComCustomDomain: cloudflare.WorkersCustomDomain = 
     service: DevWebWorkerScriptName,
     zoneId: esposterCom.id,
   },
-  { parent: esposterCom, protect: true },
+  { parent: esposterCom, protect: true, provider: cloudflareProvider },
 );

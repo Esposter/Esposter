@@ -1,6 +1,7 @@
 import type { CloudflareDatabaseRole, CloudflareEnvironment } from "@esposter/db-schema";
 
 import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareAssetType, getCloudflareResourceName } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -12,6 +13,6 @@ export const createD1Database = (
   return new cloudflare.D1Database(
     databaseName,
     { accountId: CLOUDFLARE_ACCOUNT_ID, name: databaseName, primaryLocationHint: CloudflareLocationHint },
-    { protect: true },
+    { protect: true, provider: cloudflareProvider },
   );
 };

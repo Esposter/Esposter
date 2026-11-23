@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { devR2EsposterPublicHostedAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterPublicHostedAssets";
 import { getPublicR2BucketCorsRules } from "#src/cloudflare/services/getPublicR2BucketCorsRules";
 import {
@@ -22,5 +23,5 @@ export const devR2EsposterPublicHostedAssetsCors: cloudflare.R2BucketCors = new 
     bucketName: devR2EsposterPublicHostedAssets.name,
     rules: getPublicR2BucketCorsRules(),
   },
-  { parent: devR2EsposterPublicHostedAssets, protect: true },
+  { parent: devR2EsposterPublicHostedAssets, protect: true, provider: cloudflareProvider },
 );

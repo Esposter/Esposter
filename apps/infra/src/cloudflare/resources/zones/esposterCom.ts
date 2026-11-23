@@ -1,4 +1,5 @@
 import EsposterComDomain from "#src/cloudflare/constants/EsposterComDomain";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -7,5 +8,5 @@ import * as cloudflare from "@pulumi/cloudflare";
 export const esposterCom: cloudflare.Zone = new cloudflare.Zone(
   EsposterComDomain,
   { account: { id: CLOUDFLARE_ACCOUNT_ID }, name: EsposterComDomain, type: "full" },
-  { protect: true },
+  { protect: true, provider: cloudflareProvider },
 );

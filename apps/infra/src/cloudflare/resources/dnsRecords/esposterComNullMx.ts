@@ -1,4 +1,5 @@
 import EsposterComDomain from "#src/cloudflare/constants/EsposterComDomain";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -17,5 +18,5 @@ export const esposterComNullMx: cloudflare.DnsRecord = new cloudflare.DnsRecord(
     type: "MX",
     zoneId: esposterCom.id,
   },
-  { parent: esposterCom, protect: true },
+  { parent: esposterCom, protect: true, provider: cloudflareProvider },
 );

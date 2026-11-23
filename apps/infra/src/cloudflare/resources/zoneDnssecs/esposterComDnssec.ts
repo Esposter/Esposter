@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -6,5 +7,5 @@ import * as cloudflare from "@pulumi/cloudflare";
 export const esposterComDnssec: cloudflare.ZoneDnssec = new cloudflare.ZoneDnssec(
   "esposter.com-dnssec",
   { status: "active", zoneId: esposterCom.id },
-  { parent: esposterCom, protect: true },
+  { parent: esposterCom, protect: true, provider: cloudflareProvider },
 );

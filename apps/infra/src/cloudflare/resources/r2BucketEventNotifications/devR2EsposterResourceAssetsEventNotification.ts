@@ -1,4 +1,5 @@
 import R2BucketEventNotificationActions from "#src/cloudflare/constants/R2BucketEventNotificationActions";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { devQEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/devQEsposterReconcileStorageLedgerEntry";
 import { devR2EsposterResourceAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterResourceAssets";
 import {
@@ -24,5 +25,5 @@ export const devR2EsposterResourceAssetsEventNotification: cloudflare.R2BucketEv
       queueId: devQEsposterReconcileStorageLedgerEntry.queueId,
       rules: [{ actions: R2BucketEventNotificationActions }],
     },
-    { parent: devR2EsposterResourceAssets, protect: true },
+    { parent: devR2EsposterResourceAssets, protect: true, provider: cloudflareProvider },
   );

@@ -2,6 +2,7 @@ import type { CloudflareEnvironment, QueueJob } from "@esposter/db-schema";
 
 import JobsWorkerScriptNameMap from "#src/cloudflare/constants/JobsWorkerScriptNameMap";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { queueJobResources } from "#src/cloudflare/services/queueJobResources";
 import {
   CLOUDFLARE_ACCOUNT_ID,
@@ -29,6 +30,6 @@ export const createQueueConsumer = (
       settings: { maxRetries: QueueJobMaxRetriesMap[queueJob], retryDelay: QueueConsumerRetryDelay },
       type: "worker",
     },
-    { parent: queue, protect: true },
+    { parent: queue, protect: true, provider: cloudflareProvider },
   );
 };

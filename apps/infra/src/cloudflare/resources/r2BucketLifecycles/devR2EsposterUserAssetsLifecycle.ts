@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { devR2EsposterUserAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterUserAssets";
 import {
   CLOUDFLARE_ACCOUNT_ID,
@@ -30,5 +31,5 @@ export const devR2EsposterUserAssetsLifecycle: cloudflare.R2BucketLifecycle = ne
       },
     ],
   },
-  { parent: devR2EsposterUserAssets, protect: true },
+  { parent: devR2EsposterUserAssets, protect: true, provider: cloudflareProvider },
 );

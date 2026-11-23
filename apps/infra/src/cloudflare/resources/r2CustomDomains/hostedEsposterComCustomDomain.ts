@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { prodR2EsposterPublicHostedAssets } from "#src/cloudflare/resources/r2Buckets/prodR2EsposterPublicHostedAssets";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
@@ -14,5 +15,5 @@ export const hostedEsposterComCustomDomain: cloudflare.R2CustomDomain = new clou
     enabled: true,
     zoneId: esposterCom.id,
   },
-  { parent: esposterCom, protect: true },
+  { parent: esposterCom, protect: true, provider: cloudflareProvider },
 );

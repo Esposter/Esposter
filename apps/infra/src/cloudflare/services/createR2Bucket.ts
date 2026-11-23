@@ -1,6 +1,7 @@
 import type { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 
 import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareAssetType, getCloudflareResourceName } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -12,6 +13,6 @@ export const createR2Bucket = (
   return new cloudflare.R2Bucket(
     bucketName,
     { accountId: CLOUDFLARE_ACCOUNT_ID, location: CloudflareLocationHint, name: bucketName },
-    { protect: true },
+    { protect: true, provider: cloudflareProvider },
   );
 };

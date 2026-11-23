@@ -1,3 +1,4 @@
+import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -16,5 +17,5 @@ const queueName = getCloudflareResourceName(
 export const prodQEsposterReconcileStorageLedgerEntry: cloudflare.Queue = new cloudflare.Queue(
   queueName,
   { accountId: CLOUDFLARE_ACCOUNT_ID, queueName },
-  { protect: true },
+  { protect: true, provider: cloudflareProvider },
 );
