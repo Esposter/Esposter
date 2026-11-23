@@ -1,7 +1,7 @@
 import { HOSTED_OBJECT_MAX_BYTES } from "#src/services/hostedAssets/constants";
 import { readHostedAssetSourceFolder } from "#src/services/hostedAssets/readHostedAssetSourceFolder";
 import { getContentAddress } from "@esposter/shared-node/cache";
-import { mkdir, mkdtemp, rm, truncate, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, symlink, truncate, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -48,6 +48,17 @@ describe(readHostedAssetSourceFolder, () => {
 
     await expect(readHostedAssetSourceFolder(repositoryRoot, folder, [])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: sources/notes.xyz, has an extension with no content type]`,
+    );
+  });
+
+  // A dangling link is enough, since the walk refuses the entry by its name before it reads any target
+  test("a symbolic link is refused by name, not skipped", async () => {
+    expect.hasAssertions();
+
+    await symlink(join(repositoryRoot, "elsewhere.png"), join(repositoryRoot, folder, "link.png"));
+
+    await expect(readHostedAssetSourceFolder(repositoryRoot, folder, [])).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: sources/link.png, is a symbolic link, which a publish does not follow]`,
     );
   });
 

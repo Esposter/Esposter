@@ -10,7 +10,7 @@ describe(assertHostedAssetSource, () => {
     expect.hasAssertions();
 
     expect(() => {
-      assertHostedAssetSource(folder, { bytes: 1, path: `${folder}/${TEST_FILENAME}.wav` });
+      assertHostedAssetSource({ bytes: 1, path: `${folder}/${TEST_FILENAME}.wav` });
     }).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: a/a.wav, is lossless or uncompressed audio, which is published as MP3 instead]`,
     );
@@ -20,19 +20,9 @@ describe(assertHostedAssetSource, () => {
     expect.hasAssertions();
 
     expect(() => {
-      assertHostedAssetSource(folder, { bytes: HOSTED_OBJECT_MAX_BYTES + 1, path: `${folder}/${TEST_FILENAME}.png` });
+      assertHostedAssetSource({ bytes: HOSTED_OBJECT_MAX_BYTES + 1, path: `${folder}/${TEST_FILENAME}.png` });
     }).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: a/a.png, is over the 16777216 byte cap]`,
-    );
-  });
-
-  test("a file outside the declared folder is refused", () => {
-    expect.hasAssertions();
-
-    expect(() => {
-      assertHostedAssetSource(folder, { bytes: 1, path: `b/${TEST_FILENAME}.png` });
-    }).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: b/a.png, is outside the declared folder a]`,
     );
   });
 
@@ -40,7 +30,7 @@ describe(assertHostedAssetSource, () => {
     expect.hasAssertions();
 
     expect(() => {
-      assertHostedAssetSource(folder, { bytes: 1, path: `${folder}/${TEST_FILENAME}.ogg` });
+      assertHostedAssetSource({ bytes: 1, path: `${folder}/${TEST_FILENAME}.ogg` });
     }).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: a/a.ogg, has an extension with no content type]`,
     );
@@ -50,7 +40,7 @@ describe(assertHostedAssetSource, () => {
     expect.hasAssertions();
 
     expect(() => {
-      assertHostedAssetSource(folder, { bytes: 1, path: `${folder}/${TEST_FILENAME}.png` });
+      assertHostedAssetSource({ bytes: 1, path: `${folder}/${TEST_FILENAME}.png` });
     }).not.toThrow();
   });
 });

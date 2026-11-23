@@ -101,7 +101,7 @@ sequenceDiagram
 - **Refusals.** A publish refuses, before any dry run writes its output:
   - uncompressed audio (WAV, AIFF or FLAC), since audio is published as MP3, which the lock names; the format ban is one list, `UNCOMPRESSED_AUDIO_EXTENSIONS`, which the bundle check reads too;
   - a file over `HOSTED_OBJECT_MAX_BYTES`, which is 16 MiB. The number is a policy: one request per object, and a bound on what a preload holds in memory. A 21 MB WAV is refused, and its MP3 is well under the cap. The owner may change the number;
-  - a file whose source is not in its product's declared folder;
+  - a symbolic link under the product's declared folder, which is refused by its name rather than followed or skipped;
   - an object whose scope overlaps a scope another product's lock already declares, a prefix of it or under it, so the products' scopes stay disjoint prefixes in both directions;
   - an object whose extension has no content type in the product's declaration.
 
