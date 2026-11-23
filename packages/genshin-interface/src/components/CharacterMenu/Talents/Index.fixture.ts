@@ -1,6 +1,6 @@
-// Xilonen's normal attack at level 10 and her Elemental Skill and Burst at 13, as the English client's Talents tab shows
-// Them at 159 seconds, every one at its last level, so none draws an Upgrade and none names why it cannot rise. Her four
-// Passives sit beneath them by name
+// Xilonen's normal attack at level 10 and her Elemental Skill and Burst at 13, as the English client's Talents tab
+// Shows Them at 159 seconds, every one at its last level, so none draws an Upgrade and none names why it cannot rise.
+// Her four Passives sit beneath them by name
 export const props = {
   costs: [[], [], []],
   isUpgradeDisabled: [true, true, true],

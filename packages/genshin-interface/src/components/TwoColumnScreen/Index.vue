@@ -7,8 +7,8 @@ defineSlots<{ default: () => VNode }>();
 </script>
 
 <template>
-  <!-- A screen drawn as two columns under a head row, its head spanning both. A screen of this shape takes its root from
-       here, so a class on it names the screen and never restates the layout -->
+  <!-- A screen drawn as two columns under a head row, its head spanning both. A screen of this shape takes its root
+    from here, so a class on it names the screen and never restates the layout -->
   <div class="two-column-screen">
     <slot />
   </div>

@@ -1,6 +1,7 @@
-// Mondstadt's expedition map with Wolvendom picked, as the public clip shows it at 26 seconds: the title and the expedition
-// Limit across the head, Mondstadt picked over Liyue's alert, six places as pins with the picked one outlined, and the
-// Picked place's rewards, its four durations with 4 hours picked, and the button that sends a character
+// Mondstadt's expedition map with Wolvendom picked, as the public clip shows it at 26 seconds: the title and the
+// Expedition Limit across the head, Mondstadt picked over Liyue's alert, six places as pins with the picked one
+// Outlined, and the Picked place's rewards, its four durations with 4 hours picked, and the button that sends a
+// Character
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
 
 export const props = {

@@ -5,7 +5,8 @@ import { ItemRarityQuestFaceGradientMap } from "#src/services/ItemRarityQuestFac
 interface Props {
   // How many of the item, on the strip across the tile's foot: a number, or the range a reward rolls as words ("4~5")
   count: number | string;
-  // The count's font size, in the tile's own units (cqh): a screen unit set outside the tile would resolve against the tile
+  // The count's font size, in the tile's own units (cqh): a screen unit set outside the tile would resolve against the
+  // Tile
   countSize?: string | undefined;
   // The item's traced icon: path data in a 100 unit square over the whole face, drawn under the count strip. An item
   // With none is passed an empty string, and its tile shows its rarity face alone
@@ -21,13 +22,14 @@ const { countSize = "30cqh", icon = "" } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- An item's tile as the game's reward lists draw it, filling the box its parent gives it: the rarity's gradient lit
-       from the foot, and the count in white on a darker strip across the bottom 24%, the corners rounded 7%. Measured on
-       the wiki's Adventurer Handbook screenshot and the Reputation clip, which agree on the three, four and five star
-       tiles, and the Expedition clip's grey tiles, whose items the table gives no stars (rarity zero). A count keeps
-       the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star tile's face is
-       provisional, since no reward list in a still shows one. The item's art is a traced icon the caller passes as `icon`; an item with none draws
-       its rarity face alone, and the game's own picture is never shipped -->
+  <!-- An item's tile as the game's reward lists draw it, filling the box its parent gives it: the rarity's gradient
+    lit from the foot, and the count in white on a darker strip across the bottom 24%, the corners rounded 7%.
+    Measured on the wiki's Adventurer Handbook screenshot and the Reputation clip, which agree on the three, four
+    and five star tiles, and the Expedition clip's grey tiles, whose items the table gives no stars (rarity zero). A
+    count keeps the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star
+    tile's face is provisional, since no reward list in a still shows one. The item's art is a traced icon the
+    caller passes as `icon`; an item with none draws its rarity face alone, and the game's own picture is never
+    shipped -->
   <span class="item-tile" :data-rarity="rarity" :data-variant="variant">
     <span
       class="face"

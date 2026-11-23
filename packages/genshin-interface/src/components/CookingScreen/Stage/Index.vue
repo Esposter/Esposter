@@ -66,7 +66,8 @@ const deliciousZonePath = computed(() => toArcPath(zones.delicious, COOKING_ZONE
     <rect class="jar-cap" height="16" width="46" x="937" y="304" />
     <ellipse class="meat" cx="1055" cy="356" rx="56" ry="26" />
     <!-- The bar: its track, and the regular and delicious zones on the band inside it -->
-    <!-- The bar's outer arc, its inner arc, the tick dots above it and the two scrolls at its ends, measured off the recording -->
+    <!-- The bar's outer arc, its inner arc, the tick dots above it and the two scrolls at its ends, measured off
+      the recording -->
     <path class="track" d="M525 834 A525 265 0 0 1 1395 834" />
     <path class="inner-track" d="M690 832 A345 198 0 0 1 1230 832" />
     <path

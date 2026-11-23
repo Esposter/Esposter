@@ -63,10 +63,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <!-- The layout is measured off the completionist clip's Statue's Blessing at 173 seconds, in the frame's own pixels at 1080
-       High (`--unit` is one pixel of it): the deployed team's section on the left, the teams not deployed under it, and the
-       pool, the auto-recover switch and its threshold in a panel down the right. The art the game ships is not
-       drawn -->
+  <!-- The layout is measured off the completionist clip's Statue's Blessing at 173 seconds, in the frame's own
+    pixels at 1080 High (`--unit` is one pixel of it): the deployed team's section on the left, the teams not
+    deployed under it, and the pool, the auto-recover switch and its threshold in a panel down the right. The art
+    the game ships is not drawn -->
   <div class="blessing-screen">
     <div class="glass" aria-hidden="true" />
     <div class="halo" aria-hidden="true" />

@@ -6,7 +6,8 @@ interface Props {
   healthShare: number;
   // The member's level as the game writes it, when the host knows it
   levelText?: string | undefined;
-  // The member's name in the reader's language, which names the card for a screen reader since the card shows its portrait alone
+  // The member's name in the reader's language, which names the card for a screen reader since the card shows its
+  // Portrait alone
   name: string;
 }
 
@@ -15,8 +16,9 @@ const emit = defineEmits<{ heal: [] }>();
 </script>
 
 <template>
-  <!-- A member's card as the game's Blessing draws it: a green health bar over the portrait, and its level under the portrait
-       on a pale tab. The portrait's art does not ship, so its tile is plain. A card whose level is not known draws no tab -->
+  <!-- A member's card as the game's Blessing draws it: a green health bar over the portrait, and its level under
+    the portrait on a pale tab. The portrait's art does not ship, so its tile is plain. A card whose level is not
+    known draws no tab -->
   <button class="member" type="button" :aria-label="name" @click="emit('heal')">
     <span class="health"><span class="fill" :style="{ width: `${healthShare * 100}%` }" /></span>
     <span class="portrait" />

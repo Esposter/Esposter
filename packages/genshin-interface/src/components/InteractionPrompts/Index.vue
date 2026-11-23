@@ -14,18 +14,19 @@ interface Props {
 
 defineProps<Props>();
 const emit = defineEmits<{
-  // A row pressed itself, by a tap or by a click with the cursor shown, which acts on that row as F acts on the selected
+  // A row pressed itself, by a tap or by a click with the cursor shown, which acts on that row as F acts on the
+  // Selected
   press: [id: string];
 }>();
 const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
 </script>
 
 <template>
-  <!-- The prompts beside the character: a row for each thing in reach, its kind's icon before its name in a pill, and the
-       Key's cap before the row F acts on, with the pointer that leads from it into the pill. Measured off the English
-       PC client's three-row pickup at 1080 high: each pill 63 high on a 72 pitch, its left edge 59 past the cap's, the
-       cap 40 wide and 33 high, the icon 32 across 17 in from the pill's edge. Each pill is a button of its own, as the
-       game lets a row be pressed without the key -->
+  <!-- The prompts beside the character: a row for each thing in reach, its kind's icon before its name in a pill,
+    and the Key's cap before the row F acts on, with the pointer that leads from it into the pill. Measured off the
+    English PC client's three-row pickup at 1080 high: each pill 63 high on a 72 pitch, its left edge 59 past the
+    cap's, the cap 40 wide and 33 high, the icon 32 across 17 in from the pill's edge. Each pill is a button of its
+    own, as the game lets a row be pressed without the key -->
   <ul class="interaction-prompts" :class="{ touch: isTouch }">
     <li
       v-for="{ id, kind, name } of prompts"

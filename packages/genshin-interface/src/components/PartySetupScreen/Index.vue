@@ -28,10 +28,11 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
 </script>
 
 <template>
-  <!-- Party Setup as the English PC client draws it at 1080 high, its positions measured off the frame: the title, the step
-       dots, Elemental Resonance and Close at the top, the team's four members across the middle with a name plate over each
-       (its element's mark, its name and its level), the arrows at either edge to step to another team, and the foot's team
-       name, Configure Team, Quick Setup and Deploy. The members' art is the frame's own, drawn by no piece here -->
+  <!-- Party Setup as the English PC client draws it at 1080 high, its positions measured off the frame: the title,
+    the step dots, Elemental Resonance and Close at the top, the team's four members across the middle with a name
+    plate over each (its element's mark, its name and its level), the arrows at either edge to step to another team,
+    and the foot's team name, Configure Team, Quick Setup and Deploy. The members' art is the frame's own, drawn by
+    no piece here -->
   <div class="party-setup-screen">
     <PartySetupScreenHead :back-label :resonance-label :title @close="emit('close')" />
     <PartySetupScreenTeam :next-label :previous-label :slots @next="emit('next')" @previous="emit('previous')" />

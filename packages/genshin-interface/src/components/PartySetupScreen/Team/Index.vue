@@ -6,7 +6,8 @@ import PartySetupScreenTeamMember from "#src/components/PartySetupScreen/Team/Me
 import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
-  // The words of the arrows in the reader's language: the party the next arrow steps to, and the one the previous arrow steps to
+  // The words of the arrows in the reader's language: the party the next arrow steps to, and the one the previous arrow
+  // Steps to
   nextLabel: string;
   previousLabel: string;
   // The team on the screen: its four slots in slot order

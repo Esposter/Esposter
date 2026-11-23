@@ -1,5 +1,5 @@
-// The Blessing screen of the completionist clip at 173 seconds: four members in combat and three preparing, each at full
-// Health and levelled as the clip shows, the pool full at 10000 of 10000 with auto-recover on at half
+// The Blessing screen of the completionist clip at 173 seconds: four members in combat and three preparing, each at
+// Full Health and levelled as the clip shows, the pool full at 10000 of 10000 with auto-recover on at half
 export const props = {
   autoRecoverLabel: "Auto-recover when nearby",
   closeLabel: "Back",

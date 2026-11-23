@@ -19,7 +19,8 @@ interface Props {
   closeLabel: string;
   // The coins the wallet holds
   coins: number;
-  // The count under the Materials box's first material, the bag's count of it over what one unit takes, the game's "28 / 2"
+  // The count under the Materials box's first material, the bag's count of it over what one unit takes, the game's "28
+  // / 2"
   materialCountLabel: string;
   // The Materials box's heading, and the support character's, in the game's words
   materialsBoxLabel: string;
@@ -59,10 +60,10 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 </script>
 
 <template>
-  <!-- The forge, the blacksmith's screen: its two tabs across the head with the coins and the way out, the recipes on the
-       left with the chosen one's amount and cost beside them, or the queues each holding an order that forges over real
-       time, with the picked queue's time left, units done and Obtain beside them. The forging ring is drawn at the moment
-       the reference shows, not animated -->
+  <!-- The forge, the blacksmith's screen: its two tabs across the head with the coins and the way out, the recipes
+    on the left with the chosen one's amount and cost beside them, or the queues each holding an order that forges
+    over real time, with the picked queue's time left, units done and Obtain beside them. The forging ring is drawn
+    at the moment the reference shows, not animated -->
   <TwoColumnScreen class="forge-screen">
     <ForgeScreenHead
       v-model:tab="tab"

@@ -171,8 +171,9 @@ useDestroyFocus(() => isConfirming);
       />
       <Sort v-else-if="isSortable" v-model:sort="sort" v-model:is-descending="isDescending" :order-label :sort-labels />
       <Currencies v-else :currencies />
-      <!-- The gadget's action under the detail panel, which equips the gadget to the quick-use slot. Provisional: its place
-           is where the controller recording shows a gadget's action, the bottom bar's X, until the keyboard's is read -->
+      <!-- The gadget's action under the detail panel, which equips the gadget to the quick-use slot. Provisional:
+        its place is where the controller recording shows a gadget's action, the bottom bar's X, until the
+        keyboard's is read -->
       <GameButton
         v-if="selectedCell?.isEquipable && !isDestroying"
         class="quick-use translucent-button"

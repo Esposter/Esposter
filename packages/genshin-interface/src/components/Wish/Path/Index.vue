@@ -12,7 +12,8 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- The Epitomized Path the weapon wish's banner holds, its name and its Fate Points as the game words and colours them -->
+  <!-- The Epitomized Path the weapon wish's banner holds, its name and its Fate Points as the game words and
+    colours them -->
   <p>
     {{ pathLabel }}
     <span class="fate-points">

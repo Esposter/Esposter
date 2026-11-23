@@ -38,9 +38,10 @@ defineExpose({ focus: () => button.value?.focus() });
 </script>
 
 <template>
-  <!-- One of the game's buttons, placed by its parent, in its kind's look for each state: at rest, hovered (or focused
-       From the keyboard, which the game draws as a hover), pressed and disabled. Only a Disc draws a disabled look: the
-       Other kinds look the same enabled or disabled. The look is the button's own, and its content Takes the colour it sets -->
+  <!-- One of the game's buttons, placed by its parent, in its kind's look for each state: at rest, hovered (or
+    focused From the keyboard, which the game draws as a hover), pressed and disabled. Only a Disc draws a disabled
+    look: the Other kinds look the same enabled or disabled. The look is the button's own, and its content Takes the
+    colour it sets -->
   <button
     ref="button"
     class="game-button"

@@ -3,8 +3,8 @@ defineSlots<{ default: () => unknown }>();
 </script>
 
 <template>
-  <!-- The title a screen draws across its head, at the game's place for it in its own pixels at 1080 high (`--unit` a pixel
-       of that frame). Its parent's rules add what it differs by, such as its line height -->
+  <!-- The title a screen draws across its head, at the game's place for it in its own pixels at 1080 high (`--unit`
+    a pixel of that frame). Its parent's rules add what it differs by, such as its line height -->
   <p class="title"><slot /></p>
 </template>
 

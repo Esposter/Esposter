@@ -1,6 +1,7 @@
 import { WeaponMenuTab } from "#src/models/WeaponMenuTab";
 
-// The Enhance tab open on a weapon below its level cap, the Details row above the three tabs the level and its phase allow
+// The Enhance tab open on a weapon below its level cap, the Details row above the three tabs the level and its phase
+// Allow
 export const props = {
   actionLabel: "Enhance",
   closeLabel: "Back",

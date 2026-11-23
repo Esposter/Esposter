@@ -18,9 +18,9 @@ const emit = defineEmits<{ close: [] }>();
 </script>
 
 <template>
-  <!-- The History popup the wish screen's History opens: the draws of the last year, newest first, over the wish screen
-       until its close is clicked. Provisional: its columns, their order and the time's format wait on a recording of the
-       English Client's History at 1080 high -->
+  <!-- The History popup the wish screen's History opens: the draws of the last year, newest first, over the wish
+    screen until its close is clicked. Provisional: its columns, their order and the time's format wait on a
+    recording of the English Client's History at 1080 high -->
   <div class="wish-history" role="dialog" :aria-label="title">
     <div class="panel">
       <p class="title">{{ title }}</p>

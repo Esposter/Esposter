@@ -21,8 +21,9 @@ interface Props {
   // Whether the screen is the mobile client's, a quarter larger, in place of what the window's pointer says, which a
   // Fixture sets to shoot the touch layout on a desktop
   isTouch?: boolean | undefined;
-  // Whether the world behind the screen is blurred and washed as the game blurs it behind a full-screen menu, the screen's
-  // Own pieces never blurred. Off unless a screen opts in, so every other screen draws what is behind it as it is
+  // Whether the world behind the screen is blurred and washed as the game blurs it behind a full-screen menu, the
+  // Screen's Own pieces never blurred. Off unless a screen opts in, so every other screen draws what is behind it as it
+  // Is
   isWorldBlurred?: boolean | undefined;
 }
 

@@ -15,9 +15,9 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- The way out of a screen: a disc 58 units across at its top right, its fill and ring left to the screen that places
-       it, and the mark its glyph draws over them in the same units. The ring is an inset shadow, not a border, so the
-       mark's box is the disc's -->
+  <!-- The way out of a screen: a disc 58 units across at its top right, its fill and ring left to the screen that
+    places it, and the mark its glyph draws over them in the same units. The ring is an inset shadow, not a border,
+    so the mark's box is the disc's -->
   <button class="close-button cream-disc-press ring-button" :aria-label="label" type="button">
     <svg class="mark" :viewBox="CloseButtonMarkGlyphMap[mark].viewBox" aria-hidden="true">
       <path :d="CloseButtonMarkGlyphMap[mark].path" />

@@ -6,7 +6,8 @@ import { GameButtonKind } from "#src/models/GameButtonKind";
 import { GAME_CREAM } from "#src/services/constants";
 
 interface Props {
-  // The character's stories and then its voice-overs, each in the order the game lists them, the first one open at the start
+  // The character's stories and then its voice-overs, each in the order the game lists them, the first one open at the
+  // Start
   entries: CharacterMenuProfileEntry[];
   // The name of the character's namecard once its Friendship holds it, empty until then
   namecardName: string;

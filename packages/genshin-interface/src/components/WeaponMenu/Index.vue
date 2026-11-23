@@ -28,8 +28,9 @@ const emit = defineEmits<{ action: []; close: [] }>();
 </script>
 
 <template>
-  <!-- The weapon screen's frame, drawn on the game's 1920 by 864 reference: the weapon's name at the top left, the tab column
-       down the left with its Details row and the open tab lit, the open tab's body in the slot, and its action at the foot -->
+  <!-- The weapon screen's frame, drawn on the game's 1920 by 864 reference: the weapon's name at the top left, the
+    tab column down the left with its Details row and the open tab lit, the open tab's body in the slot, and its
+    action at the foot -->
   <div class="weapon-menu" :data-tab="tab">
     <p class="kind">{{ kind }} /</p>
     <p class="breadcrumb">{{ name }}</p>

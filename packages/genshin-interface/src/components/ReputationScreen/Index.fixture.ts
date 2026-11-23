@@ -1,6 +1,6 @@
-// Mondstadt's Reputation at level 3, its reward page open on level 8's reward, the Wings of Azure Wind, as the public clip
-// Shows it at 18 seconds: levels 1 to 3 achieved, the rest not, each level's items by their rarity, and the unlock lines
-// Of levels 2 and 4 in the game's words
+// Mondstadt's Reputation at level 3, its reward page open on level 8's reward, the Wings of Azure Wind, as the public
+// Clip Shows it at 18 seconds: levels 1 to 3 achieved, the rest not, each level's items by their rarity, and the unlock
+// Lines Of levels 2 and 4 in the game's words
 export const props = {
   achievedLabel: "Achieved",
   backLabel: "Back",

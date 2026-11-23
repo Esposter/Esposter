@@ -11,7 +11,8 @@ interface Props {
   amountLabel: string;
   // The amount the selected recipe forges, between one and the most its queue holds
   amountMaximum: number;
-  // The count under the Materials box's first material, the bag's count of it over what one unit takes, the game's "28 / 2"
+  // The count under the Materials box's first material, the bag's count of it over what one unit takes, the game's "28
+  // / 2"
   materialCountLabel: string;
   // The Materials box's heading, and the support character's, in the game's words
   materialsBoxLabel: string;
@@ -41,8 +42,8 @@ const emit = defineEmits<{ obtain: [queueId: number]; start: [] }>();
 </script>
 
 <template>
-  <!-- The detail pane beside the list: the Materials tab's amount and cost or the Queues tab's ring and progress for the
-       picked queue, with the item the recipe forges and the Materials box under them -->
+  <!-- The detail pane beside the list: the Materials tab's amount and cost or the Queues tab's ring and progress
+    for the picked queue, with the item the recipe forges and the Materials box under them -->
   <div class="detail">
     <ForgeScreenDetailMaterials
       v-if="tab === ForgeTab.Materials"

@@ -27,8 +27,9 @@ const emit = defineEmits<{ destroy: []; quickSelect: [rarity: number] }>();
 </script>
 
 <template>
-  <!-- The destroy mode's foot, in place of the sort or the currencies: its opening line, the quick selects by rarity,
-       the count of the chosen entries and the Destroy button that opens the dialog. Provisional until the mode is recorded -->
+  <!-- The destroy mode's foot, in place of the sort or the currencies: its opening line, the quick selects by
+    rarity, the count of the chosen entries and the Destroy button that opens the dialog. Provisional until the mode
+    is recorded -->
   <section class="destroy">
     <p class="destroy-tip">{{ destroyTipLabel }}</p>
     <p v-if="selectedCell && !selectedCell.isDestroyable" class="destroy-cannot">{{ destroyCannotLabel }}</p>

@@ -47,9 +47,10 @@ const emit = defineEmits<{ close: []; craft: [] }>();
 </script>
 
 <template>
-  <!-- The Craft screen, its pieces placed in the game's own pixels at 1080 high (`--unit` a pixel of that frame): the title
-       and the coins across the head, the way out at the head's right, and the recipe tabs under the title. The screen takes its
-       place from the game's layout, not a two-column grid, since its recipe list is narrower than its detail -->
+  <!-- The Craft screen, its pieces placed in the game's own pixels at 1080 high (`--unit` a pixel of that frame):
+    the title and the coins across the head, the way out at the head's right, and the recipe tabs under the title.
+    The screen takes its place from the game's layout, not a two-column grid, since its recipe list is narrower than
+    its detail -->
   <div class="crafting-screen">
     <CraftingScreenHead :close-label :coins :title @close="emit('close')" />
     <CraftingScreenTabs v-model:tab-id="tabId" :tabs />

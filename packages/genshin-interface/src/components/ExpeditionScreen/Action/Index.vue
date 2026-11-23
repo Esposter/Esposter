@@ -14,8 +14,8 @@ const isPicking = defineModel<boolean>("isPicking", { default: false });
 const { detail } = defineProps<Props>();
 const emit = defineEmits<{ claim: [placeId: number]; recall: [placeId: number] }>();
 
-// The picked place's button acts on that place by its kind: a send opens the picker of the character it takes, a claim or
-// A recall acts on the place at once
+// The picked place's button acts on that place by its kind: a send opens the picker of the character it takes, a claim
+// Or A recall acts on the place at once
 const actionMap: Record<ExpeditionActionKind, () => void> = {
   [ExpeditionActionKind.Claim]: () => emit("claim", detail.id),
   [ExpeditionActionKind.Recall]: () => emit("recall", detail.id),

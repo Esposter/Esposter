@@ -52,11 +52,11 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <!-- The Expedition screen as the public clip shows it at 1080 high (references/expedition-screen, 26 seconds): the title
-       across the head with the expedition limit and the way out, the nations down the left, the places as pins over the
-       map, and the picked place's panel on the right with its rewards, its durations and the button that acts on it. The
-       map is drawn over the world and is the game's art, which does not ship, so the screen is transparent there; the
-       panel's picture is drawn as a plain sheet, and the picked pin's brackets as four corners -->
+  <!-- The Expedition screen as the public clip shows it at 1080 high (references/expedition-screen, 26 seconds):
+    the title across the head with the expedition limit and the way out, the nations down the left, the places as
+    pins over the map, and the picked place's panel on the right with its rewards, its durations and the button that
+    acts on it. The map is drawn over the world and is the game's art, which does not ship, so the screen is
+    transparent there; the panel's picture is drawn as a plain sheet, and the picked pin's brackets as four corners -->
   <div class="expedition-screen">
     <span class="emblem" aria-hidden="true" />
     <ScreenTitle class="heading">{{ title }}</ScreenTitle>

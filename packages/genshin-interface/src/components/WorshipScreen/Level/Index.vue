@@ -27,8 +27,8 @@ const lines = computed(() => [
 </script>
 
 <template>
-  <!-- The level's rewards as the game lists them: a light strip per reward with its icon and its name, a padlock over each
-       until the level is reached. The strips are one button, which a claim takes once the level is claimable -->
+  <!-- The level's rewards as the game lists them: a light strip per reward with its icon and its name, a padlock
+    over each until the level is reached. The strips are one button, which a claim takes once the level is claimable -->
   <button class="reward-list" type="button" :disabled="state !== WorshipLevelState.Claimable" @click="emit('claim')">
     <span v-for="line of lines" :key="line" class="reward">
       <span class="icon" aria-hidden="true" />

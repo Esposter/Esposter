@@ -47,10 +47,10 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 </script>
 
 <template>
-  <!-- The Worship Statue's popup as the game draws it: a panel 614 units across on the window's right, 1080 high, showing the
-       one level the region is reaching under its emblem, its rewards, the Oculus it takes against the Oculi held, and the two
-       offer buttons. The parchment, emblem, icons, padlock and offer arrows are plain until the game's art is recorded. The
-       Blessing switch sits off the panel, which draws none -->
+  <!-- The Worship Statue's popup as the game draws it: a panel 614 units across on the window's right, 1080 high,
+    showing the one level the region is reaching under its emblem, its rewards, the Oculus it takes against the
+    Oculi held, and the two offer buttons. The parchment, emblem, icons, padlock and offer arrows are plain until
+    the game's art is recorded. The Blessing switch sits off the panel, which draws none -->
   <div class="worship-screen">
     <GameButton class="blessing" :kind="GameButtonKind.Row" tip="" @click="emit('blessing')">
       {{ blessingTitle }}

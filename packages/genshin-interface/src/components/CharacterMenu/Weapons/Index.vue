@@ -35,10 +35,11 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- The Weapons tab's panel: the weapon's name and kind beside its lock, its base ATK and secondary attribute, its stars,
-       its level with the ascension phases reached, its refinement rank, its passive's name beneath that, the scrollbar of
-       its passive's column, and the two buttons beneath. The passive's text is not drawn yet: its rank's numbers are not
-       filled into it and its colour tags are not split, and the frame sets it in the game's typeface -->
+  <!-- The Weapons tab's panel: the weapon's name and kind beside its lock, its base ATK and secondary attribute,
+    its stars, its level with the ascension phases reached, its refinement rank, its passive's name beneath that,
+    the scrollbar of its passive's column, and the two buttons beneath. The passive's text is not drawn yet: its
+    rank's numbers are not filled into it and its colour tags are not split, and the frame sets it in the game's
+    typeface -->
   <div class="weapons">
     <p class="name">{{ name }}</p>
     <p class="kind">{{ kind }}</p>

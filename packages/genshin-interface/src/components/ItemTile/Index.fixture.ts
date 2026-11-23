@@ -5,7 +5,8 @@ export const props = {
   style: { height: "calc(var(--unit) * 88)", width: "calc(var(--unit) * 88)" },
 };
 
-// A four-point star stands for a traced icon, which the game's art is not shipped as: it lies in the tile's 100 unit square
+// A four-point star stands for a traced icon, which the game's art is not shipped as: it lies in the tile's 100 unit
+// Square
 const ICON_SHAPE = "M50 6 L61 39 L94 50 L61 61 L50 94 L39 61 L6 50 L39 39 Z";
 
 export const variants = {

@@ -26,7 +26,8 @@ const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }
 </script>
 
 <template>
-  <!-- The detail of the picked good over the shop's grid: its costs, limit and refresh, the count picker, and the Buy button -->
+  <!-- The detail of the picked good over the shop's grid: its costs, limit and refresh, the count picker, and the
+    Buy button -->
   <div class="detail" role="dialog" aria-modal="true" :aria-label="good.name">
     <div class="detail-good">
       <p class="detail-name">{{ good.name }}</p>

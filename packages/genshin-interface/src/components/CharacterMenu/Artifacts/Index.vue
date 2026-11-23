@@ -48,16 +48,17 @@ interface Props {
 
 const { slotStats } = defineProps<Props>();
 const emit = defineEmits<CharacterMenuArtifactEmits>();
-// The slot the actions are for, the first until Switch moves it on, and whether the details are open in place of the totals
+// The slot the actions are for, the first until Switch moves it on, and whether the details are open in place of the
+// Totals
 const selectedIndex = ref(0);
 const isDetailsOpen = ref(false);
 const selectedStats = computed(() => slotStats[selectedIndex.value]);
 </script>
 
 <template>
-  <!-- The Artifacts tab's panel: the worn artifacts' attribute totals down its top, the set bonus block under them, and the
-       Fast Equip and Switch buttons at its foot. Pressing Artifact Details opens the picked slot's stats in place of the totals,
-       with its Enhance, Equip or Unequip and Lock buttons at the foot in place of those two -->
+  <!-- The Artifacts tab's panel: the worn artifacts' attribute totals down its top, the set bonus block under them,
+    and the Fast Equip and Switch buttons at its foot. Pressing Artifact Details opens the picked slot's stats in
+    place of the totals, with its Enhance, Equip or Unequip and Lock buttons at the foot in place of those two -->
   <div class="artifacts">
     <ToastNotice v-if="notice" class="notice">{{ notice }}</ToastNotice>
     <GameButton

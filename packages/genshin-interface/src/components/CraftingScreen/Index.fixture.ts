@@ -1,6 +1,6 @@
-// The Condensed Resin picked on the Consumable tab (combine type 6) of the Crafting Table clip, crafted one at a time by
-// The second crafter. Its materials are the recipe's own, as the world's Condensed Resin fixture holds them: the player has
-// 87 of the first and none of the second
+// The Condensed Resin picked on the Consumable tab (combine type 6) of the Crafting Table clip, crafted one at a time
+// By The second crafter. Its materials are the recipe's own, as the world's Condensed Resin fixture holds them: the
+// Player has 87 of the first and none of the second
 export const props = {
   amount: 1,
   amountLabel: "Quantity",

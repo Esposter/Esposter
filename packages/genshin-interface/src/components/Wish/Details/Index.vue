@@ -10,7 +10,8 @@ import { CloseButtonMark } from "#src/models/CloseButtonMark";
 interface Props {
   // The way out of the popup in the reader's language
   closeLabel: string;
-  // The Fate Points the Epitomized Path holds as the game words and colours them, "[]" on every banner but the weapon wish's
+  // The Fate Points the Epitomized Path holds as the game words and colours them, "[]" on every banner but the weapon
+  // Wish's
   fatePoints: TextSegment[];
   // The Epitomized Path's name, "" on every banner but the weapon wish's
   pathLabel: string;
@@ -25,9 +26,9 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
 </script>
 
 <template>
-  <!-- The Details popup the wish screen's Details opens: the open banner's Pool by rarity, its Epitomized Path on the weapon
-       Wish, over the wish screen until its close is clicked. Provisional: its place and size wait on a recording of the
-       English Client's popup at 1080 high -->
+  <!-- The Details popup the wish screen's Details opens: the open banner's Pool by rarity, its Epitomized Path on
+    the weapon Wish, over the wish screen until its close is clicked. Provisional: its place and size wait on a
+    recording of the English Client's popup at 1080 high -->
   <div class="wish-details" role="dialog" :aria-label="title">
     <div class="panel">
       <p class="title">{{ title }}</p>

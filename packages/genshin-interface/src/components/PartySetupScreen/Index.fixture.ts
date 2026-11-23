@@ -1,5 +1,5 @@
-// Party 1 on Party Setup with three members and an empty slot. The names and levels are placeholders until the parity pass
-// Takes the public clip's frame, which sets the words and the figures these carry
+// Party 1 on Party Setup with three members and an empty slot. The names and levels are placeholders until the parity
+// Pass Takes the public clip's frame, which sets the words and the figures these carry
 export const props = {
   backLabel: "Back",
   configureTeamLabel: "Configure Team",

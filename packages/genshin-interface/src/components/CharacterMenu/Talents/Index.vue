@@ -27,9 +27,9 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
 </script>
 
 <template>
-  <!-- The Talents tab's panel: the three combat talents down its right, each with its name and level, the phase and cost of
-       its next level, why it cannot rise if it cannot, and its Upgrade while it is drawn, then the passives under them, each
-       with its name -->
+  <!-- The Talents tab's panel: the three combat talents down its right, each with its name and level, the phase and
+    cost of its next level, why it cannot rise if it cannot, and its Upgrade while it is drawn, then the passives
+    under them, each with its name -->
   <div class="talents">
     <ul class="talent-list">
       <li v-for="(levelText, index) in levelTexts" :key="index" class="talent">

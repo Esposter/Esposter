@@ -8,7 +8,8 @@ interface Props {
   fill?: string | undefined;
   // A rule whose hairline the caller draws itself, at its own opacity, with the ends laid over it
   isHairlineHidden?: true | undefined;
-  // A rule the game draws with its ends but no diamond at its middle, as the weapon screen's header and footer rules are
+  // A rule the game draws with its ends but no diamond at its middle, as the weapon screen's header and footer rules
+  // Are
   isMiddleHidden?: true | undefined;
   // The share of the silver the piece is drawn at.
   // The game's hairline is opaque on a light screen and translucent over a dark scene.
