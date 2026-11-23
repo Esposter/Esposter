@@ -7,8 +7,6 @@ import { resourceTable } from "#src/services/resource/overlay/constants";
 import { getRestoreResourcesEntry } from "#src/services/resource/overlay/getRestoreResourcesEntry";
 import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
 import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
-import { useNotificationStore } from "#src/store/notification";
-import { useOverlayStore } from "#src/store/overlay";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { RoutePath, takeOne, withFinalizerAsync } from "@esposter/shared";
 
@@ -16,11 +14,7 @@ import { RoutePath, takeOne, withFinalizerAsync } from "@esposter/shared";
 // No list of its own to re-read, such as the blade, passes no refresh and leaves the caches to the invalidation
 export const useRestoreResources = (refresh?: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
-  const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
-  const overlayStore = useOverlayStore();
-  const { writeOptimistic } = overlayStore;
-  const finalizeWrite = useResourceWriteFinalizer(refresh);
+  const { writeOptimistic } = useResourceWrite(refresh);
   // The ids with a restore in flight, which the bin reads so a row's Restore is disabled until its answer
   const pendingRestoreIds = ref(new Set<string>());
   const checkIsRestorePending = (id: string) => pendingRestoreIds.value.has(id);
@@ -28,15 +22,6 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
     const ids = resources.map(({ id }) => id);
     const firstResource = takeOne(resources);
     for (const id of ids) pendingRestoreIds.value.add(id);
-    // The toast shows at once, while the rows it brings back are the server's to return, in its order
-    const notificationId = createNotification({
-      // A batch is back in the list it was deleted from, so only a single resource names where it went
-      ...(resources.length === 1
-        ? { action: { title: GO_TO_RESOURCE_TITLE, to: RoutePath.Resource(firstResource.id) } }
-        : {}),
-      severity: NotificationSeverity.Success,
-      title: ResourceOperationTitleMap[ResourceOperationType.Restored](firstResource.name, resources.length),
-    });
     writeOptimistic(
       () =>
         withFinalizerAsync(
@@ -47,20 +32,20 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
               resourceTable,
               await sendIdsInChunks(ids, (chunkIds) => $trpc.resource.restoreResources.mutate({ ids: chunkIds })),
             ),
-          async () => {
+          () => {
             for (const id of ids) pendingRestoreIds.value.delete(id);
-            // The ids are restored chunk-by-chunk, each committing independently, so a failure still leaves earlier
-            // Chunks restored server-side — a write that has to invalidate even though it reports as failed, as the
-            // Delete it undoes does. The rows are reachable again, so every cache of which resources are live is stale:
-            // The stars and the Recently-opened set reconcile themselves off this tag
-            await finalizeWrite();
           },
         ),
       {
         entry: getRestoreResourcesEntry(ids),
-        onError: (error) => {
-          dismissNotification(notificationId);
-          createErrorNotification(error);
+        // The toast shows at once, while the rows it brings back are the server's to return, in its order. A batch is back
+        // In the list it was deleted from, so only a single resource names where it went
+        notification: {
+          ...(resources.length === 1
+            ? { action: { title: GO_TO_RESOURCE_TITLE, to: RoutePath.Resource(firstResource.id) } }
+            : {}),
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Restored](firstResource.name, resources.length),
         },
       },
     );
