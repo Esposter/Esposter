@@ -24,7 +24,7 @@ Every workspace package carries one clear responsibility over a sensible depende
 
 ## TypeScript — 10 / 10
 
-`isolatedDeclarations` on the library configs, `verbatimModuleSyntax` and `allowJs: false` in the shared base; Nuxt auto-generates a strict-mode tsconfig. Zod schemas co-located with models, `satisfies z.ZodType<T>` enforced, no raw `any` or `Omit`. `takeOne()` replaces direct index access under `noUncheckedIndexedAccess`. The `void` operator is banned via `no-void`, with `getSynchronizedFunction` as the single sanctioned escape hatch.
+`isolatedDeclarations` on the library configs, `verbatimModuleSyntax` in the shared base; Nuxt auto-generates a strict-mode tsconfig. Zod schemas co-located with models, `satisfies z.ZodType<T>` enforced, no raw `any` or `Omit`. `takeOne()` replaces direct index access under `noUncheckedIndexedAccess`. The `void` operator is banned via `no-void`, with `getSynchronizedFunction` as the single sanctioned escape hatch.
 
 > `skipLibCheck: true` — accepted trade-off for build speed.
 

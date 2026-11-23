@@ -62,8 +62,8 @@
 - `packages/shared/src/util` — `object`, `promise`, `reactivity`
 - `packages/shared/src/util/secret` — `checkIsSecretEqual.test.ts`, `checkIsSecretEqual.ts`, `constants.ts`, `generateSecretToken.test.ts`, `generateSecretToken.ts`, `hashSecretToken.test.ts`, `hashSecretToken.ts`
 - `packages/shared/src/util/text`, `packages/shared/src/util/time`, `packages/shared/src/util/validation`
-- `packages/shared` — `CHANGELOG.md`, `README.md`, `eslint.config.js`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
-- `packages/shared-node` — `CHANGELOG.md`, `README.md`, `eslint.config.js`, `package.json`
+- `packages/shared` — `CHANGELOG.md`, `README.md`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
+- `packages/shared-node` — `CHANGELOG.md`, `README.md`, `package.json`
 - `packages/shared-node/src` — `cache.ts`, `childProcess.ts`, `models`
 - `packages/shared-node/src` — `services`, `wakeCheck.ts`
 - `packages/shared-node` — `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
