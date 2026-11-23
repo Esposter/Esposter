@@ -1,7 +1,6 @@
 import type { TRPCWebSocketHandler } from "#src/runtime/server/models/TRPCWebSocketHandler";
 import type { TRPCWebSocketHandlerOptions } from "#src/runtime/server/models/TRPCWebSocketHandlerOptions";
 import type { AnyTRPCRouter, inferRouterContext } from "@trpc/server";
-import type { CreateWSSContextFnOptions, WSSHandlerOptions } from "@trpc/server/adapters/ws";
 
 import { PeerWebSocketAdapter } from "#src/runtime/server/models/PeerWebSocketAdapter";
 import { toIncomingMessage } from "#src/runtime/server/services/toIncomingMessage";
@@ -14,8 +13,8 @@ interface PeerConnection<TContext> {
   // The context the callbacks take, or the error that stopped it being built
   context: ReturnType<typeof getResultAsync<TContext>>;
 }
-// TRPC's WebSocket adapter over crossws, the WebSocket layer Nitro serves. tRPC drives a `ws` server, so the handler
-// Presents one and a `ws` client per peer, and replays each crossws hook onto the client it belongs to
+// TRPC's WebSocket adapter over crossws, the WebSocket layer Nitro serves. tRPC drives a WebSocket server, so the handler
+// Presents one and a client per peer, and replays each crossws hook onto the client it belongs to
 export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
   createContext,
   onClose,
@@ -29,11 +28,7 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
     ...baseOptions,
     ...omitUndefined({ dangerouslyDisablePong, experimental_encoder, keepAlive, prefix }),
     createContext,
-    // @TODO: https://github.com/trpc/trpc/issues/8057 — tRPC types `wss` and its clients as the `ws` classes, though
-    // It reads only a few members of each, so a server that is not a `ws` one is cast until they are typed by those
-    // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` as the `ws` package's server class, which the adapter is not; tRPC reads only the members it names
-    wss: webSocketServer as WSSHandlerOptions<TRouter>["wss"],
-    // oxlint-enable typescript/no-unsafe-type-assertion
+    wss: webSocketServer,
   });
   const peerConnections = new Map<string, PeerConnection<inferRouterContext<TRouter>>>();
   return {
@@ -43,7 +38,7 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
         const peerConnection = peerConnections.get(peer.id);
         if (!peerConnection) return;
         peerConnections.delete(peer.id);
-        PeerWebSocketAdapter.receiveClose(peerConnection.client, code, reason);
+        peerConnection.client.receiveClose(code, reason);
         // A context that never built was never opened, so this close has no onOpen to answer. Its failure is logged
         // When the peer opened
         await peerConnection.context.match(
@@ -53,11 +48,11 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
       },
       error: (peer, error) => {
         const peerConnection = peerConnections.get(peer.id);
-        if (peerConnection) PeerWebSocketAdapter.receiveError(peerConnection.client, error);
+        if (peerConnection) peerConnection.client.receiveError(error);
       },
       message: (peer, message) => {
         const peerConnection = peerConnections.get(peer.id);
-        if (peerConnection) PeerWebSocketAdapter.receiveMessage(peerConnection.client, message.text());
+        if (peerConnection) peerConnection.client.receiveMessage(message.text());
       },
       open: async (peer) => {
         const client = new PeerWebSocketAdapter(peer);
@@ -78,11 +73,7 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
                 url: new URL(peer.request.url),
               },
               req: request,
-              // The peer presented as the socket tRPC hands its context. The compiler cannot see that the callbacks
-              // Read only the members `PeerWebSocketAdapter` declares
-              // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `res` as the `ws` package's class, which the peer is not; the callbacks read only what the peer declares
-              res: client as CreateWSSContextFnOptions["res"],
-              // oxlint-enable typescript/no-unsafe-type-assertion
+              res: client,
             }),
           ),
         );

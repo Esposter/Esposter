@@ -36,6 +36,11 @@
       "matchPackageNames": ["miniflare", "wrangler"]
     },
     {
+      "allowedVersions": "<7",
+      "description": "The app keeps `typescript` only for `@vue/compiler-sfc`, which loads its JavaScript API to resolve a props type imported from another file. The next major ships the native compiler with no such API at its main entry, so every component whose props import a type fails to compile. The cap lifts when compiler-sfc resolves those types under it (vuejs/core#15997).",
+      "matchPackageNames": ["typescript"]
+    },
+    {
       "allowedVersions": "<27",
       "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. The pin stays on its major until every environment that runs node can run the next one, and `references/node-major.md` is the checklist that says when. The change that moves the pin with `pnpm update:node <major>` raises this cap to the next major beside it.",
       "groupName": "node",

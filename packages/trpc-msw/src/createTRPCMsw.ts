@@ -2,7 +2,6 @@ import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
 import type { TRPCMsw } from "#src/models/TRPCMsw";
 import type { TRPCMswOptions } from "#src/models/TRPCMswOptions";
 import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
-import type { WSSHandlerOptions } from "@trpc/server/adapters/ws";
 import type { HttpHandler, WebSocketHandler } from "msw";
 
 import { WEBSOCKET_ROUTER_REPLACED_CLOSE_CODE } from "#src/constants";
@@ -60,11 +59,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
     applyWSSHandler({
       ...omitUndefined({ createContext }),
       router: createMockRouter(t, new Map(procedureTypes), registrations, router),
-      // @TODO: https://github.com/trpc/trpc/issues/8057 — tRPC types `wss` and its clients as the `ws` classes, though
-      // It reads only a few members of each, so a server that is not a `ws` one is cast until they are typed by those
-      // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` as the `ws` package's server class, which the adapter is not; tRPC reads only the members it names
-      wss: webSocketServer as WSSHandlerOptions<AnyTRPCRouter>["wss"],
-      // oxlint-enable typescript/no-unsafe-type-assertion
+      wss: webSocketServer,
     });
     return webSocketServer;
   };

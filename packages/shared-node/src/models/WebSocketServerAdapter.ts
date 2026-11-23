@@ -1,10 +1,9 @@
 import { EventEmitter } from "node:events";
 
-// The part of a `ws.WebSocketServer` tRPC's `applyWSSHandler` drives: it listens for `connection` and walks `clients`
-// To broadcast its reconnect notification. A connection is announced by emitting `connection` with the client and its
-// Request, which registers the client until it closes. Nothing else is declared, so the class stays a subset of the
-// `ws` server, which a single `as` can stand in for. trpc-msw imports this class as well, and its client adapter extends
-// `WebSocketClientAdapter`
+// The server tRPC's `applyWSSHandler` drives, the members its `WSServer` names: it listens for `connection` and walks
+// `clients` to broadcast its reconnect notification. A connection is announced by emitting `connection` with the client
+// And its request, which registers the client until it closes. trpc-msw imports this class as well, and its client
+// Adapter extends `WebSocketClientAdapter`
 export class WebSocketServerAdapter<TClient extends EventEmitter> extends EventEmitter {
   readonly clients: Set<TClient> = new Set<TClient>();
 
