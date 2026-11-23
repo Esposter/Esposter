@@ -32,7 +32,6 @@ export const FileKey = {
   ThirdPartyLeohpazClaw: "ThirdPartyLeohpazClaw",
   ThirdPartyLeohpazFlee: "ThirdPartyLeohpazFlee",
   ThirdPartyLeohpazIceExplosion: "ThirdPartyLeohpazIceExplosion",
-  ThirdPartyLeohpazLicense: "ThirdPartyLeohpazLicense",
   ThirdPartyLeohpazStepGrass: "ThirdPartyLeohpazStepGrass",
   ThirdPartyXDeviruchiAndTheJourneyBegins: "ThirdPartyXDeviruchiAndTheJourneyBegins",
   ThirdPartyXDeviruchiDecisiveBattle: "ThirdPartyXDeviruchiDecisiveBattle",

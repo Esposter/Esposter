@@ -132,7 +132,6 @@
     "type": "audio",
     "url": "ThirdParty/Leohpaz/IceExplosion.wav"
   },
-  { "cache": false, "key": "ThirdPartyLeohpazLicense", "type": "image", "url": "ThirdParty/Leohpaz/License.png" },
   { "cache": false, "key": "ThirdPartyLeohpazStepGrass", "type": "audio", "url": "ThirdParty/Leohpaz/StepGrass.wav" },
   {
     "cache": false,
