@@ -12,6 +12,17 @@ Where work is placed decides its cost far more than how it is written. These are
 - **A scheduled sweep that trims a table nothing deletes from.** It has to rediscover keys the write already holds, and it runs on a schedule nothing watches; the trim is one indexed delete on the write path (`Bound growth where the keys already are`, this file).
 - **Routing a large document's bytes through the server.** Past one request body they move through a presigned URL the server signs, and the server holds them only to validate or compute (`openspec/specs/architecture/large-documents/design.md`).
 
+## A slow path is profiled, never fitted to a number
+
+A wall time, a timeout or a target figure names no defect. A slow check, script or build is changed only where its profile shows waste: a spawn or read repeated, an O(n × m) match, or work done twice. When the profile shows the time is inherent, meaning one pass over what the result must read, the code stays and the profile is the report. These are not fixes, since each buys the number by losing the result:
+
+- skipping or sampling inputs, or a cache across runs that lets a stale result pass;
+- narrowing what is checked;
+- moving work outside the measured span;
+- raising or special-casing a timeout.
+
+A fix keeps the output byte-identical on the same input. A budget that the needed work outgrows is raised, never worked around.
+
 ## Resolve a fact once, at the consumer
 
 A fact several producers would each compute belongs to the single consumer that acts on it. Every producer computing it separately is the same query run N times, N chances to disagree, and N places to fix when the rule changes.
