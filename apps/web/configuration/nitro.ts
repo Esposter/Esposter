@@ -18,8 +18,12 @@ import { dirname, join } from "node:path";
 const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("genshin-world/package.json"));
 // The PDF renderer's own folder of character maps, fonts and decoders, served from its install rather than a copy
 const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs-dist/package.json"));
-// The stable miniflare the dev runner emulates Workers with, installed under the app's `miniflare-dev` alias
-const miniflareDevDirectory = dirname(createRequire(import.meta.url).resolve("miniflare-dev/package.json"));
+// The Workers runtime the dev runner emulates Workers with: the catalog's miniflare, which `@esposter/db-mock` installs,
+// Reached through that package's manifest since the app declares no miniflare of its own
+const dbMockDirectory = dirname(createRequire(import.meta.url).resolve("@esposter/db-mock/package.json"));
+const miniflareDirectory = dirname(
+  createRequire(join(dbMockDirectory, "package.json")).resolve("miniflare/package.json"),
+);
 
 export const nitro: NonNullable<NuxtConfig["nitro"]> = {
   // The Worker's own wrangler configuration, written beside the build. A build is made for one environment (CI sets
@@ -31,9 +35,9 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
     nodeCompat: true,
     wrangler: { compatibility_date: compatibilityDate, ...getEnvironmentWrangler(getCloudflareEnvironment()) },
   },
-  // The dev runner loads `miniflare` by name from the app root, where nothing resolves it: the app declares the stable
-  // Line as `miniflare-dev`, and the wrangler pin's 5 beta does not load the runner's entry, so the runner is pointed here
-  deps: { paths: { miniflare: miniflareDevDirectory } },
+  // The dev runner loads `miniflare` by name from the app root, where nothing resolves it, so it is pointed at the install
+  // Of the catalog's miniflare that `@esposter/db-mock` holds
+  deps: { paths: { miniflare: miniflareDirectory } },
   // A package resolves the build the Workers runtime runs, as wrangler's own bundler resolves it: a Worker is a web
   // Runtime, so a package's browser build is taken over its Node one. The preset names `workerd` and `worker` alone, so
   // Cheerio, which mjml reaches through juice, resolved its Node build, whose undici compiles WebAssembly the runtime refuses.

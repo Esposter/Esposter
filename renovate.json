@@ -36,11 +36,6 @@
       "matchPackageNames": ["miniflare", "wrangler"]
     },
     {
-      "allowedVersions": "<5",
-      "description": "The Nitro dev runner loads `miniflare` by name, and the app declares the stable line it runs on as the `miniflare-dev` alias (`configuration/nitro.ts` points the runner at it). The cap stops the next major, the beta line wrangler's exact pin holds for the catalog's `miniflare`, because the runner does not load its entry under `nuxt dev`. The alias moves once the runner does.",
-      "matchPackageNames": ["miniflare-dev"]
-    },
-    {
       "allowedVersions": "<27",
       "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. The pin stays on its major until every environment that runs node can run the next one, and `references/node-major.md` is the checklist that says when. The change that moves the pin with `pnpm update:node <major>` raises this cap to the next major beside it.",
       "groupName": "node",
