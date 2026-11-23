@@ -1,6 +1,6 @@
 # Static assets
 
-A static file lives in one of two places, and the choice is a rule. `apps/web/app/assets/` holds every file the app's code reads: the bundler gives each one a content-hashed URL, the browser caches it for good, a missing file fails the build, and a small one is inlined into the code that imports it. `apps/web/public/` holds only the files whose URL must be the same from one build to the next, because something outside the bundle names that URL.
+A static file lives in one of three places, and the choice is a rule. `apps/web/app/assets/` holds every file the app's code reads: the bundler gives each one a content-hashed URL, the browser caches it for good, a missing file fails the build, and a small one is inlined into the code that imports it. `apps/web/public/` holds only the files whose URL must be the same from one build to the next, because something outside the bundle names that URL. The hosted bucket holds the data a product's code reads at runtime that is too large to bundle, or that a screen fetches only when it needs it: each object is named by the sha256 of its bytes, a product's committed lock names every object it reads, and the object is served from the hosted origin under its scope, so a changed file is a new url and the older one is never read again.
 
 ## Which place
 
@@ -10,7 +10,9 @@ flowchart TD
   Named -->|yes| Public["apps/web/public/, at a fixed path"]
   Named -->|no| Built{"Does a library build its URL at runtime?"}
   Built -->|yes| Public
-  Built -->|no| Assets["apps/web/app/assets/, imported by the code that reads it"]
+  Built -->|no| Hosted{"Is it a data set read at runtime that is too large to bundle, or fetched only when a screen needs it?"}
+  Hosted -->|yes| Bucket["The hosted bucket, under its product's lock"]
+  Hosted -->|no| Assets["apps/web/app/assets/, imported by the code that reads it"]
 ```
 
 A bundled URL changes whenever the file's bytes change, so anything that names a file by its URL outside the bundle has to stay in `public/`. These do:
@@ -19,7 +21,7 @@ A bundled URL changes whenever the file's bytes change, so anything that names a
 - **A file the browser requests by a fixed name.** `favicon.ico` is requested from the root whatever the page says. The apple and manifest icons are linked by their `pwa/` paths, so no icon sits at the root.
 - **A file a library requests by a name it builds at runtime.** The PDF renderer asks for a text annotation's icon as `annotation-<name>.svg` beside the folder the app names, so no import can name the file, and the URL has to be the same from one build to the next. The icons are copied into `public/pdfjs/images/` at the renderer's pinned version, with a notice beside them. A Nitro mount from the renderer's install, which the other renderer folders take, is not used here: its `publicAssets` entry needs a `dir` key that the `id-denylist` lint rule rejects.
 
-Everything else is in `app/assets/`. Packages whose files the server must hand out come from their own installs through Nitro's `publicAssets` (`apps/web/configuration/nitro.ts`), as the [polyfills](../polyfills/design.md) page describes for the polyfills a package ships. The renderer's annotation icons are the one exception, as the list above says.
+Everything else is in `app/assets/`, unless it is a data set the hosted bucket holds, which the hosted-assets system publishes and reads: see [hosted game data](../../genshin/hosted-game-data/design.md) for the first product. Packages whose files the server must hand out come from their own installs through Nitro's `publicAssets` (`apps/web/configuration/nitro.ts`), as the [polyfills](../polyfills/design.md) page describes for the polyfills a package ships. The renderer's annotation icons are the one exception, as the list above says.
 
 ## Saved data names an identifier, never a URL
 
@@ -61,6 +63,7 @@ Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web
 ## Rejected
 
 - **Every static file in `public/`.** It loses the content hash, the immutable cache and the build-time check, and every texture and tileset path becomes an unchecked string.
+- **Game data bundled, or kept in `public/`.** A data set too large to bundle would grow every build and every client's first load, and one kept in `public/` has a fixed url that a changed file would still answer with the old bytes. The hosted bucket names each object by its hash, so a changed file is a new url and the cache can hold it for good.
 - **Every static file bundled.** The head links, the manifest and the polyfill script cannot take a bundled URL, since config is read in Node and those files name a fixed path.
 - **Saving a bundled URL as user data.** Each edit to a file's bytes would change the URL, so a saved value would silently stop matching. A file under the inline limit would also be inlined into the saved value as a data URL. The fix is the identifier above, not keeping the file in `public/`.
 - **Textures kept in `public/` because Phaser needs a path.** Phaser and three.js read any URL, bundled ones included, so the constraint never came from the loader.
@@ -85,6 +88,8 @@ Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web
 | `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | The preset list, built from the value set, each URL read from `CallVirtualBackgroundUrlMap`            |
 | `apps/web/app/store/message/user/settings/callBackground.ts`                  | Resolves a saved preset id back to its URL                                                             |
 | `apps/web/public/`                                                            | The files whose URL is fixed, listed under Which place                                                 |
+| `packages/hosted-assets/src/services/getHostedAssetUrl.ts`                    | The url an object is served at under an origin: its scope, then its sha256                             |
+| `scripts/src/services/hostedAssets/getHostedAssetProducts.ts`                 | The one declaration of the products the hosted bucket holds, each with its scope and its lock          |
 | `apps/web/public/pdfjs/images/`                                               | The renderer's annotation icons, copied from its install, with the notice of their licence beside them |
 | `apps/web/configuration/app.ts`                                               | The head links and the polyfill script, named by their public paths                                    |
 | `apps/web/configuration/pwa.ts`                                               | The manifest's icons, named by their public paths                                                      |

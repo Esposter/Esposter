@@ -64,8 +64,8 @@ Ordered by dependency. Each task names how it is verified: a test written first 
 
 ## 7. Documents and the bundle
 
-- [ ] 7.1 Replace the two-place rule in `openspec/specs/architecture/static-assets/design.md` with the placement rule, and update its Key files. Verify: `pnpm exec openspec validate architecture-hosted-assets --strict` passes, and the static-assets design names the hosted place.
-- [ ] 7.2 Remove the `pnpm phaser:gen` row from `openspec/specs/architecture/generated-artifacts/design.md`, and rewrite the generated-artifacts table's rows for the hosted keys. Verify: `git grep -n "phaser:gen" -- openspec .agents` returns no hit outside the change itself.
+- [x] 7.1 Replace the two-place rule in `openspec/specs/architecture/static-assets/design.md` with the placement rule, and update its Key files. Verify: `pnpm exec openspec validate architecture-hosted-assets --strict` passes, and the static-assets design names the hosted place.
+- [x] 7.2 Remove the `pnpm phaser:gen` row from `openspec/specs/architecture/generated-artifacts/design.md`, and rewrite the generated-artifacts table's rows for the hosted keys. Verify: `git grep -n "phaser:gen" -- openspec .agents` returns no hit outside the change itself.
 - [x] 7.3 Update `openspec/specs/genshin/hosted-game-data/design.md` and the genshin-data skill to name the generic system in place of Genshin's machinery. Verify: `git grep -n -i "genshin\|GAME_DATA\|gameData" -- scripts/src/services/hostedAssets scripts/src/models/hostedAssets packages/hosted-assets/src ":!*.test.ts"` lists only `scripts/src/services/hostedAssets/getHostedAssetProducts.ts`, the one declaration of the products.
 - [ ] 7.4 Record the bundle size before and after, per `openspec/specs/architecture/bundle-sizes/design.md`. Verify: `pnpm -C apps/web build` on both trees, and the two totals in the change's verification note.
 - [ ] 7.5 Run the sweep of cited names: every backticked path in the changed designs exists. Verify: `pnpm -C scripts exec vitest run src/services/openspec` passes.
