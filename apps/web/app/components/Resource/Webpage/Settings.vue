@@ -14,6 +14,7 @@ const { loadContent, saveWebpage } = webpageEditorStore;
 const { webpageEditor } = storeToRefs(webpageEditorStore);
 const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
+const { getOpening } = resourceStore;
 const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => currentResourceId.value);
 const shareImageFiles = ref<File[]>([]);
 // A picked image uploads at once and only its url is kept, so the file never waits in the form. A failed upload alerts
@@ -22,7 +23,11 @@ watch(shareImageFiles, async (files) => {
   const [file] = files;
   if (!file) return;
   shareImageFiles.value = [];
+  // The picture is written to the webpage that was open when it was picked, so one that lands after another webpage opened is dropped
+  const opening = getOpening();
   const uploadResult = await getResultAsync(() => uploadFile(file));
+  if (getOpening() !== opening) return;
+
   uploadResult.match((imageUrl) => {
     webpageEditor.value.imageUrl = imageUrl;
   }, createErrorAlert);

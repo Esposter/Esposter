@@ -83,9 +83,11 @@ export const usePageBuilderClipboard = <
   };
   const pasteSelected = async () => {
     const resourceIdValue = toValue(resourceId);
+    // The edit is applied to the resource it was issued on, so the document it is read from must still be that resource's
+    const checkIsOpen = () => toValue(resourceId) === resourceIdValue;
     const text = await readFromClipboard();
     // The document is read once the clipboard has answered, since the clipboard read waits and the document may have moved on
-    const open = getOpenDocument();
+    const open = checkIsOpen() ? getOpenDocument() : undefined;
     if (text === undefined || !open) return;
 
     const { document } = open;
@@ -132,7 +134,7 @@ export const usePageBuilderClipboard = <
 
     const pastedPointer = `${target.slotPointer}/${target.index}`;
     applyEdit(resourceIdValue, operations, "Paste block").match(() => {
-      const pasted = getOpenDocument();
+      const pasted = checkIsOpen() ? getOpenDocument() : undefined;
       const pastedId = pasted ? getNodeIdAt(pasted.kind, pasted.document, pastedPointer) : "";
       if (pastedId) setSelectedNodeId(resourceIdValue, pastedId);
       const title = pasted ? getNodeTitle(pasted.kind, pasted.document, parseJsonPointer(pastedPointer)) : "";
