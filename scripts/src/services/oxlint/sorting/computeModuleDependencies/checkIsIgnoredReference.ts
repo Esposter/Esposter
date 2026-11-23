@@ -13,9 +13,7 @@ export const checkIsIgnoredReference = (statement: ESTree.Node, identifier: Refe
     identifier,
     statement,
     (ancestor): ancestor is ClassElement =>
-      ancestor.type === "AccessorProperty" ||
-      ancestor.type === "MethodDefinition" ||
-      ancestor.type === "PropertyDefinition",
+      ["AccessorProperty", "MethodDefinition", "PropertyDefinition"].includes(ancestor.type),
     false,
   ).every((element) => checkIsClassElementRelevant(element, identifier));
 };
