@@ -3,9 +3,10 @@ import type { RestrictedImportPath } from "#oxlint/models/RestrictedImportPath";
 import { ok } from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 
-// What a tree has auto-imported is written by the tool that does it, as `const name: typeof import('module').name` and its
-// Types as `export type { … }` followed by the module they come from. Reading that file makes the ban follow the tool, so a
-// Name it starts auto-importing is banned with no list kept here. A module that starts with a dot or a hash is a local file
+// What a tree has auto-imported is written by the tool that does it, as `const name: typeof import('module').name` and
+// Its Types as `export type { … }` followed by the module they come from. Reading that file makes the ban follow the
+// Tool, so a Name it starts auto-importing is banned with no list kept here. A module that starts with a dot or a hash
+// Is a local file
 const RUNTIME_DECLARATION_REGEX = /typeof import\('(?<module>[^'#.][^']*)'\)\.(?<name>\w+)/gu;
 const TYPE_DECLARATION_REGEX =
   /export type \{(?<names>[^}]*)\}\s*(?:from '(?<fromModule>[^'#.][^']*)'|import\('(?<importModule>[^'#.][^']*)'\))/gu;
@@ -15,8 +16,8 @@ export const getAutoImportedPaths = (
   allowTypeImports: boolean,
 ): RestrictedImportPath[] => {
   const declarationsUrl = new URL(`../../${declarationsPath}`, import.meta.url);
-  // A tree that has not run `nuxt prepare` (a fresh worktree) has no generated file yet, and every command that loads the
-  // Configuration, formatting included, would fail on it. CI installs first, so the ban always holds there
+  // A tree that has not run `nuxt prepare` (a fresh worktree) has no generated file yet, and every command that loads
+  // The Configuration, formatting included, would fail on it. CI installs first, so the ban always holds there
   if (!existsSync(declarationsUrl)) return [];
 
   const declarations = readFileSync(declarationsUrl, "utf8");

@@ -4,12 +4,14 @@ import type { RestrictedImportPattern } from "#oxlint/models/RestrictedImportPat
 import { CONTEXT_MESSAGE, USE_ROUTE_MESSAGE, VUETIFY_MESSAGE } from "#oxlint/messages";
 import { getAutoImportedPaths } from "#oxlint/services/getAutoImportedPaths";
 
-// An id is minted by `v7` from `uuid` alone: `randomUUID` and `v4` both make a version 4, which the id validators refuse
+// An id is minted by `v7` from `uuid` alone: `randomUUID` and `v4` both make a version 4, which the id validators
+// Refuse
 const RANDOM_UUID_MESSAGE =
   "Mint an id with `v7` from `uuid`, never `randomUUID`: a version 4 is refused by the id validators. See openspec/specs/architecture/id-validation/design.md.";
 const V4_MESSAGE =
   "Mint an id with `v7` from `uuid`, never `v4`: a version 4 is refused by the id validators. See openspec/specs/architecture/id-validation/design.md.";
-// Banned in every tree, the child process ones aside: the Vuetify 0 bans hold everywhere but the UI library and the packages
+// Banned in every tree, the child process ones aside: the Vuetify 0 bans hold everywhere but the UI library and the
+// Packages
 export const OTHER_RESTRICTED_IMPORT_PATHS: RestrictedImportPath[] = [
   { importNames: ["randomUUID"], message: RANDOM_UUID_MESSAGE, name: "crypto" },
   { importNames: ["randomUUID"], message: RANDOM_UUID_MESSAGE, name: "node:crypto" },
@@ -59,8 +61,8 @@ export const SHARED_APP_IMPORT_PATTERN: RestrictedImportPattern = {
   message:
     "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see openspec/specs/architecture/module-boundaries/design.md. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
 };
-// The parity page's modules are dev-only: `packages/genshin-world/tsdown.config.ts` exports their subpaths only when not
-// Publishing, so a built module that imports one ships a path into the dev tree
+// The parity page's modules are dev-only: `packages/genshin-world/tsdown.config.ts` exports their subpaths only when
+// Not Publishing, so a built module that imports one ships a path into the dev tree
 export const PARITY_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["#parity/**"],
   message:
@@ -110,8 +112,8 @@ export const PACKAGE_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_RELATIVE_IMPORT_PATTERN,
   SUBPATH_QUERY_IMPORT_PATTERN,
 ];
-// The Worker deploy gate reads each Worker's environment model from its app's source by path.
-// A subpath import of the scripts package never targets an app's files, so `WORKER_SECRETS_IMPORT_PATTERNS` allows only those models.
+// The Worker deploy gate reads each Worker's environment model from its app's source by path. A subpath import of the
+// Scripts package never targets an app's files, so `WORKER_SECRETS_IMPORT_PATTERNS` allows only those models.
 export const WORKER_SECRETS_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_ALIAS_IMPORT_PATTERN,
   {
