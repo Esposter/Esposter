@@ -12,13 +12,13 @@ import { checkIsProcedureType } from "#src/services/checkIsProcedureType";
 import { createMockRouter } from "#src/services/createMockRouter";
 import { getProcedurePaths } from "#src/services/getProcedurePaths";
 import { omitUndefined } from "@esposter/shared";
+import { WebSocketServerAdapter } from "@esposter/shared-node/websocket";
 import { createTRPCRecursiveProxy } from "@trpc/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { http, ws } from "msw";
 import { IncomingMessage } from "node:http";
 import { Socket } from "node:net";
-import { WebSocketServerAdapter } from "trpc-nuxt-module/runtime/server/models/WebSocketServerAdapter";
 
 export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends object = object>({
   allowMethodOverride,

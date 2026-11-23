@@ -1,4 +1,4 @@
-import { WebSocketClientAdapter } from "#src/runtime/server/models/WebSocketClientAdapter";
+import { WebSocketClientAdapter } from "@esposter/shared-node/websocket";
 
 // Presents a crossws peer as the `ws.WebSocket` tRPC's connection handler drives, the shape trpc-msw presents an msw
 // Connection in, so the protocol on the wire is tRPC's own. crossws reports a peer's life through the handler's hooks

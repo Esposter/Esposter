@@ -58,6 +58,10 @@
       "source": "./src/wakeCheck.ts",
       "default": "./dist/wake-check.js"
     },
+    "./websocket": {
+      "source": "./src/websocket.ts",
+      "default": "./dist/websocket.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -69,6 +73,7 @@
       "./find-repository-root": "./dist/find-repository-root.js",
       "./reporter": "./dist/reporter.js",
       "./wake-check": "./dist/wake-check.js",
+      "./websocket": "./dist/websocket.js",
       "./package.json": "./package.json"
     },
     "access": "public"

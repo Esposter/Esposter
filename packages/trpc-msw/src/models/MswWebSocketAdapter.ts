@@ -1,7 +1,7 @@
 import type { WebSocketHandlerConnection } from "msw";
 
 import { toBuffer } from "#src/services/toBuffer";
-import { WebSocketClientAdapter } from "trpc-nuxt-module/runtime/server/models/WebSocketClientAdapter";
+import { WebSocketClientAdapter } from "@esposter/shared-node/websocket";
 
 type MswWebSocketClient = WebSocketHandlerConnection["client"];
 

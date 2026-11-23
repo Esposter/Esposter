@@ -4,9 +4,9 @@ import type { AnyTRPCRouter, inferRouterContext } from "@trpc/server";
 import type { CreateWSSContextFnOptions, WSSHandlerOptions } from "@trpc/server/adapters/ws";
 
 import { PeerWebSocketAdapter } from "#src/runtime/server/models/PeerWebSocketAdapter";
-import { WebSocketServerAdapter } from "#src/runtime/server/models/WebSocketServerAdapter";
 import { toIncomingMessage } from "#src/runtime/server/services/toIncomingMessage";
 import { getResultAsync, noop, omitUndefined } from "@esposter/shared";
+import { WebSocketServerAdapter } from "@esposter/shared-node/websocket";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 
 interface PeerConnection<TContext> {

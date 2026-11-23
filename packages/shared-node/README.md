@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Provides the Node-only tools that Esposter packages share: a machine-wide download cache, hidden-window child processes and benchmark reporting.
+Provides the Node-only tools that Esposter packages share: a machine-wide download cache, hidden-window child processes, benchmark reporting and the WebSocket adapters tRPC drives.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -49,6 +49,7 @@ spawnSync("pnpm", ["install"], { stdio: "inherit" });
 | `CACHE_ROOT`, `readContentAddressedObject` (`/cache`)                            | The download cache folder that every checkout shares. A read-through cache for objects named by the hex SHA-256 of their bytes.                                                 |
 | `writePartialThenMove` (`/cache`)                                                | Writes a file whole. A partial file is written beside the path and renamed onto it once written, and it is removed when either step fails.                                      |
 | `readWakeRecords`, `getWakeGaps`, `checkIsFullRun`, `WakeRecord` (`/wake-check`) | The live topic wake check's records, one per test file, the watched procedures no record calls, and the rule that a run is whole only when it names no file and no subset flag. |
+| `WebSocketServerAdapter`, `WebSocketClientAdapter` (`/websocket`)                | The `ws` server and socket members tRPC's WebSocket handler drives, declared without `ws` so a server or a mock presents its own transport. Loads `node:events` alone.          |
 
 ## <a name="license">⚖️ License</a>
 

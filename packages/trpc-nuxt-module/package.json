@@ -72,14 +72,6 @@
       "source": "./src/runtime/server/models/TRPCWebSocketConnection.ts",
       "default": "./dist/runtime/server/models/TRPCWebSocketConnection.js"
     },
-    "./runtime/server/models/WebSocketClientAdapter": {
-      "source": "./src/runtime/server/models/WebSocketClientAdapter.ts",
-      "default": "./dist/runtime/server/models/WebSocketClientAdapter.js"
-    },
-    "./runtime/server/models/WebSocketServerAdapter": {
-      "source": "./src/runtime/server/models/WebSocketServerAdapter.ts",
-      "default": "./dist/runtime/server/models/WebSocketServerAdapter.js"
-    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -94,8 +86,6 @@
       "./runtime/server/createTRPCEventHandler": "./dist/runtime/server/createTRPCEventHandler.js",
       "./runtime/server/createTRPCWebSocketHandler": "./dist/runtime/server/createTRPCWebSocketHandler.js",
       "./runtime/server/models/TRPCWebSocketConnection": "./dist/runtime/server/models/TRPCWebSocketConnection.js",
-      "./runtime/server/models/WebSocketClientAdapter": "./dist/runtime/server/models/WebSocketClientAdapter.js",
-      "./runtime/server/models/WebSocketServerAdapter": "./dist/runtime/server/models/WebSocketServerAdapter.js",
       "./package.json": "./package.json"
     },
     "access": "public"
@@ -108,6 +98,7 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@nuxt/kit": "catalog:",
     "@nuxt/schema": "catalog:",
     "ohash": "catalog:",
@@ -115,7 +106,6 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@esposter/shared-node": "workspace:*",
     "@nuxt/nitro-server": "catalog:",
     "@nuxt/test-utils": "catalog:",
     "@types/node": "catalog:",

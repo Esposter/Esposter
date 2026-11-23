@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "trpc-nuxt-module": "workspace:*"
+    "@esposter/shared-node": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
