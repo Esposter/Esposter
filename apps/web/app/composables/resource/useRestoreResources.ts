@@ -2,13 +2,11 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { CacheTag } from "#src/models/cache/CacheTag";
 import { GO_TO_RESOURCE_TITLE } from "#src/services/resource/constants";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { getRestoreResourcesEntry } from "#src/services/resource/overlay/getRestoreResourcesEntry";
 import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
 import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
-import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
 import { NotificationSeverity } from "@esposter/db-schema";
@@ -18,12 +16,11 @@ import { RoutePath, takeOne, withFinalizerAsync } from "@esposter/shared";
 // No list of its own to re-read, such as the blade, passes no refresh and leaves the caches to the invalidation
 export const useRestoreResources = (refresh?: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
-  const cacheStore = useCacheStore();
-  const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const overlayStore = useOverlayStore();
   const { writeOptimistic } = overlayStore;
+  const finalizeWrite = useResourceWriteFinalizer(refresh);
   // The ids with a restore in flight, which the bin reads so a row's Restore is disabled until its answer
   const pendingRestoreIds = ref(new Set<string>());
   const checkIsRestorePending = (id: string) => pendingRestoreIds.value.has(id);
@@ -56,9 +53,7 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
             // Chunks restored server-side — a write that has to invalidate even though it reports as failed, as the
             // Delete it undoes does. The rows are reachable again, so every cache of which resources are live is stale:
             // The stars and the Recently-opened set reconcile themselves off this tag
-            await invalidateTags([CacheTag.Resources]);
-            // The list re-reads once the restore settles, since where the restored rows sort is the server's to say
-            await refresh?.();
+            await finalizeWrite();
           },
         ),
       {

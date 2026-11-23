@@ -12,6 +12,7 @@ import {
   RESOURCE_DATE_TIME_ATTRIBUTES,
   RESOURCE_LIST_ITEMS_PER_PAGE,
   RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
+  RESTORE_ACTION_TITLE,
   RETENTION_ERROR_PERCENTAGE,
   RETENTION_WARNING_PERCENTAGE,
 } from "#src/services/resource/constants";
@@ -41,7 +42,7 @@ const getActionItems = (resource: ResourceInResource): Item[] => [
     disabled: checkIsRestorePending(resource.id),
     meaning: UiIconMeaning.Undo,
     onClick: () => restoreResources([resource]),
-    title: "Restore",
+    title: RESTORE_ACTION_TITLE,
   },
   {
     isDanger: true,

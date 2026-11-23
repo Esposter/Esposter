@@ -6,7 +6,7 @@ describe(useDebouncedFilter, () => {
   const value = " ";
 
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers();
   });
 
   afterEach(() => {

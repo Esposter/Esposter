@@ -38,7 +38,7 @@ describe(useAutosaveFunction, () => {
     wrapper = await mountSuspended(autosaveHost);
     // Mounting resets the route, so the resource the edit is made on is named once the blade is up
     Object.assign(router.currentRoute.value.params, { id: resourceId });
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers();
   };
 
   beforeAll(() => {

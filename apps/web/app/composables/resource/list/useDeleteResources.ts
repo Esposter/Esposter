@@ -2,12 +2,11 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { CacheTag } from "#src/models/cache/CacheTag";
+import { RESTORE_ACTION_TITLE } from "#src/services/resource/constants";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
 import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
 import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
-import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
 import { getRouteParam } from "#src/util/router/getRouteParam";
@@ -20,13 +19,12 @@ export const useDeleteResources = (refresh: () => Promise<void>) => {
   const navigateToExplorer = getSynchronizedFunction(async () => {
     await navigateTo(RoutePath.ResourceExplorerAll);
   });
-  const cacheStore = useCacheStore();
-  const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const overlayStore = useOverlayStore();
   const { arrive, writeOptimistic } = overlayStore;
   const { restoreResources } = useRestoreResources(refresh);
+  const finalizeWrite = useResourceWriteFinalizer(refresh);
   // Owned by the list rather than by whatever triggers it — a row's menu, the selection, a context menu — because the
   // Rows it removes and puts back are the list's, and the write outlives the menu that fired it
   const deleteResources = (resources: ResourceInResource[]) => {
@@ -44,7 +42,7 @@ export const useDeleteResources = (refresh: () => Promise<void>) => {
           restoreResources(resources);
         },
         isSingleUse: true,
-        title: "Restore",
+        title: RESTORE_ACTION_TITLE,
       },
       severity: NotificationSeverity.Success,
       title: deletedNotificationTitle,
@@ -69,16 +67,11 @@ export const useDeleteResources = (refresh: () => Promise<void>) => {
                 return chunkRows;
               }),
             ),
-          async () => {
-            // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure still leaves
-            // Earlier chunks deleted server-side. The stars and the Recent rows go with those rows, so the tag is
-            // Invalidated whether the write was kept or refused
-            await invalidateTags([CacheTag.Resources]);
-            // The total is the server's count over the whole filter, so it is read again rather than moved by the rows
-            // This write removed. The read also refills the page the removal left short, and puts back any row a
-            // Refused chunk never removed, since the page's membership is the server's again
-            await refresh();
-          },
+          // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure still leaves
+          // Earlier chunks deleted server-side. The stars and the Recent rows go with those rows, so the tag is
+          // Invalidated whether the write was kept or refused. The total is the server's count over the whole filter, so
+          // It is read again rather than moved by the rows this write removed
+          finalizeWrite,
         ),
       {
         entry: getDeleteResourcesEntry(ids, new Date()),

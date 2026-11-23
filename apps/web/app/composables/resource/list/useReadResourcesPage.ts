@@ -2,6 +2,8 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ReadResourcesOptions } from "#src/models/resource/list/ReadResourcesOptions";
 
+import { takeOne } from "@esposter/shared";
+
 interface ReadResourcesPageOptions<TFilterInput> {
   // Resolved once per read and handed to every page of it, so a relative Updated preset anchors its boundary to one instant
   getFilterInput: () => TFilterInput;
@@ -60,13 +62,13 @@ export const useReadResourcesPage = <TFilterInput>({
           // Written where its page starts rather than pushed, so an overlapping read writes the same cursor in place
           const position = pageCursors.length;
           // oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor comes from the page before it, so the walk is serial
-          const walkedPage = await readPage(pageCursors[position - 1] ?? "", filterInput, options);
+          const walkedPage = await readPage(takeOne(pageCursors, position - 1), filterInput, options);
           // Past the last page there is nothing to walk to, so the table is shown empty beside the total
           if (!walkedPage.nextCursor) return { newCount: firstPage?.count, newItems: [] };
           pageCursors[position] = walkedPage.nextCursor;
         }
         const page =
-          index === 0 && firstPage ? firstPage : await readPage(pageCursors[index] ?? "", filterInput, options);
+          index === 0 && firstPage ? firstPage : await readPage(takeOne(pageCursors, index), filterInput, options);
         if (page.nextCursor && pageCursors.length === index + 1) pageCursors[index + 1] = page.nextCursor;
         return { newCount: firstPage?.count, newItems: page.items };
       },

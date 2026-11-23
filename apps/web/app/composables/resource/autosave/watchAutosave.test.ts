@@ -24,7 +24,7 @@ describe(watchAutosave, () => {
         },
       }),
     );
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers();
     source.configuration.delimiter = " ";
     await nextTick();
     vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);

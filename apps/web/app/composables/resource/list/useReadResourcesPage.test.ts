@@ -182,7 +182,7 @@ describe(useReadResourcesPage, () => {
   test("clears the rows and the total after a failed read, then reads them again", async () => {
     expect.hasAssertions();
 
-    const message = "message";
+    const message = " ";
     let isFailing = true;
     const { count, error, items, read } = useReadResourcesPage({
       getFilterInput: () => undefined,

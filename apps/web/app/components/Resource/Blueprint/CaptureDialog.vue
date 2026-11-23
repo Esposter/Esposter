@@ -3,6 +3,7 @@ import { MAX_BLUEPRINT_ENTRIES } from "#shared/services/resource/blueprint/const
 import { pluralize } from "#shared/util/text/pluralize";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { SAVE_AS_BLUEPRINT_TITLE } from "#src/services/resource/constants";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useNotificationStore } from "#src/store/notification";
 import { useBlueprintCaptureDialogStore } from "#src/store/resource/blueprint/captureDialog";
@@ -39,7 +40,7 @@ onUnmounted(() => {
     :awaited-because="AwaitedReason.ServerIssuedValue"
     confirm-label="Create"
     :is-confirm-disabled="overLimitCount > 0 || undefined"
-    title="Save as blueprint"
+    :title="SAVE_AS_BLUEPRINT_TITLE"
     :submit="
       async () => {
         const outcome = await executeMutation(

@@ -4,6 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { SAVE_AS_BLUEPRINT_TITLE } from "#src/services/resource/constants";
 import { useBlueprintCaptureDialogStore } from "#src/store/resource/blueprint/captureDialog";
 
 interface Props {
@@ -30,7 +31,7 @@ const items: Item[] = [
     onClick: () => {
       captureIds.value = selectedResources.map(({ id }) => id);
     },
-    title: "Save as blueprint",
+    title: SAVE_AS_BLUEPRINT_TITLE,
   },
 ];
 </script>

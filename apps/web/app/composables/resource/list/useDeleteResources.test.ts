@@ -71,7 +71,7 @@ describe(useDeleteResources, () => {
     // The navigation is made by the removal, and the refresh runs once the delete is kept, so both are awaited
     await Promise.all([isPushed, isCalled]);
     expect(push).toHaveBeenCalledExactlyOnceWith(RoutePath.ResourceExplorerAll);
-    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 
   // A resource the list holds drops out of it as the delete is sent, before the server has answered

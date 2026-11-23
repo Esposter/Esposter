@@ -56,7 +56,7 @@ describe(useRenameResource, () => {
     expect(heldRow?.name).toBe(newName);
     expect(heldRow?.version).toBe(1);
     // Called once, not called with nothing: the mutation hands the refresh the settled rename, which it ignores
-    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 
   // A refused rename drops its entry and changes nothing held, so the list shows the name the server last answered

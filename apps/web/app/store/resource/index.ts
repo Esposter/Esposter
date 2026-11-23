@@ -20,7 +20,7 @@ import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
-import { GO_TO_RESOURCE_TITLE } from "#src/services/resource/constants";
+import { GO_TO_RESOURCE_TITLE, RESTORE_ACTION_TITLE } from "#src/services/resource/constants";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
 import { favoriteTable, publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
 import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
@@ -601,7 +601,7 @@ export const useResourceStore = defineStore("resource", () => {
           restoreResources([resourceValue]);
         },
         isSingleUse: true,
-        title: "Restore",
+        title: RESTORE_ACTION_TITLE,
       },
       severity: NotificationSeverity.Success,
       title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
