@@ -49,7 +49,7 @@ A sitting reads units, not ledgers: `pnpm ai:sweep:sample` prints the units to r
 judged for, and a unit is never left half-read. **Planning a sitting**, sampling a question, and why a resume that
 reports nothing is the sweep converging rather than failing, is `references/windows-and-convergence.md`.
 
-A sample sitting runs `pnpm ai:sweep:sample`, `ai:sweep:batch`, the readers (`references/sample-reader.md`), `ai:sweep:record`, the fixers (`references/sample-fixer.md`), then `ai:sweep:sampled`, in the order `references/windows-and-convergence.md` ("Sampled clean") gives.
+A sample sitting runs the steps `references/windows-and-convergence.md` ("Sampled clean") gives, in that order.
 
 ## Draining beats scheduling
 
