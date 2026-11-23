@@ -22,11 +22,17 @@ pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:<NAME> <value> --
 
 ## Cloudflare
 
-The Cloudflare provider reads its API token from `cloudflare:apiToken`, the one key outside the `esposter-infra:` namespace. The token is also written to the `CLOUDFLARE_API_TOKEN` Actions secret the deploy job uses. The account id is committed as `CLOUDFLARE_ACCOUNT_ID` in `packages/db-schema/src/services/cloudflare/constants.ts`, since it is not a secret. The zone is declared by the program, so no zone id is set:
+The Cloudflare provider authenticates as `tok-esposter-infra`, an account token the program makes as an `AccountToken` resource under `apps/infra/src/cloudflare/resources/accountTokens/`. Its value goes to the provider straight from the resource, so no Cloudflare token is typed into ESC. The Deploy workflow's `tok-esposter-deploy` value is written by the program to the `CLOUDFLARE_API_TOKEN` Actions secret the deploy job uses. The one token made by hand is the bootstrap token, which only the token resources read: ESC holds it as `bootstrapToken`, wired to `pulumiConfig.esposter-infra:CLOUDFLARE_BOOTSTRAP_API_TOKEN`. Which consumer holds which token, and why, is `.agents/skills/security/references/credentials.md`.
+
+The account id is committed as `CLOUDFLARE_ACCOUNT_ID` in `packages/db-schema/src/services/cloudflare/constants.ts`, since it is not a secret. The zone is declared by the program, so no zone id is set.
+
+A token's value a person or a workflow needs is a stack output under `apps/infra/src/cloudflare/outputs/`, and each reaches ESC by its own `pulumi env set`, read from the output and never typed:
 
 ```sh
-pulumi env set esposter-infra/prod pulumiConfig.cloudflare:apiToken <token> --secret
+pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:dev_R2_ACCESS_KEY_ID "$(cd apps/infra && pulumi stack output devR2AccessKeyId --show-secrets)" --secret
 ```
+
+The keys this writes are `<env>_R2_ACCESS_KEY_ID` and `<env>_R2_SECRET_ACCESS_KEY` for an environment's R2 publishers, and `<env>_REALTIMEKIT_API_TOKEN` for its RealtimeKit token, which the realtime Worker and `realtimekit:provision` read. `realtimekit:provision` writes the app id to `<env>_REALTIMEKIT_APP_ID` itself.
 
 Every environment and account Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`), and a Pulumi logical name is that name. The zone, its DNS records, its rulesets and the Workers custom domains are named from their domain as literals instead, as that page's Pulumi section sets out. A resource applied under a different name previews as a delete and a create, and `protect: true` blocks the delete. Those resources hold data, so the move is the create, cutover and delete sequence on the pulumi-infra migrations page, not an alias.
 

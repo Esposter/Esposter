@@ -69,7 +69,7 @@ An API token is named by the one responsibility it serves, so the dashboard show
 - An account's token is `tok-esposter-<responsibility>`, such as `tok-esposter-infra` and `tok-esposter-deploy`.
 - The one hand-made token, `bootstrap`, keeps its name: it creates the others, and nothing renames it.
 
-A token's name is its `AccountToken` resource's logical name, and its file is the camelCase of that name, as every resource's is. An ESC key takes the form `pulumiConfig.esposter-infra:<NAME>` for an account's secret, with `NAME` in SCREAMING_SNAKE_CASE, a Cloudflare token's being `CLOUDFLARE_<RESPONSIBILITY>_API_TOKEN`, and `pulumiConfig.esposter-infra:<environment>_<NAME>` for a Worker's secret, where `NAME` is the Worker secret's name in `.github/worker-secrets.json`. One consumer holds one token, as `.agents/skills/security/references/credentials.md` states.
+A token's name is its `AccountToken` resource's logical name, and its file is the camelCase of that name, as every resource's is. An ESC key takes the form `pulumiConfig.esposter-infra:<NAME>` for an account's secret, with `NAME` in SCREAMING_SNAKE_CASE, and `pulumiConfig.esposter-infra:<environment>_<NAME>` for a Worker's secret, where `NAME` is the Worker secret's name in `.github/worker-secrets.json`. The bootstrap token's key is `CLOUDFLARE_BOOTSTRAP_API_TOKEN`, the only Cloudflare token ESC holds as an account secret. The R2 and RealtimeKit values are the environment's Worker secrets, written from stack outputs. One consumer holds one token, as `.agents/skills/security/references/credentials.md` states.
 
 ## Hostnames
 

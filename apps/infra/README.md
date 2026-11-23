@@ -39,7 +39,7 @@ Install the Pulumi CLI before you run a stack command. The `@pulumi/pulumi` depe
 
 ### Stack Setup
 
-Secrets come only from the `esposter-infra/prod` Pulumi ESC environment, which `Pulumi.prod.yaml` imports. Do not run `pulumi config set --secret`: it writes the ciphertext into that tracked file.
+Secrets come only from the `esposter-infra/prod` Pulumi ESC environment, which `Pulumi.prod.yaml` imports. How a secret or token is added, read and rotated is in [the credentials rules](../../.agents/skills/security/references/credentials.md).
 
 1. Sign in to Pulumi Cloud on the local machine, which serves the stack and its ESC environment:
 
