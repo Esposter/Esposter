@@ -11,7 +11,6 @@ describe(checkIsLedgerCellClean, () => {
       findings: [{ file: "a/x.ts", fix: "rename the export", kind: "defect", line: 3, what: "a misnamed export" }],
       ledger: "naming",
       unit: "a/x.ts",
-      verdict: "clean",
     });
 
     expect(checkIsLedgerCellClean({ judgements: [judgement], ledger: "naming", unit: "a/x.ts" })).toBe(false);
