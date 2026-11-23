@@ -2,6 +2,7 @@ import type { readModerationLogInputSchema } from "#shared/models/db/moderation/
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { z } from "zod";
 
+import { useRunScope } from "#src/composables/shared/useRunScope";
 import { useModerationLogStore } from "#src/store/message/moderation/log";
 
 // The filters as the client holds them: an unset one is "" and the router reads it as absent
@@ -16,11 +17,18 @@ export const useReadModerationLog = (
   // First one, so a list bound to the first call's refs would never see the filter read in flight or failed
   const isError = ref(false);
   const isPending = ref(false);
-  const readModerationLog = async () => {
+  // Only the newest read commits the state, so a read a newer one overtook cannot clear the pending state or set
+  // The error while that newer read is still out
+  const runScope = useRunScope();
+  const readModerationLog = () => {
     isPending.value = true;
-    const read = await readItems(() => $trpc.message.moderation.readModerationLog.query({ roomId, ...filters() }));
-    isError.value = read.isError.value;
-    isPending.value = false;
+    return runScope.run(
+      () => readItems(() => $trpc.message.moderation.readModerationLog.query({ roomId, ...filters() })),
+      (read) => {
+        isError.value = read.isError.value;
+        isPending.value = false;
+      },
+    );
   };
   const readMoreModerationLog = (onComplete: () => void) => {
     // Taken as the read is issued, so a retry after the filters changed still asks for the log their cursor came from

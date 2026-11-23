@@ -36,4 +36,34 @@ describe(useReadModerationLog, () => {
 
     expect(isPending.value).toBe(false);
   });
+
+  // An unfiltered read the filtered one overtook can settle last, and must not clear the pending state
+  // The filtered read holds
+  test("stays pending when an overtaken read settles while the filtered read is out", async () => {
+    expect.hasAssertions();
+
+    const unfilteredRead = Promise.withResolvers<ReturnType<typeof createEmptyPage<ModerationLogInRoom>>>();
+    const filteredRead = Promise.withResolvers<ReturnType<typeof createEmptyPage<ModerationLogInRoom>>>();
+    trpcMsw.message.moderation.readModerationLog.query(({ input }) =>
+      input.actorUserId ? filteredRead.promise : unfilteredRead.promise,
+    );
+    const filters = ref({ actorUserId: "", targetUserId: "", type: "" as const });
+    const { isPending, readModerationLog } = useReadModerationLog(v7(), () => filters.value);
+    const unfilteredReadOut = readModerationLog();
+    await flushPromises();
+
+    filters.value = { ...filters.value, actorUserId: v7() };
+    const filteredReadOut = readModerationLog();
+    await flushPromises();
+
+    unfilteredRead.resolve(createEmptyPage<ModerationLogInRoom>());
+    await unfilteredReadOut;
+
+    expect(isPending.value).toBe(true);
+
+    filteredRead.resolve(createEmptyPage<ModerationLogInRoom>());
+    await filteredReadOut;
+
+    expect(isPending.value).toBe(false);
+  });
 });
