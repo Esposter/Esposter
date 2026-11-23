@@ -5,6 +5,7 @@ import type { PublishHostedAssetsOptions } from "#src/models/hostedAssets/Publis
 import { HostedAssetMissingIndexPolicy } from "#src/models/hostedAssets/HostedAssetMissingIndexPolicy";
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
 import { assertScopeUnclaimed } from "#src/services/hostedAssets/assertScopeUnclaimed";
+import { checkNamedByScopes } from "#src/services/hostedAssets/checkNamedByScopes";
 import { encodeHostedAssetObject } from "#src/services/hostedAssets/encodeHostedAssetObject";
 import { encodeHostedAssetRecord } from "#src/services/hostedAssets/encodeHostedAssetRecord";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
@@ -12,7 +13,7 @@ import { mergeHostedAssetLock } from "#src/services/hostedAssets/mergeHostedAsse
 import { publishHostedAssetsToBucket } from "#src/services/hostedAssets/publishHostedAssetsToBucket";
 import { readHostedAssetReachableObjects } from "#src/services/hostedAssets/readHostedAssetReachableObjects";
 import { CloudflareEnvironment } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
 // Stores what a plan names in every environment's bucket, and returns the entries it planned for the caller to merge into the
@@ -29,9 +30,7 @@ export const publishHostedAssets = async ({
 }: PublishHostedAssetsOptions): Promise<HostedAssetPublishResult> => {
   for (const scope of scopes) assertScopeUnclaimed(scope, otherLocks);
   const plannedKeys = [...Object.keys(plan.lock.objects), ...Object.keys(plan.lock.indexes)];
-  const outsideScopeKey = plannedKeys.find(
-    (key) => !scopes.some((scope) => scope === key || scope === takeOne(key.split("/"))),
-  );
+  const outsideScopeKey = plannedKeys.find((key) => !checkNamedByScopes(key, scopes));
   if (outsideScopeKey !== undefined)
     throw new InvalidOperationError(Operation.Update, outsideScopeKey, "is published outside the scopes it names");
   const nextLock = mergeHostedAssetLock(product, currentLock, scopes, plan.lock);

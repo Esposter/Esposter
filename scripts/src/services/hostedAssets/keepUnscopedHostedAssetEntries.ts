@@ -1,3 +1,4 @@
+import { checkNamedByScopes } from "#src/services/hostedAssets/checkNamedByScopes";
 import { takeOne } from "@esposter/shared";
 
 // The entries of a lock map a publication leaves alone: those whose top-level scope the product declares, and that no
@@ -10,6 +11,6 @@ export const keepUnscopedHostedAssetEntries = <T>(
   Object.fromEntries(
     Object.entries(entries).filter(([key]) => {
       const scope = takeOne(key.split("/"));
-      return productScopes.includes(scope) && !scopes.some((published) => published === key || published === scope);
+      return productScopes.includes(scope) && !checkNamedByScopes(key, scopes);
     }),
   );
