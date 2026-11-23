@@ -78,7 +78,7 @@ Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `apps/web/app/assets/`                                                        | Every file the app's code reads, imported where it is read                                             |
 | `apps/web/configuration/vite.ts`                                              | `viteHooks`: a client chunk's imported asset URL through the same helper as the server's               |
-| `apps/web/app/assets/dungeons/tilesets/`                                      | The Tiled tilesets, each `.tsx` beside its image, read by the maps and imported by the loader          |
+| `apps/web/app/assets/dungeons/tilesets/`                                      | The Tiled tilesets, each `.tsx` beside its image, hosted by the dungeons publish and loaded by url     |
 | `apps/web/app/assets/visual/textures/`                                        | The gem model and the textures the visual scenes and the fluid simulator load                          |
 | `apps/web/app/assets/message/room/call/backgrounds/`                          | The call background images, bundled and resolved from their preset ids                                 |
 | `apps/web/app/services/dungeons/loader/loadTilesets.ts`                       | Each tileset's image or spritesheet, loaded by its hosted url from the dungeons key map                |
