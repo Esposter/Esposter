@@ -73,9 +73,7 @@ describe(getHostedAssetKeysSource, () => {
           "dungeons/scene/battle/forestBackground/wrapping/long/path.png",
       } as const;
 
-      export const FixtureIndexKeys = {
-
-      } as const;
+      export const FixtureIndexKeys = {} as const;
 
       export type FixtureIndexKey = ValueOfDeep<typeof FixtureIndexKeys>;
       export type FixtureKey = ValueOfDeep<typeof FixtureKeys>;
@@ -128,9 +126,7 @@ describe(getHostedAssetKeysSource, () => {
         },
       } as const;
 
-      export const FixtureIndexKeys = {
-
-      } as const;
+      export const FixtureIndexKeys = {} as const;
 
       export type FixtureIndexKey = ValueOfDeep<typeof FixtureIndexKeys>;
       export type FixtureKey = ValueOfDeep<typeof FixtureKeys>;

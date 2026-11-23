@@ -13,5 +13,8 @@ export const renderConstant = (name: string, pairs: [name: string, lockKey: stri
     names.add(keyName);
     insertKey(tree, keyName, lockKey);
   }
-  return `${renderConstantOpening(name)}\n${renderTree(tree, "  ")}\n${RENDERED_CONSTANT_CLOSING}`;
+  const body = renderTree(tree, "  ");
+  // An empty constant is one line, as the formatter writes an empty object
+  if (!body) return `${renderConstantOpening(name)}${RENDERED_CONSTANT_CLOSING}`;
+  return `${renderConstantOpening(name)}\n${body}\n${RENDERED_CONSTANT_CLOSING}`;
 };
