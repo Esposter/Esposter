@@ -249,7 +249,7 @@ export const lightTopic: ReferenceTopic = {
     },
     {
       method:
-        "The light pass's measure (passes --pass Light, measureLight): each bin a solve reads, its mean colour as the reference shows it against the shipped light's cast through the white balance and the tone curve, in CIELab, weighed by its pixels (readStoneColourDistance), gated at 2.3 or at what the same light reads against our own render of the exports under it",
+        "The light pass's measure (passes --pass Light, measureLight): each bin a solve reads, its mean colour as the reference shows it against the shipped light's cast through the white balance and the tone curve, in CIELab, weighed by its pixels (computeStoneColourDistance), gated at 2.3 or at what the same light reads against our own render of the exports under it",
       outcome: InvestigationOutcome.Adopted,
       result:
         "On the door session the shipped night light, solved on the night title, reads 23.4 ΔE, by height 9 to 28, and our own render under it 0.9, so the light's model holds what the render draws to under a ΔE and the pass is gated at 2.3. The bins hold one part's faces at one depth, height, ramp coordinate and tilt, which a pixel's misalignment does not move between",
