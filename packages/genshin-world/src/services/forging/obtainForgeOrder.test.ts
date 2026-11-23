@@ -37,6 +37,7 @@ describe(obtainForgeOrder, () => {
     completedMainQuestIds: new Set<string>(),
     definitions: new Map(),
     inventory,
+    itemRooms,
     random: () => 0,
     talents: [],
     wallet: EMPTY_WALLET,
@@ -47,7 +48,7 @@ describe(obtainForgeOrder, () => {
     expect.hasAssertions();
 
     expect(
-      obtainForgeOrder(recipe, order, { itemRooms, ...obtainArguments, now: epoch.add({ seconds: UNIT_SECONDS }) }),
+      obtainForgeOrder(recipe, order, { ...obtainArguments, now: epoch.add({ seconds: UNIT_SECONDS }) }),
     ).toStrictEqual({ adventureExp: EXP_PER_UNIT, inventory, order: undefined, wallet: EMPTY_WALLET });
   });
 
@@ -76,7 +77,6 @@ describe(obtainForgeOrder, () => {
       oreRecipe,
       { ...order, count: 2 },
       {
-        itemRooms,
         ...obtainArguments,
         definitions: new Map([[ore.id, ore]]),
         now: epoch.add({ seconds: 2 * UNIT_SECONDS }),
@@ -98,8 +98,11 @@ describe(obtainForgeOrder, () => {
   test("a unit still forging gains no Adventure EXP and stays queued", () => {
     expect.hasAssertions();
 
-    expect(
-      obtainForgeOrder(recipe, order, { itemRooms, ...obtainArguments, now: epoch.add({ seconds: 1 }) }),
-    ).toStrictEqual({ adventureExp: 0, inventory, order, wallet: EMPTY_WALLET });
+    expect(obtainForgeOrder(recipe, order, { ...obtainArguments, now: epoch.add({ seconds: 1 }) })).toStrictEqual({
+      adventureExp: 0,
+      inventory,
+      order,
+      wallet: EMPTY_WALLET,
+    });
   });
 });

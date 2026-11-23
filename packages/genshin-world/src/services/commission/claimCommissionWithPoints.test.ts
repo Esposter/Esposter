@@ -89,6 +89,7 @@ describe(claimCommissionWithPoints, () => {
     completedMainQuestIds: new Set<string>(),
     friendshipLevels: FRIENDSHIP_LEVELS,
     inventory: EMPTY_INVENTORY,
+    itemRooms,
     materialDataMap,
     names,
     now: NOW,
@@ -102,7 +103,6 @@ describe(claimCommissionWithPoints, () => {
 
     expect(
       claimCommissionWithPoints({
-        itemRooms,
         ...base,
         commissionDay: createDay(FINISH_PROGRESS - 1),
         encounterPoints: createPoints(1),
@@ -115,7 +115,6 @@ describe(claimCommissionWithPoints, () => {
     expect.hasAssertions();
 
     const outcome = claimCommissionWithPoints({
-      itemRooms,
       ...base,
       commissionDay: createDay(FINISH_PROGRESS - 1),
       encounterPoints: createPoints(3),
@@ -131,7 +130,6 @@ describe(claimCommissionWithPoints, () => {
     expect.hasAssertions();
 
     const outcome = claimCommissionWithPoints({
-      itemRooms,
       ...base,
       commissionDay: createDay(FINISH_PROGRESS),
       encounterPoints: createPoints(3),
@@ -147,7 +145,6 @@ describe(claimCommissionWithPoints, () => {
 
     expect(
       claimCommissionWithPoints({
-        itemRooms,
         ...base,
         commissionDay: createDay(FINISH_PROGRESS - 1),
         encounterPoints: { earnedOn: EPOCH, halfPoints: 8 },
@@ -167,7 +164,6 @@ describe(claimCommissionWithPoints, () => {
 
     expect(
       claimCommissionWithPoints({
-        itemRooms,
         ...base,
         commissionDay: createDay(FINISH_PROGRESS - 1),
         encounterPoints: createPoints(2),
@@ -199,7 +195,6 @@ describe(claimCommissionWithPoints, () => {
 
     expect(
       claimCommissionWithPoints({
-        itemRooms,
         ...base,
         commissionDay: claimedDay,
         commissionId: 5,

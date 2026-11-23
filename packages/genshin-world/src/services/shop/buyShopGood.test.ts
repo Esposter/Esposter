@@ -1,7 +1,9 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
+import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
@@ -22,6 +24,17 @@ const getFishDefinition = (itemId: number): ItemDefinition => ({
   rarity: 1,
   stackLimit: 99,
 });
+
+// The game's rooms are the same in every case, so a case names only the arguments it varies
+const buy = (
+  wallet: Wallet,
+  inventory: Inventory,
+  getGoodItemDefinition: (itemId: number) => ItemDefinition,
+  purchases: ShopPurchase[],
+  good: ShopGood,
+  adventureRank: number,
+  now: Temporal.Instant,
+) => buyShopGood(wallet, inventory, getGoodItemDefinition, purchases, good, adventureRank, now, itemRooms);
 
 describe(buyShopGood, () => {
   const ADVENTURE_RANK = 4;
@@ -77,16 +90,7 @@ describe(buyShopGood, () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
-    const result = buyShopGood(
-      wallet,
-      EMPTY_INVENTORY,
-      getNoItemDefinition,
-      [],
-      fateGood,
-      ADVENTURE_RANK,
-      NOW,
-      itemRooms,
-    );
+    const result = buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW);
 
     expect(result?.wallet[Currency.MasterlessStarglitter]).toBe(STARGLITTER_PRICE);
     expect(result?.wallet[Currency.IntertwinedFate]).toBe(1);
@@ -99,9 +103,7 @@ describe(buyShopGood, () => {
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE - 1 };
 
-    expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW, itemRooms),
-    ).toBeUndefined();
+    expect(buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW)).toBeUndefined();
   });
 
   test("should refuse a good below the Adventure Rank it shows from", () => {
@@ -109,9 +111,7 @@ describe(buyShopGood, () => {
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE };
 
-    expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK - 1, NOW, itemRooms),
-    ).toBeUndefined();
+    expect(buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK - 1, NOW)).toBeUndefined();
   });
 
   test("a purchase past the limit is refused", () => {
@@ -124,28 +124,10 @@ describe(buyShopGood, () => {
     ];
 
     expect(
-      buyShopGood(
-        wallet,
-        EMPTY_INVENTORY,
-        getNoItemDefinition,
-        boughtThisMonth,
-        limitedGood,
-        ADVENTURE_RANK,
-        NOW,
-        itemRooms,
-      ),
+      buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtThisMonth, limitedGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
     expect(
-      buyShopGood(
-        wallet,
-        EMPTY_INVENTORY,
-        getNoItemDefinition,
-        boughtLastMonth,
-        limitedGood,
-        ADVENTURE_RANK,
-        NOW,
-        itemRooms,
-      ),
+      buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtLastMonth, limitedGood, ADVENTURE_RANK, NOW),
     ).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       purchases: [{ count: 1, goodsId: limitedGood.goodsId, lastPurchasedAt: NOW }],
@@ -166,32 +148,14 @@ describe(buyShopGood, () => {
     ];
 
     expect(
-      buyShopGood(
-        wallet,
-        EMPTY_INVENTORY,
-        getNoItemDefinition,
-        boughtBeforeRefresh,
-        dailyGood,
-        ADVENTURE_RANK,
-        NOW,
-        itemRooms,
-      ),
+      buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtBeforeRefresh, dailyGood, ADVENTURE_RANK, NOW),
     ).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       purchases: [{ count: 1, goodsId: dailyGood.goodsId, lastPurchasedAt: NOW }],
       wallet: { ...wallet, [Currency.IntertwinedFate]: 1, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE },
     });
     expect(
-      buyShopGood(
-        wallet,
-        EMPTY_INVENTORY,
-        getNoItemDefinition,
-        boughtAfterRefresh,
-        dailyGood,
-        ADVENTURE_RANK,
-        NOW,
-        itemRooms,
-      ),
+      buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtAfterRefresh, dailyGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
 
@@ -203,19 +167,10 @@ describe(buyShopGood, () => {
     const bought = [{ count: 1, goodsId: unrefreshedGood.goodsId, lastPurchasedAt: NOW.subtract({ hours: 24 * 5 }) }];
 
     expect(
-      buyShopGood(
-        wallet,
-        EMPTY_INVENTORY,
-        getNoItemDefinition,
-        bought,
-        unrefreshedGood,
-        ADVENTURE_RANK,
-        NOW,
-        itemRooms,
-      ),
+      buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, bought, unrefreshedGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
     expect(
-      buyShopGood(
+      buy(
         wallet,
         EMPTY_INVENTORY,
         getNoItemDefinition,
@@ -223,7 +178,6 @@ describe(buyShopGood, () => {
         unrefreshedGood,
         ADVENTURE_RANK,
         NOW.add({ hours: 24 }),
-        itemRooms,
       ),
     ).toBeUndefined();
   });
@@ -235,28 +189,15 @@ describe(buyShopGood, () => {
     const notYetBegun = { ...fateGood, beginTime: NOW.add({ hours: 1 }).toString() };
     const ended = { ...fateGood, endTime: NOW.subtract({ hours: 1 }).toString() };
 
-    expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], notYetBegun, ADVENTURE_RANK, NOW, itemRooms),
-    ).toBeUndefined();
-    expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], ended, ADVENTURE_RANK, NOW, itemRooms),
-    ).toBeUndefined();
+    expect(buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], notYetBegun, ADVENTURE_RANK, NOW)).toBeUndefined();
+    expect(buy(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], ended, ADVENTURE_RANK, NOW)).toBeUndefined();
   });
 
   test("buying a grocery ingredient into an empty bag adds it to the bag", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: MORA_PRICE * 2 };
-    const result = buyShopGood(
-      wallet,
-      EMPTY_INVENTORY,
-      getGroceryItemDefinition,
-      [],
-      groceryGood,
-      ADVENTURE_RANK,
-      NOW,
-      itemRooms,
-    );
+    const result = buy(wallet, EMPTY_INVENTORY, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW);
 
     expect(result?.wallet[Currency.Mora]).toBe(MORA_PRICE);
     expect(result?.inventory.items).toStrictEqual([
@@ -286,16 +227,7 @@ describe(buyShopGood, () => {
       itemCount: SIGIL_MORA_COUNT,
       itemId: MORA_ITEM_ID,
     };
-    const moraResult = buyShopGood(
-      wallet,
-      EMPTY_INVENTORY,
-      getGroceryItemDefinition,
-      [],
-      moraGood,
-      ADVENTURE_RANK,
-      NOW,
-      itemRooms,
-    );
+    const moraResult = buy(wallet, EMPTY_INVENTORY, getGroceryItemDefinition, [], moraGood, ADVENTURE_RANK, NOW);
 
     expect(moraResult?.wallet[Currency.AnemoSigil]).toBe(SIGIL_PRICE);
     expect(moraResult?.wallet[Currency.Mora]).toBe(SIGIL_MORA_COUNT);
@@ -304,7 +236,7 @@ describe(buyShopGood, () => {
       costs: [{ count: SIGIL_PRICE, itemId: ANEMO_SIGIL_ITEM_ID }],
       goodsId: 3003,
     };
-    const materialResult = buyShopGood(
+    const materialResult = buy(
       wallet,
       EMPTY_INVENTORY,
       getGroceryItemDefinition,
@@ -312,7 +244,6 @@ describe(buyShopGood, () => {
       materialGood,
       ADVENTURE_RANK,
       NOW,
-      itemRooms,
     );
 
     expect(materialResult?.wallet[Currency.AnemoSigil]).toBe(SIGIL_PRICE);
@@ -342,9 +273,7 @@ describe(buyShopGood, () => {
       quickSwapItemIds: [],
     };
 
-    expect(
-      buyShopGood(wallet, fullBag, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW, itemRooms),
-    ).toBeUndefined();
+    expect(buy(wallet, fullBag, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW)).toBeUndefined();
   });
   const FISH_ITEM_ID = 9001;
   // A good a player buys with fish from the bag, as a Fishing Association's bait is bought with Medaka
@@ -358,16 +287,7 @@ describe(buyShopGood, () => {
       nextId: 1,
       quickSwapItemIds: [],
     };
-    const result = buyShopGood(
-      EMPTY_WALLET,
-      inventory,
-      getGroceryItemDefinition,
-      [],
-      fishPricedGood,
-      ADVENTURE_RANK,
-      NOW,
-      itemRooms,
-    );
+    const result = buy(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], fishPricedGood, ADVENTURE_RANK, NOW);
 
     expect(result?.inventory.items).toStrictEqual([
       { definition: getGroceryItemDefinition(GROCERY_ITEM_ID), id: 1, quantity: 1 },
@@ -384,16 +304,7 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(
-        EMPTY_WALLET,
-        inventory,
-        getGroceryItemDefinition,
-        [],
-        fishPricedGood,
-        ADVENTURE_RANK,
-        NOW,
-        itemRooms,
-      ),
+      buy(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], fishPricedGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
 
@@ -425,16 +336,7 @@ describe(buyShopGood, () => {
       nextId: 4,
       quickSwapItemIds: [],
     };
-    const result = buyShopGood(
-      EMPTY_WALLET,
-      inventory,
-      getGroceryItemDefinition,
-      [],
-      multiFishGood,
-      ADVENTURE_RANK,
-      NOW,
-      itemRooms,
-    );
+    const result = buy(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], multiFishGood, ADVENTURE_RANK, NOW);
 
     expect(result?.inventory.items).toStrictEqual([
       { definition: getGroceryItemDefinition(GROCERY_ITEM_ID), id: 4, quantity: 1 },
@@ -455,7 +357,7 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], multiFishGood, ADVENTURE_RANK, NOW, itemRooms),
+      buy(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], multiFishGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
 
@@ -492,7 +394,7 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW, itemRooms),
+      buy(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
 
@@ -504,16 +406,7 @@ describe(buyShopGood, () => {
       nextId: 1,
       quickSwapItemIds: [],
     };
-    const result = buyShopGood(
-      EMPTY_WALLET,
-      inventory,
-      getCardShopItemDefinition,
-      [],
-      cardShopGood,
-      ADVENTURE_RANK,
-      NOW,
-      itemRooms,
-    );
+    const result = buy(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW);
 
     expect(result?.inventory.items).toStrictEqual([
       { definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 1 },
