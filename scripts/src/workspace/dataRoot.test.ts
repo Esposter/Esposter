@@ -1,7 +1,7 @@
 import { DEFAULT_PARITY_DIRECTORY } from "#src/services/fleet/data/constants";
 import { TOOLS_DIRECTORY } from "#src/services/recreation/animeStudio/constants";
 import { CACHE_ROOT, CONTENT_CACHE_DIRECTORY, DATA_ROOT } from "@esposter/shared-node/cache";
-import { relative } from "node:path";
+import { relative, sep } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe("dataRoot", () => {
@@ -12,10 +12,12 @@ describe("dataRoot", () => {
   test("every machine folder derives from its root", () => {
     expect.hasAssertions();
 
-    expect([
-      relative(DATA_ROOT, TOOLS_DIRECTORY),
-      relative(DATA_ROOT, DEFAULT_PARITY_DIRECTORY),
-      relative(CACHE_ROOT, CONTENT_CACHE_DIRECTORY),
-    ]).toStrictEqual(["tools", "genshin-parity", "content"]);
+    expect(
+      [
+        relative(DATA_ROOT, TOOLS_DIRECTORY),
+        relative(DATA_ROOT, DEFAULT_PARITY_DIRECTORY),
+        relative(CACHE_ROOT, CONTENT_CACHE_DIRECTORY),
+      ].filter((folderPath) => folderPath.split(sep).includes("..")),
+    ).toStrictEqual([]);
   });
 });

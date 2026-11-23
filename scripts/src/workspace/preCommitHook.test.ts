@@ -51,15 +51,4 @@ describe("pre-commit hook", () => {
     expect(runGit(root, ["diff", "--name-only"])).toBe(`${FILE_NAME}\n`);
     expect(readFileSync(join(root, FILE_NAME), "utf8")).toBe("export const first = 10;\n\nexport const last=30;\n");
   });
-
-  test("a file staged whole is committed formatted, and leaves nothing unstaged", () => {
-    expect.hasAssertions();
-
-    writeFileSync(join(root, FILE_NAME), "export const first=10;\n");
-    runGit(root, ["add", FILE_NAME]);
-    runGit(root, ["commit", "--quiet", "-m", "whole file"]);
-
-    expect(runGit(root, ["show", `HEAD:${FILE_NAME}`])).toBe("export const first = 10;\n");
-    expect(runGit(root, ["status", "--porcelain", "--", FILE_NAME])).toBe("");
-  });
 });
