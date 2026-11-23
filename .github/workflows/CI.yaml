@@ -46,9 +46,30 @@ jobs:
       - name: 📏 Check the server bundle size
         run: pnpm -C scripts server-bundle:check
 
+  # One copy of the durations the last run recorded, handed to every shard: each shard splits the files by them, and a
+  # Shard that restored a newer save than its siblings would split differently, running a file twice or never
+  test-timings:
+    name: Test Timings
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: ♻️ Restore the test timings
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .vitest/timings.json
+          key: vitest-timings-${{ github.sha }}
+          restore-keys: vitest-timings-
+      - name: 📤 Upload the test timings
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: vitest-timings
+          path: .vitest/timings.json
+          if-no-files-found: ignore
+          include-hidden-files: true
+
   coverage:
     name: Coverage
-    needs: build-packages
+    needs: [build-packages, test-timings]
     strategy:
       fail-fast: false
       matrix:
@@ -86,6 +107,13 @@ jobs:
           path: node_modules/.vitest-cache
           key: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
           restore-keys: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-
+      # None on a first run or after an eviction, when the shards split by hash
+      - name: 📥 Download the test timings
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: .vitest
+          pattern: vitest-timings
+          merge-multiple: true
       # `default` beside `blob`, on purpose (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape)
       - name: 🧪 Test
         env:
@@ -113,6 +141,19 @@ jobs:
         with:
           name: wake-check-${{ matrix.shard }}
           path: .vitest/wake-check/*
+          if-no-files-found: error
+          include-hidden-files: true
+
+      # The durations this shard's files took, which Vitest wrote to its cache directory
+      - name: 📋 Collect the test timings
+        if: ${{ !cancelled() }}
+        run: mkdir -p .vitest/timings && cp node_modules/.vite/vitest/*/results.json ".vitest/timings/${{ matrix.shard }}.json"
+      - name: 📤 Upload the test timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: vitest-timings-${{ matrix.shard }}
+          path: .vitest/timings/*
           if-no-files-found: error
           include-hidden-files: true
 
@@ -159,6 +200,22 @@ jobs:
       # Re-emits the report from the blobs; no test runs again
       - name: 🧪 Merge coverage
         run: pnpm coverage --merge-reports
+
+      - name: 📥 Download the test timings
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: .vitest/timings
+          pattern: vitest-timings-*
+          merge-multiple: true
+      # Each file ran on one shard, so a deep merge of the shards' records holds every file once
+      - name: 📋 Merge the test timings
+        run: jq -s 'reduce .[] as $timings ({}; . * $timings)' .vitest/timings/*.json > .vitest/timings.json
+      - name: 💾 Save the test timings
+        if: ${{ github.ref_name == 'main' || github.ref_name == 'ai/queue' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .vitest/timings.json
+          key: vitest-timings-${{ github.sha }}
 
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -23,6 +23,9 @@ export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 export const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "public/", "scripts/", "server/", "shared/"] as const;
 export const DISTRIBUTION_DIRECTORY = "dist";
 
+// Where the coverage shards find the durations the last run recorded, merged over every shard by CI
+export const TEST_TIMINGS_PATH = ".vitest/timings.json";
+
 export const KIBIBYTE: number = 2 ** 10;
 // Shared by the SFC build and the SFC test run, so a component cannot compile against one set of ambient
 // Imports and be tested against another.

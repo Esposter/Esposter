@@ -1,6 +1,6 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { getVitestConfiguration, parseWorkspacePackageGlobs } from "@esposter/configuration";
+import { DurationSequencer, getVitestConfiguration, parseWorkspacePackageGlobs } from "@esposter/configuration";
 import { WORKSPACE_FILE } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -15,6 +15,8 @@ const vitestConfiguration: ViteUserConfig = defineConfig({
     // Member this run silently stops covering the day one is added outside the listed roots. Each member configures
     // Its own project, so nothing here knows what any of them contains.
     projects: [...parseWorkspacePackageGlobs(readFileSync(resolve(import.meta.dirname, WORKSPACE_FILE), "utf8"))],
+    // A coverage shard takes its files by the durations CI recorded, not by count (`DurationSequencer`)
+    sequence: { ...baseVitestConfiguration.test?.sequence, sequencer: DurationSequencer },
   },
 });
 

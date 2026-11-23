@@ -65,6 +65,16 @@ The test and coverage commands SHALL run every test file in a single run, so tha
 - **WHEN** the shard finishes
 - **THEN** its output names the failing test rather than only reporting where the coverage data was written
 
+### Requirement: Shards are balanced by recorded duration
+
+The coverage shards SHALL be given their test files by the durations the previous run recorded rather than by an equal count, so that no shard runs much longer than the rest; with no recorded durations, the files SHALL be split as before.
+
+#### Scenario: Recorded durations split the files
+
+- **GIVEN** the durations of the previous run's test files
+- **WHEN** the coverage shards split the files
+- **THEN** gives every file to exactly one shard, balancing their recorded durations
+
 ### Requirement: The shard count matches the required checks
 
 The coverage shard count SHALL match the number of coverage checks that branch protection requires, so that no required check is left without a result.

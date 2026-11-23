@@ -96,22 +96,6 @@ The lint SHALL run every rule with no classic TypeScript compiler installed in t
 - **THEN** the lint fails
 - **AND** the failure names the compiler it could not load
 
-### Requirement: A template finding is reported on its template line
-
-A finding in a component's template SHALL be reported on the template line that holds it.
-
-#### Scenario: A finding in a script-first component
-
-- **GIVEN** a component whose script comes before its template
-- **WHEN** lint runs over a template line that breaks a rule
-- **THEN** the finding is reported on that template line
-
-#### Scenario: A finding in a component with no script
-
-- **GIVEN** a component with a template and no script block
-- **WHEN** lint runs over a template line that breaks a rule
-- **THEN** the finding is reported on that template line
-
 ### Requirement: Manifests and JSON files are checked without a linter
 
 Every tracked JSON file and package manifest SHALL be checked for validity and for banned dependencies by the workspace checks.
