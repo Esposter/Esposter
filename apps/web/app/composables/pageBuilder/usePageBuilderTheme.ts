@@ -2,7 +2,7 @@ import { COLOR_TOKEN_PREFIX, FONT_TOKEN_PREFIX } from "#shared/services/pageBuil
 import { DEFAULT_FONT_STACK, DEFAULT_THEME_COLOR, ROOT_POINTER } from "#src/services/pageBuilder/constants";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
-import { JsonPatchOperationType, noop } from "@esposter/shared";
+import { JsonPatchOperationType, noop, normalizeString } from "@esposter/shared";
 
 // The page's colour and font-stack tokens, edited through the page builder's history. A new token takes the next free name
 // Of its kind, and no token can be deleted here, so a name is never given to two tokens
@@ -33,7 +33,8 @@ export const usePageBuilderTheme = (resourceId: MaybeRefOrGetter<string>) => {
   };
   // An empty stack is not saved: a custom property with no value would make every use of it fall back to the initial value
   const setFontStack = (name: string, value: string) => {
-    if (value !== "") setTokenValue(name, value, "Edit font stack");
+    const fontStack = normalizeString(value);
+    if (fontStack !== "") setTokenValue(name, fontStack, "Edit font stack");
   };
   const addFontStack = () => {
     setTokenValue(`${FONT_TOKEN_PREFIX}new-${fonts.value.length + 1}`, DEFAULT_FONT_STACK, "Add font stack");

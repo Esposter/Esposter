@@ -10,7 +10,7 @@ import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { usePageBuilderStyleClipboardStore } from "#src/store/pageBuilder/styleClipboard";
-import { noop } from "@esposter/shared";
+import { noop, normalizeString } from "@esposter/shared";
 import { getBlockNode } from "vue-block-editor-headless";
 
 // What one field edit writes: the operations, and the history entry they record as
@@ -55,7 +55,9 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     };
   };
   // The edit that writes a field's value, shared by a commit and a preview so the two never disagree about what is written
-  const getFieldEdit = (property: StyleProperty, value: string): FieldEdit | undefined => {
+  const getFieldEdit = (property: StyleProperty, field: string): FieldEdit | undefined => {
+    // A blank field is a reset, so the value is read without its surrounding whitespace
+    const value = normalizeString(field);
     const targetValue = target.value;
     if (!targetValue) return undefined;
 

@@ -72,6 +72,30 @@ describe(usePageBuilderStyle, () => {
     });
   });
 
+  test("a blank field value resets the node's style as an empty one does", () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [createButton(TEST_ID)], root: TEST_ROOT });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
+    const { setField } = usePageBuilderStyle(resourceId);
+
+    setField("color", "red");
+    setField("color", " ");
+
+    expect(getDocument(resourceId)?.content[0]?.props).toStrictEqual({
+      elementId: "",
+      href: TEST_URL,
+      id: TEST_ID,
+      label: TEST_LABEL,
+      target: ButtonTarget.SameTab,
+    });
+  });
+
   test("resetting a property a node does not set records no edit", () => {
     expect.hasAssertions();
 
