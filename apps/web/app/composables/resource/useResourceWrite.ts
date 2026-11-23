@@ -2,8 +2,12 @@ import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { Arrival } from "#src/models/shared/overlay/Arrival";
 import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { WriteResponse } from "#src/models/shared/overlay/WriteResponse";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { CacheTag } from "#src/models/cache/CacheTag";
+import { resourceTable } from "#src/services/resource/overlay/constants";
+import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
@@ -22,32 +26,43 @@ export const useResourceWrite = (refresh?: () => Promise<void>) => {
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const overlayStore = useOverlayStore();
   const { writeAwaited, writeOptimistic } = overlayStore;
+  const getResourceRouter = useResourceRouter();
   const finalizeWrite = async () => {
     await invalidateTags([CacheTag.Resources]);
     await refresh?.();
   };
+  const writeResourceOptimistic = (
+    mutate: () => Promise<WriteResponse>,
+    {
+      entry,
+      notification,
+    }: { entry: Entry; notification?: Parameters<ReturnType<typeof useNotificationStore>["createNotification"]>[0] },
+  ) => {
+    // The notice the write shows at once, while the answer is the server's
+    const notificationId = notification ? createNotification(notification) : undefined;
+    writeOptimistic(() => withFinalizerAsync(mutate, finalizeWrite), {
+      entry,
+      onError: (error) => {
+        if (notificationId !== undefined) dismissNotification(notificationId);
+        createErrorNotification(error);
+      },
+    });
+  };
   return {
+    // A rename or a tag edit sends only the fields it names, so the server's row keeps every other field as it is
+    updateResource: (resource: ResourceInResource, patch: Partial<Pick<ResourceInResource, "name" | "tags">>) => {
+      const { id, type } = resource;
+      writeResourceOptimistic(
+        async () =>
+          createRowResponse(resourceTable, await getResourceRouter(type).updateResource.mutate({ id, ...patch })),
+        { entry: getResourcePatchEntry(id, patch) },
+      );
+    },
     writeAwaited: (mutate: () => Promise<Arrival[]>, { awaitedBecause }: { awaitedBecause: AwaitedReason }) =>
       writeAwaited(() => withFinalizerAsync(mutate, finalizeWrite), {
         awaitedBecause,
         onError: createErrorNotification,
       }),
-    writeOptimistic: (
-      mutate: () => Promise<WriteResponse>,
-      {
-        entry,
-        notification,
-      }: { entry: Entry; notification?: Parameters<ReturnType<typeof useNotificationStore>["createNotification"]>[0] },
-    ) => {
-      // The notice the write shows at once, while the answer is the server's
-      const notificationId = notification ? createNotification(notification) : undefined;
-      writeOptimistic(() => withFinalizerAsync(mutate, finalizeWrite), {
-        entry,
-        onError: (error) => {
-          if (notificationId !== undefined) dismissNotification(notificationId);
-          createErrorNotification(error);
-        },
-      });
-    },
+    writeOptimistic: writeResourceOptimistic,
   };
 };

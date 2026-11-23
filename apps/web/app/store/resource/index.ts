@@ -26,7 +26,6 @@ import { favoriteTable, publicationTable, resourceTable } from "#src/services/re
 import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
 import { getHeldResource } from "#src/services/resource/overlay/getHeldResource";
 import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
-import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
 import { getSaveResourceEntry } from "#src/services/resource/overlay/getSaveResourceEntry";
 import { readStoredResourceContent } from "#src/services/resource/readStoredResourceContent";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
@@ -591,11 +590,7 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
 
-    const { id, type } = resourceValue;
-    resourceWrite.writeOptimistic(
-      async () => createRowResponse(resourceTable, await getResourceRouter(type).updateResource.mutate({ id, name })),
-      { entry: getResourcePatchEntry(id, { name }) },
-    );
+    resourceWrite.updateResource(resourceValue, { name });
   };
   // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag. Only the tags are
   // Sent, so an edit queued behind a rename never puts back the name the rename replaced
@@ -603,11 +598,7 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
 
-    const { id, type } = resourceValue;
-    resourceWrite.writeOptimistic(
-      async () => createRowResponse(resourceTable, await getResourceRouter(type).updateResource.mutate({ id, tags })),
-      { entry: getResourcePatchEntry(id, { tags }) },
-    );
+    resourceWrite.updateResource(resourceValue, { tags });
   };
   const deleteResource = () => {
     const resourceValue = resource.value;
