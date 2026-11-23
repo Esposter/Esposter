@@ -5,8 +5,8 @@ import { takeOne } from "@esposter/shared";
 
 const EMBLEM_OF_SEVERED_FATE_BONUS = 2;
 
-// Emblem of Severed Fate, an artifact on a character: once a round her Elemental Burst deals 2 more DMG, and after
-// Another Character of hers uses an Elemental Burst, she gains 1 Energy
+// Emblem of Severed Fate, an artifact on a character: once a round her Elemental Burst deals 2 more DMG.
+// After another character of hers uses an Elemental Burst, she gains 1 Energy.
 export const emblemOfSeveredFate: GcgCardModule = {
   // The round of its last bonus is kept on this card's own zone entry, so each Emblem is once a round on its own
   modifyDamageDealt: ({ duel, skill }, damage, zoneCard) =>

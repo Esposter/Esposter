@@ -7,8 +7,8 @@ import { takeOne } from "@esposter/shared";
 const DANDELION_FIELD_DAMAGE = 1;
 const DANDELION_FIELD_HEAL = 1;
 
-// Dandelion Field, which Dandelion Breeze summons: at the end phase, 1 Anemo DMG and 1 HP healed to the active
-// Character, for Three usages
+// Dandelion Field, which Dandelion Breeze summons: at the end phase, 1 Anemo DMG and 1 HP healed to the active one.
+// It has three usages.
 export const dandelionField: GcgCardModule = {
   initialUsages: 3,
   onEndPhase: ({ duel, sideIndex }, zoneCard) => {

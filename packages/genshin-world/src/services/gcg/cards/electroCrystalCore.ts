@@ -2,8 +2,9 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 const ELECTRO_CRYSTAL_CORE_HP = 1;
 
-// Electro Crystal Core, Electro Hypostasis' state: once, when the character would be defeated, it is spent and the
-// Character Is restored to 1 HP. A spent state is pruned from the field
+// Electro Crystal Core, Electro Hypostasis' state: once, when the character would be defeated, it is spent.
+// The character is then restored to 1 HP.
+// A spent state is pruned from the field.
 export const electroCrystalCore: GcgCardModule = {
   initialUsages: 1,
   replaceDefeat: (_context, zoneCard) => {

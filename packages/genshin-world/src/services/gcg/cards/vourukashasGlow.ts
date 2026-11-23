@@ -7,8 +7,8 @@ import { takeOne } from "@esposter/shared";
 
 const VOURUKASHAS_GLOW_HEAL = 1;
 
-// Vourukasha's Glow, an Artifact: after its character takes DMG and survives it, if she is active a card is drawn, and
-// At this End Phase she heals 1 HP, once per Round. The heal waits in the counter
+// Vourukasha's Glow, an Artifact: after its character takes DMG and survives it, if she is active a card is drawn.
+// Then, at the end phase, she heals 1 HP, once per round. The heal waits in the counter.
 export const vourukashasGlow: GcgCardModule = {
   onDamageTaken: ({ characterIndex, duel, sideIndex }, zoneCard) => {
     const side = takeOne(duel.sides, sideIndex);

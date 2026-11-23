@@ -7,8 +7,8 @@ import { takeOne } from "@esposter/shared";
 const DRUNKEN_MIST_DAMAGE = 1;
 const DRUNKEN_MIST_HEAL = 2;
 
-// Drunken Mist, which Signature Mix summons: at the end phase, 1 Cryo DMG and 2 HP healed to the active character, for
-// Two Usages
+// Drunken Mist, which Signature Mix summons: at the end phase, 1 Cryo DMG and 2 HP healed to the active character.
+// It has two usages.
 export const drunkenMist: GcgCardModule = {
   initialUsages: 2,
   onEndPhase: ({ duel, sideIndex }, zoneCard) => {
