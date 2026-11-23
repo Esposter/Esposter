@@ -6,8 +6,6 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const NODE_RUNTIME_NAME = "node";
-
 // The node floors a manifest carries: its `engines.node`, and the `node` runtime of its `devEngines`, in object or array form
 const readManifestFloors = (manifestPath: string): { path: string; value: string }[] => {
   const { devEngines, engines } = parseMachineJson<{
@@ -15,10 +13,7 @@ const readManifestFloors = (manifestPath: string): { path: string; value: string
     engines?: { node?: string };
   }>(readFileSync(manifestPath, "utf8"));
   const runtimes = devEngines?.runtime === undefined ? [] : [devEngines.runtime].flat();
-  const values = [
-    engines?.node,
-    ...runtimes.filter(({ name }) => name === NODE_RUNTIME_NAME).map(({ version }) => version),
-  ];
+  const values = [engines?.node, ...runtimes.filter(({ name }) => name === "node").map(({ version }) => version)];
   return values.filter((value) => value !== undefined).map((value) => ({ path: manifestPath, value }));
 };
 
