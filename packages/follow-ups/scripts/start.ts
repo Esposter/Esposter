@@ -11,7 +11,8 @@ let input = "";
 process.stdin.setEncoding("utf8");
 for await (const chunk of process.stdin) input += chunk;
 const listId = process.env.CLAUDE_PLUGIN_OPTION_LIST_ID ?? "";
-// oxlint-disable-next-line no-restricted-properties -- the hook input is the tool's to shape, and each field read is checked for its type
+// The hook input is
+// oxlint-disable-next-line no-restricted-properties -- the tool's to shape, and each field read is checked for its type
 const hookInput: unknown = input.trim() ? JSON.parse(input) : {};
 const checkIsRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
 const { cwd, session_id: sessionId }: Record<string, unknown> = checkIsRecord(hookInput) ? hookInput : {};
