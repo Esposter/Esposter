@@ -1,4 +1,3 @@
-/* oxlint-disable selector-ban/no-restricted-syntax -- an answer's empty operand in the expression language, compared as the answer holds it */
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { SurveyExpressionBinaryOperator } from "#src/models/SurveyExpressionBinaryOperator";
@@ -30,8 +29,8 @@ export const evaluateArithmeticOperator = (
       rightNumber === undefined &&
       typeof left === "string" &&
       typeof right === "string" &&
-      left !== "" &&
-      right !== "";
+      Boolean(left) &&
+      Boolean(right);
     return isJoin ? left + right : undefined;
   }
 
