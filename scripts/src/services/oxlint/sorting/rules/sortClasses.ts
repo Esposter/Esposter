@@ -5,6 +5,7 @@ import { buildSortingNode } from "#src/services/oxlint/sorting/buildSortingNode"
 import { checkIsFunctionProperty } from "#src/services/oxlint/sorting/checkIsFunctionProperty";
 import { CLASS_MEMBER_GROUPS } from "#src/services/oxlint/sorting/classMemberGroups";
 import { computeClassMemberGroup } from "#src/services/oxlint/sorting/computeClassMemberGroup";
+import { computeKeyName } from "#src/services/oxlint/sorting/names/computeKeyName";
 import { populateClassMemberDependencies } from "#src/services/oxlint/sorting/populateClassMemberDependencies";
 import { reportUnsortedByGroup } from "#src/services/oxlint/sorting/reportUnsortedByGroup";
 import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
@@ -22,15 +23,13 @@ const KNOWN_ELEMENT_TYPES = new Set([
   "TSIndexSignature",
 ]);
 
-// A member's name as it sorts and is depended on: a private member keeps its hash, and a computed key is its source
-const computeKeyName = (
+// A member's name as it sorts and is depended on: a private member keeps its hash, and any other key with no name is its source
+const computeMemberName = (
   sourceCode: SourceCode,
   key: ESTree.PropertyDefinition["key"],
 ): { hasPrivateHash: boolean; name: string } => {
   if (key.type === "PrivateIdentifier") return { hasPrivateHash: true, name: `#${key.name}` };
-  if (key.type === "Identifier") return { hasPrivateHash: false, name: key.name };
-  if (key.type === "Literal") return { hasPrivateHash: false, name: String(key.value) };
-  return { hasPrivateHash: false, name: sourceCode.getText(key) };
+  return { hasPrivateHash: false, name: computeKeyName(key) ?? sourceCode.getText(key) };
 };
 
 const computeMethodSelectors = (kind: ESTree.MethodDefinition["kind"]): string[] => {
@@ -118,7 +117,7 @@ const buildMember = (sourceCode: SourceCode, element: ESTree.ClassElement): Sort
       name: sourceCode.text.slice(element.range[0], element.typeAnnotation.range[0]),
       selectors: ["index-signature"],
     });
-  const { hasPrivateHash, name } = computeKeyName(sourceCode, element.key);
+  const { hasPrivateHash, name } = computeMemberName(sourceCode, element.key);
   const isStatic = element.static;
   // A property and an accessor are the members other members read, a method is not
   const isReadable =
