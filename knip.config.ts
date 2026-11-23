@@ -54,6 +54,9 @@ const knipConfiguration: KnipConfig = {
         // The app declares it and nothing in the app imports it (vite-pwa/unplugin-pwa#48)
         "@vite-pwa/workbox-window",
         "@vueuse/router",
+        // The app's Nuxt stylesheet list names the package's stylesheet as a string in `configuration/css.ts`, which Knip
+        // Does not read as a use, and Nuxt resolves it from the app, so the app declares the package and nothing imports it
+        "genshin-interface",
         // @TODO: https://github.com/nuxt/scripts/pull/946 — drop it once a stable `@nuxt/scripts` 2 ships it (it is in
         // 2.0.0-beta.13). 1.x mounts its `nuxt-scripts-cache` storage on unstorage's lru-cache driver, which loads
         // `lru-cache` without declaring it, so the app declares it, nothing in the app imports it, and without it
