@@ -29,6 +29,7 @@ describe(checkIsPureExpression, () => {
     ["values[key]", false],
     ["{ [run()]: 1 }", false],
     ["class { static field = run() }", false],
+    ["class { static accessor field = run() }", false],
     ["class { [run()] = 1 }", false],
     ["class { [run()]() {} }", false],
     ["class extends run() {}", false],

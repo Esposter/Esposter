@@ -78,7 +78,7 @@ const computeModifiers = (
 const toSortingClassMember = ({
   dependencyNames,
   element,
-  evaluated,
+  evaluated = [],
   isStatic,
   modifiers,
   name,
@@ -86,7 +86,7 @@ const toSortingClassMember = ({
 }: {
   dependencyNames: string[];
   element: ESTree.ClassElement;
-  evaluated?: ESTree.Node;
+  evaluated?: (ESTree.Node | undefined)[];
   isStatic: boolean;
   modifiers: string[];
   name: string;
@@ -96,7 +96,7 @@ const toSortingClassMember = ({
   return {
     dependencies: [],
     dependencyNames,
-    ...withEvaluated(evaluated),
+    ...withEvaluated(...evaluated),
     group,
     groupIndex: CLASS_MEMBER_GROUPS.findIndex((entry) => [entry].flat().includes(group)),
     isOxlintDisabled: false,
@@ -112,7 +112,7 @@ const buildMember = (sourceCode: SourceCode, element: ESTree.ClassElement): Sort
     return toSortingClassMember({
       dependencyNames: [],
       element,
-      evaluated: element,
+      evaluated: [element],
       isStatic: true,
       modifiers: [],
       name: "static",
@@ -138,11 +138,13 @@ const buildMember = (sourceCode: SourceCode, element: ESTree.ClassElement): Sort
   return toSortingClassMember({
     dependencyNames: isReadable ? [`${isStatic ? "static " : ""}${hasPrivateHash ? "#" : ""}${bareName}`] : [],
     element,
-    ...withEvaluated(
+    // A computed key runs when the class is defined, and a field's value runs as the field is initialised
+    evaluated: [
+      "computed" in element && element.computed ? element.key : undefined,
       (element.type === "PropertyDefinition" || element.type === "AccessorProperty") && element.value
         ? element.value
         : undefined,
-    ),
+    ],
     isStatic,
     modifiers: computeModifiers(isStatic, element.accessibility, hasPrivateHash),
     name,
@@ -151,8 +153,8 @@ const buildMember = (sourceCode: SourceCode, element: ESTree.ClassElement): Sort
 };
 
 // Sorts a class's members as perfectionist's sort-classes does with its defaults: by group, then by name, and each
-// Member after the members it reads. A method neither reads nor is read, and a field whose initialiser runs code keeps
-// Its place, since fields and static blocks run in the order the source gives them
+// Member after the members it reads. A method neither reads nor is read, and a member whose computed key or field
+// Initialiser runs code keeps its place, since those run in the order the source gives them
 const sortClasses: Rule = defineRule({
   create(context) {
     return {

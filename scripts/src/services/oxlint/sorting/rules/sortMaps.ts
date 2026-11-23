@@ -2,13 +2,15 @@ import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 import { reportUnsorted } from "#src/services/oxlint/sorting/reportUnsorted";
 import { splitRuns } from "#src/services/oxlint/sorting/splitRuns";
+import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { defineRule } from "@oxlint/plugins";
 
 // A hole or a spread entry ends a run
 const checkIsRunBreak = (entry: ESTree.ArrayExpressionElement): entry is ESTree.SpreadElement | null =>
   entry === null || entry.type === "SpreadElement";
 
-// The entries of `new Map([...])` by their key, the first element of each entry
+// The entries of `new Map([...])` by their key, the first element of each entry. Building an entry runs the expressions
+// It is made of, so an entry that runs code keeps its place
 const sortMaps: Rule = defineRule({
   create(context) {
     return {
@@ -20,7 +22,15 @@ const sortMaps: Rule = defineRule({
           reportUnsorted(
             context,
             run.flatMap((entry) =>
-              checkIsRunBreak(entry) ? [] : [{ name: computeEntryKey(context, entry), node: entry }],
+              checkIsRunBreak(entry)
+                ? []
+                : [
+                    {
+                      ...withEvaluated(...(entry.type === "ArrayExpression" ? entry.elements : [entry])),
+                      name: computeEntryKey(context, entry),
+                      node: entry,
+                    },
+                  ],
             ),
           );
       },

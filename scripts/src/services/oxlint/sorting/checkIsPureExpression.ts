@@ -1,13 +1,18 @@
 import type { ESTree } from "@oxlint/plugins";
 
 // Whether a class's definition runs no code: its heritage clause and the computed key of each member run when the class
-// Is defined, a static block does, and a static field does through its initialiser
+// Is defined, a static block does, and a static field or accessor does through its initialiser
 const checkHasPureMembers = (node: ESTree.Class): boolean =>
   (!node.superClass || checkIsPureExpression(node.superClass)) &&
   node.body.body.every((element) => {
     if (element.type === "StaticBlock") return false;
     if ("computed" in element && element.computed && !checkIsPureExpression(element.key)) return false;
-    if (element.type !== "PropertyDefinition" || !element.static || !element.value) return true;
+    if (
+      (element.type !== "PropertyDefinition" && element.type !== "AccessorProperty") ||
+      !element.static ||
+      !element.value
+    )
+      return true;
     return checkIsPureExpression(element.value);
   });
 

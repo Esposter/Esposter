@@ -6,6 +6,7 @@ import { computeExpressionNumberValue } from "#src/services/oxlint/sorting/compu
 import { computeSortingDependencies } from "#src/services/oxlint/sorting/computeSortingDependencies";
 import { getOxlintDisabledLines } from "#src/services/oxlint/sorting/getOxlintDisabledLines";
 import { reportSortingPartitions } from "#src/services/oxlint/sorting/reportSortingPartitions";
+import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { takeOne } from "@esposter/shared";
 import { defineRule } from "@oxlint/plugins";
 
@@ -42,7 +43,11 @@ const sortEnums: Rule = defineRule({
           buildSortingNode(
             member.id.type === "Literal" ? String(member.id.value) : sourceCode.getText(member.id),
             member,
-            { isOxlintDisabled: disabledLines.has(member.loc.start.line), value: numericValue?.toString() ?? "" },
+            {
+              ...withEvaluated(member.initializer),
+              isOxlintDisabled: disabledLines.has(member.loc.start.line),
+              value: numericValue?.toString() ?? "",
+            },
           ),
         );
         const partition = takeOne(

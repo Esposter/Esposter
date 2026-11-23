@@ -247,6 +247,12 @@ describe("sortClasses", () => {
       },
       { name: "privateDependencyAfterProvider", source: `export class A { #b = 1; a = this.#b; }`, violations: 0 },
       { name: "dependencyCycle", source: `export class A { a = this.b; b = this.a; }`, violations: 0 },
+      { name: "impureComputedKeysKeepTheirPlaces", source: `export class A { [g()]() {} [f()]() {} }`, violations: 0 },
+      {
+        name: "nestedClassThisIsNotOurs",
+        source: `export class A { a = class { y = this.b }; b = 1; }`,
+        violations: 0,
+      },
       {
         name: "computedIdentifierReadIsNoDependency",
         source: `export class A { a = this[key]; key = "b"; }`,

@@ -30,6 +30,7 @@ describe("sortMaps", () => {
       },
       { name: "notArgumentArray", source: `export const m = new Map(entries);`, violations: 0 },
       { name: "otherConstructor", source: `export const m = new Foo([["b", 1], ["a", 2]]);`, violations: 0 },
+      { name: "impureKeysKeepTheirPlaces", source: `export const m = new Map([[g(), 1], [f(), 2]]);`, violations: 0 },
     ],
     plugin: "sorting",
     rules: ["sorting/sort-maps"],

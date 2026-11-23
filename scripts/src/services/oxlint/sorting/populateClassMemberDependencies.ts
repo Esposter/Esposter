@@ -2,6 +2,7 @@ import type { SortingClassMember } from "#src/models/oxlint/sorting/SortingClass
 import type { ESTree } from "@oxlint/plugins";
 
 import { collectNodes } from "#src/services/oxlint/errorHandling/collectNodes";
+import { checkIsNestedClassThis } from "#src/services/oxlint/sorting/checkIsNestedClassThis";
 import { checkIsNodeInsideDeferredFunction } from "#src/services/oxlint/sorting/checkIsNodeInsideDeferredFunction";
 
 // A static block reads everything it names, and any other member reads only outside the deferred functions in it
@@ -54,7 +55,9 @@ export const populateClassMemberDependencies = (
     );
     const thisCandidates = member.isStatic ? staticMembers : instanceMembers;
     const thisProviders = nodes.flatMap((node) =>
-      node.type === "ThisExpression" ? findReadProviders(member, node, thisCandidates) : [],
+      node.type === "ThisExpression" && !checkIsNestedClassThis(node, member)
+        ? findReadProviders(member, node, thisCandidates)
+        : [],
     );
     return {
       ...member,

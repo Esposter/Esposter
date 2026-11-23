@@ -52,6 +52,7 @@ describe("sortEnums", () => {
         violations: 1,
       },
       { name: "missingInitializerSkipped", source: `export enum E { B, A = 1 }`, violations: 0 },
+      { name: "impureInitializerKeepsItsPlace", source: `export enum E { B = f(), A = g() }`, violations: 0 },
     ],
     plugin: "sorting",
     rules: ["sorting/sort-enums"],
