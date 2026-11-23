@@ -10,7 +10,7 @@ import { resolveCharacterPackTextures } from "#src/services/character/resolveCha
 import { getResult, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { parsePmx } from "genshin-engine";
 
-// One avatar's pack read from the cache its files were downloaded into.
+// One avatar's pack, each file read from its hosted url, which the worker answers from the cache the preload filled.
 // The model is the one its folder's rules choose, and the terms are the terms file those rules find.
 // So a pack keeps the names it was published under.
 // The model is chosen by the first read that needs it, so a folder of several models reads the names it is matched by
@@ -18,7 +18,6 @@ import { parsePmx } from "genshin-engine";
 // Any other path is read as the model names it, beside the model's own folder.
 // A path the pack does not list is none
 export const createCharacterPackReader = (
-  cache: Pick<Cache, "match">,
   gameDataBaseUrl: string,
   { avatarId, files }: CharacterPackIndex["avatars"][number],
 ): CharacterPackReader => {
@@ -26,8 +25,8 @@ export const createCharacterPackReader = (
   const readListedFile = async (filePath: string) => {
     const file = files.find((indexFile) => indexFile.path === filePath);
     if (file === undefined) return undefined;
-    const response = await cache.match(getCharacterPackCacheUrl(gameDataBaseUrl, avatarId, file.path, file.sha256));
-    return response?.blob();
+    const response = await fetch(getCharacterPackCacheUrl(gameDataBaseUrl, avatarId, file.path, file.sha256));
+    return response.ok ? response.blob() : undefined;
   };
   const readModelName = async (filePath: string) => {
     const modelBlob = await readListedFile(filePath);

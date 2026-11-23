@@ -57,7 +57,7 @@ The game's first bar is the plain bar on its login screen, which follows the tit
 | `scripts/src/services/genshinAssets/characterPacks/buildCharacterPackIndex.ts` | The index of every avatar, built from the same listing the upload publishes                |
 | `scripts/src/services/genshinAssets/characterPacks/toCharacterPackAvatar.ts`   | One avatar's entry, refused unless its files match its manifest's bytes and sha256         |
 | `scripts/src/services/gameData/publishGameDataStep.ts`                         | Publishes the index to both accounts, then commits the lock                                |
-| `packages/genshin-world/src/services/character/readCharacterPackReaders.ts`    | Each avatar's reader, read from the cache when the world opens                             |
+| `packages/genshin-world/src/services/character/readCharacterPackReaders.ts`    | Each avatar's reader, its files fetched from their hosted urls when the world opens        |
 | `packages/genshin-world/src/services/character/createCharacterPackReader.ts`   | A pack's model, terms and textures, each found by the pack's own names                     |
 | `scripts/src/models/genshinAssets/characterPacks/CharacterPackFile.ts`         | One file read from disk, with its object key and size                                      |
 | `scripts/src/services/hostedAssets/createHostedAssetBucketClientMap.ts`        | The bucket client each environment is published through, shared with the game data publish |
