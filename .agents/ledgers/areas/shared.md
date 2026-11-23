@@ -65,7 +65,7 @@
 - `packages/shared/src/util/text`, `packages/shared/src/util/time`, `packages/shared/src/util/validation`
 - `packages/shared` — `CHANGELOG.md`, `README.md`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/shared-node` — `CHANGELOG.md`, `README.md`, `package.json`
-- `packages/shared-node/src` — `cache.ts`, `childProcess.ts`, `models`
+- `packages/shared-node/src` — `cache.ts`, `childProcess.ts`, `models`, `websocket.ts`, `websocket.test.ts`
 - `packages/shared-node/src` — `services`, `wakeCheck.ts`
 - `packages/shared-node` — `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `apps/web/shared/services/bookmark`, `apps/web/shared/services/file`, `apps/web/shared/services/pageBuilder/getButtonCss.ts`, `apps/web/shared/services/pageBuilder/getTabButtonId.ts`, `apps/web/shared/services/resource/ResourceFileMimeTypeMap.ts`, `apps/web/shared/services/resource/getResourceContentSchema.ts`, `apps/web/shared/services/resource/whiteboard`
