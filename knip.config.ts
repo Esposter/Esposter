@@ -8,8 +8,8 @@ const knipConfiguration: KnipConfig = {
     // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop it once an `import.meta.glob` pattern resolves
     // Through the manifest's subpath imports, the only users of the app's `#src/*.html`, `*.tsx` and `*.wasm` patterns
     "apps/web/package.json": ["subpaths"],
-    // The persona's copy of genshin-text's models is held byte for byte to its source (getPersonaModuleSource), so it keeps
-    // The exports only the source's readers use
+    // The persona's copy of genshin-text's models is held byte for byte to its source (getPersonaModuleSource), so it
+    // Keeps The exports only the source's readers use
     "packages/genshin-persona/src/generated/**": ["exports"],
   },
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
@@ -26,8 +26,8 @@ const knipConfiguration: KnipConfig = {
     "apps/jobs": { entry: ["src/**/*.ts"] },
     "apps/realtime": { entry: ["src/**/*.ts"] },
     "apps/web": {
-      // A development route's handler is registered by its path from a module under `nuxt dev` alone, so nothing imports it
-      // `service-worker/sw.ts` is bundled by the PWA module from `srcDir`, which knip does not follow
+      // A development route's handler is registered by its path from a module under `nuxt dev` alone, so nothing
+      // Imports it `service-worker/sw.ts` is bundled by the PWA module from `srcDir`, which knip does not follow
       entry: [
         "app/App.vue",
         "app/components/**/*.vue",
@@ -41,8 +41,8 @@ const knipConfiguration: KnipConfig = {
         // Through the manifest's subpath imports, which reach each worker and worklet
         "app/workers/**/*.ts",
       ],
-      // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop the tilesets once their glob is followed, since knip
-      // Reads their Tiled `.tsx` definitions as unused source
+      // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop the tilesets once their glob is followed, since
+      // Knip Reads their Tiled `.tsx` definitions as unused source
       ignore: ["app/assets/dungeons/tilesets/**/*.tsx", "public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",
@@ -50,12 +50,13 @@ const knipConfiguration: KnipConfig = {
         // `tresjs-nuxt` registers the components of every `@tresjs` package the app declares, so the templates name
         // Cientos's components and nothing imports the package
         "@tresjs/cientos",
-        // The PWA engine's register code is a virtual module that imports it, which Vite resolves from the app's root, so
-        // The app declares it and nothing in the app imports it (vite-pwa/unplugin-pwa#48)
+        // The PWA engine's register code is a virtual module that imports it, which Vite resolves from the app's root,
+        // So The app declares it and nothing in the app imports it (vite-pwa/unplugin-pwa#48)
         "@vite-pwa/workbox-window",
         "@vueuse/router",
-        // The app's Nuxt stylesheet list names the package's stylesheet as a string in `configuration/css.ts`, which Knip
-        // Does not read as a use, and Nuxt resolves it from the app, so the app declares the package and nothing imports it
+        // The app's Nuxt stylesheet list names the package's stylesheet as a string in `configuration/css.ts`, which
+        // Knip Does not read as a use, and Nuxt resolves it from the app, so the app declares the package and nothing
+        // Imports it
         "genshin-interface",
         // @TODO: https://github.com/nuxt/scripts/pull/946 — drop it once a stable `@nuxt/scripts` 2 ships it (it is in
         // 2.0.0-beta.13). 1.x mounts its `nuxt-scripts-cache` storage on unstorage's lru-cache driver, which loads
@@ -65,12 +66,12 @@ const knipConfiguration: KnipConfig = {
         // @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — knip reads an `#app` import as the package it
         // Resolves to, which is the `nuxt-nightly` alias until the catalog's `nuxt` is a range again
         "nuxt-nightly",
-        // Nuxt loads it by name when `nuxt analyze` turns `build.analyze` on, for the dependency score's bundle column, so
-        // Nothing in the app imports it
+        // Nuxt loads it by name when `nuxt analyze` turns `build.analyze` on, for the dependency score's bundle column,
+        // So Nothing in the app imports it
         "rollup-plugin-visualizer",
         "temporal-polyfill",
-        // The module is registered by its source path in `configuration/modules.ts`, which `nuxt prepare` loads before any
-        // Workspace package is built, so the app declares it for a narrowed install and nothing imports it
+        // The module is registered by its source path in `configuration/modules.ts`, which `nuxt prepare` loads before
+        // Any Workspace package is built, so the app declares it for a narrowed install and nothing imports it
         "tresjs-nuxt",
       ],
     },
@@ -104,8 +105,8 @@ const knipConfiguration: KnipConfig = {
       entry: ["src/runtime/nitro/plugins/*.ts", "src/runtime/server/middleware/*.ts"],
     },
     "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
-    // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
-    // Optional on purpose
+    // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer
+    // Is Optional on purpose
     "packages/shared-node": { ignoreDependencies: ["vitest"] },
     "packages/tresjs-nuxt": {
       // The components are registered by path, so nothing imports them
@@ -113,8 +114,8 @@ const knipConfiguration: KnipConfig = {
     },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
     "packages/unplugin-pwa-nuxt": {
-      // The build test runs `nuxt build` over the fixture app, so its config, its server route and its worker are named by
-      // Path
+      // The build test runs `nuxt build` over the fixture app, so its config, its server route and its worker are named
+      // By Path
       entry: [
         "test/fixture/nuxt.config.ts",
         "test/fixture/server/api/hello.get.ts",
@@ -123,7 +124,8 @@ const knipConfiguration: KnipConfig = {
       // The fixture app builds the engine's register code, a virtual module that imports it, so nothing here does
       ignoreDependencies: ["@vite-pwa/workbox-window"],
     },
-    // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
+    // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches
+    // Alone
     "packages/vue-block-editor-headless": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     scripts: {
       // Knip follows each `node` command entry from the manifest; the oxlint plugins load by path from the root config.
