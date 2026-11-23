@@ -59,6 +59,13 @@ export const SHARED_APP_IMPORT_PATTERN: RestrictedImportPattern = {
   message:
     "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see openspec/specs/architecture/module-boundaries/design.md. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
 };
+// The parity page's modules are dev-only: `packages/genshin-world/tsdown.config.ts` exports their subpaths only when not
+// Publishing, so a built module that imports one ships a path into the dev tree
+export const PARITY_IMPORT_PATTERN: RestrictedImportPattern = {
+  group: ["#parity/**"],
+  message:
+    "The parity page's `#parity/*` is dev-only, and a module the build reaches must not import it. A model the published entry exports belongs in `src`, as `models/witness/WitnessTarget` does. See packages/genshin-world/tsdown.config.ts.",
+};
 const PACKAGE_ALIAS_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["@/**", "~/**"],
   message:

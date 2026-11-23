@@ -13,6 +13,7 @@ import {
   MOD_IMPORT_PATTERN,
   OTHER_RESTRICTED_IMPORT_PATHS,
   PACKAGE_IMPORT_PATTERNS,
+  PARITY_IMPORT_PATTERN,
   RESTRICTED_IMPORT_PATHS,
   SHARED_APP_IMPORT_PATTERN,
   VUETIFY_IMPORT_PATH,
@@ -218,6 +219,28 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       files: ["apps/*/src/**", "packages/*/**/*.{ts,vue}", "scripts/**/*.ts", "oxlint/**/*.ts", "vite/**/*.ts"],
       rules: {
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: PACKAGE_IMPORT_PATTERNS }],
+      },
+    },
+    {
+      // The built source of genshin-world may not import the parity page's `#parity/*`. Its tests and fixtures are never
+      // Built, so they keep the import. The excluded suffixes are the ones the barrel generator and the declaration program
+      // Leave out (`NON_SOURCE_SUFFIXES` in `packages/configuration/src/services/constants.ts`), repeated here since this
+      // Config cannot import them
+      excludeFiles: [
+        "**/*.bench.ts",
+        "**/*.fixture.ts",
+        "**/*.reference.ts",
+        "**/*.test-d.ts",
+        "**/*.test.ts",
+        "**/*.typebench.program.ts",
+        "**/*.typebench.ts",
+      ],
+      files: ["packages/genshin-world/src/**/*.{ts,vue}"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          { paths: RESTRICTED_IMPORT_PATHS, patterns: [...PACKAGE_IMPORT_PATTERNS, PARITY_IMPORT_PATTERN] },
+        ],
       },
     },
     {
