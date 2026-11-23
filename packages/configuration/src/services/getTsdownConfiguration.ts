@@ -5,7 +5,6 @@ import { dropModulePathCommentsPlugin } from "#src/services/dropModulePathCommen
 import { generateBarrels } from "#src/services/generateBarrels";
 import { getPackagePatterns } from "#src/services/getPackagePatterns";
 import { mapGlobalStorePath } from "#src/services/mapGlobalStorePath";
-import { mapWorkspaceSiblingPath } from "#src/services/mapWorkspaceSiblingPath";
 import { readPackageManifest } from "#src/services/readPackageManifest";
 import { mergeConfig } from "tsdown";
 
@@ -95,12 +94,11 @@ export const getTsdownConfiguration = (): UserConfig => {
     // And its version and drops pnpm's peer suffix, which pnpm shortens to a hash on Windows, so the declarations that
     // Import a vendored file name the same path, and measure the same size, on every machine. The global store keeps
     // A package outside the repository, so `mapGlobalStorePath` writes it under that same folder before anything else
-    // Reads the name. A workspace sibling a devDependency inlines is named the same way, from the checkout's own path, so
-    // `mapWorkspaceSiblingPath` writes its output under it too. A function replaces the default sanitizer, so it keeps the
-    // Three characters that one swaps for an underscore.
+    // Reads the name. A function replaces the default sanitizer, so it keeps the three characters that one swaps for
+    // An underscore.
     outputOptions: {
       sanitizeFileName: (name: string) =>
-        mapWorkspaceSiblingPath(mapGlobalStorePath(name))
+        mapGlobalStorePath(name)
           .replaceAll("\0", "_")
           .replaceAll("?", "_")
           .replaceAll("*", "_")

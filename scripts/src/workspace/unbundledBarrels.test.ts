@@ -32,9 +32,9 @@ describe("unbundledBarrels", () => {
   // The folders a machine names in a path: a pnpm store on macOS sits under `Library`, and a copy kept from one under
   // `node_modules` is what `vendor` replaces
   const MACHINE_FOLDER_NAMES = new Set(["Library", "node_modules"]);
-  // The checkout's own path is the one a module outside its package carries into the `dist` when a build names it from
-  // Their common folder, which is the home folder once a store is among them. It is matched as neighbouring folder
-  // Pairs, since one name alone would also match a checkout under a folder named like the build's own `vendor` or `pnpm`
+  // The checkout's own path is the backstop for a module a build names from the folder its bundle shares, which is the
+  // Home folder once a store is among them. It is matched as neighbouring folder pairs, since one name alone would also
+  // Match a checkout under a folder named like the build's own `vendor` or `pnpm`
   const CHECKOUT_FOLDER_PAIRS = new Set(
     REPOSITORY_ROOT.split(sep).flatMap((folder, index, folders) =>
       index + 1 < folders.length ? [`${folder}${sep}${folders[index + 1]}`] : [],
