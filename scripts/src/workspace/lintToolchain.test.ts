@@ -5,9 +5,9 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
+import { readRepositoryFile } from "#src/workspace/readRepositoryFile.test";
 import { spawnSync } from "@esposter/shared-node/child-process";
-import { readFileSync } from "node:fs";
-import { join, matchesGlob } from "node:path";
+import { matchesGlob } from "node:path";
 import { describe, expect, test } from "vitest";
 
 type Manifest = Partial<Record<DependencyField, Record<string, string>>>;
@@ -19,8 +19,6 @@ const GENERATED_FILE_PATTERN = "**/auto-imports.d.ts";
 const ESLINT_DIRECTIVE_REGEX = /(?:\/\/|\/\*|<!--)\s*eslint-(?:disable|enable)/u;
 const CLASSIC_COMPILER = "typescript";
 const IMPORTERS_SECTION_REGEX = /^importers:\n[\s\S]*?(?=^\S|(?![\s\S]))/gmu;
-
-const readRepositoryFile = (path: string): string => readFileSync(join(REPOSITORY_ROOT, path), "utf8");
 
 describe("lintToolchain", () => {
   test("linting the whole repository", { timeout: TREE_READ_TIMEOUT_MS }, () => {

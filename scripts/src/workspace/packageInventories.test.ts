@@ -1,8 +1,7 @@
 import { AGENTS_FILE, README_FILE } from "#src/services/package/new/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readRepositoryFile } from "#src/workspace/readRepositoryFile.test";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -21,7 +20,7 @@ describe("packageInventories", () => {
   test.each([AGENTS_FILE, README_FILE])("%s names every workspace member", (filename) => {
     expect.hasAssertions();
 
-    const text = readFileSync(resolve(REPOSITORY_ROOT, filename), "utf8");
+    const text = readRepositoryFile(filename);
     // A table cell holding the path whole, so `packages/db` is not answered by `packages/db-schema`'s row
     const unnamedPackagePaths = workspacePackages
       .map(({ path }) => path)
@@ -33,7 +32,7 @@ describe("packageInventories", () => {
   test("the root README marks each member published exactly when its manifest is not private", () => {
     expect.hasAssertions();
 
-    const lines = readFileSync(resolve(REPOSITORY_ROOT, README_FILE), "utf8").split("\n");
+    const lines = readRepositoryFile(README_FILE).split("\n");
     const mismatches = workspacePackages.flatMap(({ manifest, path }) => {
       const row = lines.find((line) => line.split("|")[1]?.includes(`\`${path}\``));
       if (!row) return [`${path}: no row`];
