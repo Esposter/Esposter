@@ -1,5 +1,5 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
-import { AGENT_DIRECTORY } from "@esposter/configuration/constants";
+import { AGENT_DIRECTORY, KIBIBYTE } from "@esposter/configuration/constants";
 
 // Where every ledger lives, relative to the repository root: the coverage sweep rewrites them, the prose scan
 // Sets them aside as template-shaped, and the workspace suites hold their rows and scopes to the tree.
@@ -15,6 +15,9 @@ export const SKILLS_LOCK_FILE = "skills-lock.json";
 export const CLAUDE_PATHSPEC_EXCLUDE = ":(exclude).claude";
 // The NUL byte: a file holding one anywhere is binary by `git diff`'s own heuristic, so its bytes are data rather than source
 export const BINARY_BYTE = 0;
+// How many bytes one read takes when a check scans a file for the NUL byte, so a binary file stops at the first chunk
+// Holding one
+export const CHUNK_BYTES: number = 64 * KIBIBYTE;
 // A camel hump: a lowercase letter or digit meeting a capital. The one boundary both the name segment rule and a
 // Component's path split on, so it is written once here and composed into each
 export const CAMEL_HUMP_REGEX: RegExp = /(?<=[a-z\d])(?=[A-Z])/u;

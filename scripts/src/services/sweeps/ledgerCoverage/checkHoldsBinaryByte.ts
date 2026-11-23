@@ -1,8 +1,6 @@
-import { BINARY_BYTE } from "#src/services/sweeps/constants";
+import { BINARY_BYTE, CHUNK_BYTES } from "#src/services/sweeps/constants";
 import { withFinalizer } from "@esposter/shared";
 import { closeSync, openSync, readSync } from "node:fs";
-
-const CHUNK_BYTES = 64 * 1024;
 
 // Whether a file holds a NUL byte anywhere. It is read a chunk at a time, so a binary file stops at the first chunk that
 // Holds one, which a picture does early, and only a text file, which holds none, is read whole

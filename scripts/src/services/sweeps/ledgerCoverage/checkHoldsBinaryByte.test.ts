@@ -1,4 +1,5 @@
-import { MEBIBYTE } from "#src/services/shared/constants";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
+import { BINARY_BYTE, CHUNK_BYTES } from "#src/services/sweeps/constants";
 import { checkHoldsBinaryByte } from "#src/services/sweeps/ledgerCoverage/checkHoldsBinaryByte";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -16,14 +17,15 @@ describe(checkHoldsBinaryByte, () => {
     rmSync(directory, { force: true, recursive: true });
   });
 
-  // A file a mebibyte long, the NUL in its last byte, so a check that read only the first chunk would miss it
+  // A file one byte longer than a chunk, the NUL in its last byte, so a check that read only the first chunk would
+  // Miss it
   test.each([
-    ["a NUL past the first chunk", Buffer.concat([Buffer.alloc(MEBIBYTE, "a"), Buffer.from([0])]), true],
-    ["no NUL in the whole file", Buffer.alloc(MEBIBYTE, "a"), false],
+    ["a NUL past the first chunk", Buffer.concat([Buffer.alloc(CHUNK_BYTES, "a"), Buffer.from([BINARY_BYTE])]), true],
+    ["no NUL in the whole file", Buffer.alloc(CHUNK_BYTES + 1, "a"), false],
   ])("finds %s", (_description, contents, expected) => {
     expect.hasAssertions();
 
-    const path = join(directory, "file");
+    const path = join(directory, TEST_FILENAME);
     writeFileSync(path, contents);
 
     expect(checkHoldsBinaryByte(path)).toBe(expected);
