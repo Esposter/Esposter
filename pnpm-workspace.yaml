@@ -341,5 +341,4 @@ shellEmulator: true
 skills:
   dirs:
     - .agents/skills
-    - .claude/skills
 virtualStoreType: global
