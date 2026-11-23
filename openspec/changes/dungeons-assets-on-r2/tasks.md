@@ -22,7 +22,7 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 - [x] 3.1 Collapse the image, sound and font keys into `FileKey`, and make `Attack.soundEffectKey` `fileKey`. Verify: `pnpm -C apps/web typecheck` passes (`nuxt prepare`, then `tsrs`), and the typecheck names no removed key.
 - [x] 3.2 Add `MonsterKeyFileKeyMap` and `CaptureItemFileKeyMap` as the save-safe lookups. Verify: a test named after the scenario "A monster saved before the change renders its portrait" that a species saved before the change resolves its portrait, seen failing first, and one named after the scenario "An unknown species fails its lookup".
 - [x] 3.3 Drop the saved `asset` field from `monsterSchema`. Verify: a test that a saved monster carrying the field parses and a saved monster without it parses, seen failing first.
-- [ ] 3.4 Add the capture test: a saved inventory holding a Damaged Ball with no texture field captures. Verify: a test named after the scenario "A capture with a saved ball without a texture field still captures", seen failing first.
+- [x] 3.4 Add the capture test: a saved inventory holding a Damaged Ball with no texture field captures. Verify: a test named after the scenario "A capture with a saved ball without a texture field still captures", seen failing first.
 - [ ] 3.5 Narrow `Asset` to `SpritesheetKey` and move it to `app/models`. Verify: `pnpm -C apps/web typecheck` passes.
 
 ## 4. Loaders and the Preloader

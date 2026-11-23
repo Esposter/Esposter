@@ -2,11 +2,14 @@
 // @vitest-environment nuxt
 import type { Item } from "#shared/models/dungeons/item/Item";
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
 import { CaptureItemResolver } from "#src/models/resolvers/dungeons/item/CaptureItemResolver";
+import { useBallStore } from "#src/store/dungeons/battle/ball";
 import { useInventoryInfoPanelStore } from "#src/store/dungeons/inventory/infoPanel";
 import { usePlayerStore } from "#src/store/dungeons/player";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -24,7 +27,7 @@ vi.mock("#src/store/dungeons/monsterParty/infoPanel", () => ({ useMonsterPartyIn
 // The battle and its event emitter load Phaser, which cannot initialise under the test environment. A capture reaches them
 // Only once it goes ahead, so these fakes stand in for them
 vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: {} }));
-vi.mock("#src/services/phaser/phaserEventEmitter", () => ({ phaserEventEmitter: {} }));
+vi.mock("#src/services/phaser/phaserEventEmitter", () => ({ phaserEventEmitter: { emit: vi.fn<() => void>() } }));
 
 describe(CaptureItemResolver, () => {
   let item: Item;
@@ -64,5 +67,20 @@ describe(CaptureItemResolver, () => {
     const isActive = new CaptureItemResolver().checkIsActive(ref(item), ref({} as Monster));
 
     expect(isActive).toBe(true);
+  });
+
+  test("a capture with a saved ball without a texture field still captures", () => {
+    expect.hasAssertions();
+
+    const ballStore = useBallStore();
+    const { texture } = storeToRefs(ballStore);
+    texture.value = FileKey.UIBallsCosmoBall;
+    new CaptureItemResolver().handleItem(
+      {} as SceneWithPlugins,
+      ref({ ...item, id: ItemId.DamagedBall }),
+      ref({} as Monster),
+    );
+
+    expect(texture.value).toBe(FileKey.UIBallsDamagedBall);
   });
 });
