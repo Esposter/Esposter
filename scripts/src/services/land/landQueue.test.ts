@@ -8,7 +8,7 @@ const { steps } = vi.hoisted(() => ({ steps: new Array<string>() }));
 vi.mock(import("#src/services/shared/spawnGit"), () => ({
   spawnGit: (args: string[]) => {
     steps.push(takeOne(args, 0));
-    return { status: 0, stderr: "", stdout: "" };
+    return { output: [], pid: 0, signal: null, status: 0, stderr: "", stdout: "" };
   },
 }));
 vi.mock(import("#src/services/shared/runGit"), () => ({ runGit: () => "1" }));
