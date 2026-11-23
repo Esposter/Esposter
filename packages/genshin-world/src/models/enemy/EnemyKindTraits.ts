@@ -2,9 +2,11 @@ import type { Element } from "#src/models/Element";
 import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 import type { PoiseType } from "#src/models/enemy/PoiseType";
 
-// What the wiki gives of a kind that the game's monster table does not: its poise and the energy it drops. Its element is
-// The Element its energy carries, none for an enemy whose energy is clear. Its attack element is the Element its attacks
-// Carry, none for an enemy whose attacks are all physical
+// What the wiki gives of a kind: its poise and the energy it drops. The game's monster table holds the health
+// Thresholds each drop falls at (its hpDrops), but not which drop is an energy particle: the drop tables that name
+// The items are not in the dump, so the wiki gives which drop is energy. Its element is The Element its energy carries,
+// None for an enemy whose energy is clear. Its attack element is the Element its attacks Carry, None for an enemy whose
+// Attacks are all physical
 export interface EnemyKindTraits {
   attackElement?: Element | undefined;
   element?: Element | undefined;
