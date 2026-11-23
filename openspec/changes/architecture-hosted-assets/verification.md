@@ -29,7 +29,7 @@ After the switch, the opening preloads the lock's objects and indexes and the ch
 
 ## 7.4: the bundle, before and after
 
-`pnpm -C apps/web build` on both trees, each after its packages were built (`vp run build:packages`). Before is the base commit of the change, 4270035336. After is this change at its landed head. The totals are the bytes of every file under `apps/web/.output` (2,001 files in both), and the `public` share is the bytes under `.output/public`.
+`pnpm -C apps/web build` on both trees, each after its packages were built (`vp run build:packages`). Before is the base commit of the change, 4270035336. After is this change at its landed head. The totals are the bytes of every file under the `.output` folder of `apps/web` (2,001 files in both), and the `public` share is the bytes under `.output/public`.
 
 - Before: 73,800,427 bytes in all, 42,285,160 bytes in `public`.
 - After: 73,665,103 bytes in all, 42,266,731 bytes in `public`.
