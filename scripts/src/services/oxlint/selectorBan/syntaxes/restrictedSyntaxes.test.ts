@@ -142,25 +142,6 @@ describe("restrictedSyntaxes", () => {
         source: `<template>\n  <UiButton :is-disabled="value === ''" />\n</template>`,
         violations: 1,
       },
-      { filePath: "blankRawText.ts", name: "blankRawText", source: `if (value === "") return;`, violations: 1 },
-      {
-        filePath: "blankRawTextFlipped.ts",
-        name: "blankRawTextFlipped",
-        source: `const isBlank = "" !== value;`,
-        violations: 1,
-      },
-      {
-        filePath: "blankNormalized.ts",
-        name: "blankNormalized",
-        source: `if (normalizeString(value) === "") return;`,
-        violations: 0,
-      },
-      {
-        filePath: "blankRawTextInTemplate.vue",
-        name: "blankRawTextInTemplate",
-        source: `<template>\n  <UiButton :is-disabled="value === ''" />\n</template>`,
-        violations: 1,
-      },
     ],
   });
 });
