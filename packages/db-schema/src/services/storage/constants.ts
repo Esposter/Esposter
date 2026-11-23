@@ -19,3 +19,7 @@ export const READ_PRESIGNED_URL_REFRESH_INTERVAL_MS = Temporal.Duration.from({ h
 // How long a presigned write url stays valid. Also the age a blob must reach before a prefix sweep may treat it as an
 // Orphan: anything younger could still belong to an upload whose owning row write has not landed yet.
 export const WRITE_PRESIGNED_URL_DURATION_MS = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// The text objects the hosted bucket serves, which the edge does not cache by default and a publish stores
+// Brotli-compressed: JSON, and Tiled's tilesets (.tsx) and maps (.tmx), which are XML. Each is written without
+// Its dot, as `http.request.uri.path.extension` reads it
+export const HOSTED_TEXT_EXTENSIONS: readonly string[] = ["json", "tmx", "tsx"];

@@ -1,12 +1,9 @@
 import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import { toRulesSet } from "#src/cloudflare/services/toRulesSet";
-import { HostedAssetOriginMap } from "@esposter/db-schema";
+import { HOSTED_TEXT_EXTENSIONS, HostedAssetOriginMap } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
-// The text objects the hosted bucket serves, which the edge does not cache by default: JSON, and the XML of Tiled's
-// Tilesets (.tsx) and maps (.tmx)
-const HOSTED_TEXT_EXTENSIONS = ["json", "tmx", "tsx", "xml"];
 // Both environments' hosted hostnames, which share the zone
 const hostedHostnames = Object.values(HostedAssetOriginMap).map((origin) => new URL(origin).hostname);
 
