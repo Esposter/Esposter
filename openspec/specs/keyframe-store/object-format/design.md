@@ -56,7 +56,7 @@ The magic, the version, the flag values and the byte offsets of each field are c
 | File                                                           | Role                                                                       |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | `packages/keyframe-store/src/services/constants.ts`            | the magic, the format version, the header layout, the flags and the ratios |
-| `packages/keyframe-store/src/services/getContentAddress.ts`    | the SHA-256 address of a plaintext                                         |
+| `packages/shared-node/src/services/cache/getContentAddress.ts` | the SHA-256 address of a plaintext                                         |
 | `packages/keyframe-store/src/services/encodeObject.ts`         | a keyframe or a delta, as bytes, with the window it recorded               |
 | `packages/keyframe-store/src/services/parseObject.ts`          | the header parse, which refuses bytes outside the format                   |
 | `packages/keyframe-store/src/services/decodeObject.ts`         | the decompression, with the base plaintext as the dictionary               |

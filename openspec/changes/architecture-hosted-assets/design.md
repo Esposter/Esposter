@@ -274,30 +274,30 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 
 ## Key files
 
-| File                                                                          | Role                                                                                        |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `packages/db-schema/src/models/storage/StorageBucket.ts`                      | the public buckets a product's origin names                                                 |
-| `apps/infra/src/cloudflare/resources/r2Buckets/`                              | the buckets; the shared hosted bucket and its custom domain are declared beside them        |
-| `apps/web/server/routes/assets/[bucket]/[...key].get.ts`                      | serves the user buckets only, once the game buckets are off the route                       |
-| `apps/web/configuration/security.ts`                                          | the `connect-src`, `font-src`, `img-src` and `media-src` directives over the hosted origins |
-| `apps/web/service-worker/sw.ts`                                               | the cache-first route over the hosted origins, and the claim on activation                  |
-| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`               | the precache globs, which `**/*.{js,css,html}` keeps off hosted objects                     |
-| `scripts/src/services/gameData/publishGameData.ts`                            | the publish pipeline the generic publish generalises                                        |
-| `scripts/src/services/gameData/verifyGameDataObject.ts`                       | the per-object hash check the fill reuses                                                   |
-| `scripts/src/services/gameData/writeGameDataKeys.ts`                          | the keys renderer the generic renderer generalises                                          |
-| `scripts/src/services/gameData/getGameDataKeysSource.ts`                      | the keys source, and the one committed generated file this change keeps                     |
-| `packages/genshin-world/src/generated/gameDataLock.json`                      | Genshin's lock, which the generic lock format replaces in place                             |
-| `packages/genshin-world/src/services/data/readGameData.ts`                    | Genshin's reader, which becomes the generic reader                                          |
-| `packages/genshin-world/src/composables/useCharacterPackPreload.ts`           | the preloader the generic composable generalises                                            |
-| `packages/genshin-world/src/services/character/planCharacterPackDownload.ts`  | the plan the generic plan generalises                                                       |
-| `packages/genshin-world/src/services/character/downloadCharacterPackFiles.ts` | the download the generic download generalises                                               |
-| `packages/genshin-world/src/services/character/listHeldCharacterPackUrls.ts`  | the held-set the generic held-set generalises                                               |
-| `packages/genshin-world/src/services/character/constants.ts`                  | the cache name and the download constants that move to the generic system                   |
-| `packages/genshin-world/src/services/login/constants.ts`                      | the login recordings' directory, which becomes a hosted origin                              |
-| `apps/web/configuration/nitro.ts`                                             | the `publicAssets` mount of the login recordings, removed                                   |
-| `.github/workflows/build-packages.yaml`                                       | the mirror fill, which gains the per-object hash check                                      |
-| `.github/workflows/CI.yaml`                                                   | the mirror restore, keyed on the lock                                                       |
-| `scripts/src/workspace/pathLiterals.test.ts`                                  | holds the workflows to the mirror cache constant's path                                     |
-| `openspec/specs/architecture/static-assets/design.md`                         | the two-place rule this design replaces                                                     |
-| `openspec/specs/architecture/generated-artifacts/design.md`                   | the table row for `pnpm phaser:gen`, removed                                                |
-| `openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md`              | the superseded rejection, deleted                                                           |
+| File                                                               | Role                                                                                        |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `packages/db-schema/src/models/storage/StorageBucket.ts`           | the public buckets a product's origin names                                                 |
+| `apps/infra/src/cloudflare/resources/r2Buckets/`                   | the buckets; the shared hosted bucket and its custom domain are declared beside them        |
+| `apps/web/server/routes/assets/[bucket]/[...key].get.ts`           | serves the user buckets only, once the game buckets are off the route                       |
+| `apps/web/configuration/security.ts`                               | the `connect-src`, `font-src`, `img-src` and `media-src` directives over the hosted origins |
+| `apps/web/service-worker/sw.ts`                                    | the cache-first route over the hosted origins, and the claim on activation                  |
+| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`    | the precache globs, which `**/*.{js,css,html}` keeps off hosted objects                     |
+| `scripts/src/services/gameData/publishGameData.ts`                 | the publish pipeline the generic publish generalises                                        |
+| `scripts/src/services/gameData/verifyGameDataObject.ts`            | the per-object hash check the fill reuses                                                   |
+| `scripts/src/services/gameData/writeGameDataKeys.ts`               | the keys renderer the generic renderer generalises                                          |
+| `scripts/src/services/gameData/getGameDataKeysSource.ts`           | the keys source, and the one committed generated file this change keeps                     |
+| `packages/genshin-world/src/generated/gameDataLock.json`           | Genshin's lock, which the generic lock format replaces in place                             |
+| `packages/genshin-world/src/services/data/readGameData.ts`         | Genshin's reader, which becomes the generic reader                                          |
+| `packages/hosted-assets/src/composables/useHostedAssetsPreload.ts` | the preloader, generalised from Genshin's and moved here                                    |
+| `packages/hosted-assets/src/services/planHostedAssetDownload.ts`   | the plan, generalised from Genshin's and moved here                                         |
+| `packages/hosted-assets/src/services/downloadHostedAssetFiles.ts`  | the download, generalised from Genshin's and moved here                                     |
+| `packages/hosted-assets/src/services/listHeldHostedAssetUrls.ts`   | the held-set, generalised from Genshin's and moved here                                     |
+| `packages/genshin-world/src/services/character/constants.ts`       | the cache name and the download constants that move to the generic system                   |
+| `packages/genshin-world/src/services/login/constants.ts`           | the login recordings' directory, which becomes a hosted origin                              |
+| `apps/web/configuration/nitro.ts`                                  | the `publicAssets` mount of the login recordings, removed                                   |
+| `.github/workflows/build-packages.yaml`                            | the mirror fill, which gains the per-object hash check                                      |
+| `.github/workflows/CI.yaml`                                        | the mirror restore, keyed on the lock                                                       |
+| `scripts/src/workspace/pathLiterals.test.ts`                       | holds the workflows to the mirror cache constant's path                                     |
+| `openspec/specs/architecture/static-assets/design.md`              | the two-place rule this design replaces                                                     |
+| `openspec/specs/architecture/generated-artifacts/design.md`        | the table row for `pnpm phaser:gen`, removed                                                |
+| `openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md`   | the superseded rejection, deleted                                                           |
