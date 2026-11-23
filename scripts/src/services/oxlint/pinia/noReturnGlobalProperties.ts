@@ -11,12 +11,32 @@ const enclosingFunctions = function* (node: ESTree.Node): Generator<ESTree.Node>
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) if (checkIsFunction(ancestor)) yield ancestor;
 };
 
+// Every name a binding pattern introduces, a plain identifier or one destructured, defaulted or spread
+const patternNames = (pattern: ESTree.Node): string[] => {
+  switch (pattern.type) {
+    case "ArrayPattern":
+      return pattern.elements.flatMap((element) => (element ? patternNames(element) : []));
+    case "AssignmentPattern":
+      return patternNames(pattern.left);
+    case "Identifier":
+      return [pattern.name];
+    case "ObjectPattern":
+      return pattern.properties.flatMap((property) =>
+        property.type === "RestElement" ? patternNames(property.argument) : patternNames(property.value),
+      );
+    case "RestElement":
+      return patternNames(pattern.argument);
+    default:
+      return [];
+  }
+};
+
 export const noReturnGlobalProperties: Rule = defineRule({
   create(context) {
     // The names each function binds, keyed by that function, with whether the binding is a global call
     // A name bound in one function is not a global in a sibling
     // A nested binding shadows the outer one, so a return reads the innermost binding of each name
-    // A destructured binding names nothing, so it adds none
+    // A destructured binding is never a global, but it still shadows the outer one of its name
     const scopeBindingsMap = new Map<ESTree.Node | null, Map<string, boolean>>();
     const bind = (scope: ESTree.Node | null, name: string, isGlobal: boolean): void => {
       const bindings = scopeBindingsMap.get(scope) ?? new Map<string, boolean>();
@@ -32,7 +52,7 @@ export const noReturnGlobalProperties: Rule = defineRule({
       return false;
     };
     const bindParameters = (node: ESTree.ArrowFunctionExpression | ESTree.Function): void => {
-      for (const parameter of node.params) if (parameter.type === "Identifier") bind(node, parameter.name, false);
+      for (const parameter of node.params) for (const name of patternNames(parameter)) bind(node, name, false);
     };
 
     return {
@@ -54,12 +74,12 @@ export const noReturnGlobalProperties: Rule = defineRule({
       VariableDeclaration(node) {
         const scope = enclosingFunctions(node).next().value ?? null;
         for (const { id, init } of node.declarations) {
-          if (id.type !== "Identifier") continue;
           const isGlobal =
+            id.type === "Identifier" &&
             init?.type === "CallExpression" &&
             init.callee.type === "Identifier" &&
             GLOBAL_CALLEE_NAMES.has(init.callee.name);
-          bind(scope, id.name, isGlobal);
+          for (const name of patternNames(id)) bind(scope, name, isGlobal);
         }
       },
     };

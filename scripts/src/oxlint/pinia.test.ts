@@ -105,6 +105,28 @@ describe("pinia/no-return-global-properties", () => {
       source: `export const useQStore2 = defineStore("nestedParameterShadowsRoute", () => {\n  const route = useRoute();\n  const build = (route) => {\n    return { route };\n  };\n  return { build, route };\n});`,
       violations: 1,
     },
+    // A destructured local shadows the enclosing global the same way, so its nested return reports nothing
+    {
+      name: "nestedDestructuredLocalShadowsRoute",
+      source: `export const useRStore2 = defineStore("nestedDestructuredLocalShadowsRoute", () => {\n  const route = useRoute();\n  const build = () => {\n    const { route } = makeLocal();\n    return { route };\n  };\n  return { build, route: route.params };\n});`,
+      violations: 0,
+    },
+    // A destructured, defaulted or spread parameter shadows the enclosing global, so its nested return reports nothing
+    {
+      name: "nestedDestructuredParameterShadowsRoute",
+      source: `export const useSStore2 = defineStore("nestedDestructuredParameterShadowsRoute", () => {\n  const route = useRoute();\n  const build = ({ route }) => {\n    return { route };\n  };\n  return { build, route: route.params };\n});`,
+      violations: 0,
+    },
+    {
+      name: "nestedDefaultParameterShadowsRoute",
+      source: `export const useTStore2 = defineStore("nestedDefaultParameterShadowsRoute", () => {\n  const route = useRoute();\n  const build = (route = {}) => {\n    return { route };\n  };\n  return { build, route: route.params };\n});`,
+      violations: 0,
+    },
+    {
+      name: "nestedRestParameterShadowsRoute",
+      source: `export const useUStore2 = defineStore("nestedRestParameterShadowsRoute", () => {\n  const route = useRoute();\n  const build = (...route) => {\n    return { route };\n  };\n  return { build, route: route.params };\n});`,
+      violations: 0,
+    },
   ];
   setupPluginSuite({ fixtures: FIXTURES, plugin: "pinia", rules: [RULE] });
 });
