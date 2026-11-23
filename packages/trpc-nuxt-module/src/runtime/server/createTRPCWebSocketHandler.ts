@@ -13,8 +13,8 @@ interface PeerConnection<TContext> {
   // The context the callbacks take, or the error that stopped it being built
   context: ReturnType<typeof getResultAsync<TContext>>;
 }
-// TRPC's WebSocket adapter over crossws, the WebSocket layer Nitro serves. tRPC drives a WebSocket server, so the handler
-// Presents one and a client per peer, and replays each crossws hook onto the client it belongs to
+// TRPC's WebSocket adapter over crossws, the WebSocket layer Nitro serves. tRPC drives a WebSocket server, so the
+// Handler Presents one and a client per peer, and replays each crossws hook onto the client it belongs to
 export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
   createContext,
   onClose,
