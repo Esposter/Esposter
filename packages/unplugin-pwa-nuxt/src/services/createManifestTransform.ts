@@ -15,8 +15,7 @@ export const createManifestTransform =
     manifest: entries.map((entry) => {
       if (entry.url.endsWith(".html")) {
         const route = entry.url.replace(HTML_SUFFIX_REGEX, "");
-        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- an empty route is the root
-        return { ...entry, url: route === "" ? baseURL : route };
+        return { ...entry, url: route || baseURL };
       }
       if (entry.url.startsWith(`${buildAssetsDirectory}/${BUILD_META_DIRECTORY}/`)) return { ...entry, revision: null };
       return entry;
