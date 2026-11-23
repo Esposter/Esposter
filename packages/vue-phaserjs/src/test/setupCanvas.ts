@@ -99,8 +99,8 @@ const mockCanvasContext = {
   wordSpacing: "0px",
 } as unknown as CanvasRenderingContext2D;
 
-// The spies stay for the worker's life: Phaser's blend-mode check and its canvas pool outlive a file, so a canvas one file
-// Made must keep its mock context in the next, where a restored spy would leave it a null context
+// The spies are never restored at a file's end: a load a test starts can fire after the file's last test, and the canvas
+// Phaser makes then must keep its mock context, which a restored spy would leave as a null context
 vi.spyOn(window.document, "createElement").mockImplementation((tagName, options) => {
   const element = createElement(tagName, options);
   if (element instanceof HTMLCanvasElement)
