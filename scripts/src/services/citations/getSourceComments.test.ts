@@ -17,6 +17,7 @@ describe(getSourceComments, () => {
 
   test.each([
     ["a script", `<script setup lang="ts">\n// \`${NAME}\`\n</script>`],
+    ["an upper-case script", `<SCRIPT setup lang="ts">\n// \`${NAME}\`\n</SCRIPT >`],
     ["the template", `<template><!-- \`${NAME}\` --></template>`],
     ["a style", `<style>/* \`${NAME}\` */</style>`],
   ])("blanks a comment in %s of a component and reads it", (_zone, text) => {

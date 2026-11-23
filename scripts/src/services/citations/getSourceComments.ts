@@ -8,7 +8,8 @@ const VUE_EXTENSION_REGEX = /\.vue$/u;
 const HASH_EXTENSION_REGEX = /\.(?:ya?ml|toml|sh|ps1)$/u;
 const MARKUP_EXTENSION_REGEX = /\.html$/u;
 const STYLE_EXTENSION_REGEX = /\.css$/u;
-const SCRIPT_BLOCK_REGEX = /(?<open><script\b[^>]*>)(?<content>[\s\S]*?)(?<close><\/script>)/gu;
+// HTML reads a tag's name in any case, and a closing tag may carry whitespace before its `>`
+const SCRIPT_BLOCK_REGEX = /(?<open><script\b[^>]*>)(?<content>[\s\S]*?)(?<close><\/script\b[^>]*>)/giu;
 const HTML_COMMENT_REGEX = /<!--(?<body>[\s\S]*?)-->/gu;
 const CSS_COMMENT_REGEX = /\/\*(?<body>[\s\S]*?)\*\//gu;
 // A hash opens a comment only at the start of a line or after a space, so the `#` of `C#` or of a URL's fragment is
