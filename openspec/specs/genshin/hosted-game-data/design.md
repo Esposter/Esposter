@@ -22,15 +22,14 @@ Every builder is a `pnpm -C scripts` command, and every one takes `--dry-run`. A
 
 The keys a dataset publishes are the lock's own (`packages/genshin-world/src/generated/gameDataLock.json`, its `indexes` and `objects`), and the `GameDataset` value set (`packages/genshin-world/src/models/data/GameDataset.ts`) names the datasets. Which builder publishes each one, and which reader reads it, are the `genshin:assets` commands and the functions under `packages/genshin-world/src/services/` and `scripts/src/services/genshinAssets/` that name them. The code shows a reader's absence only by search, so the datasets whose reader has no caller, or that has no reader, are listed here:
 
-| Dataset                                                                               | Status                                                                                                                      |
-| :------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------- |
-| `stats`, `readWeaponLevelRequiredExps`                                                | the reader has no caller yet                                                                                                |
-| `kitSources`                                                                          | no reader yet, and no caller yet                                                                                            |
-| `home/areas`, `home/blueprints`, `home/furnishings`, `home/gardens` and `home/levels` | `readHomeBlueprints` is read as the bag opens (`ScreenRecordKeysMap`); the readers of the others are not built              |
-| `home/events`                                                                         | published with no reader; its consumer is the companions' invitations, which are not built                                  |
-| `imaginarium/seasons` and `imaginarium/difficulties`                                  | no reader yet, and none is built                                                                                            |
-| `expeditions/bonuses`                                                                 | no reader yet, and none is built                                                                                            |
-| `weaponRoots`                                                                         | published by `genshin:assets weapon-roots`; read through the lock by `readWeaponRoots` in `scripts`, not by `genshin-world` |
+| Dataset                                                                               | Status                                                                                                         |
+| :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+| `stats`, `readWeaponLevelRequiredExps`                                                | the reader has no caller yet                                                                                   |
+| `kitSources`                                                                          | no reader yet, and no caller yet                                                                               |
+| `home/areas`, `home/blueprints`, `home/furnishings`, `home/gardens` and `home/levels` | `readHomeBlueprints` is read as the bag opens (`ScreenRecordKeysMap`); the readers of the others are not built |
+| `home/events`                                                                         | published with no reader; its consumer is the companions' invitations, which are not built                     |
+| `imaginarium/seasons` and `imaginarium/difficulties`                                  | no reader yet, and none is built                                                                               |
+| `expeditions/bonuses`                                                                 | no reader yet, and none is built                                                                               |
 
 ## What stays in the package
 
@@ -58,7 +57,7 @@ flowchart TD
 
 ## Reading
 
-`readGameData` reads the lock, then the record its key names; `readGameDataEntry` reads the lock, then the index object, then the one record (`packages/genshin-world/src/services/data/readGameData.ts`, `readGameDataEntry.ts`). Each fetch is memoized by URL for the page's life, a failed fetch is dropped from the memo so the next read retries it, and a fetch is abandoned after `DATA_FETCH_TIMEOUT_MS` (`packages/genshin-world/src/services/data/readGameDataObject.ts`, `packages/shared/src/util/promise/createEvictingPromiseCache.ts`; `packages/genshin-world/src/services/constants.ts`, 10 seconds). A reader parses the value with its own schema each time, so each caller holds a value of its own, and every function over a record stays pure and synchronous, taking it as an argument.
+`readGameData` takes the record's path from the lock by its key alone, then fetches it; `readGameDataEntry` reads the lock, then the index object, then the one record (`packages/genshin-world/src/services/data/readGameData.ts`, `getGameDataRecordPath.ts`, `readGameDataEntry.ts`). Each fetch is memoized by URL for the page's life, a failed fetch is dropped from the memo so the next read retries it, and a fetch is abandoned after `DATA_FETCH_TIMEOUT_MS` (`packages/genshin-world/src/services/data/readGameDataObject.ts`, `packages/shared/src/util/promise/createEvictingPromiseCache.ts`; `packages/genshin-world/src/services/constants.ts`, 10 seconds). A reader parses the value with its own schema each time, so each caller holds a value of its own, and every function over a record stays pure and synchronous, taking it as an argument.
 
 The base URL is the `PublicGenshinAssets` bucket's URL in the environment the page reads (`getGenshinGameDataBaseUrl`, `apps/web/shared/services/genshin/getGenshinGameDataBaseUrl.ts`): dev reads the dev bucket, production the production bucket. Two async boundaries hold every read the world needs before it draws, and a third entry point hands a worker what one of them read:
 
@@ -255,7 +254,8 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 | `packages/genshin-world/src/generated/gameDataKeys.ts`                                | The lock's keys as nested constants, and the types a reader names a key by                                                     |
 | `packages/genshin-world/src/services/data/readGameData.ts`                            | Reads one record by its key                                                                                                    |
 | `packages/genshin-world/src/services/data/readGameDataEntry.ts`                       | Reads one record by id, through its index                                                                                      |
-| `packages/genshin-world/src/services/data/readGameDataObject.ts`                      | Fetches one object by its hash, memoized by URL                                                                                |
+| `packages/genshin-world/src/services/data/getGameDataRecordPath.ts`                   | The path a record is stored at, from its key alone: the lock names its hash                                                    |
+| `packages/genshin-world/src/services/data/readGameDataObject.ts`                      | Fetches one object at its path under the base, memoized by URL                                                                 |
 | `packages/genshin-world/src/services/shared/readJson.ts`                              | The fetch itself: the timeout, the HTTP error and the JSON                                                                     |
 | `packages/genshin-world/src/generated/talentMultipliers/TalentMultiplierLoaderMap.ts` | Each character's multipliers, read from the `talentMultipliers` index                                                          |
 | `packages/genshin-world/src/generated/skillGlyphs/SkillGlyphsLoaderMap.ts`            | Each character's skill and burst icons, read from the `skillGlyphs` index                                                      |

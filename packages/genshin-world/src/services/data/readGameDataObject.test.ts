@@ -4,7 +4,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 // Reads are memoized for the page's lifetime, so each test names an object no other test reads
 describe(readGameDataObject, () => {
   const gameDataBaseUrl = "game-data";
-  const dataset = "stats/weapons";
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -17,12 +16,12 @@ describe(readGameDataObject, () => {
 
     await expect(
       Promise.all([
-        readGameDataObject(gameDataBaseUrl, dataset, "shared"),
-        readGameDataObject(gameDataBaseUrl, dataset, "shared"),
+        readGameDataObject(gameDataBaseUrl, "stats/weapons/shared.json"),
+        readGameDataObject(gameDataBaseUrl, "stats/weapons/shared.json"),
       ]),
     ).resolves.toStrictEqual([{ id: 1 }, { id: 1 }]);
     // The fetch is named by its URL alone, since the signal it is given is one a test cannot hold to a value
-    expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([`${gameDataBaseUrl}/${dataset}/shared.json`]);
+    expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([`${gameDataBaseUrl}/stats/weapons/shared.json`]);
   });
 
   // A failed read is not remembered, or one dropped request would hold a table out of the world until the page reloads
@@ -33,9 +32,11 @@ describe(readGameDataObject, () => {
       .mockResolvedValueOnce(new Response(null, { status: 503, statusText: "Service Unavailable" }))
       .mockResolvedValueOnce(Response.json({ id: 2 }));
 
-    await expect(readGameDataObject(gameDataBaseUrl, dataset, "retried")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      readGameDataObject(gameDataBaseUrl, "stats/weapons/retried.json"),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: game-data/stats/weapons/retried.json, HTTP 503 Service Unavailable]`,
     );
-    await expect(readGameDataObject(gameDataBaseUrl, dataset, "retried")).resolves.toStrictEqual({ id: 2 });
+    await expect(readGameDataObject(gameDataBaseUrl, "stats/weapons/retried.json")).resolves.toStrictEqual({ id: 2 });
   });
 });

@@ -11,6 +11,7 @@ import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { WorldLayer } from "#src/models/world/WorldLayer";
 import { readRegionChestPlaces } from "#src/services/chest/readRegionChestPlaces";
+import { getGameDataRecordPath } from "#src/services/data/getGameDataRecordPath";
 import { readGameDataObject } from "#src/services/data/readGameDataObject";
 import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
 import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
@@ -26,18 +27,19 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { ref, shallowReactive } from "vue";
 
 // Each region's record is served from the fetch the reader makes, so a record is read through its reader and its schema
-const { datasetRecordsMap } = vi.hoisted(() => ({ datasetRecordsMap: new Map<string, unknown[]>() }));
+const { pathRecordsMap } = vi.hoisted(() => ({ pathRecordsMap: new Map<string, unknown[]>() }));
+const LIYUE_CHESTS_PATH = getGameDataRecordPath(GameDataKeys.chests.liyue);
 
 vi.mock(import("#src/services/data/readGameDataObject"), async (importOriginal) => {
   const { readGameDataObject: readHostedObject } = await importOriginal();
   return {
-    readGameDataObject: vi.fn<(gameDataBaseUrl: string, dataset: string, hash: string) => Promise<unknown>>(
-      (gameDataBaseUrl, dataset, hash) =>
+    readGameDataObject: vi.fn<(gameDataBaseUrl: string, objectPath: string) => Promise<unknown>>(
+      (gameDataBaseUrl, objectPath) =>
         // A record the suite registers is served from the map, and any other hosted record is read as the shared
         // Fixtures read it when this suite loads, before any record is registered
-        datasetRecordsMap.has(dataset)
-          ? Promise.resolve(datasetRecordsMap.get(dataset))
-          : readHostedObject(gameDataBaseUrl, dataset, hash),
+        pathRecordsMap.has(objectPath)
+          ? Promise.resolve(pathRecordsMap.get(objectPath))
+          : readHostedObject(gameDataBaseUrl, objectPath),
     ),
   };
 });
@@ -60,7 +62,7 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
 
 describe(useWorldChestsStore, () => {
   afterEach(() => {
-    datasetRecordsMap.clear();
+    pathRecordsMap.clear();
     vi.clearAllMocks();
   });
 
@@ -90,7 +92,7 @@ describe(useWorldChestsStore, () => {
   test("an unopened chest in another region is offered to open", async () => {
     expect.hasAssertions();
 
-    datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
+    pathRecordsMap.set(LIYUE_CHESTS_PATH, [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
     const { chestInteractables, regionChestMap } = createChests({ ...puzzleOptions, seelies: [] });
     // Liyue's record is read once its region comes within reach, and the scene's region chest map holds it from then on
     // The store offers its chests from that map, with no copy of it kept beside it
@@ -102,10 +104,10 @@ describe(useWorldChestsStore, () => {
   test("the world's start reads no chest record of a region outside reach", () => {
     expect.hasAssertions();
 
-    datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
+    pathRecordsMap.set(LIYUE_CHESTS_PATH, [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
     createChests({ ...puzzleOptions, seelies: [] });
 
-    expect(readGameDataObject).not.toHaveBeenCalledWith(expect.anything(), "chests/liyue", expect.anything());
+    expect(readGameDataObject).not.toHaveBeenCalledWith(expect.anything(), LIYUE_CHESTS_PATH);
   });
 
   test("a Seelie's chest is offered once it settles", () => {
