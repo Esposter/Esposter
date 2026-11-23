@@ -10,9 +10,9 @@
 
 ## 3. The override
 
-- [ ] 3.1 Retire the `typescript-native-bridge` override once ESLint's parser, the one classic-API reader left, is gone with ESLint ([ESLint retirement](../architecture-eslint-retirement/tasks.md), task 4.2). Verified by no override entry remaining in the manifests.
+- [x] 3.1 Retire the `typescript-native-bridge` override once ESLint's parser, the one classic-API reader left, is gone with ESLint ([ESLint retirement](../architecture-eslint-retirement/tasks.md), task 4.2). Verified by no override entry remaining in the manifests.
 
 ## 4. The `typescript` package
 
 - [x] 4.1 Parse `scripts/` sources with `oxc-parser` and drop `typescript` from `scripts/package.json`. Verified by no `scripts/` file importing `typescript` and the scoped sweep tests passing.
-- [ ] 4.2 Drop the `typescript` package in the same step as the override, since nothing else loads it (`design.md`, "Phase 3 and 4"). Verified by the root manifest no longer declaring it.
+- [x] 4.2 Drop the `typescript` package in the same step as the override, since nothing else loads it (`design.md`, "Phase 3 and 4"). Verified by the root manifest no longer declaring it.
