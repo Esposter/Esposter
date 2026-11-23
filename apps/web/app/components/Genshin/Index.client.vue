@@ -112,7 +112,7 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
     </UiDialog>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
-        :game-data-base-url="gameDataBaseUrl"
+        :game-data-base-url
         :game-text="gameText.text"
         :language="gameText.language"
         :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"

@@ -110,7 +110,6 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@fontsource/signika": "catalog:",
     "@tsdown/css": "catalog:",
