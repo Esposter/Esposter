@@ -31,7 +31,7 @@ Skip generated output, which no question judges: `CHANGELOG.md`, migration `.sql
 One question at a time, never a merged checklist.
 
 1. **Scope.** The question's scope is its row's `Scope` cell in `.agents/ledgers/README.md`, read as git pathspecs. Its files in this unit are the unit's files that `git ls-files -- <scope>` also lists. Read every one of them in full.
-2. **Rules.** The rules are the rules table in `.agents/ledgers/<question>.md` (or `.agents/ledgers/<question>/README.md` for a question kept in a folder), any note on this unit in `.agents/ledgers/<question>/<area>.md`, and the owning skill the index's `Rules` cell names. Load each skill once per batch. A verdict without its owning skill loaded is not a verdict: load the skill before judging, or write `unread`.
+2. **Rules.** The rules are the rules table in `.agents/ledgers/<question>.md` (or `.agents/ledgers/<question>/README.md` for a question kept in a folder), any note on this unit in `.agents/ledgers/<question>/<area>.md`, and the owning skill the index's `Rules` cell names. Load each skill once per batch. A judgement without its owning skill loaded is not one: load the skill before judging, or write an `unread` finding.
 3. **Refute first.** A question's ledger may hold a find recipe: run it as written, and read it before refuting a finding that cites it. For each candidate finding, open the cited line and try to refute it. Grep `openspec/` and `.agents/skills` for a recorded decision, and look for a comment beside the line. Keep only what survives.
    A wrapped `//` comment line that opens on a capital letter is what the `capitalized-comments` lint rule requires (`formatting` skill, `references/capitalized-comments.md`), so it is never reported, whatever its words.
 4. **Classify** what survives:
@@ -45,13 +45,13 @@ The shell is zsh, which does not split an unquoted variable: `git grep -n PATTER
 Append one JSON line per (question, unit) to the output file as soon as it is judged:
 
 ```json
-{"ledger":"<question>","unit":"<unit exactly as given>","verdict":"clean|tidy|defect|unread","files":<files read>,"findings":[{"kind":"defect|tidy|unread","file":"<path>","line":<n>,"what":"<one sentence>","fix":"<one sentence>"}]}
+{"ledger":"<question>","unit":"<unit exactly as given>","files":<files read>,"findings":[{"kind":"defect|tidy|unread","file":"<path>","line":<n>,"what":"<one sentence>","fix":"<one sentence>"}]}
 ```
 
 - `unit` is copied exactly as its batch line spells it, character for character. Never split a unit into files, shorten its list or re-spell it: the trailer that dates the cell has to match.
 - `files` is the number of files read in full.
 - `line` is the cited line, or 0 for a finding on no single line.
-- `verdict` is the worst kind found. `clean` means every in-scope file was read in full and nothing survived.
+- A unit with no finding is `clean`: every in-scope file was read in full and nothing survived. Any finding sends the unit to a fixer, a `tidy` included.
 - `unread` means the unit could not be read in full. Its finding has kind `unread`: `what` gives the reason and `fix` says how the unit would be read.
 
-The final reply is one line: `batch <id>: <n> judgements, clean <a>, tidy <b>, defect <c>, unread <d>`.
+The final reply is one line: `batch <id>: <n> judgements, clean <a>, with findings <b>`.

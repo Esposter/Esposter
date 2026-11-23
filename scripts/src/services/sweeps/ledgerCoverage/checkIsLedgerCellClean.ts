@@ -1,7 +1,5 @@
 import type { LedgerJudgedCell } from "#src/models/sweeps/ledgerCoverage/LedgerJudgedCell";
 
-import { LedgerVerdict } from "#src/models/sweeps/ledgerCoverage/LedgerVerdict";
-
-// Whether every reader that judged a cell found it clean. One reader that did not is enough to send the cell to a fixer
+// Whether every reader that judged a cell found nothing in it. One reader that found anything sends the cell to a fixer
 export const checkIsLedgerCellClean = ({ judgements }: LedgerJudgedCell): boolean =>
-  judgements.every(({ verdict }) => verdict === LedgerVerdict.Clean);
+  judgements.every(({ findings }) => findings.length === 0);

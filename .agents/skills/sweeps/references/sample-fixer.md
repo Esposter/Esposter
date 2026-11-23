@@ -4,7 +4,7 @@ Read when fixing the units a sample sitting's readers left, the units `pnpm ai:s
 
 ## Input
 
-A JSON file of units, each `{ "unit": …, "judgements": [...] }`: one unit and its judgements that were not clean, one per question. Each judgement carries the reader's verdict, the files it read and its findings. A reader's finding is a lead, not a fact.
+A JSON file of units, each `{ "unit": …, "judgements": [...] }`: one unit and its judgements that were not clean, one per question. Each judgement carries the files it read and its findings. A reader's finding is a lead, not a fact.
 
 ## For each unit
 
@@ -17,7 +17,7 @@ A JSON file of units, each `{ "unit": …, "judgements": [...] }`: one unit and 
    - a `tidy` is behaviour-preserving only;
    - a `defect` is fixed in its behaviour. Add one regression test only where it fails honestly without the fix (`testing` skill, "What to Test"), and prove it by reverting the fix once and restoring it (`testing` skill, `references/regression-proof.md`);
    - a finding that shows the rule is stale, or contradicts code that is right, is fixed in the skill or spec that owns the rule, and its outcome is `skill`.
-4. **Unread cells.** A judgement with the verdict `unread` was never read. Read that question's in-scope files in the unit in full first: the unit's files by the grammar in `references/sample-reader.md`, its scope from the question's `Scope` cell, its rules from the ledger and the owning skill. What you find becomes your own findings, fixed the same way, and the cell's `Ledger:` trailer waits until you have read it whole.
+4. **Unread cells.** A judgement with an `unread` finding was never read. Read that question's in-scope files in the unit in full first: the unit's files by the grammar in `references/sample-reader.md`, its scope from the question's `Scope` cell, its rules from the ledger and the owning skill. What you find becomes your own findings, fixed the same way, and the cell's `Ledger:` trailer waits until you have read it whole.
 5. Commit each unit by pathspec as its own commit, `fix(<scope>): …` or `refactor(<scope>): …`, carrying:
    - one `Ledger: <question> | <unit>` trailer per question judged on the unit, the unit spelled exactly as in the input;
    - the co-author trailer of the model that did the work (`git` skill).
