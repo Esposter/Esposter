@@ -69,6 +69,6 @@ The resweep reads the repository once per question set, not once per ledger, so 
 | -------------------------------------------------------------- | ---------------------------------------------------- |
 | `.agents/ledgers/README.md`                                    | the index: each ledger's rules owner, unit and scope |
 | `scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts` | the ledgers whose rows are derived from the tree     |
-| `scripts/src/workspace/ledgerUnits.test.ts`                    | holds each derived ledger's rows to the tree         |
+| `scripts/src/workspace/precheck.test.ts`                       | holds each derived ledger's rows to the tree         |
 | `.agents/skills/sweeps/SKILL.md`                               | the sweep process, trailers and resizing rules       |
 | `openspec/specs/architecture/write-once/design.md`             | the red flags a ledger's own shape is judged by      |
