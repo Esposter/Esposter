@@ -26,14 +26,15 @@ describe("build", () => {
     serviceWorker = readFileSync(join(PUBLIC_DIRECTORY, "sw.js"), "utf8");
   }, BUILD_TIMEOUT);
 
-  test("precache what Nitro served: the manifest, the app manifest of the build and the shell", () => {
+  test("precache what Nitro served: the manifest and the shell, never the build's app manifest", () => {
     expect.hasAssertions();
 
     const urls = Array.from(serviceWorker.matchAll(/url:`(?<url>[^`]+)`/gu), ({ groups }) => groups?.url);
 
     expect(urls).toContain("manifest.webmanifest");
     expect(urls).toContain("/");
-    expect(urls.some((url) => /^_nuxt\/builds\/meta\/[^/]+\.json$/u.test(url ?? ""))).toBe(true);
+    // The next deploy replaces the app manifest, so a worker of this build would fail its install once it is superseded
+    expect(urls.some((url) => url?.startsWith("_nuxt/builds/meta/"))).toBe(false);
   });
 
   // A manifest icon is precached whatever the glob, so the image here is one only the glob can list

@@ -2,7 +2,7 @@ import { createManifestTransform } from "#src/services/createManifestTransform";
 import { describe, expect, test } from "vitest";
 
 describe(createManifestTransform, () => {
-  const transform = createManifestTransform("/app/", "_nuxt");
+  const transform = createManifestTransform("/app/");
 
   test("the app's own page is keyed as the base URL and another page as its route", async () => {
     expect.hasAssertions();
@@ -14,16 +14,5 @@ describe(createManifestTransform, () => {
     ]);
 
     expect(manifest.map(({ url }) => url)).toStrictEqual(["/app/", "about", "contact"]);
-  });
-
-  test("an app manifest named by its content has no revision and any other file keeps its own", async () => {
-    expect.hasAssertions();
-
-    const { manifest } = await transform([
-      { revision: "a", size: 1, url: "_nuxt/builds/meta/1.json" },
-      { revision: "b", size: 1, url: "_nuxt/entry.js" },
-    ]);
-
-    expect(manifest.map(({ revision }) => revision)).toStrictEqual([null, "b"]);
   });
 });

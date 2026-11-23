@@ -2,9 +2,8 @@ import type { PwaContext } from "#src/models/PwaContext";
 import type { Nuxt } from "@nuxt/schema";
 import type { Nitro } from "nitro/types";
 
-import { BUILD_META_DIRECTORY, PRECACHE_EXTENSIONS } from "#src/services/constants";
+import { PRECACHE_EXTENSIONS } from "#src/services/constants";
 import { createManifestTransform } from "#src/services/createManifestTransform";
-import { getImmutableAssets } from "#src/services/getImmutableAssets";
 import { getNitroNavigationDenylist } from "#src/services/getNitroNavigationDenylist";
 import { getStrategyOptions } from "#src/services/getStrategyOptions";
 import { globSync } from "node:fs";
@@ -20,18 +19,16 @@ export const buildServiceWorker = async (context: PwaContext, nuxt: Nuxt, nitro:
   if (context.resolvedOptions.disable) return;
 
   const { baseURL } = nuxt.options.app;
-  const immutableAssets = getImmutableAssets(nuxt);
   const options = getStrategyOptions(context);
   if (options) {
     // A payload exists only for a prerendered page, and workbox fails a pattern that matches nothing
     const payloadPatterns =
       globSync(PAYLOAD_PATTERN, { cwd: nitro.options.output.publicDir }).length > 0 ? [PAYLOAD_PATTERN] : [];
-    options.globPatterns ??= [
-      `**/*.{${PRECACHE_EXTENSIONS.join(",")}}`,
-      ...payloadPatterns,
-      `${immutableAssets}/${BUILD_META_DIRECTORY}/*.json`,
-    ];
-    options.manifestTransforms ??= [createManifestTransform(baseURL, immutableAssets)];
+    // The app manifest under `_nuxt/builds/meta/` is named by its build's id and left out. Each deploy serves only its
+    // Own, so a worker of an earlier build would fail its whole install on it: the precache fetches one file at a time,
+    // And a 404 on the superseded manifest stops it partway through, with the worker never activating
+    options.globPatterns ??= [`**/*.{${PRECACHE_EXTENSIONS.join(",")}}`, ...payloadPatterns];
+    options.manifestTransforms ??= [createManifestTransform(baseURL)];
   }
   const { generateSW } = context.resolvedOptions;
   if (context.strategy === "generate-sw" && generateSW) {

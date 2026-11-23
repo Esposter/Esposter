@@ -30,7 +30,7 @@ The alternative is a default that hosts every static file and keeps git holding 
 
 - **Version skew.** A deploy names a file by url. A remote file that changes independently of the deploy means a page built against one set of hashes can run against a lock published later, or the reverse. A bundled file is fingerprinted by the same build that names it, so the two cannot disagree.
 - **Dev needs the network.** A remote icon makes `pnpm dev` and an offline session fail on a file the bundle would have carried.
-- **Offline precache is lost.** The service worker precache takes the build's own files. Today the precache globs are `**/*.{js,css,html}` (`packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`), so bundled images are not precached either. Remote files are not in the precache at all. The offline gain of bundling images is therefore smaller than it looks, and the change does not claim it. Hosted objects are kept by the preloader's own cache, which is the offline story for hosted media.
+- **Offline precache is lost.** The service worker precache takes the build's own files: the code, styles, images and fonts the server serves (`PRECACHE_EXTENSIONS`, read by `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`), and not the app manifest, which the next deploy replaces. Remote files are not in the precache at all. Hosted objects are kept by the preloader's own cache, which is the offline story for hosted media.
 - **A publish for every icon edit.** A two-line icon change would need a lock commit and a publish before it is visible.
 
 ## The generic system
@@ -290,7 +290,7 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 | `apps/web/server/routes/assets/[bucket]/[...key].get.ts`                       | serves the user buckets only, once the game buckets are off the route                         |
 | `apps/web/configuration/security.ts`                                           | the `connect-src`, `font-src` and `media-src` directives over the environment's hosted origin |
 | `apps/web/service-worker/sw.ts`                                                | the cache-first route over the hosted origins, and the claim on activation                    |
-| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`                | the precache globs, which `**/*.{js,css,html}` keeps off hosted objects                       |
+| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`                | the precache globs, the server's own files without the app manifest                           |
 | `scripts/src/services/hostedAssets/publishHostedAssets.ts`                     | the publish pipeline the generic publish generalises                                          |
 | `scripts/src/services/hostedAssets/verifyHostedAssetObject.ts`                 | the per-object hash check the fill reuses                                                     |
 | `scripts/src/services/hostedAssets/repairHostedAssets.ts`                      | the repair, which copies a lost object or index from the other environment's bucket           |
