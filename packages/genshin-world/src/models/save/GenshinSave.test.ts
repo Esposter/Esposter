@@ -11,11 +11,11 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import {
-  MAX_HOME_BLUEPRINT_COUNT,
-  MAX_HOME_COMPANION_COUNT,
-  MAX_HOME_ORDER_COUNT,
   MAX_HOME_PLACEMENT_COUNT,
-  MAX_HOME_REWARD_CLAIM_COUNT,
+  MAX_STORED_HOME_BLUEPRINT_COUNT,
+  MAX_STORED_HOME_COMPANION_COUNT,
+  MAX_STORED_HOME_ORDER_COUNT,
+  MAX_STORED_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
 import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import { MAX_STORED_MAIL_COUNT } from "#src/services/mail/constants";
@@ -203,11 +203,20 @@ describe("genshinSaveSchema", () => {
         seedItemId: maxNumber,
       })),
       homeProgress: {
-        claimedRewardIds: Array.from({ length: MAX_HOME_REWARD_CLAIM_COUNT }, (_value, index) => maxNumber - index),
-        companionIds: Array.from({ length: MAX_HOME_COMPANION_COUNT }, (_value, index) => maxNumber - index),
-        learnedBlueprintIds: Array.from({ length: MAX_HOME_BLUEPRINT_COUNT }, (_value, index) => maxNumber - index),
-        madeBlueprintIds: Array.from({ length: MAX_HOME_BLUEPRINT_COUNT }, (_value, index) => maxNumber - index),
-        orders: Array.from({ length: MAX_HOME_ORDER_COUNT }, () => ({ blueprintId: maxNumber, startedAt: maxInstant })),
+        claimedRewardIds: Array.from(
+          { length: MAX_STORED_HOME_REWARD_CLAIM_COUNT },
+          (_value, index) => maxNumber - index,
+        ),
+        companionIds: Array.from({ length: MAX_STORED_HOME_COMPANION_COUNT }, (_value, index) => maxNumber - index),
+        learnedBlueprintIds: Array.from(
+          { length: MAX_STORED_HOME_BLUEPRINT_COUNT },
+          (_value, index) => maxNumber - index,
+        ),
+        madeBlueprintIds: Array.from({ length: MAX_STORED_HOME_BLUEPRINT_COUNT }, (_value, index) => maxNumber - index),
+        orders: Array.from({ length: MAX_STORED_HOME_ORDER_COUNT }, () => ({
+          blueprintId: maxNumber,
+          startedAt: maxInstant,
+        })),
         realmBounty: maxNumber,
         realmBountyAccruedAt: maxInstant,
         realmCurrency: maxNumber,

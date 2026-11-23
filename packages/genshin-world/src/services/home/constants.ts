@@ -21,14 +21,17 @@ export const MAX_HOME_PLACEMENT_COUNT =
   HOME_REALM_COUNT *
   (HOME_EXTERIOR_AREA_COUNT * HOME_EXTERIOR_FURNISHING_LIMIT +
     HOME_INTERIOR_AREA_COUNT * HOME_INTERIOR_FURNISHING_LIMIT);
-// The most of each list a realm's progress holds, each counted from the dump: the companions a realm deploys at the top
-// Trust Rank (`deployNpcCount` of the 10 rows of `HomeworldLevelExcelConfigData`, the largest 8), the queues a Trust Rank
-// Opens (that table's 10 levels), the furnishing blueprints (the 1,340 rows of `FurnitureMakeExcelConfigData`), and the
-// Companions' one-time rewards (233 distinct `rewardID`s of the `HOME_AVATAR_REWARD_EVENT` rows of `HomeWorldEventExcelConfigData`)
-export const MAX_HOME_COMPANION_COUNT = 8;
-export const MAX_HOME_ORDER_COUNT = 10;
-export const MAX_HOME_BLUEPRINT_COUNT = 1340;
-export const MAX_HOME_REWARD_CLAIM_COUNT = 233;
+// The most of each list a realm's progress holds in a stored save: the app's own storage ceilings, which the save schema
+// Bounds a realm's lists by, so a crafted save cannot grow the blob without limit. Each is set above the count the dump
+// Holds, so every save the game allows is stored, and none is a copy of a game count: the companions a realm deploys (8
+// Of the dump's `HomeworldLevelExcelConfigData` rows at the top Trust Rank), the queues a Trust Rank opens (10 levels),
+// The furnishing blueprints (1,405 rows of `FurnitureMakeExcelConfigData`, one per configID) and the Companions' one-time
+// Rewards (233 distinct `rewardID`s of the `HOME_AVATAR_REWARD_EVENT` rows of `HomeWorldEventExcelConfigData`). Each
+// Ceiling is the next power of two above the count
+export const MAX_STORED_HOME_COMPANION_COUNT = 16;
+export const MAX_STORED_HOME_ORDER_COUNT = 16;
+export const MAX_STORED_HOME_BLUEPRINT_COUNT = 2048;
+export const MAX_STORED_HOME_REWARD_CLAIM_COUNT = 256;
 // The Serenitea Pot's gadget: the material row of the widget type with id 220026, which the dump names with the name hash
 // 200477924, the English "Serenitea Pot". The gadget is the material, and the realm is entered by its use
 export const HOME_POT_GADGET_ID = 220026;

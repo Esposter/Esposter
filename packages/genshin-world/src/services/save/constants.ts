@@ -16,11 +16,11 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import {
-  MAX_HOME_BLUEPRINT_COUNT,
-  MAX_HOME_COMPANION_COUNT,
-  MAX_HOME_ORDER_COUNT,
   MAX_HOME_PLACEMENT_COUNT,
-  MAX_HOME_REWARD_CLAIM_COUNT,
+  MAX_STORED_HOME_BLUEPRINT_COUNT,
+  MAX_STORED_HOME_COMPANION_COUNT,
+  MAX_STORED_HOME_ORDER_COUNT,
+  MAX_STORED_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
 import { EMPTY_CURRENCIES, INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
@@ -368,10 +368,10 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     getRecordEntryLength(Array.from({ length: MAX_FISHING_CATCH_COUNT }, () => MAX_SAVE_INSTANT)) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLANTING) +
-  MAX_HOME_COMPANION_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
-  MAX_HOME_ORDER_COUNT * getListEntryLength({ blueprintId: MAX_SAVE_NUMBER, startedAt: MAX_SAVE_INSTANT }) +
-  MAX_HOME_BLUEPRINT_COUNT * 2 * getListEntryLength(MAX_SAVE_NUMBER) +
-  MAX_HOME_REWARD_CLAIM_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
+  MAX_STORED_HOME_COMPANION_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
+  MAX_STORED_HOME_ORDER_COUNT * getListEntryLength({ blueprintId: MAX_SAVE_NUMBER, startedAt: MAX_SAVE_INSTANT }) +
+  MAX_STORED_HOME_BLUEPRINT_COUNT * 2 * getListEntryLength(MAX_SAVE_NUMBER) +
+  MAX_STORED_HOME_REWARD_CLAIM_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ABYSS_CYCLE_COUNT * getRecordEntryLength(LONGEST_ABYSS_CYCLE_SAVE) +
   MAX_STORED_MAIL_COUNT * getListEntryLength(LONGEST_MAIL_SAVE) +
   MAX_QUEST_COUNT *
