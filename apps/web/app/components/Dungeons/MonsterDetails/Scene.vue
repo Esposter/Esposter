@@ -4,7 +4,7 @@ import { MenuExperienceTextStyle } from "#src/assets/dungeons/scene/monsterDetai
 import { MenuTextStyle } from "#src/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
 import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/ExperienceLabelTextStyle";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
-import { MonsterKeyFileKeyMap } from "#src/services/dungeons/monster/MonsterKeyFileKeyMap";
+import { getMonsterFileKey } from "#src/services/dungeons/monster/getMonsterFileKey";
 import { useControlsStore } from "#src/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "#src/store/dungeons/monsterDetails/scene";
 import { prettify } from "#src/util/text/prettify";
@@ -39,14 +39,7 @@ const monsterName = computed(() => prettify(monster.value.key));
     />
     <Text :configuration="{ x: 200, y: 60, text: monsterName, style: { ...MenuTextStyle, fontSize: 40 } }" />
     <Image
-      :configuration="{
-        x: 160,
-        y: 310,
-        originX: 0,
-        originY: 1,
-        texture: MonsterKeyFileKeyMap[monster.key],
-        scale: 0.7,
-      }"
+      :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: getMonsterFileKey(monster.key), scale: 0.7 }"
     />
     <Text :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
     <Text
