@@ -17,7 +17,8 @@ flowchart LR
   subgraph Tooling
     Vitest[vitest.config.ts]
     Oxlint[oxlint.config.ts]
-    Oxfmt["@esposter/configuration/oxfmt"]  end
+    Oxfmt["@esposter/configuration/oxfmt"]
+  end
 
   Tooling -->|include and lint| Tree
   Tooling -. ignored where walked .-> Alias
