@@ -2,9 +2,9 @@
 
 ## 1. Shapes
 
-- [x] 1.1 Judge `genshin-evidence` against `genshin-spec-evidence`, merging them or naming the difference in their units and index rows. Verified by `pnpm -C scripts exec vitest run src/workspace/ledgerUnits.test.ts` passing and the index holding one row per question.
+- [x] 1.1 Judge `genshin-evidence` against `genshin-spec-evidence`, merging them or naming the difference in their units and index rows. Verified by `pnpm -C scripts exec vitest run src/workspace/precheck.test.ts` passing and the index holding one row per question.
 - [x] 1.2 Judge `kit-records` against `kit-differs-from-source` the same way. Verified by the same test passing after the merge or the recorded difference.
-- [x] 1.3 Resize or derive the hand-listed tooling tables in `quality`, `security` and `file-organization`, with every resized row opening at `—`. Verified by `ledgerUnits.test.ts` passing and no tooling table holding a row per file.
+- [x] 1.3 Resize or derive the hand-listed tooling tables in `quality`, `security` and `file-organization`, with every resized row opening at `—`. Verified by `precheck.test.ts` passing and no tooling table holding a row per file.
 - [x] 1.4 Decide whether the area-split ledgers share one derived listing of areas and units, and build it if they do. Verified by `ledgerAreaUnits.test.ts` holding every area-split ledger's rows to the listing, or by the index stating why each sizes its own.
 - [x] 1.5 Read every ledger's rules table for rules an enforcer now owns, and retire a ledger left with nothing to judge. Verified by `pnpm ai:sweep:ledger-coverage` reporting no row for a retired ledger and no index row naming it.
 - [x] 1.6 Reopen every remaining row dated before the current rules, setting its `Swept` cell to `—`. Verified by `pnpm ai:sweep:ledger-coverage` listing those rows as open.

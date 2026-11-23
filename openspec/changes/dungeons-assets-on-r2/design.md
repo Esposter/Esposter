@@ -14,7 +14,7 @@ Every file Phaser or a loader reads moves. A file the app's code never reads at 
 | `.tsx` tilesets (10)                                                                                                                           | Phaser's external tileset loader, by url                   | **hosted**, published from the Tiled tree; the file stays in git, since the Tiled editor and the `.tmx` need it beside them |
 | `index.tmx` (3), `index.tiled-project` (1)                                                                                                     | `pnpm tiled:gen` (`apps/web/scripts/tiled/`), not the game | **stays** in git as the authoring source of the property types                                                              |
 | Asset-map `.ts` files (`TilesetAssetMap`, `TilesetUrlMap`, `ImageAssetMap`, the sound and spritesheet maps, `TilemapAssetMap`, `FontAssetMap`) | the loaders                                                | **deleted**; the key map replaces them                                                                                      |
-| Attribution `.txt` (5) and `license.pdf` (1)                                                                                                   | nothing at runtime                                         | **moved** out of `app/assets/` to `apps/web/third-party/dungeons/`, since no code imports them                              |
+| Attribution `.txt` (5) and `license.pdf` (1)                                                                                                   | nothing at runtime                                         | **moved** out of `app/assets/` to "apps/web/third-party/dungeons/", since no code imports them                              |
 
 The `.tmx`, `.tiled-project`, `.tsx` and export `tilemap.json` files stay in git for the same reason the genshin-data skill keeps an authored world file after it is published: deleting an authored file once it is published is a settled rejection there. The runtime never reads the git copy. It reads the published copy the lock names, and the bundle holds none of these files.
 
@@ -116,9 +116,9 @@ The rows naming a file the prior art creates (the save-safe maps, the Preloader'
 | `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                    | deleted: the tileset urls come from the key map                                         |
 | `apps/web/app/util/file/toXmlBlobUrl.ts`                                    | deleted: only the tileset map imports it                                                |
 | `apps/web/app/components/Dungeons/Preloader/Scene.vue`                      | the one bar, driven by the generic preloader                                            |
-| `apps/web/app/services/dungeons/monster/MonsterKeyFileKeyMap.ts`            | the portrait of each species, the save-safe lookup                                      |
-| `apps/web/app/services/dungeons/item/CaptureItemFileKeyMap.ts`              | the capture ball's texture by item id                                                   |
-| `apps/web/app/services/dungeons/scene/world/TilemapForegroundFileKeyMap.ts` | each map's foreground, read by the pixel-art list                                       |
+| "apps/web/app/services/dungeons/monster/MonsterKeyFileKeyMap.ts"            | the portrait of each species, the save-safe lookup                                      |
+| "apps/web/app/services/dungeons/item/CaptureItemFileKeyMap.ts"              | the capture ball's texture by item id                                                   |
+| "apps/web/app/services/dungeons/scene/world/TilemapForegroundFileKeyMap.ts" | each map's foreground, read by the pixel-art list                                       |
 | `apps/web/app/services/dungeons/loader/PixelArtTextureKeys.ts`              | the pixel-art texture list, read from the key map                                       |
 | `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`         | reads each tileset's url by its name                                                    |
 | `apps/web/scripts/phaser/`                                                  | the dead file-pack generator, deleted                                                   |

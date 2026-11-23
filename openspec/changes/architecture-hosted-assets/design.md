@@ -12,7 +12,7 @@ Every static file is in one of three places. The place is decided by the file, n
 flowchart TD
   File["A static file"] --> Fixed{"Must its url be fixed, named by config, the document head or a crawler?"}
   Fixed -->|yes| Public["public/, at a fixed path"]
-  Fixed -->|no| Engine{"Is it read by an engine loader, or over the size cap, or does its lifecycle leave the deploy?"}
+  Fixed -->|no| Engine{"Hosted?<br/>engine-read, over the cap, or own lifecycle"}
   Engine -->|yes| Hosted["hosted: a product's objects, published by the generic system"]
   Engine -->|no| Bundled["bundled: app/assets, imported by the code that names it"]
 ```
@@ -63,7 +63,7 @@ The alternative is a default that hosts every static file and keeps git holding 
 
 A new workspace package, `hosted-assets`, holds the runtime: the lock's type, the key map's type, the url builder, the plan, the download, the held-set, the eviction and a headless preload with its progress and status, plus one Vue composable over it for the engines' scenes. A Vue composable belongs in a package that depends on Vue, and the package follows the headless-package shape of the other `*-headless` and engine packages.
 
-The publish is in `scripts/src/services/hostedAssets/`, beside the R2 transport it already uses.
+The publish is in "scripts/src/services/hostedAssets/", beside the R2 transport it already uses.
 
 Rejected: putting the runtime in `@esposter/shared`. That package is read by the server, so a Cache Storage downloader and its types would enter server code that never runs them. Rejected: keeping the runtime inside `genshin-world`, because the dungeons game would then import a Genshin package. Rejected: a copy per product, which is the duplication this change removes.
 
@@ -134,7 +134,7 @@ Decision: **(b)**.
 
 Numbers, from the R2 pricing page: a Class B operation (GET or HEAD) is $0.36 per million beyond 10 million free each month, and a Class A operation (PUT or LIST) is $4.50 per million beyond 1 million. Egress through the custom domain is free. Each uncached object read is one Class B operation, and a Worker invocation pays for its own request. The dungeons game's first visit reads about 80 objects, and the Worker route pays for each of them in every data center's first visit, where the custom domain pays once per data center and then serves from the edge. The money at this scale is small. The reason is latency and invocation count, and the docs give no number for either, so the design does not claim one.
 
-**The rejected record.** `openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md` rejects "a CDN in front of that bucket". Its reason states the premise that "the assets hosts already answer from Cloudflare's edge, through the web Worker's asset route, and immutable caching answers a repeat visit with no request, so a cache layer in front of the Worker would only save the Worker's read of a first visit's few hundred kilobytes." Under the written-record rule, a record is overturned when materially new evidence invalidates it. Three facts do:
+**The rejected record.** `openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md` rejects a CDN in front of that bucket. Its premise is that the asset hosts are already cached at the edge through the Worker, so a cache layer would save only the one small read a first visit makes. Under the written-record rule, a record is overturned when materially new evidence invalidates it. Three facts do:
 
 1. The premise that the hosts answer from the edge through the Worker is not documented. The docs fetched say Cloudflare caches by extension and that the Cache API is per data center, and they say nothing about a Worker's response being cached at the edge by default.
 2. The saving was measured as "a first visit's few hundred kilobytes". The dungeons game's first visit is about 70 MB of media, and the game's own first visit is the one the preloader downloads in full, so the record's figure no longer describes the traffic.
@@ -208,7 +208,7 @@ The rules, in order of preference:
 What checks the invariant today, for Genshin's lock:
 
 - `pnpm -C scripts genshin:data verify`, a CLI command that fetches every object of the lock from both buckets anonymously and checks each hash. It is not run by any workflow. `grep` finds no `genshin:data verify` in `.github/workflows/CI.yaml` or `Deploy.yaml`.
-- The mirror fill in `.github/workflows/build-packages.yaml` ("Fill the game data mirror"), which downloads the lock's objects into `~/.cache/workspace-data/content` when the cache keyed on the lock misses, on `main` and `ai/queue`. The check the fill makes on each object is one of the things the task below reads.
+- The mirror fill in `.github/workflows/build-packages.yaml` ("Fill the game data mirror"), which downloads the lock's objects into `{cache-root}/workspace-data/content` when the cache keyed on the lock misses, on `main` and `ai/queue`. The check the fill makes on each object is one of the things the task below reads.
 - The Coverage job restores that mirror, and the mirror's key is the lock's hash, so a changed lock always misses and always fills.
 
 The change makes one generic check over every product's lock, and places it in the fill, which already reads every object:

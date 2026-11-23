@@ -8,11 +8,11 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 
 - [ ] 1.1 Declare the dungeons product: its scope `dungeons` under the shared bucket `public-hosted-assets`, its content types, and the path-to-key derivation. Verify: a test that `Scene/Battle/ForestBackground.png` derives `SceneBattleForestBackground`, seen failing first.
 - [ ] 1.2 Add the Tiled sources to the declaration: `tilemap.json` and the `.tsx` tilesets read from the Tiled tree, published and never imported. Verify: `pnpm -C scripts hosted-assets publish --dry-run dungeons` lists each `.tsx` and each `tilemap.json` by its hash.
-- [ ] 1.3 Move the third-party notices to `apps/web/third-party/dungeons/`, out of `app/assets`, and check no import names them. Verify: `git grep -n "license.pdf\|License.txt\|notes.txt" -- apps/web/app` returns no hit.
+- [ ] 1.3 Move the third-party notices to "apps/web/third-party/dungeons/", out of `app/assets`, and check no import names them. Verify: `git grep -n "license.pdf\|License.txt\|notes.txt" -- apps/web/app` returns no hit.
 
 ## 2. Publish
 
-- [ ] 2.1 Make the first publish from the repository's files: the PNG, MP3, WebP and WOFF2 binaries, the `.tsx` tilesets and the `tilemap.json` exports, each read from its repository path. Verify: `pnpm -C scripts hosted-assets publish --dry-run dungeons` lists one record per file and refuses nothing, since no WAV is left in the repository.
+- [ ] 2.1 Make the first publish from the repository's files: the PNG, MP3, WebP and WOFF2 binaries, the `.tsx` tilesets and the `tilemap.json` exports, each read from its repository path. Verify: `pnpm -C scripts hosted-assets publish --dry-run dungeons` lists one record per file, names no attribution notice (the scenario "A file the code never loads is not hosted"), and refuses nothing, since no WAV is left in the repository.
 - [ ] 2.2 Run `hosted-assets publish --dry-run dungeons` and read the output: each record named, each key added, and no refusal. Verify: the dry run exits zero and prints the object count.
 - [ ] 2.3 Publish to dev, then prod, then commit the lock. Verify: `pnpm -C scripts hosted-assets verify dungeons` prints the object count from both environments with no failure, and a script hashing each repository file equals its object's name for every file, the owner's byte check.
 - [ ] 2.4 `git rm` the repository copies of the hosted binaries, after 2.3's byte check passes. Verify: `git ls-files apps/web/app/assets/dungeons | grep -E '\.(png|webp|mp3|woff2)$'` prints nothing.
@@ -20,16 +20,16 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 ## 3. Key map and save-safe lookups
 
 - [ ] 3.1 Collapse the image, sound and font keys into `FileKey`, and make `Attack.soundEffectKey` `fileKey`. Verify: `pnpm -C apps/web typecheck` passes (`nuxt prepare`, then `tsrs`), and the typecheck names no removed key.
-- [ ] 3.2 Add `MonsterKeyFileKeyMap` and `CaptureItemFileKeyMap` as the save-safe lookups. Verify: a test that a species saved before the change resolves its portrait, seen failing first.
+- [ ] 3.2 Add `MonsterKeyFileKeyMap` and `CaptureItemFileKeyMap` as the save-safe lookups. Verify: a test named after the scenario "A monster saved before the change renders its portrait" that a species saved before the change resolves its portrait, seen failing first, and one named after the scenario "An unknown species fails its lookup".
 - [ ] 3.3 Drop the saved `asset` field from `monsterSchema`. Verify: a test that a saved monster carrying the field parses and a saved monster without it parses, seen failing first.
-- [ ] 3.4 Add the capture test: a saved inventory holding a Damaged Ball with no texture field captures. Verify: the test, seen failing first.
+- [ ] 3.4 Add the capture test: a saved inventory holding a Damaged Ball with no texture field captures. Verify: a test named after the scenario "A capture with a saved ball without a texture field still captures", seen failing first.
 - [ ] 3.5 Narrow `Asset` to `SpritesheetKey` and move it to `app/models`. Verify: `pnpm -C apps/web typecheck` passes.
 
 ## 4. Loaders and the Preloader
 
-- [ ] 4.1 Rewrite `loadImages`, `loadSounds`, `loadFonts` and `loadSpritesheets` to take keys and read the key map's urls. Verify: a test that `scene.load.image` receives an absolute `https://` url, seen failing first.
+- [ ] 4.1 Rewrite `loadImages`, `loadSounds`, `loadFonts` and `loadSpritesheets` to take keys and read the key map's urls. Verify: a test named after the scenario "A texture the scene draws comes from its hosted url" that `scene.load.image` receives an absolute `https://` url, seen failing first.
 - [ ] 4.2 Set `scene.load.setCORS('anonymous')` in the Preloader before the loads start. Verify: a test that the loader's `crossOrigin` reads `anonymous` before its first file, seen failing first.
-- [ ] 4.3 Replace the Preloader's `setBaseURL` and `pack` with the generic preloader's bar and the per-file loads. Verify: a driven browser run of the Preloader shows the bar advance and the title scene start after `complete`.
+- [ ] 4.3 Replace the Preloader's `setBaseURL` and `pack` with the generic preloader's bar and the per-file loads. Verify: a driven browser run of the Preloader shows the scenario "A first visit shows the download on the bar", with the bar advancing and the title scene starting after `complete`, and a test named after the scenario "A failed download does not start the game", seen failing first.
 - [ ] 4.4 Build the tilemap and tileset urls from the key map in `TiledJSONExternalFile`'s `tilesetURLs`. Verify: `pnpm -C packages/vue-phaserjs exec vitest run src/models/plugins/TiledJSONExternalFile.test.ts` passes with the map built from the key map.
 - [ ] 4.5 Delete `TilesetUrlMap.ts` with its test, `toXmlBlobUrl.ts`, and the asset maps. Verify: `git grep -n "TilesetUrlMap\|toXmlBlobUrl\|ImageAssetMap\|TilemapAssetMap" -- apps packages` returns no hit.
 
