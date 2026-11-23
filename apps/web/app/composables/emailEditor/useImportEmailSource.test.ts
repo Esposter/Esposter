@@ -52,7 +52,7 @@ describe(useImportEmailSource, () => {
     const { getEmailDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { undo } = pageBuilderHistoryStore;
-    const importEmailSource = useImportEmailSource();
+    const { importEmailSource } = useImportEmailSource();
     // Every node the import reads is minted an id, and the parser refuses a repeated one, so each mint is handed its own in turn
     const sectionId = v7();
     const columnId = v7();
@@ -92,7 +92,7 @@ describe(useImportEmailSource, () => {
     const { alerts } = storeToRefs(alertStore);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getEmailDocument } = pageBuilderDocumentStore;
-    const importEmailSource = useImportEmailSource();
+    const { importEmailSource } = useImportEmailSource();
     const isImported = importEmailSource(resourceId, TEST_INCLUDE_SOURCE);
 
     expect(isImported).toBe(false);

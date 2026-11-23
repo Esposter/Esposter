@@ -11,9 +11,11 @@ const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
 // The email this blade shows is the one the import answers for, read at setup so a close after the reader has left still names it
 const resourceId = currentResourceId.value;
-const importEmailSource = useImportEmailSource();
+const { checkEmailSource, importEmailSource } = useImportEmailSource();
 const source = ref("");
-// A refused source keeps the dialog and its source for another try, and an accepted one closes it
+// The source is checked as it is typed, so a source the email's types refuse keeps the dialog open with its reason in the
+// Field, and the import is sent only for one they take. A blank source is the empty field the confirm already holds
+const sourceRules = [(value: string) => checkIsBlankText(value) || checkEmailSource(value)];
 const isOpen = computed({
   get: () => isImportOpen.value,
   set: (newIsOpen) => {
@@ -27,15 +29,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <StyledDialog
+  <StyledFormDialog
     v-model="isOpen"
     confirm-label="Import"
-    :confirm="() => importEmailSource(resourceId, source)"
     :is-confirm-disabled="checkIsBlankText(source) || undefined"
-    title="Import MJML"
     :size="UiDialogSize.Large"
+    :submit="() => importEmailSource(resourceId, source)"
+    title="Import MJML"
   >
-    <UiTextField v-model="source" label="MJML source" :rows="20" />
+    <UiTextField v-model="source" label="MJML source" :rows="20" :rules="sourceRules" />
     <p text-muted>The email is replaced by this source as one edit, so one undo restores it.</p>
-  </StyledDialog>
+  </StyledFormDialog>
 </template>

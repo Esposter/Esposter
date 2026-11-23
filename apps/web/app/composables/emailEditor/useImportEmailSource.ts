@@ -1,3 +1,5 @@
+import type { z } from "zod";
+
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
@@ -8,23 +10,34 @@ import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { getResult, JsonPatchOperationType } from "@esposter/shared";
 import { parseMjmlDocument } from "mjml-blocks";
 
-// Replaces the open email's body and head with the document read from MJML source, as one edit the history records under
-// One label. A source the email types do not take leaves the email as it was, and the alert names each thing that did not
-// Fit. The answer is whether the email took the source, so the dialog that asked for it stays open on a refusal
+// The one reading of a source by the email's types, so the field's check and the import take the same source
+const readEmailSource = (source: string) =>
+  getResult(() => parseMjmlDocument(source, emailRegistry, emailBodyChildrenSchema, noteRichText, MAX_EMAIL_NODES));
+
+// A refusal names the tag, attribute or value it is about, and one repeated across nodes is named once
+const getRefusalMessage = (error: z.ZodError) =>
+  `Could not import the MJML: ${[...new Set(error.issues.map(({ message }) => message))].join("; ")}`;
+
+// The text a field shows for a source the email's types refuse, or true when they take it
+const checkEmailSource = (source: string): string | true =>
+  readEmailSource(source).match(
+    (result) => (result.success ? true : getRefusalMessage(result.error)),
+    (error) => error.message,
+  );
+
+// Replaces the open email's body and head with a source the email's types take, as one edit the history records under
+// One label. The field runs the check as the source is typed, so the dialog only sends a source the email takes; a refusal
+// That reaches the import is alerted with the same wording, and leaves the email as it was
 export const useImportEmailSource = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
-  return (resourceId: string, source: string) =>
-    getResult(() =>
-      parseMjmlDocument(source, emailRegistry, emailBodyChildrenSchema, noteRichText, MAX_EMAIL_NODES),
-    ).match(
+  const importEmailSource = (resourceId: string, source: string) =>
+    readEmailSource(source).match(
       (result) => {
         if (!result.success) {
-          // A refusal names the tag, attribute or value it is about, and one repeated across nodes is named once
-          const refusals = new Set(result.error.issues.map(({ message }) => message));
-          createAlert(`Could not import the MJML: ${[...refusals].join("; ")}`, "error");
+          createAlert(getRefusalMessage(result.error), "error");
           return false;
         }
 
@@ -48,4 +61,5 @@ export const useImportEmailSource = () => {
         return false;
       },
     );
+  return { checkEmailSource, importEmailSource };
 };
