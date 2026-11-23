@@ -46,6 +46,44 @@ describe(getHostedAssetKeysSource, () => {
     `);
   });
 
+  test("breaks a value after its name when the line is over the formatter's width, as the formatter does", () => {
+    expect.hasAssertions();
+
+    const source = getHostedAssetKeysSource(
+      "Fixture",
+      "fixtureLock.json",
+      [
+        [
+          "SceneBattleForestBackgroundWithAVeryLongDerivedNameThatNeedsWrapping",
+          "dungeons/scene/battle/forestBackground/wrapping/long/path.png",
+        ],
+      ],
+      [],
+    );
+
+    expect(source).toMatchInlineSnapshot(`
+      "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's keys, so each key keeps the spelling its lock entry gives it */
+      import type { ValueOfDeep } from "type-fest";
+
+      // The lock's keys as a nested constant, each path nested by its segments.
+      // FixtureKey is the union of its leaf paths, which readers may use to name a key.
+      // Generated from fixtureLock.json by the hosted-assets keys renderer; do not edit
+      export const FixtureKeys = {
+        SceneBattleForestBackgroundWithAVeryLongDerivedNameThatNeedsWrapping:
+          "dungeons/scene/battle/forestBackground/wrapping/long/path.png",
+      } as const;
+
+      export const FixtureIndexKeys = {
+
+      } as const;
+
+      export type FixtureIndexKey = ValueOfDeep<typeof FixtureIndexKeys>;
+      export type FixtureKey = ValueOfDeep<typeof FixtureKeys>;
+      export type FixtureKeyOf<D extends keyof typeof FixtureKeys> = ValueOfDeep<(typeof FixtureKeys)[D]>;
+      "
+    `);
+  });
+
   test("holds a derived name's lock key as its value, which is not the name", () => {
     expect.hasAssertions();
 
