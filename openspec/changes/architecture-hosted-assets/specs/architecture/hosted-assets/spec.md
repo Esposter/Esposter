@@ -53,7 +53,7 @@ A publish SHALL refuse, before it writes any object, a WAV file or a file over t
 
 ### Requirement: A committed lock names only objects that are verified
 
-A publish SHALL verify each object it wrote by reading it back and hashing its decoded bytes against the sha256 in its name, and SHALL commit the lock only after every object of the publish has passed.
+A publish SHALL verify each object it stores, and each object its next lock names that the current lock does not, by reading it back and hashing its decoded bytes against the sha256 in its name. It SHALL commit the lock only after every such object has passed. An object the current lock already names was verified when that lock was committed, so a publish whose next lock equals the current one SHALL make no request.
 
 #### Scenario: A mismatched object stops the commit
 
@@ -61,6 +61,13 @@ A publish SHALL verify each object it wrote by reading it back and hashing its d
 - **WHEN** the publish verifies its objects
 - **THEN** the publish fails
 - **AND** the committed lock is unchanged
+
+#### Scenario: A rerun of an unchanged plan makes no request
+
+- **GIVEN** a publish whose plan the committed lock already names
+- **WHEN** the publish runs for real
+- **THEN** no bucket is requested
+- **AND** the publish reports the lock as unchanged
 
 #### Scenario: A verified publish writes both environments
 

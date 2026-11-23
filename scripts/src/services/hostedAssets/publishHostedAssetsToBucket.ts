@@ -57,10 +57,16 @@ export const publishHostedAssetsToBucket = async (
     indexWrites.map((write) => () => writeRecord(write)),
     MAX_CONCURRENT_OBJECT_BODIES,
   );
-  // Every object the plan names is read back from the bucket and checked against its name, written or reused, so a bucket
-  // That stored other bytes under a name fails the publish before the lock that names them is committed
+  // What this run stores, and what the lock newly names, is read back from the bucket and checked against its name, written or
+  // Reused, so a bucket that stored other bytes under a name fails the publish before the lock that names them is committed.
+  // An object the current lock already names was checked when that lock was committed, so it is not read again
+  const writtenPaths = new Set(writes.map(({ key }) => key));
+  const readBackRecords = records.filter((record) => {
+    const key = getHostedAssetPath(record);
+    return writtenPaths.has(key) || !reachablePaths.has(key);
+  });
   await settleAll(
-    records.map((record) => () => readHostedAssetBytes(bucketClient, toHostedAssetLockObject(record))),
+    readBackRecords.map((record) => () => readHostedAssetBytes(bucketClient, toHostedAssetLockObject(record))),
     MAX_CONCURRENT_VERIFY_FETCHES,
   );
   return [...leafResults, ...indexResults].filter(Boolean).length;

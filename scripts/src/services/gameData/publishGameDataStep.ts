@@ -20,8 +20,8 @@ import { CloudflareEnvironment } from "@esposter/db-schema";
 
 // One generator's publish: the scopes it replaces are stored in both environments' buckets, and the lock is committed only
 // Once both have them. A dry run stores nothing and needs no credential, and its note adds what it would change against the
-// Published records. A publication that stores nothing and leaves the lock as it is makes no bucket client, so it needs no
-// Credential either. Returns a note of what the step did to the lock
+// Published records. A publication that leaves the lock as it is makes no bucket client, so it needs no credential either.
+// Returns a note of what the step did to the lock
 export const publishGameDataStep = async ({
   isDryRun,
   publication,
@@ -37,8 +37,7 @@ export const publishGameDataStep = async ({
     product: GAME_DATA_PRODUCT,
     scopes,
   });
-  if (result.outcome === HostedAssetPublishOutcome.Unchanged || result.outcome === HostedAssetPublishOutcome.Empty)
-    return formatIdleHostedAssetPublish(label, result.outcome);
+  if (result.outcome === HostedAssetPublishOutcome.Unchanged) return formatIdleHostedAssetPublish(label);
   if (result.outcome === HostedAssetPublishOutcome.DryRun)
     return [
       `${label}: dry run, ${result.storedObjectCount} records would be published`,

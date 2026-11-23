@@ -32,8 +32,7 @@ export const publishHostedAssetFiles = async (product: HostedAssetProduct, isDry
     product,
     scopes: [scope],
   });
-  if (result.outcome === HostedAssetPublishOutcome.Unchanged || result.outcome === HostedAssetPublishOutcome.Empty)
-    return formatIdleHostedAssetPublish(product.name, result.outcome);
+  if (result.outcome === HostedAssetPublishOutcome.Unchanged) return formatIdleHostedAssetPublish(product.name);
   if (result.outcome === HostedAssetPublishOutcome.DryRun)
     return formatHostedAssetFilesDryRun(product.name, currentLock, result.nextLock, result.records);
   await commitHostedAssetLock(product, [scope], result.plannedLock);

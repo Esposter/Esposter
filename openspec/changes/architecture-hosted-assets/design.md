@@ -89,14 +89,14 @@ sequenceDiagram
   Note over Lock: a dry run stops here, with no credential
   Lock->>Dev: put each new object, create-only
   Lock->>Prod: put each new object, create-only
-  Dev-->>Lock: every object read back, sha256 equals its name
-  Prod-->>Lock: every object read back, sha256 equals its name
+  Dev-->>Lock: each new object read back, sha256 equals its name
+  Prod-->>Lock: each new object read back, sha256 equals its name
   Lock->>Lock: commit the lock, and the keys file written beside it
 ```
 
 - **Dry run first.** `--dry-run` needs no credential and names what would change: the records, the keys added, removed or changed, and each changed object's path. A publish is not run without it, as the genshin-data skill already requires.
 - **Dev, then prod.** Both buckets take each object before the lock is committed, and the lock is committed only after both. A failure in either bucket throws before the commit, so a committed lock never names an object a reader cannot fetch. This is the existing `publishGameData` order, kept.
-- **Verification by hash.** Each object is read back from its bucket and its bytes are hashed. The hash must equal the sha256 in its name, and for an encoded object (Brotli or zstd) the decoded bytes are hashed, as the genshin verify already does. The check runs before the lock is committed, so the lock names only objects that were checked.
+- **Verification by hash.** Each object is read back from its bucket and its bytes are hashed. The hash must equal the sha256 in its name, and for an encoded object (Brotli or zstd) the decoded bytes are hashed, as the genshin verify already does. The check runs before the lock is committed, so the lock names only objects that were checked. An object the current lock already names was checked when that lock was committed, so a publish reads back only the objects it stores and the ones its next lock newly names, and a publish whose next lock equals the current one makes no request. The consequence is that a bucket which has since lost an object the lock names is found by `genshin:data verify`, which fetches each one, not by a publish that leaves the lock as it is.
 - **Scope and first publish.** The first publish of a product reads its files from the repository. Once each object's sha256 equals its file's, the adopter removes the repository copies with a one-time `git rm`, which `dungeons-assets-on-r2` task 2.4 names; no code performs the removal. Later edits go through `pull`, which restores a working copy from the lock. A publish writes only under the product's declared scope prefixes.
 - **Refusals.** A publish refuses, before any dry run writes its output:
   - uncompressed audio (WAV, AIFF or FLAC), since audio is published as MP3, which the lock names; the format ban is one list, `UNCOMPRESSED_AUDIO_EXTENSIONS`, which the bundle check reads too;

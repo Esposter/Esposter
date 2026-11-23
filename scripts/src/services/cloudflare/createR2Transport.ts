@@ -21,8 +21,8 @@ export const createR2Transport = (environment: CloudflareEnvironment): R2Transpo
   return {
     endpoint: `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     // The timeout starts once a request holds its slot, so a request queued behind the others is not timed out unsent. A slot
-    // Is released when the response's headers arrive, so a body read after that is not counted: the tooling reads back only
-    // Small index and listing bodies
+    // Is released when the response's headers arrive, so a body read after that is not counted: a publish reads back the
+    // Objects it stores or newly names, bodies up to the cap included, and MAX_CONCURRENT_VERIFY_FETCHES bounds those reads
     fetch: (url, init) =>
       runR2Request(() => signedFetch(url, { ...init, signal: AbortSignal.timeout(R2_REQUEST_TIMEOUT_MS) })),
   };

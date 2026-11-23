@@ -42,6 +42,11 @@ describe(publishHostedAssets, () => {
     indexes: { [PROFILE_KEY]: { "10000002": { name: "a" }, "10000003": { name: "b" } } },
     objects: { [WEAPONS_KEY]: [1, 2] },
   };
+  // The publication with one more object, so a publish of it changes the lock and lists the buckets
+  const publicationWithShields: HostedAssetPublication = {
+    ...publication,
+    objects: { ...publication.objects, "stats/shields": [3] },
+  };
   const scopes = [GameDataset.Profile, GameDataset.Stats];
   const product: HostedAssetProduct = {
     bucket: StorageBucket.PublicGenshinAssets,
@@ -91,7 +96,7 @@ describe(publishHostedAssets, () => {
     expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
   });
 
-  test("stores nothing an environment already holds when the lock already names the publication", async () => {
+  test("a real rerun of an unchanged plan makes no bucket request", async () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
@@ -105,8 +110,9 @@ describe(publishHostedAssets, () => {
         scopes,
       }),
     );
+    const createBucketClientMapSpy = vi.fn<typeof createBucketClientMap>(() => bucketClientMap);
     const rerun = await publishHostedAssets({
-      createBucketClientMap: () => bucketClientMap,
+      createBucketClientMap: createBucketClientMapSpy,
       currentLock,
       otherLocks: [],
       product,
@@ -114,16 +120,16 @@ describe(publishHostedAssets, () => {
       scopes,
     });
 
-    expect(rerun).toStrictEqual({
-      outcome: HostedAssetPublishOutcome.Published,
-      plannedLock: currentLock,
-      storedObjectCount: 4,
-      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 0 },
-    });
-    expect(bucketClientMap[CloudflareEnvironment.Development].store.size).toBe(4);
+    expect(rerun).toStrictEqual({ outcome: HostedAssetPublishOutcome.Unchanged });
+    expect(createBucketClientMapSpy).not.toHaveBeenCalled();
   });
 
-  test("stores an object an environment lost although the lock still names it", async () => {
+  // A publish that changes the lock stores again a record one environment lost although the lock names it. A publish that
+  // Leaves the lock as it is makes no request, so the added object is the change that lists the buckets
+  test.each([
+    ["an object", false],
+    ["an index", true],
+  ])("stores %s an environment lost although the lock still names it", async (_label, isIndex) => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
@@ -137,7 +143,9 @@ describe(publishHostedAssets, () => {
         scopes,
       }),
     );
-    const record = takeOne(planHostedAssetPublication(publication).records);
+    const record = takeOne(
+      planHostedAssetPublication(publication).records.filter(({ isIndex: isRecordIndex }) => isRecordIndex === isIndex),
+    );
     bucketClientMap[CloudflareEnvironment.Production].store.delete(getHostedAssetPath(record));
 
     const rerun = await publishHostedAssets({
@@ -145,20 +153,22 @@ describe(publishHostedAssets, () => {
       currentLock,
       otherLocks: [],
       product,
-      plan: planHostedAssetPublication(publication),
+      plan: planHostedAssetPublication(publicationWithShields),
       scopes,
     });
 
     expect(rerun).toStrictEqual({
       outcome: HostedAssetPublishOutcome.Published,
-      plannedLock: currentLock,
-      storedObjectCount: 4,
-      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 1 },
+      plannedLock: getPlannedLock(rerun),
+      storedObjectCount: 5,
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 1, [CloudflareEnvironment.Production]: 2 },
     });
-    expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
+    expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(5);
   });
 
-  test("stores an index an environment lost although the lock still names it", async () => {
+  // The lock keeps the entries of the scopes a publish does not replace, so a bucket that lost one of their indexes fails the
+  // Publish that replaces the others, rather than committing a lock that names a missing index
+  test("a publish of one scope aborts when a bucket lost an index of another scope", async () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
@@ -175,22 +185,18 @@ describe(publishHostedAssets, () => {
     const index = takeOne(planHostedAssetPublication(publication).records.filter(({ isIndex }) => isIndex));
     bucketClientMap[CloudflareEnvironment.Production].store.delete(getHostedAssetPath(index));
 
-    const rerun = await publishHostedAssets({
-      createBucketClientMap: () => bucketClientMap,
-      currentLock,
-      otherLocks: [],
-      product,
-      plan: planHostedAssetPublication(publication),
-      scopes,
-    });
-
-    expect(rerun).toStrictEqual({
-      outcome: HostedAssetPublishOutcome.Published,
-      plannedLock: currentLock,
-      storedObjectCount: 4,
-      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 1 },
-    });
-    expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
+    await expect(
+      publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock,
+        otherLocks: [],
+        plan: planHostedAssetPublication({ indexes: {}, objects: { [WEAPONS_KEY]: [3] } }),
+        product,
+        scopes: [GameDataset.Stats],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: profile/English/0d19ddf594acba61ccf65a4c77ab29e2c72196acbaeddc167796e43f0d223e37.json, is named by a lock but missing from its bucket]`,
+    );
   });
 
   // A record that changes is one new object, and its index is the only other object a lock change needs
@@ -325,25 +331,6 @@ describe(publishHostedAssets, () => {
     });
   });
 
-  // An empty publication that leaves the lock as it is stores and lists nothing, so it returns before any bucket is made,
-  // And the credential that would make one is never read
-  test("an empty publication makes no request and leaves the lock as it is", async () => {
-    expect.hasAssertions();
-
-    const createBucketClientMapSpy = vi.fn<typeof createBucketClientMap>(createBucketClientMap);
-    const result = await publishHostedAssets({
-      createBucketClientMap: createBucketClientMapSpy,
-      currentLock: emptyLock,
-      otherLocks: [],
-      product,
-      plan: planHostedAssetPublication({ indexes: {}, objects: {} }),
-      scopes,
-    });
-
-    expect(result).toStrictEqual({ outcome: HostedAssetPublishOutcome.Empty });
-    expect(createBucketClientMapSpy).not.toHaveBeenCalled();
-  });
-
   // The lock can change with no upload: a scope that names entries the lock holds drops them when nothing replaces them
   test("an empty publication that drops a scope's entries still publishes the lock", async () => {
     expect.hasAssertions();
@@ -421,12 +408,7 @@ describe(publishHostedAssets, () => {
       scopes: [filesScope],
     });
 
-    expect(rerun).toStrictEqual({
-      outcome: HostedAssetPublishOutcome.Published,
-      plannedLock: currentLock,
-      storedObjectCount: 1,
-      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 0 },
-    });
+    expect(rerun).toStrictEqual({ outcome: HostedAssetPublishOutcome.Unchanged });
   });
 
   // A changed file is a new object, so its lock entry names the new bytes under their own hash
@@ -527,29 +509,19 @@ describe(publishHostedAssets, () => {
     );
   });
 
-  // A stored object the current lock already names is reused, not written, so only the read back catches other bytes
+  // A stored object that no lock names is reused as it is while it is young, so only the read back catches other bytes
   // Stored under its name
   test("a reused object whose stored bytes are altered stops the commit", async () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
-    const currentLock = getPlannedLock(
-      await publishHostedAssets({
-        createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
-        plan: planHostedAssetPublication(publication),
-        scopes,
-      }),
-    );
     const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
     await bucketClientMap[CloudflareEnvironment.Production].put(alteredPath, new Uint8Array(Buffer.from(" ")));
 
     await expect(
       publishHostedAssets({
         createBucketClientMap: () => bucketClientMap,
-        currentLock,
+        currentLock: emptyLock,
         otherLocks: [],
         product,
         plan: planHostedAssetPublication(publication),

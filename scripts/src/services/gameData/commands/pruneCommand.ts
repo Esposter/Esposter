@@ -1,7 +1,6 @@
 /* oxlint-disable no-await-in-loop -- Committed prefix: a destructive prune that fails stops the environments behind it, so nothing is deleted after the failure, the deletes already made before it stay, and the one that failed is the one named */
 import type { SubCommandsDef } from "citty";
 
-import { HostedAssetMissingIndexPolicy } from "#src/models/hostedAssets/HostedAssetMissingIndexPolicy";
 import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
@@ -39,11 +38,8 @@ export const pruneCommand: SubCommandsDef[string] = defineCommand({
     const bucketClientMap = createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket);
     for (const environment of Object.values(CloudflareEnvironment)) {
       const bucketClient = bucketClientMap[environment];
-      const liveObjects = await readHostedAssetReachableObjects(
-        bucketClient,
-        locks,
-        HostedAssetMissingIndexPolicy.Abort,
-      );
+      // A prune skips no missing index: each one it cannot read would take what it names
+      const liveObjects = await readHostedAssetReachableObjects(bucketClient, locks, []);
       const result = await pruneHostedAssets({
         bucketClient,
         isDryRun: args["dry-run"],

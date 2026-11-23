@@ -12,7 +12,6 @@ export type HostedAssetPublishResult =
       records: HostedAssetRecord[];
       storedObjectCount: number;
     }
-  | { outcome: typeof HostedAssetPublishOutcome.Empty }
   | {
       outcome: typeof HostedAssetPublishOutcome.Published;
       plannedLock: HostedAssetLock;

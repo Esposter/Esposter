@@ -2,7 +2,6 @@ import type { HostedAssetPublishResult } from "#src/models/hostedAssets/HostedAs
 import type { HostedAssetRecord } from "#src/models/hostedAssets/HostedAssetRecord";
 import type { PublishHostedAssetsOptions } from "#src/models/hostedAssets/PublishHostedAssetsOptions";
 
-import { HostedAssetMissingIndexPolicy } from "#src/models/hostedAssets/HostedAssetMissingIndexPolicy";
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
 import { assertScopeUnclaimed } from "#src/services/hostedAssets/assertScopeUnclaimed";
 import { checkNamedByScopes } from "#src/services/hostedAssets/checkNamedByScopes";
@@ -34,21 +33,18 @@ export const publishHostedAssets = async ({
   if (outsideScopeKey !== undefined)
     throw new InvalidOperationError(Operation.Update, outsideScopeKey, "is published outside the scopes it names");
   const nextLock = mergeHostedAssetLock(product, currentLock, scopes, plan.lock);
-  const isLockUnchanged = formatHostedAssetLock(nextLock) === formatHostedAssetLock(currentLock);
+  // A lock that stays as it is makes no request, dry or real, since each object it names was read back when it was committed
+  if (formatHostedAssetLock(nextLock) === formatHostedAssetLock(currentLock))
+    return { outcome: HostedAssetPublishOutcome.Unchanged };
   // A dry run stops before any bucket, so it needs no credential and writes nothing
-  if (!createBucketClientMap) {
-    if (isLockUnchanged) return { outcome: HostedAssetPublishOutcome.Unchanged };
+  if (!createBucketClientMap)
     return {
       nextLock,
       outcome: HostedAssetPublishOutcome.DryRun,
       records: plan.records,
       storedObjectCount: plan.records.length,
     };
-  }
-  // A publication that stores no object and leaves the lock as it is returns before any bucket is made, so it lists none
-  // And needs no credential. Any other real publish lists each bucket, since the lock can name an object a bucket has lost,
-  // And each bucket stores only the objects it lacks
-  if (plan.records.length === 0 && isLockUnchanged) return { outcome: HostedAssetPublishOutcome.Empty };
+  // A publish that changes the lock lists each bucket, and stores only the objects it lacks
   const bucketClientMap = createBucketClientMap();
   const encodeStored = (record: HostedAssetRecord) =>
     product.source.kind === "records"
@@ -59,11 +55,8 @@ export const publishHostedAssets = async ({
   const getEncoded = (record: HostedAssetRecord) =>
     getOrCreate(encodeMap, getHostedAssetPath(record), () => encodeStored(record));
   const publishBucket = async (bucketClient: (typeof bucketClientMap)[CloudflareEnvironment]) => {
-    const reachableObjects = await readHostedAssetReachableObjects(
-      bucketClient,
-      [currentLock],
-      HostedAssetMissingIndexPolicy.Skip,
-    );
+    // A publish replaces its scopes, so an index of one of them that the bucket lacks is stored again rather than read
+    const reachableObjects = await readHostedAssetReachableObjects(bucketClient, [currentLock], scopes);
     return publishHostedAssetsToBucket(bucketClient, plan.records, reachableObjects, getEncoded);
   };
   const [devCount, prodCount] = await Promise.all([
