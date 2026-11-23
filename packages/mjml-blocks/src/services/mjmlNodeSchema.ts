@@ -51,9 +51,11 @@ import { createMjmlNodeBranch } from "#src/services/createMjmlNodeBranch";
 import { createMjmlSlotSchema } from "#src/services/createMjmlSlotSchema";
 import { z } from "zod";
 
-// The email's node schema: one static branch per MJML node type, each satisfying its node interface, and each slot's accepted types a static union over their branches
-// Nothing is built from the registry at runtime, so the compiler checks every branch and the union satisfies the node union. The MJML node graph has no cycle, so each branch is defined after the branches it holds
-// The consumer's leaf node and rich text are passed in, since a leaf is named only by the consumer and a text's content is read by its rich text's schema
+// The email's node schema: one static branch per MJML node type, each satisfying its node interface, and each slot's
+// Accepted types a static union over their branches Nothing is built from the registry at runtime, so the compiler
+// Checks every branch and the union satisfies the node union. The MJML node graph has no cycle, so each branch is
+// Defined after the branches it holds The consumer's leaf node and rich text are passed in, since a leaf is named only
+// By the consumer and a text's content is read by its rich text's schema
 export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
   leafNodeSchema,
   maxChildren,
@@ -183,7 +185,8 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     wrapperNode,
     leafNodeSchema,
   ]) satisfies z.ZodType<MjmlNode>;
-  // The body's children are the types MJML's body takes, each reached through its own branch, so the document's root reads them
+  // The body's children are the types MJML's body takes, each reached through its own branch, so the document's root
+  // Reads them
   const bodyChildrenSchema = createMjmlSlotSchema([
     rawNode,
     sectionNode,

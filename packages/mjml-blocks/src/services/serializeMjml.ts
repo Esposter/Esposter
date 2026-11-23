@@ -2,7 +2,8 @@ import type { MjmlJson } from "#src/models/MjmlJson";
 
 import { serializeAttributes } from "#src/services/serializeAttributes";
 
-// MJML source for MJML's JSON form, every element closed by its own tag, so an element that closes nothing never swallows its siblings
+// MJML source for MJML's JSON form, every element closed by its own tag, so an element that closes nothing never
+// Swallows its siblings
 export const serializeMjml = (json: MjmlJson): string => {
   const attributes = serializeAttributes(json.attributes);
   if ("children" in json)

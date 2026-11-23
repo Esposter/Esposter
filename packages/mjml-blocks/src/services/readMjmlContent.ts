@@ -6,7 +6,8 @@ import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { checkHasElement } from "#src/services/checkHasElement";
 import { exhaustiveGuard, sanitizeHtml } from "@esposter/shared";
 
-// An element's content as MJML wrote it: a label is its decoded text unless it holds an element, which its schema then refuses
+// An element's content as MJML wrote it: a label is its decoded text unless it holds an element, which its schema then
+// Refuses
 export const readMjmlContent = <TContent extends MjmlRichText>(
   element: HTMLElement,
   contentKind: MjmlContentKind,

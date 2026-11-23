@@ -7,7 +7,8 @@ import { getFilledMjmlAttributes } from "#src/services/getFilledMjmlAttributes";
 import { getMjmlAttributeSchema } from "#src/services/getMjmlAttributeSchema";
 import { mjmlRootPropsSchema } from "#src/services/mjmlRootPropsSchema";
 
-// The document's head and body, checked against the definitions it may name: each per-type attribute map is one the type takes
+// The document's head and body, checked against the definitions it may name: each per-type attribute map is one the
+// Type takes
 export const createMjmlRootPropsSchema = (
   definitions: Pick<MjmlBlockTypeDefinition, "allowedAttributes" | "type">[],
 ): typeof mjmlRootPropsSchema =>

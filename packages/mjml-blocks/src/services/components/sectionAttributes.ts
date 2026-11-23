@@ -1,6 +1,7 @@
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 
-// The attributes and defaults a section-shaped container shares, held once so mj-section and mj-wrapper cannot drift apart
+// The attributes and defaults a section-shaped container shares, held once so mj-section and mj-wrapper cannot drift
+// Apart
 const sectionBaseAllowedAttributes = {
   "background-color": "color",
   "background-position": "string",

@@ -3,8 +3,9 @@ import type { MjmlJson } from "#src/models/MjmlJson";
 import type { BlockNode, BlockTypeDefinition, OwnProps } from "vue-block-editor-headless";
 import type { z } from "zod";
 
-// A registry entry for an MJML block type: its attributes and defaults in MJML's grammar, and how it renders to MJML's JSON form
-// Its render receives the node as the core holds it, and reads each prop it needs with getBlockPropValue and a per-field parse
+// A registry entry for an MJML block type: its attributes and defaults in MJML's grammar, and how it renders to MJML's
+// JSON form Its render receives the node as the core holds it, and reads each prop it needs with getBlockPropValue and
+// A per-field parse
 export type MjmlBlockTypeDefinition<TNode extends BlockNode = BlockNode, TContext = unknown> = MjmlBlockTypeFields<
   TNode,
   TContext
@@ -15,13 +16,15 @@ export type MjmlBlockTypeDefinition<TNode extends BlockNode = BlockNode, TContex
 type MjmlBlockTypeFields<TNode extends BlockNode, TContext> = Pick<BlockTypeDefinition<TNode>, "slots" | "type"> & {
   allowedAttributes: Record<string, string>;
   defaultAttributes: Record<string, string>;
-  // The form the node's props are edited through in the content panel, which holds what the style panel and the canvas do not edit
+  // The form the node's props are edited through in the content panel, which holds what the style panel and the canvas
+  // Do not edit
   formSchema: z.ZodType;
   hasAlternativeText: boolean;
   render: (node: BlockNode, slots: Record<string, MjmlJson[]>, context: TContext) => MjmlJson;
 };
 
-// The content kind a definition declares, keyed to the props schema that holds its content: a label or raw kind holds a string, rich text holds its consumer's content, and a definition without a kind holds no content of its own
+// The content kind a definition declares, keyed to the props schema that holds its content: a label or raw kind holds a
+// String, rich text holds its consumer's content, and a definition without a kind holds no content of its own
 type MjmlContentDefinition<TNode extends BlockNode> =
   | {
       contentKind: typeof MjmlContentKind.Label | typeof MjmlContentKind.Raw;

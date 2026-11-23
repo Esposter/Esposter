@@ -9,7 +9,8 @@ import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
-// A rich-text component's type: its attributes, defaults, props schema and slots, and a render of its content through the consumer's rich text
+// A rich-text component's type: its attributes, defaults, props schema and slots, and a render of its content through
+// The consumer's rich text
 export const createMjmlRichTextType = <
   TNode extends MjmlAccordionTextNode | MjmlTextNode,
   TContent extends MjmlRichText,

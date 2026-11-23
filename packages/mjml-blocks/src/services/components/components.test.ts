@@ -6,7 +6,8 @@ import { createRequire } from "node:module";
 import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
 
-// MJML writes some defaults as entities, which the read back decodes, so each default is compared as the character it names
+// MJML writes some defaults as entities, which the read back decodes, so each default is compared as the character it
+// Names
 const decodeDefault = (value: string): string =>
   parse(`<i value="${value}"></i>`).querySelector("i")?.getAttribute("value") ?? value;
 
@@ -17,7 +18,8 @@ const readComponent = (component: object) => ({
 });
 
 describe("components", () => {
-  // The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by selector
+  // The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by
+  // Selector
   const EXCLUDED_MJML_TAGS: ReadonlySet<string> = new Set(["mj-class", "mj-html-attributes", "mj-include"]);
   const CSS_CLASS = "css-class";
   const MJ_CLASS = "mj-class";

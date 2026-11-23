@@ -2,12 +2,14 @@ import { MjmlNodeType } from "#src/models/MjmlNodeType";
 
 // The key the defaults for every component are held under: mj-all's own tag, as each type's defaults sit under its tag
 export const ALL_ATTRIBUTES_KEY = "mj-all";
-// The attribute the root's direction is written under, HTML's own name for it, held as a string since no identifier of ours takes it
+// The attribute the root's direction is written under, HTML's own name for it, held as a string since no identifier of
+// Ours takes it
 export const DIRECTION_ATTRIBUTE_KEY = "dir";
 export const ALLOWED_URL_SCHEMES: string[] = ["http", "https", "mailto", "tel"];
 // The most characters a name may hold: a tag, an attribute, a font's name, a language tag and a node's id
 export const MJML_NAME_MAX_LENGTH = 64;
-// The most characters a value may hold: an attribute value, an address or a font's href, so a render never grows past it
+// The most characters a value may hold: an attribute value, an address or a font's href, so a render never grows past
+// It
 export const MJML_VALUE_MAX_LENGTH = 2048;
 // The most characters a piece of content may hold: a label, a raw block's markup or a stylesheet
 export const MJML_CONTENT_MAX_LENGTH = 100_000;
@@ -28,7 +30,8 @@ export const MJML_BODY_CHILDREN: MjmlNodeType[] = [
   MjmlNodeType.Hero,
 ];
 export const MJML_BREAKPOINT_ATTRIBUTES: Record<string, string> = { width: "unit(px)" };
-// The four side paddings every component takes, spread into each component's attributes. Left unannotated so each key stays literal
+// The four side paddings every component takes, spread into each component's attributes. Left unannotated so each key
+// Stays literal
 export const MJML_PADDING_ATTRIBUTES = {
   "padding-bottom": "unit(px,%)",
   "padding-left": "unit(px,%)",
@@ -196,10 +199,12 @@ export const MJML_COLOR_MATCHERS: RegExp[] = [
   /^#(?:[0-9a-f]{3}){1,2}$/iu,
   new RegExp(`^(${MJML_COLOR_NAMES.join("|")})$`, "u"),
 ];
-// The head's tags whose content is read raw: a head component is a root prop rather than a block type, so the registry does not hold it
+// The head's tags whose content is read raw: a head component is a root prop rather than a block type, so the registry
+// Does not hold it
 export const MJML_HEAD_TEXT_TAGS: string[] = ["mj-preview", "mj-style", "mj-title"];
-// The type a text between an element's children takes when it is not blank: no registry holds it, so the refusal names it
+// The type a text between an element's children takes when it is not blank: no registry holds it, so the refusal names
+// It
 export const STRAY_TEXT_TYPE = "#text";
-// The key an imported id attribute is kept under: no body component takes one, and a node's own id is the core's, so the
-// Strict props schema refuses it by this name rather than the import taking it as the node's id
+// The key an imported id attribute is kept under: no body component takes one, and a node's own id is the core's, so
+// The Strict props schema refuses it by this name rather than the import taking it as the node's id
 export const STRAY_ID_ATTRIBUTE_KEY = "#id";

@@ -12,8 +12,8 @@ import { readMjmlRootProps } from "#src/services/readMjmlRootProps";
 import { readMjmlTopLevel } from "#src/services/readMjmlTopLevel";
 import { parse } from "node-html-parser";
 
-// The MJML source as a document, read by the registry's document schema: a tag the package leaves out, an attribute it does not take
-// Or a value its type refuses is refused there, at the node it names
+// The MJML source as a document, read by the registry's document schema: a tag the package leaves out, an attribute it
+// Does not take Or a value its type refuses is refused there, at the node it names
 export const parseMjmlDocument = <TContext, TContent extends MjmlRichText>(
   source: string,
   registry: MjmlRegistry<TContext>,

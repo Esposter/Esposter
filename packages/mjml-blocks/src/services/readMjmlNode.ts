@@ -9,10 +9,10 @@ import { readMjmlContent } from "#src/services/readMjmlContent";
 import { v7 } from "uuid";
 import { getBlockTypeDefinition } from "vue-block-editor-headless";
 
-// A tag as a node of its type: an empty alternative text marks it decorative, its content is read by its kind, and its children
-// Are read when its definition has a slot or it holds any, so a child that no slot takes is refused by name
-// The node is the candidate the document schema parses, so it is unknown until that parse narrows it
-// Children are read by the list reader the caller passes in, which keeps this file from importing the list reader back
+// A tag as a node of its type: an empty alternative text marks it decorative, its content is read by its kind, and its
+// Children Are read when its definition has a slot or it holds any, so a child that no slot takes is refused by name
+// The node is the candidate the document schema parses, so it is unknown until that parse narrows it Children are read
+// By the list reader the caller passes in, which keeps this file from importing the list reader back
 export const readMjmlNode = <TContext, TContent extends MjmlRichText>(
   element: HTMLElement,
   registry: MjmlRegistry<TContext>,
@@ -22,10 +22,12 @@ export const readMjmlNode = <TContext, TContent extends MjmlRichText>(
   const type = element.rawTagName;
   const definition = getBlockTypeDefinition(registry, type);
   const { alt, id: idAttribute, ...attributes } = element.attributes;
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- an alt attribute as the document holds it, where empty marks an image decorative
+  // An alt attribute as the document
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- holds it, where empty marks an image decorative
   const isDecorative = definition?.hasAlternativeText === true && alt === "";
   const slotNames = Object.keys(definition?.slots ?? {});
-  // A source attribute named after a prop the node writes itself is refused under its name, so it cannot overwrite that prop
+  // A source attribute named after a prop the node writes itself is refused under its name, so it cannot overwrite that
+  // Prop
   const reservedNames = new Set([
     ...slotNames,
     ...(definition?.contentKind === undefined ? [] : ["content"]),

@@ -7,7 +7,8 @@ import { readMjmlAttributeRefusal } from "#src/services/readMjmlAttributeRefusal
 import { readMjmlHeadText } from "#src/services/readMjmlHeadText";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
 
-// A head's components as the root's props, each one the root's schema reads, and a component it does not name refused under its own name
+// A head's components as the root's props, each one the root's schema reads, and a component it does not name refused
+// Under its own name
 export const readMjmlHead = (head: HTMLElement): [string, unknown][] => {
   const entries: [string, unknown][] = Object.entries(readMjmlStrayText(head));
   entries.push(...readMjmlAttributeRefusal(head));
@@ -24,7 +25,8 @@ export const readMjmlHead = (head: HTMLElement): [string, unknown][] => {
 
     switch (child.rawTagName) {
       case "mj-attributes":
-        // The defaults element takes no attributes of its own, so one it carries is refused under its name, as a title's is
+        // The defaults element takes no attributes of its own, so one it carries is refused under its name, as a
+        // Title's is
         entries.push(...readMjmlAttributeRefusal(child));
         // Each default sits under its tag, mj-all included, and a second default for one tag is refused under its name
         for (const { attributes, rawTagName } of child.children)
@@ -41,7 +43,8 @@ export const readMjmlHead = (head: HTMLElement): [string, unknown][] => {
         entries.push(...readMjmlHeadText(child, "preview"));
         break;
       case "mj-style":
-        // Only the inline attribute set to inline is modelled, so a style carrying anything else is refused under its name, as a title with one is
+        // Only the inline attribute set to inline is modelled, so a style carrying anything else is refused under its
+        // Name, as a title with one is
         if (Object.entries(child.attributes).every(([name, value]) => name === "inline" && value === "inline"))
           styles.push({ css: child.rawText, inline: child.attributes.inline === "inline" });
         else entries.push([getMjmlRefusalKey(child.rawTagName), child.attributes]);

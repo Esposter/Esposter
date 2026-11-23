@@ -11,8 +11,9 @@ import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { escapeAttribute, escapeText, exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import { getBlockPropValue } from "vue-block-editor-headless";
 
-// A built-in component's render: its set attributes, the alternative text its flag writes, its children or its content, each escaped once
-// Each prop is unknown until its guard or parse narrows it, so the render reads the node as the core holds it and never as a typed props object
+// A built-in component's render: its set attributes, the alternative text its flag writes, its children or its content,
+// Each escaped once Each prop is unknown until its guard or parse narrows it, so the render reads the node as the core
+// Holds it and never as a typed props object
 export const renderMjmlNode = <TContent extends MjmlRichText>(
   specification: MjmlRenderSpecification,
   richText?: MjmlRichTextDefinition<TContent>,
