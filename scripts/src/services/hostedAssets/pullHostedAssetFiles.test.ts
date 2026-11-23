@@ -7,6 +7,7 @@ import { pullHostedAssetFiles } from "#src/services/hostedAssets/pullHostedAsset
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { StorageBucket } from "@esposter/db-schema";
 import { getContentAddress } from "@esposter/shared-node/cache";
+import { getHostedAssetPath } from "hosted-assets";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -47,9 +48,7 @@ describe(pullHostedAssetFiles, () => {
     const { lock, records } = planHostedAssetFiles(TEST_FILENAME, files);
     const bucketClient = createMemoryR2BucketClient();
     await Promise.all(
-      records.map((record) =>
-        bucketClient.put(`${record.scope}/${record.sha256}${record.extension}`, new Uint8Array(record.bytes)),
-      ),
+      records.map((record) => bucketClient.put(getHostedAssetPath(record), new Uint8Array(record.bytes))),
     );
 
     await expect(pullHostedAssetFiles(() => bucketClient, product, lock, [keyA, keyB], repositoryRoot)).resolves.toBe(
