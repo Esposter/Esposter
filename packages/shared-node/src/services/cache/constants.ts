@@ -3,4 +3,4 @@ import { join } from "node:path";
 
 // Objects named by the hex SHA-256 of their bytes, whichever source served them, so every consumer of the same content
 // Shares one copy without agreeing on anything but the hash
-export const CONTENT_CACHE_DIRECTORY: string = join(CACHE_ROOT, "content");
+export const HOSTED_ASSETS_MIRROR_DIRECTORY: string = join(CACHE_ROOT, "content");

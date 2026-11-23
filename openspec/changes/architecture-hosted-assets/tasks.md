@@ -28,7 +28,7 @@ Ordered by dependency. Each task names how it is verified: a test written first 
 - [ ] 3.3 Make the mirror fill in `.github/workflows/build-packages.yaml` verify each object's sha256 as it stores it, with `verifyGameDataObject`, and fail on a mismatch. Verify: a fill run against a mirror with one altered object fails the step, seen failing first in a scratch run, and the step passes on the published lock.
 - [ ] 3.4 Run the fill over every product's lock, from its declaration, so a product added later is covered with nothing else edited. Verify: the fill's log names each product's object count and `0 failures`.
 - [ ] 3.5 Add the placement enforcer: the bundle check over `apps/web/app/assets/` (over 2 MiB, or `.wav`), and the hosted check over the engine loaders' imports, as one test each sharing a file-walking helper. Verify: each check seen failing on a seeded violation in a scratch copy, the hosted check's test named after the scenario "An engine-read texture is hosted" and the bundle check's test passing a small icon, named after the scenario "A small UI icon is bundled", then `pnpm -C scripts exec vitest run src/workspace` passes on the tree.
-- [ ] 3.6 Rename the mirror constant and update `scripts/src/workspace/pathLiterals.test.ts` to the new name. Verify: `pnpm -C scripts exec vitest run src/workspace/pathLiterals.test.ts` passes with the workflows restoring the renamed path.
+- [x] 3.6 Rename the mirror constant and update `scripts/src/workspace/pathLiterals.test.ts` to the new name. Verify: `pnpm -C scripts exec vitest run src/workspace/pathLiterals.test.ts` passes with the workflows restoring the renamed path.
 
 ## 4. The edge
 

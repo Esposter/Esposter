@@ -1,6 +1,6 @@
 import { DEFAULT_PARITY_DIRECTORY } from "#src/services/fleet/data/constants";
 import { TOOLS_DIRECTORY } from "#src/services/recreation/animeStudio/constants";
-import { CACHE_ROOT, CONTENT_CACHE_DIRECTORY, DATA_ROOT } from "@esposter/shared-node/cache";
+import { CACHE_ROOT, DATA_ROOT, HOSTED_ASSETS_MIRROR_DIRECTORY } from "@esposter/shared-node/cache";
 import { relative, sep } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -16,7 +16,7 @@ describe("dataRoot", () => {
       [
         relative(DATA_ROOT, TOOLS_DIRECTORY),
         relative(DATA_ROOT, DEFAULT_PARITY_DIRECTORY),
-        relative(CACHE_ROOT, CONTENT_CACHE_DIRECTORY),
+        relative(CACHE_ROOT, HOSTED_ASSETS_MIRROR_DIRECTORY),
       ].filter((folderPath) => folderPath.split(sep).includes("..")),
     ).toStrictEqual([]);
   });

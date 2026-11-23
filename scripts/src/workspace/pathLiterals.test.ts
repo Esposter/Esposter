@@ -1,7 +1,7 @@
 import { CI_WORKFLOW_FILE } from "#src/services/ci/constants";
 import { DEFAULT_PARITY_DIRECTORY } from "#src/services/fleet/data/constants";
 import { readRepositoryFile } from "#src/workspace/readRepositoryFile.test";
-import { CONTENT_CACHE_DIRECTORY } from "@esposter/shared-node/cache";
+import { HOSTED_ASSETS_MIRROR_DIRECTORY } from "@esposter/shared-node/cache";
 import { homedir } from "node:os";
 import { relative } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -10,9 +10,9 @@ import { describe, expect, test } from "vitest";
 const getHomePath = (path: string): string => `~/${relative(homedir(), path).replaceAll("\\", "/")}`;
 
 describe("path literals", () => {
-  // A workflow cannot read CONTENT_CACHE_DIRECTORY, so each one spells the mirror's path under the home folder. A rename
+  // A workflow cannot read HOSTED_ASSETS_MIRROR_DIRECTORY, so each one spells the mirror's path under the home folder. A rename
   // Moves the constant and not the path, and the cache then misses in silence on every run rather than failing
-  const CACHE_PATH = getHomePath(CONTENT_CACHE_DIRECTORY);
+  const CACHE_PATH = getHomePath(HOSTED_ASSETS_MIRROR_DIRECTORY);
 
   test("the workflows restore the game data mirror from the cache constant's path", () => {
     expect.hasAssertions();

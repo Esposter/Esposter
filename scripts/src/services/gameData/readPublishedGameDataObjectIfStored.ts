@@ -3,14 +3,14 @@ import { readPublishedGameDataObject } from "#src/services/gameData/readPublishe
 import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CONTENT_CACHE_DIRECTORY, readContentAddressedObject } from "@esposter/shared-node/cache";
+import { HOSTED_ASSETS_MIRROR_DIRECTORY, readContentAddressedObject } from "@esposter/shared-node/cache";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 // The same object, or undefined when the dev bucket holds no object under its key, so a comparison reads an object the bucket
 // Lacks as new rather than failing on it. A cached object is read as the cache serves it; a fetched one is verified and cached
 export const readPublishedGameDataObjectIfStored = async <T>(dataset: string, hash: string): Promise<T | undefined> => {
-  if (existsSync(join(CONTENT_CACHE_DIRECTORY, hash))) return readPublishedGameDataObject<T>(dataset, hash);
+  if (existsSync(join(HOSTED_ASSETS_MIRROR_DIRECTORY, hash))) return readPublishedGameDataObject<T>(dataset, hash);
   const url = getGameDataObjectUrl(dataset, hash);
   const response = await fetchResponse(url);
   if (response.status === 404) return undefined;

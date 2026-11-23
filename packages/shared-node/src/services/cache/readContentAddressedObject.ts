@@ -1,4 +1,4 @@
-import { CONTENT_CACHE_DIRECTORY } from "#src/services/cache/constants";
+import { HOSTED_ASSETS_MIRROR_DIRECTORY } from "#src/services/cache/constants";
 import { getContentAddress } from "#src/services/cache/getContentAddress";
 import { writePartialThenMove } from "#src/services/cache/writePartialThenMove";
 import { ASSET_HASH_REGEX, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
@@ -13,7 +13,7 @@ import { join } from "node:path";
 export const readContentAddressedObject = async (
   hash: string,
   download: () => Promise<Uint8Array>,
-  directory: string = CONTENT_CACHE_DIRECTORY,
+  directory: string = HOSTED_ASSETS_MIRROR_DIRECTORY,
 ): Promise<Buffer> => {
   if (!ASSET_HASH_REGEX.test(hash))
     throw new InvalidOperationError(Operation.Read, hash, "is not a SHA-256 hex digest");
