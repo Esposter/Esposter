@@ -11,7 +11,8 @@ import { getSlotItems } from "#src/services/getSlotItems";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
-// Moves a node to the end of the first slot of its previous sibling that accepts its type, or no operations when none does
+// Moves a node to the end of the first slot of its previous sibling that accepts its type, or no operations when none
+// Does
 export const moveIntoPreviousSibling = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,

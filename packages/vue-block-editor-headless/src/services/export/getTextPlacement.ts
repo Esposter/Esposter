@@ -13,7 +13,8 @@ import { getHorizontalAlignment } from "#src/services/getHorizontalAlignment";
 import { getVerticalAlignment } from "#src/services/getVerticalAlignment";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// The side of a box a text is anchored at by its horizontal alignment, and the anchor the text is drawn from at that side
+// The side of a box a text is anchored at by its horizontal alignment, and the anchor the text is drawn from at that
+// Side
 const getHorizontalAnchor = (
   { width, x }: Bounds,
   horizontalAlignment: HorizontalAlignment,
@@ -62,9 +63,10 @@ const getBoxTextPlacement = (
   };
 };
 
-// Where an element's text is drawn, for the export and the editor alike. An arrow's label sits at its route's midpoint, centred, and wraps at a constant width
-// A shape's or a sticky note's sits in its box by its alignments, centred until one is set, and a text box's sits in its box by its alignments, from its left edge
-// Until one is set. Undefined for an image or a stroke, which hold no text
+// Where an element's text is drawn, for the export and the editor alike. An arrow's label sits at its route's midpoint,
+// Centred, and wraps at a constant width A shape's or a sticky note's sits in its box by its alignments, centred until
+// One is set, and a text box's sits in its box by its alignments, from its left edge Until one is set. Undefined for an
+// Image or a stroke, which hold no text
 export const getTextPlacement = (element: PositionedElement): TextPlacement | undefined => {
   switch (element.type) {
     case PositionedElementType.Arrow:

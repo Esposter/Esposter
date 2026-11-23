@@ -13,13 +13,15 @@ export const STROKE_GAP_LENGTH = 6;
 export const DOTTED_STROKE_DASH_LENGTH = 0;
 // How far a hand-drawn offset may move a point, in either direction, in document units, at the artist level
 export const SKETCH_OFFSET_LIMIT = 1.5;
-// How far each sketch level's offset reaches, as a multiple of that limit: architect draws no offset, and cartoonist a larger one than artist
+// How far each sketch level's offset reaches, as a multiple of that limit: architect draws no offset, and cartoonist a
+// Larger one than artist
 export const SKETCH_LEVEL_AMPLITUDES: Record<SketchLevel, number> = {
   [SketchLevel.Architect]: 0,
   [SketchLevel.Artist]: 1,
   [SketchLevel.Cartoonist]: 2,
 };
-// A round corner curves by this share of the shorter side of its shape, and never by more than the limit, in document units
+// A round corner curves by this share of the shorter side of its shape, and never by more than the limit, in document
+// Units
 export const CORNER_RADIUS_SHARE = 0.25;
 export const CORNER_RADIUS_LIMIT = 12;
 // The modulus that keeps a sketch's hash in range, a Mersenne prime so the hash spreads across the range
@@ -27,16 +29,19 @@ export const SKETCH_HASH_MODULUS = 2_147_483_647;
 export const TEXT_FONT_FAMILY = "sans-serif";
 // The line step of a text is a share of its size, so a larger text's lines keep the spacing a smaller one's do
 export const TEXT_LINE_HEIGHT_SHARE = 1.25;
-// The advance of a narrow character is a share of its text's size, and a full-width one is this many narrow characters wide
-// A text wraps at these estimates, not at the font's own measures, so every machine and the server break it at the same words
+// The advance of a narrow character is a share of its text's size, and a full-width one is this many narrow characters
+// Wide A text wraps at these estimates, not at the font's own measures, so every machine and the server break it at the
+// Same words
 export const TEXT_CHARACTER_WIDTH_SHARE = 0.5;
 export const TEXT_WIDE_CHARACTER_FACTOR = 2;
 // The characters a full-width script sets: the Han ideographs, Hangul, kana, and the fullwidth forms
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+// `isolatedDeclarations`
+// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
 export const TEXT_WIDE_CHARACTER_REGEX: RegExp =
   /\p{Ideographic}|\p{Script=Hangul}|\p{Script=Hiragana}|\p{Script=Katakana}|[\u{FF01}-\u{FF60}\u{FFE0}-\u{FFE6}]/u;
-// The length of an arrowhead along its arrow, and its half-width across it, in document units. A circle's radius is the half-width, and a bar spans
-// Twice the half-width across its arrow and the bar thickness along it. A circle is drawn as a polygon of the circle corners it is given
+// The length of an arrowhead along its arrow, and its half-width across it, in document units. A circle's radius is the
+// `half-width`, and a bar spans Twice the half-width across its arrow and the bar thickness along it. A circle is drawn
+// As a polygon of the circle corners it is given
 export const ARROWHEAD_LENGTH = 12;
 export const ARROWHEAD_HALF_WIDTH = 5;
 export const ARROWHEAD_BAR_THICKNESS = 3;

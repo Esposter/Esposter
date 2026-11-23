@@ -4,7 +4,8 @@ import type { BlockNode } from "#src/models/BlockNode";
 
 import { getBlockLayerRows } from "#src/services/getBlockLayerRows";
 
-// The pointer of the node offset rows from a node in the layer rows, or undefined past either end or for a pointer naming no node
+// The pointer of the node offset rows from a node in the layer rows, or undefined past either end or for a pointer
+// Naming no node
 export const getAdjacentBlockNodePointer = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   children: BlockChildren<TNode>,

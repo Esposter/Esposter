@@ -11,7 +11,8 @@ import { getElementPointer } from "#src/services/getElementPointer";
 import { getPositionedElement } from "#src/services/getPositionedElement";
 import { JsonPatchOperationType } from "@esposter/shared";
 
-// Sets or clears the arrowhead at one end of an arrow. An end with no arrowhead has nothing to clear, so clearing it changes nothing
+// Sets or clears the arrowhead at one end of an arrow. An end with no arrowhead has nothing to clear, so clearing it
+// Changes nothing
 const getArrowheadOperations = (
   index: number,
   arrow: ArrowElement,
@@ -30,8 +31,8 @@ const getArrowheadOperations = (
   ];
 };
 
-// An unwrapped text box is as wide as its widest line at its size, so a change to its wrap or its size sets that width in the same edit. A wrapped
-// Text keeps the width it has, and a change to any other property sets none
+// An unwrapped text box is as wide as its widest line at its size, so a change to its wrap or its size sets that width
+// In the same edit. A wrapped Text keeps the width it has, and a change to any other property sets none
 const getTextWidthOperations = (
   index: number,
   element: TextElement,
@@ -46,8 +47,8 @@ const getTextWidthOperations = (
   return [getAutoTextWidthOperation(index, element.text, textSize)];
 };
 
-// Replaces one property of the element at an index, as the change names it, and for an unwrapped text box the width its text takes
-// No operations for a property the element does not hold, or for an index that names no element
+// Replaces one property of the element at an index, as the change names it, and for an unwrapped text box the width its
+// Text takes No operations for a property the element does not hold, or for an index that names no element
 export const updatePositionedElementProperty = (
   document: PositionedDocument,
   index: number,
@@ -58,7 +59,8 @@ export const updatePositionedElementProperty = (
   if (element.type === PositionedElementType.Arrow && change.property === "arrowhead")
     return getArrowheadOperations(index, element, change);
 
-  // An alignment an element has not set is absent from the document, so the first one is added, and a later one replaces it
+  // An alignment an element has not set is absent from the document, so the first one is added, and a later one
+  // Replaces it
   const isAbsentUntilSet = change.property === "horizontalAlignment" || change.property === "verticalAlignment";
   const operations: JsonPatchOperation[] = [
     {

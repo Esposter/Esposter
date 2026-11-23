@@ -64,7 +64,8 @@ describe("positionedDocumentSchema", () => {
     expect(error?.issues.map(({ path }) => path)).toStrictEqual([["elements", 1, "id"]]);
   });
 
-  // An agent's patch names the element by its index and the property by its path, so each refusal is a patch the schema rejects
+  // An agent's patch names the element by its index and the property by its path, so each refusal is a patch the schema
+  // Rejects
   test("a colour that is not a hex colour is refused", () => {
     expect.hasAssertions();
 

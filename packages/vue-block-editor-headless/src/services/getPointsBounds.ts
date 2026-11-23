@@ -1,7 +1,8 @@
 import type { Bounds } from "#src/models/Bounds";
 import type { Point } from "#src/models/Point";
 
-// The smallest box that holds every point. One pass, since a stroke holds as many points as the pointer took and a spread of them into Math.min would overflow the call stack
+// The smallest box that holds every point. One pass, since a stroke holds as many points as the pointer took and a
+// Spread of them into Math.min would overflow the call stack
 export const getPointsBounds = (points: Point[]): Bounds => {
   let minimumX = Infinity;
   let minimumY = Infinity;

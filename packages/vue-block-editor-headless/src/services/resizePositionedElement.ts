@@ -11,8 +11,10 @@ import { getPositionOperations } from "#src/services/getPositionOperations";
 import { getRerouteOperations } from "#src/services/getRerouteOperations";
 import { JsonPatchOperationType } from "@esposter/shared";
 
-// Resizes the element at an index, and in the same edit reroutes each arrow bound to a resized shape, since its connection points move.
-// A given position also moves the element's start in that edit. A text box stores no height, so only its width is set, and an auto width text box is wrapped again when its width changes. An arrow and a stroke hold no size of their own, so neither is resized
+// Resizes the element at an index, and in the same edit reroutes each arrow bound to a resized shape, since its
+// Connection points move. A given position also moves the element's start in that edit. A text box stores no height, so
+// Only its width is set, and an auto width text box is wrapped again when its width changes. An arrow and a stroke hold
+// No size of their own, so neither is resized
 export const resizePositionedElement = (
   document: PositionedDocument,
   index: number,
@@ -29,7 +31,8 @@ export const resizePositionedElement = (
     path: `${pointer}/width`,
     value: size.width,
   };
-  // A width change on an auto width text box sets it back to a wrapped width, at the width it is set to. A resize that keeps the width leaves it unwrapped
+  // A width change on an auto width text box sets it back to a wrapped width, at the width it is set to. A resize that
+  // Keeps the width leaves it unwrapped
   if (element.type === PositionedElementType.Text)
     return element.isWrapped || size.width === element.width
       ? [...positionOperations, widthOperation]

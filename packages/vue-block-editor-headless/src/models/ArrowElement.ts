@@ -12,7 +12,9 @@ import { StrokeWidth, strokeWidthSchema } from "#src/models/StrokeWidth";
 import { TextSize, textSizeSchema } from "#src/models/TextSize";
 import { z } from "zod";
 
-// An arrow: two ends, each bound to a shape's connection point or free, with its path kind and the text it owns as its label. Its route and arrowheads draw in its colour, at its width, in its dash pattern and at its sketch level, and its label at its size
+// An arrow: two ends, each bound to a shape's connection point or free, with its path kind and the text it owns as its
+// Label. Its route and arrowheads draw in its colour, at its width, in its dash pattern and at its sketch level, and
+// Its label at its size
 export interface ArrowElement extends ItemEntityType<typeof PositionedElementType.Arrow> {
   color: string;
   dashPattern: DashPattern;

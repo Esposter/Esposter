@@ -8,9 +8,9 @@ import { getPositionedElement } from "#src/services/getPositionedElement";
 import { getPositionedElementText } from "#src/services/getPositionedElementText";
 import { JsonPatchOperationType } from "@esposter/shared";
 
-// Replaces the text of the element at an index: the text of a shape, a text box or a sticky note, or the label of an arrow. An unwrapped text box is also
-// As wide as its new widest line, in the same edit
-// No operations for an image or a stroke, which hold no text, or for an index that names no element
+// Replaces the text of the element at an index: the text of a shape, a text box or a sticky note, or the label of an
+// Arrow. An unwrapped text box is also As wide as its new widest line, in the same edit No operations for an image or a
+// Stroke, which hold no text, or for an index that names no element
 export const updatePositionedElementText = (
   document: PositionedDocument,
   index: number,

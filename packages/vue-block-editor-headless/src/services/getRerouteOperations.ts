@@ -9,7 +9,8 @@ import { getElementBounds } from "#src/services/getElementBounds";
 import { getElementPointer } from "#src/services/getElementPointer";
 import { JsonPatchOperationType } from "@esposter/shared";
 
-// The replacements that move each arrow end bound to a shape onto that shape's connection point, read from the shape's bounds as given
+// The replacements that move each arrow end bound to a shape onto that shape's connection point, read from the shape's
+// Bounds as given
 export const getRerouteOperations = (elements: PositionedElement[], shape: ShapeElement): JsonPatchOperation[] => {
   const bounds = getElementBounds(shape);
   const operations: JsonPatchOperation[] = [];

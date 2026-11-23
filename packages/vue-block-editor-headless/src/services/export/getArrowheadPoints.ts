@@ -9,8 +9,9 @@ import {
 } from "#src/services/export/constants";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// The corners of an arrowhead of a kind whose tip sits at a point, opening back along the line from the point before it. A triangle and a diamond
-// Are the corners of a filled shape, a bar a filled strip across the line at its tip, and a circle a polygon of corners on its circumference
+// The corners of an arrowhead of a kind whose tip sits at a point, opening back along the line from the point before
+// It. A triangle and a diamond Are the corners of a filled shape, a bar a filled strip across the line at its tip, and
+// A circle a polygon of corners on its circumference
 export const getArrowheadPoints = (arrowhead: ArrowheadKind, tip: Point, previous: Point): Point[] => {
   const length = Math.hypot(tip.x - previous.x, tip.y - previous.y);
   // A run of no length has no direction, so its arrowhead collapses onto its tip

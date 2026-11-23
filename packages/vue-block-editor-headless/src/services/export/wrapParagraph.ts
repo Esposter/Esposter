@@ -2,8 +2,8 @@ import type { TextSize } from "#src/models/TextSize";
 
 import { getTextWidth } from "#src/services/export/getTextWidth";
 
-// A paragraph's lines at a width: a word joins the line before it while the line still fits, and otherwise starts the next one
-// A word wider than the width breaks at the character where the width runs out, and no hyphen is drawn
+// A paragraph's lines at a width: a word joins the line before it while the line still fits, and otherwise starts the
+// Next one A word wider than the width breaks at the character where the width runs out, and no hyphen is drawn
 export const wrapParagraph = (paragraph: string, width: number, textSize: TextSize): string[] => {
   const lines: string[] = [];
   let line = "";

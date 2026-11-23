@@ -61,7 +61,8 @@ describe(getHitElementIndex, () => {
     };
     const document: PositionedDocument = { elements: [textElement] };
 
-    // A text box stores no height, so the core reads it as the one line its text wraps to, and the point one unit below that line misses
+    // A text box stores no height, so the core reads it as the one line its text wraps to, and the point one unit below
+    // That line misses
     expect(getHitElementIndex(document, { x: 0, y: getTextLineHeight(TextSize.Small) / 2 }, 0)).toBe(0);
     expect(getHitElementIndex(document, { x: 0, y: getTextLineHeight(TextSize.Small) + 1 }, 0)).toBeUndefined();
   });

@@ -6,9 +6,10 @@ import type { Ref } from "vue";
 import { createHistory } from "@esposter/shared";
 import { computed, ref, shallowRef, watch } from "vue";
 
-// An editing session over one document: the document and its undo history, which a commit sets together, and a selected node
-// Held by id, so an edit that moves the node keeps it selected. The caller owns the document's ref, and the history is cleared
-// Whenever that ref is set from outside a commit, so a load that replaces the document starts a fresh history on its own
+// An editing session over one document: the document and its undo history, which a commit sets together, and a selected
+// Node Held by id, so an edit that moves the node keeps it selected. The caller owns the document's ref, and the
+// History is cleared Whenever that ref is set from outside a commit, so a load that replaces the document starts a
+// Fresh history on its own
 export const useEditSession = <TDocument, TEntry>(
   document: Ref<TDocument>,
   historyLimit: number,

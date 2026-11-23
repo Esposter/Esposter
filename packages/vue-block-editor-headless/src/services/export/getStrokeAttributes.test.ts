@@ -18,7 +18,8 @@ import { toShapeSvg } from "#src/services/export/toShapeSvg";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
-// The value of the first attribute of this name the SVG writes, which is the outline or route the element draws before its heads and text
+// The value of the first attribute of this name the SVG writes, which is the outline or route the element draws before
+// Its heads and text
 const readAttribute = (svg: string, name: string): string | undefined =>
   new RegExp(`${name}="([^"]*)"`, "u").exec(svg)?.[1];
 

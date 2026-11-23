@@ -5,10 +5,11 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// Whether an element holds a property a change sets: a colour every element but an image holds, a width an outline or a stroke holds, a dash
-// Pattern and a sketch level an outline or a route holds, a fill a shape or a sticky note holds, corners a shape holds but an ellipse does not, and a route
-// Or an arrowhead an arrow holds. A text's size is held by every element with text, a horizontal alignment by a shape, a sticky note or a text box, a vertical
-// Alignment by a shape or a sticky note, the wrap by a text box alone, and the alt text by an image alone
+// Whether an element holds a property a change sets: a colour every element but an image holds, a width an outline or a
+// Stroke holds, a dash Pattern and a sketch level an outline or a route holds, a fill a shape or a sticky note holds,
+// Corners a shape holds but an ellipse does not, and a route Or an arrowhead an arrow holds. A text's size is held by
+// Every element with text, a horizontal alignment by a shape, a sticky note or a text box, a vertical Alignment by a
+// Shape or a sticky note, the wrap by a text box alone, and the alt text by an image alone
 export const checkIsPositionedElementPropertyHeld = (
   element: PositionedElement,
   property: PositionedElementProperty["property"],

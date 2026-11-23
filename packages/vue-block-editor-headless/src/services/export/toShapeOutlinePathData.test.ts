@@ -16,7 +16,8 @@ import { describe, expect, test } from "vitest";
 const getStartOfCurve = (width: number, height: number): string | undefined =>
   toShapeOutlinePathData(createRectangle(width, height, CornerStyle.Round, SketchLevel.Architect)).split(" Q")[0];
 
-// A rectangle at the origin with its corners set and its sketch at the level given, so its outline has exact corners to check
+// A rectangle at the origin with its corners set and its sketch at the level given, so its outline has exact corners to
+// Check
 const createRectangle = (
   width: number,
   height: number,

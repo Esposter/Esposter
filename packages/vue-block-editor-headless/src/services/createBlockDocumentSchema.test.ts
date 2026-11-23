@@ -63,7 +63,8 @@ describe(createBlockDocumentSchema, () => {
   test("a permissive node schema still refuses a nested child its slot does not accept", () => {
     expect.hasAssertions();
 
-    // The consumer's node schema accepts any node, so only the registry's slot declarations refuse the item in the section
+    // The consumer's node schema accepts any node, so only the registry's slot declarations refuse the item in the
+    // Section
     const schema = createBlockDocumentSchema(
       z.custom<TestNode>(),
       TEST_REGISTRY,

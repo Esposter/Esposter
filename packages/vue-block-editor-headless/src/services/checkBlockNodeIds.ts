@@ -9,9 +9,10 @@ import { getBlockSlots } from "#src/services/getBlockSlots";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { getSlotItems } from "#src/services/getSlotItems";
 
-// Counts each node of a parsed tree and refuses a node whose id an earlier node holds, in any slot, naming the repeated node's id.
-// A nested child whose type its parent's slot does not accept in the registry is refused too, so the parse and the types the registry reports agree.
-// Its callers refine only a parse that raised no issue, so the nodes it is handed are the schema's typed output
+// Counts each node of a parsed tree and refuses a node whose id an earlier node holds, in any slot, naming the repeated
+// Node's id. A nested child whose type its parent's slot does not accept in the registry is refused too, so the parse
+// And the types the registry reports agree. Its callers refine only a parse that raised no issue, so the nodes it is
+// Handed are the schema's typed output
 export const checkBlockNodeIds = <TNode extends BlockNode>(
   context: z.RefinementCtx,
   registry: BlockRegistry<TNode>,

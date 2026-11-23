@@ -1,6 +1,7 @@
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
-// The slot pointer once the node at a pointer is removed: a slot in a later sibling of the same array moves down one index
+// The slot pointer once the node at a pointer is removed: a slot in a later sibling of the same array moves down one
+// Index
 export const getSlotPointerAfterRemoval = (nodePointer: string, slotPointer: string): string => {
   const nodeSegments = parseJsonPointer(nodePointer);
   const slotSegments = parseJsonPointer(slotPointer);

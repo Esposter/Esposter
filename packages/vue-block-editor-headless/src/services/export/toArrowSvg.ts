@@ -10,7 +10,8 @@ import { toSketchedPathData } from "#src/services/export/toSketchedPathData";
 import { toStrokeAttributesSvg } from "#src/services/export/toStrokeAttributesSvg";
 import { getArrowRoute } from "#src/services/getArrowRoute";
 
-// An arrow as the export draws it: its route sketched in its colour, an arrowhead in the same colour at each end that has one, and its label at the route's midpoint
+// An arrow as the export draws it: its route sketched in its colour, an arrowhead in the same colour at each end that
+// Has one, and its label at the route's midpoint
 export const toArrowSvg = (arrow: ArrowElement): string => {
   const route = getArrowRoute(arrow);
   // A route of one point, a curve folded onto its own start, has no line to draw, so the arrow draws nothing

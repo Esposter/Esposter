@@ -9,8 +9,8 @@ import { getDistanceToPolyline } from "#src/services/getDistanceToPolyline";
 import { getElementBounds } from "#src/services/getElementBounds";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// Whether a point hits an element: an arrow within the tolerance of its route, a stroke within the tolerance and half its width of its path,
-// A shape by its outline, and a box by its bounds
+// Whether a point hits an element: an arrow within the tolerance of its route, a stroke within the tolerance and half
+// Its width of its path, A shape by its outline, and a box by its bounds
 export const checkIsPointOnElement = (element: PositionedElement, point: Point, tolerance: number): boolean => {
   switch (element.type) {
     case PositionedElementType.Arrow:

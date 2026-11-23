@@ -7,8 +7,9 @@ import { arrowheadKindSchema } from "#src/models/ArrowheadKind";
 import { pointSchema } from "#src/models/Point";
 import { z } from "zod";
 
-// One end of an arrow: the point it sits at, its binding when it is bound to a shape, and the arrowhead it draws, which is absent for an end with none.
-// The end is strict, so a stored end that still holds the old arrowhead flag fails its parse until it is rewritten
+// One end of an arrow: the point it sits at, its binding when it is bound to a shape, and the arrowhead it draws, which
+// Is absent for an end with none. The end is strict, so a stored end that still holds the old arrowhead flag fails its
+// Parse until it is rewritten
 export interface ArrowEnd {
   arrowhead?: ArrowheadKind | undefined;
   binding?: ArrowBinding | undefined;

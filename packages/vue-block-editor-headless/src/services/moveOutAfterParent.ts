@@ -7,8 +7,9 @@ import type { JsonPatchOperation } from "@esposter/shared";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
-// Moves a node to just after its parent, in the slot that holds the parent: the parent's index is not shifted by the node's removal
-// No operations when the node sits in the root's content, since it has no parent, or when that slot refuses the node's type
+// Moves a node to just after its parent, in the slot that holds the parent: the parent's index is not shifted by the
+// Node's removal No operations when the node sits in the root's content, since it has no parent, or when that slot
+// Refuses the node's type
 export const moveOutAfterParent = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,

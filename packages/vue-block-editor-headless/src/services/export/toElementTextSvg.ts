@@ -6,7 +6,8 @@ import { getTextPlacement } from "#src/services/export/getTextPlacement";
 import { toTextSvg } from "#src/services/export/toTextSvg";
 import { getPositionedElementText } from "#src/services/getPositionedElementText";
 
-// An element's text as the export draws it, in the element's colour, at the place its text sits. An element that holds no text draws nothing
+// An element's text as the export draws it, in the element's colour, at the place its text sits. An element that holds
+// No text draws nothing
 export const toElementTextSvg = (element: PositionedElement): string => {
   const placement = getTextPlacement(element);
   const text = getPositionedElementText(element);

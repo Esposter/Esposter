@@ -11,7 +11,8 @@ import { getElementPointer } from "#src/services/getElementPointer";
 import { getPositionedElement } from "#src/services/getPositionedElement";
 import { JsonPatchOperationType } from "@esposter/shared";
 
-// Binds an arrow end to a connection point of a shape and moves the end onto that point, or no operations when the arrow or the shape cannot take the binding
+// Binds an arrow end to a connection point of a shape and moves the end onto that point, or no operations when the
+// Arrow or the shape cannot take the binding
 export const bindPositionedArrowEnd = (
   document: PositionedDocument,
   index: number,

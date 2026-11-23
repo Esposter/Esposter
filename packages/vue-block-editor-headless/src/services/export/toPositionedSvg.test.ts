@@ -18,7 +18,8 @@ import { assert, describe, expect, test } from "vitest";
 const getAssetUrl = (fileId: string) => `/assets/${fileId}`;
 
 describe(toPositionedSvg, () => {
-  // Fixed ids rather than random ones: an element's hand-drawn outline is seeded from its id, so a random id would move the snapshot on every run
+  // Fixed ids rather than random ones: an element's hand-drawn outline is seeded from its id, so a random id would move
+  // The snapshot on every run
   const ARROW_ID = ZERO_UUID;
   const IMAGE_ID = "00000000-0000-7000-8000-000000000001";
   const PROCESS_ID = "00000000-0000-7000-8000-000000000002";

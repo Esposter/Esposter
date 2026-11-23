@@ -6,7 +6,8 @@ import { getBoundsCorners } from "#src/services/getBoundsCorners";
 import { getElementBounds } from "#src/services/getElementBounds";
 import { getPointsBounds } from "#src/services/getPointsBounds";
 
-// The box an export draws: every element's bounds joined, and padded on each side. An empty document draws its padding alone
+// The box an export draws: every element's bounds joined, and padded on each side. An empty document draws its padding
+// Alone
 export const getExportBounds = (positionedDocument: PositionedDocument): Bounds => {
   const corners = positionedDocument.elements.flatMap((element) => getBoundsCorners(getElementBounds(element)));
   const { height, width, x, y } = corners.length > 0 ? getPointsBounds(corners) : { height: 0, width: 0, x: 0, y: 0 };

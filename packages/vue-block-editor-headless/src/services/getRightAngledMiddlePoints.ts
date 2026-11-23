@@ -1,6 +1,7 @@
 import type { Point } from "#src/models/Point";
 
-// The corners between two stub points: a leg between them along the axis each end leaves on, with one corner when the axes differ
+// The corners between two stub points: a leg between them along the axis each end leaves on, with one corner when the
+// Axes differ
 export const getRightAngledMiddlePoints = (
   startStub: Point,
   endStub: Point,

@@ -7,7 +7,8 @@ import { getBindableShape } from "#src/services/getBindableShape";
 import { getElementPointer } from "#src/services/getElementPointer";
 import { JsonPatchOperationType } from "@esposter/shared";
 
-// Adds an element at an index of the element list, or no operations when an arrow end binds no shape the document can bind it to
+// Adds an element at an index of the element list, or no operations when an arrow end binds no shape the document can
+// Bind it to
 export const insertPositionedElement = (
   document: PositionedDocument,
   index: number,

@@ -5,7 +5,8 @@ import { boxElementSchema } from "#src/models/BoxElement";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { z } from "zod";
 
-// An image: a box that holds the content hash of an uploaded file, and none of the file's bytes, and the alt text that names it, which is empty when none is set
+// An image: a box that holds the content hash of an uploaded file, and none of the file's bytes, and the alt text that
+// Names it, which is empty when none is set
 export interface ImageElement extends BoxElement, ItemEntityType<typeof PositionedElementType.Image> {
   altText: string;
   fileId: string;

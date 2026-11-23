@@ -1,6 +1,7 @@
 import type { Point } from "#src/models/Point";
 
-// The unit direction a connection point points out of its shape, in the order the points are numbered: up, right, down, left
+// The unit direction a connection point points out of its shape, in the order the points are numbered: up, right, down,
+// Left
 export const getConnectionPointDirection = (connectionPointIndex: number): Point | undefined =>
   [
     { x: 0, y: -1 },

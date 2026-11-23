@@ -33,7 +33,8 @@ describe(getArrowRoute, () => {
       type: PositionedElementType.Arrow,
     };
 
-    // Index 2 is the bottom point, so the route runs straight down out of the shape before it turns towards the free end
+    // Index 2 is the bottom point, so the route runs straight down out of the shape before it turns towards the free
+    // End
     expect(getArrowRoute(arrow)).toStrictEqual([
       { x: 50, y: 100 },
       { x: 50, y: 100 + ARROW_STUB_LENGTH },

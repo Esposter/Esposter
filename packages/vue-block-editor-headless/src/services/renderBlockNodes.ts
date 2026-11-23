@@ -6,7 +6,8 @@ import { getBlockSlots } from "#src/services/getBlockSlots";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 
 // Renders each node once its slots have rendered, in the order of the nodes, and nothing for a node whose type the
-// Registry lacks. Each slot's children are read through the port, so a slot the port does not return renders no children
+// Registry lacks. Each slot's children are read through the port, so a slot the port does not return renders no
+// Children
 export const renderBlockNodes = <TNode extends BlockNode, TDefinition extends BlockTypeDefinition, TOutput>(
   nodes: readonly TNode[],
   registry: { types: TDefinition[] },

@@ -26,7 +26,8 @@ describe(getArrowheads, () => {
   test("an arrow takes a different arrowhead at each end", () => {
     expect.hasAssertions();
 
-    // The start is a circle centred a radius back from its tip, and the end a diamond whose widest corners sit halfway back
+    // The start is a circle centred a radius back from its tip, and the end a diamond whose widest corners sit halfway
+    // Back
     const arrow = {
       ...POSITIONED_ARROW,
       end: { arrowhead: ArrowheadKind.Diamond, point: { x: 100, y: 0 } },
