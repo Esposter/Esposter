@@ -23,7 +23,9 @@ export const readModel = async (
 
   for (let index = 0; index < windows.count && readings.frames.length < frameCount; index++) {
     const remainingFrames = frameCount - readings.frames.length;
-    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: a window's remaining frame count is what the windows before it left, and the loop stops at the recording's last frame, so only one window's outputs are held at a time
+    // The windows before it left, and the loop stops at the recording's last frame, so only one window's outputs are
+    // Held at a time
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: a window's remaining frame count is what
     const windowReadings = await readWindow(session, windows.getWindow(index), remainingFrames);
     readings.frames.push(...windowReadings.frames);
     readings.onsets.push(...windowReadings.onsets);

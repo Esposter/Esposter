@@ -4,7 +4,8 @@ import type { NoteEventTime } from "#src/models/NoteEventTime";
 import { CONTOUR_BINS_PER_SEMITONE, MIDI_PITCH_BEND_SEMITONES, MIDI_PITCH_BEND_STEPS } from "#src/constants";
 import { toTicks } from "#src/services/writeMidi/toTicks";
 
-// A bend's value is its share of the bend's range, a third of a semitone a contour bin, held within a fourteen-bit range
+// A bend's value is its share of the bend's range, a third of a semitone a contour bin, held within a fourteen-bit
+// Range
 export const writePitchBendEvents = (notes: NoteEventTime[]): MidiEvent[] =>
   notes.flatMap(({ durationSeconds, pitchBends = [], startTimeSeconds }) =>
     pitchBends.map((bend, index) => {

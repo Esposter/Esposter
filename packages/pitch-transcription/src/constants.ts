@@ -39,6 +39,7 @@ export const PITCH_BEND_STANDARD_DEVIATION = 5;
 // Centre
 export const MIDI_PITCH_BEND_SEMITONES = 2;
 export const MIDI_PITCH_BEND_STEPS: number = 2 ** 13;
-// A note's velocity is a seven-bit value, and a velocity of zero is a note off, so a note's is held between one and the top
+// A note's velocity is a seven-bit value, and a velocity of zero is a note off, so a note's is held between one and the
+// Top
 export const MIDI_MIN_VELOCITY = 1;
 export const MIDI_MAX_VELOCITY = 127;

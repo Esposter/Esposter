@@ -7,8 +7,9 @@ describe("pitch-transcription", () => {
   const distFile = resolve(import.meta.dirname, "../dist/index.js");
   const distNotesFile = resolve(import.meta.dirname, "../dist/notes.js");
 
-  // A resolve hook registered before the import records every specifier the subpath's module graph asks for, and fails on
-  // An ONNX Runtime one, so a notes entry that reached the network's code would fail here rather than in a consumer's worker
+  // A resolve hook registered before the import records every specifier the subpath's module graph asks for, and fails
+  // On An ONNX Runtime one, so a notes entry that reached the network's code would fail here rather than in a
+  // Consumer's worker
   test("#19 loads the notes subpath without ONNX Runtime", () => {
     expect.hasAssertions();
 

@@ -1,4 +1,5 @@
-// oxlint-disable oxc/no-barrel-file -- the `notes` subpath is a barrel by design: the entry that never loads ONNX Runtime
+// The
+// oxlint-disable oxc/no-barrel-file -- `notes` subpath is a barrel by design: the entry that never loads ONNX Runtime
 // Note creation alone, for a worker or a server that builds notes from readings it already has and never loads
 // ONNX Runtime
 export * from "#src/constants";
