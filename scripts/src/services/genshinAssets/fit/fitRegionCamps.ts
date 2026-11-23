@@ -16,10 +16,10 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { catalogueSchema, findAreaAt } from "genshin-world";
 import { readFile } from "node:fs/promises";
 
-// Each fitted region's enemy camps, clustered from the official map's enemy marks of the families the camp map names, in
-// Place of the camps an earlier run wrote. Each camp takes the catalogue area its enemies stand in, and an enemy in no
-// Area is left out and counted, as are the marks on layers under the ground, which have no floor to stand on. A dry run
-// Counts them and writes nothing
+// Each fitted region's enemy camps, clustered from the official map's enemy marks of the families the camp map names,
+// In Place of the camps an earlier run wrote. Each camp takes the catalogue area its enemies stand in, and an enemy in
+// No Area is left out and counted, as are the marks on layers under the ground, which have no floor to stand on. A dry
+// Run Counts them and writes nothing
 export const fitRegionCamps = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const labelIdKindMap = new Map(
     flattenLabelTree(await readInteractiveMapLabels())

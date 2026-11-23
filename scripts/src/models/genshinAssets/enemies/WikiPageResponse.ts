@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-// The wiki's answer for its titles: each page with the main slot of its latest revision, which a missing title has none of
+// The wiki's answer for its titles: each page with the main slot of its latest revision, which a missing title has none
+// Of
 export interface WikiPageResponse {
   query: {
     pages: { missing?: true | undefined; revisions?: { slots: { main: { content: string } } }[] | undefined }[];

@@ -10,7 +10,8 @@ interface VueFile {
   text: string;
 }
 
-// The name a kebab-case attribute is bound to, its dashes cut and the next letter raised, as `vue/v-bind-style` reads it
+// The name a kebab-case attribute is bound to, its dashes cut and the next letter raised, as `vue/v-bind-style` reads
+// It
 const toBoundName = (name: string): string =>
   /[A-Z_]/u.test(name) ? name : name.replaceAll(/-(?<letter>\w)/gu, (_match, letter: string) => letter.toUpperCase());
 
@@ -23,19 +24,23 @@ const toFile = (template: string): VueFile => ({ path: "a.vue", text: `<template
 describe("templateTextRules", () => {
   // The top-level template, from its opening tag to its closing tag, each at the start of its line
   const TEMPLATE_REGEX = /^<template\b[^>]*>[\s\S]*?^<\/template>/mu;
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13534 — move the ban to vize's template list once its tree has modifiers
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13534 — move the ban to vize's template list once its tree has
+  // Modifiers
   const BARE_CLICK_STOP_MESSAGE =
     "Don't wall a control off with a bare `@click.stop`. The container that opens on a click asks `checkIsNestedInteraction(event)` first, and a region that is its own control without being a link, button or field carries `data-nested-interaction`. See openspec/specs/architecture/nested-interactions/design.md.";
   // A click directive with no value: `@click` or `v-on:click`, its modifiers, then a space, a `/` or a `>`, never a `=`
   const BARE_CLICK_REGEX = /(?<=\s)(?:@click|v-on:click)(?<modifiers>(?:\.[\w-]+)*)(?=\s|\/|>)(?!\s*=)/gu;
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13535 — drop the same-name check once vize's `vue/v-bind-style` takes sameNameShorthand
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13535 — drop the same-name check once vize's `vue/v-bind-style`
+  // Takes sameNameShorthand
   const SAME_NAME_BIND_MESSAGE = 'Write a bind whose value is its own name as the shorthand: `:foo`, not `:foo="foo"`.';
   // A bind whose value is a bare identifier: `:` or `v-bind:`, the attribute's name, its modifiers, then the identifier
   const BIND_REGEX = /(?<=\s)(?::|v-bind:)(?<name>[A-Za-z][\w-]*)(?:\.[\w-]+)*="(?<value>[A-Za-z_$][\w$]*)"/gu;
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13538 — drop the padding check once vize has `vue/padding-line-between-blocks`
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13538 — drop the padding check once vize has
+  // `vue/padding-line-between-blocks`
   const UNPADDED_BLOCK_MESSAGE =
     "Put a blank line between a component's top-level blocks: this block opens straight after the previous one closes.";
-  // A top-level closing tag on its own line, and the line after it starting with a tag: the lookahead leaves that tag out
+  // A top-level closing tag on its own line, and the line after it starting with a tag: the lookahead leaves that tag
+  // Out
   const UNPADDED_BLOCK_REGEX = /^<\/[\w-]+>\r?\n(?=<[\w-])/gmu;
   let trackedFiles: VueFile[] = [];
 

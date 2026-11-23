@@ -12,8 +12,8 @@ import { readHitboxStart } from "#src/services/genshinAssets/kits/gcsim/readHitb
 import { readRangeBodyStart } from "#src/services/genshinAssets/kits/gcsim/readRangeBodyStart";
 
 // The callee of an area query whose enemies a loop reads, `c.Core.Combat.EnemiesWithinArea(area, filter)`: a loop over
-// Its enemies fires at each one in the area, so a single-target hit it fires lands on every enemy there. A random subset
-// Of the area, `RandomEnemiesWithinArea`, reaches only some of them, so it is no such query
+// Its enemies fires at each one in the area, so a single-target hit it fires lands on every enemy there. A random
+// Subset Of the area, `RandomEnemiesWithinArea`, reaches only some of them, so it is no such query
 const ENEMIES_WITHIN_AREA_CALLEE = "EnemiesWithinArea";
 
 // Each loop over an area query's enemies in a file, read at its `range` token

@@ -4,6 +4,7 @@ import { assertVouched } from "#src/services/provenance/assertVouched";
 import { readFileProvenance } from "#src/services/provenance/readFileProvenance";
 import { basename } from "node:path";
 
-// The sidecar of a file input a consumer may read, refused when the file has none or one that names another game version
+// The sidecar of a file input a consumer may read, refused when the file has none or one that names another game
+// Version
 export const readVouchedFileProvenance = async (file: string, gameVersion: string): Promise<Provenance> =>
   assertVouched(await readFileProvenance(file), basename(file), gameVersion);

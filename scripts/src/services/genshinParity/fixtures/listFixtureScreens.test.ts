@@ -72,7 +72,8 @@ describe(listFixtureScreens, () => {
   test("should name a variant's primary reference as its whole-screen one, over a region listed before it", async () => {
     expect.hasAssertions();
 
-    // Built from entries, not an object literal, since the lint's key sort would list REFERENCE_ID first and undo the order
+    // Built from entries, not an object literal, since the lint's key sort would list REFERENCE_ID first and undo the
+    // Order
     const referenceMap = Object.fromEntries<ParityReference>([
       [REGION_REFERENCE_ID, { region: REGION, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT }],
       [REFERENCE_ID, { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT }],

@@ -3,8 +3,8 @@ import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 
-// A strike's hitbox from its two dimensions and its offset ahead of the body. gcsim's first and fourth strikes are fans,
-// A circle of radius and angle, and its second and third are boxes of width and length, each on the player
+// A strike's hitbox from its two dimensions and its offset ahead of the body. gcsim's first and fourth strikes are
+// Fans, A circle of radius and angle, and its second and third are boxes of width and length, each on the player
 export const createBladeRollerHitbox = (
   strikeIndex: number,
   [first, second]: [number, number],

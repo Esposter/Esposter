@@ -21,7 +21,8 @@ const SHARED_SOURCE_PREFIX = `${SHARED_PACKAGE_PATH}/src/`;
 // The threshold, and the rule is about packages, not files. The dead check is kept only for the files the barrel
 // Re-exports, which knip's default run skips as entry exports; knip reports the rest's unused exports itself.
 export const readSharedExportFindings = (): SharedExportFinding[] => {
-  // The modules the package's barrel lists, read from the same rule that writes it, since the barrel itself is build output
+  // The modules the package's barrel lists, read from the same rule that writes it, since the barrel itself is build
+  // Output
   const barrelPaths = new Set(
     getSourceSpecifiers(resolve(REPOSITORY_ROOT, SHARED_PACKAGE_PATH, "src"), []).map(
       (specifier) => `${SHARED_SOURCE_PREFIX}${specifier}`,

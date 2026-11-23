@@ -9,9 +9,9 @@ import { WitnessTarget } from "genshin-world/sceneExport";
 // The share of the sun under which a pixel of ours stands in shadow, the middle of its soft edge
 const SHADOWED_VISIBILITY = 0.5;
 
-// The price of a sun direction for a reference's shadows: the shadow the exports' occluders cast onto the receivers from
-// The direction, its edges' distance to the reference's, in the reference's pixels. The reference's edges and their
-// Distance transform are fixed for the solve, so the caller builds them once
+// The price of a sun direction for a reference's shadows: the shadow the exports' occluders cast onto the receivers
+// From The direction, its edges' distance to the reference's, in the reference's pixels. The reference's edges and
+// Their Distance transform are fixed for the solve, so the caller builds them once
 export const createShadowPricer =
   ({
     height,

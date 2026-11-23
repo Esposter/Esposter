@@ -1,8 +1,8 @@
 import type { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 
-// One good as the world reads it: the item it gives and how many, the items it is bought with and how many of each, its buy
-// Limit (zero for none), when that limit comes back, the Adventure Rank it shows from, and the game-time moments it sells
-// Between, as ISO strings with the game's offset
+// One good as the world reads it: the item it gives and how many, the items it is bought with and how many of each, its
+// Buy Limit (zero for none), when that limit comes back, the Adventure Rank it shows from, and the game-time moments it
+// Sells Between, as ISO strings with the game's offset
 export interface ShopGoodRow {
   beginTime: string;
   buyLimit: number;
@@ -14,6 +14,7 @@ export interface ShopGoodRow {
   minPlayerLevel: number;
   refresh: ShopRefresh;
   reputationDiscountLevel?: number;
-  // The sub tab a good is shown on, where its shop has tabs: the Realm Depot's six, each named by the table's sub tab id
+  // The sub tab a good is shown on, where its shop has tabs: the Realm Depot's six, each named by the table's sub tab
+  // Id
   tabId?: number;
 }

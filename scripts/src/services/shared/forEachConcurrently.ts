@@ -1,10 +1,11 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: each lane reads the shared async iterable one item at a time, and takes its next only once its call settles */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: each lane reads the shared async iterable one item at a
+   time, and takes its next only once its call settles */
 import { getResultAsync, noop } from "@esposter/shared";
 
-// Runs `callback` over `items` with at most `concurrency` calls in flight. Each lane takes the next item from one cursor only
-// Once its own call has settled, so the calls in flight are bounded and a listing is streamed rather than collected.
-// A failure stops the items not yet started; the call rejects with the first one only once every call in flight has settled.
-// The registry readers share this bound rather than each keeping a pool
+// Runs `callback` over `items` with at most `concurrency` calls in flight. Each lane takes the next item from one
+// Cursor only Once its own call has settled, so the calls in flight are bounded and a listing is streamed rather than
+// Collected. A failure stops the items not yet started; the call rejects with the first one only once every call in
+// Flight has settled. The registry readers share this bound rather than each keeping a pool
 export const forEachConcurrently = async <T>(
   items: AsyncIterable<T> | Iterable<T>,
   concurrency: number,

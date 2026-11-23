@@ -5,7 +5,8 @@ import { HOOKS_PATH, HOOKS_PATH_KEY } from "#src/services/setup/constants";
 import { getRunRow } from "#src/services/setup/getRunRow";
 import { getStepRow } from "#src/services/setup/getStepRow";
 
-// Git reads hooks from the repository's own folder once its `core.hooksPath` names it, which the setup sets when it is not
+// Git reads hooks from the repository's own folder once its `core.hooksPath` names it, which the setup sets when it is
+// Not
 export const readHooksRow = (environment: SetupEnvironment): SetupRow => {
   const step = "git hooks";
   const { status, stdout } = environment.run("git", ["config", "--get", HOOKS_PATH_KEY]);

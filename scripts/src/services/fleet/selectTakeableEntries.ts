@@ -8,11 +8,11 @@ import { comparePhases } from "#src/services/fleet/comparePhases";
 import { ALL_AREAS } from "#src/services/fleet/constants";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 
-// The entries this machine may take, in the order they are offered: the lowest phase first, an entry with no phase after
-// Every phase, and the listed order within a phase, so the first one is the next entry to claim. An entry is takeable
-// When the machine meets its needs and lends its area, when it is not waiting on a blocker, when no live claim holds it
-// (a stale claim is taken over, so it does not hold), and when its touch set overlaps no live claim's. A missed claim is
-// Live, so a missed entry and its paths wait for the coordinator
+// The entries this machine may take, in the order they are offered: the lowest phase first, an entry with no phase
+// After Every phase, and the listed order within a phase, so the first one is the next entry to claim. An entry is
+// Takeable When the machine meets its needs and lends its area, when it is not waiting on a blocker, when no live claim
+// Holds it (a stale claim is taken over, so it does not hold), and when its touch set overlaps no live claim's. A
+// Missed claim is Live, so a missed entry and its paths wait for the coordinator
 export const selectTakeableEntries = (
   entries: readonly FleetEntry[],
   profile: MachineProfile,
@@ -28,7 +28,8 @@ export const selectTakeableEntries = (
       ({ area, id, needs, touches, waiting }) =>
         needs.every((need) => profile.capabilities.includes(need)) &&
         isLent(area) &&
-        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a waiting reason the fleet holds, empty when none
+        // A
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- waiting reason the fleet holds, empty when none
         waiting === "" &&
         !liveClaimIds.has(id) &&
         !checkTouchesOverlap(touches, liveTouches),

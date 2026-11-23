@@ -8,7 +8,8 @@ import { readOwedShas } from "#src/services/review/readOwedShas";
 import { splitReviewCommits } from "#src/services/review/splitReviewCommits";
 import { toWindow } from "#src/services/review/toWindow";
 
-// Every window the commits owed split into, oldest first, so the run plans all of them at once. Empty when nothing is owed.
+// Every window the commits owed split into, oldest first, so the run plans all of them at once. Empty when nothing is
+// Owed.
 export const readReviewWindows = (range: ReviewRange): ReviewWindow[] => {
   const commits: ReviewCommit[] = readOwedShas(range).map((sha) => ({ files: readCommitFiles(sha), sha }));
   return splitReviewCommits(commits, REVIEW_WINDOW_FILE_CAP).map((windowCommits) => toWindow(windowCommits));

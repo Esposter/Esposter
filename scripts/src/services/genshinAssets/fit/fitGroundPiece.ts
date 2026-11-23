@@ -29,8 +29,8 @@ import { computeRootMeanSquare } from "#src/services/recreation/statistics/compu
 import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
 import { regionGroundSchema } from "genshin-world";
 
-// The distance between a piece's samples, and the distance from its centre a sample weighs half of one at the centre, in
-// Metres
+// The distance between a piece's samples, and the distance from its centre a sample weighs half of one at the centre,
+// In Metres
 const GROUND_STEP = 6;
 const GROUND_FALLOFF = 200;
 // The hills' widths, widest first, down to the knolls round the oak and the statue
@@ -43,18 +43,18 @@ const GROUND_ERROR_BANDS = [GROUND_BAR_RADIUS, 150, 300, 700];
 // Against the piece's gate, and faded in over one past the bar's radius
 const GROUND_FADE_CELL_SIZE = 64;
 
-// A piece of a region's ground as our Gaussian hills over its terrain tiles' heightfields, in the world's axes round the
-// Oak's foot, which every region shares: Three's, x as the game's and z its mirror, every height over the foot's. Fitted
-// Over the samples of its square inside `checkIsInside`, so no piece runs
-// Into another's outline. The piece's own ground is its gate's and its bar's: the gate is the RMS of its detail finer
-// Than the fit's step over the samples the bar is read on, the roughness no hill of the fit's widths follows, and the
-// Bar is the RMS of its hills and features, without the residual, over the same samples. A capital's city is no piece's
-// Own ground: inside it the fit takes the land the city stands on, its tiles smoothed at the narrowest hills' width, and
-// Its buildings and plazas own the tiers and walls over it. Returns the piece's hills, the plateaus, cliffs and ridges
-// The hills leave, the residual's noise faded out where they hold against the gate and the heights they stand between,
-// As the record of the piece under its key, with a report holding the gate, the bar against it and the composed ground's
-// Error with and without the residual, and a piece whose bar misses its gate, or reads on too few samples, is refused: it
-// Returns no record, and its report names it
+// A piece of a region's ground as our Gaussian hills over its terrain tiles' heightfields, in the world's axes round
+// The Oak's foot, which every region shares: Three's, x as the game's and z its mirror, every height over the foot's.
+// Fitted Over the samples of its square inside `checkIsInside`, so no piece runs Into another's outline. The piece's
+// Own ground is its gate's and its bar's: the gate is the RMS of its detail finer Than the fit's step over the samples
+// The bar is read on, the roughness no hill of the fit's widths follows, and the Bar is the RMS of its hills and
+// Features, without the residual, over the same samples. A capital's city is no piece's Own ground: inside it the fit
+// Takes the land the city stands on, its tiles smoothed at the narrowest hills' width, and Its buildings and plazas own
+// The tiers and walls over it. Returns the piece's hills, the plateaus, cliffs and ridges The hills leave, the
+// Residual's noise faded out where they hold against the gate and the heights they stand between, As the record of the
+// Piece under its key, with a report holding the gate, the bar against it and the composed ground's Error with and
+// Without the residual, and a piece whose bar misses its gate, or reads on too few samples, is refused: it Returns no
+// Record, and its report names it
 export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): Promise<GroundPieceFit> => {
   const { getGameHeight, origin } = source;
   const [originX, originY, originZ] = origin;
@@ -79,8 +79,8 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
     (x, z) => (checkIsInside(x, z) ? getGameHeight(originX + x, originZ - z) - originY : Number.NaN),
   );
   const cityDistances = mapTerrainResidualGrid(tileGrid, getCityDistance).values;
-  // The piece's own ground, NaN inside a city, and the land a city stands on: its tiles smoothed at the narrowest hills'
-  // Width, which holds none of its tiers and walls
+  // The piece's own ground, NaN inside a city, and the land a city stands on: its tiles smoothed at the narrowest
+  // Hills' Width, which holds none of its tiers and walls
   const naturalGrid = {
     ...tileGrid,
     values: tileGrid.values.map((height, index) => (cityDistances[index] === 0 ? Number.NaN : height)),
@@ -166,8 +166,8 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
       return `${roundFitted(compute([...values]))}${unit} within ${within}`;
     }).join(", ");
   const ground: RegionGround = { ...hills, features, ...computeGroundBounds(heightGrid.values), residual };
-  // The reader parses the ground against its schema, which refuses a value JSON cannot hold, such as a NaN written out as
-  // Null, so a ground the reader would refuse throws here, before anything is published
+  // The reader parses the ground against its schema, which refuses a value JSON cannot hold, such as a NaN written out
+  // As Null, so a ground the reader would refuse throws here, before anything is published
   regionGroundSchema.parse(ground);
   const getShareReport = (checkIsCounted: (weight: number) => boolean): string =>
     `${roundFitted((100 * fade.weights.filter((weight) => checkIsCounted(weight)).length) / fade.weights.length)}%`;
@@ -189,7 +189,8 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
             // Extrapolate past their edge, so it is not read against the tiles
             if (!checkIsInside(x, z)) return `${placeId} ${radius} metres from ${radiusSource}, outside its ground`;
             const tileHeight = getGameHeight(originX + x, originZ - z) - originY;
-            // A place on another region's tiles, as Windrise's oak is inside Mondstadt's extent, has no tile here to stand over
+            // A place on another region's tiles, as Windrise's oak is inside Mondstadt's extent, has no tile here to
+            // Stand over
             const overTiles = Number.isFinite(tileHeight)
               ? ` and its ground ${roundFitted(getGroundHeight(x, z) - tileHeight)} metres over the tiles'`
               : "";

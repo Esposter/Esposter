@@ -9,8 +9,8 @@ import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// A family's normal-map wavelength in metres, read off the component's exported layout and its meshes and maps. None for
-// A family the login does not name, which holds no map a parity pass reads
+// A family's normal-map wavelength in metres, read off the component's exported layout and its meshes and maps. None
+// For A family the login does not name, which holds no map a parity pass reads
 export const readFamilyMapWavelength = async (
   component: DerivedAssetComponent,
   family: string,

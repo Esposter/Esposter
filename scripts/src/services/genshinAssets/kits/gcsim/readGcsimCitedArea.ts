@@ -7,8 +7,8 @@ import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 // The area the first `combat` hitbox constructor a line calls gives, priced as the mechanical reader prices the same
 // Hitbox, at the targeting area its action's reach is measured from, with the sizes the constructor reads, which the
-// Offset it moves by is not part of. A constructor no kit area gives has none. The cause its pricing gives is not kept, as
-// A cited value carries its citation as its provenance. The names a size or offset is written with resolve through
+// Offset it moves by is not part of. A constructor no kit area gives has none. The cause its pricing gives is not kept,
+// As A cited value carries its citation as its provenance. The names a size or offset is written with resolve through
 // `resolveName`, as the mechanical path resolves them, so a size a package constant names reads as that number
 export const readGcsimCitedArea = (
   line: string,

@@ -36,9 +36,10 @@ export const SURFACES_DIRECTORY: string = join(PARITY_DIRECTORY, "surfaces");
 export const WHOLE_SCREEN_MIN_WIDTH = 1280;
 export const WHOLE_SCREEN_MIN_ASPECT_RATIO = 1.6;
 export const WHOLE_SCREEN_MAX_ASPECT_RATIO = 1.9;
-// The world package's parity page, which renders a screen without Nuxt. The shared checkout serves it on 3011, and a busy
-// Port is taken by the next one up, so a command finds the page by probing from its first port (`resolveParityPageRoot`).
-// `GENSHIN_PARITY_PORT` names a different first port, as a runner's worktree does for its own page
+// The world package's parity page, which renders a screen without Nuxt. The shared checkout serves it on 3011, and a
+// Busy Port is taken by the next one up, so a command finds the page by probing from its first port
+// (`resolveParityPageRoot`). `GENSHIN_PARITY_PORT` names a different first port, as a runner's worktree does for its
+// Own page
 export const PARITY_DEFAULT_PORT = 3011;
 // How many ports from the first one a command probes for the page, and how long each probe waits for an answer
 export const PARITY_PORT_COUNT = 10;
@@ -50,20 +51,22 @@ export const PARITY_PAGE_MAX_BYTES: number = MEBIBYTE;
 export const PARITY_PAGE_TITLE = "<title>Genshin parity</title>";
 // The world package, whose parity page a load run builds for production and serves beside the dev server
 export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
-// The committed references' folder: each reference the map names is committed here, or beside its fixture variant's snapshot
+// The committed references' folder: each reference the map names is committed here, or beside its fixture variant's
+// Snapshot
 export const REFERENCE_FILES_DIRECTORY: string = join(GENSHIN_WORLD_DIRECTORY, "parity", "references");
 // The manifest of every reference the map names: each file's hash, size, dimensions, source and attribution.
 // The committed files are checked against it.
 export const REFERENCE_MANIFEST_PATH: string = join(REFERENCE_FILES_DIRECTORY, "manifest.json");
-// The production build of the parity page: a folder inside that package, which git ignores, and the root task that builds it
+// The production build of the parity page: a folder inside that package, which git ignores, and the root task that
+// Builds it
 export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";
 // The config the build and its preview read, relative to the package
 export const PARITY_CONFIG_PATH = "parity/vite.config.ts";
-// Vite's own entry, run by node from the world package's install, so neither a shell nor a package manager stands between
-// The tool and the build
+// Vite's own entry, run by node from the world package's install, so neither a shell nor a package manager stands
+// Between The tool and the build
 export const VITE_BIN_PATH: string = join(GENSHIN_WORLD_DIRECTORY, "node_modules", "vite", "bin", "vite.js");
-// The browser keeps this many resource timings, so a page with more requests than that drops the rest from its load bench; the
-// Parity page raises it before its first request
+// The browser keeps this many resource timings, so a page with more requests than that drops the rest from its load
+// Bench; the Parity page raises it before its first request
 export const RESOURCE_TIMING_BUFFER_SIZE = 4096;
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
@@ -71,9 +74,9 @@ export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 // Under the same folder by their export folders (`Mesh/<name>.obj`, `Texture2D/<name>.png`)
 export const WITNESS_PATH_PREFIX = "/witness-exports/";
 export const WITNESS_LAYOUT_PATH = "layout.json";
-// The folder holding the installed game's `GenshinImpact_Data` and its `config.ini`, read from `GENSHIN_GAME_DIRECTORY` so
-// A machine that installed the game elsewhere points the tooling at it. On macOS it defaults to the parity folder's own
-// `game` copy, where the game is kept; elsewhere to the Windows install
+// The folder holding the installed game's `GenshinImpact_Data` and its `config.ini`, read from `GENSHIN_GAME_DIRECTORY`
+// So A machine that installed the game elsewhere points the tooling at it. On macOS it defaults to the parity folder's
+// Own `game` copy, where the game is kept; elsewhere to the Windows install
 export const GAME_DIRECTORY: string =
   process.env.GENSHIN_GAME_DIRECTORY ??
   (process.platform === "darwin"

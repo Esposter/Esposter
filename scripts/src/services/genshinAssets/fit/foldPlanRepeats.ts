@@ -4,7 +4,8 @@ import { computeCellMean } from "#src/services/genshinAssets/fit/computeCellMean
 
 // A plan's colours averaged over each block of so many cells a side and over every repeat of its rows, so a surface
 // Painted in a pattern that repeats along the plan is read once, past the speckle each repeat paints differently: each
-// Folded cell the mean of the drawn cells under it that carry the tag most of them do, and tagged -1 where none is drawn
+// Folded cell the mean of the drawn cells under it that carry the tag most of them do, and tagged -1 where none is
+// Drawn
 export const foldPlanRepeats = (
   colors: readonly Vector[],
   tags: Int16Array,

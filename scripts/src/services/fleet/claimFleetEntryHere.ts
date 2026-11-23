@@ -6,8 +6,8 @@ import { readMachineSample } from "#src/services/fleet/readMachineSample";
 import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
 
-// Takes `entry` for the worker given on this machine, its load sampled as the claim records it, and returns the holder it
-// Claimed as with the outcome of `claimFleetEntry`
+// Takes `entry` for the worker given on this machine, its load sampled as the claim records it, and returns the holder
+// It Claimed as with the outcome of `claimFleetEntry`
 export const claimFleetEntryHere = async (
   entry: string,
   worker: string,

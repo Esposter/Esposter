@@ -31,7 +31,8 @@ export const balanceCommand: SubCommandsDef[string] = defineCommand({
     const samples: DisplaySample[] = [];
     for (const referenceId of referenceIds) {
       // A channel under the curve's black is what the balance shows in, so every pixel shown over none is read
-      // oxlint-disable-next-line no-await-in-loop -- One device: each reference's pixels come from a browser render on the GPU, and parallel renders exhaust the free memory each holds
+      // The GPU, and parallel renders exhaust the free memory each holds
+      // oxlint-disable-next-line no-await-in-loop -- One device: each reference's pixels come from a browser render on
       const referenceSamples = await readDisplaySamples(referenceId, args.witness, 0);
       console.log(`${referenceId}: ${referenceSamples.length} pixels`);
       samples.push(...referenceSamples);

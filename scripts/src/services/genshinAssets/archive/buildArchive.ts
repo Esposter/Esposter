@@ -16,9 +16,10 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { ArchiveSection, GameDataset } from "genshin-world";
 
-// Every section of the Archive from the dump's codex tables, each entry named by the game's English text and checked against
-// The world's own schema for it, published as one record per section. Returns the id of each Volume's body, which the book
-// Bodies read, a note of each section's count, and the sections' entries by their keys for the names to be read from
+// Every section of the Archive from the dump's codex tables, each entry named by the game's English text and checked
+// Against The world's own schema for it, published as one record per section. Returns the id of each Volume's body,
+// Which the book Bodies read, a note of each section's count, and the sections' entries by their keys for the names to
+// Be read from
 export const buildArchive = (): { bodyIds: number[]; notes: string[]; objects: Record<string, ArchiveEntry[]> } => {
   const englishTextMap = readTextMap(GameLanguage.English);
   const { artifactSets, weapons } = readEquipmentCandidates();

@@ -53,8 +53,8 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     name: "calibrate",
   },
   run: async ({ args }) => {
-    // The haze lives in the scene's sky state, not the world's data, so a light published beside it would be drawn under
-    // A haze it was not solved under: the haze is set first, and the light published under the scene's own
+    // The haze lives in the scene's sky state, not the world's data, so a light published beside it would be drawn
+    // Under A haze it was not solved under: the haze is set first, and the light published under the scene's own
     if (args.haze && args.write)
       throw new InvalidOperationError(Operation.Update, STONE_LIGHT_KEY, "--haze solves a haze --write cannot set");
     if (args.haze) {

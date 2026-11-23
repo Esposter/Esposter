@@ -15,7 +15,8 @@ describe(writeTracedPath, () => {
   const MAP_SOURCE = "export const TracedMarkMap: Record<string, string> = {\n};\n";
   const MAX_EDGE_DIFFERENCE = 1;
 
-  // The ink's box of a path drawn on the mark's own pixels, read from the rendered alpha so no path syntax is parsed here
+  // The ink's box of a path drawn on the mark's own pixels, read from the rendered alpha so no path syntax is parsed
+  // Here
   const readInkBox = async (path: string): Promise<number[]> => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${MARK_SIZE}" height="${MARK_SIZE}" viewBox="0 0 ${MARK_SIZE} ${MARK_SIZE}"><path fill-rule="evenodd" d="${path}"/></svg>`;
     const { data, info } = await sharp(Buffer.from(svg)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -50,7 +51,8 @@ describe(writeTracedPath, () => {
     expect.hasAssertions();
 
     for (const scale of SCALES) {
-      // oxlint-disable no-await-in-loop -- Each step reads the last: each write reads the map the one before it wrote, so the scales go in turn
+      // So the scales go in turn
+      // oxlint-disable no-await-in-loop -- Each step reads the last: each write reads the map the one before it wrote,
       const region = sharp(markPath)
         .flatten({ background: "#fff" })
         .extract({ height: MARK_SIZE, left: 0, top: 0, width: MARK_SIZE });

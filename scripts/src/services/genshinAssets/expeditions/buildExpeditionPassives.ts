@@ -7,8 +7,9 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { GameDataset } from "genshin-world";
 
-// The expedition talents as one record of the expeditions dataset: each utility passive whose English description names an
-// Expedition, by its proud skill group, read from the game's own description text. A group is read once, from its first row
+// The expedition talents as one record of the expeditions dataset: each utility passive whose English description names
+// An Expedition, by its proud skill group, read from the game's own description text. A group is read once, from its
+// First row
 export const buildExpeditionPassives = (): Record<string, unknown> => {
   const englishTextMap = readTextMap(GameLanguage.English);
   const passives = new Map<number, ExpeditionPassive>();

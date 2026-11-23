@@ -1,5 +1,5 @@
-// A sky's mask dealt into two halves as a chequerboard of square blocks the size given, shifted by the offset across and
-// Down, so each half holds sky from every part of the frame and the two differ only in which of its views they see
+// A sky's mask dealt into two halves as a chequerboard of square blocks the size given, shifted by the offset across
+// And Down, so each half holds sky from every part of the frame and the two differ only in which of its views they see
 export const splitSkyMask = (
   sky: Uint8Array,
   width: number,

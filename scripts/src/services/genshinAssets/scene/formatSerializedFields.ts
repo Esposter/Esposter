@@ -9,7 +9,8 @@ import { formatNumbers } from "#src/services/genshinAssets/shared/formatNumbers"
 import { exhaustiveGuard } from "@esposter/shared";
 
 // A script's scanned fields as text, one a line by its offset in hexadecimal, a pointer named by what it points at and
-// An array's records indented beneath it, and each curve and gradient followed by what it reads at each of the times given
+// An array's records indented beneath it, and each curve and gradient followed by what it reads at each of the times
+// Given
 export const formatSerializedFields = (
   fields: readonly SerializedField[],
   describePointer: (pointer: ObjectPointer) => string,

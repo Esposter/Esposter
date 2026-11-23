@@ -9,8 +9,8 @@ import {
 } from "#src/services/machine/constants";
 import { mkdirSync, rmSync } from "node:fs";
 
-// Whether this process now holds the machine's watcher claim. Taken before the first sample, so a second watcher sees it
-// From the moment it starts, and a claim is taken over only when its holder's process is gone
+// Whether this process now holds the machine's watcher claim. Taken before the first sample, so a second watcher sees
+// It From the moment it starts, and a claim is taken over only when its holder's process is gone
 export const claimMachineWatch = (): boolean => {
   mkdirSync(MACHINE_STATE_DIRECTORY, { recursive: true });
   if (checkIsLockCreated(MACHINE_LOCK_PATH)) return true;

@@ -3,9 +3,10 @@ import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/Gcs
 
 import { checkIsInIteration } from "#src/services/genshinAssets/kits/gcsim/checkIsInIteration";
 
-// The `AttackInfo` a queue call fires: the literal written inline in its arguments, else the literal of its file assigned
-// The name it passes, the nearest one before the call or else the first after it, of the loop iteration the call is in.
-// A name no literal of the file has is a method's, which fires the attack it returns, in any file of the character
+// The `AttackInfo` a queue call fires: the literal written inline in its arguments, else the literal of its file
+// Assigned The name it passes, the nearest one before the call or else the first after it, of the loop iteration the
+// Call is in. A name no literal of the file has is a method's, which fires the attack it returns, in any file of the
+// Character
 export const findQueuedAttack = (
   attacks: readonly GcsimAttack[],
   { attackLine, attackName, file, iterations, line }: GcsimQueuedAttack,

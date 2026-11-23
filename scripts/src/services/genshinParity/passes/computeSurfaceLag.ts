@@ -4,8 +4,8 @@ import { findDominantLag } from "#src/services/genshinParity/passes/findDominant
 import { highPassAngles } from "#src/services/genshinParity/passes/highPassAngles";
 
 // The dominant lag of a family's normal angles, in samples: the strongest lobe of their autocorrelation along the rows,
-// After a high-pass that takes out variation longer than `highPassRadius` samples as shape, and within `maxLag` samples.
-// None where the angles hold no variation the measure can resolve, or no lobe in the range read
+// After a high-pass that takes out variation longer than `highPassRadius` samples as shape, and within `maxLag`
+// Samples. None where the angles hold no variation the measure can resolve, or no lobe in the range read
 export const computeSurfaceLag = ({
   angles,
   highPassRadius,

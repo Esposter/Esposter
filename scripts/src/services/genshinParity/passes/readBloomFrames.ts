@@ -11,8 +11,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GENSHIN_BLOOM_STRUCTURE } from "genshin-engine";
 import sharp from "sharp";
 
-// The width a reference's frames are drawn at: the display width, or the reference's own width, which both sides are then
-// Resized down from by the same kernel
+// The width a reference's frames are drawn at: the display width, or the reference's own width, which both sides are
+// Then Resized down from by the same kernel
 export const getBloomPageWidth = (resize: BloomResize, referenceWidth: number): number =>
   resize === BloomResize.Display ? DISPLAY_WIDTH : referenceWidth;
 
@@ -41,7 +41,8 @@ export const readBloomBaseline = async (
   return { height, reference: await readRawRgb(image, DISPLAY_WIDTH, height), unbloomed: frame };
 };
 
-// Our frame of a reference's screen with the game's bloom drawn in the given structure, at the same width the baseline is
+// Our frame of a reference's screen with the game's bloom drawn in the given structure, at the same width the baseline
+// Is
 export const readBloomedFrame = async (
   referenceId: string,
   component: DerivedAssetComponent,
@@ -60,9 +61,9 @@ export const readBloomedFrame = async (
   return frame;
 };
 
-// The bloom's two frames of a reference at the display width, drawn with the engine's own structure and the pass's measure
-// (`BLOOM_RESIZE`): ours with the game's bloom drawn and with it off, the one prop the bloom reading varies, and the
-// Reference's own pixels at the same size
+// The bloom's two frames of a reference at the display width, drawn with the engine's own structure and the pass's
+// Measure (`BLOOM_RESIZE`): ours with the game's bloom drawn and with it off, the one prop the bloom reading varies,
+// And the Reference's own pixels at the same size
 export const readBloomFrames = async (
   referenceId: string,
   component: DerivedAssetComponent,

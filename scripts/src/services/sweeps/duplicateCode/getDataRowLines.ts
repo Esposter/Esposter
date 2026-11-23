@@ -20,7 +20,8 @@ const DATA_OBJECT_ROW_REGEX = new RegExp(
   "u",
 );
 const DATA_FRAME_REGEX = /^\s*(?:[{}[\]]+|\w+\s*:\s*[[{]|export const \w+: Record<\w+, \w+> = \{)[,;]?$/u;
-// A keyed empty collection is a row too, such as a save's default of no entries, and so is an object of only such fields
+// A keyed empty collection is a row too, such as a save's default of no entries, and so is an object of only such
+// Fields
 const EMPTY_COLLECTION_SOURCE = String.raw`\[\]|\{\}`;
 const EMPTY_COLLECTION_ROW_REGEX = new RegExp(
   String.raw`^\s*(?:\w+|"[^"]*")\s*:\s*(?:${EMPTY_COLLECTION_SOURCE})\s*,?$`,

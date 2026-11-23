@@ -5,10 +5,11 @@ import { timedOutError } from "#src/services/shared/timedOutError";
 import { Operation, takeOne } from "@esposter/shared";
 import { resolve } from "node:path";
 
-// The paths of one formatter run that the formatter would rewrite, in the order given, from `oxfmt --list-different`, which
-// Prints each one on a line of its own. A path it ignores, or has no parser for, is neither listed nor an error, since
-// `--no-error-on-unmatched-pattern` makes a run of nothing but such paths a clean one. A run the formatter cannot finish,
-// Since one of its files does not parse or is not UTF-8, answers undefined, and the caller checks that run file by file
+// The paths of one formatter run that the formatter would rewrite, in the order given, from `oxfmt --list-different`,
+// Which Prints each one on a line of its own. A path it ignores, or has no parser for, is neither listed nor an error,
+// Since `--no-error-on-unmatched-pattern` makes a run of nothing but such paths a clean one. A run the formatter cannot
+// Finish, Since one of its files does not parse or is not UTF-8, answers undefined, and the caller checks that run file
+// By file
 export const listDifferent = (
   paths: string[],
   repositoryRoot: string,

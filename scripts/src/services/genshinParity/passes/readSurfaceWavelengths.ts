@@ -7,9 +7,10 @@ import { SURFACE_HIGH_PASS_RADIUS_PIXELS, SURFACE_LAG_CAP_SHARE } from "#src/ser
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 
 // The dominant wavelength of one family's normal angles in the exports' frame and in ours, over the pixels both draw as
-// The family, each side's normal against its own geometry (`computeNormalAngle`). Both read at the family's median depth
-// And the frame's field of view. The lag is capped at a share of the family's own width in pixels, so a variation the
-// Size of the object is shape and never a detail. The metres a pixel spans at that depth come back with them, as the gate
+// The family, each side's normal against its own geometry (`computeNormalAngle`). Both read at the family's median
+// Depth And the frame's field of view. The lag is capped at a share of the family's own width in pixels, so a variation
+// The Size of the object is shape and never a detail. The metres a pixel spans at that depth come back with them, as
+// The gate
 export const readSurfaceWavelengths = ({
   depth,
   exports,

@@ -3,8 +3,8 @@ import type { LuaValue } from "#src/models/recreation/lua/LuaValue";
 
 import { readLuaKey } from "#src/services/recreation/lua/readLuaKey";
 
-// A table keyed 1..n contiguously is an array, every other table an object keyed by its keys' strings. Its values are read
-// Through the reader it is handed, the one that calls it, so this file never imports that reader back
+// A table keyed 1..n contiguously is an array, every other table an object keyed by its keys' strings. Its values are
+// Read Through the reader it is handed, the one that calls it, so this file never imports that reader back
 export const readLuaTableValue = (
   table: LuaTable,
   readValue: (value: LuaValue) => unknown,

@@ -3,7 +3,8 @@ import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDun
 import { DUNGEON_LEVEL_ENTITY_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A daily fight's ley line disorder is the one level config its dungeon row names, read through the entity table's config name
+// A daily fight's ley line disorder is the one level config its dungeon row names, read through the entity table's
+// Config name
 export const getDisorder = (dungeon: ExcelDungeonRow, entityNames: ReadonlyMap<number, string>): string => {
   const entityIds = Object.keys(dungeon.levelConfigMap ?? {});
   const disorder = entityIds.length === 1 ? entityNames.get(Number(entityIds[0])) : undefined;

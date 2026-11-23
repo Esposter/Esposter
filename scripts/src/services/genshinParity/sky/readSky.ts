@@ -27,7 +27,8 @@ const MIN_SKY_HEIGHT = 0.02;
 // Sky fitted under its clouds, so a sky more cloud than clear is not solved as their mean), each turned into its ray
 // Through the scene's own camera and into scene colour through the tone mapping's inverse, under the sun and moon the
 // Scene draws its sky with, and the scene's own sky drawn with no cloud over the same frame: what the scene draws where
-// The solve reads, so a sky solved well and drawn otherwise (a haze, a grade or a pass over it) shows as its own residual
+// The solve reads, so a sky solved well and drawn otherwise (a haze, a grade or a pass over it) shows as its own
+// Residual
 export const readSky = async (referenceId: string, witness: DerivedAssetComponent): Promise<SkyReading> => {
   const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(

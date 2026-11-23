@@ -2,8 +2,8 @@ import type { DumpedDialogSpeaker } from "#src/models/genshinAssets/residents/Du
 
 import { readDialogTable } from "#src/services/genshinText/readDialogTable";
 
-// The NPC lines of the game's dialog table, each with the talk it belongs to. A talk is the game's own hundred of dialog
-// Ids, as the quest talks are read, and a line the Traveler or a narration says names no NPC and is left out
+// The NPC lines of the game's dialog table, each with the talk it belongs to. A talk is the game's own hundred of
+// Dialog Ids, as the quest talks are read, and a line the Traveler or a narration says names no NPC and is left out
 export const readDialogSpeakers = (): DumpedDialogSpeaker[] => {
   const { dialogRows, idKey } = readDialogTable();
   return dialogRows.flatMap((dialog) => {

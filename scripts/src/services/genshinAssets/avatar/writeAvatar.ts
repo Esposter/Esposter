@@ -35,7 +35,8 @@ import { join } from "node:path";
 // A component's game model written beside its exports as its avatar: the rig of its Avatar asset, each of its LOD0
 // Meshes skinned to that rig, and the values of the materials they draw with. Every pointer is resolved through the CAB
 // Its renderer lies in, so a mesh or material another CAB names is read from that CAB. The rig's bones keep their rest
-// Pose, and a bone a mesh names that the rig lacks is added under the nearest ancestor the rig has, at the layout's pose
+// Pose, and a bone a mesh names that the rig lacks is added under the nearest ancestor the rig has, at the layout's
+// Pose
 export const writeAvatar = async (component: DerivedAssetComponent): Promise<string> => {
   const source = AVATAR_SOURCE_MAP[component];
   if (!source) throw new InvalidOperationError(Operation.Create, component, "has no game model to write as an avatar");

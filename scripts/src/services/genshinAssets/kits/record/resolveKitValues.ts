@@ -28,9 +28,9 @@ const NO_SOURCE_CAUSES: ReadonlySet<KitProvisionalCause> = new Set([
 ]);
 
 // A kit's values from its sources' candidates and its overlay: each path takes its first source's value, the overlay
-// Then sets its own values, removes others and picks another source where it names one. A talent whose hits a named list
-// Spawns keeps its own list empty, the named lists' hits join to their multipliers' talent variables, and the rules fill
-// What is still missing over the actions and hits that leaves
+// Then sets its own values, removes others and picks another source where it names one. A talent whose hits a named
+// List Spawns keeps its own list empty, the named lists' hits join to their multipliers' talent variables, and the
+// Rules fill What is still missing over the actions and hits that leaves
 export const resolveKitValues = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
@@ -68,7 +68,8 @@ export const resolveKitValues = (
     return candidate !== undefined;
   };
   // A choice carrying a value its path's sources do not give is the named-hit join's, which reads the hit's multiplier
-  // And the hitmark picking its call from the record, so it holds its value until the join runs and then takes its candidate
+  // And the hitmark picking its call from the record, so it holds its value until the join runs and then takes its
+  // Candidate
   const joinedChoiceMap = new Map<string, KitOverlayChoice>();
   for (const [path, entry] of Object.entries(overlay))
     if ("source" in entry) {
@@ -94,9 +95,9 @@ export const resolveKitValues = (
       choose(path, candidate);
     }
   chooseDefaults(sourceCandidateMap);
-  // A named list's hits list is empty, which supersedes gcsim's count of the talent's hits. Its multipliers may come from
-  // The tables, so the list is read once the source defaults are in, and it takes over what they chose for paths the
-  // Overlay does not set
+  // A named list's hits list is empty, which supersedes gcsim's count of the talent's hits. Its multipliers may come
+  // From The tables, so the list is read once the source defaults are in, and it takes over what they chose for paths
+  // The Overlay does not set
   const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
   chooseDefaults(namedListKitCandidateMap, (path) => Object.hasOwn(overlay, path));
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);

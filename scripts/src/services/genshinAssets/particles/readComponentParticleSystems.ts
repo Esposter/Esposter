@@ -1,4 +1,6 @@
-/* oxlint-disable no-await-in-loop -- One device: AnimeStudio reads one block at a time, each run blocking the thread; Bounded concurrency: one particle system file is open at a time, since the blocks hold more than the descriptors a process may open at once */
+/* oxlint-disable no-await-in-loop -- One device: AnimeStudio reads one block at a time, each run blocking the
+   thread; Bounded concurrency: one particle system file is open at a time, since the blocks hold more than the
+   descriptors a process may open at once */
 import type { ParticleSystemEmitter } from "#src/models/genshinAssets/particles/ParticleSystemEmitter";
 import type { ParticleSystemLayout } from "#src/models/genshinAssets/particles/ParticleSystemLayout";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";

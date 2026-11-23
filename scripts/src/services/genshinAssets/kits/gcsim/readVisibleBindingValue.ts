@@ -6,7 +6,8 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { readGoEnclosingBodyStart } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingBodyStart";
 
 // The position a name's value is read from at a position, where the name is bound nearest before it: a `:=` declaration
-// In a block the position is in, or any `=` rebinding of it, from the function the position is in. Undefined where none is
+// In a block the position is in, or any `=` rebinding of it, from the function the position is in. Undefined where none
+// Is
 export const readVisibleBindingValue = (
   tokens: readonly GoToken[],
   namedFunctions: readonly GoNamedFunction[],

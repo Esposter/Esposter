@@ -1,7 +1,8 @@
 import type { ReviewFile } from "#src/models/review/ReviewFile";
 
 // Packs files, already in path order, into batches in that order: a batch closes before a file that would take it past
-// Any cap. A file over the line or the character cap on its own gets a batch to itself, since no batch could hold it under the cap.
+// Any cap. A file over the line or the character cap on its own gets a batch to itself, since no batch could hold it
+// Under the cap.
 export const packBatches = (
   files: ReviewFile[],
   fileCap: number,

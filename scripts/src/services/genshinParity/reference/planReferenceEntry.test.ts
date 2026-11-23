@@ -119,7 +119,8 @@ describe(planReferenceEntry, () => {
   test("a replace whose committed plate file holds other bytes than the held hash is refused, and keeps neither plate", async () => {
     expect.hasAssertions();
 
-    // The committed file holds other bytes, so no image is kept for it: the collision is reported and the plate is missing
+    // The committed file holds other bytes, so no image is kept for it: the collision is reported and the plate is
+    // Missing
     readEntryImage.mockImplementation((path) =>
       Promise.resolve(
         path === getScratchPlatePath(ID)

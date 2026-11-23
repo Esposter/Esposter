@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Order is the contract: the build's notes and records keep the depth-first order the walk fits them in, and every piece is fitted one at a time, as runFits fits one piece at a time */
+/* oxlint-disable no-await-in-loop -- Order is the contract: the build's notes and records keep the depth-first order
+   the walk fits them in, and every piece is fitted one at a time, as runFits fits one piece at a time */
 import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
 import type { GroundPieceFit } from "#src/models/genshinAssets/fit/GroundPieceFit";
 import type { GroundPiecesFit } from "#src/models/genshinAssets/fit/GroundPiecesFit";
@@ -25,11 +26,12 @@ const fitQuarters = async (
   return quarters;
 };
 
-// A piece fitted, and where its bar misses its gate, its four quarters fitted the same way, until each holds its gate or
-// Reads on fewer samples than a gate needs. The quarters reading under that minimum are grouped by `groupGroundQuarters`,
-// Each group fitted as one piece and kept only where it holds its gate, so a quarter no group holds is refused. A piece
-// Reading on fewer samples than the minimum is refused in place. Every quarter is fitted before the groups are chosen, since
-// A quarter's sample count is its own fit's, so a quarter's fit is discarded for the group it joins
+// A piece fitted, and where its bar misses its gate, its four quarters fitted the same way, until each holds its gate
+// Or Reads on fewer samples than a gate needs. The quarters reading under that minimum are grouped by
+// `groupGroundQuarters`, Each group fitted as one piece and kept only where it holds its gate, so a quarter no group
+// Holds is refused. A piece Reading on fewer samples than the minimum is refused in place. Every quarter is fitted
+// Before the groups are chosen, since A quarter's sample count is its own fit's, so a quarter's fit is discarded for
+// The group it joins
 export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource): Promise<GroundPiecesFit> => {
   const builds: GameDataBuild[] = [];
   const held: GroundPieceFit[] = [];

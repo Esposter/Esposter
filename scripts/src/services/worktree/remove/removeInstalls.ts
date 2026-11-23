@@ -3,7 +3,8 @@ import { removeTree } from "#src/services/worktree/remove/removeTree";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
-// Removes every node_modules under a worktree, never entering `.git`: it is untracked, so git's dirty check is unchanged
+// Removes every node_modules under a worktree, never entering `.git`: it is untracked, so git's dirty check is
+// Unchanged
 export const removeInstalls = (directory: string, trashPath: string): void => {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     if (!entry.isDirectory() || entry.name === GIT_FOLDER) continue;

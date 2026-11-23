@@ -47,8 +47,8 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
       for (const line of await compareKits(inputs)) console.log(line);
       return;
     }
-    // The publish replaces the whole `kits` index, so it builds every published kit and the named ones, a named kit yet to
-    // Be published among them, and only the named ones may change
+    // The publish replaces the whole `kits` index, so it builds every published kit and the named ones, a named kit yet
+    // To Be published among them, and only the named ones may change
     const inputs = await readKitInputs({
       characterIds,
       gcsimDirectory: args.gcsim,

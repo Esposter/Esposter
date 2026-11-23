@@ -23,13 +23,12 @@ const normalizeHeading = (text: string) =>
     .trim()
     .toLowerCase();
 
-/**
- * A skill, a ledger, a spec or a README cites code by its repo-relative path in backticks and a skill by
- * its name, and nothing resolves either: `ai:citations:sync` rewrites the citations a rename reports, but a
- * directory whose children moved to different roots is never a rename, and a row copied from an older tree is
- * not one either. A path that resolves nowhere reads exactly like one that does, so every backticked path in
- * the trees the sync rewrites — a design's Key files table among them — resolves or fails here. The worktrees directory is exempt because it is machine-local and gitignored.
- */
+/** A skill, a ledger, a spec or a README cites code by its repo-relative path in backticks and a skill by its name,
+ * and nothing resolves either: `ai:citations:sync` rewrites the citations a rename reports, but a directory whose
+ * children moved to different roots is never a rename, and a row copied from an older tree is not one either. A path
+ * that resolves nowhere reads exactly like one that does, so every backticked path in the trees the sync rewrites —
+ * a design's Key files table among them — resolves or fails here. The worktrees directory is exempt because it is
+ * machine-local and gitignored. / */
 describe("citations", () => {
   // A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
   const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;

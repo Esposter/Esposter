@@ -33,11 +33,10 @@ const readSyntaxFaults = (text: string, isJsonc: boolean): string[] => {
   );
 };
 
-/**
- * The checks on the repository's JSON, held by reading the files, since oxlint reads no JSON. A strict file must parse as JSON; a JSONC file (a tsconfig, a `.vscode` file, a
- * `.jsonc` config) is read with comments and trailing commas, which are its contract. Every rule that config turned on has
- * a fixture below, so a rule that stops reading its input fails here rather than passing in silence.
- */
+/** The checks on the repository's JSON, held by reading the files, since oxlint reads no JSON. A strict file must
+ * parse as JSON; a JSONC file (a tsconfig, a `.vscode` file, a `.jsonc` config) is read with comments and trailing
+ * commas, which are its contract. Every rule that config turned on has a fixture below, so a rule that stops reading
+ * its input fails here rather than passing in silence. / */
 describe("jsonFiles", () => {
   // The generated JSON left out: a drizzle migration snapshot is written and re-read by `db:gen`, an asset is an
   // Export from the tool that drew it, and a vitest snapshot is rewritten by `-u`
@@ -66,7 +65,8 @@ describe("jsonFiles", () => {
         text: readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"),
       }));
 
-  // A backslash a string may not hold. Only JSONC has comments to blank first, since a backslash inside one is no escape
+  // A backslash a string may not hold. Only JSONC has comments to blank first, since a backslash inside one is no
+  // Escape
   const readEscapeFaults = (text: string, isJsonc: boolean): string[] =>
     Array.from((isJsonc ? stripComments(text) : text).matchAll(ESCAPE_REGEX), ({ groups }) => groups?.escape ?? "")
       .filter((escape) => !VALID_ESCAPE_REGEX.test(escape))
@@ -85,8 +85,9 @@ describe("jsonFiles", () => {
       .map(() => "irregular whitespace in a comment");
   };
 
-  // The pointers under a parse-tree node: an object's pointers name its keys, and a key seen again in the same object is a
-  // Repeat. JSON.parse keeps only the last of two equal keys, so it cannot see the first, and the parse tree is read instead
+  // The pointers under a parse-tree node: an object's pointers name its keys, and a key seen again in the same object
+  // Is a Repeat. JSON.parse keeps only the last of two equal keys, so it cannot see the first, and the parse tree is
+  // Read instead
   const readRepeatedPointersIn = (node: Node, pointer: string): string[] => {
     const children = node.children ?? [];
     if (node.type === "array")
@@ -116,8 +117,8 @@ describe("jsonFiles", () => {
     ...(isJsonc ? readCommentWhitespaceFaults(text) : []),
   ];
 
-  // The syntax rules hold in both kinds of file. The comma and comment rules are strict JSON's alone, since JSONC allows
-  // Both, and an irregular space is checked inside a comment only in JSONC
+  // The syntax rules hold in both kinds of file. The comma and comment rules are strict JSON's alone, since JSONC
+  // Allows Both, and an irregular space is checked inside a comment only in JSONC
   const SYNTAX_FIXTURES = [
     { name: "a single-quoted string", text: "{'a': 1}" },
     { name: "an unquoted key", text: "{a: 1}" },

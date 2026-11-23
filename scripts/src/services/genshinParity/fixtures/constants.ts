@@ -5,5 +5,6 @@ import { join } from "node:path";
 export const COMPONENTS_DIRECTORY: string = join(GENSHIN_WORLD_DIRECTORY, "src", "components");
 export const COMPONENT_FILE_NAME = "Index.vue";
 export const FIXTURE_FILE_NAME = "Index.fixture.ts";
-// The committed reference a fixture variant is judged against sits beside the image it is named after, as `Index.reference.webp`
+// The committed reference a fixture variant is judged against sits beside the image it is named after, as
+// `Index.reference.webp`
 export const REFERENCE_IMAGE_SUFFIX = ".reference";

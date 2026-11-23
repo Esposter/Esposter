@@ -9,11 +9,11 @@ import { getOrCreate } from "@esposter/shared";
 
 // The blocks the game object of each asset's name may stand in, by that name: the block indexing the asset and, for an
 // Asset the caller follows (a Building's mesh, a held weapon's), the block of each file depending on the file holding
-// It that the asset index lists no asset in. A Building's LOD level is a prefab file of its own depending on its mesh's,
-// In a block that need not index anything of its name. A file the index does list assets in (a MonoBehaviour, an
-// Animator) is a gadget or a scene drawing the mesh as a child, almost never the prefab, and those fill the largest
-// Blocks the game has. An asset the caller does not follow keeps its own block alone, its game object looked for in every
-// Block dumped where they hold none (`deriveCapitalWorld`)
+// It that the asset index lists no asset in. A Building's LOD level is a prefab file of its own depending on its
+// Mesh's, In a block that need not index anything of its name. A file the index does list assets in (a MonoBehaviour,
+// An Animator) is a gadget or a scene drawing the mesh as a child, almost never the prefab, and those fill the largest
+// Blocks the game has. An asset the caller does not follow keeps its own block alone, its game object looked for in
+// Every Block dumped where they hold none (`deriveCapitalWorld`)
 export const readPrefabBlocks = async (
   assets: readonly IndexedAsset[],
   cabMap: ReadonlyMap<string, CabEntry>,

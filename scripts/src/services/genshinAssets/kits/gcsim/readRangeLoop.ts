@@ -9,8 +9,8 @@ import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluat
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 
-// The `for` loop opening at the position when it ranges over a constant count, `for i := range 19 {` or `for range 2 {`,
-// Its values the counts from zero, and its body's braces, else Undefined
+// The `for` loop opening at the position when it ranges over a constant count, `for i := range 19 {` or `for range 2
+// {`, Its values the counts from zero, and its body's braces, else Undefined
 export const readRangeLoop = (
   tokens: readonly GoToken[],
   forPosition: number,

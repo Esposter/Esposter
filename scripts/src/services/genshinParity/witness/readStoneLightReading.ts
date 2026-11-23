@@ -21,9 +21,9 @@ import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT
 import { WitnessTarget } from "genshin-world/sceneExport";
 import { Matrix3, Matrix4, Vector3 } from "three";
 
-// A pixel's bin: its depth band (`STONE_LIGHT_DEPTH_BANDS`), its height band (`STONE_HEIGHT_BANDS`), its ramp coordinate
-// In this many steps, and how far its face turns up in this many, so each bin holds faces the light and the haze treat
-// Alike, and the light solved over it stands neither too dark below nor too bright above
+// A pixel's bin: its depth band (`STONE_LIGHT_DEPTH_BANDS`), its height band (`STONE_HEIGHT_BANDS`), its ramp
+// Coordinate In this many steps, and how far its face turns up in this many, so each bin holds faces the light and the
+// Haze treat Alike, and the light solved over it stands neither too dark below nor too bright above
 const RAMP_BIN_COUNT = 12;
 const UPWARD_BIN_COUNT = 4;
 // A reference's stone as the game's deferred pass casts it, read over the parts the witness draws from the game's

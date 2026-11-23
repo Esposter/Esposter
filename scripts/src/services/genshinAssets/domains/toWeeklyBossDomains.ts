@@ -10,9 +10,9 @@ import {
 } from "#src/services/genshinAssets/domains/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Each weekly boss's trounce domain by its entry id: its levels are the dungeons the entry names, each a boss dungeon with the
-// Enemies' level and recommended rank it is set at. An entry missing from the dump, or a named dungeon that is not a boss
-// Dungeon, is refused rather than skipped
+// Each weekly boss's trounce domain by its entry id: its levels are the dungeons the entry names, each a boss dungeon
+// With the Enemies' level and recommended rank it is set at. An entry missing from the dump, or a named dungeon that is
+// Not a boss Dungeon, is refused rather than skipped
 export const toWeeklyBossDomains = (
   entries: ExcelDungeonEntryRow[],
   dungeons: ExcelDungeonRow[],

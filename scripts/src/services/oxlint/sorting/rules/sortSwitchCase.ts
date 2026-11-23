@@ -27,7 +27,8 @@ const sortSwitchCase: Rule = defineRule({
         const hasUnsortedTests = reportCaseTests(context, node.cases);
         if (node.cases.some((caseNode) => caseNode.test && !checkIsPureExpression(caseNode.test))) return;
         reportDefaultPlacement(context, node.cases);
-        // Two identifiers or calls can name one value, and the first matching block runs, so only literal labels reorder
+        // Two identifiers or calls can name one value, and the first matching block runs, so only literal labels
+        // Reorder
         if (node.cases.every((caseNode) => !caseNode.test || caseNode.test.type === "Literal"))
           reportCaseBlocks(context, node.cases, hasUnsortedTests);
       },

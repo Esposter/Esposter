@@ -1,10 +1,11 @@
 import type { WikiImaginariumStage } from "#src/models/genshinAssets/imaginarium/WikiImaginariumStage";
 
-// A member of a domain enemies line, as the wiki writes it: its name, then a count, an aura or a Lua table annotation, which
-// The name ends before. The count is not read, since the stage's enemies are named, not counted
+// A member of a domain enemies line, as the wiki writes it: its name, then a count, an aura or a Lua table annotation,
+// Which The name ends before. The count is not read, since the stage's enemies are named, not counted
 const cleanWikiEnemyName = (member: string): string => member.replace(/[*/{].*$/u, "").trim();
-// The stages of a season's wiki page: each domain enemies block's variants, under the act and battle the block sits in. Its
-// Enemies are the names of its members in order, split at a semicolon and at the double slash that starts a second wave
+// The stages of a season's wiki page: each domain enemies block's variants, under the act and battle the block sits in.
+// Its Enemies are the names of its members in order, split at a semicolon and at the double slash that starts a second
+// Wave
 export const parseWikiImaginariumStages = (page: string): WikiImaginariumStage[] => {
   const stages: WikiImaginariumStage[] = [];
   let act = "";
@@ -31,7 +32,8 @@ export const parseWikiImaginariumStages = (page: string): WikiImaginariumStage[]
             enemyNames: enemies
               .split(/\/\/|;/u)
               .map((member) => cleanWikiEnemyName(member))
-              // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a name from a wiki list, empty between separators
+              // A name from
+              // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a wiki list, empty between separators
               .filter((name) => name !== ""),
             variant,
           });

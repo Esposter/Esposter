@@ -4,7 +4,8 @@ import type { Sharp } from "sharp";
 
 import { computeRectangleSide } from "#src/services/genshinParity/probe/computeRectangleSide";
 
-// A rectangle of an image read from its pixels, the image already sized to the reference's so the rectangle is in its pixels
+// A rectangle of an image read from its pixels, the image already sized to the reference's so the rectangle is in its
+// Pixels
 export const readRectangleSide = async (image: Sharp, rect: ImageRegion): Promise<RectangleSide> => {
   const { data, info } = await image
     .extract({ height: rect.height, left: rect.x, top: rect.y, width: rect.width })

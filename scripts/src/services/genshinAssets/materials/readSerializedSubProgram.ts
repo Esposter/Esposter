@@ -18,8 +18,8 @@ const SAMPLER_BYTES = 8;
 // The GPU program types the game's enum defines, from its unknown type through PS5's ray-tracing-less NGGC type
 const MAX_GPU_PROGRAM_TYPE = 32;
 
-// Reads one program variant's record: its blob index, the keywords that select it, and the GPU program type it is compiled
-// For. Its legacy parameter lists are all empty in the game's shaders and read past
+// Reads one program variant's record: its blob index, the keywords that select it, and the GPU program type it is
+// Compiled For. Its legacy parameter lists are all empty in the game's shaders and read past
 export const readSerializedSubProgram = (cursor: BinaryCursor): SerializedSubProgramRecord => {
   const blobIndex = cursor.uint32();
   cursor.bool();

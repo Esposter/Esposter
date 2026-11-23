@@ -7,7 +7,8 @@ import { getResult, InvalidOperationError, noop, Operation } from "@esposter/sha
 import { join } from "node:path";
 
 // Creates a worktree on a branch of its own name, from ai/queue as origin holds it, under the main checkout's worktrees
-// Folder, and returns its full path. The name is one folder name, so the path cannot resolve against any other directory
+// Folder, and returns its full path. The name is one folder name, so the path cannot resolve against any other
+// Directory
 export const createWorktree = (name: string, mainCheckoutRoot: string): string => {
   if (!WORKTREE_NAME_REGEX.test(name))
     throw new InvalidOperationError(

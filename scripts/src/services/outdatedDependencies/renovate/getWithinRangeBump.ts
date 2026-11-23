@@ -5,8 +5,8 @@ import { checkIsVersionOutdated } from "#src/services/outdatedDependencies/regis
 import { checkIsVersionInRange } from "#src/services/semver/checkIsVersionInRange";
 import { parseVersion } from "#src/services/semver/parseVersion";
 
-// The newest stable version inside both the catalog specifier and the holding rule's `allowedVersions`, when it is newer
-// Than `current`. A prerelease is never picked, though a range admits one.
+// The newest stable version inside both the catalog specifier and the holding rule's `allowedVersions`, when it is
+// Newer Than `current`. A prerelease is never picked, though a range admits one.
 export const getWithinRangeBump = (
   dependency: OutdatedDependency,
   specifier: string,

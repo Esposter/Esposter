@@ -22,8 +22,8 @@ const PROBE_TURNS_DEGREES: readonly [number, number][] = [
 ];
 
 // The directions a shadow solve prices beyond the scene's own: probes about it, every direction of the sky's grid, and
-// The simplex each of the grid's best few starts, whose best is the solved direction. Nothing is priced when the solve is
-// Not told to solve
+// The simplex each of the grid's best few starts, whose best is the solved direction. Nothing is priced when the solve
+// Is Not told to solve
 export const searchShadowDirections = async (
   price: (candidate: Readonly<Vector>) => Promise<{ distance: number; edges: Uint8Array }>,
   direction: Readonly<Vector>,
@@ -35,7 +35,8 @@ export const searchShadowDirections = async (
   const grid: PricedDirection[] = [];
   const simplexResults: { cost: number; point: number[] }[] = [];
   const [azimuth = 0, elevation = 0] = toAngles(direction);
-  // oxlint-disable no-await-in-loop -- One device: the page draws one direction's shadows at a time, so the probes, the grid and each simplex's steps wait their turn on it
+  // Grid and each simplex's steps wait their turn on it
+  // oxlint-disable no-await-in-loop -- One device: the page draws one direction's shadows at a time, so the probes, the
   for (const [headingTurn, heightTurn] of PROBE_TURNS_DEGREES) {
     const probeDirection = toSunDirection([azimuth + headingTurn, elevation + heightTurn]);
     const { distance, edges } = await price(probeDirection);

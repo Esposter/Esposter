@@ -2,7 +2,8 @@ import type { EnemyDropFamilyKindRow, EnemyDropFamilyRow, EnemyKind } from "gens
 
 import { toEnemyKindName } from "#src/services/genshinAssets/enemies/toEnemyKindName";
 
-// One line a drop family, naming the kinds it covers by their English names, for the enemies step to print before it publishes
+// One line a drop family, naming the kinds it covers by their English names, for the enemies step to print before it
+// Publishes
 export const toDropFamilyLines = (
   dropFamilies: readonly EnemyDropFamilyRow[],
   dropFamilyKinds: readonly EnemyDropFamilyKindRow[],

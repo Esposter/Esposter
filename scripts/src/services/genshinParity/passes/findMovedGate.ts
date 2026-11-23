@@ -12,7 +12,8 @@ const readRowCells = (row: string): string[] =>
     .map((cell) => cell.trim());
 // The first reading a run would rewrite under a gate other than the one its report holds for it: a recorded row of the
 // Same pass and reading whose gate cell is another. A gate is a threshold the reference's own noise sets, so one that
-// Moves means the exports or the camera it is read through moved, and the run names it rather than rewriting it silently
+// Moves means the exports or the camera it is read through moved, and the run names it rather than rewriting it
+// Silently
 export const findMovedGate = ({
   recordedRows,
   results,

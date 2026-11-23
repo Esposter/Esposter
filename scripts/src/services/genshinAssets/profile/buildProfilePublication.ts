@@ -20,9 +20,9 @@ import { GameLanguage, GameLanguages } from "genshin-text";
 import { characterDataSchema, GameDataset, profileTextSchema } from "genshin-world";
 import { z } from "zod";
 
-// Every playable character's profile, its stories by fetter and its namecard, one entry a character in each language's index
-// Of the game data, every entry checked by the profile reader's schema before it is published. The characters are read from
-// The game data their stats step published. Returns the publication and a note of the count
+// Every playable character's profile, its stories by fetter and its namecard, one entry a character in each language's
+// Index Of the game data, every entry checked by the profile reader's schema before it is published. The characters are
+// Read from The game data their stats step published. Returns the publication and a note of the count
 export const buildProfilePublication = async (): Promise<{ note: string; publication: HostedAssetPublication }> => {
   const characters = z.array(characterDataSchema).parse(await readPublishedGameData("stats/characters"));
   const characterIds = characters.map(({ id }) => id).toSorted((firstId, secondId) => firstId - secondId);

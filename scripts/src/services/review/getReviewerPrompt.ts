@@ -4,8 +4,9 @@ import { REVIEW_DIFF_CHARACTER_LIMIT, REVIEW_DIFF_LINE_LIMIT } from "#src/servic
 import { getDataBlock } from "#src/services/review/getDataBlock";
 
 // The reviewer's prompt, its text verbatim from the review spec. The diff is cut at `REVIEW_DIFF_LINE_LIMIT`, and a cut
-// One is followed by a note to read the file for the rest, since a reviewer that does not know it saw a fragment reports
-// The fragment as the whole. The diff is fenced as data, since the code under review may quote this prompt's own answer.
+// One is followed by a note to read the file for the rest, since a reviewer that does not know it saw a fragment
+// Reports The fragment as the whole. The diff is fenced as data, since the code under review may quote this prompt's
+// Own answer.
 export const getReviewerPrompt = ({ base, diff, end, files, isDiffCut }: ReviewerPromptInput): string => {
   const cutNote = isDiffCut
     ? `\nThe diff above is cut at ${REVIEW_DIFF_LINE_LIMIT} lines or ${REVIEW_DIFF_CHARACTER_LIMIT} characters. Read the files in your batch at ${end} for the rest before you report anything about them.\n`

@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would
+   otherwise infer */
 import type { WiringBlock } from "#src/models/sweeps/duplicateCode/WiringBlock";
 
 // The code trees the scan reads, relative to the repository root: every tree of code the repository owns. The
@@ -24,8 +25,8 @@ export const MIN_DUPLICATE_TOKENS = 50;
 export const MIN_DUPLICATE_LINES = 5;
 // Tests repeat literals on purpose (the `test-values` skill), and a generated file or a declaration is the output of
 // Another tool, so no copy in any of them is one a reader could fix. An asset is drawn content, an SVG's paths rather
-// Than logic, and each cloud resource declaration is its provider's own exported shape, which the `pulumi-infra` skill's
-// Settled list keeps one per file rather than behind a factory that would copy the SDK's argument type
+// Than logic, and each cloud resource declaration is its provider's own exported shape, which the `pulumi-infra`
+// Skill's Settled list keeps one per file rather than behind a factory that would copy the SDK's argument type
 export const DUPLICATE_CODE_IGNORED_GLOBS: string[] = [
   "**/*.test.ts",
   "**/*.test-d.ts",

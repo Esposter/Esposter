@@ -9,14 +9,15 @@ interface FetchResponseOptions {
 }
 
 // Every request a script makes, bounded in one place: a fetch with no timeout hangs a release run on a registry that
-// Stopped answering. A large download passes a longer bound, and a registry asking for a token takes it as a header. The
-// Response comes back whatever its status, for a caller that reads one status as an answer rather than a refusal. Its
-// Body is read unbounded only by the trusted readers of our own R2 objects, which the runtime-efficiency skill's "Bound
-// What an outside host can send" section names; an outside body is read through `fetchOk`, or through
+// Stopped answering. A large download passes a longer bound, and a registry asking for a token takes it as a header.
+// The Response comes back whatever its status, for a caller that reads one status as an answer rather than a refusal.
+// Its Body is read unbounded only by the trusted readers of our own R2 objects, which the runtime-efficiency skill's
+// "Bound What an outside host can send" section names; an outside body is read through `fetchOk`, or through
 // `readBoundedResponse` where a caller keeps the response
 export const fetchResponse = (
   url: string,
   { body, headers, method, timeoutMs = FETCH_TIMEOUT_MS }: FetchResponseOptions = {},
 ): Promise<Response> =>
-  // oxlint-disable-next-line no-restricted-globals -- the one request of this tree, which the ban routes every other through
+  // The one
+  // oxlint-disable-next-line no-restricted-globals -- request of this tree, which the ban routes every other through
   fetch(url, { ...omitUndefined({ body, headers, method }), signal: AbortSignal.timeout(timeoutMs) });

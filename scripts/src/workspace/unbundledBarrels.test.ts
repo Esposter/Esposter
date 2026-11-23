@@ -17,13 +17,11 @@ const readDistDirectory = (packagePath: string) => {
   return distDirectory;
 };
 
-/**
- * A package builds one file per module, so a consumer's bundler drops every module an import does not reach. The
- * schema package is the one that matters: its barrel holds drizzle tables and the schemas derived from them, and
- * the client imports its enums. A package built into one file keeps all of that for a single enum, so this bundles
- * the import the way the app's client does and reads what survives. The other tests hold the shape of the output
- * itself: it is moved between machines and loaded by Node, which neither a stylesheet import nor a hidden folder survives.
- */
+/** A package builds one file per module, so a consumer's bundler drops every module an import does not reach. The
+ * schema package is the one that matters: its barrel holds drizzle tables and the schemas derived from them, and the
+ * client imports its enums. A package built into one file keeps all of that for a single enum, so this bundles the
+ * import the way the app's client does and reads what survives. The other tests hold the shape of the output itself:
+ * it is moved between machines and loaded by Node, which neither a stylesheet import nor a hidden folder survives. / */
 describe("unbundledBarrels", () => {
   // Matches a module's import of a stylesheet, bare or with bindings, which a bundler resolves and Node cannot load
   const STYLESHEET_IMPORT_REGEX = /^import\s+(?:[^;]*?\sfrom\s+)?["'][^"']+\.css["']/mu;
@@ -119,7 +117,8 @@ describe("unbundledBarrels", () => {
   });
 
   // The scripts and benchmarks read a Vue package's data through its `dist` under plain Node, which fails on a `.css`
-  // File as if it were JavaScript, so a package's stylesheets are merged into its one `style.css` and no module imports one
+  // File as if it were JavaScript, so a package's stylesheets are merged into its one `style.css` and no module imports
+  // One
   test("no built module imports a stylesheet", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
@@ -135,10 +134,10 @@ describe("unbundledBarrels", () => {
     expect(stylesheetImporters).toStrictEqual([]);
   });
 
-  // A dependency a build copies out of a pnpm store lands under `vendor`, named by its package. Copied under the folder it
-  // Was read from, the copy named the machine that built it: the global store sits in `~/Library`, outside the repository,
-  // So the copy went to `dist/Library` and a declaration imported it by a path no other machine has. Both the folder and a
-  // Module's specifier of a store path are that defect, so either one fails here
+  // A dependency a build copies out of a pnpm store lands under `vendor`, named by its package. Copied under the folder
+  // It Was read from, the copy named the machine that built it: the global store sits in `~/Library`, outside the
+  // Repository, So the copy went to `dist/Library` and a declaration imported it by a path no other machine has. Both
+  // The folder and a Module's specifier of a store path are that defect, so either one fails here
   test("a build names no folder of the machine that built it", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 

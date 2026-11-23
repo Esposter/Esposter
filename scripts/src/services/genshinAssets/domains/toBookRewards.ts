@@ -5,9 +5,9 @@ import { findTreeRow } from "#src/services/genshinAssets/domains/findTreeRow";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A Domain of Forgery's or Mastery's level pays its pair's books, each drawn between the least and most its rarity has in
-// The Adventure Rank's row and to that row's average. A rarity the row has no count for is not paid, and a book whose rarity
-// The materials do not name is refused rather than paid at no rarity
+// A Domain of Forgery's or Mastery's level pays its pair's books, each drawn between the least and most its rarity has
+// In The Adventure Rank's row and to that row's average. A rarity the row has no count for is not paid, and a book
+// Whose rarity The materials do not name is refused rather than paid at no rarity
 export const toBookRewards = (
   kind: typeof DomainKind.Forgery | typeof DomainKind.Mastery,
   books: number[],

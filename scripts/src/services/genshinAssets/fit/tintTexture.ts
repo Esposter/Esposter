@@ -7,8 +7,8 @@ import { toSrgb } from "#src/services/shared/toSrgb";
 
 // A texture as a material draws it under its main colour, as the witness and the game's G-buffer hold it: each texel's
 // SRGB colour decoded to linear light, multiplied by the tint, linear red, green and blue, and encoded back to bytes,
-// Clamped at white, its alpha kept. A grey texture, one channel or two with alpha, is widened to three so a coloured tint
-// Can colour it, and a white tint returns the texture itself
+// Clamped at white, its alpha kept. A grey texture, one channel or two with alpha, is widened to three so a coloured
+// Tint Can colour it, and a white tint returns the texture itself
 export const tintTexture = (texture: Texture, tint: Vector): Texture => {
   if (tint.every((channel) => channel === 1)) return texture;
   const { data, info } = texture;

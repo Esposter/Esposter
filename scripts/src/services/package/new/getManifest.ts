@@ -1,4 +1,5 @@
-/* oxlint-disable sorting/sort-objects -- a package's export conditions are matched in the order written, so `source` must precede `default` */
+/* oxlint-disable sorting/sort-objects -- a package's export conditions are matched in the order written, so `source`
+   must precede `default` */
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
 import { PackageKind } from "#src/models/package/PackageKind";
@@ -9,8 +10,8 @@ import { getPackageHomepage } from "#src/services/package/new/getPackageHomepage
 import { getPackageName } from "#src/services/package/new/getPackageName";
 import { NUXT_KIT_PACKAGE_NAME } from "#src/services/shared/constants";
 
-// The manifest a package is created with. Its version is lerna's one version, so `lernaPackages` holds it from the first commit.
-// Its `sideEffects` is the boolean a bundler acts on, which `sideEffects` holds every package to
+// The manifest a package is created with. Its version is lerna's one version, so `lernaPackages` holds it from the
+// First commit. Its `sideEffects` is the boolean a bundler acts on, which `sideEffects` holds every package to
 export const getManifest = (options: CreatePackageOptions, version: string): Record<string, unknown> => {
   const { description, kind, name } = options;
   const packageName = getPackageName(options);

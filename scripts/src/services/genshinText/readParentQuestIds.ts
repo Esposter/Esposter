@@ -5,9 +5,9 @@ import { readQuestConditions } from "#src/services/genshinText/readQuestConditio
 // The dump's state code for a quest a condition checks as finished
 const FINISHED_QUEST_STATE = "3";
 
-// The world quests a quest waits on, read from the accept conditions its sub quests hold: a condition naming a sub quest of
-// Another quest, finished. A condition on the quest's own sub quests is no wait, and one that asks any other state is not
-// Carried. Each parent is named once, by its world quest's number, whether or not the world carries it
+// The world quests a quest waits on, read from the accept conditions its sub quests hold: a condition naming a sub
+// Quest of Another quest, finished. A condition on the quest's own sub quests is no wait, and one that asks any other
+// State is not Carried. Each parent is named once, by its world quest's number, whether or not the world carries it
 export const readParentQuestIds = (
   questBinary: Record<string, unknown>,
   questId: number,

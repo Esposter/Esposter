@@ -4,10 +4,10 @@ import type { CraftingStrongboxData } from "genshin-world";
 import { checkIsItemIdPair } from "#src/services/genshinAssets/crafting/checkIsItemIdPair";
 import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
 
-// The strongboxes the Mystic Offering makes, one per set a display item names. Each is joined from the decompose row that
-// Recipes it, the reward preview of that row, the display item its first item shows and the offer row linked to the set.
-// Its pieces are the offer row's pieces of its set at the recipe's star rank, and a strongbox no offer row lists is left
-// Out. The result is sorted by set id
+// The strongboxes the Mystic Offering makes, one per set a display item names. Each is joined from the decompose row
+// That Recipes it, the reward preview of that row, the display item its first item shows and the offer row linked to
+// The set. Its pieces are the offer row's pieces of its set at the recipe's star rank, and a strongbox no offer row
+// Lists is left Out. The result is sorted by set id
 export const toCraftingStrongboxes = ({
   decomposeRows,
   displayItemRows,

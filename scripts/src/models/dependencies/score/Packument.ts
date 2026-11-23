@@ -1,4 +1,5 @@
-// The fields of the npm registry's full packument the score reads: when each version was published and which are deprecated
+// The fields of the npm registry's full packument the score reads: when each version was published and which are
+// Deprecated
 export interface Packument {
   "dist-tags": Record<string, string>;
   time: Record<string, string>;

@@ -6,7 +6,8 @@ import { readDonorRecordMap } from "#src/services/genshinAssets/kits/readDonorRe
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The records of a kit's donors, each built through `buildKitRecordWithDonors` so a donor shared by several kits is built once
+// The records of a kit's donors, each built through `buildKitRecordWithDonors` so a donor shared by several kits is
+// Built once
 export const readBuiltDonorRecordMap = (
   characterId: number,
   overlay: KitOverlay,

@@ -1,10 +1,9 @@
-// Times every render and compute pass the page encodes on the GPU, where the adapter has timestamp queries: each pass is
-// Given a pair of the device's queries, its encoder resolves them as it finishes, and once the queue has run what it
+// Times every render and compute pass the page encodes on the GPU, where the adapter has timestamp queries: each pass
+// Is Given a pair of the device's queries, its encoder resolves them as it finishes, and once the queue has run what it
 // Submitted they are read back beside the page's time at the submit. A pass whose queries the GPU left unwritten reads
 // As ending before it began and is dropped. A pass keeps its encoder's label, its first attachment's texture and the
-// Animation frame it was begun in. It runs
-// Ahead of the call trace, holding the WebGPU methods as the browser gives them, so its own buffers and reads are not
-// Traced as the page's. A script string, as the call trace's is
+// Animation frame it was begun in. It runs Ahead of the call trace, holding the WebGPU methods as the browser gives
+// Them, so its own buffers and reads are not Traced as the page's. A script string, as the call trace's is
 export const TRACE_GPU_PASSES_SCRIPT = `
   window.__gpuPasses = [];
   window.__hasGpuTimestamps = false;

@@ -16,23 +16,24 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "@esposter/shared-node/child-process";
 import { once } from "node:events";
 
-// The arguments a role's session gets. A reviewer is print mode with only its read-only tools allowed, which denies every
-// Other tool, and the fixer and the settler skip their prompts since they edit and commit in their own checkout.
+// The arguments a role's session gets. A reviewer is print mode with only its read-only tools allowed, which denies
+// Every Other tool, and the fixer and the settler skip their prompts since they edit and commit in their own checkout.
 const ReviewSessionRoleArgumentsMap: Record<ReviewSessionRole, string[]> = {
   [ReviewSessionRole.Fixer]: ["--dangerously-skip-permissions"],
   [ReviewSessionRole.Reviewer]: ["--allowedTools", ...REVIEWER_TOOLS],
   [ReviewSessionRole.Settler]: ["--dangerously-skip-permissions"],
 };
 
-// One headless Claude Code session: the prompt on stdin, its output returned whole for `parseReviewAnswer`. A usage limit
-// Throws `ReviewSessionLimitedError`, read only off a non-zero exit, since a clean exit's text may only quote the sentence.
-// Any other failure throws a plain error.
+// One headless Claude Code session: the prompt on stdin, its output returned whole for `parseReviewAnswer`. A usage
+// Limit Throws `ReviewSessionLimitedError`, read only off a non-zero exit, since a clean exit's text may only quote the
+// Sentence. Any other failure throws a plain error.
 export const runSession = async ({ cwd, prompt, role, timeoutMs }: ReviewSessionInput): Promise<string> => {
   const child = spawn(
     PNPM_FILE,
     [
       ...PNPM_ARGS,
-      // The checkout may be mid-conflict, which `pnpm` refuses to parse, and `dlx` installs outside the workspace anyway
+      // The checkout may be mid-conflict, which `pnpm` refuses to parse, and `dlx` installs outside the workspace
+      // Anyway
       "--ignore-workspace",
       "dlx",
       CLAUDE_CODE_PACKAGE,

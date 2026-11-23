@@ -12,15 +12,16 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // Every shader the `shaders` step exported for a component, each folder of each block with its raw export beside the
-// Blocks in `raw/<block>/Shader/`. A raw export that is missing, or whose serialized form does not read, is kept with no
-// Shader, so the listing says it is not read
+// Blocks in `raw/<block>/Shader/`. A raw export that is missing, or whose serialized form does not read, is kept with
+// No Shader, so the listing says it is not read
 export const readExportedShaders = async (component: DerivedAssetComponent): Promise<ExportedShader[]> => {
   const { shaders: directory } = getComponentDirectory(component);
   const exported: ExportedShader[] = [];
   for (const block of await readShaderBlockNames(directory))
     for (const folder of await readNames(join(directory, block))) {
       const rawPath = join(directory, "raw", block, AssetType.Shader, `${folder}.dat`);
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one raw export, up to hundreds of megabytes, is read at a time
+      // Is read at a time
+      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one raw export, up to hundreds of megabytes,
       const data = existsSync(rawPath) ? await readFile(rawPath) : undefined;
       exported.push({
         block,

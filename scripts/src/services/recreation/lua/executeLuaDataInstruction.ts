@@ -13,8 +13,8 @@ import { setLuaListEntries } from "#src/services/recreation/lua/setLuaListEntrie
 import { writeLuaTableEntry } from "#src/services/recreation/lua/writeLuaTableEntry";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Runs the instruction at a pc and returns the next pc, or undefined once the chunk returns
-// Only what a table constructor and its global assignments compile to is run; any other opcode throws, since it is logic and not data
+// Runs the instruction at a pc and returns the next pc, or undefined once the chunk returns Only what a table
+// Constructor and its global assignments compile to is run; any other opcode throws, since it is logic and not data
 export const executeLuaDataInstruction = (machine: LuaDataMachine, programCounter: number): number | undefined => {
   const word = machine.luaFunction.instructions[programCounter];
   if (word === undefined)

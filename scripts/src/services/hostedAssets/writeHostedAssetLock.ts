@@ -3,8 +3,8 @@ import type { HostedAssetLock } from "hosted-assets";
 import { formatHostedAssetLock } from "#src/services/hostedAssets/formatHostedAssetLock";
 import { publishFile } from "#src/services/shared/publishFile";
 
-// Published over the lock through a partial file of its own, so an interrupted write leaves the committed lock whole and
-// Two writes in one checkout never share a partial file
+// Published over the lock through a partial file of its own, so an interrupted write leaves the committed lock whole
+// And Two writes in one checkout never share a partial file
 export const writeHostedAssetLock = async (lock: HostedAssetLock, lockPath: string): Promise<void> => {
   await publishFile(lockPath, formatHostedAssetLock(lock));
 };

@@ -1,7 +1,7 @@
 import type { PropShape } from "#src/models/genshinAssets/props/PropShape";
 
-// A prop kind as its fit takes it: the name its record is keyed by (`props/<name>`), the mesh its prefab exports under the
-// Props' assets, and how its outline is fitted. A round kind names the bands and tolerance its lathe is read with
+// A prop kind as its fit takes it: the name its record is keyed by (`props/<name>`), the mesh its prefab exports under
+// The Props' assets, and how its outline is fitted. A round kind names the bands and tolerance its lathe is read with
 export type PropKind =
   | { bandHeight: number; mesh: string; name: string; shape: typeof PropShape.Lathe; tolerance: number }
   | { mesh: string; name: string; shape: typeof PropShape.Hull };

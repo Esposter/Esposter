@@ -17,9 +17,9 @@ const MAIL_NAMED_KEYS: Record<keyof ExcelMailRow, true> = {
   type: true,
 };
 
-// The mails the table holds, each with its text ids, its expiry and the items its reward pays. A row carrying a key this
-// Reader does not name is skipped, and so is one whose reward the table lacks, since it would reach the player without
-// Its items; both are counted so the build can say how many it left out
+// The mails the table holds, each with its text ids, its expiry and the items its reward pays. A row carrying a key
+// This Reader does not name is skipped, and so is one whose reward the table lacks, since it would reach the player
+// Without Its items; both are counted so the build can say how many it left out
 export const toMails = (
   rows: ExcelMailRow[],
   rewardMap: Map<number, ExcelRewardRow>,

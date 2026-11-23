@@ -24,8 +24,8 @@ describe(repairHostedAssets, () => {
   // The bytes an object is altered to, which no hash of its name matches
   const alteredBytes = Buffer.from(" ");
 
-  // Publishes the publication into both buckets from no lock, and returns the buckets with the lock it planned and the object
-  // And index that lock names. A publish that is refused throws, so its result needs no check of its own
+  // Publishes the publication into both buckets from no lock, and returns the buckets with the lock it planned and the
+  // Object And index that lock names. A publish that is refused throws, so its result needs no check of its own
   const publish = async () => {
     const buckets = createMemoryR2BucketClientMap();
     const plan = planHostedAssetPublication(publication);

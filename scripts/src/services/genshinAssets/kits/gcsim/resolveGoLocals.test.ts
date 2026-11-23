@@ -275,8 +275,8 @@ describe("readGcsimCitedCandidates local aliases", () => {
         createCharacter(PAIRED_LOOP_GO),
         TALENT_GROUP_ID_MAP,
       ).get("skill.area") ?? [];
-    // Row 0 sizes the circle at 3 and moves it 0.8, and row 1 sizes it at 3.5 and moves it back 1.5, so the radius is the
-    // Size and the forward offset together: 3.8, and 3.5 less 1.5 is 2
+    // Row 0 sizes the circle at 3 and moves it 0.8, and row 1 sizes it at 3.5 and moves it back 1.5, so the radius is
+    // The Size and the forward offset together: 3.8, and 3.5 less 1.5 is 2
     const provenance = { file: "internal/characters/aino/burst.go", line: 3, source: KitSource.Gcsim };
     expect(candidates).toStrictEqual([
       { provenance, value: { angle: 2 * Math.PI, height: 2, radius: 3.8 } },

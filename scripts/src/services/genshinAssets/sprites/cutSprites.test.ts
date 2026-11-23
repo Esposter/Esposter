@@ -32,7 +32,8 @@ describe(cutSprites, () => {
     await rm(directory, { force: true, recursive: true });
   });
 
-  // Unity measures a rectangle up from the atlas's bottom edge, so the bottom row is y 0 and the top two rows are y 2 and 3
+  // Unity measures a rectangle up from the atlas's bottom edge, so the bottom row is y 0 and the top two rows are y 2
+  // And 3
   test("cuts each rectangle measured up from the atlas's bottom edge, the rectangles of one atlas cut together", async () => {
     expect.hasAssertions();
 

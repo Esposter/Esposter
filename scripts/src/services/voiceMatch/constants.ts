@@ -3,10 +3,10 @@ import { SITE_NAME } from "@esposter/shared";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-// The run's one output is a generated artifact and is committed as such (openspec/specs/architecture/generated-artifacts/design.md):
-// One map of numbers and file titles, read off audio that is never written anywhere — a clip is fetched, decoded,
-// Measured and dropped, since the rule that no game audio enters the repository holds for a temporary folder
-// Exactly as for a commit
+// The run's one output is a generated artifact and is committed as such
+// (openspec/specs/architecture/generated-artifacts/design.md): One map of numbers and file titles, read off audio that
+// Is never written anywhere — a clip is fetched, decoded, Measured and dropped, since the rule that no game audio
+// Enters the repository holds for a temporary folder Exactly as for a commit
 export const PERSONA_REFERENCE_MAP_PATH: string = join(
   REPOSITORY_ROOT,
   "packages",

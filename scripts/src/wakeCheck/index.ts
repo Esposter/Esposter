@@ -4,7 +4,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getWakeGaps, readWakeRecords } from "@esposter/shared-node/wake-check";
 import { defineCommand } from "citty";
 
-// The merged shards' records are the whole run's, so a procedure no shard calls is found here, where a sharded run cannot
+// The merged shards' records are the whole run's, so a procedure no shard calls is found here, where a sharded run
+// Cannot
 await runCommand(
   defineCommand({
     meta: { description: "Fail when a watched procedure no suite of the merged shards calls", name: "wake-check:gaps" },

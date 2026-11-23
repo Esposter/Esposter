@@ -15,7 +15,8 @@ describe(readWikiTalentPages, () => {
     vi.resetAllMocks();
   });
 
-  // The cache is written by JSON.stringify, which drops an absent error, so the cached answer must parse without the key
+  // The cache is written by JSON.stringify, which drops an absent error, so the cached answer must parse without the
+  // Key
   test("reads a cached answer back without asking the wiki again", async () => {
     expect.hasAssertions();
 

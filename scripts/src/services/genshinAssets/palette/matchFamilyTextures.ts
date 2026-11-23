@@ -1,7 +1,8 @@
 import { PNG_EXTENSION } from "#src/services/genshinAssets/shared/constants";
 
-// The diffuse maps of the families among a folder's file names. A texture is its material's name followed by its diffuse
-// Suffix, so a family's normal and mask maps stay out, and a family never matches another whose name it starts with
+// The diffuse maps of the families among a folder's file names. A texture is its material's name followed by its
+// Diffuse Suffix, so a family's normal and mask maps stay out, and a family never matches another whose name it starts
+// With
 const DIFFUSE_SUFFIX = "_Diffuse";
 
 export const matchFamilyTextures = (fileNames: readonly string[], families: readonly string[]): string[] =>

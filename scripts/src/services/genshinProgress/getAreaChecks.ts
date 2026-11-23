@@ -8,8 +8,8 @@ import { checkRegionPassesFrozen } from "#src/services/genshinProgress/checkRegi
 import { checkScreenIdsUnderBars } from "#src/services/genshinProgress/checkScreenIdsUnderBars";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// The exit checks a compute area's kind holds: a screen's ids under their bars, a region's passes frozen and a dataset's
-// Lock current. A scene or a set of pieces has none, so it prints no check beside its row
+// The exit checks a compute area's kind holds: a screen's ids under their bars, a region's passes frozen and a
+// Dataset's Lock current. A scene or a set of pieces has none, so it prints no check beside its row
 export const getAreaChecks = (area: GenshinArea, exit: GenshinExitReadings): GenshinExitCheck[] => {
   switch (area.kind) {
     case ComputeKind.Dataset:

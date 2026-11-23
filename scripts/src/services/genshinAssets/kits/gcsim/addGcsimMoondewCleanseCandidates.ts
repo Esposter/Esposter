@@ -10,10 +10,10 @@ import { STRIKE_TARGETING_AREA } from "genshin-world";
 
 const MOONDEW_CLEANSE_TALENT_VARIABLE = "chargeLB";
 
-// Columbina's charged attack variant, Moondew Cleanse, which her charged attack becomes while Dew is there to spend: its
-// Three Lunar-Bloom hits at the hitmarks of `chargeHitmarkBloom`, its frames from `chargeLBFrames`, and each hit's area
-// The `CA-Moondew-Cleanse` hitbox on the primary target, and its multiplier the `chargeLB` talent's. Its Dew spend and its
-// Defence it ignores are the kit's to give, as the record holds no value for either
+// Columbina's charged attack variant, Moondew Cleanse, which her charged attack becomes while Dew is there to spend:
+// Its Three Lunar-Bloom hits at the hitmarks of `chargeHitmarkBloom`, its frames from `chargeLBFrames`, and each hit's
+// Area The `CA-Moondew-Cleanse` hitbox on the primary target, and its multiplier the `chargeLB` talent's. Its Dew spend
+// And its Defence it ignores are the kit's to give, as the record holds no value for either
 export const addGcsimMoondewCleanseCandidates = (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter): void => {
   const { attacks, config, constantMap } = gcsim;
   const moondewCleanse = attacks.find(({ talentVariable }) => talentVariable === MOONDEW_CLEANSE_TALENT_VARIABLE);

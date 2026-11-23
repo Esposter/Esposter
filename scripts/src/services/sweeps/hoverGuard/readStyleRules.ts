@@ -2,7 +2,8 @@ import type { StyleRule } from "#src/models/sweeps/hoverGuard/StyleRule";
 
 import { blankCssComments } from "#src/services/sweeps/blankCssComments";
 
-// The hover query, unless the prelude negates it: `not (hover: hover)` is the touch-only case, which the guard must not claim
+// The hover query, unless the prelude negates it: `not (hover: hover)` is the touch-only case, which the guard must not
+// Claim
 const HOVER_MEDIA_REGEX = /@media(?![^{]*\bnot\b)[^{]*\(hover:\s*hover\)/u;
 
 // Each rule of a stylesheet, its selector read as the text before its `{`, with a stack of whether each open block is

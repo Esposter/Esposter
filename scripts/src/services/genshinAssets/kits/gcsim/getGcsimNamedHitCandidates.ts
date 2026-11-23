@@ -43,15 +43,17 @@ export const getGcsimNamedHitCandidates = (
     const variableAttacks = attacks.filter(({ talentVariable }) => talentVariable === variable);
     if (variableAttacks.length === 0) continue;
     const [attack] = variableAttacks;
-    // Gcsim reassigns a literal's Mult in a closure, which reads as a second attack at the literal's own declaration, so the
-    // Literals are counted by where they are declared and the loop iteration each is for, not by the attacks read from them
+    // Gcsim reassigns a literal's Mult in a closure, which reads as a second attack at the literal's own declaration,
+    // So the Literals are counted by where they are declared and the loop iteration each is for, not by the attacks
+    // Read from them
     const literalSites = new Set(
       variableAttacks.map(({ file, iteration, siteLine }) => JSON.stringify([file, siteLine, iteration])),
     );
     const joinedAttack = literalSites.size === 1 ? attack : undefined;
-    // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its literals in turn.
-    // A list's hits are taken in the order they land, so a call a loop makes early and one it makes late sort by their delays.
-    // Each call carries the declaration its attack is made from, which a list may take the calls of several keys from
+    // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its
+    // Literals in turn. A list's hits are taken in the order they land, so a call a loop makes early and one it makes
+    // Late sort by their delays. Each call carries the declaration its attack is made from, which a list may take the
+    // Calls of several keys from
     const readAttackCalls = (calls: readonly GcsimQueuedAttack[]) =>
       calls
         .flatMap((queuedAttack) => {

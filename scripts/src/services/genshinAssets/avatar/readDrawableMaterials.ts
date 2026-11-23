@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: AnimeStudio exports one block at a time, each export a blocking run that finishes before the next block starts */
+/* oxlint-disable no-await-in-loop -- One device: AnimeStudio exports one block at a time, each export a blocking run
+   that finishes before the next block starts */
 import type { DrawableMaterial } from "#src/models/genshinAssets/avatar/DrawableMaterial";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";

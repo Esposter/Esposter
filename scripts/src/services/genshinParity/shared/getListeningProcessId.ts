@@ -2,7 +2,8 @@ import { getResult } from "@esposter/shared";
 import { execFileSync } from "@esposter/shared-node/child-process";
 
 // The process listening on a port, by the operating system's own table: PowerShell's TCP connections on Windows, which
-// List IPv6 listeners too (netstat's TCP view lists only IPv4), and lsof elsewhere. Undefined when nothing listens there
+// List IPv6 listeners too (netstat's TCP view lists only IPv4), and lsof elsewhere. Undefined when nothing listens
+// There
 export const getListeningProcessId = (port: number): number | undefined => {
   const output = getResult(() =>
     process.platform === "win32"

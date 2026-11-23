@@ -4,7 +4,8 @@ import { SEED_DATE, SEED_FRIEND_USER_ID } from "#src/services/devSeed/constants"
 import { usersInAuth } from "@esposter/db-schema";
 import { DRIVEN_USER_ID } from "@esposter/shared";
 
-// The driven user the session route signs in, and the one friend beside it. Keyed by id, so a second run finds both rows
+// The driven user the session route signs in, and the one friend beside it. Keyed by id, so a second run finds both
+// Rows
 export const writeSeedUsers = async (db: Database): Promise<void> => {
   await db
     .insert(usersInAuth)

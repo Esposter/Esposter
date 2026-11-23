@@ -15,8 +15,8 @@ const toColourRegex = (colour: string): RegExp => {
 
 // A colour the interface library already publishes as a constant, written again as its literal in a stylesheet, is a
 // Second copy that drifts from the first: a `.vue` style block reads the constant with `v-bind(NAME)` instead. Each
-// Restated literal is reported as `line: NAME`, comments left out, whatever its case and whether it is written in hex or
-// As `rgb()`
+// Restated literal is reported as `line: NAME`, comments left out, whatever its case and whether it is written in hex
+// Or As `rgb()`
 export const getRestatedGameColours = (
   css: string,
   colourMap: Readonly<Record<string, string>>,

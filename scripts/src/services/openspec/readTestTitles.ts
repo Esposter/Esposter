@@ -1,5 +1,6 @@
-// A `test(` or `it(` call, with any modifier (`.only`, `.skip`, `.concurrent`), opening on a string literal title. A table
-// Test (`test.each(rows)("title")`) opens on its rows and so is not read: its title is a template, not a scenario's.
+// A `test(` or `it(` call, with any modifier (`.only`, `.skip`, `.concurrent`), opening on a string literal title. A
+// Table Test (`test.each(rows)("title")`) opens on its rows and so is not read: its title is a template, not a
+// Scenario's.
 const TEST_CALL_REGEX =
   /(?<![\w$.])(?:test|it)(?:\.[A-Za-z_$][\w$]*)*\s*\(\s*(?<quote>["'`])(?<title>(?:\\.|(?!\k<quote>)[^\\\n])*)\k<quote>/gu;
 

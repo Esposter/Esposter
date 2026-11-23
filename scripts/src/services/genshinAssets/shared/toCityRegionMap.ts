@@ -2,8 +2,8 @@ import type { DumpedCity } from "#src/models/genshinText/DumpedCity";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Each city's region, read off its areas: a city lies in the region its areas lie in, as the catalogue names them, so no
-// Region is written by hand. A city none of whose areas a region holds has none, and a city whose areas lie in two
+// Each city's region, read off its areas: a city lies in the region its areas lie in, as the catalogue names them, so
+// No Region is written by hand. A city none of whose areas a region holds has none, and a city whose areas lie in two
 // Regions is refused
 export const toCityRegionMap = (
   cities: readonly DumpedCity[],

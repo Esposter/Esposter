@@ -3,7 +3,8 @@ import type { ExcelMonsterRow } from "#src/models/genshinAssets/fishing/ExcelMon
 import type { Fish } from "genshin-world";
 
 // Each fish's feature tags, read off the feature tag group its monster names. The group is the monster's own, not the
-// Monster's id, which is the group for most fish and not for two homeworld fish; a fish whose monster names none has no tags
+// Monster's id, which is the group for most fish and not for two homeworld fish; a fish whose monster names none has no
+// Tags
 export const toFishTagMap = (
   fishRows: readonly Pick<Fish, "id" | "monsterId">[],
   monsterRows: readonly ExcelMonsterRow[],

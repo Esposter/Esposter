@@ -5,8 +5,8 @@ import type { CloudflareEnvironment } from "@esposter/db-schema";
 import { settleAll } from "@esposter/shared";
 import { openAsBlob } from "node:fs";
 
-// Every file uploads to every environment's bucket over the key it publishes under, replacing what the bucket holds there, so
-// A rerun publishes whatever the packs now hold. Caches revalidate, since a rerun replaces a file in place
+// Every file uploads to every environment's bucket over the key it publishes under, replacing what the bucket holds
+// There, so A rerun publishes whatever the packs now hold. Caches revalidate, since a rerun replaces a file in place
 export const publishCharacterPacks = async (
   files: CharacterPackFile[],
   createBucketClientMap: () => Record<CloudflareEnvironment, R2BucketClient>,

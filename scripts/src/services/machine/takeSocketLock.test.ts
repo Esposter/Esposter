@@ -47,7 +47,8 @@ describe(takeSocketLock, () => {
     await announced;
 
     release();
-    // The release removes its socket file as its server closes, so the waiter finds the path free rather than a dead holder's
+    // The release removes its socket file as its server closes, so the waiter finds the path free rather than a dead
+    // Holder's
     expect(existsSync(SOCKET_PATH)).toBe(false);
     const releaseNext = await taking;
 

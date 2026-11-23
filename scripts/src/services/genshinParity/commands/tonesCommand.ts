@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: one browser is open at a time, and each reference's frame is shot before the next opens */
+/* oxlint-disable no-await-in-loop -- One device: one browser is open at a time, and each reference's frame is shot
+   before the next opens */
 import type { BrightnessBandReading } from "#src/models/genshinParity/passes/BrightnessBandReading";
 import type { SubCommandsDef } from "citty";
 

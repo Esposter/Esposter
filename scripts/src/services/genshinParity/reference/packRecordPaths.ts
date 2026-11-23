@@ -13,9 +13,9 @@ import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
 import { openAsBlob } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
-// Stores the record files named on the command line, each streamed from its own path and uploaded to the buckets that lack
-// It, then records each in the manifest's records section under its path relative to the parity folder, which a restore
-// Writes it back to
+// Stores the record files named on the command line, each streamed from its own path and uploaded to the buckets that
+// Lack It, then records each in the manifest's records section under its path relative to the parity folder, which a
+// Restore Writes it back to
 export const packRecordPaths = async (
   paths: string[],
   isDryRun: boolean,
@@ -40,7 +40,8 @@ export const packRecordPaths = async (
     }),
     REFERENCE_PACK_CONCURRENCY,
   );
-  // Two files packed under one path would be two rows the manifest's uniqueness check refuses on every later read, so the pack stops here
+  // Two files packed under one path would be two rows the manifest's uniqueness check refuses on every later read, so
+  // The pack stops here
   const recordPaths = files.map(({ path }) => path);
   const duplicatePath = recordPaths.find((recordPath, index) => recordPaths.indexOf(recordPath) !== index);
   if (duplicatePath !== undefined)

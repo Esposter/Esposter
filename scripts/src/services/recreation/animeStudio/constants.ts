@@ -4,8 +4,8 @@ import { join } from "node:path";
 
 // Where the sources, the builds and the published CLI are kept by default, outside the repository
 export const TOOLS_DIRECTORY: string = join(DATA_ROOT, "tools");
-// AnimeStudio (github.com/Escartem/AnimeStudio) at the commit the build was proven against: its CLI, its Ooz source and its
-// ACL source all come from this one tree
+// AnimeStudio (github.com/Escartem/AnimeStudio) at the commit the build was proven against: its CLI, its Ooz source and
+// Its ACL source all come from this one tree
 export const ANIMESTUDIO_REPOSITORY = "Escartem/AnimeStudio";
 export const ANIMESTUDIO_SHA = "db860e1f9bf0e0314b892782304d44f3ac42c261";
 // The most of a commit's codeload archive held whole: AnimeStudio's tree is about 7 MB, so the bound sits far past it
@@ -28,11 +28,13 @@ export const WORK_DIRECTORY_NAME = "animestudio-build";
 export const PUBLISH_DIRECTORY_NAME = "animestudio-cli";
 // Where a rebuild publishes first, so the published CLI is replaced only once the new one passes the parity check
 export const STAGING_DIRECTORY_NAME = "animestudio-cli-staging";
-// AnimeStudio keeps its CAB map in a Maps folder beside its working directory, which is the publish folder, so a rebuild
-// Moves that folder into the staged CLI's once the staged CLI passes, before the staged folder replaces the published one
+// AnimeStudio keeps its CAB map in a Maps folder beside its working directory, which is the publish folder, so a
+// Rebuild Moves that folder into the staged CLI's once the staged CLI passes, before the staged folder replaces the
+// Published one
 export const MAPS_DIRECTORY_NAME = "Maps";
-// The names the CLI's native imports resolve to on macOS. .NET probes `lib<import name>.dylib` and `<import name>.dylib`
-// Next to the app; the Ooz import keeps its `.dll` suffix, so its library is `libAnimeStudio.Ooz.dll.dylib`
+// The names the CLI's native imports resolve to on macOS. .NET probes `lib<import name>.dylib` and `<import
+// `name>.dylib`` Next to the app; the Ooz import keeps its `.dll` suffix, so its library is
+// `libAnimeStudio.Ooz.dll.dylib`
 export const OOZ_LIBRARY_FILE_NAME = "libAnimeStudio.Ooz.dll.dylib";
 export const TEXTURE2DDECODER_LIBRARY_FILE_NAME = "libTexture2DDecoderNative.dylib";
 export const ACL_MHY_LIBRARY_FILE_NAME = "libAnimeStudio.ACL.MHY.dylib";

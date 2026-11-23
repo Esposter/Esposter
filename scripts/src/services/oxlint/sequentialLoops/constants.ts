@@ -16,6 +16,7 @@ export const SEQUENTIAL_LOOP_SHAPES: readonly string[] = [
 ];
 export const LOOP_SHAPE_MESSAGE = `A \`no-await-in-loop\` directive's reason opens with the dependency that keeps the loop sequential, as \`<shape>: <why here>\`, one per \`; \`-separated clause, the shape one of: ${SEQUENTIAL_LOOP_SHAPES.join(", ")}. Independent iterations are converted to \`Promise.all\` instead. See the runtime-efficiency skill's sequential-loops page.`;
 // The rule a directive must name for its reason to be read here, by either linter's spelling
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+// `isolatedDeclarations`
+// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
 export const NO_AWAIT_IN_LOOP_REGEX: RegExp = /(?:^|[\s,/])no-await-in-loop(?:[\s,]|$)/u;
 export const REASON_SEPARATOR = " -- ";

@@ -6,7 +6,8 @@ import { DRIVEN_USER_ID, ZERO_UUID } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(seedDevDataset, () => {
-  // A second run of a dataset keyed by fixed identifiers adds no row, so a run that failed partway is finished by the next
+  // A second run of a dataset keyed by fixed identifiers adds no row, so a run that failed partway is finished by the
+  // Next
   test("a second run leaves the same rows", async () => {
     expect.hasAssertions();
 

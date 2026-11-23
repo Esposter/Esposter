@@ -20,10 +20,11 @@ import sharp from "sharp";
 // How many of the grid's best a solve reports
 const GRID_REPORT_COUNT = 5;
 
-// The light pass's shadows on a reference: the shadow is `computeReferenceShadow`'s, and its edges are priced against the
-// Exports' own, cast onto the same receivers from a direction by the scene's shadow map (`createShadowPricer`). The
-// Scene's own direction is priced, and when told, the directions about it and of the sky's grid (`searchShadowDirections`).
-// The reference's view is `setReferenceView`'s, and its edges are written beside it (`writeShadowImage`)
+// The light pass's shadows on a reference: the shadow is `computeReferenceShadow`'s, and its edges are priced against
+// The Exports' own, cast onto the same receivers from a direction by the scene's shadow map (`createShadowPricer`). The
+// Scene's own direction is priced, and when told, the directions about it and of the sky's grid
+// (`searchShadowDirections`). The reference's view is `setReferenceView`'s, and its edges are written beside it
+// (`writeShadowImage`)
 export const solveReferenceShadows = async (
   referenceId: string,
   witness: DerivedAssetComponent,

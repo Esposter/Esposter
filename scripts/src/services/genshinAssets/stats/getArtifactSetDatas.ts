@@ -7,10 +7,10 @@ import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeL
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { artifactSetDataSchema } from "genshin-world";
 
-// Every artifact set with bonuses, each bonus the attributes its affix adds at its piece count and the numbers its effect
-// Reads with the table's trailing zeros cut: a bonus that waits on a condition adds no attributes, and its numbers are
-// What its set's module reads. Its description's text hash is the one the names record holds, and empty where the affix
-// Has none
+// Every artifact set with bonuses, each bonus the attributes its affix adds at its piece count and the numbers its
+// Effect Reads with the table's trailing zeros cut: a bonus that waits on a condition adds no attributes, and its
+// Numbers are What its set's module reads. Its description's text hash is the one the names record holds, and empty
+// Where the affix Has none
 export const getArtifactSetDatas = (notes: string[]): ArtifactSetData[] => {
   const affixIdRowsMap = Map.groupBy(readExcelTable<ExcelEquipAffixRow>(EQUIP_AFFIX_TABLE_NAME), ({ id }) => id);
   return readExcelTable<ExcelReliquarySetRow>(RELIQUARY_SET_TABLE_NAME).flatMap(

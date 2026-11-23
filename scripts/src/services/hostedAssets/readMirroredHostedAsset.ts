@@ -9,9 +9,9 @@ import {
 } from "@esposter/shared-node/cache";
 import { getHostedAssetUrl, HOSTED_ASSETS_FETCH_TIMEOUT_MS } from "hosted-assets";
 
-// One hosted object's bytes through the machine-wide content cache, fetched from its origin on a miss. A cached object is
-// Checked as well, since the cache serves a hit without hashing it: a file that is not its name's bytes fails here rather
-// Than passing as held
+// One hosted object's bytes through the machine-wide content cache, fetched from its origin on a miss. A cached object
+// Is Checked as well, since the cache serves a hit without hashing it: a file that is not its name's bytes fails here
+// Rather Than passing as held
 export const readMirroredHostedAsset = async (
   baseUrl: string,
   name: HostedAssetName,

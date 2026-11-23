@@ -10,8 +10,8 @@ import { getPoseBar } from "#src/services/genshinParity/witness/getPoseBar";
 
 // The camera pass: each current build's reference's landmarks against where the scene's own camera, in the reference's
 // State and moved along the glide alone (`solveReferenceCamera`), projects them, their root mean square in the
-// Reference's pixels and each landmark's distance, held to the reference's pose bar (`getPoseBar`), the bar `pose --write`
-// Holds a solved camera to
+// Reference's pixels and each landmark's distance, held to the reference's pose bar (`getPoseBar`), the bar `pose
+// --write` Holds a solved camera to
 export const measureCamera = async (
   component: DerivedAssetComponent,
   pageRoot?: string,

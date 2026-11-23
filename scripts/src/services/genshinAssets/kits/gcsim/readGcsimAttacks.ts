@@ -33,11 +33,11 @@ import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 const POISE_FIELD = "PoiseDMG";
 
 // The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
-// Element by their gcsim names, its durability and poise evaluated through the package's constants, and
-// The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. The code reads in
-// Source order, so an attack is the literal or copy its variable names as of the line: a `Mult` the code sets after a
-// Literal is an attack of its own under the variable it names, and a copy `aiC2 = ai` is the source as of the copy with
-// Its later sets, its site the copy's own line, not the literal's. A set or a literal inside an if or else is tagged with
+// Element by their gcsim names, its durability and poise evaluated through the package's constants, and The talent
+// Variable its multiplier is rooted in, followed through the locals naming a slice of it. The code reads in Source
+// Order, so an attack is the literal or copy its variable names as of the line: a `Mult` the code sets after a Literal
+// Is an attack of its own under the variable it names, and a copy `aiC2 = ai` is the source as of the copy with Its
+// Later sets, its site the copy's own line, not the literal's. A set or a literal inside an if or else is tagged with
 // The branch it sits in, which a call after the branches reads
 export const readGcsimAttacks = (
   sources: readonly GoSource[],
@@ -55,8 +55,8 @@ export const readGcsimAttacks = (
     const stringMap = readGoStringConstants(tokens);
     const readBranchAt = readGoBranchAt(tokens);
     const loops = readConstantLoops(tokens, createGoScope(tokens, constantMap), config);
-    // An `Element` a constant loop's variable indexes into a local slice, `ele[i]`, is each iteration's own: the slice's
-    // Entry at that index, with the line the slice is declared on, so the literal is one attack per iteration
+    // An `Element` a constant loop's variable indexes into a local slice, `ele[i]`, is each iteration's own: the
+    // Slice's Entry at that index, with the line the slice is declared on, so the literal is one attack per iteration
     const readIndexedElements = (position: number, expression: GoExpression | undefined) => {
       if (
         expression?.kind !== GoExpressionKind.Index ||
@@ -110,7 +110,8 @@ export const readGcsimAttacks = (
     };
     for (const [position, token] of tokens.entries())
       if (token.text === "AttackInfo" && checkIsGoPunctuation(tokens[position + 1], "{")) {
-        // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a literal
+        // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a
+        // Literal
         const typeStart = checkIsGoPunctuation(tokens[position - 1], ".") ? position - 2 : position;
         if (checkIsGoPunctuation(tokens[typeStart - 1], ")")) continue;
         const fieldMap = new Map<string, { expression: GoExpression; line: number }>();

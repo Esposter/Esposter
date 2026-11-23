@@ -6,8 +6,8 @@ import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
-// The Realm Depot's goods, one record of the shops dataset for each of its tabs. Each good carries the sub tab the table
-// Files it under, which is the tab the screen shows it on
+// The Realm Depot's goods, one record of the shops dataset for each of its tabs. Each good carries the sub tab the
+// Table Files it under, which is the tab the screen shows it on
 export const buildRealmDepotGoods = (): Record<string, unknown> => {
   const rows = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME);
   return Object.assign(

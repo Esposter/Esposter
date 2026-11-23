@@ -1,8 +1,8 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Where a kind's article says its drops come from: a drop family, named by the first Drops Table it lists, a Drops template
-// Naming an entry of the drops module, or a boss's reward, which its World Boss Rewards template gives. An article naming
-// None of these gives none, as the weekly boss's and the Bathysmal Vishaps' do
+// Where a kind's article says its drops come from: a drop family, named by the first Drops Table it lists, a Drops
+// Template Naming an entry of the drops module, or a boss's reward, which its World Boss Rewards template gives. An
+// Article naming None of these gives none, as the weekly boss's and the Bathysmal Vishaps' do
 export type ArticleDropSource =
   | { family: string; type: "family" }
   | { template: string; type: "template" }

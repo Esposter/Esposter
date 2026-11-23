@@ -21,8 +21,8 @@ export const ANIMAL_DESCRIBE_TABLE_NAME = "AnimalDescribeExcelConfigData";
 export const MONSTER_DESCRIBE_TABLE_NAME = "MonsterDescribeExcelConfigData";
 export const PUSH_TIPS_CODEX_TABLE_NAME = "PushTipsCodexExcelConfigData";
 export const PUSH_TIPS_TABLE_NAME = "PushTipsConfigData";
-// The localization kind of a row that names a readable text, in the dump's unnamed kind field, which writes the kind as a
-// Number: a book's body is one of those rows
+// The localization kind of a row that names a readable text, in the dump's unnamed kind field, which writes the kind as
+// A Number: a book's body is one of those rows
 export const LOC_TEXT_ASSET_TYPE = 2;
 // The codex kind of a living being that is an animal, as the codex spells it. It is the codex's first kind, so the dump
 // Leaves it out of a row and a reader takes it as the default

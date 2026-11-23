@@ -4,7 +4,8 @@ import { GameLanguages } from "genshin-text";
 import { GameDataset } from "genshin-world";
 
 // Every name the world's data cites by text id is published into the world's own chunk per language. The ids are every
-// `nameTextId` in the published records and the data files, found by `readNameTextIds`, so a new source needs no entry here
+// `nameTextId` in the published records and the data files, found by `readNameTextIds`, so a new source needs no entry
+// Here
 export const buildNames = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const textIds = await readNameTextIds();
   const { notes, objects } = buildTextChunks(GameDataset.NameText, textIds);

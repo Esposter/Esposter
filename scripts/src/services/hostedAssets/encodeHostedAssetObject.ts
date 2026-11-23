@@ -4,8 +4,8 @@ import { brotliCompress } from "node:zlib";
 
 const compress = promisify(brotliCompress);
 
-// An object's stored bytes and the Content-Encoding they are stored with. The hash is taken over the bytes given here, so a
-// Reader that decodes the encoding gets the bytes the name hashes
+// An object's stored bytes and the Content-Encoding they are stored with. The hash is taken over the bytes given here,
+// So a Reader that decodes the encoding gets the bytes the name hashes
 export const encodeHostedAssetObject = async (
   extension: string,
   bytes: Uint8Array,

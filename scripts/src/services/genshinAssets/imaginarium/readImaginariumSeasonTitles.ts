@@ -6,8 +6,8 @@ import { z } from "zod";
 const SEASON_PAGE_PREFIX = "Imaginarium Theater/Seasons/";
 const SEASON_PAGE_TITLE_REGEX = /^Imaginarium Theater\/Seasons\/\d{4}-\d{2}-\d{2}$/u;
 const allPagesResponseSchema = z.object({ query: z.object({ allpages: z.array(z.object({ title: z.string() })) }) });
-// The titles of the wiki's Imaginarium season pages, each named for the day its season begins, from the wiki's own list of
-// Pages under the season prefix, so a season the wiki has not written up has no title
+// The titles of the wiki's Imaginarium season pages, each named for the day its season begins, from the wiki's own list
+// Of Pages under the season prefix, so a season the wiki has not written up has no title
 export const readImaginariumSeasonTitles = async (): Promise<string[]> => {
   const searchParams = new URLSearchParams({
     action: "query",

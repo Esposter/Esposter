@@ -41,7 +41,8 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
     ...createRegionPlantsRocksFits(DerivedAssetComponent.Inazuma),
     waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Inazuma, fitOptions),
   }),
-  // Its rocks are not fitted yet: its karst and stone forests are built by the Liyue change, and the rest wait on that split
+  // Its rocks are not fitted yet: its karst and stone forests are built by the Liyue change, and the rest wait on that
+  // Split
   [DerivedAssetComponent.Liyue]: createRegionFit(DerivedAssetComponent.Liyue, {
     plants: createRegionPlantsFit(DerivedAssetComponent.Liyue),
     rivers: (fitOptions) => fitRiverCourses(DerivedAssetComponent.Liyue, fitOptions),

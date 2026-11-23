@@ -9,7 +9,8 @@ export interface ProvenanceOptions {
   tools?: ProvenanceTool[];
 }
 
-// A pinned tool a command ran, by its name and the path of its binary. The stamp keeps the binary's SHA-256 and never its path
+// A pinned tool a command ran, by its name and the path of its binary. The stamp keeps the binary's SHA-256 and never
+// Its path
 export interface ProvenanceTool {
   name: string;
   path: string;

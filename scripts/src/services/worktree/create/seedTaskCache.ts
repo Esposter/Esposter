@@ -10,10 +10,10 @@ import { getResult, getResultAsync } from "@esposter/shared";
 import { mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
-// Copies the task cache of the sibling worktree that suits this one best, and returns its path, or none when no sibling shares
-// This one's install layout. A recorded run replays only where its listings match, so a copy saves the builds whose recorded
-// Runs still match and never a wrong one. The main checkout is never the source: its folders hold ignored leftovers a fresh
-// Worktree lacks, which would miss every replay
+// Copies the task cache of the sibling worktree that suits this one best, and returns its path, or none when no sibling
+// Shares This one's install layout. A recorded run replays only where its listings match, so a copy saves the builds
+// Whose recorded Runs still match and never a wrong one. The main checkout is never the source: its folders hold
+// Ignored leftovers a fresh Worktree lacks, which would miss every replay
 export const seedTaskCache = async (
   mainCheckoutRoot: string,
   worktreePath: string,
@@ -51,14 +51,16 @@ export const seedTaskCache = async (
   let failure: Error | undefined;
   for (const sourcePath of rankCacheSources(candidates)) {
     mkdirSync(destinationCachePath, { recursive: true });
-    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the next sibling is copied only once the one ranked before it has failed
+    // Ranked before it has failed
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the next sibling is copied only once the one
     const copied = await getResultAsync(() => copyTaskCache(join(sourcePath, TASK_CACHE_PATH), destinationCachePath));
     const copyFailure = copied.match(
       () => undefined,
       (error) => error,
     );
     if (copyFailure === undefined) return sourcePath;
-    // A copy refused or cut short is removed whole, since every replay in this worktree would fail on its missing archives
+    // A copy refused or cut short is removed whole, since every replay in this worktree would fail on its missing
+    // Archives
     rmSync(destinationCachePath, { force: true, recursive: true });
     failure = copyFailure;
   }

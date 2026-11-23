@@ -6,9 +6,9 @@ import { getSidecarPath } from "#src/services/provenance/getSidecarPath";
 import { removeFileProvenance } from "#src/services/provenance/removeFileProvenance";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 
-// Writes file outputs and stamps them in the order that never leaves a stamp beside bytes it did not describe: the earlier
-// Sidecars go first, then the write, then one stamp, built once, beside every file the write named. A write that fails
-// Before its stamp therefore leaves no sidecar beside its new bytes
+// Writes file outputs and stamps them in the order that never leaves a stamp beside bytes it did not describe: the
+// Earlier Sidecars go first, then the write, then one stamp, built once, beside every file the write named. A write
+// That fails Before its stamp therefore leaves no sidecar beside its new bytes
 export const writeStampedFiles = async (
   files: readonly string[],
   options: ProvenanceOptions,

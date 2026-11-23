@@ -23,12 +23,12 @@ const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: tr
 // And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
-  // The animals: their `Animal_` models, fish and pets among them, and the `Ani_Animal_` clips that move them. No pointer
-  // Roots them, so the asset index's names find them
+  // The animals: their `Animal_` models, fish and pets among them, and the `Ani_Animal_` clips that move them. No
+  // Pointer Roots them, so the asset index's names find them
   [DerivedAssetComponent.Animals]: { clipPattern: "^Ani_Animal_", namePattern: "^Animal_", screen: "WorldScreen" },
-  // Each sub-area with a catalogued extent: a catalogue area the game outlines, derived the way a capital is, from the centre
-  // Of its outline's box (`readDerivedWorldPlace`) and the terrain tiles its outline reaches. An area with no outline is no
-  // Component, so it keeps its region's ground
+  // Each sub-area with a catalogued extent: a catalogue area the game outlines, derived the way a capital is, from the
+  // Centre Of its outline's box (`readDerivedWorldPlace`) and the terrain tiles its outline reaches. An area with no
+  // Outline is no Component, so it keeps its region's ground
   [DerivedAssetComponent.ArdraviValley]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.AshavanRealm]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.AshveilPeak]: DERIVED_WORLD_OPTIONS,
@@ -40,8 +40,8 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.BishuiPlain]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.BrightcrownMountains]: DERIVED_WORLD_OPTIONS,
   // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside "AvatarInfoDescDialog", the
-  // Details dialog, and "AvatarLevelUpDialog". A tree that names none of the tabs is the wrong page
-  // Its portraits are the textures the character screen's discs take their colour from, so the component exports them by name
+  // Details dialog, and "AvatarLevelUpDialog". A tree that names none of the tabs is the wrong page Its portraits are
+  // The textures the character screen's discs take their colour from, so the component exports them by name
   [DerivedAssetComponent.Character]: {
     interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" },
     namePattern: `^${AVATAR_ICON_PREFIX}`,
@@ -66,8 +66,8 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
   // Capital's index. Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob, a
   // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
-  // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view covers,
-  // Are what holds the city's props and buildings, each a prefab rooted by its game object's name
+  // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view
+  // Covers, Are what holds the city's props and buildings, each a prefab rooted by its game object's name
   [DerivedAssetComponent.Fontaine]: {
     isCapitalWorld: true,
     namePattern: String.raw`^(Area_Fd_Build_FDC_Zhonglou_01|Area_Fd_(Build|Plot)_FDC_POI_Zongzhan_)`,
@@ -77,8 +77,8 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.GalesongHill]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.GavirehLajavard]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.HiisiIsland]: DERIVED_WORLD_OPTIONS,
-  // The in-level HUD: its page is the `InLevelMainPage` GameObject, holding the minimap, the party and the skill buttons.
-  // Its anchor is "TeamBtn_MP", an Animator in no other block, since `GrpMainPage` is in four
+  // The in-level HUD: its page is the `InLevelMainPage` GameObject, holding the minimap, the party and the skill
+  // Buttons. Its anchor is "TeamBtn_MP", an Animator in no other block, since `GrpMainPage` is in four
   [DerivedAssetComponent.Hud]: {
     clipPattern: "^Ani_InLevelMainPage_",
     interface: { anchorPattern: "^TeamBtn_MP$", root: "InLevelMainPage" },
@@ -159,10 +159,10 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.TezcatepetoncoRange]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.TheChasm]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.ToyacSprings]: DERIVED_WORLD_OPTIONS,
-  // The Traveler's four locomotion clips, the standing, walk, run and sprint cycles of `Ani_Avatar_Girl_`: Standby is an
-  // AnimationClip in `00/04161624.blk`, and Walk, Run and Sprint are in `00/04523043.blk`, as the asset index names them.
-  // The index also names `00/00035183.blk` for the same four, which holds only TextAssets and exports none. Her model is
-  // Rooted by PlayerGirl's entry, so this one roots nothing
+  // The Traveler's four locomotion clips, the standing, walk, run and sprint cycles of `Ani_Avatar_Girl_`: Standby is
+  // An AnimationClip in `00/04161624.blk`, and Walk, Run and Sprint are in `00/04523043.blk`, as the asset index names
+  // Them. The index also names `00/00035183.blk` for the same four, which holds only TextAssets and exports none. Her
+  // Model is Rooted by PlayerGirl's entry, so this one roots nothing
   [DerivedAssetComponent.Traveler]: {
     clipPattern: "^Ani_Avatar_Girl_(Standby|WalkCycle|RunCycle|SprintCycle)$",
     // Their bones are PlayerGirl's rig, whose avatar names each bone's path (`avatar playergirl`)
@@ -215,10 +215,10 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
             },
           ],
         },
-        // The tile's own placements, of which Area_Md_Water_Common_01_Vo, named by its path hash, is the valley's water,
-        // And the two paving stones under the statue's dais steps, whose centres a recording's camera is solved by. The
-        // Dais's steps and the two carved pedestals either side of the statue carry no path hash of their own, so the
-        // LOD table names them by their finest level's
+        // The tile's own placements, of which Area_Md_Water_Common_01_Vo, named by its path hash, is the valley's
+        // Water, And the two paving stones under the statue's dais steps, whose centres a recording's camera is solved
+        // By. The Dais's steps and the two carved pedestals either side of the statue carry no path hash of their own,
+        // So the LOD table names them by their finest level's
         {
           blob: { block: "00/05825684.blk", name: "012854bd" },
           index: { block: "00/05825684.blk", name: "BigWorld_1_-2_Index" },

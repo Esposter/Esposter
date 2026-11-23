@@ -3,8 +3,8 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The source of a files product, which a publish reads and a pull restores. A records product has none, since its own command
-// Publishes it
+// The source of a files product, which a publish reads and a pull restores. A records product has none, since its own
+// Command Publishes it
 export const getHostedAssetFilesSource = (product: HostedAssetProduct): HostedAssetFilesSource => {
   const { source } = product;
   if (source.kind === "records")

@@ -10,8 +10,8 @@ import { CombatTalent, STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(addGcsimGravityRippleCandidates, () => {
-  // Columbina's gravity ripples as skill.go and config.yml name them: each reaction's hitmark constant, the bloom's travel,
-  // And the config's `E-Gravity-*` hitbox round the primary target, a circle of the radius its name is given
+  // Columbina's gravity ripples as skill.go and config.yml name them: each reaction's hitmark constant, the bloom's
+  // Travel, And the config's `E-Gravity-*` hitbox round the primary target, a circle of the radius its name is given
   const gcsim: GcsimCharacter = {
     animationFrameNameMap: new Map(),
     attacks: [],

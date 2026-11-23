@@ -4,11 +4,11 @@ import type { GroundPoint } from "genshin-engine";
 import type { Resident, ResidentSpot } from "genshin-world";
 
 // Each NPC placed in a region as a resident of it, at the place of its first birth record there, which is its day spot.
-// Its night spot is the one the map gives it, and none otherwise, since the game's records give no second place to tell the
-// Day's from the night's. Its name and
-// The talk F begins with it are the game's, and an NPC with no name or no talk is left out, since the schema takes
-// Neither empty. An NPC a crafting bench stands for is left out first, since the bench is its interaction, not a person.
-// An NPC no catalogued area is in reach of is left out too, rather than filed under a guess
+// Its night spot is the one the map gives it, and none otherwise, since the game's records give no second place to tell
+// The Day's from the night's. Its name and The talk F begins with it are the game's, and an NPC with no name or no talk
+// Is left out, since the schema takes Neither empty. An NPC a crafting bench stands for is left out first, since the
+// Bench is its interaction, not a person. An NPC no catalogued area is in reach of is left out too, rather than filed
+// Under a guess
 export const joinResidents = (
   placements: readonly ResidentPlacement[],
   nameTextIdMap: ReadonlyMap<number, string>,

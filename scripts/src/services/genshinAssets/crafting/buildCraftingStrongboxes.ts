@@ -15,8 +15,8 @@ import { REWARD_PREVIEW_TABLE_NAME } from "#src/services/genshinAssets/domains/c
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
-// The Mystic Offering's strongboxes from the game's decompose, reward preview, display item, offer and reliquary tables,
-// Published under the crafting dataset beside the recipes
+// The Mystic Offering's strongboxes from the game's decompose, reward preview, display item, offer and reliquary
+// Tables, Published under the crafting dataset beside the recipes
 export const buildCraftingStrongboxes = (): Record<string, unknown> => ({
   [`${GameDataset.Crafting}/strongboxes`]: toCraftingStrongboxes({
     decomposeRows: readExcelTable<ExcelReliquaryDecomposeRow>(DECOMPOSE_TABLE_NAME),

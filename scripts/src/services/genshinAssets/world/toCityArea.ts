@@ -2,7 +2,8 @@ import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
 import type { CityAreaExtent } from "#src/models/genshinAssets/world/CityAreaExtent";
 import type { WorldPlacement } from "#src/models/genshinAssets/world/WorldPlacement";
 
-// A city area's extent and centroid from the placements its blob holds, in the game's axes, or nothing where it holds none
+// A city area's extent and centroid from the placements its blob holds, in the game's axes, or nothing where it holds
+// None
 export const toCityArea = (code: string, placements: readonly WorldPlacement[]): CityArea | undefined => {
   if (placements.length === 0) return undefined;
   const extent = placements.reduce<CityAreaExtent>(

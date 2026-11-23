@@ -22,7 +22,8 @@ const cross = ([ax, ay, az]: Vec3, [bx, by, bz]: Vec3): Vec3 => [
   ax * by - ay * bx,
 ];
 const getLength = ([x, y, z]: Vec3): number => Math.hypot(x, y, z);
-// The signed area of the parallelogram an edge and a point span, positive on one side of the edge and negative on the other
+// The signed area of the parallelogram an edge and a point span, positive on one side of the edge and negative on the
+// Other
 const getEdgeSide = ([ax, ay]: Vec2, [bx, by]: Vec2, [px, py]: Vec2): number =>
   (bx - ax) * (py - ay) - (by - ay) * (px - ax);
 // A texel's tilt from the flat, in degrees, from the three channels its RGB encodes its normal's vector in
@@ -83,11 +84,11 @@ const readFamilyTriangles = async (
   });
 };
 // The dominant wavelength of a family's normal detail read off its exported normal map, in metres, for a family whose
-// Frame resolves no lobe. The map's tilt angles are read over the texels the family's UV triangles cover, a lobe is found
-// Through each high-pass box (`computeSurfaceLag`) and the one that holds across most boxes is kept (`chooseHeldLobe`), and
-// A texel spans the family's metres per UV unit over the map's width (`computeMetresPerUv`). A family's map is the one its
-// Materials reference most, since a triangle does not name the material it is drawn with. None where the family's meshes
-// Or map are not exported
+// Frame resolves no lobe. The map's tilt angles are read over the texels the family's UV triangles cover, a lobe is
+// Found Through each high-pass box (`computeSurfaceLag`) and the one that holds across most boxes is kept
+// (`chooseHeldLobe`), and A texel spans the family's metres per UV unit over the map's width (`computeMetresPerUv`). A
+// Family's map is the one its Materials reference most, since a triangle does not name the material it is drawn with.
+// None where the family's meshes Or map are not exported
 export const readTextureWavelength = async ({
   assets,
   checkIsFamilyMesh,

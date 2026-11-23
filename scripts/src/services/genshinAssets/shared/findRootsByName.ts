@@ -7,8 +7,8 @@ import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The root of each prefab holding a GameObject of the name, named by its block as a component's roots are. A GameObject
-// Of the name may sit at any depth of its prefab's hierarchy, so the root is found from it upward. A root whose file the
-// CAB map does not know has no block to be named by, and is skipped; a name no root is found under is refused
+// Of the name may sit at any depth of its prefab's hierarchy, so the root is found from it upward. A root whose file
+// The CAB map does not know has no block to be named by, and is skipped; a name no root is found under is refused
 export const findRootsByName = (
   { objects }: Pick<SceneLayout, "objects">,
   cabMap: ReadonlyMap<string, CabEntry>,

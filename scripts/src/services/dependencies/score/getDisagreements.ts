@@ -9,8 +9,9 @@ import {
 } from "#src/services/dependencies/score/constants";
 import { parseVerdict } from "#src/services/dependencies/score/parseVerdict";
 
-// Rows to re-judge, never errors: a Keep for a reason outside the exempt list that scores as an absorb candidate or carries
-// Type workarounds absorbing it would fix, and an Absorb the score does not back. A row the ledger has not judged is no disagreement.
+// Rows to re-judge, never errors: a Keep for a reason outside the exempt list that scores as an absorb candidate or
+// Carries Type workarounds absorbing it would fix, and an Absorb the score does not back. A row the ledger has not
+// Judged is no disagreement.
 export const getDisagreements = (scores: DependencyScore[]): DependencyScore[] =>
   scores.filter(({ shimCount, total, verdict }) => {
     const { kind, reason } = parseVerdict(verdict);

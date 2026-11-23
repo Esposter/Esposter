@@ -7,8 +7,8 @@ import { parseComputeQueue } from "#src/services/fleet/parseComputeQueue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { basename, dirname } from "node:path";
 
-// Every area's page in the compute folder, the index and the specs aside, in path order. Each takes the kind and phase its
-// Design's folder holds in the index's Phases table, and a design with no row there fails the read naming it
+// Every area's page in the compute folder, the index and the specs aside, in path order. Each takes the kind and phase
+// Its Design's folder holds in the index's Phases table, and a design with no row there fails the read naming it
 export const readComputeAreas = (files: readonly QueueFile[]): ComputeArea[] => {
   const indexFile = files.find(({ path }) => basename(path) === COMPUTE_QUEUE_INDEX_FILE);
   const folderComputePhaseMap = parseComputePhases(indexFile?.text ?? "");

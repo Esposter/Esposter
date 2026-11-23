@@ -5,8 +5,8 @@ import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitRecord } from "genshin-world";
 
 // What the builder reads for one character before it builds or compares: its id, English name and overlay's name, its
-// Tables, the record published for it unless its kit is yet to be published, its gcsim folder at the tag if the tag has one, every source's candidates for
-// Its record, and what a reader could not read for it
+// Tables, the record published for it unless its kit is yet to be published, its gcsim folder at the tag if the tag has
+// One, every source's candidates for Its record, and what a reader could not read for it
 export interface KitInput {
   characterId: number;
   gcsimFolder?: string | undefined;

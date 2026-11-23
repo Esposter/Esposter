@@ -12,8 +12,8 @@ import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
-// The drops module's Enemies table: each entry's members, the names a Drops template gives one of, and its material sets by
-// Tier. A set beside a named condition is a conditional set, which a template does not model
+// The drops module's Enemies table: each entry's members, the names a Drops template gives one of, and its material
+// Sets by Tier. A set beside a named condition is a conditional set, which a template does not model
 const dropsDataSchema = z.object({
   Enemies: z.array(
     z.object({

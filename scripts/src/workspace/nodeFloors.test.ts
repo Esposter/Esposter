@@ -6,7 +6,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// The node floors a manifest carries: its `engines.node`, and the `node` runtime of its `devEngines`, in object or array form
+// The node floors a manifest carries: its `engines.node`, and the `node` runtime of its `devEngines`, in object or
+// Array form
 const readManifestFloors = (manifestPath: string): { path: string; value: string }[] => {
   const { devEngines, engines } = parseMachineJson<{
     devEngines?: { runtime?: { name: string; version: string } | { name: string; version: string }[] };

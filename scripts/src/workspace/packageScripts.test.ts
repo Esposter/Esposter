@@ -55,7 +55,8 @@ describe("packageScripts", () => {
     return Object.entries(manifestScripts).map(([name, body]) => ({ body, manifestPath, name, scriptNames }));
   });
 
-  // A recursive call naming a script its own manifest lacks keeps `run` too: knip reads the bare form as an unlisted binary
+  // A recursive call naming a script its own manifest lacks keeps `run` too: knip reads the bare form as an unlisted
+  // Binary
   test("invoke a script bare, never through `run`", () => {
     expect.hasAssertions();
 
@@ -71,10 +72,11 @@ describe("packageScripts", () => {
     expect(runInvocations).toStrictEqual([]);
   });
 
-  // Node strips types and resolves only what a package's `imports` map and a relative path with its extension name, so a
-  // Script run as `node <entry>.ts` dies at startup on the first module it cannot strip or find — a failure no typecheck
-  // Or lint reports, found only by running the command. Node's own stripper is the judge, over every module the entry
-  // Reaches through its package's `imports` or a relative path, and a specifier that resolves to no file fails too
+  // Node strips types and resolves only what a package's `imports` map and a relative path with its extension name, so
+  // A Script run as `node <entry>.ts` dies at startup on the first module it cannot strip or find — a failure no
+  // Typecheck Or lint reports, found only by running the command. Node's own stripper is the judge, over every module
+  // The entry Reaches through its package's `imports` or a relative path, and a specifier that resolves to no file
+  // Fails too
   test("run under `node` only an entry whose whole import graph node can resolve and strip", () => {
     expect.hasAssertions();
 

@@ -1,4 +1,5 @@
-// The game's tables the Profile tab's stories, voice-overs and namecards are read from, in the dump beside its text maps
+// The game's tables the Profile tab's stories, voice-overs and namecards are read from, in the dump beside its text
+// Maps
 export const FETTER_STORY_TABLE_NAME = "FetterStoryExcelConfigData";
 export const FETTER_VOICE_TABLE_NAME = "FettersExcelConfigData";
 export const AVATAR_TABLE_NAME = "AvatarExcelConfigData";

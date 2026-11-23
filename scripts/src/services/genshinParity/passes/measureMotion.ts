@@ -1,4 +1,6 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: the clock moves one frame, and the frame is read after it moved; Order is the contract: the page draws one frame after another, and the lift is timed from the last rest frame before it */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: the clock moves one frame, and the frame is read
+   after it moved; Order is the contract: the page draws one frame after another, and the lift is timed from the last
+   rest frame before it */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { LiftFrame } from "#src/models/genshinParity/passes/LiftFrame";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
@@ -71,8 +73,8 @@ export const measureMotion = async (
   });
   const frames = await withFinalizerAsync(
     async () => {
-      // Every frame's time as the page draws it, which the scene's clock moves by, its callback held on the window since
-      // A function named in the page's code would be wrapped in a helper the page lacks
+      // Every frame's time as the page draws it, which the scene's clock moves by, its callback held on the window
+      // Since A function named in the page's code would be wrapped in a helper the page lacks
       await page.evaluate(() => {
         const frameTimes: number[] = [];
         window.frameTimes = frameTimes;
@@ -82,14 +84,14 @@ export const measureMotion = async (
         };
         requestAnimationFrame(window.recordFrame);
       });
-      // The clock moves a fixed step each sample, and the frame read is the one the page drew by then with its pieces, so
-      // The frames sampled are the clock's, whatever the page's speed (`createLiftFrameSampler`)
+      // The clock moves a fixed step each sample, and the frame read is the one the page drew by then with its pieces,
+      // So The frames sampled are the clock's, whatever the page's speed (`createLiftFrameSampler`)
       const sampleFrame = createLiftFrameSampler(
         {
           advance: (ms) => page.clock.runFor(ms),
-          // The page draws its frames on its own schedule, so a read waits until the frame at the clock's tick is drawn: the
-          // Last one the faked clock has passed, a multiple of the page's frame. Read as it stood, a sample could take the
-          // Frame a tick earlier, and the moments the pace is fitted over moved by a tick between runs
+          // The page draws its frames on its own schedule, so a read waits until the frame at the clock's tick is
+          // Drawn: the Last one the faked clock has passed, a multiple of the page's frame. Read as it stood, a sample
+          // Could take the Frame a tick earlier, and the moments the pace is fitted over moved by a tick between runs
           readFrame: async (): Promise<LiftFrame> => {
             await page.waitForFunction(
               (frameMs) => (window.frameTimes.at(-1) ?? -1) >= Math.floor(performance.now() / frameMs) * frameMs,
@@ -103,9 +105,10 @@ export const measureMotion = async (
         },
         PARITY_FRAME_MS,
       );
-      // The page's loading steps the clock a frame at a time, a count that varies with the machine's speed, so the clock would
-      // Stand at a different phase of the page's 16 ms frames each run and every sample would read a frame a tick off. It is
-      // Moved to the next frame boundary first, so the moments the samples read are the same whatever the loading took
+      // The page's loading steps the clock a frame at a time, a count that varies with the machine's speed, so the
+      // Clock would Stand at a different phase of the page's 16 ms frames each run and every sample would read a frame
+      // A tick off. It is Moved to the next frame boundary first, so the moments the samples read are the same whatever
+      // The loading took
       const elapsedMs = await page.evaluate(() => performance.now());
       const toBoundaryMs = (PAGE_FRAME_MS - (elapsedMs % PAGE_FRAME_MS)) % PAGE_FRAME_MS;
       if (toBoundaryMs > 0) await page.clock.runFor(toBoundaryMs);

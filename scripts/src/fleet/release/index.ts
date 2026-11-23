@@ -5,9 +5,9 @@ import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// `pnpm ai:fleet:release <id> [--miss "<text>"] [--worker <id>]` — deletes an entry's claim, or with a miss keeps it as the
-// Holder's final word, which the stale takeover never takes. Only the worker holding the claim may release it, and only
-// Its own hold stops (the throughput skill, `references/fleet.md`)
+// `pnpm ai:fleet:release <id> [--miss "<text>"] [--worker <id>]` — deletes an entry's claim, or with a miss keeps it as
+// The Holder's final word, which the stale takeover never takes. Only the worker holding the claim may release it, and
+// Only Its own hold stops (the throughput skill, `references/fleet.md`)
 await runCommand(
   defineCommand({
     args: {

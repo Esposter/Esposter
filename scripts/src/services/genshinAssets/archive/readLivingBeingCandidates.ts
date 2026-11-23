@@ -12,8 +12,8 @@ import {
 import { MONSTER_CODEX_TYPE } from "#src/services/genshinAssets/enemies/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
-// The animals and the monsters the Living Beings section lists, each in the codex's order and named by the description its
-// Row is filed under, whose name the description table gives
+// The animals and the monsters the Living Beings section lists, each in the codex's order and named by the description
+// Its Row is filed under, whose name the description table gives
 export const readLivingBeingCandidates = (): ArchiveCandidate[] => {
   const codexTypeNameTextMapHashMap = new Map<string, Map<number, number>>([
     [

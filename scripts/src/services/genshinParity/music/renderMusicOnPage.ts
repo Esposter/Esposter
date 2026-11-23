@@ -16,7 +16,8 @@ declare global {
 }
 
 // One segment of the login's music rendered offline on the parity page by its own screen's `renderMusic`, at
-// `LISTEN_SAMPLE_RATE`. With `isLayered` false it is the synthesizer alone, and `voices` plays in place of the segment's own
+// `LISTEN_SAMPLE_RATE`. With `isLayered` false it is the synthesizer alone, and `voices` plays in place of the
+// Segment's own
 export const renderMusicOnPage = async (
   page: Page,
   segmentIndex: number,

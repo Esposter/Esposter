@@ -26,7 +26,8 @@ describe(findResidentAreaId, () => {
       { areas: [square("west-area", 0, 100), square("east-area", 100, 200)], id: "mondstadt", name: "Mondstadt" },
     ],
   };
-  // The east landmark is the nearest to a place in the west area's east edge, which the outline files under the west area
+  // The east landmark is the nearest to a place in the west area's east edge, which the outline files under the west
+  // Area
   const landmarks = [
     { areaId: "west-area", position: { x: -300, z: 50 } },
     { areaId: "east-area", position: { x: 120, z: 50 } },

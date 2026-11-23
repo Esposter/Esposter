@@ -6,8 +6,9 @@ import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { LOC_TEXT_ASSET_TYPE } from "#src/services/genshinAssets/archive/constants";
 
-// The books the codex lists, each joined to its material's name and to the readable text its document names as its body.
-// A row the codex has left out, or whose material, document or body text the dump lacks, is not a book the Archive keeps
+// The books the codex lists, each joined to its material's name and to the readable text its document names as its
+// Body. A row the codex has left out, or whose material, document or body text the dump lacks, is not a book the
+// Archive keeps
 export const toBookCandidates = (
   codexRows: readonly ExcelBooksCodexRow[],
   materialRows: readonly Pick<MaterialRow, "id" | "nameTextMapHash">[],

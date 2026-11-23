@@ -1,4 +1,5 @@
-// The fields read off one row of the game's garden field table: the furnishing a field is, and the seeds it holds at once
+// The fields read off one row of the game's garden field table: the furnishing a field is, and the seeds it holds at
+// Once
 export interface ExcelHomeWorldFarmFieldRow {
   fieldItemID: number;
   fieldSlotNum: number;

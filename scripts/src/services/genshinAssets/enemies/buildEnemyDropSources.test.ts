@@ -14,7 +14,8 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(buildEnemyDropSources, () => {
   // The wiki's Enemies table in its own Lua, cut down to the families these tests join: a family whose article lists a
-  // Drops Table of a member that is no family's first, one whose second member is its activated state, and one with a fixed count
+  // Drops Table of a member that is no family's first, one whose second member is its activated state, and one with a
+  // Fixed count
   const DROPS_MODULE = `return {
 	MoraRate = { { '0.425', '0.5' } },
 	Enemies = {

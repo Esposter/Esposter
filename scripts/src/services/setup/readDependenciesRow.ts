@@ -7,7 +7,8 @@ import { getRunRow } from "#src/services/setup/getRunRow";
 import { getStepRow } from "#src/services/setup/getStepRow";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 
-// The dependencies are installed when pnpm's marker is in place. The install runs only when asked for, since it takes minutes
+// The dependencies are installed when pnpm's marker is in place. The install runs only when asked for, since it takes
+// Minutes
 export const readDependenciesRow = (options: SetupOptions, environment: SetupEnvironment): SetupRow => {
   const step = "dependencies";
   if (environment.exists(DEPENDENCIES_MARKER_PATH)) return getStepRow(step, true, "");

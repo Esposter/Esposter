@@ -1,4 +1,5 @@
-/* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and the devtools messenger three publishes */
+/* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and
+   the devtools messenger three publishes */
 
 import type { DevtoolsMessage } from "#src/models/genshinParity/shared/DevtoolsMessage";
 import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
@@ -40,8 +41,8 @@ declare global {
 
 const LOAD_TIMEOUT_MS = 300_000;
 const HOOK_TIMEOUT_MS = 60_000;
-// Records every animation frame with the renderer's program count, from before the page's first frame. A script string rather
-// Than a function: the TypeScript runner rewrites a named inner function with a helper the page does not have
+// Records every animation frame with the renderer's program count, from before the page's first frame. A script string
+// Rather Than a function: the TypeScript runner rewrites a named inner function with a helper the page does not have
 const RECORD_FRAMES_SCRIPT = `
   window.__frameTimes = [];
   const tick = (time) => {
@@ -58,13 +59,13 @@ const RECORD_FRAMES_SCRIPT = `
   });
 `;
 
-// Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row for a state,
-// And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves. With a trace,
-// Each GPU call the page makes is recorded too, with each node material three builds and each program it adds once the
-// Renderer is handed over, and each pass timed on the GPU where the adapter has timestamp queries, read at full
-// Precision through the browser's developer features, and the slow frames are named by the calls they made and the
-// GPU's time on the frames before them. Once the walk has ended, the camera still, each kind of the scene's objects is
-// Hidden in turn, which the passes' times price each kind by
+// Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row for
+// A state, And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves.
+// With a trace, Each GPU call the page makes is recorded too, with each node material three builds and each program it
+// Adds once the Renderer is handed over, and each pass timed on the GPU where the adapter has timestamp queries, read
+// At full Precision through the browser's developer features, and the slow frames are named by the calls they made and
+// The GPU's time on the frames before them. Once the walk has ended, the camera still, each kind of the scene's objects
+// Is Hidden in turn, which the passes' times price each kind by
 export const measureStalls = async ({ height, scale, screen, trace, width }: StallOptions): Promise<string> => {
   const browser = await chromium.launch({
     args: [

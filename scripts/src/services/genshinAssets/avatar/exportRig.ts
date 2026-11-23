@@ -8,7 +8,8 @@ import { withFinalizerAsync } from "@esposter/shared";
 import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-// The rig of the Avatar asset, exported from its block into a folder beside the component's exports and removed once read
+// The rig of the Avatar asset, exported from its block into a folder beside the component's exports and removed once
+// Read
 export const exportRig = (block: string, name: string, root: string): Promise<AvatarRig> => {
   const outDirectory = join(root, "avatar-source");
   runAnimeStudio(

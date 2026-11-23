@@ -4,8 +4,8 @@ import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import { QUEST_BINARY_DIRECTORY_PATH } from "#src/services/genshinText/constants";
 import { readCarriedMainQuestId } from "#src/services/genshinText/readCarriedMainQuestId";
 
-// The binary each carried quest's steps are read from, by its path under the dump: the binary of its main quest, named by
-// That quest's id. A quest with no row is left out, and the reader that builds it names the row it lacks
+// The binary each carried quest's steps are read from, by its path under the dump: the binary of its main quest, named
+// By That quest's id. A quest with no row is left out, and the reader that builds it names the row it lacks
 export const readCarriedQuestBinaryPaths = (
   questIds: readonly string[],
   mainQuests: readonly Pick<DumpedMainQuest, "id">[],

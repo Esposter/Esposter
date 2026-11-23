@@ -12,12 +12,12 @@ import { checkIsSurfaceArea } from "#src/services/genshinAssets/fit/checkIsSurfa
 import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
 import { toGroundPiece } from "#src/services/genshinAssets/fit/toGroundPiece";
 
-// A region's ground fitted in pieces, all or nothing: its pieces publish only when every one of its surface areas holds,
-// Since a region swaps its plateau for them only then. A surface area with no outline has no piece, so the plateau's
-// Ground under it would be a hole once the plateau is retired, and it holds the region back the same way. An area on
-// Another layer carries its own terrain, so it is neither fitted nor counted. Each held piece is then read through the
-// Composition the world lays, with the region's other pieces over Windrise's base: a piece whose composed bar misses its
-// Gate holds the region back, as its own bar would
+// A region's ground fitted in pieces, all or nothing: its pieces publish only when every one of its surface areas
+// Holds, Since a region swaps its plateau for them only then. A surface area with no outline has no piece, so the
+// Plateau's Ground under it would be a hole once the plateau is retired, and it holds the region back the same way. An
+// Area on Another layer carries its own terrain, so it is neither fitted nor counted. Each held piece is then read
+// Through the Composition the world lays, with the region's other pieces over Windrise's base: a piece whose composed
+// Bar misses its Gate holds the region back, as its own bar would
 export const fitRegionGroundPieces = async (
   region: DerivedAssetComponent,
   areas: GroundPieceArea[],
@@ -29,7 +29,8 @@ export const fitRegionGroundPieces = async (
   const outlinedAreas = surfaceAreas.filter((area) => checkHasOutline(area));
   const pieces: { areaId: string; build: GameDataBuild; held: GroundPieceFit[]; isRefused: boolean }[] = [];
   for (const area of outlinedAreas)
-    // oxlint-disable-next-line no-await-in-loop -- One device: a piece's compute holds the thread, as runFits runs its fits one at a time
+    // Fits one at a time
+    // oxlint-disable-next-line no-await-in-loop -- One device: a piece's compute holds the thread, as runFits runs its
     pieces.push({ areaId: area.id, ...(await fitGroundPieces(toGroundPiece(region, area), groundSource)) });
   const held = pieces.flatMap((piece) => piece.held);
   const composed =

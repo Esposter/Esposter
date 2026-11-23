@@ -3,9 +3,9 @@ import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { checkIsJumpKind, REGION_LANDMARKS_SUFFIX } from "genshin-world";
 
-// Writes a region's data file and the landmarks file beside it, which holds the region's jump landmarks and nothing else.
-// The world's start reads that file and no region's whole file. Every region file is written here, so the landmarks file
-// Cannot drift from the data it is cut from. Returns the data file's path
+// Writes a region's data file and the landmarks file beside it, which holds the region's jump landmarks and nothing
+// Else. The world's start reads that file and no region's whole file. Every region file is written here, so the
+// Landmarks file Cannot drift from the data it is cut from. Returns the data file's path
 export const writeRegionData = async (
   relativePath: string,
   data: { landmarks: { kind?: string }[] } & Record<string, unknown>,

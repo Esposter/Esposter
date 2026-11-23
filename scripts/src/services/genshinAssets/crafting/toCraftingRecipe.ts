@@ -11,10 +11,10 @@ import { toRecipeKind } from "#src/services/genshinAssets/crafting/toRecipeKind"
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CraftingRecipeKind, ORIGINAL_RESIN_ITEM_ID } from "genshin-world";
 
-// One bench recipe from its combine row and the instruction items that open it, or undefined for a row the bench does not
-// Hold. A tier takes exactly three of one material for one of the next, Condensed Resin exactly its crystal core and its
-// Original Resin, a conversion one material and the catalyst it takes, and a recipe that is hidden until an instruction
-// Opens it must name one, or the world would never offer it. A recipe is named by the item it makes
+// One bench recipe from its combine row and the instruction items that open it, or undefined for a row the bench does
+// Not Hold. A tier takes exactly three of one material for one of the next, Condensed Resin exactly its crystal core
+// And its Original Resin, a conversion one material and the catalyst it takes, and a recipe that is hidden until an
+// Instruction Opens it must name one, or the world would never offer it. A recipe is named by the item it makes
 export const toCraftingRecipe = (
   row: ExcelCombineRow,
   { materialMap, unlockItemIds }: { materialMap: Map<number, MaterialRow>; unlockItemIds: number[] },

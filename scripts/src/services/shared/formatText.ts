@@ -6,8 +6,8 @@ import {
 } from "#src/services/shared/constants";
 import { execFileSync } from "@esposter/shared-node/child-process";
 
-// Formats a generated or edited file the way the pre-commit hook would, under the repository's own configuration.
-// The path is repository-relative: the formatter decides what to ignore from it, and a temporary root would read as outside
+// Formats a generated or edited file the way the pre-commit hook would, under the repository's own configuration. The
+// Path is repository-relative: the formatter decides what to ignore from it, and a temporary root would read as outside
 export const formatText = (relativePath: string, text: string): string =>
   execFileSync(
     process.execPath,

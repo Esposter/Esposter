@@ -48,7 +48,8 @@ const partitionProperties = (
     },
   );
 
-// A numeric set sorts by value, an object written to keep its order compares equal throughout, and anything else by name
+// A numeric set sorts by value, an object written to keep its order compares equal throughout, and anything else by
+// Name
 const computeComparator = (node: ObjectNode, sourceCode: Context["sourceCode"], isNumericSet: boolean): Comparator => {
   if (isNumericSet) return compareNumericOrName(true);
   if (checkIsUnsortedObject(node, sourceCode)) return () => 0;

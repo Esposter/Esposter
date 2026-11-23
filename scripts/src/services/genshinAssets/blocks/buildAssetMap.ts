@@ -42,8 +42,8 @@ export const buildAssetMap = async (shardCount?: number): Promise<void> => {
   );
   if (failures.length > 0) throw new InvalidOperationError(Operation.Create, "AnimeStudio shards", failures.join("\n"));
 
-  // The CLI writes each shard's CAB map into its Maps folder, so that is where they are read and cleared from. The three
-  // Outputs are written inside one stamped write, so their earlier sidecars are gone before any of them changes
+  // The CLI writes each shard's CAB map into its Maps folder, so that is where they are read and cleared from. The
+  // Three Outputs are written inside one stamped write, so their earlier sidecars are gone before any of them changes
   const stamp = { command: "map", producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS, tools: [ANIMESTUDIO_TOOL] };
   let count = 0;
   await writeStampedFiles([CAB_MAP_PATH, ASSET_MAP_PATH, ASSET_INDEX_PATH], stamp, async () => {

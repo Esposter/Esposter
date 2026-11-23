@@ -10,9 +10,10 @@ import { extname, join, relative, sep } from "node:path";
 // A file's key under its folder, with `/` between segments whatever the platform's separator
 const toKey = (directory: string, path: string): string => relative(directory, path).split(sep).join("/");
 
-// Every file under a product's source folder, in path order. A file of an unhosted extension is kept out before it is read,
-// Since it is code or an authoring source the product never publishes. The folder is named from the repository root, so a
-// Refusal names the file by its repository path. Each other file is refused by the placement rules before its bytes are read
+// Every file under a product's source folder, in path order. A file of an unhosted extension is kept out before it is
+// Read, Since it is code or an authoring source the product never publishes. The folder is named from the repository
+// Root, so a Refusal names the file by its repository path. Each other file is refused by the placement rules before
+// Its bytes are read
 export const readHostedAssetSourceFolder = async (
   repositoryRoot: string,
   folder: string,
@@ -20,8 +21,8 @@ export const readHostedAssetSourceFolder = async (
 ): Promise<HostedAssetSourceFile[]> => {
   const directory = join(repositoryRoot, folder);
   const entries = await readdir(directory, { recursive: true, withFileTypes: true });
-  // A symbolic link is refused by name whatever its extension, before the unhosted filter, since a walk that skipped it would
-  // Drop its key from the lock without a word
+  // A symbolic link is refused by name whatever its extension, before the unhosted filter, since a walk that skipped it
+  // Would Drop its key from the lock without a word
   const link = entries.find((entry) => entry.isSymbolicLink());
   if (link !== undefined)
     throw new InvalidOperationError(

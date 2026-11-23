@@ -1,4 +1,6 @@
-/* oxlint-disable no-await-in-loop -- One device: AnimeStudio runs one block at a time in the order the index lists them, and each block's dumps and atlases sit in folders the blocks share until they are cut; Bounded concurrency: one atlas at a time, each decoded whole and cut into all its sprites before the next */
+/* oxlint-disable no-await-in-loop -- One device: AnimeStudio runs one block at a time in the order the index lists
+   them, and each block's dumps and atlases sit in folders the blocks share until they are cut; Bounded concurrency:
+   one atlas at a time, each decoded whole and cut into all its sprites before the next */
 import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 import type { Promisable } from "type-fest";
 
@@ -23,8 +25,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
-// The index row each of the names is found in, within the block when one is named, and the names the index holds neither
-// A sprite nor a texture of
+// The index row each of the names is found in, within the block when one is named, and the names the index holds
+// Neither A sprite nor a texture of
 const findSpriteAssets = async (
   names: readonly string[],
   block?: string,
@@ -58,7 +60,8 @@ const exportBlocksOf = async (
 };
 
 // A block's sprites, each read from its dump for the atlas and the rectangle it is cut from. The atlases are exported
-// Beside the dumps and each atlas's sprites are cut from it at once, so a sprite's pixels are the rectangle the game draws
+// Beside the dumps and each atlas's sprites are cut from it at once, so a sprite's pixels are the rectangle the game
+// Draws
 const exportBlockSprites = async (block: string, sprites: readonly IndexedAsset[]): Promise<void> => {
   const spriteNames = sprites.map(({ name }) => name);
   exportBlockByName(block, AssetType.Sprite, spriteNames, SPRITE_DUMP_DIRECTORY, AnimeStudioExportType.Json);
@@ -87,8 +90,8 @@ const exportBlockSprites = async (block: string, sprites: readonly IndexedAsset[
   }
 };
 
-// Exports every name the index holds into its folder as a PNG under its name: a texture whole, a sprite cut from its atlas.
-// A run that writes a name's PNG nowhere fails, and the names the index does not hold are reported, not failed
+// Exports every name the index holds into its folder as a PNG under its name: a texture whole, a sprite cut from its
+// Atlas. A run that writes a name's PNG nowhere fails, and the names the index does not hold are reported, not failed
 export const exportSpritesByName = async (names: readonly string[], block?: string): Promise<string> => {
   const { assets, missing } = await findSpriteAssets(names, block);
   rmSync(SPRITE_WORK_DIRECTORY, { force: true, recursive: true });

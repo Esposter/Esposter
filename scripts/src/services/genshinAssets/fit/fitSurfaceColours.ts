@@ -37,9 +37,9 @@ const OBJ_EXTENSION = ".obj";
 // Each family's surface as its export's textures paint it, returned as the colour and palette `computeSurfaceTones`
 // Reads off the samples its meshes give, and each part's apart as `computePartSurfaces` reads them. A family's meshes
 // Are its placed meshes, each drawn with its submeshes' diffuse textures under their materials' tints as the witness
-// Draws them, and its terrain tiles, each drawn with its base map and read only where its faces stand within the terrain
-// Radius of the world's origin, the ground beyond which the screen never shows. Every face is read where it stands in
-// The world and weighted by its area there. Writes no file: the caller writes what this returns
+// Draws them, and its terrain tiles, each drawn with its base map and read only where its faces stand within the
+// Terrain Radius of the world's origin, the ground beyond which the screen never shows. Every face is read where it
+// Stands in The world and weighted by its area there. Writes no file: the caller writes what this returns
 export const fitSurfaceColours = async <Family extends string>(
   component: DerivedAssetComponent,
   meshRegexMap: Record<Family, RegExp>,
@@ -82,8 +82,8 @@ export const fitSurfaceColours = async <Family extends string>(
     materialPathDiffuseMap.set(materialPathId, diffuse);
     return diffuse;
   };
-  // A placed mesh is one part, named by its mesh, since a material can span parts: the statue's stone levels all draw one
-  // Material, and its gold dish sits in it
+  // A placed mesh is one part, named by its mesh, since a material can span parts: the statue's stone levels all draw
+  // One Material, and its gold dish sits in it
   const readPlacementSurface = async (placement: AssetPlacement): Promise<ReadSurface> => {
     const mesh = await readObjMesh(join(meshDirectory, `${placement.mesh}${OBJ_EXTENSION}`));
     const diffuses = await Promise.all(placement.materials.map((materialPathId) => getDiffuse(materialPathId)));
@@ -112,7 +112,8 @@ export const fitSurfaceColours = async <Family extends string>(
   };
   return Object.fromEntries(
     await Promise.all(
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.entries types each key as a string, and the record's keys are its families, which the compiler cannot relate to the record's type
+      // Object.entries types each key as a string, and the record's keys are its families, which
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the compiler cannot relate to the record's type
       (Object.entries(meshRegexMap) as [Family, RegExp][]).map(
         async ([family, regex]): Promise<[Family, FittedFamily]> => {
           const reads = await readFamilySurfaces(regex);

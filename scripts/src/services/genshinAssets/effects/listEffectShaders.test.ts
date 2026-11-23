@@ -10,8 +10,8 @@ import { describe, expect, test } from "vitest";
 // A state value the export holds with no driving property name
 const literal = (value: number) => ({ name: "", value });
 
-// A shader with one subshader and one pass whose first render target blends with the given factors and whose depth write
-// Is the given value
+// A shader with one subshader and one pass whose first render target blends with the given factors and whose depth
+// Write Is the given value
 const createShader = (source: number, destination: number, zWrite: number): SerializedShader => {
   const state: SerializedShaderState = {
     blend: {

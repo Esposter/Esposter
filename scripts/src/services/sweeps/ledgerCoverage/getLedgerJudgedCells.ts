@@ -6,8 +6,9 @@ import type { LedgerSample } from "#src/models/sweeps/ledgerCoverage/LedgerSampl
 import { matchLedgerJudgement } from "#src/services/sweeps/ledgerCoverage/matchLedgerJudgement";
 import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
 
-// The cells the readers judged, one per question and sampled unit, each holding the judgements written for it. A judgement
-// Is matched among the units the sample drew for its question, and is written under the unit the sample spells
+// The cells the readers judged, one per question and sampled unit, each holding the judgements written for it. A
+// Judgement Is matched among the units the sample drew for its question, and is written under the unit the sample
+// Spells
 export const getLedgerJudgedCells = (
   judgements: readonly JsonlRecord<LedgerJudgement>[],
   samples: readonly LedgerSample[],

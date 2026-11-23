@@ -1,7 +1,7 @@
 // The autocorrelation of a family's normal angles along the rows of a frame: each lag's mean product of two angles that
-// Stand that many pixels apart in a row, both in the family, over the angles' variance, so lag 0 is one. A pixel outside
-// The family is NaN, and a pair is read only where both of its pixels are in it. A family whose angles do not vary
-// Reads zero at every lag
+// Stand that many pixels apart in a row, both in the family, over the angles' variance, so lag 0 is one. A pixel
+// Outside The family is NaN, and a pair is read only where both of its pixels are in it. A family whose angles do not
+// Vary Reads zero at every lag
 export const computeAngleAutocorrelation = (angles: Float64Array, width: number, maxLag: number): number[] => {
   const height = angles.length / width;
   let sum = 0;

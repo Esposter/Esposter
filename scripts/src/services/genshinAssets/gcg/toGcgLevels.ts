@@ -3,9 +3,9 @@ import type { ExcelGcgLevelRow } from "#src/models/genshinAssets/gcg/ExcelGcgLev
 import type { ExcelGcgWeekLevelRow } from "#src/models/genshinAssets/gcg/ExcelGcgWeekLevelRow";
 import type { GcgChallengerGame, GcgLevelLock, GcgPlayerLevel } from "genshin-world";
 
-// The Player Levels, each with the total EXP that reaches it, each challenger's duels with the level that opens each, and
-// The locks that hold the Player Level until their main quest is done. A level's row gives the EXP that passes it to the
-// Next, so a level's total is the EXP of every level below it summed
+// The Player Levels, each with the total EXP that reaches it, each challenger's duels with the level that opens each,
+// And The locks that hold the Player Level until their main quest is done. A level's row gives the EXP that passes it
+// To the Next, so a level's total is the EXP of every level below it summed
 export const toGcgLevels = (
   levelRows: ExcelGcgLevelRow[],
   weekLevelRows: ExcelGcgWeekLevelRow[],
@@ -22,7 +22,8 @@ export const toGcgLevels = (
         .filter(({ levelCondList }) => levelCondList.length > 0)
         .map(({ levelCondList, npcId }) => [
           String(npcId),
-          // A slot with no duel reads as a zero game id, which no game has, so it is no duel rather than a duel of game zero
+          // A slot with no duel reads as a zero game id, which no game has, so it is no duel rather than a duel of game
+          // Zero
           levelCondList.flatMap(({ gcgLevel, levelId }) =>
             levelId === 0 ? [] : [{ gameId: levelId, level: gcgLevel }],
           ),

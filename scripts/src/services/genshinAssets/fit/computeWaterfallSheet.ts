@@ -8,9 +8,9 @@ import { Vector3 } from "three";
 // Precision every fitted number keeps
 const LIP_EDGE_TOLERANCE = 0.01;
 
-// A waterfall's sheet read off its mesh's points in the world's axes: the centre of its highest edge as the lip, the unit
-// Direction across that edge on the ground, turned to face +x or else +z, the edge's length as its width and the mesh's
-// Height as its drop. A lip with no width has no direction across it, so it has no sheet
+// A waterfall's sheet read off its mesh's points in the world's axes: the centre of its highest edge as the lip, the
+// Unit Direction across that edge on the ground, turned to face +x or else +z, the edge's length as its width and the
+// Mesh's Height as its drop. A lip with no width has no direction across it, so it has no sheet
 export const computeWaterfallSheet = (points: Vector3[]): undefined | WaterfallSheetRecord => {
   const highest = Math.max(...points.map(({ y }) => y));
   const lowest = Math.min(...points.map(({ y }) => y));

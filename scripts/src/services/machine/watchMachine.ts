@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: each reading's CPU share is taken from the totals and window the one before it left, so each reading is one minute after the last */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each reading's CPU share is taken from the totals and
+   window the one before it left, so each reading is one minute after the last */
 import type { CpuTotals } from "#src/models/machine/CpuTotals";
 import type { MachineState } from "#src/models/machine/MachineState";
 
@@ -37,7 +38,8 @@ export const watchMachine = async (): Promise<void> => {
   let previousTotals: CpuTotals = getCpuTotals(cpus());
   let lastState: MachineState | undefined;
   let minutesInState = 0;
-  // The heartbeat is pushed on the first reading and then every renewal interval, leased from this machine's last commit
+  // The heartbeat is pushed on the first reading and then every renewal interval, leased from this machine's last
+  // Commit
   let lastHeartbeatMilliseconds = 0;
   let lastHeartbeatSha: string | undefined;
   for (;;) {

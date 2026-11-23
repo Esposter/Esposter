@@ -12,10 +12,10 @@ const throwUnlessOk = (response: Response, subject: string): void => {
   if (!response.ok) throw new InvalidOperationError(Operation.Read, subject, `responds ${response.status}`);
 };
 
-// One bucket of the account's R2, reached through its S3 API, the one a script can use since a Worker's binding exists only
-// Inside a Worker. The bucket is the one Pulumi created under its environment's name. Requests are signed with the account's
-// R2 token by the shared transport, which bounds how many requests run at once. The payload is left unsigned, so a file is
-// Sent without being hashed first
+// One bucket of the account's R2, reached through its S3 API, the one a script can use since a Worker's binding exists
+// Only Inside a Worker. The bucket is the one Pulumi created under its environment's name. Requests are signed with the
+// Account's R2 token by the shared transport, which bounds how many requests run at once. The payload is left unsigned,
+// So a file is Sent without being hashed first
 export const createR2BucketClient = (
   environment: CloudflareEnvironment,
   storageBucket: StorageBucket,
@@ -55,7 +55,8 @@ export const createR2BucketClient = (
       if (contentType !== undefined) headers.set("Content-Type", contentType);
       if (createOnly) headers.set("If-None-Match", "*");
       const response = await transport.fetch(getObjectUrl(key), { body, headers, method: "PUT" });
-      // A key taken by an identical write is the state being asked for: 412 is the refusal, 409 a concurrent write of it
+      // A key taken by an identical write is the state being asked for: 412 is the refusal, 409 a concurrent write of
+      // It
       if (createOnly && (response.status === 409 || response.status === 412)) return false;
       throwUnlessOk(response, key);
       return true;

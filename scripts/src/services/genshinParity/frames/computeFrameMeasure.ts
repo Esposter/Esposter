@@ -6,8 +6,8 @@ import { getInkGrid } from "#src/services/genshinParity/probe/getInkGrid";
 import { getLuminanceGrid } from "#src/services/genshinParity/probe/getLuminanceGrid";
 import { getMeanColour } from "#src/services/genshinParity/probe/getMeanColour";
 
-// A rectangle's read in one frame from its RGB pixels, as the probe reads a rectangle: its mean colour in whole units, its
-// Ink summed over every pixel in whole units, and the box that ink fills, absent when no step stands out in it
+// A rectangle's read in one frame from its RGB pixels, as the probe reads a rectangle: its mean colour in whole units,
+// Its Ink summed over every pixel in whole units, and the box that ink fills, absent when no step stands out in it
 export const computeFrameMeasure = (
   pixels: Uint8Array,
   width: number,

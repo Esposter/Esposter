@@ -4,7 +4,8 @@ import { PROVENANCE_NAME, PROVENANCE_SIDECAR_SUFFIX } from "#src/services/proven
 import { posix } from "node:path";
 
 // The stamps a copy reads from the source before it chooses a file: the folder stamps of each changed directory and of
-// Every directory above it, since a folder's stamp covers its subtree, and the sidecars the source lists beside its files
+// Every directory above it, since a folder's stamp covers its subtree, and the sidecars the source lists beside its
+// Files
 export const getStampCandidates = (changed: ChangedDirectory[]): string[] => {
   const candidates = new Set<string>();
   for (const { directory, source } of changed) {

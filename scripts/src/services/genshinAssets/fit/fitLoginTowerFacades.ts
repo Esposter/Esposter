@@ -70,7 +70,8 @@ export const fitLoginTowerFacades = async (
     ),
   );
   const stone: Vector = [stoneColor.r, stoneColor.g, stoneColor.b];
-  // Each tower's textures and mesh are read together, a pool of towers at a time, and its facade is worked out from them after
+  // Each tower's textures and mesh are read together, a pool of towers at a time, and its facade is worked out from
+  // Them after
   const towerReads = await settleAll(
     Array.from(meshPathMap, ([tower, meshPath]) => async () => {
       const placement = partPlacements.find(({ mesh, part }) => part === tower && meshPath.endsWith(`${mesh}.obj`));
@@ -173,10 +174,10 @@ export const fitLoginTowerFacades = async (
       width,
     };
     const carvingCells = classifyFacadeCells(carving);
-    // What stands out from the wall or sinks deep into it as slabs over the spans it covers, each run of it joined round
-    // The tower's seam and kept where it covers enough to be carving rather than a speck, then split into rectangles
-    // Row by row so a rib or a window stays one tall slab and a ragged balcony keeps its outline: the wall at each and
-    // How far it stands out or sinks in, the upper median over its cells
+    // What stands out from the wall or sinks deep into it as slabs over the spans it covers, each run of it joined
+    // Round The tower's seam and kept where it covers enough to be carving rather than a speck, then split into
+    // Rectangles Row by row so a rib or a window stays one tall slab and a ragged balcony keeps its outline: the wall
+    // At each and How far it stands out or sinks in, the upper median over its cells
     const toSlabs = (slabCells: readonly number[], getDepth: (cell: number) => number): TowerSlab[] =>
       findCellComponents(slabCells, { isWrapped: true, width })
         .filter((component) => component.length >= TOWER_FACADE_MIN_AREA / TOWER_FACADE_CELL_SIZE ** 2)

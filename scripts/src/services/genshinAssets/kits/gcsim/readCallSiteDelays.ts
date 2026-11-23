@@ -22,7 +22,8 @@ export const readCallSiteDelays = (
 ): CallTiming[] => {
   const siteTasks = taskClosures.filter(({ bodyEnd, bodyStart }) => bodyStart < site && site < bodyEnd);
   const argumentDelayStart = readTaskArgumentDelayStart(tokens, site);
-  // A returned closure runs only where its value is scheduled, so a call that schedules none, as a callback does, has none
+  // A returned closure runs only where its value is scheduled, so a call that schedules none, as a callback does, has
+  // None
   if (isReturned && argumentDelayStart === undefined) return [{ delay: undefined }];
   if (siteTasks.length === 0 && argumentDelayStart === undefined) return [{ delay: 0 }];
   const closureDelayExpressions = siteTasks.map(({ delayStart }) => parseGoExpression(tokens, delayStart).expression);
@@ -39,7 +40,8 @@ export const readCallSiteDelays = (
       const closureDelay = sumOptionalDelays(
         closureDelayExpressions.map((expression) => evaluateGoNumber(expression, resolveIteration)),
       );
-      // A `Tasks.Add` delay the reader cannot evaluate gives the call its own delay alone, as a call it reads no delay for
+      // A `Tasks.Add` delay the reader cannot evaluate gives the call its own delay alone, as a call it reads no delay
+      // For
       const argumentDelay =
         argumentDelayExpression === undefined ? undefined : evaluateGoNumber(argumentDelayExpression, resolveIteration);
       if (argumentDelayStart !== undefined && argumentDelay !== undefined)

@@ -6,10 +6,10 @@ import { toMeanColour } from "#src/services/genshinParity/reference/toMeanColour
 import { toPercent } from "#src/services/genshinParity/reference/toPercent";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
 
-// The compared region split into a grid of cells, row by row from the top, each read over its scored pixels: the mean of
-// The greyscale difference in percent, and the mean colour of the reference and of ours, with the whole region's mean
-// Difference over its scored pixels. `differences` is the greyscale difference per pixel, and the two RGB buffers are
-// Each image's pixels in the same order
+// The compared region split into a grid of cells, row by row from the top, each read over its scored pixels: the mean
+// Of The greyscale difference in percent, and the mean colour of the reference and of ours, with the whole region's
+// Mean Difference over its scored pixels. `differences` is the greyscale difference per pixel, and the two RGB buffers
+// Are Each image's pixels in the same order
 export const getCellReadings = ({
   differences,
   gridSize,

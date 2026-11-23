@@ -20,9 +20,9 @@ import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
 import { getResult, getResultAsync } from "@esposter/shared";
 
 // Settles every open review issue one at a time, oldest first. Each settler starts clean on the queue's latest tip, and
-// Its commits land before the next one starts, so settlers never conflict with each other. An issue a fixer may still be
-// On is left for a later settle job. A usage limit stops the loop, and every issue not yet settled stays open for the next
-// Push's run. The deadline stops it too, and then the run dispatches the next one, since no push may follow.
+// Its commits land before the next one starts, so settlers never conflict with each other. An issue a fixer may still
+// Be On is left for a later settle job. A usage limit stops the loop, and every issue not yet settled stays open for
+// The next Push's run. The deadline stops it too, and then the run dispatches the next one, since no push may follow.
 export const runReviewSettle = async (): Promise<void> => {
   const deadline = Date.now() + REVIEW_SETTLE_DEADLINE.total("milliseconds");
   const currentRunId = process.env.GITHUB_RUN_ID ?? "";
@@ -49,7 +49,8 @@ export const runReviewSettle = async (): Promise<void> => {
     checkoutQueue();
 
     console.info(`settler on #${issue.number}`);
-    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each settler starts clean on the queue's tip the one before it landed on, so no two settlers conflict
+    // Tip the one before it landed on, so no two settlers conflict
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each settler starts clean on the queue's
     const outcome: SettleOutcome = await getResultAsync(() => runSettler(issue)).match(
       (dispositions): SettleOutcome => ({ dispositions }),
       (error): SettleOutcome => ({ error }),

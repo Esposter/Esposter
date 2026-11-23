@@ -22,7 +22,8 @@ const cause = (provenance: KitValueSource) => ("cause" in provenance ? provenanc
 describe(getGcsimNamedHitCandidates, () => {
   const BURST_PROUD_SKILL_GROUP_ID = 2139;
 
-  // Typed as an attack, so the copies below spread a whole attack, where an index into the array reads as possibly absent
+  // Typed as an attack, so the copies below spread a whole attack, where an index into the array reads as possibly
+  // Absent
   const burstAttack: GcsimAttack = {
     attackTag: "attacks.AttackTagElementalBurst",
     element: "attributes.Pyro",
@@ -126,7 +127,8 @@ describe(getGcsimNamedHitCandidates, () => {
   test("joins a named hit's fields to its variable's one literal where gcsim reassigns that literal's multiplier, and to none for two literals", () => {
     expect.hasAssertions();
 
-    // Gcsim reassigns a literal's Mult in a closure, a second attack at the literal's own declaration, not a second literal
+    // Gcsim reassigns a literal's Mult in a closure, a second attack at the literal's own declaration, not a second
+    // Literal
     const reassigned = { ...burstAttack, line: 14 };
     const reassignedJoined = getNamedHitKitCandidates(
       multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
@@ -433,7 +435,8 @@ describe(getGcsimNamedHitCandidates, () => {
   test("gives a variable whose leaf another variable's label claims no talent array, as its own label is claimed", () => {
     expect.hasAssertions();
 
-    // Both variables' leaves name the one parameter, so the second is labelled by the first's claim and its array joins none
+    // Both variables' leaves name the one parameter, so the second is labelled by the first's claim and its array joins
+    // None
     const claimedGcsim: GcsimCharacter = {
       ...gcsim,
       attacks: [...gcsim.attacks, { ...burstAttack, line: 30, siteLine: 30, talentVariable: "kick" }],

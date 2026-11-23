@@ -8,8 +8,8 @@ export interface RegionMapPoint {
   region: string;
 }
 
-// The region of the nearest mapped point to a place, or none when even the nearest lies farther than the given distance:
-// A place off every mapped region, on an island no region is mapped to, is in none
+// The region of the nearest mapped point to a place, or none when even the nearest lies farther than the given
+// Distance: A place off every mapped region, on an island no region is mapped to, is in none
 export const classifyPlacementRegion = (
   position: GroundPoint,
   regionMapPoints: readonly RegionMapPoint[],

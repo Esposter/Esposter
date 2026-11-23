@@ -38,7 +38,8 @@ export const noMapMutation: Rule = defineRule({
     const checkTarget = (target: ESTree.Node) => {
       const rootName = getRootName(target);
       if (rootName === undefined) return;
-      // The innermost function that binds the name decides it, so a parameter that shadows an element is not the element
+      // The innermost function that binds the name decides it, so a parameter that shadows an element is not the
+      // Element
       for (const { element, names } of scopes.toReversed()) {
         if (!names.includes(rootName)) continue;
         if (element === rootName) context.report({ message: MESSAGE, node: target });

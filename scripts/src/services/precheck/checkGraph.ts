@@ -7,7 +7,8 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-// The committed graph against what the generator draws from the workspace today. With `fix`, the drawing is written over it
+// The committed graph against what the generator draws from the workspace today. With `fix`, the drawing is written
+// Over it
 export const checkGraph = async (fix: boolean): Promise<GeneratedFileCheck> => {
   const graphPath = resolve(REPOSITORY_ROOT, GRAPH_FILENAME);
   const { svg } = await readGraph();

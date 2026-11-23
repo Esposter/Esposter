@@ -4,9 +4,9 @@ import type { DumpedTalkConfig } from "#src/models/genshinText/DumpedTalkConfig"
 
 import { FETTER_GT_CONDITION_TYPE } from "#src/services/genshinAssets/friendship/constants";
 
-// Each companion's realm talk that a fetter level gates, at the Friendship Level it opens at. The condition holds the fetter
-// Level it is greater than, so the talk opens one level above it. A talk no fetter level gates is none of them, and neither
-// Is a row for no companion
+// Each companion's realm talk that a fetter level gates, at the Friendship Level it opens at. The condition holds the
+// Fetter Level it is greater than, so the talk opens one level above it. A talk no fetter level gates is none of them,
+// And neither Is a row for no companion
 export const toPotCompanionTalkRows = (
   npcRows: readonly ExcelHomeWorldNpcRow[],
   talkConfigMap: ReadonlyMap<number, DumpedTalkConfig>,

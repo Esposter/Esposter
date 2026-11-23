@@ -13,9 +13,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { LandmarkKind } from "genshin-world";
 
 // A region data file's landmarks the world places, each stood where its prefab's first place stands and turned as it
-// Turns, round the world's origin. Its height over the ground is the export root's height less our ground's at its spot,
-// So the landmark's root stands where the game's does and no hand offset sets it. A statue also gets its arrival, the
-// Game's transport place and turn for the scene point it stands at, which a jump lands at. Every other field is the
+// Turns, round the world's origin. Its height over the ground is the export root's height less our ground's at its
+// Spot, So the landmark's root stands where the game's does and no hand offset sets it. A statue also gets its arrival,
+// The Game's transport place and turn for the scene point it stands at, which a jump lands at. Every other field is the
 // Region's own. A landmark the world names that the file lacks, or a prefab placed nowhere, is an error. Returns the
 // File's path
 export const fitRegionLandmarks = async (

@@ -3,9 +3,9 @@ import type { UnitSize } from "#src/models/sweeps/ledgerCoverage/UnitSize";
 import { UNIT_FILE_CAP, UNIT_LINE_CAP } from "#src/services/sweeps/ledgerCoverage/constants";
 
 // Each unit of the partition past the cap one pass reads in full, the area list's and the derived openspec folders'
-// Alike. A unit past it is split at its directory boundaries, since no sitting reads it whole and a grep pass would stand
-// In for a read that never happened. `readSize` gives each file's share of the size, so the caller decides what is read
-// And the cap is the one thing here
+// Alike. A unit past it is split at its directory boundaries, since no sitting reads it whole and a grep pass would
+// Stand In for a read that never happened. `readSize` gives each file's share of the size, so the caller decides what
+// Is read And the cap is the one thing here
 export const getAreaUnitSizeFindings = (
   units: readonly string[],
   unitFiles: ReadonlyMap<string, readonly string[]>,

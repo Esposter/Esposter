@@ -5,9 +5,9 @@ import type { Tip, TipTrigger } from "genshin-world";
 
 import { toTutorialPushTipMap } from "#src/services/genshinAssets/archive/toTutorialPushTipMap";
 
-// The tutorial push tips, each with the Archive entry the codex files it under and the trigger its watcher gives. A push
-// Tip of another kind, such as a monster's, is not a tutorial. A watcher the global table lacks, or one with no trigger
-// Kind, leaves its tip with no trigger, and a parameter the table leaves empty is left out
+// The tutorial push tips, each with the Archive entry the codex files it under and the trigger its watcher gives. A
+// Push Tip of another kind, such as a monster's, is not a tutorial. A watcher the global table lacks, or one with no
+// Trigger Kind, leaves its tip with no trigger, and a parameter the table leaves empty is left out
 export const toTipRecords = (
   pushTipRows: readonly ExcelPushTipsRow[],
   codexRows: readonly ExcelPushTipsCodexRow[],

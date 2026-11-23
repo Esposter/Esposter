@@ -13,9 +13,10 @@ import { CloudflareEnvironments } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
-// The copies that bring each bucket to what the lock names: each object or index the lock reaches that one environment's bucket
-// Lacks, from the other environment's bucket, which must hold it. An index is read from whichever bucket holds it, since its
-// Entries are the objects the walk reaches. A name neither bucket holds fails the plan, named by key, before any copy is made
+// The copies that bring each bucket to what the lock names: each object or index the lock reaches that one
+// Environment's bucket Lacks, from the other environment's bucket, which must hold it. An index is read from whichever
+// Bucket holds it, since its Entries are the objects the walk reaches. A name neither bucket holds fails the plan,
+// Named by key, before any copy is made
 export const planHostedAssetRepair = async (
   lock: HostedAssetLock,
   bucketClientMap: Record<CloudflareEnvironment, R2BucketClient>,

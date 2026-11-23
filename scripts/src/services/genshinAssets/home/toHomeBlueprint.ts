@@ -3,8 +3,8 @@ import type { HomeBlueprint } from "genshin-world";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One furnishing blueprint from its making row and the diagrams that open it. A slot a blueprint leaves empty is left out, and
-// A blueprint makes one furnishing an order, so a row making more is refused rather than read as one a unit
+// One furnishing blueprint from its making row and the diagrams that open it. A slot a blueprint leaves empty is left
+// Out, and A blueprint makes one furnishing an order, so a row making more is refused rather than read as one a unit
 export const toHomeBlueprint = (row: ExcelFurnitureMakeRow, unlockItemIds: number[]): HomeBlueprint => {
   if (row.count !== 1)
     throw new InvalidOperationError(Operation.Read, String(row.furnitureItemID), "makes more than one");

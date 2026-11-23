@@ -1,4 +1,5 @@
-// The mean of the distances at the pixels a mask sets, or Infinity where it sets none, so an empty mask never prices best
+// The mean of the distances at the pixels a mask sets, or Infinity where it sets none, so an empty mask never prices
+// Best
 export const computeMaskedMean = (mask: Uint8Array, distances: Float32Array): number => {
   let sum = 0;
   let count = 0;

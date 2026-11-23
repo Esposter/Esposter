@@ -31,7 +31,8 @@ export const shadowsCommand: SubCommandsDef[string] = defineCommand({
       console.log(
         `  probed ${formatDirection(probe.direction)}: ${probe.ourEdgeCount} edge pixels, ${probe.distance.toFixed(2)} px`,
       );
-    // The sky's grid priced before the simplex, its best few with each one's cost, the simplex started from the best three
+    // The sky's grid priced before the simplex, its best few with each one's cost, the simplex started from the best
+    // Three
     for (const reading of grid)
       console.log(
         `  grid ${formatDirection(reading.direction)}: ${reading.ourEdgeCount} edge pixels, ${reading.distance.toFixed(2)} px`,

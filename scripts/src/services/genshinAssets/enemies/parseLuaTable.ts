@@ -4,8 +4,8 @@ import { readFieldName } from "#src/services/genshinAssets/enemies/readFieldName
 import { tokenizeLuaTable } from "#src/services/genshinAssets/enemies/tokenizeLuaTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A value a Lua table literal holds: a string, a number, a boolean or a table, which is an object when it names its fields
-// And an array when it lists its values
+// A value a Lua table literal holds: a string, a number, a boolean or a table, which is an object when it names its
+// Fields And an array when it lists its values
 type LuaValue = { [field: string]: LuaValue } | boolean | LuaValue[] | number | string;
 
 // Reads a Lua table literal, as the wiki's data modules write it, into the values it holds: named fields as an object,

@@ -49,7 +49,8 @@ await runCommand(
         console.info(`✔ ${WORKSPACE_FILE} @types/node → ^${typesVersion}`);
       }
       // 3. Move every manifest's node floor to the pin, and each npm lockfile's root entry beside one. It runs on an
-      // Unchanged pin too, since Renovate's node branch moves the pin alone and a floor it left behind is caught up here
+      // Unchanged pin too, since Renovate's node branch moves the pin alone and a floor it left behind is caught up
+      // Here
       for (const { path } of readManifestFiles(REPOSITORY_ROOT)) {
         updateNodeFloorFile(path, version, (text) => setManifestNodeVersion(text, version));
         const lockfilePath = resolve(dirname(path), NPM_LOCKFILE);

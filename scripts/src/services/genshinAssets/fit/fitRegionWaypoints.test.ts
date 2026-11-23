@@ -21,7 +21,8 @@ vi.mock(import("#src/services/genshinAssets/world/readSceneTransportPoints"));
 describe(fitRegionWaypoints, () => {
   const IDENTITY_TRANSFORM: SimilarityTransform = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
   const LIYUE_FILE = join("regions", "liyue.json");
-  // Liyue's fit matched no point, so it has no residual and is in no region file of the fit, yet its earlier run's waypoint stands
+  // Liyue's fit matched no point, so it has no residual and is in no region file of the fit, yet its earlier run's
+  // Waypoint stands
   const staleWaypoint = {
     areaId: "1",
     id: "liyue-waypoint-1",

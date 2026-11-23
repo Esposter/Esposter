@@ -9,8 +9,8 @@ import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { posix } from "node:path";
 
 // The frames each ability file animates by, from the `AnimationLength` its action literal is given: an ability whose
-// Frames are named otherwise, `skillThrustFrames` in `AnimationLength: skillThrustFrames[action.InvalidAction]`. Keyed by
-// The file's base name, and the last such literal in a file wins, the main one returned after any nested one
+// Frames are named otherwise, `skillThrustFrames` in `AnimationLength: skillThrustFrames[action.InvalidAction]`. Keyed
+// By The file's base name, and the last such literal in a file wins, the main one returned after any nested one
 export const readGcsimAnimationFrameNames = (sources: readonly GoSource[]): Map<string, string> => {
   const frameNameMap = new Map<string, string>();
   for (const { path, source } of sources) {

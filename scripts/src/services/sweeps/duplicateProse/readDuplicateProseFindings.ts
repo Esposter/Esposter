@@ -9,13 +9,13 @@ import { getPathShingles } from "#src/services/sweeps/duplicateProse/getPathShin
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
 import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/readRepositoryPathShingles";
 
-// Every run of prose two pages or skills of different owners share, read off the tree. A README, a ledger and a
-// Spec's requirements are shaped by a template each of their kind repeats — a requirement is a SHALL and its scenarios,
-// Which `openspec validate` holds — so the designs, proposals, tasks and skills are the pages read; a run that is a
-// Citation rather than prose is set aside (`checkIsPathRun`).
-// A `{data-root}`, `{cache-root}` or `{state-root}` path names a file on this machine that a page cites, so its words are
-// Set aside like a tracked path's. A markdown link's target names the page or anchor it cites, and is set aside whole
-// (`checkIsPathRun`): its three-word windows are phrases ordinary prose shares, so they are not read as citations
+// Every run of prose two pages or skills of different owners share, read off the tree. A README, a ledger and a Spec's
+// Requirements are shaped by a template each of their kind repeats — a requirement is a SHALL and its scenarios, Which
+// `openspec validate` holds — so the designs, proposals, tasks and skills are the pages read; a run that is a Citation
+// Rather than prose is set aside (`checkIsPathRun`). A `{data-root}`, `{cache-root}` or `{state-root}` path names a
+// File on this machine that a page cites, so its words are Set aside like a tracked path's. A markdown link's target
+// Names the page or anchor it cites, and is set aside whole (`checkIsPathRun`): its three-word windows are phrases
+// Ordinary prose shares, so they are not read as citations
 const MACHINE_ROOT_PATH_REGEX = /\{(?:data|cache|state)-root\}\/[^\s`()[\]<>]+/gu;
 const LINK_TARGET_REGEX = /(?<=\]\()[^)\s]+(?=\))/gu;
 export const readDuplicateProseFindings = (): DuplicateProseFinding[] => {

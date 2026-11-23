@@ -9,8 +9,8 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { GameDataset } from "genshin-world";
 
-// Which held mesh each weapon row pairs with, from the weapon table and the held meshes the asset index names, published
-// As one record by the row's id. The rows with none are counted in the notes
+// Which held mesh each weapon row pairs with, from the weapon table and the held meshes the asset index names,
+// Published As one record by the row's id. The rows with none are counted in the notes
 export const fitWeaponMeshMap = async (): Promise<GameDataBuild> => {
   const assets = await readIndexedAssets(checkIsHeldWeaponMesh, GENSHIN_ANIMESTUDIO_OPTIONS);
   const meshNames = new Set(assets.map(({ name }) => name));

@@ -1,5 +1,5 @@
-// Where an exit check stands: met when it was read and holds, not met with the items that fail it named, or not measurable
-// When no command can read it. A quest's line is scripted when a session script names the quest
+// Where an exit check stands: met when it was read and holds, not met with the items that fail it named, or not
+// Measurable When no command can read it. A quest's line is scripted when a session script names the quest
 export const GenshinExitCheckState = {
   Met: "met",
   NotMeasurable: "not measurable",

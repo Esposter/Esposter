@@ -12,9 +12,10 @@ import { pushFleetRef } from "#src/services/fleet/pushFleetRef";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Takes `entry` for `holder`. A claim this worker already holds is adopted, a live one held by any other worker, even on
-// The same machine, is returned as the holder, and a stale one or none is taken: a new parentless claim commit is pushed,
-// Plain when the ref is free and leased from the stale commit when it is not, so exactly one worker's push lands
+// Takes `entry` for `holder`. A claim this worker already holds is adopted, a live one held by any other worker, even
+// On The same machine, is returned as the holder, and a stale one or none is taken: a new parentless claim commit is
+// Pushed, Plain when the ref is free and leased from the stale commit when it is not, so exactly one worker's push
+// Lands
 export const claimFleetEntry = (entry: string, holder: ClaimHolder, load: string): FleetClaimResult => {
   const claims = readClaimedRefs();
   const existingClaim = claims.get(entry);

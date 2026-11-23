@@ -7,8 +7,8 @@ import { parseStreamingPlacements } from "#src/services/genshinAssets/world/pars
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// Every placement one of a world's StreamGen streams lays out, read from the blob and index `extract` wrote into the world
-// Folder it is given
+// Every placement one of a world's StreamGen streams lays out, read from the blob and index `extract` wrote into the
+// World Folder it is given
 export const readStreamPlacements = async (
   worldDirectory: string,
   { blob, index }: WorldStream,

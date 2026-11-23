@@ -8,9 +8,9 @@ import { preferUseStoreNamingConvention } from "#src/services/oxlint/pinia/prefe
 import { definePlugin } from "@oxlint/plugins";
 
 // The Pinia rules of eslint-plugin-pinia that this repo enables, ported to oxlint's JS plugin API under the same names,
-// So each `pinia/<rule>` key reads as it did. Each reads Pinia's own API by name (`defineStore`, `storeToRefs`, `inject`,
-// `useRoute`), so its scope is the construct's domain. The package's `require-setup-store-properties-export` and
-// `prefer-single-store-per-file` are not ported: the config switches the first off and the preset the second.
+// So each `pinia/<rule>` key reads as it did. Each reads Pinia's own API by name (`defineStore`, `storeToRefs`,
+// `inject`, `useRoute`), so its scope is the construct's domain. The package's `require-setup-store-properties-export`
+// And `prefer-single-store-per-file` are not ported: the config switches the first off and the preset the second.
 // `prefer-use-store-naming-convention` takes no options: the config sets neither of the upstream rule's two, a suffix
 // And a match to the store's id, so the port reads neither.
 const plugin: Plugin = definePlugin({

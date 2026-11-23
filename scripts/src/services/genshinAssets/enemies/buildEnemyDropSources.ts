@@ -17,10 +17,10 @@ import { z } from "zod";
 const dropsModuleSchema = z.object({ Enemies: z.array(dropFamilyEntrySchema) });
 
 // Each kind's drop source, from its own wiki article, and the drop families the kinds of a family take, from the wiki's
-// Enemies table. A boss's article gives its reward or none; a kind that is no boss gives a family, template or none.
-// A kind whose article lists two Drops Tables takes the first, the one its defeat drops. Families are keyed by
-// The Drops Table type they are named by, and each material is resolved to the one item its English name is. Returns the
-// Family rows, the rows joining each family kind to its family, and every kind with the drop source its article gives
+// Enemies table. A boss's article gives its reward or none; a kind that is no boss gives a family, template or none. A
+// Kind whose article lists two Drops Tables takes the first, the one its defeat drops. Families are keyed by The Drops
+// Table type they are named by, and each material is resolved to the one item its English name is. Returns the Family
+// Rows, the rows joining each family kind to its family, and every kind with the drop source its article gives
 export const buildEnemyDropSources = <T extends Pick<EnemyKind, "enemyType" | "id" | "nameTextId">>(
   enemyKinds: readonly T[],
   englishTextMap: ReadonlyMap<string, string>,

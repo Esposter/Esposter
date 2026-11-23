@@ -3,8 +3,8 @@ import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/shared/Exce
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Each domain's artifact sets by entry id, from the wiki's name for each set, resolved to its set id: a set is named by the
-// Text of its equip affix. A name no set answers to, or two sets answer to, is refused rather than guessed
+// Each domain's artifact sets by entry id, from the wiki's name for each set, resolved to its set id: a set is named by
+// The Text of its equip affix. A name no set answers to, or two sets answer to, is refused rather than guessed
 export const resolveBlessingArtifactSetIds = (
   setNames: Readonly<Record<number, readonly string[]>>,
   reliquarySets: readonly ExcelReliquarySetRow[],

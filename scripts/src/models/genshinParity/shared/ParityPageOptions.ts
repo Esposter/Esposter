@@ -7,8 +7,8 @@ export interface ParityPageOptions {
   // An image drawn behind the screen, for an overlay shot over the very frame it is judged against
   backdropPath?: string | undefined;
   height: number;
-  // Whether the backdrop is the reference's own frame, which holds the game's blur and wash of the world already, so the
-  // Screen's own world blur and wash are not drawn over it a second time
+  // Whether the backdrop is the reference's own frame, which holds the game's blur and wash of the world already, so
+  // The Screen's own world blur and wash are not drawn over it a second time
   isBackdropBlurred?: boolean;
   // Whether the page's clock is faked, moved on only by the caller, and its timers and frames with it
   isClockFaked?: boolean;
@@ -16,7 +16,8 @@ export interface ParityPageOptions {
   isFrameRateUnlimited?: boolean;
   // The motion the page holds at its start, for a shot at times
   motion?: ParityMotion | undefined;
-  // The page's address up to its query: the dev server's by default, a preview server's when a load run measures a build
+  // The page's address up to its query: the dev server's by default, a preview server's when a load run measures a
+  // Build
   pageRoot?: string | undefined;
   // Props over the fixture's, as JSON the page reads
   props?: Record<string, unknown> | undefined;
@@ -24,7 +25,8 @@ export interface ParityPageOptions {
   // The fixture's variant the page renders over its props, by its name in the fixture's `variants`
   variant?: string | undefined;
   width: number;
-  // The left edge, in the reference's pixels, of the game window the screen is placed at, for a frame that pillarboxes it
+  // The left edge, in the reference's pixels, of the game window the screen is placed at, for a frame that pillarboxes
+  // It
   windowLeft?: number | undefined;
   // A component whose exports the page draws in place of the scene's own parts, served to it from the exports
   witness?: DerivedAssetComponent | undefined;

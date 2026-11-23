@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal
+   would otherwise infer */
 import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimStanceNormalAttack";
 
 import { MEBIBYTE, WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
@@ -95,8 +96,8 @@ export const GCSIM_PLUNGE_COLLISION_HITBOX_NAME = "Plunge";
 // Next, as the kits without one share Diluc's
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES: readonly number[] = [30, 60];
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES = 72;
-// The normal attacks a character's stance gives, by the character's folder: Wriothesley's Chilling Penalty, whose enhanced
-// Normal attacks gcsim reads at attack state 1 and multiplies by the Enhanced Repelling Fist table
+// The normal attacks a character's stance gives, by the character's folder: Wriothesley's Chilling Penalty, whose
+// Enhanced Normal attacks gcsim reads at attack state 1 and multiplies by the Enhanced Repelling Fist table
 export const GCSIM_STANCE_NORMAL_ATTACKS: Partial<Record<string, GcsimStanceNormalAttack>> = {
   wriothesley: { factorLabel: "Enhanced Repelling Fist DMG", path: "stances.chillingPenalty.normalAttacks", state: 1 },
 };

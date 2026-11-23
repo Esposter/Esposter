@@ -11,14 +11,16 @@ import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { join, parse } from "node:path";
 
-// Each portrait the component exported, as the colour its disc takes in place of the picture: the mean of the texture the
-// Export holds, as the record `<component>/pictureColours`. It is opt-in, since it reads textures the install must export
-// First: a named run on a component that exported no portrait fails, rather than writing an empty record over a published one
+// Each portrait the component exported, as the colour its disc takes in place of the picture: the mean of the texture
+// The Export holds, as the record `<component>/pictureColours`. It is opt-in, since it reads textures the install must
+// Export First: a named run on a component that exported no portrait fails, rather than writing an empty record over a
+// Published one
 export const createPictureColoursEntry = (component: DerivedAssetComponent): RunFitEntry => [
   "pictureColours",
   async () => {
     const directory = join(getComponentDirectory(component).assets, AssetType.Texture2D);
-    // A portrait is the exported texture under the name its picture takes; a folder with none of them has nothing to measure
+    // A portrait is the exported texture under the name its picture takes; a folder with none of them has nothing to
+    // Measure
     const files = existsSync(directory)
       ? (await readdir(directory)).filter(
           (file) => file.startsWith(AVATAR_ICON_PREFIX) && parse(file).ext === PNG_EXTENSION,

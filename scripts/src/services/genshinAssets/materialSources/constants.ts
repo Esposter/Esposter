@@ -4,8 +4,9 @@ export const ENV_ANIMAL_GATHER_TABLE_NAME = "EnvAnimalGatherExcelConfigData";
 // Coral Butterfly's gather row is the only critter's whose item is typed so, and no butterfly has a stand-in
 export const CHEST_MATERIAL_TYPE = "MATERIAL_CHEST";
 // The official map's labels, under Animals, of the critters picked up whole as the item their gather row gives: the
-// Crystalflies and each other critter group that has a gather row. Their points are material sources and not the fleeing
-// Animals the wildlife dataset holds. Butterflies with no gather row stay out, and so does every label none joins
+// Crystalflies and each other critter group that has a gather row. Their points are material sources and not the
+// Fleeing Animals the wildlife dataset holds. Butterflies with no gather row stay out, and so does every label none
+// Joins
 export const MATERIAL_SOURCE_LABEL_IDS: readonly number[] = [
   // Crystalflies
   277, 281, 298, 315, 393, 513, 624,

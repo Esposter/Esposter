@@ -40,8 +40,9 @@ export const RESTRICTED_TEST_SYNTAXES: SelectorBanList = {
     },
     {
       // A test's timeout is a named Temporal duration, so the constant's name says what the bench measured. A number in
-      // The timeout slot says nothing of the cost, and a slow test that passes at the default has no timeout at all (the
-      // Testing skill's timeouts page). Both places a timeout is written: the third argument and the `timeout` option
+      // The timeout slot says nothing of the cost, and a slow test that passes at the default has no timeout at all
+      // (the Testing skill's timeouts page). Both places a timeout is written: the third argument and the `timeout`
+      // Option
       message:
         "Name a test's timeout as a constant — `const SLOW_MS = Temporal.Duration.from({ seconds: 60 }).total(\"milliseconds\")` — never a literal. See the testing skill's timeouts page.",
       selector:

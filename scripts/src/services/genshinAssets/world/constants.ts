@@ -1,4 +1,6 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal would otherwise infer; `isolatedDeclarations` demands the annotation this pattern would otherwise infer; isolatedDeclarations demands the annotation this value would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal
+   would otherwise infer; `isolatedDeclarations` demands the annotation this pattern would otherwise infer;
+   isolatedDeclarations demands the annotation this value would otherwise infer */
 import type { ProvenanceSource } from "#src/models/provenance/Provenance";
 
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -23,18 +25,19 @@ export const CAPITAL_VIEW_METRES = 512;
 export const ARCHITECTURE_VIEW_METRES = 600;
 // The file a derived world block is written beside its exports, which every reader of the world reads back
 export const WORLD_JSON_NAME = "world.json";
-// The game's table of every LOD-grouped prefab, a MonoBehaviour keyed by the prefab's world id, whose placements carry no
-// Path hash of their own (`parseLodInfoMap`)
+// The game's table of every LOD-grouped prefab, a MonoBehaviour keyed by the prefab's world id, whose placements carry
+// No Path hash of their own (`parseLodInfoMap`)
 export const LOD_INFO_MAP_NAME = "LODFinInfoMap";
-// The community's asset index (the one published per version up to 2.6, radioegor146/gi-asset-indexes, its mapped file for
-// 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the prefab's name.
-// Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`). It is fetched at the
-// One commit that last changed the file, never at the branch, and the SHA-256 of the file at that commit is the one the
-// Derived names are recorded with
+// The community's asset index (the one published per version up to 2.6, radioegor146/gi-asset-indexes, its mapped file
+// For 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the prefab's
+// Name. Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`). It is fetched
+// At the One commit that last changed the file, never at the branch, and the SHA-256 of the file at that commit is the
+// One the Derived names are recorded with
 export const ASSET_PATH_INDEX_COMMIT = "3192b1759a6d1f6879cc348ad92e078092c1fb9f";
 export const ASSET_PATH_INDEX_SHA256 = "108ea704b12389a76f547e459dfdfb1c938c111d99ad62524a80f3e02eb198c4";
 export const ASSET_PATH_INDEX_URL: string = `https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/${ASSET_PATH_INDEX_COMMIT}/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json`;
-// The index as a source an output built from its derived names is stamped with: the commit it is fetched at and its SHA-256
+// The index as a source an output built from its derived names is stamped with: the commit it is fetched at and its
+// SHA-256
 export const ASSET_PATH_INDEX_SOURCE: ProvenanceSource = {
   commit: ASSET_PATH_INDEX_COMMIT,
   name: "asset-path index",
@@ -47,14 +50,16 @@ export const ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS: number = Temporal.Duration.f
 // The most of the index a fetch holds whole: the index is about 92 MB, so the bound sits past it
 export const ASSET_PATH_INDEX_MAX_BYTES: number = 128 * MEBIBYTE;
 export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "asset-index", "gi-2.6.0.json");
-// A prefab's stem starts with one of the open world's name roots, each the folder its prefabs sit under in the game's tree
+// A prefab's stem starts with one of the open world's name roots, each the folder its prefabs sit under in the game's
+// Tree
 export const PREFAB_ROOT_MAP: Record<string, string> = {
   Area: "ART/Stages/Area",
   Indoor: "ART/Stages/Indoor",
   Level: "ART/Stages/Level",
 };
 export const PREFAB_STEM_REGEX: RegExp = /^(?:Area|Indoor|Level)_/u;
-// A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`, by the code the area is known by
+// A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`, by the code the area is
+// Known by
 export const CITY_AREA_PREFIX = "Area_";
 export const CITY_AREA_SUFFIX = "_City";
 // Every city area's extent, kept for one game version beside the exports and outside the repository

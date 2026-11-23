@@ -13,7 +13,8 @@ export const validatePackageName = (name: string, root: string): void => {
       "package",
       "the name is lowercase words joined by single hyphens, such as nuxt-security-module",
     );
-  // A library's module is named for its package, so a name whose module is the entry the build generates would be written over it
+  // A library's module is named for its package, so a name whose module is the entry the build generates would be
+  // Written over it
   if (`src/${toCamelCase(name)}.ts` === LIBRARY_ENTRY_PATH)
     throw new InvalidOperationError(
       Operation.Create,

@@ -4,8 +4,9 @@ import type { TrialAvatar } from "genshin-world";
 import { toTrialAvatar } from "#src/services/genshinAssets/trials/toTrialAvatar";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The trial avatars a season's opening characters play as, one per trial id the avatar config names and in that order, each
-// Read from the trial avatar table: the character it is and the level it holds. A trial id the table lacks is refused
+// The trial avatars a season's opening characters play as, one per trial id the avatar config names and in that order,
+// Each Read from the trial avatar table: the character it is and the level it holds. A trial id the table lacks is
+// Refused
 export const toImaginariumOpeningTrials = (
   openingTrialIds: number[],
   trialAvatarRowMap: Map<number, ExcelTrialAvatarRow>,

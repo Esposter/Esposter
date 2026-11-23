@@ -33,7 +33,8 @@ export const missingTilesCommand: SubCommandsDef[string] = defineCommand({
     const world = await readWorldOptions(component);
     if (!world) throw new InvalidOperationError(Operation.Read, component, "has no open world to check");
     const expected = getOutlineTileNames(await readGroundPieceAreas(component), await readWorldOrigin(component));
-    // A tile is exported when its terrain mesh is on disk, the mesh the witness lays it out from, not when the world names it
+    // A tile is exported when its terrain mesh is on disk, the mesh the witness lays it out from, not when the world
+    // Names it
     const meshDirectory = join(getComponentDirectory(component).assets, AssetType.Mesh);
     const tileNames = world.terrainTiles.map(({ name }) => name);
     const exported = new Set(readExportedTerrainTiles(tileNames, meshDirectory));

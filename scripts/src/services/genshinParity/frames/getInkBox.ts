@@ -2,9 +2,9 @@ import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 import { PROBE_EDGE_LEVEL, PROBE_MIN_EDGE_STEP } from "#src/services/genshinParity/probe/constants";
 
-// The box a rectangle's ink fills, in its own pixels: the pixels whose ink reaches the probe's halfway level between the
-// Least and the most inked of them. The spread between those must be a strong step, as an edge's is, so a flat or noisy
-// Rectangle has no box
+// The box a rectangle's ink fills, in its own pixels: the pixels whose ink reaches the probe's halfway level between
+// The Least and the most inked of them. The spread between those must be a strong step, as an edge's is, so a flat or
+// Noisy Rectangle has no box
 export const getInkBox = (ink: Float64Array, width: number, height: number): ImageRegion | undefined => {
   let low = Infinity;
   let high = -Infinity;

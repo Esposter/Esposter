@@ -9,8 +9,8 @@ import {
 import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodCosts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One good as the world reads it, its game-time dates written as ISO strings with the game's offset, and every cost it is
-// Bought with. A good the table gives no cost for is an error rather than a free good
+// One good as the world reads it, its game-time dates written as ISO strings with the game's offset, and every cost it
+// Is Bought with. A good the table gives no cost for is an error rather than a free good
 export const toShopGoodRow = (row: ExcelShopGoodsRow, reputationDiscountLevel?: number): ShopGoodRow => {
   const costs = getShopGoodCosts(row);
   if (costs.length === 0)

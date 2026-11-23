@@ -7,7 +7,8 @@ import type { OutcropRegion } from "genshin-world";
 import { toKindRules } from "#src/services/genshinAssets/leyLine/toKindRules";
 import { toOutcropRegion } from "#src/services/genshinAssets/leyLine/toOutcropRegion";
 
-// Every city with a ley line kind, its region as the game's blossom tables give it, keyed by the city's id in ascending order
+// Every city with a ley line kind, its region as the game's blossom tables give it, keyed by the city's id in ascending
+// Order
 export const toLeyLineRegions = (
   refreshRows: ExcelBlossomRefreshRow[],
   groupRows: ExcelBlossomGroupRow[],

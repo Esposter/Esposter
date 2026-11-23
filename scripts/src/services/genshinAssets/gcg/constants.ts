@@ -4,28 +4,29 @@ import { Element } from "genshin-world";
 // The rule the duels against the game's own residents run. Its clocks are all zero, since a duel against a resident
 // Has no round to run out; its reactions and hand limit are the matchmaking rule's
 export const GCG_STANDARD_RULE_ID = 2;
-// The duels the world's residents play, by their game id in the game table: the games their seats name, and the
-// Normal challengers' duels below. Their decks are published beside the standard rule
-// The normal challengers' duels whose enemy decks are built: games 1011 and 1012 play deck 11105, and game 1083 plays deck
-// 12005. Games 1104 and 1105 (Kimiya) and game 13105 (Furuya Noboru) play deck 13105, with their regions from the wiki.
-// NPC pages: https://genshin-impact.fandom.com/wiki/Kimiya (Sumeru) and
-// Furuya Noboru: https://genshin-impact.fandom.com/wiki/Furuya_Noboru (Inazuma).
-// Stage list: https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Stage, whose Adventure Challenges in Sumeru and
-// Duels in Inazuma sections name them.
-// The other challengers' games wait for their decks, since a game whose enemy deck has no slice is refused
+// The duels the world's residents play, by their game id in the game table: the games their seats name, and the Normal
+// Challengers' duels below. Their decks are published beside the standard rule The normal challengers' duels whose
+// Enemy decks are built: games 1011 and 1012 play deck 11105, and game 1083 plays deck 12005. Games 1104 and 1105
+// (Kimiya) and game 13105 (Furuya Noboru) play deck 13105, with their regions from the wiki. NPC pages:
+// `https://genshin-impact.fandom.com/wiki/Kimiya` (Sumeru) and Furuya Noboru:
+// `https://genshin-impact.fandom.com/wiki/Furuya_Noboru` (Inazuma). Stage list:
+// `https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Stage`, whose Adventure Challenges in Sumeru and Duels
+// In Inazuma sections name them. The other challengers' games wait for their decks, since a game whose enemy deck has
+// No Slice is refused
 const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083, 1104, 1105, 13105];
 // The residents' seats' duels and the challengers' duels, each game once, since game 1104 is both a seat's and a
 // Challenger's duel
 export const GCG_DUEL_GAME_IDS: number[] = [
   ...new Set([...RESIDENT_DUEL_GAME_ID_MAP.values(), ...GCG_CHALLENGER_DUEL_GAME_IDS]),
 ];
-// The week games the residents offer in their weekly guest challenge, read from the seats. They publish beside the duels' games
+// The week games the residents offer in their weekly guest challenge, read from the seats. They publish beside the
+// Duels' games
 export const GCG_CHALLENGER_WEEK_GAME_IDS: number[] = Array.from(
   RESIDENT_WEEK_GAME_MAP.values(),
   ({ gameId }) => gameId,
 );
-// The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own deck is
-// Built, a provisional call recorded on the as-built page
+// The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own
+// Deck is Built, a provisional call recorded on the as-built page
 export const GCG_PLACEHOLDER_PLAYER_DECK_ID = 3;
 // The card game's table names each element by its own name in capitals, which the world's Element enum spells otherwise
 export const GcgElementTableNameMap: Map<string, Element> = new Map<string, Element>([
@@ -37,15 +38,15 @@ export const GcgElementTableNameMap: Map<string, Element> = new Map<string, Elem
   ["GCG_ELEMENT_HYDRO", Element.Hydro],
   ["GCG_ELEMENT_PYRO", Element.Pyro],
 ]);
-// The decks the duels run as opponents, each with the cards its skills create on the field, which a duel needs as cards of
-// Their own: the tutorial deck's Pyro Infusion, Inspiration Field, Reflection and Illusory Bubble; deck 3's Chonghua Frost
-// Field, Niwabi Enshou, Aurous Blaze and The Wolf Within; deck 4's Niwabi Enshou, Aurous Blaze and Shadowsword summons; deck
-// 11005's Cat-Claw Shield; the Oceanic Mimics of decks 2, 4 and 11005, which the Oceanid Mimic (122010) that Rhodeia of
-// Loch's skills name stands for; and deck 13105's Shadowsword summons, Niwabi Enshou, Aurous Blaze and Oz, which its
-// Characters' skills create. Deck 12305's are Chonghua Frost Field, Icy Quill, Talisman Spirit and Yaksha's Mask, which its
-// Characters' skills create too. Deck 14410's are Tengu Juurai: Ambush and Stormcluster, Crowfeather Cover, Darkfire Furnace,
-// Fiery Rebirth, Aegis of Abyssal Flame, Chains of Warding Thunder, Electro Crystal Core and the three Hilichurl summons, which
-// Its characters' skills and cards create
+// The decks the duels run as opponents, each with the cards its skills create on the field, which a duel needs as cards
+// Of Their own: the tutorial deck's Pyro Infusion, Inspiration Field, Reflection and Illusory Bubble; deck 3's Chonghua
+// Frost Field, Niwabi Enshou, Aurous Blaze and The Wolf Within; deck 4's Niwabi Enshou, Aurous Blaze and Shadowsword
+// Summons; deck 11005's Cat-Claw Shield; the Oceanic Mimics of decks 2, 4 and 11005, which the Oceanid Mimic (122010)
+// That Rhodeia of Loch's skills name stands for; and deck 13105's Shadowsword summons, Niwabi Enshou, Aurous Blaze and
+// Oz, which its Characters' skills create. Deck 12305's are Chonghua Frost Field, Icy Quill, Talisman Spirit and
+// Yaksha's Mask, which its Characters' skills create too. Deck 14410's are Tengu Juurai: Ambush and Stormcluster,
+// Crowfeather Cover, Darkfire Furnace, Fiery Rebirth, Aegis of Abyssal Flame, Chains of Warding Thunder, Electro
+// Crystal Core and the three Hilichurl summons, which Its characters' skills and cards create
 export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number, number[]>([
   [1, [113_011, 113_031, 112_031, 112_032]],
   [2, [113_021, 113_022, 114_011, 122_010, 122_011, 122_012, 122_013]],

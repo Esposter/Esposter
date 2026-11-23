@@ -2,8 +2,8 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { removeWorktree } from "#src/services/worktree/remove/removeWorktree";
 import { defineCommand } from "citty";
 
-// `pnpm ai:worktree:remove <path>` — removes a linked worktree and its branch once that has landed, or a folder under the
-// Worktrees folder git no longer lists; the full path only (the `throughput` skill, `references/fleet.md`)
+// `pnpm ai:worktree:remove <path>` — removes a linked worktree and its branch once that has landed, or a folder under
+// The Worktrees folder git no longer lists; the full path only (the `throughput` skill, `references/fleet.md`)
 await runCommand(
   defineCommand({
     args: { path: { description: "The worktree's full path", required: true, type: "positional" } },

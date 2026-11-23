@@ -5,9 +5,10 @@ import { GenshinUnitState } from "#src/models/genshinProgress/GenshinUnitState";
 import { checkNeedsMet } from "#src/services/genshinProgress/checkNeedsMet";
 import { GENSHIN_MISSING_ID_BLOCKER } from "#src/services/genshinProgress/constants";
 
-// A compute page as one unit: done when it holds no item at all, an open line with no id included, runnable when a queue
-// Item's needs this machine meets, blocked on the other machine when every queue item needs something it lacks, and
-// Otherwise waiting on the first blocker its waiting items name, or on the missing id when no waiting item names one
+// A compute page as one unit: done when it holds no item at all, an open line with no id included, runnable when a
+// Queue Item's needs this machine meets, blocked on the other machine when every queue item needs something it lacks,
+// And Otherwise waiting on the first blocker its waiting items name, or on the missing id when no waiting item names
+// One
 export const getAreaUnit = (
   { blockers, kind, needs, phase, skipped }: GenshinArea,
   capabilities: readonly string[],

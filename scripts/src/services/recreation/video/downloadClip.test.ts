@@ -41,7 +41,8 @@ describe(downloadClip, () => {
     directory = mkdtempSync(join(tmpdir(), "download-clip-test-"));
     vi.mocked(resolveFfmpeg).mockResolvedValue("ffmpeg");
     vi.mocked(resolveYtDlp).mockResolvedValue("yt-dlp");
-    // The stand-in for yt-dlp: it writes the clip where its output template names it, and prints that path as the real run does
+    // The stand-in for yt-dlp: it writes the clip where its output template names it, and prints that path as the real
+    // Run does
     vi.mocked(spawnSync).mockImplementation((_command, clipArguments) => {
       const path = outputOf(clipArguments).replace("%(id)s", "KoebEnOmDWI").replace("%(ext)s", "mp4");
       writeFileSync(path, "clip");

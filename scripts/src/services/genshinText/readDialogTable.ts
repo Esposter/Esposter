@@ -5,7 +5,8 @@ import { DIALOG_TABLE_NAME, SCRAMBLED_KEY_REGEX } from "#src/services/genshinTex
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The dialog table's rows, with the field each row's scrambled id is kept under, the one key the dump names by eleven capitals
+// The dialog table's rows, with the field each row's scrambled id is kept under, the one key the dump names by eleven
+// Capitals
 export const readDialogTable = (): DialogTable => {
   const dialogRows = readExcelTable<DumpedDialog & Record<string, unknown>>(DIALOG_TABLE_NAME);
   const idKey = Object.keys(dialogRows[0] ?? {}).find((key) => SCRAMBLED_KEY_REGEX.test(key));

@@ -33,8 +33,8 @@ export const fitStatueStack = (
 ): StatueStack => {
   const { axes, centroid } = computePrincipalAxes(points);
   const along = axis ? new Vector3(...axis).normalize() : (axes[0] ?? new Vector3(0, 1, 0));
-  // The greatest spread not along the axis, made square to it and turned so its greatest component is positive, since an
-  // Eigenvector's sign is arbitrary and the same points should always give the same turn
+  // The greatest spread not along the axis, made square to it and turned so its greatest component is positive, since
+  // An Eigenvector's sign is arbitrary and the same points should always give the same turn
   const crossing = axes.find((candidate) => Math.abs(candidate.dot(along)) < CROSSING_COSINE) ?? new Vector3(1, 0, 0);
   const across = crossing.clone().addScaledVector(along, -crossing.dot(along)).normalize();
   const greatest = across.toArray().reduce((first, second) => (Math.abs(second) > Math.abs(first) ? second : first));
@@ -76,7 +76,8 @@ export const fitStatueStack = (
     }
     shapes.push({ centre, height, radii: fillGapSectors(radii) });
   }
-  // Each ring stands at its section's middle, as the kit lofts it, and each of its vertices at its angle about its centre
+  // Each ring stands at its section's middle, as the kit lofts it, and each of its vertices at its angle about its
+  // Centre
   const vertex = new Vector3();
   const sections = shapes.map(({ centre: [centreX = 0, centreZ = 0], radii }, index) => ({
     centre: [centreX, centreZ],

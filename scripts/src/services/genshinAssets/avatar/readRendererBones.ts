@@ -6,9 +6,9 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import { readBoneChain } from "#src/services/genshinAssets/avatar/readBoneChain";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The bones of a renderer in the order of its skin's joint indices, which is the order of its mesh's bind poses: joint i
-// Is m_Bones[i]. A mesh whose bind poses do not match its renderer's bones is not the mesh the renderer draws, and a bone
-// The layout cannot place has no rest, so both throw
+// The bones of a renderer in the order of its skin's joint indices, which is the order of its mesh's bind poses: joint
+// I Is m_Bones[i]. A mesh whose bind poses do not match its renderer's bones is not the mesh the renderer draws, and a
+// Bone The layout cannot place has no rest, so both throw
 export const readRendererBones = (
   skinned: SkinnedRenderer,
   name: string,

@@ -63,8 +63,8 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
       const surfaceBends = computeSurfaceBend(exportsTargets, oursTargets, exportsRead.width, familyCount);
       const diffPath = await writeShapeDiff(referenceId, exportsTargets, oursTargets, exportsRead);
       const familyName = (family: number): string => `${referenceId} ${exportsRead.families[family] ?? family}`;
-      // A family's normals over their gate, named by the exported parts that carry most of their angle; one with no pixel
-      // Both draw has no normals to name a part by, so its no-overlap reading alone reports it
+      // A family's normals over their gate, named by the exported parts that carry most of their angle; one with no
+      // Pixel Both draw has no normals to name a part by, so its no-overlap reading alone reports it
       const partNotes = comparisons
         .filter(({ normal }) => normal !== undefined && normal > SHAPE_NORMAL_GATE_DEGREES)
         .map(({ family, partNormals }) => {
@@ -93,7 +93,8 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
           ({ family, normal }) =>
             `${familyName(family)} normal with its normal maps (diagnostic): ${normal?.toFixed(1)} degrees`,
         );
-      // The dominant wavelength of each detail family's normal angles, in the exports' frame and in ours, at its median depth
+      // The dominant wavelength of each detail family's normal angles, in the exports' frame and in ours, at its median
+      // Depth
       const wavelengths = exportsRead.families.flatMap((family, index) =>
         SURFACE_WAVELENGTH_FAMILIES.includes(family)
           ? [
@@ -113,7 +114,8 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
             ]
           : [],
       );
-      // The wavelength a family's detail is fitted at: its frame's lobe, and its normal map's where the frame resolves none
+      // The wavelength a family's detail is fitted at: its frame's lobe, and its normal map's where the frame resolves
+      // None
       const detailWavelengths = await Promise.all(
         wavelengths.map(async ({ exportsWavelength, family, index }) => ({
           detail: chooseDetailWavelength({

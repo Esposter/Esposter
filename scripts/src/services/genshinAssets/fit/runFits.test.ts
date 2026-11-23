@@ -69,8 +69,8 @@ describe(runFits, () => {
     expect(events).toStrictEqual(["sky start", "sky end", "clouds start", "clouds end"]);
   });
 
-  // An opt-in fit reads an export the install must make first, so a run of the component's fits leaves it out, and it runs
-  // Only when it is named
+  // An opt-in fit reads an export the install must make first, so a run of the component's fits leaves it out, and it
+  // Runs Only when it is named
   test("runs an opt-in fit only when it is named", async () => {
     expect.hasAssertions();
 

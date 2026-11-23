@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: a renewal is timed from the one before it, and the hold ends at the first renewal or release that stops it */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: a renewal is timed from the one before it, and the
+   hold ends at the first renewal or release that stops it */
 import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
 
 import { RENEW_MILLISECONDS } from "#src/services/fleet/constants";
@@ -13,8 +14,8 @@ import { dirname } from "node:path";
 const RELEASED_HERE_REASON = "it was released on this machine";
 
 // Holds `entry` for `holder` until its hold file is deleted here or a renewal finds the claim no longer this worker's.
-// The holds folder is watched, so a local release stops the hold the moment its file goes, and the claim is renewed each
-// Renewal interval in between
+// The holds folder is watched, so a local release stops the hold the moment its file goes, and the claim is renewed
+// Each Renewal interval in between
 export const holdFleetEntry = async (entry: string, holder: ClaimHolder): Promise<void> => {
   writeHoldFile(entry, holder.worker);
   const holdFilePath = getHoldFilePath(entry, holder.worker);

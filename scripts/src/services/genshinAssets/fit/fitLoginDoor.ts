@@ -49,11 +49,11 @@ const DOOR_MIN_DEPTH_STEP = 0.001;
 // Its own path through the lift clip, sampled as where it stands and how it is turned, its frame and panel each as the
 // Layers its front stands out in from its middle, deepest first: every loop round what stands at least each depth out
 // Seen from the front in Three's axes from the foot of its middle (an outer ring counterclockwise, a hole clockwise),
-// Each sloping down to the loop below it where its faces slope (the chamfer round the frame's opening, the bevels of the
-// Panel's bands) and straight elsewhere, the back the front mirrored as the game's mesh is. Its front's relief is read
-// Off its texture through its own coordinates, the front drawn as the camera sees it (`rasterizeTopFaces`): the gilding
-// Of its feet and the tones its stone is painted in (`fitPlanTones`), each colour over the stone's (`fitAlbedo`), inside
-// The relief's corner and size
+// Each sloping down to the loop below it where its faces slope (the chamfer round the frame's opening, the bevels of
+// The Panel's bands) and straight elsewhere, the back the front mirrored as the game's mesh is. Its front's relief is
+// Read Off its texture through its own coordinates, the front drawn as the camera sees it (`rasterizeTopFaces`): the
+// Gilding Of its feet and the tones its stone is painted in (`fitPlanTones`), each colour over the stone's
+// (`fitAlbedo`), inside The relief's corner and size
 export const fitLoginDoor = async (
   placements: readonly AssetPlacement[],
   clips: readonly DecodedClip[],

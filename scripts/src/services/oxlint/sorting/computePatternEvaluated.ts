@@ -1,7 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
-// The expressions a pattern evaluates as it binds: the default of each binding and the computed key of each property, at
-// Any depth. A plain identifier binding evaluates nothing
+// The expressions a pattern evaluates as it binds: the default of each binding and the computed key of each property,
+// At Any depth. A plain identifier binding evaluates nothing
 export const computePatternEvaluated = (pattern: ESTree.Node | null): ESTree.Node[] => {
   if (!pattern) return [];
   switch (pattern.type) {

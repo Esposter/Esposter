@@ -5,8 +5,8 @@ import type { openWitnessPage } from "#src/services/genshinParity/shared/openWit
 import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 
-// Each reference's measure taken on its own witness page, closed once its measure settles, and the notes and readings of
-// Every measure gathered in order. The caller fetches the references first
+// Each reference's measure taken on its own witness page, closed once its measure settles, and the notes and readings
+// Of Every measure gathered in order. The caller fetches the references first
 export const measureEachReference = async (
   component: DerivedAssetComponent,
   referenceIds: readonly string[],
@@ -20,7 +20,8 @@ export const measureEachReference = async (
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of referenceIds)
     measures.push(
-      // oxlint-disable-next-line no-await-in-loop -- One device: each reference's witness page is its own browser render on the GPU, and parallel renders exhaust the free memory each holds
+      // Render on the GPU, and parallel renders exhaust the free memory each holds
+      // oxlint-disable-next-line no-await-in-loop -- One device: each reference's witness page is its own browser
       await withReferencePage(
         referenceId,
         component,

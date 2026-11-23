@@ -8,7 +8,8 @@ import {
 import { GameDataset } from "genshin-world";
 
 // The open world's scene group record, which `genshin:assets scene-groups` publishes and the residents are read from
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+// `isolatedDeclarations` demands
+// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation this template literal would otherwise infer
 export const SCENE_GROUPS_KEY: string = `${GameDataset.SceneGroups}/scene${OPEN_WORLD_SCENE_ID}`;
 // Mondstadt's restaurant's point, the exemplar of the scene's building points, with the fields its kind holds its place
 // And its turn in, and the field it names the service it marks in, as the community's dump names them

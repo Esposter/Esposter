@@ -23,7 +23,8 @@ const KNOWN_ELEMENT_TYPES = new Set([
   "TSIndexSignature",
 ]);
 
-// A member's name as it sorts and is depended on: a private member keeps its hash, and any other key with no name is its source
+// A member's name as it sorts and is depended on: a private member keeps its hash, and any other key with no name is
+// Its source
 const computeMemberName = (
   sourceCode: SourceCode,
   key: ESTree.PropertyDefinition["key"],

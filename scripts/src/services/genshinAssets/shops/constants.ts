@@ -1,14 +1,16 @@
 import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 
-// Paimon's Bargains' goods are the goods of shop 1001, the one whose goods restock monthly beside the Fates. Its shop row,
-// 102, names the shop and holds none of them
+// Paimon's Bargains' goods are the goods of shop 1001, the one whose goods restock monthly beside the Fates. Its shop
+// Row, 102, names the shop and holds none of them
 export const PAIMON_BARGAINS_SHOP_TYPE = 1001;
 // The general goods the Mondstadt grocery sells, shop 1004 in the table, the one the city's grocery row is read as
 export const MONDSTADT_GENERAL_GOODS_SHOP_TYPE = 1004;
-// The Good Hunter's food shop, which Sara runs: the restaurant's food, cooking ingredients and recipes, shop 1005 in the table
+// The Good Hunter's food shop, which Sara runs: the restaurant's food, cooking ingredients and recipes, shop 1005 in
+// The table
 export const GOOD_HUNTER_SHOP_TYPE = 1005;
-// The Fishing Associations' shops, one in each region, by the shop's number in the goods table and the stem of the dataset
-// Its goods are published under. Each member's stock is matched to its shop by the names of its goods, from the wiki's page
+// The Fishing Associations' shops, one in each region, by the shop's number in the goods table and the stem of the
+// Dataset Its goods are published under. Each member's stock is matched to its shop by the names of its goods, from the
+// Wiki's page
 export const FISHING_ASSOCIATION_SHOPS: readonly { shopType: number; stem: string }[] = [
   { shopType: 1064, stem: "mondstadtFishing" },
   { shopType: 1065, stem: "liyueFishing" },
@@ -19,8 +21,9 @@ export const FISHING_ASSOCIATION_SHOPS: readonly { shopType: number; stem: strin
   { shopType: 1137, stem: "nodKraiFishing" },
   { shopType: 1156, stem: "snezhnayaFishing" },
 ];
-// The seven Mondstadt vendors' shops, by the shop's number in the goods table and the stem of the dataset each vendor's goods
-// Are published under. Each vendor's stock is matched to its shop by the names of its goods, read from the wiki's vendor pages
+// The seven Mondstadt vendors' shops, by the shop's number in the goods table and the stem of the dataset each vendor's
+// Goods Are published under. Each vendor's stock is matched to its shop by the names of its goods, read from the wiki's
+// Vendor pages
 export const MONDSTADT_VENDOR_SHOPS: readonly { shopType: number; stem: string }[] = [
   { shopType: 1011, stem: "mondstadtFlora" },
   { shopType: 1012, stem: "mondstadtCharles" },
@@ -85,7 +88,7 @@ export const SOUVENIR_SIGIL_ITEM_IDS = {
   snezhnaya: 306,
   sumeru: 303,
 } as const;
-// The Card Shop, shop 217 in the shop table: its goods are filed under shop type 2000 and numbered from 217000, and every one
-// Is priced in Lucky Coins, the card game's currency, which the bag holds as a material
+// The Card Shop, shop 217 in the shop table: its goods are filed under shop type 2000 and numbered from 217000, and
+// Every one Is priced in Lucky Coins, the card game's currency, which the bag holds as a material
 export const GCG_CARD_SHOP_TYPE = 2000;
 export const GCG_CARD_SHOP_ID = 217;

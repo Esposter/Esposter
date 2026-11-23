@@ -82,7 +82,8 @@ describe(toRadianceRows, () => {
   test("reads ours over the reference, and each channel's own ratio", () => {
     expect.hasAssertions();
 
-    // Ours is the reference's grey brightened to a white of 200 on the one pixel, so its ratio is above one in every channel
+    // Ours is the reference's grey brightened to a white of 200 on the one pixel, so its ratio is above one in every
+    // Channel
     const tallies = tallyRadiance(createFrames({ ours: createRow([200, 128]) }));
     const whole = toRadianceRows(tallies).find(({ light }) => light === RadianceLight.All);
 

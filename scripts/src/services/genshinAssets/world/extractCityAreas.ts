@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: one export at a time, each run waiting for the free memory the last one left, and one area at a time, each one's bytes parsed and dropped before the next is read */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: one export at a time, each run waiting for the free memory
+   the last one left, and one area at a time, each one's bytes parsed and dropped before the next is read */
 import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
 import type { CityAreaCandidate } from "#src/models/genshinAssets/world/CityAreaCandidate";
 import type { ExportRequest } from "#src/models/genshinAssets/world/ExportRequest";

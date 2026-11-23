@@ -1,5 +1,5 @@
-// A probe's arrays are capped at this many samples, each the largest of the rows or columns it stands for, so its output
-// Stays small whatever the rectangle's size
+// A probe's arrays are capped at this many samples, each the largest of the rows or columns it stands for, so its
+// Output Stays small whatever the rectangle's size
 export const PROBE_MAX_SAMPLES = 64;
 // The luminance step an edge must rise by, out of 255, before a probe reports it as an edge rather than as noise
 export const PROBE_MIN_EDGE_STEP = 32;

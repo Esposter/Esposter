@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: each residual is a render that must finish before the next begins, as parallel renders exhaust the memory each holds */
+/* oxlint-disable no-await-in-loop -- One device: each residual is a render that must finish before the next begins,
+   as parallel renders exhaust the memory each holds */
 import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
 
 // The finite difference steps an unknown by this fraction of its size, unless the caller gives that unknown a step

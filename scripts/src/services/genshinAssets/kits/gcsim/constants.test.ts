@@ -10,7 +10,8 @@ export const GCSIM_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtur
 export const GCSIM_ODETTE_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "odette");
 export const GCSIM_VARKA_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "varka");
 
-// Noelle's and Rosaria's bursts, whole files of the same version, each with a queue call of a Mult set's copy of its attack
+// Noelle's and Rosaria's bursts, whole files of the same version, each with a queue call of a Mult set's copy of its
+// Attack
 export const GCSIM_NOELLE_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "noelle");
 export const GCSIM_ROSARIA_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "rosaria");
 // Kujou Sara's burst, a whole file of the same version, whose cluster is a loop of repeated calls of a Mult set's copy

@@ -3,7 +3,8 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { joinGcsimTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray";
 
-// The parameter the talent array a variable names joins to by value, across the kit's talent groups, with the array's line
+// The parameter the talent array a variable names joins to by value, across the kit's talent groups, with the array's
+// Line
 export const joinGcsimVariableTalentArray = (
   talentArrayMap: Map<string, GcsimTalentArray>,
   variable: string,

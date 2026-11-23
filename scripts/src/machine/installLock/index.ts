@@ -5,7 +5,8 @@ import { spawnSync } from "@esposter/shared-node/child-process";
 import { defineCommand } from "citty";
 
 // `pnpm -C scripts ai:machine:install-lock <command...>` — runs a command from the repository root while it holds the
-// Machine's install lock, so an install it runs never races another on the pnpm store they share, and exits with its status
+// Machine's install lock, so an install it runs never races another on the pnpm store they share, and exits with its
+// Status
 await runCommand(
   defineCommand({
     args: {
@@ -22,8 +23,8 @@ await runCommand(
       name: "ai:machine:install-lock",
     },
     run: async ({ args }) => {
-      // Through a shell with its arguments joined unquoted, as crossOS runs the commands it holds, so `pnpm` and a `.ps1`
-      // Script resolve on Windows too. A quoted argument is not kept, so none is passed
+      // Through a shell with its arguments joined unquoted, as crossOS runs the commands it holds, so `pnpm` and a
+      // `.ps1` Script resolve on Windows too. A quoted argument is not kept, so none is passed
       const { status } = await withInstallLock(() =>
         spawnSync(args._.map(String).join(" "), { cwd: REPOSITORY_ROOT, shell: true, stdio: "inherit" }),
       );

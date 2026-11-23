@@ -4,8 +4,9 @@ import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// `pnpm ai:fleet:claim <id> [--worker <id>]` — takes an entry for this worker as a claim ref on origin. Exit 0 when won,
-// Exit 1 naming the holder when a live claim of another worker keeps it (the throughput skill, `references/fleet.md`)
+// `pnpm ai:fleet:claim <id> [--worker <id>]` — takes an entry for this worker as a claim ref on origin. Exit 0 when
+// Won, Exit 1 naming the holder when a live claim of another worker keeps it (the throughput skill,
+// `references/fleet.md`)
 await runCommand(
   defineCommand({
     args: {

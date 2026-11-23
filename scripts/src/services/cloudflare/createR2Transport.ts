@@ -9,8 +9,9 @@ import { createSemaphore, createSigV4Fetch } from "@esposter/shared";
 // One slot pool for every transport, so the dev and prod clients of a publish draw on the same connections
 const runR2Request = createSemaphore(R2_MAX_CONCURRENT_REQUESTS);
 
-// The signed transport to R2's S3 API for one environment's buckets. Its token is that environment's own, named `<env>_R2_*`,
-// Since a token reaches only its environment's bucket, it is read from the environment when the transport is made
+// The signed transport to R2's S3 API for one environment's buckets. Its token is that environment's own, named
+// `<env>_R2_*`, Since a token reaches only its environment's bucket, it is read from the environment when the transport
+// Is made
 export const createR2Transport = (environment: CloudflareEnvironment): R2Transport => {
   const signedFetch = createSigV4Fetch({
     accessKeyId: readR2Credential(`${environment}_R2_ACCESS_KEY_ID`),
@@ -20,9 +21,10 @@ export const createR2Transport = (environment: CloudflareEnvironment): R2Transpo
   });
   return {
     endpoint: `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    // The timeout starts once a request holds its slot, so a request queued behind the others is not timed out unsent. A slot
-    // Is released when the response's headers arrive, so a body read after that is not counted: a publish reads back the
-    // Objects it stores or newly names, bodies up to the cap included, and MAX_CONCURRENT_VERIFY_FETCHES bounds those reads
+    // The timeout starts once a request holds its slot, so a request queued behind the others is not timed out unsent.
+    // A slot Is released when the response's headers arrive, so a body read after that is not counted: a publish reads
+    // Back the Objects it stores or newly names, bodies up to the cap included, and MAX_CONCURRENT_VERIFY_FETCHES
+    // Bounds those reads
     fetch: (url, init) =>
       runR2Request(() => signedFetch(url, { ...init, signal: AbortSignal.timeout(R2_REQUEST_TIMEOUT_MS) })),
   };

@@ -9,8 +9,9 @@ import {
 import { getGrowCurve } from "#src/services/genshinAssets/enemies/getGrowCurve";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The monster a stage fights as, with its stats at the stage's level as the game computes them: each base property times
-// The multiplier its grow curve gives at that level, read from the curves `toLevelCurves` indexed once for the build
+// The monster a stage fights as, with its stats at the stage's level as the game computes them: each base property
+// Times The multiplier its grow curve gives at that level, read from the curves `toLevelCurves` indexed once for the
+// Build
 export const toImaginariumStageEnemy = (
   monsterRow: Pick<MonsterRow, "attackBase" | "defenseBase" | "describeId" | "hpBase" | "id" | "propGrowCurves">,
   level: number,

@@ -4,8 +4,8 @@ import { OVER_WIDTH_COMMENT_MESSAGE } from "#src/services/oxlint/comments/consta
 import { PRINT_WIDTH } from "@esposter/configuration/oxfmt";
 import { defineRule } from "@oxlint/plugins";
 
-// The formatter wraps code at the print width and never a comment, so a comment line keeps it here. Every physical
-// Line a comment fills is read, and a line the comment shares with code is that code's line, which the formatter settles
+// The formatter wraps code at the print width and never a comment, so a comment line keeps it here. Every physical Line
+// A comment fills is read, and a line the comment shares with code is that code's line, which the formatter settles
 export const noOverWidthComment: Rule = defineRule({
   create(context) {
     return {

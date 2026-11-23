@@ -7,14 +7,14 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { materialFloatSchema } from "genshin-world/sceneExport";
 
-// A material's export read as its values: its empty texture slots dropped, and its saved colours as tuples, each read as
-// Its shader declares it. Unity saves a colour as the sRGB its inspector shows and, in a project lit in linear space,
-// Decodes it before a program reads it, so a colour is decoded to linear light: read as saved, the stone's rim glow stood
-// Several times too red on the night's moonlit walkway. A vector, saved in the same table, is never decoded: decoded, the
-// Avatar's outline width knots read a tenth of the game's. A name the shader does not declare, which none of its programs
-// Reads, is still read as a colour, as the stone's fitted `_SpecColor` was, and one declared each way cannot be read. Its
-// Keywords are read apart, from its raw bytes (`readMaterialKeywords`), since the export drops them. Its floats are
-// Read as numbers, an unbounded one from the token the export saves it as (`materialFloatSchema`)
+// A material's export read as its values: its empty texture slots dropped, and its saved colours as tuples, each read
+// As Its shader declares it. Unity saves a colour as the sRGB its inspector shows and, in a project lit in linear
+// Space, Decodes it before a program reads it, so a colour is decoded to linear light: read as saved, the stone's rim
+// Glow stood Several times too red on the night's moonlit walkway. A vector, saved in the same table, is never decoded:
+// Decoded, the Avatar's outline width knots read a tenth of the game's. A name the shader does not declare, which none
+// Of its programs Reads, is still read as a colour, as the stone's fitted `_SpecColor` was, and one declared each way
+// Cannot be read. Its Keywords are read apart, from its raw bytes (`readMaterialKeywords`), since the export drops
+// Them. Its floats are Read as numbers, an unbounded one from the token the export saves it as (`materialFloatSchema`)
 export const toMaterialValues = (
   { m_Name, m_SavedProperties, m_Shader }: ExportedMaterial,
   keywords: readonly string[],

@@ -6,8 +6,9 @@ import { getPercentile } from "#src/services/shared/getPercentile";
 
 const OPAQUE_ALPHA = 255;
 const WHITE = 255;
-// Each pixel of an icon's square as its share of white over the disc's own shade along its row, since the disc is graded
-// From top to bottom: 0 on the disc, 1 on white. A pixel outside the disc, or on its antialiased rim, has none (-1)
+// Each pixel of an icon's square as its share of white over the disc's own shade along its row, since the disc is
+// Graded From top to bottom: 0 on the disc, 1 on white. A pixel outside the disc, or on its antialiased rim, has none
+// (-1)
 export const readWhiteShares = async (image: Sharp, size: number): Promise<Float32Array> => {
   const data = await image.raw().toBuffer();
   const getLuminance = (offset: number) =>

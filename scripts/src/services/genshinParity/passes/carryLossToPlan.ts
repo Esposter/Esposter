@@ -3,12 +3,12 @@ import type { SimilarityTermMap } from "#src/models/genshinParity/witness/Simila
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { wrap } from "#src/services/genshinParity/passes/wrap";
 
-// Where on a family's plan its surface's structure is lost: each pixel the family draws where the exports' does too, its
-// Loss (one less its term at each scale `scoreLabelSimilarity` reads, each scale's cell under the pixel, averaged over
-// The scales that read it) carried to the place on our part's own geometry it shows (the position target) along the
-// Plan's two axes, and summed in cells of the plan's resolution beside the pixels each cell gathers. A place outside
-// The plan's rectangle is wrapped into it, as a plan repeats past its rectangle; columns run along the first axis and
-// Rows along the second
+// Where on a family's plan its surface's structure is lost: each pixel the family draws where the exports' does too,
+// Its Loss (one less its term at each scale `scoreLabelSimilarity` reads, each scale's cell under the pixel, averaged
+// Over The scales that read it) carried to the place on our part's own geometry it shows (the position target) along
+// The Plan's two axes, and summed in cells of the plan's resolution beside the pixels each cell gathers. A place
+// Outside The plan's rectangle is wrapped into it, as a plan repeats past its rectangle; columns run along the first
+// Axis and Rows along the second
 export const carryLossToPlan = (
   termMaps: readonly SimilarityTermMap[],
   { part, position }: { part: Float32Array; position: Float32Array },

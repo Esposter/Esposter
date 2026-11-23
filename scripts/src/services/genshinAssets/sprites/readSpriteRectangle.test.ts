@@ -2,8 +2,8 @@ import { readSpriteRectangle } from "#src/services/genshinAssets/sprites/readSpr
 import { describe, expect, test } from "vitest";
 
 describe(readSpriteRectangle, () => {
-  // A Sprite's dump as AnimeStudio writes it, cut to the fields the reader takes: the login's `UI_AimCrossB_00`, one of the
-  // Sprites its atlas holds, measured from the atlas's bottom edge
+  // A Sprite's dump as AnimeStudio writes it, cut to the fields the reader takes: the login's `UI_AimCrossB_00`, one of
+  // The Sprites its atlas holds, measured from the atlas's bottom edge
   const FIXTURE_SPRITE_DUMP = {
     m_RD: {
       settingsRaw: { packed: 1, packingMode: "Rectangle", packingRotation: "None", settingsRaw: 67 },

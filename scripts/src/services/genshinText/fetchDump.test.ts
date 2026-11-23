@@ -29,7 +29,8 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
   ...(await importOriginal()),
   existsSync: vi.fn<() => boolean>(() => true),
   readdirSync: vi.fn<() => Dirent[]>(() => [
-    /* oxlint-disable selector-ban/no-restricted-syntax -- the entry is a `Dirent`, whose `is*` methods are node's own names, read as the fs API reads them */
+    /* oxlint-disable selector-ban/no-restricted-syntax -- the entry is a `Dirent`, whose `is*` methods are node's
+       own names, read as the fs API reads them */
     {
       isBlockDevice: () => false,
       isCharacterDevice: () => false,

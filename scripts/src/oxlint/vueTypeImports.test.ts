@@ -69,7 +69,8 @@ describe("vueTypeImports", () => {
       ),
       violations: 0,
     },
-    // A name used after a nested `<template v-if>` is still in the root block, so the nested close does not end the search
+    // A name used after a nested `<template v-if>` is still in the root block, so the nested close does not end the
+    // Search
     {
       name: "templateNameAfterNestedTemplate",
       source: buildComponent(

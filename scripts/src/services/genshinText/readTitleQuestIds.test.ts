@@ -2,7 +2,8 @@ import { readTitleQuestIds } from "#src/services/genshinText/readTitleQuestIds";
 import { describe, expect, test } from "vitest";
 
 describe(readTitleQuestIds, () => {
-  // Made-up text: a quest's title and a chapter's title each under a text hash, the chapter's end quest in the sub quest table
+  // Made-up text: a quest's title and a chapter's title each under a text hash, the chapter's end quest in the sub
+  // Quest table
   const textMap = new Map([
     ["11", "Made Up Quest"],
     ["12", "Made Up Chapter"],

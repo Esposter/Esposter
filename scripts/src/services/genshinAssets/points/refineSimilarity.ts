@@ -13,7 +13,8 @@ import { matchPairs } from "#src/services/genshinAssets/points/matchPairs";
 import { solveSimilarity } from "#src/services/genshinAssets/points/solveSimilarity";
 
 // Matches and solves from a start until its pairs settle, each pass matching within the last residual's multiple and
-// Never closer than the bar. Yields nothing where a start matches fewer than two pairs, which no turn can be solved from
+// Never closer than the bar. Yields nothing where a start matches fewer than two pairs, which no turn can be solved
+// From
 export const refineSimilarity = (
   from: readonly GroundPoint[],
   to: readonly GroundPoint[],

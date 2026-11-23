@@ -3,7 +3,8 @@ import { countPassed } from "#src/services/genshinParity/witness/countPassed";
 import { readLuminance } from "#src/services/genshinParity/witness/readLuminance";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Each height band's cells by depth: the part pixels' count, and their mean linear luminance in the exports and the reference
+// Each height band's cells by depth: the part pixels' count, and their mean linear luminance in the exports and the
+// Reference
 export const computeHeightBands = ({
   checkIsPart,
   depth,

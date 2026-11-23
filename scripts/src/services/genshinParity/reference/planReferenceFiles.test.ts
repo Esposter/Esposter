@@ -87,7 +87,8 @@ describe(planReferenceFiles, () => {
   test("should place beside its snapshot the reference that renders the fixture as it is, over a props override listed before it", () => {
     expect.hasAssertions();
 
-    // The override's id sorts first, so it is listed first, and a planner that took the first listed entry would pick it
+    // The override's id sorts first, so it is listed first, and a planner that took the first listed entry would pick
+    // It
     const referenceMap = {
       "a-props-reference": { props: PROPS, screen: SCREEN_NAME, source: " " },
       "plain-reference": { screen: SCREEN_NAME, source: " " },
@@ -103,7 +104,8 @@ describe(planReferenceFiles, () => {
   test("a map edit that moves a committed reference is refused with its git mv", () => {
     expect.hasAssertions();
 
-    // Built from entries, not an object literal, since the lint's key sort would list the committed id first and undo the order
+    // Built from entries, not an object literal, since the lint's key sort would list the committed id first and undo
+    // The order
     const referenceMap = Object.fromEntries<ParityReference>([
       ["new-primary-reference", { screen: SCREEN_NAME, source: " " }],
       ["committed-reference", { screen: SCREEN_NAME, source: " " }],

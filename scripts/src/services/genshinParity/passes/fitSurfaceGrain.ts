@@ -28,7 +28,8 @@ declare global {
 const GRAIN_TARGETS = [WitnessTarget.Part, WitnessTarget.Albedo];
 
 // Where a grain fit stopped: whether every structure term held its tolerance, the steps taken, the terms there in the
-// Order `computeStructureTerms` gives them (the luminance's variance, then each octave band finest first), and the detail
+// Order `computeStructureTerms` gives them (the luminance's variance, then each octave band finest first), and the
+// Detail
 export interface GrainFit {
   converged: boolean;
   detail: SurfaceDetail;

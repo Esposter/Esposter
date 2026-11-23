@@ -1,4 +1,6 @@
-/* oxlint-disable no-await-in-loop -- Committed prefix: a destructive prune that fails stops the environments behind it, so nothing is deleted after the failure, the deletes already made before it stay, and the one that failed is the one named */
+/* oxlint-disable no-await-in-loop -- Committed prefix: a destructive prune that fails stops the environments behind
+   it, so nothing is deleted after the failure, the deletes already made before it stay, and the one that failed is
+   the one named */
 import type { SubCommandsDef } from "citty";
 
 import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
@@ -21,7 +23,8 @@ export const pruneCommand: SubCommandsDef[string] = defineCommand({
     name: "prune",
   },
   run: async ({ args }) => {
-    // Without a fetch the live set is stale, and a stale set could delete what a branch just pushed, so the prune is skipped
+    // Without a fetch the live set is stale, and a stale set could delete what a branch just pushed, so the prune is
+    // Skipped
     const isFetched = getResult(() => runGit(["fetch", "-q", "origin"])).match(
       () => true,
       (error) => {

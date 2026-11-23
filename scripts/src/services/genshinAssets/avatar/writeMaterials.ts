@@ -14,7 +14,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-// The materials the meshes draw with, keyed by their names, each with its values and the texture files its slots point at
+// The materials the meshes draw with, keyed by their names, each with its values and the texture files its slots point
+// At
 export const writeMaterials = async (
   component: DerivedAssetComponent,
   cabMap: ReadonlyMap<string, CabEntry>,
@@ -34,7 +35,8 @@ export const writeMaterials = async (
   const textures = used.flatMap((reference) => Object.values(materialOf(reference).textures));
   const textureNames = await readObjectNames(textures, cabMap);
   assertUniqueNames(textures, textureNames, "texture");
-  // The manifest keys its materials by name, so two drawn materials under one name are an error, never one overwriting the other
+  // The manifest keys its materials by name, so two drawn materials under one name are an error, never one overwriting
+  // The other
   assertUniqueNames(used, names, "material");
   return Object.fromEntries(
     used.map((reference): [string, AvatarMaterial] => {

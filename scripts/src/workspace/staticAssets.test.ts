@@ -15,14 +15,15 @@ import { describe, expect, test } from "vitest";
 describe("staticAssets", () => {
   const BUNDLED_PATHSPECS = ["apps/web/app/assets"];
   const PUBLIC_PATHSPECS = ["apps/web/public"];
-  // The service worker precaches a build's js, css and html only up to this size, and leaves a larger one out of the list
-  // (`apps/web/configuration/pwa.ts`). The bundle holds a file only up to the same figure, so one limit is the budget
+  // The service worker precaches a build's js, css and html only up to this size, and leaves a larger one out of the
+  // List (`apps/web/configuration/pwa.ts`). The bundle holds a file only up to the same figure, so one limit is the
+  // Budget
   const SIZE_LIMIT_BYTES = 2 * MEBIBYTE;
 
   const ENGINE_LOADER_PATHSPECS = ["apps/web/app/services/dungeons/loader"];
-  // A loader names a file in a static import, a dynamic import or an import.meta.glob.
-  // A glob names its files in one string or in an array of them, so every string in its argument is read
-  // An array's strings are read whole, so a bracket inside one (a character class such as `[a-c]`) does not end the array
+  // A loader names a file in a static import, a dynamic import or an import.meta.glob. A glob names its files in one
+  // String or in an array of them, so every string in its argument is read An array's strings are read whole, so a
+  // Bracket inside one (a character class such as `[a-c]`) does not end the array
   const LOADED_SPECIFIER_REGEX =
     /(?:\bfrom |\bimport\(\s*)"(?<specifier>[^"]+)"|\bimport\.meta\.glob\(\s*(?<argument>\[(?:[^"\]]|"[^"]*")*\]|"[^"]+")/gu;
   const QUOTED_REGEX = /"(?<quoted>[^"]+)"/gu;

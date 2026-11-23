@@ -7,10 +7,10 @@ import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/find
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
 
-// A charged attack's variant: Iansan's Stormflight, the `swift` attack its queue call fires in place of the charged attack
-// While its check holds. It joins as the variant's one hit the way a burst variant's kick does: its frames from
-// `swiftFrames`, its hitmark from the call's delay, and its element, gauge, poise and multiplier from the attack and its
-// Talent leaf. Its area is not read: the swift's fan is no hitbox the reader parses
+// A charged attack's variant: Iansan's Stormflight, the `swift` attack its queue call fires in place of the charged
+// Attack While its check holds. It joins as the variant's one hit the way a burst variant's kick does: its frames from
+// `swiftFrames`, its hitmark from the call's delay, and its element, gauge, poise and multiplier from the attack and
+// Its Talent leaf. Its area is not read: the swift's fan is no hitbox the reader parses
 export const addGcsimChargedAttackVariantCandidates = (
   { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
   { attacks, config, queuedAttacks }: GcsimCharacter,

@@ -1,8 +1,8 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The kind each name of a wiki bounty list resolves to: the lowest-id monster the name is, or else the lowest-id one whose
-// Name ends in it, a family's first variant, since the dump names a family's members by element. Provisional: the lowest
-// Id stands in for the variant a bounty spawns, which the wiki does not name
+// The kind each name of a wiki bounty list resolves to: the lowest-id monster the name is, or else the lowest-id one
+// Whose Name ends in it, a family's first variant, since the dump names a family's members by element. Provisional: the
+// Lowest Id stands in for the variant a bounty spawns, which the wiki does not name
 export const toBountyTargetIds = (
   names: readonly string[],
   monsters: readonly { id: number; name: string }[],

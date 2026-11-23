@@ -26,9 +26,9 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { GameDataset } from "genshin-world";
 
-// Every challenge domain's kind and levels, each domain by its entrance's entry id, as the index the domain screen reads
-// One entrance at a time from. The levels come from the dungeon table, the reward previews and the entry table, and a
-// Blessing domain's from its entrance point
+// Every challenge domain's kind and levels, each domain by its entrance's entry id, as the index the domain screen
+// Reads One entrance at a time from. The levels come from the dungeon table, the reward previews and the entry table,
+// And a Blessing domain's from its entrance point
 export const buildDomainLevels = async (): Promise<{ notes: string[]; publication: HostedAssetPublication }> => {
   const points = await readDomainEntrancePoints();
   const entries = readExcelTable<ExcelDungeonEntryRow>(DUNGEON_ENTRY_TABLE_NAME);

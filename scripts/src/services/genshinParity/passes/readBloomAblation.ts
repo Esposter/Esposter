@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: one browser is open at a time, and each structure's frame is read before the next opens */
+/* oxlint-disable no-await-in-loop -- One device: one browser is open at a time, and each structure's frame is read
+   before the next opens */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { BloomAblationRow } from "#src/models/genshinParity/passes/BloomAblationRow";
 import type { BloomBaseline } from "#src/models/genshinParity/passes/BloomBaseline";
@@ -13,8 +14,8 @@ import { readBloomBaseline, readBloomedFrame } from "#src/services/genshinParity
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 
 // The Display pass's bloom reading over every structure of the bloom chain at each measurement, on the references the
-// Pass reads it over (`getBloomReferenceIds`). A measurement's baseline is drawn once, and each structure's bloomed frame
-// Is read against it, so a structure costs one frame a reference and a measurement one more
+// Pass reads it over (`getBloomReferenceIds`). A measurement's baseline is drawn once, and each structure's bloomed
+// Frame Is read against it, so a structure costs one frame a reference and a measurement one more
 export const readBloomAblation = async (
   component: DerivedAssetComponent,
   pageRoot?: string,

@@ -26,8 +26,8 @@ declare global {
 }
 
 // The game's own textures the cloud layer's program samples, by its slot (Login/Scene/Index.reference.ts, source
-// `cloudLayerShader`), served from the extraction with the witness's exports: a reference the layer is drawn over to read
-// What its settings can recover before textures of ours stand in for them, never shipped
+// `cloudLayerShader`), served from the extraction with the witness's exports: a reference the layer is drawn over to
+// Read What its settings can recover before textures of ours stand in for them, never shipped
 const GAME_CLOUD_LAYER_TEXTURES: NonNullable<CloudLayer["textures"]> = {
   curl: `${WITNESS_PATH_PREFIX}Texture2D/Enviro_Clouds_Curl.png`,
   density: `${WITNESS_PATH_PREFIX}Texture2D/Enviro_Clouds_Voronoi.png`,
@@ -43,12 +43,12 @@ const COLOR_SETTINGS = ["lit", "shade"] as const;
 const SETTING_STEP = 0.1;
 
 // A reference's sky drawn with the scene's cloud layer over the game's own textures, or told to over the ones the scene
-// Synthesizes, at the settings given, read against
-// The reference's as the atmosphere pass reads it (`readSkyComparison`): each setting a cloud layer's uniform by its
-// Name (a number, or a vector's or a colour's components), `coverage` the sky's cloud coverage, `cover.<band>` a
-// Cloud band's share, or `lit` and `shade` the clouds' colours. The settings named, each a number or a vector's
-// Component as `<name>.<index>`, are solved by the simplex from the values given, to the least sum of the
-// Readings each over its gate and squared, and the frame at the settings handed back is written beside the reference with both skies' clouds (`writeCloudSheet`)
+// Synthesizes, at the settings given, read against The reference's as the atmosphere pass reads it
+// (`readSkyComparison`): each setting a cloud layer's uniform by its Name (a number, or a vector's or a colour's
+// Components), `coverage` the sky's cloud coverage, `cover.<band>` a Cloud band's share, or `lit` and `shade` the
+// Clouds' colours. The settings named, each a number or a vector's Component as `<name>.<index>`, are solved by the
+// Simplex from the values given, to the least sum of the Readings each over its gate and squared, and the frame at the
+// Settings handed back is written beside the reference with both skies' clouds (`writeCloudSheet`)
 export const solveReferenceCloudLayer = async (
   referenceId: string,
   component: DerivedAssetComponent,

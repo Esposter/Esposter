@@ -11,9 +11,9 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // The next sample of the questions, read from the status: every question's open cells, drawn rarest question first.
-// Each unit is printed with the questions it is judged for.
-// A seed fixes the draw, so a rerun on the same day reads the same units. With `--touched` the draw is instead every open
-// Cell a revision range reached, the cells other sessions' commits touched after a sync, and the seed is not read.
+// Each unit is printed with the questions it is judged for. A seed fixes the draw, so a rerun on the same day reads the
+// Same units. With `--touched` the draw is instead every open Cell a revision range reached, the cells other sessions'
+// Commits touched after a sync, and the seed is not read.
 await runCommand(
   defineCommand({
     args: {

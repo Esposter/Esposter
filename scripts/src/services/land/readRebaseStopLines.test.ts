@@ -11,8 +11,8 @@ describe(readRebaseStopLines, () => {
   const PATH = "README.md";
   const { commitFile, getCwd, publish, switchTo } = setupFixtureRepository();
 
-  // The landing's pull replays the checkout's commit onto the queue's tip, which holds a conflicting change, so the pull
-  // Stops with its rebase in progress
+  // The landing's pull replays the checkout's commit onto the queue's tip, which holds a conflicting change, so the
+  // Pull Stops with its rebase in progress
   const pauseRebase = (): void => {
     const base = commitFile(PATH, "base");
     publish(QUEUE_BRANCH, "HEAD");

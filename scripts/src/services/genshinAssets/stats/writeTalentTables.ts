@@ -7,9 +7,9 @@ import { GameDataset } from "genshin-world";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Writes the loader map whose entries read each character's multipliers from the hosted index, the one generated file that
-// Stays committed TS. Returns each character's multipliers and labels as the entries of the two indexes that publish them,
-// Keyed by the character's id
+// Writes the loader map whose entries read each character's multipliers from the hosted index, the one generated file
+// That Stays committed TS. Returns each character's multipliers and labels as the entries of the two indexes that
+// Publish them, Keyed by the character's id
 export const writeTalentTables = (talentTables: readonly TalentTables[]): HostedAssetPublication["indexes"] => {
   writeFileSync(
     join(TALENT_MULTIPLIER_GENERATED_DIRECTORY, "TalentMultiplierLoaderMap.ts"),

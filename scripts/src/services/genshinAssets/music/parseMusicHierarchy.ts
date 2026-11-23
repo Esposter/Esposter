@@ -81,7 +81,9 @@ export const parseMusicHierarchy = (objects: readonly SoundBankObject[]): MusicH
         const offset = data.length - 4 - count * PLAYLIST_ITEM_LENGTH;
         if (offset < children.end) break;
         if (data.readUInt32LE(offset) !== count) continue;
-        // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- a playlist item's type code is kept as the number the bank holds, since a membership check would abort the whole bank parse on one unknown code (readGameMusicHierarchy.ts:20 parses every bank in one call)
+        // A playlist item's type code is kept as the number the bank holds, since a membership check would abort the
+        // Whole bank parse on one unknown code (readGameMusicHierarchy.ts:20
+        // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- parses every bank in one call)
         const items: MusicPlaylistItem[] = Array.from({ length: count }, (_value, index) => {
           const itemOffset = offset + 4 + index * PLAYLIST_ITEM_LENGTH;
           return {

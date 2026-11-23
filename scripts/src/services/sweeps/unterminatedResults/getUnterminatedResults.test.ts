@@ -249,7 +249,8 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults(`const read = () => {\n  ${RESULT_BINDING}\n  ${statement}\n};`)).toStrictEqual([]);
   });
 
-  // A value bound by an assignment or a destructuring declaration is held by its statement, so nothing else answers for it
+  // A value bound by an assignment or a destructuring declaration is held by its statement, so nothing else answers for
+  // It
   test.each([
     {
       line: 2,
@@ -279,7 +280,8 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults(`const $result = getResult(fn);\n$result.match(noop, log);`)).toStrictEqual([]);
   });
 
-  // `await` does not receive the value, so the chain climbs through it and the call still stands as the statement's value
+  // `await` does not receive the value, so the chain climbs through it and the call still stands as the statement's
+  // Value
   test("reports an awaited call nothing terminates", () => {
     expect.hasAssertions();
 

@@ -9,10 +9,10 @@ import { GROUND_LAYER } from "#src/services/genshinAssets/points/constants";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 
-// Every point of the kinds the label map names, carried into the game's coordinates by the fit's transform and then into
-// Its region's axes round the Windrise origin, each id under the given prefix. A point on a layer under the ground is left
-// Out for now, and so is one in an area no region is mapped to, each counted so the report says what was not placed. The
-// Other labels are none of its business
+// Every point of the kinds the label map names, carried into the game's coordinates by the fit's transform and then
+// Into Its region's axes round the Windrise origin, each id under the given prefix. A point on a layer under the ground
+// Is left Out for now, and so is one in an area no region is mapped to, each counted so the report says what was not
+// Placed. The Other labels are none of its business
 export const placeMapPoints = <Kind>(
   points: readonly InteractiveMapPoint[],
   transform: SimilarityTransform,

@@ -5,10 +5,11 @@ import { readGcsimTableRows } from "#src/services/genshinAssets/kits/gcsim/readG
 // A module table indexed by a bare name, `name[i]`, `name[i][k]`
 const TABLE_ROW_INDEX_REGEX = /(?<name>[A-Za-z_]\w*)\[\s*(?<index>[A-Za-z_]\w*)\s*\]/gu;
 
-// The texts a line is with each `for` loop index of the loops it sits in, where the index picks a row of a module table,
-// Replaced by a row of every table it indexes in turn, so a loop's constructor reads the row of each of its turns. The
-// Index takes the rows the tables it indexes all have, and one text is given for each. A line indexing no table by a loop
-// Index is its own one text, and so is one whose index picks a row of a table the module does not declare
+// The texts a line is with each `for` loop index of the loops it sits in, where the index picks a row of a module
+// Table, Replaced by a row of every table it indexes in turn, so a loop's constructor reads the row of each of its
+// Turns. The Index takes the rows the tables it indexes all have, and one text is given for each. A line indexing no
+// Table by a loop Index is its own one text, and so is one whose index picks a row of a table the module does not
+// Declare
 export const substituteGoLoopIndices = (text: string, lines: readonly string[], lineIndex: number): string[] => {
   const loopIndices = new Set(readEnclosingLoopIndices(lines, lineIndex));
   const countMap = new Map<string, number>();

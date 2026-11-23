@@ -13,8 +13,9 @@ const SURFACE_TONE_COUNT = 3;
 const PALETTE_SAMPLE_LIMIT = 20000;
 
 // A surface's colour as the mean of its samples weighted by their area, and its palette: its samples grouped by k-means
-// Over their colours (`clusterColours`, seeded darkest first), each tone the weighted mean of its samples with the share
-// Of the weight its palette samples hold. Samples of no weight count for nothing, and the samples must hold some weight
+// Over their colours (`clusterColours`, seeded darkest first), each tone the weighted mean of its samples with the
+// Share Of the weight its palette samples hold. Samples of no weight count for nothing, and the samples must hold some
+// Weight
 export const computeSurfaceTones = (
   samples: readonly SurfaceSample[],
   count: number = SURFACE_TONE_COUNT,

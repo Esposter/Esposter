@@ -5,8 +5,8 @@ import { readScenePointsOfKind } from "#src/services/genshinAssets/world/readSce
 import { toDumpedVector } from "#src/services/genshinAssets/world/toDumpedVector";
 import { SceneGroupSource } from "genshin-world";
 
-// Every building point of the scene by its point id, the service it marks and its place as the scene's points give them.
-// A point naming no service or holding no place is left out
+// Every building point of the scene by its point id, the service it marks and its place as the scene's points give
+// Them. A point naming no service or holding no place is left out
 export const readSceneBuildingPoints = async (): Promise<Record<string, SceneBuildingPoint>> => {
   const points = await readScenePointsOfKind(SCENE_BUILDING_POINT);
   return Object.fromEntries(
@@ -14,7 +14,8 @@ export const readSceneBuildingPoints = async (): Promise<Record<string, SceneBui
       const name = point[SCENE_BUILDING_NAME_FIELD];
       const position = point[SCENE_BUILDING_POINT.position];
       const rotation = point[SCENE_BUILDING_POINT.rotation];
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a building point name the file holds, empty when absent
+      // A building
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- point name the file holds, empty when absent
       if (typeof name !== "string" || name === "" || typeof position !== "object") return [];
       const { x = 0, y = 0, z = 0 } = toDumpedVector(position);
       // A turn the dump leaves out is none, as it leaves out a vector's zero fields

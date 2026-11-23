@@ -4,7 +4,8 @@ import { takeOne } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 import { z } from "zod";
 
-// The most forge points a game day holds, the game's own constant of that name, under the forging dataset's `dailyPointCap`
+// The most forge points a game day holds, the game's own constant of that name, under the forging dataset's
+// `dailyPointCap`
 export const buildForgingDailyPointCap = (): Record<string, unknown> => ({
   [`${GameDataset.Forging}/dailyPointCap`]: z
     .int()

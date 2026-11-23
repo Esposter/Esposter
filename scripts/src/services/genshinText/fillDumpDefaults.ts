@@ -6,11 +6,12 @@ const MAP_KEY_REGEX = /^\d+$/u;
 
 // Writes back the fields the dump left out of `siblings`, the rows of one table or the values at one path within them.
 // From 7.1 the dump writes a row as protobuf's JSON does, leaving out every field at its default, so a row holds only
-// What it sets. A field another sibling holds is restored in each sibling that lacks it at its kind's default: 0, false,
-// An empty list, or an object whose own fields are restored the same way, as protobuf reads an unset message. A string
-// Is left out: an enum is written as its name, and the default's name, an enum's zero, is one no other row holds, so a
-// Reader of a string field names its own default where the table leaves it out. A field no sibling holds is unknown here,
-// And a numeric key is an entry of a map keyed by id, such as a stock's weight per fish, which no other row's keys fill
+// What it sets. A field another sibling holds is restored in each sibling that lacks it at its kind's default: 0,
+// False, An empty list, or an object whose own fields are restored the same way, as protobuf reads an unset message. A
+// String Is left out: an enum is written as its name, and the default's name, an enum's zero, is one no other row
+// Holds, so a Reader of a string field names its own default where the table leaves it out. A field no sibling holds is
+// Unknown here, And a numeric key is an entry of a map keyed by id, such as a stock's weight per fish, which no other
+// Row's keys fill
 export const fillDumpDefaults = (siblings: unknown[]): void => {
   const objects = siblings.filter((sibling) => checkIsPlainObject(sibling));
   if (objects.length === 0) return;

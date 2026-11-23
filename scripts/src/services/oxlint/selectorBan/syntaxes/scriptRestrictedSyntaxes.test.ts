@@ -440,7 +440,8 @@ describe("scriptRestrictedSyntaxes", () => {
         source: "export interface A {\n  isB(c: string): boolean;\n}",
         violations: 1,
       },
-      // An unannotated function whose body is a boolean expression answers with a boolean the annotation would have shown
+      // An unannotated function whose body is a boolean expression answers with a boolean the annotation would have
+      // Shown
       {
         filePath: "isInferredComparison.ts",
         name: "isInferredComparison",
@@ -459,7 +460,8 @@ describe("scriptRestrictedSyntaxes", () => {
         source: "export function isA(b: number) {\n  return b > 1;\n}",
         violations: 1,
       },
-      // An async function resolves to the boolean its body shows, and is a call like any other, so it takes `check*` too
+      // An async function resolves to the boolean its body shows, and is a call like any other, so it takes `check*`
+      // Too
       {
         filePath: "hasInferredAsyncComparison.ts",
         name: "hasInferredAsyncComparison",
@@ -539,7 +541,8 @@ describe("scriptRestrictedSyntaxes", () => {
         source: `export const a = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");`,
         violations: 0,
       },
-      // A Durable Object is named through getObjectStub, whether its id is made from a name or its name is given directly
+      // A Durable Object is named through getObjectStub, whether its id is made from a name or its name is given
+      // Directly
       {
         filePath: "durableObjectIdFromName.ts",
         name: "durableObjectIdFromName",

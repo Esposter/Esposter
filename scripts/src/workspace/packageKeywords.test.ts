@@ -10,12 +10,10 @@ import { describe, expect, test } from "vitest";
 const readKeywords = (manifest: Record<string, unknown>): string[] =>
   Array.isArray(manifest.keywords) ? (manifest.keywords as string[]) : [];
 
-/**
- * What a published package says about itself on npm is searched and read by strangers, and the build derives none of it.
- * The part that is derivable is held here: the links the generator writes, and the shape of the keywords, which is what
- * keeps a list from being noise. Which words describe a package stays a judgement, written beside the manifest's
- * description and checked by a reader (`file-organization`, `references/new-package.md`).
- */
+/** What a published package says about itself on npm is searched and read by strangers, and the build derives none
+ * of it. The part that is derivable is held here: the links the generator writes, and the shape of the keywords,
+ * which is what keeps a list from being noise. Which words describe a package stays a judgement, written beside the
+ * manifest's description and checked by a reader (`file-organization`, `references/new-package.md`). / */
 describe("package keywords", () => {
   // Enough to name what the package is, what it plugs into and what it is for, and few enough that the list does not
   // Drift into the vocabulary around the package

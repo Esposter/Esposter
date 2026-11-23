@@ -2,9 +2,10 @@ import { readGenshinStyleBlocks } from "#src/services/sweeps/hoverGuard/readGens
 import { getRestatedGameColours } from "#src/services/sweeps/restatedGameColours/getRestatedGameColours";
 import * as interfaceConstants from "genshin-interface/constants";
 
-// One `path:line: NAME` per public game colour a Genshin `.vue` style block writes as its literal. The public colours are
-// The interface library's constants that hold a `#rrggbb` colour, so a colour the library publishes later is held to this
-// Without the scan being told. A plain `.css` sheet cannot read a constant, so it keeps the literal its component restates
+// One `path:line: NAME` per public game colour a Genshin `.vue` style block writes as its literal. The public colours
+// Are The interface library's constants that hold a `#rrggbb` colour, so a colour the library publishes later is held
+// To this Without the scan being told. A plain `.css` sheet cannot read a constant, so it keeps the literal its
+// Component restates
 export const readRestatedGameColourFindings = (): string[] => {
   const colourMap = Object.fromEntries(
     Object.entries<unknown>(interfaceConstants).filter(

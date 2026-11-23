@@ -31,9 +31,9 @@ const toRadianceTriple = ([red, green, blue]: RadianceTriple): RadianceTriple =>
   toRadianceByte(blue),
 ];
 
-// Sorts each scored pixel into its family and its light, and sums both frames' radiance there, so each family's radiance
-// Is ours beside the reference's over the same pixels. A pixel with a saturated channel on either frame is counted as
-// Clipped in its family and light, and summed nowhere
+// Sorts each scored pixel into its family and its light, and sums both frames' radiance there, so each family's
+// Radiance Is ours beside the reference's over the same pixels. A pixel with a saturated channel on either frame is
+// Counted as Clipped in its family and light, and summed nowhere
 export const tallyRadiance = ({
   families,
   family,

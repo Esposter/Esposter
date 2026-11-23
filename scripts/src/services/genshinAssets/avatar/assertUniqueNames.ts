@@ -4,7 +4,8 @@ import { readName } from "#src/services/genshinAssets/avatar/readName";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Two different objects under one name share one exported file, so it is an error, never one of them picked over the other
+// Two different objects under one name share one exported file, so it is an error, never one of them picked over the
+// Other
 export const assertUniqueNames = (
   objects: readonly ResolvedObject[],
   names: ReadonlyMap<string, string>,

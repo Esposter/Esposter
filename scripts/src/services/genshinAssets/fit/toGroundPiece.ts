@@ -5,8 +5,8 @@ import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPie
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { getGroundPieceSquare, getRegionGroundPieceKey } from "genshin-world";
 
-// An area's piece, fitted over its own outline: the square of its bounding box round the box's centre, its samples those
-// Inside the outline
+// An area's piece, fitted over its own outline: the square of its bounding box round the box's centre, its samples
+// Those Inside the outline
 export const toGroundPiece = (region: DerivedAssetComponent, { id, outline }: GroundPieceArea): GroundPiece => {
   const outlines = [outline];
   return {

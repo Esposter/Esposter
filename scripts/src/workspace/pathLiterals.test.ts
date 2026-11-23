@@ -10,8 +10,8 @@ import { describe, expect, test } from "vitest";
 const getHomePath = (path: string): string => `~/${relative(homedir(), path).replaceAll("\\", "/")}`;
 
 describe("path literals", () => {
-  // A workflow cannot read HOSTED_ASSETS_MIRROR_DIRECTORY, so each one spells the mirror's path under the home folder. A rename
-  // Moves the constant and not the path, and the cache then misses in silence on every run rather than failing
+  // A workflow cannot read HOSTED_ASSETS_MIRROR_DIRECTORY, so each one spells the mirror's path under the home folder.
+  // A rename Moves the constant and not the path, and the cache then misses in silence on every run rather than failing
   const CACHE_PATH = getHomePath(HOSTED_ASSETS_MIRROR_DIRECTORY);
 
   test("the workflows restore the game data mirror from the cache constant's path", () => {

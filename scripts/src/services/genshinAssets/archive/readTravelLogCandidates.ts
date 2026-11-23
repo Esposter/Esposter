@@ -6,8 +6,8 @@ import { QUEST_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/cons
 import { MAIN_QUEST_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
-// The quests the Travel Log lists, each in the codex's order. A quest is named by the main quest it is filed under, whose
-// Title is the one the codex's entry shows, and whose finish opens the entry
+// The quests the Travel Log lists, each in the codex's order. A quest is named by the main quest it is filed under,
+// Whose Title is the one the codex's entry shows, and whose finish opens the entry
 export const readTravelLogCandidates = (): TravelLogCandidate[] => {
   const titleTextMapHashMap = new Map(
     readExcelTable<DumpedMainQuest>(MAIN_QUEST_TABLE_NAME).map(({ id, titleTextMapHash }) => [id, titleTextMapHash]),

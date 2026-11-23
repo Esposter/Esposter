@@ -4,8 +4,8 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
 
-// The function a variable's value is returned by: the named function a position is in, when its body returns the variable,
-// `return ai`, else undefined
+// The function a variable's value is returned by: the named function a position is in, when its body returns the
+// Variable, `return ai`, else undefined
 export const readReturnedFunction = (
   tokens: readonly GoToken[],
   namedFunctions: readonly GoNamedFunction[],

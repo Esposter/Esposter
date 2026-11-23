@@ -15,7 +15,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // Every unit the report counts and every reading its exit checks take, each source read once off the working tree: the
-// Compute pages, the changes, the roadmap, the quests the session scripts name, the parity scores and the game data lock
+// Compute pages, the changes, the roadmap, the quests the session scripts name, the parity scores and the game data
+// Lock
 export const readGenshinUnits = async (): Promise<GenshinUnits> => {
   const areas = readComputeAreas(readComputeFiles()).map(
     ({ folder, kind, phase, queue, skipped, waiting }): GenshinArea => ({

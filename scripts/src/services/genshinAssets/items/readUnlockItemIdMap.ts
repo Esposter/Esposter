@@ -2,8 +2,8 @@ import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { takeOne } from "@esposter/shared";
 
-// The instruction items of each recipe, read off the material table: an item whose use is `useOp` names the recipe it opens
-// By its id as its first parameter, so each recipe's list is every item that opens it, in the table's order
+// The instruction items of each recipe, read off the material table: an item whose use is `useOp` names the recipe it
+// Opens By its id as its first parameter, so each recipe's list is every item that opens it, in the table's order
 export const readUnlockItemIdMap = (materialRows: MaterialRow[], useOp: string): Map<number, number[]> => {
   const unlocks = materialRows.flatMap(({ id, itemUse }) =>
     itemUse

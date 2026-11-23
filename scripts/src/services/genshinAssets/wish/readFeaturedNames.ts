@@ -3,5 +3,6 @@ export const readFeaturedNames = (value: string): string[] =>
   value
     .split(";")
     .map((name) => name.trim())
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a featured name from the wiki, empty between separators
+    // A featured
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- name from the wiki, empty between separators
     .filter((name) => name !== "");

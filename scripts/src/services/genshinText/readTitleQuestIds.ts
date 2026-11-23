@@ -4,8 +4,8 @@ import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 
 import { getOrCreate } from "@esposter/shared";
 
-// Each quest's title and each chapter's title in the English text, to the world quest it names: a quest's title names that
-// Quest, and a chapter's title names the quest its end quest is in. A title two quests share names both
+// Each quest's title and each chapter's title in the English text, to the world quest it names: a quest's title names
+// That Quest, and a chapter's title names the quest its end quest is in. A title two quests share names both
 export const readTitleQuestIds = (
   textMap: ReadonlyMap<string, string>,
   mainQuests: readonly Pick<DumpedMainQuest, "id" | "titleTextMapHash">[],

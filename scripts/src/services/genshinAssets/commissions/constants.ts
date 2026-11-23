@@ -1,7 +1,8 @@
 import { DailyTaskFinishKind } from "#src/models/genshinAssets/commissions/DailyTaskFinishKind";
 import { DailyTaskTypeKind } from "#src/models/genshinAssets/commissions/DailyTaskTypeKind";
 
-// The dump leaves a task's type out when it is the quest type, the enum's first value, so a task with no type is a quest
+// The dump leaves a task's type out when it is the quest type, the enum's first value, so a task with no type is a
+// Quest
 export const DAILY_TASK_TYPE_DEFAULT: DailyTaskTypeKind = DailyTaskTypeKind.DailyTaskQuest;
 // The dump leaves a task's finish out when it is none, the enum's last value, so a task with no finish has none
 export const DAILY_FINISH_DEFAULT: DailyTaskFinishKind = DailyTaskFinishKind.DailyFinishNone;

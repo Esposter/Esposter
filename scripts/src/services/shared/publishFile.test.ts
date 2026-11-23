@@ -35,7 +35,8 @@ describe(publishFile, () => {
     const path = join(failureDirectory, "occupied");
     await mkdir(join(path, "child"), { recursive: true });
 
-    // The move's error names the platform's own code and the partial file's random name, so only its failing is asserted
+    // The move's error names the platform's own code and the partial file's random name, so only its failing is
+    // Asserted
     const isPublished = await getResultAsync(() => publishFile(path, "{}")).match(
       () => true,
       () => false,

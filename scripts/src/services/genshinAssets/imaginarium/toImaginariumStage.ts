@@ -4,9 +4,10 @@ import type { ImaginariumStage, ImaginariumStageEnemy, ImaginariumStageRefusal }
 import { resolveWikiEnemyName } from "#src/services/genshinAssets/imaginarium/resolveWikiEnemyName";
 
 type StageNameOutcome = { enemy: ImaginariumStageEnemy } | { refusal: ImaginariumStageRefusal };
-// One Easy stage of a season with its wiki enemy names resolved to the enemies they fight as, in the order the wiki names
-// Them. A name whose monsters span several entries, or that no monster holds, is refused with its count, and so is a name
-// Whose entry's codex names no monster row `toEnemy` gives an enemy for. A stage is complete only with no refusal
+// One Easy stage of a season with its wiki enemy names resolved to the enemies they fight as, in the order the wiki
+// Names Them. A name whose monsters span several entries, or that no monster holds, is refused with its count, and so
+// Is a name Whose entry's codex names no monster row `toEnemy` gives an enemy for. A stage is complete only with no
+// Refusal
 export const toImaginariumStage = (
   stage: WikiImaginariumStage,
   seasonId: number,

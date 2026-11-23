@@ -3,8 +3,9 @@ import type { ReviewIssue } from "#src/models/review/ReviewIssue";
 import { REVIEW_COMMIT_INSTRUCTION, REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
 import { getDataBlock } from "#src/services/review/getDataBlock";
 
-// The settler's prompt for one review issue: the issue's body is its findings, which the prompt numbers from zero in the
-// Order the body lists them. Unlike the fixer, a settler may not defer: each finding ends fixed, refuted or recorded.
+// The settler's prompt for one review issue: the issue's body is its findings, which the prompt numbers from zero in
+// The Order the body lists them. Unlike the fixer, a settler may not defer: each finding ends fixed, refuted or
+// Recorded.
 export const getSettlerPrompt = ({
   body,
   number,

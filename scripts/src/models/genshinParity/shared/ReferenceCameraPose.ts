@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// A reference's camera as `pose --write` records it: the eye's place in metres, its heading and pitch in degrees and its
-// Field of view, the shape a world screen takes as its `cameraPose` prop
+// A reference's camera as `pose --write` records it: the eye's place in metres, its heading and pitch in degrees and
+// Its Field of view, the shape a world screen takes as its `cameraPose` prop
 export const referenceCameraPoseSchema = z.object({
   fov: z.number(),
   heading: z.number(),

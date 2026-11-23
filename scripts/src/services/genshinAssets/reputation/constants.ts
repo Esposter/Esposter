@@ -1,9 +1,11 @@
-// The difficulty a bounty is at when the dump leaves its difficulty out, which is its first value, the one 7.1 writes for no bounty
+// The difficulty a bounty is at when the dump leaves its difficulty out, which is its first value, the one 7.1 writes
+// For no bounty
 export const DEFAULT_HUNTING_DIFFICULTY = "HUNTING_DIFFICULTY_EASY";
 
 // The Mondstadt bounties' possible targets by the dump's difficulty, from the wiki's list for each tier's stars: an
-// Easy bounty is three-star, a Medium four-star and a Hard five-star, which the dump's Reputation for each tier confirms.
-// Each name is the wiki's, a family's name where the wiki names one, resolved to a monster by toBountyTargetIds
+// Easy bounty is three-star, a Medium four-star and a Hard five-star, which the dump's Reputation for each tier
+// Confirms. Each name is the wiki's, a family's name where the wiki names one, resolved to a monster by
+// `toBountyTargetIds`
 export const MONDSTADT_BOUNTY_TARGET_NAMES: Readonly<Record<string, readonly string[]>> = {
   HUNTING_DIFFICULTY_EASY: [
     "Abyss Mage",

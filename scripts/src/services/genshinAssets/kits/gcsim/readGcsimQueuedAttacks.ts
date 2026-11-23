@@ -38,11 +38,11 @@ const HITBOX_ARGUMENT_INDEX_MAP = new Map([
 const QUEUE_CALLEES = new Set(HITBOX_ARGUMENT_INDEX_MAP.keys());
 
 // Each `QueueAttack` and `QueueAttackWithSnap` call of a gcsim character's action files, its `AttackInfo` read from its
-// Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants and the
-// Locals its own function gives one value resolve to a number (see `createGoScope`). A call in a loop of constant bounds
-// Is read once per iteration, its delay with the loop's variable taking that iteration's value. A call in a `Tasks.Add` or
-// `QueueCharTask` closure adds the closure's delay to its own, as the task runs its body at that delay. A loop's bound
-// Reads the value a constellation gives it, the base kit's by default
+// Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants and
+// The Locals its own function gives one value resolve to a number (see `createGoScope`). A call in a loop of constant
+// Bounds Is read once per iteration, its delay with the loop's variable taking that iteration's value. A call in a
+// `Tasks.Add` or `QueueCharTask` closure adds the closure's delay to its own, as the task runs its body at that delay.
+// A loop's bound Reads the value a constellation gives it, the base kit's by default
 export const readGcsimQueuedAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -76,7 +76,8 @@ export const readGcsimQueuedAttacks = (
       const hitboxStart = argumentStarts[HITBOX_ARGUMENT_INDEX_MAP.get(token.text) ?? -1];
       const hitboxValueStart =
         hitboxStart === undefined ? undefined : readHitboxStart(tokens, hitboxStart, position, scope);
-      // A single-target hit fired in the innermost area query's loop takes that query's area, as it lands on each enemy in it
+      // A single-target hit fired in the innermost area query's loop takes that query's area, as it lands on each enemy
+      // In it
       const queryHitbox = enemyQueryLoops.findLast(
         ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
       )?.hitbox;
@@ -89,8 +90,9 @@ export const readGcsimQueuedAttacks = (
       const taskDelayExpressions = enclosingTasks.map((task) => parseGoExpression(tokens, task.delayStart).expression);
       const [firstTask] = enclosingTasks;
       const parameterIterations = scope.readParameterIterations(position);
-      // A method's queue call runs once per call of the method, at the delay of the closures that call is in and with the
-      // Parameter values it passes. A method never called in this file keeps its own delay and parameter values alone
+      // A method's queue call runs once per call of the method, at the delay of the closures that call is in and with
+      // The Parameter values it passes. A method never called in this file keeps its own delay and parameter values
+      // Alone
       const enclosingFunction = readGoEnclosingFunction(namedFunctions, position);
       // A call from the method's own body is its next repeat, a tick's next, which is no call of the queue call anew
       const sites =

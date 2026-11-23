@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer; `isolatedDeclarations` demands the annotation a template literal would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would
+   otherwise infer; `isolatedDeclarations` demands the annotation a template literal would otherwise infer */
 import { ScreenMatchMode } from "#src/models/genshinAssets/ui/ScreenMatchMode";
 import { UiScaleMode } from "#src/models/genshinAssets/ui/UiScaleMode";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";

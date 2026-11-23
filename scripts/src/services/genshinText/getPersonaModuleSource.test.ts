@@ -14,8 +14,8 @@ import { dirname, join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 // The persona runs a copy of `genshin-text` rather than the package, so the one way the two drift is an edit to the
-// Source with no `genshin:text write` after it, or an edit to the copy by hand. Either fails here, as does a loader
-// Map the writer would no longer write. Generated output is the formatter's form, so each is compared byte for byte with
+// Source with no `genshin:text write` after it, or an edit to the copy by hand. Either fails here, as does a loader Map
+// The writer would no longer write. Generated output is the formatter's form, so each is compared byte for byte with
 // What the formatter writes for the writer's source
 describe(getPersonaModuleSource, () => {
   test("re-aims the package's alias at the copy, headed as the copy it is", () => {

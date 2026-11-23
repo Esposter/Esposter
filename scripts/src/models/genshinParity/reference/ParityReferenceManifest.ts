@@ -8,8 +8,8 @@ import { parityReferenceManifestRowSchema } from "#src/models/genshinParity/refe
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The one committed manifest: a header naming the game version it was packed from, when known, and one section per kind.
-// Every section holds one row per line, so two machines' additions merge by rebase
+// The one committed manifest: a header naming the game version it was packed from, when known, and one section per
+// Kind. Every section holds one row per line, so two machines' additions merge by rebase
 export interface ParityReferenceManifest {
   animeGameDataCommit?: string | undefined;
   gameVersion?: string | undefined;

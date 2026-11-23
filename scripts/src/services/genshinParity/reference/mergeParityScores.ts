@@ -35,11 +35,11 @@ const LAYER_HEADER = [
 ];
 const LAYER_SEPARATOR = "/";
 
-// The report merged from its lines as they were and the given scores, the one merge both writers (`compare` and `approve`)
-// Use. A scored reference's row and layers are rewritten, a full run writes a pending screen's row with its reason and no
-// Layers, and every other row is kept as it was. A subset run lists the rows in the report's own order, a new reference placed in the
-// References' order; a full run lists every reference in the references' order and drops the rows of a reference the map
-// No longer holds
+// The report merged from its lines as they were and the given scores, the one merge both writers (`compare` and
+// `approve`) Use. A scored reference's row and layers are rewritten, a full run writes a pending screen's row with its
+// Reason and no Layers, and every other row is kept as it was. A subset run lists the rows in the report's own order, a
+// New reference placed in the References' order; a full run lists every reference in the references' order and drops
+// The rows of a reference the map No longer holds
 export const mergeParityScores = (
   lines: readonly string[],
   scores: Readonly<Record<string, ParityScore>>,
@@ -55,7 +55,8 @@ export const mergeParityScores = (
   );
   const isFullRun = run === ParityReportRun.Full;
   const checkIsPending = (referenceId: string): boolean => references[referenceId]?.pending !== undefined;
-  // A pending screen's row is the map's own statement, so only the full run writes it, and a subset run leaves it as it was
+  // A pending screen's row is the map's own statement, so only the full run writes it, and a subset run leaves it as it
+  // Was
   const order = isFullRun
     ? referenceIds.filter(
         (referenceId) => scores[referenceId] !== undefined || checkIsPending(referenceId) || rowMap.has(referenceId),
@@ -74,8 +75,8 @@ export const mergeParityScores = (
     const row = rowMap.get(referenceId);
     return row ? [row] : [];
   });
-  // A reference scored again replaces every layer row it had, so a family it no longer draws leaves none behind, and a scene
-  // Whose layers were not measured keeps the rows it had
+  // A reference scored again replaces every layer row it had, so a family it no longer draws leaves none behind, and a
+  // Scene Whose layers were not measured keeps the rows it had
   const layerRows = order.flatMap((referenceId) => {
     const layers = scores[referenceId]?.layers;
     if (layers) return layers.map((layer) => toLayerRow(`${referenceId}${LAYER_SEPARATOR}${layer.name}`, layer));
@@ -83,6 +84,7 @@ export const mergeParityScores = (
     return [...rowMap].flatMap(([key, line]) => (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`) ? [line] : []));
   });
   const layerLines = layerRows.length > 0 ? [...LAYER_HEADER, ...layerRows] : [];
-  // The text the formatter commits for this report, so a write formats to itself and a diff shows only the rows that moved
+  // The text the formatter commits for this report, so a write formats to itself and a diff shows only the rows that
+  // Moved
   return formatText(PARITY_SCORES_FORMAT_PATH, `${[...HEADER, ...rows, ...layerLines].join("\n")}\n`);
 };

@@ -3,7 +3,8 @@ import type { SortingNode } from "#src/models/oxlint/sorting/SortingNode";
 import { computePinnedNodes } from "#src/services/oxlint/sorting/computePinnedNodes";
 import { sortNodesByDependencies } from "#src/services/oxlint/sorting/sortNodesByDependencies";
 
-// Sorts one partition by the comparer. A node held for the rule (`computePinnedNodes`) keeps its index instead, when asked
+// Sorts one partition by the comparer. A node held for the rule (`computePinnedNodes`) keeps its index instead, when
+// Asked
 const sortPartitionNodes = <T extends SortingNode>(
   nodes: T[],
   compare: (left: T, right: T) => number,

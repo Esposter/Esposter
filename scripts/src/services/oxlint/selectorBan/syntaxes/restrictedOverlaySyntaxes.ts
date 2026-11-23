@@ -3,9 +3,10 @@ import type { SelectorBanList } from "#src/models/oxlint/selectorBan/SelectorBan
 import { SCRIPT_FILES } from "#src/services/oxlint/selectorBan/constants";
 
 // An optimistic entry is a pure change over the keyed view of held state: it reads and writes rows by key, and nothing
-// Else. The view cannot enumerate its rows, so an entry never walks it, and a change over held state never assigns a ref.
-// An entry is found by its shape rather than its file: the function an `entry` option holds, or the arrow a factory
-// Returns straight, annotated `: Entry` or not. Its view is its first parameter, which every entry names `view`.
+// Else. The view cannot enumerate its rows, so an entry never walks it, and a change over held state never assigns a
+// Ref. An entry is found by its shape rather than its file: the function an `entry` option holds, or the arrow a
+// Factory Returns straight, annotated `: Entry` or not. Its view is its first parameter, which every entry names
+// `view`.
 const ENTRY_FUNCTION =
   ":matches(Property[key.name='entry'] > :matches(ArrowFunctionExpression, FunctionExpression), ArrowFunctionExpression > :matches(ArrowFunctionExpression, FunctionExpression))[params.0.name='view']";
 // The statics and methods that walk a collection. `view.get` and `view.set` name one row, so neither is listed

@@ -1,5 +1,5 @@
-// The ink of each pixel of a luminance grid: its distance from the grid's mean luminance, the term the rows and columns of
-// The probe's ink are summed from
+// The ink of each pixel of a luminance grid: its distance from the grid's mean luminance, the term the rows and columns
+// Of The probe's ink are summed from
 export const getInkGrid = (luminance: Float64Array): Float64Array => {
   let total = 0;
   for (const value of luminance) total += value;

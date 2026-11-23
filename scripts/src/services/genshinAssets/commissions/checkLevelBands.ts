@@ -3,8 +3,8 @@ import type { ExcelDailyTaskLevelRow } from "#src/models/genshinAssets/commissio
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { COMMISSION_RANK_BAND_COUNT, COMMISSION_RANK_BAND_SIZE } from "genshin-world";
 
-// The level table must be the game's bands: twelve of five ranks each in order from rank one, since a claim reads its band
-// Off the rank alone and a table of other bands would pay every rank the wrong reward
+// The level table must be the game's bands: twelve of five ranks each in order from rank one, since a claim reads its
+// Band Off the rank alone and a table of other bands would pay every rank the wrong reward
 export const checkLevelBands = (levelRows: ExcelDailyTaskLevelRow[]): void => {
   const isGameBands =
     levelRows.length === COMMISSION_RANK_BAND_COUNT &&

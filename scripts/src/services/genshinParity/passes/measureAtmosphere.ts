@@ -16,7 +16,8 @@ export const measureAtmosphere = async (
 ): Promise<ParityPassMeasure> => {
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
-    // oxlint-disable-next-line no-await-in-loop -- One device: each reference's sky is read from its own browser render on the GPU, and parallel renders exhaust the free memory each holds
+    // On the GPU, and parallel renders exhaust the free memory each holds
+    // oxlint-disable-next-line no-await-in-loop -- One device: each reference's sky is read from its own browser render
     const { distance, ours, reference, skyCount, spread } = await readCloudStatistics(referenceId, component, pageRoot);
     measures.push({
       notes: [`${referenceId}: ${skyCount} pixels of sky; ${formatSkyComparison(ours, reference)}`],

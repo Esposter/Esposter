@@ -1,7 +1,7 @@
 import { getInkGrid } from "#src/services/genshinParity/probe/getInkGrid";
 
-// The ink of each row and each column of a luminance grid: the sum of its pixels' distance from the grid's mean luminance,
-// So a row or column that is drawn over what the rest of the rectangle is shows as the largest sum
+// The ink of each row and each column of a luminance grid: the sum of its pixels' distance from the grid's mean
+// Luminance, So a row or column that is drawn over what the rest of the rectangle is shows as the largest sum
 export const getInkProfiles = (
   luminance: Float64Array,
   width: number,

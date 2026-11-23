@@ -6,8 +6,8 @@ import { getParityDirectory } from "#src/services/fleet/data/getParityDirectory"
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
-// `pnpm ai:fleet:data files <dir>...` — one JSON line per directory with its direct files, the directories named as arguments
-// Or, with --stdin, one per line on stdin, as a peer's copy sends them
+// `pnpm ai:fleet:data files <dir>...` — one JSON line per directory with its direct files, the directories named as
+// Arguments Or, with --stdin, one per line on stdin, as a peer's copy sends them
 export const filesCommand: SubCommandsDef[string] = defineCommand({
   args: {
     directory: { description: "The parity directory the named directories are under", type: "string" },

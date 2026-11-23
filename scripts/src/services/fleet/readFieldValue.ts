@@ -11,6 +11,7 @@ export const readFieldValue = (value: string): string | string[] => {
     : items
         .split(",")
         .map((item) => unquote(item.trim()))
-        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a list item the record writes, empty between separators
+        // A list item
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the record writes, empty between separators
         .filter((item) => item !== "");
 };

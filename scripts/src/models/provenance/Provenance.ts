@@ -1,14 +1,15 @@
 import { z } from "zod";
 
-// The repository commit a command's code was at, whether its producer's paths held uncommitted changes then, and those paths
+// The repository commit a command's code was at, whether its producer's paths held uncommitted changes then, and those
+// Paths
 export interface ProducerVersion {
   commit: string;
   isDirty: boolean;
   producerPaths: string[];
 }
 
-// The provenance stamp an output carries beside it: the game version of the install it was read from,
-// The command that wrote it, the operating system, the producer's commit and the pinned tools it ran. It holds no absolute path
+// The provenance stamp an output carries beside it: the game version of the install it was read from, The command that
+// Wrote it, the operating system, the producer's commit and the pinned tools it ran. It holds no absolute path
 export interface Provenance {
   command: string;
   gameVersion: string;
@@ -18,7 +19,8 @@ export interface Provenance {
   tools: ToolDigest[];
 }
 
-// A source an output was built from, by name, with the commit it was fetched at or the SHA-256 of its file where it has one
+// A source an output was built from, by name, with the commit it was fetched at or the SHA-256 of its file where it has
+// One
 export interface ProvenanceSource {
   commit?: string | undefined;
   name: string;

@@ -17,7 +17,8 @@ import { mkdirSync, rmSync } from "node:fs";
 const DIRECTORIES = [NAMECARD_ART_DIRECTORY, NAMECARD_ICON_DIRECTORY];
 // The namecards' art and icons the asset index names, each a PNG under its name in one of two folders. A folder already
 // Holding exactly those names is left as it is, so a rerun costs nothing. Any other is cleaned and exported block by
-// Block, then checked for every name the index holds. An index naming no namecard is refused before any folder is touched
+// Block, then checked for every name the index holds. An index naming no namecard is refused before any folder is
+// Touched
 export const exportNamecards = async (): Promise<string> => {
   const assets = await readIndexedAssets(checkNamecardAsset, GENSHIN_ANIMESTUDIO_OPTIONS);
   if (assets.length === 0)

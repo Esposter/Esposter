@@ -11,8 +11,9 @@ describe(computeBrightnessBands, () => {
   test("reads each band's lightness error over the pixels that band holds", () => {
     expect.hasAssertions();
 
-    // Shadow, mid and white pixels, each ours a grey the reference shows as itself, except the white, which ours shows as
-    // A mid grey. The mid grey (sRGB 128) is CIELab lightness 53.6, so the white's error is 46.4 less, in the highlights
+    // Shadow, mid and white pixels, each ours a grey the reference shows as itself, except the white, which ours shows
+    // As A mid grey. The mid grey (sRGB 128) is CIELab lightness 53.6, so the white's error is 46.4 less, in the
+    // Highlights
     const reference = createRow([0, 128, BYTE]);
     const ours = createRow([0, 128, 128]);
     const readings = computeBrightnessBands(reference, ours, 3, 1, SCORED_ALL(3));

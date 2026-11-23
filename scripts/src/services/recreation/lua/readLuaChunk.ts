@@ -7,7 +7,8 @@ import { readLuaFunction } from "#src/services/recreation/lua/readLuaFunction";
 import { readLuaHeader } from "#src/services/recreation/lua/readLuaHeader";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Reads a binary chunk in a dialect, from its signature to the end of its main function, the length word already stripped
+// Reads a binary chunk in a dialect, from its signature to the end of its main function, the length word already
+// Stripped
 export const readLuaChunk = (bytes: Uint8Array, dialect: LuaDialect): LuaFunction => {
   const reader = new LuaByteReader(bytes, dialect);
   readLuaHeader(reader);

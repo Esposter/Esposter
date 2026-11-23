@@ -2,7 +2,8 @@ import type { MachineProfile } from "#src/models/fleet/MachineProfile";
 
 import { checkIsStringArray } from "#src/services/fleet/checkIsStringArray";
 
-// Whether a parsed machine file holds a profile: an object with its id as a string and its areas and capabilities as string arrays
+// Whether a parsed machine file holds a profile: an object with its id as a string and its areas and capabilities as
+// String arrays
 export const checkIsMachineProfile = (value: unknown): value is MachineProfile =>
   typeof value === "object" &&
   value !== null &&

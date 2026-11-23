@@ -14,9 +14,9 @@ const spriteDumpSchema = z.object({
   }),
 });
 
-// A Sprite's dump as AnimeStudio writes it: the atlas its pixels are cut from, by the name its texture reference carries,
-// And the rectangle inside that atlas. A sprite packed rotated holds its pixels turned, which a cut of its rectangle would
-// Not give, so it is refused rather than cut wrong
+// A Sprite's dump as AnimeStudio writes it: the atlas its pixels are cut from, by the name its texture reference
+// Carries, And the rectangle inside that atlas. A sprite packed rotated holds its pixels turned, which a cut of its
+// Rectangle would Not give, so it is refused rather than cut wrong
 export const readSpriteRectangle = (dump: unknown): SpriteAtlas => {
   const { m_RD } = spriteDumpSchema.parse(dump);
   if (m_RD.texture.IsNull) throw new InvalidOperationError(Operation.Read, "sprite", "names no atlas");

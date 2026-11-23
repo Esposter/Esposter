@@ -5,8 +5,8 @@ import { encodeHostedAssetObject } from "#src/services/hostedAssets/encodeHosted
 import { encodeHostedAssetRecord } from "#src/services/hostedAssets/encodeHostedAssetRecord";
 
 // The stored form of one object of a product: a records product's JSON records as zstd, and every other object as its
-// Extension's table names, so a binary file a records product publishes keeps its own bytes. The publish and the repair both
-// Store through it, so neither can encode an object the other would not
+// Extension's table names, so a binary file a records product publishes keeps its own bytes. The publish and the repair
+// Both Store through it, so neither can encode an object the other would not
 export const encodeStoredHostedAsset = (
   product: HostedAssetProduct,
   { bytes, extension }: { bytes: Buffer; extension: string },

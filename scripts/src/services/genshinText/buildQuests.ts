@@ -44,11 +44,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 // Every quest `QuestId` names, published: its kind, title and description from the quest table, its shown steps and the
-// Talks offering it from its binary output, the talks its steps end on and its offers from the dialog and talk tables, the
-// Items its finish pays from its reward rows, and every word they show, a language missing a word taking English's and
-// Saying so. An Archon quest starts from the prologue's first rather than from a talk, so it has no offer. Each quest is
-// Checked against the world's own schema before it is published. A Reputation request has no binary: its sub quest's title
-// Comes from its world quest, and its one step from its giving row
+// Talks offering it from its binary output, the talks its steps end on and its offers from the dialog and talk tables,
+// The Items its finish pays from its reward rows, and every word they show, a language missing a word taking English's
+// And Saying so. An Archon quest starts from the prologue's first rather than from a talk, so it has no offer. Each
+// Quest is Checked against the world's own schema before it is published. A Reputation request has no binary: its sub
+// Quest's title Comes from its world quest, and its one step from its giving row
 export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);

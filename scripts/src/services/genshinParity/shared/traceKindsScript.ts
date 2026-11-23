@@ -3,9 +3,9 @@
 // Template holds the nearest of its ancestors any template holds, named by its file under `components` with `Index.vue`
 // Dropped, as the development server names a component's file; what no template holds, such as what a composable adds
 // To the scene itself, is the scene's own. A kind is hidden by clearing its objects' layers, which every pass tests
-// Against its camera's, rather than their `visible`, which a fade or a terrain ring sets again each frame. Only an object
-// That draws is counted, among those drawn now. Run once the renderer and the scene are handed over; a string, as the
-// Other trace scripts are
+// Against its camera's, rather than their `visible`, which a fade or a terrain ring sets again each frame. Only an
+// Object That draws is counted, among those drawn now. Run once the renderer and the scene are handed over; a string,
+// As the Other trace scripts are
 export const TRACE_KINDS_SCRIPT = `
   (() => {
     const kindDrawables = new Map();

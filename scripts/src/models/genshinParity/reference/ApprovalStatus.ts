@@ -1,5 +1,6 @@
-// How a screen's compare stands against its bar, printed beside the image `approve` writes: a score under the bar is within
-// It, and a missing reference, a failed compare or a reference judging less than the whole screen has no score to set against it
+// How a screen's compare stands against its bar, printed beside the image `approve` writes: a score under the bar is
+// Within It, and a missing reference, a failed compare or a reference judging less than the whole screen has no score
+// To set against it
 export const ApprovalStatus = {
   CompareFailed: "compare failed",
   NoReference: "no reference",

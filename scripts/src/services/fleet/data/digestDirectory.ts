@@ -6,7 +6,8 @@ import { getDirectoryDigest } from "#src/services/fleet/data/getDirectoryDigest"
 import { readDirectory } from "#src/services/fleet/data/readDirectory";
 import { join, posix } from "node:path";
 
-// A directory the walk has read: its child digests gather as its subdirectories finish, and its unread ones wait by name
+// A directory the walk has read: its child digests gather as its subdirectories finish, and its unread ones wait by
+// Name
 interface OpenDirectory {
   children: ChildDigest[];
   directory: string;
@@ -15,8 +16,9 @@ interface OpenDirectory {
   unread: string[];
 }
 
-// Digests a directory and every directory under it, recording each in the manifest and returning its own digest. The walk
-// Holds one path of open directories at a time, so a directory is recorded once its subtree is, and before its sibling
+// Digests a directory and every directory under it, recording each in the manifest and returning its own digest. The
+// Walk Holds one path of open directories at a time, so a directory is recorded once its subtree is, and before its
+// Sibling
 export const digestDirectory = async (
   parityDirectory: string,
   directory: string,
@@ -32,7 +34,8 @@ export const digestDirectory = async (
     const name = current.unread.shift();
     if (name !== undefined) {
       ancestors.push(current);
-      // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each directory is recorded in the manifest as its walk finishes, and the manifest command prints the keys in that order
+      // As its walk finishes, and the manifest command prints the keys in that order
+      // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each directory is recorded in the manifest
       current = await open(posix.join(current.directory, name), name);
       continue;
     }

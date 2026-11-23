@@ -5,10 +5,10 @@ import ImageTracer from "imagetracerjs";
 
 const INK = { a: 255, b: 0, g: 0, r: 0 };
 const PAPER = { a: 255, b: 255, g: 255, r: 255 };
-// A mask's ink as filled paths, its specks cleared first and its outlines traced into curves: every path of a mark split
-// From its ground, one path a run of ink or a hole in one, to be drawn together with the even-odd rule. The paths are in
-// The mask's pixels unless the caller draws in units of its own, each coordinate then scaled while the path is still
-// Absolute and spaced, before its compact form runs numbers together
+// A mask's ink as filled paths, its specks cleared first and its outlines traced into curves: every path of a mark
+// Split From its ground, one path a run of ink or a hole in one, to be drawn together with the even-odd rule. The paths
+// Are in The mask's pixels unless the caller draws in units of its own, each coordinate then scaled while the path is
+// Still Absolute and spaced, before its compact form runs numbers together
 export const traceMask = (
   inkMask: Uint8Array,
   width: number,

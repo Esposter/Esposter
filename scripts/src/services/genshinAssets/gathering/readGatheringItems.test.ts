@@ -29,7 +29,8 @@ describe(readGatheringItems, () => {
   // The inventory category the official map files its labels under, whose labels respawn daily
   const INVENTORY_LABEL_ID = 60;
 
-  // The Electro Crystal's label, which its own respawn rule names, spelled with the no-break space the official map uses
+  // The Electro Crystal's label, which its own respawn rule names, spelled with the no-break space the official map
+  // Uses
   const ELECTRO_CRYSTAL_LABEL_ID = 63;
 
   const ELECTRO_CRYSTAL_NAME = "Electro Crystal";

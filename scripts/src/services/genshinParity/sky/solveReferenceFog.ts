@@ -28,8 +28,8 @@ const DENSITY_RANGE: [number, number] = [0.0001, 3];
 const GOLDEN_STEPS = 40;
 const GOLDEN_SHARE = (Math.sqrt(5) - 1) / 2;
 // The pixels are binned by their depth band (`DEPTH_BANDS`), and by how far they look toward the sun, in shares of its
-// Scatter weight, each bin read by its medians, so a frame whose texels do not line up with ours prices the fog's mix by
-// Distance and angle rather than rewarding a fog that washes every texel to the mean
+// Scatter weight, each bin read by its medians, so a frame whose texels do not line up with ours prices the fog's mix
+// By Distance and angle rather than rewarding a fog that washes every texel to the mean
 const SCATTER_BIN_COUNT = 4;
 const MIN_BIN_COUNT = 100;
 // A reference's haze solved over the parts the witness draws: each part's interior pixel past the fog's start, its

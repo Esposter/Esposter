@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer; the escape is the sequence's opener; `isolatedDeclarations` demands the annotation */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal
+   would otherwise infer; the escape is the sequence's opener; `isolatedDeclarations` demands the annotation */
 import type { Vector } from "#src/models/shared/Vector";
 
 import { KIBIBYTE } from "@esposter/configuration/constants";
@@ -35,10 +36,12 @@ export const CHILD_PROCESS_TIMEOUT_MS: number = Temporal.Duration.from({ minutes
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
 // Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
 export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
-// The folder under the data root that holds the parity tooling's data, which the parity and fleet defaults both derive from
+// The folder under the data root that holds the parity tooling's data, which the parity and fleet defaults both derive
+// From
 export const PARITY_FOLDER_NAME = "genshin-parity";
-// The repository's own formatter, run as its binary over each JSON file a script writes. Its configuration is the root's,
-// And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.
+// The repository's own formatter, run as its binary over each JSON file a script writes. Its configuration is the
+// Root's, And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is
+// Kept.
 export const OXFMT_BINARY_RELATIVE_PATH: string = join("node_modules", "oxfmt", "bin", "oxfmt");
 export const OXFMT_CONFIGURATION_FILE = "oxfmt.config.ts";
 export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, OXFMT_BINARY_RELATIVE_PATH);
@@ -58,14 +61,14 @@ export const MAX_WIKI_TITLES_PER_QUERY = 50;
 export const WIKI_FILE_CONCURRENCY = 8;
 // How long any request a script makes may take (`fetchJson`) — the npm registry and the GitHub API alike
 export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
-// The most of a JSON answer a script holds: a full npm packument runs to 16 MB for TypeScript alone, and a body past this
-// Is refused rather than read on (`fetchJson`)
+// The most of a JSON answer a script holds: a full npm packument runs to 16 MB for TypeScript alone, and a body past
+// This Is refused rather than read on (`fetchJson`)
 export const FETCH_JSON_MAX_BYTES: number = 128 * 1024 * 1024;
 export const SECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 export const MILLISECONDS_PER_MINUTE: number = SECONDS_PER_MINUTE * 1000;
-// `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the lockfile conflict
-// Resolver, the outdated report parses it, its benchmark reads it — and a literal repeated per
-// Consumer is one rename away from a script that reads a file that no longer exists.
+// `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the lockfile
+// Conflict Resolver, the outdated report parses it, its benchmark reads it — and a literal repeated per Consumer is one
+// Rename away from a script that reads a file that no longer exists.
 const LOCKFILE = "pnpm-lock.yaml";
 // The empty tree, the same in every repository: a commit pointing at it carries its message alone, and as an attribute
 // Source it reads no `.gitattributes`, so git writes and reads bytes as they are
@@ -73,13 +76,14 @@ export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 // The manifest every member and the root carry, which is how a workspace glob's children are told from a plain
 // Directory and how an npm-installed project is found beside its lockfile
 export const PACKAGE_JSON_FILENAME = "package.json";
-// The package a Nuxt module depends on at runtime, and which only a Nuxt module declares, so a dependency on it is what makes a package one
+// The package a Nuxt module depends on at runtime, and which only a Nuxt module declares, so a dependency on it is what
+// Makes a package one
 export const NUXT_KIT_PACKAGE_NAME = "@nuxt/kit";
 // `pnpm`'s `packageManager` pin is `<name>@<version>`, with an optional `+sha512.<hex>` suffix.
 // Corepack verifies the download against that suffix, which is no part of the version the registry is asked about.
 export const PACKAGE_MANAGER_REGEX: RegExp = /^(?<packageName>[^@]+)@(?<version>[^+]+)/u;
-// A name of word characters and hyphens, so no dot, slash or space: a folder, file, skill, worker or clip name, each read
-// As one token of a path or a command rather than as a piece of one
+// A name of word characters and hyphens, so no dot, slash or space: a folder, file, skill, worker or clip name, each
+// Read As one token of a path or a command rather than as a piece of one
 export const WORD_AND_HYPHEN_NAME_REGEX: RegExp = /^[\w-]+$/u;
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
@@ -99,12 +103,14 @@ export const FIELD_SEPARATOR = "\u001F";
 // An ANSI SGR sequence — the colours a check prints to a terminal — as an escape for the same reason. Stripped
 // Wherever a script measures or quotes such output: the outdated report's column widths, a failed check's log
 // Excerpt.
-// oxlint-disable-next-line no-control-regex -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
+// The escape
+// oxlint-disable-next-line no-control-regex -- is the sequence's opener; `isolatedDeclarations` demands the annotation
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
 // The opener of an ANSI SGR sequence, and the sequence returning the foreground to the terminal's default
 export const ANSI_ESCAPE = "\u001B";
 
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this value would otherwise infer
+// IsolatedDeclarations
+// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this value would otherwise infer
 export const ANSI_FOREGROUND_RESET: string = `${ANSI_ESCAPE}[39m`;
 // `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
 // That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is

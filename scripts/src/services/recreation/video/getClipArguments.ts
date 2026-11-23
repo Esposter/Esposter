@@ -3,9 +3,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { isAbsolute, join } from "node:path";
 
 // The yt-dlp arguments for one section of a public video: the best MP4 at or under 1080 high, merged by the pinned
-// FFmpeg, saved into the directory as `yt-<videoId>-<name>.mp4`, and its path printed once written. yt-dlp reads its FFmpeg's
-// Location only as a path, so the FFmpeg on the PATH, named bare off Windows, is left for it to find. A name is a file
-// Name's part, so a path or a separator is refused rather than written somewhere else
+// FFmpeg, saved into the directory as `yt-<videoId>-<name>.mp4`, and its path printed once written. yt-dlp reads its
+// FFmpeg's Location only as a path, so the FFmpeg on the PATH, named bare off Windows, is left for it to find. A name
+// Is a file Name's part, so a path or a separator is refused rather than written somewhere else
 export const getClipArguments = (
   url: string,
   fromSeconds: number,

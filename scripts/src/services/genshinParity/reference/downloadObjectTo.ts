@@ -17,7 +17,8 @@ export const downloadObjectTo = async (key: string, destination: string, sha256:
   if (!response.ok || response.body === null)
     throw new InvalidOperationError(Operation.Read, key, `responds ${response.status}`);
   await writePartialThenMove(destination, async (partialPath) => {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the response body is the platform's stream, which Node's typings of Readable.fromWeb do not accept as their own web stream
+    // The response body is the platform's stream, which Node's typings of Readable.fromWeb
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- do not accept as their own web stream
     await pipeline(Readable.fromWeb(response.body as ReadableStream), createWriteStream(partialPath));
     assertContentAddress(key, sha256, await getFileSha256(partialPath));
   });

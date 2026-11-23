@@ -19,9 +19,9 @@ import { LandmarkKind } from "genshin-world";
 
 // Each challenge domain's entrance of the open world written into the region its place is in, as a landmark of its own
 // Kind. Each entry is placed from its scene point round the Windrise origin, and filed under the catalogue area of the
-// Game area its point stands in, in the region holding that area. A region's other landmarks are kept, and its entrances
-// From an earlier run are replaced, then the whole is ordered by orderLandmarks. An entry with no point, or in an area no
-// Fitted region holds, is counted and left out. A dry run counts the entrances and writes nothing
+// Game area its point stands in, in the region holding that area. A region's other landmarks are kept, and its
+// Entrances From an earlier run are replaced, then the whole is ordered by orderLandmarks. An entry with no point, or
+// In an area no Fitted region holds, is counted and left out. A dry run counts the entrances and writes nothing
 export const writeDomainEntrances = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const [{ origin, regionFiles }, getWorldHeight, scenePoints, catalogueAreaPlaceMap] = await Promise.all([
     readFittedRegions(),

@@ -1,8 +1,8 @@
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // The quests a city's opening waits on, each named by one of its wiki titles: the one quest a title names, dropping the
-// Opening's own world quest, since a quest cannot wait on itself. A title naming no single quest is an error, so a title
-// That drifts from the dump cannot leave a gate unlinked
+// Opening's own world quest, since a quest cannot wait on itself. A title naming no single quest is an error, so a
+// Title That drifts from the dump cannot leave a gate unlinked
 export const readOpeningParentQuestIds = (
   titles: readonly string[],
   mainQuestId: number,

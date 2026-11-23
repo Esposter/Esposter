@@ -8,7 +8,8 @@ export const LEDGER_PATH = ".agents/ledgers/dependencies.md";
 export const UNJUDGED_VERDICT = "—";
 // A verdict's kind and its reason are split on this, as the ledger writes them
 export const VERDICT_SEPARATOR = " — ";
-// The reasons a Keep verdict is right to keep a package for whatever its type workarounds, which the shim check does not second-guess
+// The reasons a Keep verdict is right to keep a package for whatever its type workarounds, which the shim check does
+// Not second-guess
 const CORE_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling"];
 // The reasons a Keep verdict is right to keep a package for, which the absorb check does not second-guess
 export const KEEP_EXEMPT_REASONS: string[] = [...CORE_EXEMPT_REASONS, "types", "hold"];
@@ -45,7 +46,8 @@ export const STABILITY_WINDOW_MONTHS = 24;
 export const KEEP_DISAGREEMENT_MINIMUM_SCORE = 60;
 export const ABSORB_DISAGREEMENT_MAXIMUM_SCORE = 30;
 
-// The source a package's lines are counted from: the JavaScript it ships, never its declarations, source maps or a minified copy
+// The source a package's lines are counted from: the JavaScript it ships, never its declarations, source maps or a
+// Minified copy
 export const MODULE_EXTENSIONS: string[] = [".js", ".mjs", ".cjs"];
 export const MINIFIED_MARKER = ".min.";
 // The suffixes a relative import may omit, tried in turn after the specifier as written
@@ -55,15 +57,16 @@ export const TYPES_SCOPE = "@types/";
 // Where a package's own dependencies sit: beside its realpath, under pnpm's store layout
 export const NODE_MODULES_DIRECTORY = "node_modules";
 
-// One `git grep` finds every import of a package in the tracked source, matching `from "<name>"`, `import("<name>"` and a
-// Side-effect `import "<name>"` opening its line
+// One `git grep` finds every import of a package in the tracked source, matching `from "<name>"`, `import("<name>"` and
+// A Side-effect `import "<name>"` opening its line
 export const IMPORT_GREP_PATTERN: string = String.raw`(from|import\(|^\s*import)\s*"[^"]+"`;
 export const IMPORT_GREP_PATHSPECS: string[] = ["*.ts", "*.vue", "*.mjs", "*.js"];
 
 // The type workarounds a package forces on us, one `git grep` finding each of the three: a module declared over it, a
 // Directive suppressing an error at its import, and a cast at its call
 export const TYPE_SHIM_PATTERN = `@ts-expect-error|as unknown as|declare module "`;
-// The lines either side of a directive or a cast that an import or a call must fall within to be counted against a package
+// The lines either side of a directive or a cast that an import or a call must fall within to be counted against a
+// Package
 export const SHIM_LINE_WINDOW = 3;
 // The reasons a Keep verdict keeps a package whose type workarounds absorbing it would fix at the root
 export const SHIM_EXEMPT_REASONS: string[] = CORE_EXEMPT_REASONS;

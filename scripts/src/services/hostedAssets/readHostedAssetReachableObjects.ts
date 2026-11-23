@@ -7,9 +7,10 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
-// Every object the locks reach in one bucket: each lock's objects and indexes, and the entries each index names. An index
-// Missing from the bucket aborts the read, since a prune that could not see one would take what it names. The one exception
-// Is an index of a scope in `skippedScopes`: a publish that replaces that scope stores the index again, so it reaches nothing
+// Every object the locks reach in one bucket: each lock's objects and indexes, and the entries each index names. An
+// Index Missing from the bucket aborts the read, since a prune that could not see one would take what it names. The one
+// Exception Is an index of a scope in `skippedScopes`: a publish that replaces that scope stores the index again, so it
+// Reaches nothing
 export const readHostedAssetReachableObjects = async (
   bucketClient: R2BucketClient,
   locks: HostedAssetLock[],

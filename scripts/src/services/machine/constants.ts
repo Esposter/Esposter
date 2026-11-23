@@ -35,19 +35,19 @@ export const MACHINE_STATE_DIRECTORY: string = join(STATE_ROOT, "machine");
 export const MACHINE_STATE_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.json");
 export const MACHINE_STATE_NEXT_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.next.json");
 export const MACHINE_STATE_STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 3 }).total("milliseconds");
-// The watcher's claim on the machine, the one file a second watcher checks. It holds the watcher's process id, is created
-// Exclusively and removed on exit, and is taken over only once that process is gone. The takeover lock lets one starter
-// At a time take over a stale claim
+// The watcher's claim on the machine, the one file a second watcher checks. It holds the watcher's process id, is
+// Created Exclusively and removed on exit, and is taken over only once that process is gone. The takeover lock lets one
+// Starter At a time take over a stale claim
 export const MACHINE_LOCK_PATH: string = join(MACHINE_STATE_DIRECTORY, "watcher.lock");
 export const MACHINE_LOCK_TAKEOVER_PATH: string = join(MACHINE_STATE_DIRECTORY, "watcher.lock.takeover");
 // A claim is created empty and its process id written in just after, so one still empty is its writer's for this long
 export const EMPTY_LOCK_GRACE_MILLISECONDS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // The code a create-only write gives when its file is already there
 export const FILE_EXISTS_ERROR_CODE = "EEXIST";
-// The machine's install lock, held by every install that writes the pnpm store this machine shares: a worktree's create and the
-// Lockfile refresh. Its holder listens at the path for its whole run, a socket file on POSIX and a named pipe on Windows. The
-// Takeover socket is what one starter at a time removes a dead holder's socket file with. The files are named apart from the
-// Pid-file lock they replaced, so a leftover of that lock is never read as a socket
+// The machine's install lock, held by every install that writes the pnpm store this machine shares: a worktree's create
+// And the Lockfile refresh. Its holder listens at the path for its whole run, a socket file on POSIX and a named pipe
+// On Windows. The Takeover socket is what one starter at a time removes a dead holder's socket file with. The files are
+// Named apart from the Pid-file lock they replaced, so a leftover of that lock is never read as a socket
 export const INSTALL_LOCK_PATH: string =
   process.platform === "win32"
     ? `\\\\.\\pipe\\${SITE_NAME.toLowerCase()}-install-lock`

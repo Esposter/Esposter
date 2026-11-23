@@ -1,7 +1,7 @@
 import type { RegionCampsData } from "#src/models/genshinAssets/enemies/RegionCampsData";
 
-// The kinds the regions' camps place and the extra kinds given, the bounties', the weekly bosses' and the Spiral Abyss's,
-// Each once, in ascending order of its id. The enemies dataset publishes them
+// The kinds the regions' camps place and the extra kinds given, the bounties', the weekly bosses' and the Spiral
+// Abyss's, Each once, in ascending order of its id. The enemies dataset publishes them
 export const collectEnemyKindIds = (
   regionDatas: readonly RegionCampsData[],
   extraKindIds: readonly number[],

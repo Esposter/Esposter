@@ -6,8 +6,8 @@ import { MEMORY_FOLDER_NAME, MEMORY_NEXT } from "#src/services/setup/constants";
 import { getClaudeProjectSlug } from "#src/services/setup/getClaudeProjectSlug";
 import { dirname, join } from "node:path";
 
-// The main checkout's root, which every linked worktree shares with it. Read through the environment, so a machine without
-// Git gets this row's answer rather than an error that stops the whole table
+// The main checkout's root, which every linked worktree shares with it. Read through the environment, so a machine
+// Without Git gets this row's answer rather than an error that stops the whole table
 const readMainCheckoutRoot = (environment: SetupEnvironment): string | undefined => {
   const { status, stdout } = environment.run("git", ["rev-parse", "--path-format=absolute", "--git-common-dir"]);
   return status === 0 && stdout !== null ? dirname(stdout.trim()) : undefined;

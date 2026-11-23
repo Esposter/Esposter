@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: each reference's witness page is its own browser render, and parallel renders exhaust the memory each holds */
+/* oxlint-disable no-await-in-loop -- One device: each reference's witness page is its own browser render, and
+   parallel renders exhaust the memory each holds */
 import type { RadianceRow } from "#src/models/genshinParity/radiance/RadianceRow";
 import type { RadianceTally } from "#src/models/genshinParity/radiance/RadianceTally";
 import type { SubCommandsDef } from "citty";
@@ -35,8 +36,8 @@ const printRows = (rows: readonly RadianceRow[]): void => {
     );
 };
 
-// The references the table cannot read, each with the reason it is named and left out: the phone's door is framed at 4:3,
-// Which the scene's camera does not frame
+// The references the table cannot read, each with the reason it is named and left out: the phone's door is framed at
+// 4:3, Which the scene's camera does not frame
 const UNREADABLE_REFERENCES = new Map([["login-door", "the phone build's 4:3 framing is not the scene camera's"]]);
 
 // The radiance table of every login reference whose screen draws the scene, per reference and pooled over all of them.

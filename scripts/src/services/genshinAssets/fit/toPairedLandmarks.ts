@@ -9,10 +9,10 @@ import { GROUND_LAYER, INTERACTIVE_MAP_FIT_BAR } from "#src/services/genshinAsse
 import { matchPairs } from "#src/services/genshinAssets/points/matchPairs";
 import { toLandmarkArrival } from "#src/services/genshinAssets/shared/toLandmarkArrival";
 
-// The landmarks of one kind the official map labels on the ground, each paired with a transport point of the scene within
-// The fit's bar and placed at that point's arrival: its place and turn carried round the origin as the region's other places
-// Are, its id the region, the kind's word and the point's own id, which the first-unlock rewards are keyed by too. A map
-// Point of another label or on an underground layer, and a transport point no label pairs with, give none
+// The landmarks of one kind the official map labels on the ground, each paired with a transport point of the scene
+// Within The fit's bar and placed at that point's arrival: its place and turn carried round the origin as the region's
+// Other places Are, its id the region, the kind's word and the point's own id, which the first-unlock rewards are keyed
+// By too. A map Point of another label or on an underground layer, and a transport point no label pairs with, give none
 export const toPairedLandmarks = ({
   areas,
   getWorldHeight,

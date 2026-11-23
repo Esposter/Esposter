@@ -33,11 +33,11 @@ import { MAIN_BRANCH, QUEUE_BRANCH, REMOTE_MAIN_REF, REMOTE_QUEUE_REF } from "#s
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, noop, takeOne } from "@esposter/shared";
 
-// Checks the queue's bundle-size record first, then plans every window owed, reviews all of their batches in one pool, and
-// Acts on each window as it joins the passed prefix: its findings open their issues, and in steady mode `main` advances to
-// The prefix's end once that end holds `main` and a current record. A window that did not pass stops the prefix, so `main`
-// Never moves past a window no review read in full. A deadline leaves the windows past it for the next run, which the run
-// Dispatches once when nothing else stopped it.
+// Checks the queue's bundle-size record first, then plans every window owed, reviews all of their batches in one pool,
+// And Acts on each window as it joins the passed prefix: its findings open their issues, and in steady mode `main`
+// Advances to The prefix's end once that end holds `main` and a current record. A window that did not pass stops the
+// Prefix, so `main` Never moves past a window no review read in full. A deadline leaves the windows past it for the
+// Next run, which the run Dispatches once when nothing else stopped it.
 export const runReview = async ({ findingsDirectory, from, isDryRun, to }: ReviewRunInput): Promise<void> => {
   const mode = getMode(from, to);
   fetchRemote();
@@ -65,9 +65,9 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     return;
   }
 
-  // The bundle-size record is checked on the checkout the workflow built, before that checkout moves to the queue's tip. A
-  // Stale record that landed ends the run, since its push starts the run that reviews it. One that did not land, or could not
-  // Be checked, leaves `main` where it is: `verifiedTip` is set only when the record is current.
+  // The bundle-size record is checked on the checkout the workflow built, before that checkout moves to the queue's
+  // Tip. A Stale record that landed ends the run, since its push starts the run that reviews it. One that did not land,
+  // Or could not Be checked, leaves `main` where it is: `verifiedTip` is set only when the record is current.
   let verifiedTip: string | undefined;
   const recordNotices: string[] = [];
   if (mode === ReviewMode.Steady && !isDryRun) {
@@ -93,9 +93,10 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
 
   if (!isDryRun) checkoutQueue();
   const owedWindows = readReviewWindows(range);
-  // In steady mode `main` moves only to a window's end that holds it and a current record. Once `main` was merged into the
-  // Queue, the windows before the merge do not hold it, so they wait for the window that does. A window whose end holds a
-  // Stale record waits the same way, for a window that ends on a current one. A range run never moves `main`, so nothing waits.
+  // In steady mode `main` moves only to a window's end that holds it and a current record. Once `main` was merged into
+  // The Queue, the windows before the merge do not hold it, so they wait for the window that does. A window whose end
+  // Holds a Stale record waits the same way, for a window that ends on a current one. A range run never moves `main`,
+  // So nothing waits.
   const advanceables = owedWindows.map(
     ({ end }) => mode !== ReviewMode.Steady || (checkIsMainAncestor(end) && checkIsRecordVerified(end, verifiedTip)),
   );
@@ -133,7 +134,8 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
       (opened) => {
         for (const issue of opened) {
           issueNumbers.push(issue.issue);
-          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a directory the option names, empty when unset
+          // A
+          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- directory the option names, empty when unset
           if (findingsDirectory !== "") writeReviewIssueFindings(findingsDirectory, issue);
         }
         return true;
@@ -151,9 +153,9 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
 
   // The one place the run acts on windows, called as each window settles. The pool's callbacks are synchronous, so the
   // Issues and advances run one at a time in window order without a queue of their own. A window's issues open before
-  // `main` moves past it, so a finding is never left only in a run's memory. The newly passed windows open together once
-  // The last of them can move `main`, so a window that cannot waits with its issues. A window whose issues did not open
-  // Stops the run's advances there, and the next run reviews it again.
+  // `main` moves past it, so a finding is never left only in a run's memory. The newly passed windows open together
+  // Once The last of them can move `main`, so a window that cannot waits with its issues. A window whose issues did not
+  // Open Stops the run's advances there, and the next run reviews it again.
   const advancePassedWindows = (): void => {
     if (isStopped) return;
     const newlyPassed = getNewlyPassedWindowIndices(statuses, handledCount);

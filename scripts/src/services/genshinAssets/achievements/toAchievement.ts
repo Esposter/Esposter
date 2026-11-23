@@ -6,8 +6,9 @@ import { HIDDEN_SHOW_TYPE, PRIMOGEM_ITEM_ID } from "#src/services/genshinAssets/
 import { toTriggerParameters } from "#src/services/genshinAssets/achievements/toTriggerParameters";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One achievement from its row and the reward row it pays, or undefined for an achievement the game no longer offers. The
-// Reward's Primogems are the only item an achievement pays, so a row whose reward is missing from the table is refused
+// One achievement from its row and the reward row it pays, or undefined for an achievement the game no longer offers.
+// The Reward's Primogems are the only item an achievement pays, so a row whose reward is missing from the table is
+// Refused
 export const toAchievement = (
   row: ExcelAchievementRow,
   rewardMap: ReadonlyMap<number, ExcelRewardRow>,

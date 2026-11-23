@@ -6,5 +6,6 @@ export const ORIGIN: Vector = [0, 0, 0];
 export const RESIDUAL_OCTAVES = 3;
 export const RESIDUAL_SEED = 1;
 
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+// `isolatedDeclarations`
+// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
 export const NUMBER_REGEX: RegExp = /-?\d+(?:\.\d+)?/gu;

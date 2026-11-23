@@ -1,8 +1,9 @@
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
-// How many build directories hold a tracked change between a sibling's base and this worktree's. A build directory changed
-// There is a package this worktree builds again, so the fewer, the more of the sibling's recorded runs replay here
+// How many build directories hold a tracked change between a sibling's base and this worktree's. A build directory
+// Changed There is a package this worktree builds again, so the fewer, the more of the sibling's recorded runs replay
+// Here
 export const readChangedDirectoryCount = (
   candidatePath: string,
   worktreePath: string,

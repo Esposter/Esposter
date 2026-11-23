@@ -16,8 +16,8 @@ import { insertAfterLastMatch } from "#src/services/package/new/insertAfterLastM
 import { insertBeforeMatch } from "#src/services/package/new/insertBeforeMatch";
 import { insertSortedRow } from "#src/services/package/new/insertSortedRow";
 
-// The edits a new package makes to the files that already list the workspace's members. Each one edits a file's text to write the row a test reads.
-// The test is named beside the edit that writes the row
+// The edits a new package makes to the files that already list the workspace's members. Each one edits a file's text to
+// Write the row a test reads. The test is named beside the edit that writes the row
 export const getPackageEdits = (options: CreatePackageOptions): Map<string, (text: string) => string> => {
   const { description, kind, name, register } = options;
   const packageName = getPackageName(options);
@@ -39,7 +39,8 @@ export const getPackageEdits = (options: CreatePackageOptions): Map<string, (tex
     ],
     // `ledgerMembers` holds the quality ledger to every member: a new unit is unswept until a sitting reads it
     [QUALITY_LEDGER_FILE, (text) => insertAfterLastMatch(text, /^\| `packages\//u, `| \`${packagePath}\` | — | |`)],
-    // `packageInventories` holds the root README to every member, paired with its repository link and its published mark
+    // `packageInventories` holds the root README to every member, paired with its repository link and its published
+    // Mark
     [
       README_FILE,
       (text) =>

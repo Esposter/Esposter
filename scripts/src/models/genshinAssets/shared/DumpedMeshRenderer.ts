@@ -1,7 +1,8 @@
 import type { DumpedPointer } from "#src/models/genshinAssets/shared/DumpedPointer";
 
 export interface DumpedMeshRenderer {
-  // The renderer's own switch, zero where it is off. A dump that omits it leaves the renderer on, as Unity's default does
+  // The renderer's own switch, zero where it is off. A dump that omits it leaves the renderer on, as Unity's default
+  // Does
   m_Enabled?: number | undefined;
   m_GameObject: { m_PathID: string };
   m_Materials: DumpedPointer[];

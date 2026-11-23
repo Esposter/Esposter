@@ -14,7 +14,8 @@ describe(checkHasGraphInput, () => {
     expect(checkHasGraphInput([{ path, status: ChangeStatus.Modified }])).toBe(true);
   });
 
-  // The lockfile follows a manifest that is already a trigger, and a name that only ends in `package.json` is not a manifest
+  // The lockfile follows a manifest that is already a trigger, and a name that only ends in `package.json` is not a
+  // Manifest
   test.each(["packages/shared/src/index.ts", "pnpm-lock.yaml", "packages/shared/not-package.json"])(
     "%s leaves it",
     (path) => {

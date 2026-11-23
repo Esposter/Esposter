@@ -9,8 +9,8 @@ import { findRow } from "#src/services/genshinAssets/gcg/findRow";
 import { toCard } from "#src/services/genshinAssets/gcg/toCard";
 import { toCharacter } from "#src/services/genshinAssets/gcg/toCharacter";
 
-// A deck's slice, read from the dump's deck, character, skill and card rows. Its cards are the deck's distinct cards and
-// The cards its skills create, each with its name and description text ids and the effect names its skills carry
+// A deck's slice, read from the dump's deck, character, skill and card rows. Its cards are the deck's distinct cards
+// And The cards its skills create, each with its name and description text ids and the effect names its skills carry
 export const toGcgDeck = (
   deckRow: ExcelGcgDeckRow,
   characterRows: ExcelGcgCharRow[],

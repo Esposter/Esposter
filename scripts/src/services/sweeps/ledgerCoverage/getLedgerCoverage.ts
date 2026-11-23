@@ -9,10 +9,11 @@ import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normali
 
 // Each unit's state from the ledger's events, taken in the order their dates fall rather than the order the log lists
 // Them, so a carried date sits where its pass happened. A sweep raises a unit to its date and model and never lowers
-// One; a reopen clears it when it is not older than the sweep, so a sweep landing after a same-day reopen dates the unit
-// Again. A unit no sweep dates is sampled while the ledger's latest sample found no defect and neither a reopen nor a
-// Commit touching a path the unit names came after it; a unit naming no path cannot be told changed, so it stays sampled.
-// A reopen naming a whole area reopens only the units in that area; one naming a whole question reopens them all.
+// One; a reopen clears it when it is not older than the sweep, so a sweep landing after a same-day reopen dates the
+// Unit Again. A unit no sweep dates is sampled while the ledger's latest sample found no defect and neither a reopen
+// Nor a Commit touching a path the unit names came after it; a unit naming no path cannot be told changed, so it stays
+// Sampled. A reopen naming a whole area reopens only the units in that area; one naming a whole question reopens them
+// All.
 export const getLedgerCoverage = (
   ledger: string,
   units: readonly string[],

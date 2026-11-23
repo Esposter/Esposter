@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Async iteration: each bank is yielded as it is read, and one package is held open at a time with its banks read in turn from its one handle */
+/* oxlint-disable no-await-in-loop -- Async iteration: each bank is yielded as it is read, and one package is held
+   open at a time with its banks read in turn from its one handle */
 import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
 import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";
 import { SOUND_BANK_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";

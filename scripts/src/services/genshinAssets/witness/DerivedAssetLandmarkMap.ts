@@ -28,11 +28,11 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   [DerivedAssetComponent.ErinnyesForest]: {},
   [DerivedAssetComponent.EverfrozenEarth]: {},
   [DerivedAssetComponent.Fishing]: {},
-  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the bridge's
-  // Springs and the drum tower's roof corners) are all dropped: the re-extraction exports no arch or bridge mesh near the
-  // Court, and its tall Talou towers (Area_Fd_Build_FDC_Talou_A_01_Lod0, 85 metres) stand on several instances with no
-  // Way to tell which is the reference's drum tower without the pose, which cannot run here (no parity page on
-  // Localhost:3011)
+  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the
+  // Bridge's Springs and the drum tower's roof corners) are all dropped: the re-extraction exports no arch or bridge
+  // Mesh near the Court, and its tall Talou towers (Area_Fd_Build_FDC_Talou_A_01_Lod0, 85 metres) stand on several
+  // Instances with no Way to tell which is the reference's drum tower without the pose, which cannot run here (no
+  // Parity page on Localhost:3011)
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: {},
   [DerivedAssetComponent.GalesongHill]: {},
@@ -122,9 +122,10 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   [DerivedAssetComponent.LostNursery]: {},
   [DerivedAssetComponent.Minlin]: {},
   // Mondstadt's six landmarks (ParityReferenceMap's mondstadt-city-location: the towers' and the gate tower's parapets)
-  // Are unnamed: the extraction exports the city's candidate meshes (Area_MdBuild_Tower01_Lod0 and Area_MdBuild_Tower02_Lod0
-  // For the towers, Area_MdBuild_Gate02_Lod0 for the gate tower, Stages_Build_BeaconTower01 beside them), but which instance
-  // Is which landmark needs the camera the pose solves, so the map stays empty until that pose runs on the parity page
+  // Are unnamed: the extraction exports the city's candidate meshes (Area_MdBuild_Tower01_Lod0 and
+  // Area_MdBuild_Tower02_Lod0 For the towers, Area_MdBuild_Gate02_Lod0 for the gate tower, Stages_Build_BeaconTower01
+  // Beside them), but which instance Is which landmark needs the camera the pose solves, so the map stays empty until
+  // That pose runs on the parity page
   [DerivedAssetComponent.Mondstadt]: {},
   [DerivedAssetComponent.MorteRegion]: {},
   [DerivedAssetComponent.MtLaixin]: {},
@@ -134,10 +135,10 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
   // Nasha Town's seven landmarks (ParityReferenceMap's nasha-town-location: the central tower's plinth, ledge struts,
-  // Collar and column edges) are all dropped: the re-extraction exports 156 buildings, but the tower the reference shows
-  // Is a pink copper stack on its plinth with pods and pipes, and no exported mesh (Area_Ndkl_Build_NXZ_Shanghui_01 or
-  // _02, the tallest near the town, are halls 45 and 66 metres high) matches it with confidence; the pose cannot run
-  // Here (no parity page on localhost:3011)
+  // Collar and column edges) are all dropped: the re-extraction exports 156 buildings, but the tower the reference
+  // Shows Is a pink copper stack on its plinth with pods and pipes, and no exported mesh
+  // (Area_Ndkl_Build_NXZ_Shanghui_01 or _02, the tallest near the town, are halls 45 and 66 metres high) matches it
+  // With confidence; the pose cannot run Here (no parity page on localhost:3011)
   [DerivedAssetComponent.NodKrai]: {},
   [DerivedAssetComponent.NostoiRegion]: {},
   [DerivedAssetComponent.Ochkanatlan]: {},

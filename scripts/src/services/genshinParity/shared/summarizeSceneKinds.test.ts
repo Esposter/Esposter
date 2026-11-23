@@ -19,8 +19,8 @@ describe(summarizeSceneKinds, () => {
   test("prices a kind on each pass by the time its hiding saved there against the ranges either side", () => {
     expect.hasAssertions();
 
-    // The GPU slows over the run, the ranges with all drawn taking 4, 6 and 8, and a kind read against the ranges either
-    // Side of it saves what its hiding saved, not the drift
+    // The GPU slows over the run, the ranges with all drawn taking 4, 6 and 8, and a kind read against the ranges
+    // Either Side of it saves what its hiding saved, not the drift
     const passes = [
       ...[0, 1].map((frame) => toPass(VIEW_PASS, frame, 4)),
       ...[2, 3].map((frame) => toPass(VIEW_PASS, frame, 4)),

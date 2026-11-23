@@ -137,7 +137,8 @@ describe(scanSerializedFields, () => {
   test("reads a gradient a curve read three words before it would hold whole", () => {
     expect.hasAssertions();
 
-    // Times whose words read as finite floats, so eleven keys from the count on read as a curve ending past the gradient
+    // Times whose words read as finite floats, so eleven keys from the count on read as a curve ending past the
+    // Gradient
     const gradientTimes = Buffer.alloc(32);
     gradientTimes.writeUInt16LE(0x3f_80, 2);
     gradientTimes.writeUInt16LE(0x3f_80, 18);

@@ -10,9 +10,9 @@ import { listDumpFiles } from "#src/services/genshinText/listDumpFiles";
 import { listRemoteDirectory } from "#src/services/genshinText/listRemoteDirectory";
 import { writeProvenance } from "#src/services/provenance/writeProvenance";
 
-// Every readable text, table, text map and held binary the dump lacks, or holds with other content, and each binary a carried
-// Quest reads, fetched from AnimeGameData at its pinned commit. Returns a note of the count fetched and the count kept, and
-// Stamps the dump with the commit it was read at
+// Every readable text, table, text map and held binary the dump lacks, or holds with other content, and each binary a
+// Carried Quest reads, fetched from AnimeGameData at its pinned commit. Returns a note of the count fetched and the
+// Count kept, and Stamps the dump with the commit it was read at
 export const fetchDump = async (): Promise<string[]> => {
   const questListing = await listRemoteDirectory(QUEST_BINARY_DIRECTORY_PATH);
   const remoteFiles = await listDumpFiles(questListing);

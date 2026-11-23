@@ -1,10 +1,11 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal
+   would otherwise infer */
 export const TYPES_NODE_CATALOG_REGEX: RegExp = /(?<lead>"@types\/node":\s*)(?<version>\S+)/u;
 // The one node pin: `pnpm/setup` installs it on the runners, the global `vp` resolves it locally, Renovate's `nodenv`
 // Manager bumps it
 export const NODE_VERSION_FILENAME = ".node-version";
-// A manifest's `engines.node` value, wherever `node` sits among the flat `engines` object's keys, in a package.json or a
-// Lockfile root entry
+// A manifest's `engines.node` value, wherever `node` sits among the flat `engines` object's keys, in a package.json or
+// A Lockfile root entry
 export const ENGINES_NODE_REGEX: RegExp = /(?<lead>"engines":\s*\{[^{}]*?"node":\s*")[^"]*/u;
 // The `devEngines` key, after which only that field's runtime entries are edited
 export const DEV_ENGINES_KEY = '"devEngines"';

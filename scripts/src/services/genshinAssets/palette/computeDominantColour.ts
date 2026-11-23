@@ -10,8 +10,8 @@ const PALETTE_CLUSTER_COUNT = 4;
 const CHANNEL_COUNT = 3;
 
 // The colour a family paints its part with: the mean of its largest cluster of linear texels, so the most common tone
-// Wins over the lines and wear its texture carries. The spread is the root mean square difference of that cluster's texels
-// From its mean, per linear channel. Takes at least one texel
+// Wins over the lines and wear its texture carries. The spread is the root mean square difference of that cluster's
+// Texels From its mean, per linear channel. Takes at least one texel
 export const computeDominantColour = (texels: readonly Vector[]): DominantColour => {
   const clusters = clusterColours(texels, PALETTE_CLUSTER_COUNT);
   const sizes = Array.from({ length: PALETTE_CLUSTER_COUNT }, () => 0);

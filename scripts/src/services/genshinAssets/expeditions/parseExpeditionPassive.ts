@@ -12,8 +12,9 @@ const TIME_TALENT_REGEX =
 const REWARD_TALENT_REGEX =
   /^Gains (?<percent>\d+)% more rewards when dispatched on an? (?<region>\S+) Expedition for (?<hours>\d+) hours\.$/u;
 
-// The expedition talent a game description states, without its proud skill group, or undefined where the description names
-// No expedition. A region the game names but the model does not hold is an error, since the talent would then never apply
+// The expedition talent a game description states, without its proud skill group, or undefined where the description
+// Names No expedition. A region the game names but the model does not hold is an error, since the talent would then
+// Never apply
 export const parseExpeditionPassive = (
   description: string,
 ): Except<ExpeditionPassive, "proudSkillGroupId"> | undefined => {

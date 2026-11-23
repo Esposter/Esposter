@@ -25,15 +25,15 @@ import { join } from "node:path";
 import { Vector3 } from "three";
 
 // The Statue of The Seven of a component's exports as the statue kit's stacks in its frame, its root at the origin and
-// Unturned, so the Landmark's Place and turn set it down. Every statue mesh is taken into that frame by its placement and
-// Split into the pieces its triangles join into, and each piece is fitted as one upright stack or as blades along their
-// Own lengths, whichever lies nearer its surface (`fitMeshPieces`); each stack is named for the export mesh it came
-// From, so the surface pass draws each part of the statue in its own detail. Each stack's vertices carry the colour its
-// Piece's export texture paints, tinted by the export material's colour as the game's G-buffer holds it, where the vertex
-// Stands: the mean of the piece's fitted points nearest it (`createFaceColourReader`), so the stacks' colour follows
-// The export's surface over the piece rather than one colour a mesh, whose mean is read over faces no view shows.
-// Returns the record `<component>/statue` with its report. A component whose layout places no Goddess stone mesh has no
-// Statue, so it returns its note and no record
+// Unturned, so the Landmark's Place and turn set it down. Every statue mesh is taken into that frame by its placement
+// And Split into the pieces its triangles join into, and each piece is fitted as one upright stack or as blades along
+// Their Own lengths, whichever lies nearer its surface (`fitMeshPieces`); each stack is named for the export mesh it
+// Came From, so the surface pass draws each part of the statue in its own detail. Each stack's vertices carry the
+// Colour its Piece's export texture paints, tinted by the export material's colour as the game's G-buffer holds it,
+// Where the vertex Stands: the mean of the piece's fitted points nearest it (`createFaceColourReader`), so the stacks'
+// Colour follows The export's surface over the piece rather than one colour a mesh, whose mean is read over faces no
+// View shows. Returns the record `<component>/statue` with its report. A component whose layout places no Goddess stone
+// Mesh has no Statue, so it returns its note and no record
 export const fitRegionStatue = async (component: DerivedAssetComponent): Promise<GameDataBuild> => {
   const { assets } = getComponentDirectory(component);
   const meshDirectory = join(assets, AssetType.Mesh);
@@ -68,7 +68,8 @@ export const fitRegionStatue = async (component: DerivedAssetComponent): Promise
     if (!material || !diffusePath)
       throw new InvalidOperationError(Operation.Read, placement.mesh, "has no exported diffuse texture to colour it");
     const [tintRed, tintGreen, tintBlue] = readMaterialTint(material);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one mesh of thousands of vertices is read at a time, so the meshes' vertices never stack in memory
+    // Time, so the meshes' vertices never stack in memory
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one mesh of thousands of vertices is read at a
     const [{ faces, faceUvs, uvs, vertices: meshVertices }, texture] = await Promise.all([
       readObjMesh(join(meshDirectory, `${placement.mesh}.obj`)),
       readTexture(diffusePath),

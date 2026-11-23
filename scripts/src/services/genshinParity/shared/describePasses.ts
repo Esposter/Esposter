@@ -8,8 +8,8 @@ import { computeMedian } from "#src/services/recreation/statistics/computeMedian
 // On work the GPU took in earlier
 const LISTED_PASSES_PER_STATE = 6;
 
-// A state's passes by the GPU's own clock: their time a frame and how long the GPU left each queued after its submit, at
-// The median and at most, then the passes that took the most of it, each kind of pass by its encoder and attachment
+// A state's passes by the GPU's own clock: their time a frame and how long the GPU left each queued after its submit,
+// At The median and at most, then the passes that took the most of it, each kind of pass by its encoder and attachment
 export const describePasses = (passes: GpuPass[], offsetMs: number): string[] => {
   const frameGpuMsMap = new Map<number, number>();
   for (const { frame, gpuMs } of passes) frameGpuMsMap.set(frame, (frameGpuMsMap.get(frame) ?? 0) + gpuMs);

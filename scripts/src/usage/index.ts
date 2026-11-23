@@ -6,7 +6,8 @@ import { readUsageTally } from "#src/services/usage/readUsageTally";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
-// `pnpm ai:usage` — where Claude Code usage went over the last days, by bucket and family, then the heaviest transcripts
+// `pnpm ai:usage` — where Claude Code usage went over the last days, by bucket and family, then the heaviest
+// Transcripts
 await runCommand(
   defineCommand({
     args: {

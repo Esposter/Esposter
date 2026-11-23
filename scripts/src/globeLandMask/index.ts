@@ -23,8 +23,8 @@ await runCommand(
       const landMask = rasterizeLandMask(features, LAND_MASK_CELLS_PER_DEGREE);
       const landMaskPath = resolve(REPOSITORY_ROOT, LAND_MASK_PATH);
       mkdirSync(dirname(landMaskPath), { recursive: true });
-      // A file under `generated/` is committed as the formatter writes it, so the output goes through the formatter, under a name
-      // The formatter does not ignore
+      // A file under `generated/` is committed as the formatter writes it, so the output goes through the formatter,
+      // Under a name The formatter does not ignore
       const landMaskSource = JSON.stringify(landMask);
       writeFileSync(
         landMaskPath,

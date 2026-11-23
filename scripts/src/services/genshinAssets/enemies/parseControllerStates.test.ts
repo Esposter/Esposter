@@ -2,8 +2,9 @@ import { parseControllerStates } from "#src/services/genshinAssets/enemies/parse
 import { describe, expect, test } from "vitest";
 
 describe(parseControllerStates, () => {
-  // A controller as AnimeStudio's JSON export writes it: two states, the first a blend tree over clip 1 and a node naming
-  // No clip, the second over clip 0. Both path IDs are past a number's exact range, so they are kept as the text written
+  // A controller as AnimeStudio's JSON export writes it: two states, the first a blend tree over clip 1 and a node
+  // Naming No clip, the second over clip 0. Both path IDs are past a number's exact range, so they are kept as the text
+  // Written
   const CONTROLLER_JSON = `{
     "m_Controller": {
       "m_StateMachineArray": [

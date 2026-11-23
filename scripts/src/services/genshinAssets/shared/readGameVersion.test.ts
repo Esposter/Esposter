@@ -14,7 +14,8 @@ describe("readGameVersion", () => {
     rmSync(directory, { force: true, recursive: true });
   });
 
-  // The game folder is read from the environment when the constants load, so each test loads them again on its own folder
+  // The game folder is read from the environment when the constants load, so each test loads them again on its own
+  // Folder
   const importReadGameVersion = async () => {
     vi.stubEnv("GENSHIN_GAME_DIRECTORY", directory);
     vi.resetModules();

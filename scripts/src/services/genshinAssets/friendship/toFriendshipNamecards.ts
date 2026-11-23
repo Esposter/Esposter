@@ -7,8 +7,8 @@ import { FRIENDSHIP_NAMECARD_LEVEL } from "#src/services/genshinAssets/friendshi
 import { NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Each character's namecard, the item its Friendship Level's reward pays, named by that item's text id. A reward that pays
-// No item, or an item that is no namecard, is a row the dump has changed under, so it throws rather than skip
+// Each character's namecard, the item its Friendship Level's reward pays, named by that item's text id. A reward that
+// Pays No item, or an item that is no namecard, is a row the dump has changed under, so it throws rather than skip
 export const toFriendshipNamecards = (
   cardRows: readonly ExcelFetterCharacterCardRow[],
   rewardMap: ReadonlyMap<number, ExcelRewardRow>,

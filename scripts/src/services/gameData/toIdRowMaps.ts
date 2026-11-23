@@ -1,7 +1,7 @@
 import { toIdRowMap } from "#src/services/gameData/toIdRowMap";
 
-// The keys a record's rows are known by, the first that every row of both sides holds once taken: a row's own id, or the
-// Character or depot a kit's row is of
+// The keys a record's rows are known by, the first that every row of both sides holds once taken: a row's own id, or
+// The Character or depot a kit's row is of
 const ROW_ID_KEYS = ["id", "characterId", "depotId"] as const;
 
 // Both sides' rows keyed by the first id key both hold, so a table read in another order, or with a row put between two

@@ -12,8 +12,8 @@ import { findStatementKeyword } from "#src/services/genshinAssets/kits/gcsim/fin
 // Reads the if and else bodies and the switch clauses of a Go file as chains. An `if` opens a chain, and an `else` or
 // `else if` whose brace follows the previous body's close continues it. A `switch` opens a chain too, its clauses its
 // Bodies numbered from zero in the order they are written, each running to the next clause or the switch's brace.
-// Returns the branch a position sits in, innermost first, with the line the chain's last body closes on, its arm count and
-// Whether one of its arms always runs
+// Returns the branch a position sits in, innermost first, with the line the chain's last body closes on, its arm count
+// And Whether one of its arms always runs
 export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) => GcsimAttackBranch | undefined) => {
   const bodies: GoBranchBody[] = [];
   const chainEndLineMap = new Map<number, number>();
@@ -26,7 +26,8 @@ export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) 
     bodies.push({ ...frame.clause, chain: frame.chain, closePosition: position });
     frame.clause = undefined;
   };
-  // A clause belongs to the innermost open brace, so a case inside a nested function literal or an if is no clause of a switch
+  // A clause belongs to the innermost open brace, so a case inside a nested function literal or an if is no clause of a
+  // Switch
   const openClause = (position: number) => {
     const frame = openings.at(-1)?.switchFrame;
     if (frame === undefined) return;

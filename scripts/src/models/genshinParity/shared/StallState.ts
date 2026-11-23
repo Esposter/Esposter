@@ -1,5 +1,5 @@
-// What one state of the stall run drew: the frame times it took, the worst and how many ran past 50 and 250 milliseconds,
-// The programs held before and after, and each moment (from the state's first frame) the programs grew at
+// What one state of the stall run drew: the frame times it took, the worst and how many ran past 50 and 250
+// Milliseconds, The programs held before and after, and each moment (from the state's first frame) the programs grew at
 export interface StallState {
   frames: number;
   growthAt: { atMs: number; programs: number }[];

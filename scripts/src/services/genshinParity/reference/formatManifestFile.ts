@@ -8,7 +8,8 @@ import { compareText } from "@esposter/shared";
 
 // The manifest as the formatter commits it: each section's rows sorted by their name and each row's keys in code point
 // Order, so two machines' additions land as the same lines. A header key the manifest does not hold is left out, never
-// Written as a guess. The formatter, not this function, decides where a row breaks, so a re-run formats to the same text
+// Written as a guess. The formatter, not this function, decides where a row breaks, so a re-run formats to the same
+// Text
 export const formatManifestFile = ({
   animeGameDataCommit,
   gameVersion,

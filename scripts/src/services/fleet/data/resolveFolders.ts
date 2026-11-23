@@ -7,7 +7,8 @@ export const resolveFolders = (folders: string): string[] => {
   const names = folders
     .split(",")
     .map((name) => name.trim())
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a folder name from a split, empty between separators
+    // A
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- folder name from a split, empty between separators
     .filter((name) => name !== "");
   const excludedNames = names.filter((name) => EXCLUDED_FOLDERS.includes(name));
   if (excludedNames.length > 0)

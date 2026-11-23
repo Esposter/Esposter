@@ -12,7 +12,8 @@ import { GameDataset } from "genshin-world";
 import { readFileSync } from "node:fs";
 
 // The gadgets of the widget config, one row each by its id, and the Serenitea Pot's row built from its material row,
-// Published as one record of the gadgets dataset. Each gather point type is read from the gather table as the item it gives
+// Published as one record of the gadgets dataset. Each gather point type is read from the gather table as the item it
+// Gives
 export const buildGadgetRows = (cityRegionMap: ReadonlyMap<number, string>): Record<string, unknown> => {
   const { widgets } = parseMachineJson<ConfigWidgetFile>(readFileSync(CONFIG_WIDGET_PATH, "utf8"));
   const pointTypeItemIdMap = new Map(

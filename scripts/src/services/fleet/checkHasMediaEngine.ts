@@ -5,7 +5,8 @@ import { checkIsNotFound } from "#src/services/shared/checkIsNotFound";
 import { getResultAsync } from "@esposter/shared";
 
 // Whether FFmpeg lists the hardware acceleration the media engine decodes with. A missing FFmpeg is no engine, not an
-// Error; any other failure of the probe is one, since reading it as no engine would drop the capability from the profile
+// Error; any other failure of the probe is one, since reading it as no engine would drop the capability from the
+// Profile
 export const checkHasMediaEngine = async (): Promise<boolean> =>
   (await getResultAsync(() => runMachineCommand("ffmpeg", ["-hide_banner", "-hwaccels"]))).match(
     (output) => parseHardwareAccelerations(output).includes(MEDIA_ENGINE_ACCELERATION),

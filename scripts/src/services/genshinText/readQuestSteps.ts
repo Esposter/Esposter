@@ -9,20 +9,20 @@ import { QuestBanTypes, QuestObjectiveKind } from "genshin-world";
 
 // A quest's shown steps in order, and the talks offering it, read off its file in the dump's binary output by shape,
 // Since the dump scrambles every field's name each patch. Its sub quests are the list holding the most conditioned sub
-// Quests; a step's id is the number in its quest's hundred; its order the field numbering the steps from one; its finish
-// Conditions the list the most steps fill, where its fail conditions are a list only some do; and its words the field
-// Holding a hash the text map has. A step with no words is the game's own bookkeeping, never shown, and one whose
+// Quests; a step's id is the number in its quest's hundred; its order the field numbering the steps from one; its
+// Finish Conditions the list the most steps fill, where its fail conditions are a list only some do; and its words the
+// Field Holding a hash the text map has. A step with no words is the game's own bookkeeping, never shown, and one whose
 // Conditions ask nothing of the Traveler is left out and noted. A step's objectives are every condition that asks
-// Something, all of which the step needs done. A quest a talk offers opens on such a hidden step finishing on that talk,
-// So the talks the first step finishes on offer the quest when that step has no words
+// Something, all of which the step needs done. A quest a talk offers opens on such a hidden step finishing on that
+// Talk, So the talks the first step finishes on offer the quest when that step has no words
 export const readQuestSteps = (
   questBinary: Record<string, unknown>,
   questId: number,
   checkIsText: (hash: number) => boolean,
   checkIsPlayableTalk: (talkId: string) => boolean = () => true,
 ): { notes: string[]; offerTalkIds: string[]; steps: QuestStep[] } => {
-  // The sub quests are the list holding the most sub quests that hold a condition, so one sub quest with none, a step the
-  // Game finishes by script, does not hide the rest; that one is left out below as asking nothing
+  // The sub quests are the list holding the most sub quests that hold a condition, so one sub quest with none, a step
+  // The Game finishes by script, does not hide the rest; that one is left out below as asking nothing
   const [subQuests] = Object.values(questBinary)
     .filter(
       (field): field is Record<string, unknown>[] =>
@@ -56,7 +56,8 @@ export const readQuestSteps = (
   );
   const [firstSubQuest] = sortedSubQuests;
   const notes: string[] = [];
-  // A talk the dump holds no lines for is a scripted performance, which the Traveler takes no part in, so it is left out
+  // A talk the dump holds no lines for is a scripted performance, which the Traveler takes no part in, so it is left
+  // Out
   const checkTalkIsPlayable = (talkId: string): boolean => {
     if (checkIsPlayableTalk(talkId)) return true;
     notes.push(`${questId}'s talk ${talkId} holds no lines in the dump, a scripted performance, so it is left out`);
@@ -73,8 +74,9 @@ export const readQuestSteps = (
       : [];
   const steps = sortedSubQuests.flatMap((subQuest) => {
     const numbers = Object.values(subQuest).filter((value) => typeof value === "number");
-    // A world quest's step is the number in its quest's hundred, and a city's opening sub quest's step is its own id. The
-    // Dump repeats the quest's own id in every sub quest, so that number is read only when no step number is in the hundred
+    // A world quest's step is the number in its quest's hundred, and a city's opening sub quest's step is its own id.
+    // The Dump repeats the quest's own id in every sub quest, so that number is read only when no step number is in the
+    // Hundred
     const id =
       numbers.find((value) => value !== questId && Math.floor(value / 100) === questId) ??
       numbers.find((value) => value === questId);

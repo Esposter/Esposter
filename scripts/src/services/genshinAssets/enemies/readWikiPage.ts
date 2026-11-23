@@ -6,8 +6,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WIKI_API_MAX_BYTES } from "genshin-persona/src/services/constants.ts";
 import { writeFileSync } from "node:fs";
 
-// Fetches one wiki page through the wiki's API into its cache file, checking that the answer is a page before it is kept:
-// A cached refusal or missing page would never be fetched again
+// Fetches one wiki page through the wiki's API into its cache file, checking that the answer is a page before it is
+// Kept: A cached refusal or missing page would never be fetched again
 export const readWikiPage = async (cacheDirectory: string, title: string): Promise<void> => {
   const searchParams = new URLSearchParams({
     action: "query",

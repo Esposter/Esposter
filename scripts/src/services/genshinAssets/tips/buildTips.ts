@@ -9,8 +9,8 @@ import { toTipRecords } from "#src/services/genshinAssets/tips/toTipRecords";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { tipSchema } from "genshin-world";
 
-// Every tutorial tip the game's tables hold, checked against the world's schema, with a note of how many the Archive lists
-// And how many a watcher's trigger shows
+// Every tutorial tip the game's tables hold, checked against the world's schema, with a note of how many the Archive
+// Lists And how many a watcher's trigger shows
 export const buildTips = (): { notes: string[]; tips: Tip[] } => {
   const tips = tipSchema
     .array()

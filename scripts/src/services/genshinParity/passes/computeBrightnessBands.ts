@@ -34,9 +34,9 @@ const getLightnessBand = (lightness: number): BrightnessBand => {
 const checkIsAboveThreshold = (reference: Buffer, pixel: number): boolean =>
   [0, 1, 2].some((channel) => (reference[pixel * 3 + channel] ?? 0) > BLOOM_THRESHOLD_SHADE);
 
-// Each scored pixel's lightness error, ours less the reference, sorted into the lightness band the reference's lightness
-// Falls in, and into the above-threshold band too where a reference channel is over the bloom's threshold. The bands
-// Are read over the same pixels for both frames, so a pixel moves between them by the reference alone
+// Each scored pixel's lightness error, ours less the reference, sorted into the lightness band the reference's
+// Lightness Falls in, and into the above-threshold band too where a reference channel is over the bloom's threshold.
+// The bands Are read over the same pixels for both frames, so a pixel moves between them by the reference alone
 export const computeBrightnessBands = (
   reference: Buffer,
   ours: Buffer,

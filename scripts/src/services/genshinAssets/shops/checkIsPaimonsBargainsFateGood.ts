@@ -8,9 +8,9 @@ import {
 } from "#src/services/genshinAssets/shops/constants";
 import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodCosts";
 
-// Whether a good is one of Paimon's Bargains' Fates bought with a Masterless currency: a monthly good of its shop that is
-// Not part of a rotation and costs no Primogems, Genesis Crystals or Mora. The rotation and the weapons and materials are
-// The next step, and the Primogem Fates are the inventory's
+// Whether a good is one of Paimon's Bargains' Fates bought with a Masterless currency: a monthly good of its shop that
+// Is Not part of a rotation and costs no Primogems, Genesis Crystals or Mora. The rotation and the weapons and
+// Materials are The next step, and the Primogem Fates are the inventory's
 export const checkIsPaimonsBargainsFateGood = (row: ExcelShopGoodsRow): boolean => {
   const costs = getShopGoodCosts(row);
   return (

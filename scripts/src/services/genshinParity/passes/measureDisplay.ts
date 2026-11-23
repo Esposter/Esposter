@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: one browser is open at a time, and each reference's samples are read and solved before the next browser opens */
+/* oxlint-disable no-await-in-loop -- One device: one browser is open at a time, and each reference's samples are
+   read and solved before the next browser opens */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
@@ -20,12 +21,12 @@ const MIN_DISPLAY = 0.01;
 // Any two lights lie on a plane through black, so fewer pixels than three lay flat under every contrast
 const MIN_SAMPLE_COUNT = 3;
 // The display pass: at each current build's reference's camera, every interior pixel of the exports' parts
-// (`readDisplaySamples`), and the tone curve's contrast its light lies flattest under (`solveToneContrast`). Its reading
-// Is how much more the shipped contrast leaves than that one, gated where the profile's other values stand well apart,
-// And a reference with too few pixels to read fails it. The curve's exposure only scales the light the light pass
-// Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over the brightest pixels of each
-// Reference whose screen draws the bloom (`getBloomReferenceIds`), our frame drawn with the game's bloom less ours drawn
-// Without it, held only strictly below zero, where the drawn bloom closes
+// (`readDisplaySamples`), and the tone curve's contrast its light lies flattest under (`solveToneContrast`). Its
+// Reading Is how much more the shipped contrast leaves than that one, gated where the profile's other values stand well
+// Apart, And a reference with too few pixels to read fails it. The curve's exposure only scales the light the light
+// Pass Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over the brightest
+// Pixels of each Reference whose screen draws the bloom (`getBloomReferenceIds`), our frame drawn with the game's bloom
+// Less ours drawn Without it, held only strictly below zero, where the drawn bloom closes
 export const measureDisplay = async (
   component: DerivedAssetComponent,
   pageRoot?: string,

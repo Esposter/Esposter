@@ -10,8 +10,8 @@ import { runGh } from "#src/services/shared/runGh";
 import { runGit } from "#src/services/shared/runGit";
 import { takeOne } from "@esposter/shared";
 
-// Lands the settler's commits, then closes the issue with the outcome of each finding. Commits that do not land leave the
-// Issue open, so the next run settles it again from the queue's tip. Returns whether the issue closed.
+// Lands the settler's commits, then closes the issue with the outcome of each finding. Commits that do not land leave
+// The Issue open, so the next run settles it again from the queue's tip. Returns whether the issue closed.
 export const closeSettledIssue = (issue: ReviewIssue, dispositions: ReviewSettlementDisposition[]): boolean => {
   const lines = getReviewIssueFindingLines(issue.body);
   const isAhead = runGit(["rev-list", "--count", `${REMOTE_QUEUE_REF}..HEAD`]).trim() !== "0";

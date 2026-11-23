@@ -10,8 +10,9 @@ import { readLuaOpcodeStatistics } from "#src/services/recreation/lua/readLuaOpc
 // The six-bit opcode field's every number, the ones a chunk never uses listed as unknown rather than guessed
 const OPCODE_FIELD_COUNT = 64;
 
-// A report on a raw export's instructions, read in the dialect given without a mapping: each opcode number's operand ranges, how often
-// Its B and C carry the constant flag, and the stock opcode the constraints give it, with the constraint that decided it
+// A report on a raw export's instructions, read in the dialect given without a mapping: each opcode number's operand
+// Ranges, how often Its B and C carry the constant flag, and the stock opcode the constraints give it, with the
+// Constraint that decided it
 export const formatLuaDialectReport = async (file: string, dialect: LuaDialect): Promise<string> => {
   const luaFunction = await readLengthPrefixedChunk(file, dialect);
   const functionCount = flattenLuaFunctions(luaFunction).length;

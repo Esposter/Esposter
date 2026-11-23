@@ -2,7 +2,8 @@ import type { Socket } from "node:net";
 
 import { createConnection } from "node:net";
 
-// Connects to the socket path: a connection is a live holder's, and a failed connect rejects with what the path holds, if anything
+// Connects to the socket path: a connection is a live holder's, and a failed connect rejects with what the path holds,
+// If anything
 export const probeSocketLock = (path: string): Promise<Socket> =>
   new Promise<Socket>((resolve, reject) => {
     const socket = createConnection(path);

@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: one half is drawn after the other, and one half is read after the other, on one page */
+/* oxlint-disable no-await-in-loop -- One device: one half is drawn after the other, and one half is read after the
+   other, on one page */
 import type { Targets } from "#src/models/genshinParity/passes/Targets";
 import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
 import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
@@ -37,7 +38,8 @@ export const measureEnvelope = async (
   const exportsTargets = toTargets(exportsRead);
   const maskOf = ({ part }: Targets) => readFamilyMask(part, family, width * height);
   const exportsMask = maskOf(exportsTargets);
-  // The families are the scene's, not the frame's, so an Oak the reference's camera does not see has no envelope to read
+  // The families are the scene's, not the frame's, so an Oak the reference's camera does not see has no envelope to
+  // Read
   if (!exportsMask.includes(1)) return [];
   const halves: Targets[] = [];
   for (const leafHalf of [0, 1] as const) {

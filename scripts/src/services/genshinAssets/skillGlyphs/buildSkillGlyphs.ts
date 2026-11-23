@@ -15,15 +15,16 @@ import { settleAll } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world";
 
-// The talents traced at once: each trace holds a whole enlarged icon while it runs, so the pool bounds how many are held
+// The talents traced at once: each trace holds a whole enlarged icon while it runs, so the pool bounds how many are
+// Held
 const TALENT_TRACE_CONCURRENCY = 4;
 
 // Every playable character's skill and burst icons as the HUD's buttons carry them, each traced from the wiki's render
-// Of its talent (`File:Talent <Name>.png`) by `traceToneLayers`, one entry a character of the hosted `skillGlyphs` index,
-// And the loader map's source naming the characters it holds, written only once published. A talent is named in English
-// From the first of the character's skill Sets that names both (`getCharacterSkillDepotRows`), and the wiki files a
-// Name's colons as nothing or as a dash, so both titles are asked for. A character the wiki holds either icon of under
-// Neither is left out and noted
+// Of its talent (`File:Talent <Name>.png`) by `traceToneLayers`, one entry a character of the hosted `skillGlyphs`
+// Index, And the loader map's source naming the characters it holds, written only once published. A talent is named in
+// English From the first of the character's skill Sets that names both (`getCharacterSkillDepotRows`), and the wiki
+// Files a Name's colons as nothing or as a dash, so both titles are asked for. A character the wiki holds either icon
+// Of under Neither is left out and noted
 export const buildSkillGlyphs = async (): Promise<{
   loaderMapSource: string;
   notes: string[];

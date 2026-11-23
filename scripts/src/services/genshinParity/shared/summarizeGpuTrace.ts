@@ -8,11 +8,11 @@ import { describeFrame } from "#src/services/genshinParity/shared/describeFrame"
 import { describePasses } from "#src/services/genshinParity/shared/describePasses";
 import { summarizeSceneKinds } from "#src/services/genshinParity/shared/summarizeSceneKinds";
 
-// The GPU calls behind each stall: the cold orbit's slowest frame, then every frame past 50 ms in the other states. A frame's
-// Gap runs from its start to the next frame's, and the calls it made are the ones its animation frame ran. Each state first
-// Reads its own calls by cause, every call started between its first and its last frame, then, where the adapter has
-// Timestamp queries, the GPU's own time on the passes encoded in those frames; then each kind of the scene's objects
-// Priced on each pass, where the run hid them in turn
+// The GPU calls behind each stall: the cold orbit's slowest frame, then every frame past 50 ms in the other states. A
+// Frame's Gap runs from its start to the next frame's, and the calls it made are the ones its animation frame ran. Each
+// State first Reads its own calls by cause, every call started between its first and its last frame, then, where the
+// Adapter has Timestamp queries, the GPU's own time on the passes encoded in those frames; then each kind of the
+// Scene's objects Priced on each pass, where the run hid them in turn
 export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): string[] => {
   const timeFrameIndexMap = new Map(trace.times.map((time, index) => [time, index]));
   const lines: string[] = trace.passes ? [] : ["the adapter has no timestamp queries, so no pass is timed on the GPU"];

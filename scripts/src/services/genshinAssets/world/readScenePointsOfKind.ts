@@ -7,8 +7,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// Every point of the scene of the exemplar's kind, each by its id. Nothing in the dump tells one kind of point from another
-// But the obfuscated type it is written as, so the kind is the exemplar's, and a file without the exemplar throws
+// Every point of the scene of the exemplar's kind, each by its id. Nothing in the dump tells one kind of point from
+// Another But the obfuscated type it is written as, so the kind is the exemplar's, and a file without the exemplar
+// Throws
 export const readScenePointsOfKind = async ({
   category,
   file,

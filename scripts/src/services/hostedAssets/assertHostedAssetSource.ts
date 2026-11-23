@@ -3,9 +3,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 import { extname } from "node:path";
 
-// Refuses a source file the placement rules keep out of a product's objects, naming the file, before any object is written.
-// An extension no content type names has no object to serve as a hosted file, so the file is refused rather than served
-// Under a guessed type
+// Refuses a source file the placement rules keep out of a product's objects, naming the file, before any object is
+// Written. An extension no content type names has no object to serve as a hosted file, so the file is refused rather
+// Than served Under a guessed type
 export const assertHostedAssetSource = ({ bytes, path }: { bytes: number; path: string }): void => {
   const extension = extname(path);
   if (UNCOMPRESSED_AUDIO_EXTENSIONS.has(extension))

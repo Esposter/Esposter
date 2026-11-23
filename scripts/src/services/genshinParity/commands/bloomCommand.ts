@@ -5,8 +5,8 @@ import { buildBloomAblationTable } from "#src/services/genshinParity/passes/buil
 import { readBloomAblation } from "#src/services/genshinParity/passes/readBloomAblation";
 import { defineCommand } from "citty";
 
-// The bloom ablation: the Display pass's bloom reading over each structure of the bloom chain, at the display width and at
-// The reference's own width resized, as a table. Its last line is the rows as JSON
+// The bloom ablation: the Display pass's bloom reading over each structure of the bloom chain, at the display width and
+// At The reference's own width resized, as a table. Its last line is the rows as JSON
 export const bloomCommand: SubCommandsDef[string] = defineCommand({
   meta: {
     description:

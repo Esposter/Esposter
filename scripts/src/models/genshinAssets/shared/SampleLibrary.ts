@@ -1,5 +1,5 @@
-// The openly licensed sample libraries the music's instruments are chosen from, each by its repository's name, every one
-// Dedicated to the public domain under CC0: Versilian Studios' community sample library and its chamber orchestra's
+// The openly licensed sample libraries the music's instruments are chosen from, each by its repository's name, every
+// One Dedicated to the public domain under CC0: Versilian Studios' community sample library and its chamber orchestra's
 // Community edition, and from the SFZ instruments collection a double bass, a cello and a piano
 export const SampleLibrary = {
   DsmolkenDoubleBass: "dsmolken.double-bass",

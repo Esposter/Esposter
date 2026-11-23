@@ -17,8 +17,8 @@ const RIPPLE_TARGETS = new Map([
 ]);
 
 // Gravity Ripple's hits, one per reaction the gravity tick fires: each reaction's hitmarks from the constant its switch
-// Case names, the bloom's travel added to each, and a ripple of several hits written as a list the record reads by index.
-// Its literal sets no PoiseDMG, so it deals none, as a named hit without poise does
+// Case names, the bloom's travel added to each, and a ripple of several hits written as a list the record reads by
+// Index. Its literal sets no PoiseDMG, so it deals none, as a named hit without poise does
 export const addGcsimGravityRippleCandidates = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
   { config, constantMap, gravityRipples = [] }: GcsimCharacter,

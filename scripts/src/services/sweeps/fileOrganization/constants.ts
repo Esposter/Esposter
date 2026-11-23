@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would
+   otherwise infer */
 export const TYPE_KINDS: readonly string[] = ["interface", "type"];
 export const LOCAL_TYPE_REGEX: RegExp = /^(?:interface|type) (?<name>\w+)/gmu;
 // The multi-export files the skill sanctions by name: a constants file and its test and bench twins

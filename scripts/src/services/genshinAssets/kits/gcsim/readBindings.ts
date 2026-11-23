@@ -5,9 +5,9 @@ import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/ki
 // The compound assignment operators a rebinding's `=` follows, as an alternation of their escaped text
 const COMPOUND_OPERATOR_PATTERN = GO_COMPOUND_ASSIGNMENT_OPERATORS.map((operator) => RegExp.escape(operator)).join("|");
 
-// The bindings and assignments of a name in a function's lines: each `name := expr`, `var name = expr` or `name = expr`,
-// A `var name type` that gives it no expression, and each other place a name is bound, such as a range or a second
-// Declaration, which gives no expression
+// The bindings and assignments of a name in a function's lines: each `name := expr`, `var name = expr` or `name =
+// Expr`, A `var name type` that gives it no expression, and each other place a name is bound, such as a range or a
+// Second Declaration, which gives no expression
 export const readBindings = (lines: readonly string[], [start, end]: [number, number], name: string): GoBinding[] => {
   const bindings: GoBinding[] = [];
   const assignmentRegex = new RegExp(

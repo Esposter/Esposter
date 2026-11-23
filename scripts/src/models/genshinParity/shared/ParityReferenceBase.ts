@@ -25,21 +25,21 @@ export interface ParityReferenceBase {
   // Corner, which `pose` solves the camera from
   landmarks?: Record<string, [number, number]>;
   // The rectangles within the region a comparison scores, in the reference's own pixels: every other pixel is masked
-  // Out of the mean difference and FLIP, so a painted terrain the page does not draw never counts. The whole region when
-  // Absent
+  // Out of the mean difference and FLIP, so a painted terrain the page does not draw never counts. The whole region
+  // When Absent
   mask?: ImageRegion[];
-  // The interface's own pieces a backdrop's clean plate fills, each from the pixels around it, for a screen scored whole
-  // Over a scene: the world between them stays the frame's own, so every piece is scored over what lies behind it. The
-  // Scored region alone when absent
+  // The interface's own pieces a backdrop's clean plate fills, each from the pixels around it, for a screen scored
+  // Whole Over a scene: the world between them stays the frame's own, so every piece is scored over what lies behind
+  // It. The Scored region alone when absent
   plate?: ImageRegion[];
-  // Where the screenshot `<id>.plate.webp` the plate's pixels come from in place of the reference's was sampled from: the
-  // World a screen is laid over, which the still shows nothing of, as the game draws it
+  // Where the screenshot `<id>.plate.webp` the plate's pixels come from in place of the reference's was sampled from:
+  // The World a screen is laid over, which the still shows nothing of, as the game draws it
   plateSource?: string;
-  // The pixel, in the reference's own, the recording's pointer rests at, which the shot moves the page's pointer to, so a
-  // Piece the game lights under the pointer is lit in both
+  // The pixel, in the reference's own, the recording's pointer rests at, which the shot moves the page's pointer to, so
+  // A Piece the game lights under the pointer is lit in both
   pointer?: [number, number];
-  // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera pass's
-  // Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
+  // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera
+  // Pass's Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
   poseBar?: number;
   // The props the screen is shot with in place of its fixture's, where one screen is judged against several references
   // (a scene at each time of day)
@@ -53,11 +53,11 @@ export interface ParityReferenceBase {
   // The ground behind it in the reference's own pixels, so a name's strokes count and the painted terrain between them,
   // Which the page does not draw, never does
   silhouettes?: ParitySilhouette[];
-  // The fixture's variant the screen is shot in, by its name in the fixture's `variants`, for a state its props alone do
-  // Not draw, such as the logo a language's client shows
+  // The fixture's variant the screen is shot in, by its name in the fixture's `variants`, for a state its props alone
+  // Do Not draw, such as the logo a language's client shows
   variant?: string;
   // The left edge, in the reference's own pixels, of the game window a pillarboxed frame draws the screen in. The page
-  // Places the screen's 1920 by 1080 canvas there at a unit of one, as the game draws its interface at the window's height,
-  // Overflowing to the right and clipped by the frame, so the screen carries no offset of its own
+  // Places the screen's 1920 by 1080 canvas there at a unit of one, as the game draws its interface at the window's
+  // Height, Overflowing to the right and clipped by the frame, so the screen carries no offset of its own
   windowLeft?: number;
 }

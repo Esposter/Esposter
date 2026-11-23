@@ -3,7 +3,8 @@ import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 
-// The index of every block indexed so far, found by listing the index's folder, or none before the first index is written
+// The index of every block indexed so far, found by listing the index's folder, or none before the first index is
+// Written
 export const readUiIndexPaths = async (): Promise<string[]> => {
   if (!existsSync(UI_INDEX_DIRECTORY)) return [];
   const names = await readdir(UI_INDEX_DIRECTORY);

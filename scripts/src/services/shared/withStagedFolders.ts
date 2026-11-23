@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Committed prefix: a failure stops the folders behind it, and each folder swapped before it stays swapped */
+/* oxlint-disable no-await-in-loop -- Committed prefix: a failure stops the folders behind it, and each folder
+   swapped before it stays swapped */
 import { getResultAsync, noop, typedFromEntries, withFinalizerAsync } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, rename, rm } from "node:fs/promises";
@@ -6,13 +7,14 @@ import { basename, dirname, join } from "node:path";
 
 // Runs `run` on a staged copy of each folder: an empty sibling made beside it with `mkdtemp`, so the rename that swaps
 // It in stays on one volume. A copy replaces its folder only once `run` has finished, and the folder it replaces is set
-// Aside until the copy is in place, so a swap that fails puts it back (or logs where it remains, when that put-back fails
-// Too) and a run that fails leaves every folder as it was. A copy is removed on success and on failure alike
+// Aside until the copy is in place, so a swap that fails puts it back (or logs where it remains, when that put-back
+// Fails Too) and a run that fails leaves every folder as it was. A copy is removed on success and on failure alike
 export const withStagedFolders = <K extends string, R>(
   folders: Record<K, string>,
   run: (staged: Record<K, string>) => Promise<R>,
 ): Promise<R> => {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.keys types each key as a string, and the folders' keys are the record's own K, which the compiler cannot relate to its type
+  // Object.keys types each key as a string, and the folders' keys are the record's
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- own K, which the compiler cannot relate to its type
   const keys = Object.keys(folders) as K[];
   const staged = new Map<K, string>();
   // Made at once, and the finalizer waits for every one to settle, so a copy still being made when another fails is

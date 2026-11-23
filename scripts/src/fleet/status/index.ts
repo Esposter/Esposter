@@ -11,8 +11,8 @@ import { formatAge } from "#src/services/shared/formatAge";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// `pnpm ai:fleet:status` — every machine's last sample, every claim's holder, age and state, and every unit waiting on a
-// Blocker, fetched fresh with the pruned refs gone (the throughput skill, `references/fleet.md`)
+// `pnpm ai:fleet:status` — every machine's last sample, every claim's holder, age and state, and every unit waiting on
+// A Blocker, fetched fresh with the pruned refs gone (the throughput skill, `references/fleet.md`)
 await runCommand(
   defineCommand({
     meta: {
@@ -38,7 +38,8 @@ await runCommand(
         ];
       });
       const waiting = readFleetEntries()
-        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a blocker the fleet record holds, empty when none
+        // A
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- blocker the fleet record holds, empty when none
         .entries.filter(({ waiting: blocker }) => blocker !== "")
         .map(({ id, waiting: blocker }) => [id, blocker]);
       console.info("machines");

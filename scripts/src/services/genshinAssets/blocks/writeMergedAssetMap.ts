@@ -5,8 +5,8 @@ import { readFileLines } from "#src/services/genshinAssets/blocks/readFileLines"
 import { once } from "node:events";
 import { createWriteStream } from "node:fs";
 
-// Writes the asset maps of the shards as one, a line at a time: each shard's file read as lines, the merged lines written
-// As they come, waiting on the output's drain so the map is never held whole
+// Writes the asset maps of the shards as one, a line at a time: each shard's file read as lines, the merged lines
+// Written As they come, waiting on the output's drain so the map is never held whole
 export const writeMergedAssetMap = async (
   shards: AssetMapShard[],
   blocksRoot: string,

@@ -7,7 +7,8 @@ import { readLengthPrefixedChunk } from "#src/services/recreation/lua/readLength
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { join, parse } from "node:path";
 
-// The globals a scene script sets are written beside the export as `<name>.json`, stamped with the provenance that made them
+// The globals a scene script sets are written beside the export as `<name>.json`, stamped with the provenance that made
+// Them
 export const exportSceneScript = async (file: string, dialect: LuaDialect): Promise<Record<string, unknown>> => {
   const globals = evaluateLuaDataChunk(await readLengthPrefixedChunk(file, dialect), dialect);
   const { dir: directory, name } = parse(file);

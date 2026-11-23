@@ -35,7 +35,8 @@ export const familyLabelsCommand: SubCommandsDef[string] = defineCommand({
     if (!enemyCategory)
       throw new InvalidOperationError(Operation.Read, "the enemy category", "is in no official map label tree");
     console.log(await readEnemyWikiPages(ENEMY_FAMILY_PAGE_TITLES, isDryRun));
-    // A dry run fetches nothing, so with a family page still uncached the map cannot be built and only the listing shows
+    // A dry run fetches nothing, so with a family page still uncached the map cannot be built and only the listing
+    // Shows
     const isEveryPageCached = ENEMY_FAMILY_PAGE_TITLES.every((title) =>
       checkWikiPageCached(WIKI_CACHE_DIRECTORY, title),
     );

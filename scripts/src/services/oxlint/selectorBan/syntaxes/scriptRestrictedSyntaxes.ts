@@ -46,10 +46,11 @@ const CALLABLE_MEMBER_SELECTOR = `:matches(Property, PropertyDefinition, MethodD
 export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
   bans: [
     {
-      // A Durable Object is named by its namespace only inside `getObjectStub`, so every stub a Worker holds runs its RPC methods
-      // Through the object's invoke, which records the reads of each call and publishes its writes. A stub named any other way
-      // Records nothing and publishes nothing. A topic's Topic object is the one exception, named behind a disable by
-      // `publishTopics` and by a socket's subscriptions in UserObject, since it takes publishes and subscriptions, not invocations
+      // A Durable Object is named by its namespace only inside `getObjectStub`, so every stub a Worker holds runs its
+      // RPC methods Through the object's invoke, which records the reads of each call and publishes its writes. A stub
+      // Named any other way Records nothing and publishes nothing. A topic's Topic object is the one exception, named
+      // Behind a disable by `publishTopics` and by a socket's subscriptions in UserObject, since it takes publishes and
+      // Subscriptions, not invocations
       message:
         "Name a Durable Object through `getObjectStub` (`@esposter/db`), so its invoke records each call's reads and publishes its writes. See openspec/changes/archive/2026-11-20-architecture-inferred-live-topics/design.md (Object invocations).",
       selector: "MemberExpression[property.name=/^(idFromName|idFromString|newUniqueId|getByName)$/]",
@@ -130,15 +131,15 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
       selector: "VariableDeclarator[id.name=/^get(Is|Has)[A-Z]/]",
     },
     {
-      // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name
-      // Reads as a value at every call site. The annotation is what makes it decidable without types — a
-      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`, and so
-      // Is a parameter typed as one: a callback handed in is called at every site that reads it. Each shape a
-      // Named function takes is matched: a declaration, a variable, a method, an object or class member, and a
-      // Member typed as a function (`isB?: (c) => boolean`), which an interface declares without a body. An
-      // Unannotated one is held too when its body is a boolean expression (`isA = (b) => b === 1`), since that is a
-      // Boolean without the annotation; a boolean that comes from a call or a variable needs the checker, so the review
-      // Holds it. An async one resolves to that boolean and is still a call, so it is held the same way (`checkHasBlob`)
+      // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name Reads as a
+      // Value at every call site. The annotation is what makes it decidable without types — a Function whose declared
+      // Return is `boolean` or a type predicate answers with one and is `check*`, and so Is a parameter typed as one: a
+      // Callback handed in is called at every site that reads it. Each shape a Named function takes is matched: a
+      // Declaration, a variable, a method, an object or class member, and a Member typed as a function (`isB?: (c) =>
+      // Boolean`), which an interface declares without a body. An Unannotated one is held too when its body is a
+      // Boolean expression (`isA = (b) => b === 1`), since that is a Boolean without the annotation; a boolean that
+      // Comes from a call or a variable needs the checker, so the review Holds it. An async one resolves to that
+      // Boolean and is still a call, so it is held the same way (`checkHasBlob`)
       message:
         "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
       selector: [
@@ -256,9 +257,9 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
         "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
     },
     {
-      // `z.uuid()` accepts versions 1 to 8 and the nil UUID while every id the repo holds is a v7, so a field written with it
-      // Would validate more than the data is, and nothing else would fail. The drizzle-zod mapping of an id column is
-      // A plain string, which no selector sees, and `id-validation`'s design names it
+      // `z.uuid()` accepts versions 1 to 8 and the nil UUID while every id the repo holds is a v7, so a field written
+      // With it Would validate more than the data is, and nothing else would fail. The drizzle-zod mapping of an id
+      // Column is A plain string, which no selector sees, and `id-validation`'s design names it
       message: "Validate an id with `z.uuidv7()`, never `z.uuid()`. See the zod skill.",
       selector: "CallExpression[callee.object.name='z'][callee.property.name='uuid']",
     },
@@ -345,8 +346,8 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
     },
     {
       // Encoding a text only to read its length allocates every byte to count them. `getUtf8ByteLength` writes into one
-      // Scratch buffer kept for every call, which is faster at every length and allocates nothing. An encode whose bytes
-      // Are used — a hash, a signature, a body — is not matched
+      // Scratch buffer kept for every call, which is faster at every length and allocates nothing. An encode whose
+      // Bytes Are used — a hash, a signature, a body — is not matched
       message:
         "Count a text's UTF-8 bytes with `getUtf8ByteLength(text)` from `@esposter/shared`, never `encode(text).byteLength` or `.length`.",
       selector:
@@ -421,10 +422,10 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
       selector: "CallExpression[callee.property.name='nullable']",
     },
     {
-      // A missing key and an explicit `undefined` mean the same thing everywhere, so no schema of ours tells them apart:
-      // A field `.exactOptional()` makes would refuse the `undefined` a client or superjson sends for "not set". A
-      // Schema mirroring a library's type, whose optional key takes no `undefined`, names that type in its annotation,
-      // And the compiler holds the mirror to it, so a declaration with a type annotation is left to it
+      // A missing key and an explicit `undefined` mean the same thing everywhere, so no schema of ours tells them
+      // Apart: A field `.exactOptional()` makes would refuse the `undefined` a client or superjson sends for "not set".
+      // A Schema mirroring a library's type, whose optional key takes no `undefined`, names that type in its
+      // Annotation, And the compiler holds the mirror to it, so a declaration with a type annotation is left to it
       message:
         "Use `.optional()`, never `.exactOptional()` — a missing key and an explicit `undefined` mean the same thing. Only a schema annotated with the library type it mirrors may use it. See the absent-values skill.",
       selector:

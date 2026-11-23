@@ -44,12 +44,15 @@ export const EMPTY_ITEM_ID = 0;
 // The Traveler's two avatars, and the element their form is by default until a statue gives them another
 export const TRAVELER_AVATAR_IDS: ReadonlySet<number> = new Set([10000005, 10000007]);
 export const TRAVELER_DEFAULT_ELEMENT: Element = Element.Anemo;
-// The last level a combat talent's materials raise it to. Each level past it is a constellation's, which no material pays for
+// The last level a combat talent's materials raise it to. Each level past it is a constellation's, which no material
+// Pays for
 export const MAX_MATERIAL_TALENT_LEVEL = 10;
-// The seven elements as the game's tables spell them, which a skill's energy names and each character's element is read from
+// The seven elements as the game's tables spell them, which a skill's energy names and each character's element is read
+// From
 export const ElementNameSet: ReadonlySet<string> = new Set<string>(Object.values(Element));
-// The five kinds of weapon the open world gives a character, as the game's tables spell them. The tables hold a sixth, the
-// Crossbow, wielded only by the Traveler's discarded shooter forms, so a character or weapon of it is no one's to play
+// The five kinds of weapon the open world gives a character, as the game's tables spell them. The tables hold a sixth,
+// The Crossbow, wielded only by the Traveler's discarded shooter forms, so a character or weapon of it is no one's to
+// Play
 export const WeaponTypeNameSet: ReadonlySet<string> = new Set<string>(Object.values(WeaponType));
 // The depot each rarity's standard pieces draw their minor affixes from, the others being the events' and bosses' own
 export const ArtifactRarityAffixDepotMap: ReadonlyMap<number, number> = new Map([
@@ -59,21 +62,24 @@ export const ArtifactRarityAffixDepotMap: ReadonlyMap<number, number> = new Map(
   [4, 401],
   [5, 501],
 ]);
-// The item uses that add EXP to an artifact, a character and a weapon, their first parameter the EXP one of the item gives
+// The item uses that add EXP to an artifact, a character and a weapon, their first parameter the EXP one of the item
+// Gives
 export const ARTIFACT_EXP_ITEM_USE = "ITEM_USE_ADD_RELIQUARY_EXP";
 export const CHARACTER_EXP_ITEM_USE = "ITEM_USE_ADD_EXP";
 export const WEAPON_EXP_ITEM_USE = "ITEM_USE_ADD_WEAPON_EXP";
 // The game's character levelling table, and its extra-level table of the lifts past a level cap
 export const AVATAR_LEVEL_TABLE_NAME = "AvatarLevelExcelConfigData";
 export const AVATAR_EXTRA_LEVEL_TABLE_NAME = "AvatarExtraLevelExcelConfigData";
-// The dump's talent configs, one file for each group of characters, each a map from a talent's config name to its actions
+// The dump's talent configs, one file for each group of characters, each a map from a talent's config name to its
+// Actions
 export const TALENT_CONFIG_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, AVATAR_TALENT_DIRECTORY);
-// The last digit of a skill's proud skill group is the slot a constellation names the skill by: 1 the normal attack, 2 the
-// Elemental Skill and 9 the burst, as the dump numbers them
+// The last digit of a skill's proud skill group is the slot a constellation names the skill by: 1 the normal attack, 2
+// The Elemental Skill and 9 the burst, as the dump numbers them
 export const PROUD_SKILL_SLOT_MODULUS = 10;
 // The game's constant table row holding the Original Resin constants, in the order its values give them
 export const RESIN_PARAM_CONST_NAME = "CONST_VALUE_RESIN_PARAM";
-// The game's constant names of the item limits the bag counts each tab on its own by, the first value of each row its room
+// The game's constant names of the item limits the bag counts each tab on its own by, the first value of each row its
+// Room
 export const ARTIFACT_ROOM_CONST_NAME = "CONST_VALUE_RELIQUARY_ITEM_LIMIT";
 export const FURNISHING_ROOM_CONST_NAME = "CONST_VALUE_FURNITURE_ITEM_LIMIT";
 export const WEAPON_ROOM_CONST_NAME = "CONST_VALUE_WEAPON_ITEM_LIMIT";

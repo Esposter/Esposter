@@ -2,8 +2,9 @@ import type { GcsimTableRow } from "#src/models/genshinAssets/kits/gcsim/GcsimTa
 
 import { readTableBody } from "#src/services/genshinAssets/kits/gcsim/readTableBody";
 
-// Reads the rows of a module-scope table, `name = [][]float64{...}` or `name = []float64{...}`: each top-level item of a
-// Two-dimensional table is a brace group, a row of cells, and each item of a one-dimensional table is a row of one cell
+// Reads the rows of a module-scope table, `name = [][]float64{...}` or `name = []float64{...}`: each top-level item of
+// A Two-dimensional table is a brace group, a row of cells, and each item of a one-dimensional table is a row of one
+// Cell
 export const readGcsimTableRows = (lines: readonly string[], name: string): GcsimTableRow[] | undefined => {
   const body = readTableBody(lines, name);
   if (body === undefined) return undefined;

@@ -10,9 +10,10 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { chunk, takeOne } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 
-// The text id of every name and description the world's data cites: every published JSON record outside the text datasets, and every
-// Data file the lock does not name, which the package still keeps. A new source needs no edit here. The lock's extension says which
-// Objects are records: a recording (`.ogg`) is an object too, and parsing its bytes as JSON fails
+// The text id of every name and description the world's data cites: every published JSON record outside the text
+// Datasets, and every Data file the lock does not name, which the package still keeps. A new source needs no edit here.
+// The lock's extension says which Objects are records: a recording (`.ogg`) is an object too, and parsing its bytes as
+// JSON fails
 export const readNameTextIds = async (): Promise<string[]> => {
   const { objects } = await readGameDataLock();
   const textIds = new Set<string>();

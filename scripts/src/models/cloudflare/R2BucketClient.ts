@@ -1,8 +1,8 @@
 import type { R2PutOptions } from "#src/models/cloudflare/R2PutOptions";
 import type { R2ListedObject } from "@esposter/db";
 
-// One bucket of the account's R2, as a script reads and writes it. Every stored object goes through it, so a test stands an
-// In-memory bucket in its place without a network. A missing object reads as undefined, never as an error
+// One bucket of the account's R2, as a script reads and writes it. Every stored object goes through it, so a test
+// Stands an In-memory bucket in its place without a network. A missing object reads as undefined, never as an error
 export interface R2BucketClient {
   delete: (key: string) => Promise<void>;
   get: (key: string) => Promise<Buffer | undefined>;

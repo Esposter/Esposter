@@ -9,10 +9,11 @@ export const FORGE_DAILY_POINT_CAP_CONST_NAME = "CONST_VALUE_FORGE_POINT_DAY_LIM
 // The forge random table each drop id a forge row names draws from. The dump holds no table of drop ids, so the Mystic
 // Enhancement Ore's drop id is mapped to the one random table whose Mystic Enhancement Ore count is the row's own, six
 export const DropIdForgeRandomIdMap: Record<number, number> = { 208_001_500: 20_001 };
-// The use an item carries to learn the forge recipe it names as its first parameter: a diagram, one item for each recipe
+// The use an item carries to learn the forge recipe it names as its first parameter: a diagram, one item for each
+// Recipe
 export const UNLOCK_FORGE_USE_OP = "ITEM_USE_UNLOCK_FORGE";
-// The forge type of each kind of recipe the blacksmith forges. Type eight holds the gadgets' widgets, which the gadgets page
-// Owns, so it is left out here
+// The forge type of each kind of recipe the blacksmith forges. Type eight holds the gadgets' widgets, which the gadgets
+// Page Owns, so it is left out here
 export const ForgeTypeRecipeKindMap: Record<number, ForgeRecipeKind> = {
   1: ForgeRecipeKind.Enhancement,
   3: ForgeRecipeKind.Weapon,

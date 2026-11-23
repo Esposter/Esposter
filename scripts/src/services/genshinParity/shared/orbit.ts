@@ -1,4 +1,5 @@
-/* oxlint-disable no-underscore-dangle -- the names are the page's own globals, which the page sets and these read back by name */
+/* oxlint-disable no-underscore-dangle -- the names are the page's own globals, which the page sets and these read
+   back by name */
 
 import type { Page } from "playwright";
 
@@ -14,8 +15,8 @@ export const orbit = (page: Page, orbitDurationMs: number): Promise<void> =>
         window.__fakeLock = true;
         const startMs = performance.now();
         let sentPixels = 0;
-        // The browser truncates an event's movement to whole pixels, so each event sends the whole pixels the turn owes by
-        // Its time, and a late timer neither truncates nor drops any of the turn
+        // The browser truncates an event's movement to whole pixels, so each event sends the whole pixels the turn owes
+        // By Its time, and a late timer neither truncates nor drops any of the turn
         const timer = setInterval(() => {
           const progress = Math.min((performance.now() - startMs) / durationMs, 1);
           const movementX = Math.round(mousePixels * progress) - sentPixels;

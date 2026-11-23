@@ -23,7 +23,8 @@ const enclosingFunctions = function* (node: ESTree.Node): Generator<ESTree.Node>
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) if (checkIsFunction(ancestor)) yield ancestor;
 };
 
-// The scopes a node sits in, innermost first, a block and a loop included. The program is the scope after the last, keyed by null
+// The scopes a node sits in, innermost first, a block and a loop included. The program is the scope after the last,
+// Keyed by null
 const enclosingScopes = function* (node: ESTree.Node): Generator<ESTree.Node> {
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
     if (SCOPE_TYPES.has(ancestor.type)) yield ancestor;

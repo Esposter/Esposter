@@ -20,9 +20,9 @@ const TALENT_SLOTS: [CombatTalent, string][] = [
   [CombatTalent.ElementalSkill, "skill"],
 ];
 
-// The hits lists a named list's hits join to by their multipliers' proud skill group are empty, as the module spawns the
-// Hits as a list of its own, unless a hit of the slot's own joins that group at an index no named list's hit does. It
-// Supersedes gcsim's count of the talent's hits, so it is the first candidate for its path
+// The hits lists a named list's hits join to by their multipliers' proud skill group are empty, as the module spawns
+// The Hits as a list of its own, unless a hit of the slot's own joins that group at an index no named list's hit does.
+// It Supersedes gcsim's count of the talent's hits, so it is the first candidate for its path
 export const getNamedListKitCandidates = (
   valueMap: ReadonlyMap<string, unknown>,
   talentGroupIdMap: KitTables["talentGroupIdMap"],

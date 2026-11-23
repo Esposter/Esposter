@@ -7,10 +7,10 @@ import { execFileSync } from "@esposter/shared-node/child-process";
 
 const NEWLINE_BYTE = 0x0a;
 
-// Every file under a folder as the queue branch on origin holds it, never as the checkout does: a checkout behind origin
-// Still lists an item another worker finished and deleted, and the fleet would offer it again. The caller fetches first.
-// One `git cat-file --batch` reads them all, each answered as a `<sha> blob <size>` line, its bytes and a newline, so the
-// Output is cut by byte counts and stays a buffer until each file is cut from it
+// Every file under a folder as the queue branch on origin holds it, never as the checkout does: a checkout behind
+// Origin Still lists an item another worker finished and deleted, and the fleet would offer it again. The caller
+// Fetches first. One `git cat-file --batch` reads them all, each answered as a `<sha> blob <size>` line, its bytes and
+// A newline, so the Output is cut by byte counts and stays a buffer until each file is cut from it
 export const readQueueFiles = (
   directory: string,
   ref: string = REMOTE_QUEUE_REF,

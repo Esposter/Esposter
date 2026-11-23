@@ -5,9 +5,10 @@ import { buildFittedMapPointSlices } from "#src/services/genshinAssets/points/bu
 import { readInteractiveMapLabels } from "#src/services/genshinAssets/points/readInteractiveMapLabels";
 import { GameDataset } from "genshin-world";
 
-// Each region's material sources, the critters the official map marks under Animals that give an item when picked, as one
-// Slice of the material source dataset: each point placed by the fit, its kind the id of the item it gives. The notes name
-// Each critter group's join and each gather row left out, then count each region's sources and what was left out
+// Each region's material sources, the critters the official map marks under Animals that give an item when picked, as
+// One Slice of the material source dataset: each point placed by the fit, its kind the id of the item it gives. The
+// Notes name Each critter group's join and each gather row left out, then count each region's sources and what was left
+// Out
 export const buildMaterialSourcePlaces = async (): Promise<GameDataBuild> => {
   const { kindMap, notes: joinNotes } = readMaterialSourceItemIdMap(await readInteractiveMapLabels());
   const { notes, objects } = await buildFittedMapPointSlices(

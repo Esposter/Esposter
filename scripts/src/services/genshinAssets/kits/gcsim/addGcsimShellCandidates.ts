@@ -17,9 +17,10 @@ const SHELL_RADIUS = 6;
 const SHELL_ICD_LINE = 63;
 const SHELL_ICD_TAG = "attacks.ICDTagChascaBurst";
 
-// The burst's six shells: the hitmark each is cast at, as the frames list `shellHitmarks`, and the one hit each Soulseeker
-// Shell and each Radiant shell plays, its multiplier from the talent variable of its name. A Radiant shell's element is
-// Its party's, so its template leaves the element to its behaviour and keeps the gauge the galesplitting literal gives
+// The burst's six shells: the hitmark each is cast at, as the frames list `shellHitmarks`, and the one hit each
+// Soulseeker Shell and each Radiant shell plays, its multiplier from the talent variable of its name. A Radiant shell's
+// Element is Its party's, so its template leaves the element to its behaviour and keeps the gauge the galesplitting
+// Literal gives
 export const addGcsimShellCandidates = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
   { attacks, config, constantMap }: GcsimCharacter,

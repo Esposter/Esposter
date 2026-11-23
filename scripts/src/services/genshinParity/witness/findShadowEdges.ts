@@ -1,8 +1,8 @@
 import { getNeighbourPixels } from "#src/services/recreation/image/getNeighbourPixels";
 
 // A shadow's edges over flat receivers: each shadowed receiver pixel with a lit receiver beside it, along a row or a
-// Column, so an edge is one pixel wide on its shadow's side and a shadow running off a receiver onto anything else draws
-// No edge there, where the receiver's own outline would stand in for the shadow's
+// Column, so an edge is one pixel wide on its shadow's side and a shadow running off a receiver onto anything else
+// Draws No edge there, where the receiver's own outline would stand in for the shadow's
 export const findShadowEdges = (
   isShadowed: Uint8Array,
   isReceiver: Uint8Array,

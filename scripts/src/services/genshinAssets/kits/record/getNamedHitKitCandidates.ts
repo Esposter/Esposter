@@ -12,11 +12,11 @@ import { readSiteCallsMap } from "#src/services/genshinAssets/kits/record/readSi
 import { splitHitPath } from "#src/services/genshinAssets/kits/record/splitHitPath";
 import { kitParameterSchema } from "genshin-world";
 
-// The candidates a hit takes from the talent variable its multiplier joins to: each hit of a `hits` list, a skill hold's
-// Or a stance's, or a single hit's own in `hitFields`, whose multiplier names a proud skill group and index gcsim's talent
-// Variables give a hit for, takes that hit's fields. A hit of a list takes the calls its attack makes in turn, in the
-// Order they land, where the list is as long as those calls, or where the calls of several keys from one attack site are,
-// Merged in the order they land
+// The candidates a hit takes from the talent variable its multiplier joins to: each hit of a `hits` list, a skill
+// Hold's Or a stance's, or a single hit's own in `hitFields`, whose multiplier names a proud skill group and index
+// Gcsim's talent Variables give a hit for, takes that hit's fields. A hit of a list takes the calls its attack makes in
+// Turn, in the Order they land, where the list is as long as those calls, or where the calls of several keys from one
+// Attack site are, Merged in the order they land
 export const getNamedHitKitCandidates = (
   valueMap: ReadonlyMap<string, unknown>,
   namedHitCandidateMap: NamedHitCandidateMap,
@@ -42,15 +42,16 @@ export const getNamedHitKitCandidates = (
     const listLength = listLengthMap.get(group) ?? 0;
     const [firstHit] = hits;
     // A named list of indexed hits whose hits all join one key is as long as the calls that key makes, as a loop of one
-    // Call makes them, though the source may name only some of its hits' multipliers. A hit with no index is a hit of its
-    // Own, not a list
+    // Call makes them, though the source may name only some of its hits' multipliers. A hit with no index is a hit of
+    // Its Own, not a list
     const isOneKeyList =
       group.startsWith("hits.") &&
       firstHit !== undefined &&
       hits.length === listLength &&
       hits.every(({ hitPath, key }) => hitPath !== group && key === firstHit.key);
     const lengthCalls = firstHit === undefined || !isOneKeyList ? undefined : firstHit.namedHit.queuedCalls;
-    // Calls whose delays land in order give each hit its own call, so they give the list its length, else the list's own
+    // Calls whose delays land in order give each hit its own call, so they give the list its length, else the list's
+    // Own
     const callsLength =
       lengthCalls !== undefined && checkIsLandingOrdered(lengthCalls) ? lengthCalls.length : listLength;
     const siteCallsMap = readSiteCallsMap(new Map(hits.map(({ key, namedHit }) => [key, namedHit])));

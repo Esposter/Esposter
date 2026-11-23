@@ -37,7 +37,8 @@ export const readWholeScreenImages = async (articleTitle: string): Promise<Whole
   let continueParameters: Record<string, string> | undefined = {};
   while (continueParameters) {
     const query: string = new URLSearchParams(continueParameters).toString();
-    // oxlint-disable-next-line no-await-in-loop -- Pagination: each batch is asked for by the continuation the one before it gave
+    // Before it gave
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: each batch is asked for by the continuation the one
     const response = await readWikiApi(query ? `${url}&${query}` : url, wikiImagesResponseSchema, WIKI_API_MAX_BYTES);
     if (response.error)
       throw new InvalidOperationError(Operation.Read, articleTitle, `${response.error.code}: ${response.error.info}`);

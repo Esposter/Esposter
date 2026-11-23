@@ -1,7 +1,7 @@
 import type { ExcelFetterCondition } from "#src/models/genshinAssets/profile/ExcelFetterCondition";
 
-// One voice-over of a character's fetters in the dump's Fetters table: the character it belongs to, the conditions it opens
-// On, whether the game hides it, and the text ids of its title and of the line it speaks
+// One voice-over of a character's fetters in the dump's Fetters table: the character it belongs to, the conditions it
+// Opens On, whether the game hides it, and the text ids of its title and of the line it speaks
 export interface ExcelFetterVoiceRow {
   avatarId: number;
   fetterId: number;

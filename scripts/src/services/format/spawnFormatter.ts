@@ -9,11 +9,12 @@ import {
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
 
-// The repository's formatter binary runs from the main checkout, which holds its install, under the configuration and the
-// Working directory of the checkout the files are in. Its ignore patterns match a path as it is given from that working
-// Directory, so the paths in `args` are repository-relative. A formatter still running past its `timeout` is killed with
-// SIGKILL, since a spawn waits for a child that ignores SIGTERM to exit, and its null status is the caller's to read. Its
-// Colour is off whatever the caller's terminal asks for, since its message is read back as the text of an error
+// The repository's formatter binary runs from the main checkout, which holds its install, under the configuration and
+// The Working directory of the checkout the files are in. Its ignore patterns match a path as it is given from that
+// Working Directory, so the paths in `args` are repository-relative. A formatter still running past its `timeout` is
+// Killed with SIGKILL, since a spawn waits for a child that ignores SIGTERM to exit, and its null status is the
+// Caller's to read. Its Colour is off whatever the caller's terminal asks for, since its message is read back as the
+// Text of an error
 export const spawnFormatter = (
   args: string[],
   repositoryRoot: string,

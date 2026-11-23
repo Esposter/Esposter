@@ -1,5 +1,6 @@
 // The GPU 3D utilisation `typeperf` reports, summed over its instances in the last row it printed, or none when no
-// Counter had a value. The header row names the counters and is never the last row, so it reads as none only if the data row is missing
+// Counter had a value. The header row names the counters and is never the last row, so it reads as none only if the
+// Data row is missing
 export const parseTypeperf = (output: string): number | undefined => {
   const dataRow = output
     .split("\n")

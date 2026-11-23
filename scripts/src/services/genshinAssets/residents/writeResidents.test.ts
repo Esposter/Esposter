@@ -29,7 +29,8 @@ describe(writeResidents, () => {
   const REGION = "first-region";
   const REGION_FILE = `regions/${REGION}.json`;
   const IDENTITY_TRANSFORM = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
-  // The file holds a resident no placement supplies, so the residents the writer computes differ from it and a write is due
+  // The file holds a resident no placement supplies, so the residents the writer computes differ from it and a write is
+  // Due
   const region: RegionDataFile = {
     landmarks: [],
     residents: [{ areaId: AREA_ID, id: "1", nameTextId: "1", talkId: "1" }],
@@ -147,7 +148,8 @@ describe(writeResidents, () => {
 
   test("a seated challenger's talk opens the duel", async () => {
     expect.hasAssertions();
-    // Ellin keeps no point of her own, so she stands at the Knights' headquarters point, NPC 9704, the duel game her week row names
+    // Ellin keeps no point of her own, so she stands at the Knights' headquarters point, NPC 9704, the duel game her
+    // Week row names
     const KNIGHTS_HEADQUARTERS_POINT_ID = "54";
     const ELLIN_NPC_ID = 9704;
     const ELLIN_NAME_TEXT_HASH = 2;
@@ -181,8 +183,8 @@ describe(writeResidents, () => {
 
   test("a seated challenger's week game is written with its game, the level it is offered at, and its reward", async () => {
     expect.hasAssertions();
-    // Kimiya stands at Sumeru's crafting bench, building 526, and his week row names game 1103 at level 5, while his duel sits at
-    // His seat, game 1104
+    // Kimiya stands at Sumeru's crafting bench, building 526, and his week row names game 1103 at level 5, while his
+    // Duel sits at His seat, game 1104
     const CRAFTING_BENCH_BUILDING_ID = "526";
     const KIMIYA_NPC_ID = 9715;
     const KIMIYA_NAME_TEXT_HASH = 1;
@@ -217,7 +219,8 @@ describe(writeResidents, () => {
 
   test("a resident no area is in reach of is not written, and the report counts it", async () => {
     expect.hasAssertions();
-    // Ellin's place is the Knights' headquarters point, as the seated challenger's test places it, but no outline holds it
+    // Ellin's place is the Knights' headquarters point, as the seated challenger's test places it, but no outline holds
+    // It
     const KNIGHTS_HEADQUARTERS_POINT_ID = "54";
     const ELLIN_NPC_ID = 9704;
     seatChallenger(KNIGHTS_HEADQUARTERS_POINT_ID, ELLIN_NPC_ID, 2, 6970401);

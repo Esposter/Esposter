@@ -5,9 +5,9 @@ import { clusterEnemyMarks } from "#src/services/genshinAssets/camps/clusterEnem
 import { CAMP_CLUSTER_DISTANCE, CAMP_LEVEL } from "#src/services/genshinAssets/camps/constants";
 import { getOrCreate } from "@esposter/shared";
 
-// A region's camps from its enemy marks, each mark an enemy at its position with the estimated level. Marks are grouped by
-// The area they stand in, so a camp never spans two areas, and a mark in no area is left out. Camps are named by their
-// Region and their place in the order they were clustered, and no enemy has a patrol yet
+// A region's camps from its enemy marks, each mark an enemy at its position with the estimated level. Marks are grouped
+// By The area they stand in, so a camp never spans two areas, and a mark in no area is left out. Camps are named by
+// Their Region and their place in the order they were clustered, and no enemy has a patrol yet
 export const buildEnemyCamps = (
   region: string,
   places: readonly MapPointPlace<EnemyKindId>[],

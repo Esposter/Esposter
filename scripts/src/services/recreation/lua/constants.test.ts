@@ -1,7 +1,8 @@
 import { describe } from "vitest";
 
 // Lua 5.3's header written out byte by byte: the signature, version 0x53, format 0, the data check bytes, the sizes of
-// An int (4), a size_t (8), an instruction (4), a lua_Integer and a lua_Number (8 each), then 0x5678 as a lua_Integer and 370.5 as a lua_Number
+// An int (4), a size_t (8), an instruction (4), a lua_Integer and a lua_Number (8 each), then 0x5678 as a lua_Integer
+// And 370.5 as a lua_Number
 export const LUA_HEADER_BYTES: Uint8Array = Uint8Array.of(
   0x1b,
   0x4c,

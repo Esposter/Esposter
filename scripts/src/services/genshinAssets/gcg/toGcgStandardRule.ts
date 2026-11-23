@@ -6,9 +6,9 @@ import { GCG_STANDARD_RULE_ID } from "#src/services/genshinAssets/gcg/constants"
 import { toRuleElement } from "#src/services/genshinAssets/gcg/toRuleElement";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The standard rule's row with each reaction it lists joined to its element pair, each element spelt as the world's Element
-// Enum spells it. A listed reaction the reaction table does not hold is an error, since a reaction without its pair would
-// Silently never trigger
+// The standard rule's row with each reaction it lists joined to its element pair, each element spelt as the world's
+// Element Enum spells it. A listed reaction the reaction table does not hold is an error, since a reaction without its
+// Pair would Silently never trigger
 export const toGcgStandardRule = (
   ruleRow: ExcelGcgRuleRow,
   reactionRows: ExcelGcgElementReactionRow[],

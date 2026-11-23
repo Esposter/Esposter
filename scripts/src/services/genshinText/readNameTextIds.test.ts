@@ -4,9 +4,10 @@ import { GameLanguage } from "genshin-text";
 import { GameDataset } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-// The guard the writer's own discovery feeds: a record republished without a names republish cites a text id the English
-// Name chunk does not hold, and this fails on it. The cited ids and the chunk are both read from the lock on disk, so the
-// Discovery is the writer's, never a copy of it. A cold machine downloads each published record once, past a default timeout
+// The guard the writer's own discovery feeds: a record republished without a names republish cites a text id the
+// English Name chunk does not hold, and this fails on it. The cited ids and the chunk are both read from the lock on
+// Disk, so the Discovery is the writer's, never a copy of it. A cold machine downloads each published record once, past
+// A default timeout
 describe(readNameTextIds, () => {
   const RECORD_DOWNLOAD_TIMEOUT_MS = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
 

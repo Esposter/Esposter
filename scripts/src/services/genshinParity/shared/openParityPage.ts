@@ -23,12 +23,12 @@ import { join } from "node:path";
 import { chromium } from "playwright";
 import sharp from "sharp";
 
-// The parity page on one screen, at the game's interface height and the reference's aspect, drawn at the reference's pixel
-// Size, once it has drawn. It launches its own Edge, with the flags an unlimited frame rate needs, and closes it with the page.
-// A backdrop is served to the page under the name its query gives, which it draws behind the screen, and a witness's exports
-// Under `WITNESS_PATH_PREFIX`: its layout, which the query names with the component whose claims the page reads, and its
-// Meshes and textures by their export folders. The caller closes the page with `close`, which closes its context and the
-// Browser
+// The parity page on one screen, at the game's interface height and the reference's aspect, drawn at the reference's
+// Pixel Size, once it has drawn. It launches its own Edge, with the flags an unlimited frame rate needs, and closes it
+// With the page. A backdrop is served to the page under the name its query gives, which it draws behind the screen, and
+// A witness's exports Under `WITNESS_PATH_PREFIX`: its layout, which the query names with the component whose claims
+// The page reads, and its Meshes and textures by their export folders. The caller closes the page with `close`, which
+// Closes its context and the Browser
 export const openParityPage = async ({
   backdropPath,
   height,
@@ -110,8 +110,9 @@ export const openParityPage = async ({
         getResultAsync(async () => {
           const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
           const filePath = path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path);
-          // An export not on disk is answered as missing: the page fails loading it, and whatever failure follows is thrown
-          // With the path. Fulfilling from a file that is not there would reject inside this handler, where nothing awaits it
+          // An export not on disk is answered as missing: the page fails loading it, and whatever failure follows is
+          // Thrown With the path. Fulfilling from a file that is not there would reject inside this handler, where
+          // Nothing awaits it
           if (!existsSync(filePath)) {
             missingFiles.push(filePath);
             return route.fulfill({ status: 404 });
@@ -125,15 +126,16 @@ export const openParityPage = async ({
           }
           return route.fulfill({ path: filePath });
         }).match(noop, (error) => {
-          // Nothing awaits this handler, so its failure is named here, and the page is answered rather than left waiting on it
+          // Nothing awaits this handler, so its failure is named here, and the page is answered rather than left
+          // Waiting on it
           console.error(`parity page: ${route.request().url()}: ${error.message}`);
           return route.fulfill({ status: 500 });
         }),
       );
     }
-    // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments. Installed
-    // Alone, it flows with real time, so the frames a page draws would depend on how fast the machine runs: it is paused
-    // Where it starts, and the page's loading steps it with `runFor` as it does
+    // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments.
+    // Installed Alone, it flows with real time, so the frames a page draws would depend on how fast the machine runs:
+    // It is paused Where it starts, and the page's loading steps it with `runFor` as it does
     if (isClockFaked) {
       await page.clock.install({ time: 0 });
       await page.clock.pauseAt(0);
@@ -156,7 +158,8 @@ export const openParityPage = async ({
         .waitFor({ timeout: PARITY_READY_TIMEOUT_MS });
     let { parityError, parityReady: readyScreen } = await readPageState();
     while (parityError === undefined && readyScreen === undefined) {
-      // oxlint-disable no-await-in-loop -- Each step reads the last: the page draws one frame after another until it is ready, and its readiness is read after the frame it drew
+      // Ready, and its readiness is read after the frame it drew
+      // oxlint-disable no-await-in-loop -- Each step reads the last: the page draws one frame after another until it is
       await page.clock.runFor(PARITY_FRAME_MS);
       ({ parityError, parityReady: readyScreen } = await readPageState());
       // oxlint-enable no-await-in-loop

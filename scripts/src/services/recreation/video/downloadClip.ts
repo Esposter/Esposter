@@ -6,11 +6,11 @@ import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdir, mkdtemp, rename, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 
-// One section of a public video downloaded with yt-dlp into the directory, returning the file's path. Blocking, like the
-// FFmpeg runs, since the tool does one thing at a time; yt-dlp's progress shows on this terminal. yt-dlp names a section's
-// Partial file after the clip, so two runs of one clip in one folder rename each other's, and the run that loses exits 1
-// Beside a clip the other already wrote. Each run downloads into a folder of its own, and its finished file is moved into
-// The directory under the same name, replacing the other run's
+// One section of a public video downloaded with yt-dlp into the directory, returning the file's path. Blocking, like
+// The FFmpeg runs, since the tool does one thing at a time; yt-dlp's progress shows on this terminal. yt-dlp names a
+// Section's Partial file after the clip, so two runs of one clip in one folder rename each other's, and the run that
+// Loses exits 1 Beside a clip the other already wrote. Each run downloads into a folder of its own, and its finished
+// File is moved into The directory under the same name, replacing the other run's
 export const downloadClip = async (
   url: string,
   fromSeconds: number,

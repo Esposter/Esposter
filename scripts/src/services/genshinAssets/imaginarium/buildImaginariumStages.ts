@@ -21,9 +21,9 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
-// The Easy stages of every season the wiki has written up, joined to the season the schedule begins on the page's day, and
-// Each stage's enemy names resolved to the monster their codex entry names, with its stats at the stage's level, and the
-// Refusals listed on the stage. The pages come through the wiki cache, each fetched there once
+// The Easy stages of every season the wiki has written up, joined to the season the schedule begins on the page's day,
+// And Each stage's enemy names resolved to the monster their codex entry names, with its stats at the stage's level,
+// And the Refusals listed on the stage. The pages come through the wiki cache, each fetched there once
 export const buildImaginariumStages = async (): Promise<Record<string, unknown>> => {
   const beginDaySeasonIdMap = new Map(
     readExcelTable<ExcelRoleCombatScheduleRow>(

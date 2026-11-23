@@ -104,7 +104,8 @@ describe("committedReferences", () => {
     ];
     const problems = await Promise.all(
       expected.map(async ({ id, path, sha256 }) => {
-        // A file no row names is the existence test's to report; a file a row names must be on disk to hold the row's bytes
+        // A file no row names is the existence test's to report; a file a row names must be on disk to hold the row's
+        // Bytes
         if (!existsSync(path))
           return sha256 === undefined
             ? undefined

@@ -8,8 +8,8 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 
-// The open world's NPC births as one record of the scene NPC births dataset, the record the scene group record reads its
-// NPCs from
+// The open world's NPC births as one record of the scene NPC births dataset, the record the scene group record reads
+// Its NPCs from
 export const buildSceneNpcBorns = (): GameDataBuild => {
   const { bornPosList, sceneId } = parseMachineJson<DumpedSceneNpcBornFile>(readFileSync(NPC_BORN_PATH, "utf8"));
   if (sceneId !== OPEN_WORLD_SCENE_ID)

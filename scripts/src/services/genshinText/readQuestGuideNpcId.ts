@@ -1,5 +1,6 @@
-// The NPC a sub quest's guide names, read by its shape since the dump scrambles every name: the guide is an object holding
-// The type QUEST_GUIDE_NPC, and the first entry of its list of ids is the NPC's id. A sub quest with no such guide names none
+// The NPC a sub quest's guide names, read by its shape since the dump scrambles every name: the guide is an object
+// Holding The type QUEST_GUIDE_NPC, and the first entry of its list of ids is the NPC's id. A sub quest with no such
+// Guide names none
 export const readQuestGuideNpcId = (subQuest: Record<string, unknown>): string | undefined => {
   const guide = Object.values(subQuest).find(
     (value): value is Record<string, unknown> =>

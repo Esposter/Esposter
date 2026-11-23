@@ -2,8 +2,9 @@ import type { SpriteCut } from "#src/models/genshinAssets/sprites/SpriteCut";
 
 import sharp from "sharp";
 
-// Every sprite cut from one atlas, the atlas decoded once for all of them. Unity measures a rectangle up from the atlas's
-// Bottom edge, so its top is the atlas's height less the rectangle's own top-to-bottom reach, and its edges are whole pixels
+// Every sprite cut from one atlas, the atlas decoded once for all of them. Unity measures a rectangle up from the
+// Atlas's Bottom edge, so its top is the atlas's height less the rectangle's own top-to-bottom reach, and its edges are
+// Whole pixels
 export const cutSprites = async (atlasPath: string, cuts: readonly SpriteCut[]): Promise<void> => {
   const { data, info } = await sharp(atlasPath).raw().toBuffer({ resolveWithObject: true });
   await Promise.all(

@@ -3,7 +3,8 @@ import type { SerializedShaderFloat } from "#src/models/genshinAssets/materials/
 
 import { UNNAMED_PROPERTY } from "#src/services/genshinAssets/materials/constants";
 
-// A value is a float, then the name of the property that drives it, which Unity writes as UNNAMED_PROPERTY where none does
+// A value is a float, then the name of the property that drives it, which Unity writes as UNNAMED_PROPERTY where none
+// Does
 export const readSerializedShaderFloat = (cursor: BinaryCursor): SerializedShaderFloat => {
   const value = cursor.float32();
   const name = cursor.string();

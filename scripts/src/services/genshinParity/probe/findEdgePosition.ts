@@ -4,9 +4,9 @@ import { findCrossing } from "#src/services/genshinParity/reference/findCrossing
 import { getEdgeLevels } from "#src/services/genshinParity/reference/getEdgeLevels";
 
 // The first strong step along a profile read from one side: where it reaches halfway between its lowest and highest
-// Samples, in samples from that side. A step is strong when it rises by a whole `PROBE_MIN_EDGE_STEP` and has a sigma, so
-// Noise across a flat rectangle is no edge. A profile already past the halfway level at its first sample has its step
-// Outside the rectangle on that side, so no step is read there
+// Samples, in samples from that side. A step is strong when it rises by a whole `PROBE_MIN_EDGE_STEP` and has a sigma,
+// So Noise across a flat rectangle is no edge. A profile already past the halfway level at its first sample has its
+// Step Outside the rectangle on that side, so no step is read there
 export const findEdgePosition = (profile: readonly number[]): number | undefined => {
   const low = Math.min(...profile);
   const range = Math.max(...profile) - low;

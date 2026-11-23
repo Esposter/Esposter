@@ -5,9 +5,9 @@ import { computeGroundLayerField } from "#src/services/genshinAssets/fit/compute
 import { TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 
 // A component's ground layers as a field over the terrain radius round the world's origin, in the world's axes:
-// Three's, x as the game's and z its mirror. Every cell of its terrain tiles within the radius stands at its centre in the layer
-// Its tile paints it in (`readGroundLayerCells`), each the same share of the ground, and is splatted onto a grid of the
-// Cell size over the radius's square (`computeGroundLayerField`)
+// Three's, x as the game's and z its mirror. Every cell of its terrain tiles within the radius stands at its centre in
+// The layer Its tile paints it in (`readGroundLayerCells`), each the same share of the ground, and is splatted onto a
+// Grid of the Cell size over the radius's square (`computeGroundLayerField`)
 export const fitGroundLayerField = (
   tiles: GroundLayerCellTile[],
   [originX, , originZ]: [number, number, number],

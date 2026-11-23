@@ -8,8 +8,8 @@ import { DomainKind, GameDataset, SUNDAY_DAY_OF_WEEK } from "genshin-world";
 
 // The game's dungeon entry table in the dump, read by its name
 export const DUNGEON_ENTRY_TABLE_NAME = "DungeonEntryExcelConfigData";
-// The exemplar of a challenge domain's entrance point: one entrance's point, which every entrance's point is of the one kind,
-// Named by the fields that kind holds its transport place and its turn in, as the 7.1 dump names them
+// The exemplar of a challenge domain's entrance point: one entrance's point, which every entrance's point is of the one
+// Kind, Named by the fields that kind holds its transport place and its turn in, as the 7.1 dump names them
 export const DOMAIN_ENTRANCE_POINT: ScenePointExemplar = {
   category: SCENE_POINT_CATEGORY,
   file: SCENE_POINT_FILE,
@@ -17,8 +17,9 @@ export const DOMAIN_ENTRANCE_POINT: ScenePointExemplar = {
   position: "tranPos",
   rotation: "tranRot",
 };
-// The field an entrance's point files the area it stands in under: the game's area table's level-one id, which names the
-// Catalogue area the entrance is filed under. The dump leaves it out of a point at its default, 0, which names no area
+// The field an entrance's point files the area it stands in under: the game's area table's level-one id, which names
+// The Catalogue area the entrance is filed under. The dump leaves it out of a point at its default, 0, which names no
+// Area
 export const DOMAIN_ENTRANCE_AREA_FIELD = "areaId";
 // The field of an entrance's point holding the title text id its name is read from, which every entrance's point holds
 export const DOMAIN_ENTRANCE_TITLE_FIELD = "titleTextID";
@@ -37,12 +38,14 @@ export const DUNGEON_TABLE_NAME = "DungeonExcelConfigData";
 export const REWARD_PREVIEW_TABLE_NAME = "RewardPreviewExcelConfigData";
 // The type a challenge domain's level is named by in the dungeon table
 export const DOMAIN_LEVEL_TYPE = "DUNGEON_DAILY_FIGHT";
-// The dungeon entries of the weekly bosses' trounce domains, read by id: Stormterror's, whose levels the entry's own list names
+// The dungeon entries of the weekly bosses' trounce domains, read by id: Stormterror's, whose levels the entry's own
+// List names
 export const WEEKLY_BOSS_ENTRY_IDS: number[] = [1006];
 // The type a weekly boss's level is named by in the dungeon table
 export const WEEKLY_BOSS_DUNGEON_TYPE = "DUNGEON_BOSS";
 // The record the weekly bosses' trounce domains publish under, in the domains dataset
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+// `isolatedDeclarations` demands
+// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation this template literal would otherwise infer
 export const WEEKLY_BOSS_DOMAINS_KEY: string = `${GameDataset.Domains}/weeklyBosses`;
 // The days of the week, Monday as 1, each of a Domain of Forgery's or Mastery's day pairs is set for, in the order its
 // Entry's day lists give them: Monday and Thursday, Tuesday and Friday, Wednesday and Saturday
@@ -55,9 +58,9 @@ export const DOMAIN_DAY_PAIRS: number[][] = [
 export const SUNDAY_DAYS_OF_WEEK: number[] = [SUNDAY_DAY_OF_WEEK];
 
 // The counts a Domain of Forgery's or Mastery's claim draws, from the wiki's Template:Domain_Levels/Forgery (Adventure
-// Ranks 16, 21, 30 and 40, weapon ascension materials of two to five stars) and Template:Domain_Levels/Mastery (Adventure
-// Ranks 27, 28, 36 and 45, talent books of two to four stars). The dump's levels stand at 15, 21, 30 and 40, and 25, 28, 36
-// And 45, so a level reads the row of the greatest Adventure Rank not above its own (see `findTreeRow`)
+// Ranks 16, 21, 30 and 40, weapon ascension materials of two to five stars) and Template:Domain_Levels/Mastery
+// (Adventure Ranks 27, 28, 36 and 45, talent books of two to four stars). The dump's levels stand at 15, 21, 30 and 40,
+// And 25, 28, 36 And 45, so a level reads the row of the greatest Adventure Rank not above its own (see `findTreeRow`)
 export const DOMAIN_TREE_COUNT_ROWS: Record<typeof DomainKind.Forgery | typeof DomainKind.Mastery, TreeCountRow[]> = {
   [DomainKind.Forgery]: [
     { counts: { 2: { avg: 4.7, maxCount: 6, minCount: 4 } }, rank: 16 },
@@ -95,9 +98,10 @@ export const DOMAIN_TREE_COUNT_ROWS: Record<typeof DomainKind.Forgery | typeof D
   ],
 };
 
-// The artifacts a Domain of Blessing's claim draws at each Adventure Rank, from the wiki's Template:Domain_Levels/Blessing,
-// Each rarity as its guaranteed count and the chance, as a fraction, of one more. The rows are the same whichever Domain
-// Level's table they are read from. A level at Adventure Rank 20 reads the lowest row, since the wiki's table starts at 22
+// The artifacts a Domain of Blessing's claim draws at each Adventure Rank, from the wiki's
+// Template:Domain_Levels/Blessing, Each rarity as its guaranteed count and the chance, as a fraction, of one more. The
+// Rows are the same whichever Domain Level's table they are read from. A level at Adventure Rank 20 reads the lowest
+// Row, since the wiki's table starts at 22
 export const BLESSING_TREE_ARTIFACT_ROWS: TreeArtifactRow[] = [
   {
     artifacts: [
@@ -146,8 +150,8 @@ export const BLESSING_TREE_ARTIFACT_ROWS: TreeArtifactRow[] = [
 ];
 
 // The four artifact sets of each Domain of Blessing, by entry id, as each domain's wiki infobox gives them: the `sets`
-// Line of its page on https://genshin-impact.fandom.com/wiki/Domain_of_Blessing. A name is resolved to its set id through
-// The dump's equip affixes by resolveBlessingArtifactSetIds, so no set id is typed in
+// Line of its page on https://genshin-impact.fandom.com/wiki/Domain_of_Blessing. A name is resolved to its set id
+// Through The dump's equip affixes by resolveBlessingArtifactSetIds, so no set id is typed in
 export const BLESSING_ARTIFACT_SET_NAMES: Readonly<Record<number, readonly string[]>> = {
   1: ["Thundering Fury", "Thundersoother", "Resolution of Sojourner", "Adventurer"],
   6: ["Viridescent Venerer", "Maiden Beloved", "Tiny Miracle", "Traveling Doctor"],

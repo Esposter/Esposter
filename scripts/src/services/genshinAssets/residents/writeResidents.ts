@@ -31,11 +31,11 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
 import { residentSchema, SceneGroupMemberKind } from "genshin-world";
 
-// Every NPC the scene group record places, in its groups' order, joined to the game's name and talk and written into the
-// Residents of each region the official map fitted to the scene. A region the fit matched no statue or waypoint in is left out, since its places
-// Cannot be trusted. The talk F begins with an NPC is its standing talk where the talk table gives it one, else the
-// Lowest-numbered talk it speaks in. The report counts each region's residents, the ones with a night spot and what was
-// Left out. A dry run reports the same and writes no region data
+// Every NPC the scene group record places, in its groups' order, joined to the game's name and talk and written into
+// The Residents of each region the official map fitted to the scene. A region the fit matched no statue or waypoint in
+// Is left out, since its places Cannot be trusted. The talk F begins with an NPC is its standing talk where the talk
+// Table gives it one, else the Lowest-numbered talk it speaks in. The report counts each region's residents, the ones
+// With a night spot and what was Left out. A dry run reports the same and writes no region data
 export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const { origin, regionFiles, regionMapPoints } = await readFittedRegions();
   const sceneGroups = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
@@ -55,7 +55,8 @@ export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<strin
       return keeperNpcId === undefined ? [] : [[keeperNpcId, place]];
     }),
     ...craftingKeeperPlaces,
-    // An NPC who stands beside a bench is placed beside the bench's building point, as Mondstadt's keeper is beside his bench
+    // An NPC who stands beside a bench is placed beside the bench's building point, as Mondstadt's keeper is beside his
+    // Bench
     ...Object.entries(sceneGroups.buildings).flatMap(([buildingId, { place }]): [number, SceneGroupPlace][] => {
       const benchNpcId = CRAFTING_BENCH_NPC_ID_MAP.get(buildingId);
       return benchNpcId === undefined ? [] : [[benchNpcId, toCraftingKeeperPlace(place)]];

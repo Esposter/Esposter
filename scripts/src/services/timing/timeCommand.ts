@@ -11,11 +11,13 @@ import { writeSync } from "node:fs";
 // No command prints its own and stdout stays the command's; a slow run's line is the warning, and neither changes the
 // Exit status.
 export const timeCommand = (command: string): void => {
-  // oxlint-disable-next-line no-restricted-properties -- the record keeps the shape of the argv citty parses, which only this run reads; citty reads the values
+  // The record keeps the shape of the argv citty
+  // oxlint-disable-next-line no-restricted-properties -- parses, which only this run reads; citty reads the values
   const rawArgs = process.argv.slice(2);
   const date = Temporal.Now.instant().toString();
   process.once("exit", (exitCode) => {
-    // `performance.now()` counts from the process's start, so a run includes loading its own modules, as its reader waits for it
+    // `performance.now()` counts from the process's start, so a run includes loading its own modules, as its reader
+    // Waits for it
     const milliseconds = performance.now();
     // The record is best effort: a log another run is replacing at that moment costs this run its line, never its exit
     getResult(() =>

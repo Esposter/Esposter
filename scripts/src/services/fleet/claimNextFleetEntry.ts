@@ -11,8 +11,9 @@ import { readMachineSample } from "#src/services/fleet/readMachineSample";
 import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
 
-// Claims the first entry this machine may take among those `lane` and `kind` filter to, for `worker`, and returns it, or
-// Undefined when none is takeable. A queue line with no id is warned about on stderr, so a missing id is never silent
+// Claims the first entry this machine may take among those `lane` and `kind` filter to, for `worker`, and returns it,
+// Or Undefined when none is takeable. A queue line with no id is warned about on stderr, so a missing id is never
+// Silent
 export const claimNextFleetEntry = async (
   lane: string,
   kind: FleetEntryKind | undefined,

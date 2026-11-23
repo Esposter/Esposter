@@ -7,8 +7,8 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 
-// Each of the open world's level-one areas by its id in the game's area table, with the catalogue area of its English name
-// And the region holding it, which a scene point's own area and a city are filed under
+// Each of the open world's level-one areas by its id in the game's area table, with the catalogue area of its English
+// Name And the region holding it, which a scene point's own area and a city are filed under
 export const readCatalogueAreaPlaceMap = async (): Promise<Map<number, { areaId: string; region: string }>> =>
   toCatalogueAreaPlaceMap({
     areas: readExcelTable<WorldArea>(WORLD_AREAS_TABLE_NAME),

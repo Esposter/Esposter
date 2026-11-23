@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation these three template literals would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation these three
+   template literals would otherwise infer */
 import { PackageRole } from "#src/models/dependencyGraph/PackageRole";
 
 export const GRAPH_FILENAME = "dependency-graph.svg";

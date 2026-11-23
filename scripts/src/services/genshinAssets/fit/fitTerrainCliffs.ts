@@ -13,8 +13,8 @@ const FALLOFF_SHARE = 0.25;
 
 // Places cliffs greedily on a residual grid: each round, the segment whose terrace, raised on its left out to half its
 // Length and fitted by least squares to the samples it draws on, takes the most squared error off is a cliff at that
-// Height (`placeTerrainFeatures`). Its headings go round the full turn, so the side it raises covers both sides of every
-// Line. Returns the cliffs and the residual they leave
+// Height (`placeTerrainFeatures`). Its headings go round the full turn, so the side it raises covers both sides of
+// Every Line. Returns the cliffs and the residual they leave
 export const fitTerrainCliffs = (
   grid: TerrainResidualGrid,
 ): { features: CliffFeature[]; remainder: TerrainResidualGrid } =>

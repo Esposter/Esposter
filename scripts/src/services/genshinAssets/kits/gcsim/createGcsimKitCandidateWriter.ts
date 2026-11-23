@@ -24,7 +24,8 @@ import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea"
 import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
 import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
 
-// The writer of one gcsim character's values into a kit's candidate map, each cited at the file and line it is read from
+// The writer of one gcsim character's values into a kit's candidate map, each cited at the file and line it is read
+// From
 export const createGcsimKitCandidateWriter = (
   candidateMap: Map<string, KitCandidate[]>,
   { configFile, constantMap, folder, talentArrayMap, talentFile, talentParameterMap }: GcsimCharacter,
@@ -40,8 +41,8 @@ export const createGcsimKitCandidateWriter = (
   };
   return {
     add,
-    // A slot's frames are one set, or a list of them one for each of its states, a list of lists for a slot with a list of
-    // States per level, the first state at each level being the press or the tap a slot is read by
+    // A slot's frames are one set, or a list of them one for each of its states, a list of lists for a slot with a list
+    // Of States per level, the first state at each level being the press or the tap a slot is read by
     addFrames: (path, ...names) => {
       const constant = findGcsimConstant(constantMap, ...names);
       const isList = Array.isArray(constant?.value);

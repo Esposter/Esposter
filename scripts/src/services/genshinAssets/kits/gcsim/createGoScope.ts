@@ -21,8 +21,8 @@ import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/rea
 const MAX_DEPTH = 4;
 
 // The value of each name a Go source's references read at a position: a parameter's from its callers' arguments, a
-// Local's from its dominating assignment, else a constant's. A name no assignment reaches, or a branch may skip, has none,
-// So a local of another function is never read
+// Local's from its dominating assignment, else a constant's. A name no assignment reaches, or a branch may skip, has
+// None, So a local of another function is never read
 export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyMap<string, GoConstant>): GoScope => {
   const nameCallPositionsMap = new Map<string, number[]>();
   for (const [position, token] of tokens.entries())

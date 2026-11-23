@@ -8,7 +8,8 @@ import { renderReviewIssueBody } from "#src/services/review/issues/renderReviewI
 import { runGhWithBody } from "#src/services/review/issues/runGhWithBody";
 
 // Opens the issues a window's findings are owed in, one per chunk of at most `REVIEW_ISSUE_FINDING_CAP` findings, and
-// Returns each one's findings file content. The run ID is the workflow's, so the settle job can tell a live run's issue.
+// Returns each one's findings file content. The run ID is the workflow's, so the settle job can tell a live run's
+// Issue.
 export const openReviewIssues = (
   base: string,
   end: string,

@@ -46,11 +46,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The placements those select (every one in view, and each architecture placement within the radius), each prefab of
 // Them rooted at the game object its name finds in the blocks that name its mesh or, for a building, hold its prefab
 // File (`readPrefabBlocks`) or, failing that, in any block dumped for the derivation (a game object's block need not
-// Index its own mesh), and the 2x2 of terrain tiles its place stands in. A sub-area's place is its outline's centre, and
-// Its terrain is the tiles its outline reaches instead of the region's. Each step reads the game's own data (the asset
-// Index, the CAB map, the blobs, the game's LOD table, the community's path names and the ones the asset index's own
-// Names hash to, the dumped layouts), so a region or a sub-area gives only its own place. Returns the block with the
-// Lines that report what did not resolve
+// Index its own mesh), and the 2x2 of terrain tiles its place stands in. A sub-area's place is its outline's centre,
+// And Its terrain is the tiles its outline reaches instead of the region's. Each step reads the game's own data (the
+// Asset Index, the CAB map, the blobs, the game's LOD table, the community's path names and the ones the asset index's
+// Own Names hash to, the dumped layouts), so a region or a sub-area gives only its own place. Returns the block with
+// The Lines that report what did not resolve
 export const deriveCapitalWorld = async (
   component: DerivedAssetComponent,
   directory: ComponentDirectory,
@@ -62,8 +62,8 @@ export const deriveCapitalWorld = async (
   const subarea = await readSubareaArea(component);
   const place = await readDerivedWorldPlace(component, subarea);
   const lines: string[] = [];
-  // Each covered tile's blob and index, then those of every city area the view reaches, by the names their path hash and
-  // Index name give. A city area's blob holds the props and buildings the tiles do not
+  // Each covered tile's blob and index, then those of every city area the view reaches, by the names their path hash
+  // And Index name give. A city area's blob holds the props and buildings the tiles do not
   const tileNames = getCoveredTiles(place, ARCHITECTURE_VIEW_METRES).map(({ column, row }) =>
     getWorldTileName(column, row),
   );
@@ -171,9 +171,9 @@ export const deriveCapitalWorld = async (
     ({ name }) => name.includes(TERRAIN_NAME_MARK),
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
-  // The blocks holding a tile's own textures are searched first, since a tile is often exported beside them. A tile they
-  // Lack is then searched for in every other block naming a terrain asset: the index names no TerrainData, but each block
-  // Holding one names a terrain asset beside it, so a tile in none of these blocks is reported
+  // The blocks holding a tile's own textures are searched first, since a tile is often exported beside them. A tile
+  // They Lack is then searched for in every other block naming a terrain asset: the index names no TerrainData, but
+  // Each block Holding one names a terrain asset beside it, so a tile in none of these blocks is reported
   const tileAssets = terrainAssets.filter(({ name }) => name.startsWith(TERRAIN_NAME_PREFIX));
   const nearTerrainBlocks = tileAssets
     .filter(({ name }) => terrainNames.some((terrainName) => name.startsWith(`${terrainName}_`)))

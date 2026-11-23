@@ -5,8 +5,8 @@ import { APPS_DIRECTORY, PACKAGES_DIRECTORY } from "#src/services/package/new/co
 import { SCRIPTS_PACKAGE_NAME, WORKSPACE_PROTOCOL } from "#src/services/worktree/create/constants";
 
 // The directories a worktree builds before its first command, in dependency order: every workspace package the scripts
-// Package depends on, and every package named, each walked through the workspace packages it depends on, transitively, so
-// A package with no build of its own is walked through to the builds beneath it. The walk reads the four dependency
+// Package depends on, and every package named, each walked through the workspace packages it depends on, transitively,
+// So A package with no build of its own is walked through to the builds beneath it. The walk reads the four dependency
 // Fields a build is ordered by, and only the `workspace:` specifiers. A package is built when its manifest has a build
 // Script, and only then: a named plugin with none is walked through like any other, so naming it builds nothing of its
 // Own. An app named is never built itself, since its build is the deploy's bundle: what it imports is every package's
@@ -36,7 +36,8 @@ export const getBuildDirectories = (workspacePackages: WorkspacePackage[], packa
   if (scriptsPackage !== undefined) visit(scriptsPackage);
   for (const namedLibrary of namedLibraries) visit(namedLibrary);
 
-  // A member at the repository root, the scripts package, has no build of its own, so only the packages directory counts
+  // A member at the repository root, the scripts package, has no build of its own, so only the packages directory
+  // Counts
   const directories = dependencyOrder.flatMap((workspacePackage) => {
     const { directory, manifest, workspaceDirectory } = workspacePackage;
     const isBuilt = manifest.scripts?.build !== undefined;

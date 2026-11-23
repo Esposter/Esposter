@@ -3,8 +3,8 @@ import { readWikiPage } from "#src/services/genshinAssets/enemies/readWikiPage";
 import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { mkdirSync } from "node:fs";
 
-// Fetches each of the given enemy wiki pages the cache lacks, one after another, and leaves a cached page untouched. A dry
-// Run fetches nothing and reports which pages a run would fetch. Returns one line a page, for the command to print
+// Fetches each of the given enemy wiki pages the cache lacks, one after another, and leaves a cached page untouched. A
+// Dry Run fetches nothing and reports which pages a run would fetch. Returns one line a page, for the command to print
 export const readEnemyWikiPages = async (
   titles: readonly string[],
   isDryRun: boolean,
@@ -16,7 +16,8 @@ export const readEnemyWikiPages = async (
     else if (isDryRun) lines.push(`${title}: not cached`);
     else {
       mkdirSync(cacheDirectory, { recursive: true });
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one page is fetched at a time, so the wiki is asked for no more than one at once
+      // Asked for no more than one at once
+      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one page is fetched at a time, so the wiki is
       await readWikiPage(cacheDirectory, title);
       lines.push(`${title}: fetched`);
     }

@@ -45,7 +45,8 @@ export const DerivedAssetComponentArrangementMap: Record<DerivedAssetComponent, 
   [DerivedAssetComponent.ErinnyesForest]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.EverfrozenEarth]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.Fishing]: EMPTY_ARRANGEMENT,
-  // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the export
+  // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the
+  // Export
   [DerivedAssetComponent.Fontaine]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.GalesongHill]: EMPTY_ARRANGEMENT,
@@ -53,7 +54,8 @@ export const DerivedAssetComponentArrangementMap: Record<DerivedAssetComponent, 
   [DerivedAssetComponent.HiisiIsland]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.Hud]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.HypostyleDesert]: EMPTY_ARRANGEMENT,
-  // Inazuma City's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
+  // Inazuma City's parts stand where the city's own data places them, as Windrise's do, so its families wait on the
+  // Export
   [DerivedAssetComponent.Inazuma]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.Kannazuka]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.LandOfLowerSetekh]: EMPTY_ARRANGEMENT,
@@ -61,7 +63,8 @@ export const DerivedAssetComponentArrangementMap: Record<DerivedAssetComponent, 
   [DerivedAssetComponent.LempoIsle]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.LiffeyRegion]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.Lisha]: EMPTY_ARRANGEMENT,
-  // Liyue Harbor's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
+  // Liyue Harbor's parts stand where the city's own data places them, as Windrise's do, so its families wait on the
+  // Export
   [DerivedAssetComponent.Liyue]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.Login]: {
     // The towers' row and its bridges keep their laid places while every block of the walkway rises under the camera,
@@ -184,8 +187,8 @@ export const DerivedAssetComponentArrangementMap: Record<DerivedAssetComponent, 
   [DerivedAssetComponent.WavechaserPlain]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.Weapons]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.WindrestPeak]: EMPTY_ARRANGEMENT,
-  // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold. Its plants
-  // Are the families it fits, the grass and the trees, each beside the game's placements of it
+  // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold. Its
+  // Plants Are the families it fits, the grass and the trees, each beside the game's placements of it
   [DerivedAssetComponent.Windrise]: { explainedOffsets: {}, families: WindrisePlantArrangementFamilies, ratios: {} },
   [DerivedAssetComponent.WindwailHighland]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.YashioriIsland]: EMPTY_ARRANGEMENT,

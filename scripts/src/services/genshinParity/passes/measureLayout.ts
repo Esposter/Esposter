@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: each reference's witness page is its own browser render on the GPU, and parallel renders exhaust the free memory each holds */
+/* oxlint-disable no-await-in-loop -- One device: each reference's witness page is its own browser render on the GPU,
+   and parallel renders exhaust the free memory each holds */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { Vector } from "#src/models/shared/Vector";
@@ -24,9 +25,9 @@ import sharp from "sharp";
 // Family of the witness off its laid-out place past what the game's own data explains (along the glide is its motion);
 // Then at each current build's reference, each fitted part and the export it stands for carried as the scene carries
 // Their family in the reference's state, at every copy of a row it repeats the family along, and projected from the
-// Reference's own camera there (`solveReferenceCamera`), and the furthest apart they stand in the reference's own pixels,
-// Which `computeLayoutFrameMeasure` reads. The camera is solved from the reference alone, never the scene's, so a change to
-// Our camera cannot move a placement's gate
+// Reference's own camera there (`solveReferenceCamera`), and the furthest apart they stand in the reference's own
+// Pixels, Which `computeLayoutFrameMeasure` reads. The camera is solved from the reference alone, never the scene's, so
+// A change to Our camera cannot move a placement's gate
 export const measureLayout = async (
   component: DerivedAssetComponent,
   pageRoot?: string,

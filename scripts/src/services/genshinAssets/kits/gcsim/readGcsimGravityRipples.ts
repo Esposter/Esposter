@@ -20,7 +20,8 @@ const findAssignment = (segment: readonly GoToken[], name: string): number =>
       token.kind === GoTokenKind.Identifier && token.text === name && checkIsGoPunctuation(segment[index + 1], "="),
   );
 
-// The up to three tokens after the `=` of a name's assignment in a segment, its value first, or none when it has no assignment
+// The up to three tokens after the `=` of a name's assignment in a segment, its value first, or none when it has no
+// Assignment
 const readAssignedTokens = (segment: readonly GoToken[], name: string): readonly GoToken[] => {
   const assignment = findAssignment(segment, name);
   return assignment === -1 ? [] : segment.slice(assignment + 2, assignment + 5);
@@ -54,7 +55,8 @@ const readAbil = (segment: readonly GoToken[]): string | undefined => {
   return value?.kind === GoTokenKind.String && value.text.startsWith('"') ? value.text.slice(1, -1) : undefined;
 };
 
-// The `attributes` constant the `elem` assignment in a segment takes its value from, as `attributes.Electro`, else undefined
+// The `attributes` constant the `elem` assignment in a segment takes its value from, as `attributes.Electro`, else
+// Undefined
 const readElement = (segment: readonly GoToken[]): string | undefined => {
   const [attributes, dot, element] = readAssignedTokens(segment, "elem");
   return attributes?.text === "attributes" && checkIsGoPunctuation(dot, ".") && element?.kind === GoTokenKind.Identifier
@@ -62,7 +64,8 @@ const readElement = (segment: readonly GoToken[]): string | undefined => {
     : undefined;
 };
 
-// The ripples a file's gravity tick switch sets, one per case that names its label, element, talent variable and hitmark
+// The ripples a file's gravity tick switch sets, one per case that names its label, element, talent variable and
+// Hitmark
 const readFileRipples = (file: string, source: string): GcsimGravityRipple[] => {
   const tokens = tokenizeGo(source);
   const switchIndex = tokens.findIndex(

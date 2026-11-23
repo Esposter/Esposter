@@ -15,9 +15,9 @@ const OFFSET_PREFIX = '"Offset": ';
 const PATH_ID_PREFIX = '"PathID": ';
 const TYPE_PREFIX = '"Type": "';
 
-// The asset map's name, type, block, path ID and file offset of every entry, one tab-separated line each, read a line at
-// A time since the map is too large to parse whole. A block is written relative to the blocks folder, so an export can
-// Open it, a path ID as its source text, since 64 bits are past what a number holds exactly, and the offset of the
+// The asset map's name, type, block, path ID and file offset of every entry, one tab-separated line each, read a line
+// At A time since the map is too large to parse whole. A block is written relative to the blocks folder, so an export
+// Can Open it, a path ID as its source text, since 64 bits are past what a number holds exactly, and the offset of the
 // Serialized file holding the asset in its block, the entry's last field, by which the CAB map names that file
 export const writeAssetIndex = async (): Promise<number> => {
   const lines = createInterface({ crlfDelay: Infinity, input: createReadStream(ASSET_MAP_PATH, "utf8") });

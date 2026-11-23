@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal
+   would otherwise infer */
 import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
@@ -29,8 +30,8 @@ export const DEFAULT_APPROVAL: ParityApproval = Object.freeze({
 const PARITY_SCORES_NAME = "ParityReferenceMap";
 // The committed report of every reference's last scores, beside the map naming them
 export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, `${PARITY_SCORES_NAME}.snapshot.md`);
-// The report is formatted under the markdown name the formatter does not skip, since a snapshot is written verbatim. The
-// Path is repository-relative, as the formatter reads its ignores from it, and a worktree's own path sits under
+// The report is formatted under the markdown name the formatter does not skip, since a snapshot is written verbatim.
+// The Path is repository-relative, as the formatter reads its ignores from it, and a worktree's own path sits under
 // `.agents/worktrees`, which the config ignores
 export const PARITY_SCORES_FORMAT_PATH: string = relative(
   REPOSITORY_ROOT,
@@ -46,8 +47,8 @@ export const RECORDING_FRAME_FILTER =
 // One percent therefore admits every cut of the frame and fails any other picture
 export const VERIFY_TOLERANCE_PERCENT = 1;
 
-// The lossless WebP a reference is packed as, at the highest effort sharp offers. Its pixels decode back exactly, so every
-// Score reads the same as it did from the screenshot
+// The lossless WebP a reference is packed as, at the highest effort sharp offers. Its pixels decode back exactly, so
+// Every Score reads the same as it did from the screenshot
 export const REFERENCE_WEBP_OPTIONS = { effort: 6, lossless: true } as const;
 
 // How many files `references pack` writes and `references restore` moves at once.
@@ -57,7 +58,8 @@ export const REFERENCE_PACK_LARGEST_COUNT = 10;
 // How many leading hex digits of a hash a colliding id names, enough to tell two apart at a glance
 export const SHORT_HASH_LENGTH = 8;
 
-// A reference's source as the map writes it, `<file> at <N>s`, with `, cropped to WxH from X,Y` when the frame is cropped
+// A reference's source as the map writes it, `<file> at <N>s`, with `, cropped to WxH from X,Y` when the frame is
+// Cropped
 export const RECORDING_SOURCE_REGEX: RegExp =
   /^(?<file>\S+) at (?<seconds>\d+(?:\.\d+)?)s(?:, cropped to (?<cropWidth>\d+)x(?<cropHeight>\d+) from (?<cropX>\d+),(?<cropY>\d+))?$/u;
 

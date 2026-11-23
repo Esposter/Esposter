@@ -9,9 +9,9 @@ import { planHostedAssetRepair } from "#src/services/hostedAssets/planHostedAsse
 import { settleAll } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
-// Copies each object and index the lock names that one environment's bucket lacks from the other environment's bucket, and
-// Resolves to the report the command prints. A dry run names each copy and writes nothing. A name neither bucket holds fails
-// The repair before any copy is made
+// Copies each object and index the lock names that one environment's bucket lacks from the other environment's bucket,
+// And Resolves to the report the command prints. A dry run names each copy and writes nothing. A name neither bucket
+// Holds fails The repair before any copy is made
 export const repairHostedAssets = async (
   product: HostedAssetProduct,
   lock: HostedAssetLock,

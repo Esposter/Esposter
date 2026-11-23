@@ -6,9 +6,9 @@ import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-// The committed file beside each fixture variant's snapshot, by its path, to the ids whose manifest rows hold its bytes.
-// The file's bytes are hashed and matched against the rows, since a manifest row names no path.
-// A file no row holds is left out, as an uncommitted file is the committed references test's to report.
+// The committed file beside each fixture variant's snapshot, by its path, to the ids whose manifest rows hold its
+// Bytes. The file's bytes are hashed and matched against the rows, since a manifest row names no path. A file no row
+// Holds is left out, as an uncommitted file is the committed references test's to report.
 export const readCommittedBeside = async (
   componentsDirectory: string,
   fixtureRows: FixtureScreenRow[],

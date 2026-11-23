@@ -24,7 +24,8 @@ describe("familyLabelsCommand", () => {
     vi.restoreAllMocks();
   });
 
-  // A dry run is how the map's rows are checked before a write, so a cache still lacking a family page lists it and stops
+  // A dry run is how the map's rows are checked before a write, so a cache still lacking a family page lists it and
+  // Stops
   test("a dry run against a cache lacking a family page lists it and writes nothing", async () => {
     expect.hasAssertions();
     const log = vi.spyOn(console, "log").mockImplementation(() => {});

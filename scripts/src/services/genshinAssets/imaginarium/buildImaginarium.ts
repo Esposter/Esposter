@@ -22,8 +22,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // The Imaginarium Theater's seasons and difficulties from the role combat tables, each published as a record of the
-// Imaginarium dataset. A season names its difficulties by id, and a season whose opening characters do not hold its three
-// Elements, whose trial versions are not its openers', or that names a difficulty the table lacks, is refused
+// Imaginarium dataset. A season names its difficulties by id, and a season whose opening characters do not hold its
+// Three Elements, whose trial versions are not its openers', or that names a difficulty the table lacks, is refused
 export const buildImaginarium = (): Record<string, unknown> => {
   const difficulties = readExcelTable<ExcelRoleCombatDifficultyRow>(
     ROLE_COMBAT_DIFFICULTY_TABLE_NAME,

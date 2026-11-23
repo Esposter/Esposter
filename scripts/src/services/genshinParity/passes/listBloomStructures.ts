@@ -1,8 +1,8 @@
 import type { GameBloomStructure } from "genshin-engine";
 
-// Every structure of the bloom chain the ablation reads: the two prefilters, the two tap offsets, and each blur the game's
-// Rotated pass and the engine's separable pair take once or twice a level. The first is the engine's own (the default),
-// Read first so the ablation's default row reproduces the shipped reading
+// Every structure of the bloom chain the ablation reads: the two prefilters, the two tap offsets, and each blur the
+// Game's Rotated pass and the engine's separable pair take once or twice a level. The first is the engine's own (the
+// Default), Read first so the ablation's default row reproduces the shipped reading
 export const listBloomStructures = (): GameBloomStructure[] => {
   const blurs: Pick<GameBloomStructure, "blurForm" | "blurPasses">[] = [
     { blurForm: "separable", blurPasses: 1 },

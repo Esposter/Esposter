@@ -12,8 +12,9 @@ import { GroundLayer } from "genshin-engine";
 
 // Each terrain tile of a part of the open world, by its column, name and row, with the ground layer every one of its
 // Cells is painted in, the cells a side, row by row along the game's z with its x within a row, as its heights run. A
-// Cell's layer is its splat layer's kind's, but for the stone the game paints its roads in, which is the path: its cells
-// Run as thin lines along the roads its base maps show. A kind no tile was read holding is an error rather than a guess
+// Cell's layer is its splat layer's kind's, but for the stone the game paints its roads in, which is the path: its
+// Cells Run as thin lines along the roads its base maps show. A kind no tile was read holding is an error rather than a
+// Guess
 export const readGroundLayerCells = async (component: DerivedAssetComponent): Promise<GroundLayerCellTile[]> => {
   const tiles = await readTerrainSplats(component);
   const diffusePathIdNameMap = await readAssetNames(

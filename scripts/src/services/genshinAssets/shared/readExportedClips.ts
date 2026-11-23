@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: one clip file is open at a time, since a block holds more clips than the descriptors a process may open at once */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: one clip file is open at a time, since a block holds more
+   clips than the descriptors a process may open at once */
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";

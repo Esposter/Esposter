@@ -1,8 +1,9 @@
 import { OfferingKind } from "genshin-world";
 
 // The kind of each offering id the dump's level-up table names, by the id its open state gives it. Each id's levels are
-// Published under its kind, and an id this map does not hold is an error. Ids 1 to 3, 5 to 9, 16 and 19 are the offerings
-// The wiki's Offering System page names, their group sizes and totals matching its figures; the rest are the game's own
+// Published under its kind, and an id this map does not hold is an error. Ids 1 to 3, 5 to 9, 16 and 19 are the
+// Offerings The wiki's Offering System page names, their group sizes and totals matching its figures; the rest are the
+// Game's own
 export const OfferingIdKindMap: Partial<Record<number, OfferingKind>> = {
   1: OfferingKind.FrostbearingTree,
   2: OfferingKind.SacredSakura,

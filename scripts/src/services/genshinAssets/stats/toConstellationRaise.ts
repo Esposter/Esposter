@@ -6,9 +6,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CombatTalent } from "genshin-world";
 
 // The talent a constellation's skill action raises, from its actions in the dump: the one skill action, its levels and
-// The combat talent whose proud skill group ends in its slot. The skill the description names must be that talent's own,
-// So a table that moved a slot is refused rather than raising the wrong talent. A constellation with no skill action
-// Raises none, which is every one but the third and fifth
+// The combat talent whose proud skill group ends in its slot. The skill the description names must be that talent's
+// Own, So a table that moved a slot is refused rather than raising the wrong talent. A constellation with no skill
+// Action Raises none, which is every one but the third and fifth
 export const toConstellationRaise = (
   actions: readonly Record<string, unknown>[],
   {

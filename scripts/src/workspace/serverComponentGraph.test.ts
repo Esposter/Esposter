@@ -40,7 +40,8 @@ const readPackageSources = (): PackageSource[] =>
       return { directory: resolve(REPOSITORY_ROOT, workspaceDirectory, directory), exports, imports, name };
     });
 
-// A package's source arm for a specifier the way its manifest's `exports` declares it, by the package name and the subpath
+// A package's source arm for a specifier the way its manifest's `exports` declares it, by the package name and the
+// Subpath
 const resolveWorkspaceSpecifier = (specifier: string, packages: PackageSource[]): SourceModule | undefined => {
   const owner = packages.find(({ name }) => specifier === name || specifier.startsWith(`${name}/`));
   if (!owner) return undefined;
@@ -103,7 +104,8 @@ const readComponentChains = (): string[] => {
     }
   }
 
-  // One entry per module that imports a component, since a barrel reaches every component it re-exports through that one chain
+  // One entry per module that imports a component, since a barrel reaches every component it re-exports through that
+  // One chain
   const chains = new Set<string>();
   for (const module of queue)
     if (module.file.endsWith(".vue"))

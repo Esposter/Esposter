@@ -9,8 +9,8 @@ const ITEM_REGEX = /^- \[(?<mark>[ x])\] /u;
 // The quest an item names, as a whole word
 const QUEST_REGEX = new RegExp(String.raw`\b${QUEST_ID_PATTERN}\b`, "u");
 
-// The roadmap's items, each with the phase its heading names, whether it is ticked and the quest it names, and the name of
-// Every phase
+// The roadmap's items, each with the phase its heading names, whether it is ticked and the quest it names, and the name
+// Of Every phase
 export const parseRoadmapItems = (text: string): GenshinRoadmapReading => {
   const items: GenshinRoadmapItem[] = [];
   const names = new Map<number, string>();

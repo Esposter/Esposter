@@ -30,8 +30,8 @@ const verifyHeld = async (indexPath: string, sha256: string): Promise<void> => {
 
 // The community's index at its path, fetched from its source when the path holds no file. A copy that brought it (the
 // `asset-index` folder is in the fleet's data) is checked against the pinned SHA-256 and refused when it differs, never
-// Fetched over. A fetch hashes the bytes it downloads once, and publishes them only when they are the pinned ones, through
-// A partial file of its own, so a fetch cut short leaves no file a later run reads as the index
+// Fetched over. A fetch hashes the bytes it downloads once, and publishes them only when they are the pinned ones,
+// Through A partial file of its own, so a fetch cut short leaves no file a later run reads as the index
 export const ensureAssetPathIndex = async (
   indexPath: string = ASSET_PATH_INDEX_PATH,
   sha256: string = ASSET_PATH_INDEX_SHA256,

@@ -95,8 +95,8 @@ await runCommand(
         manifestDependencies,
         npmManifestPaths,
       );
-      // A catalog entry reached through an override alone has no `catalogs:` row, so its one resolved version is read from
-      // The packages, and a `catalogs:` row wins wherever both have one
+      // A catalog entry reached through an override alone has no `catalogs:` row, so its one resolved version is read
+      // From The packages, and a `catalogs:` row wins wherever both have one
       const lockCatalogVersions = new Map([...getLockPackageVersions(lockYaml), ...getLockCatalogVersions(lockYaml)]);
       const lockConfigDependencyVersions = getLockConfigDependencyVersions(lockYaml);
       const mismatches = [
@@ -106,7 +106,8 @@ await runCommand(
       ];
 
       const renovateRules = getRenovateRules(renovateJson);
-      // A reference `renovate.json` switches off is one the bot never pins either — the review's own workflow at a branch
+      // A reference `renovate.json` switches off is one the bot never pins either — the review's own workflow at a
+      // Branch
       const unpinnedReferences = referenceScan.unpinned.filter(
         ({ packageName }) => !getDisablingRule(packageName, renovateRules),
       );
@@ -133,8 +134,8 @@ await runCommand(
           ...followedTagEntries,
           ...npmProjects.flatMap(({ entries, resolvedVersions }) => applyDistTags(entries, resolvedVersions)),
         ]),
-        // Each is a different repository, and each costs a whole handshake (`git ls-remote`, a GitHub API request), so all
-        // Of them run at once rather than queueing behind the npm registry's bound
+        // Each is a different repository, and each costs a whole handshake (`git ls-remote`, a GitHub API request), so
+        // All Of them run at once rather than queueing behind the npm registry's bound
         readRegistryOutdatedDependencies(referenceScan.entries, referenceScan.entries.length),
       ]);
       // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.

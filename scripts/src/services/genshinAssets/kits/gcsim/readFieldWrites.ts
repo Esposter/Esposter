@@ -11,8 +11,8 @@ import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumb
 
 const ARITHMETIC_OPERATORS = new Set(["-", "*", "/", "&", "%", "^", "+", "<", ">", "|"]);
 
-// Each write to a field of `c` in a file: a literal `=` gives its value, an increment or `op=` gives none, and a read like
-// `c.field == 2` is no write at all
+// Each write to a field of `c` in a file: a literal `=` gives its value, an increment or `op=` gives none, and a read
+// Like `c.field == 2` is no write at all
 export const readFieldWrites = (
   tokens: readonly GoToken[],
   file: string,

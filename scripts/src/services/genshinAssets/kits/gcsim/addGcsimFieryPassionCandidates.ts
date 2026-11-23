@@ -10,8 +10,8 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 
 // Varesa's Fiery Passion: the stance's skill is the rush at the skill's frames and hitmark, its multiplier the Fiery
 // Passion rush's, and the burst variant is the flying kick at the burst's frames and hitmark, its multiplier the Fiery
-// Passion kick's. Neither area is read: both are built in code as a box and a circle, not as a hitbox of the config. The
-// Rush's area (skill.go:82), the kick's area (burst.go:76) and the kick's Fiery Passion poise (burst.go:70) are the
+// Passion kick's. Neither area is read: both are built in code as a box and a circle, not as a hitbox of the config.
+// The Rush's area (skill.go:82), the kick's area (burst.go:76) and the kick's Fiery Passion poise (burst.go:70) are the
 // Overlay's values, the code's own numbers where the reader cannot see a branch's literal
 export const addGcsimFieryPassionCandidates = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,

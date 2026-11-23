@@ -8,8 +8,8 @@ import { resolve } from "node:path";
 
 const TSDOWN_CONFIGURATION_FILENAME = "tsdown.config.ts";
 const SOURCE_MAP_EXTENSION = ".map";
-// A chunk's name ends in a hash of its content, which changes with the very size the record tracks, so a chunk that grew
-// Would read as one file gone and another added. The hash is eight characters with a capital or a digit among them
+// A chunk's name ends in a hash of its content, which changes with the very size the record tracks, so a chunk that
+// Grew Would read as one file gone and another added. The hash is eight characters with a capital or a digit among them
 const CONTENT_HASH_REGEX = /-(?=[\w-]{8}\.)(?=[\w-]*[A-Z\d])[\w-]{8}(?=\.)/u;
 
 // The size of every file a workspace package's build emits, the modules of an unbundled build rolled up per extension.

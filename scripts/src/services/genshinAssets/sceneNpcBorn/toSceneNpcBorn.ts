@@ -1,8 +1,8 @@
 import type { DumpedSceneNpcBorn } from "#src/models/genshinAssets/sceneNpcBorn/DumpedSceneNpcBorn";
 import type { SceneNpcBorn } from "genshin-world";
 
-// One birth as the dataset holds it: its place and turn kept, the dump's underscores dropped, and an unset turn or suite
-// List left out or empty rather than written as a value
+// One birth as the dataset holds it: its place and turn kept, the dump's underscores dropped, and an unset turn or
+// Suite List left out or empty rather than written as a value
 export const toSceneNpcBorn = ({
   _configId,
   _groupId,

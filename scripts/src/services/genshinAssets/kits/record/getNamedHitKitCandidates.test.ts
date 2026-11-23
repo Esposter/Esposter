@@ -122,7 +122,8 @@ describe(getNamedHitKitCandidates, () => {
   test("takes no call where a second site of the key makes as many calls, though its own call has no delay", () => {
     expect.hasAssertions();
 
-    // A skill's own call at a delay, and its A4 blade fired from a function whose delay is a parameter, so no delay reads
+    // A skill's own call at a delay, and its A4 blade fired from a function whose delay is a parameter, so no delay
+    // Reads
     const namedHitCandidateMap: NamedHitCandidateMap = new Map([
       [
         "3|0",

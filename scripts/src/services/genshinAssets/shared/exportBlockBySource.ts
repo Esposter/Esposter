@@ -18,7 +18,8 @@ import { basename, join } from "node:path";
 // Lowercase as the CAB map keys it), so every object is held with the file its pointers resolve from: AnimeStudio
 // Groups a source's export under a folder named after the block, whose files are moved up a level. A type is its own
 // Run, since a file's objects are named by their own names and two types' objects share one. An unparsed export writes
-// The objects' bytes without AnimeStudio's parser, which refuses some of the game's shaders, into the same type's folder
+// The objects' bytes without AnimeStudio's parser, which refuses some of the game's shaders, into the same type's
+// Folder
 export const exportBlockBySource = async (
   block: string,
   types: readonly AssetType[],

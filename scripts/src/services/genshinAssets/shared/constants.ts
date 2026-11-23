@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer; `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would
+   otherwise infer; `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
 import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 import type { ProvenanceTool } from "#src/models/provenance/ProvenanceOptions";
@@ -43,11 +44,12 @@ export const ASSET_MAP_SHARDS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), 
 // The blocks as the game loads them, each a symlink to its hotfixed copy or its StreamingAssets one, written by the map
 // (`linkInstalledBlocks`) and the folder the map, the CAB map and every export open a block through
 export const INSTALLED_BLOCKS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "blocks");
-// The environment variable that names AnimeStudio's command line in place of the one the build or the Windows unpack leaves
+// The environment variable that names AnimeStudio's command line in place of the one the build or the Windows unpack
+// Leaves
 export const ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE = "GENSHIN_ANIMESTUDIO_CLI";
-// AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where its
-// Map is kept, or the one unpacked under Downloads on Windows, unless the environment variable names another. It writes its
-// CAB map into a `Maps` folder beside its working directory, so it is run from its own folder
+// AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where
+// Its Map is kept, or the one unpacked under Downloads on Windows, unless the environment variable names another. It
+// Writes its CAB map into a `Maps` folder beside its working directory, so it is run from its own folder
 export const ANIMESTUDIO_CLI_PATH: string =
   process.env[ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE] ??
   (process.platform === "darwin"
@@ -122,16 +124,18 @@ export const SERIALIZED_POINTER_BYTES = 12;
 export const TERRAIN_TILE_SIZE = 1024;
 export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
-// How far round a region's centre its ground is fitted and its terrain read, in metres: the valley the screen's views see
+// How far round a region's centre its ground is fitted and its terrain read, in metres: the valley the screen's views
+// See
 export const GROUND_RADIUS = 1000;
-// The fewest samples a piece's gate is read on, provisionally: a piece under them is refused rather than fitted or split
+// The fewest samples a piece's gate is read on, provisionally: a piece under them is refused rather than fitted or
+// Split
 export const GROUND_GATE_SAMPLES = 1024;
 // The side of a ground layer field's cell in metres, where its shares hold the colour Windrise's reference camera sees
 // Within the colour gate at a few tens of kilobytes: read off the base maps at that camera, half the side gains a third
 // Of a ΔE for four times the bytes, and twice it misses the gate
 export const GROUND_LAYER_CELL_SIZE = 32;
-// The diffuse of the stone layer the game paints its roads in: on Windrise's tiles its cells run as thin lines along the
-// Roads the base maps show, so its cells are the ground's path
+// The diffuse of the stone layer the game paints its roads in: on Windrise's tiles its cells run as thin lines along
+// The Roads the base maps show, so its cells are the ground's path
 export const TERRAIN_PATH_DIFFUSE = "Stages_Mdterrain08_Diffuse";
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";
@@ -141,7 +145,8 @@ export const MAIN_COLOUR_PROPERTY = "_Color";
 export const CUTOFF_PROPERTY = "_Cutoff";
 // The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source
 export const SOURCE_EXPORT_SUFFIX = ".blk_export";
-// The extension of the PNG an export writes its textures and sprites as, which the palette and the namecards pick out by
+// The extension of the PNG an export writes its textures and sprites as, which the palette and the namecards pick out
+// By
 export const PNG_EXTENSION = ".png";
 // The prefix a character's portrait takes in the game's UI, which the character component exports by name
 export const AVATAR_ICON_PREFIX = "UI_AvatarIcon_";
@@ -341,7 +346,8 @@ export const WORLD_AREA_POLYGONS_PATH: string = join(
   SCENE_WORLD_AREA_DIRECTORY,
   SCENE_WORLD_AREA_FILE_NAME,
 );
-// The key the open world's subarea labels are published under, one record of every level-two area's name and label point
+// The key the open world's subarea labels are published under, one record of every level-two area's name and label
+// Point
 export const MAP_LABELS_KEY: string = `${GameDataset.MapLabels}/subareas`;
 export const SCENE_POINT_AREA_FIELD = "EABBCMGNLEL";
 // The open world's scene, whose groups, points, NPC births and transport points the world is placed from
@@ -440,24 +446,26 @@ export const HULL_MESH_READ_CONCURRENCY = 4;
 // How far a ratio's cross-ratio in the fitted data may stray from its reference's: a pixel off at each end of widths
 // About two hundred pixels across moves it by about a hundredth
 export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;
-// The region data file the open world's landmarks are written to, the one Windrise's landmarks and capitals are fitted into
+// The region data file the open world's landmarks are written to, the one Windrise's landmarks and capitals are fitted
+// Into
 export const WINDRISE_REGION_FILE = "regions/mondstadt.json";
 // The path ID a root's parent is written as
 export const ROOT_PARENT_ID = "0";
-// How far a world position may stand from the origin and still count as at it, in metres: a placement a float off zero is
-// Collapsed there all the same
+// How far a world position may stand from the origin and still count as at it, in metres: a placement a float off zero
+// Is Collapsed there all the same
 export const ORIGIN_TOLERANCE_METRES = 0.001;
 // How near a placed point's nearest official map point must lie, in game units, for the point to be filed in that map
 // Point's region: about nine in ten placed NPCs lie within about twenty of it
 export const REGION_MAX_DISTANCE = 100;
-// The regions whose Teleport Waypoints the waypoints command writes into their region data. A region joins the list once its
-// Map fit passes its bar, one at a time, and a region in it whose fit is over the bar writes none
+// The regions whose Teleport Waypoints the waypoints command writes into their region data. A region joins the list
+// Once its Map fit passes its bar, one at a time, and a region in it whose fit is over the bar writes none
 export const WAYPOINT_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt, DerivedAssetComponent.Liyue];
-// The regions whose Statues of the New Moon the waypoints command writes: Nod-Krai, whose statues the official map labels
-// As Statues of The Seven in its own map area, each paired with the scene's transport point it stands at
+// The regions whose Statues of the New Moon the waypoints command writes: Nod-Krai, whose statues the official map
+// Labels As Statues of The Seven in its own map area, each paired with the scene's transport point it stands at
 export const NEW_MOON_STATUE_REGIONS: readonly string[] = [DerivedAssetComponent.NodKrai];
-// The regions whose ley line blossoms are placed as their outcrop places: the regions the dump's section order table names
-// Sections for. Fontaine, Natlan, Snezhnaya and Nod-Krai wait on that table, so their blossoms stay out until it names them
+// The regions whose ley line blossoms are placed as their outcrop places: the regions the dump's section order table
+// Names Sections for. Fontaine, Natlan, Snezhnaya and Nod-Krai wait on that table, so their blossoms stay out until it
+// Names them
 export const OUTCROP_REGIONS: readonly string[] = [
   DerivedAssetComponent.Mondstadt,
   DerivedAssetComponent.Liyue,

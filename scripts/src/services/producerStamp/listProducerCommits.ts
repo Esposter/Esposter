@@ -7,7 +7,8 @@ import { listRecentCommits } from "#src/services/producerStamp/listRecentCommits
 import { readCommitLines } from "#src/services/producerStamp/readCommitLines";
 
 // The commits to a producer's paths since its stamp's commit, each `<short sha> <subject>`. A commit HEAD holds is
-// Listed from its own ancestry. One git does not know, or HEAD does not hold, lists the window's commits, as an approximation
+// Listed from its own ancestry. One git does not know, or HEAD does not hold, lists the window's commits, as an
+// Approximation
 export const listProducerCommits = (
   commit: string,
   producerPaths: string[],

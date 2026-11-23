@@ -2,8 +2,8 @@ import type { ConfigWidgetRow } from "#src/models/genshinAssets/gadgets/ConfigWi
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The item a gather point finder finds, by the gather point type its widget names. A type the gather table gives no item
-// Is refused, so the stone is not published with a target it cannot have
+// The item a gather point finder finds, by the gather point type its widget names. A type the gather table gives no
+// Item Is refused, so the stone is not published with a target it cannot have
 export const toGatherItemId = (
   id: string,
   { gatherPointType }: ConfigWidgetRow,

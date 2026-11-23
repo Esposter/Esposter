@@ -4,9 +4,9 @@ import type { ExcelTowerBuffRow } from "#src/models/genshinAssets/spiralAbyss/Ex
 import { TowerBuffIconIconMap } from "#src/services/genshinAssets/spiralAbyss/TowerBuffIconIconMap";
 import { TowerBuffLastingTypeScopeMap } from "#src/services/genshinAssets/spiralAbyss/TowerBuffLastingTypeScopeMap";
 
-// Each Benediction of the tower buff table by its id, holding its description's text hash, and the glyph and span its row
-// Names where the published record holds one. A Benediction with no glyph or no span has no such field, rather than one
-// Written as undefined
+// Each Benediction of the tower buff table by its id, holding its description's text hash, and the glyph and span its
+// Row Names where the published record holds one. A Benediction with no glyph or no span has no such field, rather than
+// One Written as undefined
 export const toAbyssTowerBuffs = (rows: ExcelTowerBuffRow[]): Map<number, AbyssTowerBuff> =>
   new Map(
     rows.map(({ buffIcon, descTextMapHash, lastingType, towerBuffId }): [number, AbyssTowerBuff] => {

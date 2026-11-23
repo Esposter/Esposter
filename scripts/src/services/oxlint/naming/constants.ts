@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would
+   otherwise infer */
 export const MESSAGE =
   "A binding named after the call that produced it (`const readPost = await readPost(…)`) holds the value, not the fetch — drop the verb prefix (`const post = …`). See the naming skill.";
 // The naming skill's own function prefixes: a call under one of these answers with something the prefix

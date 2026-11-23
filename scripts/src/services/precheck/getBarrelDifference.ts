@@ -1,4 +1,5 @@
-// The export lines the generator would write that the committed barrel lacks, and the committed lines it would not write
+// The export lines the generator would write that the committed barrel lacks, and the committed lines it would not
+// Write
 export const getBarrelDifference = (
   expectedLines: string[],
   committedLines: string[],

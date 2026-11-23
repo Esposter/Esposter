@@ -9,7 +9,8 @@ import { defineRule } from "@oxlint/plugins";
 const LOG_REGEX = /\bconsole\.\w+|\bcreateErrorAlert\b/u;
 
 // A comment beside the call names why its failure is the expected answer: within the call's own lines, or on the line
-// Directly above them. A comment further off, say above the function the call sits in, names the function, not the failure
+// Directly above them. A comment further off, say above the function the call sits in, names the function, not the
+// Failure
 const checkIsCommented = (node: ESTree.Node, sourceCode: SourceCode): boolean =>
   sourceCode
     .getAllComments()
@@ -50,9 +51,9 @@ const checkIsSilentArm = (arm: ESTree.Node, sourceCode: SourceCode): boolean => 
   );
 };
 
-// Reports a Result whose failure becomes nothing: `.unwrapOr(undefined)`, or a `.match` whose err arm returns a sentinel
-// Without a log. A reader cannot tell that failure from an empty answer, so a comment beside it must name why the failure
-// Is expected, or the failure is logged. See the error-handling skill.
+// Reports a Result whose failure becomes nothing: `.unwrapOr(undefined)`, or a `.match` whose err arm returns a
+// Sentinel Without a log. A reader cannot tell that failure from an empty answer, so a comment beside it must name why
+// The failure Is expected, or the failure is logged. See the error-handling skill.
 export const noUncommentedFallback: Rule = defineRule({
   create(context) {
     const { sourceCode } = context;

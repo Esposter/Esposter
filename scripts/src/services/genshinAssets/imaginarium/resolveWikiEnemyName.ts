@@ -1,6 +1,6 @@
-// A wiki enemy name's codex entry: resolved only when every monster whose English name is the name shares one describe id,
-// The entry the game files its monsters under. Otherwise the name is refused with the count of entries that hold it, so a
-// Name whose monsters span several entries, or that no monster holds, is never guessed at
+// A wiki enemy name's codex entry: resolved only when every monster whose English name is the name shares one describe
+// Id, The entry the game files its monsters under. Otherwise the name is refused with the count of entries that hold
+// It, so a Name whose monsters span several entries, or that no monster holds, is never guessed at
 export type WikiEnemyNameResolution = { count: number; isResolved: false } | { describeId: number; isResolved: true };
 
 export const resolveWikiEnemyName = (

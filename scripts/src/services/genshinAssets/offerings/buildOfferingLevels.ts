@@ -16,12 +16,12 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset, OfferingKind } from "genshin-world";
 
-// Every offering's levels, each row's items and reward joined from the level table and the reward table, as one record per
-// Offering under its kind. A row at level 0 is the unstarted state and is left out. An offering id the kind map does not
-// Hold is an error, since its levels would publish under no key, unless its event has ended. An offering whose levels name
-// Their rewards in a pool rather than the level table draws each level from that pool. An offering whose level names no
-// Reward the level table holds is left out with a note. Primal Flame Resonance has no level table, so its levels come from
-// The wiki
+// Every offering's levels, each row's items and reward joined from the level table and the reward table, as one record
+// Per Offering under its kind. A row at level 0 is the unstarted state and is left out. An offering id the kind map
+// Does not Hold is an error, since its levels would publish under no key, unless its event has ended. An offering whose
+// Levels name Their rewards in a pool rather than the level table draws each level from that pool. An offering whose
+// Level names no Reward the level table holds is left out with a note. Primal Flame Resonance has no level table, so
+// Its levels come from The wiki
 export const buildOfferingLevels = (): GameDataBuild => {
   const rewardMap = readRewardMap();
   const levelRows = readExcelTable<ExcelOfferingLevelupRow>("OfferingLevelUpExcelConfigData");

@@ -10,7 +10,8 @@ import { formatAge } from "#src/services/shared/formatAge";
 
 const MISS_LENGTH = 40;
 
-// The claims this machine holds, each with its state and age. A live claim whose hold process is gone is no longer renewed
+// The claims this machine holds, each with its state and age. A live claim whose hold process is gone is no longer
+// Renewed
 export const getClaimItems = (
   claimedRefMap: ReadonlyMap<string, ClaimedRef>,
   machineId: string,

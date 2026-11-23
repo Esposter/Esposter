@@ -2,8 +2,9 @@ import { replaceCounted } from "#src/services/recreation/animeStudio/replaceCoun
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// The controller's state machine is parsed into a local and dropped, so the JSON export holds only its two lists. Kept as a
-// Public field, the exporter writes its layers, state machines and states beside them, and the reader's branches are unchanged
+// The controller's state machine is parsed into a local and dropped, so the JSON export holds only its two lists. Kept
+// As a Public field, the exporter writes its layers, state machines and states beside them, and the reader's branches
+// Are unchanged
 export const patchAnimatorControllerExport = (animeStudioDirectory: string): void => {
   const path = join(animeStudioDirectory, "AnimeStudio", "Classes", "AnimatorController.cs");
   const source = readFileSync(path, "utf8");

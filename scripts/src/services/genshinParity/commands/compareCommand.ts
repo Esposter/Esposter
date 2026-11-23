@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: the parity page shoots one screen at a time on the GPU, and parallel renders exhaust the free memory each holds, so each reference and its passes wait on the one before */
+/* oxlint-disable no-await-in-loop -- One device: the parity page shoots one screen at a time on the GPU, and
+   parallel renders exhaust the free memory each holds, so each reference and its passes wait on the one before */
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 import type { ReferenceEntryPath } from "#src/models/genshinParity/reference/ReferenceEntryPath";
 import type { SubCommandsDef } from "citty";
@@ -64,14 +65,17 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     const cellCount = parseWholeCount(args.cells, "cells", 1);
     const referenceIds = args.all ? Object.keys(ParityReferenceMap) : [args.reference ?? ""];
     const scores: Record<string, ParityScore> = {};
-    // The committed images the run found missing, each named with its id and path once the run has written what it measured
+    // The committed images the run found missing, each named with its id and path once the run has written what it
+    // Measured
     const missingImages: ReferenceEntryPath[] = [];
-    // A page that predates a build of its packages is replaced for this run alone, and the replacement stopped when the run ends
+    // A page that predates a build of its packages is replaced for this run alone, and the replacement stopped when the
+    // Run ends
     const freshPage = await startFreshPageServer();
     const pageRoot = freshPage === undefined ? undefined : `${freshPage.origin}/parity/`;
     await withFinalizerAsync(
       async () => {
-        // Fetched first, as each comparison would fetch it, so a reference the wiki holds is measured rather than reported
+        // Fetched first, as each comparison would fetch it, so a reference the wiki holds is measured rather than
+        // Reported
         if (args.all) await fetchReferences();
         // Read once for the run, so the loop awaits only its comparison.
         // The held check comes from the manifest, and each held reference's planned path is read here before the loop.
@@ -104,7 +108,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
               layerComponent === undefined
                 ? undefined
                 : join(getComponentDirectory(layerComponent).root, WITNESS_LAYOUT_FILE_NAME);
-            // A reference the manifest does not hold has no stored image to measure, so it is named missing rather than fetched
+            // A reference the manifest does not hold has no stored image to measure, so it is named missing rather than
+            // Fetched
             const referencePath = plannedPaths.get(referenceId);
             const platePath =
               ParityReferenceMap[referenceId]?.plateSource === undefined
@@ -151,11 +156,12 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
                 console.error("the browser closed, so the next reference opens its page on a fresh one");
             },
           );
-          // A frame that stands off names the pass its report holds red, as the passes last recorded it: the first one outside
-          // Its gate is the one reopened. The passes are not run here, so a compare costs its own frame alone
+          // A frame that stands off names the pass its report holds red, as the passes last recorded it: the first one
+          // Outside Its gate is the one reopened. The passes are not run here, so a compare costs its own frame alone
           const comparedScore = scores[referenceId];
           const component = getLayerComponent(referenceId, args.witness);
-          // At the bar is over it, as the approval's own status counts it, and the measure is the one the approval judges by
+          // At the bar is over it, as the approval's own status counts it, and the measure is the one the approval
+          // Judges by
           if (
             comparedScore !== undefined &&
             component !== undefined &&

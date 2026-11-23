@@ -2,8 +2,8 @@ import type { GroundPoint } from "genshin-engine";
 
 import { computeOutlineDistance } from "genshin-engine";
 
-// Whether a point is on a region's ground: inside one of its catalogue outlines. A region the catalogue gives no outline
-// Is fitted over its whole disc, so it has none to hold a point to
+// Whether a point is on a region's ground: inside one of its catalogue outlines. A region the catalogue gives no
+// Outline Is fitted over its whole disc, so it has none to hold a point to
 export const checkIsInsideRegionOutlines = (
   outlines: readonly (readonly GroundPoint[])[],
   x: number,

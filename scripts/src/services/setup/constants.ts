@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer; `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal
+   would otherwise infer; `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
 import type { SetupLogin } from "#src/models/setup/SetupLogin";
 import type { SetupTool } from "#src/models/setup/SetupTool";
 
@@ -110,8 +111,8 @@ export const LONG_PATHS_KEY: string = String.raw`HKLM\SYSTEM\CurrentControlSet\C
 export const LONG_PATHS_VALUE_NAME = "LongPathsEnabled";
 export const LONG_PATHS_ENABLED_REGEX: RegExp = new RegExp(`${LONG_PATHS_VALUE_NAME}\\s+REG_DWORD\\s+0x1\\b`, "u");
 export const LONG_PATHS_NEXT: string = String.raw`from an elevated PowerShell run Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1, then restart the terminal`;
-// `fsutil devdrv query` answers "This is a trusted developer volume." or "This is a developer volume." for a Dev Drive, and
-// "This is not a developer volume." for any other
+// `fsutil devdrv query` answers "This is a trusted developer volume." or "This is a developer volume." for a Dev Drive,
+// And "This is not a developer volume." for any other
 export const DEV_DRIVE_REGEX = /^This is a (?:trusted )?developer volume\./mu;
 export const DEV_DRIVE_NEXT: string = String.raw`create a Dev Drive (Settings > System > Storage > Disks & volumes > Create dev drive), then move the pnpm store onto it with pnpm config set store-dir <drive>:\.pnpm-store --global and run pnpm i`;
 export const SSH_DIRECTORY: string = join(homedir(), ".ssh");

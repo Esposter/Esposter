@@ -1,4 +1,7 @@
-/* oxlint-disable no-await-in-loop -- Stop at the first: once every tile is found, the blocks still to come are not exported; One device: AnimeStudio runs one block at a time, each run blocking the thread into one folder that is cleared before the next block's exports go in; Each step reads the last: a name found in an earlier file or block is skipped; Bounded concurrency: one tile at a time, each some megabytes */
+/* oxlint-disable no-await-in-loop -- Stop at the first: once every tile is found, the blocks still to come are not
+   exported; One device: AnimeStudio runs one block at a time, each run blocking the thread into one folder that is
+   cleared before the next block's exports go in; Each step reads the last: a name found in an earlier file or block
+   is skipped; Bounded concurrency: one tile at a time, each some megabytes */
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";

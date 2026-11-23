@@ -13,8 +13,8 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { createSeededRandom } from "genshin-engine";
 
-// A mesh as the statue kit's stacks, a piece at a time: the pieces its triangles join into (`splitMeshComponents`), each
-// Fitted as one upright stack or as blades by `fitStatueComponent`, with the same seed a piece so a refit changes
+// A mesh as the statue kit's stacks, a piece at a time: the pieces its triangles join into (`splitMeshComponents`),
+// Each Fitted as one upright stack or as blades by `fitStatueComponent`, with the same seed a piece so a refit changes
 // Nothing. `readFaceColour` gives the colour, in linear light, at a point on a face of the mesh, the face by its index
 // Among `faces` and the point by its weights over the face's corners; a stack's vertices take the mean of the piece's
 // Points nearest them. Returns each piece's stacks with the score they were chosen at

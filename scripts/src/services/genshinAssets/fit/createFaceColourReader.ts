@@ -5,9 +5,9 @@ import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurf
 import { BYTE } from "#src/services/shared/constants";
 import { Color, SRGBColorSpace } from "three";
 
-// The colour at a point on a mesh's face, read from the texture its material draws with: the point's texel, found at its
-// Own place on the face from the face's texture coordinates and the point's weights over its corners, taken to linear
-// Light and multiplied by the material's tint, as the game's G-buffer holds it
+// The colour at a point on a mesh's face, read from the texture its material draws with: the point's texel, found at
+// Its Own place on the face from the face's texture coordinates and the point's weights over its corners, taken to
+// Linear Light and multiplied by the material's tint, as the game's G-buffer holds it
 export const createFaceColourReader = (
   { faceUvs, uvs }: { faceUvs: readonly Vector[]; uvs: readonly (readonly [number, number])[] },
   texture: Texture,

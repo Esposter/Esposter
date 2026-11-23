@@ -1,4 +1,5 @@
-// Two grey images of one size and the label of each pixel, -1 where no label reads, as `computeLabelSimilarity` takes them
+// Two grey images of one size and the label of each pixel, -1 where no label reads, as `computeLabelSimilarity` takes
+// Them
 export interface LabelSimilarityInput {
   height: number;
   labelCount: number;

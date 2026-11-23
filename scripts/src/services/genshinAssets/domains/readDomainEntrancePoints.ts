@@ -5,9 +5,9 @@ import { SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
 import { readScenePointsOfKind } from "#src/services/genshinAssets/world/readScenePointsOfKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Every point the challenge domains' entrances stand at, of the entrances' kind, each by its id. A dump that renamed the
-// Transport place or the area would hold none, so it is refused rather than read as a scene with no entrances, or with
-// Entrances in no area
+// Every point the challenge domains' entrances stand at, of the entrances' kind, each by its id. A dump that renamed
+// The Transport place or the area would hold none, so it is refused rather than read as a scene with no entrances, or
+// With Entrances in no area
 export const readDomainEntrancePoints = async (): Promise<Record<string, DumpedScenePoint>> => {
   const points = await readScenePointsOfKind(DOMAIN_ENTRANCE_POINT);
   const holdsField: [string, (value: unknown) => boolean][] = [

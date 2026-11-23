@@ -2,9 +2,9 @@ import { toWords } from "#src/services/genshinAssets/sceneGroups/toWords";
 
 // Each viewpoint's point of the official map, by the viewpoint's id: a point is a viewpoint's candidate when the text
 // Written on it holds the viewpoint's name as whole words, and is taken by elimination. A viewpoint with one candidate
-// That no other viewpoint with one candidate shares takes it, the point is struck from every other viewpoint's candidates,
-// And the round repeats until none is taken. A viewpoint left with no candidate, or with several, is left unmatched
-// Rather than guessed
+// That no other viewpoint with one candidate shares takes it, the point is struck from every other viewpoint's
+// Candidates, And the round repeats until none is taken. A viewpoint left with no candidate, or with several, is left
+// Unmatched Rather than guessed
 export const matchViewpointPoints = (
   viewpointNameMap: ReadonlyMap<number, string>,
   pointContentMap: ReadonlyMap<number, string>,

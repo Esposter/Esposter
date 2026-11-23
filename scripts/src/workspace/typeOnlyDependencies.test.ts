@@ -28,7 +28,8 @@ const readScripts = (path: string): string[] => {
     : [text];
 };
 
-// The names a package's two lists hold, which a consumer resolves: a peer is installed beside the package by the consumer
+// The names a package's two lists hold, which a consumer resolves: a peer is installed beside the package by the
+// Consumer
 const readHeldNames = (manifest: PackageManifest) =>
   new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.peerDependencies ?? {})]);
 
@@ -55,7 +56,8 @@ describe("typeOnlyDependencies", () => {
     "u",
   );
   const DECLARATION_PATH_REGEX = /\.d\.[cm]?ts$/u;
-  // Only a source that writes `import(` can hold a dynamic import or an import type, and either sits anywhere in its tree
+  // Only a source that writes `import(` can hold a dynamic import or an import type, and either sits anywhere in its
+  // Tree
   const IMPORT_CALL_REGEX = /\bimport\s*\(/u;
   const DECLARE_MODULE_REGEX = /\bdeclare\s+module\b/u;
   // A name a bundler resolves rather than a package a consumer installs: a virtual module or a wildcard
@@ -125,7 +127,8 @@ describe("typeOnlyDependencies", () => {
     expect.hasAssertions();
 
     const packages = readPackages((manifest) => manifest.private === true && manifest.dependencies !== undefined);
-    // One listing for every package: git walks its index once, where a spawn for each package pays the process start again
+    // One listing for every package: git walks its index once, where a spawn for each package pays the process start
+    // Again
     const sourcePaths = readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
       (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
     );
@@ -164,9 +167,9 @@ describe("typeOnlyDependencies", () => {
     },
   );
 
-  // A workspace sibling a built package loads is kept external by its runtime fields alone: tsdown bundles a devDependency
-  // Its source imports, which copies the sibling's modules into this package's `dist`. A published package's declarations
-  // Name the types it imports, so its consumers resolve those names as well
+  // A workspace sibling a built package loads is kept external by its runtime fields alone: tsdown bundles a
+  // `devDependency` Its source imports, which copies the sibling's modules into this package's `dist`. A published
+  // Package's declarations Name the types it imports, so its consumers resolve those names as well
   test(
     "list each workspace sibling a built package loads in dependencies or peerDependencies",
     { timeout: TREE_READ_TIMEOUT_MS },

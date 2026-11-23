@@ -17,10 +17,10 @@ import { readOtherHostedAssetLocks } from "#src/services/hostedAssets/readOtherH
 import { writeHostedAssetKeys } from "#src/services/hostedAssets/writeHostedAssetKeys";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 
-// One publish of a plan: the scopes it replaces are stored in both environments' buckets, and the lock is committed only
-// Once both have them. A dry run stores nothing and needs no credential, and its note adds what it would change against the
-// Published records. A publication that leaves the lock as it is makes no bucket client, so it needs no credential either.
-// Returns a note of what the step did to the lock
+// One publish of a plan: the scopes it replaces are stored in both environments' buckets, and the lock is committed
+// Only Once both have them. A dry run stores nothing and needs no credential, and its note adds what it would change
+// Against the Published records. A publication that leaves the lock as it is makes no bucket client, so it needs no
+// Credential either. Returns a note of what the step did to the lock
 export const publishGameDataPlan = async ({ isDryRun, plan, scopes }: PublishGameDataPlanOptions): Promise<string> => {
   const label = scopes.join(", ");
   const currentLock = await readGameDataLock();

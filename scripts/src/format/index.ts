@@ -2,8 +2,8 @@ import { formatPaths } from "#src/services/format/formatPaths";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// `pnpm ai:format [paths...]` — formats the files in place with the repository's formatter, from any checkout, the files
-// Changed against ai/queue when none is named (the `running-checks` skill, "Checks run once, before the commit")
+// `pnpm ai:format [paths...]` — formats the files in place with the repository's formatter, from any checkout, the
+// Files Changed against ai/queue when none is named (the `running-checks` skill, "Checks run once, before the commit")
 await runCommand(
   defineCommand({
     meta: {

@@ -9,8 +9,8 @@ import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData"
 import { toWorldQuaternion } from "#src/services/genshinAssets/world/toWorldQuaternion";
 
 // A family of Windrise's plants, every prefab whose name holds the part: its places as the streams record them, in our
-// Region's axes on the ground's plane, against the fitted places drawn for it. A fitted file that drifts from the records
-// It was fitted from shows as a distance
+// Region's axes on the ground's plane, against the fitted places drawn for it. A fitted file that drifts from the
+// Records It was fitted from shows as a distance
 export const createPlantFamily = (name: string, namePart: string): ArrangementFamily => ({
   name,
   readExpected: async () => {

@@ -30,9 +30,9 @@ const NO_GATE_REASON = "no gate: the family lies within one half";
 // Ours against the exports', as the root mean square relative error (`computeStatisticalStructure`). The exports'
 // Textures are never shipped, so a pixel-aligned structure cannot be met, and a surface is matched in distribution. Its
 // Gate is the sampling floor: the exports' own family split into two halves of blocks, each measured against the other,
-// So a surface of the same distribution reads at the least a finite patch can. The pixel-aligned structure of each family stays in the notes, scale by scale, as a diagnostic of where
-// Its detail lies. A glow the materials add over their lit colour is lit, not unlit, so it is scored by the light pass
-// Against the game's frame (`measureGlow`)
+// So a surface of the same distribution reads at the least a finite patch can. The pixel-aligned structure of each
+// Family stays in the notes, scale by scale, as a diagnostic of where Its detail lies. A glow the materials add over
+// Their lit colour is lit, not unlit, so it is scored by the light pass Against the game's frame (`measureGlow`)
 export const measureSurface = (component: DerivedAssetComponent, pageRoot?: string): Promise<ParityPassMeasure> =>
   measureFamilyTargets(
     component,
@@ -46,7 +46,8 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
       const oursPart = oursRead.targets.part ?? new Float32Array();
       const exportsTargets = { colour: exportsAlbedo, part: exportsPart };
       const height = exportsPart.length / 4 / width;
-      // A family's pixel at its median depth, the metres a pixel of the surface's structure spans where the family stands
+      // A family's pixel at its median depth, the metres a pixel of the surface's structure spans where the family
+      // Stands
       const familyPixelMetres = families.map((_name, family) =>
         computeMedianMetresPerPixel({
           depths: [...computeFamilyMask(exportsPart, exportsPart, family, width)].flatMap((isDrawn, pixel) =>

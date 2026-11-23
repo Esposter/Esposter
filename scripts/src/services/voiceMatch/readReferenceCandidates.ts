@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- One device: the decoder and the embedder below each run one clip at a time; One device: the embedder runs one clip at a time */
+/* oxlint-disable no-await-in-loop -- One device: the decoder and the embedder below each run one clip at a time; One
+   device: the embedder runs one clip at a time */
 import type { ReferenceCandidate } from "#src/models/voiceMatch/ReferenceCandidate";
 import type { SpeakerEmbedder } from "#src/models/voiceMatch/SpeakerEmbedder";
 import type { ClipDecoder } from "genshin-persona/src/models/ClipDecoder.ts";

@@ -8,8 +8,8 @@ import { toHullPlacements } from "#src/services/genshinAssets/fit/toHullPlacemen
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { join } from "node:path";
 
-// A component's hulls of the meshes the check keeps: each mesh's visual hull fitted off its own export (`fitVisualHull` at
-// `HULL_CELL_SIZE`, in three's axes), and each place the witness stands it. No game vertex is kept
+// A component's hulls of the meshes the check keeps: each mesh's visual hull fitted off its own export (`fitVisualHull`
+// At `HULL_CELL_SIZE`, in three's axes), and each place the witness stands it. No game vertex is kept
 export const fitRegionHulls = async (
   component: DerivedAssetComponent,
   checkIsHullMesh: (mesh: string) => boolean,

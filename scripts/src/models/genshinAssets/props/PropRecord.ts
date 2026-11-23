@@ -11,8 +11,8 @@ export type PropRecord =
     }
   | { boxes: [number, number, number, number, number, number][]; shape: typeof PropShape.Hull };
 
-// A strict object refuses any key beyond the outline's, so a record carrying the game's vertices, faces or a mesh's name
-// Is refused before it is published
+// A strict object refuses any key beyond the outline's, so a record carrying the game's vertices, faces or a mesh's
+// Name Is refused before it is published
 export const propRecordSchema: z.ZodType<PropRecord> = z.discriminatedUnion("shape", [
   z.strictObject({
     boxes: z.array(z.tuple([z.number(), z.number(), z.number(), z.number(), z.number(), z.number()])),

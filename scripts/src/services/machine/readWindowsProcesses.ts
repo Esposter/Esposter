@@ -11,8 +11,9 @@ import { getResultAsync } from "@esposter/shared";
 const WINDOWS_PROCESS_SCRIPT =
   "Get-CimInstance Win32_Process | ForEach-Object { '{0}|{1}|{2}|{3}|{4}|{5}' -f $_.ProcessId, $_.ParentProcessId, $_.Name, ($_.KernelModeTime + $_.UserModeTime), $_.ExecutablePath, $_.CommandLine }";
 
-// A Windows process list where each MSYS process carries its MSYS identity. An MSYS process whose identity cannot be read
-// Is left out, and when Git's ps itself cannot be read the list is empty, so a tick sweeps nothing rather than a live run
+// A Windows process list where each MSYS process carries its MSYS identity. An MSYS process whose identity cannot be
+// Read Is left out, and when Git's ps itself cannot be read the list is empty, so a tick sweeps nothing rather than a
+// Live run
 export const readWindowsProcesses = async (): Promise<MachineProcess[]> => {
   const windowsProcesses = (
     await getResultAsync(() =>

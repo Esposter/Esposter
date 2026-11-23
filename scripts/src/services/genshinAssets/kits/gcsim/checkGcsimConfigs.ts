@@ -8,7 +8,8 @@ import { getResult } from "@esposter/shared";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Reads every character's config.yml at GCSIM_TAG, the gcsim files a kit reader parses, and names each the reader refuses
+// Reads every character's config.yml at GCSIM_TAG, the gcsim files a kit reader parses, and names each the reader
+// Refuses
 const charactersDirectory = join(GCSIM_CACHE_DIRECTORY, GCSIM_CHARACTERS_PATH);
 const folders = readdirSync(charactersDirectory).filter((folder) =>
   existsSync(join(charactersDirectory, folder, GCSIM_CONFIG_FILE)),

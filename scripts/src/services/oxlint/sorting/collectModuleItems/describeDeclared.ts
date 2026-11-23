@@ -1,7 +1,8 @@
 import type { StatementDescription } from "#src/models/oxlint/sorting/StatementDescription";
 
-// The group a declaration sorts under: ambient declarations first, then exported ones, then the bare kind. A declaration
-// With no name, such as a default export of an anonymous function, declares nothing sortable and only ends a partition
+// The group a declaration sorts under: ambient declarations first, then exported ones, then the bare kind. A
+// Declaration With no name, such as a default export of an anonymous function, declares nothing sortable and only ends
+// A partition
 export const describeDeclared = (
   kind: string,
   name: string | undefined,

@@ -32,8 +32,8 @@ export const checkBarrel = (packageDirectory: string, fix: boolean): GeneratedFi
   const excludedPaths = getSubpathExclusions(readPackageManifest(packageRoot));
   const fullLines = generateBarrelLines(sourceDirectory, exportsGeneration, excludedPaths);
   const lazyDirectories = getLazyDirectories(fullLines.source, committedLines.source);
-  // The component barrel leaves out its own lazy directories, which the source barrel does not name, so they are read off
-  // The component lines the committed barrel holds, and the generator is handed them under `components`
+  // The component barrel leaves out its own lazy directories, which the source barrel does not name, so they are read
+  // Off The component lines the committed barrel holds, and the generator is handed them under `components`
   const lazyComponentDirectories = getLazyDirectories(fullLines.components, committedLines.components);
   const findings = [
     ...getBarrelFindings(barrelLabel, getExpectedLines(fullLines.source, lazyDirectories), committedLines.source),

@@ -3,9 +3,9 @@ import type { TalentLabelMap, TalentMultiplierMap } from "genshin-world";
 
 import { talentLabelMapSchema, talentMultiplierMapSchema } from "genshin-world";
 
-// The combat talents' multipliers and their labels, each keyed by its proud skill group and each level from the first up
-// To the last. A level's parameters end at the last one that is not zero, as the world's schema reads. The labels are
-// Kept apart so the multipliers a kit reads never carry them
+// The combat talents' multipliers and their labels, each keyed by its proud skill group and each level from the first
+// Up To the last. A level's parameters end at the last one that is not zero, as the world's schema reads. The labels
+// Are Kept apart so the multipliers a kit reads never carry them
 export const toTalentTables = (
   rows: readonly ExcelProudSkillRow[],
   groupIds: ReadonlySet<number>,
