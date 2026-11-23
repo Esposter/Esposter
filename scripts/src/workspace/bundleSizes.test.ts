@@ -18,7 +18,10 @@ describe("bundleSizes", () => {
   test("the record is the size of every built file", () => {
     expect.hasAssertions();
 
-    expect(renderBundleSizes(bundleSizes)).toBe(record);
+    expect(
+      renderBundleSizes(bundleSizes),
+      `${BUNDLE_SIZES_FILENAME} is not the built files' sizes: pnpm bundle-sizes:gen writes it from a fresh build`,
+    ).toBe(record);
   });
 
   // The record's reach is the build's, so a build that found no package would pass the test above against nothing

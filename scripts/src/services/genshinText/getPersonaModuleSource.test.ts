@@ -33,7 +33,10 @@ describe(getPersonaModuleSource, () => {
     const source = readFileSync(join(GENSHIN_TEXT_SOURCE_DIRECTORY, modulePath), "utf8");
     const copyPath = join(PERSONA_COPY_DIRECTORY, modulePath);
 
-    expect(readFileSync(copyPath, "utf8")).toBe(await formatGeneratedSource(copyPath, getPersonaModuleSource(source)));
+    expect(
+      readFileSync(copyPath, "utf8"),
+      `the persona's copy of ${modulePath} is stale: pnpm -C scripts genshin:text write`,
+    ).toBe(await formatGeneratedSource(copyPath, getPersonaModuleSource(source)));
   });
 
   test("the loader maps are the ones the writer writes", async () => {
@@ -42,11 +45,13 @@ describe(getPersonaModuleSource, () => {
     const gameTextMapPath = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameLanguageGameTextLoaderMap.ts");
     const characterLinesMapPath = join(dirname(CHARACTER_LINES_DIRECTORY), "GameLanguageCharacterLinesLoaderMap.ts");
 
-    expect(readFileSync(gameTextMapPath, "utf8")).toBe(
-      await formatGeneratedSource(gameTextMapPath, getGameLanguageGameTextLoaderMapSource()),
-    );
-    expect(readFileSync(characterLinesMapPath, "utf8")).toBe(
-      await formatGeneratedSource(characterLinesMapPath, getGameLanguageCharacterLinesLoaderMapSource()),
-    );
+    expect(
+      readFileSync(gameTextMapPath, "utf8"),
+      "the game text loader map is stale: pnpm -C scripts genshin:text write",
+    ).toBe(await formatGeneratedSource(gameTextMapPath, getGameLanguageGameTextLoaderMapSource()));
+    expect(
+      readFileSync(characterLinesMapPath, "utf8"),
+      "the character lines loader map is stale: pnpm -C scripts genshin:text write",
+    ).toBe(await formatGeneratedSource(characterLinesMapPath, getGameLanguageCharacterLinesLoaderMapSource()));
   });
 });
