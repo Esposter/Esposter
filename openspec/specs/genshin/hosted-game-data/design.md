@@ -6,7 +6,7 @@ Every static dataset genshin-world reads is published to Cloudflare R2, and `pac
 
 Each record is one object named by the SHA-256 of its compact JSON, at `<dataset>/<hash>.json` in the `public-genshin-assets` bucket of each environment, where `<dataset>` is the record's lock key, such as `achievementText/English`: `dev-r2-esposter-public-genshin-assets` for development and `prod-r2-esposter-public-genshin-assets` for production (`scripts/src/services/gameData/getGameDataHash.ts`, `scripts/src/services/gameData/constants.ts`, `apps/infra/src/cloudflare/resources/r2Buckets/prodR2EsposterPublicGenshinAssets.ts`). Identical bytes are stored once, a change of compression level never renames an object, and each object is stored as a zstd frame that the browser decodes, with `Cache-Control: public, max-age=31536000, immutable` (`scripts/src/services/gameData/constants.ts`; `packages/db/src/services/storage/compressZstd.ts`).
 
-The bucket is PublicGenshinAssets rather than GenshinAssets: the game data is public, and a bucket is private unless its name starts with `public-`, while GenshinAssets holds each player's save and must stay private (`packages/db-schema/src/models/storage/StorageBucket.ts`). A public bucket is served on its environment's custom domain, `assets.esposter.com` in production and `assets.dev.esposter.com` in development, through the web Worker's asset route, which serves no private bucket (`apps/web/server/routes/assets/[bucket]/[...key].get.ts`, `scripts/src/services/cloudflare/constants.ts`).
+The bucket is PublicGenshinAssets rather than GenshinAssets: the game data is public, and a bucket is private unless its name starts with `public-`, while GenshinAssets holds each player's save and must stay private (`packages/db-schema/src/models/storage/StorageBucket.ts`). A public bucket is served on its environment's custom domain, `assets.esposter.com` in production and `assets.dev.esposter.com` in development, through the web Worker's asset route, which serves the app's and the users' buckets and neither a game's nor a private one (`apps/web/server/routes/assets/[bucket]/[...key].get.ts`, `scripts/src/services/cloudflare/constants.ts`).
 
 ### Keys and scopes
 
@@ -167,7 +167,7 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 
 ## Decisions
 
-- **The web Worker serves the objects directly, with no CDN of its own in front.** Immutable caching already answers a repeat visit without a request, and [a CDN in front of the bucket](../../../rejected/infra/cdn-in-front-of-blob-storage/design.md) would change only the base URL.
+- **The web Worker serves the objects directly, with no CDN of its own in front.** Immutable caching already answers a repeat visit without a request, and a CDN in front of the bucket would change only the base URL.
 - **Nothing is served through the app.** No Nitro route carries the data, so no build compresses it, and [static data in public assets](../../../rejected/genshin/static-data-in-public-assets/design.md) stays rejected.
 - **Each language is one index,** not one object per entity, so a reader fetches the one index of its language rather than an object for each entry it shows (`packages/genshin-world/src/generated/gameDataLock.json`, its `profile/<Language>` and `bookBody/<Language>` indexes).
 - **The keys are `profile/<Language>` and `bookBody/<Language>`,** with the entity id as the entry key, in decimal (`packages/genshin-world/src/generated/gameDataLock.json`).

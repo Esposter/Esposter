@@ -10,7 +10,7 @@ How it works, from a builder's publish to a reader's fetch, the full lifecycle a
 ## Settled — do not re-propose
 
 - **Bundling or committing a dataset the browser reads**, however small, or importing one for a synchronous read (`references/settled-directions.md`).
-- **Serving the data through the app**, a CDN in front of the account, or a Nitro mirror in development (`openspec/rejected/genshin/static-data-in-public-assets/design.md`, `openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md`).
+- **Serving the data through the app**, a CDN in front of the account, or a Nitro mirror in development (`openspec/rejected/genshin/static-data-in-public-assets/design.md`).
 - **Per-version folders, per-dataset manifests, git-style trees or a mutable pointer blob** in place of the lock (`openspec/specs/genshin/hosted-game-data/design.md`, "Notes").
 - **A test fixture holding a copy of a record** — `references/settled-directions.md`.
 - **Deleting an authored file once it is published** — `references/settled-directions.md`.
