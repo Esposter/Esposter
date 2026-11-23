@@ -17,7 +17,7 @@ Notes on a tree several units share:
 - `apps/web/app/store/post`, `app/store/user`, `app/store/survey`, `app/store/achievement`: the three dialog stores here are per-service with `""` targets
 - `apps/web/app/store/dashboard`, `emailEditor`, `webpageEditor`, `clicker`: the three content stores share one load-seed shape
 - `apps/web/app/store/message` top-level files: `dialog`, `emoji`, `emojiPicker`, `index`, `roomCategory`, `roomCategoryDialog`, `scheduledMessageJob`, `sentMessage`, `thread`, `threadFollow`: the message module's own stores beside `data` and `pin`, which the row above holds
-- `apps/web/app/store/message/room` — `dialog.ts`, `directMessage.test.ts`, `directMessage.ts`, `emoji.test.ts`, `emoji.ts`, `emojiDialog.ts`, `index.test.ts`, `index.ts`, `invite.test.ts`, `invite.ts`, `realtime.test.ts`, `realtime.ts`, `role.test.ts`, `role.ts`, `roleDialog.ts`, `roomInvite.test.ts`: the widest keyed state in the app — every write names its room; the room's direct files past the first chunk
+- `apps/web/app/store/message/room` — `dialog.ts`, `directMessage.test.ts`, `directMessage.ts`, `emoji.test.ts`, `emoji.ts`, `emojiDialog.ts`, `index.test.ts`, `index.ts`, `invite.test.ts`, `invite.ts`, `realtime.test.ts`, `realtime.ts`, `role.test.ts`, `role.ts`, `roleDialog.ts`, `roomInvite.test.ts`: the widest keyed state in the app — every write names its room
 
 ## Rules
 
