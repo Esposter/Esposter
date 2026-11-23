@@ -115,21 +115,8 @@ export const ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, 
 ];
 // The Masterless Stella Fortuna, the item that lifts a character past its level cap of 90
 export const MASTERLESS_STELLA_FORTUNA_ID = 104_300;
-// The level a Masterless Stella Fortuna lifts a character to from the level before, and how many it takes: one for
-// The seventh ascension and two for the eighth, as the wiki's Character page gives them. Provisional until the
-// Game's own table is published with the stats
-export const MASTERLESS_LEVEL_LIFTS: ReadonlyMap<number, { count: number; level: number }> = new Map([
-  [90, { count: 1, level: 95 }],
-  [95, { count: 2, level: 100 }],
-]);
-// The Character EXP materials, each by the EXP it gives, the largest first: the Hero's Wit, the Adventurer's
-// Experience and the Wanderer's Advice, under the ids the game's tables give them
-export const CHARACTER_EXP_MATERIALS: readonly { exp: number; id: number }[] = [
-  { exp: 20_000, id: 104_003 },
-  { exp: 5000, id: 104_002 },
-  { exp: 1000, id: 104_001 },
-];
-// The Character EXP a point of Mora pays for: five EXP for each Mora the wiki's Character EXP page charges
+// The Character EXP a point of Mora pays for: five EXP for each Mora the wiki's Character EXP page charges, a rate the
+// Dump holds no table of
 export const CHARACTER_EXP_PER_MORA = 5;
 // The attributes the game writes whole rather than as a percentage: the bases, the flats and Elemental Mastery
 export const WHOLE_ATTRIBUTES: readonly Attribute[] = [

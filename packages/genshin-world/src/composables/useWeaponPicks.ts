@@ -1,3 +1,4 @@
+import type { ExpMaterial } from "#src/models/inventory/ExpMaterial";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { Weapon } from "#src/models/weapon/Weapon";
@@ -5,11 +6,12 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { ComputedRef, MaybeRefOrGetter, Ref } from "vue";
 
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
-import { ENHANCEMENT_ORES } from "#src/services/weapon/constants";
 import { ItemCategory } from "genshin-interface";
 import { computed, ref, toValue } from "vue";
 
 interface WeaponPicksSource {
+  // The Enhancement Ores the Enhance tab offers, the largest first
+  enhancementOres: MaybeRefOrGetter<readonly ExpMaterial[]>;
   // The bag entry of the weapon the screen opens on, which the bag's other weapons leave out
   entryId: MaybeRefOrGetter<number>;
   // The level text a bag weapon's entry shows in its slot
@@ -23,6 +25,7 @@ interface WeaponPicksSource {
 
 // The picks the player makes on the Enhance and Refine panels, the cells they are drawn in, and the state each pick takes
 export const useWeaponPicks = ({
+  enhancementOres,
   entryId,
   getEntryLevelText,
   getItemName,
@@ -36,7 +39,7 @@ export const useWeaponPicks = ({
   const pickedFodderIds = ref<number[]>([]);
   const pickedCopyId = ref<number>();
   const oreCells = computed(() =>
-    ENHANCEMENT_ORES.map(({ id }) => ({
+    toValue(enhancementOres).map(({ id }) => ({
       id,
       name: getItemName(id),
       ownedCount: countInventoryItem(inventory.value.items, id),

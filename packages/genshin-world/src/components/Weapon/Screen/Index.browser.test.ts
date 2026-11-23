@@ -50,6 +50,7 @@ describe("weaponScreen", () => {
   // On the same data the fixture holds
   const fodder = getBagWeapon(props.inventory.items, FODDER_ENTRY_ID);
   const enhanced = enhanceWeapon(heldWeapon, weaponData, props.rarityRequiredExpsMap, props.wallet, {
+    enhancementOres: props.enhancementOres,
     fodders: [{ data: getWeaponData(props.weaponDataMap, fodder.id), weapon: fodder }],
     ores: [{ count: 1, id: ORE_ID }],
   });

@@ -4,8 +4,12 @@ export interface RawStatTables {
   artifactMainAffixCurves: unknown;
   artifactRarities: unknown;
   artifactSets: unknown;
+  characterExpMaterials: unknown;
+  characterExpToNext: unknown;
   characterGrowCurves: unknown;
   characters: unknown;
+  masterlessLevelLifts: unknown;
+  weaponEnhancementOres: unknown;
   weaponGrowCurves: unknown;
   weapons: unknown;
 }

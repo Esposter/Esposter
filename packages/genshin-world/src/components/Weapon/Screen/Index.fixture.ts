@@ -10,7 +10,6 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
-import { ENHANCEMENT_ORES } from "#src/services/weapon/constants";
 import { readWeaponLevelRequiredExps } from "#src/services/weapon/readWeaponLevelRequiredExps";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WeaponMenuTab } from "genshin-interface";
@@ -66,7 +65,7 @@ const toWeaponEntry = (weapon: Weapon, entryId: number): InventoryItem => {
   };
 };
 // Three of each enhancement ore in the bag, beside the weapons
-const oreItems: InventoryItem[] = ENHANCEMENT_ORES.map(({ id }, index) => ({
+const oreItems: InventoryItem[] = statTables.weaponEnhancementOres.map(({ id }, index) => ({
   definition: getItemDefinition(id, englishNameText, materialDataMap),
   id: index + 1,
   quantity: 3,
@@ -86,6 +85,7 @@ const bag = createBag(openWeapon);
 
 export const props = {
   adventureRank: 30,
+  enhancementOres: statTables.weaponEnhancementOres,
   entryId: OPEN_ENTRY_ID,
   gameText: ENGLISH_GAME_TEXT,
   inventory: bag,

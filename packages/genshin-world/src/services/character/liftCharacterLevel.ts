@@ -1,8 +1,9 @@
 import type { Character } from "#src/models/character/Character";
+import type { MasterlessLevelLift } from "#src/models/character/MasterlessLevelLift";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
 import { checkIsLiftHeld } from "#src/services/character/checkIsLiftHeld";
-import { MASTERLESS_LEVEL_LIFTS, MASTERLESS_STELLA_FORTUNA_ID } from "#src/services/character/constants";
+import { MASTERLESS_STELLA_FORTUNA_ID } from "#src/services/character/constants";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -11,9 +12,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Is taken
 export const liftCharacterLevel = (
   character: Character,
-  { inventory }: { inventory: Inventory },
+  { inventory, lifts }: { inventory: Inventory; lifts: ReadonlyMap<number, MasterlessLevelLift> },
 ): { character: Character; inventory: Inventory } => {
-  const lift = MASTERLESS_LEVEL_LIFTS.get(character.level);
+  const lift = lifts.get(character.level);
   if (!lift)
     throw new InvalidOperationError(Operation.Update, liftCharacterLevel.name, `level ${character.level} lift`);
   if (!checkIsLiftHeld(inventory, lift))

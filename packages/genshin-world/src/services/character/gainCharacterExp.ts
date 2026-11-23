@@ -9,7 +9,10 @@ export const gainCharacterExp = (
   characterIds: readonly number[],
   exp: number,
   getMaxLevel: (character: Character) => number,
+  expToNext: readonly number[],
 ): Character[] =>
   characters.map((character) =>
-    characterIds.includes(character.id) ? raiseCharacterByExp(character, exp, getMaxLevel(character)) : character,
+    characterIds.includes(character.id)
+      ? raiseCharacterByExp(character, exp, getMaxLevel(character), expToNext)
+      : character,
   );

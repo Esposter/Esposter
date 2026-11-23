@@ -1,12 +1,17 @@
 import type { Character } from "#src/models/character/Character";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
+
+const { characterExpMaterials: expMaterials, characterExpToNext: expToNext } =
+  await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(levelUpCharacter, () => {
   const CHARACTER: Character = {
@@ -39,6 +44,8 @@ describe(levelUpCharacter, () => {
     expect.hasAssertions();
     expect(
       levelUpCharacter(CHARACTER, {
+        expMaterials,
+        expToNext,
         inventory: {
           items: [{ definition: ADVENTURERS_EXPERIENCE, id: 0, quantity: 1 }],
           nextId: 1,
@@ -59,6 +66,8 @@ describe(levelUpCharacter, () => {
     expect.hasAssertions();
     expect(
       levelUpCharacter(CHARACTER, {
+        expMaterials,
+        expToNext,
         inventory: { items: [{ definition: WANDERERS_ADVICE, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] },
         maxLevel: 20,
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 1000 },

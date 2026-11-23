@@ -1,3 +1,4 @@
+import type { ExpMaterial } from "#src/models/inventory/ExpMaterial";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -33,6 +34,8 @@ interface ActionState {
 interface WeaponActionsSource {
   // Clears the picks an accepted action spent
   clearPicks: () => void;
+  // The Enhancement Ores a weapon is levelled with, each EXP the enhancement takes from its picked ores
+  enhancementOres: MaybeRefOrGetter<readonly ExpMaterial[]>;
   // The bag entry of the weapon the screen opens on, which an accepted action writes the weapon back into
   entryId: MaybeRefOrGetter<number>;
   // The adventure rank the player holds when the action is pressed, which an Ascend's next phase requires
@@ -76,6 +79,7 @@ const reportRefusal = (error: Error) => {
 // Accepted, the Mora it spends on the Required line, and whether its button is disabled
 export const useWeaponActions = ({
   clearPicks,
+  enhancementOres,
   entryId,
   getAdventureRank,
   inventory,
@@ -108,6 +112,7 @@ export const useWeaponActions = ({
         return { data: getWeaponData(toValue(weaponDataMap), fodder.id), weapon: fodder };
       });
       const enhanced = enhanceWeapon(weapon.value, weaponData.value, toValue(rarityRequiredExpsMap), wallet.value, {
+        enhancementOres: toValue(enhancementOres),
         fodders,
         ores: pickedOres.value,
       });

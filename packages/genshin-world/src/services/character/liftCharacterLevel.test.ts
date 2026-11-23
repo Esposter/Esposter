@@ -1,11 +1,15 @@
 import type { Character } from "#src/models/character/Character";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { MASTERLESS_STELLA_FORTUNA_ID } from "#src/services/character/constants";
 import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
+
+const { masterlessLevelLiftMap: lifts } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(liftCharacterLevel, () => {
   const CHARACTER: Character = {
@@ -41,6 +45,7 @@ describe(liftCharacterLevel, () => {
           nextId: 1,
           quickSwapItemIds: [],
         },
+        lifts,
       }),
     ).toStrictEqual({
       character: { ...CHARACTER, level: 95 },
@@ -58,6 +63,7 @@ describe(liftCharacterLevel, () => {
           nextId: 1,
           quickSwapItemIds: [],
         },
+        lifts,
       }),
     ).toStrictEqual({
       character: { ...character, level: 100 },

@@ -1,3 +1,4 @@
+import type { ExpMaterial } from "#src/models/inventory/ExpMaterial";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { RarityRequiredExpsMap } from "#src/models/weapon/RarityRequiredExpsMap";
@@ -5,7 +6,7 @@ import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Currency } from "#src/models/inventory/Currency";
-import { ENHANCEMENT_ORES, EXP_PER_MORA, FODDER_EXP_SHARE } from "#src/services/weapon/constants";
+import { EXP_PER_MORA, FODDER_EXP_SHARE } from "#src/services/weapon/constants";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { getWeaponInvestedExp } from "#src/services/weapon/getWeaponInvestedExp";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -21,7 +22,11 @@ export const enhanceWeapon = (
   weaponData: WeaponData,
   rarityRequiredExpsMap: RarityRequiredExpsMap,
   wallet: Wallet,
-  { fodders, ores }: { fodders: { data: WeaponData; weapon: Weapon }[]; ores: ItemCount[] },
+  {
+    enhancementOres,
+    fodders,
+    ores,
+  }: { enhancementOres: readonly ExpMaterial[]; fodders: { data: WeaponData; weapon: Weapon }[]; ores: ItemCount[] },
 ): { returnedOres: ItemCount[]; wallet: Wallet; weapon: Weapon } => {
   const fodderPaidExp = fodders.reduce((sum, { data }) => sum + data.baseExp, 0);
   const fodderRecoveredExp = fodders.reduce(
@@ -34,9 +39,9 @@ export const enhanceWeapon = (
     0,
   );
   const orePaidExp = ores.reduce((sum, { count, id }) => {
-    const ore = ENHANCEMENT_ORES.find((enhancementOre) => enhancementOre.id === id);
+    const ore = enhancementOres.find((enhancementOre) => enhancementOre.id === id);
     if (!ore) throw new InvalidOperationError(Operation.Update, enhanceWeapon.name, `ore ${id}`);
-    return sum + count * ore.exp;
+    return sum + count * ore.experience;
   }, 0);
   const paidExp = fodderPaidExp + orePaidExp;
   const moraCost = Math.floor(paidExp / EXP_PER_MORA);
@@ -59,10 +64,10 @@ export const enhanceWeapon = (
   const isAtCap = level === phaseMaxLevel;
   let returnedExp = isAtCap ? experience : 0;
   const returnedOres: ItemCount[] = [];
-  for (const { exp, id } of ENHANCEMENT_ORES) {
-    const count = Math.floor(returnedExp / exp);
-    if (count > 0) returnedOres.push({ count, id });
-    returnedExp -= count * exp;
+  for (const ore of enhancementOres) {
+    const count = Math.floor(returnedExp / ore.experience);
+    if (count > 0) returnedOres.push({ count, id: ore.id });
+    returnedExp -= count * ore.experience;
   }
   return {
     returnedOres,

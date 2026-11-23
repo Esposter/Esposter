@@ -67,8 +67,13 @@ export const ArtifactRarityAffixDepotMap: ReadonlyMap<number, number> = new Map(
   [4, 401],
   [5, 501],
 ]);
-// The item use that adds EXP to an artifact, its first parameter the EXP one of the item gives
+// The item uses that add EXP to an artifact, a character and a weapon, their first parameter the EXP one of the item gives
 export const ARTIFACT_EXP_ITEM_USE = "ITEM_USE_ADD_RELIQUARY_EXP";
+export const CHARACTER_EXP_ITEM_USE = "ITEM_USE_ADD_EXP";
+export const WEAPON_EXP_ITEM_USE = "ITEM_USE_ADD_WEAPON_EXP";
+// The game's character levelling table, and its extra-level table of the lifts past a level cap
+export const AVATAR_LEVEL_TABLE_NAME = "AvatarLevelExcelConfigData";
+export const AVATAR_EXTRA_LEVEL_TABLE_NAME = "AvatarExtraLevelExcelConfigData";
 // The dump's talent configs, one file for each group of characters, each a map from a talent's config name to its actions
 export const TALENT_CONFIG_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, AVATAR_TALENT_DIRECTORY);
 // The last digit of a skill's proud skill group is the slot a constellation names the skill by: 1 the normal attack, 2 the

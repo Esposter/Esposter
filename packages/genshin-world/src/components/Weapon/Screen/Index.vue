@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ExpMaterial } from "#src/models/inventory/ExpMaterial";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -30,6 +31,8 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 interface Props {
   // The adventure rank the player holds, which an Ascend's next phase requires
   adventureRank: number;
+  // The Enhancement Ores the Enhance tab offers, the largest EXP first
+  enhancementOres: readonly ExpMaterial[];
   // The bag entry of the weapon the screen opens on, which holds the weapon's level, EXP, ascension and refinement
   entryId: number;
   // The game's words in the reader's language
@@ -51,6 +54,7 @@ const tab = defineModel<WeaponMenuTab>("tab", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const {
   adventureRank,
+  enhancementOres,
   entryId,
   gameText,
   materialDataMap,
@@ -104,7 +108,15 @@ const {
   refinementMaterial,
   toggleFodder,
   unpickOre,
-} = useWeaponPicks({ entryId: () => entryId, getEntryLevelText, getItemName, inventory, weapon, weaponData });
+} = useWeaponPicks({
+  enhancementOres: () => enhancementOres,
+  entryId: () => entryId,
+  getEntryLevelText,
+  getItemName,
+  inventory,
+  weapon,
+  weaponData,
+});
 // The next phase's ascension materials, each with what the bag holds of it, and its rarity
 const nextPhaseCosts = computed(() =>
   (nextPhase.value?.costItems ?? []).map(({ count, id }) => {
@@ -120,6 +132,7 @@ const nextPhaseCosts = computed(() =>
 );
 const { act, isActionDisabled, pendingMora } = useWeaponActions({
   clearPicks,
+  enhancementOres: () => enhancementOres,
   entryId: () => entryId,
   getAdventureRank: () => adventureRank,
   inventory,

@@ -3,12 +3,13 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
-import { CHARACTER_EXP_TO_NEXT_LEVEL } from "#src/data/character/characterExpToNext";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { QuestKind } from "#src/models/quest/QuestKind";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { CHARACTER_EXP_ITEM_ID, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
@@ -17,6 +18,8 @@ import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
+
+const { characterExpToNext } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(useWorldQuestRewards, () => {
   // A made-up item and quest, since no record is copied into a test. Its rewards are Mora, a made-up item, Adventure
@@ -42,7 +45,7 @@ describe(useWorldQuestRewards, () => {
       { count: 2, itemId: 202 },
       { count: 3, itemId: ITEM_ID },
       { count: 40, itemId: ADVENTURE_EXP_ITEM_ID },
-      { count: CHARACTER_EXP_TO_NEXT_LEVEL[0] ?? 0, itemId: CHARACTER_EXP_ITEM_ID },
+      { count: characterExpToNext[0] ?? 0, itemId: CHARACTER_EXP_ITEM_ID },
     ],
     steps: [],
     talks: [],
@@ -79,7 +82,7 @@ describe(useWorldQuestRewards, () => {
     );
     const worldAdventureRankStore = useWorldAdventureRankStore();
     const gainAdventureExp = vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
-    useWorldQuestRewards({ getMaxLevel: () => MAX_LEVEL });
+    useWorldQuestRewards({ characterExpToNext, getMaxLevel: () => MAX_LEVEL });
     events.emit("finishQuest", QUEST, PROGRESS, PROGRESS);
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora] + 2);
     expect(inventory.value.items.map(({ definition, quantity }) => ({ id: definition.id, quantity }))).toStrictEqual([

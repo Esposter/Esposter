@@ -11,7 +11,6 @@ import CharacterAttributeList from "#src/components/Character/AttributeList/Inde
 import { Currency } from "#src/models/inventory/Currency";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
 import { checkIsLiftHeld } from "#src/services/character/checkIsLiftHeld";
-import { MASTERLESS_LEVEL_LIFTS } from "#src/services/character/constants";
 import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
 import { getNextAscensionPhase } from "#src/services/character/getNextAscensionPhase";
 import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
@@ -83,11 +82,17 @@ const levelUpResult = computed(() => {
   const maxLevel = ascensionPhases.value?.[character.ascension]?.maxLevel;
   return maxLevel === undefined
     ? undefined
-    : levelUpCharacter(character, { inventory: inventory.value, maxLevel, wallet: wallet.value });
+    : levelUpCharacter(character, {
+        expMaterials: statTables.characterExpMaterials,
+        expToNext: statTables.characterExpToNext,
+        inventory: inventory.value,
+        maxLevel,
+        wallet: wallet.value,
+      });
 });
 // Whether the chosen character sits at a level cap a Masterless Stella Fortuna lifts, with the items in the bag for it
 const isLiftable = computed(() => {
-  const liftLevel = MASTERLESS_LEVEL_LIFTS.get(character.level);
+  const liftLevel = statTables.masterlessLevelLiftMap.get(character.level);
   return liftLevel !== undefined && checkIsLiftHeld(inventory.value, liftLevel);
 });
 </script>
@@ -127,7 +132,7 @@ const isLiftable = computed(() => {
     @lift="
       () => {
         if (!isLiftable) return;
-        const lifted = liftCharacterLevel(character, { inventory });
+        const lifted = liftCharacterLevel(character, { inventory, lifts: statTables.masterlessLevelLiftMap });
         characters = replaceCharacterInRoster(characters, lifted.character);
         inventory = lifted.inventory;
       }

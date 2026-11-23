@@ -11,7 +11,14 @@ import { storeToRefs } from "pinia";
 // Each quest's finish pays its rewards as it finishes: the bag and the wallet take the items, the Adventure Rank takes
 // The Adventure EXP after them, so the rank reads the wallet they left, and the deployed team's characters take the
 // Character EXP. A finish is recorded once, so a reload pays nothing
-export const useWorldQuestRewards = ({ getMaxLevel }: { getMaxLevel: (character: Character) => number }) => {
+export const useWorldQuestRewards = ({
+  characterExpToNext,
+  getMaxLevel,
+}: {
+  // The EXP each character level needs to rise past it, by its level less one
+  characterExpToNext: readonly number[];
+  getMaxLevel: (character: Character) => number;
+}) => {
   const worldPartyStore = useWorldPartyStore();
   const { characters, deployedCharacterIds } = storeToRefs(worldPartyStore);
   const worldSessionStore = useWorldSessionStore();
@@ -36,6 +43,7 @@ export const useWorldQuestRewards = ({ getMaxLevel }: { getMaxLevel: (character:
         deployedCharacterIds.value,
         granted.characterExp,
         getMaxLevel,
+        characterExpToNext,
       );
     if (granted.adventureExp > 0) gainWorldAdventureExp(granted.adventureExp);
   };

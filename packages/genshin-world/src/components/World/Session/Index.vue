@@ -568,6 +568,7 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
   });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
+  characterExpToNext: statTables.characterExpToNext,
   getMaxLevel: (character) =>
     statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? 0,
 });

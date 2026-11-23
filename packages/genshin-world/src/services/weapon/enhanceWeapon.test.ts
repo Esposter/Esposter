@@ -1,8 +1,12 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { UPGRADABLE_WEAPON_DATA } from "#src/services/weapon/constants.test";
 import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { describe, expect, test } from "vitest";
+
+const { weaponEnhancementOres: enhancementOres } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(enhanceWeapon, () => {
   const REQUIRED_EXPS_MAP = { "3": Array.from({ length: 40 }, () => 100) };
@@ -13,6 +17,7 @@ describe(enhanceWeapon, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 100 };
     expect(
       enhanceWeapon(weapon, UPGRADABLE_WEAPON_DATA, REQUIRED_EXPS_MAP, wallet, {
+        enhancementOres,
         fodders: [],
         ores: [{ count: 1, id: 104011 }],
       }),
@@ -32,7 +37,11 @@ describe(enhanceWeapon, () => {
       weapon: { ascension: 0, experience: 0, id: 2, level: 3, refinement: 1 },
     };
     expect(
-      enhanceWeapon(weapon, UPGRADABLE_WEAPON_DATA, REQUIRED_EXPS_MAP, wallet, { fodders: [fodder], ores: [] }),
+      enhanceWeapon(weapon, UPGRADABLE_WEAPON_DATA, REQUIRED_EXPS_MAP, wallet, {
+        enhancementOres,
+        fodders: [fodder],
+        ores: [],
+      }),
     ).toStrictEqual({
       returnedOres: [],
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: 70 },
@@ -46,6 +55,7 @@ describe(enhanceWeapon, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 1000 };
     expect(
       enhanceWeapon(weapon, UPGRADABLE_WEAPON_DATA, REQUIRED_EXPS_MAP, wallet, {
+        enhancementOres,
         fodders: [],
         ores: [{ count: 1, id: 104013 }],
       }),
@@ -65,6 +75,7 @@ describe(enhanceWeapon, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 39 };
     expect(() =>
       enhanceWeapon(weapon, UPGRADABLE_WEAPON_DATA, REQUIRED_EXPS_MAP, wallet, {
+        enhancementOres,
         fodders: [],
         ores: [{ count: 1, id: 104011 }],
       }),
