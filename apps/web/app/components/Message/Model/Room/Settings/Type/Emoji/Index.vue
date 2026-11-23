@@ -10,7 +10,7 @@ interface Props {
 
 defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
-const { isRoomEmojisPending, items, roomEmojisError } = storeToRefs(roomEmojiStore);
+const { isRoomEmojisLoaded, isRoomEmojisPending, items, roomEmojisError } = storeToRefs(roomEmojiStore);
 const { readRoomEmojis } = roomEmojiStore;
 </script>
 
@@ -19,7 +19,7 @@ const { readRoomEmojis } = roomEmojiStore;
     <!-- The panel manages the set and never adds to it, so the empty state is the only place that can say where
          adding happens -->
     <UiErrorState v-if="roomEmojisError" :error="roomEmojisError" @retry="readRoomEmojis(room.id)" />
-    <MessageFriendsListSkeleton v-else-if="isRoomEmojisPending && items.length === 0" />
+    <MessageFriendsListSkeleton v-else-if="(isRoomEmojisPending || !isRoomEmojisLoaded) && items.length === 0" />
     <UiEmptyState
       v-else-if="items.length === 0"
       description="Add one from the emoji picker."

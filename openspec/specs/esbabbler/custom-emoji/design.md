@@ -32,7 +32,7 @@ Adding an emoji is reachable from **the picker's own footer** and nowhere else, 
 emoji the room does not have is the moment they have the picker open and are failing to find it. A settings-only
 create is a feature reachable only by whoever already thought to go looking, and a create in _both_ places is the
 same action twice — so the settings panel does not carry one. It manages the set that exists: the whole list,
-renaming, deleting, and an empty state that names the picker.
+renaming, deleting, and an empty state that names the picker. The empty state waits for the room's first read to land (`isRoomEmojisLoaded`), since the read is issued once the room's socket is open: until then the panel draws its skeleton, and a failed read is its error state with a retry, never the empty one.
 
 The footer button is gated on `ManageEmojis` and simply absent for a member without it.
 

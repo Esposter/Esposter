@@ -46,6 +46,10 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   // A failed read is held as its message, so the panel draws the failure rather than reading as no emoji, and it still alerts
   const roomEmojisError = ref("");
   const isRoomEmojisPending = ref(false);
+  // The room whose set has landed. A room's set is read once its socket is open, so until then nothing says whether the
+  // Room has any emoji, and the panel that lists them draws its skeleton rather than its empty state
+  const loadedRoomEmojisRoomId = ref<RoomInMessage["id"]>();
+  const isRoomEmojisLoaded = computed(() => loadedRoomEmojisRoomId.value === roomStore.scopedRoomId);
   const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
     isRoomEmojisPending.value = true;
     await readRoomEmojiRows(() => $trpc.room.emoji.readRoomEmojis.query({ roomId }), {
@@ -55,6 +59,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
       },
       onSuccess: () => {
         roomEmojisError.value = "";
+        loadedRoomEmojisRoomId.value = roomId;
       },
     });
     isRoomEmojisPending.value = false;
@@ -101,6 +106,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     customEmojiMap,
     customEmojis,
     deleteRoomEmoji,
+    isRoomEmojisLoaded,
     isRoomEmojisPending,
     items,
     readRoomEmojis,

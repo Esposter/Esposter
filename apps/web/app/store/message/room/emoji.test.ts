@@ -34,6 +34,23 @@ describe(useRoomEmojiStore, () => {
     version: 0,
   });
 
+  // The panel draws its skeleton until the room's first read lands, so a set nothing has read yet is not an empty one
+  test("reports the room's set as unloaded until its first read lands", async () => {
+    expect.hasAssertions();
+
+    setRouteId(roomId);
+    trpcMsw.room.emoji.readRoomEmojis.query(() => [createRoomEmoji()]);
+    const roomEmojiStore = useRoomEmojiStore();
+    const { readRoomEmojis } = roomEmojiStore;
+    const { isRoomEmojisLoaded } = storeToRefs(roomEmojiStore);
+
+    expect(isRoomEmojisLoaded.value).toBe(false);
+
+    await readRoomEmojis(roomId);
+
+    expect(isRoomEmojisLoaded.value).toBe(true);
+  });
+
   // A removal and a creation that land while the room's set is read are held over its answer: the removal at a higher
   // Version than the answer's live copy of the same emoji, and the creation because the answer predates it
   test("keeps a removal and a creation that land during the read over its answer", async () => {
