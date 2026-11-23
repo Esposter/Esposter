@@ -43,13 +43,12 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
         .insert(notificationsInNotification)
         .values(userIds.map((userId) => ({ body, path, severity, title, type: data.type, userId }))),
     );
-    // The retention trim rides the write rather than a sweep of its own: the recipients are already known here,
-    // So bounding the table costs one indexed delete against the rows that were just added to. Best-effort,
-    // Because it runs after the rows above have landed — a throw here would ask the queue for a redelivery
-    // That inserts them a second time, which is the duplication QueueJobMaxRetriesMap promises this
-    // Handler does not cause
-    // A live row is kept for the retention counted from its creation. A dismissal is a tombstone the nightly purge removes on
-    // Its own retention, so the trim takes live rows only and leaves a tombstone to the purge rather than duplicating it
+    // The retention trim rides the write rather than a sweep of its own: the recipients are already known here, So
+    // Bounding the table costs one indexed delete against the rows that were just added to. Best-effort, Because it
+    // Runs after the rows above have landed — a throw here would ask the queue for a redelivery That inserts them a
+    // Second time, which is the duplication QueueJobMaxRetriesMap promises this Handler does not cause A live row is
+    // Kept for the retention counted from its creation. A dismissal is a tombstone the nightly purge removes on Its own
+    // Retention, so the trim takes live rows only and leaves a tombstone to the purge rather than duplicating it
     const retentionCutoff = new Date(Date.now() - NOTIFICATION_RETENTION_MS);
     await getResultAsync(() =>
       getDb()

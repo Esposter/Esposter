@@ -23,8 +23,8 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
 describe(purgeExpiredTombstones, () => {
   const userId = v7();
   const title = "title";
-  // The clock the purge reads, 30 days after the epoch: a deletion at the epoch is past the seven-day retention, and one
-  // 24 days after the epoch is inside it
+  // The clock the purge reads, 30 days after the epoch: a deletion at the epoch is past the seven-day retention, and
+  // One 24 days after the epoch is inside it
   const clockNow = new Date(Temporal.Duration.from({ days: 30 }).total("milliseconds"));
   const expiredDeletedAt = new Date(0);
   const withinRetentionDeletedAt = new Date(Temporal.Duration.from({ days: 24 }).total("milliseconds"));

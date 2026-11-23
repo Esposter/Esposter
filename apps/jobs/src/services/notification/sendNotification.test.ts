@@ -149,8 +149,8 @@ describe(sendNotification, () => {
     expect(trim).toHaveBeenCalledTimes(1);
   });
 
-  // A dismissal is a tombstone the purge removes on its own retention. The trim takes only live rows, so a dismissal past the
-  // Notification retention is left to the purge rather than removed here as well
+  // A dismissal is a tombstone the purge removes on its own retention. The trim takes only live rows, so a dismissal
+  // Past the Notification retention is left to the purge rather than removed here as well
   test("leaves a dismissed notification to the purge, though its dismissal is past the notification retention", async () => {
     expect.hasAssertions();
 
@@ -185,7 +185,8 @@ describe(sendNotification, () => {
     expect(notification?.type).toBe(AppNotificationType.ResourceOperation);
   });
 
-  // A bell row's topic is published once the row lands, so the bell is woken before the device push waits on each device
+  // A bell row's topic is published once the row lands, so the bell is woken before the device push waits on each
+  // Device
   test("a bell row's topic is published before the device push is sent", async () => {
     expect.hasAssertions();
 
@@ -206,8 +207,8 @@ describe(sendNotification, () => {
     );
   });
 
-  // The bell reads the rows of its recipient through the reader the web's notification list reads them with, so the bell row a
-  // Unit writes is what wakes it
+  // The bell reads the rows of its recipient through the reader the web's notification list reads them with, so the
+  // Bell row a Unit writes is what wakes it
   test("a bell row wakes its recipient's bell, which reads the rows of that recipient", async () => {
     expect.hasAssertions();
 

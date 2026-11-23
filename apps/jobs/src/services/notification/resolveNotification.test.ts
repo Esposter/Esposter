@@ -56,8 +56,9 @@ describe(resolveNotification, () => {
     ).resolves.toBeUndefined();
   });
 
-  // A departure removes the reminders the member set in the room from their object, and that removal can fail, leaving the reminder
-  // Armed there. The membership is gone either way, so a reminder whose owner is no longer a member is dropped at its send
+  // A departure removes the reminders the member set in the room from their object, and that removal can fail, leaving
+  // The reminder Armed there. The membership is gone either way, so a reminder whose owner is no longer a member is
+  // Dropped at its send
   test("resolves no notification for a reminder whose owner has left the room", async () => {
     expect.hasAssertions();
 

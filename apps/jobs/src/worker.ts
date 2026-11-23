@@ -1,4 +1,5 @@
-// The Workers runtime has no Temporal yet, and modules read it as they load, so the polyfill installs it before any other import
+// The Workers runtime has no Temporal yet, and modules read it as they load, so the polyfill installs it before any
+// Other import
 import "temporal-polyfill/global";
 import { validateJobsEnvironment } from "#src/services/environment/validateJobsEnvironment";
 import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";

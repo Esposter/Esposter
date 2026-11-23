@@ -10,7 +10,8 @@ import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-// An update returns the rows its where matches, and a unit names only the rows that changed, so a write needs a row to change
+// An update returns the rows its where matches, and a unit names only the rows that changed, so a write needs a row to
+// Change
 const insertUser = async () => {
   const userId = v7();
   await getDb().insert(usersInAuth).values(createUser(userId));
@@ -37,7 +38,8 @@ describe(runUnit, () => {
     expect(getMockPublishedTopics()).toContain(authTableTopic);
   });
 
-  // A blob a unit writes is published under its bucket's binding and its key, so a reader of the blob is woken by the unit
+  // A blob a unit writes is published under its bucket's binding and its key, so a reader of the blob is woken by the
+  // Unit
   test("a blob a unit writes publishes its bucket's topic for its key", async () => {
     expect.hasAssertions();
 

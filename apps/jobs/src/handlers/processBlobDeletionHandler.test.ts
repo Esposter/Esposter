@@ -27,7 +27,8 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
   },
 }));
 
-// Handed out as a spy so one call can be given a bucket whose delete fails: Miniflare's bucket takes no spy on its methods
+// Handed out as a spy so one call can be given a bucket whose delete fails: Miniflare's bucket takes no spy on its
+// Methods
 vi.mock(import("#src/services/storage/getBucket"), async () => {
   const actual = await import("@esposter/db-mock/workers");
   return { ...actual, getBucket: vi.fn<typeof actual.getBucket>(actual.getBucket) };

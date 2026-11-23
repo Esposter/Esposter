@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: one room at a time, one page of its messages at a time, and one scheduled message at a time */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: one room at a time, one page of its messages at a time,
+   and one scheduled message at a time */
 import type { PageCursor, RoomMessage, ScheduledMessageInUser, UserInAuth } from "@esposter/db-schema";
 
 import { takeBackErasedMentionCounts } from "#src/services/account/takeBackErasedMentionCounts";
@@ -17,11 +18,11 @@ import {
   toPageCursorValue,
 } from "@esposter/db-schema";
 
-// The account's messages are erased in every room it is a member of, a page at a time. An erased message loses its text,
-// Files and link preview, and its row stays as a tombstone, so a reply still names a root. The blobs its files named go
-// Through the release a blob deletion runs, page by page.
-// The scheduled messages are named by the account's own index, so each is reached in the room it was set in, member or not.
-// The index is cleared after this, so this step runs before the user object is erased
+// The account's messages are erased in every room it is a member of, a page at a time. An erased message loses its
+// Text, Files and link preview, and its row stays as a tombstone, so a reply still names a root. The blobs its files
+// Named go Through the release a blob deletion runs, page by page. The scheduled messages are named by the account's
+// Own index, so each is reached in the room it was set in, member or not. The index is cleared after this, so this step
+// Runs before the user object is erased
 export const eraseAccountMessages = async (userId: UserInAuth["id"]): Promise<void> => {
   const memberRoomIds = await getMemberRoomIds(getDb(), userId);
   const bucket = getBucket(StorageBucket.MessageAssets);

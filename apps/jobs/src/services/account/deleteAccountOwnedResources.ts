@@ -15,6 +15,7 @@ export const deleteAccountOwnedResources = async (userId: UserInAuth["id"]): Pro
     .where(eq(resourcesInResource.userId, userId));
   const bucket = getBucket(StorageBucket.ResourceAssets);
   for (const ownedResource of ownedResources)
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as the timer's purge runs
+    // Runs
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as the timer's purge
     await purgeResourceAndBroadcast(bucket, ownedResource);
 };

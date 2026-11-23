@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: one page of a list is read at a time, each from the last item of the page before it */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: one page of a list is read at a time, each from the last
+   item of the page before it */
 import { readPages } from "#src/services/shared/readPages";
 
 // Each page of a keyed read, from the start of its list to the end, is handed to `onPage` before the next is asked for,

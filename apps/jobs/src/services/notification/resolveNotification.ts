@@ -60,9 +60,10 @@ export const resolveNotification = async (
       };
     }
     case AppNotificationType.Reminder: {
-      // A reminder is sent only while its owner is still a member of its room: a room that is gone has no room to open, and an
-      // Owner who left has no place to read it. The owner's object keeps a reminder whose removal failed, so this is the check
-      // That holds at the one place a reminder is delivered. A membership cascades with its room, so one read answers both
+      // A reminder is sent only while its owner is still a member of its room: a room that is gone has no room to open,
+      // And an Owner who left has no place to read it. The owner's object keeps a reminder whose removal failed, so
+      // This is the check That holds at the one place a reminder is delivered. A membership cascades with its room, so
+      // One read answers both
       const membership = await getDb().query.usersToRoomsInMessage.findFirst({
         columns: { userId: true },
         where: getLiveMembershipRelationalWhere(data.roomId, data.userId),

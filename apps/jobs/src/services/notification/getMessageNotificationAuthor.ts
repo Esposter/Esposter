@@ -2,10 +2,9 @@ import { getDb } from "#src/services/shared/getDb";
 import { getLiveMembershipRelationalWhere, getLiveRowWhere } from "@esposter/db-schema";
 
 // Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room display name
-// ([display names](openspec/specs/esbabbler/display-names/design.md)) is applied once and never on the request path a member is waiting on.
-//
-// A webhook message has no author of its own — it is posted by an app user on the webhook's behalf — so the two
-// Author kinds resolve to one display and everything downstream stops caring which it was.
+// ([display names](openspec/specs/esbabbler/display-names/design.md)) is applied once and never on the request path a
+// Member is waiting on. A webhook message has no author of its own — it is posted by an app user on the webhook's
+// Behalf — so the two Author kinds resolve to one display and everything downstream stops caring which it was.
 export const getMessageNotificationAuthor = async ({
   appUserId,
   roomId,

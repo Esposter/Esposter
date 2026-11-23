@@ -7,7 +7,8 @@ import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
 import { QueueJob } from "@esposter/db-schema";
 
-// Each job's handler, keyed by the job the queue delivers. Exhaustive over QueueJob, so a new job has to name its handler
+// Each job's handler, keyed by the job the queue delivers. Exhaustive over QueueJob, so a new job has to name its
+// Handler
 export const QueueJobHandlerMap = {
   [QueueJob.DeleteAccount]: deleteAccountHandler,
   [QueueJob.DeleteOrphanedProfileImage]: deleteOrphanedProfileImageHandler,

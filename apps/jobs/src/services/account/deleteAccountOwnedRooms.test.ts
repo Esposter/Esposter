@@ -103,8 +103,8 @@ describe(deleteAccountOwnedRooms, () => {
     ]);
   });
 
-  // A member's membership is a row of the room, so the room's row takes it out with the room, and the member's list of rooms
-  // Is woken by that removal, not by a topic the sweep names
+  // A member's membership is a row of the room, so the room's row takes it out with the room, and the member's list of
+  // Rooms Is woken by that removal, not by a topic the sweep names
   test("wakes the membership reader of each member whose membership the owned room's row takes out", async () => {
     expect.hasAssertions();
 

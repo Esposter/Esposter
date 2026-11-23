@@ -77,7 +77,8 @@ describe(deleteAccountHandler, () => {
     ]);
   });
 
-  // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first page
+  // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first
+  // Page
   beforeEach(() => {
     roomObjectReplies.set("deleteUserMessages", () => []);
     roomObjectReplies.set("deleteUserReactions", () => []);
@@ -123,8 +124,8 @@ describe(deleteAccountHandler, () => {
     await expect(readUserRows(userId)).resolves.toStrictEqual([{ id: userId }]);
   });
 
-  // A membership the erased person holds is read by their own list of rooms, and the row that erases them takes it out, so the
-  // Read is woken by the write the sweep makes, not by a topic named by hand
+  // A membership the erased person holds is read by their own list of rooms, and the row that erases them takes it out,
+  // So the Read is woken by the write the sweep makes, not by a topic named by hand
   test("wakes the reader of each membership the erased person's row takes with it", async () => {
     expect.hasAssertions();
 
@@ -169,8 +170,8 @@ describe(deleteAccountHandler, () => {
     ).resolves.toStrictEqual([{ likeCount: 1, ranking: getPostRanking(1, post.createdAt) }]);
   });
 
-  // A post's comment count is the replies beneath it: the erased comment and every reply beneath it leave the count, and
-  // The reply that stays beneath the post stays in it
+  // A post's comment count is the replies beneath it: the erased comment and every reply beneath it leave the count,
+  // And The reply that stays beneath the post stays in it
   test("recounts a post's comments without the erased person's comment or the replies beneath it", async () => {
     expect.hasAssertions();
 
@@ -234,8 +235,8 @@ describe(deleteAccountHandler, () => {
     await expect(
       mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage).where(eq(roomsInMessage.userId, userId)),
     ).resolves.toStrictEqual([]);
-    // Only the first run sends anything: the second finds no owned room and no membership left
-    // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
+    // Only the first run sends anything: the second finds no owned room and no membership left The leave's payload is
+    // The tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
     const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([
       { args: [[]], method: "deleteAll", objectId: ownedRoom.id },

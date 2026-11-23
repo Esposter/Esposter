@@ -25,7 +25,8 @@ export const purgeExpiredResources = async (): Promise<void> => {
   // So the next tick retries it. Failures are logged, never rethrown — a rethrow would strand
   // The resources this pass already purged behind a retry of the whole batch.
   for (const expiredResource of expiredResources)
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, each fanning out across its own partitions and blob directory
+    // Its own partitions and blob directory
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, each fanning out across
     await getResultAsync(() => purgeResourceAndBroadcast(bucket, expiredResource)).match(noop, (error) => {
       console.error(`purgeExpiredResources failed to purge resource ${expiredResource.id}:`, error);
     });

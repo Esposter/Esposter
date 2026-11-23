@@ -73,7 +73,8 @@ describe(handleDeadLetterMessage, () => {
     await expect(readQuarantine()).resolves.toBe(JSON.stringify(body));
   });
 
-  // The body is under the attempt cap, so only the delivery count can quarantine it: the last delivery is never republished
+  // The body is under the attempt cap, so only the delivery count can quarantine it: the last delivery is never
+  // Republished
   test("quarantines a dead letter on the delivery that reaches the consumer's retry count, and does not republish it", async () => {
     expect.hasAssertions();
 

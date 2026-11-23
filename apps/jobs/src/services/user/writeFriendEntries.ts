@@ -3,11 +3,10 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { getDb } from "#src/services/shared/getDb";
 
-// The person's friend requests in both directions and their current friends. A removed request or friendship is a tombstone,
-// So only the live rows are written.
-// Each other party appears by user id and display name only. A request the person sent carries the time it was sent.
-// A request they received is the sender's act, so it carries no time.
-// A friendship is one row for the pair, made when the receiver accepted it, so it carries no time.
+// The person's friend requests in both directions and their current friends. A removed request or friendship is a
+// Tombstone, So only the live rows are written. Each other party appears by user id and display name only. A request
+// The person sent carries the time it was sent. A request they received is the sender's act, so it carries no time. A
+// Friendship is one row for the pair, made when the receiver accepted it, so it carries no time.
 export const writeFriendEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const where = {
     deletedAt: { isNull: true as const },

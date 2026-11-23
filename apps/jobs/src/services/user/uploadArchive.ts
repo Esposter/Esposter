@@ -8,7 +8,8 @@ import { getResultAsync, KIBIBYTE, noop } from "@esposter/shared";
 // Every part but the last is at least this large, which is R2's minimum for a part.
 const MIN_UPLOAD_PART_BYTES = 5 * KIBIBYTE * KIBIBYTE;
 
-// The archive is read a part at a time: a part is sent once it reaches the minimum, so the upload holds one part at most
+// The archive is read a part at a time: a part is sent once it reaches the minimum, so the upload holds one part at
+// Most
 const uploadParts = async (
   upload: R2MultipartUpload,
   archive: AsyncIterable<Uint8Array>,
@@ -25,7 +26,8 @@ const uploadParts = async (
   for await (const chunk of archive) {
     chunks.push(chunk);
     bufferedBytes += chunk.byteLength;
-    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each part's number is the count of the parts before it, so each waits for the one before it
+    // Before it, so each waits for the one before it
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each part's number is the count of the parts
     if (bufferedBytes >= MIN_UPLOAD_PART_BYTES) await uploadBufferedPart();
   }
   // The last part is the one under the minimum, and the archive always ends in a zip record, so there is always one
@@ -33,8 +35,8 @@ const uploadParts = async (
   return parts;
 };
 
-// Streams the archive into the object named for it.
-// A failed part abandons the upload rather than leaving it for R2 to age out, so a truncated archive is never completed.
+// Streams the archive into the object named for it. A failed part abandons the upload rather than leaving it for R2 to
+// Age out, so a truncated archive is never completed.
 export const uploadArchive = async (
   bucket: R2Bucket,
   blobName: string,

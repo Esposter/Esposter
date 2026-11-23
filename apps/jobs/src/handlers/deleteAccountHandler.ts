@@ -11,12 +11,12 @@ import { eraseAccountUserRow } from "#src/services/account/eraseAccountUserRow";
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
 import { deleteAccountQueueMessageSchema } from "@esposter/db-schema";
 
-// The account deletion sweep, in the order each store depends on. Every step treats an already-gone target as done, so a
-// Run that fails anywhere is finished by the next one, and the message names the account by its user id, so a retry runs
-// Every step again from the top. The user row goes last: deleting it earlier would cascade away the only record of what
-// Still needs sweeping, and the cascade from it removes whatever no step above names. Each step's rows are published by the
-// Unit the message runs in, and each object's writes by its own invoke, whether the run succeeded or not, so a reader of a
-// Row is told by the run that removed it
+// The account deletion sweep, in the order each store depends on. Every step treats an already-gone target as done, so
+// A Run that fails anywhere is finished by the next one, and the message names the account by its user id, so a retry
+// Runs Every step again from the top. The user row goes last: deleting it earlier would cascade away the only record of
+// What Still needs sweeping, and the cascade from it removes whatever no step above names. Each step's rows are
+// Published by the Unit the message runs in, and each object's writes by its own invoke, whether the run succeeded or
+// Not, so a reader of a Row is told by the run that removed it
 export const deleteAccountHandler = async (body: unknown): Promise<void> => {
   const { userId } = deleteAccountQueueMessageSchema.parse(body);
   await deleteAccountOwnedRooms(userId);

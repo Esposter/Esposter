@@ -6,8 +6,8 @@ import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsa
 import { purgeResource } from "@esposter/db";
 
 // One resource's purge, then the broadcast to the owners it gave bytes back to. The recycle bin's timer and the account
-// Deletion each call it once per resource. The owner's resource list is not published here: the purge's delete names the
-// Row's owner scope, and the unit it runs in publishes that when it settles
+// Deletion each call it once per resource. The owner's resource list is not published here: the purge's delete names
+// The Row's owner scope, and the unit it runs in publishes that when it settles
 export const purgeResourceAndBroadcast = async (
   bucket: R2Bucket,
   { id }: Pick<ResourceInResource, "id">,

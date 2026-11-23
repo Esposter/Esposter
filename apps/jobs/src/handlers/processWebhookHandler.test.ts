@@ -14,7 +14,8 @@ describe(processWebhookHandler, () => {
   const roomId = v7();
   const userId = v7();
   const username = "username";
-  // The one call a delivery sends the room: the webhook's app user, the name and image the payload gives, and the id it was accepted under
+  // The one call a delivery sends the room: the webhook's app user, the name and image the payload gives, and the id it
+  // Was accepted under
   const webhookMessageCall = {
     args: [{ appUserId: userId, appUserImage: avatarUrl, deliveryId, message: content, senderName: username }],
     method: "createWebhookMessage",

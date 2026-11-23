@@ -12,9 +12,9 @@ export const MockPublishedTopics: ColumnTopic[] = [];
 // The names of the topics published, for a test that asks only which topics a write reached
 export const getMockPublishedTopics = (): Topic[] => MockPublishedTopics.map(({ topic }) => topic);
 
-// The topics a reader watches that the publishes made so far wake. The reader's statements run through the recorder over the
-// Given database, so the topics its queries read are named the way the web names them for the same query, and the wake
-// Rule is the one the Topic objects apply
+// The topics a reader watches that the publishes made so far wake. The reader's statements run through the recorder
+// Over the Given database, so the topics its queries read are named the way the web names them for the same query, and
+// The wake Rule is the one the Topic objects apply
 export const getReaderWakes = async (
   database: Database,
   read: (recorded: Database) => Promise<unknown>,

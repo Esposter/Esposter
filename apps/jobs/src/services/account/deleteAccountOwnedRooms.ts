@@ -13,6 +13,7 @@ export const deleteAccountOwnedRooms = async (userId: UserInAuth["id"]): Promise
     .from(roomsInMessage)
     .where(eq(roomsInMessage.userId, userId));
   for (const { id: roomId } of ownedRooms)
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, each fanning out across its own partitions and blobs
+    // Own partitions and blobs
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, each fanning out across its
     await deleteAccountOwnedRoom(roomId);
 };

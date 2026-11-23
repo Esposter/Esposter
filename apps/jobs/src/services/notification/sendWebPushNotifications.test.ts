@@ -87,8 +87,8 @@ describe(sendWebPushNotifications, () => {
     expect(peakInFlight).toBe(MAX_CONCURRENT_PUSH_SENDS);
   });
 
-  // A stored endpoint off the push services is never POSTed to, whatever row it came from, so the worker cannot be made to
-  // Send a request to an arbitrary host
+  // A stored endpoint off the push services is never POSTed to, whatever row it came from, so the worker cannot be made
+  // To Send a request to an arbitrary host
   test("never POSTs to an endpoint whose host is not a browser's push service", async () => {
     expect.hasAssertions();
 

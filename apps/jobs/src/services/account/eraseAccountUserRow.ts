@@ -9,10 +9,11 @@ import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 // The like counts are recounted first, from the rows that remain, since the rankings are read from them. The erased
-// Person's likes and replies are still present here, and every sum and tally excludes them by predicate, so a replay that
-// Runs a recount again sets each count from the rows that remain, which is right whichever run it is. The comment counts,
-// The rankings and the user row's delete are one batch with the delete as its last statement, so they commit together. A
-// Crash before that batch commits leaves the likes that name the affected posts for the queue's retry to read
+// Person's likes and replies are still present here, and every sum and tally excludes them by predicate, so a replay
+// That Runs a recount again sets each count from the rows that remain, which is right whichever run it is. The comment
+// Counts, The rankings and the user row's delete are one batch with the delete as its last statement, so they commit
+// Together. A Crash before that batch commits leaves the likes that name the affected posts for the queue's retry to
+// Read
 export const eraseAccountUserRow = async (userId: UserInAuth["id"]): Promise<void> => {
   await recountPostLikes(userId);
   const rankingUpdates = await computePostRankingUpdates(userId);

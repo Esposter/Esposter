@@ -20,7 +20,8 @@ export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInA
   const roomIds = await getMemberRoomIds(getDb(), userId);
   const emojiReactions: { emojiTag: string; kind: ArchiveLikeKind; roomId: string; targetId: number }[] = [];
   for (const roomId of roomIds)
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, and one page of its reactions at a time
+    // Reactions at a time
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, and one page of its
     await readPagesToEnd(
       (after, limit) => getRoomObject(roomId).exportUserReactions({ after, limit, userId }),
       ({ emojiTag, messageId }: RoomReaction) => ({ emojiTag, messageId }),

@@ -1,4 +1,6 @@
-/* oxlint-disable no-await-in-loop -- Async iteration: the messages stream a page at a time, so one page and one attachment are held at once; Order is the contract: the archive takes one entry at a time, so each room's entries stay in order */
+/* oxlint-disable no-await-in-loop -- Async iteration: the messages stream a page at a time, so one page and one
+   attachment are held at once; Order is the contract: the archive takes one entry at a time, so each room's entries
+   stay in order */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomMessage, UserInAuth } from "@esposter/db-schema";
 

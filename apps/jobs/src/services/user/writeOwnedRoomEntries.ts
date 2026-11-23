@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Order is the contract: the archive takes one entry at a time, so each room's record, images and emoji blobs are written in order, with its emoji read beside its record */
+/* oxlint-disable no-await-in-loop -- Order is the contract: the archive takes one entry at a time, so each room's
+   record, images and emoji blobs are written in order, with its emoji read beside its record */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 

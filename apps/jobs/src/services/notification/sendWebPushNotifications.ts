@@ -14,8 +14,8 @@ export const sendWebPushNotifications = async (
 ): Promise<void> => {
   await settleAll(
     subscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) => async () => {
-      // A stored endpoint off the push services is never POSTed to. The subscribe input refuses one, so a row that fails
-      // Here was written before the rule or around it, and the request it would make is not the worker's to send
+      // A stored endpoint off the push services is never POSTed to. The subscribe input refuses one, so a row that
+      // Fails Here was written before the rule or around it, and the request it would make is not the worker's to send
       if (!checkIsPushServiceEndpoint(endpoint)) {
         console.error(`Refusing to send to ${endpoint}: it is not a browser's push service.`);
         return;

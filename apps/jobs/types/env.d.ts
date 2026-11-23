@@ -2,9 +2,9 @@ import type { JobsEnvironmentVariables } from "#src/models/environment/JobsEnvir
 import type { Rpc } from "@cloudflare/workers-types";
 import type { CallObjectRpc, RoomObjectRpc, TopicObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 
-// The bindings wrangler.jsonc declares, typed once here. A queue is bound by its job's SCREAMING_SNAKE name with a `_QUEUE` suffix.
-// A bucket is bound by its purpose's name, and each is the same in both environments. The realtime objects belong to another Worker.
-// Each is typed by the RPC surface that the realtime Worker's class implements.
+// The bindings wrangler.jsonc declares, typed once here. A queue is bound by its job's SCREAMING_SNAKE name with a
+// `_QUEUE` suffix. A bucket is bound by its purpose's name, and each is the same in both environments. The realtime
+// Objects belong to another Worker. Each is typed by the RPC surface that the realtime Worker's class implements.
 declare global {
   namespace Cloudflare {
     interface Env {

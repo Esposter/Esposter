@@ -131,8 +131,8 @@ describe(buildUserDataArchive, () => {
     ]);
   });
 
-  // A room the person is in is asked for their reactions and messages on every build, and a room with none answers empty,
-  // So a test scripts only the answer it reads
+  // A room the person is in is asked for their reactions and messages on every build, and a room with none answers
+  // Empty, So a test scripts only the answer it reads
   beforeEach(() => {
     roomObjectReplies.set("exportUserMessages", () => []);
     roomObjectReplies.set("exportUserReactions", () => []);
@@ -197,8 +197,8 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    // The room the person is in is asked for their reactions, then for their messages twice: once to write them, and once
-    // More to write their attachments. The room they left is never asked
+    // The room the person is in is asked for their reactions, then for their messages twice: once to write them, and
+    // Once More to write their attachments. The room they left is never asked
     expect(roomObjectCalls).toStrictEqual([
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
@@ -341,8 +341,8 @@ describe(buildUserDataArchive, () => {
     );
     await mockDb.insert(likesInPost).values({ postId: post.id, userId: otherUserId, value: -1 });
 
-    // The person's reaction in a room they are a member of is the room's row for that emoji on that message, which another
-    // Member shares as a reactor
+    // The person's reaction in a room they are a member of is the room's row for that emoji on that message, which
+    // Another Member shares as a reactor
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await joinRoom(room.id, userId, otherUserId);
     roomObjectReplies.set("exportUserReactions", () => [{ emojiTag, messageId, userIds: [userId, otherUserId] }]);
@@ -373,14 +373,14 @@ describe(buildUserDataArchive, () => {
       parentId: null,
       title,
     });
-    // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time is
-    // The first reactor's, not the person's, and the exact shape leaves it out
+    // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time
+    // Is The first reactor's, not the person's, and the exact shape leaves it out
     expect(getEntryJson(entries, "likes.json")).toStrictEqual([
       { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
       { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageId },
     ]);
-    // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
-    // Row for the pair, made when the receiver accepted it, so neither carries a time
+    // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship
+    // Is one Row for the pair, made when the receiver accepted it, so neither carries a time
     expect(getEntryJson(entries, "friends.json")).toStrictEqual({
       friends: [{ id: friendUserId, name }],
       received: [{ id: receivedUserId, name }],
@@ -481,8 +481,8 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the time
-    // It was last published, all as the row stores them
+    // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the
+    // Time It was last published, all as the row stores them
     expect(getEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
       createdAt: resourcePublication.createdAt,
       publishedAt: resourcePublication.publishedAt,
@@ -611,7 +611,8 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    // A record carries its actor, its room and the time it was made beside what it did or said, and no update or delete time
+    // A record carries its actor, its room and the time it was made beside what it did or said, and no update or delete
+    // Time
     expect(getEntryJson(entries, "moderation.json")).toStrictEqual({
       logs: [
         {
@@ -648,7 +649,8 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it out
+    // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it
+    // Out
     expect(getEntryJson(entries, "calls.json")).toStrictEqual([
       { createdAt: callSession.createdAt, roomId: room.id, threadRootId: 0 },
     ]);
@@ -776,8 +778,8 @@ describe(buildUserDataArchive, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await joinRoom(room.id, userId, otherUserId);
     const pagedMessages = Array.from({ length: OBJECT_READ_PAGE_LIMIT + 1 }, (_value, index) => `${message}${index}`);
-    // The room's ids run from one, so a page's last id is its size. The room answers each page as the ids after the cursor
-    // It is sent, up to the limit
+    // The room's ids run from one, so a page's last id is its size. The room answers each page as the ids after the
+    // Cursor It is sent, up to the limit
     const pagedRoomMessages = pagedMessages.map((pagedMessage, index) =>
       createRoomMessage({ id: index + 1, message: pagedMessage, userId }),
     );
@@ -791,8 +793,8 @@ describe(buildUserDataArchive, () => {
     const messagesText = getEntryText(entries, `rooms/${room.id}/messages.json`);
     const messages = jsonDateParse<RoomMessage[]>(messagesText);
 
-    // The reactions are asked first, then the messages are read in two pages, the first from no cursor and the second from the
-    // Last id of the first, and the attachments are read through the same two pages again
+    // The reactions are asked first, then the messages are read in two pages, the first from no cursor and the second
+    // From the Last id of the first, and the attachments are read through the same two pages again
     expect(roomObjectCalls).toStrictEqual([
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
@@ -823,7 +825,8 @@ describe(buildUserDataArchive, () => {
     expect(messages.map(({ message: text }) => text)).toStrictEqual(pagedMessages);
   });
 
-  // A person's reactions in a room are read a page at a time, so a room with more of them than one page comes through whole
+  // A person's reactions in a room are read a page at a time, so a room with more of them than one page comes through
+  // Whole
   test("archives every page of a person's reactions in a room, asking each page for the key after the one before it", async () => {
     expect.hasAssertions();
 

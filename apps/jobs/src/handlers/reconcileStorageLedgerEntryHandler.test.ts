@@ -32,7 +32,8 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
   },
 }));
 
-// Handed out as a spy so one call can be given a bucket with only the method under test: Miniflare's bucket takes no spy on its methods
+// Handed out as a spy so one call can be given a bucket with only the method under test: Miniflare's bucket takes no
+// Spy on its methods
 vi.mock(import("#src/services/storage/getBucket"), async () => {
   const actual = await import("@esposter/db-mock/workers");
   return { ...actual, getBucket: vi.fn<typeof actual.getBucket>(actual.getBucket) };
@@ -149,7 +150,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(0);
   });
 
-  // A reserve names its bucket on the row it writes, so the reconcile follows that row and keeps no list of buckets to join
+  // A reserve names its bucket on the row it writes, so the reconcile follows that row and keeps no list of buckets to
+  // Join
   test("charges a row in any bucket the ledger names", async () => {
     expect.hasAssertions();
 
