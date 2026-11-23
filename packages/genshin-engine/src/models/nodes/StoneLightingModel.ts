@@ -12,10 +12,12 @@ import { diffuseColor, exp, normalView, normalWorld, positionWorld, texture, vec
 import { LightingModel } from "three/webgpu";
 
 // A node of no type, checked to be a vec3 before it is read as one, so a node of any other type fails the build here
-// Rather than in the shader
-const checkIsVec3Node = (node: Node): node is Node<"vec3"> => node.nodeType === "vec3";
-const readVec3Node = (node: Node): Node<"vec3"> => {
-  if (!checkIsVec3Node(node)) throw new TypeError(`Expected a vec3 node, got ${String(node.nodeType)}`);
+// Rather than in the shader. The type is the builder's to resolve, since a light's direction is an operator whose type
+// Three infers from its inputs, so its `nodeType` is still null until the builder reads them
+const checkIsVec3Node = (node: Node, builder: NodeBuilder): node is Node<"vec3"> =>
+  node.getNodeType(builder) === "vec3";
+const readVec3Node = (node: Node, builder: NodeBuilder): Node<"vec3"> => {
+  if (!checkIsVec3Node(node, builder)) throw new TypeError(`Expected a vec3 node, got ${node.getNodeType(builder)}`);
   return node;
 };
 
@@ -41,11 +43,14 @@ export class StoneLightingModel extends LightingModel {
 
   // The light's direction and the reflected light's terms are nodes of no type in three's typings, so each is read through
   // `readVec3Node`, which checks it is the vec3 it is read as
-  override direct({ lightColor, lightDirection, reflectedLight }: LightingModelDirectInput): void {
+  override direct(
+    { lightColor, lightDirection, reflectedLight }: LightingModelDirectInput,
+    builder: NodeBuilder,
+  ): void {
     const { ramp, sunRadiance } = this.stoneLight;
     const visibility = createSunVisibilityNode(lightColor, sunRadiance);
     const coordinate = normalView
-      .dot(readVec3Node(lightDirection))
+      .dot(readVec3Node(lightDirection, builder))
       .mul(visibility.pow(STONE_SHADOW_EXPONENT))
       .mul(0.5)
       .add(0.5);
@@ -54,7 +59,7 @@ export class StoneLightingModel extends LightingModel {
       .mul(STONE_RAMP_KNOT_COUNT - 1)
       .add(0.5)
       .div(STONE_RAMP_KNOT_COUNT);
-    readVec3Node(reflectedLight.directDiffuse).addAssign(
+    readVec3Node(reflectedLight.directDiffuse, builder).addAssign(
       texture(ramp, vec2(rampU, 0.5)).rgb.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),
     );
   }
@@ -77,7 +82,7 @@ export class StoneLightingModel extends LightingModel {
     // The reflected light, and three's typings offer no narrower type to check it against
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- @types/three declares the builder's `context` as `unknown`, so the lighting context it holds is asserted to the reflected light it carries
     const { reflectedLight } = builder.context as { reflectedLight: LightingModelReflectedLight };
-    readVec3Node(reflectedLight.indirectDiffuse).addAssign(
+    readVec3Node(reflectedLight.indirectDiffuse, builder).addAssign(
       ambient.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),
     );
   }
