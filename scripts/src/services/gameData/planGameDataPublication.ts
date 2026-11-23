@@ -3,7 +3,7 @@ import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { createGameDataRecord } from "#src/services/gameData/createGameDataRecord";
-import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
+import { getGameDataObjectPath } from "genshin-world";
 
 // The lock entries a publication names and every object they reach, each record once even when several names reach
 // It. An index's entries are sorted by id before their hashes are collected, so the index object is the same whatever
@@ -13,7 +13,7 @@ export const planGameDataPublication = ({ indexes, objects }: GameDataPublicatio
   const recordMap = new Map<string, GameDataRecord>();
   const addRecord = (dataset: string, value: unknown, isIndex: boolean): string => {
     const record = createGameDataRecord(dataset, value, isIndex);
-    recordMap.set(getGameDataObjectKey(dataset, record.hash), record);
+    recordMap.set(getGameDataObjectPath(dataset, record.hash), record);
     return record.hash;
   };
   const objectHashes = Object.fromEntries(

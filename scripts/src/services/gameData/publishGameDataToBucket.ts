@@ -7,9 +7,9 @@ import {
   GAME_DATA_REUSE_WINDOW_MS,
   MAX_CONCURRENT_OBJECT_BODIES,
 } from "#src/services/gameData/constants";
-import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { toGameDataObjectKeys } from "#src/services/gameData/toGameDataObjectKeys";
 import { settleAll } from "@esposter/shared";
+import { getGameDataObjectPath } from "genshin-world";
 
 // Stores what one bucket does not hold yet, and returns how many objects it wrote. A stored object is reused as it is when
 // The current lock reaches it or it is young, and otherwise rewritten with the same bytes, which restarts its age so no
@@ -26,7 +26,7 @@ export const publishGameDataToBucket = async (
   const reachableKeys = toGameDataObjectKeys(reachableObjects);
   const now = Date.now();
   const writes = records
-    .map((record) => ({ key: getGameDataObjectKey(record.dataset, record.hash), record }))
+    .map((record) => ({ key: getGameDataObjectPath(record.dataset, record.hash), record }))
     .filter(({ key }) => {
       const lastModified = lastModifiedMap.get(key);
       return (

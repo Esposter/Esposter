@@ -1,6 +1,6 @@
 import { getGameDataHash } from "#src/services/gameData/getGameDataHash";
-import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { verifyGameData } from "#src/services/gameData/verifyGameData";
+import { getGameDataObjectPath } from "genshin-world";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(verifyGameData, () => {
@@ -9,7 +9,7 @@ describe(verifyGameData, () => {
   const createStoredRecord = (dataset: string, value: unknown) => {
     const json = JSON.stringify(value);
     const hash = getGameDataHash(json);
-    return { hash, json, url: `${baseUrl}/${getGameDataObjectKey(dataset, hash)}` };
+    return { hash, json, url: `${baseUrl}/${getGameDataObjectPath(dataset, hash)}` };
   };
 
   afterEach(() => {

@@ -6,12 +6,11 @@ import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutc
 import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { DAY_MS } from "#src/services/gameData/constants";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
-import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
 import { publishGameData } from "#src/services/gameData/publishGameData";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset, getGameDataObjectPath } from "genshin-world";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Each environment's bucket is its own in-memory store, made fresh for each test, so a rerun reads what the test stored
@@ -109,7 +108,7 @@ describe(publishGameData, () => {
       }),
     );
     const record = takeOne(planGameDataPublication(publication).records);
-    bucketClientMap[CloudflareEnvironment.Production].store.delete(getGameDataObjectKey(record.dataset, record.hash));
+    bucketClientMap[CloudflareEnvironment.Production].store.delete(getGameDataObjectPath(record.dataset, record.hash));
 
     const rerun = await publishGameData({
       createBucketClientMap: () => bucketClientMap,
