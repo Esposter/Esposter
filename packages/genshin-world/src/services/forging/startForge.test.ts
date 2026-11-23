@@ -101,7 +101,7 @@ describe(startForge, () => {
       orders: [{ count: 1, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 }],
     };
 
-    expect(startForge(recipe, 1, { ...startArguments, progress: busyProgress, resinParam })).toBeUndefined();
+    expect(startForge(recipe, 1, { ...startArguments, progress: busyProgress })).toBeUndefined();
   });
 
   test("should start in the first queue no order holds, past a queue that is free again", () => {
@@ -111,7 +111,7 @@ describe(startForge, () => {
       ...progress,
       orders: [{ count: 1, queueId: 2, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 }],
     };
-    const result = startForge(recipe, 1, { ...startArguments, adventureRank: 5, progress: queuedProgress, resinParam });
+    const result = startForge(recipe, 1, { ...startArguments, adventureRank: 5, progress: queuedProgress });
 
     expect(result?.progress.orders.map(({ queueId }) => queueId)).toStrictEqual([2, 1]);
   });
@@ -123,7 +123,6 @@ describe(startForge, () => {
       startForge(recipe, 1, {
         ...startArguments,
         progress: { ...progress, forgedPoints: dailyPointCap - recipe.forgePoint + 1 },
-        resinParam,
       }),
     ).toBeUndefined();
   });
@@ -131,7 +130,7 @@ describe(startForge, () => {
   test("should be refused where the bag holds too few materials for every unit", () => {
     expect.hasAssertions();
 
-    expect(startForge(recipe, 2, { ...startArguments, inventory: createInventory(5), resinParam })).toBeUndefined();
+    expect(startForge(recipe, 2, { ...startArguments, inventory: createInventory(5) })).toBeUndefined();
   });
 
   test("should be refused where the bag holds too few of a material the recipe names twice for every unit", () => {
@@ -147,7 +146,7 @@ describe(startForge, () => {
           ],
         },
         1,
-        { ...startArguments, inventory: createInventory(5), resinParam },
+        { ...startArguments, inventory: createInventory(5) },
       ),
     ).toBeUndefined();
   });
@@ -164,12 +163,10 @@ describe(startForge, () => {
     const resinRecipe = { ...recipe, materials: [{ count: 10, id: ORIGINAL_RESIN_ITEM_ID }] };
     const resinWallet = { ...wallet, [Currency.OriginalResin]: 20 };
 
-    expect(
-      startForge(resinRecipe, 1, { ...startArguments, resinParam, wallet: resinWallet })?.wallet[
-        Currency.OriginalResin
-      ],
-    ).toBe(10);
-    expect(startForge(resinRecipe, 3, { ...startArguments, resinParam, wallet: resinWallet })).toBeUndefined();
+    expect(startForge(resinRecipe, 1, { ...startArguments, wallet: resinWallet })?.wallet[Currency.OriginalResin]).toBe(
+      10,
+    );
+    expect(startForge(resinRecipe, 3, { ...startArguments, wallet: resinWallet })).toBeUndefined();
   });
 
   test("should refuse in the Serenitea Pot a recipe that takes a Magical Crystal Chunk, and forge it anywhere else", () => {
@@ -186,7 +183,7 @@ describe(startForge, () => {
     };
     const chunkArguments = { ...startArguments, definitions: chunkDefinitions, inventory: chunkInventory };
 
-    expect(startForge(chunkRecipe, 1, { ...chunkArguments, isInRealm: true, resinParam })).toBeUndefined();
+    expect(startForge(chunkRecipe, 1, { ...chunkArguments, isInRealm: true })).toBeUndefined();
     expect(startForge(chunkRecipe, 1, chunkArguments)?.progress.orders).toStrictEqual([
       { count: 1, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 },
     ]);
@@ -195,7 +192,7 @@ describe(startForge, () => {
   test("should save a unit's seconds where a party's Venti gives an enhancement recipe its reduce talent", () => {
     expect.hasAssertions();
 
-    const result = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [VENTI_CHARACTER_ID], resinParam });
+    const result = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [VENTI_CHARACTER_ID] });
 
     expect(result?.progress.orders).toStrictEqual([
       { count: 1, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 5 },
@@ -228,11 +225,7 @@ describe(startForge, () => {
     };
 
     const result = startForge(weaponRecipe, 2, weaponArguments);
-    const enhancementResult = startForge(recipe, 1, {
-      ...startArguments,
-      partyCharacterIds: [DILUC_CHARACTER_ID],
-      resinParam,
-    });
+    const enhancementResult = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [DILUC_CHARACTER_ID] });
 
     assert.exists(result);
     assert.exists(enhancementResult);

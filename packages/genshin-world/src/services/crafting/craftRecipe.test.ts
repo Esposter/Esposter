@@ -87,7 +87,6 @@ describe(craftRecipe, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 200 };
     const result = craftRecipe(tierRecipe, 2, resultDefinition, {
       ...craftingState(inventory, wallet, { learnedRecipeIds: [] }),
-      resinParam,
     });
 
     expect(result?.inventory).toStrictEqual({
