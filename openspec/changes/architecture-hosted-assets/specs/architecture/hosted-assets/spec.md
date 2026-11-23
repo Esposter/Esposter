@@ -71,7 +71,7 @@ A publish SHALL verify each object it wrote by reading it back and hashing its d
 
 ### Requirement: Hosted objects are cached immutably at the edge
 
-A hosted object SHALL be served by its own custom domain with an immutable one-year cache header and the content type and encoding it was published with, and its cache status SHALL be readable in the response.
+A hosted object SHALL be served from the one hosted origin with an immutable one-year cache header and the content type and encoding it was published with, and its cache status SHALL be readable in the response.
 
 #### Scenario: A repeat request is a cache hit
 
@@ -104,15 +104,22 @@ A product's preloader SHALL download every object its lock names that the browse
 - **THEN** the preloader reports the failed paths
 - **AND** every cache entry it held before the preload is kept
 
-### Requirement: A successful preload evicts the objects a lock no longer names
+### Requirement: A successful preload evicts only its own product's stale objects
 
-A successful preload SHALL delete the cache entries of its product that the current lock does not name, and a preload that fails SHALL delete none.
+A successful preload SHALL delete the cached objects under its own product's scope prefixes that its lock no longer names. Objects under another product's prefix are never deleted, and a failed preload deletes none.
 
-#### Scenario: A replaced object is evicted after the preload succeeds
+#### Scenario: A stale object of one product is evicted and another product's object is kept
 
-- **GIVEN** a cache holding an object whose hash the current lock no longer names
-- **WHEN** the product's preload succeeds
-- **THEN** that entry is deleted from the cache
+- **GIVEN** one shared cache holding a stale object of product A and an object of product B that A's lock does not name
+- **WHEN** product A's preload succeeds
+- **THEN** A's stale object is deleted from the cache
+- **AND** B's object is kept
+
+#### Scenario: A failed preload deletes nothing
+
+- **GIVEN** a stale object of product A in the cache
+- **WHEN** product A's preload fails
+- **THEN** the stale object is kept
 
 ### Requirement: Tests read hosted objects from a local mirror
 

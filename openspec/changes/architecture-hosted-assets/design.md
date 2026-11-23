@@ -93,10 +93,12 @@ sequenceDiagram
 - **Dry run first.** `--dry-run` needs no credential and names what would change: the records, the keys added, removed or changed, and each changed object's path. A publish is not run without it, as the genshin-data skill already requires.
 - **Dev, then prod.** Both buckets take each object before the lock is committed, and the lock is committed only after both. A failure in either bucket throws before the commit, so a committed lock never names an object a reader cannot fetch. This is the existing `publishGameData` order, kept.
 - **Verification by hash.** Each object is read back from its bucket and its bytes are hashed. The hash must equal the sha256 in its name, and for an encoded object (Brotli or zstd) the decoded bytes are hashed, as the genshin verify already does. The check runs before the lock is committed, so the lock names only objects that were checked.
+- **Scope and first publish.** The first publish of a product reads its files from the repository, and a repository file is removed only after each object's sha256 equals its file's. Later edits go through `pull`, which restores a working copy from the lock. A publish writes only under the product's declared scope prefixes.
 - **Refusals.** A publish refuses, before any dry run writes its output:
   - a WAV file, since audio is published as MP3, which the lock names; the format ban is a banned-extension list, `.wav` first;
   - a file over `HOSTED_OBJECT_MAX_BYTES`, which is 16 MiB. The number is a policy: one request per object, and a bound on what a preload holds in memory. A 21 MB WAV is refused, and its MP3 is well under the cap. The owner may change the number;
   - a file whose source is not in its product's declared folder;
+  - an object under a scope prefix another product's lock already declares;
   - an object whose extension has no content type in the product's declaration.
 
 ## Url builder and cache contract
@@ -124,7 +126,7 @@ The three options:
 
 **(a) The current Worker route plus the Cache API.** The Worker stays in the path. Each request invokes it, the Cache API answers a hit in the data center that stored it, and a miss reads R2. Costs: a Worker invocation on every request, a Class B read on every miss, and a per-colo cache that a cold data center fills again. Code lands in the asset route.
 
-**(b) An R2 custom domain on the bucket, with a Cache Rule.** The domain serves the bucket directly, so a hit never invokes a Worker or reads R2. Each public product bucket gets its own hostname, because a custom domain maps one hostname to one bucket's root. The Cache Rule makes JSON, XML and TMX cacheable, since the default table excludes them.
+**(b) One shared R2 bucket behind a custom domain, with a Cache Rule.** The domain serves the bucket directly, so a hit never invokes a Worker or reads R2. The bucket is shared by every hosted product, and each product's scope is a key prefix, so one domain and one Cache Rule per environment serve them all, and a new product edits no infrastructure. The Cache Rule makes JSON, XML and TMX cacheable, since the default table excludes them.
 
 **(c) The current route unchanged.** The route answers `Cache-Control: public, max-age=3600`, which is not immutable, so the browser re-asks after an hour and the edge's behaviour is undocumented. Every first request in each data center reaches the Worker and R2.
 
@@ -144,8 +146,17 @@ The verification task reads `cf-cache-status` on the dev custom domain: the firs
 
 ### Hostnames and the route
 
-- Each public product bucket gets a custom domain, named like the existing `assets` hosts: `genshin-assets.esposter.com` and `dungeons-assets.esposter.com` in production, and the same names under `dev.esposter.com` for development. A product declares its origin as configuration, and the url builder takes that origin, never a host it builds itself.
-- The asset route (`apps/web/server/routes/assets/[bucket]/[...key].get.ts`) keeps serving the user buckets, which are untouched. It stops serving the two game buckets, so `public-genshin-assets` and `public-dungeons-assets` are no longer reachable through `assets.esposter.com/<bucket>/`. No route is kept beside the new hostnames.
+One public bucket, `public-hosted-assets`, holds every hosted product's objects, and a product's scope is its key prefix, so an object is `<scope>/<sha256><extension>`. Genshin's scopes are its datasets, and its objects keep their names through the migration: a record stays `<dataset>/<hash>.json`. The dungeons game's scope is `dungeons`. A product's scopes are the prefixes its lock declares, and a publish refuses an object under a prefix another product's lock already declares, so no two products share one.
+
+One custom domain per environment serves the bucket's root: `hosted.esposter.com` in production and `hosted.dev.esposter.com` in development. The bucket has one CORS policy, and the domain has one Cache Rule. A product declares its scope and its files and edits no infrastructure, so a new product is a declaration and not a Pulumi change.
+
+The repository declares no certificate. Live, `*.esposter.com` is listed on the certificate that serves `www.esposter.com`, and `*.dev.esposter.com` on the one that serves `dev.esposter.com`, both issued by Google Trust Services WE1. Each hosted name is one label under one of those wildcards, so neither needs a certificate change. The verification task reads the live certificate once each domain attaches. The user hostname `assets.dev.esposter.com` has its own wildcard, `*.assets.dev.esposter.com`, which is not the one the hosted names use.
+
+The asset route keeps serving the user buckets on `assets.esposter.com` and `assets.dev.esposter.com`. It stops serving the two game buckets, which are retired under Migration.
+
+### Migration
+
+Genshin's objects are copied server-side with `CopyObject` into `public-hosted-assets`, under the same names, so no object is downloaded. `CopyObject` is a Class A operation at $4.50 per million, so the copy costs a fraction of a cent. Every locked hash is then verified in the new bucket from the hosted origin before the origin switches. The app reads the hosted domain, and only then are `public-genshin-assets` and `public-dungeons-assets` emptied and their Pulumi resources removed. A tab still running an older bundle requests a deleted url after the emptying. The window is one deploy, and the owner accepted it.
 
 ## Load
 
@@ -154,10 +165,10 @@ The verification task reads `cf-cache-status` on the dev custom domain: the firs
 The generic preloader takes a product's lock and its hosted origin, and it does what Genshin's `useCharacterPackPreload` does today, for every object the lock names:
 
 1. read the lock, which is the product's committed lock;
-2. list the Cache Storage entries under the product's cache name, and compare each to the url the lock names for each object;
+2. list the Cache Storage entries under this product's scope prefixes, and compare each to the url the lock names for each object;
 3. plan the objects the cache lacks, with their bytes;
 4. fetch each with bounded concurrency and retries, storing the response in the cache, and report the bytes loaded as `downloadProgress`;
-5. on success, call `onHeld` once and delete the cache entries the lock does not name;
+5. on success, call `onHeld` once, and delete the cache entries under this product's own scope prefixes that the lock does not name. The cache is shared by every product, so an entry under another product's prefix is neither read for eviction nor deleted;
 6. on failure, keep the previous entries and report the failure with the paths that failed.
 
 Genshin's composable's `downloadProgress`, `status` and `onHeld` keep their shape, so a loading bar takes the same prop for both products. The character-pack names move: `CHARACTER_PACK_CACHE_NAME` becomes the product's cache name, and `CHARACTER_PACK_DOWNLOAD_*` becomes the generic constants.
@@ -243,7 +254,7 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 
 ## Notes
 
-- The character packs' preloader moves as it is, and its tests move with it. The one behaviour that is new is the eviction of entries the lock no longer names, which Genshin's packs never had: their cache kept older copies forever.
+- The character packs' preloader moves as it is, and its tests move with it. The one behaviour that is new is the eviction of entries under the product's own scope prefixes that its lock no longer names, which Genshin's packs never had: their cache kept older copies forever.
 - Genshin's game data is about 100 MB, the figure the rejected static-data record gives. A game's preload now covers every object of the lock, so the first visit to Genshin downloads that set behind the opening's bar. The change measures the lock's total in a task before the preload is turned on for records.
 - Nothing in this change is dated. The Cloudflare docs quoted here are the pages as fetched for the change.
 
@@ -259,13 +270,14 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 - **The HTTP cache as the held store.** Rejected: it cannot be listed, so the plan cannot match its contents.
 - **Blob urls for the engines.** Rejected: every loader's call site changes, and the bytes do not outlive the page.
 - **Every public bucket served by the Worker route.** Rejected by this change, with the facts under Where the bytes are served from.
+- **Per-product buckets and custom domains.** Rejected: each product would need its own bucket, custom domain, CORS policy and Cache Rule, a Pulumi change for every new product, which breaks the rule that a product only declares its assets. One bucket and one domain per environment, with each product's scope as a key prefix, need no infrastructure change for a new product.
 
 ## Key files
 
 | File                                                                          | Role                                                                                        |
 | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | `packages/db-schema/src/models/storage/StorageBucket.ts`                      | the public buckets a product's origin names                                                 |
-| `apps/infra/src/cloudflare/resources/r2Buckets/`                              | one bucket per storage bucket; the custom domains are declared beside them                  |
+| `apps/infra/src/cloudflare/resources/r2Buckets/`                              | the buckets; the shared hosted bucket and its custom domain are declared beside them        |
 | `apps/web/server/routes/assets/[bucket]/[...key].get.ts`                      | serves the user buckets only, once the game buckets are off the route                       |
 | `apps/web/configuration/security.ts`                                          | the `connect-src`, `font-src`, `img-src` and `media-src` directives over the hosted origins |
 | `apps/web/service-worker/sw.ts`                                               | the cache-first route over the hosted origins, and the claim on activation                  |
