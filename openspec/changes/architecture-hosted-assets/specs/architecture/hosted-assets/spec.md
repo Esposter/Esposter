@@ -104,13 +104,6 @@ A product's preloader SHALL download every object its lock names that the browse
 - **THEN** no object is requested from the network
 - **AND** the progress reads complete
 
-#### Scenario: A failed download keeps the previous cache
-
-- **GIVEN** a preload in which an object fails its attempts
-- **WHEN** the preload stops
-- **THEN** the preloader reports the failed paths
-- **AND** every cache entry it held before the preload is kept
-
 ### Requirement: A successful preload evicts only its own product's stale objects
 
 A successful preload SHALL delete the cached objects under its own product's scope prefixes that its lock no longer names. Objects under another product's prefix are never deleted, and a failed preload deletes none.
