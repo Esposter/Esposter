@@ -49,7 +49,7 @@ vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: 
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type: ResourceType = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
-type ReadResourceResult = { favorite: null; publication: null } & ReturnType<typeof createResource>;
+type ReadResourceResult = ReturnType<typeof createResource> & { favorite: null; publication: null };
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   Object.assign(useRouter().currentRoute.value.params, { id });
@@ -147,16 +147,16 @@ describe(useResourceStore, () => {
     vi.useRealTimers();
   });
 
-  // The open resource's read is the store's, so its route guard is tested here once: a route with no resource segment names
-  // Nothing to read, and the caller's executor is never asked to issue one
+  // The open resource's read is the store's, so its route guard is tested here once.
+  // A route with no resource segment has nothing to read, and the caller's executor is never asked to issue one
   test("issues no read of the open resource while the route names no resource", async () => {
     expect.hasAssertions();
 
     setRouteId("");
     const resourceStore = useResourceStore();
     const { readOpenResource } = resourceStore;
-    // A read that must never run: a mock of the generic read itself loses its type parameter, so the store is handed a
-    // Plain function over it
+    // A read that must never run.
+    // A mock of the generic read itself loses its type parameter, so the store is handed a plain function over it
     const executeRead = vi.fn<() => never>();
     const runScope = effectScope().run(useRunScope);
     assert.exists(runScope);
@@ -167,8 +167,8 @@ describe(useResourceStore, () => {
   });
 
   // `readResource()` swaps the loaded resource an await before the content store re-seeds its content ref from
-  // `readContent`, so a debounced autosave landing in between holds the previous resource's document — writing
-  // It replaces this resource's content with another one's, under this one's id and contentVersion
+  // `readContent`, so a debounced autosave landing in between holds the previous resource's document.
+  // Writing it replaces this resource's content with another one's, under this one's id and contentVersion
   test("refuses a save while the content in hand still belongs to the previous resource", async () => {
     expect.hasAssertions();
 
