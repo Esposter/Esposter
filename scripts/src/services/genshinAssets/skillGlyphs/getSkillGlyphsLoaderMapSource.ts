@@ -13,8 +13,9 @@ const readSkillGlyphsEntry =
   (characterId: string) =>
   (gameDataBaseUrl: string): Promise<SkillGlyphs> =>
     readGameDataEntry(gameDataBaseUrl, "${GameDataset.SkillGlyphs}", characterId, skillGlyphsSchema);
-// Written by \`pnpm -C scripts genshin:assets skill-glyphs\`, never by hand. Each character's skill and burst icons are its
-// Entry of the hosted \`skillGlyphs\` index, fetched only once that character joins the party
+// Written by \`pnpm -C scripts genshin:assets skill-glyphs\`, never by hand.
+// Each character's skill and burst icons are its entry of the hosted \`skillGlyphs\` index.
+// Fetched only once that character joins the party
 export const SkillGlyphsLoaderMap: Readonly<Record<number, (gameDataBaseUrl: string) => Promise<SkillGlyphs>>> = {
 ${entries.join("")}};
 `;
