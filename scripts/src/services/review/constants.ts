@@ -87,7 +87,7 @@ export const SECRET_VARIABLE_REGEX: RegExp = /credential|key|password|secret|tok
 export const REVIEWER_TOOLS: readonly string[] = ["Read", "Grep", "Glob", "Skill"];
 
 // Claude Code refusing to start prints its own sentence and exits non-zero. The phrase is bounded to its own line, so a
-// Review discussing "usage limit" in prose is not read as one (`runSession`'s `getIsLimited`).
+// Review discussing "usage limit" in prose is not read as one (`runSession` matches its output against `USAGE_LIMIT_REGEX`).
 export const USAGE_LIMIT_REGEX: RegExp = /(?:you've hit your \w+ limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
 
 // The paths a review does not read, each with the reason the bot's path filters gave for it. Written as globs over the

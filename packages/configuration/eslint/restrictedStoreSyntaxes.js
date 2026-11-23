@@ -7,7 +7,7 @@
 // Store's type rather than about the shape on the page. The dot is the half decidable from syntax alone.
 export default [
   {
-    // Lower-camel only: a `PascalCaseStore` is a plain module object rather than a `use*Store()` handle
+    // Lower-camel only: a `FooStore` is a plain module object rather than a `use*Store()` handle
     message:
       "Destructure a store's methods and take its refs through `storeToRefs` — a consumer never reads a store by dot. See the pinia skill.",
     selector: "MemberExpression[object.name=/^[a-z][A-Za-z0-9]*Store$/]",

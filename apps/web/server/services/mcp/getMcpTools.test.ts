@@ -143,7 +143,7 @@ describe(getMcpTools, () => {
     expect(getUndeclaredTypeProcedurePaths(undeclaredRouter)).toStrictEqual(["webpage.undeclared"]);
   });
 
-  // Turning the dots to underscores would merge `a_b.c` with `a.b_c`, and a client lists the one name twice
+  // Turning the dots to underscores would merge `foo_bar.baz` with `foo.bar_baz`, and a client lists the one name twice
   test("names every tool apart", () => {
     expect.hasAssertions();
 

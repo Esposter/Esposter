@@ -23,7 +23,7 @@ describe("passThroughHelper", () => {
     // A default export is the same surface reached without a name, so it forwards on the same terms.
     { name: "forwardsFromDefaultExport", source: `export default (b: string) => f(b);`, violations: 1 },
     // Everything below absorbs something the caller no longer states.
-    // A read of what the forward would have returned is the same rename one step out: the `useGlobalTheme` shape.
+    // A read of what the forward would have returned is the same rename one step out: the `useFoo` shape.
     { name: "readsForwardedCallResult", source: `export const a = () => f().b;`, violations: 1 },
     { name: "readsParameterProperty", source: `export const a = (b: X) => b.c;`, violations: 1 },
     // A computed read is a lookup the caller did not spell, and an argument the caller never passed is absorbed.

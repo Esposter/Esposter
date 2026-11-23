@@ -67,7 +67,7 @@ export default {
     },
     {
       // The `InMessage` suffix names the schema a message table sits in, and the table's own name is
-      // Already the plural — so a relation key or a local spelled `bansInMessages` has pluralised the schema, and
+      // Already the plural — so a relation key or a local spelled `barsInFoo` has pluralised the schema, and
       // Reads as bans across messages. The suffix is dropped from a variable (`const ban`) or kept whole as the
       // Table's name (`r.many.bansInMessage`); nothing spells it plural. Unanchored, because a through-relation
       // Key carries the table's name mid-word (`roomsInMessageViaInvitesInMessage`), which an end anchor passes
@@ -86,13 +86,13 @@ export default {
     },
     {
       // One structure, one spelling: the repo's own lookup tables already fix the word order
-      // (`EmojiGroupIconMap` is group -> icon), so a local reading `iconsByEmojiGroup` or `idToAlias` says the
+      // (`EmojiGroupIconMap` is group -> icon), so a local reading `barByFoo` or `fooToBar` says the
       // Same thing a second way. Every branch reads what the name is attached to rather than the name alone,
       // Because the shape is what makes it a lookup: a map is data, so a function keeps its `By<Selector>`
-      // (`getDataSourceTypeByFileName`), and `isGroupedByType` is a boolean. So a lookup is recognised by a
+      // (`getFooByBar`), and `isGroupedByType` is a boolean. So a lookup is recognised by a
       // `Map`/`Record` annotation, a `new Map`/`Object.groupBy` initialiser, or an object literal — and the
       // Object-literal branches take the `By` infix only, since `To` collides with the `usersToRooms` join
-      // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byPage`. A lookup
+      // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byFoo`. A lookup
       // Built inside a `computed` is the same lookup — the initialiser is the `computed` call rather than the
       // `new Map`, so the arrow's body is read directly instead of by descent, which would report the wrong node
       // And catch a `Map` built anywhere deeper for some other purpose.
@@ -102,7 +102,7 @@ export default {
     },
     {
       // A boolean says what is true, not what is permitted: `can`/`should` name a policy the value does not
-      // Carry, and the repo already spells a permission check `hasManageRoles` and a capability check
+      // Carry, and the repo already spells a permission check `checkHasPermission` and a capability check
       // `isScreenShareSupported`. Only a **named** declarator is matched, so a dependency's own key stays its own —
       // `URL.canParse` is read and written under its name.
       // A destructuring pattern is therefore out of scope on purpose rather than by omission: the name in

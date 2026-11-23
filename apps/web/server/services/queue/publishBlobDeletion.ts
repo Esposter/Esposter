@@ -23,7 +23,7 @@ export const publishBlobDeletion = (
 
     // Deduplicated here rather than at each caller, because the handler's schema requires unique names and a
     // Publisher that concatenates two listings has no way to know they are disjoint. A repeated name would only
-    // Ever have cost one no-op `deleteIfExists`, but it fails the parse before any delete runs — turning a
+    // Ever have cost one no-op delete, but it fails the parse before any delete runs — turning a
     // Harmless duplicate into a chunk of blobs that no delivery, retry or replay can ever reclaim.
     for (const blobNamesChunk of chunkBlobNamesByMessageSize([...new Set(blobNamesValue)])) {
       // Spread rather than assigned, so a deletion without a decision sends no key at all instead of an undefined one

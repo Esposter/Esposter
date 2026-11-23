@@ -4,7 +4,7 @@ import { posix } from "node:path";
 const CASE_BOUNDARY_REGEX = new RegExp(`\\/|${CAMEL_HUMP_REGEX.source}`, "u");
 // The name Nuxt registers a component under, from its path below the components directory: the folder segments
 // Prefix the file name, minus the longest run of trailing folder segments the file name already opens with
-// (`Message/Room/RoomHeader.vue` is `MessageRoomHeader`, `Item/Item.vue` and `Item/Index.vue` are `Item`). The name is
+// (`Foo/Bar/BarBaz.vue` is `FooBarBaz`, `Item/Item.vue` and `Item/Index.vue` are `Item`). The name is
 // What a page cites, and it is written in no source file — only the file name is.
 export const getComponentName = (componentPath: string): string => {
   // A component at the root has the dirname `.`, which is no prefix
