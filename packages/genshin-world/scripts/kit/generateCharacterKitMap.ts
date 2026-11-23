@@ -23,7 +23,7 @@ const readKitModule = (directory: string, file: string) => {
 // Each entry imports its module on demand, so a kit loads only when its character joins the party.
 // The id is written as the module declares it rather than imported, which would load the module with the map.
 // Called from the build's `build:prepare` hook before the barrels are written, so the barrel lists the map too.
-// The text goes through the repository's formatter, as a generated `.ts` written through `formatGeneratedSource` does.
+// The text goes through the formatter's API before it is written, the same call `formatGeneratedSource` makes in `scripts`.
 // So the map is canonical for any number of kits.
 // A map of one kit fits on a line the formatter collapses, which no hand-written layout would anticipate
 export const generateCharacterKitMap = async (packageDirectory: string): Promise<void> => {
