@@ -43,7 +43,7 @@ export const readGameMusicChroma = async (): Promise<Map<number, Chroma>> => {
       const path = join(CHROMA_DIRECTORY, `${id}.bin`);
       if (!existsSync(path)) return;
       const data = await readFile(path);
-      const values = new Float32Array(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength));
+      const values = new Float32Array(data.buffer, data.byteOffset, data.byteLength / Float32Array.BYTES_PER_ELEMENT);
       const frameCount = values.length / 13;
       soundChromaMap.set(id, {
         classes: values.subarray(0, frameCount * 12),

@@ -17,7 +17,7 @@ export const readMusicSourceNotes = async (
   let readings: Pick<ModelReadings, "frames" | "onsets">;
   if (existsSync(readingsPath)) {
     const data = await readFile(readingsPath);
-    const values = new Float32Array(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength));
+    const values = new Float32Array(data.buffer, data.byteOffset, data.byteLength / Float32Array.BYTES_PER_ELEMENT);
     const frameCount = values.length / ANNOTATIONS_SEMITONES / 2;
     const getRows = (offset: number): number[][] =>
       Array.from({ length: frameCount }, (_value, frame) => [

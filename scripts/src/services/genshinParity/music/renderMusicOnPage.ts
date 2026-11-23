@@ -28,5 +28,5 @@ export const renderMusicOnPage = async (
     [segmentIndex, LISTEN_SAMPLE_RATE, isLayered, voices] as const,
   );
   const bytes = Buffer.from(rendered, "base64");
-  return new Float32Array(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
+  return new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / Float32Array.BYTES_PER_ELEMENT);
 };
