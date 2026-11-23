@@ -31,9 +31,9 @@ export const createRouteRulesPlugin = (routeRules: Record<string, SecurityRules>
     });
   });
 
-// The headers a response the server writes itself carries under a path, which no page renders: the path's resolved resource
-// Headers, and the embedder policy its pages send, which a dedicated worker's script is refused without. Empty before the
-// Route rules resolve, and when none match the path
+// The headers a response the server writes itself carries under a path, which no page renders: the path's resolved
+// Resource Headers, and the embedder policy its pages send, which a dedicated worker's script is refused without. Empty
+// Before the Route rules resolve, and when none match the path
 export const getResourceHeaders = (event: H3Event): Record<string, string> => {
   const headers = getSecurityRules(event)?.headers;
   if (!headers) return {};
