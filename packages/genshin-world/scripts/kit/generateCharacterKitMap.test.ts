@@ -47,7 +47,9 @@ describe(generateCharacterKitMap, () => {
 
     const text = await createMap();
 
-    expect(text.split("\n", 1)[0]).toMatch(/^\/\* oxlint-disable selector-ban\/no-restricted-syntax -- .+ \*\/$/u);
+    expect(text.slice(0, text.indexOf("*/") + 2)).toMatch(
+      /^\/\* oxlint-disable selector-ban\/no-restricted-syntax -- .+ \*\/$/su,
+    );
   });
 
   test("writes a map the formatter leaves unchanged", async () => {
