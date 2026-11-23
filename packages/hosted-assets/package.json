@@ -47,6 +47,9 @@
     "test": "vitest",
     "typecheck": "tsrs --fast"
   },
+  "dependencies": {
+    "@esposter/shared": "workspace:*"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",

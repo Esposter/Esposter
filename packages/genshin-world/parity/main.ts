@@ -34,7 +34,6 @@ import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreload";
-import { CharacterPackPreloadStatus } from "#src/models/character/CharacterPackPreloadStatus";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { loadWitness } from "#src/services/scene/loadWitness";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
@@ -42,6 +41,7 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
 import { StoneNodeMaterial } from "genshin-engine";
 import { checkIsGameLanguage, GameLanguageGameTextLoaderMap } from "genshin-text";
+import { HostedAssetPreloadStatus } from "hosted-assets";
 import { createPinia } from "pinia";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
@@ -87,7 +87,7 @@ if (screen?.directory.startsWith("World/")) {
   const from = performance.now();
   const { preload, status } = useCharacterPackPreload(GAME_DATA_LOCAL_BASE_URL, noop);
   await preload();
-  if (status.value === CharacterPackPreloadStatus.Failed)
+  if (status.value === HostedAssetPreloadStatus.Failed)
     throw new InvalidOperationError(Operation.Read, "character packs", "failed to download");
   packWindow = { from, to: performance.now() };
 }

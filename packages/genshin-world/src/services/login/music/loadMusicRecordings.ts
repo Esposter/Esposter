@@ -1,7 +1,7 @@
 import type { Music } from "genshin-engine";
 
 import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
-import { readFileResponse } from "#src/services/shared/readFileResponse";
+import { readFileResponse } from "@esposter/shared";
 
 // Every recording a piece's voices play, fetched from `baseUrl` and decoded once, by file. A context decodes at its
 // Own rate and a buffer source resamples whatever it plays, so any context the piece plays or renders through can

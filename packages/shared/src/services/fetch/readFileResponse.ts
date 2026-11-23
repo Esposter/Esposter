@@ -1,4 +1,5 @@
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
 
 // A host's file fetched under a timeout and rejected unless the host answers OK
 export const readFileResponse = async (url: string, timeoutMs: number): Promise<Response> => {

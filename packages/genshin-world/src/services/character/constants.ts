@@ -51,18 +51,9 @@ export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
   GameLanguage.English,
   GameLanguage.Japanese,
 ];
-// A file of a host's pack, its model and each of its textures running to megabytes, is abandoned past this so a stalled
-// Request cannot leave a character loading for good
-export const CHARACTER_PACK_FETCH_TIMEOUT_MS = 60_000;
 // The folder the published packs sit in under the hosted game data, and the cache their files are kept in, each under
 // Its url with its whole sha256 as a query, so a republished file is a key of its own
 export const CHARACTER_PACKS_FOLDER = "characterPacks";
-export const CHARACTER_PACK_CACHE_NAME = "genshin-character-pack-files";
-// The files fetched at once, and the attempts each gets, with the wait before each retry growing from the base to the max
-export const CHARACTER_PACK_DOWNLOAD_CONCURRENCY = 6;
-export const CHARACTER_PACK_DOWNLOAD_ATTEMPTS = 3;
-export const CHARACTER_PACK_RETRY_BASE_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-export const CHARACTER_PACK_RETRY_MAX_MS = Temporal.Duration.from({ seconds: 4 }).total("milliseconds");
 // The Traveler the world plays, the female twin, as the login's Traveler is
 export const TRAVELER_CHARACTER_ID = 10_000_007;
 // The Traveler's locomotion clips, by the body state each plays in: its standing cycle while the body is still, and its

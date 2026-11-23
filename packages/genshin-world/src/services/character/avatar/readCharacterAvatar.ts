@@ -8,8 +8,8 @@ import { createAvatarTexture } from "#src/services/character/avatar/createAvatar
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
 import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "#src/services/scene/constants";
-import { readFileResponse } from "#src/services/shared/readFileResponse";
 import { readJson } from "#src/services/shared/readJson";
+import { readFileResponse } from "@esposter/shared";
 
 // The game's model of a component the host serves: its manifest, its binary read once as an ArrayBuffer, and each texture
 // The materials the model draws name, decoded once and shared by the materials that name it. A file that fails rejects the

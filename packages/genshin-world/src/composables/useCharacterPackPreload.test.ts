@@ -1,11 +1,11 @@
 import type { CharacterPackIndex } from "#src/models/character/CharacterPackIndex";
 
 import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreload";
-import { CharacterPackPreloadStatus } from "#src/models/character/CharacterPackPreloadStatus";
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
 import { createCharacterPackCacheStub } from "#src/services/character/createCharacterPackCacheStub.test";
 import { getCharacterPackCacheUrl } from "#src/services/character/getCharacterPackCacheUrl";
 import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
+import { HostedAssetPreloadStatus } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/character/readCharacterPackIndex"), () => ({
@@ -47,7 +47,7 @@ describe(useCharacterPackPreload, () => {
     await vi.runAllTimersAsync();
     await run;
 
-    expect(status.value).toBe(CharacterPackPreloadStatus.Failed);
+    expect(status.value).toBe(HostedAssetPreloadStatus.Failed);
     expect(onHeld).not.toHaveBeenCalled();
   });
 
@@ -88,7 +88,7 @@ describe(useCharacterPackPreload, () => {
     await vi.runAllTimersAsync();
     await run;
 
-    expect(status.value).toBe(CharacterPackPreloadStatus.Ready);
+    expect(status.value).toBe(HostedAssetPreloadStatus.Ready);
     expect(onHeld).toHaveBeenCalledExactlyOnceWith();
     expect(fetch).not.toHaveBeenCalled();
   });

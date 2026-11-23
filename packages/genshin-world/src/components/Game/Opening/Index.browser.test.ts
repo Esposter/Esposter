@@ -1,7 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import GameOpening from "#src/components/Game/Opening/Index.vue";
 import { GameDataKeys } from "#src/generated/gameDataKeys";
-import { CHARACTER_PACK_CACHE_NAME } from "#src/services/character/constants";
 import { gameDataLock } from "#src/services/data/gameDataLock";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import {
@@ -17,6 +16,7 @@ import { LOGIN_GLIDE_TITLE_SPEED } from "#src/services/login/scene/constants";
 import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitleLogoMap";
 import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+import { HOSTED_ASSETS_CACHE_NAME } from "hosted-assets";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -94,7 +94,7 @@ describe("gameOpening", () => {
   test("begins the character pack download when it mounts", async () => {
     expect.hasAssertions();
 
-    await caches.delete(CHARACTER_PACK_CACHE_NAME);
+    await caches.delete(HOSTED_ASSETS_CACHE_NAME);
     const { promise } = Promise.withResolvers<Response>();
     const fetchSpy = vi.fn<typeof fetch>(() => promise);
     vi.stubGlobal("fetch", fetchSpy);

@@ -112,6 +112,7 @@
     "genshin-text": "workspace:*",
     "genshin-world": "workspace:*",
     "grid-engine-headless": "workspace:*",
+    "hosted-assets": "workspace:*",
     "keyframe-store": "workspace:*",
     "lowlight": "catalog:",
     "lru-cache": "catalog:",

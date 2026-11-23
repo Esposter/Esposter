@@ -6,7 +6,6 @@ import LoadingStartup from "#src/components/Loading/Startup/Index.vue";
 import LoginScreen from "#src/components/Login/Screen/Index.vue";
 import SplashSequence from "#src/components/Splash/Sequence/Index.vue";
 import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreload";
-import { CharacterPackPreloadStatus } from "#src/models/character/CharacterPackPreloadStatus";
 import { OpeningPhase } from "#src/models/game/OpeningPhase";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { getLoginTimeOfDay } from "#src/services/login/getLoginTimeOfDay";
@@ -15,6 +14,7 @@ import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitle
 import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
 import { getResultAsync } from "@esposter/shared";
 import { GameScreen } from "genshin-interface";
+import { HostedAssetPreloadStatus } from "hosted-assets";
 
 interface Props {
   // Where the hosted game data is read from: the title logo and the login screen's records
@@ -83,7 +83,7 @@ onMounted(preload);
   <LoginScreen
     v-else-if="phase === OpeningPhase.Login && loginData"
     :game-text
-    :is-download-failed="status === CharacterPackPreloadStatus.Failed"
+    :is-download-failed="status === HostedAssetPreloadStatus.Failed"
     :is-interface-hidden="false"
     :language
     :login-data

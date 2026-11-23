@@ -1,33 +1,24 @@
+import type { HostedAssetDownloadFile } from "#src/models/HostedAssetDownloadFile";
 import type { MockInstance } from "vitest";
 
-import { CHARACTER_MODEL_PATH, CHARACTER_TERMS_PATH } from "#src/services/character/constants";
-import { createCharacterPackCacheStub } from "#src/services/character/createCharacterPackCacheStub.test";
-import { downloadCharacterPackFiles } from "#src/services/character/downloadCharacterPackFiles";
-import { listHeldCharacterPackUrls } from "#src/services/character/listHeldCharacterPackUrls";
-import { planCharacterPackDownload } from "#src/services/character/planCharacterPackDownload";
+import { createHostedAssetCacheStub } from "#src/services/createHostedAssetCacheStub.test";
+import { downloadHostedAssetFiles } from "#src/services/downloadHostedAssetFiles";
+import { listHeldHostedAssetUrls } from "#src/services/listHeldHostedAssetUrls";
+import { planHostedAssetDownload } from "#src/services/planHostedAssetDownload";
 import { noop } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe(downloadCharacterPackFiles, () => {
-  const gameDataBaseUrl = "http://a.test";
+describe(downloadHostedAssetFiles, () => {
   const sha256 = "0".repeat(64);
-  const modelUrl = `http://a.test/characterPacks/1/model.pmx?sha256=${sha256}`;
-  const termsUrl = `http://a.test/characterPacks/1/terms.txt?sha256=${sha256}`;
+  const modelUrl = `http://a.test/characters/1/model.pmx?sha256=${sha256}`;
+  const termsUrl = `http://a.test/characters/1/terms.txt?sha256=${sha256}`;
   const modelText = "model";
   const termsText = "terms";
   const failedMessage = "Invalid operation: Read, name: terms.txt, failed after its attempts";
-  const index = {
-    avatars: [
-      {
-        avatarId: 1,
-        files: [
-          { bytes: 5, path: CHARACTER_MODEL_PATH, sha256 },
-          { bytes: 5, path: CHARACTER_TERMS_PATH, sha256 },
-        ],
-        name: "a",
-      },
-    ],
-  };
+  const files: HostedAssetDownloadFile[] = [
+    { bytes: 5, path: "model.pmx", url: modelUrl },
+    { bytes: 5, path: "terms.txt", url: termsUrl },
+  ];
   // The host answers the model, and fails the terms file with a server error until a test lets it through
   let fetchSpy: MockInstance<typeof fetch>;
   let isTermsServed: boolean;
@@ -50,21 +41,21 @@ describe(downloadCharacterPackFiles, () => {
   test("retry fetches only what is missing", async () => {
     expect.hasAssertions();
 
-    const cache = createCharacterPackCacheStub();
-    const firstPlan = planCharacterPackDownload(index, gameDataBaseUrl, new Set());
-    const firstRun = downloadCharacterPackFiles(cache, firstPlan.files, noop);
+    const cache = createHostedAssetCacheStub();
+    const firstPlan = planHostedAssetDownload(files, new Set());
+    const firstRun = downloadHostedAssetFiles(cache, firstPlan.files, noop);
     await vi.runAllTimersAsync();
     const firstError = await firstRun.match(noop, (error) => error);
     fetchSpy.mockClear();
     isTermsServed = true;
 
-    const retryPlan = planCharacterPackDownload(index, gameDataBaseUrl, await listHeldCharacterPackUrls(cache));
-    const retryRun = downloadCharacterPackFiles(cache, retryPlan.files, noop);
+    const retryPlan = planHostedAssetDownload(files, await listHeldHostedAssetUrls(cache));
+    const retryRun = downloadHostedAssetFiles(cache, retryPlan.files, noop);
     await vi.runAllTimersAsync();
     const retryError = await retryRun.match(noop, (error) => error);
 
     expect(firstError?.message).toBe(failedMessage);
-    expect(retryPlan.files.map(({ path }) => path)).toStrictEqual([CHARACTER_TERMS_PATH]);
+    expect(retryPlan.files.map(({ path }) => path)).toStrictEqual(["terms.txt"]);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy.mock.calls[0]?.[0]).toBe(termsUrl);
     expect(Object.keys(fetchSpy.mock.calls[0]?.[1] ?? {})).toStrictEqual(["signal"]);
@@ -74,9 +65,9 @@ describe(downloadCharacterPackFiles, () => {
   test("a terms file that fails all its attempts is not cached, and the download reports the failure", async () => {
     expect.hasAssertions();
 
-    const cache = createCharacterPackCacheStub();
-    const plan = planCharacterPackDownload(index, gameDataBaseUrl, new Set());
-    const run = downloadCharacterPackFiles(cache, plan.files, noop);
+    const cache = createHostedAssetCacheStub();
+    const plan = planHostedAssetDownload(files, new Set());
+    const run = downloadHostedAssetFiles(cache, plan.files, noop);
     await vi.runAllTimersAsync();
     const error = await run.match(noop, (runError) => runError);
 

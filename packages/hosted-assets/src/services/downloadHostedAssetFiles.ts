@@ -1,15 +1,15 @@
-import type { CharacterPackDownloadFile } from "#src/models/character/CharacterPackDownloadFile";
+import type { HostedAssetDownloadFile } from "#src/models/HostedAssetDownloadFile";
 
-import { CHARACTER_PACK_DOWNLOAD_CONCURRENCY } from "#src/services/character/constants";
-import { downloadCharacterPackFile } from "#src/services/character/downloadCharacterPackFile";
+import { HOSTED_ASSETS_DOWNLOAD_CONCURRENCY } from "#src/services/constants";
+import { downloadHostedAssetFile } from "#src/services/downloadHostedAssetFile";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
 // The planned files fetched a few at a time into the cache, with the bytes loaded across all of them reported as each
 // Chunk lands. A file that fails its attempts is listed by its path in the error, while the rest are still fetched, so a
 // Retry plans only what is missing
-export const downloadCharacterPackFiles = (
+export const downloadHostedAssetFiles = (
   cache: Pick<Cache, "put">,
-  files: readonly CharacterPackDownloadFile[],
+  files: readonly HostedAssetDownloadFile[],
   onProgress: (loadedBytes: number) => void,
 ): ReturnType<typeof getResultAsync<void>> =>
   getResultAsync(async () => {
@@ -22,12 +22,12 @@ export const downloadCharacterPackFiles = (
     };
     const fetchFiles = async (): Promise<void> => {
       for (const file of fileIterator)
-        // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: CHARACTER_PACK_DOWNLOAD_CONCURRENCY workers share one iterator, and each fetches one file at a time
-        await downloadCharacterPackFile(cache, file, reportDeltaBytes).match(noop, () => {
+        // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: HOSTED_ASSETS_DOWNLOAD_CONCURRENCY workers share one iterator, and each fetches one file at a time
+        await downloadHostedAssetFile(cache, file, reportDeltaBytes).match(noop, () => {
           failedPaths.push(file.path);
         });
     };
-    await Promise.all(Array.from({ length: CHARACTER_PACK_DOWNLOAD_CONCURRENCY }, () => fetchFiles()));
+    await Promise.all(Array.from({ length: HOSTED_ASSETS_DOWNLOAD_CONCURRENCY }, () => fetchFiles()));
     if (failedPaths.length > 0)
       throw new InvalidOperationError(Operation.Read, failedPaths.join(", "), "failed after its attempts");
   });
