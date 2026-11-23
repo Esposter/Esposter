@@ -1,9 +1,8 @@
-const COLLATOR = new Intl.Collator("en-US", { numeric: true });
+import { computeComparableName } from "#src/services/oxlint/sorting/names/computeComparableName";
 
-// A name as it compares: lowercased, with every whitespace character dropped
-const formatName = (name: string): string => name.toLowerCase().replaceAll(/\s/gu, "");
+const COLLATOR = new Intl.Collator("en-US", { numeric: true });
 
 // The one name comparator, the engine's own collation: numbers inside a name compare by value (`item2` before
 // `item10`), and punctuation sorts before letters, so a type literal's `{` leads a named type
 export const compareNames = (left: string, right: string): number =>
-  COLLATOR.compare(formatName(left), formatName(right));
+  COLLATOR.compare(computeComparableName(left), computeComparableName(right));
