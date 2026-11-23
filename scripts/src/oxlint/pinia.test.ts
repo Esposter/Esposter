@@ -81,6 +81,18 @@ describe("pinia/no-return-global-properties", () => {
       source: `export const useLStore = defineStore("destructuredInjectDoesNotReportLiteral", () => {\n  const { a } = inject("a");\n  return { a, count: 0 };\n});`,
       violations: 0,
     },
+    // A parameter of a sibling function is not the global bound in another function, so its return reports nothing
+    {
+      name: "siblingParameterDoesNotReport",
+      source: `export const useMStore2 = () => {\n  const route = useRoute();\n  return route.params;\n};\nexport function other(route) {\n  return { route };\n}`,
+      violations: 0,
+    },
+    // A function nested in the binding's function still returns the global, so the nested return reports
+    {
+      name: "nestedFunctionReturnsRoute",
+      source: `export const useNStore2 = () => {\n  const route = useRoute();\n  return () => {\n    return { route };\n  };\n};`,
+      violations: 1,
+    },
   ];
   setupPluginSuite({ fixtures: FIXTURES, plugin: "pinia", rules: [RULE] });
 });
