@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
  * Every file in these folders is shipped to the browser: the app's own assets are bundled and served from the edge, and
  * `public/` is served as it is. A file over the limit is left out of the service worker, and an uncompressed audio file
  * is many times the size of the same sound in MP3, so both are checked here rather than trusted to review. A file over
- * the limit that the bundle must not hold is hosted instead (`openspec/specs/architecture/hosted-assets/design.md`).
+ * the limit that the bundle must not hold is hosted instead (`openspec/changes/architecture-hosted-assets/design.md`).
  */
 describe("staticAssets", () => {
   const BUNDLED_PATHSPECS = ["apps/web/app/assets"];
