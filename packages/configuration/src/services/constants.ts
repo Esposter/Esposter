@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer; `isolatedDeclarations` demands the annotation */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template
+   literal would otherwise infer; `isolatedDeclarations` demands the annotation */
 // The agent tree is stored once here. `.claude` is a symlink alias pointing at it, so Claude Code resolves its skills
 // And settings while every tool reads the real path — globbers follow directory symlinks, so a repo-wide walk that did
 // Not ignore the alias would enumerate the whole tree twice under two names.
@@ -64,7 +65,8 @@ export const BROWSER_TEST_GLOB = "**/*.browser.test.ts";
 // `pnpm` parses it at the start of every command, so a resolver handed a checkout where it still holds conflict
 // Markers is told to resolve it before anything else (`git` skill)
 export const WORKSPACE_FILE = "pnpm-workspace.yaml";
-// The barrel every package with a source tree writes at the top of `src`, and the folder of Vue components it reads from
+// The barrel every package with a source tree writes at the top of `src`, and the folder of Vue components it reads
+// From
 export const BARREL_FILE = "index.ts";
 // The folder under a package holding its source, which every `source` arm of its exports map starts in
 export const SOURCE_DIRECTORY_NAME = "src";
@@ -72,8 +74,9 @@ export const SOURCE_DIRECTORY_NAME = "src";
 // Convention: a module beside the folder, outside it, is listed as before
 export const INTERNAL_DIRECTORY = "internal";
 export const COMPONENTS_DIRECTORY = "components";
-// The app's migrations, one folder per database under it, from the repository root. The Drizzle config writes them there,
-// And the mock database and the dev seed read them from there, so the three cannot disagree on where a migration is
+// The app's migrations, one folder per database under it, from the repository root. The Drizzle config writes them
+// There, And the mock database and the dev seed read them from there, so the three cannot disagree on where a migration
+// Is
 export const DATABASE_MIGRATIONS_DIRECTORY = "apps/web/server/db/migrations";
 // A leading dot on a folder name in an output path, such as the `.pnpm` folder pnpm keeps its packages in
 export const HIDDEN_FOLDER_REGEX: RegExp = /(?<![^/])\.(?=\w)/gu;

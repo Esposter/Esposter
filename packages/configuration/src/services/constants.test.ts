@@ -1,4 +1,5 @@
-/* oxlint-disable no-restricted-properties -- a tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse */
+/* oxlint-disable no-restricted-properties -- a tsconfig carries no dates, and this package builds before
+   @esposter/shared so it cannot import jsonDateParse */
 import { NON_SOURCE_SUFFIXES, SOURCE_CONDITION } from "#src/services/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

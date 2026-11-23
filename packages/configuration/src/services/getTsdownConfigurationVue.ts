@@ -27,8 +27,8 @@ export const getTsdownConfigurationVue = (vizeOptions: VizeUnpluginOptions = {})
       : { dts: { generator: "tsrs", tsconfig: "tsconfig.build.json", tsrs: { runExternalCode: true } } }),
     // The package's stylesheets are merged into its one `style.css`, which a page imports once, and no module imports a
     // Stylesheet: Node loads this package's `dist` too, in the scripts and benchmarks that read its data, and cannot
-    // Load a `.css` file. Splitting is off, since tsdown's manifest writer lists `./style.css` only for the unsplit file.
-    // `mergeStylesheetsPlugin` then puts that file's rules in module-id order, which tsdown's own join does not
+    // Load a `.css` file. Splitting is off, since tsdown's manifest writer lists `./style.css` only for the unsplit
+    // File. `mergeStylesheetsPlugin` then puts that file's rules in module-id order, which tsdown's own join does not
     css: { splitting: false },
     // A stylesheet is compiled into this package's own CSS, a sibling package's that a style block's `src` names
     // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script

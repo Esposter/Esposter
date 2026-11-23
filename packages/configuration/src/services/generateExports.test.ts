@@ -51,7 +51,8 @@ describe(generateExports, () => {
     );
   });
 
-  // A package that stops generating a component barrel keeps no stale one: an earlier build's would still be typechecked
+  // A package that stops generating a component barrel keeps no stale one: an earlier build's would still be
+  // Typechecked
   test("removes the component barrel an earlier Vue answer wrote and a later answer does not", () => {
     expect.hasAssertions();
 
@@ -63,7 +64,8 @@ describe(generateExports, () => {
     expect(existsSync(join(sourceDirectory, "components", "index.ts"))).toBe(false);
   });
 
-  // A module under a lazy directory is loaded by its own `import()`, so a barrel line for it would load it with the entry
+  // A module under a lazy directory is loaded by its own `import()`, so a barrel line for it would load it with the
+  // Entry
   test("leaves the modules of a lazy directory out of the barrel and keeps the others", () => {
     expect.hasAssertions();
 
@@ -76,7 +78,8 @@ describe(generateExports, () => {
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(`export * from "./${TEST_FILENAME}.ts";\n`);
   });
 
-  // A component under a lazy directory is loaded by its own `import()` as its source is, so the component barrel leaves it out
+  // A component under a lazy directory is loaded by its own `import()` as its source is, so the component barrel leaves
+  // It out
   test("leaves the components of a lazy directory out of the component barrel", () => {
     expect.hasAssertions();
 
@@ -92,7 +95,8 @@ describe(generateExports, () => {
     );
   });
 
-  // A module under `internal` is private to its package, so no barrel lists it, while a module beside that folder is still listed
+  // A module under `internal` is private to its package, so no barrel lists it, while a module beside that folder is
+  // Still listed
   test("leaves a module under internal out of the barrel and keeps a sibling outside it", () => {
     expect.hasAssertions();
 

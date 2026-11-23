@@ -74,7 +74,8 @@ describe(getTsdownConfiguration, () => {
     );
   });
 
-  // A package whose root export does not name its `src/index.ts` names its entrypoints itself, so it generates no barrel
+  // A package whose root export does not name its `src/index.ts` names its entrypoints itself, so it generates no
+  // Barrel
   test.each([
     { [`./${TEST_FILENAME}`]: { default: "./dist/a.js", source: `./${SOURCE_DIRECTORY_NAME}/${TEST_FILENAME}.ts` } },
     { ".": { default: "./dist/module.js", source: `./${SOURCE_DIRECTORY_NAME}/module.ts` } },

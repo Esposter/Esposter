@@ -1,4 +1,5 @@
-// oxlint-disable no-restricted-properties -- the suite sets the argv Vitest itself is started with, which the configuration reads
+// The suite
+// oxlint-disable no-restricted-properties -- sets the argv Vitest itself is started with, which the configuration reads
 import { getBenchmarkTestConfiguration } from "#src/services/getBenchmarkTestConfiguration";
 import { getVitestConfiguration } from "#src/services/getVitestConfiguration";
 import { afterEach, describe, expect, test } from "vitest";

@@ -3,7 +3,8 @@ export interface Stylesheet {
   source: string;
 }
 
-// By code unit rather than `localeCompare`, which orders by the machine's locale and so moves the bytes between machines
+// By code unit rather than `localeCompare`, which orders by the machine's locale and so moves the bytes between
+// Machines
 const byId = (a: Stylesheet, b: Stylesheet): number => {
   if (a.id < b.id) return -1;
   else if (a.id > b.id) return 1;

@@ -76,9 +76,9 @@ export const getTsdownConfiguration = (): UserConfig => {
     // Extension that tsdown defaults to on the node platform buys nothing — it only makes the output path
     // Differ between the node packages and the neutral ones.
     fixedExtension: false,
-    // Barrel generation belongs to the build rather than to a line in front of it — one definition here
-    // Instead of the same command repeated in every manifest. The root barrel leaves out each subpath's `source` arm the
-    // Manifest names, so a subpath is declared once, where its consumers read it, and no config is loaded to find it.
+    // Barrel generation belongs to the build rather than to a line in front of it — one definition here Instead of the
+    // Same command repeated in every manifest. The root barrel leaves out each subpath's `source` arm the Manifest
+    // Names, so a subpath is declared once, where its consumers read it, and no config is loaded to find it.
     hooks: {
       "build:prepare": ({ options: { cwd } }) => {
         generateBarrels(cwd);
