@@ -13,7 +13,7 @@ import {
   getCloudflareResourceName,
   StorageBucket,
 } from "@esposter/db-schema";
-import { createSigV4Fetch, InvalidOperationError, Operation } from "@esposter/shared";
+import { capitalize, createSigV4Fetch, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { format } from "oxfmt";
 
@@ -28,6 +28,7 @@ export const createFilePack = async () => {
   });
   const files: Types.Loader.FileConfig[] = [];
   const fileKeys = new Set<string>();
+  const phaserMethodFileKeysMap: Record<string, string[]> = {};
   const valueSetName = "FileKey";
 
   // A listing carries no content type, so each object's type is read from its own headers
@@ -50,12 +51,20 @@ export const createFilePack = async () => {
         if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, valueSetName, `Duplicate key: ${key}`);
 
         fileKeys.add(key);
+        (phaserMethodFileKeysMap[phaserMethod] ??= []).push(key);
         files.push({ cache: false, key, type: phaserMethod, url: name });
       }
   }
 
+  // Each content type's keys also get a value set of their own, so a loader map can be total over the keys of its type
+  const valueSets = [createValueSetString(valueSetName, [...fileKeys])];
+  for (const phaserMethod of Object.values(ContentTypePhaserMethodMap))
+    valueSets.push(
+      createValueSetString(`${capitalize(phaserMethod)}${valueSetName}`, phaserMethodFileKeysMap[phaserMethod] ?? []),
+    );
+
   await Promise.all([
-    outputFile(PHASER_ROOT_DIRECTORY, `${valueSetName}.ts`, createValueSetString(valueSetName, [...fileKeys])),
+    outputFile(PHASER_ROOT_DIRECTORY, `${valueSetName}.ts`, valueSets.join("\n")),
     (async () => {
       const { code } = await format("files.json", JSON.stringify(files), formatterConfiguration);
       await outputFile(PHASER_ROOT_DIRECTORY, "files.json", code);

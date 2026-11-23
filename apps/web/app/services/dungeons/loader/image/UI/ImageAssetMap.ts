@@ -1,3 +1,5 @@
+import type { ImageFileKey } from "#shared/generated/phaser/FileKey";
+
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import blueButton from "#src/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
 import blueButtonSelected from "#src/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png";
@@ -41,4 +43,4 @@ export const ImageAssetMap = {
   ...BallAssetMap,
   ...ControlsAssetMap,
   ...MonsterAssetMap,
-} as const satisfies Partial<Record<FileKey, string>>;
+} as const satisfies Partial<Record<ImageFileKey, string>>;

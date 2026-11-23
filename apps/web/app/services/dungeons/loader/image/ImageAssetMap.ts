@@ -1,3 +1,5 @@
+import type { ImageFileKey } from "#shared/generated/phaser/FileKey";
+
 import { BattleAssetMap } from "#src/services/dungeons/loader/image/BattleAssetMap";
 import { InventoryAssetMap } from "#src/services/dungeons/loader/image/InventoryAssetMap";
 import { MonsterPartyAssetMap } from "#src/services/dungeons/loader/image/MonsterPartyAssetMap";
@@ -13,4 +15,4 @@ export const ImageAssetMap = mergeObjectsStrict(
   TitleAssetMap,
   WorldAssetMap,
   UIImageAssetMap,
-);
+) satisfies Record<ImageFileKey, string>;

@@ -1,3 +1,5 @@
+import type { ImageFileKey } from "#shared/generated/phaser/FileKey";
+
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import aquavalor from "#src/assets/dungeons/UI/monsters/aquavalor.png";
 import carnodusk from "#src/assets/dungeons/UI/monsters/carnodusk.png";
@@ -11,4 +13,4 @@ export const MonsterAssetMap = {
   [FileKey.UIMonstersFrostsaber]: frostsaber,
   [FileKey.UIMonstersIgnivolt]: ignivolt,
   [FileKey.UIMonstersIguanignite]: iguanignite,
-} as const satisfies Partial<Record<FileKey, string>>;
+} as const satisfies Partial<Record<ImageFileKey, string>>;

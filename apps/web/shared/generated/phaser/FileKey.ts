@@ -49,3 +49,63 @@ export const FileKey = {
   UIMonstersIguanignite: "UIMonstersIguanignite",
 } as const;
 export type FileKey = (typeof FileKey)[keyof typeof FileKey];
+
+export const AudioFileKey = {
+  SoundOpenChest: "SoundOpenChest",
+  SoundOpenDoor: "SoundOpenDoor",
+  SoundTextBlip: "SoundTextBlip",
+  ThirdPartyLeohpazClaw: "ThirdPartyLeohpazClaw",
+  ThirdPartyLeohpazFlee: "ThirdPartyLeohpazFlee",
+  ThirdPartyLeohpazIceExplosion: "ThirdPartyLeohpazIceExplosion",
+  ThirdPartyLeohpazStepGrass: "ThirdPartyLeohpazStepGrass",
+  ThirdPartyXDeviruchiAndTheJourneyBegins: "ThirdPartyXDeviruchiAndTheJourneyBegins",
+  ThirdPartyXDeviruchiDecisiveBattle: "ThirdPartyXDeviruchiDecisiveBattle",
+  ThirdPartyXDeviruchiTitleTheme: "ThirdPartyXDeviruchiTitleTheme",
+} as const;
+export type AudioFileKey = (typeof AudioFileKey)[keyof typeof AudioFileKey];
+
+export const FontFileKey = {
+  ThirdPartyKenneysAssetsFontsKenneyFutureNarrow: "ThirdPartyKenneysAssetsFontsKenneyFutureNarrow",
+} as const;
+export type FontFileKey = (typeof FontFileKey)[keyof typeof FontFileKey];
+
+export const ImageFileKey = {
+  SceneBattleForestBackground: "SceneBattleForestBackground",
+  SceneInventoryBackground: "SceneInventoryBackground",
+  SceneInventoryBag: "SceneInventoryBag",
+  SceneMonsterPartyBackground: "SceneMonsterPartyBackground",
+  SceneMonsterPartyMonsterDetailsBackground: "SceneMonsterPartyMonsterDetailsBackground",
+  SceneTitleScreenBackground: "SceneTitleScreenBackground",
+  SceneTitleText: "SceneTitleText",
+  SceneTitleTextBackground: "SceneTitleTextBackground",
+  SceneWorldHomeForeground: "SceneWorldHomeForeground",
+  SceneWorldHomeHomeBuilding1Foreground: "SceneWorldHomeHomeBuilding1Foreground",
+  SceneWorldHomeHomeBuilding2Foreground: "SceneWorldHomeHomeBuilding2Foreground",
+  ThirdPartyKenneysAssetsUIPackBlueButton00: "ThirdPartyKenneysAssetsUIPackBlueButton00",
+  ThirdPartyKenneysAssetsUIPackBlueButton01: "ThirdPartyKenneysAssetsUIPackBlueButton01",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowLeft: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowLeft",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowMid: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowMid",
+  ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowRight: "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowRight",
+  ThirdPartyKenneysAssetsUISpaceExpansionCustomUI: "ThirdPartyKenneysAssetsUISpaceExpansionCustomUI",
+  ThirdPartyKenneysAssetsUISpaceExpansionGlassPanel: "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanel",
+  ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelGreen: "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelGreen",
+  ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelPurple: "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelPurple",
+  UIBallsCosmoBall: "UIBallsCosmoBall",
+  UIBallsDamagedBall: "UIBallsDamagedBall",
+  UICursorCursor: "UICursorCursor",
+  UICursorCursorWhite: "UICursorCursorWhite",
+  UIJoystickBase: "UIJoystickBase",
+  UIJoystickThumb: "UIJoystickThumb",
+  UIMonstersAquavalor: "UIMonstersAquavalor",
+  UIMonstersCarnodusk: "UIMonstersCarnodusk",
+  UIMonstersFrostsaber: "UIMonstersFrostsaber",
+  UIMonstersIgnivolt: "UIMonstersIgnivolt",
+  UIMonstersIguanignite: "UIMonstersIguanignite",
+} as const;
+export type ImageFileKey = (typeof ImageFileKey)[keyof typeof ImageFileKey];

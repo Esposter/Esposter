@@ -1,3 +1,5 @@
+import type { AudioFileKey } from "#shared/generated/phaser/FileKey";
+
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import openChest from "#src/assets/dungeons/sound/openChest.mp3";
 import openDoor from "#src/assets/dungeons/sound/openDoor.mp3";
@@ -15,4 +17,4 @@ export const SoundEffectAssetMap = {
   [FileKey.ThirdPartyLeohpazFlee]: flee,
   [FileKey.ThirdPartyLeohpazIceExplosion]: iceExplosion,
   [FileKey.ThirdPartyLeohpazStepGrass]: stepGrass,
-} as const satisfies Partial<Record<FileKey, string>>;
+} as const satisfies Partial<Record<AudioFileKey, string>>;

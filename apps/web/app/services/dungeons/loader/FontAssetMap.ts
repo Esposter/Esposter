@@ -1,6 +1,8 @@
+import type { FontFileKey } from "#shared/generated/phaser/FileKey";
+
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import KenneyFutureNarrow from "#src/assets/dungeons/thirdParty/kenneysAssets/fonts/KenneyFutureNarrow.woff2";
 
 export const FontAssetMap = {
   [FileKey.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow]: KenneyFutureNarrow,
-} as const satisfies Partial<Record<FileKey, string>>;
+} as const satisfies Record<FontFileKey, string>;
