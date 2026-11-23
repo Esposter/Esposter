@@ -22,6 +22,7 @@ describe(getSampledCounts, () => {
   test.each([
     ["a fixed defect", LedgerFindingKind.Defect, LedgerFixerOutcome.Fixed, 1],
     ["a defect settled in its rule", LedgerFindingKind.Defect, LedgerFixerOutcome.Skill, 1],
+    ["a defect left open", LedgerFindingKind.Defect, LedgerFixerOutcome.Open, 1],
     ["a refuted defect", LedgerFindingKind.Defect, LedgerFixerOutcome.Refuted, 0],
     ["a fixed tidy", LedgerFindingKind.Tidy, LedgerFixerOutcome.Fixed, 0],
     ["a tidy settled in its rule", LedgerFindingKind.Tidy, LedgerFixerOutcome.Skill, 0],

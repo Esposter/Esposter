@@ -19,7 +19,7 @@ export const getSampledCounts = (
         (result) =>
           result.ledger === ledger &&
           result.kind === LedgerFindingKind.Defect &&
-          (result.outcome === LedgerFixerOutcome.Fixed || result.outcome === LedgerFixerOutcome.Skill),
+          result.outcome !== LedgerFixerOutcome.Refuted,
       ).length,
       ledger,
       size: samples.filter(({ ledgers }) => ledgers.includes(ledger)).length,

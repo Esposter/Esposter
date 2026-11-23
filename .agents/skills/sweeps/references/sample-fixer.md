@@ -32,13 +32,14 @@ A JSON file of units, each `{ "unit": …, "judgements": [...] }`: one unit and 
 One JSON line per finding, in the result file beside the unit file, `<n>.result.jsonl` in the fixers' directory:
 
 ```json
-{"unit":"…","ledger":"…","kind":"defect|tidy","file":"…","line":<n>,"outcome":"fixed|refuted|skill","reason":"<one sentence>","commit":"<sha or empty>"}
+{"unit":"…","ledger":"…","kind":"defect|tidy","file":"…","line":<n>,"outcome":"fixed|refuted|skill|open","reason":"<one sentence>","commit":"<sha or empty>"}
 ```
 
 - `fixed`: the finding was fixed in the code.
 - `refuted`: the finding was wrong, and the reason says what settles it.
 - `skill`: the rule that owns the code was fixed instead of the code.
+- `open`: the finding holds, but its fix needs a change this pass cannot make (a dataset publish, a backfill, a design decision); the reason names it, and the lead takes it up.
 
-A defect counts toward its question's sample only when its outcome is `fixed` or `skill`, so be exact. The sampled count reads these lines and refuses any other outcome, naming the line.
+A defect counts toward its question's sample unless its outcome is `refuted`, since a defect left open is a defect found, so be exact. The sampled count reads these lines and refuses any other outcome, naming the line.
 
 The final reply is one line: `fixer <id>: units <n>, fixed <a>, refuted <b>, skill <c>, commits <d>, landed yes|no`.
