@@ -23,6 +23,19 @@ A first pass showed 408 character-pack requests as `//characterPacks/...` and 40
 
 The local Miniflare bucket holds no `stats/resin` record, so `startGenshin` answers "is not stored in the game data" on the dev server, and the save panel stays on "Save not loaded". The hosted bucket holds the record (copied by 6.3), so the deployed run reads it.
 
+## 6.7: the login recordings are the lock's `loginRecordings` scope
+
+The 21 OGG files are published by `genshin:data recordings`, which reads its working folder (`{data-root}/login-recordings`, seeded once from the repository copies) and publishes it as one scope through the generic publish. The dry run first named 21 objects added, none removed or changed. The publish then stored all 21 in both environments before it committed the lock, and the keys file beside it:
+
+- `loginRecordings: 21 records published, 21 objects uploaded to dev and 21 to prod`.
+- The lock: 499 to 520 objects, 21 added at 989,006 bytes (0.94 MiB), none removed or changed; 37 indexes unchanged. Every added object is `.ogg` under `loginRecordings`.
+- `pnpm -C scripts genshin:data verify` after the lock's commit: `dev: 7422 objects verified`, `prod: 7422 objects verified`, exit 0. The count before the change was 7401, and the 21 recordings make 7422.
+- `git ls-files packages/genshin-world/src/data/login/recordings` returns 0 files, and `pnpm -C apps/web exec vitest run configuration/nitro` passes (1 test).
+
+The login's music resolves each recording through the lock (`getLoginRecordingUrl`), and the `publicAssets` mount is removed.
+
+Local driven run, on the dev server at `http://localhost:3011` (Chrome under Playwright, the driven user signed in, the page read for 240 s, the rebuilt packages): 42 requests for a login recording, every one to `hosted.dev.esposter.com` and every one 200. They name the 21 recordings, each twice, so the login's music loader ran twice in the run. No request reached the retired mount (`/data/genshin/login/recordings`) or `public-genshin-assets`. The page reached the login screen (`CLICK TO BEGIN`, `Welcome, Traveler!`). The first load of the dev server logs dependency-optimisation aborts (`ERR_ABORTED` on `node_modules/.cache/vite/deps`) and one dynamic-import failure from the cold cache; none is a request for game data. The save does not load locally, as in 6.5.
+
 ## 6.8: the lock's measured total, before the preload is turned on
 
 The lock on disk (`packages/genshin-world/src/generated/gameDataLock.json`):
