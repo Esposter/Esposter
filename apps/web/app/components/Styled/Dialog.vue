@@ -29,7 +29,12 @@ interface Props {
 }
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
-defineSlots<{ default?: () => VNode; "prepend-actions"?: () => VNode; "prepend-confirm"?: () => VNode }>();
+// The body is handed the dialog's own answer, so a form inside it submits through the one pending state the confirm shows
+defineSlots<{
+  default?: (props: { answer: ReturnType<typeof useDialogAnswer>["answer"] }) => VNode;
+  "prepend-actions"?: () => VNode;
+  "prepend-confirm"?: () => VNode;
+}>();
 const isOpen = defineModel<boolean>({ default: false });
 const { confirmVariant = UiButtonVariant.Accent, size = UiDialogSize.Medium } = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
@@ -43,7 +48,7 @@ const { answer, isPending } = useDialogAnswer(isOpen);
       <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
       <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
         <div v-if="isOpen" contents>
-          <slot />
+          <slot :answer />
         </div>
       </Transition>
     </template>
