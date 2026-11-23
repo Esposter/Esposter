@@ -10,7 +10,7 @@ flowchart TD
   Named -->|yes| Public["apps/web/public/, at a fixed path"]
   Named -->|no| Built{"Does a library build its URL at runtime?"}
   Built -->|yes| Public
-  Built -->|no| Hosted{"Is it a data set read at runtime that is too large to bundle, or fetched only when a screen needs it?"}
+  Built -->|no| Hosted{"Is it runtime data too large to bundle or fetched on demand?"}
   Hosted -->|yes| Bucket["The hosted bucket, under its product's lock"]
   Hosted -->|no| Assets["apps/web/app/assets/, imported by the code that reads it"]
 ```

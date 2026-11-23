@@ -13,7 +13,7 @@ flowchart TD
   S --> T{"Nearer the game's bands than the synthesizer,<br/>with its pitch agreement kept?"}
   T -->|"no"| X["The segment plays the synthesizer alone"]
   T -->|"yes"| E["Only the recordings its notes reach,<br/>trimmed, mono Opus"]
-  E --> W["The login/music record, published,<br/>and login/recordings, published under the lock's loginRecordings scope"]
+  E --> W["login/music and login/recordings, published to the lock"]
   W -->|"fetched and decoded once the login shows"| P["Each note: the synthesized note,<br/>and its recording shifted to its pitch"]
 ```
 
