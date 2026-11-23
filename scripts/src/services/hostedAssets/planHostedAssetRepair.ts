@@ -5,6 +5,7 @@ import type { HostedAssetLock } from "hosted-assets";
 
 import { MAX_CONCURRENT_VERIFY_FETCHES } from "#src/services/hostedAssets/constants";
 import { getLockRefs } from "#src/services/hostedAssets/getLockRefs";
+import { readBucketLastModifiedMap } from "#src/services/hostedAssets/readBucketLastModifiedMap";
 import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 import { toLockedBytesMap } from "#src/services/hostedAssets/toLockedBytesMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -19,17 +20,17 @@ export const planHostedAssetRepair = async (
   lock: HostedAssetLock,
   bucketClientMap: Record<CloudflareEnvironment, R2BucketClient>,
 ): Promise<HostedAssetCopy[]> => {
-  const environmentKeysMap = new Map(
+  const environmentLastModifiedMap = new Map(
     await Promise.all(
       CloudflareEnvironments.map(async (environment) => {
-        const listed = await bucketClientMap[environment].list("");
-        return [environment, new Set(listed.map(({ key }) => key))] as const;
+        const lastModifiedMap = await readBucketLastModifiedMap(bucketClientMap[environment]);
+        return [environment, lastModifiedMap] as const;
       }),
     ),
   );
   const lockedBytesMap = toLockedBytesMap(lock);
   const getSource = (path: string) =>
-    CloudflareEnvironments.find((environment) => environmentKeysMap.get(environment)?.has(path));
+    CloudflareEnvironments.find((environment) => environmentLastModifiedMap.get(environment)?.has(path));
   const { indexes, objects } = await getLockRefs(
     [lock],
     async (index) => {
@@ -47,7 +48,7 @@ export const planHostedAssetRepair = async (
   for (const name of [...indexes, ...objects]) {
     const path = getHostedAssetPath(name);
     const destinations = CloudflareEnvironments.filter(
-      (environment) => !environmentKeysMap.get(environment)?.has(path),
+      (environment) => !environmentLastModifiedMap.get(environment)?.has(path),
     );
     if (destinations.length === 0) continue;
     const source = getSource(path);

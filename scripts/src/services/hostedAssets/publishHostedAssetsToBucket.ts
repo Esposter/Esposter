@@ -8,6 +8,7 @@ import {
   MAX_CONCURRENT_VERIFY_FETCHES,
 } from "#src/services/hostedAssets/constants";
 import { putHostedAsset } from "#src/services/hostedAssets/putHostedAsset";
+import { readBucketLastModifiedMap } from "#src/services/hostedAssets/readBucketLastModifiedMap";
 import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 import { toHostedAssetLockObject } from "#src/services/hostedAssets/toHostedAssetLockObject";
 import { toHostedAssetPaths } from "#src/services/hostedAssets/toHostedAssetPaths";
@@ -23,9 +24,7 @@ export const publishHostedAssetsToBucket = async (
   reachableObjects: HostedAssetName[],
   getEncoded: (record: HostedAssetRecord) => Promise<{ body: Uint8Array; contentEncoding?: string | undefined }>,
 ): Promise<number> => {
-  const lastModifiedMap = new Map(
-    (await bucketClient.list("")).map(({ key, lastModified }) => [key, lastModified] as const),
-  );
+  const lastModifiedMap = await readBucketLastModifiedMap(bucketClient);
   const reachablePaths = toHostedAssetPaths(reachableObjects);
   const now = Date.now();
   const writes = records

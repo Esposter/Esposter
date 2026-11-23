@@ -3,6 +3,7 @@ import type { PruneHostedAssetsOptions } from "#src/models/hostedAssets/PruneHos
 import type { R2ListedObject } from "@esposter/db";
 
 import { HOSTED_ASSET_RETENTION_MS } from "#src/services/hostedAssets/constants";
+import { readBucketLastModifiedMap } from "#src/services/hostedAssets/readBucketLastModifiedMap";
 import { toHostedAssetPaths } from "#src/services/hostedAssets/toHostedAssetPaths";
 import { settleAll } from "@esposter/shared";
 
@@ -23,9 +24,7 @@ export const pruneHostedAssets = async ({
   // Only an object under a product's scope is a candidate: the bucket holds other publishes too, which no lock names
   const candidateKeys = (await bucketClient.list("")).filter((object) => isPastRetention(object)).map(({ key }) => key);
   if (isDryRun) return { candidateCount: candidateKeys.length, deletedCount: 0, keptCount: 0 };
-  const listedAgain = new Map(
-    (await bucketClient.list("")).map(({ key, lastModified }) => [key, lastModified] as const),
-  );
+  const listedAgain = await readBucketLastModifiedMap(bucketClient);
   // A key the second listing no longer holds is already gone, which a delete counts as done
   const deletableKeys = candidateKeys.filter((key) => {
     const lastModified = listedAgain.get(key);
