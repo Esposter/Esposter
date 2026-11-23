@@ -1,9 +1,11 @@
 import { SinStatusKind } from "../../models/SinStatusKind";
 
-// The plugin's node script, run as `node --input-type=module -e` with its request on stdin: the one network call and the
-// Evidence log run here, since the hooks module has no Node. It is a string because a plugin reaches none of its own
-// Files from inside the module, and it writes exactly one JSON result, so a run that exits otherwise reads as failed
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations asks for the type of an exported template that interpolates, and this rule would refuse that annotation
+// The plugin's node script, run as `node --input-type=module -e` with its request on stdin: the one network call and
+// The Evidence log run here, since the hooks module has no Node. It is a string because a plugin reaches none of its
+// Own Files from inside the module, and it writes exactly one JSON result, so a run that exits otherwise reads as
+// Failed
+// `isolatedDeclarations` asks for the type of an exported template that
+// oxlint-disable-next-line typescript/no-inferrable-types -- interpolates, and this rule would refuse that annotation
 export const SINS_SCRIPT: string = `
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";

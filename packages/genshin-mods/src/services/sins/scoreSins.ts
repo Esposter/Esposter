@@ -19,7 +19,8 @@ const sinSessionAtom = atom({ key: "sinSession", plugin: "genshin-mods" } as con
 const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
 // The sins are scored beside the prompt's turn, never in front of it: the call and the evidence log run in the plugin's
 // Node script, and a run that fails, or a machine that cannot open the log, records nothing and says why in the band
-// oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
+// A declaration, not an arrow: the hooks module's bundle
+// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export async function scoreSins($: EngineInterface, text: string, typeSafeKey: string): Promise<void> {
   if (!(await read($, enabledModsAtom)).sins) return;
 
@@ -50,8 +51,8 @@ export async function scoreSins($: EngineInterface, text: string, typeSafeKey: s
     outcome.status === "fulfilled" && outcome.value.exitCode === 0
       ? parseSinsResult(outcome.value.stdout)
       : { result: SinStatusKind.Failed };
-  // A `/clear` or a resume during the run has reset the session, and a switch turned off has turned the mod off, so this
-  // Run's answers belong to nothing shown
+  // A `/clear` or a resume during the run has reset the session, and a switch turned off has turned the mod off, so
+  // This Run's answers belong to nothing shown
   const sessionNow = await read($, sinSessionAtom);
   const { sins: isSinsEnabled } = await read($, enabledModsAtom);
   if (sessionNow !== session || !isSinsEnabled) return;

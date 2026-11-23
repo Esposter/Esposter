@@ -22,8 +22,8 @@ const HIDDEN_NAMES = [
   "workflow",
 ];
 const HIDDEN_CALL_REGEX = new RegExp(String.raw`(?<![\w$])(?:${HIDDEN_NAMES.join("|")})(?![\w$])`, "u");
-// A name written as a quoted property, which the mask blanks with the rest of the string: `hub['agent']` reaches the agent
-// And `({})['constructor']` reaches the constructor, neither spelling `agent(` nor the name in code
+// A name written as a quoted property, which the mask blanks with the rest of the string: `hub['agent']` reaches the
+// Agent And `({})['constructor']` reaches the constructor, neither spelling `agent(` nor the name in code
 const QUOTED_ACCESS_REGEX = new RegExp(String.raw`\[\s*(['"${"`"}])(?:agent|${HIDDEN_NAMES.join("|")})\1\s*\]`, "u");
 const AGENT_CALL_REGEX = /(?<![\w$])agent\s*\(/gu;
 const AGENT_NAME_REGEX = /(?<![\w$])agent(?![\w$])/gu;

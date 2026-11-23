@@ -12,7 +12,8 @@ import { registerWard } from "./services/ward/registerWard";
 import { registerWholeIndex } from "./services/ward/registerWholeIndex";
 
 export const register: Register = (on, options) => {
-  // The plugin's typesafe_key option, empty when it is not set: the sins readers fall back to the TYPESAFE_API_KEY variable
+  // The plugin's typesafe_key option, empty when it is not set: the sins readers fall back to the TYPESAFE_API_KEY
+  // Variable
   const typeSafeKey = typeof options.typesafe_key === "string" ? options.typesafe_key : "";
   registerBand(on, typeSafeKey);
   registerCommission(on);

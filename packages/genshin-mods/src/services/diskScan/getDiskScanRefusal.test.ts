@@ -3,7 +3,8 @@ import { describe, expect, test } from "vitest";
 import { getDiskScanRefusal } from "./getDiskScanRefusal";
 
 // The allowed cases name the repo's own folders and the game's folder, which the package cannot derive from SITE_NAME
-// oxlint-disable naming/no-site-name-literal -- The allowed cases are the repo's and the game's own folders, named as they are on disk
+// The allowed cases
+// oxlint-disable naming/no-site-name-literal -- are the repo's and the game's own folders, named as they are on disk
 
 describe(getDiskScanRefusal, () => {
   // The refusal names the scan it refuses, so each case pins which command the refusal is for

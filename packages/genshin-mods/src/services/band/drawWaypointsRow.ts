@@ -8,7 +8,8 @@ import { InitialState } from "../InitialState";
 import { press } from "./press";
 
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
-// oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
+// A declaration, not an arrow: the hooks module's bundle
+// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export async function drawWaypointsRow(
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,

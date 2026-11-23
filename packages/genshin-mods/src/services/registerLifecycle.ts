@@ -34,7 +34,8 @@ const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as con
 const sinSessionAtom = atom({ key: "sinSession", plugin: "genshin-mods" } as const, InitialState.sinSession);
 const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
-// The events a plugin may hook once with no matcher, each hooked here for every mod, with the commands that switch the mods
+// The events a plugin may hook once with no matcher, each hooked here for every mod, with the commands that switch the
+// Mods
 export const registerLifecycle = (on: On, typeSafeKey: string): void => {
   // The bare command flips a mod and an argument sets it, kept in the store so it holds for every later session
   for (const name of ModNames)

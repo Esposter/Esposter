@@ -20,7 +20,8 @@ const lastCacheRequestAtAtom = atom(
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 // `jscpd:ignore-end`
-// oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
+// A declaration, not an arrow: the hooks module's bundle
+// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export async function drawResinRow(
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,

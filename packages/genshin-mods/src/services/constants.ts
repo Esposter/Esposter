@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal or a pattern would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal
+   or a pattern would otherwise infer */
 // The game's own interface gold, the accent wherever the persona publishes no character
 export const ACCENT_COLOR = "#d3bc8e";
 // The prompt cache's lifetime, which the engine chooses and does not report: an hour on a subscription
@@ -59,6 +60,6 @@ export const DELEGATION_NUDGE =
   "Third lookup in a row with no decision between them: by the llm-delegation skill's hop rule this chain goes to a haiku agent as one bounded question.";
 // The repository's watcher, which the pulse runs as its child and reads the lines of
 export const MACHINE_WATCHER_SCRIPT = "scripts/src/machine/watch/index.ts";
-// How long after its watcher exits a session starts one again, so a session whose watcher found another's lock held takes
-// Over the watching once that watcher's session ends
+// How long after its watcher exits a session starts one again, so a session whose watcher found another's lock held
+// Takes Over the watching once that watcher's session ends
 export const MACHINE_WATCHER_RETRY_MILLISECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");

@@ -15,7 +15,8 @@ import { press } from "./press";
 
 const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
 // The sins as one line, each in its colour, with the pane's own button; the pane holds the bars and the trends
-// oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
+// A declaration, not an arrow: the hooks module's bundle
+// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export async function drawSinsRow(
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,

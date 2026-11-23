@@ -17,7 +17,8 @@ const isCommissionExpandedAtom = atom(
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 const StatusMarkMap = { [TaskStatus.Completed]: "✓", [TaskStatus.InProgress]: "▸", [TaskStatus.Pending]: "·" } as const;
-// oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
+// A declaration, not an arrow: the hooks module's bundle
+// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export async function drawCommissionRow(
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,

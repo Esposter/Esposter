@@ -16,7 +16,8 @@ const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as con
 // `jscpd:ignore-end`
 // A task tool's call folded in, opening the commission on its first task with the goal read off the prompt that started
 // The turn
-// oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
+// A declaration, not an arrow: the hooks module's bundle
+// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export async function foldCommission($: EngineInterface, call: TaskCall): Promise<void> {
   if (!(await read($, enabledModsAtom)).commission) return;
   const now = await $.clock.now();

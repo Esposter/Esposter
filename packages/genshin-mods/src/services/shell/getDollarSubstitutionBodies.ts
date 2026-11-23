@@ -11,7 +11,8 @@ export const getDollarSubstitutionBodies = (command: string): string[] => {
     for (; index < command.length && depth > 0; index++) {
       const character = command[index];
       if (character === "\\" && quote !== "'") index++;
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a quote character the shell parser holds, not text
+      // A
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- quote character the shell parser holds, not text
       else if (quote !== "") {
         if (character === quote) quote = "";
       } else if (character === '"' || character === "'") quote = character;

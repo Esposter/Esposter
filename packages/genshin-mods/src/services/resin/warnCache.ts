@@ -19,12 +19,12 @@ const lastCacheRequestAtAtom = atom(
   InitialState.lastCacheRequestAt,
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
-// `jscpd:ignore-end`
-// The cache goes cold at a known instant, so its warning is one timer armed for that instant at each turn's end, from the
-// Request that last read or wrote the cache, rather than a check on a clock. The timer warns once for that request, and
-// Stands down while a turn runs, since that turn's end arms it again. A timer left from an earlier turn finds the cache
-// Renewed and does nothing more than the warning it would have given
-// oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
+// `jscpd:ignore-end` The cache goes cold at a known instant, so its warning is one timer armed for that instant at each
+// Turn's end, from the Request that last read or wrote the cache, rather than a check on a clock. The timer warns once
+// For that request, and Stands down while a turn runs, since that turn's end arms it again. A timer left from an
+// Earlier turn finds the cache Renewed and does nothing more than the warning it would have given
+// A declaration, not an arrow: the hooks module's bundle
+// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export async function warnCache($: EngineInterface): Promise<void> {
   const now = await $.clock.now();
   await update($, nowAtom, () => now);

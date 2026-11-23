@@ -1,7 +1,8 @@
 import { checkIsWholeCheckout } from "./checkIsWholeCheckout";
 import { splitArguments } from "./splitArguments";
 
-// The reset modes that touch the working tree or the index beyond HEAD, so a reset with one of them is not a commit move
+// The reset modes that touch the working tree or the index beyond HEAD, so a reset with one of them is not a commit
+// Move
 const RESET_INDEX_MODES: ReadonlySet<string> = new Set(["--hard", "--keep", "--merge", "--mixed"]);
 // A reset that names a path is path-scoped: after `--`, or as a second operand with none, since git reads the first
 // As a commit or a path and every one after it as a path. The checkout's own pathspec names no commit, so it is the
