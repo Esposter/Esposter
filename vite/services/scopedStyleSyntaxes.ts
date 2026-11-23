@@ -1,3 +1,5 @@
+import type { SelectorBan } from "#scripts/models/oxlint/selectorBan/SelectorBan";
+
 import { htmlElementAttributes } from "#vite/services/htmlElementAttributes";
 import { htmlTagNames } from "#vite/services/htmlTagNames";
 
@@ -22,7 +24,7 @@ const ownAttributesTagNamesMap = Map.groupBy(
   (tagName) => (htmlElementAttributes[tagName] ?? []).join(","),
 );
 
-export const SCOPED_STYLE_SYNTAXES: { message: string; selector: string }[] = Array.from(
+export const SCOPED_STYLE_SYNTAXES: SelectorBan[] = Array.from(
   ownAttributesTagNamesMap,
   ([ownAttributes, tagNames]) => {
     const attributeNames = [

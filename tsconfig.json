@@ -5,6 +5,7 @@
     "oxlint/**/*.ts",
     "vite/**/*.ts",
     "scripts/src/models/oxlint/selectorBan/*.ts",
+    "apps/web/configuration/blockedSpellings.ts",
     "scripts/src/services/oxlint/selectorBan/**/*.ts"
   ],
   // The selector bans are the scripts package's, read by the root lint and the template pass; their suites are its own

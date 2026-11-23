@@ -37,7 +37,8 @@
   "imports": {
     "#oxlint/*": "./oxlint/*.ts",
     "#scripts/*": "./scripts/src/*.ts",
-    "#vite/*": "./vite/*.ts"
+    "#vite/*": "./vite/*.ts",
+    "#web/*": "./apps/web/*.ts"
   },
   "scripts": {
     "ai:ci:distinct-errors": "pnpm -C scripts ai:ci:distinct-errors",

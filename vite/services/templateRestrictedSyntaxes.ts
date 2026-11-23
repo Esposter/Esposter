@@ -1,7 +1,9 @@
+import type { SelectorBan } from "#scripts/models/oxlint/selectorBan/SelectorBan";
+
 import { SELECTOR_BAN_LISTS } from "#scripts/services/oxlint/selectorBan/selectorBanLists";
 
 // The template's selector bans: every list that marks itself as one, and the bans only a template can break
-export const TEMPLATE_RESTRICTED_SYNTAXES: { message: string; selector: string }[] = [
+export const TEMPLATE_RESTRICTED_SYNTAXES: SelectorBan[] = [
   ...SELECTOR_BAN_LISTS.filter(({ isTemplate }) => isTemplate).flatMap(({ bans }) => bans),
   {
     // The `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` rules oxlint ships cover the script and

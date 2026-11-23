@@ -11,6 +11,18 @@ describe("scriptRestrictedSyntaxes", () => {
       // An optional ref of anything but a string omits its initial value on purpose
       { filePath: "optionalRef.ts", name: "optionalRef", source: "export const a = ref<A>();", violations: 0 },
       {
+        filePath: "processClient.ts",
+        name: "processClient",
+        source: "export const a = process.client;",
+        violations: 1,
+      },
+      {
+        filePath: "processEnvironment.ts",
+        name: "processEnvironment",
+        source: "export const a = process.env.A;",
+        violations: 0,
+      },
+      {
         filePath: "undefinedRef.ts",
         name: "undefinedRef",
         source: "export const a = ref<A | undefined>(undefined);",

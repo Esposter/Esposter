@@ -1,5 +1,6 @@
 import type { VueOptions } from "vize";
 
+import { BLOCKED_SPELLING_SYNTAXES } from "#vite/services/blockedSpellingSyntaxes";
 import { SCOPED_STYLE_SYNTAXES } from "#vite/services/scopedStyleSyntaxes";
 import { TEMPLATE_RESTRICTED_SYNTAXES } from "#vite/services/templateRestrictedSyntaxes";
 
@@ -23,6 +24,13 @@ export const VUE_OPTIONS: VueOptions = {
       ],
       linter: {
         ruleOptions: { "vue/no-restricted-syntax": [...TEMPLATE_RESTRICTED_SYNTAXES, ...SCOPED_STYLE_SYNTAXES] },
+      },
+    },
+    // The app is the one package UnoCSS styles, so its components take the spellings its blocklist refuses
+    {
+      files: ["apps/web/**/*.vue"],
+      linter: {
+        ruleOptions: { "vue/no-restricted-syntax": [...TEMPLATE_RESTRICTED_SYNTAXES, ...BLOCKED_SPELLING_SYNTAXES] },
       },
     },
   ],

@@ -7,9 +7,15 @@ import restrictedUtilImports from "@esposter/configuration/eslint/restrictedUtil
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 
 // The vize lint holds a page, a layout and a server component to one root, so Nuxt's own block for it goes. The
-// Selector bans are oxlint's `selector-ban/no-restricted-syntax`, each list scoped by its own paths
+// Selector bans are oxlint's `selector-ban/no-restricted-syntax`, each list scoped by its own paths. The Nuxt and
+// Link-checker rules are deleted (`openspec/changes/architecture-eslint-retirement/design.md`, Decisions)
 export default withNuxt(plugins)
   .remove("nuxt/vue/single-root")
+  .remove("nuxt/rules")
+  .remove("nuxt/pages")
+  .remove("nuxt/nuxt-config")
+  .remove("nuxt-link-checker/valid-route")
+  .remove("nuxt-link-checker/valid-route-markdown")
   .overrides(nuxtOverrides)
   .append(oxlint)
   .append({

@@ -197,10 +197,10 @@ The catalog's own standing check is `scripts/src/workspace/deprecatedPackages.te
 
 ## Key files
 
-| File                                              | Role                                                                      |
-| ------------------------------------------------- | ------------------------------------------------------------------------- |
-| `pnpm-workspace.yaml`                             | The catalog — every version in the workspace, under `catalogMode: strict` |
-| `packages/configuration/eslint/plugins/depend.js` | `depend/ban-dependencies`, and the `allowed` option that keeps a package  |
-| `packages/shared/src`                             | Where an absorbed utility lands                                           |
-| `scripts/src/services/dependencies/score`         | The absorb score, its dimensions and the disagreement filter              |
-| `apps/web/app/services/message/emoji`             | The precedent — data and search engine kept, behaviour taken back         |
+| File                                               | Role                                                                              |
+| -------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `pnpm-workspace.yaml`                              | The catalog — every version in the workspace, under `catalogMode: strict`         |
+| `scripts/src/workspace/bannedDependencies.test.ts` | The ban on every manifest, read from `module-replacements`' recorded replacements |
+| `packages/shared/src`                              | Where an absorbed utility lands                                                   |
+| `scripts/src/services/dependencies/score`          | The absorb score, its dimensions and the disagreement filter                      |
+| `apps/web/app/services/message/emoji`              | The precedent — data and search engine kept, behaviour taken back                 |

@@ -196,6 +196,14 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
         "MemberExpression[object.type='MetaProperty'][property.name='dev'], MemberExpression[object.object.type='MetaProperty'][object.property.name='env'][property.name=/^(DEV|MODE|PROD)$/]",
     },
     {
+      // Nuxt's build flags on `process` are the old spelling of the ones on `import.meta`, and both are read through
+      // The repository's own names: the side through `checkIsServer`, the build through the environment constants
+      message:
+        "Don't read Nuxt's flags off `process`. Use `checkIsServer()` from `@esposter/shared` for the side, and `IS_PRODUCTION`/`IS_DEVELOPMENT` from `#shared/util/environment/constants` for the build.",
+      selector:
+        "MemberExpression[object.name='process'][property.name=/^(browser|client|dev|prerender|server|static|test)$/]",
+    },
+    {
       // An export list names a binding a second time, away from its declaration, so a reader finds what a module
       // Exports in two places. A re-export carries `from` and an empty `export {}` in a `.d.ts` carries no
       // Specifier, so neither is matched — the generated barrels and every `eslint.config.js` stay as they are

@@ -4,6 +4,7 @@ import type { ESTree } from "@oxlint/plugins";
 // Reader takes for "no items". A fallback that carries data (a schema, a default string) is not one
 export const checkIsSentinel = (node: ESTree.Node): boolean =>
   (node.type === "Identifier" && node.name === "undefined") ||
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- an AST literal's value, whose empty string is the sentinel itself
   (node.type === "Literal" && (node.value === null || node.value === false || node.value === "")) ||
   (node.type === "ArrayExpression" && node.elements.length === 0) ||
   (node.type === "ObjectExpression" && node.properties.length === 0) ||
