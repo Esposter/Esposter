@@ -30,3 +30,8 @@ export const READER_OUTPUT_EXTENSION = ".jsonl";
 export const FIXER_UNIT_FILE_EXTENSION = ".json";
 // The file a fixer writes its answers into, one finding a line
 export const FIXER_RESULT_FILE_EXTENSION = ".result.jsonl";
+// The most files one area unit holds, and the most lines of code, so one pass reads it in full in one sitting
+export const UNIT_FILE_CAP = 40;
+export const UNIT_LINE_CAP = 3000;
+// The files whose lines count against the line cap: the code a pass reads in full. Prose, data and snapshots add files only
+export const UNIT_CODE_FILE_REGEX = /\.(?:[cm]?[jt]sx?|vue|css)$/u;
