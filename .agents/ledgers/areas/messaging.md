@@ -4,11 +4,14 @@
 
 - `apps/web/app/store/message` — `draftsAndSent`, `file`, `input`, `moderation`
 - `apps/web/app/store/message/room/call` — `index.test.ts`, `index.ts`, `knocker.test.ts`, `knocker.ts`, `media.test.ts`, `media.ts`, `participant.test.ts`, `participant.ts`
-- `apps/web/app/store/message/room` — `dialog.ts`, `directMessage.test.ts`, `directMessage.ts`, `emoji.test.ts`, `emoji.ts`, `emojiDialog.ts`, `index.test.ts`, `index.ts`, `invite.test.ts`, `invite.ts`, `realtime.test.ts`, `realtime.ts`, `role.test.ts`, `role.ts`, `roleDialog.ts`, `roomInvite.test.ts`
+- `apps/web/app/store/message/room` — `dialog.ts`, `directMessage.test.ts`, `directMessage.ts`, `emoji.test.ts`, `emoji.ts`, `emojiDialog.ts`, `index.test.ts`, `index.ts`, `invite.test.ts`, `invite.ts`
+- `apps/web/app/store/message/room` — `realtime.test.ts`, `realtime.ts`, `role.test.ts`, `role.ts`, `roleDialog.ts`, `roomInvite.test.ts`
 - `apps/web/app/store/message/room` — `roomInvite.ts`, `roomInviteDialog.ts`, `search.ts`, `userToRoom.ts`, `webhook.test.ts`, `webhook.ts`, `webhookDialog.test.ts`, `webhookDialog.ts`
 - `apps/web/app/store/message/search`, `apps/web/app/store/message/ui`, `apps/web/app/store/message/user`
-- `apps/web/app/store/message` — `data.test.ts`, `data.ts`, `dialog.ts`, `emoji.test.ts`, `emoji.ts`, `emojiPicker.ts`, `index.ts`, `pin.test.ts`, `pin.ts`, `roomCategory.test.ts`, `roomCategory.ts`, `roomCategoryDialog.ts`, `scheduledMessageJob.test.ts`, `scheduledMessageJob.ts`, `sentMessage.ts`, `thread.test.ts`, `thread.ts`, `threadFollow.test.ts`, `threadFollow.ts`
-- `apps/web/app/components/Message/Model/Message/Emoji`, `apps/web/app/components/Message/Model/Message/File`, `apps/web/app/components/Message/Model/Message/Forward`, `apps/web/app/components/Message/Model/Message/Input`, `apps/web/app/components/Message/Model/Message/LinkPreview`
+- `apps/web/app/store/message` — `data.test.ts`, `data.ts`, `dialog.ts`, `emoji.test.ts`, `emoji.ts`, `emojiPicker.ts`, `index.ts`
+- `apps/web/app/store/message` — `pin.test.ts`, `pin.ts`, `roomCategory.test.ts`, `roomCategory.ts`, `roomCategoryDialog.ts`, `scheduledMessageJob.test.ts`, `scheduledMessageJob.ts`, `sentMessage.ts`, `thread.test.ts`, `thread.ts`, `threadFollow.test.ts`, `threadFollow.ts`
+- `apps/web/app/components/Message/Model/Message/Emoji`, `apps/web/app/components/Message/Model/Message/File`, `apps/web/app/components/Message/Model/Message/Forward`
+- `apps/web/app/components/Message/Model/Message/Input`, `apps/web/app/components/Message/Model/Message/LinkPreview`
 - `apps/web/app/components/Message/Model/Message/List`, `apps/web/app/components/Message/Model/Message/OptionsMenu`, `apps/web/app/components/Message/Model/Message/ReactionsDialog`, `apps/web/app/components/Message/Model/Message/Reply`, `apps/web/app/components/Message/Model/Message/Search`, `apps/web/app/components/Message/Model/Message/Suggestion`, `apps/web/app/components/Message/Model/Message/Type`
 - `apps/web/app/components/Message/Model/Message` — `AppUserBadge.vue`, `ConfirmDeleteDialog.test.ts`, `ConfirmDeleteDialog.vue`, `ConfirmPinDialog.test.ts`, `ConfirmPinDialog.vue`, `CreatedAtDate.vue`, `Editor.vue`, `JumpToPresentSnackbar.vue`, `Snippet.vue`, `Timeline.vue`
 - `apps/web/app/components/Message/Model/Room/Create`, `apps/web/app/components/Message/Model/Room/DirectMessage`, `apps/web/app/components/Message/Model/Room/Emoji`, `apps/web/app/components/Message/Model/Room/Invite`, `apps/web/app/components/Message/Model/Room/List`, `apps/web/app/components/Message/Model/Room/Role`, `apps/web/app/components/Message/Model/Room/Settings/LeftSideBar`, `apps/web/app/components/Message/Model/Room/Settings/Type/Attachments`, `apps/web/app/components/Message/Model/Room/Settings/Type/AuditLog`, `apps/web/app/components/Message/Model/Room/Settings/Type/Bans`, `apps/web/app/components/Message/Model/Room/Settings/Type/Emoji`
@@ -17,7 +20,8 @@
 - `apps/web/app/components/Message/Model/Room/Settings` — `Content.vue`, `Dialog.vue`, `Field.vue`, `UnsavedChangesBar.vue`
 - `apps/web/app/components/Message/Model/Room` — `BaseList.vue`, `BaseListItem.vue`, `ConfirmDeleteDialog.vue`, `Searcher.vue`
 - `apps/web/app/components/Message/Model/User`
-- `apps/web/app/components/Message/Content/Call/Audio`, `apps/web/app/components/Message/Content/Call/Camera`, `apps/web/app/components/Message/Content/Call/Control`, `apps/web/app/components/Message/Content/Call/Device`, `apps/web/app/components/Message/Content/Call/JoinNotice`, `apps/web/app/components/Message/Content/Call/Panel`, `apps/web/app/components/Message/Content/Call/Participant`, `apps/web/app/components/Message/Content/Call/PictureInPicture`, `apps/web/app/components/Message/Content/Call/PreJoin`, `apps/web/app/components/Message/Content/Call/ScreenShare`, `apps/web/app/components/Message/Content/Call/Video`, `apps/web/app/components/Message/Content/Call/VirtualBackground`
+- `apps/web/app/components/Message/Content/Call/Audio`, `apps/web/app/components/Message/Content/Call/Camera`, `apps/web/app/components/Message/Content/Call/Control`, `apps/web/app/components/Message/Content/Call/Device`, `apps/web/app/components/Message/Content/Call/JoinNotice`, `apps/web/app/components/Message/Content/Call/Panel`
+- `apps/web/app/components/Message/Content/Call/Participant`, `apps/web/app/components/Message/Content/Call/PictureInPicture`, `apps/web/app/components/Message/Content/Call/PreJoin`, `apps/web/app/components/Message/Content/Call/ScreenShare`, `apps/web/app/components/Message/Content/Call/Video`, `apps/web/app/components/Message/Content/Call/VirtualBackground`
 - `apps/web/app/components/Message/Content/Call` — `Button.vue`, `FeatureCard.vue`, `InviteCard.vue`, `JoinForm.vue`, `Stage.vue`, `StartButton.vue`, `View.vue`, `Waiting.vue`
 - `apps/web/app/components/Message/Content/Header`
 - `apps/web/app/components/Message/Content` — `Index.vue`, `PushPermissionAlert.vue`, `RoomWelcome.vue`
@@ -25,13 +29,15 @@
 - `apps/web/app/components/Message/RightSideBar`, `apps/web/app/components/Message/Layout.client.vue`
 - `apps/web/app/components/Message/LeftSideBar`
 - `apps/web/app/components/Message/Friends`
-- `apps/web/app/composables/message/composer`, `apps/web/app/composables/message/draftsAndSent`, `apps/web/app/composables/message/editor`, `apps/web/app/composables/message/emoji`, `apps/web/app/composables/message/events`, `apps/web/app/composables/message/file`, `apps/web/app/composables/message/message`
+- `apps/web/app/composables/message/composer`, `apps/web/app/composables/message/draftsAndSent`, `apps/web/app/composables/message/editor`, `apps/web/app/composables/message/emoji`, `apps/web/app/composables/message/events`
+- `apps/web/app/composables/message/file`, `apps/web/app/composables/message/message`
 - `apps/web/app/composables/message/moderation`, `apps/web/app/composables/message/poll`, `apps/web/app/composables/message/room/call`
 - `apps/web/app/composables/message/room` — `useCreator.test.ts`, `useCreator.ts`, `useDirectMessageName.ts`, `useInvitableRooms.ts`, `useIsCreator.test.ts`, `useIsCreator.ts`, `useMemberCache.test.ts`, `useMemberCache.ts`, `useReadDirectMessages.ts`, `useReadMemberRoles.ts`, `useReadMembers.test.ts`, `useReadMembers.ts`, `useReadMyInvite.ts`, `useReadMyUsersToRooms.ts`, `useReadRoomCategories.test.ts`, `useReadRoomCategories.ts`, `useReadRoomInvites.ts`, `useReadRooms.ts`, `useReadUsersByIds.test.ts`, `useReadUsersByIds.ts`, `useRefreshRoomUsers.test.ts`, `useRefreshRoomUsers.ts`, `useRoomCache.ts`, `useRoomName.ts`, `useRoomPlaceholder.test.ts`, `useRoomPlaceholder.ts`, `useSaveRoom.test.ts`, `useSaveRoom.ts`, `useToggleMemberRole.ts`
 - `apps/web/app/composables/message/search`, `apps/web/app/composables/message/shared`, `apps/web/app/composables/message/slashCommand`, `apps/web/app/composables/message/subscribables`, `apps/web/app/composables/message/suggestion`, `apps/web/app/composables/message/thread`, `apps/web/app/composables/message/typing`, `apps/web/app/composables/message/user`
 - `apps/web/app/composables/message` — `useMessageHtml.test.ts`, `useMessageHtml.ts`, `useToggleRightDrawer.ts`
 - `apps/web/app/services/message/composer`, `apps/web/app/services/message/draft`, `apps/web/app/services/message/draftsAndSent`, `apps/web/app/services/message/editor`, `apps/web/app/services/message/emoji`
-- `apps/web/app/services/message` — `file`, `filter`, `input`, `member`
+- `apps/web/app/services/message` — `file`, `filter`, `input`
+- `apps/web/app/services/message` — `member`
 - `apps/web/app/services/message/message` — `createMessage.test.ts`, `toRoomMessagePage.ts`
 - `apps/web/app/services/message/moderation`, `apps/web/app/services/message/poll`, `apps/web/app/services/message/room/call`, `apps/web/app/services/message/room/invite`, `apps/web/app/services/message/room/list`
 - `apps/web/app/services/message/room/realtime`, `apps/web/app/services/message/room/role`

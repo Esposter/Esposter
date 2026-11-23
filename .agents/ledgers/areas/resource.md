@@ -49,7 +49,8 @@
 - `apps/web/app/components/Dataset`
 - `apps/web/app/store/dashboard`
 - `apps/web/app/composables/dashboard`
-- `apps/web/app/services/dashboard/chart`, `apps/web/app/services/dashboard/dataset`, `apps/web/app/services/dashboard/demo`, `apps/web/app/services/dashboard/editor`, `apps/web/app/services/dashboard/export`, `apps/web/app/services/dashboard/grid`
+- `apps/web/app/services/dashboard/chart`, `apps/web/app/services/dashboard/dataset`
+- `apps/web/app/services/dashboard/demo`, `apps/web/app/services/dashboard/editor`, `apps/web/app/services/dashboard/export`, `apps/web/app/services/dashboard/grid`
 - `apps/web/app/services/dashboard/visual`
 - `apps/web/app/services/dashboard` — `VisualTypeCategoryDefinitions.test.ts`, `VisualTypeCategoryDefinitions.ts`, `checkIsAxisVisualPropsData.ts`, `checkIsChartVisualType.ts`, `constants.ts`, `setVisualType.test.ts`, `setVisualType.ts`
 - `apps/web/app/composables/dataset`
@@ -77,7 +78,8 @@
 - `apps/web/app/models/resource/survey`, `apps/web/app/models/resource/todoList`
 - `apps/web/app/models/resource` — `BladeDefinition.ts`, `ContentBaseline.ts`, `ContentDeltaRequest.ts`, `ContentDeltaResponse.ts`, `CreatableResourceType.ts`, `PortableFormat.ts`, `PortableFormatKind.ts`, `PortableResourceType.ts`, `ResourceBlade.ts`, `ResourceBladeSlug.test.ts`, `ResourceBladeSlug.ts`, `ResourceBladeType.ts`, `ResourceHomeTab.ts`, `ResourceRouter.ts`, `ResourceSave.ts`, `ResourceSaveState.ts`, `ResourceSaveStateDefinition.ts`, `TagRow.ts`, `ZstdEncoder.ts`
 - `apps/web/app/components` — `Editor`, `Genshin`
-- `apps/web/app/components/PageBuilder` — `Bar.vue`, `Canvas`, `ContentPanel.test.ts`, `ContentPanel.vue`, `Editor.test.ts`, `Editor.vue`
+- `apps/web/app/components/PageBuilder` — `Bar.vue`, `Canvas`
+- `apps/web/app/components/PageBuilder` — `ContentPanel.test.ts`, `ContentPanel.vue`, `Editor.test.ts`, `Editor.vue`
 - `apps/web/app/components/PageBuilder` — `Email`, `EmptyPage.test.ts`, `EmptyPage.vue`, `FilePicker`, `Layers.test.ts`, `Layers.vue`, `MediaField.test.ts`, `MediaField.vue`, `MergeFieldList.vue`, `Palette.test.ts`, `Palette.vue`, `StylePanel`, `ThemePanel`
 - `apps/web/app/components/Pdf` — `Thumbnail.test.ts`, `Thumbnail.vue`, `Viewer`
 - `apps/web/app/components/Resource/Link` — `Select.test.ts`, `Select.vue`
@@ -87,7 +89,8 @@
 - `apps/web/app/composables/app`, `apps/web/app/composables/auth`, `apps/web/app/composables/desmos`, `apps/web/app/composables/editor`, `apps/web/app/composables/genshin`, `apps/web/app/composables/realtime`, `apps/web/app/composables/resource/sheet/useSheetCommands.test.ts`, `apps/web/app/composables/storage`
 - `apps/web/app/composables/whiteboard` — `useInsertWhiteboardImages.test.ts`, `useInsertWhiteboardImages.ts`, `useWhiteboardArrangeKeyboard.test.ts`, `useWhiteboardArrangeKeyboard.ts`, `useWhiteboardContextMenu.test.ts`, `useWhiteboardContextMenu.ts`, `useWhiteboardGesture.test.ts`, `useWhiteboardGesture.ts`, `useWhiteboardKeyboard.test.ts`, `useWhiteboardKeyboard.ts`, `useWhiteboardSelectedElement.ts`, `useWhiteboardSelectionOperations.ts`, `useWhiteboardStyleKeyboard.test.ts`, `useWhiteboardStyleKeyboard.ts`, `useWhiteboardTextEdit.test.ts`, `useWhiteboardTextEdit.ts`, `useWhiteboardViewportKeyboard.test.ts`, `useWhiteboardViewportKeyboard.ts`
 - `apps/web/app` — `error.test.ts`, `generated`, `moduleCycles.test.ts`
-- `apps/web/app/services/bookmark`, `apps/web/app/services/capture`, `apps/web/app/services/dashboard/createBoundVisual.test.ts`, `apps/web/app/services/desmos`, `apps/web/app/services/editor`, `apps/web/app/services/genshin`, `apps/web/app/services/pdf`
+- `apps/web/app/services/bookmark`, `apps/web/app/services/capture`, `apps/web/app/services/dashboard/createBoundVisual.test.ts`, `apps/web/app/services/desmos`
+- `apps/web/app/services/editor`, `apps/web/app/services/genshin`, `apps/web/app/services/pdf`
 - `apps/web/app/services/realtime`, `apps/web/app/services/resource/overlay`, `apps/web/app/services/resource/parseResourceBlade.test.ts`, `apps/web/app/services/resource/parseResourceBlade.ts`, `apps/web/app/services/resource/sheet/loadCommandSheet.ts`, `apps/web/app/services/richTextEditor`, `apps/web/app/services/search`
 - `apps/web/app/services/whiteboard` — `arrange`, `arrow`, `constants.test.ts`, `constants.ts`, `contextMenu`, `createWhiteboardElement.test.ts`, `createWhiteboardElement.ts`, `createWhiteboardImageElement.ts`, `edit`, `export`
 - `apps/web/app/services/whiteboard/gesture` — `checkIsCoveredBy.ts`, `checkIsDragStarted.ts`, `constants.ts`, `getArrowEnd.ts`, `getArrowOperations.test.ts`, `getArrowOperations.ts`, `getBoxedSelectionBounds.ts`, `getClickSelection.ts`, `getConnectOperations.ts`, `getConnectionHandle.ts`, `getConnectionHandleItems.test.ts`, `getConnectionHandleItems.ts`, `getConnectionHandlePoint.ts`, `getCopyMoveOperations.ts`, `getDraggedBounds.ts`, `getElementIndexById.ts`, `getEndOperations.ts`, `getFreeEndHandle.ts`, `getFreeEndHandleItems.test.ts`, `getFreeEndHandleItems.ts`, `getHitElementId.ts`, `getHitTolerance.ts`, `getMarqueeSelection.ts`, `getMoveOperations.ts`, `getNearestConnectionPointIndex.ts`, `getPointDistance.ts`, `getPressedHandle.ts`, `getPressedSelection.ts`, `getPreviewOrCommitResult.ts`, `getResizeHandle.test.ts`, `getResizeHandle.ts`, `getResizeHandlePoint.ts`, `getResizeOperations.ts`, `getResizedSides.ts`, `getScaleOperations.test.ts`, `getScaleOperations.ts`, `getSelectionBounds.ts`, `getSelectionResizeHandles.ts`, `getSnap.ts`, `getStrokeOperations.ts`

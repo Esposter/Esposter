@@ -45,6 +45,7 @@
 - `apps/web/server/services/emailEditor`, `apps/web/server/services/dashboard`
 - `apps/web/server` — `auth.test.ts`, `development`, `middleware`
 - `apps/web/server/services` — `app`, `devSession`, `genshin`
-- `apps/web/server/services/mcp`, `apps/web/server/services/queue`, `apps/web/server/services/realtime`, `apps/web/server/services/realtimeKit`, `apps/web/server/services/resource/reapplyLiveResourceContent.test-d.ts`, `apps/web/server/services/room/deleteRoom.test.ts`
+- `apps/web/server/services/mcp`, `apps/web/server/services/queue`
+- `apps/web/server/services/realtime`, `apps/web/server/services/realtimeKit`, `apps/web/server/services/resource/reapplyLiveResourceContent.test-d.ts`, `apps/web/server/services/room/deleteRoom.test.ts`
 - `apps/web/server/services` — `security`, `tombstone`, `webpage`
 - `apps/web/server/trpc/routers/createPageDocument.test.ts`, `apps/web/server/trpc/routers/createPublishedSurvey.test.ts`, `apps/web/server/trpc/routers/createSurveyDocumentWith.test.ts`, `apps/web/server/trpc/routers/createSurveyResponse.test.ts`, `apps/web/server/types`
