@@ -5,6 +5,7 @@
 - `apps/web/server/trpc/routers/room` — `index.test.ts`
 - `apps/web/server/trpc/routers/room/index.ts`
 - `apps/web/server/trpc/routers` — `call`
+- `apps/web/server/trpc/routers` — `readRoomMembership.test.ts`
 - `apps/web/server/trpc/routers` — `resource.test.ts`, `resource.ts`
 - `apps/web/server/trpc/routers` — `role.test.ts`, `role.ts`, `user.test.ts`, `user.ts`
 - `apps/web/server/trpc/routers` — `post.test.ts`, `post.ts`, `like.test.ts`, `like.ts`, `friend.test.ts`, `friend.ts`, `friendRequest.test.ts`, `friendRequest.ts`, `block.test.ts`, `block.ts`, `userToRoom.test.ts`, `userToRoom.ts`
@@ -16,6 +17,7 @@
 - `apps/web/server/trpc/routers` — `webpage.test.ts`, `webpage.ts`, `whiteboard.test.ts`, `whiteboard.ts`
 - `apps/web/server/trpc` — `guards`, `middleware`, `plugins`
 - `apps/web/server/trpc/procedure` — `blobState`, `getAuthedProcedure.ts`, `getProfanityFilterProcedure.ts`, `message`, `resource`, `room`, `slowAuthedProcedure.ts`, `slowRateLimitedProcedure.ts`, `standardAuthedProcedure.ts`, `standardRateLimitedProcedure.ts`
+- `apps/web/server/trpc/procedure/survey` — `slowRespondentProcedure.ts`, `standardRespondentProcedure.ts`
 - `apps/web/server/trpc` — `context.test.ts`, `context.ts`, `index.ts`, `indexWithWakeCheck.test.ts`, `initTrpc.ts`, `liveTopicWakeCheck.harness.test.ts`, `liveTopicWakeCheck.test.ts`, `liveTopicWakeCheckGlobal.ts`, `optimisticWriteCrossCheck.harness.test.ts`, `optimisticWriteCrossCheck.test.ts`, `rootConfig.ts`
 - `apps/web/server/models`
 - `apps/web/server/composables`
@@ -30,6 +32,7 @@
 - `apps/web/server/services/message` — `scheduledMessageJob`
 - `apps/web/server/services/resource/link`, `apps/web/server/services/resource/note`, `apps/web/server/services/resource/sheet`, `apps/web/server/services/resource/whiteboard`
 - `apps/web/server/services/resource` — `ResourceAfterSaveContentMap.ts`, `ResourceCritiqueMap.ts`, `ResourceLiveContentMap.ts`, `applyResourceContentPatches.test.ts`, `applyResourceContentPatches.ts`, `checkIsJsonSizeWithin.test.ts`, `checkIsJsonSizeWithin.ts`, `checkIsResourceAssetHeld.ts`, `checkIsResourceAssetReadable.test.ts`, `checkIsResourceAssetReadable.ts`, `cloneContentAssets.test.ts`, `cloneContentAssets.ts`, `collectResourceAssetPaths.ts`, `constants.ts`, `createResourceRow.test.ts`, `createResourceRow.ts`, `deleteCreatedResources.test.ts`, `deleteCreatedResources.ts`, `deleteStagingContentBlob.ts`, `findOwnedResource.ts`, `generateReservedResourceAssetPresignedUrlEntities.test.ts`, `generateReservedResourceAssetPresignedUrlEntities.ts`, `getFavoriteJoin.ts`, `getJsonByteSize.ts`, `getOwnedLiveResourceWhere.ts`, `getPublicationWhere.ts`, `getResourcesWhere.ts`, `getStagingContentBlobName.ts`, `incrementResourceViewCount.ts`, `omitDerivedContent.test.ts`, `omitDerivedContent.ts`, `pruneWorkingAssets.ts`
+- `apps/web/server/services/resource` — `getPublishCaller.ts`, `resourceCallers.ts`
 - `apps/web/server/services/resource` — `readContentAtPointer.test.ts`, `readContentAtPointer.ts`, `readCritiqueSources.test.ts`, `readCritiqueSources.ts`, `readLiveOwnedResourceSummaries.ts`, `readOwnedResource.ts`, `readResourceAccess.test.ts`, `readResourceAccess.ts`, `readResourceConsumers.ts`, `readResourceContent.ts`, `readResourceContentDelta.ts`, `readResourceDependencies.ts`, `readResourceFiles.ts`, `readResourceList.test.ts`, `readResourceList.ts`, `readResourceTagCounts.test.ts`, `readResourceTagCounts.ts`, `readResourceViewCount.ts`, `readSerializedResourceContent.ts`, `readStagedResourceContent.bench.json`, `readStagedResourceContent.bench.md`, `readStagedResourceContent.bench.ts`, `readStagedResourceContent.ts`, `readStoredResourceContent.ts`, `reapplyLiveResourceContent.ts`, `relativizeOwnAssetUrls.test.ts`, `relativizeOwnAssetUrls.ts`, `requireAgentWritableOperations.ts`, `requireOwnedResource.ts`, `reserveWorkingAssets.ts`, `runAfterSaveResourceContent.ts`, `saveResourceContent.test.ts`, `saveResourceContent.ts`, `softDeleteResources.ts`, `touchResourceAssetBlob.ts`, `updateResourceContent.test.ts`, `updateResourceContent.ts`, `updateResourceRow.ts`
 - `apps/web/server/services/resource` — `withResourceRollback.ts`, `writeResourceActivities.ts`, `writeResourceActivity.ts`
 - `apps/web/server/services/resource` — `snapshot`, `todoList`
@@ -45,6 +48,7 @@
 - `apps/web/server/services/emailEditor`, `apps/web/server/services/dashboard`
 - `apps/web/server` — `auth.test.ts`, `development`, `middleware`
 - `apps/web/server/services` — `app`, `devSession`, `genshin`
+- `apps/web/server/services/webhook` — `publicWebhookColumns.ts`
 - `apps/web/server/services/mcp`, `apps/web/server/services/queue`
 - `apps/web/server/services/realtime`, `apps/web/server/services/realtimeKit`, `apps/web/server/services/resource/reapplyLiveResourceContent.test-d.ts`, `apps/web/server/services/room/deleteRoom.test.ts`
 - `apps/web/server/services` — `security`, `tombstone`, `webpage`

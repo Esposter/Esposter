@@ -3,6 +3,7 @@
 `apps/web/app/components/Message/Model` is two-thirds of `apps/web/app/components/Message`, so the units split at its sub-directories.
 
 - `apps/web/app/store/message` — `draftsAndSent`, `file`, `input`, `moderation`
+- `apps/web/app/store/message` — `linkPreviewDialog.ts`
 - `apps/web/app/store/message/room/call` — `index.test.ts`, `index.ts`, `knocker.test.ts`, `knocker.ts`, `media.test.ts`, `media.ts`, `participant.test.ts`, `participant.ts`
 - `apps/web/app/store/message/room` — `dialog.ts`, `directMessage.test.ts`, `directMessage.ts`, `emoji.test.ts`, `emoji.ts`, `emojiDialog.ts`, `index.test.ts`, `index.ts`, `invite.test.ts`, `invite.ts`
 - `apps/web/app/store/message/room` — `realtime.test.ts`, `realtime.ts`, `role.test.ts`, `role.ts`, `roleDialog.ts`, `roomInvite.test.ts`
@@ -33,15 +34,19 @@
 - `apps/web/app/composables/message/file`, `apps/web/app/composables/message/message`
 - `apps/web/app/composables/message/moderation`, `apps/web/app/composables/message/poll`, `apps/web/app/composables/message/room/call`
 - `apps/web/app/composables/message/room` — `useCreator.test.ts`, `useCreator.ts`, `useDirectMessageName.ts`, `useInvitableRooms.ts`, `useIsCreator.test.ts`, `useIsCreator.ts`, `useMemberCache.test.ts`, `useMemberCache.ts`, `useReadDirectMessages.ts`, `useReadMemberRoles.ts`, `useReadMembers.test.ts`, `useReadMembers.ts`, `useReadMyInvite.ts`, `useReadMyUsersToRooms.ts`, `useReadRoomCategories.test.ts`, `useReadRoomCategories.ts`, `useReadRoomInvites.ts`, `useReadRooms.ts`, `useReadUsersByIds.test.ts`, `useReadUsersByIds.ts`, `useRefreshRoomUsers.test.ts`, `useRefreshRoomUsers.ts`, `useRoomCache.ts`, `useRoomName.ts`, `useRoomPlaceholder.test.ts`, `useRoomPlaceholder.ts`, `useSaveRoom.test.ts`, `useSaveRoom.ts`, `useToggleMemberRole.ts`
+- `apps/web/app/composables/message/room` — `useRoomCategoryGroups.ts`
 - `apps/web/app/composables/message/search`, `apps/web/app/composables/message/shared`, `apps/web/app/composables/message/slashCommand`, `apps/web/app/composables/message/subscribables`, `apps/web/app/composables/message/suggestion`, `apps/web/app/composables/message/thread`, `apps/web/app/composables/message/typing`, `apps/web/app/composables/message/user`
 - `apps/web/app/composables/message` — `useMessageHtml.test.ts`, `useMessageHtml.ts`, `useToggleRightDrawer.ts`
+- `apps/web/app/composables/message` — `useSidebarSectionOpen.ts`
 - `apps/web/app/services/message/composer`, `apps/web/app/services/message/draft`, `apps/web/app/services/message/draftsAndSent`, `apps/web/app/services/message/editor`, `apps/web/app/services/message/emoji`
 - `apps/web/app/services/message` — `file`, `filter`, `input`
+- `apps/web/app/services/message` — `createInFlightChanges.ts`, `getDistinctIds.ts`
 - `apps/web/app/services/message` — `member`
 - `apps/web/app/services/message/message` — `createMessage.test.ts`, `toRoomMessagePage.ts`
 - `apps/web/app/services/message/moderation`, `apps/web/app/services/message/poll`, `apps/web/app/services/message/room/call`, `apps/web/app/services/message/room/invite`, `apps/web/app/services/message/room/list`
 - `apps/web/app/services/message/room/realtime`, `apps/web/app/services/message/room/role`
 - `apps/web/app/services/message/room` — `WebhookDialogActionMetaMap.ts`, `createRoom.test.ts`, `createUserToRoom.test.ts`, `createWebhook.test.ts`, `getDirectMessageName.test.ts`, `getDirectMessageName.ts`, setCurrentRoomId.test.ts, `setRoomUsers.ts`
+- `apps/web/app/services/message/room` — `checkIsRoomOwner.ts`, `compareLastMessageAtDescending.ts`, `createRoomRole.test.ts`
 - `apps/web/app/services/message` — `roomCategory`, `settings`, `shared`, `slashCommands`
 - `apps/web/app/services/message/user` — `ban`, `createFriend.test.ts`, `createFriendRequest.test.ts`, `createUser.test.ts`, `pair`, `seedFriends.test.ts`, `settings`, `status`
 - `apps/web/app/services/message` — `BroadcastMentionItems.ts`, `CodeBlockExtension.ts`, `CustomEmojiExtension.ts`, `EmojiExtension.ts`, `FilterTypeHasIconMap.ts`, `MentionExtension.ts`, `MentionSuggestion.test.ts`, `MentionSuggestion.ts`, `MessageComponentMap.ts`, `MessageHookMap.ts`, `NotificationTypeLabelMap.ts`, `NotificationTypeMeaningMap.ts`, `RightDrawerComponentMap.ts`, `RightDrawerToggleMap.ts`, `SlashCommandExtension.ts`, `SpoilerExtension.test.ts`, `SpoilerExtension.ts`, `checkIsMessageId.test.ts`, `checkIsMessageId.ts`, `checkIsSameBatch.test.ts`, `checkIsSameBatch.ts`, `constants.ts`, `createOptimisticMessage.ts`, `getBroadcastMentionItems.ts`, `getEarliestScheduledAt.ts`, `getMessageWriteTarget.ts`, `getNewestMessageId.ts`, `getRender.ts`, `getRoleMentionItems.ts`, `getSuggestionListTitle.test.ts`, `getSuggestionListTitle.ts`, `getTypingMessage.test.ts`, `getTypingMessage.ts`, `messageHolderRegistry.ts`, `parseMessageId.test.ts`, `parseMessageId.ts`, `readMemberMentionItems.ts`, `requirePartitionKey.test.ts`, `requirePartitionKey.ts`
@@ -49,6 +54,7 @@
 - `apps/web/app/models/message/room`, `apps/web/app/models/message/slashCommands`
 - `apps/web/app/models/message/user`
 - `apps/web/app/models/message` — `BroadcastMentionItem.ts`, `ClientMessage.ts`, `ClientThread.ts`, `ComposerTarget.ts`, `Creator.ts`, `Draft.ts`, `MentionNodeAttributes.ts`, `MessageComponentProps.ts`, `MessageDisplayMode.ts`, `MessageHook.ts`, `RightDrawer.ts`, `RoleMentionItem.ts`, `SuggestionList.ts`
+- `apps/web/app/models/message/search` — `ResultSearch.ts`, `SearchHistoryKey.ts`
 - `apps/web/app/components/Message/Model/FileRenderer`, `apps/web/app/components/Message/Model/Member`, `apps/web/app/components/Message/Model/Message/Editor.test.ts`, `apps/web/app/components/Message/Model/RoomCategory`, `apps/web/app/components/Message/Model/Settings`, `apps/web/app/components/Message/Model/Status`, `apps/web/app/composables/message/room/useNavigateFromRemovedRoom.test.ts`, `apps/web/app/composables/message/room/useNavigateFromRemovedRoom.ts`, `apps/web/app/composables/message/room/useReadMyInvite.test.ts`, `apps/web/app/composables/message/room/useRoomCache.test.ts`, `apps/web/app/composables/message/room/useToggleMemberRole.test.ts`, `apps/web/app/models/message/ForwardDraft.ts`
 - `apps/web/app/services/message/checkIsNewerThanCopy.ts`, `apps/web/app/services/message/role`, `apps/web/app/services/message/room/constants.ts`, `apps/web/app/services/message/room/getRoomPatchEntry.ts`, `apps/web/app/services/message/room/overlay`, `apps/web/app/services/message/room/pushRooms.test.ts`, `apps/web/app/services/message/scheduledMessageJob`, `apps/web/app/services/message/threadFollow`, `apps/web/app/services/message/updateMessageCopy.ts`, `apps/web/app/services/message/userToRoom`, `apps/web/app/store/editor`, `apps/web/app/store/message/room/userToRoom.test.ts`, `apps/web/app/store/realtime`, `apps/web/app/store/richTextEditor`
 - `apps/web/app/assets/message`
