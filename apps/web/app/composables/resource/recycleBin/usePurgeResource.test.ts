@@ -2,7 +2,6 @@
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { usePurgeResource } from "#src/composables/resource/recycleBin/usePurgeResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
@@ -21,11 +20,11 @@ describe(usePurgeResource, () => {
       return resource;
     });
     const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
-    usePurgeResource(refresh)(resource);
+    const purging = usePurgeResource(refresh)(resource);
     await flushPromises();
     const refreshCallsInFlight = refresh.mock.calls.length;
     releasePurge();
-    await waitForSynchronizedFunctions();
+    await purging;
 
     expect(refreshCallsInFlight).toBe(0);
     expect(refresh).toHaveBeenCalledExactlyOnceWith();

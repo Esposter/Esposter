@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { Promisable } from "type-fest";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useRecycleBinDialogStore } from "#src/store/resource/recycleBinDialog";
 
 interface Props {
   // Passed in rather than emitted, so the purge is made against the bin's own rows the moment the confirm is pressed
-  purge: (resource: ResourceInResource) => void;
+  purge: (resource: ResourceInResource) => Promisable<unknown>;
   resource: ResourceInResource;
 }
 
@@ -18,6 +20,7 @@ const { isOpen } = useSingletonDialog(purgingId);
 <template>
   <UiConfirmDialog
     v-model="isOpen"
+    :awaited-because="AwaitedReason.IrreversibleStep"
     confirm-label="Delete forever"
     :confirm-name="resource.name"
     title="Delete forever"
