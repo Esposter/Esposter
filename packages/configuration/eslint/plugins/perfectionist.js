@@ -8,7 +8,7 @@ export default defineConfig({
   ...configuration,
   rules: {
     ...configuration.rules,
-    // oxfmt sorts the imports (`sortImports` in `oxfmtConfiguration.ts`)
+    // Oxfmt sorts the imports (`sortImports` in `oxfmtConfiguration.ts`)
     "perfectionist/sort-imports": "off",
     // A citty command reads its positional arguments in the order they are declared, so the objects inside a
     // `defineCommand` call, and an arguments object shared between commands (named `…Args`), keep the order written

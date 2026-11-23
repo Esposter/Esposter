@@ -30,10 +30,10 @@ interface Props {
   isBagFull: boolean;
   // Each held mail's row, by its id, which the mail's text ids, items and expiry are read from
   mailRows: ReadonlyMap<number, Mail>;
-  // The most mails the mailbox holds, which the count of the held mails is read against
-  maxMailCount: number;
   mails: readonly MailSave[];
   materialDataMap: ReadonlyMap<number, MaterialData>;
+  // The most mails the mailbox holds, which the count of the held mails is read against
+  maxMailCount: number;
   // The name texts of the items, in the reader's language, by their text id
   names: Readonly<Record<string, string>>;
   // The clock the mails' time left is read against

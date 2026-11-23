@@ -11,16 +11,16 @@ const checkIsTypeOnlyValueUse = (identifier: Reference["identifier"]): boolean |
   let parent: ESTree.Node | null = identifier.parent;
   while (parent) {
     switch (parent.type) {
-      case "TSTypeQuery":
-        return true;
+      case "MemberExpression":
+        if (parent.object !== child) return false;
+        break;
       case "TSPropertySignature":
         return parent.key === child;
       case "TSQualifiedName":
         if (parent.left !== child) return false;
         break;
-      case "MemberExpression":
-        if (parent.object !== child) return false;
-        break;
+      case "TSTypeQuery":
+        return true;
       default:
         return false;
     }

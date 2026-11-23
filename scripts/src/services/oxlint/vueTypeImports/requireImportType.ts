@@ -1,4 +1,4 @@
-// oxlint's typescript/consistent-type-imports skips .vue script blocks by its documented scope, since oxlint reads no template; this rule reads the template's words in its place
+// Oxlint's typescript/consistent-type-imports skips .vue script blocks by its documented scope, since oxlint reads no template; this rule reads the template's words in its place
 import type { ESTree, Rule } from "@oxlint/plugins";
 
 import { buildTypeImportFix } from "#src/services/oxlint/vueTypeImports/buildTypeImportFix";

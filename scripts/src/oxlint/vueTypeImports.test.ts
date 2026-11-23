@@ -121,14 +121,14 @@ describe("vueTypeImports", () => {
       violations: 1,
     },
     {
+      fixed: buildComponent(
+        `import type { A } from "a";\ninterface B extends A {\n  b: string;\n}\nconst c: B | undefined = undefined;`,
+      ),
       name: "interfaceHeritage",
       source: buildComponent(
         `import { A } from "a";\ninterface B extends A {\n  b: string;\n}\nconst c: B | undefined = undefined;`,
       ),
       violations: 1,
-      fixed: buildComponent(
-        `import type { A } from "a";\ninterface B extends A {\n  b: string;\n}\nconst c: B | undefined = undefined;`,
-      ),
     },
     // A class's `implements` clause and a type literal's computed key are type positions, as typescript-eslint reads them
     {
