@@ -1,10 +1,7 @@
 import type { ESTree, SourceCode } from "@oxlint/plugins";
 
+import { checkIsDeclarationOrCall } from "#src/services/oxlint/sorting/checkIsUnsortedObject/checkIsDeclarationOrCall";
 import { computeDeclarationName } from "#src/services/oxlint/sorting/computeDeclarationName";
-
-// The ancestors an object is declared or called within, the nodes a declaration name is read from
-const checkIsDeclarationOrCall = (node: ESTree.Node): boolean =>
-  node.type === "VariableDeclarator" || node.type === "CallExpression" || node.type === "Property";
 
 // Whether an object keeps its written order: one anywhere inside a `defineCommand` call, or one declared as `…Args`.
 // A command reads its arguments in declaration order, and an `…Args` object is read the same way.

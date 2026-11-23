@@ -207,6 +207,8 @@
 - `scripts/src/services/oxlint/sorting/computeNodesInCircularDependencies` — `computeDependencyEdges.ts`
 - `scripts/src/services/oxlint/sorting/computeModuleDependencies` — `checkHoldsStaticState.ts`, `checkIsClassElementRelevant.ts`, `checkIsClassOrEnumItem.ts`, `checkIsIgnoredReference.ts`, `checkIsSameNode.ts`, `computeAncestors.ts`, `computeRelatedNames.ts`
 - `scripts/src/services/oxlint/sorting/collectModuleItems` — `describeDeclared.ts`, `describeDeclaration.ts`, `describeStatement.ts`, `getGroupIndex.ts`
+- `scripts/src/services/oxlint/sorting/checkIsNodeInsideDeferredFunction` — `checkIsFunctionDeferred.ts`
+- `scripts/src/services/oxlint/sorting/checkIsUnsortedObject` — `checkIsDeclarationOrCall.ts`
 - `scripts/src/services/oxlint/sorting/computeExpressionNumberValue` — `computeBinaryNumberValue.ts`, `computeUnaryNumberValue.ts`
 - `scripts/src/services/oxlint/sorting/getItemRange` — `checkIsBlockDirective.ts`, `checkIsExportStatement.ts`, `computeBounds.ts`, `computeExportedDeclaration.ts`, `computeFirstDecorator.ts`, `computeLeadingStart.ts`, `getItemTrailer.ts`
 - `scripts/src/services/oxlint/sorting` — `reportUnsorted.ts`, `reportUnsortedByGroup.ts`, `sortNodesByDependencies.ts`, `sortPartitions.ts`, `splitAtImpureItems.ts`, `splitRuns.ts`, `withEvaluated.ts`
