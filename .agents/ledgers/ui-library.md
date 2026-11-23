@@ -48,7 +48,7 @@ Each hit of 4 is read against `UiIconMeaning`: a class with no meaning yet is wr
 
 ```bash
 # 5. a write-named button with no is-pending: the tag names a write verb in its click and binds no pending state
-rg -Pzo '<UiButton\b(?![^>]*is-pending)[^>]*@click="[^"]*\b(save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline|upsert|add|follow|block|invite|kick|ban|vote|like|pin|unpin|confirm|apply|reset|set|move|sync)\w*' --glob '*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts
+rg -Pzo '<UiButton\b(?![^>]*is-pending)[^>]*@click(?:\.\w+)*="[^"]*\b(save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline|upsert|add|follow|block|invite|kick|ban|vote|like|pin|unpin|confirm|apply|reset|set|move|sync)\w*' --glob '*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts
 ```
 
 Each hit of 5 is read for the server write its handler reaches, which the reader sees only once the server answers. A local edit, a dialog's opener and an event the parent writes are not hits here. A write behind a menu item's `onClick` names no verb, so it is read by hand from the menu's items.

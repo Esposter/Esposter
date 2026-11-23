@@ -37,7 +37,7 @@ server answers?** If not, and the button is not a dialog's answer, it binds `is-
 1. A write button with no pending state. A tag's attributes run across lines, so the pattern reads one tag whole:
 
    ```bash
-   rg -U -P --pcre2 -n '<Ui(?:Icon)?Button\b(?![^>]*is-pending)[^>]*@click="(?:async|[^"]*?(?:save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline|block|request))' apps/web/app/components apps/web/app/pages -g '*.vue'
+   rg -U -P --pcre2 -n '<Ui(?:Icon)?Button\b(?![^>]*is-pending)[^>]*@click(?:\.\w+)*="(?:async|[^"]*?(?:save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline|block|request))' apps/web/app/components apps/web/app/pages -g '*.vue'
    ```
 
    Each hit is a question, not a finding: read the write it calls. An optimistic write (`writeOptimistic`), a dialog's answer and a local-only change take no pending state. So does a save the surface queues while one is out, such as the word filter's, since `UiButton`'s pending disables the button the queue needs to stay open. A write reached through a composable's item handler, such as `friendItem.onClick`, matches no pattern, so the unit read is the only check for it.
@@ -57,6 +57,14 @@ server answers?** If not, and the button is not a dialog's answer, it binds `is-
    ```
 
    Each hit is a question: a highlight or a preview that changes nothing a key could reach takes none.
+
+4. A dialog or a button over an awaited write with no reason on it. The store's awaited writes are the functions whose body holds `writeAwaited(` or `executeMutation(`, so the names come first. Recipe 1 reads verbs and misses the rest (`toggleEmoji`, `takeBack`, `deleteRoom`), and a wrapper of one is named by what it calls (`regenerateToken` over `writeIssuedWebhook`), so the list is read, not grepped for a verb:
+
+   ```bash
+   for f in $(git grep -l -E 'writeAwaited\(|executeMutation\(' -- apps/web/app/store apps/web/app/composables | grep -v '\.test\.'); do awk '/^ *(export )?const [A-Za-z_]+ *=/ {name=$0; sub(/^ *(export )?const /,"",name); sub(/ .*/,"",name)} /writeAwaited\(|executeMutation\(/ {print name}' "$f"; done | sort -u
+   ```
+
+   Then each name is read where a component calls it: `rg -n '\bNAME\b' apps/web/app/components apps/web/app/pages -g '*.vue'`. A hit is a dialog (`UiConfirmDialog`, `StyledDialog`, `StyledFormDialog`, `answer(`) that closes on send without its `awaited-because`, or a button with no `is-pending` bound to the write's pending state. A write that shows its change first (an overlay entry, a `writeOptimistic`) is optimistic and takes neither. Two places hold a write the list misses, and both are read by hand: a component's own `executeMutation(` (`git grep -l 'executeMutation(' -- apps/web/app/components apps/web/app/pages`), and a raw awaited call in a handler (`await getResultAsync(...)` or `await $trpc...` behind a confirm), since no store name leads to either.
 
 ## Coverage
 
