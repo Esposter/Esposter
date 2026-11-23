@@ -36,7 +36,7 @@ await runCommand(
       );
       const directory = resolveInvocationPath(args.directory);
       for (const [index, batch] of batches.entries()) {
-        const path = join(directory, formatBatchFileName(index, BATCH_FILE_EXTENSION));
+        const path = join(directory, formatBatchFileName(index, batches.length, BATCH_FILE_EXTENSION));
         writeFileAtomically(path, batch.map((sample) => `${formatLedgerSample(sample)}\n`).join(""));
         console.info(path);
       }

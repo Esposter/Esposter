@@ -79,7 +79,10 @@ await runCommand(
         parseWholeCount(args.findings, "findings", 1),
       );
       for (const [index, batch] of batches.entries())
-        writeFileAtomically(join(fixerDirectory, formatBatchFileName(index, FIXER_UNIT_FILE_EXTENSION)), toJson(batch));
+        writeFileAtomically(
+          join(fixerDirectory, formatBatchFileName(index, batches.length, FIXER_UNIT_FILE_EXTENSION)),
+          toJson(batch),
+        );
     },
   }),
 );
