@@ -103,8 +103,10 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
           `Expected a resolver registered with query, mutation or subscription at "${path.join(".")}"`,
         );
       // The proxy hands its arguments over untyped; `TRPCMsw`'s record type is what checked them at the call site. The
-      // Resolver is the one its procedure type names, which the proxy's plain string type does not carry to the compiler
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the proxy types the resolver as unknown and the type as a string, so the registration's variant is the one its type names
+      // Resolver is the one its procedure type names, which the proxy's plain string type does not carry to the
+      // Compiler
+      // The proxy types the resolver as unknown and the type as a string, so the registration's
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- variant is the one its type names
       register(path.slice(0, -1).join("."), { resolver, type } as ProcedureRegistration);
     }),
   };
