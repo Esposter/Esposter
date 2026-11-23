@@ -1,4 +1,3 @@
-/* oxlint-disable no-template-curly-in-string -- the cases are source text holding a template literal, which is the input under test */
 import type { ESTree } from "@oxlint/plugins";
 
 import { checkIsPureExpression } from "#src/services/oxlint/sorting/checkIsPureExpression";
