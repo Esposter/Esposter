@@ -41,7 +41,7 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
   // `browser`, msw's interceptors resolve their Node entries to nothing
   exportConditions: process.env.VITEST ? [] : ["workerd", "worker", "browser"],
   hooks: {
-    // Nitro's Vite builder, the one Nuxt 5 builds through, dropped the size summary its Rollup builder prints, so each
+    // Nitro's Vite builder, the one Nuxt 5 builds through, prints no size summary, so each
     // Output directory's size is logged once the build is written. Source maps are left out, since they are never uploaded
     compiled: async ({ logger, options: { output } }) => {
       const directorySizes = await Promise.all(
@@ -61,7 +61,7 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
       }
     },
   },
-  // The Workers runtime has no Temporal yet, and server modules read it as they load, so it is installed before the entry
+  // The Workers runtime has no Temporal, and server modules read it as they load, so it is installed before the entry
   polyfills: ["temporal-polyfill/global"],
   preset: "cloudflare_module",
   // A package polyfill is served from its own install under `/polyfills/`, so its version is the lockfile's
