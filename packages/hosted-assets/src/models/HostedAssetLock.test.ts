@@ -1,16 +1,11 @@
 import { hostedAssetLockSchema } from "#src/models/HostedAssetLock";
+import { TEST_SHA256 } from "#src/services/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe("hostedAssetLockSchema", () => {
-  const sha256 = "0".repeat(64);
-  const recordsLock = {
-    indexes: { "books/index": { bytes: 2, extension: ".json", scope: "books", sha256 } },
-    objects: { "stats/characters": { bytes: 3, extension: ".json", scope: "stats", sha256 } },
-  };
-  const filesLock = {
-    indexes: {},
-    objects: { SceneBattleForestBackground: { bytes: 4, extension: ".png", scope: "dungeons", sha256 } },
-  };
+  const object = { bytes: 0, extension: "", scope: " ", sha256: TEST_SHA256 };
+  const recordsLock = { indexes: { "": object }, objects: { " ": object } };
+  const filesLock = { indexes: {}, objects: { "": object } };
 
   test.each([
     ["a product of records", recordsLock],
@@ -24,10 +19,7 @@ describe("hostedAssetLockSchema", () => {
   test("rejects an object whose entry lacks its sha256", () => {
     expect.hasAssertions();
 
-    const lockWithoutHash = {
-      indexes: {},
-      objects: { SceneBattleForestBackground: { bytes: 4, extension: ".png", scope: "dungeons" } },
-    };
+    const lockWithoutHash = { indexes: {}, objects: { "": { bytes: 0, extension: "", scope: " " } } };
 
     expect(hostedAssetLockSchema.safeParse(lockWithoutHash).success).toBe(false);
   });

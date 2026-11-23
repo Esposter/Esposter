@@ -2,8 +2,8 @@ import type { CharacterPackIndex } from "#src/models/character/CharacterPackInde
 
 import { chooseCharacterPackModel } from "#src/services/character/chooseCharacterPackModel";
 import { CHARACTER_MODEL_PATH, CHARACTER_TERMS_PATH } from "#src/services/character/constants";
-import { createCharacterPackCacheStub } from "#src/services/character/createCharacterPackCacheStub.test";
 import { createCharacterPackReader } from "#src/services/character/createCharacterPackReader";
+import { createHostedAssetCacheStub } from "hosted-assets/createHostedAssetCacheStub";
 import { describe, expect, test, vi } from "vitest";
 
 // The real chooser, recorded, so a test sees when the model is chosen
@@ -36,7 +36,7 @@ describe(createCharacterPackReader, () => {
   test("the model is chosen by the first read, not when the reader is made", async () => {
     expect.hasAssertions();
 
-    const cache = createCharacterPackCacheStub();
+    const cache = createHostedAssetCacheStub();
     await cache.put(modelUrl, new Response(modelText));
     const characterPackReader = createCharacterPackReader(cache, gameDataBaseUrl, avatar);
 
@@ -51,7 +51,7 @@ describe(createCharacterPackReader, () => {
   test("a texture the model names is read beside the model's folder", async () => {
     expect.hasAssertions();
 
-    const cache = createCharacterPackCacheStub();
+    const cache = createHostedAssetCacheStub();
     await cache.put(textureUrl, new Response(textureText));
     const characterPackReader = createCharacterPackReader(cache, gameDataBaseUrl, avatar);
 
@@ -63,7 +63,7 @@ describe(createCharacterPackReader, () => {
   test("terms are read from the pack's terms file", async () => {
     expect.hasAssertions();
 
-    const cache = createCharacterPackCacheStub();
+    const cache = createHostedAssetCacheStub();
     await cache.put(termsUrl, new Response(termsText));
     const characterPackReader = createCharacterPackReader(cache, gameDataBaseUrl, avatar);
 
@@ -75,7 +75,7 @@ describe(createCharacterPackReader, () => {
   test("a file the pack does not list is none", async () => {
     expect.hasAssertions();
 
-    const cache = createCharacterPackCacheStub();
+    const cache = createHostedAssetCacheStub();
     const characterPackReader = createCharacterPackReader(cache, gameDataBaseUrl, avatar);
 
     await expect(characterPackReader.readFile("missing.png")).resolves.toBeUndefined();

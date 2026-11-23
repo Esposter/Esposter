@@ -1,7 +1,8 @@
 import type { HostedAssetDownloadFile } from "#src/models/HostedAssetDownloadFile";
 import type { MockInstance } from "vitest";
 
-import { createHostedAssetCacheStub } from "#src/services/createHostedAssetCacheStub.test";
+import { TEST_MODEL_URL, TEST_TERMS_URL } from "#src/services/constants.test";
+import { createHostedAssetCacheStub } from "#src/services/createHostedAssetCacheStub";
 import { downloadHostedAssetFiles } from "#src/services/downloadHostedAssetFiles";
 import { listHeldHostedAssetUrls } from "#src/services/listHeldHostedAssetUrls";
 import { planHostedAssetDownload } from "#src/services/planHostedAssetDownload";
@@ -9,9 +10,8 @@ import { noop } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(downloadHostedAssetFiles, () => {
-  const sha256 = "0".repeat(64);
-  const modelUrl = `http://a.test/characters/1/model.pmx?sha256=${sha256}`;
-  const termsUrl = `http://a.test/characters/1/terms.txt?sha256=${sha256}`;
+  const modelUrl = TEST_MODEL_URL;
+  const termsUrl = TEST_TERMS_URL;
   const modelText = "model";
   const termsText = "terms";
   const failedMessage = "Invalid operation: Read, name: terms.txt, failed after its attempts";

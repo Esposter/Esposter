@@ -2,16 +2,15 @@ import type { HostedAssetPreloadSet } from "#src/models/HostedAssetPreloadSet";
 
 import { useHostedAssetsPreload } from "#src/composables/useHostedAssetsPreload";
 import { HostedAssetPreloadStatus } from "#src/models/HostedAssetPreloadStatus";
-import { createHostedAssetCacheStub } from "#src/services/createHostedAssetCacheStub.test";
+import { TEST_CHANGED_MODEL_URL, TEST_CHANGED_SHA256, TEST_MODEL_URL, TEST_ORIGIN } from "#src/services/constants.test";
+import { createHostedAssetCacheStub } from "#src/services/createHostedAssetCacheStub";
 import { listHeldHostedAssetUrls } from "#src/services/listHeldHostedAssetUrls";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useHostedAssetsPreload, () => {
-  const origin = "http://a.test";
-  const sha256 = "0".repeat(64);
-  const modelUrl = `${origin}/characterPacks/1/model.pmx?sha256=${sha256}`;
+  const modelUrl = TEST_MODEL_URL;
   const modelFile = { bytes: 5, path: "model.pmx", url: modelUrl };
-  const set: HostedAssetPreloadSet = { files: [modelFile], scopePrefixes: [`${origin}/characterPacks/`] };
+  const set: HostedAssetPreloadSet = { files: [modelFile], scopePrefixes: [`${TEST_ORIGIN}/a/`] };
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
@@ -83,8 +82,8 @@ describe(useHostedAssetsPreload, () => {
     expect.hasAssertions();
 
     const cache = createHostedAssetCacheStub();
-    const staleUrl = `${origin}/characterPacks/2/model.pmx?sha256=${"1".repeat(64)}`;
-    const otherProductUrl = `${origin}/dungeons/${"2".repeat(64)}.png`;
+    const staleUrl = TEST_CHANGED_MODEL_URL;
+    const otherProductUrl = `${TEST_ORIGIN}/b/${TEST_CHANGED_SHA256}.png`;
     await cache.put(modelUrl, new Response(null));
     await cache.put(staleUrl, new Response(null));
     await cache.put(otherProductUrl, new Response(null));
@@ -102,7 +101,7 @@ describe(useHostedAssetsPreload, () => {
     expect.hasAssertions();
 
     const cache = createHostedAssetCacheStub();
-    const staleUrl = `${origin}/characterPacks/2/model.pmx?sha256=${"1".repeat(64)}`;
+    const staleUrl = TEST_CHANGED_MODEL_URL;
     await cache.put(modelUrl, new Response(null));
     await cache.put(staleUrl, new Response(null));
     vi.spyOn(cache, "delete").mockRejectedValue(new Error(" "));
@@ -122,7 +121,7 @@ describe(useHostedAssetsPreload, () => {
     expect.hasAssertions();
 
     const cache = createHostedAssetCacheStub();
-    const staleUrl = `${origin}/characterPacks/2/model.pmx?sha256=${"1".repeat(64)}`;
+    const staleUrl = TEST_CHANGED_MODEL_URL;
     await cache.put(staleUrl, new Response(null));
     vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
 
