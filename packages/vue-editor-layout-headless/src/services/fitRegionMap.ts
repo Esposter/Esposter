@@ -1,8 +1,8 @@
 import type { Layout } from "#src/models/Layout";
 import type { Region } from "#src/models/Region";
 
-// The entries of a stored map that name a region of the layout, each value fitted to that region. An entry naming no region is dropped,
-// And so is an entry whose value does not fit its region
+// The entries of a stored map that name a region of the layout, each value fitted to that region. An entry naming no
+// Region is dropped, And so is an entry whose value does not fit its region
 export const fitRegionMap = <TValue>(
   layout: Layout,
   storedMap: Record<string, TValue>,

@@ -13,7 +13,8 @@ export interface ReaderState {
 
 const layoutIdSchema = z.string().max(MAX_LAYOUT_ID_LENGTH);
 
-// The stored shape of a reader state. It is read against a layout by the parse, which drops what the layout does not name
+// The stored shape of a reader state. It is read against a layout by the parse, which drops what the layout does not
+// Name
 export const readerStateSchema: z.ZodObject<{
   regionActivePanelIdMap: z.ZodRecord<z.ZodString, z.ZodString>;
   regionOpenMap: z.ZodRecord<z.ZodString, z.ZodBoolean>;

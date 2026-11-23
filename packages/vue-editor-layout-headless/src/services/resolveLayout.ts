@@ -8,8 +8,8 @@ import type { SizeClass } from "#src/models/SizeClass";
 import { resolvePanels } from "#src/services/resolvePanels";
 import { resolveRegion } from "#src/services/resolveRegion";
 
-// A layout as a reader sees it for a context, a size class and the reader's state. It answers the regions that hold a present panel,
-// In the layout's order, and always the canvas
+// A layout as a reader sees it for a context, a size class and the reader's state. It answers the regions that hold a
+// Present panel, In the layout's order, and always the canvas
 export const resolveLayout = (
   layout: Layout,
   context: Context,

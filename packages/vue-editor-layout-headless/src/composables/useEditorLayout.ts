@@ -11,10 +11,11 @@ import { setActivePanel as baseSetActivePanel } from "#src/services/setActivePan
 import { toggleRegion as baseToggleRegion } from "#src/services/toggleRegion";
 import { computed, shallowRef, toValue } from "vue";
 
-// An editor's layout resolved for its reader. The layout, the context and the size class are read again whenever one changes, so the
-// Resolved layout is always the one for the present state. The reader's state changes only through the three functions here, each of
-// Which answers a new state and leaves the one it was given. The state starts as the one passed in, which the app reads back from its
-// Store through parseReaderState, and the app stores the state this composable exposes
+// An editor's layout resolved for its reader. The layout, the context and the size class are read again whenever one
+// Changes, so the Resolved layout is always the one for the present state. The reader's state changes only through the
+// Three functions here, each of Which answers a new state and leaves the one it was given. The state starts as the one
+// Passed in, which the app reads back from its Store through parseReaderState, and the app stores the state this
+// Composable exposes
 export const useEditorLayout = (
   layout: MaybeRefOrGetter<Layout>,
   context: MaybeRefOrGetter<Context>,

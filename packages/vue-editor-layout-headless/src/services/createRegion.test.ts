@@ -6,7 +6,8 @@ import { RegionPresentation } from "#src/models/RegionPresentation";
 import { SizeClass } from "#src/models/SizeClass";
 import { describe } from "vitest";
 
-// A docked region at the start edge, sized from one to three with a default of two. A test overrides the fields it reads
+// A docked region at the start edge, sized from one to three with a default of two. A test overrides the fields it
+// Reads
 export const createRegion = (overrides: Partial<Region> = {}): Region => ({
   defaultSize: 2,
   edge: RegionEdge.Start,
