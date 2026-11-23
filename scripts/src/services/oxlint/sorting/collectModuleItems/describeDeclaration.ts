@@ -4,10 +4,7 @@ import type { ESTree } from "@oxlint/plugins";
 import { describeDeclared } from "#src/services/oxlint/sorting/collectModuleItems/describeDeclared";
 
 // A declaration's description, where an unnamed class or any other statement only ends a partition
-export const describeDeclaration = (
-  declaration: ESTree.Node,
-  isExported: boolean,
-): StatementDescription | undefined => {
+export const describeDeclaration = (declaration: ESTree.Node, isExported: boolean): StatementDescription => {
   switch (declaration.type) {
     case "ClassDeclaration":
       return describeDeclared("class", declaration.id?.name, declaration.declare, isExported);
