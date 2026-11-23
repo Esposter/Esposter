@@ -62,7 +62,7 @@ Check: the screen opens once its names, tables and first view have loaded.
 Your host must serve two sets of files:
 
 - The region data, at `region-data-base-url`.
-- Every game-data record, at `game-data-base-url`. Each object and index entry that `gameDataLock.json` names is served as `<base>/<sha256>.json`.
+- Every game-data record, at `game-data-base-url`. Each object and index entry that `gameDataLock.json` names is served as `<base>/<key>/<sha256>.json`, where `<key>` is the key it is listed under; an index entry is listed under its index's key.
 
 Allow CORS for your page's origin. Esposter's own accounts admit only Esposter's origins. Another host must publish its own copy.
 
