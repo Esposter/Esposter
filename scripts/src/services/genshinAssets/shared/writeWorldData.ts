@@ -1,5 +1,6 @@
-import { GENSHIN_ASSETS_PRODUCER_PATHS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { GENSHIN_ASSETS_PRODUCER_PATHS } from "#src/services/genshinAssets/shared/constants";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { join } from "node:path";
 

@@ -1,4 +1,4 @@
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { globSync } from "node:fs";
 import { readFile } from "node:fs/promises";

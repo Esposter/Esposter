@@ -1,4 +1,4 @@
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { relative, sep } from "node:path";
 
 // The data file's key in the lock: its path under the data folder, with '/' separators and without `.json`

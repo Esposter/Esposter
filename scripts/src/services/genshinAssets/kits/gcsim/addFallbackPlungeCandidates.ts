@@ -2,11 +2,8 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
-import {
-  GCSIM_PLUNGE_COLLISION_HITBOX_NAME,
-  GCSIM_PLUNGE_LANDINGS,
-  KIT_LENGTH_KEY,
-} from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_PLUNGE_COLLISION_HITBOX_NAME, KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_PLUNGE_LANDINGS } from "#src/services/genshinAssets/kits/gcsim/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { readHitmarkSpread } from "#src/services/genshinAssets/kits/gcsim/readHitmarkSpread";

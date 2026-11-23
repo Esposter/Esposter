@@ -33,6 +33,8 @@ export const CHILD_PROCESS_TIMEOUT_MS: number = Temporal.Duration.from({ minutes
 // Was, and it is wrong the first time the file counting it moves a directory. The walk-up to the manifest survives
 // That move.
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
+// Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
+export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
 // The folder under the data root that holds the parity tooling's data, which the parity and fleet defaults both derive from
 export const PARITY_FOLDER_NAME = "genshin-parity";
 // The repository's own formatter, run as its binary over each JSON file a script writes. Its configuration is the root's,

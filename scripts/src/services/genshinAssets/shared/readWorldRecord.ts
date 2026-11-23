@@ -1,6 +1,6 @@
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readGameVersion } from "#src/services/genshinAssets/shared/readGameVersion";
 import { readVouchedFileProvenance } from "#src/services/provenance/readVouchedFileProvenance";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 

@@ -1,7 +1,8 @@
 import { AGE_RATING_KEY, CATALOGUE_KEY, DOMAIN_CHALLENGE_LEVELS_KEY } from "#src/services/gameData/constants";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
-import { CATALOGUE_PATH, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { CATALOGUE_PATH } from "#src/services/genshinAssets/shared/constants";
 import { readRegionGroundFiles } from "#src/services/genshinAssets/shared/readRegionGroundFiles";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";

@@ -1,10 +1,10 @@
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { collectNameTextIds } from "#src/services/genshinText/collectNameTextIds";
 import { PUBLISHED_READ_BATCH_SIZE, TEXT_GAME_DATASETS } from "#src/services/genshinText/constants";
 import { toDataFileKey } from "#src/services/genshinText/toDataFileKey";
 import { walkJsonFiles } from "#src/services/genshinText/walkJsonFiles";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { chunk, takeOne } from "@esposter/shared";
 import { readFileSync } from "node:fs";

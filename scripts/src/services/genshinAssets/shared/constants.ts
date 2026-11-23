@@ -25,7 +25,7 @@ import {
   PUBLISH_DIRECTORY_NAME,
   TOOLS_DIRECTORY,
 } from "#src/services/recreation/animeStudio/constants";
-import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { CACHE_ROOT, WINDOWS_ANIMESTUDIO_DIRECTORY } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
@@ -325,8 +325,6 @@ export const DECOMPILER_ARCHIVE_SHA256 = "5e72e067dfcb15c36f106efa74d805055eec53
 export const DECOMPILER_DIRECTORY: string = join(CACHE_ROOT, "3dmigoto");
 // How many programs one run of the decompiler is handed, so their names stay well within Windows' command line
 export const DECOMPILER_BATCH_SIZE = 200;
-// Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
-export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
 // The catalogue's file in the world data, the regions, areas and subareas people edit and `fitAreaOutlines` outlines
 export const CATALOGUE_FILE = "catalogue.json";
 // The catalogue read from the world data, its file joined to the directory every reader of it shares

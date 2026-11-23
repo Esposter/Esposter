@@ -1,8 +1,8 @@
 import type { PlaceLandmark } from "genshin-world";
 
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readRegionFilenames } from "#src/services/genshinAssets/shared/readRegionFilenames";
 import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { join } from "node:path";
 

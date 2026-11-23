@@ -1,8 +1,8 @@
 import type { writeStampedFiles as baseWriteStampedFiles } from "#src/services/provenance/writeStampedFiles";
 
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { takeOne } from "@esposter/shared";
 import { join } from "node:path";

@@ -1,6 +1,6 @@
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { readPublishedGameDataObject } from "#src/services/gameData/readPublishedGameDataObject";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

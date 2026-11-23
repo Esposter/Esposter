@@ -1,8 +1,8 @@
 import type { RegionCampsData } from "#src/models/genshinAssets/enemies/RegionCampsData";
 
 import { REGIONS_DIRECTORY } from "#src/services/genshinAssets/enemies/constants";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readRegionFilenames } from "#src/services/genshinAssets/shared/readRegionFilenames";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

@@ -1,6 +1,6 @@
 import type { ResidentSpot, ResidentWeekGame } from "genshin-world";
 
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { join } from "node:path";
 
 // The region data files the residents are written into, one per region, beside its landmarks and camps

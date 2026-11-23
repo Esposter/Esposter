@@ -15,7 +15,7 @@ const { WORLD_DATA_ROOT } = await vi.hoisted(async () => {
 const { readGameVersion } = vi.hoisted(() => ({ readGameVersion: vi.fn<() => Promise<string>>() }));
 
 vi.mock(import("#src/services/genshinAssets/shared/readGameVersion"), () => ({ readGameVersion }));
-vi.mock(import("#src/services/genshinAssets/shared/constants"), async (importOriginal) => {
+vi.mock(import("#src/services/shared/constants"), async (importOriginal) => {
   const { join: joinPath } = await import("node:path");
   return { ...(await importOriginal()), WORLD_DATA_DIRECTORY: joinPath(WORLD_DATA_ROOT, "data") };
 });

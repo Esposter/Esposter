@@ -10,7 +10,7 @@ import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
-import { WORLD_AREAS_TABLE_NAME, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { WORLD_AREAS_TABLE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { readWorldBaseGrounds } from "#src/services/genshinAssets/shared/readWorldBaseGrounds";
 import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
@@ -20,6 +20,7 @@ import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrig
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
+import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
