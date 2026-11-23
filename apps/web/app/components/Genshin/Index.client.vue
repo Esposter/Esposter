@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GENSHIN_SCENE_EXPORT_BASE_URL, LOADING_STALL_WARNING_SECONDS } from "#shared/services/genshin/constants";
-import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
+import { IS_NUXT_DEVELOPMENT } from "#shared/util/environment/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
@@ -115,7 +115,7 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
         :language="gameText.language"
         player-name=""
         :progress
-        :scene-export-base-url="IS_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : ''"
+        :scene-export-base-url="IS_NUXT_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : ''"
         @begin="isDoorOpened = true"
         @finish="isOpeningShown = false"
         @held="isPacksHeld = true"

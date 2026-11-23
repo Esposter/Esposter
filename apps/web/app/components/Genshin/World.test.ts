@@ -8,11 +8,22 @@ import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+import { WorldScreen } from "genshin-world";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/composables/genshin/useGenshinDevSaveCommands"), () => ({
   useGenshinDevSaveCommands: vi.fn<typeof useGenshinDevSaveCommands>(),
+}));
+
+// The build mode the declared environment sets, which the test reads through a getter so one case can declare a
+// Development build while Nuxt's own development flag stays off, as it does in a production build
+const declaredMode = vi.hoisted(() => ({ isDevelopment: false }));
+vi.mock(import("#shared/util/environment/constants"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  get IS_DEVELOPMENT() {
+    return declaredMode.isDevelopment;
+  },
 }));
 
 // The developer surface on its own, since the world mounts none where the test environment strips its block
@@ -48,7 +59,21 @@ describe("genshinWorld", () => {
 
   afterEach(() => {
     Reflect.deleteProperty(window, "__dev");
+    declaredMode.isDevelopment = false;
     vi.restoreAllMocks();
+  });
+
+  test("a build declared development mounts the world with no scene exports and no tuning", async () => {
+    expect.hasAssertions();
+
+    declaredMode.isDevelopment = true;
+    const component = await mountWorld();
+    await flushPromises();
+
+    const worldScreen = component.findComponent(WorldScreen);
+    expect(worldScreen.exists()).toBe(true);
+    expect(worldScreen.props("sceneExportBaseUrl")).toBe("");
+    expect(worldScreen.props("isTuning")).toBe(false);
   });
 
   test("development build offers the console and the panel", async () => {

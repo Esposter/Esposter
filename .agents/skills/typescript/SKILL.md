@@ -80,7 +80,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Environment Checks
 
-- **Build mode is read through `IS_PRODUCTION`/`IS_DEVELOPMENT`** from `#shared/util/environment/constants`, the one file that reads `import.meta` for it (`no-restricted-syntax`).
+- **Build mode is read through `IS_PRODUCTION`/`IS_DEVELOPMENT`**, and a gate that must match what Nuxt strips or serves under `nuxt dev` alone reads `IS_NUXT_DEVELOPMENT`, from `#shared/util/environment/constants`, the one file that reads `import.meta` for either (`no-restricted-syntax`).
 
 ## Absent Values
 
