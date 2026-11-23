@@ -54,6 +54,12 @@ A convenience call that takes its configuration as an argument often rebuilds ev
 
 A size is counted, never measured by building the thing and reading its length. A text's UTF-8 byte length is `getUtf8ByteLength` (`@esposter/shared`), which encodes into one scratch buffer kept for every call; `encode(text).byteLength` allocates every byte to count them, which a per-cell size paid fifty thousand times in one row insert. Lint reports the encode-to-count shape, and an encode whose bytes are used — a hash, a signature, a body — stays.
 
+Bytes already held are read through a view, never copied out of their buffer: `new Float32Array(x.buffer, x.byteOffset, x.byteLength / Float32Array.BYTES_PER_ELEMENT)` reads the same floats as `.buffer.slice(x.byteOffset, …)`, which `restrictedSourceSyntaxes` bans. A copy stays only where an offset the element size does not divide needs one, and it says so.
+
+## Bound what an outside host can send
+
+A body fetched from the wiki's file host is read through `readWikiFile` (`genshin-persona`), the one reader that refuses a body past `WIKI_FILE_MAX_BYTES` and answers nothing for it. A new read of an outside body goes through a reader that bounds it, rather than a `.arrayBuffer()` of the response.
+
 ## A script's clock is boot, spawns and reads
 
 Measure a script end to end first (`scripts/src/workspace/sweepCommands.bench.md`); what its time is made of, and the timeout a whole-tree suite needs, is in `references/script-clock.md`.
