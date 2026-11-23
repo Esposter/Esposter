@@ -482,6 +482,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/no-unsafe-argument": "off",
     "typescript/no-unsafe-assignment": "off",
     "typescript/no-unsafe-call": "off",
+    // @TODO: https://github.com/oxc-project/tsgolint/issues/1371 — oxlint 1.95 enables this rule through the `pedantic` and
+    // `restriction` categories above, and the type-aware backend does not implement it, so every type-aware run fails on
+    // "unknown rule". Drop the `off` once the backend ships the rule
+    "typescript/no-unsafe-class-instance-assignment": "off",
     "typescript/no-unsafe-enum-comparison": "off",
     "typescript/no-unsafe-member-access": "off",
     "typescript/no-unsafe-return": "off",
