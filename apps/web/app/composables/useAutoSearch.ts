@@ -20,15 +20,22 @@ export const useAutoSearch = (
   let abortController: AbortController | undefined;
   // The query the results on screen came from, rather than the previous query: emptying the box discards those
   // Results, so the same string typed again is a new search even though the string never changed
-  let searchedQuery: string | undefined;
+  const searchedQuery = ref<string | undefined>();
+  // A search is owed from the moment the box holds text the last search did not run for, until it starts
+  // The throttle may hold it back. A failed search is the error state instead, so it is not pending
+  const isSearchOwed = computed(
+    () =>
+      (isIncludeEmptySearchQuery || !isSearchQueryEmpty.value) &&
+      normalizeString(searchQuery.value) !== searchedQuery.value,
+  );
   // The throttle sits on the call rather than on a throttled copy of the query, because emptying the box and
   // Retyping the same string within one window leaves that copy holding the value it already held — a watcher on
   // It would never fire, and the group it feeds would stay permanently empty
   const throttledSearch = useThrottleFn(
     async (sanitizedSearchQuery: string) => {
-      if (sanitizedSearchQuery === searchedQuery || !(isIncludeEmptySearchQuery || sanitizedSearchQuery)) return;
+      if (sanitizedSearchQuery === searchedQuery.value || !(isIncludeEmptySearchQuery || sanitizedSearchQuery)) return;
 
-      searchedQuery = sanitizedSearchQuery;
+      searchedQuery.value = sanitizedSearchQuery;
       abortController?.abort();
       const newAbortController = new AbortController();
       abortController = newAbortController;
@@ -44,7 +51,7 @@ export const useAutoSearch = (
           isPending.value = false;
           isError.value = true;
           // Nothing was rendered for it, so retyping the same query is a retry rather than a repeat
-          searchedQuery = undefined;
+          searchedQuery.value = undefined;
           createErrorAlert(error);
         },
       );
@@ -59,7 +66,7 @@ export const useAutoSearch = (
     isPending.value = false;
     // A failure is about a query that no longer has results on screen, so emptying the box clears it too
     isError.value = false;
-    searchedQuery = undefined;
+    searchedQuery.value = undefined;
     reset();
   });
 
@@ -72,5 +79,5 @@ export const useAutoSearch = (
   );
   // The failed search again, as a retry button asks
   const retry = () => throttledSearch(normalizeString(searchQuery.value));
-  return { isError, isPending, retry };
+  return { isError, isPending: computed(() => isPending.value || (isSearchOwed.value && !isError.value)), retry };
 };

@@ -54,11 +54,11 @@ rg -Pzo '<UiButton\b(?![^>]*is-pending)[^>]*@click(?:\.\w+)*="[^"]*\b(save|delet
 Each hit of 5 is read for the server write its handler reaches, which the reader sees only once the server answers. A local edit, a dialog's opener and an event the parent writes are not hits here. A write behind a menu item's `onClick` names no verb, so it is read by hand from the menu's items.
 
 ```bash
-# 6. a read's empty state with no failure branch: a file that draws an empty state and reads isPending, and never names its error
-for f in $(grep -rlE 'UiEmptyState' --include='*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts); do grep -qE 'isPending|is-pending' "$f" && ! grep -qE '\berror\b|isError|is-error' "$f" && echo "$f"; done
+# 6. a read's empty state with no failure branch: a file that draws an empty state and names no error branch or async body
+for f in $(grep -rlE '<UiEmptyState' --include='*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts); do grep -qE 'UiErrorState|UiAsyncBody' "$f" || echo "$f"; done
 ```
 
-Each hit of 6 is read for the read it draws: a failed read that falls through to the empty state is a hit, and the fix binds the read's error and draws `UiErrorState` ahead of the empty state.
+Each hit of 6 is read for the read it draws: a failed read that falls through to the empty state is a hit, and the fix binds the read's error and draws `UiErrorState` ahead of the empty state. A hit whose read is awaited in its setup and whose parent awaits it first is refuted, since no empty state draws before the read settles. A file that names an error but binds it to a read's result discarded (`await readX();` with no binding) is a hit too.
 
 ```bash
 # 7. a comment naming a focus ring: a text entry takes a fill and no ring, so a comment that gives one a ring names the wrong mark

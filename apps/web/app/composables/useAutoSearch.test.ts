@@ -80,6 +80,26 @@ describe(useAutoSearch, () => {
     expect(searchedQueries).toStrictEqual([searchQueryValue]);
   });
 
+  // A typed query waits out the throttle before its search starts, and a list that reads an empty result there would
+  // Say nothing matches a query nobody has searched yet
+  test("is pending from a typed query until its search lands", async () => {
+    expect.hasAssertions();
+
+    const searchQuery = ref("");
+    const { isPending } = useAutoSearch(searchQuery, { reset: noop, search: () => Promise.resolve() });
+    searchQuery.value = searchQueryValue;
+    await flushPromises();
+    expect(isPending.value).toBe(false);
+
+    searchQuery.value = `${searchQueryValue}b`;
+    await flushPromises();
+    expect(isPending.value).toBe(true);
+
+    await vi.advanceTimersByTimeAsync(AUTO_SEARCH_THROTTLE_MS);
+
+    expect(isPending.value).toBe(false);
+  });
+
   // A failure is about the query the screen showed, and emptying the box is what discards that query's results
   test("clears a failed search's error when the box is emptied", async () => {
     expect.hasAssertions();
