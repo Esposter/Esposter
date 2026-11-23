@@ -121,7 +121,7 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(isSpaceHeld.value).toBe(false);
   });
 
-  // A press on a plain element pans, so the rows that do not pan are not passing for want of a press that reached the handler
+  // A press on a plain element pans, so the rows that do not pan must not pass for want of a press reaching the handler
   test.each([
     { isPanning: true, tagName: "div", title: "space on a plain element pans" },
     { isPanning: false, tagName: "button", title: "space on a focused button presses the button" },
