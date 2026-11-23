@@ -153,7 +153,6 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
         :stat-tables
       />
       <CharacterScreenArtifacts
-        :item-rooms
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         v-model:artifact-notice="artifactNotice"
         v-model:characters="characters"
@@ -164,6 +163,7 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
         v-model:inventory="inventory"
         :character
         :game-text
+        :item-rooms
         :name-text
         :reliquary-sets
         :stat-tables
@@ -200,13 +200,13 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
       />
     </CharacterMenu>
     <CharacterScreenEquip
-      :item-rooms
       v-if="equipSlot && character"
       v-model:characters="characters"
       v-model:inventory="inventory"
       :artifact-slot="equipSlot"
       :character
       :game-text
+      :item-rooms
       :name-text
       :reliquary-sets
       @close="equipSlot = undefined"

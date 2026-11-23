@@ -89,7 +89,6 @@ onMounted(() => {
 
 <template>
   <ExpeditionScreen
-    :item-rooms
     v-if="places && expeditionLimitAdds && characterExpeditionPassives"
     v-model:expeditions="expeditions"
     v-model:inventory="inventory"
@@ -101,6 +100,7 @@ onMounted(() => {
     :down-character-ids
     :expedition-limit-adds
     :game-text
+    :item-rooms
     :material-data-map
     :name-text
     :now

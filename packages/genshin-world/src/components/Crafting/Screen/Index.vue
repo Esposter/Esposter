@@ -197,11 +197,11 @@ const craft = () => {
        and the party's crafter who may pass a talent's extra on to the bag. Its last tab is the Mystic Offering, whose panel
        takes the screen while that tab is picked -->
   <CraftingStrongbox
-    :item-rooms
     v-if="pickedTabId === MYSTIC_OFFERING_TAB_ID"
     :artifact-drop-tables
     :game-text
     :inventory
+    :item-rooms
     :material-data-map
     :names="nameText"
     :random

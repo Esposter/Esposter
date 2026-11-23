@@ -1365,7 +1365,6 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Character]>
         <CharacterScreen
-          :item-rooms
           v-model:characters="characters"
           v-model:wallet="wallet"
           :active-character-id
@@ -1378,6 +1377,7 @@ useWorldSaveSync({
           :initial-tab="CharacterMenuTab.Attributes"
           :inventory
           :is-touch
+          :item-rooms
           :language
           :material-data-map
           :max-stamina="staminaMaximum"
@@ -1428,7 +1428,6 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Wish]>
         <WishScreen
-          :item-rooms
           v-if="records.wishSchedule && records.characterTrials"
           v-model:character-copy-count-map="characterCopyCountMap"
           v-model:characters="characters"
@@ -1437,6 +1436,7 @@ useWorldSaveSync({
           v-model:wallet="wallet"
           :game-text
           :inventory
+          :item-rooms
           :name-text
           :stat-tables
           :get-world-now
@@ -1451,7 +1451,6 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.PaimonsBargains]>
         <PaimonsBargainsScreen
-          :item-rooms
           v-if="records.shopIdShopGoodMap && records.paimonsBargainsRotation"
           v-model:characters="characters"
           v-model:purchases="shopPurchases"
@@ -1461,6 +1460,7 @@ useWorldSaveSync({
           :get-world-now
           :goods="records.shopIdShopGoodMap?.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
           :inventory
+          :item-rooms
           :material-data-map
           :name-text
           :now="worldNow"
@@ -1560,7 +1560,6 @@ useWorldSaveSync({
     />
     <FishingScreen v-if="screenKind === ScreenKind.Fishing" :game-text :view="castView" />
     <ShopScreen
-      :item-rooms
       v-if="screenKind === ScreenKind.Shop && records.shopIdShopGoodMap"
       v-model:purchases="shopPurchases"
       :adventure-rank="rank"
@@ -1568,6 +1567,7 @@ useWorldSaveSync({
       :get-world-now
       :goods="records.shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
+      :item-rooms
       :material-data-map
       :name-text
       :now="worldNow"
@@ -1579,7 +1579,6 @@ useWorldSaveSync({
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <ExpeditionLoader
-      :item-rooms
       v-if="screenKind === ScreenKind.Expedition"
       v-model:expeditions="expeditions"
       :adventure-rank="rank"
@@ -1590,6 +1589,7 @@ useWorldSaveSync({
       :game-data-base-url
       :game-text
       :inventory
+      :item-rooms
       :material-data-map
       :name-text
       :now="worldNow"
@@ -1661,13 +1661,13 @@ useWorldSaveSync({
       @choose="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
     />
     <CookingScreen
-      :item-rooms
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe && records.cookingTalents"
       v-model:progress="cookingProgress"
       v-model:recipe="cookingRecipe"
       :avatar-id="activeCharacterId"
       :game-text
       :inventory
+      :item-rooms
       :material-data-map
       :name-text
       :random="kitContext.random"
@@ -1677,11 +1677,11 @@ useWorldSaveSync({
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <ProcessingScreen
-      :item-rooms
       v-if="screenKind === ScreenKind.Processing && records.processingRecipes"
       v-model:jobs="processingJobs"
       :game-text
       :inventory
+      :item-rooms
       :material-data-map
       :name-text
       :now="getWorldNow"
@@ -1690,7 +1690,6 @@ useWorldSaveSync({
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <CraftingScreen
-      :item-rooms
       v-if="screenKind === ScreenKind.Crafting && records.craftingRecipes && records.craftingStrongboxes"
       v-model:crafted-count-map="craftedCountMap"
       :adventure-rank="rank"
@@ -1700,6 +1699,7 @@ useWorldSaveSync({
       :get-world-now
       :initial-crafter-id="crafting.crafterId"
       :inventory
+      :item-rooms
       :material-data-map
       :name-text
       :now="worldNow"
@@ -1717,7 +1717,6 @@ useWorldSaveSync({
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <ForgeScreen
-      :item-rooms
       v-if="screenKind === ScreenKind.Forge && records.forgeDailyPointCap && records.forgeRecipes"
       v-model:adventure-exp="adventureExp"
       v-model:amount="forgeAmount"
@@ -1733,6 +1732,7 @@ useWorldSaveSync({
       :game-text
       :inventory
       :is-in-realm="false"
+      :item-rooms
       :now="forgeNow"
       :party-character-ids="deployedCharacterIds"
       :resin-param
