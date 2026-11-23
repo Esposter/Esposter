@@ -90,3 +90,7 @@ Task 6.8's own Verify is met by this run. The brief's zero-console-error criteri
 One run (`genshin-bar-run2.json`) froze the bar at 67 from 28 s to 240 s, with every hosted response 200. Its `terrainTileWorker` was blocked by its response twice, and it logged a terrain-worker failure. The next two runs did not freeze, so this is one observation and not yet reproduced.
 
 The first run of the page did not click the title, so no bar was drawn (`genshin-run.json`). A single early click, at 18 s (`genshin-bar-run.json`), did not start the Preparing stage either.
+
+## 6.6: the dev bucket emptied
+
+Before the emptying, the dev `public-genshin-assets` was listed by its top-level prefix against the dev `public-hosted-assets`. Every prefix the game reads held its objects in both; the old bucket's extra objects were versions no lock names. One prefix had no hosted copy: `parityObjects`, the parity loop's five reference objects, which `referencesPackCommand` now writes to the hosted bucket and `restoreManifestFiles` reads from the hosted origin. Each of the five was copied to the dev and prod hosted buckets, its bytes hashed against its name before the write and read back after it, and one answers 200 on both hosted domains. The dev `public-genshin-assets` was then emptied: 8,204 objects deleted, 0 left. The prod bucket waits for `main`.

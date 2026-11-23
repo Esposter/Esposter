@@ -46,3 +46,7 @@ Second visit: the title at 2.2 s, the world after Space.
 - The same three app-level requests, console errors 0, page errors 0.
 
 "A second visit downloads nothing" holds on the deployed origin: no hosted request reached the network on the second visit. The disk cache answered all 87, and the service worker answered none. The worker did not control the second visit: its registration (`sw.js`) went to installing at about 3 s on each visit and never reached active, with `navigator.serviceWorker.controller` null throughout (`sw-state.json`). So this run does not show the worker serving a second visit. Two earlier runs of the same flow (`dungeons-run.json`, `dungeons-run2.json`) gave the same counts.
+
+## 5.1: the dev bucket emptied
+
+The dev `public-dungeons-assets` was emptied once the deployed dev run read every dungeons asset from `hosted.dev.esposter.com`: 53 objects deleted, 0 left. The prod bucket waits for `main`.
