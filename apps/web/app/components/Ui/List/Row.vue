@@ -27,7 +27,8 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
 </script>
 
 <template>
-  <!-- oxlint-disable-next-line a11y/interactive-supports-focus -- the list's roving focus sets the option's tabindex -->
+  <!-- oxlint-disable a11y/interactive-supports-focus -- the list's roving focus sets the option's
+    tabindex -->
   <div
     v-if="isSelected !== undefined"
     :id
@@ -55,6 +56,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
       </template>
     </UiItemContent>
   </div>
+  <!-- oxlint-enable a11y/interactive-supports-focus -->
   <div v-else role="listitem" flex items-center>
     <span v-if="item.hasLeadingSlot" pl-2 flex shrink-0 items-center><slot name="leading" /></span>
     <component

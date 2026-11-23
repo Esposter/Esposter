@@ -67,7 +67,8 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
     ui-guide
     relative
   >
-    <!-- oxlint-disable-next-line a11y/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
+    <!-- oxlint-disable a11y/interactive-supports-focus -- the grid's roving focus sets the cell's
+      tabindex -->
     <div
       v-for="({ slotName, slotStart }, index) of slots"
       :key="index"
@@ -104,6 +105,7 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
         sr-only
       />
     </div>
+    <!-- oxlint-enable a11y/interactive-supports-focus -->
     <div
       v-for="{ count, event, index, slotIndex } of placedEvents"
       :key="event.id"

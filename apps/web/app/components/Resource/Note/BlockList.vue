@@ -23,7 +23,8 @@ defineExpose({ onKeyDown });
     :selected-index
     :title="getSuggestionListTitle('BLOCKS', SuggestionTrigger.Slash, query)"
   >
-    <!-- oxlint-disable-next-line a11y/interactive-supports-focus -- focus stays in the editor, which walks the options -->
+    <!-- oxlint-disable a11y/interactive-supports-focus -- focus stays in the editor, which walks the
+      options -->
     <div
       v-for="({ icon, title }, index) of items"
       :key="title"
@@ -35,5 +36,6 @@ defineExpose({ onKeyDown });
     >
       <UiItemContent :icon :title />
     </div>
+    <!-- oxlint-enable a11y/interactive-supports-focus -->
   </MessageModelMessageSuggestionList>
 </template>

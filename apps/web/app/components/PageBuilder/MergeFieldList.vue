@@ -28,7 +28,8 @@ defineExpose({ onKeyDown });
     :selected-index
     :title="getSuggestionListTitle('MERGE FIELDS', SuggestionTrigger.MergeField, query)"
   >
-    <!-- oxlint-disable-next-line a11y/interactive-supports-focus -- focus stays in the editor, which walks the options -->
+    <!-- oxlint-disable a11y/interactive-supports-focus -- focus stays in the editor, which walks the
+      options -->
     <div
       v-for="(column, index) of items"
       :key="column"
@@ -40,5 +41,6 @@ defineExpose({ onKeyDown });
     >
       <UiItemContent :meaning="UiIconMeaning.Tag" :title="column" />
     </div>
+    <!-- oxlint-enable a11y/interactive-supports-focus -->
   </MessageModelMessageSuggestionList>
 </template>
