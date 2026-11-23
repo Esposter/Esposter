@@ -1,4 +1,4 @@
-// Lua 5.3's instruction set in its numbering (`OpCode` in lopcodes.h); names are spelled out, and each is the
+// Lua 5.3's instruction set in its numbering ("OpCode" in lopcodes.h); names are spelled out, and each is the
 // Member for the same numeric value, so an opcode read from a chunk is named the way the reference names it
 export const LuaOpcode = {
   Move: 0,

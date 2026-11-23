@@ -7,7 +7,7 @@ import {
   WISH_UNLOCK_QUEST_ID,
 } from "#src/services/adventureRank/constants";
 
-// The game's open-state table (`OpenStateConfigData`) sets the main quests each Paimon menu system is finished for.
+// The game's open-state table ("OpenStateConfigData") sets the main quests each Paimon menu system is finished for.
 // The Wish (Gacha, id 31) and the Shop (Mall, id 900) come after quest 2010001.
 // Co-Op Mode comes after quest 35001 as well as its rank (id 49).
 // The Adventurer Handbook's quest 20505 is the game's own: its text ties the Handbook to that quest.

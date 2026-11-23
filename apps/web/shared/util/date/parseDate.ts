@@ -5,7 +5,7 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
 const UTC_DESIGNATOR = "Z";
 const UTC_OFFSET = "+00:00";
-// Dayjs's strict `customParseFormat`, over Temporal: the format is compiled to an anchored regex, so a value
+// Dayjs's strict "customParseFormat", over Temporal: the format is compiled to an anchored regex, so a value
 // With anything before, after or between its parts fails rather than being read partially, and the fields are
 // Handed to Temporal with `overflow: "reject"` so a real calendar decides whether 31 February is a date.
 export const parseDate = (value: string, format: string): Date | undefined => {

@@ -45,8 +45,8 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.BerylRegion]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.BishuiPlain]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.BrightcrownMountains]: DERIVED_WORLD_OPTIONS,
-  // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside `AvatarInfoDescDialog`, the
-  // Details dialog, and `AvatarLevelUpDialog`. A tree that names none of the tabs is the wrong page
+  // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside "AvatarInfoDescDialog", the
+  // Details dialog, and "AvatarLevelUpDialog". A tree that names none of the tabs is the wrong page
   // Its portraits are the textures the character screen's discs take their colour from, so the component exports them by name
   [DerivedAssetComponent.Character]: {
     interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" },
@@ -87,7 +87,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.GavirehLajavard]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.HiisiIsland]: DERIVED_WORLD_OPTIONS,
   // The in-level HUD: its page is the `InLevelMainPage` GameObject, holding the minimap, the party and the skill buttons.
-  // Its anchor is `TeamBtn_MP`, an Animator in no other block, since `GrpMainPage` is in four
+  // Its anchor is "TeamBtn_MP", an Animator in no other block, since `GrpMainPage` is in four
   [DerivedAssetComponent.Hud]: {
     clipPattern: "^Ani_InLevelMainPage_",
     interface: { anchorPattern: "^TeamBtn_MP$", root: "InLevelMainPage" },

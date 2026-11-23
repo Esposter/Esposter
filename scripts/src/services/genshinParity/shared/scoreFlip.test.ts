@@ -6,7 +6,7 @@ describe(scoreFlip, () => {
     expect.hasAssertions();
 
     // A red-green ramp over half blue, and the same with an eight-pixel square of another colour in its middle, scored
-    // By `flip_evaluator.evaluate(reference, test, "LDR")` at its default viewing distance
+    // By "flip_evaluator.evaluate" with (reference, test, "LDR") at its default viewing distance
     const width = 24;
     const height = 16;
     const reference = new Float32Array(width * height * 3);

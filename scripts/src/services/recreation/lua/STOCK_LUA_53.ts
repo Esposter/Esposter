@@ -3,8 +3,8 @@ import type { LuaDialect } from "#src/models/recreation/lua/LuaDialect";
 import { LuaOpcode } from "#src/models/recreation/lua/LuaOpcode";
 import { LuaSizeField } from "#src/models/recreation/lua/LuaSizeField";
 
-// Lua 5.3 as its reference writes it (`lundump.c`'s `DumpHeader`): five size fields, format 0, and opcodes numbered as
-// `lopcodes.h` numbers them, so each maps to itself
+// Lua 5.3 as its reference writes it ("lundump.c"'s "DumpHeader"): five size fields, format 0, and opcodes numbered as
+// "lopcodes.h" numbers them, so each maps to itself
 export const STOCK_LUA_53: LuaDialect = {
   format: 0,
   name: "stock Lua 5.3",

@@ -9,7 +9,7 @@ const NUMBER_REGEX = /^\d+(?:\.\d+)?$/u;
 const HEADING_REGEX = /^;\s*(?<name>\S.*?)\s*$/u;
 
 // The rows of every `{{Advanced Properties}}` template on a wiki talent page, numbered on from one template to the
-// Next: each row's `titleN`, `guN`, `icdtagN` and `poiseN`, the first row's written with no number. A template under a
+// Next: each row's "titleN", "guN", "icdtagN" and "poiseN", the first row's written with no number. A template under a
 // `;name` line carries that name as its rows' heading
 export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[] => {
   const properties: WikiAdvancedProperty[] = [];

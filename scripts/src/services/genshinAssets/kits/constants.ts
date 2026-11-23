@@ -45,7 +45,7 @@ export const GO_COMPOUND_ASSIGNMENT_OPERATORS: readonly string[] = [
   ">>",
   "&^",
 ];
-// The charge level a bow's aimed shot is fired at when its config sets none, gcsim's `attacks.AimParamLv1`, the fully
+// The charge level a bow's aimed shot is fired at when its config sets none, gcsim's "attacks.AimParamLv1", the fully
 // Charged shot
 export const GCSIM_AIM_CHARGE_LEVEL = 1;
 // A value's path in a kit's record: its keys and array indexes joined by dots, `normalAttacks.0.hits.1.poiseDamage`,

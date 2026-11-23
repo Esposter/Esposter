@@ -6,7 +6,7 @@ import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQue
 import { readAbilNames } from "#src/services/genshinAssets/kits/gcsim/readAbilNames";
 
 const FRAME_LIST_REGEX = /^frames\.(?<name>[^.]+)\.(?<index>\d+)$/u;
-// The word a list's name ends with for the hits it holds: `boundlessOriginHitmarks` holds the hits of `boundlessOrigin`
+// The word a list's name ends with for the hits it holds: `boundlessOriginHitmarks` holds the hits of "boundlessOrigin"
 const HIT_WORD_REGEX = /(?:Hitmarks|Hitmark|Hits|Hit)$/u;
 
 // A frame list the kit holds with no named constant of its name takes the delays of the queue calls whose attack an

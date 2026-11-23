@@ -25,7 +25,7 @@ const IS_CI = Boolean(process.env.CI);
 const IS_ENABLED = false;
 const isBenchable = IS_ENABLED && !IS_CI;
 // The cwd is pinned to the repository root rather than inherited: this file's project root is `scripts/`, and a
-// `--filter` of `./packages/*` is resolved against the cwd — so an inherited one looks for `scripts/packages/`,
+// `--filter` of `./packages/*` is resolved against the cwd — so an inherited one looks for "scripts/packages/",
 // Matches nothing, and pnpm exits 0 having done nothing. That reads as a workspace with nothing to build, which
 // Is indistinguishable here from a workspace whose packages were all found, and the emptiness only surfaces one
 // Layer up as `bench.compare() requires at least 2 benchmarks, received 0`.

@@ -1,4 +1,4 @@
-// The camel-cased words of a name, `Boundless Origin` as `boundlessOrigin`
+// The camel-cased words of a name, `Boundless Origin` as "boundlessOrigin"
 export const toCamelCase = (text: string): string =>
   text
     .split(/[^A-Za-z0-9]+/u)

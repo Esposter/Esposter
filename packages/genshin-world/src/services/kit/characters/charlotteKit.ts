@@ -119,7 +119,7 @@ export const createCharlotteKitBehaviour = ({
   const snappyMarkHit = readHit("snappyMark");
   const snappyMarkSeconds = readSeconds("snappyMark");
   // Constellation 4 counts each burst hit that lands on an enemy the press marked, and gives energy for it, as gcsim's
-  // `OnEnemyHit` does for each of the burst's initial hit and its Kamera ticks
+  // "OnEnemyHit" does for each of the burst's initial hit and its Kamera ticks
   const burstHitBehaviour: KitHitBehaviour = {
     onStrike: ({ kitEffectState, party }, { combatant }, enemy) => {
       if (combatant.constellationCount < CONSTELLATION_4 || !checkIsSnappyMarked(enemy)) return;

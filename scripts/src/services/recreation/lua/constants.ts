@@ -1,6 +1,6 @@
 import { LuaSizeField } from "#src/models/recreation/lua/LuaSizeField";
 
-// Lua 5.3's binary chunk header (`lundump.c`, `lundump.h`): the signature, the version, the format and the data check bytes
+// Lua 5.3's binary chunk header ("lundump.c", "lundump.h"): the signature, the version, the format and the data check bytes
 // Then the sizes a dialect records, then the integer and float the header proves
 export const LUA_SIGNATURE_BYTES: Uint8Array = Uint8Array.of(0x1b, 0x4c, 0x75, 0x61);
 export const LUA_VERSION = 0x53;

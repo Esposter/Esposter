@@ -5,7 +5,7 @@ runs:
   steps:
     # `pnpm -r` interleaves concurrent packages' output, which a log read after the fact wants contiguous. Set
     # here rather than per workflow because every job that runs pnpm passes through this action. pnpm reads
-    # `PNPM_CONFIG_<SETTING>` (`npm_config_*` is not read). First step, because `GITHUB_ENV` reaches the steps
+    # `PNPM_CONFIG_<SETTING>` (`npm_config_*` is not read). First step, because "GITHUB_ENV" reaches the steps
     # after it.
     - name: 🪵 Keep each package's output contiguous
       shell: bash

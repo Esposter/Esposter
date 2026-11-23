@@ -12,7 +12,7 @@ import { mergeAlias } from "vite";
 const nuxtEnvironmentOptions = getNuxtEnvironmentOptions(import.meta.dirname);
 const { test } = getVitestConfiguration(import.meta.dirname, {
   environmentOptions: nuxtEnvironmentOptions,
-  // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
+  // Cold "setupNuxt()" (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
   // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
   hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
   // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
