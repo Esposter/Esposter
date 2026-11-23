@@ -36,12 +36,12 @@ export const vite: NonNullable<NuxtConfig["vite"]> = {
   },
 };
 
-// Nuxt resolves a client chunk's imported asset against the chunk (`new URL(file, import.meta.url)`, an absolute URL
-// Once read) where the server render writes it through `__buildAssetsURL`, root-relative: every server-rendered
-// `<img>` of an imported asset then hydrated as a mismatch. The client resolves its assets through the same helper
 // The app assets a game or 3D engine loads by URL at runtime: Phaser's dungeons and the three.js scenes' textures
 const ENGINE_ASSET_REGEX = /(?:^|[/\\])assets[/\\](?:dungeons|visual)[/\\]/u;
 
+// Nuxt resolves a client chunk's imported asset against the chunk (`new URL(file, import.meta.url)`, an absolute URL
+// Once read) where the server render writes it through `__buildAssetsURL`, root-relative: every server-rendered
+// `<img>` of an imported asset then hydrated as a mismatch. The client resolves its assets through the same helper
 export const viteHooks: NuxtConfig["hooks"] = {
   "vite:extend": ({ config, nuxt }) => {
     const buildAssetsDirectory = `${nuxt.options.app.buildAssetsDir.replaceAll(/^\/|\/$/gu, "")}/`;
