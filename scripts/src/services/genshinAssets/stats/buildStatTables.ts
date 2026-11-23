@@ -3,6 +3,7 @@ import type { ExcelCurveRow } from "#src/models/genshinAssets/stats/ExcelCurveRo
 import type { ExcelForgeUpdateRow } from "#src/models/genshinAssets/stats/ExcelForgeUpdateRow";
 import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
+import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
@@ -13,6 +14,7 @@ import {
   CHARACTER_EXP_ITEM_USE,
   WEAPON_EXP_ITEM_USE,
 } from "#src/services/genshinAssets/stats/constants";
+import { RELIQUARY_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { getArtifactMainAffixCurves } from "#src/services/genshinAssets/stats/getArtifactMainAffixCurves";
 import { getArtifactMainAffixPools } from "#src/services/genshinAssets/stats/getArtifactMainAffixPools";
 import { getArtifactRarityDatas } from "#src/services/genshinAssets/stats/getArtifactRarityDatas";
@@ -24,6 +26,7 @@ import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCha
 import { compareExperienceDescending, getExpMaterials } from "#src/services/genshinAssets/stats/getExpMaterials";
 import { getMasterlessLevelLifts } from "#src/services/genshinAssets/stats/getMasterlessLevelLifts";
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
+import { toArtifactSlotMainPropDepotMap } from "#src/services/genshinAssets/stats/toArtifactSlotMainPropDepotMap";
 import { toCharacterExpToNext } from "#src/services/genshinAssets/stats/toCharacterExpToNext";
 import { toForgeQueuePlayerLevels } from "#src/services/genshinAssets/stats/toForgeQueuePlayerLevels";
 import { toGrowCurves } from "#src/services/genshinAssets/stats/toGrowCurves";
@@ -53,7 +56,9 @@ export const buildStatTables = (): { notes: string[]; publication: GameDataPubli
   const tableMap = {
     artifactExpMaterials: getExpMaterials(materialRows, ARTIFACT_EXP_ITEM_USE),
     artifactMainAffixCurves: getArtifactMainAffixCurves(notes),
-    artifactMainAffixPools: getArtifactMainAffixPools(),
+    artifactMainAffixPools: getArtifactMainAffixPools(
+      toArtifactSlotMainPropDepotMap(readExcelTable<ExcelReliquaryRow>(RELIQUARY_TABLE_NAME)),
+    ),
     artifactRarities: getArtifactRarityDatas(),
     artifactSets: getArtifactSetDatas(notes),
     characterConstellationKits: getCharacterConstellationKits(notes),

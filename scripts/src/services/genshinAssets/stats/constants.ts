@@ -2,7 +2,7 @@ import { AssociationRegionId } from "#src/models/genshinAssets/stats/Association
 import { QualityTypeRarity } from "#src/models/genshinAssets/stats/QualityTypeRarity";
 import { AVATAR_TALENT_DIRECTORY, GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { ArtifactSlot, DestroyRule, Element, GameDataset, WeaponType } from "genshin-world";
+import { DestroyRule, Element, GameDataset, WeaponType } from "genshin-world";
 import { join } from "node:path";
 
 // The world package's generated folder, which holds the committed loader maps
@@ -51,14 +51,6 @@ export const ElementNameSet: ReadonlySet<string> = new Set<string>(Object.values
 // The five kinds of weapon the open world gives a character, as the game's tables spell them. The tables hold a sixth, the
 // Crossbow, wielded only by the Traveler's discarded shooter forms, so a character or weapon of it is no one's to play
 export const WeaponTypeNameSet: ReadonlySet<string> = new Set<string>(Object.values(WeaponType));
-// The depot each slot's standard pieces draw their main affix from, the depot holding that slot's own attributes
-export const ArtifactSlotMainPropDepotMap: Readonly<Record<ArtifactSlot, number>> = {
-  [ArtifactSlot.CircletOfLogos]: 3000,
-  [ArtifactSlot.FlowerOfLife]: 4000,
-  [ArtifactSlot.GobletOfEonothem]: 5000,
-  [ArtifactSlot.PlumeOfDeath]: 2000,
-  [ArtifactSlot.SandsOfEon]: 1000,
-};
 // The depot each rarity's standard pieces draw their minor affixes from, the others being the events' and bosses' own
 export const ArtifactRarityAffixDepotMap: ReadonlyMap<number, number> = new Map([
   [1, 101],
