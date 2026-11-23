@@ -171,8 +171,9 @@ describe(useGridLayout, () => {
 
     return { grid: gridLayout, onCommit, setItems, wrapper };
   };
-  // The palette sits outside every grid, so an entry is dragged in from a plain element that starts the drag on a press.
-  // The returned dispatch fires a pointer event of the given type at that element, and onDrop is the callback the drop calls
+  // The palette sits outside every grid, so an entry is dragged in from a plain element that starts the drag on a
+  // Press. The returned dispatch fires a pointer event of the given type at that element, and onDrop is the callback
+  // The drop calls
   const mountPalette = (item: TestItem, checkIsRefused?: GridRefusal) => {
     const palette = document.createElement("div");
     document.body.append(palette);
@@ -188,8 +189,8 @@ describe(useGridLayout, () => {
     return { dispatch, onDrop };
   };
 
-  // An inner grid is a component of its own, so its root is mounted and registered as a grid inside an item is, and the outer
-  // Grid's tile holds it, so a press on the inner tile bubbles up through the outer tile too
+  // An inner grid is a component of its own, so its root is mounted and registered as a grid inside an item is, and the
+  // Outer Grid's tile holds it, so a press on the inner tile bubbles up through the outer tile too
   const mountNestedGrids = () => {
     const innerCommit = vi.fn<(commit: GridCommit) => void>();
     const outerCommit = vi.fn<(commit: GridCommit) => void>();
@@ -252,7 +253,8 @@ describe(useGridLayout, () => {
   };
 
   beforeEach(() => {
-    // The DOM here hits nothing and has no elementsFromPoint to spy on, so a test stands one in for the browser's hit list
+    // The DOM here hits nothing and has no elementsFromPoint to spy on, so a test stands one in for the browser's hit
+    // List
     document.elementsFromPoint = () => [];
     // A DOM without layout never reports the grid's width, so the observer reports the width the test lays it out at
     vi.stubGlobal(
@@ -1076,7 +1078,8 @@ describe(useGridLayout, () => {
   test("a palette entry a grid refuses is neither previewed nor dropped", async () => {
     expect.hasAssertions();
 
-    // The landing would push the item already in the grid down a row, but the entry is refused before anything is laid out
+    // The landing would push the item already in the grid down a row, but the entry is refused before anything is laid
+    // Out
     const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }] });
     await flushPromises();
     const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 }, () => true);
@@ -1410,7 +1413,8 @@ describe(useGridLayout, () => {
 
     expect(target.grid.value?.placeholder.value).toBeDefined();
 
-    // A live update that removes the source's group unmounts its grid while a drag held over another grid is in progress
+    // A live update that removes the source's group unmounts its grid while a drag held over another grid is in
+    // Progress
     source.wrapper.unmount();
 
     expect(target.grid.value?.placeholder.value).toBeUndefined();

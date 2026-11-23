@@ -52,7 +52,8 @@ describe(compactLayout, () => {
   test("an item left overlapping under no compaction moves down until it clears", () => {
     expect.hasAssertions();
 
-    // The layout a push leaves when b is moved onto a's rows, so b is lower than a's bottom edge and must not stay within it
+    // The layout a push leaves when b is moved onto a's rows, so b is lower than a's bottom edge and must not stay
+    // Within it
     expect(
       compactLayout(
         [

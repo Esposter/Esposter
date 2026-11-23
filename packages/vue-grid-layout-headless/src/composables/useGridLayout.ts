@@ -32,22 +32,24 @@ import { checkChangesHeight } from "#src/placement/checkChangesHeight";
 import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue, watch } from "vue";
 
-// The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout as
-// The pointer moves, and the release writes the cells the drag changed, once. The consumer draws the returned tiles and
-// Binds each item's press to startGesture, and the grid's element is the root the pointer is followed across
+// The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout
+// As The pointer moves, and the release writes the cells the drag changed, once. The consumer draws the returned tiles
+// And Binds each item's press to startGesture, and the grid's element is the root the pointer is followed across
 export const useGridLayout = <T extends GridItem>(
   root: Readonly<ShallowRef<HTMLElement | null>>,
   options: MaybeRefOrGetter<GridLayoutOptions<T>>,
 ): GridLayout<T> => {
   const getOptions = () => toValue(options);
-  // The ids of the items the consumer marks solid, which no other item's drag displaces, so a landing over one is refused
+  // The ids of the items the consumer marks solid, which no other item's drag displaces, so a landing over one is
+  // Refused
   const solidIds = computed(() => {
     const { checkIsSolid, items } = getOptions();
     return new Set(checkIsSolid ? items.filter((item) => checkIsSolid(item)).map(({ id }) => id) : []);
   });
   const width = ref(0);
   const gesture = shallowRef<GridGesture<T>>();
-  // The previews of a drag and of an external drop, held until the release or the clear. A drag's preview wins when both are set
+  // The previews of a drag and of an external drop, held until the release or the clear. A drag's preview wins when
+  // Both are set
   const gesturePreview = shallowRef<GridPreview>();
   const externalPreview = shallowRef<GridPreview>();
   const activePreview = computed(() => gesturePreview.value ?? externalPreview.value);
@@ -104,8 +106,8 @@ export const useGridLayout = <T extends GridItem>(
   const clearPreview = () => {
     externalPreview.value = undefined;
   };
-  // Ending a gesture also ends the drop preview an external drag holds and the one a body drag holds on another grid, since a
-  // Layout replaced under either is no longer the one previewed
+  // Ending a gesture also ends the drop preview an external drag holds and the one a body drag holds on another grid,
+  // Since a Layout replaced under either is no longer the one previewed
   const resetGesture = () => {
     gesture.value?.transfer?.clearPreview();
     gesture.value = undefined;
@@ -118,16 +120,17 @@ export const useGridLayout = <T extends GridItem>(
   watch(layout, () => {
     resetGesture();
   });
-  // The layout a cell lands in, as the collision mode resolves it. A refused cell keeps the grid's own layout, so it is drawn
-  // Where it was attempted and the grid is left as it was
+  // The layout a cell lands in, as the collision mode resolves it. A refused cell keeps the grid's own layout, so it is
+  // Drawn Where it was attempted and the grid is left as it was
   const getPreview = (cell: GridBlock, landingLayout: GridItem[]): GridPreview => {
     const landedLayout = placeMove(landingLayout, cell, getOptions(), solidIds.value);
     if (!landedLayout) return { cell, isRefused: true, layout: layout.value };
 
     return { cell: landedLayout.find(({ id }) => id === cell.id) ?? cell, isRefused: false, layout: landedLayout };
   };
-  // An item dropped with its top-left under the point lands in the columns and below the top, on the layout it is not yet
-  // Part of, so its collisions resolve as a move's do. A grid that refuses the item has no drop preview, so it lands nothing
+  // An item dropped with its top-left under the point lands in the columns and below the top, on the layout it is not
+  // Yet Part of, so its collisions resolve as a move's do. A grid that refuses the item has no drop preview, so it
+  // Lands nothing
   const getDropPreview = (item: GridItem, point: GridPoint): GridPreview | undefined => {
     const element = root.value;
     if (!element || !getOptions().isEditable || getOptions().checkIsRefused?.(item, element)) return undefined;
@@ -141,18 +144,20 @@ export const useGridLayout = <T extends GridItem>(
     return getPreview(cell, [...layout.value, cell]);
   };
 
-  // A body drag is handed to the grid its pointer is over only when the consumer takes a transfer. A resize never leaves its
-  // Own grid, and without onTransfer a body drag stays in its own grid
+  // A body drag is handed to the grid its pointer is over only when the consumer takes a transfer. A resize never
+  // Leaves its Own grid, and without onTransfer a body drag stays in its own grid
   const checkIsTransferable = (activeGesture: GridGesture<T>): boolean =>
     getOptions().onTransfer !== undefined && !activeGesture.edge;
-  // The other grid a body drag is handed to, which is the one under its pointer and never its own, so none is returned for it
+  // The other grid a body drag is handed to, which is the one under its pointer and never its own, so none is returned
+  // For it
   const findTransfer = (activeGesture: GridGesture<T>, point: GridPoint): MountedGrid | undefined => {
     if (!checkIsTransferable(activeGesture)) return undefined;
 
     const grid = findGridAt(point, activeGesture.element);
     return grid?.element === root.value ? undefined : grid;
   };
-  // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
+  // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a
+  // Click
   const startGesture = (event: PointerEvent, item: T, pressedEdge?: ResizeEdge) => {
     // Only the primary button starts a gesture, since a touch or pen contact reports button 0 too
     if (event.button !== 0) return;
@@ -189,7 +194,8 @@ export const useGridLayout = <T extends GridItem>(
     const offset = { x: event.clientX - activeGesture.start.x, y: event.clientY - activeGesture.start.y };
     if (!activeGesture.isStarted && Math.hypot(offset.x, offset.y) < getOptions().dragStartDistance) return;
 
-    // The drag holds the pointer, so nothing else it passes over takes a hover or its events, and a press that stays a click never does
+    // The drag holds the pointer, so nothing else it passes over takes a hover or its events, and a press that stays a
+    // Click never does
     if (!activeGesture.isStarted) activeGesture.element.setPointerCapture(event.pointerId);
     const cell = getGestureCell({
       columnNumber: getOptions().columnNumber,
@@ -201,9 +207,9 @@ export const useGridLayout = <T extends GridItem>(
     });
     const point = { x: event.clientX, y: event.clientY };
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
-    // A body drag over another grid that previews it is shown on that grid and not on its own, so this grid's other items stay
-    // Where they were. Over its own grid, over no grid, or over a grid that refuses it, it previews its own layout, so a
-    // Release over no grid commits the cells its placeholder shows
+    // A body drag over another grid that previews it is shown on that grid and not on its own, so this grid's other
+    // Items stay Where they were. Over its own grid, over no grid, or over a grid that refuses it, it previews its own
+    // Layout, so a Release over no grid commits the cells its placeholder shows
     const transfer = findTransfer(activeGesture, point);
     if (activeGesture.transfer !== transfer) activeGesture.transfer?.clearPreview();
     gesture.value = { ...activeGesture, cell, isStarted: true, offset, transfer };
@@ -219,8 +225,9 @@ export const useGridLayout = <T extends GridItem>(
         ? [{ h: item.h, id: item.id, w: item.w, x: item.x, y: item.y }]
         : [];
     });
-  // A dropped item lands on the cell its drop previews. Under prevent a drop that lands on another item is refused, so nothing is
-  // Committed and no cell is returned. The dropped item is not part of the changes, since the consumer adds it at the cell returned
+  // A dropped item lands on the cell its drop previews. Under prevent a drop that lands on another item is refused, so
+  // Nothing is Committed and no cell is returned. The dropped item is not part of the changes, since the consumer adds
+  // It at the cell returned
   const accept = (item: GridItem, point: GridPoint): GridCell | undefined => {
     const preview = getDropPreview(item, point);
     if (!preview || preview.isRefused) return undefined;
@@ -230,8 +237,8 @@ export const useGridLayout = <T extends GridItem>(
     const { h, w, x, y } = preview.cell;
     return { h, w, x, y };
   };
-  // A keyboard step places an item as a gesture places it, and commits the changes once when it lands. A step that lands where
-  // The item already is, leaves the columns or is refused under prevent changes nothing and returns false
+  // A keyboard step places an item as a gesture places it, and commits the changes once when it lands. A step that
+  // Lands where The item already is, leaves the columns or is refused under prevent changes nothing and returns false
   const stepItem = (id: string, step: GridStep): boolean => {
     const item = layout.value.find((other) => other.id === id);
     if (!getOptions().isEditable || !item) return false;
@@ -247,7 +254,8 @@ export const useGridLayout = <T extends GridItem>(
       x: item.x + dx,
       y: item.y + dy,
     };
-    // A step that would leave the grid, past its top, left or last column, changes nothing rather than being pulled back in
+    // A step that would leave the grid, past its top, left or last column, changes nothing rather than being pulled
+    // Back in
     const isOutside = target.x < 0 || target.y < 0 || target.x + target.w > getOptions().columnNumber;
     if (isOutside || checkIsSameCell(target, item)) return false;
 
@@ -258,9 +266,9 @@ export const useGridLayout = <T extends GridItem>(
     getOptions().onCommit({ changes });
     return true;
   };
-  // A release writes the cells its drag previewed, once. A drag the mode refuses leaves the layout as it was, so it writes
-  // Nothing. A body drag released over another grid is handed to that grid instead, and a release over no grid commits in
-  // Its own grid, as it does with or without onTransfer
+  // A release writes the cells its drag previewed, once. A drag the mode refuses leaves the layout as it was, so it
+  // Writes Nothing. A body drag released over another grid is handed to that grid instead, and a release over no grid
+  // Commits in Its own grid, as it does with or without onTransfer
   const handlePointerUp = (event: PointerEvent) => {
     const activeGesture = gesture.value;
     if (!activeGesture || event.pointerId !== activeGesture.pointerId) return;
@@ -278,7 +286,8 @@ export const useGridLayout = <T extends GridItem>(
     const cell = transfer.accept(activeGesture.origin, point);
     if (cell) getOptions().onTransfer?.({ cell, item: activeGesture.origin, target: transfer.element });
   };
-  // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
+  // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one
+  // Commit
   const reportContentHeight = (id: string, contentHeight: number) => {
     const savedItem = savedItemMap.value.get(id);
     if (!getOptions().isEditable || !savedItem?.isAutoHeight) return;
@@ -301,7 +310,8 @@ export const useGridLayout = <T extends GridItem>(
     if (event.pointerId === gesture.value?.pointerId) resetGesture();
   };
 
-  // The element, its observer and the listeners' controller are held from mount, so unmount detaches what mount attached
+  // The element, its observer and the listeners' controller are held from mount, so unmount detaches what mount
+  // Attached
   const attached = shallowRef<{ controller: AbortController; element: HTMLElement; observer: ResizeObserver }>();
   // Returns whether the grid previews the item at all, which is false where the grid refuses it, so a body drag knows
   // Whether to hold its own layout
@@ -331,7 +341,8 @@ export const useGridLayout = <T extends GridItem>(
     attached.value = { controller, element, observer };
   });
   onUnmounted(() => {
-    // A gesture held when its grid unmounts ends with it, so a body drag held over another grid clears the preview it drew there
+    // A gesture held when its grid unmounts ends with it, so a body drag held over another grid clears the preview it
+    // Drew there
     resetGesture();
     if (!attached.value) return;
 

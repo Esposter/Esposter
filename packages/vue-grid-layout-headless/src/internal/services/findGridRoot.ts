@@ -1,6 +1,7 @@
 import { mountedGrids } from "#src/internal/services/mountedGrids";
 
-// The root of the nearest registered grid at or above an element, so an inner grid's root is found before an outer one's
+// The root of the nearest registered grid at or above an element, so an inner grid's root is found before an outer
+// One's
 export const findGridRoot = (element: Element | null): Element | undefined => {
   let current = element;
   while (current && !mountedGrids.has(current)) current = current.parentElement;

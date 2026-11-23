@@ -4,8 +4,8 @@ import type { GridLayoutOptions } from "#src/models/GridLayoutOptions";
 import { compactLayout } from "#src/internal/placement/compactLayout";
 import { resolveMove } from "#src/internal/placement/resolveMove";
 
-// The layout a move lands in: the target resolved under the collision mode, then compacted in the grid's direction. A move the
-// Mode refuses, or one that lands over or displaces a solid item, has no layout, so the result is undefined
+// The layout a move lands in: the target resolved under the collision mode, then compacted in the grid's direction. A
+// Move the Mode refuses, or one that lands over or displaces a solid item, has no layout, so the result is undefined
 export const placeMove = <T extends GridBlock>(
   layout: T[],
   target: GridBlock,

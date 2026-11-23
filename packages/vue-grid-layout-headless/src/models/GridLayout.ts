@@ -5,7 +5,8 @@ import type { GridTile } from "#src/models/GridTile";
 import type { ResizeEdge } from "#src/models/ResizeEdge";
 import type { ComputedRef } from "vue";
 
-// What a grid hands its consumer: the boxes to draw, the placeholder of a drag, the height the grid needs, and the press and step
+// What a grid hands its consumer: the boxes to draw, the placeholder of a drag, the height the grid needs, and the
+// Press and step
 export interface GridLayout<T extends GridItem = GridItem> {
   gridHeight: ComputedRef<number>;
   placeholder: ComputedRef<GridPlaceholder | undefined>;

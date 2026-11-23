@@ -15,9 +15,9 @@ const ResizeEdgeSidesMap = {
   [ResizeEdge.West]: { isEast: false, isNorth: false, isSouth: false, isWest: true },
 } as const satisfies Record<ResizeEdge, { isEast: boolean; isNorth: boolean; isSouth: boolean; isWest: boolean }>;
 
-// The cell a pointer's travel from where it pressed puts an item on. A move shifts its origin by whole cells and keeps it
-// Within the columns. A resize moves the edges it pulls and keeps the opposite ones in place, and never shrinks below the
-// Least span
+// The cell a pointer's travel from where it pressed puts an item on. A move shifts its origin by whole cells and keeps
+// It Within the columns. A resize moves the edges it pulls and keeps the opposite ones in place, and never shrinks
+// Below the Least span
 export const getGestureCell = ({
   columnNumber,
   columnPitch,
