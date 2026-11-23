@@ -1,4 +1,5 @@
 import type { R2Transport } from "#src/models/cloudflare/R2Transport";
+import type { CloudflareEnvironment } from "@esposter/db-schema";
 
 import { R2_MAX_CONCURRENT_REQUESTS, R2_REQUEST_TIMEOUT_MS } from "#src/services/cloudflare/constants";
 import { readR2Credential } from "#src/services/cloudflare/readR2Credential";
@@ -8,13 +9,13 @@ import { createSemaphore, createSigV4Fetch } from "@esposter/shared";
 // One slot pool for every transport, so the dev and prod clients of a publish draw on the same connections
 const runR2Request = createSemaphore(R2_MAX_CONCURRENT_REQUESTS);
 
-// The one signed transport to R2's S3 API, shared by the tooling's bucket clients. Credentials are read from the
-// Environment when it is made
-export const createR2Transport = (): R2Transport => {
+// The signed transport to R2's S3 API for one environment's buckets. Its token is that environment's own, named `<env>_R2_*`,
+// Since a token reaches only its environment's bucket, it is read from the environment when the transport is made
+export const createR2Transport = (environment: CloudflareEnvironment): R2Transport => {
   const signedFetch = createSigV4Fetch({
-    accessKeyId: readR2Credential("R2_ACCESS_KEY_ID"),
+    accessKeyId: readR2Credential(`${environment}_R2_ACCESS_KEY_ID`),
     region: "auto",
-    secretAccessKey: readR2Credential("R2_SECRET_ACCESS_KEY"),
+    secretAccessKey: readR2Credential(`${environment}_R2_SECRET_ACCESS_KEY`),
     service: "s3",
   });
   return {

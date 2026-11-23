@@ -20,7 +20,7 @@ export const createR2BucketClient = (
   environment: CloudflareEnvironment,
   storageBucket: StorageBucket,
 ): R2BucketClient => {
-  const transport = createR2Transport();
+  const transport = createR2Transport(environment);
   const bucketUrl = `${transport.endpoint}/${getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, storageBucket)}`;
   // Each segment of a key is encoded on its own, so the slashes that separate a dataset from its hash stay separators
   const getObjectUrl = (key: string): string =>
