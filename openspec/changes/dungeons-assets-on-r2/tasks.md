@@ -36,7 +36,7 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 ## 5. Removals
 
 - [ ] 5.1 Retire `public-dungeons-assets` once 6.2's driven run reads the shared domain: empty its objects in both environments, the path-named ones the file-pack generator listed included, then remove its Pulumi resources and its `StorageBucket` member in one commit, lifting protection as the owner's explicit lifecycle change. Verify: `pnpm -C apps/infra infra:preview` shows the two buckets deleted and nothing else, and `git grep -n PublicDungeonsAssets -- apps packages scripts` returns no hit.
-- [ ] 5.2 `git rm` the file-pack generator under `apps/web/scripts/phaser/`, the `phaser:gen` script, and the committed `apps/web/shared/generated/phaser/` files. Verify: `git grep -n "phaser:gen\|generated/phaser\|scripts/phaser" -- ':!openspec'` returns no hit.
+- [x] 5.2 `git rm` the file-pack generator under `apps/web/scripts/phaser/`, the `phaser:gen` script, and the committed `apps/web/shared/generated/phaser/` files. Verify: `git grep -n "phaser:gen\|generated/phaser\|scripts/phaser" -- ':!openspec'` returns no hit.
 - [ ] 5.3 Update `openspec/specs/dungeons/monsters-and-items/design.md` and `openspec/specs/dungeons/scenes-and-input/design.md` to the key map they now describe, and read each against the code. Verify: `pnpm exec openspec validate dungeons-assets-on-r2 --strict` passes.
 
 ## 6. Tests and the browser

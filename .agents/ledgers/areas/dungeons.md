@@ -33,7 +33,6 @@ because a model every group shares belongs to none of their rows.
 - `apps/web/app/models/phaser`
 - `apps/web/app/models/resolvers/dungeons`
 - `apps/web/app/assets/dungeons/data`
-- `apps/web/scripts/phaser`
 - `apps/web/third-party/dungeons`
 - `apps/web/app/assets/dungeons/scene`, `apps/web/app/assets/dungeons/styles`, `apps/web/app/assets/dungeons/tilesets`, `apps/web/app/assets/icons`
 - `apps/web/app/services/dungeons/gridEngine`, `apps/web/app/store/dungeons/title`, `apps/web/app/store/dungeons/world`

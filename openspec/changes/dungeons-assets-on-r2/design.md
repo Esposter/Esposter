@@ -97,7 +97,7 @@ The Phaser pass is near-instant. It runs after every object is held in the cache
 - `git rm` of every hosted binary: the 52 PNG, the 10 MP3, the 1 WebP and the 1 WOFF2 under `apps/web/app/assets/dungeons/`, once the first publish's byte check passes.
 - `git rm` of the asset-map files, the tileset url map with its test, and the blob-url helper, which only the tileset url map imported.
 - The path-named objects the file-pack generator listed in `public-dungeons-assets`, such as `Scene/Battle/ForestBackground.png` (the `url` column of the retired `files.json`), are not copied. They are deleted with the bucket's retirement, once the shared domain serves the game.
-- The file-pack generator: `apps/web/scripts/phaser/` with its `constants.ts`, `index.ts`, `filePack/createFilePack.ts`, its test and `services/remove.ts`; the `phaser:gen` script in `apps/web/package.json`; and the committed `apps/web/shared/generated/phaser/FileKey.ts` and `files.json`, which no file reads.
+- The file-pack generator, its test and its `phaser:gen` script, and the committed `FileKey.ts` and `files.json` it wrote, which no file reads.
 - `openspec/specs/architecture/generated-artifacts/design.md`'s row for `pnpm phaser:gen` is removed by the architecture change, not this one.
 - `openspec/specs/dungeons/monsters-and-items/design.md` and `openspec/specs/dungeons/scenes-and-input/design.md` name the key maps the prior art edited, and read against the code they describe.
 
@@ -122,7 +122,5 @@ The rows naming a file the prior art creates (the save-safe maps, the Preloader'
 | "apps/web/app/services/dungeons/scene/world/TilemapForegroundFileKeyMap.ts" | each map's foreground, read by the pixel-art list                                         |
 | `apps/web/app/services/dungeons/loader/PixelArtTextureKeys.ts`              | the pixel-art texture list, read from the key map                                         |
 | `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`         | reads each tileset's url by its name                                                      |
-| `apps/web/scripts/phaser/`                                                  | the dead file-pack generator, deleted                                                     |
 | `apps/web/scripts/tiled/`                                                   | the `tiled:gen` generator that reads the `.tmx` and `.tiled-project`, which stay in git   |
-| `apps/web/shared/generated/phaser/`                                         | the generated `FileKey` and `files.json`, deleted                                         |
 | `apps/web/shared/generated/tiled/`                                          | the generated typed properties the dungeons game keeps                                    |

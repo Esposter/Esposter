@@ -54,7 +54,6 @@
     "hydration:check": "node scripts/hydration/index.ts",
     "generate": "nuxt generate",
     "generate-pwa-assets": "pnpm dlx pwa-asset-generator https://prodstesposter001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f",
-    "phaser:gen": "node scripts/phaser/index.ts",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
