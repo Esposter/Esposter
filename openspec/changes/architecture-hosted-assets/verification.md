@@ -101,7 +101,7 @@ Before the emptying, the dev `public-genshin-assets` was listed by its top-level
 
 - the worker unchanged: installing for about 20 s, then `installing` and `active` null and no controller;
 - the same worker with that one entry removed: installs, activates and controls the page (about 55 s);
-- the other 1048 entries of that worker all answer 200 on the live site, so removing the manifest entry is the whole difference.
+- the other entries of that worker (1053 less the removed manifest) all answer 200 on the live site, so removing the manifest entry is the whole difference. The per-entry probe results were not kept in the repo, so this record gives no count of the entries probed.
 
 The fix (`packages/unplugin-pwa-nuxt`, the build test asserts it) leaves the app manifest out of the precache. The built `sw.js` of this change names no `_nuxt/builds/meta` entry and 1052 entries in all.
 
