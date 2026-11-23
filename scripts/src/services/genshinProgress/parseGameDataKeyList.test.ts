@@ -8,9 +8,12 @@ describe(parseGameDataKeyList, () => {
     expect.hasAssertions();
 
     const text = [
-      renderConstant(GAME_DATA_KEYS_NAME, ["achievements/achievements", "tips"]),
+      renderConstant(GAME_DATA_KEYS_NAME, [
+        ["achievements/achievements", "achievements/achievements"],
+        ["tips", "tips"],
+      ]),
       "",
-      renderConstant(GAME_DATA_INDEX_KEYS_NAME, ["domains"]),
+      renderConstant(GAME_DATA_INDEX_KEYS_NAME, [["domains", "domains"]]),
     ].join("\n");
 
     expect(parseGameDataKeyList(text)).toStrictEqual({

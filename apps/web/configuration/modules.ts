@@ -9,6 +9,8 @@ import { TRPC_CLIENT_PATH } from "#src/services/trpc/constants";
 const NUXT_SECURITY_MODULE_PATH = "../../packages/nuxt-security-module/src/module.ts";
 const TRESJS_NUXT_MODULE_PATH = "../../packages/tresjs-nuxt/src/module.ts";
 const UNPLUGIN_PWA_NUXT_MODULE_PATH = "../../packages/unplugin-pwa-nuxt/src/module.ts";
+// The dungeons game's key map is written at install by a module of the scripts tree, which reads the committed lock
+const DUNGEONS_KEYS_MODULE_PATH = "../../scripts/src/services/dungeons/dungeonsKeysModule.ts";
 // The tRPC module's options are the router and context the generated handlers import, the endpoints they are
 // Registered at, and the keep-alive the WebSocket handler pings its connections with
 const trpcNuxtModule: [string, ModuleOptions] = [
@@ -36,6 +38,7 @@ export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   NUXT_SECURITY_MODULE_PATH,
   TRESJS_NUXT_MODULE_PATH,
   trpcNuxtModule,
+  DUNGEONS_KEYS_MODULE_PATH,
   UNPLUGIN_PWA_NUXT_MODULE_PATH,
 ];
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).

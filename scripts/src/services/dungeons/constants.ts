@@ -1,5 +1,6 @@
 import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetProduct";
 
+import { DUNGEONS_SCOPE } from "#src/services/dungeons/scope";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { StorageBucket } from "@esposter/db-schema";
 import { join } from "node:path";
@@ -15,7 +16,7 @@ export const DUNGEONS_PRODUCT: HostedAssetProduct = {
   lockPath: DUNGEONS_LOCK_PATH,
   lockRepositoryPath: DUNGEONS_LOCK_REPOSITORY_PATH,
   name: "dungeons",
-  scopes: ["dungeons"],
+  scopes: [DUNGEONS_SCOPE],
   source: {
     folder: "apps/web/app/assets/dungeons",
     kind: "files",

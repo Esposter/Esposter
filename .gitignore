@@ -49,3 +49,6 @@ scheduled_tasks.lock
 .DS_Store
 # A crashed MSYS bash (Git Bash) writes its stack trace into the working directory
 *.stackdump
+
+# The dungeons game's key map, written at install from its committed lock, which the web app's prepare step regenerates
+/apps/web/shared/generated/hostedAssetKeys/

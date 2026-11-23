@@ -1,10 +1,13 @@
-import type { HostedAssetLock } from "hosted-assets";
-
 import { renderConstant } from "#src/services/hostedAssets/renderConstant";
 
-// The nested constants a product's lock keys render as, each key's type the leaf of its path. The product's name prefixes
-// Them: `<name>Keys` and `<name>IndexKeys` hold the keys, and `<name>Key`, `<name>IndexKey` and `<name>KeyOf` type them
-export const getHostedAssetKeysSource = (productName: string, lock: HostedAssetLock): string => {
+// The nested constants a product's keys render as. Each `[name, lockKey]` pair nests its name by segments and holds its
+// Lock key, which a reader looks the lock's entry up by. The product's name prefixes them: `<name>Keys` and `<name>IndexKeys`
+// Hold the keys, and `<name>Key`, `<name>IndexKey` and `<name>KeyOf` type them by the lock keys they hold
+export const getHostedAssetKeysSource = (
+  productName: string,
+  objects: [name: string, lockKey: string][],
+  indexes: [name: string, lockKey: string][],
+): string => {
   const keysName = `${productName}Keys`;
   const indexKeysName = `${productName}IndexKeys`;
   const lockFileName = `${productName.charAt(0).toLowerCase()}${productName.slice(1)}Lock.json`;
@@ -15,9 +18,9 @@ export const getHostedAssetKeysSource = (productName: string, lock: HostedAssetL
     "// The lock's keys as a nested constant, each path nested by its segments.",
     `// ${productName}Key is the union of its leaf paths, which readers may use to name a key.`,
     `// Generated from ${lockFileName} on every publish.`,
-    renderConstant(keysName, Object.keys(lock.objects)),
+    renderConstant(keysName, objects),
     "",
-    renderConstant(indexKeysName, Object.keys(lock.indexes)),
+    renderConstant(indexKeysName, indexes),
     "",
     `export type ${productName}IndexKey = ValueOfDeep<typeof ${indexKeysName}>;`,
     `export type ${productName}Key = ValueOfDeep<typeof ${keysName}>;`,
