@@ -172,12 +172,17 @@ export const useNotificationStore = defineStore("notification", () => {
       { entry: getDismissNotificationEntry(id, new Date()), onError: createErrorAlert },
     );
   };
+  // The panel's notifications go on the server's answer, so a refusal leaves them as they were. The loaded rows are the
+  // Exception: they leave at once as the tombstones the answer confirms, and the overlay brings them back on a refusal
   const dismissNotifications = () => {
-    localNotifications.value = [];
-    snackbarIds.value = [];
-    return writeAwaited(
+    const shownIds = new Set(displayNotifications.value.map(({ id }) => id));
+    const loadedIds = deliveredItems.value.map(({ id }) => id);
+    writeOptimistic(
       async () => {
         setUnreadDeliveredCount(await $trpc.notification.deleteNotifications.mutate());
+        // A notification that arrived while the answer was in flight was not dismissed, so only the shown ones go
+        localNotifications.value = localNotifications.value.filter(({ id }) => !shownIds.has(id));
+        snackbarIds.value = snackbarIds.value.filter((id) => !shownIds.has(id));
         // Every row is a tombstone now, so the loaded page is emptied on the answer. A read would page through the
         // Tombstones, and a topic refetch refreshes only the first page. The reset retires the page a read still in
         // Flight was issued against, so that read lands nothing; the initialize then restores the loaded list with its
@@ -185,21 +190,29 @@ export const useNotificationStore = defineStore("notification", () => {
         const slice = getSlice();
         slice.resetCursorPaginationData();
         slice.initializeCursorPaginationData(createEmptyPage<NotificationInNotification>());
-        return [];
+        return { arrivals: [], confirmed: [] };
       },
-      { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
+      {
+        entry: (keyedView) => {
+          for (const id of loadedIds) getDismissNotificationEntry(id, new Date())(keyedView);
+        },
+        onError: createErrorAlert,
+      },
     );
   };
   const markAllAsRead = () => {
-    // Copy-on-write is the point: the array and every changed row are replaced so the computed re-evaluates
-    localNotifications.value = localNotifications.value.map((notification) => markRead(notification));
     // The statement marks every unread row read, on the loaded pages and beyond them, so the total it clears is
     // The server's one — which is also the only thing that says there is anything to clear at all
-    if (unreadDeliveredCount.value === 0) return Promise.resolve();
+    if (unreadDeliveredCount.value === 0) {
+      localNotifications.value = localNotifications.value.map((notification) => markRead(notification));
+      return Promise.resolve();
+    }
 
     return writeAwaited(
       async () => {
         setUnreadDeliveredCount(await $trpc.notification.updateNotificationsReadStatus.mutate());
+        // Copy-on-write is the point: the array and every changed row are replaced so the computed re-evaluates
+        localNotifications.value = localNotifications.value.map((notification) => markRead(notification));
         // A loaded later page would keep its rows unread, so the first page is read again and replaces the loaded pages
         await readNotifications();
         return [];

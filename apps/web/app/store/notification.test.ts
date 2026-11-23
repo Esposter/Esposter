@@ -6,6 +6,7 @@ import type { NotificationInNotification } from "@esposter/db-schema";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "#src/store/notification";
 import { AppNotificationType, NotificationSeverity } from "@esposter/db-schema";
+import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -97,11 +98,40 @@ describe(useNotificationStore, () => {
     const { createNotification, dismissNotifications } = notificationStore;
     createNotification({ severity: NotificationSeverity.Success, title });
     createNotification({ severity: NotificationSeverity.Error, title });
-    await dismissNotifications();
+    dismissNotifications();
+    await flushPromises();
 
     expect(displayNotifications.value).toStrictEqual([]);
     expect(unreadCount.value).toBe(0);
     expect(snackbarNotification.value).toBeUndefined();
+  });
+
+  // The loaded rows leave the list before the server answers, and a refused answer puts them back. The notifications
+  // The answer would have cleared stay until it lands
+  test("restores the loaded notifications when the server refuses dismiss all, and keeps the rest", async () => {
+    expect.hasAssertions();
+
+    const notification = createDeliveredNotification(v7(), epoch);
+    trpcMsw.notification.readNotifications.query(() => ({ items: [notification], nextCursor: "" }));
+    const { promise: refusal, resolve: refuse } = Promise.withResolvers<void>();
+    trpcMsw.notification.deleteNotifications.mutation(async () => {
+      await refusal;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: title });
+    });
+    const { createNotification, dismissNotifications, readNotifications } = notificationStore;
+    await readNotifications();
+    const localId = createNotification({ severity: NotificationSeverity.Info, title });
+    dismissNotifications();
+    await flushPromises();
+
+    expect(displayNotifications.value.map(({ id }) => id)).toStrictEqual([localId]);
+
+    refuse();
+    await flushPromises();
+
+    expect(displayNotifications.value.map(({ id }) => id).toSorted()).toStrictEqual(
+      [localId, notification.id].toSorted(),
+    );
   });
 
   // The delivered half is paginated, so a badge counting loaded rows reads low for every unread row still on a
@@ -243,6 +273,20 @@ describe(useNotificationStore, () => {
     await readNotifications();
 
     expect(displayNotifications.value).toStrictEqual([]);
+  });
+
+  test("keeps the notifications unread when the server refuses mark all as read", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.notification.updateNotificationsReadStatus.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: title });
+    });
+    const { createNotification, markAllAsRead, setUnreadDeliveredCount } = notificationStore;
+    createNotification({ severity: NotificationSeverity.Info, title });
+    setUnreadDeliveredCount(1);
+    await markAllAsRead();
+
+    expect(unreadCount.value).toBe(2);
   });
 
   test("marks all notifications as read", async () => {
