@@ -6,6 +6,8 @@ import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/cl
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { Save } from "#shared/models/dungeons/data/Save";
 import homeBuilding1 from "#src/assets/dungeons/scene/world/Home/HomeBuilding1/tilemap.json";
+import homeBuilding2 from "#src/assets/dungeons/scene/world/Home/HomeBuilding2/tilemap.json";
+import home from "#src/assets/dungeons/scene/world/Home/tilemap.json";
 import { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
 import { doorInteractionEffect } from "#src/services/dungeons/scene/world/interaction/effect/doorInteractionEffect";
 import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
@@ -44,8 +46,14 @@ const getDoorObject = (
 
 describe(doorInteractionEffect, () => {
   const once = vi.fn<(event: unknown, listener: () => Promise<void>) => void>();
+  // Each map's Tiled JSON is read by its own key, so a door reads the map it names and no other
+  const tilemaps = {
+    [TilemapKey.Home]: home,
+    [TilemapKey.HomeBuilding1]: homeBuilding1,
+    [TilemapKey.HomeBuilding2]: homeBuilding2,
+  };
   const scene = Object.assign(createSceneWithPlugins(), {
-    cache: { tilemap: { get: () => ({ data: homeBuilding1 }) } },
+    cache: { tilemap: { get: (key: TilemapKey) => ({ data: tilemaps[key] }) } },
     cameras: { main: { once } },
   });
 

@@ -10,21 +10,22 @@ describe(loadDungeonsFiles, () => {
   test("setCORS runs before the first file is queued", () => {
     expect.hasAssertions();
 
-    const image = vi.fn<(key: string, url: string) => void>();
+    // Every method that queues a file records into one mock, so the first queued call is the first of any of them
+    const queueFile = vi.fn<(key: string, url: string) => void>();
     const setCORS = vi.fn<(crossOrigin: string) => void>();
     const scene = Object.assign(createSceneWithPlugins(), {
       load: {
-        audio: () => undefined,
-        font: () => undefined,
-        image,
+        audio: queueFile,
+        font: queueFile,
+        image: queueFile,
         setCORS,
-        spritesheet: () => undefined,
-        tilemapTiledJSONExternal: () => undefined,
+        spritesheet: queueFile,
+        tilemapTiledJSONExternal: queueFile,
       },
     });
     loadDungeonsFiles(scene, origin);
 
     expect(setCORS).toHaveBeenCalledExactlyOnceWith("anonymous");
-    expect(takeOne(setCORS.mock.invocationCallOrder, 0)).toBeLessThan(takeOne(image.mock.invocationCallOrder, 0));
+    expect(takeOne(setCORS.mock.invocationCallOrder, 0)).toBeLessThan(takeOne(queueFile.mock.invocationCallOrder, 0));
   });
 });

@@ -27,7 +27,7 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 
 ## 4. Loaders and the Preloader
 
-- [x] 4.1 Rewrite `loadImages`, `loadSounds`, `loadFonts` and `loadSpritesheets` to take keys and read the key map's urls. Verify: a test named after the scenario "A texture the scene draws comes from its hosted url" that `scene.load.image` receives an absolute `https://` url, seen failing first.
+- [x] 4.1 Rewrite `loadImages`, `loadSounds` and `loadSpritesheets` to take keys and read the key map's urls, and load the one font by its key's url in `loadDungeonsFiles`. Verify: a test named after the scenario "A texture the scene draws comes from its hosted url" that `scene.load.image` receives an absolute `https://` url, seen failing first.
 - [x] 4.2 Set `scene.load.setCORS('anonymous')` in the Preloader before the loads start. Verify: a test that the loader's `crossOrigin` reads `anonymous` before its first file, seen failing first.
 - [x] 4.3 Replace the Preloader's `setBaseURL` and `pack` with the generic preloader's bar and the per-file loads. Verify: a driven browser run of the Preloader shows the scenario "A first visit shows the download on the bar", with the bar advancing and the title scene starting after `complete`, and a test named after the scenario "A failed download does not start the game", seen failing first.
 - [x] 4.4 Build the tilemap and tileset urls from the key map in `TiledJSONExternalFile`'s `tilesetURLs`. Verify: `pnpm -C packages/vue-phaserjs exec vitest run src/models/plugins/TiledJSONExternalFile.test.ts` passes with the map built from the key map.

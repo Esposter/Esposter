@@ -1,8 +1,8 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
+import { getDungeonsUrl } from "#src/services/dungeons/loader/getDungeonsUrl";
 import { ImageFileKeys } from "#src/services/dungeons/loader/ImageFileKeys";
-import { loadFonts } from "#src/services/dungeons/loader/loadFonts";
 import { loadImages } from "#src/services/dungeons/loader/loadImages";
 import { loadSounds } from "#src/services/dungeons/loader/loadSounds";
 import { loadSpritesheets } from "#src/services/dungeons/loader/loadSpritesheets";
@@ -14,7 +14,8 @@ import { SoundFileKeys } from "#src/services/dungeons/loader/SoundFileKeys";
 // Because the hosted origin is another one, and a texture WebGL reads needs the CORS response
 export const loadDungeonsFiles = (scene: SceneWithPlugins, origin: string) => {
   scene.load.setCORS("anonymous");
-  loadFonts(scene, origin, [DungeonsKeys.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow]);
+  const fontKey = DungeonsKeys.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow;
+  scene.load.font(fontKey, getDungeonsUrl(origin, fontKey));
   loadSounds(scene, origin, SoundFileKeys);
   loadSpritesheets(scene, origin);
   loadImages(scene, origin, ImageFileKeys);

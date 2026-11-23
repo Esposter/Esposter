@@ -76,7 +76,7 @@ So the Preloader calls `scene.load.setCORS('anonymous')` before it loads, and ev
 
 ### Loaders
 
-- `loadImages`, `loadSounds`, `loadFonts` and `loadSpritesheets` take keys and read each url from the key map, so `scene.load.image(key, url)` keeps its call shape.
+- `loadImages`, `loadSounds` and `loadSpritesheets` take keys and read each url from the key map, so `scene.load.image(key, url)` keeps its call shape. The one font is loaded inline by `loadDungeonsFiles`, from its key's url.
 - `TiledJSONExternalFile` keeps its `tilesetURLs` argument, which the loader reads by tileset name. The map is built from the lock, and each value is the tileset's absolute url. The `toXmlBlobUrl` workaround is removed: a `.tsx` is no longer read as text and turned into a `blob:` url, because it is requested from its own url by XHR.
 - The `tilemap.json` is requested by its absolute url, the same as each tileset. The loader's structured copy of the map's data stays as it is, since a tilemap given as an object still needs it.
 - The `PixelArtTextureKeys` list reads its keys from the generated map, not from the asset maps it replaces.

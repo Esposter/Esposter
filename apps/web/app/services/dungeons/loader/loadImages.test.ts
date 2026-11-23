@@ -1,7 +1,10 @@
 import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
+import { dungeonsLock } from "#src/services/dungeons/loader/dungeonsLock";
 import { loadImages } from "#src/services/dungeons/loader/loadImages";
 import { createSceneWithPlugins } from "#src/services/phaser/createSceneWithPlugins.test";
 import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
+import { getHostedAssetUrl } from "hosted-assets";
 import { describe, expect, test, vi } from "vitest";
 
 describe(loadImages, () => {
@@ -16,7 +19,7 @@ describe(loadImages, () => {
 
     expect(image).toHaveBeenCalledExactlyOnceWith(
       DungeonsKeys.SceneBattleForestBackground,
-      expect.stringMatching(new RegExp(`^${origin}/dungeons/[0-9a-f]{64}\\.png$`, "u")),
+      getHostedAssetUrl(origin, takeOne(dungeonsLock.objects, DungeonsKeys.SceneBattleForestBackground)),
     );
   });
 });
