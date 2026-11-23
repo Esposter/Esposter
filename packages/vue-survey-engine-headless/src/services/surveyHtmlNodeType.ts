@@ -4,7 +4,8 @@ import type { SurveyNodeTypeDefinition } from "#src/models/SurveyNodeTypeDefinit
 import { surveyHtmlNodePropsSchema } from "#src/models/SurveyHtmlNodeProps";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
-// A text block. It is not a question, so its form and its props share one schema of its own props, and its defaults are the schema's own
+// A text block. It is not a question, so its form and its props share one schema of its own props, and its defaults are
+// The schema's own
 export const surveyHtmlNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyHtmlNode>["createDefaultProps"];
   formSchema: typeof surveyHtmlNodePropsSchema;

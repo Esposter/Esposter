@@ -12,7 +12,8 @@ export interface SurveyHtmlNodeProps extends BlockNodeProps {
   visibleIf: string;
 }
 
-// The markup is kept as its owner wrote it, since it is sanitised where it renders, and a copy sanitised here would drift from that
+// The markup is kept as its owner wrote it, since it is sanitised where it renders, and a copy sanitised here would
+// Drift from that
 export const surveyHtmlNodePropsSchema: z.ZodObject<{
   html: z.ZodDefault<z.ZodString>;
   name: typeof surveyNameSchema;

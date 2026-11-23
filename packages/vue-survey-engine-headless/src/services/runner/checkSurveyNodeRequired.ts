@@ -4,8 +4,8 @@ import type { SurveyLogicContext } from "survey-expression";
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
 import { checkIsBlankText } from "@esposter/shared";
 
-// A node is required when its own flag says so or its requirement condition holds, and a node with neither is not required
-// A dynamic panel's template reads its row through the panel scope, which the caller passes
+// A node is required when its own flag says so or its requirement condition holds, and a node with neither is not
+// Required A dynamic panel's template reads its row through the panel scope, which the caller passes
 export const checkSurveyNodeRequired = (
   node: SurveyNode,
   values: SurveyLogicContext["values"],

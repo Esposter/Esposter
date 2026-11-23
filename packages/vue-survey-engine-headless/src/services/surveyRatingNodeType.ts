@@ -4,7 +4,8 @@ import type { SurveyRatingNode } from "#src/models/SurveyRatingNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyRatingNodePropsSchema } from "#src/models/SurveyRatingNodeProps";
 
-// A rating question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults are the schema's own
+// A rating question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults
+// Are the schema's own
 export const surveyRatingNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyRatingNode>["createDefaultProps"];
   formSchema: typeof surveyRatingNodePropsSchema;

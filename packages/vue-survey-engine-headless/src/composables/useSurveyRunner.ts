@@ -23,8 +23,8 @@ import { setSurveyAnswer } from "#src/services/runner/setSurveyAnswer";
 import { v7 } from "uuid";
 import { computed, ref, toValue } from "vue";
 
-// A respondent's session over a survey document: the state the runner's functions move, the errors that block a move and
-// The clock they read. The Vue wrapper over those functions, so the page holds nothing of the survey's own
+// A respondent's session over a survey document: the state the runner's functions move, the errors that block a move
+// And The clock they read. The Vue wrapper over those functions, so the page holds nothing of the survey's own
 export const useSurveyRunner = (
   document: MaybeRefOrGetter<SurveyDocument>,
   {
@@ -57,14 +57,16 @@ export const useSurveyRunner = (
   const pageElements = computed(() => getSurveyPageElements(getDocument(), state.value, now.value));
   const progress = computed(() => getSurveyProgress(getDocument(), state.value, now.value));
   const values = computed(() => getSurveyRunnerValues(getDocument(), state.value.answers, now.value));
-  // A dynamic panel's row shows the template questions its own answers show, read against the same values the page reads
+  // A dynamic panel's row shows the template questions its own answers show, read against the same values the page
+  // Reads
   const getRowViews = (node: SurveyPanelDynamicNode, row: SurveyAnswers): SurveyPanelRowView[] =>
     getSurveyPanelRowViews(node, row, values.value, now.value);
   const visiblePageIndexes = computed(() => getSurveyVisiblePageIndexes(getDocument(), state.value.answers, now.value));
   const isFirstPage = computed(() => visiblePageIndexes.value[0] === state.value.pageIndex);
   const isLastPage = computed(() => checkIsLastSurveyPage(getDocument(), state.value, now.value));
   const isCompleted = computed(() => state.value.isCompleted);
-  // The numbers of the questions on the pages up to the current one, so the current page's numbering carries on from them
+  // The numbers of the questions on the pages up to the current one, so the current page's numbering carries on from
+  // Them
   const questionNumbers = computed(() => {
     const numbers = new Map<string, number>();
     if (!getDocument().root.props.isQuestionNumbersVisible) return numbers;

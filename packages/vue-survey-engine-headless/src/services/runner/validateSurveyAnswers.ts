@@ -14,10 +14,10 @@ import { getSurveyPanelRowAnswers } from "#src/services/runner/getSurveyPanelRow
 import { getSurveyQuestionErrors } from "#src/services/runner/getSurveyQuestionErrors";
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
 
-// The issues a response's answers hold against the document: a name no question holds, an answer to a question that is not shown
-// Each answer a shown question refuses, by the runner's own check of a question
-// A submit also refuses a shown required question that is unanswered
-// A draft checks only the answers it holds, since a respondent may not have reached a required question yet
+// The issues a response's answers hold against the document: a name no question holds, an answer to a question that is
+// Not shown Each answer a shown question refuses, by the runner's own check of a question A submit also refuses a shown
+// Required question that is unanswered A draft checks only the answers it holds, since a respondent may not have
+// Reached a required question yet
 export const validateSurveyAnswers = (
   document: SurveyDocument,
   answers: SurveyAnswers,
@@ -29,7 +29,8 @@ export const validateSurveyAnswers = (
   const views = flattenSurveyElementViews(
     document.content.flatMap((_node, pageIndex) => getSurveyPageViews(document, pageIndex, values, now)),
   );
-  // The questions a page holds, read through the panels that hold them. A dynamic panel's template is not among them, since its names are its own
+  // The questions a page holds, read through the panels that hold them. A dynamic panel's template is not among them,
+  // Since its names are its own
   const questionNames = new Set(
     flattenSurveyQuestions(document.content)
       .filter((node) => checkIsSurveyAnsweringNode(node))
@@ -38,7 +39,8 @@ export const validateSurveyAnswers = (
   const shownNames = new Set(
     views.flatMap(({ node }) => (node.type === SurveyNodeType.Panel ? [] : [node.props.name])),
   );
-  // A submit also carries the calculated values its result includes into the result. They answer no question, so they are accepted as they are
+  // A submit also carries the calculated values its result includes into the result. They answer no question, so they
+  // Are accepted as they are
   const calculatedNames = new Set(
     isSubmit
       ? document.root.props.calculatedValues
@@ -54,7 +56,8 @@ export const validateSurveyAnswers = (
     if (!questionNames.has(name)) issues.push({ message: SURVEY_UNKNOWN_QUESTION_MESSAGE, name });
     else if (isSubmit && !shownNames.has(name)) issues.push({ message: SURVEY_NOT_SHOWN_MESSAGE, name });
   }
-  // A submit refuses a row's answer to a template question the row does not show, as it refuses an answer to a hidden question
+  // A submit refuses a row's answer to a template question the row does not show, as it refuses an answer to a hidden
+  // Question
   for (const { node } of views) {
     if (!isSubmit || node.type !== SurveyNodeType.PanelDynamic) continue;
 

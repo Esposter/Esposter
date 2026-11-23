@@ -7,7 +7,8 @@ import { surveyConditionSchema } from "#src/services/surveyConditionSchema";
 import { surveyNameSchema } from "#src/services/surveyNameSchema";
 import { z } from "zod";
 
-// The props every question holds besides its id, which the node schema adds last, so each kind's own schema spreads the shape below
+// The props every question holds besides its id, which the node schema adds last, so each kind's own schema spreads the
+// Shape below
 export interface SurveyQuestionBaseProps extends BlockNodeProps {
   description: string;
   enableIf: string;

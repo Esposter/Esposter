@@ -5,8 +5,8 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { exhaustiveGuard } from "@esposter/shared";
 import { NO_BLOCK_SLOTS } from "vue-block-editor-headless";
 
-// The children port of a survey: each node type's slots as the typed list of nodes that slot holds, switched on the type tag
-// A node type without a case fails the typecheck at the default, rather than falling through to no slots
+// The children port of a survey: each node type's slots as the typed list of nodes that slot holds, switched on the
+// Type tag A node type without a case fails the typecheck at the default, rather than falling through to no slots
 export const surveyNodeChildren: BlockChildren<SurveyNode> = (node) => {
   switch (node.type) {
     case SurveyNodeType.Boolean:

@@ -2,7 +2,8 @@ import type { SurveyDocumentIssue } from "#src/models/SurveyDocumentIssue";
 
 import { checkSurveyExpression } from "survey-expression";
 
-// Refuses an expression the expression language does not parse, naming the field it sits in and where the parser stopped
+// Refuses an expression the expression language does not parse, naming the field it sits in and where the parser
+// Stopped
 export const checkSurveyExpressionField = (
   source: string,
   label: string,

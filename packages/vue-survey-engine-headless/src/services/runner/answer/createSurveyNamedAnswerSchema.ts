@@ -2,8 +2,8 @@ import { checkSurveyAnswerEmpty } from "#src/services/runner/checkSurveyAnswerEm
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { z } from "zod";
 
-// A record answer keyed by the names of the fields it holds: a name no field declares is refused
-// A field left empty is not checked by its schema, as an empty question is not, and a required one that is empty is refused at its own name
+// A record answer keyed by the names of the fields it holds: a name no field declares is refused A field left empty is
+// Not checked by its schema, as an empty question is not, and a required one that is empty is refused at its own name
 // The fields are a matrix's rows, a dynamic matrix's columns, a panel's questions or a multiple text's items
 export const createSurveyNamedAnswerSchema = (
   fields: { isRequired?: boolean; name: string; schema: z.ZodType }[],

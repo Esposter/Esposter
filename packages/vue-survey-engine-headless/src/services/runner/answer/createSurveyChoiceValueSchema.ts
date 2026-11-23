@@ -8,7 +8,8 @@ import {
 } from "#src/services/runner/constants";
 import { z } from "zod";
 
-// One value a choice question takes: a choice's own value, the none answer when the question has one, or any text when it has an other answer
+// One value a choice question takes: a choice's own value, the none answer when the question has one, or any text when
+// It has an other answer
 export const createSurveyChoiceValueSchema = ({
   choices,
   hasNone = false,

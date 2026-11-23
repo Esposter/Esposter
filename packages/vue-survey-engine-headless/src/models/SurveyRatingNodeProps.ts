@@ -9,7 +9,8 @@ import { z } from "zod";
 const MIN_SURVEY_RATE_COUNT = 2;
 const MAX_SURVEY_RATE_COUNT = 20;
 
-// The props of a rating question: the scale it is drawn as, its first step, how many steps it has and the text at either end
+// The props of a rating question: the scale it is drawn as, its first step, how many steps it has and the text at
+// Either end
 export interface SurveyRatingNodeProps extends SurveyQuestionBaseProps {
   maxRateDescription: string;
   minRateDescription: string;
@@ -18,7 +19,8 @@ export interface SurveyRatingNodeProps extends SurveyQuestionBaseProps {
   rateType: SurveyRatingType;
 }
 
-// A scale of one step asks nothing and one past twenty is more than a respondent reads at a glance, so the step count is bounded
+// A scale of one step asks nothing and one past twenty is more than a respondent reads at a glance, so the step count
+// Is bounded
 export const surveyRatingNodePropsSchema: z.ZodObject<
   {
     maxRateDescription: z.ZodDefault<z.ZodString>;

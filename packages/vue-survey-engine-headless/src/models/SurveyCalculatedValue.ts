@@ -2,7 +2,8 @@ import { surveyExpressionSchema } from "#src/services/surveyExpressionSchema";
 import { surveyNameSchema } from "#src/services/surveyNameSchema";
 import { z } from "zod";
 
-// A value a survey computes from its answers, referred to by its name in an expression, and written into the saved result when it is included
+// A value a survey computes from its answers, referred to by its name in an expression, and written into the saved
+// Result when it is included
 export interface SurveyCalculatedValue {
   expression: string;
   includeIntoResult: boolean;

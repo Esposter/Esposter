@@ -9,8 +9,8 @@ import type { SurveyProgress } from "#src/models/SurveyProgress";
 import type { SurveyRunnerState } from "#src/models/SurveyRunnerState";
 import type { ComputedRef, Ref } from "vue";
 
-// A respondent's session over a survey document, as the Vue composable holds it: the state and the errors in refs, the views
-// Of the current page, and the functions that move the session, each reading the clock when it runs
+// A respondent's session over a survey document, as the Vue composable holds it: the state and the errors in refs, the
+// Views Of the current page, and the functions that move the session, each reading the clock when it runs
 export interface SurveyRunner {
   complete: () => SurveyAnswers | undefined;
   errorByPointer: (pointer: string) => string;

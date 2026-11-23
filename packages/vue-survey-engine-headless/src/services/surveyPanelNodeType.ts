@@ -5,7 +5,8 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyPanelNodePropsSchema } from "#src/models/SurveyPanelNodeProps";
 import { SURVEY_PLACEABLE_NODE_TYPES } from "#src/services/surveyNodeTypeLists";
 
-// A panel, which groups questions and panels under a heading. Its form and its props share one schema, and its defaults are the schema's own
+// A panel, which groups questions and panels under a heading. Its form and its props share one schema, and its defaults
+// Are the schema's own
 export const surveyPanelNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyPanelNode>["createDefaultProps"];
   formSchema: typeof surveyPanelNodePropsSchema;

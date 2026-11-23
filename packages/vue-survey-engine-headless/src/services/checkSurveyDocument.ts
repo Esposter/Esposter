@@ -4,8 +4,8 @@ import type { SurveyDocumentIssue } from "#src/models/SurveyDocumentIssue";
 import { checkSurveyCalculatedValues } from "#src/services/checkSurveyCalculatedValues";
 import { checkSurveyNodes } from "#src/services/checkSurveyNodes";
 
-// The save check of a parsed survey. It returns every refusal in document order rather than the first
-// The calculated values come after the pages, so a value's name is checked against every question name the walk has collected
+// The save check of a parsed survey. It returns every refusal in document order rather than the first The calculated
+// Values come after the pages, so a value's name is checked against every question name the walk has collected
 export const checkSurveyDocument = (document: SurveyDocument): SurveyDocumentIssue[] => {
   const issues: SurveyDocumentIssue[] = [];
   const names = new Set<string>();

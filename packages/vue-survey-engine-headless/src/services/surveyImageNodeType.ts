@@ -4,7 +4,8 @@ import type { SurveyNodeTypeDefinition } from "#src/models/SurveyNodeTypeDefinit
 import { surveyImageNodePropsSchema } from "#src/models/SurveyImageNodeProps";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
-// An image. It is not a question, so its form and its props share one schema of its own props, and its defaults are the schema's own
+// An image. It is not a question, so its form and its props share one schema of its own props, and its defaults are the
+// Schema's own
 export const surveyImageNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyImageNode>["createDefaultProps"];
   formSchema: typeof surveyImageNodePropsSchema;

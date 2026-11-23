@@ -2,7 +2,8 @@ import { SurveyImageFit } from "#src/models/SurveyImageFit";
 import { MAX_SURVEY_IMAGE_SIZE } from "#src/services/constants";
 import { z } from "zod";
 
-// The props of the box a picture is drawn in: how the picture fills it, and its width and height in pixels when it is sized
+// The props of the box a picture is drawn in: how the picture fills it, and its width and height in pixels when it is
+// Sized
 export interface SurveyImageBoxProps {
   imageFit: SurveyImageFit;
   imageHeight?: number | undefined;

@@ -8,14 +8,16 @@ import { MAX_SURVEY_CHOICE_COUNT } from "#src/services/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The props of a matrix question: a grid whose rows and columns are choices, and whose cell an answer holds one column's value in
+// The props of a matrix question: a grid whose rows and columns are choices, and whose cell an answer holds one
+// Column's value in
 export interface SurveyMatrixNodeProps extends SurveyQuestionBaseProps {
   columns: SurveyChoice[];
   isAllRowRequired: boolean;
   rows: SurveyChoice[];
 }
 
-// A row and a column are each told apart by their value, since an answer holds the value and a repeated one would be two answers for one
+// A row and a column are each told apart by their value, since an answer holds the value and a repeated one would be
+// Two answers for one
 export const surveyMatrixNodePropsSchema: z.ZodObject<
   {
     columns: z.ZodDefault<z.ZodArray<typeof surveyChoiceSchema>>;

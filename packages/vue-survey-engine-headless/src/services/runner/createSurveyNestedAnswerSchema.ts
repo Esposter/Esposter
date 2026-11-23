@@ -6,7 +6,8 @@ import { surveyAnswerScalarSchema } from "#src/services/runner/surveyAnswerScala
 import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
-// A list or a record whose entries each hold the value beneath it, so one level of nesting is one call on the level below
+// A list or a record whose entries each hold the value beneath it, so one level of nesting is one call on the level
+// Below
 export const createSurveyNestedAnswerSchema = (inner: z.ZodType<SurveyAnswerValue>): z.ZodType<SurveyAnswerValue> =>
   z.union(
     [

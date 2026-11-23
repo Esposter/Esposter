@@ -12,7 +12,8 @@ import {
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The props of a dynamic matrix question: a set of columns, and a list of rows a respondent adds and removes, each row answered in every column
+// The props of a dynamic matrix question: a set of columns, and a list of rows a respondent adds and removes, each row
+// Answered in every column
 export interface SurveyMatrixDynamicNodeProps extends SurveyQuestionBaseProps {
   addRowText: string;
   columns: SurveyMatrixColumn[];
@@ -22,7 +23,8 @@ export interface SurveyMatrixDynamicNodeProps extends SurveyQuestionBaseProps {
   rowCount: number;
 }
 
-// A column is told apart by its name, since an answer is keyed by the name and a repeated one would overwrite the other's answer
+// A column is told apart by its name, since an answer is keyed by the name and a repeated one would overwrite the
+// Other's answer
 export const surveyMatrixDynamicNodePropsSchema: z.ZodObject<
   {
     addRowText: z.ZodDefault<z.ZodString>;

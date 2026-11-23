@@ -8,10 +8,11 @@ import { getSurveyPanelRowViews } from "#src/services/runner/getSurveyPanelRowVi
 import { surveyAnswerValueSchema } from "#src/services/runner/surveyAnswerValueSchema";
 import { z } from "zod";
 
-// A dynamic panel's answer: a list of panels within the bounds its owner set, each one answering the template's questions
-// A template question a row hides or disables is skipped for that row: it is neither required nor checked, as a top-level one is not
-// The row's own answers are the panel scope its condition reads, beside the survey's values
-// The template's questions are checked by the schema the caller passes in, since this module cannot import the function that imports it
+// A dynamic panel's answer: a list of panels within the bounds its owner set, each one answering the template's
+// Questions A template question a row hides or disables is skipped for that row: it is neither required nor checked, as
+// A top-level one is not The row's own answers are the panel scope its condition reads, beside the survey's values The
+// Template's questions are checked by the schema the caller passes in, since this module cannot import the function
+// That imports it
 export const createSurveyPanelDynamicAnswerSchema = (
   node: SurveyPanelDynamicNode,
   createTemplateAnswerSchema: (node: SurveyTemplateNode) => z.ZodType,
@@ -22,7 +23,8 @@ export const createSurveyPanelDynamicAnswerSchema = (
     name: question.props.name,
     schema: createTemplateAnswerSchema(question),
   }));
-  // Each row's shape is held first, which types its answers for the scope above. Its keys are the template's names, so a key none declares is refused here
+  // Each row's shape is held first, which types its answers for the scope above. Its keys are the template's names, so
+  // A key none declares is refused here
   const rowShapeSchema = z.strictObject(
     Object.fromEntries(templateFields.map(({ name }) => [name, surveyAnswerValueSchema.optional()])),
     { error: SURVEY_INVALID_ANSWER_MESSAGE },

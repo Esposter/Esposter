@@ -3,7 +3,8 @@ import type { SurveyRunnerState } from "#src/models/SurveyRunnerState";
 
 import { getSurveyVisiblePageIndexes } from "#src/services/runner/getSurveyVisiblePageIndexes";
 
-// Moves back to the previous page with an element on it. Moving back never validates, so a respondent can leave a page with errors
+// Moves back to the previous page with an element on it. Moving back never validates, so a respondent can leave a page
+// With errors
 export const goToPreviousSurveyPage = (
   document: SurveyDocument,
   state: SurveyRunnerState,

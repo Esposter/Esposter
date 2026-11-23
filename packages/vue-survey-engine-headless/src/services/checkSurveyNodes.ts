@@ -19,8 +19,9 @@ const checkSurveyVisibility = (visibleIf: string, nodePointer: string, issues: S
   );
 };
 
-// Walks a list of nodes in document order. A page's and a panel's nodes share the names of their scope
-// A dynamic panel's template is a scope of its own, so its questions are named among themselves and may repeat a name outside the panel
+// Walks a list of nodes in document order. A page's and a panel's nodes share the names of their scope A dynamic
+// Panel's template is a scope of its own, so its questions are named among themselves and may repeat a name outside the
+// Panel
 export const checkSurveyNodes = (
   nodes: readonly SurveyNode[],
   listPointer: string,
@@ -69,7 +70,8 @@ export const checkSurveyNodes = (
         checkSurveyQuestion(node.props, nodePointer, names, issues);
         checkSurveyNodes(node.props.template, getBlockPropPointer(nodePointer, "template"), new Set<string>(), issues);
         break;
-      // Every other kind is a question, narrowed by the cases above, so a kind whose props are not a question's fails the typecheck here
+      // Every other kind is a question, narrowed by the cases above, so a kind whose props are not a question's fails
+      // The typecheck here
       default:
         checkSurveyQuestion(node.props, nodePointer, names, issues);
     }

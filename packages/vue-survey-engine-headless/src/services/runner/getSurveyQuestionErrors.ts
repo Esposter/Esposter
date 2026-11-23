@@ -13,9 +13,9 @@ import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessag
 import { checkIsBlankText } from "@esposter/shared";
 import { toSurveyLogicAnswer } from "survey-expression";
 
-// The errors one element holds: a required question left empty, an answer its schema refuses, then each validator that does not hold
-// Only an enabled question is checked, since a disabled one takes no answer
-// The predicate narrows the node to an answering question, which holds a validator list
+// The errors one element holds: a required question left empty, an answer its schema refuses, then each validator that
+// Does not hold Only an enabled question is checked, since a disabled one takes no answer The predicate narrows the
+// Node to an answering question, which holds a validator list
 export const getSurveyQuestionErrors = (
   view: SurveyElementView,
   answers: SurveyAnswers,
@@ -29,7 +29,8 @@ export const getSurveyQuestionErrors = (
   const answer = answers[name];
   // The undefined test narrows the answer past the check, which the predicate's unknown parameter would not
   if (answer === undefined || checkSurveyAnswerEmpty(answer)) {
-    // A multiple text's items carry their own flags, so an unanswered one can hold a required item its question's flag does not
+    // A multiple text's items carry their own flags, so an unanswered one can hold a required item its question's flag
+    // Does not
     const holdsRequiredItem =
       node.type === SurveyNodeType.MultipleText && node.props.items.some((item) => item.isRequired);
     if (!view.isRequired && !holdsRequiredItem) return [];

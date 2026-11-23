@@ -5,7 +5,8 @@ import { surveyChoicesPropsShape } from "#src/models/SurveyChoicesProps";
 import { MAX_SURVEY_TEXT_LENGTH } from "#src/services/constants";
 import { z } from "zod";
 
-// What a choice question that lists its choices on screen adds to them: the order they are shown in, and an other answer typed as text
+// What a choice question that lists its choices on screen adds to them: the order they are shown in, and an other
+// Answer typed as text
 export interface SurveyChoiceOptionsProps extends SurveyChoicesProps {
   choicesOrder: SurveyChoicesOrder;
   hasOther: boolean;

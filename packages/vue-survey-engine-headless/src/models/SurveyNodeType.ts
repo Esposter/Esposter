@@ -1,4 +1,5 @@
-// Each node type a survey holds, named by the type tag its node carries in the document, which an exported document and the dataset's column rules read
+// Each node type a survey holds, named by the type tag its node carries in the document, which an exported document and
+// The dataset's column rules read
 export const SurveyNodeType = {
   Boolean: "boolean",
   ButtonGroup: "buttongroup",

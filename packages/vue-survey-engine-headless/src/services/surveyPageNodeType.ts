@@ -5,7 +5,8 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyPageNodePropsSchema } from "#src/models/SurveyPageNodeProps";
 import { SURVEY_PLACEABLE_NODE_TYPES } from "#src/services/surveyNodeTypeLists";
 
-// A page, which holds the survey's questions and panels. Its form and its props share one schema, and its defaults are the schema's own
+// A page, which holds the survey's questions and panels. Its form and its props share one schema, and its defaults are
+// The schema's own
 export const surveyPageNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyPageNode>["createDefaultProps"];
   formSchema: typeof surveyPageNodePropsSchema;

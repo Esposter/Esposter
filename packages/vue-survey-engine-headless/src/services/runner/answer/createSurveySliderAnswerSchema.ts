@@ -4,7 +4,8 @@ import type { z } from "zod";
 import { createSurveyNumberAnswerSchema } from "#src/services/runner/answer/createSurveyNumberAnswerSchema";
 import { SURVEY_INVALID_ANSWER_MESSAGE } from "#src/services/runner/constants";
 
-// The gap a value may leave from a whole step, wide enough that a fraction of a step the float arithmetic cannot hold exactly still counts
+// The gap a value may leave from a whole step, wide enough that a fraction of a step the float arithmetic cannot hold
+// Exactly still counts
 const SURVEY_SLIDER_STEP_TOLERANCE = 1e-9;
 
 // A slider's answer: a number inside its range that lands on a whole step from the range's minimum

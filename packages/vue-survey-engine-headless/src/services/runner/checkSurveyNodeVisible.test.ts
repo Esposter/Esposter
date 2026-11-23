@@ -3,7 +3,8 @@ import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisi
 import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
 import { describe, expect, test } from "vitest";
 
-// The condition's own matrix, faults included, lives in checkSurveyExpressionHolds.test.ts, so here only the node's visibleIf is read
+// The condition's own matrix, faults included, lives in checkSurveyExpressionHolds.test.ts, so here only the node's
+// `visibleIf` is read
 describe(checkSurveyNodeVisible, () => {
   const now = new Date(0);
 

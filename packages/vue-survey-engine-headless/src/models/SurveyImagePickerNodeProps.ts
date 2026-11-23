@@ -10,7 +10,8 @@ import { MAX_SURVEY_CHOICE_COUNT } from "#src/services/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The props of an image picker question: the pictures a respondent picks from, one answer or several, and how each picture is drawn
+// The props of an image picker question: the pictures a respondent picks from, one answer or several, and how each
+// Picture is drawn
 export interface SurveyImagePickerNodeProps extends SurveyImageBoxProps, SurveyQuestionBaseProps {
   choices: SurveyImageChoice[];
   isLabelVisible: boolean;

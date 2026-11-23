@@ -3,7 +3,8 @@ import type { SurveyDocumentIssue } from "#src/models/SurveyDocumentIssue";
 
 import { checkSurveyExpressionField } from "#src/services/checkSurveyExpressionField";
 
-// A calculated value's name collides with no question's name nor an earlier calculated value's, and its expression parses
+// A calculated value's name collides with no question's name nor an earlier calculated value's, and its expression
+// Parses
 export const checkSurveyCalculatedValues = (
   calculatedValues: readonly SurveyCalculatedValue[],
   listPointer: string,

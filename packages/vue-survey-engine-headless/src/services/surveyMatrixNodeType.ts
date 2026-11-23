@@ -4,7 +4,8 @@ import type { SurveyNodeTypeDefinition } from "#src/models/SurveyNodeTypeDefinit
 import { surveyMatrixNodePropsSchema } from "#src/models/SurveyMatrixNodeProps";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
-// A matrix question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults are the schema's own
+// A matrix question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults
+// Are the schema's own
 export const surveyMatrixNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyMatrixNode>["createDefaultProps"];
   formSchema: typeof surveyMatrixNodePropsSchema;

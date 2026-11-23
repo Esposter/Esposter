@@ -11,7 +11,8 @@ import {
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The props of a survey as a whole: its texts, logo, background picture and colours, how its pages show progress and numbering, and the values it calculates
+// The props of a survey as a whole: its texts, logo, background picture and colours, how its pages show progress and
+// Numbering, and the values it calculates
 export interface SurveyRootProps {
   accentColor: string;
   backgroundColor: string;

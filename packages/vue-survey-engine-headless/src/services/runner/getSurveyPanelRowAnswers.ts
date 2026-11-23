@@ -4,7 +4,8 @@ import type { SurveyLogicContext } from "survey-expression";
 
 import { getSurveyPanelRowViews } from "#src/services/runner/getSurveyPanelRowViews";
 
-// A row's answers without the answers to the template questions the row does not show, as a completed survey drops a hidden answer
+// A row's answers without the answers to the template questions the row does not show, as a completed survey drops a
+// Hidden answer
 export const getSurveyPanelRowAnswers = (
   node: SurveyPanelDynamicNode,
   row: SurveyAnswers,

@@ -4,7 +4,8 @@ import type { SurveyNodeTypeDefinition } from "#src/models/SurveyNodeTypeDefinit
 import { surveyMatrixDynamicNodePropsSchema } from "#src/models/SurveyMatrixDynamicNodeProps";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
-// A dynamic matrix question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults are the schema's own
+// A dynamic matrix question. Its form and its props share one schema, since every prop is one its owner edits, and its
+// Defaults are the schema's own
 export const surveyMatrixDynamicNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyMatrixDynamicNode>["createDefaultProps"];
   formSchema: typeof surveyMatrixDynamicNodePropsSchema;

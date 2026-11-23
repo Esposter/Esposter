@@ -6,7 +6,8 @@ import { createSurveyStringAnswerSchema } from "#src/services/runner/answer/crea
 import { SURVEY_INVALID_ANSWER_MESSAGE } from "#src/services/runner/constants";
 import { z } from "zod";
 
-// A multiple text's answer: a record from each item's name to the text typed into it, an email item held to the email format
+// A multiple text's answer: a record from each item's name to the text typed into it, an email item held to the email
+// Format
 export const createSurveyMultipleTextAnswerSchema = (node: SurveyMultipleTextNode): z.ZodType =>
   createSurveyNamedAnswerSchema(
     node.props.items.map((item) => ({

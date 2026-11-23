@@ -6,7 +6,8 @@ import { getSurveyChoiceText } from "#src/services/getSurveyChoiceText";
 import { hashSurveySeed } from "#src/services/hashSurveySeed";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
-// The choices in the order a respondent sees them: the list's own, by text, or shuffled by a seed the session holds so the order holds still
+// The choices in the order a respondent sees them: the list's own, by text, or shuffled by a seed the session holds so
+// The order holds still
 export const getSurveyOrderedChoices = (
   choices: SurveyChoice[],
   choicesOrder: SurveyChoicesOrder,

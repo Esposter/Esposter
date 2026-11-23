@@ -2,7 +2,8 @@
 export const MAX_SURVEY_QUESTION_NAME_LENGTH = 256;
 // The most questions a survey may hold, counted across every page and panel
 export const MAX_SURVEY_QUESTION_COUNT = 1000;
-// The most nodes a survey may hold, its pages and panels with its questions, so a document cannot grow past what a save walks
+// The most nodes a survey may hold, its pages and panels with its questions, so a document cannot grow past what a save
+// Walks
 export const MAX_SURVEY_NODE_COUNT = 1500;
 // The most choices a question's list may hold, so a list cannot outgrow what a respondent reads
 export const MAX_SURVEY_CHOICE_COUNT = 200;
@@ -30,9 +31,11 @@ export const MAX_SURVEY_VALIDATOR_COUNT = 20;
 export const MAX_SURVEY_CALCULATED_VALUE_COUNT = 100;
 // The most characters a text question's pattern may hold, a regular expression the runner compiles for each answer
 export const MAX_SURVEY_PATTERN_LENGTH = 200;
-// The most characters a URL may hold, the bound the app keeps on its own URLs, mirrored here since this package cannot import it
+// The most characters a URL may hold, the bound the app keeps on its own URLs, mirrored here since this package cannot
+// Import it
 export const MAX_SURVEY_URL_LENGTH = 2048;
-// The most characters an answer's text may hold, the bound every string an answer holds is held to whatever its question allows
+// The most characters an answer's text may hold, the bound every string an answer holds is held to whatever its
+// Question allows
 export const MAX_SURVEY_ANSWER_LENGTH = 10_000;
 // The most entries a list or a record inside an answer may hold, the most any question's rows, columns or choices reach
 export const MAX_SURVEY_ANSWER_ENTRY_COUNT = 200;

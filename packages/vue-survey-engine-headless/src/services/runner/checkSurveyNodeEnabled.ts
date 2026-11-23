@@ -6,9 +6,10 @@ import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAn
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
 import { checkIsBlankText } from "@esposter/shared";
 
-// A node is enabled unless it is a calculated value, or it holds no answer and is not a container, or its enabling condition does not hold
-// A calculated value holds a value no respondent gives, so it is never enabled. A page or a panel is a container, enabled by its own condition
-// A dynamic panel's template reads its row through the panel scope, which the caller passes
+// A node is enabled unless it is a calculated value, or it holds no answer and is not a container, or its enabling
+// Condition does not hold A calculated value holds a value no respondent gives, so it is never enabled. A page or a
+// Panel is a container, enabled by its own condition A dynamic panel's template reads its row through the panel scope,
+// Which the caller passes
 export const checkSurveyNodeEnabled = (
   node: SurveyNode,
   values: SurveyLogicContext["values"],

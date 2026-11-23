@@ -4,7 +4,8 @@ import type { SurveySliderNode } from "#src/models/SurveySliderNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveySliderNodePropsSchema } from "#src/models/SurveySliderNodeProps";
 
-// A slider question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults are the schema's own
+// A slider question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults
+// Are the schema's own
 export const surveySliderNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveySliderNode>["createDefaultProps"];
   formSchema: typeof surveySliderNodePropsSchema;

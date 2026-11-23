@@ -9,7 +9,8 @@ import { z } from "zod";
 const MIN_SURVEY_FRACTION_DIGITS = 0;
 const MAX_SURVEY_FRACTION_DIGITS = 10;
 
-// The props of a calculated value: the expression it computes, the format its result is shown in and the decimal places that format keeps
+// The props of a calculated value: the expression it computes, the format its result is shown in and the decimal places
+// That format keeps
 export interface SurveyExpressionNodeProps extends SurveyQuestionBaseProps {
   displayFormat: SurveyExpressionDisplayFormat;
   expression: string;
