@@ -15,7 +15,8 @@ describe(createRouteRulesPlugin, () => {
     expect.hasAssertions();
 
     const app = createNitroApp();
-    // The module's plugins are registered before the app's own server plugins, so the hook has its listener only after this plugin's setup
+    // The module's plugins are registered before the app's own server plugins, so the hook has its listener only after
+    // This plugin's setup
     await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     await securityHeaders(app.nitroApp);
     app.nitroApp.hooks.hook(ROUTE_RULES_HOOK, (routeRules) => {

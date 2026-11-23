@@ -10,7 +10,8 @@ describe(getSecurityRules, () => {
   test("a request's route rules", async ({ bench }) => {
     setSecurityRouteMatcher(PAGE_ROUTE_RULES);
     let event = createPageEvent();
-    // Each iteration gets its own event, built outside the timing, so the per-event cache misses as it does for a request
+    // Each iteration gets its own event, built outside the timing, so the per-event cache misses as it does for a
+    // Request
     const beforeEach = () => {
       event = createPageEvent();
     };

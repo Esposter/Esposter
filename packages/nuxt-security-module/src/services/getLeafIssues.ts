@@ -3,8 +3,8 @@ import type { z } from "zod";
 
 import { getDeepestPathLength } from "#src/services/getDeepestPathLength";
 
-// A union reports each branch's issues, and the branch that matched furthest into the input is the one the author meant.
-// Zod's own pretty-printing stops at the union, so the walk goes through every branch and keeps the deepest one
+// A union reports each branch's issues, and the branch that matched furthest into the input is the one the author
+// Meant. Zod's own pretty-printing stops at the union, so the walk goes through every branch and keeps the deepest one
 export const getLeafIssues = (issue: z.core.$ZodIssue, parentPath: PropertyKey[]): LeafIssue[] => {
   const path = [...parentPath, ...issue.path];
   if (issue.code !== "invalid_union") return [{ issue, path }];

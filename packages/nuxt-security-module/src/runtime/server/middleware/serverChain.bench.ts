@@ -36,7 +36,8 @@ const getServerChain = (options: ModuleOptions): Middleware[] =>
 
 const runServerChain = async (chain: Middleware[]): Promise<void> => {
   const event = new H3Event(new Request(REQUEST_URL));
-  // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each middleware answers before the next one runs
+  // Runs
+  // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each middleware answers before the next one
   for (const middleware of chain) await middleware(event, () => undefined);
 };
 

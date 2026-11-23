@@ -20,7 +20,8 @@ const corsHandler: Middleware = defineMiddleware((event) => {
     origin: [origin].flat(),
     ...(preflight === undefined ? {} : { preflight }),
   });
-  // A preflight is answered here, so its response is returned for h3 to send. Any other request falls through to its handler
+  // A preflight is answered here, so its response is returned for h3 to send. Any other request falls through to its
+  // Handler
   return response === false ? undefined : response;
 });
 

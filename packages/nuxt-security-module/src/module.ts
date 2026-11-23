@@ -42,9 +42,9 @@ declare module "@nuxt/schema" {
   }
 }
 
-// A route rule's `security` key, which the module reads when the rules are resolved at build time.
-// The augmentation names `h3/rules`, where `RouteRuleConfig` is declared: `nitro/types` and `nuxt/schema` only
-// Re-export it, and an augmentation of a re-export declares a new interface that never reaches a consumer's `routeRules`
+// A route rule's `security` key, which the module reads when the rules are resolved at build time. The augmentation
+// Names `h3/rules`, where `RouteRuleConfig` is declared: `nitro/types` and `nuxt/schema` only Re-export it, and an
+// Augmentation of a re-export declares a new interface that never reaches a consumer's `routeRules`
 declare module "h3/rules" {
   interface RouteRuleConfig {
     security?: SecurityRules;
