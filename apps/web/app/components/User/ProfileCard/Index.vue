@@ -37,11 +37,13 @@ const profileCardValues = computed(() => {
 });
 const profileCardRows = computed(() => {
   const { biography, image, name } = profileCardValues.value;
+  /* eslint-disable perfectionist/sort-objects -- the rows render in declaration order, and Name is the first row */
   return {
+    name: { type: RowValueType.Text, value: name },
     biography: { type: RowValueType.Textarea, value: biography },
     image: { type: RowValueType.Image, value: image },
-    name: { type: RowValueType.Text, value: name },
   } as const;
+  /* eslint-enable perfectionist/sort-objects */
 });
 const editedProfileCardRows = ref(structuredClone(profileCardValues.value));
 const isEditMode = ref(false);
