@@ -91,6 +91,13 @@ A tile that cannot be built SHALL be requested again, and SHALL be given up afte
 - **WHEN** the view still needs it on a later frame
 - **THEN** it is requested again
 
+#### Scenario: A worker that errored takes no tile again
+
+- **GIVEN** a terrain worker errored, so each tile it held failed
+- **WHEN** a later frame asks for a tile
+- **THEN** the tile is asked of a worker that has not errored
+- **AND** once every worker has errored, the tile fails at once, so it is given up after three failures and the ground still settles
+
 #### Scenario: Tile given up after three failures
 
 - **GIVEN** a tile has failed to build three times

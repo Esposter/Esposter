@@ -23,4 +23,23 @@ describe(createTileHolders, () => {
     expect(tileHolders.checkIsHeldBy(1, 0)).toBe(false);
     expect(tileHolders.checkIsHeldBy(1, 1)).toBe(true);
   });
+
+  test("a worker that failed takes no tile again", () => {
+    expect.hasAssertions();
+
+    const tileHolders = createTileHolders(2);
+    tileHolders.retire(0);
+
+    expect([1, 2, 3].map((key) => tileHolders.assign(key))).toStrictEqual([1, 1, 1]);
+  });
+
+  test("a tile asked once every worker has failed is held by none", () => {
+    expect.hasAssertions();
+
+    const tileHolders = createTileHolders(2);
+    tileHolders.retire(0);
+    tileHolders.retire(1);
+
+    expect(tileHolders.assign(1)).toBeUndefined();
+  });
 });
