@@ -31,9 +31,8 @@ import { defineConfig } from "oxlint";
 // Environment it inherits. Every `vp lint` loads this file before oxlint starts its backend, so this is the one place.
 // They are `--runExternalCode` and `--fast`, the two the typecheck scripts pass. The first runs the content mapper that
 // Nuxt's generated tsconfig and the Vue packages' `tsconfig.vue.json` name, and the second is the fast preset.
-// @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
-// Vize evaluates this file through `vite.config.ts` and refuses a write over a variable already set, so each is set only
-// When absent
+// @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476 Vize evaluates this file through `vite.config.ts` and
+// Refuses a write over a variable already set, so each is set only when absent
 // @TODO: https://github.com/ubugeeei-prod/vize/issues/13532 — assign plainly once the recorder's Proxy takes a write
 process.env.TSRS_FAST ??= "1";
 process.env.TSRS_LINT_RUN_EXTERNAL_CODE ??= "1";
@@ -122,7 +121,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
     },
     {
-      // Nuxt auto-imports Vue into the app tree alone: a package, the Nuxt configuration and `shared/` reach it by import
+      // Nuxt auto-imports Vue into the app tree alone: a package, the Nuxt configuration and `shared/` reach it by
+      // Import
       files: ["apps/web/app/**"],
       rules: {
         "no-restricted-imports": [
@@ -222,10 +222,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
     },
     {
-      // The built source of genshin-world may not import the parity page's `#parity/*`. Its tests and fixtures are never
-      // Built, so they keep the import. The excluded suffixes are the ones the barrel generator and the declaration program
-      // Leave out (`NON_SOURCE_SUFFIXES` in `packages/configuration/src/services/constants.ts`), repeated here since this
-      // Config cannot import them without a build, and pinned against it by
+      // The built source of genshin-world may not import the parity page's `#parity/*`. Its tests and fixtures are
+      // Never Built, so they keep the import. The excluded suffixes are the ones the barrel generator and the
+      // Declaration program Leave out (`NON_SOURCE_SUFFIXES` in `packages/configuration/src/services/constants.ts`),
+      // Repeated here since this Config cannot import them without a build, and pinned against it by
       // `scripts/src/workspace/oxlintParityExcludes.test.ts`
       excludeFiles: [
         "**/*.bench.ts",
@@ -245,8 +245,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
     },
     {
-      // The Worker deploy gate reads each Worker's environment model by path, the one reach up a scripts tree makes, and
-      // `WORKER_SECRETS_IMPORT_PATTERNS` allows nothing else across it
+      // The Worker deploy gate reads each Worker's environment model by path, the one reach up a scripts tree makes,
+      // And `WORKER_SECRETS_IMPORT_PATTERNS` allows nothing else across it
       files: ["scripts/src/services/workerSecrets/**/*.ts"],
       rules: {
         "no-restricted-imports": [
@@ -258,8 +258,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     ...AUTO_IMPORT_PACKAGE_OVERRIDES,
     {
       // The wrappers are the one place node's child_process is imported, and two plugins keep it, each passing
-      // `windowsHide` itself: genshin-persona's source installs from its own package-lock.json, and follow-ups installs as
-      // A pinned snapshot, neither with a workspace dependency, so each joins the ban once shared-node is on npm.
+      // `windowsHide` itself: genshin-persona's source installs from its own package-lock.json, and follow-ups installs
+      // As A pinned snapshot, neither with a workspace dependency, so each joins the ban once shared-node is on npm.
       // Persona's `mod` tree is left to the mod override, which bans relative specifiers the engine would refuse.
       files: [
         "packages/shared-node/src/services/childProcess/*.ts",
@@ -277,8 +277,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       files: ["packages/genshin-mods/**/*.ts", "packages/genshin-persona/mod/**/*.ts"],
       rules: {
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }],
-        // Asking whether an async hook fits the engine's `On` overloads costs this rule tens of seconds over these trees
-        // Alone, where tsrs checks the program in under a second. See openspec/specs/architecture/lint-toolchain/design.md
+        // Asking whether an async hook fits the engine's `On` overloads costs this rule tens of seconds over these
+        // Trees Alone, where tsrs checks the program in under a second. See
+        // `openspec/specs/architecture/lint-toolchain/design.md`
         "typescript/strict-void-return": "off",
       },
     },
@@ -287,6 +288,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   rules: {
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
+    "comments/no-over-width-comment": "error",
     "comments/no-repeated-disable-next-line": "error",
     "comments/no-trailing-comment": "error",
     "comments/require-directive-reason": "error",
@@ -404,7 +406,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "no-useless-return": "off",
     "one-var": "off",
     "oxc/no-async-await": "off",
-    // Its only alternative is mutating the element, which `immutability/no-map-mutation` bans, and `Object.assign` is `prefer-object-spread`'s error
+    // Its only alternative is mutating the element, which `immutability/no-map-mutation` bans, and `Object.assign` is
+    // `prefer-object-spread`'s error
     "oxc/no-map-spread": "off",
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
@@ -425,10 +428,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     // Reads a function returning a promise as awaited, so the core copy is off
     "require-await": "off",
     "routing/no-route-literal": "error",
-    // Each list under `scripts/src/services/oxlint/selectorBan/syntaxes/` states the paths it runs over, so the rule needs
-    // No options and no override
-    // @TODO: https://github.com/oxc-project/oxc/issues/2180 — enable `typescript/naming-convention` once oxlint ships it:
-    // Variables of a primitive or array type in camelCase, PascalCase or UPPER_CASE, with a leading underscore allowed
+    // Each list under `scripts/src/services/oxlint/selectorBan/syntaxes/` states the paths it runs over, so the rule
+    // Needs No options and no override @TODO: https://github.com/oxc-project/oxc/issues/2180 — enable
+    // `typescript/naming-convention` once oxlint ships it: Variables of a primitive or array type in camelCase,
+    // PascalCase or UPPER_CASE, with a leading underscore allowed
     "selector-ban/no-restricted-syntax": "error",
     "sequential-loops/no-async-self-call": "error",
     "sequential-loops/require-loop-shape": "error",
@@ -482,9 +485,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/no-unsafe-argument": "off",
     "typescript/no-unsafe-assignment": "off",
     "typescript/no-unsafe-call": "off",
-    // @TODO: https://github.com/oxc-project/tsgolint/issues/1371 — oxlint 1.95 enables this rule through the `pedantic` and
-    // `restriction` categories above, and the type-aware backend does not implement it, so every type-aware run fails on
-    // "unknown rule". Drop the `off` once the backend ships the rule
+    // @TODO: https://github.com/oxc-project/tsgolint/issues/1371 — oxlint 1.95 enables this rule through the `pedantic`
+    // And `restriction` categories above, and the type-aware backend does not implement it, so every type-aware run
+    // Fails on "unknown rule". Drop the `off` once the backend ships the rule
     "typescript/no-unsafe-class-instance-assignment": "off",
     "typescript/no-unsafe-enum-comparison": "off",
     "typescript/no-unsafe-member-access": "off",
