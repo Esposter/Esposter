@@ -24,3 +24,5 @@ The lock on disk (`packages/genshin-world/src/generated/gameDataLock.json`):
 The character packs are outside the lock, named by the index `characterPackIndex/index`:
 
 - 13 avatars, 136 files, 84,982,707 bytes (81.05 MiB).
+
+After the switch, the opening preloads the lock's objects and indexes and the character packs (`readGameDataPreloadSet`). A local driven run of the opening (dev server on port 3001, the same rebuilt packages, signed in, 240 s) recorded 690 requests to `hosted.dev.esposter.com`, all 200 and none with a doubled slash. The local save does not load (the local bucket has no `stats/resin` record), so the login's progress bar is not drawn there, and the bar's completion is measured on the deployed dev run recorded beside 6.6.

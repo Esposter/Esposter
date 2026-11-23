@@ -6,7 +6,7 @@ import LoadingStartup from "#src/components/Loading/Startup/Index.vue";
 import LoginScreen from "#src/components/Login/Screen/Index.vue";
 import SplashSequence from "#src/components/Splash/Sequence/Index.vue";
 import { OpeningPhase } from "#src/models/game/OpeningPhase";
-import { readCharacterPackPreloadSet } from "#src/services/character/readCharacterPackPreloadSet";
+import { readGameDataPreloadSet } from "#src/services/data/readGameDataPreloadSet";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { getLoginTimeOfDay } from "#src/services/login/getLoginTimeOfDay";
 import { readLoginData } from "#src/services/login/readLoginData";
@@ -66,10 +66,10 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
     console.error(error);
   },
 );
-// The published character packs download from the moment the opening mounts, so the splashes and the title play while
-// The bytes arrive, and the launch loading bar reports them once the game starts preparing
+// The game data's objects and the character packs download from the moment the opening mounts, so the splashes and the
+// title play while the bytes arrive, and the launch loading bar reports them once the game starts preparing
 const { downloadProgress, preload, status } = useHostedAssetsPreload(
-  () => readCharacterPackPreloadSet(gameDataBaseUrl),
+  () => readGameDataPreloadSet(gameDataBaseUrl),
   () => emit("held"),
 );
 onMounted(preload);
