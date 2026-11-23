@@ -2,8 +2,11 @@ import { ASCENSION_PHASE_COUNT } from "genshin-interface/constants";
 
 // The most ranks a weapon refines to; a refinement that would pass it loses what is past
 export const MAX_WEAPON_REFINEMENT = 5;
-// The EXP each ten points of Mora pay for, and the share of a fodder weapon's own levelling EXP it gives back
+// The EXP one Mora pays for when a weapon is levelled, ten points of EXP for each Mora as the wiki's Weapon EXP page gives
+// It, a rate the dump holds no table of
 export const EXP_PER_MORA = 10;
+// The share of a fodder weapon's own levelling EXP it gives back at no Mora, eighty percent as the wiki's Weapon EXP page
+// Gives it, a share the dump holds no table of
 export const FODDER_EXP_SHARE = 0.8;
 // The phases an ascension's sparks count from the first, each one lit once the weapon holds it
 export const SPARK_PHASES = Array.from({ length: ASCENSION_PHASE_COUNT }, (_value, index) => index + 1);

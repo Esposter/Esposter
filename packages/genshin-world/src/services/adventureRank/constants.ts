@@ -1,5 +1,6 @@
 export const MAX_ADVENTURE_RANK = 60;
-// Adventure EXP past the highest rank is paid in Mora at ten for each point
+// Adventure EXP past the highest rank is paid in Mora at ten for each point, the rate the wiki's Adventure EXP page gives,
+// Since the game's text states none
 export const MORA_PER_EXCESS_ADVENTURE_EXP = 10;
 // From this World Level the player may lower it by one
 export const WORLD_LEVEL_LOWERING_MINIMUM = 3;
