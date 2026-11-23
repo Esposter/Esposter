@@ -28,7 +28,7 @@ export const checkLedgerUnits = (): string[] => {
   const trackedFiles = readTrackedFiles(readVendoredSkillNames());
   const unitFiles = getUnitFiles(partitionUnits, trackedFiles);
   const questionUnitsByFile = Object.fromEntries(
-    Object.entries(readQuestionUnits()).flatMap(([question, units]) =>
+    Object.entries(readQuestionUnits(trackedFiles, partitionUnits, unitFiles)).flatMap(([question, units]) =>
       [question, ...areas.map((area) => `${question}/${area}`)].map((file): [string, () => string[]] => [
         file,
         () => units,

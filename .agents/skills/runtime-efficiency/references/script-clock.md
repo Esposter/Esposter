@@ -23,6 +23,9 @@ and the scan itself is a small share. So the savings sit at those three:
   several times more over the repository's bytes and reads no clearer. It is the pass that finds _nothing_ that
   has to be fast, since that is the one every clean run makes; work priced per finding (a line number, a slice)
   is free by comparison and belongs there rather than in the walk.
+- **A binary check stops at its first NUL.** `checkHoldsBinaryByte` reads a chunk at a time, so a picture stops at the first chunk
+  holding one, and every file is still checked. An exact line count opens every code file and reads its text, which is the floor
+  of the size pass: a byte bound cannot lower it, since a unit's bytes pass its 3000-line cap nearly everywhere.
 - **A whole-tree suite declares `TREE_READ_TIMEOUT_MS`** (`scripts/src/workspace/constants.test.ts`), and only where the parallel `scripts/src/workspace` run exceeds Vitest's 5s default. Those suites run at once, so each one's wall time is its own read plus every sibling contending with it: a suite that passes alone can fail there, and a new one arriving fails the others rather than itself. The timeout is not the budget: `pnpm bench` is.
 
 Which units earn a bench is the `bench` skill's rule (`references/running-benchmarks.md`), and a script whose clock is boot, spawns and reads is one of the cases it excludes.
