@@ -5,7 +5,7 @@ import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
 import { createCharacterPackCacheStub } from "#src/services/character/createCharacterPackCacheStub.test";
 import { getCharacterPackCacheUrl } from "#src/services/character/getCharacterPackCacheUrl";
 import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
-import { HostedAssetPreloadStatus } from "hosted-assets";
+import { HostedAssetPreloadStatus, listHeldHostedAssetUrls } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/character/readCharacterPackIndex"), () => ({
@@ -91,5 +91,42 @@ describe(useCharacterPackPreload, () => {
     expect(status.value).toBe(HostedAssetPreloadStatus.Ready);
     expect(onHeld).toHaveBeenCalledExactlyOnceWith();
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  test("a successful preload evicts the stale packs of its own scope and keeps another product's entries", async () => {
+    expect.hasAssertions();
+
+    const cache = createCharacterPackCacheStub();
+    const modelUrl = getCharacterPackCacheUrl(`${gameDataBaseUrl}/`, 1, CHARACTER_MODEL_PATH, sha256);
+    const staleUrl = getCharacterPackCacheUrl(`${gameDataBaseUrl}/`, 2, CHARACTER_MODEL_PATH, "1".repeat(64));
+    const otherProductUrl = `${gameDataBaseUrl}/dungeons/${"2".repeat(64)}.png`;
+    await cache.put(modelUrl, new Response(null));
+    await cache.put(staleUrl, new Response(null));
+    await cache.put(otherProductUrl, new Response(null));
+    vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
+
+    const { preload } = useCharacterPackPreload(gameDataBaseUrl, vi.fn<() => void>());
+    const run = preload();
+    await vi.runAllTimersAsync();
+    await run;
+
+    await expect(listHeldHostedAssetUrls(cache)).resolves.toStrictEqual(new Set([modelUrl, otherProductUrl]));
+  });
+
+  test("a failed preload evicts nothing", async () => {
+    expect.hasAssertions();
+
+    const cache = createCharacterPackCacheStub();
+    const staleUrl = getCharacterPackCacheUrl(`${gameDataBaseUrl}/`, 2, CHARACTER_MODEL_PATH, "1".repeat(64));
+    await cache.put(staleUrl, new Response(null));
+    vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
+
+    const { preload, status } = useCharacterPackPreload(gameDataBaseUrl, vi.fn<() => void>());
+    const run = preload();
+    await vi.runAllTimersAsync();
+    await run;
+
+    expect(status.value).toBe(HostedAssetPreloadStatus.Failed);
+    await expect(listHeldHostedAssetUrls(cache)).resolves.toStrictEqual(new Set([staleUrl]));
   });
 });

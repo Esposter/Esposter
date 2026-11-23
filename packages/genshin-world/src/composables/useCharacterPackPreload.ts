@@ -1,8 +1,10 @@
+import { CHARACTER_PACKS_FOLDER } from "#src/services/character/constants";
 import { getCharacterPackDownloadFiles } from "#src/services/character/getCharacterPackDownloadFiles";
 import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
 import { getResultAsync, noop } from "@esposter/shared";
 import {
   downloadHostedAssetFiles,
+  evictStaleHostedAssets,
   HOSTED_ASSETS_CACHE_NAME,
   HostedAssetPreloadStatus,
   listHeldHostedAssetUrls,
@@ -31,14 +33,21 @@ export const useCharacterPackPreload = (gameDataBaseUrl: string, onHeld: () => v
       const cache = await caches.open(HOSTED_ASSETS_CACHE_NAME);
       // The cache lists its keys as absolute urls, so the plan's urls are made absolute the same way
       const absoluteGameDataBaseUrl = new URL(gameDataBaseUrl, window.location.href).href;
+      const files = getCharacterPackDownloadFiles(index, absoluteGameDataBaseUrl);
       const heldUrls = await listHeldHostedAssetUrls(cache);
-      const plan = planHostedAssetDownload(getCharacterPackDownloadFiles(index, absoluteGameDataBaseUrl), heldUrls);
+      const plan = planHostedAssetDownload(files, heldUrls);
       pendingBytes.value = plan.pendingBytes;
       await downloadHostedAssetFiles(cache, plan.files, (bytes) => {
         loadedBytes.value = bytes;
       }).match(noop, (error) => {
         throw error;
       });
+      // Only the packs of this scope the index no longer names are evicted, since the cache is shared with other products
+      await evictStaleHostedAssets(
+        cache,
+        [`${absoluteGameDataBaseUrl}/${CHARACTER_PACKS_FOLDER}/`],
+        new Set(files.map(({ url }) => url)),
+      );
     }).match(
       () => {
         status.value = HostedAssetPreloadStatus.Ready;
