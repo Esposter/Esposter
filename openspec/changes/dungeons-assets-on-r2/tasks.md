@@ -48,7 +48,7 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 ## 7. Prior art and the branch
 
 - [x] 7.1 Check each decision of the commit `158d95e9d1` (`origin/migrate-assets`) against the design's Save-safe key decisions, against `ai/queue` at `750a8a0771`. Verify: every decision of `158d95e9d1` is recorded below as matched or superseded (or as dropped, where the design drops it), and the three superseded by 4.x are ticked once 4.x lands.
-  - matched: the monster key stays `MonsterKey`, and its portrait is `getMonsterFileKey`, which reads `MonsterKeyFileKeyMap` and throws for an unknown species.
+  - changed deliberately: the monster key stays `MonsterKey`, and its portrait is `getMonsterFileKey`, which reads `MonsterKeyFileKeyMap` and throws for an unknown species, where `158d95e9d1` indexed the map.
   - matched: the saved `asset` is dropped from `monsterSchema`, and a saved monster still carrying it parses (`Monster.test.ts`).
   - matched: `Asset` narrows to `SpritesheetKey` and lives at `apps/web/app/models/dungeons/Asset.ts`.
   - matched: the capture ball's texture is `CaptureItemFileKeyMap` by item id, and `Item` carries no `fileKey`.
@@ -61,4 +61,4 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
   - superseded by 4.5: the image, sound, font and spritesheet asset maps are deleted.
   - superseded by 4.1 to 4.4: the spritesheets, tilesets and tilemaps load from their hosted urls, and the bundle no longer holds them.
   - superseded by 4.1 to 4.3: the Preloader downloads each object of the lock, then loads each file by its key from the hosted origin.
-- [ ] 7.2 Once the port is verified and reviewed, the session checks each decision of `158d95e9d1` against the design's Save-safe key decisions, each carried or recorded as dropped, then runs `git push origin --delete migrate-assets`. The owner authorised the deletion. Verify: `git ls-remote --heads origin migrate-assets` prints nothing.
+- [x] 7.2 Once the port is verified and reviewed, the session checks each decision of `158d95e9d1` against the design's Save-safe key decisions, each carried or recorded as dropped, then runs `git push origin --delete migrate-assets`. The owner authorised the deletion. Verify: `git ls-remote --heads origin migrate-assets` prints nothing.
