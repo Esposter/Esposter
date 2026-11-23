@@ -4,7 +4,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                      |   Bytes |    KiB |
 | :------------------------- | :------------------------ | ------: | -----: |
-| genshin-world              | **/*.js                   | 4141692 | 4044.6 |
+| genshin-world              | **/*.js                   | 4141675 | 4044.6 |
 | genshin-world              | **/*.d.ts                 | 2837697 | 2771.2 |
 | @esposter/db               | **/*.js                   |  826760 |  807.4 |
 | genshin-text               | **/*.js                   |  605071 |  590.9 |
@@ -18,8 +18,8 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-world              | index.js                  |  232859 |  227.4 |
 | genshin-interface          | style.css                 |  194226 |  189.7 |
 | genshin-engine             | **/*.d.ts                 |  134341 |  131.2 |
-| @esposter/shared           | **/*.js                   |  132044 |  128.9 |
-| math-expression-compiler   | **/*.js                   |  111982 |  109.4 |
+| @esposter/shared           | **/*.js                   |  132032 |  128.9 |
+| math-expression-compiler   | **/*.js                   |  111976 |  109.4 |
 | vue-survey-engine-headless | **/*.js                   |  109308 |  106.7 |
 | vue-phaserjs               | **/*.js                   |   98723 |   96.4 |
 | vue-block-editor-headless  | **/*.js                   |   87344 |   85.3 |
@@ -27,7 +27,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | mjml-blocks                | **/*.js                   |   80783 |   78.9 |
 | vue-survey-engine-headless | **/*.d.ts                 |   74241 |   72.5 |
 | mjml-blocks                | **/*.d.ts                 |   72461 |   70.8 |
-| survey-expression          | **/*.js                   |   72155 |   70.5 |
+| survey-expression          | **/*.js                   |   72159 |   70.5 |
 | @esposter/infra            | index.js                  |   59834 |   58.4 |
 | genshin-engine             | index.d.ts                |   55274 |   54.0 |
 | trpc-msw                   | **/*.d.ts                 |   52211 |   51.0 |
@@ -37,7 +37,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | @esposter/db-schema        | index.js                  |   43051 |   42.0 |
 | genshin-engine             | index.js                  |   40066 |   39.1 |
 | genshin-text               | **/*.d.ts                 |   38787 |   37.9 |
-| parse-tmx                  | **/*.js                   |   38765 |   37.9 |
+| parse-tmx                  | **/*.js                   |   38758 |   37.8 |
 | vue-pdfjs-headless         | **/*.js                   |   32365 |   31.6 |
 | survey-expression          | **/*.d.ts                 |   32318 |   31.6 |
 | @esposter/db-mock          | **/*.js                   |   30721 |   30.0 |
@@ -67,7 +67,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-editor-layout-headless | **/*.js                   |   12877 |   12.6 |
 | @esposter/shared-node      | **/*.js                   |   12188 |   11.9 |
 | vue-pdfjs-headless         | **/*.d.ts                 |   11117 |   10.9 |
-| unplugin-pwa-nuxt          | **/*.js                   |   10273 |   10.0 |
+| unplugin-pwa-nuxt          | **/*.js                   |   10253 |   10.0 |
 | vue-editor-layout-headless | **/*.d.ts                 |    9910 |    9.7 |
 | genshin-interface          | constants.js              |    9200 |    9.0 |
 | mjml-blocks                | index.js                  |    8935 |    8.7 |
@@ -167,4 +167,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 162 files, 13188585 bytes, 12879.5 KiB, 12.58 MiB
+**Total:** 162 files, 13188527 bytes, 12879.4 KiB, 12.58 MiB
