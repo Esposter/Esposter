@@ -1,6 +1,7 @@
 import type { SortingGroupItem } from "#src/models/oxlint/sorting/SortingGroupItem";
 import type { Context, ESTree, Reference } from "@oxlint/plugins";
 
+import { checkIsFunctionProperty } from "#src/services/oxlint/sorting/checkIsFunctionProperty";
 import { checkIsRangeContaining } from "#src/services/oxlint/sorting/checkIsRangeContaining";
 import { collectReadNames } from "#src/services/oxlint/sorting/collectReadNames";
 
@@ -19,17 +20,12 @@ const checkIsClassOrEnumItem = (item: SortingGroupItem): boolean => {
   return declaration.type === "ClassDeclaration" || declaration.type === "TSEnumDeclaration";
 };
 
-// Whether a property holds an arrow function, which runs only when called
-const checkIsArrowFunctionProperty = (element: ESTree.ClassElement): boolean =>
-  (element.type === "AccessorProperty" || element.type === "PropertyDefinition") &&
-  element.value?.type === "ArrowFunctionExpression";
-
 // Whether a class element holds static state, whose reads run when the class is defined
 const checkHoldsStaticState = (element: ESTree.ClassElement): boolean =>
   element.type === "StaticBlock" ||
   ((element.type === "PropertyDefinition" || element.type === "AccessorProperty") &&
     element.static &&
-    !checkIsArrowFunctionProperty(element));
+    !checkIsFunctionProperty(element));
 
 // The ancestors of a node that pass the guard, up to the statement holding it.
 // With `consecutiveOnly`, the run stops at the first ancestor that does not pass it.
@@ -52,7 +48,7 @@ const computeAncestors = <T extends ESTree.Node>(
 // Whether a read inside a class element runs at definition: a property's value does, unless it is a function.
 // A method or function body runs later, except a read in its key, or in a static method of a class with static state.
 const checkIsClassElementRelevant = (element: ClassElement, identifier: ESTree.Node): boolean => {
-  if (element.type !== "MethodDefinition" && !checkIsArrowFunctionProperty(element)) return true;
+  if (element.type !== "MethodDefinition" && !checkIsFunctionProperty(element)) return true;
   if (checkIsRangeContaining(element.key.range, identifier.range)) return true;
   return (
     element.static &&

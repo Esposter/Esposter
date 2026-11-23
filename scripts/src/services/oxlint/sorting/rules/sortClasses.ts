@@ -1,6 +1,7 @@
 import type { SortingClassMember } from "#src/models/oxlint/sorting/SortingClassMember";
 import type { ESTree, Rule, SourceCode } from "@oxlint/plugins";
 
+import { checkIsFunctionProperty } from "#src/services/oxlint/sorting/checkIsFunctionProperty";
 import { CLASS_MEMBER_GROUPS } from "#src/services/oxlint/sorting/classMemberGroups";
 import { computeClassMemberGroup } from "#src/services/oxlint/sorting/computeClassMemberGroup";
 import { populateClassMemberDependencies } from "#src/services/oxlint/sorting/populateClassMemberDependencies";
@@ -59,9 +60,7 @@ const computeKeyedSelectors = (
     case "TSAbstractMethodDefinition":
       return computeMethodSelectors(element.kind);
     default:
-      return element.value?.type === "ArrowFunctionExpression" || element.value?.type === "FunctionExpression"
-        ? ["function-property", "property"]
-        : ["property"];
+      return checkIsFunctionProperty(element) ? ["function-property", "property"] : ["property"];
   }
 };
 

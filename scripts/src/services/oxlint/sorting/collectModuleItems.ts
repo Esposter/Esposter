@@ -2,6 +2,8 @@ import type { ModuleItems } from "#src/models/oxlint/sorting/ModuleItems";
 import type { SortingGroupItem } from "#src/models/oxlint/sorting/SortingGroupItem";
 import type { ESTree } from "@oxlint/plugins";
 
+import { buildSortingNode } from "#src/services/oxlint/sorting/buildSortingNode";
+
 // The groups a module's declarations sort into, in perfectionist's default order.
 // A declaration sits in its kind's `declare-` group when ambient, and in its `export-` group when exported.
 // Otherwise it sits in the bare kind's group.
@@ -59,14 +61,15 @@ const getGroupIndex = (group: string): number =>
     typeof groupNames === "string" ? groupNames === group : groupNames.includes(group),
   );
 
-// The group a declaration sorts under: ambient declarations first, then exported ones, then the bare kind
+// The group a declaration sorts under: ambient declarations first, then exported ones, then the bare kind. A declaration
+// With no name, such as a default export of an anonymous function, declares nothing sortable and only ends a partition
 const describeDeclared = (
   kind: string,
   name: string | undefined,
   isDeclare: boolean | undefined,
   isExported: boolean,
-): StatementDescription | undefined => {
-  if (name === undefined) return undefined;
+): StatementDescription => {
+  if (name === undefined) return { endsPartition: true };
   const group = isDeclare ? `declare-${kind}` : isExported ? `export-${kind}` : kind;
   return { declaration: { group, name }, endsPartition: false };
 };
@@ -75,9 +78,7 @@ const describeDeclared = (
 const describeDeclaration = (declaration: ESTree.Node, isExported: boolean): StatementDescription | undefined => {
   switch (declaration.type) {
     case "ClassDeclaration":
-      return declaration.id
-        ? describeDeclared("class", declaration.id.name, declaration.declare, isExported)
-        : { endsPartition: true };
+      return describeDeclared("class", declaration.id?.name, declaration.declare, isExported);
     case "FunctionDeclaration":
     case "TSDeclareFunction":
       return describeDeclared("function", declaration.id?.name, declaration.declare, isExported);
@@ -129,17 +130,8 @@ export const collectModuleItems = (statements: ESTree.Program["body"]): ModuleIt
     if (description === undefined) continue;
     if (description.declaration) {
       const { group, name } = description.declaration;
-      partition.push({
-        dependencies: [],
-        dependencyNames: [name],
-        // A declaration is never pinned in place: it sorts by its name within its group.
-        group,
-        groupIndex: getGroupIndex(group),
-        isOxlintDisabled: false,
-        name,
-        node: statement,
-        value: "",
-      });
+      // A declaration is never pinned in place: it sorts by its name within its group.
+      partition.push({ ...buildSortingNode(name, statement), group, groupIndex: getGroupIndex(group) });
     }
     if (description.moduleBody) moduleBodies.push(description.moduleBody);
     if (description.endsPartition) {

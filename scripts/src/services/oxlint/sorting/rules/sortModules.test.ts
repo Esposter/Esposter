@@ -155,6 +155,11 @@ describe("sortModules", () => {
         violations: 1,
       },
       {
+        name: "unnamedDefaultFunctionEndsPartition",
+        source: `export function B() {}\nexport default function () {}\nexport function A() {}`,
+        violations: 0,
+      },
+      {
         fixed: `declare class B {}\nclass A {}\nexport { A, B };`,
         name: "declaredClass",
         source: `class A {}\ndeclare class B {}\nexport { A, B };`,
@@ -165,6 +170,11 @@ describe("sortModules", () => {
         name: "ambientModuleBody",
         source: `declare module "x" {\n  export interface B {}\n  export interface A {}\n}`,
         violations: 1,
+      },
+      {
+        name: "functionPropertyReadsLater",
+        source: `export class A {\n  f = function () {\n    return B;\n  };\n}\nexport class B {}`,
+        violations: 0,
       },
       {
         fixed: `export class A {}
