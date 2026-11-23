@@ -20,8 +20,8 @@ export const measureEachReference = async (
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of referenceIds)
     measures.push(
-      // Render on the GPU, and parallel renders exhaust the free memory each holds
-      // oxlint-disable-next-line no-await-in-loop -- One device: each reference's witness page is its own browser
+      /* oxlint-disable-next-line no-await-in-loop -- One device: each reference's witness page is its own browser
+         render on the GPU, and parallel renders exhaust the free memory each holds */
       await withReferencePage(
         referenceId,
         component,

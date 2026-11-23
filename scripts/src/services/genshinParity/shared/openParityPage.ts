@@ -158,8 +158,8 @@ export const openParityPage = async ({
         .waitFor({ timeout: PARITY_READY_TIMEOUT_MS });
     let { parityError, parityReady: readyScreen } = await readPageState();
     while (parityError === undefined && readyScreen === undefined) {
-      // Ready, and its readiness is read after the frame it drew
-      // oxlint-disable no-await-in-loop -- Each step reads the last: the page draws one frame after another until it is
+      /* oxlint-disable no-await-in-loop -- Each step reads the last: the page draws one frame after another
+         until it is ready, and its readiness is read after the frame it drew */
       await page.clock.runFor(PARITY_FRAME_MS);
       ({ parityError, parityReady: readyScreen } = await readPageState());
       // oxlint-enable no-await-in-loop

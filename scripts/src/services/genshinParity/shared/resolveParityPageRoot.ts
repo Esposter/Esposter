@@ -6,14 +6,14 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Busy, So the page is asked for port by port rather than assumed to be on one. The first port is `GENSHIN_PARITY_PORT`
 // When it Is set, read at the call so a caller's environment is the one searched
 export const resolveParityPageRoot = async (
-  // IsolatedDeclarations demands
-  // oxlint-disable-next-line typescript/no-inferrable-types -- the annotation this default would otherwise infer
+  /* oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation
+     this default would otherwise infer */
   firstPort: number = Number(process.env.GENSHIN_PARITY_PORT ?? PARITY_DEFAULT_PORT),
 ): Promise<string> => {
   for (let port = firstPort; port < firstPort + PARITY_PORT_COUNT; port++) {
     const root = `http://localhost:${port}/parity/`;
-    // Ports after it are not probed
-    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: the first port that answers is the page, so the
+    /* oxlint-disable-next-line no-await-in-loop -- Stop at the first: the first port that answers is the page, so the
+       ports after it are not probed */
     if (await checkIsParityPage(root)) return root;
   }
   throw new InvalidOperationError(

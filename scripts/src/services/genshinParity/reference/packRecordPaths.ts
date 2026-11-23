@@ -40,8 +40,8 @@ export const packRecordPaths = async (
     }),
     REFERENCE_PACK_CONCURRENCY,
   );
-  // Two files packed under one path would be two rows the manifest's uniqueness check refuses on every later read, so
-  // The pack stops here
+  // Two files packed under one path would be two rows the manifest's uniqueness check refuses on every later read,
+  // So the pack stops here
   const recordPaths = files.map(({ path }) => path);
   const duplicatePath = recordPaths.find((recordPath, index) => recordPaths.indexOf(recordPath) !== index);
   if (duplicatePath !== undefined)

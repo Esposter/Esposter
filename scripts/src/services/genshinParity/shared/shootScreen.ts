@@ -31,8 +31,8 @@ export const shootScreen = async ({
       }
 
       for (const timeMs of timesMs) {
-        // Order, since the shot belongs to the time just set, before the next one is
-        // oxlint-disable no-await-in-loop -- One device: one page is paused at one time and shot before the next, in
+        /* oxlint-disable no-await-in-loop -- One device: one page is paused at one time and shot before the next, in
+           order, since the shot belongs to the time just set, before the next one is */
         await page.evaluate((currentTime) => {
           for (const animation of window.document.getAnimations()) {
             animation.pause();
