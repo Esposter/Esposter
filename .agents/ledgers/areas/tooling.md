@@ -227,6 +227,7 @@
 - `scripts/src/services/hostedAssets` — `renderConstant.ts`, `renderConstantOpening.ts`, `renderName.ts`, `renderTree.ts`, `writeHostedAssetKeys.ts`
 - `scripts/src/services/hostedAssets` — `pruneHostedAssets.ts`, `publishHostedAssets.test.ts`, `publishHostedAssets.ts`, `publishHostedAssetsToBucket.ts`, `readHostedAssetReachableObjects.ts`, `readLiveHostedAssetLocks.ts`, `readLockAt.ts`, `toHostedAssetLockObject.ts`, `toHostedAssetPaths.ts`, `toLockHashes.ts`, `verifyHostedAssets.test.ts`, `verifyHostedAssets.ts`, `verifyHostedAssetObject.ts`, `writeHostedAssetLock.ts`
 - `scripts/src/services/gameData/commands`
+- `scripts/src/services/dungeons` — `constants.ts`
 - `scripts/src/services/gameVersion` — `commands`, `constants.ts`, `createStamp.test.ts`, `findCommandHeading.ts`, `formatStaleRow.ts`, `groupStaleOutputs.ts`, `listStampPaths.ts`, `planStaleRows.test.ts`, `planStaleRows.ts`, `readInstallStaleRows.ts`, `readLockGameVersion.ts`, `readStaleRows.test.ts`, `readStaleRows.ts`, `readStampedOutput.ts`
 - `scripts/src/services/genshinAssets` — `achievements`, `adventureRank`, `archive`
 - `scripts/src/services/genshinAssets` — `avatar`, `bounds`
