@@ -1,5 +1,6 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
@@ -16,6 +17,7 @@ export const payOfferingLevels = (
   wallet: Wallet,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): { adventureExp: number; inventory: Inventory; overflowItems: DroppedItem[]; wallet: Wallet } => {
   let adventureExp = 0;
   let paidInventory = inventory;
@@ -24,7 +26,14 @@ export const payOfferingLevels = (
   for (const { itemCount, itemId } of gainedLevels.flatMap(({ rewards }) => rewards))
     if (itemId === ADVENTURE_EXP_ITEM_ID) adventureExp += itemCount;
     else {
-      const pickUp = pickUpDroppedItem({ count: itemCount, itemId }, paidInventory, paidWallet, names, materialDataMap);
+      const pickUp = pickUpDroppedItem(
+        { count: itemCount, itemId },
+        paidInventory,
+        paidWallet,
+        names,
+        materialDataMap,
+        itemRooms,
+      );
       paidInventory = pickUp.inventory;
       paidWallet = pickUp.wallet;
       if (pickUp.overflow > 0) overflowItems.push({ count: pickUp.overflow, itemId });

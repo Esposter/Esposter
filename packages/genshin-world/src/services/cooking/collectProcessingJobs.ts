@@ -1,6 +1,7 @@
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { collectProcessing } from "#src/services/cooking/collectProcessing";
@@ -13,8 +14,14 @@ export const collectProcessingJobs = (
   {
     getResultDefinition,
     inventory,
+    itemRooms,
     now,
-  }: { getResultDefinition: (itemId: number) => ItemDefinition; inventory: Inventory; now: Temporal.Instant },
+  }: {
+    getResultDefinition: (itemId: number) => ItemDefinition;
+    inventory: Inventory;
+    itemRooms: ItemCategoryRoomMap;
+    now: Temporal.Instant;
+  },
 ): { inventory: Inventory; jobs: Record<number, ProcessingJob> } => {
   const nextJobs: Record<number, ProcessingJob> = {};
   let nextInventory = inventory;
@@ -23,6 +30,7 @@ export const collectProcessingJobs = (
     if (!job) continue;
     const collected = collectProcessing(recipe, job, {
       inventory: nextInventory,
+      itemRooms,
       now,
       resultDefinition: getResultDefinition(recipe.result.id),
     });

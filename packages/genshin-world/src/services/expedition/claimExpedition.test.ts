@@ -11,6 +11,7 @@ import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
@@ -53,6 +54,7 @@ describe(claimExpedition, () => {
         materialDataMap,
         returnedAt.subtract({ nanoseconds: 1 }),
         random,
+        itemRooms,
       ),
     ).toBeUndefined();
   });
@@ -76,6 +78,7 @@ describe(claimExpedition, () => {
         materialDataMap,
         returnedAt,
         random,
+        itemRooms,
       )?.inventory.items,
     ).toStrictEqual([
       {
@@ -108,6 +111,7 @@ describe(claimExpedition, () => {
         materialDataMap,
         returnedAt,
         random,
+        itemRooms,
       ),
     ).toStrictEqual({
       expeditions: [],
@@ -141,6 +145,7 @@ describe(claimExpedition, () => {
         materialDataMap,
         returnedAt,
         random,
+        itemRooms,
         rewardPassives,
       )?.wallet,
     ).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: 781 });

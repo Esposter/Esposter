@@ -10,6 +10,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET, INVENTORY_KIND_LIMIT, MORA_ITEM_ID } fro
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { buyShopGood } from "#src/services/shop/buyShopGood";
 import { getNoItemDefinition } from "#src/services/shop/getNoItemDefinition.test";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -76,7 +77,16 @@ describe(buyShopGood, () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
-    const result = buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW);
+    const result = buyShopGood(
+      wallet,
+      EMPTY_INVENTORY,
+      getNoItemDefinition,
+      [],
+      fateGood,
+      ADVENTURE_RANK,
+      NOW,
+      itemRooms,
+    );
 
     expect(result?.wallet[Currency.MasterlessStarglitter]).toBe(STARGLITTER_PRICE);
     expect(result?.wallet[Currency.IntertwinedFate]).toBe(1);
@@ -90,7 +100,7 @@ describe(buyShopGood, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE - 1 };
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW, itemRooms),
     ).toBeUndefined();
   });
 
@@ -100,7 +110,7 @@ describe(buyShopGood, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE };
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK - 1, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK - 1, NOW, itemRooms),
     ).toBeUndefined();
   });
 
@@ -114,10 +124,28 @@ describe(buyShopGood, () => {
     ];
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtThisMonth, limitedGood, ADVENTURE_RANK, NOW),
+      buyShopGood(
+        wallet,
+        EMPTY_INVENTORY,
+        getNoItemDefinition,
+        boughtThisMonth,
+        limitedGood,
+        ADVENTURE_RANK,
+        NOW,
+        itemRooms,
+      ),
     ).toBeUndefined();
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtLastMonth, limitedGood, ADVENTURE_RANK, NOW),
+      buyShopGood(
+        wallet,
+        EMPTY_INVENTORY,
+        getNoItemDefinition,
+        boughtLastMonth,
+        limitedGood,
+        ADVENTURE_RANK,
+        NOW,
+        itemRooms,
+      ),
     ).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       purchases: [{ count: 1, goodsId: limitedGood.goodsId, lastPurchasedAt: NOW }],
@@ -138,14 +166,32 @@ describe(buyShopGood, () => {
     ];
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtBeforeRefresh, dailyGood, ADVENTURE_RANK, NOW),
+      buyShopGood(
+        wallet,
+        EMPTY_INVENTORY,
+        getNoItemDefinition,
+        boughtBeforeRefresh,
+        dailyGood,
+        ADVENTURE_RANK,
+        NOW,
+        itemRooms,
+      ),
     ).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       purchases: [{ count: 1, goodsId: dailyGood.goodsId, lastPurchasedAt: NOW }],
       wallet: { ...wallet, [Currency.IntertwinedFate]: 1, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE },
     });
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtAfterRefresh, dailyGood, ADVENTURE_RANK, NOW),
+      buyShopGood(
+        wallet,
+        EMPTY_INVENTORY,
+        getNoItemDefinition,
+        boughtAfterRefresh,
+        dailyGood,
+        ADVENTURE_RANK,
+        NOW,
+        itemRooms,
+      ),
     ).toBeUndefined();
   });
 
@@ -157,7 +203,16 @@ describe(buyShopGood, () => {
     const bought = [{ count: 1, goodsId: unrefreshedGood.goodsId, lastPurchasedAt: NOW.subtract({ hours: 24 * 5 }) }];
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, bought, unrefreshedGood, ADVENTURE_RANK, NOW),
+      buyShopGood(
+        wallet,
+        EMPTY_INVENTORY,
+        getNoItemDefinition,
+        bought,
+        unrefreshedGood,
+        ADVENTURE_RANK,
+        NOW,
+        itemRooms,
+      ),
     ).toBeUndefined();
     expect(
       buyShopGood(
@@ -168,6 +223,7 @@ describe(buyShopGood, () => {
         unrefreshedGood,
         ADVENTURE_RANK,
         NOW.add({ hours: 24 }),
+        itemRooms,
       ),
     ).toBeUndefined();
   });
@@ -180,16 +236,27 @@ describe(buyShopGood, () => {
     const ended = { ...fateGood, endTime: NOW.subtract({ hours: 1 }).toString() };
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], notYetBegun, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], notYetBegun, ADVENTURE_RANK, NOW, itemRooms),
     ).toBeUndefined();
-    expect(buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], ended, ADVENTURE_RANK, NOW)).toBeUndefined();
+    expect(
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], ended, ADVENTURE_RANK, NOW, itemRooms),
+    ).toBeUndefined();
   });
 
   test("buying a grocery ingredient into an empty bag adds it to the bag", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: MORA_PRICE * 2 };
-    const result = buyShopGood(wallet, EMPTY_INVENTORY, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW);
+    const result = buyShopGood(
+      wallet,
+      EMPTY_INVENTORY,
+      getGroceryItemDefinition,
+      [],
+      groceryGood,
+      ADVENTURE_RANK,
+      NOW,
+      itemRooms,
+    );
 
     expect(result?.wallet[Currency.Mora]).toBe(MORA_PRICE);
     expect(result?.inventory.items).toStrictEqual([
@@ -227,6 +294,7 @@ describe(buyShopGood, () => {
       moraGood,
       ADVENTURE_RANK,
       NOW,
+      itemRooms,
     );
 
     expect(moraResult?.wallet[Currency.AnemoSigil]).toBe(SIGIL_PRICE);
@@ -244,6 +312,7 @@ describe(buyShopGood, () => {
       materialGood,
       ADVENTURE_RANK,
       NOW,
+      itemRooms,
     );
 
     expect(materialResult?.wallet[Currency.AnemoSigil]).toBe(SIGIL_PRICE);
@@ -274,7 +343,7 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(wallet, fullBag, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, fullBag, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW, itemRooms),
     ).toBeUndefined();
   });
   const FISH_ITEM_ID = 9001;
@@ -297,6 +366,7 @@ describe(buyShopGood, () => {
       fishPricedGood,
       ADVENTURE_RANK,
       NOW,
+      itemRooms,
     );
 
     expect(result?.inventory.items).toStrictEqual([
@@ -314,7 +384,16 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], fishPricedGood, ADVENTURE_RANK, NOW),
+      buyShopGood(
+        EMPTY_WALLET,
+        inventory,
+        getGroceryItemDefinition,
+        [],
+        fishPricedGood,
+        ADVENTURE_RANK,
+        NOW,
+        itemRooms,
+      ),
     ).toBeUndefined();
   });
 
@@ -354,6 +433,7 @@ describe(buyShopGood, () => {
       multiFishGood,
       ADVENTURE_RANK,
       NOW,
+      itemRooms,
     );
 
     expect(result?.inventory.items).toStrictEqual([
@@ -375,7 +455,7 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], multiFishGood, ADVENTURE_RANK, NOW),
+      buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], multiFishGood, ADVENTURE_RANK, NOW, itemRooms),
     ).toBeUndefined();
   });
 
@@ -412,7 +492,7 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW),
+      buyShopGood(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW, itemRooms),
     ).toBeUndefined();
   });
 
@@ -432,6 +512,7 @@ describe(buyShopGood, () => {
       cardShopGood,
       ADVENTURE_RANK,
       NOW,
+      itemRooms,
     );
 
     expect(result?.inventory.items).toStrictEqual([

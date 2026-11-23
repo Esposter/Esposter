@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -19,6 +20,7 @@ export const offerBagItems = (
   progress: OfferingProgress<OfferingLevel>,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): OfferingOffer => {
   const { items } = inventory;
   const offeringItemIds = new Set(
@@ -33,6 +35,7 @@ export const offerBagItems = (
     wallet,
     names,
     materialDataMap,
+    itemRooms,
   );
   return { ...paid, progress: offeredProgress };
 };

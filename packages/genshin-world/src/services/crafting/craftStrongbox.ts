@@ -2,6 +2,7 @@ import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongb
 import type { StrongboxCraftTables } from "#src/models/crafting/StrongboxCraftTables";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { checkIsOfferableForStrongbox } from "#src/services/crafting/checkIsOfferableForStrongbox";
@@ -17,6 +18,7 @@ export const craftStrongbox = (
   strongbox: CraftingStrongboxData,
   pickedIds: number[],
   tables: StrongboxCraftTables,
+  itemRooms: ItemCategoryRoomMap,
 ): DroppedItemPickUp | undefined => {
   const isCountRight = pickedIds.length === strongbox.needCount && new Set(pickedIds).size === pickedIds.length;
   const isOfferable = pickedIds.every((id) =>
@@ -34,6 +36,7 @@ export const craftStrongbox = (
     wallet,
     names,
     materialDataMap,
+    itemRooms,
     reliquaryPieceEntryMap,
     weaponDataMap,
   );

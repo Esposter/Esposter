@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
@@ -33,6 +34,7 @@ interface Props {
   getWorldNow: () => Temporal.Instant;
   // The shop's goods as its slice holds them, before their sale dates and rank are checked
   goods: ShopGood[];
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which each good's item is named and defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items in the reader's language, by their game text ids
@@ -49,8 +51,18 @@ const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 // Every good bought, by its id and the moment it was bought, which each good's limit is counted from
 const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
-const { adventureRank, gameText, getWorldNow, goods, materialDataMap, nameText, now, reputationLevel, shopId } =
-  defineProps<Props>();
+const {
+  adventureRank,
+  gameText,
+  getWorldNow,
+  goods,
+  itemRooms,
+  materialDataMap,
+  nameText,
+  now,
+  reputationLevel,
+  shopId,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const { count, goodId, resetShopPick } = useShopPick();
 // The tab the goods are shown on, by its id, where the shop has tabs: the first until the player picks another
@@ -121,6 +133,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
     buyCount,
     adventureRank,
     getWorldNow(),
+    itemRooms,
   );
   if (bought.purchases === purchases.value) return;
   inventory.value = bought.inventory;

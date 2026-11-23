@@ -252,6 +252,7 @@ export const useWorldOutcrops = ({
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
       worldSessionStore.resinParam,
+      worldSessionStore.itemRooms,
     );
     if (!claim) return;
     setWallet(claim.wallet);

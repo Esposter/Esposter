@@ -1,5 +1,6 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { RewardClaim } from "#src/models/reward/RewardClaim";
@@ -17,6 +18,7 @@ export const claimRewards = (
   wallet: Wallet,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): RewardClaim | undefined => {
   let claimedInventory = inventory;
   let claimedWallet = wallet;
@@ -25,7 +27,7 @@ export const claimRewards = (
     if (!items)
       throw new InvalidOperationError(Operation.Read, String(rewardId), "names no items in the rewards record");
     for (const item of items) {
-      const pickUp = pickUpDroppedItem(item, claimedInventory, claimedWallet, names, materialDataMap);
+      const pickUp = pickUpDroppedItem(item, claimedInventory, claimedWallet, names, materialDataMap, itemRooms);
       if (pickUp.overflow > 0) return undefined;
       claimedInventory = pickUp.inventory;
       claimedWallet = pickUp.wallet;

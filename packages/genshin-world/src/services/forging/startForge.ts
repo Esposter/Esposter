@@ -1,6 +1,7 @@
 import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinParam } from "#src/models/originalResin/ResinParam";
@@ -35,6 +36,7 @@ export const startForge = (
     forgeQueuePlayerLevels,
     inventory,
     isInRealm,
+    itemRooms,
     now,
     partyCharacterIds,
     progress,
@@ -47,6 +49,7 @@ export const startForge = (
     forgeQueuePlayerLevels: readonly number[];
     inventory: Inventory;
     isInRealm: boolean;
+    itemRooms: ItemCategoryRoomMap;
     now: Temporal.Instant;
     partyCharacterIds: number[];
     progress: ForgeProgress;
@@ -85,7 +88,7 @@ export const startForge = (
   const forgedPoints = progress.forgedPointsDay.equals(gameDay) ? progress.forgedPoints : 0;
   const takenInventory = { ...inventory, items: takeItemCounts(inventory.items, bagMaterials, count) };
   return {
-    inventory: refundForgeOres(takenInventory, recipe, count, talents, definitions),
+    inventory: refundForgeOres(takenInventory, recipe, count, talents, definitions, itemRooms),
     progress: {
       ...progress,
       forgedPoints: forgedPoints + recipe.forgePoint * count,

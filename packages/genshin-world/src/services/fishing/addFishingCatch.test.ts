@@ -4,6 +4,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { addFishingCatch } from "#src/services/fishing/addFishingCatch";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -50,6 +51,7 @@ describe(addFishingCatch, () => {
         rewards,
         names,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({
       inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] },

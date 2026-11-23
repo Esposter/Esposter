@@ -1,6 +1,7 @@
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
@@ -13,18 +14,19 @@ export const collectProcessing = (
   job: ProcessingJob | undefined,
   {
     inventory,
+    itemRooms,
     now,
     resultDefinition,
-  }: { inventory: Inventory; now: Temporal.Instant; resultDefinition: ItemDefinition },
+  }: { inventory: Inventory; itemRooms: ItemCategoryRoomMap; now: Temporal.Instant; resultDefinition: ItemDefinition },
 ): { inventory: Inventory; job?: ProcessingJob } => {
   if (!job) return { inventory };
   const elapsedSeconds = now.since(job.startedAt).total({ unit: "second" });
   const doneCount = Math.min(job.count, Math.max(Math.floor(elapsedSeconds / recipe.costTime), 0));
   if (doneCount === 0) return { inventory, job };
-  const { overflow } = addInventoryItem(inventory, resultDefinition, doneCount * recipe.result.count);
+  const { overflow } = addInventoryItem(inventory, resultDefinition, doneCount * recipe.result.count, itemRooms);
   const collectedCount = doneCount - Math.ceil(overflow / recipe.result.count);
   if (collectedCount === 0) return { inventory, job };
-  const addition = addInventoryItem(inventory, resultDefinition, collectedCount * recipe.result.count);
+  const addition = addInventoryItem(inventory, resultDefinition, collectedCount * recipe.result.count, itemRooms);
   const remainingCount = job.count - collectedCount;
   if (remainingCount === 0) return { inventory: addition.inventory };
   return {

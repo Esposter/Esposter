@@ -9,7 +9,7 @@ import {
   WEAPON_START_LEVEL,
   WEAPON_START_REFINEMENT,
 } from "#src/services/inventory/constants";
-import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
@@ -32,16 +32,18 @@ describe(addInventoryItem, () => {
     expect.hasAssertions();
     const inventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [QUICK_SWAP_ITEM_ID] };
 
-    expect(addInventoryItem(inventory, material, 1).inventory.quickSwapItemIds).toStrictEqual([QUICK_SWAP_ITEM_ID]);
+    expect(addInventoryItem(inventory, material, 1, itemRooms).inventory.quickSwapItemIds).toStrictEqual([
+      QUICK_SWAP_ITEM_ID,
+    ]);
   });
 
   // Most items stack to their own limit, under the save's ceiling in `MAX_ITEM_QUANTITY`, so a pick up is clamped by the item's own limit
   test("fills a stack to its item's limit of 9,999 and refuses the 10,000th", () => {
     expect.hasAssertions();
 
-    const { inventory } = addInventoryItem(emptyInventory, material, 9998);
+    const { inventory } = addInventoryItem(emptyInventory, material, 9998, itemRooms);
 
-    expect(addInventoryItem(inventory, material, 2)).toStrictEqual({
+    expect(addInventoryItem(inventory, material, 2, itemRooms)).toStrictEqual({
       inventory: { items: [{ definition: material, id: 0, quantity: 9999 }], nextId: 1, quickSwapItemIds: [] },
       overflow: 1,
     });
@@ -52,7 +54,7 @@ describe(addInventoryItem, () => {
 
     const weapon = createDefinition(ItemCategory.Weapon, 0);
 
-    expect(addInventoryItem(emptyInventory, weapon, 2)).toStrictEqual({
+    expect(addInventoryItem(emptyInventory, weapon, 2, itemRooms)).toStrictEqual({
       inventory: {
         items: [
           {
@@ -85,7 +87,7 @@ describe(addInventoryItem, () => {
     expect.hasAssertions();
 
     expect(() =>
-      addInventoryItem(emptyInventory, createDefinition(ItemCategory.Artifact, 1), 1),
+      addInventoryItem(emptyInventory, createDefinition(ItemCategory.Artifact, 1), 1, itemRooms),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: addInventoryItem, takes an artifact only as its rolled one]`,
     );
@@ -96,12 +98,12 @@ describe(addInventoryItem, () => {
     (category) => {
       expect.hasAssertions();
 
-      const room = ItemCategoryRoomMap[category];
+      const room = itemRooms[category];
       assert.exists(room);
       const definition = createDefinition(category, 0, room);
-      const { inventory } = addInventoryItem(emptyInventory, definition, room - 1);
+      const { inventory } = addInventoryItem(emptyInventory, definition, room - 1, itemRooms);
 
-      expect(addInventoryItem(inventory, definition, 2).overflow).toBe(1);
+      expect(addInventoryItem(inventory, definition, 2, itemRooms).overflow).toBe(1);
     },
   );
 
@@ -115,8 +117,8 @@ describe(addInventoryItem, () => {
     }));
     const inventory: Inventory = { items, nextId: INVENTORY_KIND_LIMIT, quickSwapItemIds: [] };
 
-    expect(addInventoryItem(inventory, createDefinition(ItemCategory.Material, INVENTORY_KIND_LIMIT), 1)).toStrictEqual(
-      { inventory, overflow: 1 },
-    );
+    expect(
+      addInventoryItem(inventory, createDefinition(ItemCategory.Material, INVENTORY_KIND_LIMIT), 1, itemRooms),
+    ).toStrictEqual({ inventory, overflow: 1 });
   });
 });

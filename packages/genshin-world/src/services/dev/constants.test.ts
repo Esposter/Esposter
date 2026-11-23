@@ -5,6 +5,7 @@ import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { WorldLayer } from "#src/models/world/WorldLayer";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 import { describe } from "vitest";
 
@@ -53,9 +54,10 @@ const CRYSTAL_CORE_NAME_TEXT_ID = "1";
 // The name tables a dev line's item is resolved against: the game's words in English and the one material above
 export const DEV_ITEM_TABLES: Pick<
   DevSaveTables,
-  "gameText" | "materialDataMap" | "nameText" | "reliquaryPieceEntryMap" | "weaponDataMap"
+  "gameText" | "itemRooms" | "materialDataMap" | "nameText" | "reliquaryPieceEntryMap" | "weaponDataMap"
 > = {
   gameText: ENGLISH_GAME_TEXT,
+  itemRooms,
   materialDataMap: new Map([
     [
       DEV_CRYSTAL_CORE_ID,

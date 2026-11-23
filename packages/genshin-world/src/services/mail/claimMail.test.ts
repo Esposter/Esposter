@@ -5,6 +5,7 @@ import type { MailSave } from "#src/models/mail/MailSave";
 import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { claimMail } from "#src/services/mail/claimMail";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { assert, describe, expect, test } from "vitest";
 
 describe(claimMail, () => {
@@ -33,7 +34,7 @@ describe(claimMail, () => {
   test("claiming a mail gives its items once", () => {
     expect.hasAssertions();
 
-    expect(claimMail(STATE, HELD, ROW, NAMES, MATERIAL_DATA_MAP)).toStrictEqual({
+    expect(claimMail(STATE, HELD, ROW, NAMES, MATERIAL_DATA_MAP, itemRooms)).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       mails: [{ ...HELD, isClaimed: true, isRead: true }],
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT },
@@ -44,10 +45,10 @@ describe(claimMail, () => {
   test("a claimed mail cannot be claimed again", () => {
     expect.hasAssertions();
 
-    const claimed = claimMail(STATE, HELD, ROW, NAMES, MATERIAL_DATA_MAP);
+    const claimed = claimMail(STATE, HELD, ROW, NAMES, MATERIAL_DATA_MAP, itemRooms);
     assert.exists(claimed);
 
-    expect(claimMail(claimed, HELD, ROW, NAMES, MATERIAL_DATA_MAP)).toBeUndefined();
+    expect(claimMail(claimed, HELD, ROW, NAMES, MATERIAL_DATA_MAP, itemRooms)).toBeUndefined();
   });
 
   // A mail held once per delivery: claiming one delivery leaves the other delivery of the same mail as it was
@@ -56,10 +57,12 @@ describe(claimMail, () => {
 
     const LATER: MailSave = { ...HELD, deliveredAt: new Date(1).toISOString() };
 
-    expect(claimMail({ ...STATE, mails: [HELD, LATER] }, HELD, ROW, NAMES, MATERIAL_DATA_MAP)).toStrictEqual({
-      inventory: EMPTY_INVENTORY,
-      mails: [{ ...HELD, isClaimed: true, isRead: true }, LATER],
-      wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT },
-    });
+    expect(claimMail({ ...STATE, mails: [HELD, LATER] }, HELD, ROW, NAMES, MATERIAL_DATA_MAP, itemRooms)).toStrictEqual(
+      {
+        inventory: EMPTY_INVENTORY,
+        mails: [{ ...HELD, isClaimed: true, isRead: true }, LATER],
+        wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT },
+      },
+    );
   });
 });

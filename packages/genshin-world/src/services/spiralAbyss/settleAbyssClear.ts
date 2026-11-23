@@ -1,5 +1,6 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { PartyMember } from "#src/models/party/PartyMember";
@@ -21,6 +22,7 @@ export const settleAbyssClear = ({
   characterIdMemberMap,
   floor,
   inventory,
+  itemRooms,
   materialDataMap,
   names,
   progress,
@@ -33,6 +35,7 @@ export const settleAbyssClear = ({
   characterIdMemberMap: ReadonlyMap<number, PartyMember>;
   floor: AbyssFloor;
   inventory: Inventory;
+  itemRooms: ItemCategoryRoomMap;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   names: Readonly<Record<string, string>>;
   progress: AbyssProgress;
@@ -41,7 +44,15 @@ export const settleAbyssClear = ({
   wallet: Wallet;
 }): AbyssClearSettlement | undefined => {
   const recorded = recordAbyssChamberClear(progress, floor, chamber, challenge, reward, characterIdMemberMap);
-  const claim = claimRewards(recorded.givenRewardIds, rewardItems, inventory, wallet, names, materialDataMap);
+  const claim = claimRewards(
+    recorded.givenRewardIds,
+    rewardItems,
+    inventory,
+    wallet,
+    names,
+    materialDataMap,
+    itemRooms,
+  );
   if (claim === undefined) return undefined;
   return { carry: recorded.carry, inventory: claim.inventory, progress: recorded.progress, wallet: claim.wallet };
 };

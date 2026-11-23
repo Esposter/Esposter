@@ -8,6 +8,7 @@ import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
 import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Kit } from "#src/models/kit/Kit";
 import type { RegionCityIds } from "#src/models/leyLine/RegionCityIds";
@@ -51,6 +52,8 @@ export interface WorldTables {
   frostbearingTreePlaces: FrostbearingTreePlace[];
   // The HUD's pieces' rects as the game's tree places them
   hudInterfaceRects: HudInterfaceRects;
+  // The tabs the bag counts on their own and their rooms in the game, which an item's add is checked against
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which every item the bag takes in is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The Elemental Monuments of Mondstadt, each lit by its element in the world

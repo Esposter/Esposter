@@ -184,6 +184,7 @@ export const useWorldFishing = ({
           rewardMap.value,
           worldSessionStore.nameText,
           worldSessionStore.materialDataMap,
+          worldSessionStore.itemRooms,
         ).inventory,
       );
       caughtAtMap.value = computeFishingCatchAts(caughtAtMap.value, next.stockKey, getWorldNow());

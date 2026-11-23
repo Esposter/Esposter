@@ -2,6 +2,7 @@
 import type { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { GameText } from "genshin-text";
 
@@ -18,6 +19,7 @@ interface Props {
   character: Character;
   // The game's words in the reader's language
   gameText: GameText;
+  itemRooms: ItemCategoryRoomMap;
   // The names the stat tables cite, in the reader's language, by their text id
   nameText: Readonly<Record<string, string>>;
   // The game's artifact sets, by which a worn artifact's bag definition is rebuilt and the bag's pieces are named
@@ -47,7 +49,11 @@ const equipOptions = computed(() =>
     @choose="
       (id) => {
         // The artifact the player chose is worn, and the piece it wore goes back to the bag
-        const equipped = equipBagArtifact(inventory, character, Number(id), { names: nameText, reliquarySets });
+        const equipped = equipBagArtifact(inventory, character, Number(id), {
+          itemRooms,
+          names: nameText,
+          reliquarySets,
+        });
         characters = replaceCharacterInRoster(characters, equipped.character);
         inventory = equipped.inventory;
         emit('close');

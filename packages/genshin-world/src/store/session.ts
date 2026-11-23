@@ -27,6 +27,7 @@ export const useWorldSessionStore = defineStore("world/session", () => {
   const gameDataBaseUrl = computed(() => getContext().gameDataBaseUrl);
   const gameText = computed(() => getContext().gameText);
   const language = computed(() => getContext().language);
+  const itemRooms = computed(() => getContext().itemRooms);
   const materialDataMap = computed(() => getContext().materialDataMap);
   const nameText = computed(() => getContext().nameText);
   const reliquaryPieceEntryMap = computed(() => getContext().reliquaryPieceEntryMap);
@@ -66,6 +67,7 @@ export const useWorldSessionStore = defineStore("world/session", () => {
     gameText,
     getWorldNow,
     inventory,
+    itemRooms,
     language,
     materialDataMap,
     nameText,

@@ -73,3 +73,7 @@ export const TALENT_CONFIG_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, AVATAR_
 export const PROUD_SKILL_SLOT_MODULUS = 10;
 // The game's constant table row holding the Original Resin constants, in the order its values give them
 export const RESIN_PARAM_CONST_NAME = "CONST_VALUE_RESIN_PARAM";
+// The game's constant names of the item limits the bag counts each tab on its own by, the first value of each row its room
+export const ARTIFACT_ROOM_CONST_NAME = "CONST_VALUE_RELIQUARY_ITEM_LIMIT";
+export const FURNISHING_ROOM_CONST_NAME = "CONST_VALUE_FURNITURE_ITEM_LIMIT";
+export const WEAPON_ROOM_CONST_NAME = "CONST_VALUE_WEAPON_ITEM_LIMIT";

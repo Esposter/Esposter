@@ -12,6 +12,7 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { destroyInventoryItems } from "#src/services/inventory/destroyInventoryItems";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -55,6 +56,7 @@ describe(destroyInventoryItems, () => {
           Array.from({ length: chosenCount }, () => weapon.id),
           englishNameText,
           materialDataMap,
+          itemRooms,
         ),
       ).toStrictEqual({
         inventory: {
@@ -104,6 +106,7 @@ describe(destroyInventoryItems, () => {
         [artifact.id],
         englishNameText,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({
       inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
@@ -124,6 +127,7 @@ describe(destroyInventoryItems, () => {
         [weapon.id, fourStarWeapon.id],
         englishNameText,
         materialDataMap,
+        itemRooms,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Delete, name: getDestroyableItem, 1]`,
@@ -142,7 +146,7 @@ describe(destroyInventoryItems, () => {
     const inventory = { items: [weapon, fullOreStack], nextId: 2, quickSwapItemIds: [] };
 
     expect(
-      destroyInventoryItems(inventory, EMPTY_WALLET, [weapon.id], englishNameText, materialDataMap),
+      destroyInventoryItems(inventory, EMPTY_WALLET, [weapon.id], englishNameText, materialDataMap, itemRooms),
     ).toBeUndefined();
     expect(inventory.items).toStrictEqual([weapon, fullOreStack]);
   });
@@ -172,6 +176,7 @@ describe(destroyInventoryItems, () => {
         [apple.id],
         englishNameText,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({ inventory: { items: [], nextId: 1, quickSwapItemIds: [] }, wallet: EMPTY_WALLET });
   });

@@ -4,6 +4,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import { collectProcessingJobs } from "#src/services/cooking/collectProcessingJobs";
 import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -39,6 +40,7 @@ describe(collectProcessingJobs, () => {
     const result = collectProcessingJobs([recipe], jobs, {
       getResultDefinition: () => createDefinition(RESULT_ID),
       inventory: EMPTY_INVENTORY,
+      itemRooms,
       now: EPOCH.add({ seconds: UNIT_SECONDS / 2 }),
     });
 
@@ -54,6 +56,7 @@ describe(collectProcessingJobs, () => {
       {
         getResultDefinition: () => createDefinition(RESULT_ID),
         inventory: EMPTY_INVENTORY,
+        itemRooms,
         now: EPOCH.add({ seconds: 2 * UNIT_SECONDS }),
       },
     );
@@ -78,6 +81,7 @@ describe(collectProcessingJobs, () => {
       {
         getResultDefinition: () => createDefinition(RESULT_ID, 1),
         inventory: fullInventory,
+        itemRooms,
         now: EPOCH.add({ seconds: UNIT_SECONDS }),
       },
     );

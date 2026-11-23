@@ -3,6 +3,7 @@ import CraftingScreenContainer from "#src/components/Crafting/Screen/Index.vue";
 import { MYSTIC_OFFERING_ADVENTURE_RANK } from "#src/services/crafting/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -27,6 +28,7 @@ describe("craftingScreen", () => {
         getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
         initialCrafterId: 0,
         inventory: { items: [], nextId: 0, quickSwapItemIds: [] },
+        itemRooms,
         materialDataMap: new Map(),
         nameText: {},
         now: Temporal.Instant.fromEpochMilliseconds(0),

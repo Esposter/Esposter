@@ -7,6 +7,7 @@ import { CookingTalentEffect } from "#src/models/cooking/CookingTalentEffect";
 import { autoCookRecipe } from "#src/services/cooking/autoCookRecipe";
 import { COOKING_BATCH_LIMIT } from "#src/services/cooking/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -64,6 +65,7 @@ describe(autoCookRecipe, () => {
         avatarId: AVATAR_ID,
         getDefinition: createDefinition,
         inventory: createInventory(3),
+        itemRooms,
         progress: { learnedRecipeIds: [], proficiencies: { 1001: 1 } },
         random: () => 0.99,
       }),
@@ -86,6 +88,7 @@ describe(autoCookRecipe, () => {
           avatarId: AVATAR_ID,
           getDefinition: createDefinition,
           inventory: createInventory(1),
+          itemRooms,
           progress: provenProgress,
           random: () => 0.99,
         },
@@ -100,6 +103,7 @@ describe(autoCookRecipe, () => {
       avatarId: AVATAR_ID,
       getDefinition: createDefinition,
       inventory: createInventory(COOKING_BATCH_LIMIT + 5),
+      itemRooms,
       progress: provenProgress,
       random: () => 0.99,
     });
@@ -115,6 +119,7 @@ describe(autoCookRecipe, () => {
       avatarId: AVATAR_ID,
       getDefinition: createDefinition,
       inventory: createInventory(3),
+      itemRooms,
       progress: provenProgress,
       random: () => 0,
     });
@@ -131,6 +136,7 @@ describe(autoCookRecipe, () => {
       avatarId: AVATAR_ID,
       getDefinition: createDefinition,
       inventory: createInventory(2),
+      itemRooms,
       progress: provenProgress,
       random: () => rolls.shift() ?? 0.5,
       talent: { chance: 12, effect: CookingTalentEffect.DoubleProduct, foodTypes: [CookingFoodType.Heal] },

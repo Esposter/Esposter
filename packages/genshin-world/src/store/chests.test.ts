@@ -28,11 +28,19 @@ import { ref, shallowReactive } from "vue";
 // Each region's record is served from the fetch the reader makes, so a record is read through its reader and its schema
 const { datasetRecordsMap } = vi.hoisted(() => ({ datasetRecordsMap: new Map<string, unknown[]>() }));
 
-vi.mock(import("#src/services/data/readGameDataObject"), () => ({
-  readGameDataObject: vi.fn<(gameDataBaseUrl: string, dataset: string, hash: string) => Promise<unknown>>(
-    (_gameDataBaseUrl, dataset) => Promise.resolve(datasetRecordsMap.get(dataset) ?? []),
-  ),
-}));
+vi.mock(import("#src/services/data/readGameDataObject"), async (importOriginal) => {
+  const { readGameDataObject: readHostedObject } = await importOriginal();
+  return {
+    readGameDataObject: vi.fn<(gameDataBaseUrl: string, dataset: string, hash: string) => Promise<unknown>>(
+      (gameDataBaseUrl, dataset, hash) =>
+        // A record the suite registers is served from the map, and any other hosted record is read as the shared
+        // Fixtures read it when this suite loads, before any record is registered
+        datasetRecordsMap.has(dataset)
+          ? Promise.resolve(datasetRecordsMap.get(dataset))
+          : readHostedObject(gameDataBaseUrl, dataset, hash),
+    ),
+  };
+});
 
 const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0]) => {
   startTestWorldSession();

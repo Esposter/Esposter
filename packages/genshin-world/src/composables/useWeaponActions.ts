@@ -1,5 +1,6 @@
 import type { ExpMaterial } from "#src/models/inventory/ExpMaterial";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -44,6 +45,7 @@ interface WeaponActionsSource {
   inventory: Ref<Inventory>;
   // Whether the bag holds the refinement material, which a refinement can take in place of a copy
   isRefinementMaterialHeld: ComputedRef<boolean>;
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which the ores and the refinement material are named from
   materialDataMap: MaybeRefOrGetter<ReadonlyMap<number, MaterialData>>;
   // The names the stat tables cite, in the reader's language, by their text id
@@ -84,6 +86,7 @@ export const useWeaponActions = ({
   getAdventureRank,
   inventory,
   isRefinementMaterialHeld,
+  itemRooms,
   materialDataMap,
   nameText,
   nextPhase,
@@ -123,7 +126,8 @@ export const useWeaponActions = ({
       const items = takeItemCounts(withoutFodders, pickedOres.value, 1);
       const returned = enhanced.returnedOres.reduce(
         (bag, { count, id }) =>
-          addInventoryItem(bag, getItemDefinition(id, toValue(nameText), toValue(materialDataMap)), count).inventory,
+          addInventoryItem(bag, getItemDefinition(id, toValue(nameText), toValue(materialDataMap)), count, itemRooms)
+            .inventory,
         { ...inventory.value, items: setBagWeapon(items, toValue(entryId), enhanced.weapon) },
       );
       return { inventory: returned, wallet: enhanced.wallet };

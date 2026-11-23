@@ -5,6 +5,7 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { MaterialTypeItemCategoryMap } from "#src/services/inventory/MaterialTypeItemCategoryMap";
 import { pickUpMaterialSource } from "#src/services/wildlife/pickUpMaterialSource";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 describe(pickUpMaterialSource, () => {
@@ -71,7 +72,7 @@ describe(pickUpMaterialSource, () => {
   ])("a picked $name gives its item and vanishes", ({ itemId, materialSources, name, pickedId, sources }) => {
     expect.hasAssertions();
 
-    const pickUp = pickUpMaterialSource(sources, pickedId, EMPTY_INVENTORY, names, materialDataMap);
+    const pickUp = pickUpMaterialSource(sources, pickedId, EMPTY_INVENTORY, names, materialDataMap, itemRooms);
 
     expect(pickUp.inventory).toStrictEqual({
       items: [

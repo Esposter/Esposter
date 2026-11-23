@@ -9,6 +9,7 @@ import { CookingTalentEffect } from "#src/models/cooking/CookingTalentEffect";
 import { RAIDEN_SHOGUN_AVATAR_ID } from "#src/services/cooking/constants";
 import { cookRecipeByHand } from "#src/services/cooking/cookRecipeByHand";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -57,6 +58,7 @@ describe(cookRecipeByHand, () => {
       avatarId,
       getDefinition: (itemId) => createDefinition(itemId),
       inventory: createInventory(ingredientCount),
+      itemRooms,
       progress: { learnedRecipeIds: [], proficiencies: {} },
       random: () => 0.5,
       stopPosition,
@@ -80,6 +82,7 @@ describe(cookRecipeByHand, () => {
       avatarId: AVATAR_ID,
       getDefinition: (itemId) => createDefinition(itemId, stackLimit),
       inventory: createInventory(1),
+      itemRooms,
       progress: { learnedRecipeIds: [], proficiencies: {} },
       random: () => roll,
       stopPosition,
@@ -114,6 +117,7 @@ describe(cookRecipeByHand, () => {
       avatarId: AVATAR_ID,
       getDefinition: (itemId) => createDefinition(itemId),
       inventory: createInventory(1),
+      itemRooms,
       progress: { learnedRecipeIds: [], proficiencies: { [recipe.id]: 2 } },
       random: () => 0.5,
       stopPosition: DELICIOUS_STOP,

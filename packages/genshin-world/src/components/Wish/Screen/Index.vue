@@ -3,6 +3,7 @@ import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Currency } from "#src/models/inventory/Currency";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Trial } from "#src/models/trial/Trial";
 import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
@@ -30,6 +31,7 @@ interface Props {
   gameText: GameText;
   // The world's clock as a draw reads it at the moment the draw is made
   getWorldNow: () => Temporal.Instant;
+  itemRooms: ItemCategoryRoomMap;
   // The names the stat tables cite by text id, in the reader's language
   nameText: Readonly<Record<string, string>>;
   // The world's clock as the screen shows it, at which the event banners on offer are read
@@ -54,8 +56,17 @@ const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", {
 // The draws the wish history keeps, which the draws of each set are appended to
 const wishHistory = defineModel<WishDrawSave[]>("wishHistory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { gameText, getWorldNow, nameText, now, statTables, stellaFortunaNameTextIdMap, trials, wishSchedule } =
-  defineProps<Props>();
+const {
+  gameText,
+  getWorldNow,
+  itemRooms,
+  nameText,
+  now,
+  statTables,
+  stellaFortunaNameTextIdMap,
+  trials,
+  wishSchedule,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: []; startTrial: [trial: Trial] }>();
 // An amount of a currency as the game's count text: its name and its count in the item-count format, in the reader's language
 const toCountText = (currency: Currency, quantity: number) =>
@@ -107,6 +118,7 @@ const wish = useWishDraw({
   getStatTables: () => statTables,
   getWorldNow,
   inventory,
+  itemRooms,
   pityMap,
   results,
   toResultCell,

@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
@@ -13,11 +14,12 @@ export const giveShopGood = (
   inventory: Inventory,
   getGoodItemDefinition: (itemId: number) => ItemDefinition,
   good: ShopGood,
+  itemRooms: ItemCategoryRoomMap,
 ): undefined | { inventory: Inventory; wallet: Wallet } => {
   const itemCurrency = ShopItemCurrencyMap[good.itemId];
   if (itemCurrency !== undefined)
     return { inventory, wallet: { ...wallet, [itemCurrency]: wallet[itemCurrency] + good.itemCount } };
-  const addition = addInventoryItem(inventory, getGoodItemDefinition(good.itemId), good.itemCount);
+  const addition = addInventoryItem(inventory, getGoodItemDefinition(good.itemId), good.itemCount, itemRooms);
   if (addition.overflow > 0) return undefined;
   return { inventory: addition.inventory, wallet };
 };

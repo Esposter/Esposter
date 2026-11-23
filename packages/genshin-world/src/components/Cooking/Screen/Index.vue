@@ -3,6 +3,7 @@ import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { CookingTalent } from "#src/models/cooking/CookingTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GameText } from "genshin-text";
 
@@ -23,6 +24,7 @@ interface Props {
   gameText: GameText;
   // The place of the pointer held still for a shot, where the indicator does not sweep; it sweeps from the opening when none is given
   heldPointer?: number | undefined;
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which each dish is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
@@ -39,7 +41,7 @@ const inventory = defineModel<Inventory>("inventory", { required: true });
 const progress = defineModel<CookingProgress>("progress", { required: true });
 // The recipe on the screen, whose zone parameters lay out the indicator, and the dishes the list offers
 const recipe = defineModel<CookingRecipe>("recipe", { required: true });
-const { avatarId, heldPointer, materialDataMap, nameText, random, recipes, talent } = defineProps<Props>();
+const { avatarId, heldPointer, itemRooms, materialDataMap, nameText, random, recipes, talent } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const zones = computed(() => readCookingZones(recipe.value.qteParam));
 const dishes = computed(() => recipes.map(({ id, nameTextId }) => ({ id, name: nameText[nameTextId] ?? "" })));
@@ -71,6 +73,7 @@ const stopCooking = () => {
     avatarId,
     getDefinition,
     inventory: inventory.value,
+    itemRooms,
     progress: progress.value,
     random,
     stopPosition: pointer.value,
@@ -90,6 +93,7 @@ const autoCook = () => {
     avatarId,
     getDefinition,
     inventory: inventory.value,
+    itemRooms,
     progress: progress.value,
     random,
     talent,

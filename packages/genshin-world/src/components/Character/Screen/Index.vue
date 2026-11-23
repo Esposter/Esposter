@@ -7,6 +7,7 @@ import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
 import type { Element } from "#src/models/Element";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
@@ -48,6 +49,7 @@ interface Props {
   initialTab: CharacterMenuTab;
   // Whether the device's main pointer is a finger, which the menu's keys are not drawn for
   isTouch: boolean;
+  itemRooms: ItemCategoryRoomMap;
   // The reader's game language, whose text the Profile tab shows
   language?: GameLanguage | undefined;
   // The game's material table by item id, which the materials a talent's next level takes are named from
@@ -151,6 +153,7 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
         :stat-tables
       />
       <CharacterScreenArtifacts
+        :item-rooms
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         v-model:artifact-notice="artifactNotice"
         v-model:characters="characters"
@@ -197,6 +200,7 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
       />
     </CharacterMenu>
     <CharacterScreenEquip
+      :item-rooms
       v-if="equipSlot && character"
       v-model:characters="characters"
       v-model:inventory="inventory"

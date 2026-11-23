@@ -1,6 +1,7 @@
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
@@ -16,6 +17,7 @@ export const refundForgeOres = (
   count: number,
   talents: ForgeTalent[],
   definitions: Map<number, ItemDefinition>,
+  itemRooms: ItemCategoryRoomMap,
 ): Inventory =>
   talents
     .filter(({ kind }) => kind === ForgeTalentKind.RefundOre)
@@ -26,7 +28,7 @@ export const refundForgeOres = (
           .reduce((refundedBag, { count: perUnit, id }) => {
             const definition = definitions.get(id);
             if (!definition) throw new InvalidOperationError(Operation.Read, String(id), "has no definition to refund");
-            return addInventoryItem(refundedBag, definition, Math.floor(perUnit * count * ratio)).inventory;
+            return addInventoryItem(refundedBag, definition, Math.floor(perUnit * count * ratio), itemRooms).inventory;
           }, bag),
       inventory,
     );

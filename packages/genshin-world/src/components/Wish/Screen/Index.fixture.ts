@@ -8,6 +8,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants
 import { BEGINNERS_WISH_LIMIT, INITIAL_WISH_PITY } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { readWishSchedule } from "#src/services/wish/readWishSchedule";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { BannerKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
@@ -38,6 +39,7 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   getWorldNow: () => heldNow,
   inventory: EMPTY_INVENTORY,
+  itemRooms,
   nameText: englishNameText,
   now: heldNow,
   pityMap,

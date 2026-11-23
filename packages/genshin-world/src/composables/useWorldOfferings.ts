@@ -54,6 +54,7 @@ export const useWorldOfferings = ({
           { ...progress, levels },
           worldSessionStore.nameText,
           worldSessionStore.materialDataMap,
+          worldSessionStore.itemRooms,
         );
         setInventory(offer.inventory);
         setWallet(offer.wallet);

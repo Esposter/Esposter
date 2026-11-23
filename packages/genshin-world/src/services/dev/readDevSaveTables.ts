@@ -5,6 +5,7 @@ import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { readItemCategoryRoomMap } from "#src/services/inventory/readItemCategoryRoomMap";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { createReliquaryPieceEntryMap } from "#src/services/reliquary/createReliquaryPieceEntryMap";
 import { readReliquarySets } from "#src/services/reliquary/readReliquarySets";
@@ -21,14 +22,16 @@ export const readDevSaveTables = async (
   language: GameLanguage,
   gameText: GameText,
 ): Promise<DevSaveTables> => {
-  const [nameText, materialDataMap, statTables, reliquarySets, adventureRankTables, catalogue] = await Promise.all([
-    NameTextLoaderMap[language](gameDataBaseUrl),
-    readMaterialDataMap(gameDataBaseUrl),
-    readStatTables(gameDataBaseUrl),
-    readReliquarySets(gameDataBaseUrl),
-    readAdventureRankTables(gameDataBaseUrl),
-    readCatalogue(gameDataBaseUrl),
-  ]);
+  const [nameText, itemRooms, materialDataMap, statTables, reliquarySets, adventureRankTables, catalogue] =
+    await Promise.all([
+      NameTextLoaderMap[language](gameDataBaseUrl),
+      readItemCategoryRoomMap(gameDataBaseUrl),
+      readMaterialDataMap(gameDataBaseUrl),
+      readStatTables(gameDataBaseUrl),
+      readReliquarySets(gameDataBaseUrl),
+      readAdventureRankTables(gameDataBaseUrl),
+      readCatalogue(gameDataBaseUrl),
+    ]);
   const regionLandmarks = await Promise.all(
     catalogue.regions.map(({ id }) =>
       getResultAsync(() => readRegionData(regionDataBaseUrl, id)).match(
@@ -46,6 +49,7 @@ export const readDevSaveTables = async (
     catalogue,
     characterDataMap: statTables.characterDataMap,
     gameText,
+    itemRooms,
     materialDataMap,
     nameText,
     reliquaryPieceEntryMap: createReliquaryPieceEntryMap(reliquarySets),

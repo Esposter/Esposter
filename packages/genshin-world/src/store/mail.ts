@@ -82,6 +82,7 @@ export const useWorldMailStore = defineStore("world/mail", () => {
       mailRow,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
     );
     if (!nextState) {
       isBagFull.value = mails.value.some((mail) => checkIsSameHeldMail(mail, held) && !mail.isClaimed);
@@ -98,6 +99,7 @@ export const useWorldMailStore = defineStore("world/mail", () => {
       mailRows,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
     );
     isBagFull.value = nextState.mails.some(({ isClaimed }) => !isClaimed);
     applyMailboxState(nextState);

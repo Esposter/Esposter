@@ -5,6 +5,7 @@ import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
 import type { ForgeQueueSlot } from "#src/models/forging/ForgeQueueSlot";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinParam } from "#src/models/originalResin/ResinParam";
@@ -40,6 +41,7 @@ interface Props {
   gameText: GameText;
   // Whether the player is in the Serenitea Pot's realm, which refuses a recipe that takes a Magical Crystal Chunk
   isInRealm: boolean;
+  itemRooms: ItemCategoryRoomMap;
   // The moment the queues are read at, so a queue's time left and its units done are of this moment
   now: Temporal.Instant;
   // The party's characters, whose forging talents apply to the orders started and obtained here
@@ -70,6 +72,7 @@ const {
   forgeQueuePlayerLevels,
   gameText,
   isInRealm,
+  itemRooms,
   now,
   partyCharacterIds,
   random,
@@ -187,6 +190,7 @@ const start = () => {
     forgeQueuePlayerLevels,
     inventory: inventory.value,
     isInRealm,
+    itemRooms,
     now,
     partyCharacterIds,
     progress: progress.value,
@@ -210,6 +214,7 @@ const obtain = (queueId: number) => {
     completedMainQuestIds,
     definitions,
     inventory: inventory.value,
+    itemRooms,
     now,
     random,
     talents: computeForgeTalents(partyCharacterIds),

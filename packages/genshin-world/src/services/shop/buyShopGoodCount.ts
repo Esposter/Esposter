@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
@@ -18,6 +19,7 @@ export const buyShopGoodCount = (
   count: number,
   adventureRank: number,
   now: Temporal.Instant,
+  itemRooms: ItemCategoryRoomMap,
 ): { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
   let state = { inventory, purchases, wallet };
   for (let index = 0; index < count; index++) {
@@ -29,6 +31,7 @@ export const buyShopGoodCount = (
       good,
       adventureRank,
       now,
+      itemRooms,
     );
     if (!bought) break;
     state = bought;

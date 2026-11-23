@@ -12,6 +12,7 @@ import type { HomeProgress } from "#src/models/home/HomeProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { InventoryUseContext } from "#src/models/inventory/InventoryUseContext";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { InventoryCell, InventoryWeaponDetails } from "genshin-interface";
@@ -34,7 +35,6 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { InventorySortGameTextKeyMap } from "#src/services/inventory/InventorySortGameTextKeyMap";
 import { ItemCategoryGameTextKeyMap } from "#src/services/inventory/ItemCategoryGameTextKeyMap";
-import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { toggleInventoryArtifactLock } from "#src/services/inventory/toggleInventoryArtifactLock";
 import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategory } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -65,6 +65,8 @@ interface Props {
   // The dish each instruction item teaches, by the item's id, which an instruction's Use is offered from
   instructionRecipeMap: ReadonlyMap<number, CookingRecipe>;
   inventory: Inventory;
+  // The tabs' rooms the game gives each tab it counts on its own, by the tab's category, which a tab's capacity is read from
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which a destroy's returned materials are defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The game's names in the reader's language, by their text ids, for the materials a destroy returns
@@ -90,6 +92,7 @@ const {
   initialSort,
   instructionRecipeMap,
   inventory,
+  itemRooms,
   materialDataMap,
   names,
   wallet,
@@ -123,7 +126,7 @@ const sortLabels = computed(() => ({
 }));
 // A tab counted on its own shows its room as the game words it, its name, its count and its limit
 const capacity = computed(() => {
-  const room = ItemCategoryRoomMap[category.value];
+  const room = itemRooms[category.value];
   return room === undefined
     ? ""
     : fillGameTextValues(
@@ -241,7 +244,7 @@ const quickSelect = (rarity: number) => {
 // The destruction the chosen entries make, undefined where the bag cannot take what they return whole
 // The dialog holds its OK off then, under the game's bag-full line
 const destruction = computed(() =>
-  destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names, materialDataMap),
+  destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names, materialDataMap, itemRooms),
 );
 const confirmDestroy = () => {
   if (!destruction.value) return;

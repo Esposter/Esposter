@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -16,11 +17,12 @@ export const grantRewardItems = (
   rewards: readonly ItemCount[],
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): undefined | { inventory: Inventory; wallet: Wallet } => {
   let granted: undefined | { inventory: Inventory; wallet: Wallet } = { inventory, wallet };
   for (const reward of rewards) {
     if (reward.id === ADVENTURE_EXP_ITEM_ID || reward.id === COMPANIONSHIP_EXP_ITEM_ID) continue;
-    granted = addRewardItem(granted, reward, names, materialDataMap);
+    granted = addRewardItem(granted, reward, names, materialDataMap, itemRooms);
     if (granted === undefined) return undefined;
   }
   return granted;

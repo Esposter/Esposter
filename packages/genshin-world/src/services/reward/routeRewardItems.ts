@@ -1,5 +1,6 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -23,6 +24,7 @@ export const routeRewardItems = (
   items: readonly ItemCount[],
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): undefined | { adventureExp: number; inventory: Inventory; wallet: Wallet } => {
   const gain = gainAdventureExp(adventureRankTables, adventureExp, gainedAdventureExp, completedMainQuestIds);
   const granted = grantRewardItems(
@@ -31,6 +33,7 @@ export const routeRewardItems = (
     items,
     names,
     materialDataMap,
+    itemRooms,
   );
   if (!granted) return undefined;
   return { adventureExp: gain.adventureExp, ...granted };

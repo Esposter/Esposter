@@ -6,6 +6,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { collectHomeOrder } from "#src/services/home/collectHomeOrder";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -49,6 +50,7 @@ describe(collectHomeOrder, () => {
 
     const result = collectHomeOrder(order, blueprint, {
       inventory: emptyInventory,
+      itemRooms,
       now: EPOCH.add({ seconds: SECONDS - 1 }),
       progress,
       resultDefinition,
@@ -63,6 +65,7 @@ describe(collectHomeOrder, () => {
 
     const first = collectHomeOrder(order, blueprint, {
       inventory: emptyInventory,
+      itemRooms,
       now: EPOCH.add({ seconds: SECONDS }),
       progress,
       resultDefinition,
@@ -74,6 +77,7 @@ describe(collectHomeOrder, () => {
 
     const again = collectHomeOrder(order, blueprint, {
       inventory: emptyInventory,
+      itemRooms,
       now: EPOCH.add({ seconds: SECONDS }),
       progress: { ...first.progress, orders: [order] },
       resultDefinition,
@@ -87,12 +91,14 @@ describe(collectHomeOrder, () => {
 
     const first = collectHomeOrder(order, blueprint, {
       inventory: emptyInventory,
+      itemRooms,
       now: EPOCH.add({ seconds: SECONDS }),
       progress,
       resultDefinition,
     });
     const again = collectHomeOrder(order, blueprint, {
       inventory: first.inventory,
+      itemRooms,
       now: EPOCH.add({ seconds: SECONDS }),
       progress: first.progress,
       resultDefinition: { ...resultDefinition, stackLimit: 2 },

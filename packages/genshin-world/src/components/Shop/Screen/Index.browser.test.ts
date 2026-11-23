@@ -10,6 +10,7 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { MONDSTADT_GENERAL_GOODS_SHOP_ID, REALM_DEPOT_SHOP_ID } from "#src/services/shop/constants";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -94,6 +95,7 @@ describe("shopScreen", () => {
               },
             ],
             inventory,
+            itemRooms,
             materialDataMap,
             nameText,
             now,
@@ -125,6 +127,7 @@ describe("shopScreen", () => {
               createGood(2, FURNISHING_ITEM_ID, FURNISHING_TAB_ID),
             ],
             inventory,
+            itemRooms,
             materialDataMap,
             nameText,
             now,

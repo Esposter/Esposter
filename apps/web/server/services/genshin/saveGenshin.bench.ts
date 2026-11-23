@@ -9,13 +9,18 @@ import { createMockBucket } from "@esposter/db-mock";
 import { getSaveBlobName, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
-import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, InventoryItemKind, MAX_INVENTORY_ITEM_COUNT } from "genshin-world/save";
+import {
+  EMPTY_GENSHIN_SAVE,
+  genshinSaveSchema,
+  InventoryItemKind,
+  MAX_STORED_INVENTORY_ITEM_COUNT,
+} from "genshin-world/save";
 import { v7 } from "uuid";
 import { afterAll, beforeAll, describe, test } from "vitest";
 
 // The bag is the one collection that reaches its ceiling, so its entry count is the scale: a typical bag,
 // Then the most the schema admits
-const BENCH_BAG_ENTRY_COUNTS = [1000, MAX_INVENTORY_ITEM_COUNT];
+const BENCH_BAG_ENTRY_COUNTS = [1000, MAX_STORED_INVENTORY_ITEM_COUNT];
 // The ETag a save is sent under, and one the blob never carries, which a write under it is refused for
 const SAVE_ETAG = "save";
 const STALE_ETAG = "stale";

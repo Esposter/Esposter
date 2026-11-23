@@ -3,6 +3,7 @@ import type { Character } from "#src/models/character/Character";
 import type { CharacterData } from "#src/models/character/CharacterData";
 import type { Currency } from "#src/models/inventory/Currency";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -57,6 +58,7 @@ interface Props {
   getWorldNow: () => Temporal.Instant;
   // The Fates the shop sells, as its dataset holds them, before their sale dates and rank are checked
   goods: ShopGood[];
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which each Fate's name is read from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and characters in the reader's language, by their game text ids
@@ -80,6 +82,7 @@ const {
   gameText,
   getWorldNow,
   goods,
+  itemRooms,
   materialDataMap,
   nameText,
   now,
@@ -196,6 +199,7 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
       buyCount,
       adventureRank,
       getWorldNow(),
+      itemRooms,
     );
     return bought.purchases === purchases.value ? undefined : { ...bought, characters: characters.value };
   }
@@ -217,6 +221,7 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
     offer.good,
     getWeaponDefinition,
     getWorldNow(),
+    itemRooms,
   );
   return bought && { ...bought, characters: characters.value };
 };

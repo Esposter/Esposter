@@ -7,6 +7,7 @@ import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { GCG_LUCKY_COIN_ITEM_ID } from "#src/services/shop/constants";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 describe(grantGcgGameReward, () => {
@@ -39,7 +40,7 @@ describe(grantGcgGameReward, () => {
   test("a won game pays its Player EXP into the card game and its Lucky Coins into the bag", () => {
     expect.hasAssertions();
 
-    expect(grantGcgGameReward(EMPTY_STATE, GAME_ID, REWARDS, NAMES, MATERIAL_DATA_MAP)).toStrictEqual({
+    expect(grantGcgGameReward(EMPTY_STATE, GAME_ID, REWARDS, NAMES, MATERIAL_DATA_MAP, itemRooms)).toStrictEqual({
       cardGameExp: PLAYER_EXP,
       inventory: {
         items: [
@@ -60,8 +61,8 @@ describe(grantGcgGameReward, () => {
   test("a game's reward is paid once, so a second win pays nothing", () => {
     expect.hasAssertions();
 
-    const paid = grantGcgGameReward(EMPTY_STATE, GAME_ID, REWARDS, NAMES, MATERIAL_DATA_MAP);
+    const paid = grantGcgGameReward(EMPTY_STATE, GAME_ID, REWARDS, NAMES, MATERIAL_DATA_MAP, itemRooms);
 
-    expect(grantGcgGameReward(paid, GAME_ID, REWARDS, NAMES, MATERIAL_DATA_MAP)).toStrictEqual(paid);
+    expect(grantGcgGameReward(paid, GAME_ID, REWARDS, NAMES, MATERIAL_DATA_MAP, itemRooms)).toStrictEqual(paid);
   });
 });

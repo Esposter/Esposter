@@ -1,5 +1,6 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
@@ -17,12 +18,13 @@ export const destroyInventoryItems = (
   ids: number[],
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): InventoryDestruction | undefined => {
   const { items } = inventory;
   const destroyedItems = Array.from(new Set(ids), (id) => getDestroyableItem(items, id));
   const remainingInventory: Inventory = { ...inventory, items: items.filter((item) => !destroyedItems.includes(item)) };
   return getDestroyReturns(destroyedItems).reduce<InventoryDestruction | undefined>(
-    (destruction, itemCount) => destruction && addRewardItem(destruction, itemCount, names, materialDataMap),
+    (destruction, itemCount) => destruction && addRewardItem(destruction, itemCount, names, materialDataMap, itemRooms),
     { inventory: remainingInventory, wallet },
   );
 };

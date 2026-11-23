@@ -5,6 +5,7 @@ import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
 import { getNoItemDefinition } from "#src/services/shop/getNoItemDefinition.test";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 describe(buyShopGoodCount, () => {
@@ -36,6 +37,7 @@ describe(buyShopGoodCount, () => {
       2,
       ADVENTURE_RANK,
       NOW,
+      itemRooms,
     );
     expect(wallet[Currency.Mora]).toBe(100 - MORA_PRICE * 2);
     expect(wallet[Currency.AnemoSigil]).toBe(2);
@@ -53,6 +55,7 @@ describe(buyShopGoodCount, () => {
       5,
       ADVENTURE_RANK,
       NOW,
+      itemRooms,
     );
     expect(wallet[Currency.Mora]).toBe(1);
     expect(wallet[Currency.AnemoSigil]).toBe(2);

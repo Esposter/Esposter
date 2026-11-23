@@ -2,6 +2,7 @@
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GameText } from "genshin-text";
 
@@ -16,6 +17,7 @@ import { GameTextKey } from "genshin-text";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which each result and ingredient is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
@@ -28,7 +30,7 @@ interface Props {
 
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const jobs = defineModel<Record<number, ProcessingJob>>("jobs", { required: true });
-const { materialDataMap, nameText, now, recipes } = defineProps<Props>();
+const { itemRooms, materialDataMap, nameText, now, recipes } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // The processings offered: only the ones known from the start, since a processing not yet known is refused
 const knownRecipes = recipes.filter((recipe) => recipe.isDefaultUnlocked);
@@ -46,6 +48,7 @@ const collect = () => {
   const collected = collectProcessingJobs(recipes, jobs.value, {
     getResultDefinition: getDefinition,
     inventory: inventory.value,
+    itemRooms,
     now: now(),
   });
   if (collected.inventory !== inventory.value) inventory.value = collected.inventory;

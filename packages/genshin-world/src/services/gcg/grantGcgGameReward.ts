@@ -1,4 +1,5 @@
 import type { GcgRewardState } from "#src/models/gcg/GcgRewardState";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 
@@ -13,6 +14,7 @@ export const grantGcgGameReward = (
   rewards: ItemCount[],
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): GcgRewardState => {
   if (state.rewardedGameIds.includes(gameId)) return state;
   const granted = grantRewardItems(
@@ -21,6 +23,7 @@ export const grantGcgGameReward = (
     rewards.filter(({ id }) => id !== GCG_PLAYER_EXP_ITEM_ID),
     names,
     materialDataMap,
+    itemRooms,
   );
   if (!granted) return state;
   const playerExp = rewards

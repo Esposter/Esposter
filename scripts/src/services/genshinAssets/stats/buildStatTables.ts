@@ -24,6 +24,7 @@ import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacte
 import { getCharacterSkillKits } from "#src/services/genshinAssets/stats/getCharacterSkillKits";
 import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCharacterTalentKits";
 import { compareExperienceDescending, getExpMaterials } from "#src/services/genshinAssets/stats/getExpMaterials";
+import { getItemCategoryRoomMap } from "#src/services/genshinAssets/stats/getItemCategoryRoomMap";
 import { getMasterlessLevelLifts } from "#src/services/genshinAssets/stats/getMasterlessLevelLifts";
 import { getResinParam } from "#src/services/genshinAssets/stats/getResinParam";
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
@@ -73,6 +74,7 @@ export const buildStatTables = (): { notes: string[]; publication: GameDataPubli
     characterSkillKits: getCharacterSkillKits(),
     characterTalentKits,
     forgeQueuePlayerLevels: toForgeQueuePlayerLevels(readExcelTable<ExcelForgeUpdateRow>("ForgeUpdateExcelConfigData")),
+    itemRooms: getItemCategoryRoomMap(),
     masterlessLevelLifts: getMasterlessLevelLifts(),
     resin: getResinParam(),
     talentUpgrades: toTalentUpgradeMap(proudSkillRows, combatGroupIds),

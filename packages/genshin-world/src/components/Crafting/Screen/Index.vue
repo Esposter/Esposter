@@ -6,6 +6,7 @@ import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinParam } from "#src/models/originalResin/ResinParam";
@@ -47,6 +48,7 @@ interface Props {
   getWorldNow: () => Temporal.Instant;
   // The crafter picked as the bench opens, the party's character on the field
   initialCrafterId: number;
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which each crafted item is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
@@ -78,6 +80,7 @@ const {
   gameText,
   getWorldNow,
   initialCrafterId,
+  itemRooms,
   materialDataMap,
   nameText,
   now,
@@ -170,6 +173,7 @@ const craft = () => {
   const crafted = craftRecipe(recipe, craftCount, getItemDefinition(recipe.resultItemId, nameText, materialDataMap), {
     adventureRank,
     inventory: inventory.value,
+    itemRooms,
     now: getWorldNow(),
     progress,
     resinParam,
@@ -177,7 +181,8 @@ const craft = () => {
   });
   if (!crafted) return;
   inventory.value = rollCraftingTalent(crafterId.value, recipe, craftCount, random).reduce(
-    (bag, { count, id }) => addInventoryItem(bag, getItemDefinition(id, nameText, materialDataMap), count).inventory,
+    (bag, { count, id }) =>
+      addInventoryItem(bag, getItemDefinition(id, nameText, materialDataMap), count, itemRooms).inventory,
     crafted.inventory,
   );
   wallet.value = crafted.wallet;
@@ -192,6 +197,7 @@ const craft = () => {
        and the party's crafter who may pass a talent's extra on to the bag. Its last tab is the Mystic Offering, whose panel
        takes the screen while that tab is picked -->
   <CraftingStrongbox
+    :item-rooms
     v-if="pickedTabId === MYSTIC_OFFERING_TAB_ID"
     :artifact-drop-tables
     :game-text

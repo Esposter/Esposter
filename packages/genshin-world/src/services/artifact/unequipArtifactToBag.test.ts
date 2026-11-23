@@ -12,7 +12,7 @@ import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
 import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
 import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
-import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
@@ -36,6 +36,7 @@ describe(unequipArtifactToBag, () => {
     startingMinorCount: 4,
   } satisfies ReliquaryPieceData;
   const options = {
+    itemRooms,
     names: { "101": "Flower Piece", "102": variantName },
     reliquarySets: [
       { id: 1, nameTextId: "1", needCounts: [2, 4], pieces: [flowerPiece, variantPiece] },
@@ -84,7 +85,12 @@ describe(unequipArtifactToBag, () => {
       artifactMainAffixPools: [{ attributes: [Attribute.Health], slot: ArtifactSlot.FlowerOfLife }],
       artifactRarityDataMap: new Map([[5, rarityData]]),
     });
-    const { inventory } = addDroppedItem({ items: [], nextId: 0, quickSwapItemIds: [] }, dropped, variantDefinition);
+    const { inventory } = addDroppedItem(
+      { items: [], nextId: 0, quickSwapItemIds: [] },
+      dropped,
+      variantDefinition,
+      itemRooms,
+    );
     const worn = equipBagArtifact(inventory, createCharacter([]), 0, options);
     expect(unequipArtifactToBag(worn.inventory, worn.character, ArtifactSlot.FlowerOfLife, options)).toStrictEqual({
       character: createCharacter([]),
@@ -114,7 +120,7 @@ describe(unequipArtifactToBag, () => {
   test("unequipping with the artifacts tab full reports the full bag, and the piece stays worn", () => {
     expect.hasAssertions();
 
-    const room = ItemCategoryRoomMap[ItemCategory.Artifact];
+    const room = itemRooms[ItemCategory.Artifact];
     assert.exists(room);
     const artifact = createArtifact();
     const items = Array.from({ length: room }, (_value, index) => ({

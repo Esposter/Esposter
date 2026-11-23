@@ -4,6 +4,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import { collectProcessing } from "#src/services/cooking/collectProcessing";
 import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -39,6 +40,7 @@ describe(collectProcessing, () => {
       { count: 3, startedAt: EPOCH },
       {
         inventory: EMPTY_INVENTORY,
+        itemRooms,
         now: EPOCH.add({ seconds: 2 * UNIT_SECONDS + UNIT_SECONDS / 2 }),
         resultDefinition: createDefinition(RESULT_ID),
       },
@@ -55,6 +57,7 @@ describe(collectProcessing, () => {
     const job = { count: 3, startedAt: EPOCH };
     const result = collectProcessing(recipe, job, {
       inventory: EMPTY_INVENTORY,
+      itemRooms,
       now: EPOCH.add({ seconds: UNIT_SECONDS - 1 }),
       resultDefinition: createDefinition(RESULT_ID),
     });
@@ -70,6 +73,7 @@ describe(collectProcessing, () => {
       { count: 1, startedAt: EPOCH },
       {
         inventory: EMPTY_INVENTORY,
+        itemRooms,
         now: EPOCH.add({ seconds: UNIT_SECONDS }),
         resultDefinition: createDefinition(RESULT_ID),
       },
@@ -90,6 +94,7 @@ describe(collectProcessing, () => {
     const job = { count: 1, startedAt: EPOCH };
     const result = collectProcessing(recipe, job, {
       inventory: fullInventory,
+      itemRooms,
       now: EPOCH.add({ seconds: UNIT_SECONDS }),
       resultDefinition: createDefinition(RESULT_ID, 1),
     });
@@ -106,6 +111,7 @@ describe(collectProcessing, () => {
       { count: 3, startedAt: EPOCH },
       {
         inventory: { items: [{ definition, id: 1, quantity: 1 }], nextId: 2, quickSwapItemIds: [] },
+        itemRooms,
         now: EPOCH.add({ seconds: 3 * UNIT_SECONDS }),
         resultDefinition: definition,
       },

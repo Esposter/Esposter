@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ExpMaterial } from "#src/models/inventory/ExpMaterial";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { RarityRequiredExpsMap } from "#src/models/weapon/RarityRequiredExpsMap";
@@ -37,6 +38,7 @@ interface Props {
   entryId: number;
   // The game's words in the reader's language
   gameText: GameText;
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which the ores and the refinement material are named from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names the stat tables cite, in the reader's language, by their text id
@@ -57,6 +59,7 @@ const {
   enhancementOres,
   entryId,
   gameText,
+  itemRooms,
   materialDataMap,
   nameText,
   rarityRequiredExpsMap,
@@ -137,6 +140,7 @@ const { act, isActionDisabled, pendingMora } = useWeaponActions({
   getAdventureRank: () => adventureRank,
   inventory,
   isRefinementMaterialHeld,
+  itemRooms,
   materialDataMap: () => materialDataMap,
   nameText: () => nameText,
   nextPhase,

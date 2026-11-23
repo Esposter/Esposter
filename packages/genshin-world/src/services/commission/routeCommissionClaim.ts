@@ -2,6 +2,7 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { Character } from "#src/models/character/Character";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -28,6 +29,7 @@ export const routeCommissionClaim = (
   names: Readonly<Record<string, string>>,
   party: Party,
   wallet: Wallet,
+  itemRooms: ItemCategoryRoomMap,
 ): RewardRouting | undefined => {
   const routed = routeRewardItems(
     adventureRankTables,
@@ -39,6 +41,7 @@ export const routeCommissionClaim = (
     items,
     names,
     materialDataMap,
+    itemRooms,
   );
   if (!routed) return undefined;
   return {

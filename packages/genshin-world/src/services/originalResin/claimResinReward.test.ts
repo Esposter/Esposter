@@ -11,6 +11,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inven
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -75,6 +76,7 @@ describe(claimResinReward, () => {
         names,
         new Map(),
         resinParam,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -102,6 +104,7 @@ describe(claimResinReward, () => {
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
         resinParam,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -143,6 +146,7 @@ describe(claimResinReward, () => {
         names,
         new Map(),
         resinParam,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: 0,
@@ -167,6 +171,7 @@ describe(claimResinReward, () => {
         names,
         new Map(),
         resinParam,
+        itemRooms,
       ),
     ).toBeUndefined();
   });
@@ -187,6 +192,7 @@ describe(claimResinReward, () => {
         names,
         new Map(),
         resinParam,
+        itemRooms,
       ),
     ).toBeUndefined();
   });

@@ -532,6 +532,7 @@ export const GameDataKeys = {
     characterSkillKits: "stats/characterSkillKits",
     characterTalentKits: "stats/characterTalentKits",
     forgeQueuePlayerLevels: "stats/forgeQueuePlayerLevels",
+    itemRooms: "stats/itemRooms",
     masterlessLevelLifts: "stats/masterlessLevelLifts",
     resin: "stats/resin",
     talentUpgrades: "stats/talentUpgrades",

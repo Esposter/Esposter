@@ -5,6 +5,7 @@ import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { buyHomeDepotGood } from "#src/services/home/buyHomeDepotGood";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
@@ -39,14 +40,18 @@ describe(buyHomeDepotGood, () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.RealmCurrency]: PRICE_COUNT * 2 };
-    const result = buyHomeDepotGood(good, {
-      adventureRank: ADVENTURE_RANK,
-      inventory: EMPTY_INVENTORY,
-      itemDefinition: furnishingDefinition,
-      now: EPOCH,
-      purchases: [],
-      wallet,
-    });
+    const result = buyHomeDepotGood(
+      good,
+      {
+        adventureRank: ADVENTURE_RANK,
+        inventory: EMPTY_INVENTORY,
+        itemDefinition: furnishingDefinition,
+        now: EPOCH,
+        purchases: [],
+        wallet,
+      },
+      itemRooms,
+    );
 
     assert.exists(result);
 
@@ -60,14 +65,18 @@ describe(buyHomeDepotGood, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.RealmCurrency]: PRICE_COUNT - 1 };
 
     expect(
-      buyHomeDepotGood(good, {
-        adventureRank: ADVENTURE_RANK,
-        inventory: EMPTY_INVENTORY,
-        itemDefinition: furnishingDefinition,
-        now: EPOCH,
-        purchases: [],
-        wallet,
-      }),
+      buyHomeDepotGood(
+        good,
+        {
+          adventureRank: ADVENTURE_RANK,
+          inventory: EMPTY_INVENTORY,
+          itemDefinition: furnishingDefinition,
+          now: EPOCH,
+          purchases: [],
+          wallet,
+        },
+        itemRooms,
+      ),
     ).toBeUndefined();
   });
 
@@ -83,14 +92,18 @@ describe(buyHomeDepotGood, () => {
       { count: 1, goodsId: weeklyGood.goodsId, lastPurchasedAt: WEEKLY_REFRESH.add({ hours: 1 }) },
     ];
     const buy = (purchases: typeof boughtLastWeek, now: Temporal.Instant) =>
-      buyHomeDepotGood(weeklyGood, {
-        adventureRank: ADVENTURE_RANK,
-        inventory: EMPTY_INVENTORY,
-        itemDefinition: furnishingDefinition,
-        now,
-        purchases,
-        wallet,
-      });
+      buyHomeDepotGood(
+        weeklyGood,
+        {
+          adventureRank: ADVENTURE_RANK,
+          inventory: EMPTY_INVENTORY,
+          itemDefinition: furnishingDefinition,
+          now,
+          purchases,
+          wallet,
+        },
+        itemRooms,
+      );
 
     expect(buy(boughtLastWeek, WEEKLY_REFRESH.add({ hours: 2 }))?.wallet[Currency.RealmCurrency]).toBe(PRICE_COUNT);
     expect(buy(boughtThisWeek, WEEKLY_REFRESH.add({ hours: 2 }))).toBeUndefined();

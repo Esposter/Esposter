@@ -1,6 +1,7 @@
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Banner } from "#src/models/wish/Banner";
 import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
@@ -32,6 +33,7 @@ interface WishDrawSource {
   getWorldNow: () => Temporal.Instant;
   // The bag a drawn weapon goes into
   inventory: Ref<Inventory>;
+  itemRooms: ItemCategoryRoomMap;
   // Each kind's counters, which the set's wishes advance
   pityMap: Ref<Readonly<Record<BannerKind, WishPity>>>;
   // The cards the screen shows, which a set's draws replace
@@ -54,6 +56,7 @@ export const useWishDraw =
     getStatTables,
     getWorldNow,
     inventory,
+    itemRooms,
     pityMap,
     results,
     toResultCell,
@@ -79,7 +82,12 @@ export const useWishDraw =
       if (item.kind === WishItemKind.Weapon) {
         const weaponData = weaponDataMap.get(item.id);
         if (!weaponData) throw new InvalidOperationError(Operation.Read, String(item.id), "has no weapon data");
-        nextInventory = addInventoryItem(nextInventory, toWeaponDefinition(weaponData, item.name), 1).inventory;
+        nextInventory = addInventoryItem(
+          nextInventory,
+          toWeaponDefinition(weaponData, item.name),
+          1,
+          itemRooms,
+        ).inventory;
       }
     // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy, and
     // Each duplicate's Stella Fortuna is added to its character as the draw lands, a new character's second copy included

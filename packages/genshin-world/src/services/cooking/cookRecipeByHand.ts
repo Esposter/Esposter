@@ -3,6 +3,7 @@ import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { CookingTalent } from "#src/models/cooking/CookingTalent";
 import type { CookingZones } from "#src/models/cooking/CookingZones";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { CookingQuality } from "#src/models/cooking/CookingQuality";
@@ -26,6 +27,7 @@ export const cookRecipeByHand = (
     avatarId,
     getDefinition,
     inventory,
+    itemRooms,
     progress,
     random,
     stopPosition,
@@ -35,6 +37,7 @@ export const cookRecipeByHand = (
     avatarId: number;
     getDefinition: (itemId: number) => ItemDefinition;
     inventory: Inventory;
+    itemRooms: ItemCategoryRoomMap;
     progress: CookingProgress;
     random: () => number;
     stopPosition: number;
@@ -55,6 +58,7 @@ export const cookRecipeByHand = (
     { ...inventory, items: takeItemCounts(inventory.items, recipe.ingredients, 1) },
     getDefinition(itemId),
     1 + extra,
+    itemRooms,
   );
   if (addition.overflow > 0) return undefined;
   const proficiency = progress.proficiencies[recipe.id] ?? 0;

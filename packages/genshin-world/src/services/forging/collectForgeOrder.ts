@@ -3,6 +3,7 @@ import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { ForgeResult } from "#src/models/forging/ForgeResult";
 import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
@@ -28,6 +29,7 @@ export const collectForgeOrder = (
   {
     definitions,
     inventory,
+    itemRooms,
     now,
     random,
     talents,
@@ -35,6 +37,7 @@ export const collectForgeOrder = (
   }: {
     definitions: Map<number, ItemDefinition>;
     inventory: Inventory;
+    itemRooms: ItemCategoryRoomMap;
     now: Temporal.Instant;
     random: () => number;
     talents: ForgeTalent[];
@@ -59,7 +62,12 @@ export const collectForgeOrder = (
       collectedCount++;
       continue;
     }
-    const added = addInventoryItem(collectedInventory, toResultDefinition(recipe, itemId, definitions, weapons), count);
+    const added = addInventoryItem(
+      collectedInventory,
+      toResultDefinition(recipe, itemId, definitions, weapons),
+      count,
+      itemRooms,
+    );
     if (added.overflow > 0) break;
     collectedCount++;
     collectedInventory = added.inventory;

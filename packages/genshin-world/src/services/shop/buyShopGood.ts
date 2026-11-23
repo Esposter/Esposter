@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
@@ -20,10 +21,11 @@ export const buyShopGood = (
   good: ShopGood,
   adventureRank: number,
   now: Temporal.Instant,
+  itemRooms: ItemCategoryRoomMap,
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
   if (!checkIsShopGoodOffered(good, adventureRank, now)) return undefined;
   const paid = payShopGoodCosts(wallet, inventory, purchases, good, now);
   if (!paid) return undefined;
-  const given = giveShopGood(paid.wallet, paid.inventory, getGoodItemDefinition, good);
+  const given = giveShopGood(paid.wallet, paid.inventory, getGoodItemDefinition, good, itemRooms);
   return given && { ...given, purchases: paid.purchases };
 };

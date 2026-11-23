@@ -1,3 +1,4 @@
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Mail } from "#src/models/mail/Mail";
 import type { MailboxState } from "#src/models/mail/MailboxState";
@@ -11,9 +12,10 @@ export const claimAllMails = (
   mailRows: ReadonlyMap<number, Mail>,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): MailboxState =>
   state.mails.reduce<MailboxState>((current, held) => {
     const mailRow = mailRows.get(held.id);
     if (mailRow === undefined) return current;
-    return claimMail(current, held, mailRow, names, materialDataMap) ?? current;
+    return claimMail(current, held, mailRow, names, materialDataMap, itemRooms) ?? current;
   }, state);

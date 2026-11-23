@@ -4,6 +4,7 @@ import type { MailboxState } from "#src/models/mail/MailboxState";
 import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -34,7 +35,7 @@ describe(claimAllMails, () => {
   test("claim all gives every unclaimed mail its items once", () => {
     expect.hasAssertions();
 
-    expect(claimAllMails(STATE, mailRows, {}, new Map())).toStrictEqual({
+    expect(claimAllMails(STATE, mailRows, {}, new Map(), itemRooms)).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       mails: [
         { deliveredAt, id: 1, isClaimed: true, isPinned: false, isRead: true },
@@ -51,7 +52,9 @@ describe(claimAllMails, () => {
 
     const later = { deliveredAt: new Date(1).toISOString(), id: 1, isClaimed: false, isPinned: false, isRead: false };
 
-    expect(claimAllMails({ ...STATE, mails: [takeOne(STATE.mails), later] }, mailRows, {}, new Map())).toStrictEqual({
+    expect(
+      claimAllMails({ ...STATE, mails: [takeOne(STATE.mails), later] }, mailRows, {}, new Map(), itemRooms),
+    ).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       mails: [
         { deliveredAt, id: 1, isClaimed: true, isPinned: false, isRead: true },

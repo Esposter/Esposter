@@ -35,6 +35,7 @@ import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { grantQuestRewards } from "#src/services/quest/grantQuestRewards";
 import { buyShopGood } from "#src/services/shop/buyShopGood";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
@@ -158,6 +159,7 @@ describe(useInventoryEntry, () => {
       good,
       1,
       NOW,
+      itemRooms,
     );
     assert.exists(bought);
     const [entry] = bought.inventory.items;
@@ -177,6 +179,7 @@ describe(useInventoryEntry, () => {
       EMPTY_WALLET,
       instructionNames,
       instructionMaterialDataMap,
+      itemRooms,
     );
     const [entry] = granted.inventory.items;
     assert.exists(entry);

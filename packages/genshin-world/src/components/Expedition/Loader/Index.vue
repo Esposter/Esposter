@@ -4,6 +4,7 @@ import type { ExpeditionLimitAdd } from "#src/models/expedition/ExpeditionLimitA
 import type { ExpeditionPassive } from "#src/models/expedition/ExpeditionPassive";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
@@ -28,6 +29,7 @@ interface Props {
   // The hosted game data's base, which the expedition places and the limit's steps are read from
   gameDataBaseUrl: string;
   gameText: GameText;
+  itemRooms: ItemCategoryRoomMap;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
   now: Temporal.Instant;
@@ -87,6 +89,7 @@ onMounted(() => {
 
 <template>
   <ExpeditionScreen
+    :item-rooms
     v-if="places && expeditionLimitAdds && characterExpeditionPassives"
     v-model:expeditions="expeditions"
     v-model:inventory="inventory"

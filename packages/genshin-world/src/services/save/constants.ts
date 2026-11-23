@@ -22,8 +22,7 @@ import {
   MAX_STORED_HOME_ORDER_COUNT,
   MAX_STORED_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
-import { EMPTY_CURRENCIES, INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/constants";
-import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { EMPTY_CURRENCIES, MAX_ITEM_QUANTITY } from "#src/services/inventory/constants";
 import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import { MAX_STORED_MAIL_COUNT } from "#src/services/mail/constants";
 import {
@@ -133,10 +132,11 @@ export const MAX_FORGE_RECIPE_COUNT = 64;
 // The game's achievement table keeps this many achievements, counted by `genshin:assets achievements` into the
 // World's data
 export const MAX_ACHIEVEMENT_COUNT: number = achievementCount.count;
-// The bag holds up to its kinds of item beside its rooms for weapons, artifacts and furnishings, where each piece is
-// An entry of its own, so its entries are at most the kinds plus the rooms the wiki's Inventory page gives
-export const MAX_INVENTORY_ITEM_COUNT: number =
-  INVENTORY_KIND_LIMIT + Object.values(ItemCategoryRoomMap).reduce((total, room) => total + (room ?? 0), 0);
+// The most entries the bag holds: the app's own storage ceiling, which the save schema bounds its items by, so a crafted
+// Save cannot grow the blob without limit. The game's counts are its kinds of item and its rooms (the stats dataset's
+// `itemRooms`, which the bag counts its tabs against), 9,600 together, and the ceiling sits above them, so every bag the
+// Game allows is stored
+export const MAX_STORED_INVENTORY_ITEM_COUNT = 10000;
 // The longest instant a save holds: Temporal's own string at its nanosecond, Z-suffixed, which the schemas bound to
 // This length
 const MAX_SAVE_INSTANT = "9999-12-31T23:59:59.999999999Z";
@@ -401,7 +401,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_SHOWN_TIP_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_WISH_HISTORY_COUNT *
     getListEntryLength({ bannerKind: LONGEST_BANNER_KIND, itemId: MAX_SAVE_NUMBER, time: MAX_SAVE_INSTANT }) +
-  MAX_INVENTORY_ITEM_COUNT * LONGEST_INVENTORY_ITEM_LENGTH +
+  MAX_STORED_INVENTORY_ITEM_COUNT * LONGEST_INVENTORY_ITEM_LENGTH +
   QUICK_SWAP_GADGET_LIMIT * getListEntryLength(MAX_SAVE_NUMBER);
 // A new player's bag, which holds nothing until the world gives it something
 const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0, quickSwapItemIds: [] };

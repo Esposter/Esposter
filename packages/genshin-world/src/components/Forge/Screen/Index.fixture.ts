@@ -20,6 +20,7 @@ import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { computeGameDay } from "#src/services/time/computeGameDay";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { ForgeTab } from "genshin-interface";
@@ -121,6 +122,7 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   inventory: createBag(createOreEntry(0, 38)),
   isInRealm: false,
+  itemRooms,
   now,
   partyCharacterIds: [],
   progress,

@@ -6,6 +6,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { claimRewards } from "#src/services/reward/claimRewards";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 describe(claimRewards, () => {
@@ -49,6 +50,7 @@ describe(claimRewards, () => {
         EMPTY_WALLET,
         names,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({
       inventory: EMPTY_INVENTORY,
@@ -67,6 +69,7 @@ describe(claimRewards, () => {
         EMPTY_WALLET,
         names,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({
       inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] },
@@ -77,7 +80,7 @@ describe(claimRewards, () => {
   test("a claim is refused whole when the material's stack is full", () => {
     expect.hasAssertions();
 
-    const { inventory: fullInventory } = addInventoryItem(EMPTY_INVENTORY, definition, MATERIAL_STACK_LIMIT);
+    const { inventory: fullInventory } = addInventoryItem(EMPTY_INVENTORY, definition, MATERIAL_STACK_LIMIT, itemRooms);
 
     expect(
       claimRewards(
@@ -92,6 +95,7 @@ describe(claimRewards, () => {
         EMPTY_WALLET,
         names,
         materialDataMap,
+        itemRooms,
       ),
     ).toBeUndefined();
   });
@@ -100,7 +104,7 @@ describe(claimRewards, () => {
     expect.hasAssertions();
 
     expect(() =>
-      claimRewards([MISSING_REWARD_ID], {}, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap),
+      claimRewards([MISSING_REWARD_ID], {}, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap, itemRooms),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 2, names no items in the rewards record]`,
     );

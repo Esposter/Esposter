@@ -15,6 +15,7 @@ import { readTalentTables } from "#src/services/character/readTalentTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { readReliquarySets } from "#src/services/reliquary/readReliquarySets";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CharacterMenuTab } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
@@ -174,6 +175,7 @@ export const props = {
   initialTab: CharacterMenuTab.Attributes,
   inventory: EMPTY_INVENTORY,
   isTouch: false,
+  itemRooms,
   materialDataMap,
   maxStamina: STAMINA,
   nameText: englishNameText,

@@ -1,5 +1,6 @@
 import type { AdventureRankLevel } from "#src/models/adventureRank/AdventureRankLevel";
 import type { CharacterData } from "#src/models/character/CharacterData";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
@@ -14,6 +15,7 @@ export interface DevSaveTables {
   catalogue: Catalogue;
   characterDataMap: ReadonlyMap<number, CharacterData>;
   gameText: GameText;
+  itemRooms: ItemCategoryRoomMap;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;

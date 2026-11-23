@@ -1,5 +1,6 @@
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { ResinParam } from "#src/models/originalResin/ResinParam";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
@@ -17,6 +18,7 @@ export interface WorldSessionContext {
   gameDataBaseUrl: string;
   gameText: GameText;
   getWorldNow: () => Temporal.Instant;
+  itemRooms: ItemCategoryRoomMap;
   language: GameLanguage;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;

@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
@@ -26,5 +27,6 @@ export const buyHomeDepotGood = (
     purchases: ShopPurchase[];
     wallet: Wallet;
   },
+  itemRooms: ItemCategoryRoomMap,
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } =>
-  buyShopGood(wallet, inventory, () => itemDefinition, purchases, good, adventureRank, now);
+  buyShopGood(wallet, inventory, () => itemDefinition, purchases, good, adventureRank, now, itemRooms);

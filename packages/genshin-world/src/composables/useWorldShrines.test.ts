@@ -12,6 +12,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { SHRINE_REGION_ID } from "#src/services/puzzle/constants";
 import { startTestWorldGround } from "#src/store/ground.fixture";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { InteractionKind } from "genshin-interface";
@@ -59,7 +60,7 @@ describe(useWorldShrines, () => {
   const createBag = (...keys: [itemId: number, quantity: number][]): Inventory =>
     keys.reduce<Inventory>(
       (inventory, [itemId, quantity]) =>
-        addInventoryItem(inventory, getItemDefinition(itemId, NAMES, MATERIAL_DATA_MAP), quantity).inventory,
+        addInventoryItem(inventory, getItemDefinition(itemId, NAMES, MATERIAL_DATA_MAP), quantity, itemRooms).inventory,
       { ...EMPTY_INVENTORY },
     );
 

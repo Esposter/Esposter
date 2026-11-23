@@ -14,6 +14,7 @@ import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -90,6 +91,7 @@ describe(routeCommissionClaim, () => {
         names,
         party,
         wallet,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: ADVENTURE_EXP,
@@ -134,6 +136,7 @@ describe(routeCommissionClaim, () => {
         names,
         party,
         wallet,
+        itemRooms,
       ),
     ).toBeUndefined();
   });

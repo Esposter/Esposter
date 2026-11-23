@@ -12,6 +12,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { settleAbyssClear } from "#src/services/spiralAbyss/settleAbyssClear";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 describe(settleAbyssClear, () => {
@@ -66,6 +67,7 @@ describe(settleAbyssClear, () => {
         characterIdMemberMap: new Map(),
         floor,
         inventory: EMPTY_INVENTORY,
+        itemRooms,
         materialDataMap,
         names,
         progress: emptyProgress,
@@ -87,7 +89,7 @@ describe(settleAbyssClear, () => {
   test("a clear whose rewards the bag has no room for is refused, and its progress is not recorded", () => {
     expect.hasAssertions();
 
-    const { inventory: fullInventory } = addInventoryItem(EMPTY_INVENTORY, definition, MATERIAL_STACK_LIMIT);
+    const { inventory: fullInventory } = addInventoryItem(EMPTY_INVENTORY, definition, MATERIAL_STACK_LIMIT, itemRooms);
 
     expect(
       settleAbyssClear({
@@ -96,6 +98,7 @@ describe(settleAbyssClear, () => {
         characterIdMemberMap: new Map(),
         floor,
         inventory: fullInventory,
+        itemRooms,
         materialDataMap,
         names,
         progress: emptyProgress,

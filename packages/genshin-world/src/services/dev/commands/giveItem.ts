@@ -26,7 +26,10 @@ type GiveItemArguments = z.infer<typeof giveItemArgs>;
 export const giveItem = (
   save: GenshinSave,
   { count, item }: GiveItemArguments,
-  tables: Pick<DevSaveTables, "gameText" | "materialDataMap" | "nameText" | "reliquaryPieceEntryMap" | "weaponDataMap">,
+  tables: Pick<
+    DevSaveTables,
+    "gameText" | "itemRooms" | "materialDataMap" | "nameText" | "reliquaryPieceEntryMap" | "weaponDataMap"
+  >,
 ): DevSaveOutcome => {
   const resolution = resolveDevItem(item, tables);
   if (!resolution.ok) return resolution;
@@ -44,6 +47,7 @@ export const giveItem = (
     { count, id },
     tables.nameText,
     tables.materialDataMap,
+    tables.itemRooms,
   );
   if (!reward) return { error: `the bag cannot take ${count} ${name} whole`, ok: false };
 

@@ -16,6 +16,7 @@ import {
   WEAPON_START_REFINEMENT,
 } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -61,6 +62,7 @@ describe(collectForgeOrder, () => {
     expect.hasAssertions();
 
     const result = collectForgeOrder(recipe, order(3), {
+      itemRooms,
       ...collectArguments,
       now: EPOCH.add({ seconds: 2 * UNIT_SECONDS + UNIT_SECONDS / 2 }),
     });
@@ -74,6 +76,7 @@ describe(collectForgeOrder, () => {
     expect.hasAssertions();
 
     const result = collectForgeOrder(recipe, order(2), {
+      itemRooms,
       ...collectArguments,
       now: EPOCH.add({ seconds: 2 * UNIT_SECONDS }),
     });
@@ -87,6 +90,7 @@ describe(collectForgeOrder, () => {
 
     const queued = order(2);
     const result = collectForgeOrder(recipe, queued, {
+      itemRooms,
       ...collectArguments,
       now: EPOCH.add({ seconds: UNIT_SECONDS - 1 }),
     });
@@ -100,6 +104,7 @@ describe(collectForgeOrder, () => {
 
     const talents = [{ forgeType: FORGE_ENHANCEMENT_TYPE, kind: ForgeTalentKind.ExtraResult, ratio: 0.2 }];
     const result = collectForgeOrder(recipe, order(2), {
+      itemRooms,
       ...collectArguments,
       now: EPOCH.add({ seconds: 2 * UNIT_SECONDS }),
       random: () => 0.1,
@@ -120,6 +125,7 @@ describe(collectForgeOrder, () => {
       ],
     };
     const result = collectForgeOrder(expRecipe, order(2), {
+      itemRooms,
       ...collectArguments,
       now: EPOCH.add({ seconds: 2 * UNIT_SECONDS }),
       random: () => 0.75,
@@ -134,6 +140,7 @@ describe(collectForgeOrder, () => {
 
     const fullDefinition = { ...resultDefinition, stackLimit: 3 };
     const result = collectForgeOrder(recipe, order(3), {
+      itemRooms,
       ...collectArguments,
       definitions: new Map([[RESULT_ID, fullDefinition]]),
       inventory: { items: [{ definition: fullDefinition, id: 1, quantity: 1 }], nextId: 2, quickSwapItemIds: [] },
@@ -174,6 +181,7 @@ describe(collectForgeOrder, () => {
       results: [{ count: 1, itemId: WEAPON_ID, weight: 1 }],
     };
     const result = collectForgeOrder(weaponRecipe, order(1), {
+      itemRooms,
       ...collectArguments,
       now: EPOCH.add({ seconds: UNIT_SECONDS }),
       weapons: new Map([[WEAPON_ID, { ...weaponData, name: "Dull Blade" }]]),

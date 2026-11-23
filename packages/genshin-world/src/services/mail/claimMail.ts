@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Mail } from "#src/models/mail/Mail";
@@ -17,12 +18,13 @@ export const claimMail = (
   mailRow: Mail,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): MailboxState | undefined => {
   const heldMail = state.mails.find((mail) => checkIsSameHeldMail(mail, held));
   if (heldMail === undefined || heldMail.isClaimed) return undefined;
   let granted: { inventory: Inventory; wallet: Wallet } = state;
   for (const { itemId, quantity } of mailRow.items) {
-    const addition = addRewardItem(granted, { count: quantity, id: itemId }, names, materialDataMap);
+    const addition = addRewardItem(granted, { count: quantity, id: itemId }, names, materialDataMap, itemRooms);
     if (addition === undefined) return undefined;
     granted = addition;
   }

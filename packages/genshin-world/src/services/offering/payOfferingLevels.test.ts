@@ -7,6 +7,7 @@ import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 describe(payOfferingLevels, () => {
@@ -55,7 +56,9 @@ describe(payOfferingLevels, () => {
       },
     ];
 
-    expect(payOfferingLevels(gainedLevels, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap)).toStrictEqual({
+    expect(
+      payOfferingLevels(gainedLevels, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap, itemRooms),
+    ).toStrictEqual({
       adventureExp: ADVENTURE_EXP_COUNT,
       inventory: {
         items: [{ definition: getItemDefinition(SIGIL_ITEM_ID, names, materialDataMap), id: 0, quantity: SIGIL_COUNT }],
@@ -77,7 +80,9 @@ describe(payOfferingLevels, () => {
       },
     ];
 
-    expect(payOfferingLevels(gainedLevels, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap)).toStrictEqual({
+    expect(
+      payOfferingLevels(gainedLevels, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap, itemRooms),
+    ).toStrictEqual({
       adventureExp: 0,
       inventory: {
         items: [{ definition: getItemDefinition(STONE_ITEM_ID, names, materialDataMap), id: 0, quantity: 1 }],

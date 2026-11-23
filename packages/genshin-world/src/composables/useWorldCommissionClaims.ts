@@ -66,6 +66,7 @@ export const useWorldCommissionClaims = ({
       encounterPoints: encounterPoints.value,
       friendshipLevels: friendshipLevels.value,
       inventory: inventory.value,
+      itemRooms: worldSessionStore.itemRooms,
       materialDataMap: worldSessionStore.materialDataMap,
       names: worldSessionStore.nameText,
       now: getWorldNow(),
@@ -98,6 +99,7 @@ export const useWorldCommissionClaims = ({
       worldSessionStore.nameText,
       party,
       wallet.value,
+      worldSessionStore.itemRooms,
     );
     if (!routing) return;
     commissionDay.value = bonusClaim.day;

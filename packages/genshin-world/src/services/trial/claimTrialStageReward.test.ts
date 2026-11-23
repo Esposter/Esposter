@@ -4,6 +4,7 @@ import type { TrialStage } from "#src/models/trial/TrialStage";
 import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { claimTrialStageReward } from "#src/services/trial/claimTrialStageReward";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 describe(claimTrialStageReward, () => {
@@ -36,6 +37,7 @@ describe(claimTrialStageReward, () => {
       EMPTY_WALLET,
       names,
       materialDataMap,
+      itemRooms,
     );
     expect(firstClear).toStrictEqual({
       claimedStageIds: new Set([STAGE_ID]),
@@ -56,6 +58,7 @@ describe(claimTrialStageReward, () => {
         EMPTY_WALLET,
         names,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({ claimedStageIds: new Set([STAGE_ID]), inventory: EMPTY_INVENTORY, wallet: EMPTY_WALLET });
   });

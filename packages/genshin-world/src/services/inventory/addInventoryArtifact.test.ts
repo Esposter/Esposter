@@ -5,7 +5,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { addInventoryArtifact } from "#src/services/inventory/addInventoryArtifact";
-import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
@@ -36,9 +36,14 @@ describe(addInventoryArtifact, () => {
     expect.hasAssertions();
 
     const otherArtifact: Artifact = { ...artifact, level: 4 };
-    const { inventory } = addInventoryArtifact({ ...emptyInventory, equippedGadgetItemId: 1 }, definition, artifact);
+    const { inventory } = addInventoryArtifact(
+      { ...emptyInventory, equippedGadgetItemId: 1 },
+      definition,
+      artifact,
+      itemRooms,
+    );
 
-    expect(addInventoryArtifact(inventory, definition, otherArtifact)).toStrictEqual({
+    expect(addInventoryArtifact(inventory, definition, otherArtifact, itemRooms)).toStrictEqual({
       inventory: {
         equippedGadgetItemId: 1,
         items: [
@@ -55,11 +60,11 @@ describe(addInventoryArtifact, () => {
   test("leaves the artifact over once the artifacts tab is full, keeping the equipped gadget", () => {
     expect.hasAssertions();
 
-    const room = ItemCategoryRoomMap[ItemCategory.Artifact];
+    const room = itemRooms[ItemCategory.Artifact];
     assert.exists(room);
     const items = Array.from({ length: room }, (_value, index) => ({ artifact, definition, id: index, quantity: 1 }));
     const inventory = { equippedGadgetItemId: 1, items, nextId: room, quickSwapItemIds: [] };
 
-    expect(addInventoryArtifact(inventory, definition, artifact)).toStrictEqual({ inventory, overflow: 1 });
+    expect(addInventoryArtifact(inventory, definition, artifact, itemRooms)).toStrictEqual({ inventory, overflow: 1 });
   });
 });

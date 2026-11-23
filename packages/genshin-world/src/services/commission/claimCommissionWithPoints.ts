@@ -6,6 +6,7 @@ import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Party } from "#src/models/party/Party";
@@ -28,6 +29,7 @@ export const claimCommissionWithPoints = ({
   encounterPoints,
   friendshipLevels,
   inventory,
+  itemRooms,
   materialDataMap,
   names,
   now,
@@ -45,6 +47,7 @@ export const claimCommissionWithPoints = ({
   encounterPoints: EncounterPoints;
   friendshipLevels: FriendshipLevels;
   inventory: Inventory;
+  itemRooms: ItemCategoryRoomMap;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   names: Readonly<Record<string, string>>;
   now: Temporal.Instant;
@@ -69,6 +72,7 @@ export const claimCommissionWithPoints = ({
     names,
     party,
     wallet,
+    itemRooms,
   );
   if (!routing) return undefined;
   const spentPoints = wholePoints - claim.encounterPoints;

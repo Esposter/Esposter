@@ -10,6 +10,7 @@ import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -68,6 +69,7 @@ describe(craftRecipe, () => {
   const craftingState = (inventory: Inventory, wallet: Wallet, progress = learnedProgress) => ({
     adventureRank: ADVENTURE_RANK,
     inventory,
+    itemRooms,
     now: EPOCH,
     progress,
     resinParam,

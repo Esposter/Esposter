@@ -1,5 +1,6 @@
 import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -28,6 +29,7 @@ describe("expeditionLoader", () => {
         gameDataBaseUrl: "/unreachable-game-data",
         gameText: ENGLISH_GAME_TEXT,
         inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
+        itemRooms,
         materialDataMap: new Map(),
         nameText: {},
         now: Temporal.Instant.fromEpochMilliseconds(0),

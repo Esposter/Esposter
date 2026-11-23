@@ -22,6 +22,7 @@ import { readTalentTables } from "#src/services/character/readTalentTables";
 import { readMondstadtCraftingBenchPlace } from "#src/services/crafting/readMondstadtCraftingBenchPlace";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
+import { readItemCategoryRoomMap } from "#src/services/inventory/readItemCategoryRoomMap";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { readRegionCityIds } from "#src/services/leyLine/readRegionCityIds";
@@ -113,6 +114,7 @@ getResultAsync(() =>
       measureLoadStep("tip-text", TipTextLoaderMap[props.language](props.gameDataBaseUrl)),
       measureLoadStep("tips", readTips(props.gameDataBaseUrl)),
       measureLoadStep("character-pack-readers", readCharacterPackReaders(props.gameDataBaseUrl)),
+      measureLoadStep("item-rooms", readItemCategoryRoomMap(props.gameDataBaseUrl)),
       measureLoadStep("resin-param", readResinParam(props.gameDataBaseUrl)),
     ]),
   ),
@@ -142,6 +144,7 @@ getResultAsync(() =>
     tipText,
     tips,
     characterPackReaders,
+    itemRooms,
     resinParam,
   ]) => {
     tables.value = {
@@ -156,6 +159,7 @@ getResultAsync(() =>
       frostbearingTreeLevels,
       frostbearingTreePlaces,
       hudInterfaceRects,
+      itemRooms,
       materialDataMap,
       monumentPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ElementalMonument),
       nameText,

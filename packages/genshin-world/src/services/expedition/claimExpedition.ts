@@ -3,6 +3,7 @@ import type { ExpeditionClaim } from "#src/models/expedition/ExpeditionClaim";
 import type { ExpeditionPassive } from "#src/models/expedition/ExpeditionPassive";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
@@ -29,6 +30,7 @@ export const claimExpedition = (
   materialDataMap: ReadonlyMap<number, MaterialData>,
   now: Temporal.Instant,
   random: () => number,
+  itemRooms: ItemCategoryRoomMap,
   passives: readonly ExpeditionPassive[] = [],
 ): ExpeditionClaim | undefined => {
   const expedition = expeditions.find((expeditionAway) => expeditionAway.characterId === characterId);
@@ -44,7 +46,12 @@ export const claimExpedition = (
     const boostedCount = Math.round((count * (100 + rewardPercent)) / 100);
     if (id === MORA_ITEM_ID) moraCount += boostedCount;
     else {
-      const addition = addInventoryItem(claimedInventory, getItemDefinition(id, names, materialDataMap), boostedCount);
+      const addition = addInventoryItem(
+        claimedInventory,
+        getItemDefinition(id, names, materialDataMap),
+        boostedCount,
+        itemRooms,
+      );
       if (addition.overflow > 0) return undefined;
       claimedInventory = addition.inventory;
     }

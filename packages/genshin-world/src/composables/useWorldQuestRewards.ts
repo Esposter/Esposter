@@ -34,6 +34,7 @@ export const useWorldQuestRewards = ({
       wallet.value,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
     );
     setInventory(granted.inventory);
     setWallet(granted.wallet);

@@ -7,6 +7,7 @@ import { FLOWER_ITEM_DEFINITION } from "#src/services/artifact/constants.test";
 import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { createCharacter } from "#src/services/artifact/createCharacter.test";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -19,6 +20,7 @@ const createEntry = (artifact: Artifact, id: number): InventoryItem => ({
 
 describe(equipBagArtifact, () => {
   const options = {
+    itemRooms,
     names: { "101": "Flower Piece" },
     reliquarySets: [
       {

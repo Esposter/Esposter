@@ -9,6 +9,7 @@ import { CurrencyItemIdMap, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inv
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
@@ -42,6 +43,7 @@ describe(offerBagItems, () => {
         { heldCounts: {}, level: 1, levels },
         englishNameText,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: 1,
@@ -74,6 +76,7 @@ describe(offerBagItems, () => {
         { heldCounts: {}, level: 1, levels: rewardLevels },
         englishNameText,
         materialDataMap,
+        itemRooms,
       ).overflowItems,
     ).toStrictEqual([{ count: 2, itemId: rewardItemId }]);
   });
@@ -90,6 +93,7 @@ describe(offerBagItems, () => {
         { heldCounts: {}, level: 3, levels },
         englishNameText,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: 0,

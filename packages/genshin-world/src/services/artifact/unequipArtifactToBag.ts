@@ -1,6 +1,7 @@
 import type { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { getArtifactItemDefinition } from "#src/services/artifact/getArtifactItemDefinition";
@@ -18,11 +19,20 @@ export const unequipArtifactToBag = (
   inventory: Inventory,
   character: Character,
   slot: ArtifactSlot,
-  options: { names: Readonly<Record<string, string>>; reliquarySets: readonly ReliquarySetData[] },
+  options: {
+    itemRooms: ItemCategoryRoomMap;
+    names: Readonly<Record<string, string>>;
+    reliquarySets: readonly ReliquarySetData[];
+  },
 ): UnequipArtifactToBagResult => {
   const { artifact, character: unequipped } = unequipCharacterArtifact(character, slot);
   const definition = getArtifactItemDefinition(artifact, options.reliquarySets, options.names);
-  const { inventory: nextInventory, overflow } = addInventoryArtifact(inventory, definition, artifact);
+  const { inventory: nextInventory, overflow } = addInventoryArtifact(
+    inventory,
+    definition,
+    artifact,
+    options.itemRooms,
+  );
   if (overflow) return { isBagFull: true };
   return { character: unequipped, inventory: nextInventory, isBagFull: false };
 };

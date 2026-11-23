@@ -199,6 +199,7 @@ export const useWorldSpiralAbyss = ({
       characterIdMemberMap: party.characterIdMemberMap,
       floor: arena.floor,
       inventory: inventory.value,
+      itemRooms: worldSessionStore.itemRooms,
       materialDataMap: worldSessionStore.materialDataMap,
       names: worldSessionStore.nameText,
       progress: abyssProgressMap.value.get(cycleKey) ?? {

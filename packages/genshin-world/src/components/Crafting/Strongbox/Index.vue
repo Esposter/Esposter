@@ -3,6 +3,7 @@ import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
@@ -22,6 +23,7 @@ interface Props {
   gameText: GameText;
   // The bag the offering takes its artifacts from and takes its strongbox's artifact into
   inventory: Inventory;
+  itemRooms: ItemCategoryRoomMap;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the strongboxes and items in the reader's language, by their text ids
   names: Readonly<Record<string, string>>;
@@ -126,14 +128,21 @@ const confirmSegments = computed(() =>
         @click="
           () => {
             if (pickedStrongbox === undefined) return;
-            const pickUp = craftStrongbox(props.inventory, props.wallet, pickedStrongbox, pickedIds, {
-              artifactDropTables: props.artifactDropTables,
-              materialDataMap: props.materialDataMap,
-              names: props.names,
-              random: props.random,
-              reliquaryPieceEntryMap: props.reliquaryPieceEntryMap,
-              weaponDataMap: props.weaponDataMap,
-            });
+            const pickUp = craftStrongbox(
+              props.inventory,
+              props.wallet,
+              pickedStrongbox,
+              pickedIds,
+              {
+                artifactDropTables: props.artifactDropTables,
+                materialDataMap: props.materialDataMap,
+                names: props.names,
+                random: props.random,
+                reliquaryPieceEntryMap: props.reliquaryPieceEntryMap,
+                weaponDataMap: props.weaponDataMap,
+              },
+              props.itemRooms,
+            );
             isConfirming = false;
             if (pickUp === undefined) return;
             pickedIds = [];

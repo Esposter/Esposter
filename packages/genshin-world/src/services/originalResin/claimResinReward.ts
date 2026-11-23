@@ -1,5 +1,6 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -30,6 +31,7 @@ export const claimResinReward = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
   resinParam: ResinParam,
+  itemRooms: ItemCategoryRoomMap,
 ): ResinClaim | undefined => {
   if (cost.condensedResinCount > 0) {
     if (countInventoryItem(inventory.items, CONDENSED_RESIN_ITEM_ID) < cost.condensedResinCount) return undefined;
@@ -43,6 +45,7 @@ export const claimResinReward = (
       rewards,
       names,
       materialDataMap,
+      itemRooms,
     );
   }
   const spentWallet = spendOriginalResin(wallet, cost.resin, now, resinParam);
@@ -57,5 +60,6 @@ export const claimResinReward = (
     rewards,
     names,
     materialDataMap,
+    itemRooms,
   );
 };

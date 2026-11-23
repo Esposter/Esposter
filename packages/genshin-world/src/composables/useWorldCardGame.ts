@@ -35,6 +35,7 @@ export const useWorldCardGame = ({ getResidents, savedCardGameExp, savedRewarded
         toGcgWeekGameRewards(weekGame),
         worldSessionStore.nameText,
         worldSessionStore.materialDataMap,
+        worldSessionStore.itemRooms,
       );
       cardGameExp.value = granted.cardGameExp;
       cardGameRewardedGameIds.value = granted.rewardedGameIds;

@@ -12,6 +12,7 @@ import {
   WEAPON_START_REFINEMENT,
 } from "#src/services/inventory/constants";
 import { buyPaimonsBargainsWeapon } from "#src/services/shop/buyPaimonsBargainsWeapon";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
@@ -43,7 +44,7 @@ describe(buyPaimonsBargainsWeapon, () => {
   test("a weapon is put in the bag and its price is taken", () => {
     expect.hasAssertions();
 
-    const result = buyPaimonsBargainsWeapon(wallet, EMPTY_INVENTORY, [], good, getWeaponDefinition, NOW);
+    const result = buyPaimonsBargainsWeapon(wallet, EMPTY_INVENTORY, [], good, getWeaponDefinition, NOW, itemRooms);
 
     expect(result).toStrictEqual({
       inventory: {
@@ -70,11 +71,19 @@ describe(buyPaimonsBargainsWeapon, () => {
     expect.hasAssertions();
 
     const limited = { ...good, buyLimit: 1 };
-    const first = buyPaimonsBargainsWeapon(wallet, EMPTY_INVENTORY, [], limited, getWeaponDefinition, NOW);
+    const first = buyPaimonsBargainsWeapon(wallet, EMPTY_INVENTORY, [], limited, getWeaponDefinition, NOW, itemRooms);
 
     assert.exists(first);
     expect(
-      buyPaimonsBargainsWeapon(first.wallet, first.inventory, first.purchases, limited, getWeaponDefinition, NOW),
+      buyPaimonsBargainsWeapon(
+        first.wallet,
+        first.inventory,
+        first.purchases,
+        limited,
+        getWeaponDefinition,
+        NOW,
+        itemRooms,
+      ),
     ).toBeUndefined();
   });
 
@@ -83,6 +92,8 @@ describe(buyPaimonsBargainsWeapon, () => {
 
     const poor = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: WEAPON_PRICE - 1 };
 
-    expect(buyPaimonsBargainsWeapon(poor, EMPTY_INVENTORY, [], good, getWeaponDefinition, NOW)).toBeUndefined();
+    expect(
+      buyPaimonsBargainsWeapon(poor, EMPTY_INVENTORY, [], good, getWeaponDefinition, NOW, itemRooms),
+    ).toBeUndefined();
   });
 });

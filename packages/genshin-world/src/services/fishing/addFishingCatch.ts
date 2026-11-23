@@ -2,6 +2,7 @@ import type { Fish } from "#src/models/fishing/Fish";
 import type { FishReward } from "#src/models/fishing/FishReward";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryAddition } from "#src/models/inventory/InventoryAddition";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
@@ -17,13 +18,14 @@ export const addFishingCatch = (
   rewards: ReadonlyMap<number, FishReward>,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): InventoryAddition => {
   const reward = rewards.get(rewardId);
   if (!reward) throw new InvalidOperationError(Operation.Read, String(rewardId), "has no row in the rewards' table");
   return reward.rewardItemList.reduce<InventoryAddition>(
     (addition, { itemCount, itemId }) => {
       const definition = getItemDefinition(itemId, names, materialDataMap);
-      const taken = addInventoryItem(addition.inventory, definition, itemCount);
+      const taken = addInventoryItem(addition.inventory, definition, itemCount, itemRooms);
       return { inventory: taken.inventory, overflow: addition.overflow + taken.overflow };
     },
     { inventory, overflow: 0 },

@@ -1,5 +1,6 @@
 import { props } from "#src/components/Crafting/Strongbox/Index.fixture";
 import CraftingStrongbox from "#src/components/Crafting/Strongbox/Index.vue";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { takeOne } from "@esposter/shared";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
@@ -14,6 +15,7 @@ describe("craftingStrongbox", () => {
 
     await render(CraftingStrongbox, {
       props: {
+        itemRooms,
         ...props,
         inventory: {
           ...props.inventory,

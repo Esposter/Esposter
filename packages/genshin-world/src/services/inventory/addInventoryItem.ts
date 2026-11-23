@@ -1,5 +1,6 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryAddition } from "#src/models/inventory/InventoryAddition";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import {
@@ -10,18 +11,19 @@ import {
   WEAPON_START_REFINEMENT,
 } from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
-import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
 
 // The bag after taking in so many of an item, as the game takes a pick up. Each weapon is an entry of its own at its
 // Starting state, and an artifact is taken in only as the artifact it was rolled as, through addInventoryArtifact.
 // Anything else fills its stack up to the item's own limit, or opens a new one while the bag holds fewer kinds than its
-// Limit. A tab counted on its own takes no more pieces than its room, and whatever does not fit is left over
+// Limit. A tab counted on its own takes no more pieces than its room in the game's rooms, and whatever does not fit is
+// Left over
 export const addInventoryItem = (
   inventory: Inventory,
   definition: ItemDefinition,
   quantity: number,
+  itemRooms: ItemCategoryRoomMap,
 ): InventoryAddition => {
   if (definition.category === ItemCategory.Artifact)
     throw new InvalidOperationError(
@@ -31,7 +33,7 @@ export const addInventoryItem = (
     );
   const { items, nextId } = inventory;
   const { category } = definition;
-  const categoryRoom = category === undefined ? undefined : ItemCategoryRoomMap[category];
+  const categoryRoom = category === undefined ? undefined : itemRooms[category];
   const tabRoom =
     category === undefined || categoryRoom === undefined
       ? Infinity
@@ -66,8 +68,7 @@ export const addInventoryItem = (
   }
 
   const kindCount = items.filter(
-    ({ definition: { category: itemCategory } }) =>
-      itemCategory === undefined || ItemCategoryRoomMap[itemCategory] === undefined,
+    ({ definition: { category: itemCategory } }) => itemCategory === undefined || itemRooms[itemCategory] === undefined,
   ).length;
   const addedCount =
     categoryRoom === undefined && kindCount >= INVENTORY_KIND_LIMIT

@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
@@ -16,6 +17,7 @@ export const grantQuestRewards = (
   wallet: Wallet,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): { adventureExp: number; characterExp: number; inventory: Inventory; wallet: Wallet } => {
   let adventureExp = 0;
   let characterExp = 0;
@@ -35,6 +37,7 @@ export const grantQuestRewards = (
       { count, id: itemId },
       names,
       materialDataMap,
+      itemRooms,
     );
     if (taken) {
       grantedInventory = taken.inventory;

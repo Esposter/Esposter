@@ -1,5 +1,6 @@
 import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { equipCharacterArtifact } from "#src/services/artifact/equipCharacterArtifact";
@@ -14,7 +15,11 @@ export const equipBagArtifact = (
   inventory: Inventory,
   character: Character,
   entryId: number,
-  options: { names: Readonly<Record<string, string>>; reliquarySets: readonly ReliquarySetData[] },
+  options: {
+    itemRooms: ItemCategoryRoomMap;
+    names: Readonly<Record<string, string>>;
+    reliquarySets: readonly ReliquarySetData[];
+  },
 ): { character: Character; inventory: Inventory } => {
   const chosen = inventory.items.find(({ id }) => id === entryId)?.artifact;
   if (!chosen)
@@ -23,7 +28,12 @@ export const equipBagArtifact = (
   const { character: equipped, displaced } = equipCharacterArtifact(character, chosen);
   if (!displaced) return { character: equipped, inventory: { ...inventory, items } };
   const definition = getArtifactItemDefinition(displaced, options.reliquarySets, options.names);
-  const { inventory: nextInventory, overflow } = addInventoryArtifact({ ...inventory, items }, definition, displaced);
+  const { inventory: nextInventory, overflow } = addInventoryArtifact(
+    { ...inventory, items },
+    definition,
+    displaced,
+    options.itemRooms,
+  );
   if (overflow)
     throw new InvalidOperationError(
       Operation.Update,

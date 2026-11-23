@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { TrialStageClaim } from "#src/models/trial/TrialStageClaim";
@@ -17,11 +18,12 @@ export const claimTrialStageReward = (
   wallet: Wallet,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): TrialStageClaim | undefined => {
   if (claimedStageIds.has(stageId)) return { claimedStageIds, inventory, wallet };
   const stage = stages[String(stageId)];
   if (!stage) throw new InvalidOperationError(Operation.Read, String(stageId), "names no trial stage");
-  const claim = claimRewards([stage.rewardId], rewards, inventory, wallet, names, materialDataMap);
+  const claim = claimRewards([stage.rewardId], rewards, inventory, wallet, names, materialDataMap, itemRooms);
   if (!claim) return undefined;
   return { claimedStageIds: new Set([...claimedStageIds, stageId]), inventory: claim.inventory, wallet: claim.wallet };
 };

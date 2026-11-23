@@ -162,6 +162,7 @@ const {
   gameDataBaseUrl,
   gameText,
   isPaused,
+  itemRooms,
   language,
   materialDataMap,
   monumentPlaces,
@@ -241,6 +242,7 @@ start(
     gameDataBaseUrl,
     gameText,
     getWorldNow,
+    itemRooms,
     language,
     materialDataMap,
     nameText,
@@ -1363,6 +1365,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Character]>
         <CharacterScreen
+          :item-rooms
           v-model:characters="characters"
           v-model:wallet="wallet"
           :active-character-id
@@ -1413,6 +1416,7 @@ useWorldSaveSync({
           :initial-sort="InventorySort.Level"
           :instruction-recipe-map
           :inventory
+          :item-rooms
           :material-data-map
           :names="nameText"
           :wallet
@@ -1424,6 +1428,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Wish]>
         <WishScreen
+          :item-rooms
           v-if="records.wishSchedule && records.characterTrials"
           v-model:character-copy-count-map="characterCopyCountMap"
           v-model:characters="characters"
@@ -1446,6 +1451,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.PaimonsBargains]>
         <PaimonsBargainsScreen
+          :item-rooms
           v-if="records.shopIdShopGoodMap && records.paimonsBargainsRotation"
           v-model:characters="characters"
           v-model:purchases="shopPurchases"
@@ -1554,6 +1560,7 @@ useWorldSaveSync({
     />
     <FishingScreen v-if="screenKind === ScreenKind.Fishing" :game-text :view="castView" />
     <ShopScreen
+      :item-rooms
       v-if="screenKind === ScreenKind.Shop && records.shopIdShopGoodMap"
       v-model:purchases="shopPurchases"
       :adventure-rank="rank"
@@ -1572,6 +1579,7 @@ useWorldSaveSync({
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <ExpeditionLoader
+      :item-rooms
       v-if="screenKind === ScreenKind.Expedition"
       v-model:expeditions="expeditions"
       :adventure-rank="rank"
@@ -1653,6 +1661,7 @@ useWorldSaveSync({
       @choose="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
     />
     <CookingScreen
+      :item-rooms
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe && records.cookingTalents"
       v-model:progress="cookingProgress"
       v-model:recipe="cookingRecipe"
@@ -1668,6 +1677,7 @@ useWorldSaveSync({
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <ProcessingScreen
+      :item-rooms
       v-if="screenKind === ScreenKind.Processing && records.processingRecipes"
       v-model:jobs="processingJobs"
       :game-text
@@ -1680,6 +1690,7 @@ useWorldSaveSync({
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <CraftingScreen
+      :item-rooms
       v-if="screenKind === ScreenKind.Crafting && records.craftingRecipes && records.craftingStrongboxes"
       v-model:crafted-count-map="craftedCountMap"
       :adventure-rank="rank"
@@ -1706,6 +1717,7 @@ useWorldSaveSync({
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <ForgeScreen
+      :item-rooms
       v-if="screenKind === ScreenKind.Forge && records.forgeDailyPointCap && records.forgeRecipes"
       v-model:adventure-exp="adventureExp"
       v-model:amount="forgeAmount"

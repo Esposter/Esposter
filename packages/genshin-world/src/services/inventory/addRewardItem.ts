@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -17,9 +18,10 @@ export const addRewardItem = (
   { count, id }: ItemCount,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): undefined | { inventory: Inventory; wallet: Wallet } => {
   if (!WALLET_ITEM_IDS.includes(id)) {
-    const addition = addInventoryItem(inventory, getItemDefinition(id, names, materialDataMap), count);
+    const addition = addInventoryItem(inventory, getItemDefinition(id, names, materialDataMap), count, itemRooms);
     return addition.overflow > 0 ? undefined : { inventory: addition.inventory, wallet };
   }
   const currency = getWalletCurrency(id);

@@ -23,6 +23,7 @@ import {
 } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -41,6 +42,7 @@ describe(pickUpDroppedItem, () => {
         EMPTY_WALLET,
         englishNameText,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({ inventory: EMPTY_INVENTORY, overflow: 0, wallet: { ...EMPTY_WALLET, [Currency.Mora]: 5 } });
   });
@@ -55,6 +57,7 @@ describe(pickUpDroppedItem, () => {
         EMPTY_WALLET,
         englishNameText,
         materialDataMap,
+        itemRooms,
       ),
     ).toStrictEqual({
       inventory: EMPTY_INVENTORY,
@@ -69,7 +72,14 @@ describe(pickUpDroppedItem, () => {
     const definition = getItemDefinition(maskId, englishNameText, materialDataMap);
 
     expect(
-      pickUpDroppedItem({ count: 1, itemId: maskId }, EMPTY_INVENTORY, EMPTY_WALLET, englishNameText, materialDataMap),
+      pickUpDroppedItem(
+        { count: 1, itemId: maskId },
+        EMPTY_INVENTORY,
+        EMPTY_WALLET,
+        englishNameText,
+        materialDataMap,
+        itemRooms,
+      ),
     ).toStrictEqual({
       inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] },
       overflow: 0,
@@ -81,10 +91,17 @@ describe(pickUpDroppedItem, () => {
     expect.hasAssertions();
 
     const definition = getItemDefinition(maskId, englishNameText, materialDataMap);
-    const { inventory } = addInventoryItem(EMPTY_INVENTORY, definition, definition.stackLimit);
+    const { inventory } = addInventoryItem(EMPTY_INVENTORY, definition, definition.stackLimit, itemRooms);
 
     expect(
-      pickUpDroppedItem({ count: 2, itemId: maskId }, inventory, EMPTY_WALLET, englishNameText, materialDataMap),
+      pickUpDroppedItem(
+        { count: 2, itemId: maskId },
+        inventory,
+        EMPTY_WALLET,
+        englishNameText,
+        materialDataMap,
+        itemRooms,
+      ),
     ).toStrictEqual({ inventory, overflow: 2, wallet: EMPTY_WALLET });
   });
 
@@ -122,6 +139,7 @@ describe(pickUpDroppedItem, () => {
         EMPTY_WALLET,
         names,
         materialDataMap,
+        itemRooms,
         reliquaryPieceEntryMap,
       ),
     ).toStrictEqual({
@@ -180,6 +198,7 @@ describe(pickUpDroppedItem, () => {
         EMPTY_WALLET,
         names,
         materialDataMap,
+        itemRooms,
         new Map(),
         new Map([[weaponId, weaponData]]),
       ),

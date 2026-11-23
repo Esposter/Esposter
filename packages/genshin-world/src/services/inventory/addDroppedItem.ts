@@ -1,6 +1,7 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryAddition } from "#src/models/inventory/InventoryAddition";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { addInventoryArtifact } from "#src/services/inventory/addInventoryArtifact";
@@ -12,7 +13,8 @@ export const addDroppedItem = (
   inventory: Inventory,
   { artifact, count }: DroppedItem,
   definition: ItemDefinition,
+  itemRooms: ItemCategoryRoomMap,
 ): InventoryAddition =>
   artifact === undefined
-    ? addInventoryItem(inventory, definition, count)
-    : addInventoryArtifact(inventory, definition, artifact);
+    ? addInventoryItem(inventory, definition, count, itemRooms)
+    : addInventoryArtifact(inventory, definition, artifact, itemRooms);

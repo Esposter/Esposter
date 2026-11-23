@@ -6,6 +6,7 @@ import { readAdventureRankTables } from "#src/services/adventureRank/readAdventu
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
 import { routeRewardItems } from "#src/services/reward/routeRewardItems";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
@@ -31,6 +32,7 @@ describe(routeRewardItems, () => {
         [],
         {},
         new Map(),
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: maxAdventureExp,

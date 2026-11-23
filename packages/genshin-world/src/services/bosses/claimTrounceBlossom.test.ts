@@ -9,6 +9,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inven
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
@@ -48,6 +49,7 @@ describe(claimTrounceBlossom, () => {
       names,
       materialDataMap,
       resinParam,
+      itemRooms,
     );
 
     expect(claim?.wallet[Currency.OriginalResin]).toBe(1);
@@ -68,6 +70,7 @@ describe(claimTrounceBlossom, () => {
         names,
         materialDataMap,
         resinParam,
+        itemRooms,
       ),
     ).toBeUndefined();
   });

@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { PaimonsBargainsGood } from "#src/models/shop/PaimonsBargainsRotation";
@@ -18,11 +19,12 @@ export const buyPaimonsBargainsWeapon = (
   good: PaimonsBargainsGood,
   getWeaponDefinition: (weaponId: number) => ItemDefinition,
   now: Temporal.Instant,
+  itemRooms: ItemCategoryRoomMap,
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
   if (!checkIsCurrencyOnlyGood(good)) return undefined;
   const paid = payShopGoodCosts(wallet, inventory, purchases, good, now);
   if (!paid) return undefined;
-  const addition = addInventoryItem(paid.inventory, getWeaponDefinition(good.itemId), good.itemCount);
+  const addition = addInventoryItem(paid.inventory, getWeaponDefinition(good.itemId), good.itemCount, itemRooms);
   if (addition.overflow > 0) return undefined;
   return { inventory: addition.inventory, purchases: paid.purchases, wallet: paid.wallet };
 };

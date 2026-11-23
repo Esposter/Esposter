@@ -353,6 +353,7 @@ export const useWorldDomains = ({
       claim.rewards,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
     );
     if (!granted) return;
     setWallet(granted.wallet);
@@ -451,6 +452,7 @@ export const useWorldDomains = ({
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
       worldSessionStore.resinParam,
+      worldSessionStore.itemRooms,
     );
     if (!claim) return;
     // Each artifact goes into the bag as an entry of its own with the stats it rolled, so each one keeps its own
@@ -466,6 +468,7 @@ export const useWorldDomains = ({
             worldSessionStore.materialDataMap,
             worldSessionStore.reliquaryPieceEntryMap,
           ),
+          worldSessionStore.itemRooms,
         ).inventory,
       claim.inventory,
     );

@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 
@@ -13,10 +14,16 @@ export const pickUpMaterialSource = (
   inventory: Inventory,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
 ): { inventory: Inventory; materialSources: MaterialSourcePlace[]; overflow: number } => {
   const place = materialSources.find(({ id }) => id === placeId);
   if (!place) return { inventory, materialSources: [...materialSources], overflow: 0 };
-  const addition = addInventoryItem(inventory, getItemDefinition(place.kind.itemId, names, materialDataMap), 1);
+  const addition = addInventoryItem(
+    inventory,
+    getItemDefinition(place.kind.itemId, names, materialDataMap),
+    1,
+    itemRooms,
+  );
   return {
     inventory: addition.inventory,
     materialSources: addition.overflow > 0 ? [...materialSources] : materialSources.filter(({ id }) => id !== placeId),

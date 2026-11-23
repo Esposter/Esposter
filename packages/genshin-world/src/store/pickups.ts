@@ -124,6 +124,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
       worldSessionStore.wallet,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
       worldSessionStore.reliquaryPieceEntryMap,
       worldSessionStore.weaponDataMap,
     );
@@ -147,6 +148,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
       worldSessionStore.inventory,
       toItemDefinition(item, worldSessionStore.nameText),
       1,
+      worldSessionStore.itemRooms,
     );
     setInventory(addition.inventory);
     bagFullHint.value = addition.overflow > 0 ? worldSessionStore.gameText[GameTextKey.BagFull] : "";
@@ -165,6 +167,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
       worldSessionStore.inventory,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
     );
     setInventory(pickUp.inventory);
     bagFullHint.value = pickUp.overflow > 0 ? worldSessionStore.gameText[GameTextKey.BagFull] : "";

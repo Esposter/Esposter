@@ -11,6 +11,7 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { readWeaponLevelRequiredExps } from "#src/services/weapon/readWeaponLevelRequiredExps";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WeaponMenuTab } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
@@ -89,6 +90,7 @@ export const props = {
   entryId: OPEN_ENTRY_ID,
   gameText: ENGLISH_GAME_TEXT,
   inventory: bag,
+  itemRooms,
   materialDataMap,
   nameText: englishNameText,
   rarityRequiredExpsMap,

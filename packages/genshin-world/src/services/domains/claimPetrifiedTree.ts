@@ -2,6 +2,7 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { Character } from "#src/models/character/Character";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
@@ -34,6 +35,7 @@ export const claimPetrifiedTree = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
   resinParam: ResinParam,
+  itemRooms: ItemCategoryRoomMap,
 ): RewardRouting | undefined => {
   const rewards = Array.from({ length: offer.claimCount }, () => drawRewardItems(treeRewards, random)).flat();
   const claim = claimResinReward(
@@ -48,6 +50,7 @@ export const claimPetrifiedTree = (
     names,
     materialDataMap,
     resinParam,
+    itemRooms,
   );
   if (!claim) return undefined;
   return { ...claim, characters: gainDeployedCompanionshipExp(characters, rewards, party, friendshipLevels) };

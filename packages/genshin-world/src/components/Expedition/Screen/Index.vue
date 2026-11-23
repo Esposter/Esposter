@@ -5,6 +5,7 @@ import type { ExpeditionLimitAdd } from "#src/models/expedition/ExpeditionLimitA
 import type { ExpeditionPassive } from "#src/models/expedition/ExpeditionPassive";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ExpeditionCharacter, ExpeditionNation, ExpeditionPin, ExpeditionPlaceDetail } from "genshin-interface";
@@ -35,6 +36,7 @@ interface Props {
   expeditionLimitAdds: ExpeditionLimitAdd[];
   // The game's words in the reader's language
   gameText: GameText;
+  itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, whose rarity colours each reward's slot
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items in the reader's language, by their game text ids
@@ -65,6 +67,7 @@ const {
   downCharacterIds,
   expeditionLimitAdds,
   gameText,
+  itemRooms,
   materialDataMap,
   nameText,
   now,
@@ -185,6 +188,7 @@ const claim = (placeId: number) => {
     materialDataMap,
     now,
     random,
+    itemRooms,
     characterExpeditionPassives.get(expedition.characterId) ?? [],
   );
   if (!claimed) return;

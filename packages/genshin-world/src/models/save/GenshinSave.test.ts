@@ -36,7 +36,6 @@ import {
   MAX_CRAFTING_RECIPE_COUNT,
   MAX_ENEMY_RESPAWN_COUNT,
   MAX_FOUND_OCULUS_COUNT,
-  MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
   MAX_OFFERING_COUNT,
   MAX_OFFERING_ITEM_KIND_COUNT,
@@ -49,6 +48,7 @@ import {
   MAX_SHOWN_TIP_COUNT,
   MAX_SOLVED_PUZZLE_COUNT,
   MAX_STATUE_REGION_COUNT,
+  MAX_STORED_INVENTORY_ITEM_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
   MAX_UNLOCKED_LANDMARK_COUNT,
   MAX_WISH_HISTORY_COUNT,
@@ -69,7 +69,7 @@ describe("genshinSaveSchema", () => {
     const maxNumber = Number.MAX_SAFE_INTEGER;
     const maxInstant = epoch.add({ nanoseconds: 999_999_999 }).toString();
     // A bag of artifacts at its cap, each at its longest, since an artifact is the longest entry the bag holds
-    const artifactItems = Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
+    const artifactItems = Array.from({ length: MAX_STORED_INVENTORY_ITEM_COUNT }, (_value, index) => ({
       artifact: {
         experience: maxNumber,
         isLocked: true,
@@ -224,7 +224,7 @@ describe("genshinSaveSchema", () => {
         trustExp: maxNumber,
       },
       inventory: {
-        items: Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
+        items: Array.from({ length: MAX_STORED_INVENTORY_ITEM_COUNT }, (_value, index) => ({
           ascension: maxNumber,
           experience: maxNumber,
           id: maxNumber - index,

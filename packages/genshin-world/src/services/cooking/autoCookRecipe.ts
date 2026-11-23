@@ -2,6 +2,7 @@ import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { CookingTalent } from "#src/models/cooking/CookingTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { CookingQuality } from "#src/models/cooking/CookingQuality";
@@ -23,6 +24,7 @@ export const autoCookRecipe = (
     avatarId,
     getDefinition,
     inventory,
+    itemRooms,
     progress,
     random,
     talent,
@@ -30,6 +32,7 @@ export const autoCookRecipe = (
     avatarId: number;
     getDefinition: (itemId: number) => ItemDefinition;
     inventory: Inventory;
+    itemRooms: ItemCategoryRoomMap;
     progress: CookingProgress;
     random: () => number;
     talent?: CookingTalent | undefined;
@@ -51,7 +54,7 @@ export const autoCookRecipe = (
   return [...Map.groupBy(itemIds, (itemId) => itemId)].reduce<Inventory | undefined>(
     (bag, [itemId, group]) => {
       if (!bag) return undefined;
-      const addition = addInventoryItem(bag, getDefinition(itemId), group.length);
+      const addition = addInventoryItem(bag, getDefinition(itemId), group.length, itemRooms);
       return addition.overflow > 0 ? undefined : addition.inventory;
     },
     { ...inventory, items: takeItemCounts(inventory.items, recipe.ingredients, count) },

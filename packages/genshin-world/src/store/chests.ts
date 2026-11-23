@@ -106,7 +106,7 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
         worldSessionStore.materialDataMap,
         worldSessionStore.reliquaryPieceEntryMap,
       );
-      const addition = addDroppedItem(nextInventory, dropped, definition);
+      const addition = addDroppedItem(nextInventory, dropped, definition, worldSessionStore.itemRooms);
       nextInventory = addition.inventory;
       if (addition.overflow > 0) overflowDrops.push({ ...dropped, count: addition.overflow });
       events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(itemId) });

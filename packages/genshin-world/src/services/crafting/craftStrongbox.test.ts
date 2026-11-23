@@ -14,6 +14,7 @@ import { craftStrongbox } from "#src/services/crafting/craftStrongbox";
 import { rollStrongboxArtifact } from "#src/services/crafting/rollStrongboxArtifact";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { describe, expect, test } from "vitest";
 
 const RANDOM = (): number => 0.5;
@@ -104,22 +105,30 @@ describe(craftStrongbox, () => {
     };
     const expected = rollStrongboxArtifact(STRONGBOX, RANDOM, TABLES);
 
-    expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables())).toStrictEqual({
-      inventory: {
-        items: [
-          {
-            artifact: expected.artifact,
-            definition: getDroppedItemDefinition(expected.itemId, NAMES, new Map(), new Map(), reliquaryPieceEntryMap),
-            id: 3,
-            quantity: 1,
-          },
-        ],
-        nextId: 4,
-        quickSwapItemIds: [],
+    expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables(), itemRooms)).toStrictEqual(
+      {
+        inventory: {
+          items: [
+            {
+              artifact: expected.artifact,
+              definition: getDroppedItemDefinition(
+                expected.itemId,
+                NAMES,
+                new Map(),
+                new Map(),
+                reliquaryPieceEntryMap,
+              ),
+              id: 3,
+              quantity: 1,
+            },
+          ],
+          nextId: 4,
+          quickSwapItemIds: [],
+        },
+        overflow: 0,
+        wallet: EMPTY_WALLET,
       },
-      overflow: 0,
-      wallet: EMPTY_WALLET,
-    });
+    );
   });
 
   test("the equipped gadget stays equipped through the craft", () => {
@@ -133,7 +142,7 @@ describe(craftStrongbox, () => {
     };
 
     expect(
-      craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables())?.inventory
+      craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables(), itemRooms)?.inventory
         .equippedGadgetItemId,
     ).toBe(1);
   });
@@ -147,7 +156,9 @@ describe(craftStrongbox, () => {
       quickSwapItemIds: [],
     };
 
-    expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables())).toBeUndefined();
+    expect(
+      craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables(), itemRooms),
+    ).toBeUndefined();
   });
 
   test("a choice of other than three artifacts is refused", () => {
@@ -159,6 +170,6 @@ describe(craftStrongbox, () => {
       quickSwapItemIds: [],
     };
 
-    expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1], createCraftTables())).toBeUndefined();
+    expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1], createCraftTables(), itemRooms)).toBeUndefined();
   });
 });

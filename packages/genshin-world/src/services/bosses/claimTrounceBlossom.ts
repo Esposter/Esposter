@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -20,8 +21,9 @@ export const claimTrounceBlossom = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
   resinParam: ResinParam,
+  itemRooms: ItemCategoryRoomMap,
 ): Pick<ResinClaim, "inventory" | "wallet"> | undefined => {
   const spentWallet = spendOriginalResin(wallet, resin, now, resinParam);
   if (!spentWallet) return undefined;
-  return grantRewardItems(spentWallet, inventory, rewards, names, materialDataMap);
+  return grantRewardItems(spentWallet, inventory, rewards, names, materialDataMap, itemRooms);
 };

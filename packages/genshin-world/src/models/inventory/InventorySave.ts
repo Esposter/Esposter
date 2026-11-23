@@ -1,6 +1,6 @@
 import { inventoryItemSaveSchema } from "#src/models/inventory/InventoryItemSave";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
-import { MAX_INVENTORY_ITEM_COUNT } from "#src/services/save/constants";
+import { MAX_STORED_INVENTORY_ITEM_COUNT } from "#src/services/save/constants";
 import { z } from "zod";
 
 // The bag as the save holds it: its entries, the id the next one it takes in is given, the gadget equipped to the
@@ -9,7 +9,7 @@ import { z } from "zod";
 // Required, so a save holding none is refused
 export const inventorySaveSchema = z.object({
   equippedGadgetItemId: z.int().positive().optional(),
-  items: z.array(inventoryItemSaveSchema).max(MAX_INVENTORY_ITEM_COUNT),
+  items: z.array(inventoryItemSaveSchema).max(MAX_STORED_INVENTORY_ITEM_COUNT),
   nextId: z.int().nonnegative(),
   quickSwapItemIds: z.array(z.int().positive()).max(QUICK_SWAP_GADGET_LIMIT),
 });

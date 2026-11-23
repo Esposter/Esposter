@@ -13,6 +13,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inven
 import { ADVENTURE_EXP_PER_RESIN, COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { createParty } from "#src/services/party/createParty";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -91,6 +92,7 @@ describe(claimPetrifiedTree, () => {
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
         resinParam,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: DOMAIN_RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -140,6 +142,7 @@ describe(claimPetrifiedTree, () => {
         {},
         materialDataMap,
         resinParam,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: DOMAIN_RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -175,6 +178,7 @@ describe(claimPetrifiedTree, () => {
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
         resinParam,
+        itemRooms,
       ),
     ).toStrictEqual({
       adventureExp: 2 * DOMAIN_RESIN * ADVENTURE_EXP_PER_RESIN,
@@ -223,6 +227,7 @@ describe(claimPetrifiedTree, () => {
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
         resinParam,
+        itemRooms,
       )?.inventory.items,
     ).toStrictEqual([
       {
@@ -260,6 +265,7 @@ describe(claimPetrifiedTree, () => {
         {},
         new Map(),
         resinParam,
+        itemRooms,
       ),
     ).toBeUndefined();
   });

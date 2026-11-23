@@ -17,6 +17,7 @@ import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants"
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { useWorldPickupsStore } from "#src/store/pickups";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
@@ -82,6 +83,7 @@ describe(useWorldOfferings, () => {
       { heldCounts: {}, level: 1, levels },
       englishNameText,
       materialDataMap,
+      itemRooms,
     );
     await offer;
 

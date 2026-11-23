@@ -2,6 +2,7 @@ import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
 import type { HomeOrder } from "#src/models/home/HomeOrder";
 import type { HomeProgress } from "#src/models/home/HomeProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
@@ -15,15 +16,22 @@ export const collectHomeOrder = (
   blueprint: HomeBlueprint,
   {
     inventory,
+    itemRooms,
     now,
     progress,
     resultDefinition,
-  }: { inventory: Inventory; now: Temporal.Instant; progress: HomeProgress; resultDefinition: ItemDefinition },
+  }: {
+    inventory: Inventory;
+    itemRooms: ItemCategoryRoomMap;
+    now: Temporal.Instant;
+    progress: HomeProgress;
+    resultDefinition: ItemDefinition;
+  },
 ): { inventory: Inventory; progress: HomeProgress } => {
   if (!progress.orders.includes(order)) return { inventory, progress };
   const elapsedSeconds = now.since(order.startedAt).total({ unit: "second" });
   if (elapsedSeconds < blueprint.seconds) return { inventory, progress };
-  const addition = addInventoryItem(inventory, resultDefinition, 1);
+  const addition = addInventoryItem(inventory, resultDefinition, 1, itemRooms);
   if (addition.overflow > 0) return { inventory, progress };
   const isFirstMaking = !progress.madeBlueprintIds.includes(blueprint.id);
   return {

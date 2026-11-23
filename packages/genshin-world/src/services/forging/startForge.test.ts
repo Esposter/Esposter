@@ -15,6 +15,7 @@ import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
@@ -70,6 +71,7 @@ describe(startForge, () => {
     forgeQueuePlayerLevels,
     inventory: createInventory(6),
     isInRealm: false,
+    itemRooms,
     now: EPOCH,
     partyCharacterIds: [],
     progress,

@@ -6,6 +6,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readResinParam } from "#src/services/originalResin/readResinParam";
 import { getServerNow } from "#src/services/time/getServerNow";
+import { itemRooms } from "#src/store/itemRooms.fixture";
 import { useWorldSessionStore } from "#src/store/session";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 import { createPinia, setActivePinia } from "pinia";
@@ -33,6 +34,7 @@ export const startTestWorldSession = (
       gameDataBaseUrl: "",
       gameText: ENGLISH_GAME_TEXT,
       getWorldNow,
+      itemRooms,
       language: GameLanguage.English,
       materialDataMap: new Map(),
       nameText: {},

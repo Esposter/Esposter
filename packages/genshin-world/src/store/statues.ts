@@ -82,6 +82,7 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
       worldSessionStore.wallet,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
     );
     worldSessionStore.setInventory(paid.inventory);
     worldSessionStore.setWallet(paid.wallet);

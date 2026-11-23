@@ -143,6 +143,7 @@ export const useWorldTrials = ({
       wallet.value,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
+      worldSessionStore.itemRooms,
     );
     if (!claim) {
       console.error(`the bag has no room for trial stage ${stageId}'s reward, so its clear is not recorded`);

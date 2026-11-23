@@ -1,6 +1,7 @@
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinParam } from "#src/models/originalResin/ResinParam";
@@ -24,6 +25,7 @@ export const craftRecipe = (
   {
     adventureRank,
     inventory,
+    itemRooms,
     now,
     progress,
     resinParam,
@@ -31,6 +33,7 @@ export const craftRecipe = (
   }: {
     adventureRank: number;
     inventory: Inventory;
+    itemRooms: ItemCategoryRoomMap;
     now: Temporal.Instant;
     progress: CraftingProgress;
     resinParam: ResinParam;
@@ -50,7 +53,7 @@ export const craftRecipe = (
   const items = recipe.materials
     .filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID)
     .reduce((bagItems, material) => takeInventoryItems(bagItems, material.id, material.count * count), inventory.items);
-  const addition = addInventoryItem({ ...inventory, items }, resultDefinition, recipe.resultCount * count);
+  const addition = addInventoryItem({ ...inventory, items }, resultDefinition, recipe.resultCount * count, itemRooms);
   if (addition.overflow > 0) return undefined;
   return {
     inventory: addition.inventory,

@@ -3,6 +3,7 @@ import type { ForgeOrder } from "#src/models/forging/ForgeOrder";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
@@ -23,6 +24,7 @@ export const obtainForgeOrder = (
     completedMainQuestIds,
     definitions,
     inventory,
+    itemRooms,
     now,
     random,
     talents,
@@ -34,6 +36,7 @@ export const obtainForgeOrder = (
     completedMainQuestIds: ReadonlySet<string>;
     definitions: Map<number, ItemDefinition>;
     inventory: Inventory;
+    itemRooms: ItemCategoryRoomMap;
     now: Temporal.Instant;
     random: () => number;
     talents: ForgeTalent[];
@@ -41,7 +44,15 @@ export const obtainForgeOrder = (
     weapons: Map<number, Pick<ItemDefinition, "name"> & WeaponData>;
   },
 ): { adventureExp: number; inventory: Inventory; order?: ForgeOrder | undefined; wallet: Wallet } => {
-  const collected = collectForgeOrder(recipe, order, { definitions, inventory, now, random, talents, weapons });
+  const collected = collectForgeOrder(recipe, order, {
+    definitions,
+    inventory,
+    itemRooms,
+    now,
+    random,
+    talents,
+    weapons,
+  });
   const gain = gainAdventureExp(adventureRankTables, adventureExp, collected.adventureExp, completedMainQuestIds);
   return {
     adventureExp: gain.adventureExp,

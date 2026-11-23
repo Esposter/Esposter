@@ -1,6 +1,7 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCategoryRoomMap } from "#src/models/inventory/ItemCategoryRoomMap";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
@@ -21,6 +22,7 @@ export const pickUpDroppedItem = (
   wallet: Wallet,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  itemRooms: ItemCategoryRoomMap,
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry> = new Map(),
   weaponDataMap: ReadonlyMap<number, WeaponData> = new Map(),
 ): DroppedItemPickUp => {
@@ -29,5 +31,5 @@ export const pickUpDroppedItem = (
   if (currency !== undefined)
     return { inventory, overflow: 0, wallet: { ...wallet, [currency]: wallet[currency] + count } };
   const definition = getDroppedItemDefinition(itemId, names, weaponDataMap, materialDataMap, reliquaryPieceEntryMap);
-  return { ...addDroppedItem(inventory, dropped, definition), wallet };
+  return { ...addDroppedItem(inventory, dropped, definition, itemRooms), wallet };
 };
