@@ -18,7 +18,7 @@ const parseExpression = (source: string): ESTree.Node => {
 describe(checkIsPureExpression, () => {
   test.each([
     ["value.name", true],
-    ["`total ${count}`", true],
+    [`\`total \${count}\``, true],
     ["{ a: 1, b: value }", true],
     ["value as number", true],
     ["() => run()", true],
@@ -34,7 +34,7 @@ describe(checkIsPureExpression, () => {
     ["class { [run()] = 1 }", false],
     ["class { [run()]() {} }", false],
     ["class extends run() {}", false],
-    ["`total ${run()}`", false],
+    [`\`total \${run()}\``, false],
   ])("%s is pure: %s", (source, expected) => {
     expect.hasAssertions();
 
