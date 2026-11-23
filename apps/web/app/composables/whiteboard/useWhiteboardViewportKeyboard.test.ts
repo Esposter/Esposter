@@ -121,39 +121,26 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(isSpaceHeld.value).toBe(false);
   });
 
-  test("space on a focused button presses the button", async () => {
+  // A press on a plain element pans, so the rows that do not pan are not passing for want of a press that reached the handler
+  test.each([
+    { isPanning: true, tagName: "div", title: "space on a plain element pans" },
+    { isPanning: false, tagName: "button", title: "space on a focused button presses the button" },
+    { isPanning: false, tagName: "textarea", title: "space typed into a text field is text" },
+  ])("$title", async ({ isPanning, tagName }) => {
     expect.hasAssertions();
 
-    const button = document.createElement("button");
-    document.body.append(button);
+    const element = document.createElement(tagName);
+    document.body.append(element);
     onTestFinished(() => {
-      button.remove();
+      element.remove();
     });
-    button.focus();
+    element.focus();
     const whiteboardEditorStore = useWhiteboardEditorStore();
     const { isSpaceHeld } = storeToRefs(whiteboardEditorStore);
     await mountViewportKeyboard();
 
-    pressKey({ bubbles: true, cancelable: true, code: "Space", key: " " }, button);
+    pressKey({ bubbles: true, cancelable: true, code: "Space", key: " " }, element);
 
-    expect(isSpaceHeld.value).toBe(false);
-  });
-
-  test("space typed into a text field is text", async () => {
-    expect.hasAssertions();
-
-    const textarea = document.createElement("textarea");
-    document.body.append(textarea);
-    onTestFinished(() => {
-      textarea.remove();
-    });
-    textarea.focus();
-    const whiteboardEditorStore = useWhiteboardEditorStore();
-    const { isSpaceHeld } = storeToRefs(whiteboardEditorStore);
-    await mountViewportKeyboard();
-
-    pressKey({ bubbles: true, code: "Space", key: " " }, textarea);
-
-    expect(isSpaceHeld.value).toBe(false);
+    expect(isSpaceHeld.value).toBe(isPanning);
   });
 });
