@@ -5,8 +5,8 @@ import { userIdSchema } from "#src/models/shared/UserId";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { z } from "zod";
 
-// A connection's place in one call, named to the call's members by a fresh id each join or knock. It names the participant
-// In that call alone: the auth session it joined under is never part of it
+// A connection's place in one call, named to the call's members by a fresh id each join or knock. It names the
+// Participant In that call alone: the auth session it joined under is never part of it
 export interface CallParticipant extends Pick<UserInAuth, "name"> {
   id: string;
   image: UserInAuth["image"];

@@ -21,7 +21,8 @@ export const moderationNotesInMessage = sqliteTable(
   },
   {
     extraConfig: ({ actorUserId, id, roomId, targetUserId }) => [
-      // A target's notes in a room page newest-first on id, which is creation order, and their badge counts the same rows
+      // A target's notes in a room page newest-first on id, which is creation order, and their badge counts the same
+      // Rows
       index("moderationNotes_roomId_targetUserId_id_index").on(roomId, targetUserId, id),
       index("moderationNotes_actorUserId_index").on(actorUserId),
       index("moderationNotes_targetUserId_index").on(targetUserId),

@@ -17,7 +17,8 @@ const createMessageEventSchema = z.object({
   type: z.literal(RealtimeEventType.CreateMessage),
 });
 const createTypingEventSchema = z.object({ data: typingSchema, type: z.literal(RealtimeEventType.CreateTyping) });
-// A delete carries the tombstone the object left, with its deletedAt set, so a client keeps the message by id as deleted
+// A delete carries the tombstone the object left, with its deletedAt set, so a client keeps the message by id as
+// Deleted
 const deleteMessageEventSchema = z.object({
   data: roomMessageSchema,
   type: z.literal(RealtimeEventType.DeleteMessage),
@@ -27,8 +28,8 @@ const updateMessageEventSchema = z.object({
   data: roomMessageSchema,
   type: z.literal(RealtimeEventType.UpdateMessage),
 });
-// A reaction is one row, and its update carries the whole row with its version, so a client replaces the reaction it holds
-// By its key, and a removal is an update too: the row is sent with no reactor
+// A reaction is one row, and its update carries the whole row with its version, so a client replaces the reaction it
+// Holds By its key, and a removal is an update too: the row is sent with no reactor
 const createEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.CreateEmoji) });
 const updateEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.UpdateEmoji) });
 const adminActionEventSchema = z.object({

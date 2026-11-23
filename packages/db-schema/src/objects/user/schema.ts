@@ -2,8 +2,8 @@ import { createVersionSchema } from "#src/createMetadataSchema";
 import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-// The messages a person sent, one row each, appended by the room that stored the message and removed when it is deleted.
-// Its newest-first page reads by createdAt, and a room's own rows are found by the key
+// The messages a person sent, one row each, appended by the room that stored the message and removed when it is
+// Deleted. Its newest-first page reads by createdAt, and a room's own rows are found by the key
 export const sentMessagesInUser = sqliteTable(
   "sentMessagesInUser",
   {
@@ -25,8 +25,8 @@ export const joinedCallsInUser = sqliteTable("joinedCallsInUser", {
   ...createVersionSchema(),
 });
 
-// The scheduled messages a person has pending, one row each until the room delivers or cancels them. A delivery or a cancel
-// Leaves the row as a tombstone, which no read returns and the alarm never sends, until the purge removes it.
+// The scheduled messages a person has pending, one row each until the room delivers or cancels them. A delivery or a
+// Cancel Leaves the row as a tombstone, which no read returns and the alarm never sends, until the purge removes it.
 // Ordered by when they run, then by id, which is what their list shows and what its keyset reads by
 export const scheduledMessagesInUser = sqliteTable(
   "scheduledMessagesInUser",

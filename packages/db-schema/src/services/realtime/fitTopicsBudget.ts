@@ -7,12 +7,13 @@ import { getKindTableTopic } from "#src/services/realtime/getKindTableTopic";
 import { getTableTopic } from "#src/services/realtime/getTableTopic";
 import { mergeColumnTopics } from "#src/services/realtime/mergeColumnTopics";
 
-// The coarser topic a topic collapses to, which every write that names the topic also publishes, so a read collapsed to it wakes
-// For each write it would have woken for. A row topic collapses to its table's table-wide topic. An object's rows name the object's
-// Scope and then its table, `room/<id>:messages:col=value`, so they collapse to the table-wide topic of that table, which the
-// Object's writes publish. A blob collapses to its bucket's root, the empty key every write to the bucket publishes. A table-wide
-// Topic is its own coarser topic, and a kind's topic has none. A kind's id and a blob's key may hold an equals sign, so the first
-// Segment, a kind's name or a bucket's binding name, is read before the equals sign is looked for
+// The coarser topic a topic collapses to, which every write that names the topic also publishes, so a read collapsed to
+// It wakes For each write it would have woken for. A row topic collapses to its table's table-wide topic. An object's
+// Rows name the object's Scope and then its table, `room/<id>:messages:col=value`, so they collapse to the table-wide
+// Topic of that table, which the Object's writes publish. A blob collapses to its bucket's root, the empty key every
+// Write to the bucket publishes. A table-wide Topic is its own coarser topic, and a kind's topic has none. A kind's id
+// And a blob's key may hold an equals sign, so the first Segment, a kind's name or a bucket's binding name, is read
+// Before the equals sign is looked for
 const getCoarseTopic = (topic: Topic, kindNames: Set<string>): Topic | undefined => {
   const prefix = topic.slice(0, topic.indexOf(":"));
   if (blobBindingNames.has(prefix)) return getBlobTopic(prefix, "");
@@ -21,9 +22,10 @@ const getCoarseTopic = (topic: Topic, kindNames: Set<string>): Topic | undefined
   return getTableTopic(topic.slice(0, topic.lastIndexOf(":", topic.indexOf("="))));
 };
 
-// An object's own topic, `<kind>/<id>:<table>:<rest>`, where the rest is the table's topic or one of its rows, collapses to the kind's
-// Table topic for that table. An object publishes that topic for each table its own writes change, so the collapse is sound for the
-// Tables the objects of the kind write, and a shared topic, which has no kind in front of its table, has no such form
+// An object's own topic, `<kind>/<id>:<table>:<rest>`, where the rest is the table's topic or one of its rows,
+// Collapses to the kind's Table topic for that table. An object publishes that topic for each table its own writes
+// Change, so the collapse is sound for the Tables the objects of the kind write, and a shared topic, which has no kind
+// In front of its table, has no such form
 const getKindTopicOf = (topic: Topic): Topic | undefined => {
   const kindEnd = topic.indexOf("/");
   const scopeEnd = topic.indexOf(":");
@@ -33,8 +35,9 @@ const getKindTopicOf = (topic: Topic): Topic | undefined => {
   return getKindTableTopic(topic.slice(0, kindEnd), topic.slice(scopeEnd + 1, tableEnd));
 };
 
-// Collapses the topics `getCoarse` gives a coarser form, a group at a time, the largest group first and then the next, until the
-// Count fits. A group's topics merge into their coarser topic, which carries the columns of the topics it replaces
+// Collapses the topics `getCoarse` gives a coarser form, a group at a time, the largest group first and then the next,
+// Until the Count fits. A group's topics merge into their coarser topic, which carries the columns of the topics it
+// Replaces
 const collapseGroups = (
   topics: ColumnTopic[],
   getCoarse: (topic: Topic) => Topic | undefined,
@@ -55,7 +58,8 @@ const collapseGroups = (
       ([firstTopic, firstSize], [secondTopic, secondSize]) =>
         secondSize - firstSize || (firstTopic < secondTopic ? -1 : 1),
     );
-  // A group of n topics collapses to one, so taking it removes n - 1 topics, and the groups are taken until the count fits
+  // A group of n topics collapses to one, so taking it removes n - 1 topics, and the groups are taken until the count
+  // Fits
   const collapsed = new Set<Topic>();
   let fittedCount = topics.length;
   for (const [coarseTopic, groupSize] of groupsToCollapse) {
@@ -73,10 +77,11 @@ const collapseGroups = (
   );
 };
 
-// The topics a header names, within `budget`. Past the budget, the topics that have a coarser form collapse to it, the largest
-// Group first and then the next, until the count fits. A kind's topic has no coarser form and stays whole, and a list still names
-// What it names if every group has collapsed and the count does not fit. The objects' own tables collapse first, and only then,
-// Past the budget still, do the objects of a kind collapse to the kind's table topic, the last step
+// The topics a header names, within `budget`. Past the budget, the topics that have a coarser form collapse to it, the
+// Largest Group first and then the next, until the count fits. A kind's topic has no coarser form and stays whole, and
+// A list still names What it names if every group has collapsed and the count does not fit. The objects' own tables
+// Collapse first, and only then, Past the budget still, do the objects of a kind collapse to the kind's table topic,
+// The last step
 export const fitTopicsBudget = (columnTopics: ColumnTopic[], budget: number): ColumnTopic[] => {
   const topics = mergeColumnTopics(columnTopics);
   if (topics.length <= budget) return topics;

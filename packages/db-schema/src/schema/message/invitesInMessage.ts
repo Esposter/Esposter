@@ -15,8 +15,8 @@ export const invitesInMessage = sqliteTable(
   {
     // Null = never expires (timestamps have no empty value, unlike numbers/strings)
     expiresAt: integer({ mode: "timestamp_ms" }),
-    // The code a link carries: a 256-bit secret from `generateSecretToken`. An invite is shared rather than held, so the
-    // Code must be unguessable, and the room's admins read it back to share it
+    // The code a link carries: a 256-bit secret from `generateSecretToken`. An invite is shared rather than held, so
+    // The Code must be unguessable, and the room's admins read it back to share it
     id: text().primaryKey(),
     // 0 = unlimited uses — the numeric empty sentinel, stored as-is so it propagates end-to-end
     maxUses: integer().notNull().default(0),

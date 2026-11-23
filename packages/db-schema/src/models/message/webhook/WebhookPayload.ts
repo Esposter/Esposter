@@ -13,8 +13,8 @@ export interface WebhookPayload {
 // Discord's payload also takes `embeds`, but a message has nowhere to store one, so the schema refuses every key it
 // Does not declare rather than accepting a payload and silently dropping part of it
 export const webhookPayloadSchema = z.strictObject({
-  // Drawn by every reader's browser as the message's picture, so only an https image is taken: a plain http one would be
-  // Mixed content on the app's own pages
+  // Drawn by every reader's browser as the message's picture, so only an https image is taken: a plain http one would
+  // Be Mixed content on the app's own pages
   avatar_url: z
     .url({ protocol: /^https$/u })
     .max(URL_MAX_LENGTH)

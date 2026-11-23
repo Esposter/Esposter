@@ -1,4 +1,5 @@
-// The columns a resource list's sort can bind: the sort's own keys, the id that breaks every tie, and the two a search ranks by
+// The columns a resource list's sort can bind: the sort's own keys, the id that breaks every tie, and the two a search
+// Ranks by
 export const ResourceListColumnKey = {
   CreatedAt: "createdAt",
   DeletedAt: "deletedAt",

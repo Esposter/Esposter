@@ -19,8 +19,8 @@ export type ScheduledMessageInUser = { id: string } & Pick<
 // A reminder a person set for themselves, held until its alarm sends it. Its deep link is the room it was set in
 export type ScheduledReminder = typeof remindersInUser.$inferSelect;
 
-// What a write names of a reminder: every column but its version, which the database raises, and its tombstone, which only
-// A cancel or a send sets
+// What a write names of a reminder: every column but its version, which the database raises, and its tombstone, which
+// Only A cancel or a send sets
 export type ScheduledReminderInput = Except<ScheduledReminder, "deletedAt" | "version">;
 
 // A message the person sent, as their index holds it
@@ -29,8 +29,8 @@ export type SentMessageInUser = typeof sentMessagesInUser.$inferSelect;
 // What a write names of a sent message: every column but its version, which the database raises
 export type SentMessageInUserInput = Except<SentMessageInUser, "version">;
 
-// The RPC surface of a User object, the one contract its class in the realtime Worker and the web Worker's callers share.
-// A personal event is sent by the write that raised it, and reaches every tab the person has open
+// The RPC surface of a User object, the one contract its class in the realtime Worker and the web Worker's callers
+// Share. A personal event is sent by the write that raised it, and reaches every tab the person has open
 export interface UserObjectRpc {
   addJoinedCall: (callSessionId: string) => Promise<void>;
   addReminder: (reminder: ScheduledReminderInput) => Promise<void>;
@@ -56,7 +56,8 @@ export interface UserObjectRpc {
   // The reminder as its cancel leaves it, a tombstone, or nothing when no live reminder held the id, so a cancel of one
   // That already fired or never existed is told so
   removeReminder: (id: string) => Promise<ScheduledReminder | undefined>;
-  // The reminders and scheduled-message index entries the person holds for a room, dropped when they leave it or it is deleted
+  // The reminders and scheduled-message index entries the person holds for a room, dropped when they leave it or it is
+  // Deleted
   removeRoomScheduledItems: (roomId: string) => Promise<void>;
   removeScheduledMessage: (scheduledId: string) => Promise<void>;
   // The sent messages the person has in a room, by their ids, dropped when those messages are deleted

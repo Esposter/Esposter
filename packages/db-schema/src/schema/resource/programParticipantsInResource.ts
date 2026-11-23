@@ -24,8 +24,9 @@ export const programParticipantsInResource = sqliteTable(
     resourceId: text()
       .notNull()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),
-    // The SHA-256 of the credential in the participant's link, never the credential, which is shown once when it is issued.
-    // A survey response names its participant by this hash, and a regeneration replaces it, so it is unique on its own
+    // The SHA-256 of the credential in the participant's link, never the credential, which is shown once when it is
+    // Issued. A survey response names its participant by this hash, and a regeneration replaces it, so it is unique on
+    // Its own
     tokenHash: text().notNull(),
   },
   {

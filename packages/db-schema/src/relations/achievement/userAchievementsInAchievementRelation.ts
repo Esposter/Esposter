@@ -13,5 +13,6 @@ export const userAchievementsInAchievementRelation = defineRelationsPart(schema,
 }));
 
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-// oxlint-disable-next-line selector-ban/no-restricted-syntax -- the relation names a query's `with` takes, keyed as drizzle keys them
+// The relation names
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- a query's `with` takes, keyed as drizzle keys them
 export const UserAchievementInAchievementRelations = { achievement: true } as const;

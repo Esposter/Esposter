@@ -86,7 +86,8 @@ export const userSettingsInMessage = sqliteTable(
         ),
       ),
     ],
-    // Named by the user's id, the primary key, so the write's row version reaches the header and the entry confirms by it
+    // Named by the user's id, the primary key, so the write's row version reaches the header and the entry confirms by
+    // It
     schema: messageSchema,
     scope: { columns: ["userId"] },
   },

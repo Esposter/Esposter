@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// Where a read continues from: the sort values of the last row it answered, in the sort's key order, and whether it reads
-// Backward through the list from there. No values is the start of the list
+// Where a read continues from: the sort values of the last row it answered, in the sort's key order, and whether it
+// Reads Backward through the list from there. No values is the start of the list
 export interface PageCursor {
   isBackward: boolean;
   values: (number | string)[];

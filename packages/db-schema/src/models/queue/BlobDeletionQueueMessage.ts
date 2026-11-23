@@ -20,9 +20,9 @@ export const blobDeletionQueueMessageSchema = z.union([
   z.object({
     ...queueMessageEnvelopeSchema.shape,
     blobNames: createUniquePrimitiveArraySchema(z.string().min(1)).min(1).max(MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES),
-    // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a retry can
-    // Arrive long after that decision, so a blob written since — a re-upload or a re-copy the decision never saw — is
-    // Kept rather than deleted. Omitted by a named deletion that carries no such judgement, which deletes as it always has
+    // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a retry can Arrive
+    // Long after that decision, so a blob written since — a re-upload or a re-copy the decision never saw — is Kept
+    // Rather than deleted. Omitted by a named deletion that carries no such judgement, which deletes as it always has
     decidedAt: z.coerce.date().optional(),
     storageBucket: storageBucketSchema,
   }),

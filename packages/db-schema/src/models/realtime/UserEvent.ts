@@ -23,8 +23,8 @@ const replaceSessionEventSchema = z.object({
   data: z.object({ sessionId: sessionIdSchema.shape.sessionId }),
   type: z.literal(RealtimeEventType.ReplaceSession),
 });
-// The owner's user row as the counter last wrote it, at the version that write left it. The meter applies it as a row, so a
-// Total that arrives after a newer one for the same row loses to it
+// The owner's user row as the counter last wrote it, at the version that write left it. The meter applies it as a row,
+// So a Total that arrives after a newer one for the same row loses to it
 const updateUsageEventSchema = z.object({
   data: selectUserInAuthSchema,
   type: z.literal(RealtimeEventType.UpdateUsage),
@@ -35,14 +35,14 @@ const updateRoomEventSchema = z.object({
   data: selectRoomInMessageSchema,
   type: z.literal(RealtimeEventType.UpdateRoom),
 });
-// A room's last message moved it to the top of the list, which is what the room list sorts by. The room as its row stands
-// After the write, at the version the write left it, so the list applies it as a row
+// A room's last message moved it to the top of the list, which is what the room list sorts by. The room as its row
+// Stands After the write, at the version the write left it, so the list applies it as a row
 const roomActivityEventSchema = z.object({
   data: selectRoomInMessageSchema,
   type: z.literal(RealtimeEventType.RoomActivity),
 });
-// The membership row a room's members may see, at the version it was written at, so a list holding it applies the row by
-// Its version like any other arrival. A removal carries the tombstone the removal left
+// The membership row a room's members may see, at the version it was written at, so a list holding it applies the row
+// By Its version like any other arrival. A removal carries the tombstone the removal left
 const memberRowEventSchema = selectUserToRoomInMessageSchema.pick({
   deletedAt: true,
   displayName: true,

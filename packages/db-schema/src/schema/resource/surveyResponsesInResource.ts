@@ -21,8 +21,8 @@ export const surveyResponsesInResource = sqliteTable(
     // Resume position, tracked apart from `model` so a question named "pageNo" can never collide with it. 0 means the
     // Respondent never advanced past the first page
     pageNo: integer().notNull().default(0),
-    // The SHA-256 of the program participant token an Identified response was given under, "" in Anonymous mode. Only the
-    // Hash is kept, so a response names its participant without holding the credential that opens it
+    // The SHA-256 of the program participant token an Identified response was given under, "" in Anonymous mode. Only
+    // The Hash is kept, so a response names its participant without holding the credential that opens it
     participantTokenHash: text().notNull().default(""),
     resourceId: text()
       .notNull()
@@ -30,7 +30,8 @@ export const surveyResponsesInResource = sqliteTable(
   },
   {
     extraConfig: ({ id, isDraft, resourceId }) => [
-      // A survey's submitted responses are counted and listed oldest-first on id, which is creation order, and its deletion cascades through it
+      // A survey's submitted responses are counted and listed oldest-first on id, which is creation order, and its
+      // Deletion cascades through it
       index("surveyResponses_resourceId_isDraft_id_index").on(resourceId, isDraft, id),
     ],
     schema: resourceSchema,

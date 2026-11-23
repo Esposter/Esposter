@@ -25,7 +25,8 @@ export interface CreateWebhookRoomMessageInput {
   // The avatar the push names. The message keeps it in place of its identity's own image when a push names one
   // The incoming webhook's avatar override, or "" for the identity's own image
   appUserImage: string;
-  // The id the push was accepted under. A delivery can be made more than once, and every one of them writes this message
+  // The id the push was accepted under. A delivery can be made more than once, and every one of them writes this
+  // Message
   deliveryId: string;
   files?: FileEntity[];
   message: string;
@@ -70,7 +71,8 @@ export interface RoomObjectRpc {
   deleteLinkPreview: (id: number, actor: RoomActor) => null | RoomMessage;
   // Returns the message as it was before the delete, so the caller can remove the blobs its files named
   deleteMessage: (id: number, actor: RoomActor) => Promise<null | RoomMessage>;
-  // The scheduled message as its cancel leaves it, a tombstone, or nothing when the sender holds no live one under the id
+  // The scheduled message as its cancel leaves it, a tombstone, or nothing when the sender holds no live one under the
+  // Id
   deleteScheduledMessage: (id: string, actor: RoomActor) => Promise<ScheduledRoomMessage | undefined>;
   // One page of a person's erase in this room: their live messages after the id named, oldest first, each tombstoned.
   // Returns the page as it was before the delete, so the caller can remove the blobs its files named. A page shorter
@@ -95,8 +97,8 @@ export interface RoomObjectRpc {
   // A room-list event the room's own write raised, sent to each member online in the room through that member's object
   notifyOnlineMembers: (event: UserEvent) => Promise<void>;
   pinMessage: (id: number, actor: RoomActor) => null | RoomMessage;
-  // The live messages after a page cursor in the room's message order, at most `limit` of them. A backward cursor reads the
-  // Messages newer than its row, oldest first, which the caller turns back into the list's order
+  // The live messages after a page cursor in the room's message order, at most `limit` of them. A backward cursor reads
+  // The Messages newer than its row, oldest first, which the caller turns back into the list's order
   readMessages: (input: { cursor: PageCursor; isPinned?: boolean | undefined; limit: number }) => RoomMessage[];
   readMessagesByIds: (ids: number[]) => RoomMessage[];
   readReactions: (messageIds: number[]) => RoomReaction[];
@@ -106,11 +108,11 @@ export interface RoomObjectRpc {
   readThread: (threadRootId: number) => RoomMessage[];
   // The live roots among the named ids, in the order named, each with its live replies counted
   readThreads: (threadRootIds: number[]) => RoomThread[];
-  // A member who is no longer in the room is dropped from its online set and sockets, and their scheduled messages in it are
-  // Removed, with their object told to drop what it holds for the room
+  // A member who is no longer in the room is dropped from its online set and sockets, and their scheduled messages in
+  // It are Removed, with their object told to drop what it holds for the room
   removeMember: (userId: string) => Promise<void>;
-  // Takes the actor off the emoji's reactors and answers the reaction as it now stands, with no reactor when the actor was
-  // Its only one. Null when the actor was not a reactor
+  // Takes the actor off the emoji's reactors and answers the reaction as it now stands, with no reactor when the actor
+  // Was Its only one. Null when the actor was not a reactor
   removeReaction: (input: { emojiTag: string; messageId: number }, actor: RoomActor) => null | RoomReaction;
   // The matches after a page cursor, in the order getRoomSearchPageSort gives the query
   searchMessages: (input: RoomSearchInput) => RoomSearchResult;

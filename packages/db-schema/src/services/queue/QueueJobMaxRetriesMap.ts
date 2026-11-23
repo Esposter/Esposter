@@ -1,8 +1,8 @@
 import { QueueJob } from "#src/models/queue/QueueJob";
 
-// How many times a job's queue redelivers a message its handler threw on, before the message goes to the job's dead-letter
-// Queue. Exhaustive over QueueJob on purpose: a new job has to state its answer here rather than inherit a default that
-// Silently retries it. Each consumer in apps/infra reads its count from here.
+// How many times a job's queue redelivers a message its handler threw on, before the message goes to the job's
+// `dead-letter` Queue. Exhaustive over QueueJob on purpose: a new job has to state its answer here rather than inherit
+// A Default that Silently retries it. Each consumer in apps/infra reads its count from here.
 const MAX_IDEMPOTENT_QUEUE_JOB_RETRIES = 5;
 
 export const QueueJobMaxRetriesMap = {
@@ -14,8 +14,9 @@ export const QueueJobMaxRetriesMap = {
   [QueueJob.ExportUserData]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
   // Deletes each blob through deleteStorageBlobs, and R2 answers the delete of a blob already gone as success.
   [QueueJob.ProcessBlobDeletion]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
-  // Delivers an already-persisted occurrence. Its bell write is the last step that may fail the delivery; everything after
-  // It is best-effort, so a retry cannot repeat a side effect that already landed beyond the one bell row a crash can repeat.
+  // Delivers an already-persisted occurrence. Its bell write is the last step that may fail the delivery; everything
+  // After It is best-effort, so a retry cannot repeat a side effect that already landed beyond the one bell row a crash
+  // Can repeat.
   [QueueJob.ProcessNotification]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
   // The room writes the message under the push's delivery id, which is unique, so a rerun finds the message an earlier
   // Attempt wrote and writes nothing new.

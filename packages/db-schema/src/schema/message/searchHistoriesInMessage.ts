@@ -30,8 +30,9 @@ export const searchHistoriesInMessage = sqliteTable(
       // Deletion
       index("searchHistories_userId_roomId_id_index").on(userId, roomId, id),
       index("searchHistories_roomId_index").on(roomId),
-      // A search's identity is its member, room, query and filters. Running one again is the same row, so the insert that
-      // Would repeat it meets this constraint, and the create procedure needs no read ahead of the write to avoid a copy
+      // A search's identity is its member, room, query and filters. Running one again is the same row, so the insert
+      // That Would repeat it meets this constraint, and the create procedure needs no read ahead of the write to avoid
+      // A copy
       uniqueIndex("searchHistories_userId_roomId_query_filters_unique").on(userId, roomId, query, filters),
     ],
     schema: messageSchema,

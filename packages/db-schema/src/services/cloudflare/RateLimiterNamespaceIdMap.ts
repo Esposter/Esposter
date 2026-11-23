@@ -1,8 +1,9 @@
 import { CloudflareEnvironment } from "#src/models/cloudflare/CloudflareEnvironment";
 import { RateLimiterBinding } from "#src/models/cloudflare/RateLimiterBinding";
 
-// The namespace each rate limiter's counters live in. Bindings sharing a namespace share counts for a key, so every binding has
-// Its own, and dev and prod never share one. An id is not a secret and never changes, so it is committed like the database ids
+// The namespace each rate limiter's counters live in. Bindings sharing a namespace share counts for a key, so every
+// Binding has Its own, and dev and prod never share one. An id is not a secret and never changes, so it is committed
+// Like the database ids
 export const RateLimiterNamespaceIdMap = {
   [CloudflareEnvironment.Development]: {
     [RateLimiterBinding.Address]: "2001",

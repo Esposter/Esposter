@@ -28,8 +28,8 @@ export const roomEmojisInMessage = sqliteTable(
       // SQLite has no regex operator, so the charset is GLOB's spelling of ROOM_EMOJI_NAME_REGEX: non-empty, and no
       // Character outside the set. The zod schema still tests the regex itself, so a change to it must be mirrored here
       check("roomEmojis_name_charset_check", sql`${name} <> '' AND ${name} NOT GLOB '*[^a-z0-9_]*'`),
-      // One shortcode names at most one live emoji in a room, which is what makes `:name:` resolvable at all. A deleted emoji
-      // Is a tombstone outside the index, so its name is free again for a new emoji
+      // One shortcode names at most one live emoji in a room, which is what makes `:name:` resolvable at all. A deleted
+      // Emoji Is a tombstone outside the index, so its name is free again for a new emoji
       uniqueIndex("roomEmojis_roomId_name_unique")
         .on(roomId, name)
         .where(sql`${deletedAt} IS NULL`),

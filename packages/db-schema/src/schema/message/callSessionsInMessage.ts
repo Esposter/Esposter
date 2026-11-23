@@ -17,7 +17,8 @@ export const callSessionsInMessage = sqliteTable(
     meetingId: text().unique(),
     roomId: text().references(() => roomsInMessage.id, { onDelete: "cascade" }),
     // The thread this call belongs to, by its root message's id, and 0 for the room's own call. A room can run both at
-    // Once — a call in a thread is a call about that message, not the room's — so the room alone does not identify a session
+    // Once — a call in a thread is a call about that message, not the room's — so the room alone does not identify a
+    // Session
     threadRootId: integer().notNull().default(0),
     userId: text()
       .notNull()
