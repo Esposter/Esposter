@@ -15,10 +15,9 @@ describe(createLoginHullsGeometry, () => {
   // Pillar of the row as it stands off its laid-out place: a bridge standing too high, a row standing across the path,
   // Or a hull fatter than the part it stands for, drives the camera into stone
   const offsets = [-1, 0, 1];
-  // The row's build and the cast down its path are each a pass over its 1.19M vertices and ~670k triangles, and the
-  // Cast has no BVH to skip by. The bench beside this file puts the build at ~155ms and the cast at ~130ms on an M1,
-  // And a CI coverage shard ran this body in 3.4s when it passed and 5.0s when it timed out at the default. Three
-  // Times the slowest of those is the budget; a regression in the cost is the bench's to show, not this timeout's
+  // The row's build and the cast down its path are each one pass over its 1.19M vertices and ~670k triangles, and the
+  // Cast has no BVH to skip by, so a profile finds no waste to remove. A CI coverage shard ran this body in 3.4s when it
+  // Passed and 5.0s when it timed out at the default, and the budget is three times the slowest of those
   const PATH_CHECK_TIMEOUT_MS = Temporal.Duration.from({ seconds: 15 }).total("milliseconds");
 
   test(
