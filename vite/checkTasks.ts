@@ -3,11 +3,11 @@ import type { RunTasks } from "#vite/models/RunTasks";
 import { ROOT_TSBUILDINFO_PATH } from "#vite/services/constants";
 import { createTask } from "#vite/services/createTask";
 
-// The checks are cached leaves, each traced like a build: a tree no leaf's reads changed in replays its verdict. A file a
-// Leaf reads and rewrites, such as a generated declaration or a build info, is traced like any other and restored on a
-// Hit. The aggregates over the leaves are uncached, so an aggregate with no inputs of its own never replays a verdict no
-// Leaf produced. Every leaf runs even after one fails: `dependsOn` runs them all where `&&` stops at the first, so a red
-// Check hides none
+// The checks are cached leaves, each traced like a build: a tree no leaf's reads changed in replays its verdict. A file
+// A Leaf reads and rewrites, such as a generated declaration or a build info, is traced like any other and restored on
+// A Hit. The aggregates over the leaves are uncached, so an aggregate with no inputs of its own never replays a verdict
+// No Leaf produced. Every leaf runs even after one fails: `dependsOn` runs them all where `&&` stops at the first, so a
+// Red Check hides none
 export const CHECK_TASKS: RunTasks = {
   "format:check": createTask("vp fmt --check"),
   lint: {

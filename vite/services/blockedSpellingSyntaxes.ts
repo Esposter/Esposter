@@ -2,9 +2,9 @@ import type { SelectorBan } from "#scripts/models/oxlint/selectorBan/SelectorBan
 
 import { BLOCKED_SPELLINGS } from "#web/configuration/blockedSpellings";
 
-// The template half of the app's UnoCSS blocklist: a blocked spelling generates nothing, so the element it is written on
-// Silently loses that style. A utility is written as a token of a static `class` or as an attribute with no value, and
-// Either may carry variants before it (`hover:p4`), so each spelling is matched after any run of them. A spelling
+// The template half of the app's UnoCSS blocklist: a blocked spelling generates nothing, so the element it is written
+// On Silently loses that style. A utility is written as a token of a static `class` or as an attribute with no value,
+// And Either may carry variants before it (`hover:p4`), so each spelling is matched after any run of them. A spelling
 // Anchored at the utility's start is matched from the token's start, and one that is not may sit anywhere in the token
 const VARIANTS = String.raw`(?:[^\s:]+:)*`;
 
