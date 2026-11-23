@@ -7,14 +7,15 @@ import { splitAtImpureItems } from "#src/services/oxlint/sorting/splitAtImpureIt
 
 // Reports every item that sorts before the one ahead of it, at the item, as perfectionist does. Each report carries
 // The fix that rewrites its run in order, so one fix pass sorts it; items sorting equal keep their order
+// Returns whether the run is out of order
 const reportRun = (
   context: Context,
   items: SortingItem[],
   compareItems: (left: SortingItem, right: SortingItem) => number,
-): void => {
-  if (items.length < 2) return;
+): boolean => {
+  if (items.length < 2) return false;
   const sortedItems = items.toSorted(compareItems);
-  if (sortedItems.every((item, index) => item === items[index])) return;
+  if (sortedItems.every((item, index) => item === items[index])) return false;
   for (const [index, item] of items.entries()) {
     const previousItem = items[index - 1];
     if (previousItem === undefined || compareItems(previousItem, item) <= 0) continue;
@@ -24,13 +25,16 @@ const reportRun = (
       node: item.node,
     });
   }
+  return true;
 };
 
+// Returns whether any run of the items is out of order
 export const reportUnsorted = (
   context: Context,
   items: SortingItem[],
   compareItems: (left: SortingItem, right: SortingItem) => number = (left, right) =>
     compareNames(left.name, right.name),
-): void => {
-  for (const run of splitAtImpureItems(items)) reportRun(context, run, compareItems);
-};
+): boolean =>
+  splitAtImpureItems(items)
+    .map((run) => reportRun(context, run, compareItems))
+    .includes(true);

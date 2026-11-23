@@ -1,14 +1,12 @@
-import type { SortingItem } from "#src/models/oxlint/sorting/SortingItem";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
-import { reportUnsorted } from "#src/services/oxlint/sorting/reportUnsorted";
-import { splitRuns } from "#src/services/oxlint/sorting/splitRuns";
+import { reportElementRuns } from "#src/services/oxlint/sorting/reportArrayLiteral/reportElementRuns";
 import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { defineRule } from "@oxlint/plugins";
 
 const computeArrayElements = (
   node: ESTree.ArrayExpression | ESTree.NewExpression,
-): (ESTree.Node | null)[] | undefined => {
+): ESTree.ArrayExpressionElement[] | undefined => {
   if (node.type === "ArrayExpression") return node.elements;
   if (node.callee.type === "Identifier" && node.callee.name === "Array") return node.arguments;
   return undefined;
@@ -24,21 +22,16 @@ export const reportArrayLiteral = (
 ): void => {
   const elements = computeArrayElements(node);
   if (elements === undefined || elements.length < 2) return;
-  const runs = splitRuns(elements, (element) => element?.type === "SpreadElement");
-  for (const run of runs) {
-    const items = run.flatMap((element): SortingItem[] =>
-      element === null || element.type === "SpreadElement"
-        ? []
-        : [
-            {
-              ...withEvaluated(evaluatesElements ? element : undefined),
-              name: element.type === "Literal" ? String(element.value) : context.sourceCode.getText(element),
-              node: element,
-            },
-          ],
-    );
-    reportUnsorted(context, items);
-  }
+  reportElementRuns(
+    context,
+    elements,
+    (element) => element?.type === "SpreadElement",
+    (element) => ({
+      ...withEvaluated(evaluatesElements ? element : undefined),
+      name: element.type === "Literal" ? String(element.value) : context.sourceCode.getText(element),
+      node: element,
+    }),
+  );
 };
 
 export const defineArrayLiteralRule = (

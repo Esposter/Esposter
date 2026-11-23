@@ -43,9 +43,7 @@ const reportCaseTests = (context: Context, cases: ESTree.SwitchCase[]): boolean 
     const items: SortingItem[] = run.flatMap((caseNode) =>
       caseNode.test ? [{ evaluated: caseNode.test, name: getCaseName(context, caseNode), node: caseNode.test }] : [],
     );
-    const sortedItems = items.toSorted((left, right) => compareNames(left.name, right.name));
-    hasUnsortedTests ||= sortedItems.some((item, index) => item !== items[index]);
-    reportUnsorted(context, items);
+    hasUnsortedTests = reportUnsorted(context, items) || hasUnsortedTests;
   }
   return hasUnsortedTests;
 };

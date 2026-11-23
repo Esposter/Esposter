@@ -1,7 +1,6 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
-import { reportUnsorted } from "#src/services/oxlint/sorting/reportUnsorted";
-import { splitRuns } from "#src/services/oxlint/sorting/splitRuns";
+import { reportElementRuns } from "#src/services/oxlint/sorting/reportArrayLiteral/reportElementRuns";
 import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { defineRule } from "@oxlint/plugins";
 
@@ -18,21 +17,11 @@ const sortMaps: Rule = defineRule({
         if (node.callee.type !== "Identifier" || node.callee.name !== "Map") return;
         const [entries] = node.arguments;
         if (entries?.type !== "ArrayExpression" || entries.elements.length < 2) return;
-        for (const run of splitRuns(entries.elements, checkIsRunBreak))
-          reportUnsorted(
-            context,
-            run.flatMap((entry) =>
-              checkIsRunBreak(entry)
-                ? []
-                : [
-                    {
-                      ...withEvaluated(...(entry.type === "ArrayExpression" ? entry.elements : [entry])),
-                      name: computeEntryKey(context, entry),
-                      node: entry,
-                    },
-                  ],
-            ),
-          );
+        reportElementRuns(context, entries.elements, checkIsRunBreak, (entry) => ({
+          ...withEvaluated(...(entry.type === "ArrayExpression" ? entry.elements : [entry])),
+          name: computeEntryKey(context, entry),
+          node: entry,
+        }));
       },
     };
   },
