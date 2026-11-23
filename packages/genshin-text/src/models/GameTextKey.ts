@@ -1,8 +1,8 @@
 // Every string of the game's a consumer shows, by the game's own text id — the name its manual text map files the
 // String under, the raw text hash where it files none, or the account kit's own key for a string the game shows before
 // It has loaded its text map. The game already holds each in all fifteen languages, so referencing a new one is a line
-// Here and a run of `pnpm -C scripts genshin:text write`, which reads this const object as its inventory; `genshin:text find`
-// Prints the id of any English text
+// Here and a run of `pnpm -C scripts genshin:text write`, which reads this const object as its inventory; `genshin:text
+// Find` Prints the id of any English text
 export const GameTextKey = {
   // The Abandon button of a challenge, named as the challenge's interrupt control names it
   AbandonChallenge: "CONTROL_CHALLENGE_INTERRUPT",
@@ -49,7 +49,8 @@ export const GameTextKey = {
   ArchiveMaterials: "UI_CODEX_MATERIAL",
   ArchiveTravelLog: "UI_CODEX_QUEST",
   ArchiveTutorials: "UI_CODEX_TIPS",
-  // The counter line over the sections, "Archive entries unlocked:", and the count that follows it, "{0}" with a coloured run for the total
+  // The counter line over the sections, "Archive entries unlocked:", and the count that follows it, "{0}" with a
+  // Coloured run for the total
   ArchiveUnlockedEntries: "UI_CODEX_COUNT_A",
   ArchiveUnlockedEntriesCount: "UI_CODEX_COUNT_B",
   // The Artifacts tab's buttons: Enhance raises a worn artifact's level, Equip puts one on an empty slot and Unequip
@@ -138,7 +139,8 @@ export const GameTextKey = {
   // The blossom of an outcrop that gives Mora, by its English name
   BlossomOfWealth: "UI_BLOSSOM_CHEST_TIMEOUT_MORA",
   BossQuickChallenge: "UI_BOSS_QUICKSTART_TITLE",
-  // The Mondstadt bounty copy the keeper's offer, the world's target and the claim show, as the game's manual text map files it
+  // The Mondstadt bounty copy the keeper's offer, the world's target and the claim show, as the game's manual text map
+  // Files it
   BountyAccept: "HUNTING_ACCEPT",
   BountyClaim: "HUNTING_TAKE_REWARD",
   BountyCompleted: "HUNTING_SUCCESS",
@@ -315,8 +317,8 @@ export const GameTextKey = {
   ForgeAmount: "UI_FORGE_PAGE_ITEM_COUNT",
   // The heading over a finished order's ring
   ForgeComplete: "UI_FORGE_PAGE_FORGE_FINISH",
-  // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
-  // Recipe names; a recipe's own id for the same words repeats the English of these
+  // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id
+  // Its Recipe names; a recipe's own id for the same words repeats the English of these
   ForgeEnhancementOreRefusal: "1106263712",
   ForgeFineEnhancementOreRefusal: "1652126560",
   // The forge screen's words: a recipe's forge time, the queue button with its count, a queue's state (idle, forging,
@@ -369,7 +371,8 @@ export const GameTextKey = {
   GcgVictory: "UI_GCG_RESULT_WIN",
   GenesisCrystal: "2722599324",
   GeoSigil: "3999941044",
-  // The Adventurer Handbook's Experience page: its chapter, its progress panel and its commissions, by the game's text ids
+  // The Adventurer Handbook's Experience page: its chapter, its progress panel and its commissions, by the game's text
+  // Ids
   HandbookChapterNine: "1920411551",
   HandbookCommissionAscendCharactersPhase5: "1556199294",
   HandbookCommissionAscendWeaponsPhase5: "239842230",
@@ -448,8 +451,8 @@ export const GameTextKey = {
   JumpOrMoveUpward: "CONTROL_JUMP_OR_SKILL4",
   // A level as the game writes one, its number in place of `{0}`
   LevelFormat: "UI_COMMON_LEVEL_FORMAT",
-  // A level's badge word, its number set on the line beneath, as the Reputation reward page's badges show it. Two of the
-  // Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
+  // A level's badge word, its number set on the line beneath, as the Reputation reward page's badges show it. Two of
+  // The Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
   // Narrow badge fits, where the Statue's spells "Niveau" and "Stufe" out
   LevelShort: "2960839764",
   // The button that raises a character one level with its Character EXP materials
@@ -517,8 +520,9 @@ export const GameTextKey = {
   MoveForward: "CONTROL_MOVE_FORWARD",
   MoveLeft: "CONTROL_MOVE_LEFT",
   MoveRight: "CONTROL_MOVE_RIGHT",
-  // The Mystic Offering at the Crafting Bench: its title, the Create button, the tip naming how many five-star artifacts make
-  // A strongbox, the tip that it needs five-star artifacts, the tip that the choice falls short, and the confirm dialog
+  // The Mystic Offering at the Crafting Bench: its title, the Create button, the tip naming how many five-star
+  // Artifacts make A strongbox, the tip that it needs five-star artifacts, the tip that the choice falls short, and the
+  // Confirm dialog
   MysticOffering: "UI_MELTING_TITLE_A",
   MysticOfferingConfirm: "UI_MELTING_TIPS_F",
   MysticOfferingCreate: "UI_MELTING_BUTTON_A",
@@ -579,7 +583,8 @@ export const GameTextKey = {
   // Provisional: how far a quest in the quest screen's list stands, "{0}m". The text map holds no line of the quest
   // Screen's own for it, so this is the minigame's "{0}m", the same words in English
   QuestDistance: "UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER",
-  // The quest tracker's word before the navigated objective's distance, where it stands well below or above the character
+  // The quest tracker's word before the navigated objective's distance, where it stands well below or above the
+  // Character
   QuestMarkDown: "QUEST_MARK_DOWN",
   QuestMarkUp: "QUEST_MARK_UP",
   // The same button on any other quest
@@ -587,14 +592,16 @@ export const GameTextKey = {
   // The quest screen's button opening the overview of every quest
   QuestOverview: "UI_QUESTHUB_BUTTON_NAME",
   Quests: "UI_STC_GAMEENTRYPAGE_QUEST",
-  // The caption over the rewards a series of quests gives once all of it is complete, whose coloured run names what it unlocks
+  // The caption over the rewards a series of quests gives once all of it is complete, whose coloured run names what it
+  // Unlocks
   QuestSeriesRewards: "UI_SNEZHNAYA_BOOK_TASK_TIPS",
   // Provisional: the quest screen's title over its first tab, which lists every quest in progress. The text map holds
   // Several lines reading "In Progress" and none of them is named for the quest screen, so this is the plainest one
   QuestsInProgress: "UI_TEXT_DOING",
   // Party Setup's button that fills the team's empty slots with the next characters
   QuickSetup: "UI_BUTTON_FAST_TEAM",
-  // The quick swap menu's prompt over its slots while Z is held, and the word on its key that switches to the slot chosen
+  // The quick swap menu's prompt over its slots while Z is held, and the word on its key that switches to the slot
+  // Chosen
   QuickSwapSelect: "WIDGET_QUICK_SWITCH_GUIDE2_2",
   QuickSwapSwitch: "UI_PC_Quick_Switch",
   // The quit prompt's question, which the game asks before the player leaves
@@ -779,8 +786,8 @@ export const GameTextKey = {
   SwitchToWalkRun: "CONTROL_SLOW_MOVE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto: "UI_PIC_MAIN_PCPS_C",
-  // The Talents tab's button that raises a combat talent by one level, the phase its next level needs, and the reasons it
-  // Cannot rise: at its last level, the character's Ascension Phase too low, or short of the Mora or the materials
+  // The Talents tab's button that raises a combat talent by one level, the phase its next level needs, and the reasons
+  // It Cannot rise: at its last level, the character's Ascension Phase too low, or short of the Mora or the materials
   TalentLevelUp: "UI_TALENT_LEVEL_UP",
   TalentMaterialsShort: "UI_TRAININGPLAN_MATERIAL_LACK",
   TalentMoraShort: "RetScoinNotEnough",
@@ -829,7 +836,8 @@ export const GameTextKey = {
   UseOriginalResin: "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   // The Paimon menu's link to the game's version highlights, drawn disabled
   VersionHighlights: "UI_STC_GAMEENTRYPAGE_HANDBOOK",
-  // The weapon screen's three actions, the equipment page's buttons: the weapon's level, its ascension and its refinement
+  // The weapon screen's three actions, the equipment page's buttons: the weapon's level, its ascension and its
+  // Refinement
   WeaponAscend: "UI_EQUIP_PAGE_STARUP_BUTTON",
   WeaponEnhance: "UI_EQUIP_PAGE_LEVELUP_BUTTON",
   // The enhancement materials chosen so far over those the next level needs, "({0}/{1})"
@@ -839,7 +847,8 @@ export const GameTextKey = {
   // The quick-add option choosing every material of three stars and under
   WeaponMaterialsThreeStarAndUnder: "UI_FAST_ADD_OPTION_3",
   WeaponRefine: "UI_EQUIP_PAGE_AWAKEN_BUTTON",
-  // The held rank's row over its passive text, "·Current: {0}" with the label coloured, and the next rank's, "·Next Rank: {0}"
+  // The held rank's row over its passive text, "·Current: {0}" with the label coloured, and the next rank's, "·Next
+  // Rank: {0}"
   WeaponRefinementCurrent: "EQUIP_AWAKEN_AFFIX_CURRENT_DESC",
   WeaponRefinementLevel: "UI_WEAPON_AFFIX_DESC",
   WeaponRefinementMaterial: "UI_WEAPON_AWAKEN_NEED_2",
@@ -865,7 +874,8 @@ export const GameTextKey = {
   WishDetails: "UI_GACHA_WISH_02_DETAIL",
   WishEpitomizedPath: "UI_GACHA_WISH",
   WishFatePoint: "UI_GACHA_WISH_POINT",
-  // The notices a wish's panel shows: its 5-star event-exclusive characters and weapons can only be obtained in the wish named
+  // The notices a wish's panel shows: its 5-star event-exclusive characters and weapons can only be obtained in the
+  // Wish named
   WishFiveStarCharacterNotice: "UI_GACHA_SHOW_PANEL_DETAIL_01",
   WishFiveStarWeaponNotice: "UI_GACHA_SHOW_PANEL_DETAIL_02",
   WishGoToTrial: "UI_REUNIONV2_GOTO_AVARTARTRIAL",
@@ -873,7 +883,8 @@ export const GameTextKey = {
   WishProbabilityUp: "UI_GACHA_SHOW_PANEL_PROBABILITY_UP",
   WishRateUp: "UI_GACHA_SHOW_PANEL_DETAIL_03",
   WishStandard: "UI_GACHA_TYPE_02",
-  // The time a wish has left, its three-part format and the day, hour and minute units it counts in, with `{0}` the count
+  // The time a wish has left, its three-part format and the day, hour and minute units it counts in, with `{0}` the
+  // Count
   WishTimeRemaining: "UI_GACHA_TIME_REMAINING",
   WishTimeRemainingDays: "UI_GACHA_TIME_REMAINING_FORMAT_DAY",
   WishTimeRemainingFormat: "UI_GACHA_TIME_REMAINING_FORMAT",
@@ -881,8 +892,8 @@ export const GameTextKey = {
   WishTimeRemainingMinutes: "UI_GACHA_TIME_REMAINING_FORMAT_MINIUT",
   WishWeaponEvent: "UI_GACHA_TYPE_04",
   WorldLevel: "UI_WORLDLEVEL_TITLE",
-  // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
-  // The restoring's tips and label
+  // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips,
+  // And The restoring's tips and label
   WorldLevelAdjustedTo: "UI_WORLDLEVEL_ADJUST_HINT",
   WorldLevelCurrent: "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
   // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in

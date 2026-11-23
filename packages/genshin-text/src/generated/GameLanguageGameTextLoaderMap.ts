@@ -1,4 +1,5 @@
-/* oxlint-disable selector-ban/no-restricted-syntax -- every language but English is its own chunk: the map is the entry every reader loads, so its dynamic imports keep the fourteen languages a page does not show out of the eager graph */
+/* oxlint-disable selector-ban/no-restricted-syntax -- every language but English is its own chunk: the map is the entry
+   every reader loads, so its dynamic imports keep the fourteen languages a page does not show out of the eager graph */
 import type { GameText } from "#src/models/GameText";
 
 import English from "#src/generated/text/English.json" with { type: "json" };
