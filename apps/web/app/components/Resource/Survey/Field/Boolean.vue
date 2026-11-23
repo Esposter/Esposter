@@ -3,8 +3,8 @@ import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyBooleanNode } from "vue-survey-engine-headless";
 
 import { SURVEY_NO_TITLE, SURVEY_YES_TITLE } from "#src/services/resource/survey/constants";
-import { SurveyBooleanDisplayStyle } from "vue-survey-engine-headless";
 import { checkIsBlankText } from "@esposter/shared";
+import { SurveyBooleanDisplayStyle } from "vue-survey-engine-headless";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field and marking it invalid

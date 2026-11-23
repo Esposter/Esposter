@@ -3,8 +3,8 @@ import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyTagBoxNode } from "vue-survey-engine-headless";
 
 import { SURVEY_OTHER_TITLE } from "#src/services/resource/survey/constants";
-import { getSurveyChoiceText, getSurveyOrderedChoices } from "vue-survey-engine-headless";
 import { checkIsBlankText } from "@esposter/shared";
+import { getSurveyChoiceText, getSurveyOrderedChoices } from "vue-survey-engine-headless";
 
 interface Props {
   error: string;

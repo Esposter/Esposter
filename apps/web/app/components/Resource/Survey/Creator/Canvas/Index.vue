@@ -5,8 +5,8 @@ import { getSurveyDropSlots } from "#src/services/resource/survey/getSurveyDropS
 import { getSurveyKindItems } from "#src/services/resource/survey/getSurveyKindItems";
 import { SurveyNodeTypeIconMap } from "#src/services/resource/survey/SurveyNodeTypeIconMap";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
-import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 import { checkIsBlankText } from "@esposter/shared";
+import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 // The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over its
 // Elements, a page and every element is chosen by a click or Enter, and the chosen one takes an accent line inside its edge

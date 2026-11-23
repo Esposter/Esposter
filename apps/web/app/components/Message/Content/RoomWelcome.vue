@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
+
 import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {

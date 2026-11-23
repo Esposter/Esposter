@@ -1,7 +1,6 @@
 import type { SelectorBanList } from "#src/models/oxlint/selectorBan/SelectorBanList";
 
 import { SCRIPT_FILES } from "#src/services/oxlint/selectorBan/constants";
-
 import {
   SERVER_COUNT_FIELDS,
   SERVER_COUNT_ROLE_FIELD,

@@ -9,8 +9,8 @@ import type {
 
 import { getSurveyAnswerRows } from "#src/services/resource/survey/getSurveyAnswerRows";
 import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
-import { getSurveyChoiceText } from "vue-survey-engine-headless";
 import { checkIsBlankText } from "@esposter/shared";
+import { getSurveyChoiceText } from "vue-survey-engine-headless";
 
 interface Props {
   error: string;

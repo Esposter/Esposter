@@ -10,7 +10,7 @@ Both rules are on by category and report the same line for a module imported twi
 
 `import/newline-after-import` runs with `considerComments`, which is what makes a `//` line straight under the imports report. It also reads a comment _between_ two imports as the end of the block, so the block holds imports only: a directive that concerns an import is written file-level on the first line, and a `@vitest-environment` pragma goes there too. Without `considerComments` the mid-block comment would pass, but so would a comment flush under the last import, which is the layout the rule exists to refuse.
 
-`perfectionist/sort-imports` runs with `partitionByComment`, because by default it carries a comment above an import along with it wherever the sort puts it — a line-1 directive sitting flush over the first import lands mid-block the moment another import sorts above it, and the fixers then fight over the blank line. As a partition boundary the comment stays where it was written, so the sort can never create the report; the rule alone decides where a comment may sit.
+oxfmt's `sortImports` runs with `partitionByComment`, because without it the sort carries a comment above an import along with it wherever the sort puts it — a line-1 directive sitting flush over the first import lands mid-block the moment another import sorts above it, and the formatter and the lint fixer then fight over the blank line. As a partition boundary the comment stays where it was written, so the sort can never create the report; the rule alone decides where a comment may sit.
 
 ## `import/no-cycle` — and the half no linter sees
 
