@@ -2,8 +2,10 @@ import { getMathExpressionNames } from "#src/services/names/getMathExpressionNam
 import { parseMathExpression } from "#src/services/parser/parseMathExpression";
 import { describe, expect, test } from "vitest";
 
-const getNamesOf = (formula: string): null | string[] =>
-  parseMathExpression(formula).match(getMathExpressionNames, () => null);
+const getNamesOf = (formula: string): string[] =>
+  parseMathExpression(formula).match(getMathExpressionNames, (error) => {
+    throw error;
+  });
 
 describe(getMathExpressionNames, () => {
   test.each([

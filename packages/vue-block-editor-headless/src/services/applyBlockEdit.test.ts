@@ -42,9 +42,13 @@ describe(applyBlockEdit, () => {
         ({ document, inverses }) =>
           applyBlockEdit(schema, document, inverses).match(
             (reversed) => reversed.document,
-            () => undefined,
+            (error) => {
+              throw error;
+            },
           ),
-        () => undefined,
+        (error) => {
+          throw error;
+        },
       ),
     ).toStrictEqual(TEST_DOCUMENT);
   });

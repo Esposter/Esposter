@@ -13,4 +13,5 @@ export const checkSurveyExpressionHolds = (
 ): boolean =>
   runSurveyExpression(source, { now, scopes, values })
     .map((value) => value === true)
+    // A fault reads as not holding, as the header above says
     .unwrapOr(false);

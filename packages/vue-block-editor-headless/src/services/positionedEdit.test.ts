@@ -12,6 +12,7 @@ export const applyPositionedEdit = (
 ): PositionedDocument | undefined =>
   applyBlockEdit(positionedDocumentSchema, document, operations).match(
     ({ document: patchedDocument }) => patchedDocument,
+    // A refused edit is the undefined the header above names, so the caller applies nothing
     () => undefined,
   );
 

@@ -28,6 +28,7 @@ export const getSurveyRunnerValues = (
     changedNames = [];
     for (const { expression, name } of calculations) {
       const previous = values[name];
+      // A calculation that faults has no value, so its name is cleared rather than kept from an earlier pass
       const next = runSurveyExpression(expression, { now, scopes: {}, values }).unwrapOr(undefined);
       if (next === undefined) delete values[name];
       else values[name] = next;

@@ -24,6 +24,7 @@ describe("sanitizerAdvisoryWatch", () => {
       }),
     ).match(
       (value) => value,
+      // A feed that cannot be read is skipped below with its reason, rather than failing the sanitiser
       () => undefined,
     );
     if (!response?.ok) {

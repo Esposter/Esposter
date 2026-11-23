@@ -31,10 +31,10 @@ const checkIsMatching = (expected: number, actual: number, isTolerant: boolean):
   return checkIsNearlyEqual(expected, actual);
 };
 
-// Null where the parser refuses the formula, which is not a NaN answer
 const evaluateFormula = (formula: string, scope: Record<string, number>): null | number =>
   parseMathExpression(formula).match(
     (node) => compileMathExpression(node, Object.keys(scope))(Object.values(scope)),
+    // Null where the parser refuses the formula, which is not a NaN answer
     () => null,
   );
 

@@ -17,6 +17,7 @@ const getEncodings = (bytes: Uint8Array): CharacterTermsEncoding[] => {
 export const decodeCharacterTerms = (bytes: Uint8Array): CharacterPackTerms => {
   const encodings = getEncodings(bytes);
   for (const encoding of encodings) {
+    // Bytes an encoding does not read fail its fatal decode, so the next encoding in the order is tried
     const text = getResult(() => new TextDecoder(encoding, { fatal: true }).decode(bytes)).unwrapOr(undefined);
     if (
       text !== undefined &&

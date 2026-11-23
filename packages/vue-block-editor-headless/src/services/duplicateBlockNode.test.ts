@@ -14,7 +14,7 @@ import {
 } from "#src/services/constants.test";
 import { duplicateBlockNode } from "#src/services/duplicateBlockNode";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(duplicateBlockNode, () => {
   // A duplicate adds one node to the document, so the schema allows one more
@@ -29,18 +29,20 @@ describe(duplicateBlockNode, () => {
       duplicateBlockNode(TEST_DOCUMENT, TEST_REGISTRY, TEST_CHILDREN, TEST_NODE_SCHEMA, "/content/0/props/children/0"),
     ).match(
       ({ document }) => document,
-      () => undefined,
+      (error) => {
+        throw error;
+      },
     );
-    assert.exists(duplicated);
     const edited = applyBlockEdit(
       schema,
       duplicated,
       updateBlockNodeProps<HeadingNodeProps>("/content/0/props/children/1", { text: "copied" }),
     ).match(
       ({ document }) => document,
-      () => undefined,
+      (error) => {
+        throw error;
+      },
     );
-    assert.exists(edited);
 
     expect(edited.content).toStrictEqual([
       {
