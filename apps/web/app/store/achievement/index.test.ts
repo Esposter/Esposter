@@ -36,4 +36,37 @@ describe(useAchievementStore, () => {
 
     expect(statistics.value.unlockedAchievements).toBe(1);
   });
+
+  // The subscription is live before the definitions are read, so an unlock pushed in that window waits for them
+  test("announces an unlock pushed before the definitions are read once they land", () => {
+    expect.hasAssertions();
+
+    const achievementStore = useAchievementStore();
+    const { recentlyUnlockedUserAchievements } = storeToRefs(achievementStore);
+    const { initializeAchievementDefinitionMap, updateAchievement } = achievementStore;
+    const pushedAchievementId = v7();
+    updateAchievement({
+      achievement: {
+        createdAt: epoch,
+        deletedAt: null,
+        id: pushedAchievementId,
+        name: EmailAchievementName.EmailMarketer,
+        updatedAt: epoch,
+        version: 1,
+      },
+      achievementId: pushedAchievementId,
+      amount: 1,
+      createdAt: epoch,
+      deletedAt: null,
+      unlockedAt: epoch,
+      updatedAt: epoch,
+      userId: v7(),
+      version: 1,
+    });
+    initializeAchievementDefinitionMap(AchievementDefinitionMap);
+
+    expect(
+      recentlyUnlockedUserAchievements.value.map((userAchievement) => userAchievement.achievementId),
+    ).toStrictEqual([pushedAchievementId]);
+  });
 });

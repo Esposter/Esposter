@@ -16,9 +16,8 @@ export const useAchievementStore = defineStore("achievement", () => {
   const achievementDefinitions = computed<AchievementDefinitionEntry[]>(() =>
     achievementDefinitionMap.value ? parseDictionaryToArray(achievementDefinitionMap.value, "name") : [],
   );
-  const initializeAchievementDefinitionMap = (newAchievementDefinitionMap: AchievementDefinitionViewMap) => {
-    achievementDefinitionMap.value = newAchievementDefinitionMap;
-  };
+  // A push that lands before the definitions are read has no definition to build its row from, so it waits for them
+  let heldUserAchievements: UserAchievementInAchievementWithRelations[] = [];
   const overlayStore = useOverlayStore();
   const { arrive, view } = overlayStore;
   const userAchievementRows = view(userAchievementTable);
@@ -46,7 +45,10 @@ export const useAchievementStore = defineStore("achievement", () => {
     );
   };
   const updateAchievement = (updatedUserAchievement: UserAchievementInAchievementWithRelations) => {
-    if (!achievementDefinitionMap.value) return;
+    if (!achievementDefinitionMap.value) {
+      heldUserAchievements.push(updatedUserAchievement);
+      return;
+    }
 
     const userAchievementWithDefinition = toUserAchievementWithDefinition(
       updatedUserAchievement,
@@ -56,6 +58,13 @@ export const useAchievementStore = defineStore("achievement", () => {
     const isApplied = arrive(userAchievementTable, userAchievementWithDefinition);
     if (isApplied && checkIsUnlockedUserAchievement(userAchievementWithDefinition))
       recentlyUnlockedUserAchievements.value.push(userAchievementWithDefinition);
+  };
+  const initializeAchievementDefinitionMap = (newAchievementDefinitionMap: AchievementDefinitionViewMap) => {
+    achievementDefinitionMap.value = newAchievementDefinitionMap;
+    // Pushes held while the definitions were read are applied now, so an unlock that landed in that window is announced
+    const heldPushes = heldUserAchievements;
+    heldUserAchievements = [];
+    for (const userAchievement of heldPushes) updateAchievement(userAchievement);
   };
   return {
     achievementDefinitions,
