@@ -1,13 +1,13 @@
 ---
 name: pulumi-infra
-description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure for Cloudflare and GitHub in one prod stack, and the decisions the estate has settled.
+description: Apply when modifying apps/infra, or when a Cloudflare token, an ESC key, a secret or a Worker secret is added, widened or removed. Esposter's Pulumi infrastructure for Cloudflare and GitHub in one prod stack, and the decisions the estate has settled.
 ---
 
 # Pulumi Infrastructure
 
 ## Settled — do not re-propose
 
-- **A secret in a stack file, encrypted or not.** `pulumi config set --secret` writes ciphertext into `Pulumi.prod.yaml`, which is tracked and public — the secret is then published to everybody and rests on one algorithm and one key for as long as the repository outlives them. Every secret this estate holds is in the `esposter-infra/prod` ESC environment the stack imports, and `apps/infra/docs/stacks.md` has the `pulumi env set` form that puts one there.
+- **Credentials.** Every secret, ESC key and Cloudflare token follows `.agents/skills/security/references/credentials.md`, including the rule that no secret sits in a stack file.
 - **Widening `.github/workflows/Pulumi.yaml`'s `paths:` — a gate job over the workspace graph, a content hash at two refs, a `pnpm-workspace.yaml` entry — so a pull request previews on a workspace-package edit or a `@pulumi/*` bump.** Nothing applies to the estate off a pull request: `up` is local with a preview in front of it (`references/operations.md`), and the workflow previews only pushes to `ai/queue` (`openspec/specs/architecture/monorepo-tooling/design.md` → "What a CI proposal has to beat").
 - **Adding an observability resource — a telemetry store, an alert rule — as an unprompted best practice.** The estate runs with none by a cost decision: paid ingestion recurs with no consumer, so the suggestion is closed, not applied. What a condition worth noticing does instead (`console.error`, the dead-letter queue) and what would reopen the decision: `openspec/specs/infra/observability/design.md`.
 
@@ -19,7 +19,7 @@ The package's shape is `references/package-shape.md`. The stack holds only what 
 
 - **Provider.** Every Cloudflare resource is declared with `@pulumi/cloudflare`, imported as a namespace (Provider Imports below).
 - **Names.** An environment's resource is `<env>-<assetType>-esposter-<purpose>` and an account's is `<assetType>-esposter-<purpose>`. `getCloudflareResourceName` and `getCloudflareAccountResourceName` in `packages/db-schema/src/services/cloudflare/` build both, for Pulumi and for the Workers, and `apps/infra/docs/cloudflare/naming-conventions.md` lists the asset types. A Pulumi logical name is that name.
-- **Secrets.** Only in the ESC environment, never in Pulumi config (Settled, above). A change that adds a Worker secret sets its ESC keys itself, unasked: it generates a value per environment, distinct for dev and prod, sets `pulumiConfig["esposter-infra:<env>_<NAME>"]` with `pulumi env set esposter-infra/prod … --secret`, and checks each key as the `security` skill's secret rule says. The deploy gate refuses a Worker whose secret its schema rejects, so a key the change left unset fails the deploy rather than the site (`openspec/specs/architecture/environment/design.md`, "Secrets and vars").
+- **Secrets.** The ESC environment holds them, never Pulumi config, and a change that adds a Worker secret sets its ESC keys itself, unasked. The rule and its lifecycle are `.agents/skills/security/references/credentials.md`, and the deploy gate's check is `openspec/specs/architecture/environment/design.md`, "Secrets and vars".
 - **Worker code.** Pulumi declares what the Workers bind to — queues, queue consumers, buckets, D1 databases, custom domains — and never ships their code. The Deploy workflow (`.github/workflows/Deploy.yaml`) runs `wrangler deploy` for the three Workers (`realtime`, `jobs`, `web`, in that order), on `main` for production and `ai/queue` for development, once CI's run on that commit succeeds.
 
 ## Resource Files
