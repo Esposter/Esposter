@@ -2,9 +2,15 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
-// A file of the build folder, which carries the robots header and the lifetime its rule gives it
+// A file of the build folder, which carries the robots header and the lifetime its rule gives it. The embedder policy is the
+// Page's own: a dedicated worker's script is refused unless its response carries it, and the Worker's assets binding serves
+// These files without its request hook, so the policy is a header rule here
 const buildFileRule = (cacheControl: string) => ({
-  headers: { "cache-control": cacheControl, "X-Robots-Tag": "noindex" },
+  headers: {
+    "cache-control": cacheControl,
+    "Cross-Origin-Embedder-Policy": "credentialless",
+    "X-Robots-Tag": "noindex",
+  },
 });
 
 // Client-only pages that touch window/localStorage during setup stay out of SSR and indexing.

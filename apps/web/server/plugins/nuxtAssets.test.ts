@@ -24,6 +24,20 @@ describe("nuxtAssets", () => {
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
+  // A response the Worker writes under the build's folder gets none of its file's headers, so it takes the embedder policy a
+  // Worker's script needs and the security headers the page carries
+  test("a missing file under the build's folder carries the embedder policy and the referrer policy", async () => {
+    expect.hasAssertions();
+
+    const response = new Response("", { status: 404 });
+    (await getResponseHook())(response, { req: { url: "https://example.com/_nuxt/missing.js" } });
+
+    expect({
+      coep: response.headers.get("Cross-Origin-Embedder-Policy"),
+      referrer: response.headers.get("Referrer-Policy"),
+    }).toStrictEqual({ coep: "credentialless", referrer: "no-referrer" });
+  });
+
   test("a file found under the build's folder stays immutable", async () => {
     expect.hasAssertions();
 

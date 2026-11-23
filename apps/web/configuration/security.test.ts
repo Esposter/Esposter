@@ -1,4 +1,5 @@
 import { CLOUDFLARE_INSIGHTS_URL, NUXT_IMAGE_ERROR_HANDLER } from "#configuration/constants";
+import { routeRules } from "#configuration/routeRules";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -129,5 +130,13 @@ describe("security", () => {
 
     for (const component of ["NuxtImg", "NuxtPicture"])
       expect(readFileSync(join(componentDirectory, `${component}.vue`), "utf8")).toContain(NUXT_IMAGE_ERROR_HANDLER);
+  });
+
+  // A dedicated worker's script is refused unless its response carries the embedder policy its page sends. The build's
+  // Scripts are served from the static assets, which never reach the Worker's request hook, so the policy is a route rule
+  test("serves the build's folder under the embedder policy its pages send", () => {
+    expect.hasAssertions();
+
+    expect(routeRules["/_nuxt/:file"]?.headers?.["Cross-Origin-Embedder-Policy"]).toBe("credentialless");
   });
 });
