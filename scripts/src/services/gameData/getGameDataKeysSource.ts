@@ -1,11 +1,11 @@
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 import { GAME_DATA_INDEX_KEYS_NAME, GAME_DATA_KEYS_NAME } from "#src/services/gameData/constants";
 import { renderConstant } from "#src/services/gameData/renderConstant";
 
 // The nested constants the lock's keys render as, with each key's type the leaf of its path. A dataset's keys are
 // `GameDataKeyOf<"shops">`, so a consumer narrows to one dataset without restating the strings
-export const getGameDataKeysSource = (lock: GameDataLock): string =>
+export const getGameDataKeysSource = (lock: HostedAssetLock): string =>
   [
     "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's own keys, which a reader looks up by a dataset's name at runtime, so a key keeps the spelling the data gives it */",
     'import type { ValueOfDeep } from "type-fest";',

@@ -1,6 +1,8 @@
+import { createGameDataLockObject } from "#src/services/gameData/createGameDataLockObject.test";
 import { getGameDataHash } from "#src/services/gameData/getGameDataHash";
 import { verifyGameData } from "#src/services/gameData/verifyGameData";
-import { getGameDataObjectPath } from "genshin-world";
+import { getGameDataObjectName } from "genshin-world";
+import { getHostedAssetUrl } from "hosted-assets";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(verifyGameData, () => {
@@ -9,7 +11,7 @@ describe(verifyGameData, () => {
   const createStoredRecord = (dataset: string, value: unknown) => {
     const json = JSON.stringify(value);
     const hash = getGameDataHash(json);
-    return { hash, json, url: `${baseUrl}/${getGameDataObjectPath(dataset, hash)}` };
+    return { hash, json, url: getHostedAssetUrl(baseUrl, getGameDataObjectName(dataset, hash)) };
   };
 
   afterEach(() => {
@@ -32,8 +34,8 @@ describe(verifyGameData, () => {
 
     await expect(
       verifyGameData(baseUrl, {
-        indexes: { "profile/English": index.hash },
-        objects: { "stats/weapons": shared.hash },
+        indexes: { "profile/English": createGameDataLockObject("profile/English", index.hash) },
+        objects: { "stats/weapons": createGameDataLockObject("stats/weapons", shared.hash) },
       }),
     ).resolves.toBe(3);
     // Three calls naming three distinct URLs, so each object is fetched exactly once
@@ -49,7 +51,10 @@ describe(verifyGameData, () => {
     const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ "10000002": getGameDataHash("b") }));
 
     await expect(
-      verifyGameData(baseUrl, { indexes: { "profile/English": index.hash }, objects: {} }),
+      verifyGameData(baseUrl, {
+        indexes: { "profile/English": createGameDataLockObject("profile/English", index.hash) },
+        objects: {},
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: https://bucket.example/public-genshin-assets/profile/English/2709f82fb9bd4917c3e5f7617f1f22fa906116a4ae4447125391ff760f2ff17a.json, does not hash to its name]`,
     );
@@ -66,7 +71,10 @@ describe(verifyGameData, () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify(value, null, 2)));
 
     await expect(
-      verifyGameData(baseUrl, { indexes: {}, objects: { "profile/English": record.hash } }),
+      verifyGameData(baseUrl, {
+        indexes: {},
+        objects: { "profile/English": createGameDataLockObject("profile/English", record.hash) },
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: https://bucket.example/public-genshin-assets/profile/English/d9d719b27480b55cd4918020e7473e716ed3569c8adafe926cf9b10b4f8ef064.json, does not hash to its name]`,
     );

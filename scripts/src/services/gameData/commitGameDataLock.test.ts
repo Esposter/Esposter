@@ -1,4 +1,5 @@
 import { commitGameDataLock } from "#src/services/gameData/commitGameDataLock";
+import { createGameDataLockObject } from "#src/services/gameData/createGameDataLockObject.test";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { writeGameDataLock } from "#src/services/gameData/writeGameDataLock";
 import { GameDataset } from "genshin-world";
@@ -25,19 +26,25 @@ describe(commitGameDataLock, () => {
     expect.hasAssertions();
 
     await writeGameDataLock(
-      { indexes: { "profile/English": createHash("b") }, objects: { "stats/weapons": createHash("a") } },
+      {
+        indexes: { "profile/English": createGameDataLockObject("profile/English", createHash("b")) },
+        objects: { "stats/weapons": createGameDataLockObject("stats/weapons", createHash("a")) },
+      },
       lockPath,
     );
 
     await commitGameDataLock(
       [GameDataset.BookBody],
-      { indexes: { "bookBody/English": createHash("c") }, objects: {} },
+      { indexes: { "bookBody/English": createGameDataLockObject("bookBody/English", createHash("c")) }, objects: {} },
       lockPath,
     );
 
     await expect(readGameDataLock(lockPath)).resolves.toStrictEqual({
-      indexes: { "bookBody/English": createHash("c"), "profile/English": createHash("b") },
-      objects: { "stats/weapons": createHash("a") },
+      indexes: {
+        "bookBody/English": createGameDataLockObject("bookBody/English", createHash("c")),
+        "profile/English": createGameDataLockObject("profile/English", createHash("b")),
+      },
+      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", createHash("a")) },
     });
   });
 
@@ -45,19 +52,22 @@ describe(commitGameDataLock, () => {
     expect.hasAssertions();
 
     await writeGameDataLock(
-      { indexes: { "profile/English": createHash("a") }, objects: { "stats/weapons": createHash("b") } },
+      {
+        indexes: { "profile/English": createGameDataLockObject("profile/English", createHash("a")) },
+        objects: { "stats/weapons": createGameDataLockObject("stats/weapons", createHash("b")) },
+      },
       lockPath,
     );
 
     await commitGameDataLock(
       [GameDataset.Profile],
-      { indexes: { "profile/English": createHash("c") }, objects: {} },
+      { indexes: { "profile/English": createGameDataLockObject("profile/English", createHash("c")) }, objects: {} },
       lockPath,
     );
 
     await expect(readGameDataLock(lockPath)).resolves.toStrictEqual({
-      indexes: { "profile/English": createHash("c") },
-      objects: { "stats/weapons": createHash("b") },
+      indexes: { "profile/English": createGameDataLockObject("profile/English", createHash("c")) },
+      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", createHash("b")) },
     });
   });
 
@@ -68,15 +78,28 @@ describe(commitGameDataLock, () => {
     const doorKey = `${GameDataset.Login}/door` as const;
     const musicKey = `${GameDataset.Login}/music` as const;
     await writeGameDataLock(
-      { indexes: {}, objects: { [doorKey]: createHash("a"), [musicKey]: createHash("b") } },
+      {
+        indexes: {},
+        objects: {
+          [doorKey]: createGameDataLockObject(doorKey, createHash("a")),
+          [musicKey]: createGameDataLockObject(musicKey, createHash("b")),
+        },
+      },
       lockPath,
     );
 
-    await commitGameDataLock([musicKey], { indexes: {}, objects: { [musicKey]: createHash("c") } }, lockPath);
+    await commitGameDataLock(
+      [musicKey],
+      { indexes: {}, objects: { [musicKey]: createGameDataLockObject(musicKey, createHash("c")) } },
+      lockPath,
+    );
 
     await expect(readGameDataLock(lockPath)).resolves.toStrictEqual({
       indexes: {},
-      objects: { [doorKey]: createHash("a"), [musicKey]: createHash("c") },
+      objects: {
+        [doorKey]: createGameDataLockObject(doorKey, createHash("a")),
+        [musicKey]: createGameDataLockObject(musicKey, createHash("c")),
+      },
     });
   });
 });

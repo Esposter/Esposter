@@ -1,8 +1,8 @@
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 // The lock a publication names and every record that lock reaches, each record once
 export interface GameDataPlan {
-  lock: GameDataLock;
+  lock: HostedAssetLock;
   records: GameDataRecord[];
 }

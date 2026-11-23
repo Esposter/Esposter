@@ -1,16 +1,17 @@
 import type { GameDataPublishResult } from "#src/models/gameData/GameDataPublishResult";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { DAY_MS } from "#src/services/gameData/constants";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
+import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
 import { publishGameData } from "#src/services/gameData/publishGameData";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { GameDataset, getGameDataObjectPath } from "genshin-world";
+import { GameDataset } from "genshin-world";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Each environment's bucket is its own in-memory store, made fresh for each test, so a rerun reads what the test stored
@@ -20,14 +21,14 @@ const createBucketClientMap = () => ({
 });
 
 // The lock a published result plans, which a caller commits and a test carries into its next publish
-const getPlannedLock = (result: GameDataPublishResult): GameDataLock => {
+const getPlannedLock = (result: GameDataPublishResult): HostedAssetLock => {
   if (result.outcome !== GameDataPublishOutcome.Published)
     throw new InvalidOperationError(Operation.Read, result.outcome, "is not a published publication");
   return result.plannedLock;
 };
 
 describe(publishGameData, () => {
-  const emptyLock: GameDataLock = { indexes: {}, objects: {} };
+  const emptyLock: HostedAssetLock = { indexes: {}, objects: {} };
   // One object, and an index of two entries: four stored objects in all
   const publication: GameDataPublication = {
     indexes: { "profile/English": { "10000002": { name: "a" }, "10000003": { name: "b" } } },
@@ -108,7 +109,7 @@ describe(publishGameData, () => {
       }),
     );
     const record = takeOne(planGameDataPublication(publication).records);
-    bucketClientMap[CloudflareEnvironment.Production].store.delete(getGameDataObjectPath(record.dataset, record.hash));
+    bucketClientMap[CloudflareEnvironment.Production].store.delete(getGameDataObjectKey(record));
 
     const rerun = await publishGameData({
       createBucketClientMap: () => bucketClientMap,

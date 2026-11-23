@@ -2,15 +2,15 @@ import type { RockRecord } from "#src/models/world/RockRecord";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { readMirroredGameDataObject } from "#scripts/gameData/mirror/readMirroredGameDataObject";
-import { gameDataLock } from "#src/services/data/gameDataLock";
+import { getGameDataRecord } from "#src/services/data/getGameDataRecord";
 import { readRegionRockLandmarks, toRockLandmarks } from "#src/services/world/readRegionRockLandmarks";
-import { jsonDateParse, takeOne } from "@esposter/shared";
+import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 // Inazuma's rocks record as the publish wrote it, read from the mirror the lock names
 const readInazumaRockRecord = async (): Promise<RockRecord> => {
   const key = "regions/inazuma/rocks";
-  return jsonDateParse(await readMirroredGameDataObject(key, takeOne(gameDataLock.objects, key)));
+  return jsonDateParse(await readMirroredGameDataObject(getGameDataRecord(key)));
 };
 
 describe(readRegionRockLandmarks, () => {

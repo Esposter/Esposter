@@ -7,7 +7,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // File read from disk is: the caller names what it holds, or parses it with the reader's schema
 export const readPublishedGameData = async <T>(key: string): Promise<T> => {
   const { objects } = await readGameDataLock();
-  const hash = objects[key];
-  if (hash === undefined) throw new InvalidOperationError(Operation.Read, key, "is not in the game data lock");
-  return readPublishedGameDataObject<T>(key, hash);
+  const object = objects[key];
+  if (object === undefined) throw new InvalidOperationError(Operation.Read, key, "is not in the game data lock");
+  return readPublishedGameDataObject<T>(key, object.sha256);
 };

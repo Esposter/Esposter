@@ -1,5 +1,5 @@
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 import { keepUnscopedEntries } from "#src/services/gameData/keepUnscopedEntries";
 
@@ -8,10 +8,10 @@ import { keepUnscopedEntries } from "#src/services/gameData/keepUnscopedEntries"
 // Its dataset's other keys as they stand. An entry whose dataset has left GameDataset goes too, so a retired dataset
 // Leaves the lock on its next write
 export const mergeGameDataLock = (
-  currentLock: GameDataLock,
+  currentLock: HostedAssetLock,
   scopes: GameDataScope[],
-  plannedLock: GameDataLock,
-): GameDataLock => ({
+  plannedLock: HostedAssetLock,
+): HostedAssetLock => ({
   indexes: { ...keepUnscopedEntries(currentLock.indexes, scopes), ...plannedLock.indexes },
   objects: { ...keepUnscopedEntries(currentLock.objects, scopes), ...plannedLock.objects },
 });

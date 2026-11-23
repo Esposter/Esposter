@@ -1,5 +1,5 @@
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 import { GAME_DATA_KEYS_FILE_NAME, GAME_DATA_LOCK_PATH } from "#src/services/gameData/constants";
 import { mergeGameDataLock } from "#src/services/gameData/mergeGameDataLock";
@@ -12,7 +12,7 @@ import { dirname, join } from "node:path";
 // Upload in between can take minutes, and a publication of another scope may have committed in that time
 export const commitGameDataLock = async (
   scopes: GameDataScope[],
-  plannedLock: GameDataLock,
+  plannedLock: HostedAssetLock,
   lockPath: string = GAME_DATA_LOCK_PATH,
 ): Promise<void> => {
   const lock = mergeGameDataLock(await readGameDataLock(lockPath), scopes, plannedLock);

@@ -1,11 +1,11 @@
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 import { GAME_DATA_LOCK_PATH } from "#src/services/gameData/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { gameDataLockSchema } from "genshin-world";
+import { hostedAssetLockSchema } from "hosted-assets";
 import { readFile } from "node:fs/promises";
 
 // Read from disk on every call, never from genshin-world's build, which holds the lock of its last build rather than
 // The one an earlier step just wrote
-export const readGameDataLock = async (lockPath: string = GAME_DATA_LOCK_PATH): Promise<GameDataLock> =>
-  gameDataLockSchema.parse(parseMachineJson(await readFile(lockPath, "utf8")));
+export const readGameDataLock = async (lockPath: string = GAME_DATA_LOCK_PATH): Promise<HostedAssetLock> =>
+  hostedAssetLockSchema.parse(parseMachineJson(await readFile(lockPath, "utf8")));

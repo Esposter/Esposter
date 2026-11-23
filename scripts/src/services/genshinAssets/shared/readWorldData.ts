@@ -9,7 +9,7 @@ import { join } from "node:path";
 // Parity loop last published, else the file the package keeps (region data and the authored sources no fit publishes)
 export const readWorldData = async <T>(relativePath: string): Promise<T> => {
   const key = relativePath.replace(/\.json$/u, "");
-  const hash = (await readGameDataLock()).objects[key];
-  if (hash !== undefined) return readPublishedGameDataObject<T>(key, hash);
+  const object = (await readGameDataLock()).objects[key];
+  if (object !== undefined) return readPublishedGameDataObject<T>(key, object.sha256);
   return parseMachineJson<T>(await readFile(join(WORLD_DATA_DIRECTORY, relativePath), "utf8"));
 };

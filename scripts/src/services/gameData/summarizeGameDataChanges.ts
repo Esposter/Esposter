@@ -1,10 +1,11 @@
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 import { countGameDataPathChanges } from "#src/services/gameData/countGameDataPathChanges";
 import { diffEntries } from "#src/services/gameData/diffEntries";
 import { formatDiff } from "#src/services/gameData/formatDiff";
 import { readPublishedGameDataObjectIfStored } from "#src/services/gameData/readPublishedGameDataObjectIfStored";
+import { toLockHashes } from "#src/services/gameData/toLockHashes";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
@@ -15,8 +16,8 @@ const SHOWN_PATH_COUNT = 20;
 // Published lock, then the paths its changed records differ at, most often first, each prefixed with its key or index.
 // The published side is read from the dev account, so a field a source stopped writing shows before anything publishes
 export const summarizeGameDataChanges = async (
-  currentLock: GameDataLock,
-  nextLock: GameDataLock,
+  currentLock: HostedAssetLock,
+  nextLock: HostedAssetLock,
   records: GameDataRecord[],
 ): Promise<string[]> => {
   const recordJsonMap = new Map(records.map(({ hash, json }) => [hash, json]));
@@ -27,8 +28,8 @@ export const summarizeGameDataChanges = async (
       ? readPublishedGameDataObjectIfStored<T>(dataset, hash)
       : Promise.resolve(parseMachineJson<T>(json));
   };
-  const objectDiff = diffEntries(currentLock.objects, nextLock.objects);
-  const indexDiff = diffEntries(currentLock.indexes, nextLock.indexes);
+  const objectDiff = diffEntries(toLockHashes(currentLock.objects), toLockHashes(nextLock.objects));
+  const indexDiff = diffEntries(toLockHashes(currentLock.indexes), toLockHashes(nextLock.indexes));
   // An index's entries are stored under the index's own key, so the index's name is the dataset of each of them
   const entryDiffs = await Promise.all(
     indexDiff.changes.map(async ({ afterHash, beforeHash, name }) => {

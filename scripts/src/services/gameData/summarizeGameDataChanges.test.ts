@@ -1,6 +1,7 @@
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
+import { createGameDataLockObject } from "#src/services/gameData/createGameDataLockObject.test";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -14,8 +15,14 @@ describe(summarizeGameDataChanges, () => {
 
     // The bucket answers 404 for the old object, so there is nothing published to compare the new record against
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 404 }));
-    const currentLock: GameDataLock = { indexes: {}, objects: { "stats/weapons": "1".repeat(64) } };
-    const nextLock: GameDataLock = { indexes: {}, objects: { "stats/weapons": "2".repeat(64) } };
+    const currentLock: HostedAssetLock = {
+      indexes: {},
+      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", "1".repeat(64)) },
+    };
+    const nextLock: HostedAssetLock = {
+      indexes: {},
+      objects: { "stats/weapons": createGameDataLockObject("stats/weapons", "2".repeat(64)) },
+    };
     const records: GameDataRecord[] = [
       { dataset: "stats/weapons", hash: "2".repeat(64), isIndex: false, json: '{"attack":1,"defense":2}' },
     ];

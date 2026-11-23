@@ -1,7 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import GameOpening from "#src/components/Game/Opening/Index.vue";
 import { GameDataKeys } from "#src/generated/gameDataKeys";
-import { gameDataLock } from "#src/services/data/gameDataLock";
+import { getGameDataRecord } from "#src/services/data/getGameDataRecord";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import {
   LOGIN_DOOR_AFTER_LOAD_MS,
@@ -113,7 +113,7 @@ describe("gameOpening", () => {
     const characterPackIndexKey = GameDataKeys.characterPackIndex.index;
 
     expect(fetchSpy.mock.calls.map(([url]) => url)).toContainEqual(
-      `/preload/${characterPackIndexKey}/${gameDataLock.objects[characterPackIndexKey]}.json`,
+      `/preload/${characterPackIndexKey}/${getGameDataRecord(characterPackIndexKey).sha256}.json`,
     );
   });
 

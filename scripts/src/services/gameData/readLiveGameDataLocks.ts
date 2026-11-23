@@ -1,4 +1,4 @@
-import type { GameDataLock } from "genshin-world";
+import type { HostedAssetLock } from "hosted-assets";
 
 import { checkHasLockAt } from "#src/services/gameData/checkHasLockAt";
 import { GAME_DATA_RETENTION_MS } from "#src/services/gameData/constants";
@@ -10,7 +10,7 @@ import { runGit } from "#src/services/shared/runGit";
 // Every lock a stored object may still be reached by: the working tree's, HEAD's, each remote branch's head, every
 // Version origin/main committed within the retention window, and the one in force when the window opened. The git
 // History is the one place a revert's lock is still written, so a revert within the window still resolves
-export const readLiveGameDataLocks = (workingTreeLock: GameDataLock): GameDataLock[] => {
+export const readLiveGameDataLocks = (workingTreeLock: HostedAssetLock): HostedAssetLock[] => {
   const cutoff = new Date(Date.now() - GAME_DATA_RETENTION_MS).toISOString();
   const revisions = [
     ...(checkHasLockAt("HEAD") ? ["HEAD"] : []),

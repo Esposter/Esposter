@@ -1,8 +1,8 @@
 import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { DAY_MS } from "#src/services/gameData/constants";
+import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { pruneGameData } from "#src/services/gameData/pruneGameData";
 import { CHARACTER_PACKS_PREFIX } from "#src/services/genshinAssets/characterPacks/constants";
-import { getGameDataObjectPath } from "genshin-world";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(pruneGameData, () => {
@@ -27,10 +27,10 @@ describe(pruneGameData, () => {
   test("deletes an object no live lock reaches and that is past retention, and keeps the rest", async () => {
     expect.hasAssertions();
 
-    await writeObject(getGameDataObjectPath(dataset, liveHash));
-    await writeObject(getGameDataObjectPath(dataset, oldHash));
+    await writeObject(getGameDataObjectKey({ dataset, hash: liveHash }));
+    await writeObject(getGameDataObjectKey({ dataset, hash: oldHash }));
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(99 * DAY_MS));
-    await writeObject(getGameDataObjectPath(dataset, youngHash));
+    await writeObject(getGameDataObjectKey({ dataset, hash: youngHash }));
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await pruneGameData({
       bucketClient,
@@ -41,7 +41,10 @@ describe(pruneGameData, () => {
 
     expect(result).toStrictEqual({ candidateCount: 1, deletedCount: 1, keptCount: 0 });
     expect([...bucketClient.store.keys()].toSorted()).toStrictEqual(
-      [getGameDataObjectPath(dataset, liveHash), getGameDataObjectPath(dataset, youngHash)].toSorted(),
+      [
+        getGameDataObjectKey({ dataset, hash: liveHash }),
+        getGameDataObjectKey({ dataset, hash: youngHash }),
+      ].toSorted(),
     );
   });
 
@@ -60,7 +63,7 @@ describe(pruneGameData, () => {
   test("lists what it would delete without deleting it", async () => {
     expect.hasAssertions();
 
-    await writeObject(getGameDataObjectPath(dataset, oldHash));
+    await writeObject(getGameDataObjectKey({ dataset, hash: oldHash }));
     const result = await pruneGameData({ bucketClient, isDryRun: true, liveObjects: [], now: 100 * DAY_MS });
 
     expect(result).toStrictEqual({ candidateCount: 1, deletedCount: 0, keptCount: 0 });

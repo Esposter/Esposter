@@ -1,5 +1,5 @@
 import { weeklyBossDomainsSchema } from "#src/models/domains/WeeklyBossDomain";
-import { gameDataLock } from "#src/services/data/gameDataLock";
+import { getGameDataRecord } from "#src/services/data/getGameDataRecord";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -19,7 +19,7 @@ describe(readWeeklyBossDomains, () => {
 
     await expect(readWeeklyBossDomains("weekly-boss-domains-read")).resolves.toStrictEqual(weeklyBossDomains);
     expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([
-      `weekly-boss-domains-read/${weeklyBossesKey}/${gameDataLock.objects[weeklyBossesKey]}.json`,
+      `weekly-boss-domains-read/${weeklyBossesKey}/${getGameDataRecord(weeklyBossesKey).sha256}.json`,
     ]);
   });
 });

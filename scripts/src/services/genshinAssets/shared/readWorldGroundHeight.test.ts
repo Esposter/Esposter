@@ -3,7 +3,11 @@ import { TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test, vi } from "vitest";
 
 const { lockObjects, records } = vi.hoisted(() => ({
-  lockObjects: { "ground/liyue": "liyue", "ground/mondstadt": "mondstadt", "ground/windrise": "windrise" },
+  lockObjects: {
+    "ground/liyue": { bytes: 0, extension: ".json", scope: "ground/liyue", sha256: "liyue" },
+    "ground/mondstadt": { bytes: 0, extension: ".json", scope: "ground/mondstadt", sha256: "mondstadt" },
+    "ground/windrise": { bytes: 0, extension: ".json", scope: "ground/windrise", sha256: "windrise" },
+  },
   records: {} as Record<string, object>,
 }));
 let readKeys: string[] = [];

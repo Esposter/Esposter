@@ -1,3 +1,5 @@
+import type { HostedAssetObject } from "hosted-assets";
+
 import { GAME_DATA_MIRROR_SOURCE_URL } from "#scripts/gameData/mirror/constants";
 import { downloadGameDataObject } from "#scripts/gameData/mirror/downloadGameDataObject";
 import { fillGameDataMirror } from "#scripts/gameData/mirror/fillGameDataMirror";
@@ -12,6 +14,14 @@ vi.mock(import("#scripts/gameData/mirror/downloadGameDataObject"), () => ({
 }));
 
 const getHash = (json: string): string => createHash("sha256").update(json).digest("hex");
+
+// A lock entry for a JSON under its scope, named by the hash of its bytes and sized by them
+const createObject = (scope: string, json: string): HostedAssetObject => ({
+  bytes: Buffer.byteLength(json),
+  extension: ".json",
+  scope,
+  sha256: getHash(json),
+});
 
 describe(fillGameDataMirror, () => {
   let mirrorDirectory: string;
@@ -39,7 +49,10 @@ describe(fillGameDataMirror, () => {
 
     await expect(
       fillGameDataMirror(
-        { indexes: { index: getHash(indexJson) }, objects: { object: getHash(objectJson) } },
+        {
+          indexes: { index: createObject("index", indexJson) },
+          objects: { object: createObject("object", objectJson) },
+        },
         mirrorDirectory,
       ),
     ).resolves.toBe(3);

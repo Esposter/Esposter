@@ -1,5 +1,5 @@
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
-import { gameDataLock } from "#src/services/data/gameDataLock";
+import { getGameDataRecord } from "#src/services/data/getGameDataRecord";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Reads are memoized by the object's URL, so each test names its own base URL
@@ -66,7 +66,7 @@ describe(readCraftingStrongboxes, () => {
 
     await expect(readCraftingStrongboxes("crafting-strongboxes-read")).resolves.toStrictEqual([strongbox]);
     expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([
-      `crafting-strongboxes-read/${strongboxesKey}/${gameDataLock.objects[strongboxesKey]}.json`,
+      `crafting-strongboxes-read/${strongboxesKey}/${getGameDataRecord(strongboxesKey).sha256}.json`,
     ]);
   });
 });

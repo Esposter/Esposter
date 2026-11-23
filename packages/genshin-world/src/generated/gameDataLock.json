@@ -1,542 +1,3222 @@
 {
   "indexes": {
-    "bookBody/ChineseSimplified": "fbbf322bcbd2a9cb340d1ef19a832b2663c36e54cf19b38ab7c35f2e1806c94a",
-    "bookBody/ChineseTraditional": "03b28dd32d348bae638265374e8fb7baf94865f3de9241661f6399263e152791",
-    "bookBody/English": "8bf94d3fd2d87a6f0c0d3aabb3745526918b22457808a1f921795bb6b2449838",
-    "bookBody/French": "7788b0e75b52ca0adc55928c9712322eec99a3c9577e32aea79a74863f29e9b0",
-    "bookBody/German": "d1908df195029637bc11628c499b5e3b3c2fe9aff784f841a8875ac2a726076d",
-    "bookBody/Indonesian": "2fb6f18b616146c200d75a348afe898f4b90c40b007bedddb4ea6e9ed79e6d56",
-    "bookBody/Italian": "4b225de9d599c607cffd0b02a90dd9959d6b301cf696df558b367a9faf5cdb0c",
-    "bookBody/Japanese": "c2219f4668cc3048c8348d02917ecdde190ae5f8a778aa958aac4b6ae0d8f5c4",
-    "bookBody/Korean": "de1541fa3c901e70c3351df67793ec8104251131e6d433d2c235521cecbf508d",
-    "bookBody/Portuguese": "894e82135a1da448f0033aa030a5deda5b8b1e501d264715aa8df9abc78ed014",
-    "bookBody/Russian": "8bf9fb44b0217e89b3163379c6a52dbc3f5e9b9ea1ac14cc5b21678b10347d93",
-    "bookBody/Spanish": "8d4b69d47d70f3f6f6e9a1cc20afb1f8059b226a7f1512fd68ce03d4e4660872",
-    "bookBody/Thai": "042d357d241317ddb5fbf3c48f025e21d4049d78c39cb9ded6ae41bce87d0848",
-    "bookBody/Turkish": "1bdbbdd00f40eba3728bf179622b22f7c56d6a722764f9ef30ac512d24aef5b4",
-    "bookBody/Vietnamese": "39a31334f4e37396b79c18af5916f9284b1d4378a03352d421b1ec2e360b7497",
-    "domains": "cda1156bc38f821909c57140d0e0e7e13ed5f0e2506ff88a169609a963158068",
-    "kitSources": "ed18e3a79549a9921ea4b83c4d7194c4d1962d019478327f539140753b3e11de",
-    "kits": "3a1b188245e0e16353bad0ed4e87bd8a42ec20e84b15f400df242c45422c29c0",
-    "mail/mail": "d67c093b6817136f616529b17f164a09d2af94ef46fe895e7d267d5e683f58c3",
-    "profile/ChineseSimplified": "dd486f55f92b71ca27ba99a5f68bd45ad6ee34d8096372f90451b692457996cc",
-    "profile/ChineseTraditional": "78ef888f1db6c1a2f60c33a2dfa135c21f9798dbde4944a821043017c5d3e885",
-    "profile/English": "ead71376d3043e27d770fe3a92e3cccb441ff1b5498cf02650e13347f1960fc9",
-    "profile/French": "9d9804e67002965785d7466b0d936952e07fac761bc07c00ae61b26074aa09bc",
-    "profile/German": "f40a7a05260a531aeaa40dd5e4827f4d7e2d955087daddcafe5589511bdaf6f3",
-    "profile/Indonesian": "4262b4947c072ccc4f10e9f8dbb73858ce0aac6c1c46a077243cb1682ab5bf3d",
-    "profile/Italian": "5f1cba28b3c449c74b47245adf31d997f4573ab378fe339eca4fa18beac34151",
-    "profile/Japanese": "bf9ed5583746a21dea0f36b3efa5655c5b5afecbcec6f8fcd8daf6a0fe106263",
-    "profile/Korean": "84915b6691ae4172ce0293f25d9147116a0efa99b1450c773162bf221592b94d",
-    "profile/Portuguese": "a905934fc3a45e3c8bb23c6a9f344cd467df9a8c201b8086c7785f3f898a648d",
-    "profile/Russian": "80d714ef142a23697ec447b5aa4373e2a666d3edaa3c7e7f971b8f142dac8571",
-    "profile/Spanish": "a279842d2d17537acd50df01a864a1c0072efb391f6f072e7f9f80375b033920",
-    "profile/Thai": "02223658eb46b08b7765a0fff233a16b6eee7e767d632d75dba2d245fb3ab35e",
-    "profile/Turkish": "91eb8ede4a80d6d52a099c3b0e4f5ccefbfa7921140cb5eb7ba1428273884d49",
-    "profile/Vietnamese": "2b2f9d6260f8455879a803850c793e883060fac8683b4de1f08de3181cb8df22",
-    "skillGlyphs": "63ffc6e6fe29659d55d4859aed0568d998f31af916c1d1df40fd49862a37de7b",
-    "talentLabels": "ba7798a45092aeaa23eb320c5378d1d99fbc69d7a68f2b8cf699174fbf651573",
-    "talentMultipliers": "010575ee4968a5f890043f199c998533c6a711e7aa4131a6228c99757b5e40e2"
+    "bookBody/ChineseSimplified": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/ChineseSimplified",
+      "sha256": "fbbf322bcbd2a9cb340d1ef19a832b2663c36e54cf19b38ab7c35f2e1806c94a"
+    },
+    "bookBody/ChineseTraditional": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/ChineseTraditional",
+      "sha256": "03b28dd32d348bae638265374e8fb7baf94865f3de9241661f6399263e152791"
+    },
+    "bookBody/English": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/English",
+      "sha256": "8bf94d3fd2d87a6f0c0d3aabb3745526918b22457808a1f921795bb6b2449838"
+    },
+    "bookBody/French": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/French",
+      "sha256": "7788b0e75b52ca0adc55928c9712322eec99a3c9577e32aea79a74863f29e9b0"
+    },
+    "bookBody/German": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/German",
+      "sha256": "d1908df195029637bc11628c499b5e3b3c2fe9aff784f841a8875ac2a726076d"
+    },
+    "bookBody/Indonesian": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Indonesian",
+      "sha256": "2fb6f18b616146c200d75a348afe898f4b90c40b007bedddb4ea6e9ed79e6d56"
+    },
+    "bookBody/Italian": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Italian",
+      "sha256": "4b225de9d599c607cffd0b02a90dd9959d6b301cf696df558b367a9faf5cdb0c"
+    },
+    "bookBody/Japanese": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Japanese",
+      "sha256": "c2219f4668cc3048c8348d02917ecdde190ae5f8a778aa958aac4b6ae0d8f5c4"
+    },
+    "bookBody/Korean": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Korean",
+      "sha256": "de1541fa3c901e70c3351df67793ec8104251131e6d433d2c235521cecbf508d"
+    },
+    "bookBody/Portuguese": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Portuguese",
+      "sha256": "894e82135a1da448f0033aa030a5deda5b8b1e501d264715aa8df9abc78ed014"
+    },
+    "bookBody/Russian": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Russian",
+      "sha256": "8bf9fb44b0217e89b3163379c6a52dbc3f5e9b9ea1ac14cc5b21678b10347d93"
+    },
+    "bookBody/Spanish": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Spanish",
+      "sha256": "8d4b69d47d70f3f6f6e9a1cc20afb1f8059b226a7f1512fd68ce03d4e4660872"
+    },
+    "bookBody/Thai": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Thai",
+      "sha256": "042d357d241317ddb5fbf3c48f025e21d4049d78c39cb9ded6ae41bce87d0848"
+    },
+    "bookBody/Turkish": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Turkish",
+      "sha256": "1bdbbdd00f40eba3728bf179622b22f7c56d6a722764f9ef30ac512d24aef5b4"
+    },
+    "bookBody/Vietnamese": {
+      "bytes": 20901,
+      "extension": ".json",
+      "scope": "bookBody/Vietnamese",
+      "sha256": "39a31334f4e37396b79c18af5916f9284b1d4378a03352d421b1ec2e360b7497"
+    },
+    "domains": {
+      "bytes": 2730,
+      "extension": ".json",
+      "scope": "domains",
+      "sha256": "cda1156bc38f821909c57140d0e0e7e13ed5f0e2506ff88a169609a963158068"
+    },
+    "kitSources": {
+      "bytes": 9439,
+      "extension": ".json",
+      "scope": "kitSources",
+      "sha256": "ed18e3a79549a9921ea4b83c4d7194c4d1962d019478327f539140753b3e11de"
+    },
+    "kits": {
+      "bytes": 9439,
+      "extension": ".json",
+      "scope": "kits",
+      "sha256": "3a1b188245e0e16353bad0ed4e87bd8a42ec20e84b15f400df242c45422c29c0"
+    },
+    "mail/mail": {
+      "bytes": 17934,
+      "extension": ".json",
+      "scope": "mail/mail",
+      "sha256": "d67c093b6817136f616529b17f164a09d2af94ef46fe895e7d267d5e683f58c3"
+    },
+    "profile/ChineseSimplified": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/ChineseSimplified",
+      "sha256": "dd486f55f92b71ca27ba99a5f68bd45ad6ee34d8096372f90451b692457996cc"
+    },
+    "profile/ChineseTraditional": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/ChineseTraditional",
+      "sha256": "78ef888f1db6c1a2f60c33a2dfa135c21f9798dbde4944a821043017c5d3e885"
+    },
+    "profile/English": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/English",
+      "sha256": "ead71376d3043e27d770fe3a92e3cccb441ff1b5498cf02650e13347f1960fc9"
+    },
+    "profile/French": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/French",
+      "sha256": "9d9804e67002965785d7466b0d936952e07fac761bc07c00ae61b26074aa09bc"
+    },
+    "profile/German": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/German",
+      "sha256": "f40a7a05260a531aeaa40dd5e4827f4d7e2d955087daddcafe5589511bdaf6f3"
+    },
+    "profile/Indonesian": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Indonesian",
+      "sha256": "4262b4947c072ccc4f10e9f8dbb73858ce0aac6c1c46a077243cb1682ab5bf3d"
+    },
+    "profile/Italian": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Italian",
+      "sha256": "5f1cba28b3c449c74b47245adf31d997f4573ab378fe339eca4fa18beac34151"
+    },
+    "profile/Japanese": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Japanese",
+      "sha256": "bf9ed5583746a21dea0f36b3efa5655c5b5afecbcec6f8fcd8daf6a0fe106263"
+    },
+    "profile/Korean": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Korean",
+      "sha256": "84915b6691ae4172ce0293f25d9147116a0efa99b1450c773162bf221592b94d"
+    },
+    "profile/Portuguese": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Portuguese",
+      "sha256": "a905934fc3a45e3c8bb23c6a9f344cd467df9a8c201b8086c7785f3f898a648d"
+    },
+    "profile/Russian": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Russian",
+      "sha256": "80d714ef142a23697ec447b5aa4373e2a666d3edaa3c7e7f971b8f142dac8571"
+    },
+    "profile/Spanish": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Spanish",
+      "sha256": "a279842d2d17537acd50df01a864a1c0072efb391f6f072e7f9f80375b033920"
+    },
+    "profile/Thai": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Thai",
+      "sha256": "02223658eb46b08b7765a0fff233a16b6eee7e767d632d75dba2d245fb3ab35e"
+    },
+    "profile/Turkish": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Turkish",
+      "sha256": "91eb8ede4a80d6d52a099c3b0e4f5ccefbfa7921140cb5eb7ba1428273884d49"
+    },
+    "profile/Vietnamese": {
+      "bytes": 10141,
+      "extension": ".json",
+      "scope": "profile/Vietnamese",
+      "sha256": "2b2f9d6260f8455879a803850c793e883060fac8683b4de1f08de3181cb8df22"
+    },
+    "skillGlyphs": {
+      "bytes": 9985,
+      "extension": ".json",
+      "scope": "skillGlyphs",
+      "sha256": "63ffc6e6fe29659d55d4859aed0568d998f31af916c1d1df40fd49862a37de7b"
+    },
+    "talentLabels": {
+      "bytes": 9985,
+      "extension": ".json",
+      "scope": "talentLabels",
+      "sha256": "ba7798a45092aeaa23eb320c5378d1d99fbc69d7a68f2b8cf699174fbf651573"
+    },
+    "talentMultipliers": {
+      "bytes": 9985,
+      "extension": ".json",
+      "scope": "talentMultipliers",
+      "sha256": "010575ee4968a5f890043f199c998533c6a711e7aa4131a6228c99757b5e40e2"
+    }
   },
   "objects": {
-    "achievementText/ChineseSimplified": "f87e886266ef519d30c8b630428087cb35f719a0ed84c105f8e16cae1e375d2e",
-    "achievementText/ChineseTraditional": "2288cce3abc3b5bdf855c1a309d03b36303bb0b628e2904d2ddbe71a93744077",
-    "achievementText/English": "090c8968209b7a8811b1c221e4fe57342dfe3b9d1a22702f4fda0857e34d3dd9",
-    "achievementText/French": "fa7d42e8e9e89d031bb80e453498d295a67b235d38e52a8b4ae65814795ce7f0",
-    "achievementText/German": "79aacdb960adaa492bce61e1973148014c2a5ac9d80f5471f5cfbba6332bd418",
-    "achievementText/Indonesian": "ca4b24bc92ac50982ca48c8daf28468864a754a3c2d83e79302db5a62ce30151",
-    "achievementText/Italian": "08b0164eca7f31fc43b7d230f4790c430990409ba3541e4831e4395e7b1f5af2",
-    "achievementText/Japanese": "99e6ad8c5884cd3b121c1df5756ef479d9dd354724c07e94148cf8763cf6aaf0",
-    "achievementText/Korean": "78bdf59da8c62e68886fef6d25ffb3b6d978989fd45f383e1bf56ecf3d33975f",
-    "achievementText/Portuguese": "16bdbc54a6c70a454ae28f1a0effe92f65b2d62bbf92729ed8de0d006053d407",
-    "achievementText/Russian": "81e7b6051987f9a58f4683c59ad45047ef6e6185fd9db587185f1b3ea08b17c0",
-    "achievementText/Spanish": "ade4314b6cceb000086751341742a7b822de9a04ac2c33729937a586a8882aaf",
-    "achievementText/Thai": "c181669a762bf60a2e4919781ea7df4caa15806f497f687795e736654bd7120e",
-    "achievementText/Turkish": "dc9cc8c43a61a3d90f8cfc6f56eb20cd10084542dc2dde60a68904334f2b31bb",
-    "achievementText/Vietnamese": "ed7acc05315f94aa1ed42aa7f99189a7b989c636dccde7d8defddb640c0d77b4",
-    "achievements/achievements": "bc45bb269716a9da9a3b18352d00a9884c236494e16c9d2fe13ce01500708829",
-    "achievements/categories": "8673ff09f5573d3e7bd337c004f8fa42b53ad5f01b34ed2150a01ec35cd02312",
-    "adventureRank/levels": "125df3f338a73d89df0338ca9b8254c26b6f14fa0b6bcb7e35a76a35eab5f353",
-    "adventureRank/locks": "d795fde35ab386c57264507adff9bd406d5f722ba8d62d7e166b4859691797bd",
-    "adventureRank/worldLevels": "7fe55241a3074470bfe9303d17584eb861dee5aa1d550e1c78a452994bab198e",
-    "archive/books": "30959c87d26877d9392703be88623337b1f8beeb51f05ba54a6b010d440da805",
-    "archive/equipment": "6855caf084ec2a4c8489e6b66b52e487caf271714baa98caf52cfcae403e3746",
-    "archive/geography": "78825b5c40f282779e0aff0eff606f36e1526010892e56abfc0a7823fe6a51cb",
-    "archive/livingBeings": "3c73ca0a0041efed43901ba423a38853fdaaacb21d173db85bcac69af4406574",
-    "archive/materials": "c2696da933939a90666ad493980f476df2f769cba02c4db7b4bb7ad912a81460",
-    "archive/travelLog": "3dfa5d2afa759e88ef3665cfc2f4d848f5f4e4145fb2434c5e3dd8aa2a03268e",
-    "archive/tutorials": "285a34e57e97d0aed0471ea45a7fe2947e4f349f879b2b6b75de17dba81ca34d",
-    "archiveText/ChineseSimplified": "6c63d5caa4d8f1cdf83ddfaadde7e1bd0d9b52f1f35d8caa809216a6e920ef36",
-    "archiveText/ChineseTraditional": "fffd4da8f76fb1fc886392b5db97b9a7c3974fe307609564c04ca78429be4b4f",
-    "archiveText/English": "7bb50a1c071b2deb2e6e194f949a1f8be32efcd9da83d0ad6c35c851c579989d",
-    "archiveText/French": "670ef85517f3ad01f12f976bcf0c9db551b5c87c58122d1afbab96c968ebc859",
-    "archiveText/German": "43dca8fe5b03b024ec1c6261b623bc9686292c78ab43b09d89c3fc6b17e4ea4e",
-    "archiveText/Indonesian": "c043fe0e547248db86e66a4a9f955fd926d5263a35c2d499fa6e49261ec34d2f",
-    "archiveText/Italian": "11def5569867f696a4ff64e5e04736c1d62c961f34ae4415d03f353346904460",
-    "archiveText/Japanese": "b739d1430e5cf30965ff6e130b872be08067be382b7ffc6edd7b3d187c472887",
-    "archiveText/Korean": "f7fefd6617db73e4dedc29d9e318e97e4b4fee563ed7fe3a5341576eb3fd6a37",
-    "archiveText/Portuguese": "1bd5b190851390736e23aa3a28f7a21da5acecf52754f3a334e0bb6ea41fec92",
-    "archiveText/Russian": "c471515b08fd67be8a2680d0c472d59289bac285b2e5e25227a0c1c266dcac8b",
-    "archiveText/Spanish": "706166fda7ab8f01f75f48ffb919bb960230483d2624d5a9e8fe061bc4f7cd94",
-    "archiveText/Thai": "af22caae9c3e68777bd11795fe53255c6dc83d52c0ac334d1a250374ab372b7d",
-    "archiveText/Turkish": "e3c6e186c53becdf305019d58a3001aa6d1450fe3fdf01d76b1f0bdd72ed98e4",
-    "archiveText/Vietnamese": "fa1634eeff000ae9a84ea81cefd4b4ae2c683f780c7a6840d913a906800b9c38",
-    "catalogue/catalogue": "af67f94f3d2ab53c409d0e8f70ae31144e4c4fb4c8b7a1fd464c7066ed8b337b",
-    "characterModels/scale": "a256a8e699a9d3d3b4a11f03750365b987f49028d1e4e4e8fbe8e0f15706d061",
-    "characterPackIndex/index": "a73caf35dbd9a925b28f9411a7ba8604d0add1ffe10a9e5fe99954587560c9e2",
-    "characterTrials/avatars": "60b443c55533ac145bd076ae262b8bb99ab19a44622d1454fa0173f5e1448066",
-    "characterTrials/builds": "33eead7d1506f87c4b5d5c8e4b51e72a1f2495244da9f9ffa6d7b8f570c7e0bf",
-    "characterTrials/reliquaries": "90b2cdb6d613ad6ffee03f39f3213f8de0ba484a8249be5eca747bba7ecdebbb",
-    "characterTrials/rewards": "4365b6f1f74156014f46a855cf00a431cef5b1cbd5004e3688ec4c0e563e6000",
-    "characterTrials/stages": "ff0c52598ad22c59ab912897b19ef6c808a67391b6516627b59ff4d6d9be9ba3",
-    "characterTrials/templates": "4eb1d1405e238571f342d8f2264b0a1ea2fa5b0d50d30ffd178e3f35d6d0d80b",
-    "chests/fontaine": "57da4d580cad1dec6c32d46e628f40abd2f1e8e19c267630ddb77894602abd8c",
-    "chests/inazuma": "ad01b01e9165e59848fd2d6a0c1bd0e5343b8124c79fd78bad5b1fa79db26d78",
-    "chests/liyue": "656f207cfc0f5a699ba460bfb0e907041149c18b3db75962324aa1e993d1426a",
-    "chests/mondstadt": "a56863fdd11c918b79b2489a30f40c1c22e893c882b1d4c81f7dc1d670d74f8d",
-    "chests/natlan": "027239b8d3985773e6359a51df6a9f8b244ecb7eee446f2a4749f34009a873c1",
-    "chests/nod-krai": "94ed2527dbe0ed9c456ed41d3fbe5cf9151708c49d1a70dbcdbf2b1e1819abea",
-    "chests/snezhnaya": "d662eabb7bf0491146164dad571f1e0bb691d3982533c09a7c40e26e79ce9be9",
-    "chests/sumeru": "a062ed1a2df1014112325ae18a1ed3ac283f76b58a48a7ab2d2499a14260af47",
-    "commissions/fontaine": "dd2c212ae32a0832d40a2be4322b713bbe49b6549f3a7e716e8fd0d08ae9579d",
-    "commissions/inazuma": "6b433a5d2ed1e4999ca25d6bd7a75d417363f61efafc424f0d95b5bdc6942ded",
-    "commissions/liyue": "6f25c343be005000d044aa1e691ff23a7293f35ee0d59420c6c9705941e95af2",
-    "commissions/mondstadt": "0f7a76e99054d47dbd45596f7b8264d4e89f9461ca82b61bd13cba2d01a0b2a7",
-    "commissions/natlan": "ec6ba7a89d14144afd04d485afbdf4bb4d5f605cf3c5753f020d32a604294aa0",
-    "commissions/nod-krai": "b097ad1b1628b252928ff80a8215385792076e3fe19947fbb309f2d25f0f1760",
-    "commissions/snezhnaya": "d47d340a426024e4d9249e5a0e1137183f55fea5193407a7046f0cbd35b1849a",
-    "commissions/sumeru": "789626395d6543165ec8cf8099f61dda7a2660c4f3935623db24f704bd67f258",
-    "cooking/dishes": "86d31b348da5814a3f3df0483e596752ac040998a6aabc948e2338a0cc23d586",
-    "cooking/processing": "25dce6c195731e60148af5071791803d22a4c82575db7db86e8067944d007960",
-    "cooking/recipes": "cd50c97927be40a1bd590c840a67152741a5c585753a520cdc691a6fae9f880d",
-    "cooking/talents": "73ea11b5fcf9203aa134b30e50e2e5a77cd3d792ef1812af32b846fec8516a39",
-    "crafting/recipes": "347d4657d942540c83f5d76d97aad7fb906c9dc79f5541a1b3ed0ff6e752d547",
-    "crafting/strongboxes": "f930b47dcb55e28e6e3b650554638c1ec8d0c1cb379d854ceed7928c04ec35e6",
-    "craftingBenchPlaces/mondstadt": "5684d37e4057cd181f00aec3406d25e6d0b512544b790251cee88f91c8aa05ce",
-    "domainChallengeLevels/levels": "0d74901aea171e3a4c6b9326bfb5d9f52aae4ed5a18e684c8506f763e2aedab3",
-    "domains/weeklyBosses": "8364bb0aafa5d3704fa319809ced57f3c0a01c80c323e3e7b9aaa0a461214579",
-    "enemies/dropFamilies": "7502c08b08cbd849fc3beb9788eec95d0b16e2c34d5c14bfbcc9bb2cf5312bcc",
-    "enemies/dropFamilyKinds": "e42d76474873661a2987c151565483f382c802c15b55a56179585645c7d60983",
-    "enemies/kinds": "40facd0136dee81638ee7be4c3d78075a25abeabc12b5c7ce26ddb7a1d16fc2c",
-    "enemies/levelCurves": "341c0ba27fd71d673db8425ca7bbd6995ac4ef52794363aa79c041876ffe2485",
-    "enemies/reactionPoise": "3425e88d301f66fc9db02e38e3484caa9e5ff4c9b07e19394dfd2af85e057fd9",
-    "expeditions/bonuses": "067d7335e880afdf595099cb5f0d1519bd2a7d92fbf045798aa998dbbfa5147b",
-    "expeditions/limits": "7ad8f3e4d7b18301179793d164cdfc0ddf795bb95e0f2d78ea18468a67dbd94b",
-    "expeditions/mondstadt": "9b7ef8f6cfd03f7f33d10f09a46789faf9131000fee48dd552f81c491e9ae3db",
-    "expeditions/passives": "4a9cc81f720c20f7565b490cc857c94c08822511afc0fa492f6556e543506885",
-    "exploration/mondstadt": "8210d2763fd35e620970c8fa7fe410910012c6fbdf731cfb5acabcc10892c2da",
-    "fishing/baits": "c502cec74a49e4ac49ba9e9bb64f45b264805286e4d5f4b319a112cfa15027bb",
-    "fishing/fish": "d363dc5631d9ef93eccd70f4414f7e126564398f57a49cfc518bab2127ec9ea5",
-    "fishing/points": "0c527bc297842a1b2b07166de7e82d2331163e6e774563d1f68c17b9241ddb67",
-    "fishing/pools": "27523c39021997f7b4d223b4aca8bee4712b0e2414d717cbdef275357872d8e0",
-    "fishing/proficiency": "ce0c709b4039fed56dff164b15254d84016018b262f829ac4e55079d04c68e5e",
-    "fishing/props": "43d5f58de93f86e56b2f8846f2d2c1b8a1815c5062d13462b92f53875a58d12b",
-    "fishing/rewards": "7956a53c9fc527c490168e40c8245cf5931c4a7d2dae953141cbf1cfd8804587",
-    "fishing/rods": "9e943a9152b4ea673026d4e1d6ed8b742fc0892e6886e97354202717ef727e10",
-    "fishing/skills": "c8bc79e78a7457f75eae849d8be60a06d0e689b0562d091421848c99432a6d66",
-    "forging/dailyPointCap": "ad1e2e29fe1631ddf7bedaadffe63c4efd61e6909a1ed0648e7b9645bd27dab5",
-    "forging/recipes": "0658bb7c584244aa48e27b99ffa3b591605a3723815d57dc3edf45edceb8b5b3",
-    "friendship/friendship": "2c14fa9ba3234b231c69a7c936913050aa58e3a614b4616d257a155e2a87e36c",
-    "frostbearingTreePlaces/mondstadt": "9d59710b8f1e9ffc5d1aeadb3b29ea1a43193c837bd2d2747761f5adf8c2decf",
-    "gadgets/gadgets": "e250ac1efbe6eaa73dad41ac2bb977b1ab191b33faed9204df83d19b0ee9d101",
-    "gathering/fontaine": "fd131a8be5b245b734ec6e0dc6da50d16edcf6f6f679393a2071ea715387019b",
-    "gathering/inazuma": "8244385abeab785aec9b2ded3717d900652439a4f06af03e2ca69f59f19903ca",
-    "gathering/items": "7d01328a8e084c0ea3a78750389a65c252701c52e9c591f5467947df7669ea2b",
-    "gathering/liyue": "4831e92ed668c3177851b96548e0cd10f207ddba9c2ada730a286576057217af",
-    "gathering/mondstadt": "21191cefc5253e85e7710ca87e8d22de1fd0d4ed286bb6229578a1bdced25181",
-    "gathering/natlan": "37933e4cd7e80be245a1fea8d5fd1497372360e3abcaba01c3e5d42ca41d257a",
-    "gathering/nod-krai": "e27cdf2612a7f91034b73debd0bd650e84684e1553e0028566731fb5eb2d4991",
-    "gathering/snezhnaya": "e1c995df774f2373dfec9933a8cec3c142f2612d2c69eb6b753c55c46b758ab6",
-    "gathering/sumeru": "f2af057d4607aef8fde42dc6e167c7144436e125cc20f60e913ece12c538ee94",
-    "gcg/deck1": "a5dd8b930e298e63b6d9c4b40a43cdb9aff03fe02583cd380f130e0ed45d85e4",
-    "gcg/deck11002": "11e03836be5ae13bc3010d5d896d93ea1bfdadbfce0d8ace03ce0d6831e167c0",
-    "gcg/deck11005": "ec197d36c88f39c5d7b3e9868fc8f09e9e5d31e216f47ea9d02c8cae27246d0c",
-    "gcg/deck11105": "ad58414145fdbab5503060b41f7ae5c667e77228727d709885bb9ead40cf886a",
-    "gcg/deck12005": "43db0f28aa88ae21ab6b6bfb91af64f0edf162eb52a1d675dfc8ddf76caca99d",
-    "gcg/deck12107": "eb52dfa5439f05fc06aa902b5cf27bf32808924771af3c589bdc4e6127219e29",
-    "gcg/deck12305": "924c4cac7a78cab07fe235c0afa27e3e8ff5c1ccbe0a683874e45d9ce00cfd60",
-    "gcg/deck13005": "06ac0cf9d1c7210e430d5eccf70c17b15bcbfb5eea551571fe8757c2f87f2aa0",
-    "gcg/deck13105": "2d7ddc5a01b89c690f83078d1ea772f1409c31c81ff8617ed4afc6b9523535dd",
-    "gcg/deck14405": "2b547d2422399241a5c0d9adc60ea30b7030a560646e6543e36b976b79671585",
-    "gcg/deck14410": "52e2664fbd4c814b94637a743294915a06f2bc28880488a1fa7be949cbccf2aa",
-    "gcg/deck15004": "9477773e087411b47ee639ed39521a437664aa06b0356a65e5b2d1090799cd9c",
-    "gcg/deck2": "42c5f8586ca77b1eee5c90074f466d672fe266b1f154b0e8d6c05b38316b7175",
-    "gcg/deck3": "a1d70f220ac47dada0f08b504e5fc80dbf88f582dbdb5738944303d04d3a9a52",
-    "gcg/deck30111": "b7dcde2ad32e6e57d55ece033cea4316ef137421df22b3eb57cd4f7fbd6b6422",
-    "gcg/deck30112": "d599007eca190556860a2dc7a637fc843c7a4873b4f80b7cccf625edc3b84125",
-    "gcg/deck4": "f3ed3db8ef0bc805c7768ea224b998b8d0d8fd6e67c2c826d9d13bef5b0e24b1",
-    "gcg/deck7": "7627d94025f4dda864e8e811d081a93e5dc2ace5d3b4dafdf838a35873d70101",
-    "gcg/games": "6607ab86ab1213b970b0d5109dd1619665130ebf5bfe9c2e334d210d09ab5df7",
-    "gcg/levels": "0c65a418a783206546318c4b3e76eee95fc2b8ad8cd9d3d87c3145cff151ad97",
-    "gcg/standardRule": "000255b49dd59883e3e00b6526e81b95ac74cb8d0a1965e46a6f223a0a2a6634",
-    "gcgText/ChineseSimplified": "12dc2ff75bec980f3191834e861f8bf292af554602ac5a4ce3065251d92ba40a",
-    "gcgText/ChineseTraditional": "d85f8f04a2e742357304e0e5834b7b221e6a424bfabf82e242d560d858952090",
-    "gcgText/English": "9ceda2af92aba3053d0cb915bea5e00072ba4051c9f2aaedf25cae2419ba8352",
-    "gcgText/French": "436af3be2f18717c96842c24ddcf9cb72dd477326d2458d8e295d80c84ee9dbf",
-    "gcgText/German": "59f6a0027074f71e14c305b025b769687d965050d4c9c7beff1ea5b29bc32070",
-    "gcgText/Indonesian": "3d4ad0630746708dbf08bbd49dfb8e30b936445ad592d7d56578b0de81b0f70f",
-    "gcgText/Italian": "1966f8a2b9768a5e513191bfbd6573fd9ecb9d646d5a0f5a2c1e35f1bf458437",
-    "gcgText/Japanese": "701b84e1724c042858c4c4a007931085aab6eed14762300b9ca37c6823b2bd73",
-    "gcgText/Korean": "e70ed08ee42068ccddd1554179d12e9aceee0fce900bf82ec0b1e91e9f55cd5f",
-    "gcgText/Portuguese": "2f4512ce110444fd5fd980ee66f8bcc0ae1301d9a64b80dcbc6499a79e1ea79f",
-    "gcgText/Russian": "8c091f1192942a7da745dda5655bc3a39e409c751ac222b9c15ae11aba65f3d8",
-    "gcgText/Spanish": "b8252f7616ce144b500da52901fe4ae8a248ad29fc40d1bdb7923587c9cad0c4",
-    "gcgText/Thai": "45565af9a00a720a8a147329b632e15bcfec55b29f4c54c300051d907ebcdb09",
-    "gcgText/Turkish": "d08be51782e1926aae226c4ea0a0162279e167c188b925509199dc6ac01e4961",
-    "gcgText/Vietnamese": "107bfb0f53d97335c4447252f9483712a0cb84610e990002bd93ded0e8d99dfa",
-    "ground/fontaine": "0589e098b8b75ccd96fb17f6af9689d89a7dbab5753f3cf0cea3db2d90838a61",
-    "ground/fontaine/belleau-region": "9cf04f11b5b1438728eb2c700c69a672c2e8f4f85f553f6af8a20adbd3917423",
-    "ground/fontaine/beryl-region": "675a754bcd1a86e326795bc7e6e9888d228c87f644c178473b0f2388268a6ad4",
-    "ground/fontaine/court-of-fontaine-region": "7fcd59b28ba859b5b4b2ad050116019c6b6b24eba4a827e682ae05933c303dc3",
-    "ground/fontaine/erinnyes-forest": "dbe54fc47f5fd2d6eda29478deb4b11735ed731b2e68263f1e2703ce47dff0e7",
-    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/0": "243601c4ca31f85a2a3ef84de3ca53bfd51f779ab1657a32e4a4142c519f82b3",
-    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/1": "ee251e9792d4e5791150bfe06fa4aa59f52b80a3cd19faeb1b280fe517e82105",
-    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/2": "ffba6ef83706c746d495b43f4bbc2a9dd60747116a90e8fa39e1dc30b8422af2",
-    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/3": "a9125811641471edb2082f955d982565e4f1f70300ec6f23d9dec1fd01156e47",
-    "ground/fontaine/liffey-region": "7ecbb8d9d7111a20ff5bbe444fddaeb047a1331410adf87d0136f2bc199ad047",
-    "ground/fontaine/morte-region": "cb1bd6ec50c2a2e82657fb1a303c00a697fdba25c1bbfa5ef1207f7373fba49b",
-    "ground/fontaine/nostoi-region": "79cac9413ee917b2982ec03915825c04521823d69fffa0c770cd5f946c8f6c00",
-    "ground/inazuma": "35121ac9051de32442f58b2c62e732d45236df6cdab9961831a4db80c30fbe72",
-    "ground/liyue": "93c700eaf69423a8db42eb5164e12f0138d483c20ebae98025c17ab0e201a95e",
-    "ground/mondstadt": "d46c78463b2e6f23e1a3a9ed838470984a492cc632fb7ad600d01a188294cb1a",
-    "ground/natlan": "13774d92632d4e9bd5316d236aeb2ee060ab4425f5b7148c32240ec5f87f0d41",
-    "ground/nod-krai": "d0d1cdbf36406372996f99b54750c0028ad25f45bf1cc45a303ea8347d8edae0",
-    "ground/snezhnaya": "d87923cba3cbeeb391b092d8ed7e826455d8a1871415267e24e8c2940d1429dd",
-    "ground/sumeru": "cea11e841e40c2bb7334790ea2675661f6e072cea1f99dd132a24ab5ed4a56c7",
-    "ground/windrise": "aa6f10e68b31aaf72c4f6b94fd72caa064e272cc02cd9463ca77f3040e5ceee6",
-    "home/areas": "03c00981091c0cd145ba88f463ec7ba94838ecdc01fa5b6f5641a86ffb8a2eab",
-    "home/blueprints": "8580042f812afd3ac0d2b906643b74e01c10c1ec75e953d226f1215a2ca10a43",
-    "home/events": "304155cd8a3fe4f8f8c0d39226fd872de6f502a78e043250efce143a1f6f9f0a",
-    "home/furnishings": "cd8223500a25104a341c4a0bf7a2f23a75091f8932983e3ed90ff27eeeaf33f0",
-    "home/gardens": "acc9258ab578ec48a029ea602062a02f21182392c2dd9827ce66831a9782060f",
-    "home/levels": "ef2801f4ad2be2af8d9eaade9f8a4c9c0f0dcd7e456b3e34cf982269f9314410",
-    "hud/interfaceRects": "c5b05d58ec2de204b4a2cc488cb0cbabb2aedad4581601a183456df4e6cdd87e",
-    "imaginarium/difficulties": "aa1565bc6f87c0f500a936aed049337ee7fb4cea3e79c22604f4718ed5c75d8a",
-    "imaginarium/seasons": "55290ca0d89c13a5fd110db50c24510bf2a1a2900168f6ee15ed6bef322e2d52",
-    "imaginarium/stages": "3fee7432ec79c70c1b9b737547bd4510ab1eb5dd761b17140b43b9577e040aba",
-    "items/materials": "671810b2d9025fd5f75755d4c139dba2c70144fd14b6599ce16a7b59160449c4",
-    "items/reliquarySets": "72945739c7b2d0046a8f556df1192cc9371d4e2110351888e539239744b5b803",
-    "leyLine/cities": "243c5dd1150e6d7446992a589f442147f76a68e80452684206cba096a0c9a938",
-    "leyLine/regions/1": "8d9d964493c05110501aa440cd038fa6285e58474d917234e5a1518e1494b4af",
-    "leyLine/regions/2": "1e1e3409c009cbdd3ec9535a9206636f1a7b886037362f3269b9b284e3a634b4",
-    "leyLine/regions/3": "30f57a1302b7d196d1d37daf33e9fbd5334d6c9c325279af4875114b1520c873",
-    "leyLine/regions/4": "d3da571d5fe4de3cdc42d04bab6d6f959d768ab20ebdfe23cf1d69b850d92bda",
-    "leyLine/regions/5": "e38bc86bd24a772de9810fd12c091018de6328a1467bc0117ed69b2bc27becaa",
-    "leyLine/regions/6": "a1789a68e3c8411cc926ed40f8a3cc7bcf615932ecc17c09c3a6d30b6b3b327b",
-    "leyLine/regions/7": "31e35c02faab2102b80fe2a5c5e7a7f636db75979541af38d91521b07b70b591",
-    "leyLine/regions/8": "794b5976a28eeca3cba0b7ec184a3027bf8d6081589da5489f7d725b284ef154",
-    "login/ageRating": "7ce216a9ecf5b1c0ee6b01f96452c2c3d56e8b650c9ea1eb917ee8aeb3f9f49e",
-    "login/cloudLayerTextures": "e060aae16bc782fa7a681f087c989f50687ab34d1fa20c58a3b968551d60466e",
-    "login/clouds": "dfad60ed52fb22816bcd2de04a589fc3b8ddd9c71e7964498bce013f1a2e5985",
-    "login/door": "d8d9e7f1aea8c38cceeeda78f1938cd16cc88741763bb56810da6381964be9ee",
-    "login/hulls": "c72a961fd9374f6b5f0a27b55c15b6dacc73824f043b85e9227d5308d888dfb3",
-    "login/interfaceClips": "0ca349073f22513062f7789560d7dbeed02581b2ac7a5f2236896f4babc0a9f4",
-    "login/interfaceRects": "493e210c8929aaf1dfe176c3cb3964c3fc338fcdfc7ade83050ab43a40b7f7e5",
-    "login/music": "060df2b95844a09d4ab3f283f95cecd91e177da1b64594311a5d998f69af187c",
-    "login/paving": "a92ca505bf76aca8793b1df2e553f09b29be291878b92a25e5aaa923591d5753",
-    "login/scroll": "46f5590bf46645619b6a2b2573403b5a0a1ab1b2cf71929456a604a2121db9a2",
-    "login/sky": "df3801d5cdce5b88d57a8d263bca13b47d376992b6010a7aface999fec34faa1",
-    "login/sounds": "5523c4b4cee27020c460a2a08a930025fe6b69c05e10ffada78f373da3b8df97",
-    "login/stone": "d912643bb799d5fcb9cce87486aca513d495a14cf3b1a53f3f272c968acc4076",
-    "login/stoneLight": "6a52402c91cd589c4df18389bffda0cc49e5afb65eaf4f36798cdbacb4924b57",
-    "login/towers": "4d7c89359c5e979c1030a3d4df1e61110c221ae8df2d43977e45d5379bbb1cbb",
-    "login/walkway": "7ffee328bf0ef48dfcc62475d5573f0479a2c7fcb789cd9cf8340cf3dde2cc4c",
-    "mail/maxCount": "40510175845988f13f6162ed8526f0b09f73384467fa855e1e79b44a56562a58",
-    "mailText/ChineseSimplified": "77e4c5c80860dad15fd86d0b30a89bc4da8f6a0ab8fd461f7e63be89fe0c5a19",
-    "mailText/ChineseTraditional": "0682ec1dec0aacca76dcfbe73ca418d89f0b0ed3ec91dc96ad7f13c1db184cb8",
-    "mailText/English": "ea7c839f8b59505188728531abb5b847d9abbbca72a7a929add3d4ac6746a9c3",
-    "mailText/French": "e130bb2e6b72b1a71ce7dbcccab3d7bee759a62c57236cdcefbf1cf4556e4fa5",
-    "mailText/German": "fc71b6a7fded212f117a4bb740a786f93d81598d29cca545815b8cac885acde1",
-    "mailText/Indonesian": "2d2e9df90ec607c02bff3d9c02148961b8b2e5e2d3e9d83e8b5a2236313377db",
-    "mailText/Italian": "a3fecfb4177811ffe736430c4dfc0ad7d7dba16ae29a69c47abc21e760c1c509",
-    "mailText/Japanese": "57f19f24b32ae8c83ad6d05f258ce291578f470ce782c6405ab1a86104de47d2",
-    "mailText/Korean": "455f2783f29f2990edb7b6eb54bd678b47052575578c3168edb76d28dd181292",
-    "mailText/Portuguese": "c462503a15c921c228c2e1c2f3e5e853ca78a207429f73ca8fec592431c7d7aa",
-    "mailText/Russian": "0a02bccffe88d6da9427e43947b17d93c7e75f03ab2257ff3e16694569c30f24",
-    "mailText/Spanish": "321e91d13af406cf716ab87bbb2f5651eb3a32e15bf7fc1c8e63c10a7eee151c",
-    "mailText/Thai": "bfc1b9dc01a7ad48fe19d8e1883af6652c3ef4f463ee0289935aed6b6e4b657e",
-    "mailText/Turkish": "9139420a7c768e80464323555a346e4563231b7984081805a5ae9ded48962e37",
-    "mailText/Vietnamese": "6c99e7ef35ff20ab50aff55c6f3356a2f0702f3c756163ea560a29ce20b8c4fe",
-    "mapLabels/subareas": "74c603cad1d55802e6bb570e16c2fb7df8cf6c2679db4ca3f05832eccfb5e1a7",
-    "materialSources/fontaine": "dd730a409e9305cc24f68413afc34378c3a753f95225af1b63463467afcf38c9",
-    "materialSources/inazuma": "5a105101f08ea684fe745bda7e7ac276074431cd0fe8f06e0a6e7cc4a75df6d9",
-    "materialSources/liyue": "fa07fc22e2c20ae060f5fd2eb4e07eb56c0cbfa9e42833944d9b4168892833fb",
-    "materialSources/mondstadt": "9d721b37369182ecdf1a7e50d529db5098caa2a16995d029610248e7352e24db",
-    "materialSources/natlan": "9fc885fb38a2b84c6057b7698e4da47eb73036751193ec9682b41c9ff9c71f96",
-    "materialSources/nod-krai": "43b03cd81376d1b2266c4b1f1eca0bbeee32bfb2d276dcd0cff1f7b7ade1eed9",
-    "materialSources/snezhnaya": "df1a92a20d45808a3ff128e14fa64bbd881f78e8b830349b1b37b222549c380b",
-    "materialSources/sumeru": "11f934951e0b48642d54f6540bbe8cdf41fd831cf5eba69325956b98c7f26b77",
-    "miningOutcrops/fontaine": "6fd4f377c1bc4c304da55397db3f8a35d58382bf15a7cf797cb2e816a3c46590",
-    "miningOutcrops/inazuma": "0bd4c62ce9e4321d23ea7f78404c79c19b8385b286a6575d7207d5415dd25427",
-    "miningOutcrops/liyue": "f3cbbd736d7f4f14368e6d115b03a3d85a9f215ead302f8417599662ed523c65",
-    "miningOutcrops/mondstadt": "19ab20dd0e4c96f8900ca1daac085a6cb835facf02715710aad5239413e08f85",
-    "miningOutcrops/natlan": "b2cb34d71753188b6708142604b990ba4b4d8dce6b1bbb98fc06c347d3ccf8a3",
-    "miningOutcrops/nod-krai": "fe6f4238bb7d8342a192d471f0c507901474be0cc87724f8c0d93a62d6d531b4",
-    "miningOutcrops/snezhnaya": "0a98db41f60142161955c172cdec0914b6438f7ba6a90688999d6c24f5d0a5d7",
-    "miningOutcrops/sumeru": "6c81e550b961784524938bcd8abfcb988fa76ea4659ff6a226e33a7c8f5b7569",
-    "nameText/ChineseSimplified": "d27fa9130c20f8862dbbf1b9074dd36804887a08f27a8fd54d8d66a3b55f4bdb",
-    "nameText/ChineseTraditional": "d1db97c16634b7f0d6725d5f17ee7932c74515cee1b18837b9f4e38b8179344b",
-    "nameText/English": "b38810083da2531283ae9aec2b9e037fef3778a94aefea56054c9bfaea1aeeb9",
-    "nameText/French": "e56e7ff45f45f61a3f356c0c93e6bc564843f35ceb7e292645e2456a469d1960",
-    "nameText/German": "b381466cc6be7462e8dc801cfad8962a3a7b36f2c57b146a80f0eceaf83c21c0",
-    "nameText/Indonesian": "732e189e13cf6b90ae878a97e12110d81ab2d010f3d2819b7319d8db23aeabf3",
-    "nameText/Italian": "1ad86f418f85951f671e9d948425b0b3d477689d6b187f5a514828f39150e7d1",
-    "nameText/Japanese": "6faf79de793eaad6184498ddd3c56b96236d32b270cebc29c545133909589f80",
-    "nameText/Korean": "a893087c80fb6499cb2c735612030f1d8bbe4904120656d7a0ac2004b8f8e671",
-    "nameText/Portuguese": "d7a24466b3aa42c91c757ad6fa0c569bab740053a0a101267bb8b76075552af3",
-    "nameText/Russian": "58b528f91aaf91e44bee2b849b03d13f64762a19bbaa229da45975f3641213c4",
-    "nameText/Spanish": "dd6a9d4b88c54d5952457514ff553bcadc47a87a92d7499472f4d9395d147c56",
-    "nameText/Thai": "d840ccc05e2cb786a785ff3d4b35f188163f427d4a037bccd1d54d0c96c014e9",
-    "nameText/Turkish": "53feb3d8ee7b7f591a60e31c4491d7362c2c815d92214cf6d5fcafd437f5da82",
-    "nameText/Vietnamese": "550a0f80f55621ec26f0888672d6db2a744aec2fb2296afa2bc6ad101c1cc5e2",
-    "oculi/fontaine": "d97ef5fdfc7d57bd9a77b16fa9b5be490faf915739376cb58fd5f57f053e3beb",
-    "oculi/inazuma": "c74d1ce0fa378cf61fa731acf4849c68348dba44cccb73ab738540a5c7ec5803",
-    "oculi/liyue": "91e074cd95fcfe3607f121f69a42dc1096829d888df53874f34903069b90b29e",
-    "oculi/mondstadt": "6835d33a90565b391af1fab194b16dc2bd02b8a0d6f9f355fee8842cdd4dda4b",
-    "oculi/natlan": "e215f9cc6939be2b6f229fe2f0e6f7d380cd45836d095dda358375ebd8672b54",
-    "oculi/nod-krai": "be39c23b585a63c3d1a9c954ca162dbfcf1bff00ba41ce5d7136129018b2ed86",
-    "oculi/snezhnaya": "bbf624350c07fb18d7575b4216c10a7a76692e2584dc005986202f482d139f83",
-    "oculi/sumeru": "1cb234b54eee003ea72d95490e9df6fd9755110df5df4a9c67412cd226a0fabb",
-    "offeringPlaces/inazuma": "d51b6dd1d9b1e2b79ba2a75ac8638c5409985e0d358265f5c86890534d20a039",
-    "offeringPlaces/natlan": "1ab78ed85568fa0da8064ca0a715e1381fd07d4ac9edafba32e8d2a8fbdb228c",
-    "offeringPlaces/sumeru": "c2c27f2dba481cdb876136bcafb138794feba947e2c8ded2117194e166c7429c",
-    "offerings/amritaPool": "ef862b60868bf2fd406730bbeba2c833195b76d6e491038051dd0b2dee1bee50",
-    "offerings/fountainOfLucine": "af3e5515bfd01fb600db016afe356e7f8f96e5c65fa2d2d46ff370e8b00fae15",
-    "offerings/frostbearingTree": "cd94afafb2a7d4b641a4be75b93593e5e6b5c4b940fc52b5298d689b2978c269",
-    "offerings/lumenstoneAdjuvant": "7d484ee6c5206450fff14b1a16488f42dd1eb5633ea8182058e9dcc0f9f30abe",
-    "offerings/memoryCore": "b73c62c7413a77a796149ba2bfd7f04d382fa445ab556395f2a246b1a3dc07ee",
-    "offerings/nordkalaiOffering01": "9ec52e1a6f99df7155bace30cd58256e23676995e7553fa527723671be0ae93d",
-    "offerings/nordkalaiOffering02": "3e7bb2302da85f1ec9cd760145c02db7240e149eeff9e7e3bc24e56bf1e38e0c",
-    "offerings/nordkalaiOffering03": "06501ab0d68d2287cc72f49d78b58c86d83cbf8fb25ab4bc4a2bff16dbabb582",
-    "offerings/nordkalaiOffering04": "c8e4ec15a4e32cd40ea4d2a67695ce938e5bf9ec0a28273fea6b37078fe867e3",
-    "offerings/nordkalaiOffering05": "95e2be3ea06c61498d88c3775ac11ce5f5c171d40250f8aa3f193a4783e134b4",
-    "offerings/nordkalaiOffering06": "782299255bf6be22b1ffc2e21d65eaade131e4259b72662e1305d7113c854b59",
-    "offerings/nordkalaiOffering07": "abd067cc91779ba8d5ea0b99f919520a77a8806b34608b7174a04bc37f428cf9",
-    "offerings/nordkalaiOffering08": "89f28186b31f67a167abf3432f2a47709ecda7843622beb30bd3ccb29327fa54",
-    "offerings/primalFlameResonance": "a751407f370cfa07c03f5ba6410fd6df040e9223f98931f19316c279515ace06",
-    "offerings/sacredSakura": "80635f16b10ea175400130d0b6c144411e316acc57da8fa1854b03396a0a0fc9",
-    "offerings/shadowRealmAnalyzer": "8ec87d62cfb9e1bea4b46fb7ac54925cbfa671f6d387a4f6c51c92c7144b2766",
-    "offerings/snezhnayaOffering01": "6df238199534382bab5dcc1dfb9248bc9f304eb0c276930ef55150b4eb277d98",
-    "offerings/snezhnayaOffering02": "e7b03014493f2c1157ab6816e1dfc6df27c7d9c0f463500809340e938632dacf",
-    "offerings/snezhnayaOffering03": "30770fc3a921b44223032035fef65909e596a0073db43ab91320a73ff705d237",
-    "offerings/tonaFlame": "4ee500689159256ec83981a44f4370d0ee954e81960c11cb0a55e86ea30f9979",
-    "offerings/treeOfDreams": "a5d65a2b1f0b9a532d87963bf78645173c75466888d25fa5c6bfb83a8d99ff13",
-    "offerings/votiveRainjade": "91c49e0eae928d25760499635a36dfa4ac76657017c95ed02a770d6fe49ef142",
-    "puzzles/fontaine": "201bcec1bfce2b1e1e70aa2c192eb82a8929b0a6d3725bbaad725d3e95c6b2b5",
-    "puzzles/inazuma": "8045952760df4e4861401146a465d32eb5828d009a8f10270f673015c072b6ba",
-    "puzzles/liyue": "84f66d76254be2ca7a8626796a8fe975577e2fc4ad6e4e54199ee1bbb0ea23a3",
-    "puzzles/mondstadt": "fc46af71e3e82fef3d250c6972013e1daae9faed0870f76ddc5f65441c1a03d9",
-    "puzzles/natlan": "3925cc2bb3531f6750b4460f4b644af219410faf6bc8f022de9d0bd72f2d5a22",
-    "puzzles/nod-krai": "8ca0e6d92a3582b4220dfcc63926b19cd89986fcd991d97f047f244a27633dc9",
-    "puzzles/snezhnaya": "506e317f1a52137b425825ebd93a8e69f7cb6e25cc50405e9f7cf16e99e0da37",
-    "puzzles/sumeru": "692e4c17698d750121ae86289bfb851d68ee4a92c1dd9f4d89598983c965350d",
-    "questText/ChineseSimplified": "2694dc2c6ed70b0af450fb905f7d07207e14bed988cf3afb827eaf8c3b400c94",
-    "questText/ChineseTraditional": "1112bab4fa7881e1c8038bbc81ecb20b3f48aabb3a8dd58a479d5674894ee259",
-    "questText/English": "8601a81142b971acae895413832a723edef21d21a78a8db111473cbfeecc44c7",
-    "questText/French": "02db6fa942b25db390492cd8d9ca1904893fff6b5aba1e4da637e2ea71b79366",
-    "questText/German": "744bdc1a1e680df247813e8ab287c3d8b31290d9dc52edfba2681ac02a06f012",
-    "questText/Indonesian": "3986f4f52b8b2575a150100eec5c403536a299ac0e3d358f47728034fd104a1a",
-    "questText/Italian": "64ad8d2219ac15ca51ca90f1012159aa9d831f0d567fadffc0b037e2efff7e6c",
-    "questText/Japanese": "69c7baf671dd2d5b76262ad110af3c5fc8b827d41a5be0fc92994bcb6b619f9a",
-    "questText/Korean": "bd3c5c32c243ace7b40eedc3bfad02504c283bc3fee58998d1ef24fbde3efd73",
-    "questText/Portuguese": "af1fd42e1b352b650c05a524eb6f1cf6b3f30b32e6d1a4db7cc276d8c534be58",
-    "questText/Russian": "a7986b26f8bcf6ee9a323af8012926b7490ec123a8e214104888cd9c074828eb",
-    "questText/Spanish": "38d64e5f0ae46b00f434ee16a8391ad96f575b09aa6532914c8ea3cad6794cbf",
-    "questText/Thai": "d4273dff6cf9dff4c6117b13bfab802a12a3a867c514fb582912da8425c50f85",
-    "questText/Turkish": "8ea224533bb9a27eff9aca868ffb85f6187b8c55bfca025b1fdbfb50c6898a98",
-    "questText/Vietnamese": "225478864bc99f0cc581120c40bcfb580dd2ca0309a2ed96514706f9681fbfe7",
-    "quests/11018": "7dd54d49d9386b559d6552be0f5b0e763250b51c6049acd2180599ff01a82590",
-    "quests/11019": "9ca162a661ffd4097aa4cd4fdcb4d753f636d6a32b96355596313817283b7b1d",
-    "quests/11026": "24f73d7a10b2710a9da5067450be4acfca6e8462c46a9cb31873c792e6d2baa7",
-    "quests/20740": "37556fc1e5eabe3b271797ea2639a3e818b00242f477a6c3f10065095bbefd81",
-    "quests/20741": "b1927420b82ebec07dc14e3220ff54dd7a16eeb589c6f77469830ca71bcf136a",
-    "quests/20743": "081df0fd71e926ff6950686c2a4b827c43d5ee286a4102a7ae84cdac6320eb7c",
-    "quests/22111": "93f80abd241b5547dcd4e7ce01a3088a7f939c3ec73bc04cb7635fceded78dae",
-    "quests/2211102": "cca7c61fd7518d894326fa9e7ce810e143791b254ff83d60bca8b9d05530d6ef",
-    "quests/351": "40d70082e11923a252ba9bd10e48020bb81696d001d8f6a1442c4664288436bb",
-    "quests/352": "c513e67f6f12b5011b0cb3a107b146cf561ad7ead653337a23aadd79ddaa89c3",
-    "quests/384": "2f2a97d8028161833e4a759443e7af56c92e16448ae7a773c3884657d9145adb",
-    "quests/396": "e27b4d32e10bc065805aeb0e68e48d980469a100bc343b35de227601e6bc8a64",
-    "quests/39604": "bb6fb0753a35acf0e026f3f429e2f2861fd58321fa14f46f50221f0037b1cfe1",
-    "quests/70102": "b1c3adc465a56597daa1c8d0bfc309962e7c65fa4aaeffe158c5b5c88f7ce8b4",
-    "quests/70104": "541fa0ba28b553d63a2823e4f281935a6ceb22c0b418d4a05cbb278988412e11",
-    "quests/70106": "3536b0b8e9c7b04bea2a575a639be731ca7a9e057d5aa8369bd1533c610440ca",
-    "quests/70108": "53a66c0c63ae171b7c5788b3e418ba2e3462902fccd8e0c74023b85aad27a652",
-    "quests/70121": "b91a3c719d5eaec147ecd507afc9207c70c4efd0e30a1daccf8c3d0c3d7934e5",
-    "quests/70123": "0813c042e9b5c24e7219f461fa89e2d3b3ed362abb7e89dd80354de27ee4ad3e",
-    "quests/70141": "03f058a0d3ed386018d66ad2c387eb9117cf929c6d95dd77ab189b2f174af8af",
-    "quests/7070001": "c0b580b979393ba8fb0175c448e05b54e6bd34864cac0731d41c9dffb8e2e20c",
-    "quests/7070101": "b7edf43a1632c3ffe83f53a074477f929e5e0ae37052d9674ce99502d7dd5970",
-    "quests/7070201": "a0cc9e4b4a40ccf7e55924edc7cb9fb049c07cbbcac899595e9c872267e96e73",
-    "quests/7070301": "d42aae91838987d56541cb37ca5a8e3e13cc7f9a5667efab8799d4e250128193",
-    "quests/7070401": "e270402eff99162d362bf52ec25dd7d0b60c9560cdf4ac4cf59a66b0c36672dd",
-    "quests/7070501": "b58179e3ccc69ccec52db06a117172d5fdc9ff3cab5e0332724e4b97c108fb17",
-    "quests/7070601": "101973c37adb3076a6e206d5914c1ca57e1f54693553e1b4005583ef1f61e489",
-    "quests/7070701": "2200d2d56c94ae1bb5d4b7d235ec26eb8a9245f7a3b0577d4d6c731ab8a31189",
-    "quests/7070801": "04ab40d8fe21c68d23aeb9f538d7cd11f9d3d0101b831df4a086c4136c4d42af",
-    "quests/7070901": "0057584d85f8f264164b4186983bc7cc7735d5b3de137ad50c928b89fef4e05e",
-    "quests/7071001": "b8e99c95585a775b73852907035b6714cdb33f44d1e56b3bca9599340acbb265",
-    "quests/7071101": "9782875d2ae7ecaa293bb3f21f9d290874470f2730b98ab58a9e19bd191b5592",
-    "quests/7071201": "a047c8d88dc453176b94a15157b12a972c1434d4efb3c522ee5c04d6e7a3a250",
-    "quests/7071301": "37c239929acabc496c51f18cc08ff23fa9e80df4c06a72b9a12bdec7467efff3",
-    "quests/7071401": "1e50dfc3cb687016732d4a303dc956b645b1821072dc1d8f82c5a0fe594748ae",
-    "quests/70801": "d2aa1ad6bbaff3fb78bfe1399d85147b6d1cffa4eceb6b45158c9df03b656b5a",
-    "quests/70810": "0a7442cb0ff7a93f47b9412c08ead0e54195b23cfbbd19b8ca66fab24dd525f9",
-    "quests/70812": "150be927375400bd7f215fc2b8ea827676c4ab6f02373542e723211f326bae9f",
-    "quests/70813": "7bf1d7c0876e31e65f8df69643cc1ca724d9cbc49859beef0278be49bee64f3d",
-    "quests/70821": "e1daed2db5ba06a698e80a28800fbbfa5b8f57d55a0b10ac2639ad4157bfc22d",
-    "quests/70824": "41f822ac95e701142f7bf60d10003337409a3a1b95598a1b372b13f029d313c2",
-    "quests/70825": "ab61c135a0dce3400eb6d383976dc30e963093b5c5773c358e152b8a9cb26d1d",
-    "quests/71012": "a69d8f7b336961d99ee32ef2eb77f667d64d1ba53651e2a3b063c4801b8a95d5",
-    "quests/72154": "9cbc005a3a8d54933957469991ed4c69addf37faeaf3187144aceaabc7b4c41b",
-    "quests/7280801": "c2d0242b85d36084d2622bd70530b0a34c9edcc03af3dd07d1bca594b3c1200e",
-    "quests/7380201": "8658d04c5b983bb27b06388d8aeb0687977d288add8a26b9e3bebc167f7f1bb8",
-    "quests/chapters": "06eeaf3a48a0193717fa3f4fbf12ecdc4178c9645217956d27cee56e82d1dfa8",
-    "regions/fontaine/palette": "06b96950c3111634b54c7552a0c8b2fd65a8e05dcdff6808bb2905b36356a7cf",
-    "regions/fontaine/plants": "534238e08ab62bbe06f45e23ced130dc0582b1eea93b52f718a835b959dd8197",
-    "regions/fontaine/rocks": "df1e3b6b9b8315ee5373b44bd39e49a82b4c84a64d62a1dd7b0351171d445c8f",
-    "regions/inazuma/palette": "dac3221c8e07b31b400af4897c019f66956b690994700fcf45cc1d3d4cbda57c",
-    "regions/inazuma/plants": "0c6d6420a1eb2b24ac5f890c59383d1c0aa6e8514128b6d5a849a452cf14355c",
-    "regions/inazuma/rocks": "750103fc7eac45e2c190992e5afad1772f251d6fc25b1681c9f41e12afb13de3",
-    "regions/liyue/palette": "d50a258777fd304d25f3d8943d7791685253e0e081cb49d5ffe420a7b9b3a0ea",
-    "regions/liyue/plants": "aa5e5ff8da5aea36a1e3543b65dd95184b27e62817dfb7795e0d0b5329d94de2",
-    "regions/mondstadt/palette": "783234507e9250d8c12dc5b8580c7945764729c9ff39fc321ce63f2454d607c9",
-    "regions/mondstadt/plants": "b3ef53c4eda5bd1474c73f8e725a546ff51cd3eade845156d9e91bf5da0234b0",
-    "regions/natlan/palette": "d1ee2aaa7b36ae21dfdd4c9ec0e7b4153c37853887ba08501384deb187369ebd",
-    "regions/natlan/plants": "57a0f0260a74d0d6bdd9f02ab6ccd3d28ff19907ffdc8e7443a60d5c76570221",
-    "regions/natlan/rocks": "bc5b3adfc9389a98216f315c70ace1a07aa671fb9302f2049ef88589143b9854",
-    "regions/nod-krai/palette": "8d543f35b0b9bda676604d000cc3ab90f20106ef237986a10212331a46ce2022",
-    "regions/nod-krai/plants": "bb5b406e662a2ca7f06bd1eb2fe7ba679c3b07c9175a48fe6775611260c0b31a",
-    "regions/nod-krai/rocks": "abec626b0b39761a2cf75ba2e236e2cbdd1179d9726d8cd552ce87a8ca5de6d1",
-    "regions/snezhnaya/plants": "97d3c27893afe7ecadecf9239a212955346ef40bf6517beea1a714bee32f8514",
-    "regions/snezhnaya/rocks": "5fea2c0d793bd35c2c0bb60f3ae65a493a865f2ac46c03fc95407012f5f45207",
-    "regions/sumeru/palette": "d06fcadcf5b1ef351f789b8c1cd333eadb5015cc37fd0c800544f53b1ddbc2f8",
-    "regions/sumeru/plants": "9902768ce5a82c8c084674fc1bc0dae04debb541c5b9033bb4f996272490ce52",
-    "regions/sumeru/rocks": "a43a8861883d2e7c0993868b905a82a17eea472aba64022a2cc599fea07631c4",
-    "regions/sumeru/ruins": "5ff1516de9d01bf72afed5115bc137c7e45d9276b2ebf1b97324ec5e1dba4ccc",
-    "reputation/mondstadt": "e48d903928180b1a29e15fb056c8eec34610e36b6c17397f919ad672d31f52d4",
-    "sceneGroups/scene3": "3a75f5dfe3dc5e3290ef38ecbcf93dbd1a2ecfa6008c188ba1775b2a38d4c7f1",
-    "sceneNpcBorn/scene3": "561633b72271c622fee8bb6f2a37de3418a8b140c606e0a1b14a46c606bbcc59",
-    "shops/fontaineFishing": "f82f83b725ee77d840cde1ee71e00f55d941f935075a10e354c836dca9d452b4",
-    "shops/gcgCardShop": "0c7963ae4d39f87f479d77c6e8a180293be07d256fd00f36c4967c29b7979d3b",
-    "shops/goodHunter": "f0a5a871158634b67d9a81c6b1a58ff85c4b73d8bbb7046125cd844aac3bcd12",
-    "shops/inazumaFishing": "083c0322aee94385d66a64086df857420d69be4cfe447ed9f829a3bbafd8f05c",
-    "shops/liyueFishing": "8c47991eddb69ad895694d9a3931cfca71d295c00ae50d4a41ae863cf96df990",
-    "shops/mondstadtBrook": "c5f06831ea14d7cecd4efc0252c7809221a8ba0c5935e7cd942f403b75fe6da5",
-    "shops/mondstadtCharles": "0a69f9a9879ac4cdcdb6d4931da9865edf514f8b598f062398d80997d3d316b9",
-    "shops/mondstadtChloris": "2ee13c4bebcea1a9d3207a4fe90e8979a534a6134d8c6771097c136ed362dd9d",
-    "shops/mondstadtDraff": "1a5728c66c2496ff14979595cc38fec84ec5d2559e7a1d1622fafcbbd2fa2350",
-    "shops/mondstadtFishing": "5798c8a0da9bf3d13cddf5631c82909e7d4a37ef7ea3089b97d37ffdea237d26",
-    "shops/mondstadtFlora": "ba9479848dd5324bfa79e54b05d61cf0b602c32acab6df1e484a9b42e2c89741",
-    "shops/mondstadtGeneralGoods": "fcb39a74aa1181cf30d36dd9bba2d04a65288c6c2914a1f632c60151c3da4989",
-    "shops/mondstadtSchulz": "41cf2c9e7dbfe689ec659966be601909abbe18817830c0a7fac90b8f26393f5b",
-    "shops/mondstadtShiliu": "59159473026ae59c6859334c8e1d64a261ae85098c9bdb3ac7f43603d94e6db9",
-    "shops/natlanFishing": "f409bdeaf6bb014de0b2b3b3adc0d283b129b69901eaab4949fb0aef0b4ee514",
-    "shops/nodKraiFishing": "2a5c0bb5dc04a3580b3cdf25b8df4d47acc1a77c59e6a3018f304a2128854dc1",
-    "shops/paimonsBargains": "9040d8eabaff418685777ddb186266599fc0cdd0ae806fd2d8470d6265bc6e02",
-    "shops/paimonsBargainsRotation": "19fe342b32711f8bef358cfd33eb1b61b559249f75eeac061c4c8f50efac24b8",
-    "shops/realmDepotBlueprints": "a254495aee0beeba7f808e8333e8c29a7417eb7289446937efa4271c5fd2cee1",
-    "shops/realmDepotCreatures": "f9a349f34533ea2a813801860e7499e92a18e67eafe7a05023b3c5f3e1fb9ee9",
-    "shops/realmDepotFurnishings": "085f02e8f9680254d816cf8c10b2f885711e896c23c33cbea3800d696b0d9ade",
-    "shops/realmDepotRiches": "409fa2f0417946a9d328c0d4e972b95f603b23f6e3fb9c9e43e5f2c8cee00ca7",
-    "shops/realmDepotTreasures": "d7a63008e5c844c6fce7753dd8219b23c2db6749715c8450955d1046b60c147e",
-    "shops/realmDepotWood": "94af92de508d12a6c8a5f4f95963b33920e4ffd9cff85fc1ddc164e61979eadb",
-    "shops/snezhnayaFishing": "9837c3670c1339ac8ba94c480d0bfcca488e610fef8b3be39aaa1e259f632ebb",
-    "shops/souvenirFontaine": "6b0805acb83968f7a66cc54e65f9cf4dbe2b513ed58ba2346098da3aabe14520",
-    "shops/souvenirInazuma": "a29a3a09005f1d20737bcfaa8efd450eadaa14cc04861e6cc4b5f03eb25f49ba",
-    "shops/souvenirLiyue": "0fdb363b6a409dbd566237446e5f7d8900097e3104830e76334ad37fde8bf269",
-    "shops/souvenirMondstadt": "c2c9592103301600ad4fb6a2e6b746d54b853b600a0b0675d9f09a06489a6af8",
-    "shops/souvenirNatlan": "a5bee04ca7c64a1477b4c4412470d8248750f9104742c089f24592ec0fb44575",
-    "shops/souvenirNodKrai": "ca1f86fb4e7fa5e3871d674d1435f4f4b0600562674e35d5e80e8b055eaddbf2",
-    "shops/souvenirSumeru": "b775367241929c8c691d695bcc052b8ddac6b4d35d368c25ad76737c6fc08b0b",
-    "shops/sumeruFishing": "1673a314edcc54b7203949758c1946c43258c4e09fd9be3208952d2ac1503272",
-    "shrineKeySources/inazuma": "622b1556361061a8ea6853188a4ca783058e089407b6ac1a9af379a182341d90",
-    "shrineKeySources/liyue": "b01873ec4be96fa087b59cae752aef4634c80b9c1a9c731cf42b8a6185c06041",
-    "shrineKeySources/mondstadt": "266d5b8cc6f200c24eb83773226ee16d360ecb2e4c33369c9078b1ea48c9363a",
-    "spiralAbyss/benedictionChoices": "0c8c3a6b4748b7234c6a1009a638f62b6325405c4a560e0f6158c339c7ee4c2c",
-    "spiralAbyss/enemyKinds": "6f43d30c32ede9ccc37b8688873ded8150b365e88046f4f8ef14457733b473da",
-    "spiralAbyss/floors": "f3bb69a9e75ca9bd6360492ec5761c486a1c6df474f5df89e4765bd137ca64b1",
-    "spiralAbyss/periods": "7a5cd90ee481e801c268fef9707b09140c679c661141a2a25765c6457303a5f5",
-    "spiralAbyss/rewards": "bc83546805d7defc04beeae75597f1e522ae9e386cd0b2a2297ec1f5ee320254",
-    "splash/titleLogo/ChineseSimplified": "75c36da077d899a9650ebc768fdd54b13d0574ca6146b5d47769c8849aa156f3",
-    "splash/titleLogo/ChineseTraditional": "83c0c7d1bb72bf5435185c314431e9acb007e04dc8116b1a2ab10fc8eab6510b",
-    "splash/titleLogo/English": "5196c5b8680f25921c3a23367501449fdbcfd81f05563d055a1aa56dd6535d59",
-    "splash/titleLogo/Japanese": "f7eeba3a4e2c6333aaae40383a89372b72245e1be0ba6776b1243bfd2f0a9c65",
-    "splash/titleLogo/Korean": "969eae242e84e8486054a4881a685749e20849d1329c31f62cc70bd1788bf234",
-    "standingTalkText/ChineseSimplified": "f70ac93946da4335162bc3584ef98937e5ea7ff33982a31513d2384e1a21d1e6",
-    "standingTalkText/ChineseTraditional": "8b12e091192d6c589f30a16ee3aeb01f56ced4267866980b8b2be9f59b3da620",
-    "standingTalkText/English": "29b41336a9cb07140a4fe61887a6182a3c240fd2ebb4c86ed5e494dcc31016db",
-    "standingTalkText/French": "fdc5de74758905895cd2cf32f701763142c81d11de982e24b38b17ab606aeaad",
-    "standingTalkText/German": "dd266ac63640a236b44d6c07dc196cca4bcebb502e82a5f7b454393670caa572",
-    "standingTalkText/Indonesian": "f57c0a11ce7c391904dec7f2be3b52a0d0c44f1a0bd4a97a2b5d7e901873b7f1",
-    "standingTalkText/Italian": "a241133be7fe212290d5cedc1371a543c7f6da2905f0b2f06b591e69f63d3019",
-    "standingTalkText/Japanese": "4f3c2fe06609b652ff379f4dbd40c6c091995cdc5ace95707d28156fbfec3cfd",
-    "standingTalkText/Korean": "29008b5ea1d8f352cd75e452b2a9e63aa0a64985e5c67936a5810c5d37026c01",
-    "standingTalkText/Portuguese": "9266743cf21f3c02e508a1eb9df8dac8957fcbab16664f464ddcc9026e71c651",
-    "standingTalkText/Russian": "d6aaf98355424eee3b0ac49baee316aa4d8b0ec4104dcd69c85671accac37f2a",
-    "standingTalkText/Spanish": "813a5dd21a8cc834b6f90086955c91de33387adf787abb0c2f3a63edfe4f1f00",
-    "standingTalkText/Thai": "8ba9d225b73b71a8cbdc47cfc5d70edada312e7ac8a91f0620b36b48730634a2",
-    "standingTalkText/Turkish": "01ba246ca0bb66faa862f05b98018c97df4e0375293be434693e9403c615cc42",
-    "standingTalkText/Vietnamese": "04ab02c52610ab1119a3489b24ade0b7558c11230d8fb31430e0d8e3747ea875",
-    "standingTalks/favours": "2cdce6ee1e672f94d2736bf207984a2b079c2e17133766037b03081ef981f46a",
-    "standingTalks/residents": "05f013bd95cae93fde29eab80fb43da7fd22c4c88e132f2c00f09c1fb609fb66",
-    "stats/artifactExpMaterials": "502dffdf8454d5b2ed81822b10aad4e2fd1c65055a3bf04e4b4f555b717ec54f",
-    "stats/artifactMainAffixCurves": "1d6960ed077043c1fb4df6160c31c11bd217bf7a8eb757a02ddd09905a3301d7",
-    "stats/artifactMainAffixPools": "daace42f0693c719279e9b83443d1a22818f1b2aa2a763c9e32dba3447e9500f",
-    "stats/artifactRarities": "e9decdd67f6b5e4b564f8ca71ebbbb5330f137b3d1390f697db518b11109f474",
-    "stats/artifactSets": "82a9c164a832d6ed1307b6467be09b94515a5abe3792df5ccf1de9b3b07b60d8",
-    "stats/characterConstellationKits": "8efc5cf1ddc805638dab3256bd5334a87383c5cb14edadfb554b0115bc52f288",
-    "stats/characterExpMaterials": "556cf521ad1ee24ef6b3a749f456930f9772d0a8df8770821ecfb402675897bf",
-    "stats/characterExpToNext": "3c98f3a74da7ac854f3917e96f42cc827222196cfba557aa78843b409e154edb",
-    "stats/characterGrowCurves": "5d5cde0b0c2f473f7375248e49c330b75653633aed5e72665b5bc454503ddfb4",
-    "stats/characterSkillKits": "404b429135eda2094070935f8f6210fbc16ea3e31221da201c7414aafe03a9ef",
-    "stats/characterTalentKits": "17181b710e44838a0a0daa867ab0f17a81486c46939379e8e9d8a155dcb817a3",
-    "stats/characters": "89cd14b8dad3aca1be17fa24e745c8ab46ec1f5e740ccfa05cf9468bdcbe68ae",
-    "stats/forgeQueuePlayerLevels": "ae05ec6fc54dfb8693f3e7e9a3aa4bdec302f117bd62edb828322b8f24c7a11c",
-    "stats/itemRooms": "39e4b038477747419b5018595fceaceaa012921eab8e59a7610dd30f096ea9bd",
-    "stats/masterlessLevelLifts": "7f5d0519203df44324ba17f639831b58a01421a0f6e4af268d9d04ded826c8f0",
-    "stats/resin": "7162e78ca9a51f3be152f9c86fd8da7202ddd66546e98130ba212e67d049aaa9",
-    "stats/talentUpgrades": "1f2f8851e839b34916b3d0e91bdc0168b0570ef081985c72f90d99df0ffdbced",
-    "stats/weaponEnhancementOres": "9776d9ee5ad5decf9d0c3830545aa533b60e7fdeb4123c6ccd5dc92aeb7aa2f9",
-    "stats/weaponGrowCurves": "f4327c1e523f869582066c02b4224d8e8ffe61b371acb5a039aeadfa3a487bcb",
-    "stats/weaponLevelRequiredExps": "5eba0c9efb4af69a4defcb2ca4d54b8c6c90a8d0e0a9b3fd78971d5471d20cf2",
-    "stats/weapons": "16c27ecd64436b7dd0de35f4c917bfdc0471c304bddf851b4637ac1139170538",
-    "statueLevels/liyue": "fcee7ae34c954b3383befe36a0f77a938ec7ad47c3d42d400f6c610a714b25d2",
-    "statueLevels/mondstadt": "7278dd3b97c7759b7306265d919a4de83ff851a835f0e68a2a3a73b39832d9eb",
-    "tipText/ChineseSimplified": "badf22ecd0d5167b57293cc911c5fd4e547d45a8457149c19ded3b902cf925d4",
-    "tipText/ChineseTraditional": "642c19c3d5eef1549f1fc3ec33c8ff832fc17101a1a2c82192c0b6135fd87a50",
-    "tipText/English": "171592578234d461b0c390f00dff92154d1ee1779b12c6bd54b097a4de4fa531",
-    "tipText/French": "6075b3875b5dd1c8204d117a8cd2e5cbac57bebe8b565ac208dc632ce4b7bd5d",
-    "tipText/German": "d155647264042c42a0ab50bd58c725b208cfcfcbfb195e8ba84b8214a8653ce5",
-    "tipText/Indonesian": "9f4d2a0bf1b02f72bbfe0b19e7007e281c6dcb2956c9aaf797f75ae059a3a11d",
-    "tipText/Italian": "6e06cb738765cc9e70168eb5ccb738ce33ed245f834b21b9f5fa0e9b1f083d0d",
-    "tipText/Japanese": "e502219cafc4270ac0715303c6b4056f57d83e242ccd5dc6044d2e18ee3e75eb",
-    "tipText/Korean": "2ed7d636760267f03ba2560d775a8769aab41e31f778b3661fd79891130cbc60",
-    "tipText/Portuguese": "459409c985e4d84b49185d21908ed51a234dbb9e2530762bc67507946fb2c205",
-    "tipText/Russian": "7066ae120962a220441ebbda8431f96bafd5e41dc0979196f5f11403e53f2b5d",
-    "tipText/Spanish": "44df82466d03aa323507df37449d63d15ec7d8c022f23db052eb766322599df8",
-    "tipText/Thai": "048c45fad6e58ca5c24deb4d632a9180e48e94c7dc6dbd72b1f6c4f2ea3bd25a",
-    "tipText/Turkish": "1b468a5e91c4e89c99cdc9af680fd69f720caf63844e16f3a9ba4ee22fd9131b",
-    "tipText/Vietnamese": "fe1506aede04b323ae6f298d98111ce7a3fa9a7690521f8cd8d0b95d6f23a3d2",
-    "tips": "d1c285207bcb95dd070b386126e1c34893e401980443487e98d15f0f4fff4403",
-    "transPoints/scene3": "d06ceab423d9696fde9641bd151a52c57530678213e1cb4b59f3ef58b546e284",
-    "transPoints/unlock": "3baa034641790ace05c6109d5c81052c2ff604a008785fd8754a526fce2377c1",
-    "weaponRoots/roots": "00782963513aba70f0daad26c4c4739148582a37d35ded7ecca0552a37b1506e",
-    "wildlife/fontaine": "85341546cfe28835e54bad96a1ab170889018c5c9dcf1b70c1bec411e8561e79",
-    "wildlife/inazuma": "a5e63192304279aeb58d19bf13ae874669266aa18c6ab1bac899d406a017feb0",
-    "wildlife/liyue": "e0b839d2c227f4bac1dccf22e63c3d89eb4d2daac66b033c4b78cf5c0c6d1f8d",
-    "wildlife/mondstadt": "e800444369052c37d2b60a44b8c69f81ce4699ee4e70d0bda21684f2ec6e520b",
-    "wildlife/natlan": "2092387714db253db162b113de39f476541077bc0cc984ac829a0c63a962075d",
-    "wildlife/nod-krai": "923b9bf9c57319eb19f6210b904d18613f4a8399aa051b8d1730ab0512b78eb3",
-    "wildlife/snezhnaya": "d890bfa76738b934f25d332a8316f27df2717fe3caa86072288f5e8da514e9cd",
-    "wildlife/sumeru": "a9878f2570757364abebf79d774b1b62f11f5f7106dc4a0079d67dbac79b8a69",
-    "windrise/ground-layers": "fdea76ec911e840878bff3970065a868f545aff7098012c052251a68358449d3",
-    "windrise/oak": "b38005e02451a3befd683fe4866b211a2fa5d40d98e7b286b1f0792f28136dff",
-    "windrise/paving": "8d2d04e7783cb05f8642fcf8730963f3d252532a79a816216e0f380c233467fb",
-    "windrise/plants": "946a6e8ffbec3108e329f8b117102f33e66e3f47a69bd34808e8f4b6003d11f6",
-    "windrise/statue": "2c346fc0de7b55f99d25437947864f0db3921662d4952277b9513593b8fd599b",
-    "windrise/surfaces": "3c3b88800bfee0a250fa09106005e0367e0904777730db964127f5bf987e82ef",
-    "windrise/water": "2e046f06a32db5b818986f6c5df74497d08b105d70cc05e256cc07531e0b6768",
-    "wishSchedule/eventBanners": "02ee447d725f24168a99e79e9272a8ba798325f536569eb1fa58c611afa636cd"
+    "achievementText/ChineseSimplified": {
+      "bytes": 194071,
+      "extension": ".json",
+      "scope": "achievementText/ChineseSimplified",
+      "sha256": "f87e886266ef519d30c8b630428087cb35f719a0ed84c105f8e16cae1e375d2e"
+    },
+    "achievementText/ChineseTraditional": {
+      "bytes": 194110,
+      "extension": ".json",
+      "scope": "achievementText/ChineseTraditional",
+      "sha256": "2288cce3abc3b5bdf855c1a309d03b36303bb0b628e2904d2ddbe71a93744077"
+    },
+    "achievementText/English": {
+      "bytes": 219020,
+      "extension": ".json",
+      "scope": "achievementText/English",
+      "sha256": "090c8968209b7a8811b1c221e4fe57342dfe3b9d1a22702f4fda0857e34d3dd9"
+    },
+    "achievementText/French": {
+      "bytes": 245661,
+      "extension": ".json",
+      "scope": "achievementText/French",
+      "sha256": "fa7d42e8e9e89d031bb80e453498d295a67b235d38e52a8b4ae65814795ce7f0"
+    },
+    "achievementText/German": {
+      "bytes": 244355,
+      "extension": ".json",
+      "scope": "achievementText/German",
+      "sha256": "79aacdb960adaa492bce61e1973148014c2a5ac9d80f5471f5cfbba6332bd418"
+    },
+    "achievementText/Indonesian": {
+      "bytes": 224588,
+      "extension": ".json",
+      "scope": "achievementText/Indonesian",
+      "sha256": "ca4b24bc92ac50982ca48c8daf28468864a754a3c2d83e79302db5a62ce30151"
+    },
+    "achievementText/Italian": {
+      "bytes": 235782,
+      "extension": ".json",
+      "scope": "achievementText/Italian",
+      "sha256": "08b0164eca7f31fc43b7d230f4790c430990409ba3541e4831e4395e7b1f5af2"
+    },
+    "achievementText/Japanese": {
+      "bytes": 237158,
+      "extension": ".json",
+      "scope": "achievementText/Japanese",
+      "sha256": "99e6ad8c5884cd3b121c1df5756ef479d9dd354724c07e94148cf8763cf6aaf0"
+    },
+    "achievementText/Korean": {
+      "bytes": 231615,
+      "extension": ".json",
+      "scope": "achievementText/Korean",
+      "sha256": "78bdf59da8c62e68886fef6d25ffb3b6d978989fd45f383e1bf56ecf3d33975f"
+    },
+    "achievementText/Portuguese": {
+      "bytes": 231176,
+      "extension": ".json",
+      "scope": "achievementText/Portuguese",
+      "sha256": "16bdbc54a6c70a454ae28f1a0effe92f65b2d62bbf92729ed8de0d006053d407"
+    },
+    "achievementText/Russian": {
+      "bytes": 343431,
+      "extension": ".json",
+      "scope": "achievementText/Russian",
+      "sha256": "81e7b6051987f9a58f4683c59ad45047ef6e6185fd9db587185f1b3ea08b17c0"
+    },
+    "achievementText/Spanish": {
+      "bytes": 237046,
+      "extension": ".json",
+      "scope": "achievementText/Spanish",
+      "sha256": "ade4314b6cceb000086751341742a7b822de9a04ac2c33729937a586a8882aaf"
+    },
+    "achievementText/Thai": {
+      "bytes": 429845,
+      "extension": ".json",
+      "scope": "achievementText/Thai",
+      "sha256": "c181669a762bf60a2e4919781ea7df4caa15806f497f687795e736654bd7120e"
+    },
+    "achievementText/Turkish": {
+      "bytes": 228555,
+      "extension": ".json",
+      "scope": "achievementText/Turkish",
+      "sha256": "dc9cc8c43a61a3d90f8cfc6f56eb20cd10084542dc2dde60a68904334f2b31bb"
+    },
+    "achievementText/Vietnamese": {
+      "bytes": 264075,
+      "extension": ".json",
+      "scope": "achievementText/Vietnamese",
+      "sha256": "ed7acc05315f94aa1ed42aa7f99189a7b989c636dccde7d8defddb640c0d77b4"
+    },
+    "achievements/achievements": {
+      "bytes": 562704,
+      "extension": ".json",
+      "scope": "achievements/achievements",
+      "sha256": "bc45bb269716a9da9a3b18352d00a9884c236494e16c9d2fe13ce01500708829"
+    },
+    "achievements/categories": {
+      "bytes": 5279,
+      "extension": ".json",
+      "scope": "achievements/categories",
+      "sha256": "8673ff09f5573d3e7bd337c004f8fa42b53ad5f01b34ed2150a01ec35cd02312"
+    },
+    "adventureRank/levels": {
+      "bytes": 10111,
+      "extension": ".json",
+      "scope": "adventureRank/levels",
+      "sha256": "125df3f338a73d89df0338ca9b8254c26b6f14fa0b6bcb7e35a76a35eab5f353"
+    },
+    "adventureRank/locks": {
+      "bytes": 782,
+      "extension": ".json",
+      "scope": "adventureRank/locks",
+      "sha256": "d795fde35ab386c57264507adff9bd406d5f722ba8d62d7e166b4859691797bd"
+    },
+    "adventureRank/worldLevels": {
+      "bytes": 272,
+      "extension": ".json",
+      "scope": "adventureRank/worldLevels",
+      "sha256": "7fe55241a3074470bfe9303d17584eb861dee5aa1d550e1c78a452994bab198e"
+    },
+    "archive/books": {
+      "bytes": 21377,
+      "extension": ".json",
+      "scope": "archive/books",
+      "sha256": "30959c87d26877d9392703be88623337b1f8beeb51f05ba54a6b010d440da805"
+    },
+    "archive/equipment": {
+      "bytes": 20384,
+      "extension": ".json",
+      "scope": "archive/equipment",
+      "sha256": "6855caf084ec2a4c8489e6b66b52e487caf271714baa98caf52cfcae403e3746"
+    },
+    "archive/geography": {
+      "bytes": 20940,
+      "extension": ".json",
+      "scope": "archive/geography",
+      "sha256": "78825b5c40f282779e0aff0eff606f36e1526010892e56abfc0a7823fe6a51cb"
+    },
+    "archive/livingBeings": {
+      "bytes": 24077,
+      "extension": ".json",
+      "scope": "archive/livingBeings",
+      "sha256": "3c73ca0a0041efed43901ba423a38853fdaaacb21d173db85bcac69af4406574"
+    },
+    "archive/materials": {
+      "bytes": 46410,
+      "extension": ".json",
+      "scope": "archive/materials",
+      "sha256": "c2696da933939a90666ad493980f476df2f769cba02c4db7b4bb7ad912a81460"
+    },
+    "archive/travelLog": {
+      "bytes": 27901,
+      "extension": ".json",
+      "scope": "archive/travelLog",
+      "sha256": "3dfa5d2afa759e88ef3665cfc2f4d848f5f4e4145fb2434c5e3dd8aa2a03268e"
+    },
+    "archive/tutorials": {
+      "bytes": 24800,
+      "extension": ".json",
+      "scope": "archive/tutorials",
+      "sha256": "285a34e57e97d0aed0471ea45a7fe2947e4f349f879b2b6b75de17dba81ca34d"
+    },
+    "archiveText/ChineseSimplified": {
+      "bytes": 150555,
+      "extension": ".json",
+      "scope": "archiveText/ChineseSimplified",
+      "sha256": "6c63d5caa4d8f1cdf83ddfaadde7e1bd0d9b52f1f35d8caa809216a6e920ef36"
+    },
+    "archiveText/ChineseTraditional": {
+      "bytes": 150564,
+      "extension": ".json",
+      "scope": "archiveText/ChineseTraditional",
+      "sha256": "fffd4da8f76fb1fc886392b5db97b9a7c3974fe307609564c04ca78429be4b4f"
+    },
+    "archiveText/English": {
+      "bytes": 175124,
+      "extension": ".json",
+      "scope": "archiveText/English",
+      "sha256": "7bb50a1c071b2deb2e6e194f949a1f8be32efcd9da83d0ad6c35c851c579989d"
+    },
+    "archiveText/French": {
+      "bytes": 193629,
+      "extension": ".json",
+      "scope": "archiveText/French",
+      "sha256": "670ef85517f3ad01f12f976bcf0c9db551b5c87c58122d1afbab96c968ebc859"
+    },
+    "archiveText/German": {
+      "bytes": 192904,
+      "extension": ".json",
+      "scope": "archiveText/German",
+      "sha256": "43dca8fe5b03b024ec1c6261b623bc9686292c78ab43b09d89c3fc6b17e4ea4e"
+    },
+    "archiveText/Indonesian": {
+      "bytes": 178230,
+      "extension": ".json",
+      "scope": "archiveText/Indonesian",
+      "sha256": "c043fe0e547248db86e66a4a9f955fd926d5263a35c2d499fa6e49261ec34d2f"
+    },
+    "archiveText/Italian": {
+      "bytes": 189810,
+      "extension": ".json",
+      "scope": "archiveText/Italian",
+      "sha256": "11def5569867f696a4ff64e5e04736c1d62c961f34ae4415d03f353346904460"
+    },
+    "archiveText/Japanese": {
+      "bytes": 180622,
+      "extension": ".json",
+      "scope": "archiveText/Japanese",
+      "sha256": "b739d1430e5cf30965ff6e130b872be08067be382b7ffc6edd7b3d187c472887"
+    },
+    "archiveText/Korean": {
+      "bytes": 177589,
+      "extension": ".json",
+      "scope": "archiveText/Korean",
+      "sha256": "f7fefd6617db73e4dedc29d9e318e97e4b4fee563ed7fe3a5341576eb3fd6a37"
+    },
+    "archiveText/Portuguese": {
+      "bytes": 187079,
+      "extension": ".json",
+      "scope": "archiveText/Portuguese",
+      "sha256": "1bd5b190851390736e23aa3a28f7a21da5acecf52754f3a334e0bb6ea41fec92"
+    },
+    "archiveText/Russian": {
+      "bytes": 269948,
+      "extension": ".json",
+      "scope": "archiveText/Russian",
+      "sha256": "c471515b08fd67be8a2680d0c472d59289bac285b2e5e25227a0c1c266dcac8b"
+    },
+    "archiveText/Spanish": {
+      "bytes": 190881,
+      "extension": ".json",
+      "scope": "archiveText/Spanish",
+      "sha256": "706166fda7ab8f01f75f48ffb919bb960230483d2624d5a9e8fe061bc4f7cd94"
+    },
+    "archiveText/Thai": {
+      "bytes": 295626,
+      "extension": ".json",
+      "scope": "archiveText/Thai",
+      "sha256": "af22caae9c3e68777bd11795fe53255c6dc83d52c0ac334d1a250374ab372b7d"
+    },
+    "archiveText/Turkish": {
+      "bytes": 183478,
+      "extension": ".json",
+      "scope": "archiveText/Turkish",
+      "sha256": "e3c6e186c53becdf305019d58a3001aa6d1450fe3fdf01d76b1f0bdd72ed98e4"
+    },
+    "archiveText/Vietnamese": {
+      "bytes": 200133,
+      "extension": ".json",
+      "scope": "archiveText/Vietnamese",
+      "sha256": "fa1634eeff000ae9a84ea81cefd4b4ae2c683f780c7a6840d913a906800b9c38"
+    },
+    "catalogue/catalogue": {
+      "bytes": 145781,
+      "extension": ".json",
+      "scope": "catalogue/catalogue",
+      "sha256": "af67f94f3d2ab53c409d0e8f70ae31144e4c4fb4c8b7a1fd464c7066ed8b337b"
+    },
+    "characterModels/scale": {
+      "bytes": 124,
+      "extension": ".json",
+      "scope": "characterModels/scale",
+      "sha256": "a256a8e699a9d3d3b4a11f03750365b987f49028d1e4e4e8fbe8e0f15706d061"
+    },
+    "characterPackIndex/index": {
+      "bytes": 16562,
+      "extension": ".json",
+      "scope": "characterPackIndex/index",
+      "sha256": "a73caf35dbd9a925b28f9411a7ba8604d0add1ffe10a9e5fe99954587560c9e2"
+    },
+    "characterTrials/avatars": {
+      "bytes": 50334,
+      "extension": ".json",
+      "scope": "characterTrials/avatars",
+      "sha256": "60b443c55533ac145bd076ae262b8bb99ab19a44622d1454fa0173f5e1448066"
+    },
+    "characterTrials/builds": {
+      "bytes": 6881,
+      "extension": ".json",
+      "scope": "characterTrials/builds",
+      "sha256": "33eead7d1506f87c4b5d5c8e4b51e72a1f2495244da9f9ffa6d7b8f570c7e0bf"
+    },
+    "characterTrials/reliquaries": {
+      "bytes": 91069,
+      "extension": ".json",
+      "scope": "characterTrials/reliquaries",
+      "sha256": "90b2cdb6d613ad6ffee03f39f3213f8de0ba484a8249be5eca747bba7ecdebbb"
+    },
+    "characterTrials/rewards": {
+      "bytes": 156,
+      "extension": ".json",
+      "scope": "characterTrials/rewards",
+      "sha256": "4365b6f1f74156014f46a855cf00a431cef5b1cbd5004e3688ec4c0e563e6000"
+    },
+    "characterTrials/stages": {
+      "bytes": 12133,
+      "extension": ".json",
+      "scope": "characterTrials/stages",
+      "sha256": "ff0c52598ad22c59ab912897b19ef6c808a67391b6516627b59ff4d6d9be9ba3"
+    },
+    "characterTrials/templates": {
+      "bytes": 599,
+      "extension": ".json",
+      "scope": "characterTrials/templates",
+      "sha256": "4eb1d1405e238571f342d8f2264b0a1ea2fa5b0d50d30ffd178e3f35d6d0d80b"
+    },
+    "chests/fontaine": {
+      "bytes": 33950,
+      "extension": ".json",
+      "scope": "chests/fontaine",
+      "sha256": "57da4d580cad1dec6c32d46e628f40abd2f1e8e19c267630ddb77894602abd8c"
+    },
+    "chests/inazuma": {
+      "bytes": 37491,
+      "extension": ".json",
+      "scope": "chests/inazuma",
+      "sha256": "ad01b01e9165e59848fd2d6a0c1bd0e5343b8124c79fd78bad5b1fa79db26d78"
+    },
+    "chests/liyue": {
+      "bytes": 84504,
+      "extension": ".json",
+      "scope": "chests/liyue",
+      "sha256": "656f207cfc0f5a699ba460bfb0e907041149c18b3db75962324aa1e993d1426a"
+    },
+    "chests/mondstadt": {
+      "bytes": 40312,
+      "extension": ".json",
+      "scope": "chests/mondstadt",
+      "sha256": "a56863fdd11c918b79b2489a30f40c1c22e893c882b1d4c81f7dc1d670d74f8d"
+    },
+    "chests/natlan": {
+      "bytes": 37852,
+      "extension": ".json",
+      "scope": "chests/natlan",
+      "sha256": "027239b8d3985773e6359a51df6a9f8b244ecb7eee446f2a4749f34009a873c1"
+    },
+    "chests/nod-krai": {
+      "bytes": 23513,
+      "extension": ".json",
+      "scope": "chests/nod-krai",
+      "sha256": "94ed2527dbe0ed9c456ed41d3fbe5cf9151708c49d1a70dbcdbf2b1e1819abea"
+    },
+    "chests/snezhnaya": {
+      "bytes": 14615,
+      "extension": ".json",
+      "scope": "chests/snezhnaya",
+      "sha256": "d662eabb7bf0491146164dad571f1e0bb691d3982533c09a7c40e26e79ce9be9"
+    },
+    "chests/sumeru": {
+      "bytes": 99138,
+      "extension": ".json",
+      "scope": "chests/sumeru",
+      "sha256": "a062ed1a2df1014112325ae18a1ed3ac283f76b58a48a7ab2d2499a14260af47"
+    },
+    "commissions/fontaine": {
+      "bytes": 36915,
+      "extension": ".json",
+      "scope": "commissions/fontaine",
+      "sha256": "dd2c212ae32a0832d40a2be4322b713bbe49b6549f3a7e716e8fd0d08ae9579d"
+    },
+    "commissions/inazuma": {
+      "bytes": 48301,
+      "extension": ".json",
+      "scope": "commissions/inazuma",
+      "sha256": "6b433a5d2ed1e4999ca25d6bd7a75d417363f61efafc424f0d95b5bdc6942ded"
+    },
+    "commissions/liyue": {
+      "bytes": 46608,
+      "extension": ".json",
+      "scope": "commissions/liyue",
+      "sha256": "6f25c343be005000d044aa1e691ff23a7293f35ee0d59420c6c9705941e95af2"
+    },
+    "commissions/mondstadt": {
+      "bytes": 49461,
+      "extension": ".json",
+      "scope": "commissions/mondstadt",
+      "sha256": "0f7a76e99054d47dbd45596f7b8264d4e89f9461ca82b61bd13cba2d01a0b2a7"
+    },
+    "commissions/natlan": {
+      "bytes": 22127,
+      "extension": ".json",
+      "scope": "commissions/natlan",
+      "sha256": "ec6ba7a89d14144afd04d485afbdf4bb4d5f605cf3c5753f020d32a604294aa0"
+    },
+    "commissions/nod-krai": {
+      "bytes": 16096,
+      "extension": ".json",
+      "scope": "commissions/nod-krai",
+      "sha256": "b097ad1b1628b252928ff80a8215385792076e3fe19947fbb309f2d25f0f1760"
+    },
+    "commissions/snezhnaya": {
+      "bytes": 16107,
+      "extension": ".json",
+      "scope": "commissions/snezhnaya",
+      "sha256": "d47d340a426024e4d9249e5a0e1137183f55fea5193407a7046f0cbd35b1849a"
+    },
+    "commissions/sumeru": {
+      "bytes": 53610,
+      "extension": ".json",
+      "scope": "commissions/sumeru",
+      "sha256": "789626395d6543165ec8cf8099f61dda7a2660c4f3935623db24f704bd67f258"
+    },
+    "cooking/dishes": {
+      "bytes": 71683,
+      "extension": ".json",
+      "scope": "cooking/dishes",
+      "sha256": "86d31b348da5814a3f3df0483e596752ac040998a6aabc948e2338a0cc23d586"
+    },
+    "cooking/processing": {
+      "bytes": 12382,
+      "extension": ".json",
+      "scope": "cooking/processing",
+      "sha256": "25dce6c195731e60148af5071791803d22a4c82575db7db86e8067944d007960"
+    },
+    "cooking/recipes": {
+      "bytes": 114223,
+      "extension": ".json",
+      "scope": "cooking/recipes",
+      "sha256": "cd50c97927be40a1bd590c840a67152741a5c585753a520cdc691a6fae9f880d"
+    },
+    "cooking/talents": {
+      "bytes": 949,
+      "extension": ".json",
+      "scope": "cooking/talents",
+      "sha256": "73ea11b5fcf9203aa134b30e50e2e5a77cd3d792ef1812af32b846fec8516a39"
+    },
+    "crafting/recipes": {
+      "bytes": 115920,
+      "extension": ".json",
+      "scope": "crafting/recipes",
+      "sha256": "347d4657d942540c83f5d76d97aad7fb906c9dc79f5541a1b3ed0ff6e752d547"
+    },
+    "crafting/strongboxes": {
+      "bytes": 5627,
+      "extension": ".json",
+      "scope": "crafting/strongboxes",
+      "sha256": "f930b47dcb55e28e6e3b650554638c1ec8d0c1cb379d854ceed7928c04ec35e6"
+    },
+    "craftingBenchPlaces/mondstadt": {
+      "bytes": 54,
+      "extension": ".json",
+      "scope": "craftingBenchPlaces/mondstadt",
+      "sha256": "5684d37e4057cd181f00aec3406d25e6d0b512544b790251cee88f91c8aa05ce"
+    },
+    "domainChallengeLevels/levels": {
+      "bytes": 34350,
+      "extension": ".json",
+      "scope": "domainChallengeLevels/levels",
+      "sha256": "0d74901aea171e3a4c6b9326bfb5d9f52aae4ed5a18e684c8506f763e2aedab3"
+    },
+    "domains/weeklyBosses": {
+      "bytes": 357,
+      "extension": ".json",
+      "scope": "domains/weeklyBosses",
+      "sha256": "8364bb0aafa5d3704fa319809ced57f3c0a01c80c323e3e7b9aaa0a461214579"
+    },
+    "enemies/dropFamilies": {
+      "bytes": 10452,
+      "extension": ".json",
+      "scope": "enemies/dropFamilies",
+      "sha256": "7502c08b08cbd849fc3beb9788eec95d0b16e2c34d5c14bfbcc9bb2cf5312bcc"
+    },
+    "enemies/dropFamilyKinds": {
+      "bytes": 8360,
+      "extension": ".json",
+      "scope": "enemies/dropFamilyKinds",
+      "sha256": "e42d76474873661a2987c151565483f382c802c15b55a56179585645c7d60983"
+    },
+    "enemies/kinds": {
+      "bytes": 110835,
+      "extension": ".json",
+      "scope": "enemies/kinds",
+      "sha256": "40facd0136dee81638ee7be4c3d78075a25abeabc12b5c7ce26ddb7a1d16fc2c"
+    },
+    "enemies/levelCurves": {
+      "bytes": 10638,
+      "extension": ".json",
+      "scope": "enemies/levelCurves",
+      "sha256": "341c0ba27fd71d673db8425ca7bbd6995ac4ef52794363aa79c041876ffe2485"
+    },
+    "enemies/reactionPoise": {
+      "bytes": 757,
+      "extension": ".json",
+      "scope": "enemies/reactionPoise",
+      "sha256": "3425e88d301f66fc9db02e38e3484caa9e5ff4c9b07e19394dfd2af85e057fd9"
+    },
+    "expeditions/bonuses": {
+      "bytes": 259,
+      "extension": ".json",
+      "scope": "expeditions/bonuses",
+      "sha256": "067d7335e880afdf595099cb5f0d1519bd2a7d92fbf045798aa998dbbfa5147b"
+    },
+    "expeditions/limits": {
+      "bytes": 109,
+      "extension": ".json",
+      "scope": "expeditions/limits",
+      "sha256": "7ad8f3e4d7b18301179793d164cdfc0ddf795bb95e0f2d78ea18468a67dbd94b"
+    },
+    "expeditions/mondstadt": {
+      "bytes": 3667,
+      "extension": ".json",
+      "scope": "expeditions/mondstadt",
+      "sha256": "9b7ef8f6cfd03f7f33d10f09a46789faf9131000fee48dd552f81c491e9ae3db"
+    },
+    "expeditions/passives": {
+      "bytes": 1129,
+      "extension": ".json",
+      "scope": "expeditions/passives",
+      "sha256": "4a9cc81f720c20f7565b490cc857c94c08822511afc0fa492f6556e543506885"
+    },
+    "exploration/mondstadt": {
+      "bytes": 1886,
+      "extension": ".json",
+      "scope": "exploration/mondstadt",
+      "sha256": "8210d2763fd35e620970c8fa7fe410910012c6fbdf731cfb5acabcc10892c2da"
+    },
+    "fishing/baits": {
+      "bytes": 821,
+      "extension": ".json",
+      "scope": "fishing/baits",
+      "sha256": "c502cec74a49e4ac49ba9e9bb64f45b264805286e4d5f4b319a112cfa15027bb"
+    },
+    "fishing/fish": {
+      "bytes": 34899,
+      "extension": ".json",
+      "scope": "fishing/fish",
+      "sha256": "d363dc5631d9ef93eccd70f4414f7e126564398f57a49cfc518bab2127ec9ea5"
+    },
+    "fishing/points": {
+      "bytes": 6014,
+      "extension": ".json",
+      "scope": "fishing/points",
+      "sha256": "0c527bc297842a1b2b07166de7e82d2331163e6e774563d1f68c17b9241ddb67"
+    },
+    "fishing/pools": {
+      "bytes": 50943,
+      "extension": ".json",
+      "scope": "fishing/pools",
+      "sha256": "27523c39021997f7b4d223b4aca8bee4712b0e2414d717cbdef275357872d8e0"
+    },
+    "fishing/proficiency": {
+      "bytes": 130,
+      "extension": ".json",
+      "scope": "fishing/proficiency",
+      "sha256": "ce0c709b4039fed56dff164b15254d84016018b262f829ac4e55079d04c68e5e"
+    },
+    "fishing/props": {
+      "bytes": 6895,
+      "extension": ".json",
+      "scope": "fishing/props",
+      "sha256": "43d5f58de93f86e56b2f8846f2d2c1b8a1815c5062d13462b92f53875a58d12b"
+    },
+    "fishing/rewards": {
+      "bytes": 8450,
+      "extension": ".json",
+      "scope": "fishing/rewards",
+      "sha256": "7956a53c9fc527c490168e40c8245cf5931c4a7d2dae953141cbf1cfd8804587"
+    },
+    "fishing/rods": {
+      "bytes": 848,
+      "extension": ".json",
+      "scope": "fishing/rods",
+      "sha256": "9e943a9152b4ea673026d4e1d6ed8b742fc0892e6886e97354202717ef727e10"
+    },
+    "fishing/skills": {
+      "bytes": 9087,
+      "extension": ".json",
+      "scope": "fishing/skills",
+      "sha256": "c8bc79e78a7457f75eae849d8be60a06d0e689b0562d091421848c99432a6d66"
+    },
+    "forging/dailyPointCap": {
+      "bytes": 6,
+      "extension": ".json",
+      "scope": "forging/dailyPointCap",
+      "sha256": "ad1e2e29fe1631ddf7bedaadffe63c4efd61e6909a1ed0648e7b9645bd27dab5"
+    },
+    "forging/recipes": {
+      "bytes": 13697,
+      "extension": ".json",
+      "scope": "forging/recipes",
+      "sha256": "0658bb7c584244aa48e27b99ffa3b591605a3723815d57dc3edf45edceb8b5b3"
+    },
+    "friendship/friendship": {
+      "bytes": 8022,
+      "extension": ".json",
+      "scope": "friendship/friendship",
+      "sha256": "2c14fa9ba3234b231c69a7c936913050aa58e3a614b4616d257a155e2a87e36c"
+    },
+    "frostbearingTreePlaces/mondstadt": {
+      "bytes": 83,
+      "extension": ".json",
+      "scope": "frostbearingTreePlaces/mondstadt",
+      "sha256": "9d59710b8f1e9ffc5d1aeadb3b29ea1a43193c837bd2d2747761f5adf8c2decf"
+    },
+    "gadgets/gadgets": {
+      "bytes": 2264,
+      "extension": ".json",
+      "scope": "gadgets/gadgets",
+      "sha256": "e250ac1efbe6eaa73dad41ac2bb977b1ab191b33faed9204df83d19b0ee9d101"
+    },
+    "gathering/fontaine": {
+      "bytes": 257858,
+      "extension": ".json",
+      "scope": "gathering/fontaine",
+      "sha256": "fd131a8be5b245b734ec6e0dc6da50d16edcf6f6f679393a2071ea715387019b"
+    },
+    "gathering/inazuma": {
+      "bytes": 191623,
+      "extension": ".json",
+      "scope": "gathering/inazuma",
+      "sha256": "8244385abeab785aec9b2ded3717d900652439a4f06af03e2ca69f59f19903ca"
+    },
+    "gathering/items": {
+      "bytes": 14076,
+      "extension": ".json",
+      "scope": "gathering/items",
+      "sha256": "7d01328a8e084c0ea3a78750389a65c252701c52e9c591f5467947df7669ea2b"
+    },
+    "gathering/liyue": {
+      "bytes": 303202,
+      "extension": ".json",
+      "scope": "gathering/liyue",
+      "sha256": "4831e92ed668c3177851b96548e0cd10f207ddba9c2ada730a286576057217af"
+    },
+    "gathering/mondstadt": {
+      "bytes": 242458,
+      "extension": ".json",
+      "scope": "gathering/mondstadt",
+      "sha256": "21191cefc5253e85e7710ca87e8d22de1fd0d4ed286bb6229578a1bdced25181"
+    },
+    "gathering/natlan": {
+      "bytes": 262375,
+      "extension": ".json",
+      "scope": "gathering/natlan",
+      "sha256": "37933e4cd7e80be245a1fea8d5fd1497372360e3abcaba01c3e5d42ca41d257a"
+    },
+    "gathering/nod-krai": {
+      "bytes": 103991,
+      "extension": ".json",
+      "scope": "gathering/nod-krai",
+      "sha256": "e27cdf2612a7f91034b73debd0bd650e84684e1553e0028566731fb5eb2d4991"
+    },
+    "gathering/snezhnaya": {
+      "bytes": 113937,
+      "extension": ".json",
+      "scope": "gathering/snezhnaya",
+      "sha256": "e1c995df774f2373dfec9933a8cec3c142f2612d2c69eb6b753c55c46b758ab6"
+    },
+    "gathering/sumeru": {
+      "bytes": 430049,
+      "extension": ".json",
+      "scope": "gathering/sumeru",
+      "sha256": "f2af057d4607aef8fde42dc6e167c7144436e125cc20f60e913ece12c538ee94"
+    },
+    "gcg/deck1": {
+      "bytes": 5655,
+      "extension": ".json",
+      "scope": "gcg/deck1",
+      "sha256": "a5dd8b930e298e63b6d9c4b40a43cdb9aff03fe02583cd380f130e0ed45d85e4"
+    },
+    "gcg/deck11002": {
+      "bytes": 2158,
+      "extension": ".json",
+      "scope": "gcg/deck11002",
+      "sha256": "11e03836be5ae13bc3010d5d896d93ea1bfdadbfce0d8ace03ce0d6831e167c0"
+    },
+    "gcg/deck11005": {
+      "bytes": 8174,
+      "extension": ".json",
+      "scope": "gcg/deck11005",
+      "sha256": "ec197d36c88f39c5d7b3e9868fc8f09e9e5d31e216f47ea9d02c8cae27246d0c"
+    },
+    "gcg/deck11105": {
+      "bytes": 7059,
+      "extension": ".json",
+      "scope": "gcg/deck11105",
+      "sha256": "ad58414145fdbab5503060b41f7ae5c667e77228727d709885bb9ead40cf886a"
+    },
+    "gcg/deck12005": {
+      "bytes": 6692,
+      "extension": ".json",
+      "scope": "gcg/deck12005",
+      "sha256": "43db0f28aa88ae21ab6b6bfb91af64f0edf162eb52a1d675dfc8ddf76caca99d"
+    },
+    "gcg/deck12107": {
+      "bytes": 7242,
+      "extension": ".json",
+      "scope": "gcg/deck12107",
+      "sha256": "eb52dfa5439f05fc06aa902b5cf27bf32808924771af3c589bdc4e6127219e29"
+    },
+    "gcg/deck12305": {
+      "bytes": 5685,
+      "extension": ".json",
+      "scope": "gcg/deck12305",
+      "sha256": "924c4cac7a78cab07fe235c0afa27e3e8ff5c1ccbe0a683874e45d9ce00cfd60"
+    },
+    "gcg/deck13005": {
+      "bytes": 5480,
+      "extension": ".json",
+      "scope": "gcg/deck13005",
+      "sha256": "06ac0cf9d1c7210e430d5eccf70c17b15bcbfb5eea551571fe8757c2f87f2aa0"
+    },
+    "gcg/deck13105": {
+      "bytes": 5877,
+      "extension": ".json",
+      "scope": "gcg/deck13105",
+      "sha256": "2d7ddc5a01b89c690f83078d1ea772f1409c31c81ff8617ed4afc6b9523535dd"
+    },
+    "gcg/deck14405": {
+      "bytes": 6095,
+      "extension": ".json",
+      "scope": "gcg/deck14405",
+      "sha256": "2b547d2422399241a5c0d9adc60ea30b7030a560646e6543e36b976b79671585"
+    },
+    "gcg/deck14410": {
+      "bytes": 7036,
+      "extension": ".json",
+      "scope": "gcg/deck14410",
+      "sha256": "52e2664fbd4c814b94637a743294915a06f2bc28880488a1fa7be949cbccf2aa"
+    },
+    "gcg/deck15004": {
+      "bytes": 6414,
+      "extension": ".json",
+      "scope": "gcg/deck15004",
+      "sha256": "9477773e087411b47ee639ed39521a437664aa06b0356a65e5b2d1090799cd9c"
+    },
+    "gcg/deck2": {
+      "bytes": 6284,
+      "extension": ".json",
+      "scope": "gcg/deck2",
+      "sha256": "42c5f8586ca77b1eee5c90074f466d672fe266b1f154b0e8d6c05b38316b7175"
+    },
+    "gcg/deck3": {
+      "bytes": 5544,
+      "extension": ".json",
+      "scope": "gcg/deck3",
+      "sha256": "a1d70f220ac47dada0f08b504e5fc80dbf88f582dbdb5738944303d04d3a9a52"
+    },
+    "gcg/deck30111": {
+      "bytes": 7481,
+      "extension": ".json",
+      "scope": "gcg/deck30111",
+      "sha256": "b7dcde2ad32e6e57d55ece033cea4316ef137421df22b3eb57cd4f7fbd6b6422"
+    },
+    "gcg/deck30112": {
+      "bytes": 7523,
+      "extension": ".json",
+      "scope": "gcg/deck30112",
+      "sha256": "d599007eca190556860a2dc7a637fc843c7a4873b4f80b7cccf625edc3b84125"
+    },
+    "gcg/deck4": {
+      "bytes": 6661,
+      "extension": ".json",
+      "scope": "gcg/deck4",
+      "sha256": "f3ed3db8ef0bc805c7768ea224b998b8d0d8fd6e67c2c826d9d13bef5b0e24b1"
+    },
+    "gcg/deck7": {
+      "bytes": 7855,
+      "extension": ".json",
+      "scope": "gcg/deck7",
+      "sha256": "7627d94025f4dda864e8e811d081a93e5dc2ace5d3b4dafdf838a35873d70101"
+    },
+    "gcg/games": {
+      "bytes": 605,
+      "extension": ".json",
+      "scope": "gcg/games",
+      "sha256": "6607ab86ab1213b970b0d5109dd1619665130ebf5bfe9c2e334d210d09ab5df7"
+    },
+    "gcg/levels": {
+      "bytes": 15532,
+      "extension": ".json",
+      "scope": "gcg/levels",
+      "sha256": "0c65a418a783206546318c4b3e76eee95fc2b8ad8cd9d3d87c3145cff151ad97"
+    },
+    "gcg/standardRule": {
+      "bytes": 722,
+      "extension": ".json",
+      "scope": "gcg/standardRule",
+      "sha256": "000255b49dd59883e3e00b6526e81b95ac74cb8d0a1965e46a6f223a0a2a6634"
+    },
+    "gcgText/ChineseSimplified": {
+      "bytes": 32987,
+      "extension": ".json",
+      "scope": "gcgText/ChineseSimplified",
+      "sha256": "12dc2ff75bec980f3191834e861f8bf292af554602ac5a4ce3065251d92ba40a"
+    },
+    "gcgText/ChineseTraditional": {
+      "bytes": 32987,
+      "extension": ".json",
+      "scope": "gcgText/ChineseTraditional",
+      "sha256": "d85f8f04a2e742357304e0e5834b7b221e6a424bfabf82e242d560d858952090"
+    },
+    "gcgText/English": {
+      "bytes": 36767,
+      "extension": ".json",
+      "scope": "gcgText/English",
+      "sha256": "9ceda2af92aba3053d0cb915bea5e00072ba4051c9f2aaedf25cae2419ba8352"
+    },
+    "gcgText/French": {
+      "bytes": 44485,
+      "extension": ".json",
+      "scope": "gcgText/French",
+      "sha256": "436af3be2f18717c96842c24ddcf9cb72dd477326d2458d8e295d80c84ee9dbf"
+    },
+    "gcgText/German": {
+      "bytes": 38912,
+      "extension": ".json",
+      "scope": "gcgText/German",
+      "sha256": "59f6a0027074f71e14c305b025b769687d965050d4c9c7beff1ea5b29bc32070"
+    },
+    "gcgText/Indonesian": {
+      "bytes": 41135,
+      "extension": ".json",
+      "scope": "gcgText/Indonesian",
+      "sha256": "3d4ad0630746708dbf08bbd49dfb8e30b936445ad592d7d56578b0de81b0f70f"
+    },
+    "gcgText/Italian": {
+      "bytes": 40463,
+      "extension": ".json",
+      "scope": "gcgText/Italian",
+      "sha256": "1966f8a2b9768a5e513191bfbd6573fd9ecb9d646d5a0f5a2c1e35f1bf458437"
+    },
+    "gcgText/Japanese": {
+      "bytes": 44207,
+      "extension": ".json",
+      "scope": "gcgText/Japanese",
+      "sha256": "701b84e1724c042858c4c4a007931085aab6eed14762300b9ca37c6823b2bd73"
+    },
+    "gcgText/Korean": {
+      "bytes": 40743,
+      "extension": ".json",
+      "scope": "gcgText/Korean",
+      "sha256": "e70ed08ee42068ccddd1554179d12e9aceee0fce900bf82ec0b1e91e9f55cd5f"
+    },
+    "gcgText/Portuguese": {
+      "bytes": 40083,
+      "extension": ".json",
+      "scope": "gcgText/Portuguese",
+      "sha256": "2f4512ce110444fd5fd980ee66f8bcc0ae1301d9a64b80dcbc6499a79e1ea79f"
+    },
+    "gcgText/Russian": {
+      "bytes": 59762,
+      "extension": ".json",
+      "scope": "gcgText/Russian",
+      "sha256": "8c091f1192942a7da745dda5655bc3a39e409c751ac222b9c15ae11aba65f3d8"
+    },
+    "gcgText/Spanish": {
+      "bytes": 41119,
+      "extension": ".json",
+      "scope": "gcgText/Spanish",
+      "sha256": "b8252f7616ce144b500da52901fe4ae8a248ad29fc40d1bdb7923587c9cad0c4"
+    },
+    "gcgText/Thai": {
+      "bytes": 74044,
+      "extension": ".json",
+      "scope": "gcgText/Thai",
+      "sha256": "45565af9a00a720a8a147329b632e15bcfec55b29f4c54c300051d907ebcdb09"
+    },
+    "gcgText/Turkish": {
+      "bytes": 38042,
+      "extension": ".json",
+      "scope": "gcgText/Turkish",
+      "sha256": "d08be51782e1926aae226c4ea0a0162279e167c188b925509199dc6ac01e4961"
+    },
+    "gcgText/Vietnamese": {
+      "bytes": 43724,
+      "extension": ".json",
+      "scope": "gcgText/Vietnamese",
+      "sha256": "107bfb0f53d97335c4447252f9483712a0cb84610e990002bd93ded0e8d99dfa"
+    },
+    "ground/fontaine": {
+      "bytes": 92159,
+      "extension": ".json",
+      "scope": "ground/fontaine",
+      "sha256": "0589e098b8b75ccd96fb17f6af9689d89a7dbab5753f3cf0cea3db2d90838a61"
+    },
+    "ground/fontaine/belleau-region": {
+      "bytes": 100667,
+      "extension": ".json",
+      "scope": "ground/fontaine/belleau-region",
+      "sha256": "9cf04f11b5b1438728eb2c700c69a672c2e8f4f85f553f6af8a20adbd3917423"
+    },
+    "ground/fontaine/beryl-region": {
+      "bytes": 116811,
+      "extension": ".json",
+      "scope": "ground/fontaine/beryl-region",
+      "sha256": "675a754bcd1a86e326795bc7e6e9888d228c87f644c178473b0f2388268a6ad4"
+    },
+    "ground/fontaine/court-of-fontaine-region": {
+      "bytes": 157507,
+      "extension": ".json",
+      "scope": "ground/fontaine/court-of-fontaine-region",
+      "sha256": "7fcd59b28ba859b5b4b2ad050116019c6b6b24eba4a827e682ae05933c303dc3"
+    },
+    "ground/fontaine/erinnyes-forest": {
+      "bytes": 126201,
+      "extension": ".json",
+      "scope": "ground/fontaine/erinnyes-forest",
+      "sha256": "dbe54fc47f5fd2d6eda29478deb4b11735ed731b2e68263f1e2703ce47dff0e7"
+    },
+    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/0": {
+      "bytes": 52482,
+      "extension": ".json",
+      "scope": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/0",
+      "sha256": "243601c4ca31f85a2a3ef84de3ca53bfd51f779ab1657a32e4a4142c519f82b3"
+    },
+    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/1": {
+      "bytes": 73864,
+      "extension": ".json",
+      "scope": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/1",
+      "sha256": "ee251e9792d4e5791150bfe06fa4aa59f52b80a3cd19faeb1b280fe517e82105"
+    },
+    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/2": {
+      "bytes": 81835,
+      "extension": ".json",
+      "scope": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/2",
+      "sha256": "ffba6ef83706c746d495b43f4bbc2a9dd60747116a90e8fa39e1dc30b8422af2"
+    },
+    "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/3": {
+      "bytes": 75038,
+      "extension": ".json",
+      "scope": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/3",
+      "sha256": "a9125811641471edb2082f955d982565e4f1f70300ec6f23d9dec1fd01156e47"
+    },
+    "ground/fontaine/liffey-region": {
+      "bytes": 103948,
+      "extension": ".json",
+      "scope": "ground/fontaine/liffey-region",
+      "sha256": "7ecbb8d9d7111a20ff5bbe444fddaeb047a1331410adf87d0136f2bc199ad047"
+    },
+    "ground/fontaine/morte-region": {
+      "bytes": 123933,
+      "extension": ".json",
+      "scope": "ground/fontaine/morte-region",
+      "sha256": "cb1bd6ec50c2a2e82657fb1a303c00a697fdba25c1bbfa5ef1207f7373fba49b"
+    },
+    "ground/fontaine/nostoi-region": {
+      "bytes": 189061,
+      "extension": ".json",
+      "scope": "ground/fontaine/nostoi-region",
+      "sha256": "79cac9413ee917b2982ec03915825c04521823d69fffa0c770cd5f946c8f6c00"
+    },
+    "ground/inazuma": {
+      "bytes": 52518,
+      "extension": ".json",
+      "scope": "ground/inazuma",
+      "sha256": "35121ac9051de32442f58b2c62e732d45236df6cdab9961831a4db80c30fbe72"
+    },
+    "ground/liyue": {
+      "bytes": 94155,
+      "extension": ".json",
+      "scope": "ground/liyue",
+      "sha256": "93c700eaf69423a8db42eb5164e12f0138d483c20ebae98025c17ab0e201a95e"
+    },
+    "ground/mondstadt": {
+      "bytes": 77291,
+      "extension": ".json",
+      "scope": "ground/mondstadt",
+      "sha256": "d46c78463b2e6f23e1a3a9ed838470984a492cc632fb7ad600d01a188294cb1a"
+    },
+    "ground/natlan": {
+      "bytes": 81090,
+      "extension": ".json",
+      "scope": "ground/natlan",
+      "sha256": "13774d92632d4e9bd5316d236aeb2ee060ab4425f5b7148c32240ec5f87f0d41"
+    },
+    "ground/nod-krai": {
+      "bytes": 77668,
+      "extension": ".json",
+      "scope": "ground/nod-krai",
+      "sha256": "d0d1cdbf36406372996f99b54750c0028ad25f45bf1cc45a303ea8347d8edae0"
+    },
+    "ground/snezhnaya": {
+      "bytes": 112,
+      "extension": ".json",
+      "scope": "ground/snezhnaya",
+      "sha256": "d87923cba3cbeeb391b092d8ed7e826455d8a1871415267e24e8c2940d1429dd"
+    },
+    "ground/sumeru": {
+      "bytes": 99411,
+      "extension": ".json",
+      "scope": "ground/sumeru",
+      "sha256": "cea11e841e40c2bb7334790ea2675661f6e072cea1f99dd132a24ab5ed4a56c7"
+    },
+    "ground/windrise": {
+      "bytes": 272583,
+      "extension": ".json",
+      "scope": "ground/windrise",
+      "sha256": "aa6f10e68b31aaf72c4f6b94fd72caa064e272cc02cd9463ca77f3040e5ceee6"
+    },
+    "home/areas": {
+      "bytes": 7802,
+      "extension": ".json",
+      "scope": "home/areas",
+      "sha256": "03c00981091c0cd145ba88f463ec7ba94838ecdc01fa5b6f5641a86ffb8a2eab"
+    },
+    "home/blueprints": {
+      "bytes": 180405,
+      "extension": ".json",
+      "scope": "home/blueprints",
+      "sha256": "8580042f812afd3ac0d2b906643b74e01c10c1ec75e953d226f1215a2ca10a43"
+    },
+    "home/events": {
+      "bytes": 18660,
+      "extension": ".json",
+      "scope": "home/events",
+      "sha256": "304155cd8a3fe4f8f8c0d39226fd872de6f502a78e043250efce143a1f6f9f0a"
+    },
+    "home/furnishings": {
+      "bytes": 117417,
+      "extension": ".json",
+      "scope": "home/furnishings",
+      "sha256": "cd8223500a25104a341c4a0bf7a2f23a75091f8932983e3ed90ff27eeeaf33f0"
+    },
+    "home/gardens": {
+      "bytes": 3125,
+      "extension": ".json",
+      "scope": "home/gardens",
+      "sha256": "acc9258ab578ec48a029ea602062a02f21182392c2dd9827ce66831a9782060f"
+    },
+    "home/levels": {
+      "bytes": 1385,
+      "extension": ".json",
+      "scope": "home/levels",
+      "sha256": "ef2801f4ad2be2af8d9eaade9f8a4c9c0f0dcd7e456b3e34cf982269f9314410"
+    },
+    "hud/interfaceRects": {
+      "bytes": 18308,
+      "extension": ".json",
+      "scope": "hud/interfaceRects",
+      "sha256": "c5b05d58ec2de204b4a2cc488cb0cbabb2aedad4581601a183456df4e6cdd87e"
+    },
+    "imaginarium/difficulties": {
+      "bytes": 12550,
+      "extension": ".json",
+      "scope": "imaginarium/difficulties",
+      "sha256": "aa1565bc6f87c0f500a936aed049337ee7fb4cea3e79c22604f4718ed5c75d8a"
+    },
+    "imaginarium/seasons": {
+      "bytes": 20858,
+      "extension": ".json",
+      "scope": "imaginarium/seasons",
+      "sha256": "55290ca0d89c13a5fd110db50c24510bf2a1a2900168f6ee15ed6bef322e2d52"
+    },
+    "imaginarium/stages": {
+      "bytes": 139721,
+      "extension": ".json",
+      "scope": "imaginarium/stages",
+      "sha256": "3fee7432ec79c70c1b9b737547bd4510ab1eb5dd761b17140b43b9577e040aba"
+    },
+    "items/materials": {
+      "bytes": 525754,
+      "extension": ".json",
+      "scope": "items/materials",
+      "sha256": "671810b2d9025fd5f75755d4c139dba2c70144fd14b6599ce16a7b59160449c4"
+    },
+    "items/reliquarySets": {
+      "bytes": 464307,
+      "extension": ".json",
+      "scope": "items/reliquarySets",
+      "sha256": "72945739c7b2d0046a8f556df1192cc9371d4e2110351888e539239744b5b803"
+    },
+    "leyLine/cities": {
+      "bytes": 99,
+      "extension": ".json",
+      "scope": "leyLine/cities",
+      "sha256": "243c5dd1150e6d7446992a589f442147f76a68e80452684206cba096a0c9a938"
+    },
+    "leyLine/regions/1": {
+      "bytes": 7230,
+      "extension": ".json",
+      "scope": "leyLine/regions/1",
+      "sha256": "8d9d964493c05110501aa440cd038fa6285e58474d917234e5a1518e1494b4af"
+    },
+    "leyLine/regions/2": {
+      "bytes": 9627,
+      "extension": ".json",
+      "scope": "leyLine/regions/2",
+      "sha256": "1e1e3409c009cbdd3ec9535a9206636f1a7b886037362f3269b9b284e3a634b4"
+    },
+    "leyLine/regions/3": {
+      "bytes": 7137,
+      "extension": ".json",
+      "scope": "leyLine/regions/3",
+      "sha256": "30f57a1302b7d196d1d37daf33e9fbd5334d6c9c325279af4875114b1520c873"
+    },
+    "leyLine/regions/4": {
+      "bytes": 8569,
+      "extension": ".json",
+      "scope": "leyLine/regions/4",
+      "sha256": "d3da571d5fe4de3cdc42d04bab6d6f959d768ab20ebdfe23cf1d69b850d92bda"
+    },
+    "leyLine/regions/5": {
+      "bytes": 6359,
+      "extension": ".json",
+      "scope": "leyLine/regions/5",
+      "sha256": "e38bc86bd24a772de9810fd12c091018de6328a1467bc0117ed69b2bc27becaa"
+    },
+    "leyLine/regions/6": {
+      "bytes": 7661,
+      "extension": ".json",
+      "scope": "leyLine/regions/6",
+      "sha256": "a1789a68e3c8411cc926ed40f8a3cc7bcf615932ecc17c09c3a6d30b6b3b327b"
+    },
+    "leyLine/regions/7": {
+      "bytes": 5323,
+      "extension": ".json",
+      "scope": "leyLine/regions/7",
+      "sha256": "31e35c02faab2102b80fe2a5c5e7a7f636db75979541af38d91521b07b70b591"
+    },
+    "leyLine/regions/8": {
+      "bytes": 4253,
+      "extension": ".json",
+      "scope": "leyLine/regions/8",
+      "sha256": "794b5976a28eeca3cba0b7ec184a3027bf8d6081589da5489f7d725b284ef154"
+    },
+    "login/ageRating": {
+      "bytes": 5275,
+      "extension": ".json",
+      "scope": "login/ageRating",
+      "sha256": "7ce216a9ecf5b1c0ee6b01f96452c2c3d56e8b650c9ea1eb917ee8aeb3f9f49e"
+    },
+    "login/cloudLayerTextures": {
+      "bytes": 9187,
+      "extension": ".json",
+      "scope": "login/cloudLayerTextures",
+      "sha256": "e060aae16bc782fa7a681f087c989f50687ab34d1fa20c58a3b968551d60466e"
+    },
+    "login/clouds": {
+      "bytes": 45237,
+      "extension": ".json",
+      "scope": "login/clouds",
+      "sha256": "dfad60ed52fb22816bcd2de04a589fc3b8ddd9c71e7964498bce013f1a2e5985"
+    },
+    "login/door": {
+      "bytes": 114934,
+      "extension": ".json",
+      "scope": "login/door",
+      "sha256": "d8d9e7f1aea8c38cceeeda78f1938cd16cc88741763bb56810da6381964be9ee"
+    },
+    "login/hulls": {
+      "bytes": 60659,
+      "extension": ".json",
+      "scope": "login/hulls",
+      "sha256": "c72a961fd9374f6b5f0a27b55c15b6dacc73824f043b85e9227d5308d888dfb3"
+    },
+    "login/interfaceClips": {
+      "bytes": 5495,
+      "extension": ".json",
+      "scope": "login/interfaceClips",
+      "sha256": "0ca349073f22513062f7789560d7dbeed02581b2ac7a5f2236896f4babc0a9f4"
+    },
+    "login/interfaceRects": {
+      "bytes": 4487,
+      "extension": ".json",
+      "scope": "login/interfaceRects",
+      "sha256": "493e210c8929aaf1dfe176c3cb3964c3fc338fcdfc7ade83050ab43a40b7f7e5"
+    },
+    "login/music": {
+      "bytes": 94801,
+      "extension": ".json",
+      "scope": "login/music",
+      "sha256": "060df2b95844a09d4ab3f283f95cecd91e177da1b64594311a5d998f69af187c"
+    },
+    "login/paving": {
+      "bytes": 93879,
+      "extension": ".json",
+      "scope": "login/paving",
+      "sha256": "a92ca505bf76aca8793b1df2e553f09b29be291878b92a25e5aaa923591d5753"
+    },
+    "login/scroll": {
+      "bytes": 98,
+      "extension": ".json",
+      "scope": "login/scroll",
+      "sha256": "46f5590bf46645619b6a2b2573403b5a0a1ab1b2cf71929456a604a2121db9a2"
+    },
+    "login/sky": {
+      "bytes": 1141,
+      "extension": ".json",
+      "scope": "login/sky",
+      "sha256": "df3801d5cdce5b88d57a8d263bca13b47d376992b6010a7aface999fec34faa1"
+    },
+    "login/sounds": {
+      "bytes": 37828,
+      "extension": ".json",
+      "scope": "login/sounds",
+      "sha256": "5523c4b4cee27020c460a2a08a930025fe6b69c05e10ffada78f373da3b8df97"
+    },
+    "login/stone": {
+      "bytes": 775,
+      "extension": ".json",
+      "scope": "login/stone",
+      "sha256": "d912643bb799d5fcb9cce87486aca513d495a14cf3b1a53f3f272c968acc4076"
+    },
+    "login/stoneLight": {
+      "bytes": 2283,
+      "extension": ".json",
+      "scope": "login/stoneLight",
+      "sha256": "6a52402c91cd589c4df18389bffda0cc49e5afb65eaf4f36798cdbacb4924b57"
+    },
+    "login/towers": {
+      "bytes": 478757,
+      "extension": ".json",
+      "scope": "login/towers",
+      "sha256": "4d7c89359c5e979c1030a3d4df1e61110c221ae8df2d43977e45d5379bbb1cbb"
+    },
+    "login/walkway": {
+      "bytes": 15762,
+      "extension": ".json",
+      "scope": "login/walkway",
+      "sha256": "7ffee328bf0ef48dfcc62475d5573f0479a2c7fcb789cd9cf8340cf3dde2cc4c"
+    },
+    "mail/maxCount": {
+      "bytes": 4,
+      "extension": ".json",
+      "scope": "mail/maxCount",
+      "sha256": "40510175845988f13f6162ed8526f0b09f73384467fa855e1e79b44a56562a58"
+    },
+    "mailText/ChineseSimplified": {
+      "bytes": 65166,
+      "extension": ".json",
+      "scope": "mailText/ChineseSimplified",
+      "sha256": "77e4c5c80860dad15fd86d0b30a89bc4da8f6a0ab8fd461f7e63be89fe0c5a19"
+    },
+    "mailText/ChineseTraditional": {
+      "bytes": 64481,
+      "extension": ".json",
+      "scope": "mailText/ChineseTraditional",
+      "sha256": "0682ec1dec0aacca76dcfbe73ca418d89f0b0ed3ec91dc96ad7f13c1db184cb8"
+    },
+    "mailText/English": {
+      "bytes": 70650,
+      "extension": ".json",
+      "scope": "mailText/English",
+      "sha256": "ea7c839f8b59505188728531abb5b847d9abbbca72a7a929add3d4ac6746a9c3"
+    },
+    "mailText/French": {
+      "bytes": 87407,
+      "extension": ".json",
+      "scope": "mailText/French",
+      "sha256": "e130bb2e6b72b1a71ce7dbcccab3d7bee759a62c57236cdcefbf1cf4556e4fa5"
+    },
+    "mailText/German": {
+      "bytes": 87798,
+      "extension": ".json",
+      "scope": "mailText/German",
+      "sha256": "fc71b6a7fded212f117a4bb740a786f93d81598d29cca545815b8cac885acde1"
+    },
+    "mailText/Indonesian": {
+      "bytes": 74787,
+      "extension": ".json",
+      "scope": "mailText/Indonesian",
+      "sha256": "2d2e9df90ec607c02bff3d9c02148961b8b2e5e2d3e9d83e8b5a2236313377db"
+    },
+    "mailText/Italian": {
+      "bytes": 78849,
+      "extension": ".json",
+      "scope": "mailText/Italian",
+      "sha256": "a3fecfb4177811ffe736430c4dfc0ad7d7dba16ae29a69c47abc21e760c1c509"
+    },
+    "mailText/Japanese": {
+      "bytes": 88408,
+      "extension": ".json",
+      "scope": "mailText/Japanese",
+      "sha256": "57f19f24b32ae8c83ad6d05f258ce291578f470ce782c6405ab1a86104de47d2"
+    },
+    "mailText/Korean": {
+      "bytes": 74827,
+      "extension": ".json",
+      "scope": "mailText/Korean",
+      "sha256": "455f2783f29f2990edb7b6eb54bd678b47052575578c3168edb76d28dd181292"
+    },
+    "mailText/Portuguese": {
+      "bytes": 79590,
+      "extension": ".json",
+      "scope": "mailText/Portuguese",
+      "sha256": "c462503a15c921c228c2e1c2f3e5e853ca78a207429f73ca8fec592431c7d7aa"
+    },
+    "mailText/Russian": {
+      "bytes": 118220,
+      "extension": ".json",
+      "scope": "mailText/Russian",
+      "sha256": "0a02bccffe88d6da9427e43947b17d93c7e75f03ab2257ff3e16694569c30f24"
+    },
+    "mailText/Spanish": {
+      "bytes": 75617,
+      "extension": ".json",
+      "scope": "mailText/Spanish",
+      "sha256": "321e91d13af406cf716ab87bbb2f5651eb3a32e15bf7fc1c8e63c10a7eee151c"
+    },
+    "mailText/Thai": {
+      "bytes": 174581,
+      "extension": ".json",
+      "scope": "mailText/Thai",
+      "sha256": "bfc1b9dc01a7ad48fe19d8e1883af6652c3ef4f463ee0289935aed6b6e4b657e"
+    },
+    "mailText/Turkish": {
+      "bytes": 75585,
+      "extension": ".json",
+      "scope": "mailText/Turkish",
+      "sha256": "9139420a7c768e80464323555a346e4563231b7984081805a5ae9ded48962e37"
+    },
+    "mailText/Vietnamese": {
+      "bytes": 88725,
+      "extension": ".json",
+      "scope": "mailText/Vietnamese",
+      "sha256": "6c99e7ef35ff20ab50aff55c6f3356a2f0702f3c756163ea560a29ce20b8c4fe"
+    },
+    "mapLabels/subareas": {
+      "bytes": 29342,
+      "extension": ".json",
+      "scope": "mapLabels/subareas",
+      "sha256": "74c603cad1d55802e6bb570e16c2fb7df8cf6c2679db4ca3f05832eccfb5e1a7"
+    },
+    "materialSources/fontaine": {
+      "bytes": 31010,
+      "extension": ".json",
+      "scope": "materialSources/fontaine",
+      "sha256": "dd730a409e9305cc24f68413afc34378c3a753f95225af1b63463467afcf38c9"
+    },
+    "materialSources/inazuma": {
+      "bytes": 34754,
+      "extension": ".json",
+      "scope": "materialSources/inazuma",
+      "sha256": "5a105101f08ea684fe745bda7e7ac276074431cd0fe8f06e0a6e7cc4a75df6d9"
+    },
+    "materialSources/liyue": {
+      "bytes": 38086,
+      "extension": ".json",
+      "scope": "materialSources/liyue",
+      "sha256": "fa07fc22e2c20ae060f5fd2eb4e07eb56c0cbfa9e42833944d9b4168892833fb"
+    },
+    "materialSources/mondstadt": {
+      "bytes": 31983,
+      "extension": ".json",
+      "scope": "materialSources/mondstadt",
+      "sha256": "9d721b37369182ecdf1a7e50d529db5098caa2a16995d029610248e7352e24db"
+    },
+    "materialSources/natlan": {
+      "bytes": 66176,
+      "extension": ".json",
+      "scope": "materialSources/natlan",
+      "sha256": "9fc885fb38a2b84c6057b7698e4da47eb73036751193ec9682b41c9ff9c71f96"
+    },
+    "materialSources/nod-krai": {
+      "bytes": 35676,
+      "extension": ".json",
+      "scope": "materialSources/nod-krai",
+      "sha256": "43b03cd81376d1b2266c4b1f1eca0bbeee32bfb2d276dcd0cff1f7b7ade1eed9"
+    },
+    "materialSources/snezhnaya": {
+      "bytes": 33176,
+      "extension": ".json",
+      "scope": "materialSources/snezhnaya",
+      "sha256": "df1a92a20d45808a3ff128e14fa64bbd881f78e8b830349b1b37b222549c380b"
+    },
+    "materialSources/sumeru": {
+      "bytes": 32926,
+      "extension": ".json",
+      "scope": "materialSources/sumeru",
+      "sha256": "11f934951e0b48642d54f6540bbe8cdf41fd831cf5eba69325956b98c7f26b77"
+    },
+    "miningOutcrops/fontaine": {
+      "bytes": 3258,
+      "extension": ".json",
+      "scope": "miningOutcrops/fontaine",
+      "sha256": "6fd4f377c1bc4c304da55397db3f8a35d58382bf15a7cf797cb2e816a3c46590"
+    },
+    "miningOutcrops/inazuma": {
+      "bytes": 3835,
+      "extension": ".json",
+      "scope": "miningOutcrops/inazuma",
+      "sha256": "0bd4c62ce9e4321d23ea7f78404c79c19b8385b286a6575d7207d5415dd25427"
+    },
+    "miningOutcrops/liyue": {
+      "bytes": 5072,
+      "extension": ".json",
+      "scope": "miningOutcrops/liyue",
+      "sha256": "f3cbbd736d7f4f14368e6d115b03a3d85a9f215ead302f8417599662ed523c65"
+    },
+    "miningOutcrops/mondstadt": {
+      "bytes": 3818,
+      "extension": ".json",
+      "scope": "miningOutcrops/mondstadt",
+      "sha256": "19ab20dd0e4c96f8900ca1daac085a6cb835facf02715710aad5239413e08f85"
+    },
+    "miningOutcrops/natlan": {
+      "bytes": 3091,
+      "extension": ".json",
+      "scope": "miningOutcrops/natlan",
+      "sha256": "b2cb34d71753188b6708142604b990ba4b4d8dce6b1bbb98fc06c347d3ccf8a3"
+    },
+    "miningOutcrops/nod-krai": {
+      "bytes": 2140,
+      "extension": ".json",
+      "scope": "miningOutcrops/nod-krai",
+      "sha256": "fe6f4238bb7d8342a192d471f0c507901474be0cc87724f8c0d93a62d6d531b4"
+    },
+    "miningOutcrops/snezhnaya": {
+      "bytes": 1321,
+      "extension": ".json",
+      "scope": "miningOutcrops/snezhnaya",
+      "sha256": "0a98db41f60142161955c172cdec0914b6438f7ba6a90688999d6c24f5d0a5d7"
+    },
+    "miningOutcrops/sumeru": {
+      "bytes": 3145,
+      "extension": ".json",
+      "scope": "miningOutcrops/sumeru",
+      "sha256": "6c81e550b961784524938bcd8abfcb988fa76ea4659ff6a226e33a7c8f5b7569"
+    },
+    "nameText/ChineseSimplified": {
+      "bytes": 832271,
+      "extension": ".json",
+      "scope": "nameText/ChineseSimplified",
+      "sha256": "d27fa9130c20f8862dbbf1b9074dd36804887a08f27a8fd54d8d66a3b55f4bdb"
+    },
+    "nameText/ChineseTraditional": {
+      "bytes": 831872,
+      "extension": ".json",
+      "scope": "nameText/ChineseTraditional",
+      "sha256": "d1db97c16634b7f0d6725d5f17ee7932c74515cee1b18837b9f4e38b8179344b"
+    },
+    "nameText/English": {
+      "bytes": 950869,
+      "extension": ".json",
+      "scope": "nameText/English",
+      "sha256": "b38810083da2531283ae9aec2b9e037fef3778a94aefea56054c9bfaea1aeeb9"
+    },
+    "nameText/French": {
+      "bytes": 1100929,
+      "extension": ".json",
+      "scope": "nameText/French",
+      "sha256": "e56e7ff45f45f61a3f356c0c93e6bc564843f35ceb7e292645e2456a469d1960"
+    },
+    "nameText/German": {
+      "bytes": 1063056,
+      "extension": ".json",
+      "scope": "nameText/German",
+      "sha256": "b381466cc6be7462e8dc801cfad8962a3a7b36f2c57b146a80f0eceaf83c21c0"
+    },
+    "nameText/Indonesian": {
+      "bytes": 1001806,
+      "extension": ".json",
+      "scope": "nameText/Indonesian",
+      "sha256": "732e189e13cf6b90ae878a97e12110d81ab2d010f3d2819b7319d8db23aeabf3"
+    },
+    "nameText/Italian": {
+      "bytes": 1056189,
+      "extension": ".json",
+      "scope": "nameText/Italian",
+      "sha256": "1ad86f418f85951f671e9d948425b0b3d477689d6b187f5a514828f39150e7d1"
+    },
+    "nameText/Japanese": {
+      "bytes": 984121,
+      "extension": ".json",
+      "scope": "nameText/Japanese",
+      "sha256": "6faf79de793eaad6184498ddd3c56b96236d32b270cebc29c545133909589f80"
+    },
+    "nameText/Korean": {
+      "bytes": 1015776,
+      "extension": ".json",
+      "scope": "nameText/Korean",
+      "sha256": "a893087c80fb6499cb2c735612030f1d8bbe4904120656d7a0ac2004b8f8e671"
+    },
+    "nameText/Portuguese": {
+      "bytes": 1043634,
+      "extension": ".json",
+      "scope": "nameText/Portuguese",
+      "sha256": "d7a24466b3aa42c91c757ad6fa0c569bab740053a0a101267bb8b76075552af3"
+    },
+    "nameText/Russian": {
+      "bytes": 1537411,
+      "extension": ".json",
+      "scope": "nameText/Russian",
+      "sha256": "58b528f91aaf91e44bee2b849b03d13f64762a19bbaa229da45975f3641213c4"
+    },
+    "nameText/Spanish": {
+      "bytes": 1075019,
+      "extension": ".json",
+      "scope": "nameText/Spanish",
+      "sha256": "dd6a9d4b88c54d5952457514ff553bcadc47a87a92d7499472f4d9395d147c56"
+    },
+    "nameText/Thai": {
+      "bytes": 1798118,
+      "extension": ".json",
+      "scope": "nameText/Thai",
+      "sha256": "d840ccc05e2cb786a785ff3d4b35f188163f427d4a037bccd1d54d0c96c014e9"
+    },
+    "nameText/Turkish": {
+      "bytes": 993264,
+      "extension": ".json",
+      "scope": "nameText/Turkish",
+      "sha256": "53feb3d8ee7b7f591a60e31c4491d7362c2c815d92214cf6d5fcafd437f5da82"
+    },
+    "nameText/Vietnamese": {
+      "bytes": 1122677,
+      "extension": ".json",
+      "scope": "nameText/Vietnamese",
+      "sha256": "550a0f80f55621ec26f0888672d6db2a744aec2fb2296afa2bc6ad101c1cc5e2"
+    },
+    "oculi/fontaine": {
+      "bytes": 15904,
+      "extension": ".json",
+      "scope": "oculi/fontaine",
+      "sha256": "d97ef5fdfc7d57bd9a77b16fa9b5be490faf915739376cb58fd5f57f053e3beb"
+    },
+    "oculi/inazuma": {
+      "bytes": 14786,
+      "extension": ".json",
+      "scope": "oculi/inazuma",
+      "sha256": "c74d1ce0fa378cf61fa731acf4849c68348dba44cccb73ab738540a5c7ec5803"
+    },
+    "oculi/liyue": {
+      "bytes": 10005,
+      "extension": ".json",
+      "scope": "oculi/liyue",
+      "sha256": "91e074cd95fcfe3607f121f69a42dc1096829d888df53874f34903069b90b29e"
+    },
+    "oculi/mondstadt": {
+      "bytes": 4972,
+      "extension": ".json",
+      "scope": "oculi/mondstadt",
+      "sha256": "6835d33a90565b391af1fab194b16dc2bd02b8a0d6f9f355fee8842cdd4dda4b"
+    },
+    "oculi/natlan": {
+      "bytes": 19987,
+      "extension": ".json",
+      "scope": "oculi/natlan",
+      "sha256": "e215f9cc6939be2b6f229fe2f0e6f7d380cd45836d095dda358375ebd8672b54"
+    },
+    "oculi/nod-krai": {
+      "bytes": 15634,
+      "extension": ".json",
+      "scope": "oculi/nod-krai",
+      "sha256": "be39c23b585a63c3d1a9c954ca162dbfcf1bff00ba41ce5d7136129018b2ed86"
+    },
+    "oculi/snezhnaya": {
+      "bytes": 11167,
+      "extension": ".json",
+      "scope": "oculi/snezhnaya",
+      "sha256": "bbf624350c07fb18d7575b4216c10a7a76692e2584dc005986202f482d139f83"
+    },
+    "oculi/sumeru": {
+      "bytes": 22147,
+      "extension": ".json",
+      "scope": "oculi/sumeru",
+      "sha256": "1cb234b54eee003ea72d95490e9df6fd9755110df5df4a9c67412cd226a0fabb"
+    },
+    "offeringPlaces/inazuma": {
+      "bytes": 85,
+      "extension": ".json",
+      "scope": "offeringPlaces/inazuma",
+      "sha256": "d51b6dd1d9b1e2b79ba2a75ac8638c5409985e0d358265f5c86890534d20a039"
+    },
+    "offeringPlaces/natlan": {
+      "bytes": 178,
+      "extension": ".json",
+      "scope": "offeringPlaces/natlan",
+      "sha256": "1ab78ed85568fa0da8064ca0a715e1381fd07d4ac9edafba32e8d2a8fbdb228c"
+    },
+    "offeringPlaces/sumeru": {
+      "bytes": 169,
+      "extension": ".json",
+      "scope": "offeringPlaces/sumeru",
+      "sha256": "c2c27f2dba481cdb876136bcafb138794feba947e2c8ded2117194e166c7429c"
+    },
+    "offerings/amritaPool": {
+      "bytes": 4807,
+      "extension": ".json",
+      "scope": "offerings/amritaPool",
+      "sha256": "ef862b60868bf2fd406730bbeba2c833195b76d6e491038051dd0b2dee1bee50"
+    },
+    "offerings/fountainOfLucine": {
+      "bytes": 10949,
+      "extension": ".json",
+      "scope": "offerings/fountainOfLucine",
+      "sha256": "af3e5515bfd01fb600db016afe356e7f8f96e5c65fa2d2d46ff370e8b00fae15"
+    },
+    "offerings/frostbearingTree": {
+      "bytes": 2624,
+      "extension": ".json",
+      "scope": "offerings/frostbearingTree",
+      "sha256": "cd94afafb2a7d4b641a4be75b93593e5e6b5c4b940fc52b5298d689b2978c269"
+    },
+    "offerings/lumenstoneAdjuvant": {
+      "bytes": 2299,
+      "extension": ".json",
+      "scope": "offerings/lumenstoneAdjuvant",
+      "sha256": "7d484ee6c5206450fff14b1a16488f42dd1eb5633ea8182058e9dcc0f9f30abe"
+    },
+    "offerings/memoryCore": {
+      "bytes": 2172,
+      "extension": ".json",
+      "scope": "offerings/memoryCore",
+      "sha256": "b73c62c7413a77a796149ba2bfd7f04d382fa445ab556395f2a246b1a3dc07ee"
+    },
+    "offerings/nordkalaiOffering01": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering01",
+      "sha256": "9ec52e1a6f99df7155bace30cd58256e23676995e7553fa527723671be0ae93d"
+    },
+    "offerings/nordkalaiOffering02": {
+      "bytes": 1135,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering02",
+      "sha256": "3e7bb2302da85f1ec9cd760145c02db7240e149eeff9e7e3bc24e56bf1e38e0c"
+    },
+    "offerings/nordkalaiOffering03": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering03",
+      "sha256": "06501ab0d68d2287cc72f49d78b58c86d83cbf8fb25ab4bc4a2bff16dbabb582"
+    },
+    "offerings/nordkalaiOffering04": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering04",
+      "sha256": "c8e4ec15a4e32cd40ea4d2a67695ce938e5bf9ec0a28273fea6b37078fe867e3"
+    },
+    "offerings/nordkalaiOffering05": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering05",
+      "sha256": "95e2be3ea06c61498d88c3775ac11ce5f5c171d40250f8aa3f193a4783e134b4"
+    },
+    "offerings/nordkalaiOffering06": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering06",
+      "sha256": "782299255bf6be22b1ffc2e21d65eaade131e4259b72662e1305d7113c854b59"
+    },
+    "offerings/nordkalaiOffering07": {
+      "bytes": 1070,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering07",
+      "sha256": "abd067cc91779ba8d5ea0b99f919520a77a8806b34608b7174a04bc37f428cf9"
+    },
+    "offerings/nordkalaiOffering08": {
+      "bytes": 1070,
+      "extension": ".json",
+      "scope": "offerings/nordkalaiOffering08",
+      "sha256": "89f28186b31f67a167abf3432f2a47709ecda7843622beb30bd3ccb29327fa54"
+    },
+    "offerings/primalFlameResonance": {
+      "bytes": 541,
+      "extension": ".json",
+      "scope": "offerings/primalFlameResonance",
+      "sha256": "a751407f370cfa07c03f5ba6410fd6df040e9223f98931f19316c279515ace06"
+    },
+    "offerings/sacredSakura": {
+      "bytes": 10949,
+      "extension": ".json",
+      "scope": "offerings/sacredSakura",
+      "sha256": "80635f16b10ea175400130d0b6c144411e316acc57da8fa1854b03396a0a0fc9"
+    },
+    "offerings/shadowRealmAnalyzer": {
+      "bytes": 1503,
+      "extension": ".json",
+      "scope": "offerings/shadowRealmAnalyzer",
+      "sha256": "8ec87d62cfb9e1bea4b46fb7ac54925cbfa671f6d387a4f6c51c92c7144b2766"
+    },
+    "offerings/snezhnayaOffering01": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/snezhnayaOffering01",
+      "sha256": "6df238199534382bab5dcc1dfb9248bc9f304eb0c276930ef55150b4eb277d98"
+    },
+    "offerings/snezhnayaOffering02": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/snezhnayaOffering02",
+      "sha256": "e7b03014493f2c1157ab6816e1dfc6df27c7d9c0f463500809340e938632dacf"
+    },
+    "offerings/snezhnayaOffering03": {
+      "bytes": 1103,
+      "extension": ".json",
+      "scope": "offerings/snezhnayaOffering03",
+      "sha256": "30770fc3a921b44223032035fef65909e596a0073db43ab91320a73ff705d237"
+    },
+    "offerings/tonaFlame": {
+      "bytes": 10733,
+      "extension": ".json",
+      "scope": "offerings/tonaFlame",
+      "sha256": "4ee500689159256ec83981a44f4370d0ee954e81960c11cb0a55e86ea30f9979"
+    },
+    "offerings/treeOfDreams": {
+      "bytes": 10949,
+      "extension": ".json",
+      "scope": "offerings/treeOfDreams",
+      "sha256": "a5d65a2b1f0b9a532d87963bf78645173c75466888d25fa5c6bfb83a8d99ff13"
+    },
+    "offerings/votiveRainjade": {
+      "bytes": 2203,
+      "extension": ".json",
+      "scope": "offerings/votiveRainjade",
+      "sha256": "91c49e0eae928d25760499635a36dfa4ac76657017c95ed02a770d6fe49ef142"
+    },
+    "puzzles/fontaine": {
+      "bytes": 17431,
+      "extension": ".json",
+      "scope": "puzzles/fontaine",
+      "sha256": "201bcec1bfce2b1e1e70aa2c192eb82a8929b0a6d3725bbaad725d3e95c6b2b5"
+    },
+    "puzzles/inazuma": {
+      "bytes": 25352,
+      "extension": ".json",
+      "scope": "puzzles/inazuma",
+      "sha256": "8045952760df4e4861401146a465d32eb5828d009a8f10270f673015c072b6ba"
+    },
+    "puzzles/liyue": {
+      "bytes": 28809,
+      "extension": ".json",
+      "scope": "puzzles/liyue",
+      "sha256": "84f66d76254be2ca7a8626796a8fe975577e2fc4ad6e4e54199ee1bbb0ea23a3"
+    },
+    "puzzles/mondstadt": {
+      "bytes": 18562,
+      "extension": ".json",
+      "scope": "puzzles/mondstadt",
+      "sha256": "fc46af71e3e82fef3d250c6972013e1daae9faed0870f76ddc5f65441c1a03d9"
+    },
+    "puzzles/natlan": {
+      "bytes": 9099,
+      "extension": ".json",
+      "scope": "puzzles/natlan",
+      "sha256": "3925cc2bb3531f6750b4460f4b644af219410faf6bc8f022de9d0bd72f2d5a22"
+    },
+    "puzzles/nod-krai": {
+      "bytes": 3071,
+      "extension": ".json",
+      "scope": "puzzles/nod-krai",
+      "sha256": "8ca0e6d92a3582b4220dfcc63926b19cd89986fcd991d97f047f244a27633dc9"
+    },
+    "puzzles/snezhnaya": {
+      "bytes": 4150,
+      "extension": ".json",
+      "scope": "puzzles/snezhnaya",
+      "sha256": "506e317f1a52137b425825ebd93a8e69f7cb6e25cc50405e9f7cf16e99e0da37"
+    },
+    "puzzles/sumeru": {
+      "bytes": 46683,
+      "extension": ".json",
+      "scope": "puzzles/sumeru",
+      "sha256": "692e4c17698d750121ae86289bfb851d68ee4a92c1dd9f4d89598983c965350d"
+    },
+    "questText/ChineseSimplified": {
+      "bytes": 136325,
+      "extension": ".json",
+      "scope": "questText/ChineseSimplified",
+      "sha256": "2694dc2c6ed70b0af450fb905f7d07207e14bed988cf3afb827eaf8c3b400c94"
+    },
+    "questText/ChineseTraditional": {
+      "bytes": 138680,
+      "extension": ".json",
+      "scope": "questText/ChineseTraditional",
+      "sha256": "1112bab4fa7881e1c8038bbc81ecb20b3f48aabb3a8dd58a479d5674894ee259"
+    },
+    "questText/English": {
+      "bytes": 158337,
+      "extension": ".json",
+      "scope": "questText/English",
+      "sha256": "8601a81142b971acae895413832a723edef21d21a78a8db111473cbfeecc44c7"
+    },
+    "questText/French": {
+      "bytes": 171685,
+      "extension": ".json",
+      "scope": "questText/French",
+      "sha256": "02db6fa942b25db390492cd8d9ca1904893fff6b5aba1e4da637e2ea71b79366"
+    },
+    "questText/German": {
+      "bytes": 173504,
+      "extension": ".json",
+      "scope": "questText/German",
+      "sha256": "744bdc1a1e680df247813e8ab287c3d8b31290d9dc52edfba2681ac02a06f012"
+    },
+    "questText/Indonesian": {
+      "bytes": 154127,
+      "extension": ".json",
+      "scope": "questText/Indonesian",
+      "sha256": "3986f4f52b8b2575a150100eec5c403536a299ac0e3d358f47728034fd104a1a"
+    },
+    "questText/Italian": {
+      "bytes": 164689,
+      "extension": ".json",
+      "scope": "questText/Italian",
+      "sha256": "64ad8d2219ac15ca51ca90f1012159aa9d831f0d567fadffc0b037e2efff7e6c"
+    },
+    "questText/Japanese": {
+      "bytes": 175107,
+      "extension": ".json",
+      "scope": "questText/Japanese",
+      "sha256": "69c7baf671dd2d5b76262ad110af3c5fc8b827d41a5be0fc92994bcb6b619f9a"
+    },
+    "questText/Korean": {
+      "bytes": 156255,
+      "extension": ".json",
+      "scope": "questText/Korean",
+      "sha256": "bd3c5c32c243ace7b40eedc3bfad02504c283bc3fee58998d1ef24fbde3efd73"
+    },
+    "questText/Portuguese": {
+      "bytes": 161534,
+      "extension": ".json",
+      "scope": "questText/Portuguese",
+      "sha256": "af1fd42e1b352b650c05a524eb6f1cf6b3f30b32e6d1a4db7cc276d8c534be58"
+    },
+    "questText/Russian": {
+      "bytes": 225889,
+      "extension": ".json",
+      "scope": "questText/Russian",
+      "sha256": "a7986b26f8bcf6ee9a323af8012926b7490ec123a8e214104888cd9c074828eb"
+    },
+    "questText/Spanish": {
+      "bytes": 159923,
+      "extension": ".json",
+      "scope": "questText/Spanish",
+      "sha256": "38d64e5f0ae46b00f434ee16a8391ad96f575b09aa6532914c8ea3cad6794cbf"
+    },
+    "questText/Thai": {
+      "bytes": 321201,
+      "extension": ".json",
+      "scope": "questText/Thai",
+      "sha256": "d4273dff6cf9dff4c6117b13bfab802a12a3a867c514fb582912da8425c50f85"
+    },
+    "questText/Turkish": {
+      "bytes": 161386,
+      "extension": ".json",
+      "scope": "questText/Turkish",
+      "sha256": "8ea224533bb9a27eff9aca868ffb85f6187b8c55bfca025b1fdbfb50c6898a98"
+    },
+    "questText/Vietnamese": {
+      "bytes": 185443,
+      "extension": ".json",
+      "scope": "questText/Vietnamese",
+      "sha256": "225478864bc99f0cc581120c40bcfb580dd2ca0309a2ed96514706f9681fbfe7"
+    },
+    "quests/11018": {
+      "bytes": 31123,
+      "extension": ".json",
+      "scope": "quests/11018",
+      "sha256": "7dd54d49d9386b559d6552be0f5b0e763250b51c6049acd2180599ff01a82590"
+    },
+    "quests/11019": {
+      "bytes": 42213,
+      "extension": ".json",
+      "scope": "quests/11019",
+      "sha256": "9ca162a661ffd4097aa4cd4fdcb4d753f636d6a32b96355596313817283b7b1d"
+    },
+    "quests/11026": {
+      "bytes": 44620,
+      "extension": ".json",
+      "scope": "quests/11026",
+      "sha256": "24f73d7a10b2710a9da5067450be4acfca6e8462c46a9cb31873c792e6d2baa7"
+    },
+    "quests/20740": {
+      "bytes": 4524,
+      "extension": ".json",
+      "scope": "quests/20740",
+      "sha256": "37556fc1e5eabe3b271797ea2639a3e818b00242f477a6c3f10065095bbefd81"
+    },
+    "quests/20741": {
+      "bytes": 3102,
+      "extension": ".json",
+      "scope": "quests/20741",
+      "sha256": "b1927420b82ebec07dc14e3220ff54dd7a16eeb589c6f77469830ca71bcf136a"
+    },
+    "quests/20743": {
+      "bytes": 1495,
+      "extension": ".json",
+      "scope": "quests/20743",
+      "sha256": "081df0fd71e926ff6950686c2a4b827c43d5ee286a4102a7ae84cdac6320eb7c"
+    },
+    "quests/22111": {
+      "bytes": 5672,
+      "extension": ".json",
+      "scope": "quests/22111",
+      "sha256": "93f80abd241b5547dcd4e7ce01a3088a7f939c3ec73bc04cb7635fceded78dae"
+    },
+    "quests/2211102": {
+      "bytes": 2755,
+      "extension": ".json",
+      "scope": "quests/2211102",
+      "sha256": "cca7c61fd7518d894326fa9e7ce810e143791b254ff83d60bca8b9d05530d6ef"
+    },
+    "quests/351": {
+      "bytes": 809,
+      "extension": ".json",
+      "scope": "quests/351",
+      "sha256": "40d70082e11923a252ba9bd10e48020bb81696d001d8f6a1442c4664288436bb"
+    },
+    "quests/352": {
+      "bytes": 1646,
+      "extension": ".json",
+      "scope": "quests/352",
+      "sha256": "c513e67f6f12b5011b0cb3a107b146cf561ad7ead653337a23aadd79ddaa89c3"
+    },
+    "quests/384": {
+      "bytes": 1972,
+      "extension": ".json",
+      "scope": "quests/384",
+      "sha256": "2f2a97d8028161833e4a759443e7af56c92e16448ae7a773c3884657d9145adb"
+    },
+    "quests/396": {
+      "bytes": 13041,
+      "extension": ".json",
+      "scope": "quests/396",
+      "sha256": "e27b4d32e10bc065805aeb0e68e48d980469a100bc343b35de227601e6bc8a64"
+    },
+    "quests/39604": {
+      "bytes": 8186,
+      "extension": ".json",
+      "scope": "quests/39604",
+      "sha256": "bb6fb0753a35acf0e026f3f429e2f2861fd58321fa14f46f50221f0037b1cfe1"
+    },
+    "quests/70102": {
+      "bytes": 8658,
+      "extension": ".json",
+      "scope": "quests/70102",
+      "sha256": "b1c3adc465a56597daa1c8d0bfc309962e7c65fa4aaeffe158c5b5c88f7ce8b4"
+    },
+    "quests/70104": {
+      "bytes": 5941,
+      "extension": ".json",
+      "scope": "quests/70104",
+      "sha256": "541fa0ba28b553d63a2823e4f281935a6ceb22c0b418d4a05cbb278988412e11"
+    },
+    "quests/70106": {
+      "bytes": 6152,
+      "extension": ".json",
+      "scope": "quests/70106",
+      "sha256": "3536b0b8e9c7b04bea2a575a639be731ca7a9e057d5aa8369bd1533c610440ca"
+    },
+    "quests/70108": {
+      "bytes": 4554,
+      "extension": ".json",
+      "scope": "quests/70108",
+      "sha256": "53a66c0c63ae171b7c5788b3e418ba2e3462902fccd8e0c74023b85aad27a652"
+    },
+    "quests/70121": {
+      "bytes": 6638,
+      "extension": ".json",
+      "scope": "quests/70121",
+      "sha256": "b91a3c719d5eaec147ecd507afc9207c70c4efd0e30a1daccf8c3d0c3d7934e5"
+    },
+    "quests/70123": {
+      "bytes": 7656,
+      "extension": ".json",
+      "scope": "quests/70123",
+      "sha256": "0813c042e9b5c24e7219f461fa89e2d3b3ed362abb7e89dd80354de27ee4ad3e"
+    },
+    "quests/70141": {
+      "bytes": 11650,
+      "extension": ".json",
+      "scope": "quests/70141",
+      "sha256": "03f058a0d3ed386018d66ad2c387eb9117cf929c6d95dd77ab189b2f174af8af"
+    },
+    "quests/7070001": {
+      "bytes": 285,
+      "extension": ".json",
+      "scope": "quests/7070001",
+      "sha256": "c0b580b979393ba8fb0175c448e05b54e6bd34864cac0731d41c9dffb8e2e20c"
+    },
+    "quests/7070101": {
+      "bytes": 286,
+      "extension": ".json",
+      "scope": "quests/7070101",
+      "sha256": "b7edf43a1632c3ffe83f53a074477f929e5e0ae37052d9674ce99502d7dd5970"
+    },
+    "quests/7070201": {
+      "bytes": 287,
+      "extension": ".json",
+      "scope": "quests/7070201",
+      "sha256": "a0cc9e4b4a40ccf7e55924edc7cb9fb049c07cbbcac899595e9c872267e96e73"
+    },
+    "quests/7070301": {
+      "bytes": 285,
+      "extension": ".json",
+      "scope": "quests/7070301",
+      "sha256": "d42aae91838987d56541cb37ca5a8e3e13cc7f9a5667efab8799d4e250128193"
+    },
+    "quests/7070401": {
+      "bytes": 286,
+      "extension": ".json",
+      "scope": "quests/7070401",
+      "sha256": "e270402eff99162d362bf52ec25dd7d0b60c9560cdf4ac4cf59a66b0c36672dd"
+    },
+    "quests/7070501": {
+      "bytes": 286,
+      "extension": ".json",
+      "scope": "quests/7070501",
+      "sha256": "b58179e3ccc69ccec52db06a117172d5fdc9ff3cab5e0332724e4b97c108fb17"
+    },
+    "quests/7070601": {
+      "bytes": 287,
+      "extension": ".json",
+      "scope": "quests/7070601",
+      "sha256": "101973c37adb3076a6e206d5914c1ca57e1f54693553e1b4005583ef1f61e489"
+    },
+    "quests/7070701": {
+      "bytes": 286,
+      "extension": ".json",
+      "scope": "quests/7070701",
+      "sha256": "2200d2d56c94ae1bb5d4b7d235ec26eb8a9245f7a3b0577d4d6c731ab8a31189"
+    },
+    "quests/7070801": {
+      "bytes": 286,
+      "extension": ".json",
+      "scope": "quests/7070801",
+      "sha256": "04ab40d8fe21c68d23aeb9f538d7cd11f9d3d0101b831df4a086c4136c4d42af"
+    },
+    "quests/7070901": {
+      "bytes": 295,
+      "extension": ".json",
+      "scope": "quests/7070901",
+      "sha256": "0057584d85f8f264164b4186983bc7cc7735d5b3de137ad50c928b89fef4e05e"
+    },
+    "quests/7071001": {
+      "bytes": 294,
+      "extension": ".json",
+      "scope": "quests/7071001",
+      "sha256": "b8e99c95585a775b73852907035b6714cdb33f44d1e56b3bca9599340acbb265"
+    },
+    "quests/7071101": {
+      "bytes": 292,
+      "extension": ".json",
+      "scope": "quests/7071101",
+      "sha256": "9782875d2ae7ecaa293bb3f21f9d290874470f2730b98ab58a9e19bd191b5592"
+    },
+    "quests/7071201": {
+      "bytes": 285,
+      "extension": ".json",
+      "scope": "quests/7071201",
+      "sha256": "a047c8d88dc453176b94a15157b12a972c1434d4efb3c522ee5c04d6e7a3a250"
+    },
+    "quests/7071301": {
+      "bytes": 282,
+      "extension": ".json",
+      "scope": "quests/7071301",
+      "sha256": "37c239929acabc496c51f18cc08ff23fa9e80df4c06a72b9a12bdec7467efff3"
+    },
+    "quests/7071401": {
+      "bytes": 285,
+      "extension": ".json",
+      "scope": "quests/7071401",
+      "sha256": "1e50dfc3cb687016732d4a303dc956b645b1821072dc1d8f82c5a0fe594748ae"
+    },
+    "quests/70801": {
+      "bytes": 2081,
+      "extension": ".json",
+      "scope": "quests/70801",
+      "sha256": "d2aa1ad6bbaff3fb78bfe1399d85147b6d1cffa4eceb6b45158c9df03b656b5a"
+    },
+    "quests/70810": {
+      "bytes": 8679,
+      "extension": ".json",
+      "scope": "quests/70810",
+      "sha256": "0a7442cb0ff7a93f47b9412c08ead0e54195b23cfbbd19b8ca66fab24dd525f9"
+    },
+    "quests/70812": {
+      "bytes": 1371,
+      "extension": ".json",
+      "scope": "quests/70812",
+      "sha256": "150be927375400bd7f215fc2b8ea827676c4ab6f02373542e723211f326bae9f"
+    },
+    "quests/70813": {
+      "bytes": 1185,
+      "extension": ".json",
+      "scope": "quests/70813",
+      "sha256": "7bf1d7c0876e31e65f8df69643cc1ca724d9cbc49859beef0278be49bee64f3d"
+    },
+    "quests/70821": {
+      "bytes": 1593,
+      "extension": ".json",
+      "scope": "quests/70821",
+      "sha256": "e1daed2db5ba06a698e80a28800fbbfa5b8f57d55a0b10ac2639ad4157bfc22d"
+    },
+    "quests/70824": {
+      "bytes": 2432,
+      "extension": ".json",
+      "scope": "quests/70824",
+      "sha256": "41f822ac95e701142f7bf60d10003337409a3a1b95598a1b372b13f029d313c2"
+    },
+    "quests/70825": {
+      "bytes": 1016,
+      "extension": ".json",
+      "scope": "quests/70825",
+      "sha256": "ab61c135a0dce3400eb6d383976dc30e963093b5c5773c358e152b8a9cb26d1d"
+    },
+    "quests/71012": {
+      "bytes": 3798,
+      "extension": ".json",
+      "scope": "quests/71012",
+      "sha256": "a69d8f7b336961d99ee32ef2eb77f667d64d1ba53651e2a3b063c4801b8a95d5"
+    },
+    "quests/72154": {
+      "bytes": 12315,
+      "extension": ".json",
+      "scope": "quests/72154",
+      "sha256": "9cbc005a3a8d54933957469991ed4c69addf37faeaf3187144aceaabc7b4c41b"
+    },
+    "quests/7280801": {
+      "bytes": 2421,
+      "extension": ".json",
+      "scope": "quests/7280801",
+      "sha256": "c2d0242b85d36084d2622bd70530b0a34c9edcc03af3dd07d1bca594b3c1200e"
+    },
+    "quests/7380201": {
+      "bytes": 2206,
+      "extension": ".json",
+      "scope": "quests/7380201",
+      "sha256": "8658d04c5b983bb27b06388d8aeb0687977d288add8a26b9e3bebc167f7f1bb8"
+    },
+    "quests/chapters": {
+      "bytes": 409,
+      "extension": ".json",
+      "scope": "quests/chapters",
+      "sha256": "06eeaf3a48a0193717fa3f4fbf12ecdc4178c9645217956d27cee56e82d1dfa8"
+    },
+    "regions/fontaine/palette": {
+      "bytes": 639,
+      "extension": ".json",
+      "scope": "regions/fontaine/palette",
+      "sha256": "06b96950c3111634b54c7552a0c8b2fd65a8e05dcdff6808bb2905b36356a7cf"
+    },
+    "regions/fontaine/plants": {
+      "bytes": 334622,
+      "extension": ".json",
+      "scope": "regions/fontaine/plants",
+      "sha256": "534238e08ab62bbe06f45e23ced130dc0582b1eea93b52f718a835b959dd8197"
+    },
+    "regions/fontaine/rocks": {
+      "bytes": 691496,
+      "extension": ".json",
+      "scope": "regions/fontaine/rocks",
+      "sha256": "df1e3b6b9b8315ee5373b44bd39e49a82b4c84a64d62a1dd7b0351171d445c8f"
+    },
+    "regions/inazuma/palette": {
+      "bytes": 425,
+      "extension": ".json",
+      "scope": "regions/inazuma/palette",
+      "sha256": "dac3221c8e07b31b400af4897c019f66956b690994700fcf45cc1d3d4cbda57c"
+    },
+    "regions/inazuma/plants": {
+      "bytes": 791514,
+      "extension": ".json",
+      "scope": "regions/inazuma/plants",
+      "sha256": "0c6d6420a1eb2b24ac5f890c59383d1c0aa6e8514128b6d5a849a452cf14355c"
+    },
+    "regions/inazuma/rocks": {
+      "bytes": 682507,
+      "extension": ".json",
+      "scope": "regions/inazuma/rocks",
+      "sha256": "750103fc7eac45e2c190992e5afad1772f251d6fc25b1681c9f41e12afb13de3"
+    },
+    "regions/liyue/palette": {
+      "bytes": 769,
+      "extension": ".json",
+      "scope": "regions/liyue/palette",
+      "sha256": "d50a258777fd304d25f3d8943d7791685253e0e081cb49d5ffe420a7b9b3a0ea"
+    },
+    "regions/liyue/plants": {
+      "bytes": 722348,
+      "extension": ".json",
+      "scope": "regions/liyue/plants",
+      "sha256": "aa5e5ff8da5aea36a1e3543b65dd95184b27e62817dfb7795e0d0b5329d94de2"
+    },
+    "regions/mondstadt/palette": {
+      "bytes": 522,
+      "extension": ".json",
+      "scope": "regions/mondstadt/palette",
+      "sha256": "783234507e9250d8c12dc5b8580c7945764729c9ff39fc321ce63f2454d607c9"
+    },
+    "regions/mondstadt/plants": {
+      "bytes": 1040356,
+      "extension": ".json",
+      "scope": "regions/mondstadt/plants",
+      "sha256": "b3ef53c4eda5bd1474c73f8e725a546ff51cd3eade845156d9e91bf5da0234b0"
+    },
+    "regions/natlan/palette": {
+      "bytes": 259,
+      "extension": ".json",
+      "scope": "regions/natlan/palette",
+      "sha256": "d1ee2aaa7b36ae21dfdd4c9ec0e7b4153c37853887ba08501384deb187369ebd"
+    },
+    "regions/natlan/plants": {
+      "bytes": 32178,
+      "extension": ".json",
+      "scope": "regions/natlan/plants",
+      "sha256": "57a0f0260a74d0d6bdd9f02ab6ccd3d28ff19907ffdc8e7443a60d5c76570221"
+    },
+    "regions/natlan/rocks": {
+      "bytes": 17343,
+      "extension": ".json",
+      "scope": "regions/natlan/rocks",
+      "sha256": "bc5b3adfc9389a98216f315c70ace1a07aa671fb9302f2049ef88589143b9854"
+    },
+    "regions/nod-krai/palette": {
+      "bytes": 294,
+      "extension": ".json",
+      "scope": "regions/nod-krai/palette",
+      "sha256": "8d543f35b0b9bda676604d000cc3ab90f20106ef237986a10212331a46ce2022"
+    },
+    "regions/nod-krai/plants": {
+      "bytes": 84904,
+      "extension": ".json",
+      "scope": "regions/nod-krai/plants",
+      "sha256": "bb5b406e662a2ca7f06bd1eb2fe7ba679c3b07c9175a48fe6775611260c0b31a"
+    },
+    "regions/nod-krai/rocks": {
+      "bytes": 624968,
+      "extension": ".json",
+      "scope": "regions/nod-krai/rocks",
+      "sha256": "abec626b0b39761a2cf75ba2e236e2cbdd1179d9726d8cd552ce87a8ca5de6d1"
+    },
+    "regions/snezhnaya/plants": {
+      "bytes": 13,
+      "extension": ".json",
+      "scope": "regions/snezhnaya/plants",
+      "sha256": "97d3c27893afe7ecadecf9239a212955346ef40bf6517beea1a714bee32f8514"
+    },
+    "regions/snezhnaya/rocks": {
+      "bytes": 65586,
+      "extension": ".json",
+      "scope": "regions/snezhnaya/rocks",
+      "sha256": "5fea2c0d793bd35c2c0bb60f3ae65a493a865f2ac46c03fc95407012f5f45207"
+    },
+    "regions/sumeru/palette": {
+      "bytes": 307,
+      "extension": ".json",
+      "scope": "regions/sumeru/palette",
+      "sha256": "d06fcadcf5b1ef351f789b8c1cd333eadb5015cc37fd0c800544f53b1ddbc2f8"
+    },
+    "regions/sumeru/plants": {
+      "bytes": 1696787,
+      "extension": ".json",
+      "scope": "regions/sumeru/plants",
+      "sha256": "9902768ce5a82c8c084674fc1bc0dae04debb541c5b9033bb4f996272490ce52"
+    },
+    "regions/sumeru/rocks": {
+      "bytes": 173656,
+      "extension": ".json",
+      "scope": "regions/sumeru/rocks",
+      "sha256": "a43a8861883d2e7c0993868b905a82a17eea472aba64022a2cc599fea07631c4"
+    },
+    "regions/sumeru/ruins": {
+      "bytes": 159340,
+      "extension": ".json",
+      "scope": "regions/sumeru/ruins",
+      "sha256": "5ff1516de9d01bf72afed5115bc137c7e45d9276b2ebf1b97324ec5e1dba4ccc"
+    },
+    "reputation/mondstadt": {
+      "bytes": 8112,
+      "extension": ".json",
+      "scope": "reputation/mondstadt",
+      "sha256": "e48d903928180b1a29e15fb056c8eec34610e36b6c17397f919ad672d31f52d4"
+    },
+    "sceneGroups/scene3": {
+      "bytes": 279178,
+      "extension": ".json",
+      "scope": "sceneGroups/scene3",
+      "sha256": "3a75f5dfe3dc5e3290ef38ecbcf93dbd1a2ecfa6008c188ba1775b2a38d4c7f1"
+    },
+    "sceneNpcBorn/scene3": {
+      "bytes": 160183,
+      "extension": ".json",
+      "scope": "sceneNpcBorn/scene3",
+      "sha256": "561633b72271c622fee8bb6f2a37de3418a8b140c606e0a1b14a46c606bbcc59"
+    },
+    "shops/fontaineFishing": {
+      "bytes": 1785,
+      "extension": ".json",
+      "scope": "shops/fontaineFishing",
+      "sha256": "f82f83b725ee77d840cde1ee71e00f55d941f935075a10e354c836dca9d452b4"
+    },
+    "shops/gcgCardShop": {
+      "bytes": 71321,
+      "extension": ".json",
+      "scope": "shops/gcgCardShop",
+      "sha256": "0c7963ae4d39f87f479d77c6e8a180293be07d256fd00f36c4967c29b7979d3b"
+    },
+    "shops/goodHunter": {
+      "bytes": 5844,
+      "extension": ".json",
+      "scope": "shops/goodHunter",
+      "sha256": "f0a5a871158634b67d9a81c6b1a58ff85c4b73d8bbb7046125cd844aac3bcd12"
+    },
+    "shops/inazumaFishing": {
+      "bytes": 1060,
+      "extension": ".json",
+      "scope": "shops/inazumaFishing",
+      "sha256": "083c0322aee94385d66a64086df857420d69be4cfe447ed9f829a3bbafd8f05c"
+    },
+    "shops/liyueFishing": {
+      "bytes": 732,
+      "extension": ".json",
+      "scope": "shops/liyueFishing",
+      "sha256": "8c47991eddb69ad895694d9a3931cfca71d295c00ae50d4a41ae863cf96df990"
+    },
+    "shops/mondstadtBrook": {
+      "bytes": 646,
+      "extension": ".json",
+      "scope": "shops/mondstadtBrook",
+      "sha256": "c5f06831ea14d7cecd4efc0252c7809221a8ba0c5935e7cd942f403b75fe6da5"
+    },
+    "shops/mondstadtCharles": {
+      "bytes": 1075,
+      "extension": ".json",
+      "scope": "shops/mondstadtCharles",
+      "sha256": "0a69f9a9879ac4cdcdb6d4931da9865edf514f8b598f062398d80997d3d316b9"
+    },
+    "shops/mondstadtChloris": {
+      "bytes": 1076,
+      "extension": ".json",
+      "scope": "shops/mondstadtChloris",
+      "sha256": "2ee13c4bebcea1a9d3207a4fe90e8979a534a6134d8c6771097c136ed362dd9d"
+    },
+    "shops/mondstadtDraff": {
+      "bytes": 645,
+      "extension": ".json",
+      "scope": "shops/mondstadtDraff",
+      "sha256": "1a5728c66c2496ff14979595cc38fec84ec5d2559e7a1d1622fafcbbd2fa2350"
+    },
+    "shops/mondstadtFishing": {
+      "bytes": 1159,
+      "extension": ".json",
+      "scope": "shops/mondstadtFishing",
+      "sha256": "5798c8a0da9bf3d13cddf5631c82909e7d4a37ef7ea3089b97d37ffdea237d26"
+    },
+    "shops/mondstadtFlora": {
+      "bytes": 1076,
+      "extension": ".json",
+      "scope": "shops/mondstadtFlora",
+      "sha256": "ba9479848dd5324bfa79e54b05d61cf0b602c32acab6df1e484a9b42e2c89741"
+    },
+    "shops/mondstadtGeneralGoods": {
+      "bytes": 1950,
+      "extension": ".json",
+      "scope": "shops/mondstadtGeneralGoods",
+      "sha256": "fcb39a74aa1181cf30d36dd9bba2d04a65288c6c2914a1f632c60151c3da4989"
+    },
+    "shops/mondstadtSchulz": {
+      "bytes": 1066,
+      "extension": ".json",
+      "scope": "shops/mondstadtSchulz",
+      "sha256": "41cf2c9e7dbfe689ec659966be601909abbe18817830c0a7fac90b8f26393f5b"
+    },
+    "shops/mondstadtShiliu": {
+      "bytes": 1076,
+      "extension": ".json",
+      "scope": "shops/mondstadtShiliu",
+      "sha256": "59159473026ae59c6859334c8e1d64a261ae85098c9bdb3ac7f43603d94e6db9"
+    },
+    "shops/natlanFishing": {
+      "bytes": 1215,
+      "extension": ".json",
+      "scope": "shops/natlanFishing",
+      "sha256": "f409bdeaf6bb014de0b2b3b3adc0d283b129b69901eaab4949fb0aef0b4ee514"
+    },
+    "shops/nodKraiFishing": {
+      "bytes": 1215,
+      "extension": ".json",
+      "scope": "shops/nodKraiFishing",
+      "sha256": "2a5c0bb5dc04a3580b3cdf25b8df4d47acc1a77c59e6a3018f304a2128854dc1"
+    },
+    "shops/paimonsBargains": {
+      "bytes": 847,
+      "extension": ".json",
+      "scope": "shops/paimonsBargains",
+      "sha256": "9040d8eabaff418685777ddb186266599fc0cdd0ae806fd2d8470d6265bc6e02"
+    },
+    "shops/paimonsBargainsRotation": {
+      "bytes": 504,
+      "extension": ".json",
+      "scope": "shops/paimonsBargainsRotation",
+      "sha256": "19fe342b32711f8bef358cfd33eb1b61b559249f75eeac061c4c8f50efac24b8"
+    },
+    "shops/realmDepotBlueprints": {
+      "bytes": 177012,
+      "extension": ".json",
+      "scope": "shops/realmDepotBlueprints",
+      "sha256": "a254495aee0beeba7f808e8333e8c29a7417eb7289446937efa4271c5fd2cee1"
+    },
+    "shops/realmDepotCreatures": {
+      "bytes": 10482,
+      "extension": ".json",
+      "scope": "shops/realmDepotCreatures",
+      "sha256": "f9a349f34533ea2a813801860e7499e92a18e67eafe7a05023b3c5f3e1fb9ee9"
+    },
+    "shops/realmDepotFurnishings": {
+      "bytes": 58875,
+      "extension": ".json",
+      "scope": "shops/realmDepotFurnishings",
+      "sha256": "085f02e8f9680254d816cf8c10b2f885711e896c23c33cbea3800d696b0d9ade"
+    },
+    "shops/realmDepotRiches": {
+      "bytes": 6027,
+      "extension": ".json",
+      "scope": "shops/realmDepotRiches",
+      "sha256": "409fa2f0417946a9d328c0d4e972b95f603b23f6e3fb9c9e43e5f2c8cee00ca7"
+    },
+    "shops/realmDepotTreasures": {
+      "bytes": 1806,
+      "extension": ".json",
+      "scope": "shops/realmDepotTreasures",
+      "sha256": "d7a63008e5c844c6fce7753dd8219b23c2db6749715c8450955d1046b60c147e"
+    },
+    "shops/realmDepotWood": {
+      "bytes": 7459,
+      "extension": ".json",
+      "scope": "shops/realmDepotWood",
+      "sha256": "94af92de508d12a6c8a5f4f95963b33920e4ffd9cff85fc1ddc164e61979eadb"
+    },
+    "shops/snezhnayaFishing": {
+      "bytes": 974,
+      "extension": ".json",
+      "scope": "shops/snezhnayaFishing",
+      "sha256": "9837c3670c1339ac8ba94c480d0bfcca488e610fef8b3be39aaa1e259f632ebb"
+    },
+    "shops/souvenirFontaine": {
+      "bytes": 3808,
+      "extension": ".json",
+      "scope": "shops/souvenirFontaine",
+      "sha256": "6b0805acb83968f7a66cc54e65f9cf4dbe2b513ed58ba2346098da3aabe14520"
+    },
+    "shops/souvenirInazuma": {
+      "bytes": 3174,
+      "extension": ".json",
+      "scope": "shops/souvenirInazuma",
+      "sha256": "a29a3a09005f1d20737bcfaa8efd450eadaa14cc04861e6cc4b5f03eb25f49ba"
+    },
+    "shops/souvenirLiyue": {
+      "bytes": 3398,
+      "extension": ".json",
+      "scope": "shops/souvenirLiyue",
+      "sha256": "0fdb363b6a409dbd566237446e5f7d8900097e3104830e76334ad37fde8bf269"
+    },
+    "shops/souvenirMondstadt": {
+      "bytes": 2752,
+      "extension": ".json",
+      "scope": "shops/souvenirMondstadt",
+      "sha256": "c2c9592103301600ad4fb6a2e6b746d54b853b600a0b0675d9f09a06489a6af8"
+    },
+    "shops/souvenirNatlan": {
+      "bytes": 3810,
+      "extension": ".json",
+      "scope": "shops/souvenirNatlan",
+      "sha256": "a5bee04ca7c64a1477b4c4412470d8248750f9104742c089f24592ec0fb44575"
+    },
+    "shops/souvenirNodKrai": {
+      "bytes": 3811,
+      "extension": ".json",
+      "scope": "shops/souvenirNodKrai",
+      "sha256": "ca1f86fb4e7fa5e3871d674d1435f4f4b0600562674e35d5e80e8b055eaddbf2"
+    },
+    "shops/souvenirSumeru": {
+      "bytes": 3177,
+      "extension": ".json",
+      "scope": "shops/souvenirSumeru",
+      "sha256": "b775367241929c8c691d695bcc052b8ddac6b4d35d368c25ad76737c6fc08b0b"
+    },
+    "shops/sumeruFishing": {
+      "bytes": 1487,
+      "extension": ".json",
+      "scope": "shops/sumeruFishing",
+      "sha256": "1673a314edcc54b7203949758c1946c43258c4e09fd9be3208952d2ac1503272"
+    },
+    "shrineKeySources/inazuma": {
+      "bytes": 102,
+      "extension": ".json",
+      "scope": "shrineKeySources/inazuma",
+      "sha256": "622b1556361061a8ea6853188a4ca783058e089407b6ac1a9af379a182341d90"
+    },
+    "shrineKeySources/liyue": {
+      "bytes": 304,
+      "extension": ".json",
+      "scope": "shrineKeySources/liyue",
+      "sha256": "b01873ec4be96fa087b59cae752aef4634c80b9c1a9c731cf42b8a6185c06041"
+    },
+    "shrineKeySources/mondstadt": {
+      "bytes": 106,
+      "extension": ".json",
+      "scope": "shrineKeySources/mondstadt",
+      "sha256": "266d5b8cc6f200c24eb83773226ee16d360ecb2e4c33369c9078b1ea48c9363a"
+    },
+    "spiralAbyss/benedictionChoices": {
+      "bytes": 655198,
+      "extension": ".json",
+      "scope": "spiralAbyss/benedictionChoices",
+      "sha256": "0c8c3a6b4748b7234c6a1009a638f62b6325405c4a560e0f6158c339c7ee4c2c"
+    },
+    "spiralAbyss/enemyKinds": {
+      "bytes": 2890,
+      "extension": ".json",
+      "scope": "spiralAbyss/enemyKinds",
+      "sha256": "6f43d30c32ede9ccc37b8688873ded8150b365e88046f4f8ef14457733b473da"
+    },
+    "spiralAbyss/floors": {
+      "bytes": 99859,
+      "extension": ".json",
+      "scope": "spiralAbyss/floors",
+      "sha256": "f3bb69a9e75ca9bd6360492ec5761c486a1c6df474f5df89e4765bd137ca64b1"
+    },
+    "spiralAbyss/periods": {
+      "bytes": 28018,
+      "extension": ".json",
+      "scope": "spiralAbyss/periods",
+      "sha256": "7a5cd90ee481e801c268fef9707b09140c679c661141a2a25765c6457303a5f5"
+    },
+    "spiralAbyss/rewards": {
+      "bytes": 59543,
+      "extension": ".json",
+      "scope": "spiralAbyss/rewards",
+      "sha256": "bc83546805d7defc04beeae75597f1e522ae9e386cd0b2a2297ec1f5ee320254"
+    },
+    "splash/titleLogo/ChineseSimplified": {
+      "bytes": 40970,
+      "extension": ".json",
+      "scope": "splash/titleLogo/ChineseSimplified",
+      "sha256": "75c36da077d899a9650ebc768fdd54b13d0574ca6146b5d47769c8849aa156f3"
+    },
+    "splash/titleLogo/ChineseTraditional": {
+      "bytes": 55017,
+      "extension": ".json",
+      "scope": "splash/titleLogo/ChineseTraditional",
+      "sha256": "83c0c7d1bb72bf5435185c314431e9acb007e04dc8116b1a2ab10fc8eab6510b"
+    },
+    "splash/titleLogo/English": {
+      "bytes": 57539,
+      "extension": ".json",
+      "scope": "splash/titleLogo/English",
+      "sha256": "5196c5b8680f25921c3a23367501449fdbcfd81f05563d055a1aa56dd6535d59"
+    },
+    "splash/titleLogo/Japanese": {
+      "bytes": 51679,
+      "extension": ".json",
+      "scope": "splash/titleLogo/Japanese",
+      "sha256": "f7eeba3a4e2c6333aaae40383a89372b72245e1be0ba6776b1243bfd2f0a9c65"
+    },
+    "splash/titleLogo/Korean": {
+      "bytes": 38659,
+      "extension": ".json",
+      "scope": "splash/titleLogo/Korean",
+      "sha256": "969eae242e84e8486054a4881a685749e20849d1329c31f62cc70bd1788bf234"
+    },
+    "standingTalkText/ChineseSimplified": {
+      "bytes": 104322,
+      "extension": ".json",
+      "scope": "standingTalkText/ChineseSimplified",
+      "sha256": "f70ac93946da4335162bc3584ef98937e5ea7ff33982a31513d2384e1a21d1e6"
+    },
+    "standingTalkText/ChineseTraditional": {
+      "bytes": 104790,
+      "extension": ".json",
+      "scope": "standingTalkText/ChineseTraditional",
+      "sha256": "8b12e091192d6c589f30a16ee3aeb01f56ced4267866980b8b2be9f59b3da620"
+    },
+    "standingTalkText/English": {
+      "bytes": 124969,
+      "extension": ".json",
+      "scope": "standingTalkText/English",
+      "sha256": "29b41336a9cb07140a4fe61887a6182a3c240fd2ebb4c86ed5e494dcc31016db"
+    },
+    "standingTalkText/French": {
+      "bytes": 135121,
+      "extension": ".json",
+      "scope": "standingTalkText/French",
+      "sha256": "fdc5de74758905895cd2cf32f701763142c81d11de982e24b38b17ab606aeaad"
+    },
+    "standingTalkText/German": {
+      "bytes": 135457,
+      "extension": ".json",
+      "scope": "standingTalkText/German",
+      "sha256": "dd266ac63640a236b44d6c07dc196cca4bcebb502e82a5f7b454393670caa572"
+    },
+    "standingTalkText/Indonesian": {
+      "bytes": 126479,
+      "extension": ".json",
+      "scope": "standingTalkText/Indonesian",
+      "sha256": "f57c0a11ce7c391904dec7f2be3b52a0d0c44f1a0bd4a97a2b5d7e901873b7f1"
+    },
+    "standingTalkText/Italian": {
+      "bytes": 133832,
+      "extension": ".json",
+      "scope": "standingTalkText/Italian",
+      "sha256": "a241133be7fe212290d5cedc1371a543c7f6da2905f0b2f06b591e69f63d3019"
+    },
+    "standingTalkText/Japanese": {
+      "bytes": 134512,
+      "extension": ".json",
+      "scope": "standingTalkText/Japanese",
+      "sha256": "4f3c2fe06609b652ff379f4dbd40c6c091995cdc5ace95707d28156fbfec3cfd"
+    },
+    "standingTalkText/Korean": {
+      "bytes": 126647,
+      "extension": ".json",
+      "scope": "standingTalkText/Korean",
+      "sha256": "29008b5ea1d8f352cd75e452b2a9e63aa0a64985e5c67936a5810c5d37026c01"
+    },
+    "standingTalkText/Portuguese": {
+      "bytes": 129086,
+      "extension": ".json",
+      "scope": "standingTalkText/Portuguese",
+      "sha256": "9266743cf21f3c02e508a1eb9df8dac8957fcbab16664f464ddcc9026e71c651"
+    },
+    "standingTalkText/Russian": {
+      "bytes": 193857,
+      "extension": ".json",
+      "scope": "standingTalkText/Russian",
+      "sha256": "d6aaf98355424eee3b0ac49baee316aa4d8b0ec4104dcd69c85671accac37f2a"
+    },
+    "standingTalkText/Spanish": {
+      "bytes": 129489,
+      "extension": ".json",
+      "scope": "standingTalkText/Spanish",
+      "sha256": "813a5dd21a8cc834b6f90086955c91de33387adf787abb0c2f3a63edfe4f1f00"
+    },
+    "standingTalkText/Thai": {
+      "bytes": 269897,
+      "extension": ".json",
+      "scope": "standingTalkText/Thai",
+      "sha256": "8ba9d225b73b71a8cbdc47cfc5d70edada312e7ac8a91f0620b36b48730634a2"
+    },
+    "standingTalkText/Turkish": {
+      "bytes": 126280,
+      "extension": ".json",
+      "scope": "standingTalkText/Turkish",
+      "sha256": "01ba246ca0bb66faa862f05b98018c97df4e0375293be434693e9403c615cc42"
+    },
+    "standingTalkText/Vietnamese": {
+      "bytes": 146290,
+      "extension": ".json",
+      "scope": "standingTalkText/Vietnamese",
+      "sha256": "04ab02c52610ab1119a3489b24ade0b7558c11230d8fb31430e0d8e3747ea875"
+    },
+    "standingTalks/favours": {
+      "bytes": 68671,
+      "extension": ".json",
+      "scope": "standingTalks/favours",
+      "sha256": "2cdce6ee1e672f94d2736bf207984a2b079c2e17133766037b03081ef981f46a"
+    },
+    "standingTalks/residents": {
+      "bytes": 99865,
+      "extension": ".json",
+      "scope": "standingTalks/residents",
+      "sha256": "05f013bd95cae93fde29eab80fb43da7fd22c4c88e132f2c00f09c1fb609fb66"
+    },
+    "stats/artifactExpMaterials": {
+      "bytes": 66,
+      "extension": ".json",
+      "scope": "stats/artifactExpMaterials",
+      "sha256": "502dffdf8454d5b2ed81822b10aad4e2fd1c65055a3bf04e4b4f555b717ec54f"
+    },
+    "stats/artifactMainAffixCurves": {
+      "bytes": 17286,
+      "extension": ".json",
+      "scope": "stats/artifactMainAffixCurves",
+      "sha256": "1d6960ed077043c1fb4df6160c31c11bd217bf7a8eb757a02ddd09905a3301d7"
+    },
+    "stats/artifactMainAffixPools": {
+      "bytes": 883,
+      "extension": ".json",
+      "scope": "stats/artifactMainAffixPools",
+      "sha256": "daace42f0693c719279e9b83443d1a22818f1b2aa2a763c9e32dba3447e9500f"
+    },
+    "stats/artifactRarities": {
+      "bytes": 4450,
+      "extension": ".json",
+      "scope": "stats/artifactRarities",
+      "sha256": "e9decdd67f6b5e4b564f8ca71ebbbb5330f137b3d1390f697db518b11109f474"
+    },
+    "stats/artifactSets": {
+      "bytes": 15487,
+      "extension": ".json",
+      "scope": "stats/artifactSets",
+      "sha256": "82a9c164a832d6ed1307b6467be09b94515a5abe3792df5ccf1de9b3b07b60d8"
+    },
+    "stats/characterConstellationKits": {
+      "bytes": 106216,
+      "extension": ".json",
+      "scope": "stats/characterConstellationKits",
+      "sha256": "8efc5cf1ddc805638dab3256bd5334a87383c5cb14edadfb554b0115bc52f288"
+    },
+    "stats/characterExpMaterials": {
+      "bytes": 98,
+      "extension": ".json",
+      "scope": "stats/characterExpMaterials",
+      "sha256": "556cf521ad1ee24ef6b3a749f456930f9772d0a8df8770821ecfb402675897bf"
+    },
+    "stats/characterExpToNext": {
+      "bytes": 557,
+      "extension": ".json",
+      "scope": "stats/characterExpToNext",
+      "sha256": "3c98f3a74da7ac854f3917e96f42cc827222196cfba557aa78843b409e154edb"
+    },
+    "stats/characterGrowCurves": {
+      "bytes": 2444,
+      "extension": ".json",
+      "scope": "stats/characterGrowCurves",
+      "sha256": "5d5cde0b0c2f473f7375248e49c330b75653633aed5e72665b5bc454503ddfb4"
+    },
+    "stats/characterSkillKits": {
+      "bytes": 23576,
+      "extension": ".json",
+      "scope": "stats/characterSkillKits",
+      "sha256": "404b429135eda2094070935f8f6210fbc16ea3e31221da201c7414aafe03a9ef"
+    },
+    "stats/characterTalentKits": {
+      "bytes": 60462,
+      "extension": ".json",
+      "scope": "stats/characterTalentKits",
+      "sha256": "17181b710e44838a0a0daa867ab0f17a81486c46939379e8e9d8a155dcb817a3"
+    },
+    "stats/characters": {
+      "bytes": 396010,
+      "extension": ".json",
+      "scope": "stats/characters",
+      "sha256": "89cd14b8dad3aca1be17fa24e745c8ab46ec1f5e740ccfa05cf9468bdcbe68ae"
+    },
+    "stats/forgeQueuePlayerLevels": {
+      "bytes": 11,
+      "extension": ".json",
+      "scope": "stats/forgeQueuePlayerLevels",
+      "sha256": "ae05ec6fc54dfb8693f3e7e9a3aa4bdec302f117bd62edb828322b8f24c7a11c"
+    },
+    "stats/itemRooms": {
+      "bytes": 49,
+      "extension": ".json",
+      "scope": "stats/itemRooms",
+      "sha256": "39e4b038477747419b5018595fceaceaa012921eab8e59a7610dd30f096ea9bd"
+    },
+    "stats/masterlessLevelLifts": {
+      "bytes": 78,
+      "extension": ".json",
+      "scope": "stats/masterlessLevelLifts",
+      "sha256": "7f5d0519203df44324ba17f639831b58a01421a0f6e4af268d9d04ded826c8f0"
+    },
+    "stats/resin": {
+      "bytes": 163,
+      "extension": ".json",
+      "scope": "stats/resin",
+      "sha256": "7162e78ca9a51f3be152f9c86fd8da7202ddd66546e98130ba212e67d049aaa9"
+    },
+    "stats/talentUpgrades": {
+      "bytes": 383981,
+      "extension": ".json",
+      "scope": "stats/talentUpgrades",
+      "sha256": "1f2f8851e839b34916b3d0e91bdc0168b0570ef081985c72f90d99df0ffdbced"
+    },
+    "stats/weaponEnhancementOres": {
+      "bytes": 97,
+      "extension": ".json",
+      "scope": "stats/weaponEnhancementOres",
+      "sha256": "9776d9ee5ad5decf9d0c3830545aa533b60e7fdeb4123c6ccd5dc92aeb7aa2f9"
+    },
+    "stats/weaponGrowCurves": {
+      "bytes": 8604,
+      "extension": ".json",
+      "scope": "stats/weaponGrowCurves",
+      "sha256": "f4327c1e523f869582066c02b4224d8e8ffe61b371acb5a039aeadfa3a487bcb"
+    },
+    "stats/weaponLevelRequiredExps": {
+      "bytes": 2655,
+      "extension": ".json",
+      "scope": "stats/weaponLevelRequiredExps",
+      "sha256": "5eba0c9efb4af69a4defcb2ca4d54b8c6c90a8d0e0a9b3fd78971d5471d20cf2"
+    },
+    "stats/weapons": {
+      "bytes": 586224,
+      "extension": ".json",
+      "scope": "stats/weapons",
+      "sha256": "16c27ecd64436b7dd0de35f4c917bfdc0471c304bddf851b4637ac1139170538"
+    },
+    "statueLevels/liyue": {
+      "bytes": 1905,
+      "extension": ".json",
+      "scope": "statueLevels/liyue",
+      "sha256": "fcee7ae34c954b3383befe36a0f77a938ec7ad47c3d42d400f6c610a714b25d2"
+    },
+    "statueLevels/mondstadt": {
+      "bytes": 1614,
+      "extension": ".json",
+      "scope": "statueLevels/mondstadt",
+      "sha256": "7278dd3b97c7759b7306265d919a4de83ff851a835f0e68a2a3a73b39832d9eb"
+    },
+    "tipText/ChineseSimplified": {
+      "bytes": 102909,
+      "extension": ".json",
+      "scope": "tipText/ChineseSimplified",
+      "sha256": "badf22ecd0d5167b57293cc911c5fd4e547d45a8457149c19ded3b902cf925d4"
+    },
+    "tipText/ChineseTraditional": {
+      "bytes": 101730,
+      "extension": ".json",
+      "scope": "tipText/ChineseTraditional",
+      "sha256": "642c19c3d5eef1549f1fc3ec33c8ff832fc17101a1a2c82192c0b6135fd87a50"
+    },
+    "tipText/English": {
+      "bytes": 118588,
+      "extension": ".json",
+      "scope": "tipText/English",
+      "sha256": "171592578234d461b0c390f00dff92154d1ee1779b12c6bd54b097a4de4fa531"
+    },
+    "tipText/French": {
+      "bytes": 122757,
+      "extension": ".json",
+      "scope": "tipText/French",
+      "sha256": "6075b3875b5dd1c8204d117a8cd2e5cbac57bebe8b565ac208dc632ce4b7bd5d"
+    },
+    "tipText/German": {
+      "bytes": 132613,
+      "extension": ".json",
+      "scope": "tipText/German",
+      "sha256": "d155647264042c42a0ab50bd58c725b208cfcfcbfb195e8ba84b8214a8653ce5"
+    },
+    "tipText/Indonesian": {
+      "bytes": 118673,
+      "extension": ".json",
+      "scope": "tipText/Indonesian",
+      "sha256": "9f4d2a0bf1b02f72bbfe0b19e7007e281c6dcb2956c9aaf797f75ae059a3a11d"
+    },
+    "tipText/Italian": {
+      "bytes": 125310,
+      "extension": ".json",
+      "scope": "tipText/Italian",
+      "sha256": "6e06cb738765cc9e70168eb5ccb738ce33ed245f834b21b9f5fa0e9b1f083d0d"
+    },
+    "tipText/Japanese": {
+      "bytes": 124654,
+      "extension": ".json",
+      "scope": "tipText/Japanese",
+      "sha256": "e502219cafc4270ac0715303c6b4056f57d83e242ccd5dc6044d2e18ee3e75eb"
+    },
+    "tipText/Korean": {
+      "bytes": 109245,
+      "extension": ".json",
+      "scope": "tipText/Korean",
+      "sha256": "2ed7d636760267f03ba2560d775a8769aab41e31f778b3661fd79891130cbc60"
+    },
+    "tipText/Portuguese": {
+      "bytes": 135714,
+      "extension": ".json",
+      "scope": "tipText/Portuguese",
+      "sha256": "459409c985e4d84b49185d21908ed51a234dbb9e2530762bc67507946fb2c205"
+    },
+    "tipText/Russian": {
+      "bytes": 173273,
+      "extension": ".json",
+      "scope": "tipText/Russian",
+      "sha256": "7066ae120962a220441ebbda8431f96bafd5e41dc0979196f5f11403e53f2b5d"
+    },
+    "tipText/Spanish": {
+      "bytes": 124808,
+      "extension": ".json",
+      "scope": "tipText/Spanish",
+      "sha256": "44df82466d03aa323507df37449d63d15ec7d8c022f23db052eb766322599df8"
+    },
+    "tipText/Thai": {
+      "bytes": 214565,
+      "extension": ".json",
+      "scope": "tipText/Thai",
+      "sha256": "048c45fad6e58ca5c24deb4d632a9180e48e94c7dc6dbd72b1f6c4f2ea3bd25a"
+    },
+    "tipText/Turkish": {
+      "bytes": 115987,
+      "extension": ".json",
+      "scope": "tipText/Turkish",
+      "sha256": "1b468a5e91c4e89c99cdc9af680fd69f720caf63844e16f3a9ba4ee22fd9131b"
+    },
+    "tipText/Vietnamese": {
+      "bytes": 141821,
+      "extension": ".json",
+      "scope": "tipText/Vietnamese",
+      "sha256": "fe1506aede04b323ae6f298d98111ce7a3fa9a7690521f8cd8d0b95d6f23a3d2"
+    },
+    "tips": {
+      "bytes": 182281,
+      "extension": ".json",
+      "scope": "tips",
+      "sha256": "d1c285207bcb95dd070b386126e1c34893e401980443487e98d15f0f4fff4403"
+    },
+    "transPoints/scene3": {
+      "bytes": 11854,
+      "extension": ".json",
+      "scope": "transPoints/scene3",
+      "sha256": "d06ceab423d9696fde9641bd151a52c57530678213e1cb4b59f3ef58b546e284"
+    },
+    "transPoints/unlock": {
+      "bytes": 349,
+      "extension": ".json",
+      "scope": "transPoints/unlock",
+      "sha256": "3baa034641790ace05c6109d5c81052c2ff604a008785fd8754a526fce2377c1"
+    },
+    "weaponRoots/roots": {
+      "bytes": 7790,
+      "extension": ".json",
+      "scope": "weaponRoots/roots",
+      "sha256": "00782963513aba70f0daad26c4c4739148582a37d35ded7ecca0552a37b1506e"
+    },
+    "wildlife/fontaine": {
+      "bytes": 4728,
+      "extension": ".json",
+      "scope": "wildlife/fontaine",
+      "sha256": "85341546cfe28835e54bad96a1ab170889018c5c9dcf1b70c1bec411e8561e79"
+    },
+    "wildlife/inazuma": {
+      "bytes": 322,
+      "extension": ".json",
+      "scope": "wildlife/inazuma",
+      "sha256": "a5e63192304279aeb58d19bf13ae874669266aa18c6ab1bac899d406a017feb0"
+    },
+    "wildlife/liyue": {
+      "bytes": 12088,
+      "extension": ".json",
+      "scope": "wildlife/liyue",
+      "sha256": "e0b839d2c227f4bac1dccf22e63c3d89eb4d2daac66b033c4b78cf5c0c6d1f8d"
+    },
+    "wildlife/mondstadt": {
+      "bytes": 10266,
+      "extension": ".json",
+      "scope": "wildlife/mondstadt",
+      "sha256": "e800444369052c37d2b60a44b8c69f81ce4699ee4e70d0bda21684f2ec6e520b"
+    },
+    "wildlife/natlan": {
+      "bytes": 1093,
+      "extension": ".json",
+      "scope": "wildlife/natlan",
+      "sha256": "2092387714db253db162b113de39f476541077bc0cc984ac829a0c63a962075d"
+    },
+    "wildlife/nod-krai": {
+      "bytes": 1402,
+      "extension": ".json",
+      "scope": "wildlife/nod-krai",
+      "sha256": "923b9bf9c57319eb19f6210b904d18613f4a8399aa051b8d1730ab0512b78eb3"
+    },
+    "wildlife/snezhnaya": {
+      "bytes": 2023,
+      "extension": ".json",
+      "scope": "wildlife/snezhnaya",
+      "sha256": "d890bfa76738b934f25d332a8316f27df2717fe3caa86072288f5e8da514e9cd"
+    },
+    "wildlife/sumeru": {
+      "bytes": 1151,
+      "extension": ".json",
+      "scope": "wildlife/sumeru",
+      "sha256": "a9878f2570757364abebf79d774b1b62f11f5f7106dc4a0079d67dbac79b8a69"
+    },
+    "windrise/ground-layers": {
+      "bytes": 70065,
+      "extension": ".json",
+      "scope": "windrise/ground-layers",
+      "sha256": "fdea76ec911e840878bff3970065a868f545aff7098012c052251a68358449d3"
+    },
+    "windrise/oak": {
+      "bytes": 332001,
+      "extension": ".json",
+      "scope": "windrise/oak",
+      "sha256": "b38005e02451a3befd683fe4866b211a2fa5d40d98e7b286b1f0792f28136dff"
+    },
+    "windrise/paving": {
+      "bytes": 2909,
+      "extension": ".json",
+      "scope": "windrise/paving",
+      "sha256": "8d2d04e7783cb05f8642fcf8730963f3d252532a79a816216e0f380c233467fb"
+    },
+    "windrise/plants": {
+      "bytes": 172383,
+      "extension": ".json",
+      "scope": "windrise/plants",
+      "sha256": "946a6e8ffbec3108e329f8b117102f33e66e3f47a69bd34808e8f4b6003d11f6"
+    },
+    "windrise/statue": {
+      "bytes": 614162,
+      "extension": ".json",
+      "scope": "windrise/statue",
+      "sha256": "2c346fc0de7b55f99d25437947864f0db3921662d4952277b9513593b8fd599b"
+    },
+    "windrise/surfaces": {
+      "bytes": 6289,
+      "extension": ".json",
+      "scope": "windrise/surfaces",
+      "sha256": "3c3b88800bfee0a250fa09106005e0367e0904777730db964127f5bf987e82ef"
+    },
+    "windrise/water": {
+      "bytes": 15,
+      "extension": ".json",
+      "scope": "windrise/water",
+      "sha256": "2e046f06a32db5b818986f6c5df74497d08b105d70cc05e256cc07531e0b6768"
+    },
+    "wishSchedule/eventBanners": {
+      "bytes": 58407,
+      "extension": ".json",
+      "scope": "wishSchedule/eventBanners",
+      "sha256": "02ee447d725f24168a99e79e9272a8ba798325f536569eb1fa58c611afa636cd"
+    }
   }
 }

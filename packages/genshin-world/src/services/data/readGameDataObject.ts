@@ -1,10 +1,10 @@
 import { readJson } from "#src/services/shared/readJson";
 import { createEvictingPromiseCache } from "@esposter/shared";
 
-// An object is immutable under its hash, so one fetch of it serves every reader of that page's lifetime, including a
-// Second reader that asks while the first is still in flight
-const readCachedGameDataObject = createEvictingPromiseCache((url: string) => url, readJson);
-
-// The parsed JSON of the object at a path under the host's base, before any reader's schema has been applied to it
-export const readGameDataObject = (gameDataBaseUrl: string, objectPath: string): Promise<unknown> =>
-  readCachedGameDataObject(`${gameDataBaseUrl}/${objectPath}`);
+// The parsed JSON of the object at a url, before any reader's schema has been applied to it. An object is immutable under
+// Its hash, so one fetch of it serves every reader of that page's lifetime, including a second reader that asks while the
+// First is still in flight
+export const readGameDataObject: (url: string) => Promise<unknown> = createEvictingPromiseCache(
+  (url: string) => url,
+  readJson,
+);

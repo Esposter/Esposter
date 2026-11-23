@@ -1,3 +1,4 @@
+import { createGameDataLockObject } from "#src/services/gameData/createGameDataLockObject.test";
 import { getGameDataKeysSource } from "#src/services/gameData/getGameDataKeysSource";
 import { describe, expect, test } from "vitest";
 
@@ -8,8 +9,12 @@ describe(getGameDataKeysSource, () => {
     expect.hasAssertions();
 
     const source = getGameDataKeysSource({
-      indexes: { "bookBody/English": HASH },
-      objects: { domains: HASH, "domains/weeklyBosses": HASH, "quests/11018": HASH },
+      indexes: { "bookBody/English": createGameDataLockObject("bookBody/English", HASH) },
+      objects: {
+        domains: createGameDataLockObject("domains", HASH),
+        "domains/weeklyBosses": createGameDataLockObject("domains/weeklyBosses", HASH),
+        "quests/11018": createGameDataLockObject("quests/11018", HASH),
+      },
     });
 
     expect(source).toMatchInlineSnapshot(`
@@ -47,7 +52,11 @@ describe(getGameDataKeysSource, () => {
 
     const source = getGameDataKeysSource({
       indexes: {},
-      objects: { ["__proto__"]: HASH, "a/constructor": HASH, "a/toString": HASH },
+      objects: {
+        ["__proto__"]: createGameDataLockObject("__proto__", HASH),
+        "a/constructor": createGameDataLockObject("a/constructor", HASH),
+        "a/toString": createGameDataLockObject("a/toString", HASH),
+      },
     });
 
     expect(source).toMatchInlineSnapshot(`
@@ -83,15 +92,18 @@ describe(getGameDataKeysSource, () => {
       getGameDataKeysSource({
         indexes: {},
         objects: Object.fromEntries([
-          ["a/self", HASH],
-          ["a", HASH],
+          ["a/self", createGameDataLockObject("a/self", HASH)],
+          ["a", createGameDataLockObject("a", HASH)],
         ]),
       }),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Push, name: a, shares its self slot with a segment named self in the lock]`,
     );
     expect(() =>
-      getGameDataKeysSource({ indexes: {}, objects: { a: HASH, "a/self": HASH } }),
+      getGameDataKeysSource({
+        indexes: {},
+        objects: { a: createGameDataLockObject("a", HASH), "a/self": createGameDataLockObject("a/self", HASH) },
+      }),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Push, name: a/self, shares its self slot with a segment named self in the lock]`,
     );
@@ -104,8 +116,8 @@ describe(getGameDataKeysSource, () => {
       getGameDataKeysSource({
         indexes: {},
         objects: Object.fromEntries([
-          ["a/self/x", HASH],
-          ["a", HASH],
+          ["a/self/x", createGameDataLockObject("a/self/x", HASH)],
+          ["a", createGameDataLockObject("a", HASH)],
         ]),
       }),
     ).toThrowErrorMatchingInlineSnapshot(
