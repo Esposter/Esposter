@@ -4,9 +4,9 @@ import { mkdir, rename } from "node:fs/promises";
 import { dirname } from "node:path";
 import { v7 } from "uuid";
 
-// Writes a file whole at a path: `write` fills a partial file of its own beside the path, and the partial file is renamed
-// Onto the path only once `write` has returned, so a write cut short is never taken for the file. A partial file a failed
-// Write or rename leaves is removed before the failure is thrown
+// Writes a file whole at a path: `write` fills a partial file of its own beside the path, and the partial file is
+// Renamed Onto the path only once `write` has returned, so a write cut short is never taken for the file. A partial
+// File a failed Write or rename leaves is removed before the failure is thrown
 export const writePartialThenMove = async (
   path: string,
   write: (partialPath: string) => Promise<void>,

@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/strict-void-return -- promisify reads execFile's callback overload, whose void return the rule mistakes for this call's context */
+/* oxlint-disable typescript/strict-void-return -- promisify reads execFile's callback overload, whose void return
+   the rule mistakes for this call's context */
 import { withHiddenWindowFunction } from "#src/services/childProcess/withHiddenWindowFunction";
 import { execFile as execFileNode } from "node:child_process";
 import { promisify } from "node:util";
