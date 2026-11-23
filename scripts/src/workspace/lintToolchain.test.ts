@@ -18,6 +18,7 @@ const CODE_PATHSPECS = ["*.cjs", "*.cts", "*.js", "*.mjs", "*.mts", "*.ts", "*.t
 const GENERATED_FILE_PATTERN = "**/auto-imports.d.ts";
 const ESLINT_DIRECTIVE_REGEX = /(?:\/\/|\/\*|<!--)\s*eslint-(?:disable|enable)/u;
 const CLASSIC_COMPILER = "typescript";
+const IMPORTERS_SECTION_REGEX = /^importers:\n[\s\S]*?(?=^\S|(?![\s\S]))/gmu;
 
 const readRepositoryFile = (path: string): string => readFileSync(join(REPOSITORY_ROOT, path), "utf8");
 
@@ -42,13 +43,15 @@ describe("lintToolchain", () => {
         (field) => `${path} ${field}`,
       );
     });
-    // The importers are the lockfile's section before its packages, where each dependency it installs is listed
+    // The lockfile is one YAML document per install, each with its own importers section listing every workspace package's
+    // Dependencies. A section runs from its key to the next line at column zero, or the end of the file
     const lockfile = readRepositoryFile("pnpm-lock.yaml");
-    const importers = lockfile.slice(0, lockfile.indexOf("\npackages:"));
+    const importers = lockfile.match(IMPORTERS_SECTION_REGEX) ?? [];
 
     expect(manifestListings).toStrictEqual([]);
     expect(readRepositoryFile("pnpm-workspace.yaml")).not.toMatch(/^ {2}typescript:/mu);
-    expect(importers).not.toMatch(/^ {6}typescript:/mu);
+    expect(importers.length).toBeGreaterThan(0);
+    expect(importers.join("\n")).not.toMatch(/^ {6}typescript:/mu);
   });
 
   test("a lint tool that needs the classic compiler", () => {
