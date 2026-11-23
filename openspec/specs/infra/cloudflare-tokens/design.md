@@ -75,7 +75,7 @@ Each output reaches ESC as one `pulumi env set` per key, as `apps/infra/docs/sta
 - **Rejected: borrowing the Deploy token for backfills.** Its value reaches only the GitHub secret, which no session can read back, so a backfill cannot hold it.
 - **Rejected: a backfill token per environment.** D1's permission group is granted on the account and cannot be scoped to one database, so a pair per environment would grant the same reach twice.
 - **One RealtimeKit token for both uses.** The realtime Worker's calls and `realtimekit:provision` make Realtime Admin calls and nothing else, so one token serves both. The provisioning creates apps, presets and webhooks, and holds no account token permission, since Pulumi makes the token.
-- **Settled.** The provider key `cloudflare:apiToken` and the hand-made account tokens it held are retired, and nothing reads them. A second hand-made token is not reintroduced.
+- **Settled.** A hand-made account token beyond the bootstrap token is not reintroduced: every other token is an `AccountToken` resource.
 - **Protection.** Every token and every resource is `protect: true`, so a change that would replace a token stops the run. A token's value changes only through a replacement, which lifts the protection for that one run and restores it. No scheduler re-rolls a token and no job checks expiry.
 - **Group names.** A permission group's name is Cloudflare's. If Cloudflare renames one, the lookup fails the run by the old name, which is the signal to change the name in code.
 
