@@ -51,7 +51,7 @@ describe(readHostedAssetSourceFolder, () => {
     );
   });
 
-  test("a file of an unhosted extension is left out of the product", async () => {
+  test("a file the code never loads is not hosted", async () => {
     expect.hasAssertions();
 
     await writeFile(join(repositoryRoot, folder, "map.ts"), "a");
