@@ -10,7 +10,8 @@ export const renderPrintImage = async (
 ): Promise<HTMLImageElement> => {
   const page = await pdfDocument.getPage(pageNumber);
   const { height, width } = page.getViewport({ scale: 1 });
-  // A page past the largest canvas a device draws is printed at the scale that fits it, since a larger one comes out blank
+  // A page past the largest canvas a device draws is printed at the scale that fits it, since a larger one comes out
+  // Blank
   const printScale = getCanvasScale({
     cssWidth: width,
     pageHeight: height,

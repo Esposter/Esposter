@@ -15,7 +15,8 @@ const readFreeText = (element: Element, index: number, usedIds: Set<string>): Re
   const coordinates = (element.getAttribute("rect") ?? "").split(",").map((text) => parseCoordinate(text));
   if (!/^\d+$/u.test(page)) return err(`Free text ${index + 1} has no valid page`);
   if (!checkRectangle(coordinates)) return err(`Free text ${index + 1} has no valid rect`);
-  // The renderer stores no editor whose text is blank, so a free text with none is refused rather than dropped on its page
+  // The renderer stores no editor whose text is blank, so a free text with none is refused rather than dropped on its
+  // Page
   const contents = element.querySelector("contents")?.textContent ?? "";
   if (contents.trim() === "") return err(`Free text ${index + 1} has no contents`);
 
@@ -28,8 +29,8 @@ const readFreeText = (element: Element, index: number, usedIds: Set<string>): Re
 };
 
 // Reads the free-text annotations of an XFDF file. The ids already held in the document are passed in, so a free text
-// Named as one of them takes an id of its own. A file that cannot be read is an error naming the problem, and it gives no
-// Annotations, so a caller that stops on the error changes nothing
+// Named as one of them takes an id of its own. A file that cannot be read is an error naming the problem, and it gives
+// No Annotations, so a caller that stops on the error changes nothing
 export const readXfdf = (xfdf: string, takenIds: ReadonlySet<string>): Result<PdfFreeText[], string> => {
   const xfdfDocument = new DOMParser().parseFromString(xfdf, "application/xml");
   if (xfdfDocument.querySelector("parsererror")) return err("The XFDF is not well-formed XML");

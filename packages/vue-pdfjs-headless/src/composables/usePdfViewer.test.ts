@@ -88,8 +88,8 @@ describe(usePdfViewer, () => {
   const FIT_SCALE = 1.5;
   // The renderer zooms in by a step of 1.1 and stops at 25, which is past the package's own largest scale
   const PDF_RENDERER_MAX_SCALE = 25;
-  // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
-  // The stubs keep the last viewer and link service they made, so a test can move the viewer or read what the composable asked of it
+  // The renderer's viewer components stand in for their real ones, which need a canvas and a worker. The stubs keep the
+  // Last viewer and link service they made, so a test can move the viewer or read what the composable asked of it
   const stubs: {
     abortSignal?: AbortSignal | undefined;
     editorModes: number[];
@@ -130,7 +130,8 @@ describe(usePdfViewer, () => {
     eventBus.on("find", (event: unknown) => {
       stubs.findEvents.push(event);
       // The renderer finds nothing for an empty query, so a cleared search has no matches
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a fake event's query, built by the test rather than typed
+      // A fake event's
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- query, built by the test rather than typed
       const total = (event as { query: string }).query === "" ? 0 : matches;
       const matchesCount = { current: total > 0 ? 1 : 0, total };
       eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: total > 0 ? 0 : FIND_STATE_NOT_FOUND });
@@ -158,7 +159,8 @@ describe(usePdfViewer, () => {
     eventBus.on("pagesinit", () => {
       hasPages = true;
     });
-    // The renderer makes its editor manager after a document's first page, and announces it, before which it throws on a mode
+    // The renderer makes its editor manager after a document's first page, and announces it, before which it throws on
+    // A mode
     eventBus.on("annotationeditoruimanager", () => {
       hasEditorManager = true;
     });
@@ -217,8 +219,8 @@ describe(usePdfViewer, () => {
       previousPage: () => {
         viewer.currentPageNumber -= 1;
       },
-      // The renderer resets its page and rotation without dispatching an event, and drops its pages until pagesinit. A new
-      // Document replaces its editor manager
+      // The renderer resets its page and rotation without dispatching an event, and drops its pages until pagesinit. A
+      // New Document replaces its editor manager
       setDocument: vi.fn<(loaded: null | PDFDocumentProxy) => void>(() => {
         currentPageNumber = 1;
         currentScaleValue = null;

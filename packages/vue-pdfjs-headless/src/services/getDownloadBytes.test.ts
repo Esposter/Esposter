@@ -61,7 +61,8 @@ describe(getDownloadBytes, () => {
   );
 
   // A failure means the pinned pdf.js now saves a text annotation, so a comment can be added. The deferred idea at
-  // `openspec/deferred/vue-pdfjs-headless/annotation-comments/design.md` is then revived, and this test is retired with it
+  // `openspec/deferred/vue-pdfjs-headless/annotation-comments/design.md` is then revived, and this test is retired with
+  // It
   test("pdf.js still drops a Text annotation when it saves", async () => {
     expect.hasAssertions();
 

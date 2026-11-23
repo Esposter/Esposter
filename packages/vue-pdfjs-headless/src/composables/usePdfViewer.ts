@@ -37,8 +37,8 @@ interface UsePdfViewerOptions {
   container: MaybeRefOrGetter<HTMLDivElement | undefined>;
   // The terms highlighted on load, searched as one phrase with the terms joined by a space
   highlightTerms?: MaybeRefOrGetter<string[]>;
-  // The URL the renderer's annotation icons are served from, ending in a slash.
-  // The renderer asks for each icon by its name beside this URL, so a path it is not given is requested from the page's root.
+  // The URL the renderer's annotation icons are served from, ending in a slash. The renderer asks for each icon by its
+  // Name beside this URL, so a path it is not given is requested from the page's root.
   imageResourcesPath: string;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
   viewer: MaybeRefOrGetter<HTMLDivElement | undefined>;
@@ -81,9 +81,9 @@ export const usePdfViewer = ({
   let printRoot: HTMLDivElement | undefined;
   // Bumped by every print and by the scope's end, so a print still drawing stops before it reaches the page
   let printGeneration = 0;
-  // The renderer makes its editor manager once a document's first page is read, and a new document replaces it.
-  // A mode set while there is no manager throws, and a throw in a watcher freezes this viewer's rendering.
-  // So the mode is set only once the renderer reports its manager, which is also what the stored editors are drawn through.
+  // The renderer makes its editor manager once a document's first page is read, and a new document replaces it. A mode
+  // Set while there is no manager throws, and a throw in a watcher freezes this viewer's rendering. So the mode is set
+  // Only once the renderer reports its manager, which is also what the stored editors are drawn through.
   let editorManager: AnnotationEditorUIManager | undefined;
   const applyEditorMode = () => {
     if (pdfViewer && editorManager) pdfViewer.annotationEditorMode = { mode: editorMode.value };
@@ -101,7 +101,8 @@ export const usePdfViewer = ({
     // One signal per viewer, so the viewer's own listeners and the ones added here end together
     const viewerAbortController = new AbortController();
     const { signal } = viewerAbortController;
-    // @TODO: https://github.com/mozilla/pdf.js/issues/22213 — pdf.js's PDFViewerOptions typedef omits the abortSignal PDFViewer's constructor reads, so the options are typed with it added
+    // @TODO: https://github.com/mozilla/pdf.js/issues/22213 — pdf.js's PDFViewerOptions typedef omits the abortSignal
+    // PDFViewer's constructor reads, so the options are typed with it added
     const viewerOptions: { abortSignal: AbortSignal } & ConstructorParameters<typeof PdfJsViewer>[0] = {
       abortSignal: signal,
       container: containerValue,
@@ -195,14 +196,16 @@ export const usePdfViewer = ({
     // So a document that replaces another starts from the state a new viewer has.
     currentPageNumber.value = 1;
     pagesRotation.value = 0;
-    // The search starts over with the document: its query and matches are cleared, and the terms it opens with are searched
+    // The search starts over with the document: its query and matches are cleared, and the terms it opens with are
+    // Searched
     searchQuery.value = "";
     matchesCount.value = { current: 0, total: 0 };
     isNotFound.value = false;
     if (!loaded) return;
 
     loadOutline(loaded);
-    // The terms are one phrase the search bar shows, so the highlight and the bar's Next and Previous search the same query
+    // The terms are one phrase the search bar shows, so the highlight and the bar's Next and Previous search the same
+    // Query
     searchQuery.value = toValue(highlightTerms).join(" ");
     documentGeneration.value++;
   };
@@ -218,8 +221,9 @@ export const usePdfViewer = ({
       type,
     });
   };
-  // Registered before the viewer is created, since a document loaded during setup bumps the generation this watches
-  // A search runs again when its query or options change, and when a document loads, which searches the terms it opens with
+  // Registered before the viewer is created, since a document loaded during setup bumps the generation this watches A
+  // Search runs again when its query or options change, and when a document loads, which searches the terms it opens
+  // With
   watch([searchQuery, isMatchCase, isWholeWord, documentGeneration], () => {
     if (toValue(pdfDocument)) findText({ query: searchQuery.value });
   });

@@ -59,7 +59,8 @@ export const usePdfDocument = ({ parameters = {}, renderer, source }: UsePdfDocu
       task.onProgress = ({ loaded, total }: PdfLoadingProgress) => {
         if (generation === loadGeneration) progress.value = { loaded, total };
       };
-      // The renderer asks again with the reason when a password is wrong, so the prompt says so rather than starting over
+      // The renderer asks again with the reason when a password is wrong, so the prompt says so rather than starting
+      // Over
       task.onPassword = (passwordCallback: (password: string) => void, reason: number) => {
         if (generation !== loadGeneration) return;
 

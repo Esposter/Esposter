@@ -15,7 +15,8 @@ describe(getCanvasScale, () => {
     ).toBe(PIXEL_RATIO);
   });
 
-  // Safari on iOS refuses a canvas above its area and draws it blank, so the scale is lowered to the largest one it draws
+  // Safari on iOS refuses a canvas above its area and draws it blank, so the scale is lowered to the largest one it
+  // Draws
   test("#52 caps the canvas area at the largest canvas a device draws", () => {
     expect.hasAssertions();
 

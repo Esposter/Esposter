@@ -64,7 +64,8 @@ export const usePdfPage = ({
     awaitRender(task);
   };
 
-  // Latched by the first report that the page is wanted, so loading starts then and the page leaving view never undoes it
+  // Latched by the first report that the page is wanted, so loading starts then and the page leaving view never undoes
+  // It
   const isWanted = ref(false);
   watch(
     () => toValue(isActive),
@@ -102,7 +103,8 @@ export const usePdfPage = ({
         return;
       }
 
-      // A new element's first report is its own width, which may equal the last canvas's, so the width is not remembered across elements
+      // A new element's first report is its own width, which may equal the last canvas's, so the width is not
+      // Remembered across elements
       cssWidth = 0;
       const observer = new ResizeObserver((entries) => {
         // A report that keeps the width is the canvas resizing its own height, which must not draw the page again
@@ -134,7 +136,8 @@ export const usePdfPage = ({
   onScopeDispose(() => {
     loadGeneration++;
     cancelRender();
-    // The renderer caches a page's proxy for the document's life, and its own viewer releases the proxy once the page is no longer drawn
+    // The renderer caches a page's proxy for the document's life, and its own viewer releases the proxy once the page
+    // Is no longer drawn
     page?.cleanup();
   });
 };

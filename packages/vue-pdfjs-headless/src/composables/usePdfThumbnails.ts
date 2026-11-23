@@ -61,8 +61,8 @@ export const usePdfThumbnails = ({
     return thumbnail;
   };
 
-  // The observer the rows are watched through, made again each time the sidebar's element changes, and each row it watches
-  // Is watched again by the new one
+  // The observer the rows are watched through, made again each time the sidebar's element changes, and each row it
+  // Watches Is watched again by the new one
   watch(
     () => toValue(root),
     (rootElement) => {

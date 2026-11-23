@@ -1,4 +1,5 @@
-// A free-text annotation as XFDF exchanges it: its text, its page one-based as the viewer counts pages, and its rectangle
+// A free-text annotation as XFDF exchanges it: its text, its page one-based as the viewer counts pages, and its
+// Rectangle
 export interface PdfFreeText {
   contents: string;
   id: string;

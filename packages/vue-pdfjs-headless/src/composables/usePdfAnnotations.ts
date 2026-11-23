@@ -35,7 +35,8 @@ const readComments = async (loaded: PDFDocumentProxy): Promise<PdfComment[]> => 
       // A page's proxy is released once its annotations are read, since the document keeps the proxies it hands out
       page.cleanup();
 
-      // The text of a text annotation is its contentsObj's str, since pdf.js gives no contents field on an annotation's data
+      // The text of a text annotation is its contentsObj's str, since pdf.js gives no contents field on an annotation's
+      // Data
       return annotations
         .filter(({ subtype }) => subtype === "Text")
         .map(({ contentsObj }) => ({ contents: contentsObj?.str ?? "", pageNumber: pageIndex + 1 }));
@@ -63,7 +64,8 @@ const readFreeTexts = (loaded: PDFDocumentProxy): PdfFreeText[] =>
     const data: StoredFreeText | undefined = typeof value.serialize === "function" ? value.serialize() : value;
     if (data?.annotationType !== PdfEditorMode.FreeText || !data.rect) return [];
 
-    // A drawn editor has no element id until a page it sits on saves it, so its id is the key the renderer stores it under
+    // A drawn editor has no element id until a page it sits on saves it, so its id is the key the renderer stores it
+    // Under
     const id = data.id ?? key.slice(PDF_EDITOR_KEY_PREFIX.length);
 
     return [{ contents: data.value ?? "", id, pageNumber: (data.pageIndex ?? 0) + 1, rect: data.rect }];
@@ -121,7 +123,8 @@ export const usePdfAnnotations = ({
     const loaded = toValue(pdfDocument);
     if (!loaded) return err("No document is open to import into");
 
-    // The ids the document already holds are taken by the reader, so an imported free text named as one keeps an id of its own
+    // The ids the document already holds are taken by the reader, so an imported free text named as one keeps an id of
+    // Its own
     return readXfdf(xfdf, new Set(readFreeTexts(loaded).map(({ id }) => id))).andThen((freeTexts) => {
       const stray = freeTexts.find(({ pageNumber }) => pageNumber > loaded.numPages);
       if (stray)
