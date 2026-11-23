@@ -7,8 +7,7 @@ export const checkIsLocalUrl = (url: string): boolean => {
   const parsedUrl = new URL(url);
   return (
     LOCAL_HOSTNAMES.includes(parsedUrl.hostname) &&
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a URL's hash, which the URL parser leaves empty
-    parsedUrl.hash === "" &&
+    !parsedUrl.hash &&
     !HOST_PARAMETER_NAMES.some((name) => parsedUrl.searchParams.has(name))
   );
 };
