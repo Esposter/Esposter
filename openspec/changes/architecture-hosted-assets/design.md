@@ -128,7 +128,7 @@ The three options:
 
 **(a) The current Worker route plus the Cache API.** The Worker stays in the path. Each request invokes it, the Cache API answers a hit in the data center that stored it, and a miss reads R2. Costs: a Worker invocation on every request, a Class B read on every miss, and a per-colo cache that a cold data center fills again. Code lands in the asset route.
 
-**(b) One shared R2 bucket behind a custom domain, with a Cache Rule.** The domain serves the bucket directly, so a hit never invokes a Worker or reads R2. The bucket is shared by every hosted product, and each product's scope is a key prefix, so one domain and one Cache Rule per environment serve them all, and a new product edits no infrastructure. The Cache Rule makes JSON, XML and TMX cacheable, since the default table excludes them.
+**(b) One shared R2 bucket behind a custom domain, with a Cache Rule.** The domain serves the bucket directly, so a hit never invokes a Worker or reads R2. The bucket is shared by every hosted product, and each product's scope is a key prefix, so one domain and one Cache Rule per environment serve them all, and a new product edits no infrastructure. The Cache Rule makes JSON, XML, TSX and TMX cacheable, since the default table excludes them.
 
 **(c) The current route unchanged.** The route answers `Cache-Control: public, max-age=3600`, which is not immutable, so the browser re-asks after an hour and the edge's behaviour is undocumented. Every first request in each data center reaches the Worker and R2.
 
@@ -144,7 +144,7 @@ Numbers, from the R2 pricing page: a Class B operation (GET or HEAD) is $0.36 pe
 
 The new record names the rejected direction, "every public bucket served by the Worker route", as rejected, with these facts, so the old reason cannot return beside it. The rejected folder is deleted in this change, since its idea is superseded by (b) and this section keeps the reason.
 
-The verification task reads `cf-cache-status` on the dev custom domain: the first request is a miss, the second a hit, and a hit reports no Worker invocation in the Worker's own logs. If the Cache Rule does not cache JSON or XML, the rule's edge TTL is the fix, and the design does not change.
+The verification task reads `cf-cache-status` on the dev custom domain: the first request is a miss, the second a hit, and a hit reports no Worker invocation in the Worker's own logs. The rule's edge mode is `respect_origin`, so the origin's `Cache-Control` sets how long an object stays at the edge, and the same task reads the `Cache-Control` the edge returns. If the Cache Rule does not cache a text object, its expression is the fix, and the design does not change.
 
 ### Hostnames and the route
 
@@ -278,30 +278,31 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 
 ## Key files
 
-| File                                                               | Role                                                                                          |
-| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/models/storage/StorageBucket.ts`           | the public buckets a product's origin names                                                   |
-| `apps/infra/src/cloudflare/resources/r2Buckets/`                   | the buckets; the shared hosted bucket and its custom domain are declared beside them          |
-| `apps/web/server/routes/assets/[bucket]/[...key].get.ts`           | serves the user buckets only, once the game buckets are off the route                         |
-| `apps/web/configuration/security.ts`                               | the `connect-src`, `font-src` and `media-src` directives over the environment's hosted origin |
-| `apps/web/service-worker/sw.ts`                                    | the cache-first route over the hosted origins, and the claim on activation                    |
-| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`    | the precache globs, which `**/*.{js,css,html}` keeps off hosted objects                       |
-| `scripts/src/services/gameData/publishGameData.ts`                 | the publish pipeline the generic publish generalises                                          |
-| `scripts/src/services/gameData/verifyGameDataObject.ts`            | the per-object hash check the fill reuses                                                     |
-| `scripts/src/services/gameData/writeGameDataKeys.ts`               | the keys renderer the generic renderer generalises                                            |
-| `scripts/src/services/gameData/getGameDataKeysSource.ts`           | the keys source, and the one committed generated file this change keeps                       |
-| `packages/genshin-world/src/generated/gameDataLock.json`           | Genshin's lock, which the generic lock format replaces in place                               |
-| `packages/genshin-world/src/services/data/readGameData.ts`         | Genshin's reader, which becomes the generic reader                                            |
-| `packages/hosted-assets/src/composables/useHostedAssetsPreload.ts` | the preloader, generalised from Genshin's and moved here                                      |
-| `packages/hosted-assets/src/services/planHostedAssetDownload.ts`   | the plan, generalised from Genshin's and moved here                                           |
-| `packages/hosted-assets/src/services/downloadHostedAssetFiles.ts`  | the download, generalised from Genshin's and moved here                                       |
-| `packages/hosted-assets/src/services/listHeldHostedAssetUrls.ts`   | the held-set, generalised from Genshin's and moved here                                       |
-| `packages/genshin-world/src/services/character/constants.ts`       | the cache name and the download constants that move to the generic system                     |
-| `packages/genshin-world/src/services/login/constants.ts`           | the login recordings' directory, which becomes a hosted origin                                |
-| `apps/web/configuration/nitro.ts`                                  | the `publicAssets` mount of the login recordings, removed                                     |
-| `.github/workflows/build-packages.yaml`                            | the mirror fill, which gains the per-object hash check                                        |
-| `.github/workflows/CI.yaml`                                        | the mirror restore, keyed on the lock                                                         |
-| `scripts/src/workspace/pathLiterals.test.ts`                       | holds the workflows to the mirror cache constant's path                                       |
-| `openspec/specs/architecture/static-assets/design.md`              | the two-place rule this design replaces                                                       |
-| `openspec/specs/architecture/generated-artifacts/design.md`        | the table row for `pnpm phaser:gen`, removed                                                  |
-| "openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md"   | the superseded rejection, deleted                                                             |
+| File                                                                           | Role                                                                                          |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/models/storage/StorageBucket.ts`                       | the public buckets a product's origin names                                                   |
+| `apps/infra/src/cloudflare/resources/r2Buckets/`                               | the buckets; the shared hosted bucket and its custom domain are declared beside them          |
+| `apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts` | the Cache Rule: the hosted hostnames' text objects eligible for the edge cache                |
+| `apps/web/server/routes/assets/[bucket]/[...key].get.ts`                       | serves the user buckets only, once the game buckets are off the route                         |
+| `apps/web/configuration/security.ts`                                           | the `connect-src`, `font-src` and `media-src` directives over the environment's hosted origin |
+| `apps/web/service-worker/sw.ts`                                                | the cache-first route over the hosted origins, and the claim on activation                    |
+| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`                | the precache globs, which `**/*.{js,css,html}` keeps off hosted objects                       |
+| `scripts/src/services/gameData/publishGameData.ts`                             | the publish pipeline the generic publish generalises                                          |
+| `scripts/src/services/gameData/verifyGameDataObject.ts`                        | the per-object hash check the fill reuses                                                     |
+| `scripts/src/services/gameData/writeGameDataKeys.ts`                           | the keys renderer the generic renderer generalises                                            |
+| `scripts/src/services/gameData/getGameDataKeysSource.ts`                       | the keys source, and the one committed generated file this change keeps                       |
+| `packages/genshin-world/src/generated/gameDataLock.json`                       | Genshin's lock, which the generic lock format replaces in place                               |
+| `packages/genshin-world/src/services/data/readGameData.ts`                     | Genshin's reader, which becomes the generic reader                                            |
+| `packages/hosted-assets/src/composables/useHostedAssetsPreload.ts`             | the preloader, generalised from Genshin's and moved here                                      |
+| `packages/hosted-assets/src/services/planHostedAssetDownload.ts`               | the plan, generalised from Genshin's and moved here                                           |
+| `packages/hosted-assets/src/services/downloadHostedAssetFiles.ts`              | the download, generalised from Genshin's and moved here                                       |
+| `packages/hosted-assets/src/services/listHeldHostedAssetUrls.ts`               | the held-set, generalised from Genshin's and moved here                                       |
+| `packages/genshin-world/src/services/character/constants.ts`                   | the cache name and the download constants that move to the generic system                     |
+| `packages/genshin-world/src/services/login/constants.ts`                       | the login recordings' directory, which becomes a hosted origin                                |
+| `apps/web/configuration/nitro.ts`                                              | the `publicAssets` mount of the login recordings, removed                                     |
+| `.github/workflows/build-packages.yaml`                                        | the mirror fill, which gains the per-object hash check                                        |
+| `.github/workflows/CI.yaml`                                                    | the mirror restore, keyed on the lock                                                         |
+| `scripts/src/workspace/pathLiterals.test.ts`                                   | holds the workflows to the mirror cache constant's path                                       |
+| `openspec/specs/architecture/static-assets/design.md`                          | the two-place rule this design replaces                                                       |
+| `openspec/specs/architecture/generated-artifacts/design.md`                    | the table row for `pnpm phaser:gen`, removed                                                  |
+| "openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md"               | the superseded rejection, deleted                                                             |
