@@ -1,8 +1,8 @@
-import { glob, readFile } from "node:fs/promises";
-import { join, relative } from "node:path";
 import type { Expression, Node, ObjectBindingPattern, SourceFile } from "tsrs/ast";
 import type { Project, Type } from "tsrs/sync";
 
+import { glob, readFile } from "node:fs/promises";
+import { join, relative } from "node:path";
 import {
   isIdentifier,
   isObjectBindingPattern,
@@ -152,7 +152,7 @@ const { customEmojis } = useRoomEmojiStore();
           continue;
         }
         const name = element.propertyName ?? element.name;
-        const propName = isIdentifier(name) || isStringLiteral(name) ? name.text : undefined;
+        const propName = name && (isIdentifier(name) || isStringLiteral(name)) ? name.text : undefined;
         if (propName === undefined) continue;
         const property = checker.getPropertyOfType(initializerType, propName);
         if (!property) {
@@ -199,7 +199,7 @@ const { customEmojis } = useRoomEmojiStore();
     const fixtureVueScanPath = `${FIXTURE_VUE_PATH}${VUE_SCAN_SUFFIX}`;
     const project = openStoreProject(
       api,
-      new Map([...vueScanEntries, [fixtureVueScanPath, toVueScanText(FIXTURE_VUE_TEXT)], [FIXTURE_PATH, FIXTURE_TEXT]]),
+      new Map([...vueScanEntries, [FIXTURE_PATH, FIXTURE_TEXT], [fixtureVueScanPath, toVueScanText(FIXTURE_VUE_TEXT)]]),
     );
     hits = scanStoreDestructures(project, [
       ...scriptPaths,
