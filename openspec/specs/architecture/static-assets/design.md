@@ -49,6 +49,13 @@ A Tiled tileset is named in a map by a relative `source` path, the form the Tile
 
 A file under `shared/` is parsed by the server and read by the Nuxt config in Node, so it cannot import from `app/assets/`. A constant that names a bundled file lives beside the code that reads it, in `app/`. What `shared/` may name is a path the config or the server reads, so `PWA_PUBLIC_FOLDER_PATH` stays there.
 
+## Limits on what ships
+
+Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web/public/`, and `scripts/src/workspace/staticAssets.test.ts` enforces both over the files git lists:
+
+- **Audio is compressed.** No `.wav`, `.aiff` or `.flac` file is tracked there. A sound is an MP3, the format the dungeons' other music and sound effects already use. An uncompressed two-minute track runs toward the per-file limit that Workers static assets set, and its MP3 is a small fraction of its size.
+- **No bundled file is over the precache limit.** The service worker leaves a file past the limit out of its precache list (`apps/web/configuration/pwa.ts`), so the page fetches it when it needs it. An image past the limit is converted to lossless WebP, which keeps its pixels exact and which Phaser's `load.image` reads. The test names the limit once, in its `PRECACHE_LIMIT_BYTES`.
+
 ## Rejected
 
 - **Every static file in `public/`.** It loses the content hash, the immutable cache and the build-time check, and every texture and tileset path becomes an unchecked string.
@@ -84,6 +91,7 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 | `apps/web/configuration/skewProtection.ts`                                    | Turns off `@nuxtjs/seo`'s skew protection, for the reasons under Rejected                              |
 | `apps/web/configuration/typescript.ts`                                        | Excludes the Tiled `.tsx` sources from the app's TypeScript include                                    |
 | `apps/web/shared/services/app/constants.ts`                                   | `PWA_PUBLIC_FOLDER_PATH`, the one public path the config reads                                         |
+| `scripts/src/workspace/staticAssets.test.ts`                                  | Enforces the two limits under Limits on what ships, over every tracked file in the two folders         |
 
 ## Notes
 
