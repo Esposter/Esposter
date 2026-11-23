@@ -15,8 +15,8 @@ const getResponseHook = async (): Promise<ResponseHook> => {
 };
 
 describe("nuxtAssets", () => {
-  // The module's route rules, resolved the way its Nitro plugin resolves them on the first request. Each header is a value
-  // The module's defaults do not set, so a value the hook writes itself cannot match them by chance
+  // The module's route rules, resolved the way its Nitro plugin resolves them on the first request. Each header is a
+  // Value The module's defaults do not set, so a value the hook writes itself cannot match them by chance
   beforeEach(async () => {
     let resolveRoutes: (() => Promise<void>) | undefined;
     const routeRulesPlugin = createRouteRulesPlugin({
@@ -56,8 +56,8 @@ describe("nuxtAssets", () => {
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
-  // A response the Worker writes under the build's folder gets none of its file's headers, so it takes the resource headers
-  // The page's rules set and the embedder policy its pages send, and none of the page-only policies
+  // A response the Worker writes under the build's folder gets none of its file's headers, so it takes the resource
+  // Headers The page's rules set and the embedder policy its pages send, and none of the page-only policies
   test("a missing file under the build's folder carries the resource headers its rules set, and no page-only policy", async () => {
     expect.hasAssertions();
 
