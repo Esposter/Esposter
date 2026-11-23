@@ -1,3 +1,4 @@
+import { getDistinctIds } from "#src/services/message/getDistinctIds";
 import { useDataStore } from "#src/store/message/data";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
@@ -16,7 +17,7 @@ export const useMessageEvents = () => {
         getResultAsync(async () => {
           // A member who joined in a previous session fires no onJoinRoom, so their data is loaded here for
           // The author info a new message needs
-          const userIds = [...new Set(data.map(({ userId }) => userId))].filter((userId) => userId !== null);
+          const userIds = getDistinctIds(data.map(({ userId }) => userId));
           // A failed lookup only leaves its author unnamed, so the messages still land
           if (userIds.length > 0)
             await getResultAsync(() => readUsersByIds(roomId, userIds)).match(noop, console.error);
