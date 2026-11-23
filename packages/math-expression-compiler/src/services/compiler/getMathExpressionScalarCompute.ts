@@ -2,7 +2,8 @@ import type { MathExpressionScalarCompute } from "#src/models/function/MathExpre
 
 import { getMathExpressionSignatures } from "#src/services/shared/getMathExpressionSignatures";
 
-// An operator's scalar function of the form Key names: the first signature's own form when it carries one, else its array form over the same operands, and Null for a name the table does not hold
+// An operator's scalar function of the form Key names: the first signature's own form when it carries one, else its
+// Array form over the same operands, and Null for a name the table does not hold
 export const getMathExpressionScalarCompute = <Key extends keyof MathExpressionScalarCompute>(
   name: string,
   key: Key,

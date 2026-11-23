@@ -6,7 +6,8 @@ export const MATH_EXPRESSION_ABSOLUTE_TOLERANCE = 1e-15;
 export const SQRT_PI: number = Math.sqrt(Math.PI);
 // The most digits a rounding function takes
 export const MAXIMUM_DIGITS = 15;
-// The bases under which Miller-Rabin is exact for every integer below 3.3e24, so for the safe integers it is deterministic
+// The bases under which Miller-Rabin is exact for every integer below 3.3e24, so for the safe integers it is
+// Deterministic
 export const MILLER_RABIN_BASES: readonly bigint[] = [2n, 3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n, 29n, 31n, 37n];
 // The gamma function overflows above this argument, and an integer above the last factorial is infinite
 export const OVERFLOW_ARGUMENT = 171.35;

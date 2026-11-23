@@ -1,5 +1,6 @@
 // The rules of a formula's grammar. Each rule parses its operands with the rule below it in the chain, from the loosest
-// Binding to the tightest, so a formula's parse is that chain, and an operator-bearing rule is a key of the operator map
+// Binding to the tightest, so a formula's parse is that chain, and an operator-bearing rule is a key of the operator
+// Map
 export const MathExpressionGrammarRule = {
   Assignment: "Assignment",
   Binary: "Binary",

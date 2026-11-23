@@ -13,8 +13,8 @@ const compileOfType = <TType extends MathExpressionNodeType>(
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => MathExpressionNodeCompileMap[type](node, context);
 
-// Compiles a node with the compiler of its type.
-// A subtree that reads no variable and no assignment is computed once, here, and an error it folds to is kept as an error
+// Compiles a node with the compiler of its type. A subtree that reads no variable and no assignment is computed once,
+// Here, and an error it folds to is kept as an error
 export const compileMathExpressionNode = (
   node: MathExpressionNode,
   context: MathExpressionCompileContext,

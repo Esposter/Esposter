@@ -3,7 +3,8 @@ import type { MathExpressionSignature } from "#src/models/function/MathExpressio
 import { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
 import { getMathExpressionArityMessage } from "#src/services/parser/getMathExpressionArityMessage";
 
-// A call no signature takes is an arity error when no signature has its count of arguments, else a list in the wrong place
+// A call no signature takes is an arity error when no signature has its count of arguments, else a list in the wrong
+// Place
 export const getMathExpressionSignatureError = (
   name: string,
   signatures: readonly MathExpressionSignature[],

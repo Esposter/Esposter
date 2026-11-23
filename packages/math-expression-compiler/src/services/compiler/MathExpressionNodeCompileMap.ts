@@ -16,7 +16,8 @@ import { compileNumber } from "#src/services/compiler/node/compileNumber";
 import { compilePercentage } from "#src/services/compiler/node/compilePercentage";
 import { compileUnary } from "#src/services/compiler/node/compileUnary";
 
-// The compiler of each node type, which takes the node of that type; the mapped type checks each entry against its own node
+// The compiler of each node type, which takes the node of that type; the mapped type checks each entry against its own
+// Node
 export const MathExpressionNodeCompileMap: {
   [T in MathExpressionNodeType]: (
     node: Extract<MathExpressionNode, { type: T }>,

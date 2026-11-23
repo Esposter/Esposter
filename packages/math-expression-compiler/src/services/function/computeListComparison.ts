@@ -1,6 +1,7 @@
 import { computeComparison } from "#src/services/function/computeComparison";
 
-// Lists compare element by element, and where one runs out first, the shorter list is the smaller, as mathjs compares them
+// Lists compare element by element, and where one runs out first, the shorter list is the smaller, as mathjs compares
+// Them
 export const computeListComparison = (left: number[], right: number[]): number => {
   for (const [index, value] of left.entries()) {
     const other = right[index];

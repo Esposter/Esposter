@@ -3,7 +3,8 @@ import type { MathExpressionSignature } from "#src/models/function/MathExpressio
 
 import { checkIsMatching } from "#src/services/shared/checkIsMatching";
 
-// The first signature a call's argument kinds fit, which the parser checks a call with and the compiler computes it with
+// The first signature a call's argument kinds fit, which the parser checks a call with and the compiler computes it
+// With
 export const matchMathExpressionSignature = (
   signatures: readonly MathExpressionSignature[],
   parameterTypes: MathExpressionParameterType[],

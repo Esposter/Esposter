@@ -1,6 +1,6 @@
-// The number of ways to choose `chosen` items from `available`. Choosing from the smaller of the chosen and the rest keeps the
-// Loop short, and each partial product is a binomial of a smaller count, which only grows, so once one passes the float
-// Range the whole count is Infinity, an empty cell, without the loop running on
+// The number of ways to choose `chosen` items from `available`. Choosing from the smaller of the chosen and the rest
+// Keeps the Loop short, and each partial product is a binomial of a smaller count, which only grows, so once one passes
+// The float Range the whole count is Infinity, an empty cell, without the loop running on
 export const computeCombinations = (available: number, chosen: number): number => {
   const smaller = Math.min(chosen, available - chosen);
   let result = 1;

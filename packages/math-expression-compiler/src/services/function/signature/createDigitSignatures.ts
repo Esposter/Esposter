@@ -3,7 +3,8 @@ import type { MathExpressionSignature } from "#src/models/function/MathExpressio
 import { roundToDigits } from "#src/services/function/roundToDigits";
 import { createRangedSignatures } from "#src/services/function/signature/createRangedSignatures";
 
-// A rounding takes a value and an optional count of decimal places, and its scalar forms round to none and to the given count
+// A rounding takes a value and an optional count of decimal places, and its scalar forms round to none and to the given
+// Count
 export const createDigitSignatures = (rounder: (value: number) => number): MathExpressionSignature[] =>
   createRangedSignatures(
     1,

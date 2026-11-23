@@ -11,10 +11,11 @@ import { getMathExpressionToken } from "#src/services/parser/getMathExpressionTo
 import { MathExpressionBinaryOperatorMap } from "#src/services/parser/MathExpressionBinaryOperatorMap";
 import { getOwnValue } from "@esposter/shared";
 
-// Parses the binary operators of at least the minimum power by precedence climbing: an operand is followed by each operator
-// That binds at least that tightly, and its right operand is parsed one power above it, so `a - b - c` is `(a - b) - c`.
-// An implicit product is the same operator as `*`, taken where a factor begins with no operator between the operands. The
-// Right operand calls this function again, not another rule, so an operator costs one call whatever its level
+// Parses the binary operators of at least the minimum power by precedence climbing: an operand is followed by each
+// Operator That binds at least that tightly, and its right operand is parsed one power above it, so `a - b - c` is `(a
+// - b) - c`. An implicit product is the same operator as `*`, taken where a factor begins with no operator between the
+// Operands. The Right operand calls this function again, not another rule, so an operator costs one call whatever its
+// Level
 export const parseBinaryOperators = (
   state: MathExpressionParserState,
   parse: MathExpressionParse,

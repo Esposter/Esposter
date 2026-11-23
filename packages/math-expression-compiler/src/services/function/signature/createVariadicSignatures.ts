@@ -4,7 +4,8 @@ import type { MathExpressionSignature } from "#src/models/function/MathExpressio
 
 import { createNumberSignature } from "#src/services/function/signature/createNumberSignature";
 
-// A variadic function may take its scalar form of two numbers, which an operator or a call of two arguments computes with
+// A variadic function may take its scalar form of two numbers, which an operator or a call of two arguments computes
+// With
 export const createVariadicSignatures = (
   minArity: number,
   compute: MathExpressionNumberCompute,

@@ -1,5 +1,6 @@
-// The extreme of a list as mathjs's max and min fold it from a starting value: a NaN answers NaN, and a value replaces the
-// Extreme so far only where it is preferred over it, which a nearly equal value never is, so the first of the two is kept
+// The extreme of a list as mathjs's max and min fold it from a starting value: a NaN answers NaN, and a value replaces
+// The Extreme so far only where it is preferred over it, which a nearly equal value never is, so the first of the two
+// Is kept
 export const computeExtreme = (
   values: readonly number[],
   initial: number,

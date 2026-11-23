@@ -1,5 +1,6 @@
-// The nth root as mathjs takes it: a negative root is the reciprocal of the root of the magnitude, a negative value needs an
-// Odd integer root, and a root that is exact for a perfect power is that power's root rather than its rounding residue
+// The nth root as mathjs takes it: a negative root is the reciprocal of the root of the magnitude, a negative value
+// Needs an Odd integer root, and a root that is exact for a perfect power is that power's root rather than its rounding
+// Residue
 export const computeNthRoot = (value: number, root: number): null | number => {
   const isInverse = root < 0;
   const degree = Math.abs(root);

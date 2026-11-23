@@ -3,7 +3,8 @@ import type { MathExpressionValue } from "#src/models/function/MathExpressionVal
 import { computeDotProduct } from "#src/services/function/computeDotProduct";
 import { scaleList } from "#src/services/function/scaleList";
 
-// The product of two operands, where a number scales a list and two lists give their dot product, as mathjs multiplies them
+// The product of two operands, where a number scales a list and two lists give their dot product, as mathjs multiplies
+// Them
 export const multiplyPair = (left: MathExpressionValue, right: MathExpressionValue): MathExpressionValue | null => {
   if (typeof left === "number" && typeof right === "number") return left * right;
   if (typeof left === "number" && Array.isArray(right)) return scaleList(right, left);
