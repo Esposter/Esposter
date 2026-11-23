@@ -2,7 +2,7 @@
 
 ## Context
 
-The repository declares several hundred closed sets of named values: element kinds, permission bits, message types, achievement names, scene and texture keys. The proposal's Why gives the two forms and the merge's defect. The decisions below settle the one form, how a member is typed, and the merge's check. Nothing has collided yet, and nothing would say so if it did.
+The repository declares several hundred closed sets of named values: element kinds, permission bits, message types, achievement names, scene and texture keys. A set can be declared as an `enum` or as an `as const` object, and a merge by object spread lets a repeated key win silently. The decisions below settle the one form, how a member is typed, and the merge's check.
 
 ## Goals
 
@@ -56,11 +56,7 @@ flowchart LR
 
 ### A set mirroring outside data is generated, not merged
 
-The dungeons' texture and sound keys are merges of a dozen hand-written sets restating the names of files in a bucket. Where a set mirrors data the repository does not author, the generator that reads the data writes the one set: `DungeonsKeys` from the dungeons' committed lock (`apps/web/shared/generated/hostedAssets/dungeonsLock.json`, read by the Nuxt module in `packages/hosted-assets/src/internal/module.ts`), the Tiled property types from the Tiled project. The generators write the `as const` form (`createValueSetString`). The dungeons' asset merges go when the `migrate-assets` branch lands.
-
-## Migration
-
-The conversion is mechanical, so it is one throwaway codemod run per package, never a hand sweep: each `enum` becomes its object and type, each member in a type position becomes `typeof` the member, and the generators are re-run. Everything else an `enum` does carries over: `z.enum`, `Record<X, …>`, mapped types over a set, a Drizzle column built from a set's values, a member as an interface's computed key, and serialized values. One use needs a hand edit, made in its own commit before the codemod: a numeric set read back from a number to its member name (the Lua opcode names), which takes a map written beside the set. An unfiltered `Object.values` over a numeric set changes for the better, since its result today also holds the reverse mapping's name strings. A package is converted whole in one commit, and the base and the Nuxt options turn `erasableSyntaxOnly` on in the commit converting the last, so no package holds both forms. Every `scripts` entry runs under `node`: `scripts/src/workspace/packageScripts.test.ts` strips every module a `node` entry reaches with Node's own stripper.
+The dungeons' texture and sound keys are one generated set, `DungeonsKeys`, which the generator writes from the dungeons' committed lock (`apps/web/shared/generated/hostedAssets/dungeonsLock.json`, read by the Nuxt module in `packages/hosted-assets/src/internal/module.ts`), so no hand-written list restates the names of the files in the hosted bucket. Where a set mirrors data the repository does not author, the generator that reads the data writes the one set, and the Tiled property types come from the Tiled project. The generators write the `as const` form (`createValueSetString`).
 
 ## Sources
 

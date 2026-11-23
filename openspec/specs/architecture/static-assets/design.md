@@ -34,9 +34,9 @@ The value set follows the repo's convention: each member's value is spelled like
 A loader takes any URL, so a bundled URL needs no special handling in Phaser or three.js: `scene.load.image(key, url)` and `textureLoader.load(url)` read it the same as a path under `public/`. The import names the file where it is read, and the URL is the import's value:
 
 ```ts
-import basicPlainsUrl from "#src/assets/dungeons/tilesets/axulart/BasicPlains.png";
+import roughnessUrl from "#src/assets/visual/textures/roughness.jpeg";
 
-scene.load.image(TilesetKey.BasicPlains, basicPlainsUrl);
+textureLoader.load(roughnessUrl);
 ```
 
 An image's default import is its URL, and a glTF model's too, since `configuration/vite.ts` lists it in `assetsInclude`. A `#src` name carries no query, because the manifest substitutes the whole specifier into its pattern, so a file read another way passes its query as an `import.meta.glob` option: the privacy policy's HTML with `query: "?raw"`, a string in its route's chunk that needs no request, the zstd module with `"?url"`, and a worker with `"?worker"`. The file is never named by a string path in the source, so a missing file is a build error rather than a 404 found at runtime.
@@ -47,7 +47,7 @@ A bundled URL is the same on both renders. Nuxt writes an imported asset's URL t
 
 A dev server and a build still disagree on a bundled URL's space. The dev server encodes it (`%20`), while the build writes the URL through `__buildAssetsURL`, which joins without encoding, so the build keeps it raw. A loader takes either form, but a `srcset` splits on a raw space, so a consumer that puts a bundled URL in one encodes its spaces, as the clicker's icon map does (`apps/web/app/services/clicker/icon/toIconMap.ts`).
 
-A Tiled tileset is named in a map by a relative `source` path, the form the Tiled editor writes, so each map's `index.tmx` and the `tilemap.json` beside it keep that path. The runtime does not follow the path. The external tileset loader in `packages/vue-phaserjs` takes each tileset's Tiled definition from a url, keyed by the tileset's name. The dungeons game's maps and definitions are hosted objects (`openspec/changes/dungeons-assets-on-r2`): `loadTilemaps` builds each map's url and each `.tsx` url from the dungeons key map, so a map loads by its url and the loader requests each definition from its own hosted url. A move still edits the relative paths in each map, because the editor needs them. The `.tsx` and `tilemap.json` files stay in `app/assets/dungeons/`, the Tiled tree the editor and `tiled:gen` read, and the bundle holds none of them.
+A Tiled tileset is named in a map by a relative `source` path, the form the Tiled editor writes, so each map's `index.tmx` and the `tilemap.json` beside it keep that path. The runtime does not follow the path. The external tileset loader in `packages/vue-phaserjs` takes each tileset's Tiled definition from a url, keyed by the tileset's name. The dungeons game's maps and definitions are hosted objects: `loadTilemaps` builds each map's url and each `.tsx` url from the dungeons key map, so a map loads by its url and the loader requests each definition from its own hosted url. A move still edits the relative paths in each map, because the editor needs them. The `.tsx` and `tilemap.json` files stay in `app/assets/dungeons/`, the Tiled tree the editor and `tiled:gen` read, and the bundle holds none of them.
 
 ## Shared code stays out of asset imports
 
