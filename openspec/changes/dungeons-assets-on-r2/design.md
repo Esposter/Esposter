@@ -8,8 +8,8 @@ Every file Phaser or a loader reads moves. A file the app's code never reads at 
 
 | Files                                                                                                                                          | Read by                                                    | Decision                                                                                                                    |
 | :--------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| PNG (54), WebP (the re-encodes over 2 MiB), WOFF2 (1)                                                                                          | Phaser, by url                                             | **hosted**; git removes the binaries                                                                                        |
-| WAV (7) and MP3 (3)                                                                                                                            | Phaser, by url                                             | **hosted** as MP3; a WAV is refused by the publish, so the re-encodes land first                                            |
+| PNG (53), WebP (1), WOFF2 (1)                                                                                                                  | Phaser, by url                                             | **hosted**; git removes the binaries after the first publish verifies them                                                  |
+| MP3 (10)                                                                                                                                       | Phaser, by url                                             | **hosted**; the publish refuses a WAV, and none remains in the repository                                                   |
 | `tilemap.json` (3)                                                                                                                             | Phaser, as the map's Tiled JSON                            | **hosted**, published from the Tiled export beside `index.tmx`; the file stays in git as the editor's export                |
 | `.tsx` tilesets (10)                                                                                                                           | Phaser's external tileset loader, by url                   | **hosted**, published from the Tiled tree; the file stays in git, since the Tiled editor and the `.tmx` need it beside them |
 | `index.tmx` (3), `index.tiled-project` (1)                                                                                                     | `pnpm tiled:gen` (`apps/web/scripts/tiled/`), not the game | **stays** in git as the authoring source of the property types                                                              |
@@ -18,12 +18,12 @@ Every file Phaser or a loader reads moves. A file the app's code never reads at 
 
 The `.tmx`, `.tiled-project`, `.tsx` and export `tilemap.json` files stay in git for the same reason the genshin-data skill keeps an authored world file after it is published: deleting an authored file once it is published is a settled rejection there. The runtime never reads the git copy. It reads the published copy the lock names, and the bundle holds none of these files.
 
-The binaries are different. They leave git. The original PNG, WAV and WOFF2 bytes live in the product's R2 bucket under their hashes, which the architecture design's recoverability decision accepts as a home ("the repository or R2 under a committed lock"). `hosted-assets pull --all` restores a working copy from the lock when a file must be changed and published again.
+The binaries are different. They leave git after the first publish verifies them. The first publish reads the repository's files, and a repository file is removed only after its object's sha256 equals the file's. The original bytes then live in the shared bucket under their hashes, which the architecture design's recoverability decision accepts ("the repository or R2 under a committed lock"). `hosted-assets pull --all` restores a working copy for a later edit.
 
 ## Object names and keys
 
 - **Content hash.** Each object is `dungeons/<sha256><extension>`. Edge caching is immutable because a changed file is a new name.
-- **Bucket.** The existing `public-dungeons-assets`. The generic system does not add a bucket: a product's bucket is its scope, and the dungeons game has one.
+- **Bucket and prefix.** The shared `public-hosted-assets` bucket, under the `dungeons/` prefix. Objects are `dungeons/<sha256><extension>`, served from the shared hosted domain. The game declares its prefix and owns no bucket.
 - **Keys.** The key of each file is derived from its path, as the file-pack generator derived it: `Scene/Battle/ForestBackground.png` is `SceneBattleForestBackground`. The derivation lives in the product's declaration, and the generic renderer writes the names into `FileKey`.
 - **Key map.** The keys are a `FileKey` value set. Its literal union is generated into a gitignored file at install, and every url is read from the lock by that key, so no key is a string the code spells by hand.
 
@@ -92,15 +92,16 @@ The Phaser pass is near-instant. It runs after every object is held in the cache
 
 ## Cleanup
 
-- `git rm` of every hosted binary: the 54 PNG, the 7 WAV, the 3 MP3 and the 1 WOFF2 under `apps/web/app/assets/dungeons/`, and the WebP re-encodes' originals, once their hashes are in the lock.
+- `git rm` of every hosted binary: the 53 PNG, the 10 MP3, the 1 WebP and the 1 WOFF2 under `apps/web/app/assets/dungeons/`, once the first publish's byte check passes.
 - `git rm` of the asset-map files and `TilesetUrlMap.ts` with its test, and of `toXmlBlobUrl` at `apps/web/app/util/file/toXmlBlobUrl.ts`, which only `TilesetUrlMap` imports.
+- The path-named objects the file-pack generator listed in `public-dungeons-assets`, such as `Scene/Battle/ForestBackground.png` (the `url` column of the retired `files.json`), are not copied. They are deleted with the bucket's retirement, once the shared domain serves the game.
 - The file-pack generator: `apps/web/scripts/phaser/` with its `constants.ts`, `index.ts`, `filePack/createFilePack.ts`, its test and `services/remove.ts`; the `phaser:gen` script in `apps/web/package.json`; and the committed `apps/web/shared/generated/phaser/FileKey.ts` and `files.json`, which no file reads.
 - `openspec/specs/architecture/generated-artifacts/design.md`'s row for `pnpm phaser:gen` is removed by the architecture change, not this one.
 - `openspec/specs/dungeons/monsters-and-items/design.md` and `openspec/specs/dungeons/scenes-and-input/design.md` name the key maps the prior art edited, and read against the code they describe.
 
 ## Notes
 
-- The prior-art branch `origin/migrate-assets` is the implementation's base. The change ports its commit onto `ai/queue` as a new commit, not a rebase, and the owner deletes the branch after review.
+- The prior-art branch `origin/migrate-assets` is the implementation's base. The change ports its commit onto `ai/queue` as a new commit, not a rebase. The session deletes the branch once the port is verified: each decision of the commit is checked as carried or recorded as dropped, then `git push origin --delete migrate-assets`, as the owner authorised.
 - The driven-browser run covers the title, world and battle scenes against the bucket, with the bundle size before and after recorded as the architecture change records it.
 
 ## Key files
