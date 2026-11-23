@@ -123,18 +123,19 @@ What stays a selector ban rather than a native rule, and why:
 
 ## Key files
 
-| File                                                                | Role                                                                                                        |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `oxlint.config.ts`                                                  | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware`         |
-| `package.json`                                                      | The root oxlint scripts, each run with `--debug=timings`                                                    |
-| `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `oxlint.config.ts`                                                    |
-| `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables after the base rules, so they win                                                |
-| `packages/configuration/eslint/index.vueScopedStyles.js`            | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                              |
-| `vite/services/scopedStyleSyntaxes.ts`                              | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here |
-| `vite/services/htmlTagNames.ts`                                     | The HTML standard's tag names that ban reads, with the upstream release it was copied from                  |
-| `vite/services/htmlElementAttributes.ts`                            | The attributes each HTML element accepts, that ban's other half, with the same provenance                   |
-| `packages/configuration/eslint/ignores.js`                          | ESLint's shared ignores; the tileset glob is the one `oxlint.config.ts` exports                             |
-| `packages/configuration/eslint/restrictedEventSyntaxes.js`          | The bare `@click.stop` ban, the one `no-restricted-syntax` list still run by ESLint                         |
+| File                                                                           | Role                                                                                                                                     |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `oxlint.config.ts`                                                             | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware`                                      |
+| `package.json`                                                                 | The root oxlint scripts, each run with `--debug=timings`                                                                                 |
+| `packages/configuration/eslint/oxlint.js`                                      | Builds the ESLint disable config from `oxlint.config.ts`                                                                                 |
+| `packages/configuration/eslint/index.typescript.js`, `index.vue.js`            | Append the oxlint disables after the base rules, so they win                                                                             |
+| `packages/configuration/eslint/index.vueScopedStyles.js`                       | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                                                           |
+| `vite/services/scopedStyleSyntaxes.ts`                                         | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here                              |
+| `vite/services/htmlTagNames.ts`                                                | The HTML standard's tag names that ban reads, with the upstream release it was copied from                                               |
+| `vite/services/htmlElementAttributes.ts`                                       | The attributes each HTML element accepts, that ban's other half, with the same provenance                                                |
+| `packages/configuration/eslint/ignores.js`                                     | ESLint's shared ignores; the tileset glob is the one `oxlint.config.ts` exports                                                          |
+| `scripts/src/workspace/templateTextRules.test.ts`                              | The template rules vize cannot run yet — the bare `@click.stop` ban, same-name bind shorthand and block padding — each under its `@TODO` |
+| `vite/services/componentCasingSyntaxes.ts`, `vite/services/foreignTagNames.ts` | The PascalCase component-tag check as a vize selector ban, with the SVG and MathML names it exempts                                      |
 
 ## The HTML data behind the scoped-styles ban
 

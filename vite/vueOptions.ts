@@ -48,6 +48,7 @@ export const VUE_OPTIONS: VueOptions = {
       // Comment with its reason; library CSS is a script-setup import, code-split with the component
       "vue/enforce-style-attribute": { allow: ["scoped"] },
       "vue/no-restricted-syntax": TEMPLATE_RESTRICTED_SYNTAXES,
+      "vue/v-bind-style": "shorthand",
       "vue/v-on-event-hyphenation": { autofix: true, style: "always" },
       "vue/v-slot-style": { atComponent: "shorthand" },
     },
@@ -121,6 +122,7 @@ export const VUE_OPTIONS: VueOptions = {
       "vue/sfc-element-order": "error",
       "vue/this-in-template": "error",
       "vue/use-v-on-exact": "error",
+      "vue/v-bind-style": "error",
       "vue/v-on-event-hyphenation": "error",
       "vue/v-on-style": "error",
       "vue/v-slot-style": "error",

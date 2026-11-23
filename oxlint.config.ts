@@ -90,6 +90,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "props-interface/no-exported-type": "error",
         "props-interface/no-unread-destructure": "error",
         "props-interface/require-props-name": "error",
+        "vue-type-imports/require-import-type": "error",
       },
     },
     {
