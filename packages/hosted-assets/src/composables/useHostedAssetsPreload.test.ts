@@ -98,6 +98,26 @@ describe(useHostedAssetsPreload, () => {
     await expect(listHeldHostedAssetUrls(cache)).resolves.toStrictEqual(new Set([modelUrl, otherProductUrl]));
   });
 
+  test("an eviction that fails once every file is held leaves the set ready and calls onHeld once", async () => {
+    expect.hasAssertions();
+
+    const cache = createHostedAssetCacheStub();
+    const staleUrl = `${origin}/characterPacks/2/model.pmx?sha256=${"1".repeat(64)}`;
+    await cache.put(modelUrl, new Response(null));
+    await cache.put(staleUrl, new Response(null));
+    vi.spyOn(cache, "delete").mockRejectedValue(new Error(" "));
+    vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
+
+    const onHeld = vi.fn<() => void>();
+    const { preload, status } = useHostedAssetsPreload(() => Promise.resolve(set), onHeld);
+    const run = preload();
+    await vi.runAllTimersAsync();
+    await run;
+
+    expect(status.value).toBe(HostedAssetPreloadStatus.Ready);
+    expect(onHeld).toHaveBeenCalledExactlyOnceWith();
+  });
+
   test("a failed preload evicts nothing", async () => {
     expect.hasAssertions();
 

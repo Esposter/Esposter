@@ -31,6 +31,8 @@ Both accounts upload in parallel, and each file replaces the account's copy unde
 
 How the world reads the packs, from the index through the cache to each pack's reader, is set out in [the characters index](../README.md#how-the-world-reads-a-pack).
 
+A successful preload evicts the pack entries under the packs' folder that the index no longer names, so a republished file's older copy is removed once every file of the index is held. A failed preload removes nothing.
+
 ## The launch bar shows the download
 
 The game's first bar is the plain bar on its login screen, which follows the title's click: the English recording's status reads "Checking for updates...", then "Loading game..." at 0.00%, then "Preparing to load data" over the bar, which fills to full before the door rises (`{data-root}/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`). The elemental loading screen is the scene's own load after the door, and the game's shows no download on it. So the packs download from the opening's mount, under the splashes and the title, and the launch bar reports their share once the game starts preparing, with the door waiting on the bar's full share as the game's does. A failed file puts the game's failure line and a retry on that bar, in the words' and the share's places. The elemental screen takes the world's steps alone.
@@ -39,7 +41,6 @@ The game's first bar is the plain bar on its login screen, which follows the tit
 
 - An upload does not compare content first, so an unchanged file uploads again on a rerun.
 - A file a pack drops is not unpublished: a rerun replaces only the names the packs still hold.
-- Nothing removes a held file, so a republished file's older copy stays in the browser's cache, unread.
 
 ## Rejected
 

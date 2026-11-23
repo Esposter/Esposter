@@ -94,7 +94,7 @@
 - `packages/grid-engine-headless` — `README.md`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/hosted-assets` — `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/hosted-assets/src/composables` — `useHostedAssetsPreload.test.ts`, `useHostedAssetsPreload.ts`
-- `packages/hosted-assets/src/models` — `HostedAssetDownloadFile.ts`, `HostedAssetDownloadPlan.ts`, `HostedAssetLock.test.ts`, `HostedAssetLock.ts`, `HostedAssetObject.ts`, `HostedAssetPreloadSet.ts`, `HostedAssetPreloadStatus.ts`, `HostedAssetsPreload.ts`
+- `packages/hosted-assets/src/models` — `HostedAssetDownloadFile.ts`, `HostedAssetDownloadPlan.ts`, `HostedAssetLock.test.ts`, `HostedAssetLock.ts`, `HostedAssetObject.ts`, `HostedAssetPreload.ts`, `HostedAssetPreloadSet.ts`, `HostedAssetPreloadStatus.ts`
 - `packages/hosted-assets/src/services` — `constants.ts`, `createHostedAssetCacheStub.test.ts`, `downloadHostedAssetFile.ts`, `downloadHostedAssetFiles.test.ts`, `downloadHostedAssetFiles.ts`, `evictStaleHostedAssets.ts`, `getHostedAssetUrl.test.ts`, `getHostedAssetUrl.ts`, `listHeldHostedAssetUrls.ts`, `planHostedAssetDownload.test.ts`, `planHostedAssetDownload.ts`, `preloadHostedAssets.ts`, `readStreamedBlob.ts`, `storeHostedAssetFile.ts`
 - `packages/keyframe-store`
 - `packages/genshin-persona/.claude-plugin`, `packages/genshin-persona/hooks`, `packages/genshin-persona/mod`, `packages/genshin-persona/output-styles`, `packages/genshin-persona/runtime`, `packages/genshin-persona/scripts`, `packages/genshin-persona/skills`, `packages/genshin-persona/src/generated/characterLines`

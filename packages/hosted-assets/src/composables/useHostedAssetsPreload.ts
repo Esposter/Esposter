@@ -1,9 +1,9 @@
+import type { HostedAssetPreload } from "#src/models/HostedAssetPreload";
 import type { HostedAssetPreloadSet } from "#src/models/HostedAssetPreloadSet";
-import type { HostedAssetsPreload } from "#src/models/HostedAssetsPreload";
 
 import { HostedAssetPreloadStatus } from "#src/models/HostedAssetPreloadStatus";
 import { preloadHostedAssets } from "#src/services/preloadHostedAssets";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { computed, ref } from "vue";
 
 // A product's preload behind its loading bar: its set is read, then each file is held in the browser's cache.
@@ -12,7 +12,7 @@ import { computed, ref } from "vue";
 export const useHostedAssetsPreload = (
   readPreloadSet: () => Promise<HostedAssetPreloadSet>,
   onHeld: () => void,
-): HostedAssetsPreload => {
+): HostedAssetPreload => {
   const status = ref<HostedAssetPreloadStatus>(HostedAssetPreloadStatus.Idle);
   const loadedBytes = ref(0);
   const pendingBytes = ref(0);
@@ -26,21 +26,22 @@ export const useHostedAssetsPreload = (
     pendingBytes.value = 0;
     await getResultAsync(readPreloadSet)
       .andThen((preloadSet) =>
-        preloadHostedAssets(preloadSet, (progress) => {
-          loadedBytes.value = progress.loadedBytes;
-          pendingBytes.value = progress.pendingBytes;
-        }),
+        preloadHostedAssets(
+          preloadSet,
+          (progress) => {
+            loadedBytes.value = progress.loadedBytes;
+            pendingBytes.value = progress.pendingBytes;
+          },
+          () => {
+            status.value = HostedAssetPreloadStatus.Ready;
+            onHeld();
+          },
+        ),
       )
-      .match(
-        () => {
-          status.value = HostedAssetPreloadStatus.Ready;
-          onHeld();
-        },
-        (error) => {
-          console.error(error);
-          status.value = HostedAssetPreloadStatus.Failed;
-        },
-      );
+      .match(noop, (error) => {
+        console.error(error);
+        status.value = HostedAssetPreloadStatus.Failed;
+      });
   };
   return { downloadProgress, preload, status };
 };
