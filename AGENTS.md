@@ -78,7 +78,7 @@ Working is not finished. Once the change does what it should — a feature, a fi
 
 Skip step 1 only for a genuinely one-line change. When a step finds nothing, say so — that is a result.
 
-Carrying one settled convention across code that predates this ritual is a **sweep**: one file per sweep in `.agents/ledgers/`, tracked as repo state rather than as a proposal, and run per the `sweeps` skill. A sweep is not only a job someone schedules — **when the change edits a file inside a unit an open ledger still lists as unswept, sweep those files first, in their own commit ahead of the behaviour change**, so the ledger drains as a by-product of ordinary work. Scope it to the files being touched, keep the two commits apart, and write no `Ledger:` trailer for the unit: coverage tracks whole units, and there is no partially-swept state.
+Carrying one settled convention across code that predates this ritual is a **sweep**: one file per sweep in `.agents/ledgers/`, tracked as repo state rather than as a proposal, and run per the `sweeps` skill. A sweep is not only a job someone schedules — **when the change edits a file inside a unit an open ledger still lists as unswept, sweep those files first, in their own commit ahead of the behaviour change**, so the ledger drains as a by-product of ordinary work. Scope it to the files being touched, keep the two commits apart, and write no `Ledger:` trailer for the unit: coverage tracks whole units, and there is no partially-swept state. A question whose ledger is sampled rather than read unit by unit owes no such pass: its touched cells are drawn by `pnpm ai:sweep:sample --touched` and read whole in the next sitting (the `sweeps` skill, `references/draining.md`).
 
 ## Specifications
 
