@@ -20,8 +20,15 @@ describe("staticAssets", () => {
   const SIZE_LIMIT_BYTES = 2 * MEBIBYTE;
 
   const ENGINE_LOADER_PATHSPECS = ["apps/web/app/services/dungeons/loader"];
-  const IMPORT_SPECIFIER_REGEX = /\bfrom "(?<specifier>[^"]+)"/gu;
+  // A loader names a file in a static import, a dynamic import or an import.meta.glob.
+  // The string that names it is the first one in each form.
+  const LOADED_SPECIFIER_REGEX = /(?:\bfrom |\bimport\(\s*|\bimport\.meta\.glob\(\s*)"(?<specifier>[^"]+)"/gu;
   const HOSTED_MEDIA_REGEX = /\.(?:mp3|ogg|png|tmx|tsx|webp|woff2)(?:\?|$)|tilemap\.json(?:\?|$)/u;
+
+  const getHostedSpecifiers = (source: string): string[] =>
+    Array.from(source.matchAll(LOADED_SPECIFIER_REGEX), ({ groups }) => groups?.specifier ?? "").filter((specifier) =>
+      HOSTED_MEDIA_REGEX.test(specifier),
+    );
 
   const checkIsOversizedOrUncompressed = (path: string): boolean =>
     statSync(join(REPOSITORY_ROOT, path)).size > SIZE_LIMIT_BYTES || UNCOMPRESSED_AUDIO_EXTENSIONS.has(extname(path));
@@ -42,19 +49,33 @@ describe("staticAssets", () => {
     ).toStrictEqual([]);
   });
 
-  // An engine loader reads each hosted file by its url from the key map, so a loader that imports one by its path puts the
-  // File back into the bundle, which the hosted objects exist to keep out
+  // An engine loader reads each hosted file by its url from the key map. A loader that names one by its path puts
+  // The file back into the bundle, which the hosted objects exist to keep out
   test("an engine-read texture is hosted", () => {
     expect.hasAssertions();
 
     expect(
       readSweepFilePaths(...ENGINE_LOADER_PATHSPECS)
         .filter((path) => extname(path) === ".ts")
-        .flatMap((path) =>
-          Array.from(readRepositoryFile(path).matchAll(IMPORT_SPECIFIER_REGEX), ({ groups }) => groups?.specifier ?? "")
-            .filter((specifier) => HOSTED_MEDIA_REGEX.test(specifier))
-            .map((specifier) => `${path}: ${specifier}`),
-        ),
+        .flatMap((path) => getHostedSpecifiers(readRepositoryFile(path)).map((specifier) => `${path}: ${specifier}`)),
     ).toStrictEqual([]);
+  });
+
+  test("a loader that names a hosted file by a glob or a dynamic import is flagged", () => {
+    expect.hasAssertions();
+
+    expect(
+      getHostedSpecifiers(
+        [
+          'import tileset from "#src/assets/dungeons/tilesets/Dungeon.tsx";',
+          'const frames = import.meta.glob("#src/assets/dungeons/scene/**/*.png", { eager: true });',
+          'const sheet = await import("#src/assets/dungeons/sheet.webp");',
+        ].join("\n"),
+      ),
+    ).toStrictEqual([
+      "#src/assets/dungeons/tilesets/Dungeon.tsx",
+      "#src/assets/dungeons/scene/**/*.png",
+      "#src/assets/dungeons/sheet.webp",
+    ]);
   });
 });

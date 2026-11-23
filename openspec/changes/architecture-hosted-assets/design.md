@@ -254,7 +254,7 @@ Tasks per migrating group are in `tasks.md`.
 The placement rule has two checks, and both extend the test the other agent is adding for WAV files and files over 2 MiB, rather than restating it:
 
 - **The bundle check** fails any file under `apps/web/app/assets/` that is over 2 MiB or has an uncompressed-audio extension, the list `UNCOMPRESSED_AUDIO_EXTENSIONS` (`.aiff`, `.flac`, `.wav`). A file the bundle cannot hold is hosted instead.
-- **The hosted check** is a separate test over the engine loaders. It fails when a loader module imports a media file (`.png`, `.webp`, `.mp3`, `.ogg`, `.woff2`, `.tsx`, `.tmx`, `.json` of a map) by its path, since such a file is read by url from the product's key map. It also fails when a key a loader names has no entry in the product's lock.
+- **The hosted check** is a separate test over the engine loaders. It fails when a loader module names a media file (`.png`, `.webp`, `.mp3`, `.ogg`, `.woff2`, `.tsx`, `.tmx`, `.json` of a map) by its path, in an `import`, an `import()` or an `import.meta.glob`, since such a file is read by url from the product's key map. A key a loader names is a member of the product's generated keys, so a key the lock lacks is a type error the typecheck owns, and the check does not restate it.
 
 Each check is one test, sharing the file-walking helper the bundle check uses. Neither runs a new CI step: both are workspace tests in the Coverage job's single run.
 
