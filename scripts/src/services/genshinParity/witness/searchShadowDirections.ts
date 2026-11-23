@@ -29,39 +29,36 @@ export const searchShadowDirections = async (
   direction: Readonly<Vector>,
   isSolved: boolean,
 ): Promise<{ gridBest: PricedDirection[]; probes: PricedDirection[]; solvedDirection?: undefined | Vector }> => {
+  if (!isSolved) return { gridBest: [], probes: [], solvedDirection: undefined };
+
   const probes: PricedDirection[] = [];
   const grid: PricedDirection[] = [];
   const simplexResults: { cost: number; point: number[] }[] = [];
   const [azimuth = 0, elevation = 0] = toAngles(direction);
   // oxlint-disable no-await-in-loop -- One device: the page draws one direction's shadows at a time, so the probes, the grid and each simplex's steps wait their turn on it
-  if (isSolved)
-    for (const [headingTurn, heightTurn] of PROBE_TURNS_DEGREES) {
-      const probeDirection = toSunDirection([azimuth + headingTurn, elevation + heightTurn]);
-      const { distance, edges } = await price(probeDirection);
-      probes.push({ direction: probeDirection, distance, ourEdgeCount: countSetPixels(edges) });
-    }
-  if (isSolved)
-    for (const gridDirection of getSkyGridDirections()) {
-      const { distance, edges } = await price(gridDirection);
-      grid.push({ direction: gridDirection, distance, ourEdgeCount: countSetPixels(edges) });
-    }
+  for (const [headingTurn, heightTurn] of PROBE_TURNS_DEGREES) {
+    const probeDirection = toSunDirection([azimuth + headingTurn, elevation + heightTurn]);
+    const { distance, edges } = await price(probeDirection);
+    probes.push({ direction: probeDirection, distance, ourEdgeCount: countSetPixels(edges) });
+  }
+  for (const gridDirection of getSkyGridDirections()) {
+    const { distance, edges } = await price(gridDirection);
+    grid.push({ direction: gridDirection, distance, ourEdgeCount: countSetPixels(edges) });
+  }
   const gridBest = grid.toSorted((firstReading, secondReading) => firstReading.distance - secondReading.distance);
-  if (isSolved)
-    for (const { direction: startDirection } of gridBest.slice(0, SOLVE_START_COUNT)) {
-      const [startAzimuth = 0, startElevation = 0] = toAngles(startDirection);
-      const simplexResult = await minimizeNelderMead(
-        async (angles) => {
-          const [, angleElevation = 0] = angles;
-          return angleElevation <= 0 || angleElevation >= 90
-            ? Infinity
-            : (await price(toSunDirection(angles))).distance;
-        },
-        [startAzimuth, startElevation],
-        [SOLVE_STEP_DEGREES, SOLVE_STEP_DEGREES],
-        SOLVE_ITERATION_COUNT,
-      );
-      simplexResults.push(simplexResult);
-    }
+  for (const { direction: startDirection } of gridBest.slice(0, SOLVE_START_COUNT)) {
+    const [startAzimuth = 0, startElevation = 0] = toAngles(startDirection);
+    const simplexResult = await minimizeNelderMead(
+      async (angles) => {
+        const [, angleElevation = 0] = angles;
+        return angleElevation <= 0 || angleElevation >= 90 ? Infinity : (await price(toSunDirection(angles))).distance;
+      },
+      [startAzimuth, startElevation],
+      [SOLVE_STEP_DEGREES, SOLVE_STEP_DEGREES],
+      SOLVE_ITERATION_COUNT,
+    );
+    simplexResults.push(simplexResult);
+  }
   // oxlint-enable no-await-in-loop
   const [simplexBest] = simplexResults.toSorted((firstResult, secondResult) => firstResult.cost - secondResult.cost);
   return { gridBest, probes, solvedDirection: simplexBest ? toSunDirection(simplexBest.point) : undefined };
