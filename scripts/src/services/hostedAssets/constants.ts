@@ -4,8 +4,8 @@ import { HOSTED_TEXT_EXTENSIONS } from "@esposter/db-schema";
 // The largest object a publish stores: one request per object, and a bound on what a preload holds in memory. The owner may
 // Change the figure, and a file over it is refused before any object is written
 export const HOSTED_OBJECT_MAX_BYTES: number = 16 * MEBIBYTE;
-// Uncompressed audio, which a publish refuses and the bundle check reads: audio is published as MP3, which the lock names,
-// So an uncompressed file never reaches a bucket
+// Lossless and uncompressed audio, which a publish refuses and the bundle check reads: audio is published as MP3, which the
+// Lock names, So a file in either form never reaches a bucket
 export const UNCOMPRESSED_AUDIO_EXTENSIONS: ReadonlySet<string> = new Set([".aiff", ".flac", ".wav"]);
 // The text a reader fetches, stored Brotli-compressed. Every other format is already compressed and stored as it is
 export const HOSTED_BROTLI_EXTENSIONS: ReadonlySet<string> = new Set(

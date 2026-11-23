@@ -8,7 +8,11 @@ import { extname } from "node:path";
 export const assertHostedAssetSource = (folder: string, { bytes, path }: { bytes: number; path: string }): void => {
   const extension = extname(path);
   if (UNCOMPRESSED_AUDIO_EXTENSIONS.has(extension))
-    throw new InvalidOperationError(Operation.Read, path, "is uncompressed audio, which is published as MP3 instead");
+    throw new InvalidOperationError(
+      Operation.Read,
+      path,
+      "is lossless or uncompressed audio, which is published as MP3 instead",
+    );
   if (bytes > HOSTED_OBJECT_MAX_BYTES)
     throw new InvalidOperationError(Operation.Read, path, `is over the ${HOSTED_OBJECT_MAX_BYTES} byte cap`);
   if (!path.startsWith(`${folder}/`))

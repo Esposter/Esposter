@@ -12,7 +12,7 @@ describe(assertHostedAssetSource, () => {
     expect(() => {
       assertHostedAssetSource(folder, { bytes: 1, path: `${folder}/${TEST_FILENAME}.wav` });
     }).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a/a.wav, is uncompressed audio, which is published as MP3 instead]`,
+      `[InvalidOperationError: Invalid operation: Read, name: a/a.wav, is lossless or uncompressed audio, which is published as MP3 instead]`,
     );
   });
 
