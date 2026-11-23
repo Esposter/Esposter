@@ -18,7 +18,7 @@ export const noReturnGlobalProperties: Rule = defineRule({
         }
       },
       VariableDeclaration(node) {
-        for (const { id, init } of node.declarations) {
+        for (const { id, init } of node.declarations)
           if (
             id.type === "Identifier" &&
             init?.type === "CallExpression" &&
@@ -26,7 +26,6 @@ export const noReturnGlobalProperties: Rule = defineRule({
             GLOBAL_CALLEE_NAMES.has(init.callee.name)
           )
             globalNames.add(id.name);
-        }
       },
     };
   },

@@ -3,6 +3,7 @@ export const STORE_TO_REFS_NAME = "storeToRefs";
 // The globals a store must not return: each is bound to the page or the app that called it, not to the store
 export const GLOBAL_CALLEE_NAMES: ReadonlySet<string> = new Set(["inject", "useRoute"]);
 // A store is named `use` followed by its name, so the letter after `use` is the one that starts the store's name
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this regex would otherwise infer
 export const STORE_NAME_PREFIX_REGEX: RegExp = /^use[A-Z]/u;
 export const DEFAULT_EXPORT_MESSAGE =
   "Never export default initialized store. Use inject/import instead where it is used.";

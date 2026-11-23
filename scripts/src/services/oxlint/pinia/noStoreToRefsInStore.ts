@@ -12,7 +12,7 @@ export const noStoreToRefsInStore: Rule = defineRule({
 
         const [, setup] = node.arguments;
         if (setup?.type !== "ArrowFunctionExpression" && setup?.type !== "FunctionExpression") return;
-        if (setup.body.type !== "BlockStatement") return;
+        if (setup.body?.type !== "BlockStatement") return;
 
         for (const statement of setup.body.body) {
           if (statement.type !== "VariableDeclaration") continue;

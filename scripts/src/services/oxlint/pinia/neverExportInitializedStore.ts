@@ -7,8 +7,8 @@ import { defineRule } from "@oxlint/plugins";
 
 export const neverExportInitializedStore: Rule = defineRule({
   create(context) {
-    // The stores this file defines, under the name each is bound to. A store defined in another file is not one this
-    // file can see, so the verdict never depends on which file the linter read first
+    // The stores this file defines, under the name each is bound to. A store from another file is not seen here, so
+    // The verdict never depends on which file the linter read first
     const storeNames = new Set<string>();
     return {
       CallExpression(node) {

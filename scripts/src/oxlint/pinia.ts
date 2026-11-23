@@ -11,8 +11,8 @@ import { definePlugin } from "@oxlint/plugins";
 // So each `pinia/<rule>` key reads as it did. Each reads Pinia's own API by name (`defineStore`, `storeToRefs`, `inject`,
 // `useRoute`), so its scope is the construct's domain. The package's `require-setup-store-properties-export` and
 // `prefer-single-store-per-file` are not ported: the config switches the first off and the preset the second.
-// `prefer-use-store-naming-convention` takes no options, since no config here sets the two the upstream rule reads for
-// a name's suffix and for matching the store's id.
+// `prefer-use-store-naming-convention` takes no options: the config sets neither of the upstream rule's two, a suffix
+// And a match to the store's id, so the port reads neither.
 const plugin: Plugin = definePlugin({
   meta: { name: "pinia" },
   rules: {
