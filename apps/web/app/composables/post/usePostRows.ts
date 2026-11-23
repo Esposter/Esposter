@@ -65,5 +65,5 @@ export const usePostRows = () => {
     const post = postMap.value.get(id);
     return post && toPostWithRelations(post);
   };
-  return { getPostWithRelations, postMap, storePostRelations, toPostWithRelations };
+  return { getPostWithRelations, postMap, storePostRelations };
 };
