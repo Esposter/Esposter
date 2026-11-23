@@ -21,7 +21,7 @@ describe(pullHostedAssetFiles, () => {
     lockRepositoryPath: TEST_FILENAME,
     name: TEST_FILENAME,
     scopes: [TEST_FILENAME],
-    source: { folder, kind: "files" },
+    source: { folder, kind: "files", unhostedExtensions: [] },
   };
   const bytesA = Buffer.from(TEST_FILENAME);
   const bytesB = Buffer.from("");

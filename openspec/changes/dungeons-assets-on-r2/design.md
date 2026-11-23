@@ -24,7 +24,9 @@ The binaries are different. They leave git after the first publish verifies them
 
 - **Content hash.** Each object is `dungeons/<sha256><extension>`. Edge caching is immutable because a changed file is a new name.
 - **Bucket and prefix.** The shared `public-hosted-assets` bucket, under the `dungeons/` prefix. Objects are `dungeons/<sha256><extension>`, served from the shared hosted domain. The game declares its prefix and owns no bucket.
-- **Keys.** The key of each file is derived from its path, as the file-pack generator derived it: `Scene/Battle/ForestBackground.png` is `SceneBattleForestBackground`. The derivation lives in the product's declaration, and the generic renderer writes the names into `FileKey`.
+- **Lock.** The product's lock is `apps/web/shared/generated/hostedAssets/dungeonsLock.json`, committed. Each lock key is the file's path under the scope (`dungeons/scene/battle/forestBackground.png`), so `hosted-assets pull` restores the file to its path; the key map is derived from those paths, never read back as a name.
+- **Keys.** A loader reads a file by its derived key, as the file-pack generator derived it: `Scene/Battle/ForestBackground.png` is `SceneBattleForestBackground`, each segment's first letter capitalised, the extension dropped. A Tiled definition or map keeps its extension's name as a suffix (`TilesetsAxulartBasicPlainsTsx`), since a tileset's `.tsx` shares its stem with its image. The generic renderer writes the derived names into the key map.
+- **Source.** The folder is `apps/web/app/assets/dungeons`. Its `.ts` files, `.tmx` and `.tiled-project` are unhosted: the bundle or the Tiled editor reads them, and the publish never does. Every other file must have a content type.
 - **Key map.** The keys are a `FileKey` value set. Its literal union is generated into a gitignored file at install, and every url is read from the lock by that key, so no key is a string the code spells by hand.
 
 ## Save-safe key decisions

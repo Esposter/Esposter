@@ -3,7 +3,7 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 import type { HostedAssetLock } from "hosted-assets";
 
 import { MAX_CONCURRENT_OBJECT_BODIES } from "#src/services/hostedAssets/constants";
-import { getHostedAssetFilesFolder } from "#src/services/hostedAssets/getHostedAssetFilesFolder";
+import { getHostedAssetFilesSource } from "#src/services/hostedAssets/getHostedAssetFilesSource";
 import { getHostedAssetLockKey } from "#src/services/hostedAssets/getHostedAssetLockKey";
 import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 import { InvalidOperationError, Operation, settleAll, takeOne } from "@esposter/shared";
@@ -21,7 +21,7 @@ export const pullHostedAssetFiles = async (
   keys: string[],
   repositoryRoot: string,
 ): Promise<number> => {
-  const folder = getHostedAssetFilesFolder(product);
+  const { folder } = getHostedAssetFilesSource(product);
   const bucketClient = createBucketClient();
   const scope = takeOne(product.scopes);
   await settleAll(

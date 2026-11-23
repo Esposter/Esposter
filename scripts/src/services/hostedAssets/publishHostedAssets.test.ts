@@ -55,7 +55,7 @@ describe(publishHostedAssets, () => {
     lockRepositoryPath: TEST_FILENAME,
     name: TEST_FILENAME,
     scopes: [filesScope],
-    source: { folder: TEST_FILENAME, kind: "files" },
+    source: { folder: TEST_FILENAME, kind: "files", unhostedExtensions: [] },
   };
 
   beforeEach(() => {

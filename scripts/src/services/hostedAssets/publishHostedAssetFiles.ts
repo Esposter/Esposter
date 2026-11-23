@@ -3,7 +3,7 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 import { HostedAssetPublishOutcome } from "#src/models/hostedAssets/HostedAssetPublishOutcome";
 import { commitHostedAssetLock } from "#src/services/hostedAssets/commitHostedAssetLock";
 import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
-import { getHostedAssetFilesFolder } from "#src/services/hostedAssets/getHostedAssetFilesFolder";
+import { getHostedAssetFilesSource } from "#src/services/hostedAssets/getHostedAssetFilesSource";
 import { planHostedAssetFiles } from "#src/services/hostedAssets/planHostedAssetFiles";
 import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
 import { readHostedAssetSourceFolder } from "#src/services/hostedAssets/readHostedAssetSourceFolder";
@@ -17,7 +17,8 @@ import { getHostedAssetPath } from "hosted-assets";
 // A files product's publish: its folder's files are planned, stored in both environments, and the lock committed once both
 // Hold them. A dry run stores nothing and needs no credential, and names each object it would store
 export const publishHostedAssetFiles = async (product: HostedAssetProduct, isDryRun: boolean): Promise<string> => {
-  const files = await readHostedAssetSourceFolder(REPOSITORY_ROOT, getHostedAssetFilesFolder(product));
+  const { folder, unhostedExtensions } = getHostedAssetFilesSource(product);
+  const files = await readHostedAssetSourceFolder(REPOSITORY_ROOT, folder, unhostedExtensions);
   // A files product declares one scope, under which every object of its folder is stored
   const scope = takeOne(product.scopes);
   const result = await publishHostedAssets({

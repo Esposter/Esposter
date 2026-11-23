@@ -1,12 +1,13 @@
+import type { HostedAssetFilesSource } from "#src/models/hostedAssets/HostedAssetFilesSource";
 import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetProduct";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The repository folder a files product is published from and pulled to. A records product has none, since its own command
+// The source of a files product, which a publish reads and a pull restores. A records product has none, since its own command
 // Publishes it
-export const getHostedAssetFilesFolder = (product: HostedAssetProduct): string => {
+export const getHostedAssetFilesSource = (product: HostedAssetProduct): HostedAssetFilesSource => {
   const { source } = product;
   if (source.kind === "records")
     throw new InvalidOperationError(Operation.Update, product.name, "is published by its own command");
-  return source.folder;
+  return source;
 };

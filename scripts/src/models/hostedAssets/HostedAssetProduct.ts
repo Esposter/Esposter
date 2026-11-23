@@ -1,3 +1,4 @@
+import type { HostedAssetFilesSource } from "#src/models/hostedAssets/HostedAssetFilesSource";
 import type { StorageBucket } from "@esposter/db-schema";
 
 // A product whose objects one bucket holds: the bucket they are stored in, the committed lock that names them, and the
@@ -11,5 +12,5 @@ export interface HostedAssetProduct {
   // The name the tools address the product by, on the command line and in the keys a lock renders under
   name: string;
   scopes: readonly string[];
-  source: { folder: string; kind: "files" } | { kind: "records" };
+  source: { kind: "records" } | HostedAssetFilesSource;
 }

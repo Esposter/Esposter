@@ -6,8 +6,8 @@ Precondition for section 2: the WAV-to-MP3 and over-2-MiB WebP re-encodes are in
 
 ## 1. Declaration
 
-- [ ] 1.1 Declare the dungeons product: its scope `dungeons` under the shared bucket `public-hosted-assets`, its content types, and the path-to-key derivation. Verify: a test that `Scene/Battle/ForestBackground.png` derives `SceneBattleForestBackground`, seen failing first.
-- [ ] 1.2 Add the Tiled sources to the declaration: `tilemap.json` and the `.tsx` tilesets read from the Tiled tree, published and never imported. Verify: `pnpm -C scripts hosted-assets publish --dry-run dungeons` lists each `.tsx` and each `tilemap.json` by its hash.
+- [x] 1.1 Declare the dungeons product: its scope `dungeons` under the shared bucket `public-hosted-assets`, its content types, and the path-to-key derivation. Verify: a test that `Scene/Battle/ForestBackground.png` derives `SceneBattleForestBackground`, seen failing first.
+- [x] 1.2 Add the Tiled sources to the declaration: `tilemap.json` and the `.tsx` tilesets read from the Tiled tree, published and never imported. Verify: `pnpm -C scripts hosted-assets publish --dry-run dungeons` lists each `.tsx` and each `tilemap.json` by its hash.
 - [x] 1.3 Move the third-party notices to "apps/web/third-party/dungeons/", out of `app/assets`, and check no import names them. Verify: `git ls-files apps/web/app/assets | grep -iE '(license\.(txt|pdf|png)|notes\.txt)$'` prints nothing, and `git grep -n "license.pdf\|License.txt\|notes.txt\|license.png" -- apps/web/app` returns no hit.
 
 ## 2. Publish

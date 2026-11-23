@@ -7,16 +7,18 @@ import { getContentAddress } from "@esposter/shared-node/cache";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { extname, join, relative, sep } from "node:path";
 
-// Every file under a product's source folder, in key order. The folder is named from the repository root, so a refusal
-// Names the file by its repository path. Each file is refused by the placement rules before its bytes are read
+// Every file under a product's source folder, in path order. A file of an unhosted extension is kept out before it is read,
+// Since it is code or an authoring source the product never publishes. The folder is named from the repository root, so a
+// Refusal names the file by its repository path. Each other file is refused by the placement rules before its bytes are read
 export const readHostedAssetSourceFolder = async (
   repositoryRoot: string,
   folder: string,
+  unhostedExtensions: readonly string[],
 ): Promise<HostedAssetSourceFile[]> => {
   const directory = join(repositoryRoot, folder);
   const entries = await readdir(directory, { recursive: true, withFileTypes: true });
   const paths = entries
-    .filter((entry) => entry.isFile())
+    .filter((entry) => entry.isFile() && !unhostedExtensions.includes(extname(entry.name)))
     .map((entry) => join(entry.parentPath, entry.name))
     .toSorted();
   return settleAll(

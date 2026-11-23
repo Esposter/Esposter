@@ -24,7 +24,7 @@ describe(readHostedAssetSourceFolder, () => {
 
     await writeFile(join(repositoryRoot, folder, "sound.wav"), "a");
 
-    await expect(readHostedAssetSourceFolder(repositoryRoot, folder)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(readHostedAssetSourceFolder(repositoryRoot, folder, [])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: sources/sound.wav, is lossless or uncompressed audio, which is published as MP3 instead]`,
     );
   });
@@ -36,7 +36,7 @@ describe(readHostedAssetSourceFolder, () => {
     await writeFile(join(repositoryRoot, folder, "large.png"), "");
     await truncate(join(repositoryRoot, folder, "large.png"), HOSTED_OBJECT_MAX_BYTES + 1);
 
-    await expect(readHostedAssetSourceFolder(repositoryRoot, folder)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(readHostedAssetSourceFolder(repositoryRoot, folder, [])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: sources/large.png, is over the 16777216 byte cap]`,
     );
   });
@@ -46,9 +46,20 @@ describe(readHostedAssetSourceFolder, () => {
 
     await writeFile(join(repositoryRoot, folder, "notes.xyz"), "a");
 
-    await expect(readHostedAssetSourceFolder(repositoryRoot, folder)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(readHostedAssetSourceFolder(repositoryRoot, folder, [])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: sources/notes.xyz, has an extension with no content type]`,
     );
+  });
+
+  test("a file of an unhosted extension is left out of the product", async () => {
+    expect.hasAssertions();
+
+    await writeFile(join(repositoryRoot, folder, "map.ts"), "a");
+    await writeFile(join(repositoryRoot, folder, "tile.png"), "b");
+
+    const files = await readHostedAssetSourceFolder(repositoryRoot, folder, [".ts"]);
+
+    expect(files.map(({ key }) => key)).toStrictEqual(["tile.png"]);
   });
 
   test("every file is read in key order, named by the hash of its bytes", async () => {
@@ -58,7 +69,7 @@ describe(readHostedAssetSourceFolder, () => {
     await writeFile(join(repositoryRoot, folder, "tiles", "grass.png"), "a");
     await writeFile(join(repositoryRoot, folder, "stats.json"), "b");
 
-    const files = await readHostedAssetSourceFolder(repositoryRoot, folder);
+    const files = await readHostedAssetSourceFolder(repositoryRoot, folder, []);
 
     expect(files.map(({ key }) => key)).toStrictEqual(["stats.json", "tiles/grass.png"]);
     expect(files.map(({ bytes, sha256 }) => getContentAddress(bytes) === sha256)).toStrictEqual([true, true]);
