@@ -47,9 +47,6 @@
 - `apps/realtime/src` — `worker.ts`, `wrangler.test.ts`
 - `apps/realtime/types`
 - `apps/realtime` — `.env.example`, `CHANGELOG.md`, `package.json`, `tsconfig.json`, `vitest.config.ts`, `wrangler.jsonc`
-- `packages/hosted-assets` — `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
-- `packages/hosted-assets/src/models` — `HostedAssetLock.test.ts`, `HostedAssetLock.ts`, `HostedAssetObject.ts`
-- `packages/hosted-assets/src/services` — `getHostedAssetUrl.test.ts`, `getHostedAssetUrl.ts`
 - `packages/parse-tmx/maps`
 - `packages/parse-tmx/src/models`
 - `packages/parse-tmx/src/internal/models`
@@ -92,7 +89,7 @@
 - `packages/grid-engine-headless/src/internal/models`, `packages/grid-engine-headless/src/internal/services`
 - `packages/grid-engine-headless/src/models`, `packages/grid-engine-headless/src/services`, `packages/grid-engine-headless/src/index.test.ts`
 - `packages/grid-engine-headless` — `README.md`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
-- `packages/hosted-assets` — `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
+- `packages/hosted-assets` — `README.md`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/hosted-assets/src/composables` — `useHostedAssetsPreload.test.ts`, `useHostedAssetsPreload.ts`
 - `packages/hosted-assets/src/models` — `HostedAssetDownloadFile.ts`, `HostedAssetDownloadPlan.ts`, `HostedAssetLock.test.ts`, `HostedAssetLock.ts`, `HostedAssetObject.ts`, `HostedAssetPreload.ts`, `HostedAssetPreloadSet.ts`, `HostedAssetPreloadStatus.ts`
 - `packages/hosted-assets/src/services` — `constants.test.ts`, `constants.ts`, `createHostedAssetCacheStub.ts`, `downloadHostedAssetFile.ts`, `downloadHostedAssetFiles.test.ts`, `downloadHostedAssetFiles.ts`, `evictStaleHostedAssets.ts`, `getHostedAssetUrl.test.ts`, `getHostedAssetUrl.ts`, `listHeldHostedAssetUrls.ts`, `planHostedAssetDownload.test.ts`, `planHostedAssetDownload.ts`, `preloadHostedAssets.ts`, `readStreamedBlob.ts`, `storeHostedAssetFile.ts`

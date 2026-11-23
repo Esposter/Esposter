@@ -7,8 +7,8 @@ export const HOSTED_ASSETS_DOWNLOAD_CONCURRENCY = 6;
 export const HOSTED_ASSETS_DOWNLOAD_ATTEMPTS = 3;
 export const HOSTED_ASSETS_RETRY_BASE_MS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 export const HOSTED_ASSETS_RETRY_MAX_MS: number = Temporal.Duration.from({ seconds: 4 }).total("milliseconds");
-// The base a test or the parity page reads hosted objects from: a path its own fetch route answers from the local mirror.
-// No test reaches the network for an object the mirror holds.
+// The base the test setup serves hosted objects from: the path its fetch route answers from the local mirror, so no test
+// Reaches the network for an object the mirror holds.
 export const HOSTED_ASSETS_LOCAL_BASE_URL = "/hosted-assets";
 // The content type each extension of a hosted object is served as, so a mirror answers with the type its publish declares
 export const HOSTED_ASSET_CONTENT_TYPES: Readonly<Record<string, string>> = {
