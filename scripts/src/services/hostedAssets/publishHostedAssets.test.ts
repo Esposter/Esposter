@@ -476,7 +476,7 @@ describe(publishHostedAssets, () => {
       `${GameDataset.LoginRecordings}/${sha256}.ogg`,
     );
     expect(stored?.contentEncoding).toBeUndefined();
-    expect(stored?.contentType).toBe("audio/ogg");
+    expect(stored?.contentType).toBe(HOSTED_ASSET_CONTENT_TYPES[".ogg"]);
   });
 
   // The read back of each object the lock names is what stands between a bucket that stored other bytes and a lock
