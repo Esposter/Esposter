@@ -4,7 +4,7 @@ import { z } from "zod";
 // Each project's files by their path from the root, none for a project that ran only type tests. Only the duration is
 // Read, so every other field is stripped
 export interface TestTimings {
-  projects: Record<string, { files?: Record<string, { duration: number }> | undefined }>;
+  projects: Record<string, { files?: Record<string, { duration: number }> }>;
 }
 
 export const testTimingsSchema: z.ZodType<TestTimings> = z.object({
