@@ -14,7 +14,7 @@ import { getResultAsync } from "@esposter/shared";
 export const useSurveyFiles = () => {
   const resourceStore = useResourceStore();
   const { currentResourceId } = storeToRefs(resourceStore);
-  const { getOpening } = resourceStore;
+  const { captureOpeningCheck } = resourceStore;
   const getResourceId = () => currentResourceId.value;
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
   const deleteFile = useDeleteResourceFile(ResourceType.Survey);
@@ -33,9 +33,9 @@ export const useSurveyFiles = () => {
     if (!validateFileWithAlert(file)) return undefined;
 
     const resourceId = getResourceId();
-    const opening = getOpening();
+    const isStillOpen = captureOpeningCheck();
     const url = await uploadFile(file);
-    if (isClosed.value || getOpening() !== opening) {
+    if (isClosed.value || !isStillOpen()) {
       deleteUrls(resourceId, [url]);
       return undefined;
     }

@@ -17,7 +17,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const useInsertWhiteboardImages = () => {
   const resourceStore = useResourceStore();
   const { currentResourceId } = storeToRefs(resourceStore);
-  const { getOpening } = resourceStore;
+  const { captureOpeningCheck } = resourceStore;
   const uploadFile = useUploadResourceFile(ResourceType.Whiteboard, () => currentResourceId.value);
   const deleteFile = useDeleteResourceFile(ResourceType.Whiteboard);
   const whiteboardStore = useWhiteboardStore();
@@ -29,19 +29,19 @@ export const useInsertWhiteboardImages = () => {
     // The board the images were picked for. An upload names the board open when it is made, so it is made only while that
     // Board is still open, and an image whose board closed while it uploaded is placed on none: the open board is not the one
     // It was picked for, so the upload is deleted from the board it went to
-    const opening = getOpening();
+    const isStillOpen = captureOpeningCheck();
     const resourceId = currentResourceId.value;
     const uploadResults = await Promise.all(
       imageFiles.map(async (imageFile) => {
         // The file is addressed by the hash of its bytes, the id the element holds
         const fileId = await getSha256Hex(new Uint8Array(await imageFile.arrayBuffer()));
-        if (getOpening() !== opening) return undefined;
+        if (!isStillOpen()) return undefined;
 
         const uploadResult = await getResultAsync(() => uploadFile(imageFile, fileId));
         return uploadResult.map((url) => ({ fileId, url }));
       }),
     );
-    if (getOpening() !== opening) {
+    if (!isStillOpen()) {
       for (const uploadResult of uploadResults)
         uploadResult?.match(({ url }) => {
           deleteFile(resourceId, url);

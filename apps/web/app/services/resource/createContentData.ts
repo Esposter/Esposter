@@ -19,8 +19,8 @@ export const createContentData = <
 ) => {
   const resourceStore = useResourceStore();
   const {
+    captureOpeningCheck,
     checkIsContentRead,
-    getOpening,
     readContent,
     saveContent: saveResourceContent,
     setPersistedContent,
@@ -56,9 +56,9 @@ export const createContentData = <
   // That opening is still the open one, and a late write is dropped rather than filed under another resource or a
   // Reopening of this one. It reports whether it wrote, so a caller can skip what follows a dropped write
   const getContentWriter = () => {
-    const writerOpening = getOpening();
+    const isWriterOpen = captureOpeningCheck();
     return (newContent: TContent) => {
-      if (getOpening() !== writerOpening) return false;
+      if (!isWriterOpen()) return false;
       content.value = newContent;
       return true;
     };

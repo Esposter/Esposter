@@ -40,7 +40,7 @@ export const useWhiteboardKeyboard = (
 ) => {
   const { isOpen: isDeleteOpen } = useSingletonDialog(deletingIds);
   const resourceStore = useResourceStore();
-  const { getOpening } = resourceStore;
+  const { captureOpeningCheck } = resourceStore;
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { chooseShape, toggleToolLock } = whiteboardEditorStore;
 
@@ -59,9 +59,8 @@ export const useWhiteboardKeyboard = (
   // Switched to during the write is left alone, since the elements were cut from the board it held
   const cutSelection = async () => {
     const cutIds = selectedIds.value;
-    const opening = getOpening();
-    if ((await writeSelectionToClipboard(editState.value.document, cutIds)) && getOpening() === opening)
-      removeElements(cutIds);
+    const isStillOpen = captureOpeningCheck();
+    if ((await writeSelectionToClipboard(editState.value.document, cutIds)) && isStillOpen()) removeElements(cutIds);
   };
   const deleteSelection = () => {
     requestSelectionDelete(deletingIds, selectedIds);

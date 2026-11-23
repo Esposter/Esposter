@@ -41,14 +41,14 @@ export const useWhiteboardContextMenu = (
   const { fitToElements, zoomTo } = whiteboardEditorStore;
   const { pasteText, ...selectionCommands } = commands;
   const resourceStore = useResourceStore();
-  const { getOpening } = resourceStore;
+  const { captureOpeningCheck } = resourceStore;
   // The paste event cannot fire from a menu, so the clipboard is read when the item is chosen, and a read the browser refuses is told to the owner.
   // The clipboard is pasted onto the board chosen, so a board switched to during the read takes none of it
   const paste = () => {
-    const opening = getOpening();
+    const isStillOpen = captureOpeningCheck();
     return getResultAsync(() => window.navigator.clipboard.readText()).match(
       (text) => {
-        if (getOpening() === opening) pasteText(text);
+        if (isStillOpen()) pasteText(text);
       },
       () => {
         createAlert("Could not read the clipboard.", "error");

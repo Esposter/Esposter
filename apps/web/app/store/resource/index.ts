@@ -117,7 +117,11 @@ export const useResourceStore = defineStore("resource", () => {
   // Save would write that content under the fresh contentVersion. A refresh of the open resource is the same
   // Opening: its in-flight writes are still the ones on screen
   let opening = Symbol("opening");
-  const getOpening = () => opening;
+  // A late result is for the opening it was issued under, so the check it captures holds only while that opening is still open
+  const captureOpeningCheck = () => {
+    const issuedUnder = opening;
+    return () => opening === issuedUnder;
+  };
   // A restore re-reads within the one opening, so the opening alone cannot drop a read issued before the restore that
   // Lands after it: the scope aborts a read a newer one replaces, so only the newest read's content applies
   const { executeQuery: executeContentQuery } = useMutation();
@@ -713,12 +717,12 @@ export const useResourceStore = defineStore("resource", () => {
   };
   return {
     applyResource,
+    captureOpeningCheck,
     checkIsContentRead,
     clearResource,
     currentResourceId,
     deleteResource,
     duplicateResource,
-    getOpening,
     heldSave,
     isDuplicatePending,
     isPublicationPending,

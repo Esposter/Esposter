@@ -7,15 +7,16 @@ import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useResourceStore } from "#src/store/resource/index";
 import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
 import { ResourceType } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const webpageEditorStore = useWebpageEditorStore();
 const { loadContent, saveWebpage } = webpageEditorStore;
 const { webpageEditor } = storeToRefs(webpageEditorStore);
 const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
-const { getOpening } = resourceStore;
+const { captureOpeningCheck } = resourceStore;
 const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => currentResourceId.value);
+const deleteFile = useDeleteResourceFile(ResourceType.Webpage);
 const shareImageFiles = ref<File[]>([]);
 // A picked image uploads at once and only its url is kept, so the file never waits in the form. A failed upload alerts
 // And keeps the share image as it was
@@ -23,10 +24,17 @@ watch(shareImageFiles, async (files) => {
   const [file] = files;
   if (!file) return;
   shareImageFiles.value = [];
-  // The picture is written to the webpage that was open when it was picked, so one that lands after another webpage opened is dropped
-  const opening = getOpening();
+  // The picture is written to the webpage that was open when it was picked. One that lands after another webpage opened
+  // is deleted from the webpage it was written to, since the page open now never shows it
+  const isStillOpen = captureOpeningCheck();
+  const resourceId = currentResourceId.value;
   const uploadResult = await getResultAsync(() => uploadFile(file));
-  if (getOpening() !== opening) return;
+  if (!isStillOpen()) {
+    uploadResult.match((imageUrl) => {
+      deleteFile(resourceId, imageUrl);
+    }, noop);
+    return;
+  }
 
   uploadResult.match((imageUrl) => {
     webpageEditor.value.imageUrl = imageUrl;
