@@ -35,7 +35,8 @@ interface Props {
   dailyPointCap: number;
   // The items the forge yields and refunds, by their item ids
   definitions: Map<number, ItemDefinition>;
-  // The Adventure Rank each queue at the blacksmith opens at, the first queue's at rank one, as the game's forge update table holds them
+  // The Adventure Rank each queue at the blacksmith opens at, the first queue's at rank one, as the game's forge update
+  // Table holds them
   forgeQueuePlayerLevels: readonly number[];
   // The game's words in the reader's language
   gameText: GameText;
@@ -101,7 +102,8 @@ const findRecipe = (id: number) => recipes.find((recipe) => recipe.id === id);
 const pickedRecipe = computed(() => findRecipe(recipeId.value));
 // The most a recipe's queue holds, the one ceiling the amount is kept under
 const getAmountMaximum = (recipe: ForgeRecipe | undefined) => recipe?.queueSize ?? 1;
-// The Materials box's count under the first material the picked recipe takes: the bag's count of it over what one unit takes
+// The Materials box's count under the first material the picked recipe takes: the bag's count of it over what one unit
+// Takes
 const materialCountLabel = computed(() => {
   if (!pickedRecipe.value) return "";
   const { count, id } = takeOne(pickedRecipe.value.materials, 0);
@@ -154,8 +156,9 @@ const queuesLabel = computed(() =>
     queueSlots.value.filter(({ state }) => state !== ForgeQueueState.Locked).length,
   ),
 );
-// The queue the Queues tab's detail shows, the first holding an order: its units done, the words over its ring (its time
-// Left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows full
+// The queue the Queues tab's detail shows, the first holding an order: its units done, the words over its ring (its
+// Time Left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows
+// Full
 const queueDetail = computed(() => {
   const slot = queueSlots.value.find((queueSlot) => isQueueOccupied(queueSlot));
   const order = progress.value.orders.find(({ queueId }) => queueId === slot?.id);
@@ -172,14 +175,14 @@ const queueDetail = computed(() => {
     progress: isComplete ? 1 : (elapsedSeconds - slot.forged * order.unitSeconds) / order.unitSeconds,
   };
 });
-// Picks a recipe and brings the amount under the most the picked recipe's queue holds, read from the pick itself: the parent's
-// Recipe is still the old one until it re-renders
+// Picks a recipe and brings the amount under the most the picked recipe's queue holds, read from the pick itself: the
+// Parent's Recipe is still the old one until it re-renders
 const pickRecipe = (id: number) => {
   recipeId.value = id;
   amount.value = Math.min(amount.value, getAmountMaximum(findRecipe(id)));
 };
-// Starts the picked order in a free queue, its materials, Mora and talents taken, and leaves the forge as it was where the
-// Forge refuses it
+// Starts the picked order in a free queue, its materials, Mora and talents taken, and leaves the forge as it was where
+// The Forge refuses it
 const start = () => {
   const recipe = pickedRecipe.value;
   if (!recipe) return;

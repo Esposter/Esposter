@@ -8,9 +8,10 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { takeOne } from "@esposter/shared";
 
-// A passive that, after its wielder causes an Elemental Reaction, whether or not the wielder is on the field, raises one of its
-// Attributes by the rank's amount for the rank's seconds, and by the rank's Moonsign amount more while the deployed team is
-// Ascendant Gleam. Only the reactions a hit triggers that checkIsTriggering accepts count, and with none given, every one does
+// A passive that, after its wielder causes an Elemental Reaction, whether or not the wielder is on the field, raises
+// One of its Attributes by the rank's amount for the rank's seconds, and by the rank's Moonsign amount more while the
+// Deployed team is Ascendant Gleam. Only the reactions a hit triggers that checkIsTriggering accepts count, and with
+// None given, every one does
 export const createReactionBuffPassiveModule = (
   params: number[],
   {

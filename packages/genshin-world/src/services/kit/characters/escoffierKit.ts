@@ -23,24 +23,23 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Low-Temperature Cooking's Surging Blade lands only while the Aligned interval is not running, as gcsim v2.47.2 (MIT)
-// Escoffier/skill.go checks it, and starts it, in the task it queues at the blade's 83rd frame, its cooldown starting 22
-// Frames after the press there, which the framework does not hold. Arkhe's application is a TODO in gcsim, so it is not
-// Applied here
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/skill.go
+// Escoffier/skill.go checks it, and starts it, in the task it queues at the blade's 83rd frame, its cooldown starting
+// 22 Frames after the press there, which the framework does not hold. Arkhe's application is a TODO in gcsim, so it is
+// Not Applied here https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/skill.go
 const ALIGNED_HITMARK_FRAMES = 83;
 const ALIGNED_INTERVAL_STATUS_ID = "escoffier-aligned-icd";
-// Scoring Cuts' heal lands on the active character as a single tick of a field the burst sets going, as gcsim v2.47.2 (MIT)
-// Escoffier/burst.go heals
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/burst.go
+// Scoring Cuts' heal lands on the active character as a single tick of a field the burst sets going, as gcsim v2.47.2
+// (MIT) Escoffier/burst.go heals
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/burst.go`
 const BURST_HEAL_FIELD_ID = "escoffier-scoring-cuts-heal";
-// Measured: gcsim v2.47.2 (MIT) escoffier/asc.go, Rehab Diet heals the active character nine times for 1.3824 of her ATK
-// Each tick, and the burst starts it on Ascension 1 or above
+// Measured: gcsim v2.47.2 (MIT) escoffier/asc.go, Rehab Diet heals the active character nine times for 1.3824 of her
+// ATK Each tick, and the burst starts it on Ascension 1 or above
 const REHAB_DIET_SCALING = 1.3824;
 const REHAB_DIET_FIELD_ID = "escoffier-rehab-diet";
 const REHAB_DIET_ASCENSION = 1;
-// Measured: gcsim v2.47.2 (MIT) escoffier/asc.go, Ascension 4's Hydro and Cryo RES shred by how many Hydro or Cryo members the
-// Team holds, 0 to 55%, for 12 seconds, on each enemy her skill and burst hit
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/asc.go
+// Measured: gcsim v2.47.2 (MIT) escoffier/asc.go, Ascension 4's Hydro and Cryo RES shred by how many Hydro or Cryo
+// Members the Team holds, 0 to 55%, for 12 seconds, on each enemy her skill and burst hit
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/asc.go`
 const ASCENSION_4 = 4;
 const ASCENSION_4_RES_SHREDS = [0, 0.05, 0.1, 0.15, 0.55];
 const ASCENSION_4_SECONDS = 12;
@@ -57,9 +56,9 @@ const checkIsCryoHydroTeam = (deployedElements: readonly (Element | undefined)[]
   deployedElements.length > 0 &&
   countDeployedElements(deployedElements, CRYO_HYDRO_ELEMENTS) === deployedElements.length;
 
-// Constellation 1's window, which her skill and burst open for 15 seconds on an Ascension 4 Escoffier and a team of Cryo and
-// Hydro members, as gcsim v2.47.2 (MIT) escoffier/cons.go's c1 does at the end of each, and the wiki states the same window
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/cons.go
+// Constellation 1's window, which her skill and burst open for 15 seconds on an Ascension 4 Escoffier and a team of
+// Cryo and Hydro members, as gcsim v2.47.2 (MIT) escoffier/cons.go's c1 does at the end of each, and the wiki states
+// The same window https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/cons.go
 const startConstellation1 = (combatant: Combatant, kitEffectState: KitEffectState): void => {
   if (
     combatant.constellationCount < CONSTELLATION_1 ||
@@ -101,11 +100,12 @@ export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 
 // Escoffier's behaviour outside the passives and constellations that wait: Low-Temperature Cooking casts its Frosty
 // Parfait ticks and, outside the Aligned interval, its Surging Blade, and Scoring Cuts sets going its heal and, from
-// Ascension 1, Rehab Diet and the Cryo and Hydro RES shred of Ascension 4 are built. Her Constellations wait on the hooks the page names
-// Constellation 1 is built: her skill and burst open its 15-second window, and its CRIT DMG reaches each deployed member's Cryo strikes
-// Constellation 2 needs Cooking Mek's Cold Storage Mode, which the skill does not build yet
-// Constellation 4 needs Rehab Diet's six seconds and its chance to heal and restore energy, which the kit does not roll
-// Constellation 6 needs Cooking Mek's Cold Storage Mode and the effects it sets, which are not built
+// Ascension 1, Rehab Diet and the Cryo and Hydro RES shred of Ascension 4 are built. Her Constellations wait on the
+// Hooks the page names Constellation 1 is built: her skill and burst open its 15-second window, and its CRIT DMG
+// Reaches each deployed member's Cryo strikes Constellation 2 needs Cooking Mek's Cold Storage Mode, which the skill
+// Does not build yet Constellation 4 needs Rehab Diet's six seconds and its chance to heal and restore energy, which
+// The kit does not roll Constellation 6 needs Cooking Mek's Cold Storage Mode and the effects it sets, which are not
+// Built
 export const createEscoffierKitBehaviour = ({
   kit,
   readHit,
@@ -165,11 +165,13 @@ export const createEscoffierKitBehaviour = ({
         });
       },
     },
-    // Constellation 1 reaches a deployed member's Cryo strike while the window of its member, whose kit this is, is open
+    // Constellation 1 reaches a deployed member's Cryo strike while the window of its member, whose kit this is, is
+    // Open
     getPartyStrikeBonus: (member, { combatant, hit }, _enemy, _party, effects) => ({
       criticalDamageBonus: getConstellation1CriticalDamage(member.characterId, combatant, hit, effects),
     }),
-    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while her window is open, as gcsim's c1 buffs every Cryo attack
+    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while her window is open, as gcsim's c1 buffs every Cryo
+    // Attack
     getStrikeCriticalDamageBonus: ({ combatant, hit }, _enemy, _party, effects) =>
       getConstellation1CriticalDamage(combatant.characterId, combatant, hit, effects),
     skill: {

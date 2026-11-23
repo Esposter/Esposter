@@ -27,11 +27,11 @@ const setStacks = (kitEffectState: KitEffectState, characterId: number, stacks: 
   addKitStatus(kitEffectState, characterId, { id: HUSK_STACKS_ID, secondsRemaining: Number.POSITIVE_INFINITY, stacks });
 };
 
-// Husk of Opulent Dreams. Its four-piece bonus gives its wearer a Curiosity stack, up to four, each raising DEF and Geo DMG by the
-// Third and fourth params. A stack comes on each Geo hit the wearer lands while it is the active character, no more than once every
-// First param's seconds, and on each of the second param's seconds the wearer spends off the field, counted from its swap off. A
-// Stack gained restarts the fifth param's seconds, and when they run out with no gain, one stack is lost, the count running on down
-// By one every such span. The two-piece bonus is attributes only
+// Husk of Opulent Dreams. Its four-piece bonus gives its wearer a Curiosity stack, up to four, each raising DEF and Geo
+// DMG by the Third and fourth params. A stack comes on each Geo hit the wearer lands while it is the active character,
+// No more than once every First param's seconds, and on each of the second param's seconds the wearer spends off the
+// Field, counted from its swap off. A Stack gained restarts the fifth param's seconds, and when they run out with no
+// Gain, one stack is lost, the count running on down By one every such span. The two-piece bonus is attributes only
 export const createHuskOfOpulentDreamsSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const cooldownSeconds = takeOne(bonus.params, 0);
   const offFieldSeconds = takeOne(bonus.params, 1);

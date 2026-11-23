@@ -7,10 +7,10 @@ import type { Except } from "type-fest";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
 
-// A summon cast where its body stands, which lands its hits from there for its seconds, priced by the combatant that cast
-// It as it stood then, with the fields its kit names beside them. It copies the body, so the summon stays where it was
-// Cast. Its seconds default to SUMMON_LINGER_SECONDS past its last hit, so the step that lands that hit still has it on the
-// Field, and a summon with no hit lingers that long from its cast
+// A summon cast where its body stands, which lands its hits from there for its seconds, priced by the combatant that
+// Cast It as it stood then, with the fields its kit names beside them. It copies the body, so the summon stays where it
+// Was Cast. Its seconds default to SUMMON_LINGER_SECONDS past its last hit, so the step that lands that hit still has
+// It on the Field, and a summon with no hit lingers that long from its cast
 export const createKitSummon = (
   body: KitBody,
   combatant: Combatant,

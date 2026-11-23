@@ -72,7 +72,8 @@ const artifactSetBonusGroups = computed(() =>
   ),
 );
 const formatTotal = (difference: number) => `+${formatWholeNumber(difference)}`;
-// The attribute totals the worn artifacts add: each stat the character reaches with them less the one it reaches without
+// The attribute totals the worn artifacts add: each stat the character reaches with them less the one it reaches
+// Without
 const artifactTotals = computed(() => {
   const worn = computeCharacterAttributes(getCharacterAttributeLines(character, statTables));
   const bare = computeCharacterAttributes(getCharacterAttributeLines({ ...character, artifacts: [] }, statTables));

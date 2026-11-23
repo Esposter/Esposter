@@ -23,7 +23,8 @@ interface WeaponPicksSource {
   weaponData: ComputedRef<WeaponData>;
 }
 
-// The picks the player makes on the Enhance and Refine panels, the cells they are drawn in, and the state each pick takes
+// The picks the player makes on the Enhance and Refine panels, the cells they are drawn in, and the state each pick
+// Takes
 export const useWeaponPicks = ({
   enhancementOres,
   entryId,
@@ -35,7 +36,8 @@ export const useWeaponPicks = ({
 }: WeaponPicksSource) => {
   // The ores the player picks for the next enhancement, each count taken from the bag when it is enhanced
   const pickedOres = ref<ItemCount[]>([]);
-  // The bag entries of the fodder weapons the player picks, and the copy the Refine tab picks, which stands in for the material
+  // The bag entries of the fodder weapons the player picks, and the copy the Refine tab picks, which stands in for the
+  // Material
   const pickedFodderIds = ref<number[]>([]);
   const pickedCopyId = ref<number>();
   const oreCells = computed(() =>
@@ -70,7 +72,8 @@ export const useWeaponPicks = ({
   const pickRefinementMaterial = () => {
     pickedCopyId.value = undefined;
   };
-  // The bag's other weapons, each a fodder the Enhance tab picks by its entry, and the copies among them the Refine tab offers
+  // The bag's other weapons, each a fodder the Enhance tab picks by its entry, and the copies among them the Refine tab
+  // Offers
   const bagWeapons = computed(() =>
     inventory.value.items.filter(
       (item) => item.definition.category === ItemCategory.Weapon && item.id !== toValue(entryId),

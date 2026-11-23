@@ -1,5 +1,5 @@
-/* The traced marks the Mail screen draws where the game draws its own: the header's pin, folder, help and pointer marks,
-   the list's person and star, the claim arrows, the delete mark */
+/* The traced marks the Mail screen draws where the game draws its own: the header's pin, folder, help and pointer
+   marks, the list's person and star, the claim arrows, the delete mark */
 export const MailMark = {
   ClaimAllArrow: "ClaimAllArrow",
   ClaimArrow: "ClaimArrow",

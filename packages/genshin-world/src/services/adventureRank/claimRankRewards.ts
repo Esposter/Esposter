@@ -2,8 +2,8 @@ import type { AdventureRankLevel } from "#src/models/adventureRank/AdventureRank
 import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
 
 // The rewards Katheryne gives when she is spoken to: each reached rank whose reward is not yet claimed pays its items
-// Once, and every reached rank is then claimed, so a second talk gives nothing. Returns the claimed ranks, with the ones
-// Given now, sorted, for the save to keep
+// Once, and every reached rank is then claimed, so a second talk gives nothing. Returns the claimed ranks, with the
+// Ones Given now, sorted, for the save to keep
 export const claimRankRewards = (
   levels: readonly AdventureRankLevel[],
   rank: number,

@@ -10,9 +10,9 @@ import { MAX_MATERIAL_COUNT } from "#src/services/constants";
 import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The game's own character model as the developer's exports hold it, in `avatar.json`: its rig's bones in their rest pose,
-// Parents before children, the Unity humanoid names of the bones that matter to a pose, its meshes and its materials. The
-// Meshes' arrays sit in `avatar.bin` at the offsets the manifest gives, in three's axes
+// The game's own character model as the developer's exports hold it, in `avatar.json`: its rig's bones in their rest
+// Pose, Parents before children, the Unity humanoid names of the bones that matter to a pose, its meshes and its
+// Materials. The Meshes' arrays sit in `avatar.bin` at the offsets the manifest gives, in three's axes
 export interface AvatarManifest {
   bones: AvatarBone[];
   // The Unity humanoid name of each bone the rig holds one for, to the index of that bone

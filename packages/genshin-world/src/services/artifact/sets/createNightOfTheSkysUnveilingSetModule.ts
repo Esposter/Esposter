@@ -15,10 +15,11 @@ import { takeOne } from "@esposter/shared";
 const GLEAMING_MOON_INTENT_ID = "gleamingMoonIntent";
 const NIGHT_OF_THE_SKYS_UNVEILING_SOURCE = "Night of the Sky's Unveiling";
 
-// Night of the Sky's Unveiling's four-piece. While its wearer is the active character, a Lunar Reaction any party member triggers
-// Gives the wearer the Gleaming Moon: Intent effect for the first param's seconds, whose CRIT Rate is the second param at Nascent
-// Gleam and the third at Ascendant Gleam, none with no Moonsign. The effect raises every party member's Lunar Reaction DMG by the
-// Fourth param while it holds, as gcsim's lunarReactHook does with its Moonsign-level CRIT Rate and its ReactBonus
+// Night of the Sky's Unveiling's four-piece. While its wearer is the active character, a Lunar Reaction any party
+// Member triggers Gives the wearer the Gleaming Moon: Intent effect for the first param's seconds, whose CRIT Rate is
+// The second param at Nascent Gleam and the third at Ascendant Gleam, none with no Moonsign. The effect raises every
+// Party member's Lunar Reaction DMG by the Fourth param while it holds, as gcsim's lunarReactHook does with its
+// Moonsign-level CRIT Rate and its ReactBonus
 export const createNightOfTheSkysUnveilingSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(bonus.params, 0);
   const nascentCriticalRateBonus = takeOne(bonus.params, 1);

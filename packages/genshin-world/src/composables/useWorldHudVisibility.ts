@@ -3,9 +3,9 @@ import type { Ref } from "vue";
 
 import { computed, ref } from "vue";
 
-// Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it, and whether the
-// HUD is drawn over the world, which a reference's held camera, a witness render, the pause and the screens that hide it all
-// Keep off
+// Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it, and
+// Whether the HUD is drawn over the world, which a reference's held camera, a witness render, the pause and the screens
+// That hide it all Keep off
 export const useWorldHudVisibility = ({
   checkIsCameraHeld,
   checkIsPaused,

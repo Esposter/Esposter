@@ -5,8 +5,8 @@ import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
 import { takeOne } from "@esposter/shared";
 
-// A fast action: the side discards a card from its hand to turn one of its dice into its active character's element. The
-// Turn stays with the side
+// A fast action: the side discards a card from its hand to turn one of its dice into its active character's element.
+// The Turn stays with the side
 export const tuneGcgDie = (duel: GcgDuel, sideIndex: number, cardIndex: number, dieIndex: number): GcgActionResult => {
   const refusal = checkGcgActingSide(duel, sideIndex);
   if (refusal !== undefined) return refusal;

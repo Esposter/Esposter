@@ -174,7 +174,8 @@ describe("decorum", () => {
   });
 });
 
-// The seconds the mark stands on the character an Ambush-carrying hit gives the ATK Bonus, with Sara at the constellation count
+// The seconds the mark stands on the character an Ambush-carrying hit gives the ATK Bonus, with Sara at the
+// Constellation count
 const readMarkSeconds = (constellationCount: number): number | undefined => {
   const kitEffectState: KitEffectState = { effects: [] };
   const combatant = createSaraCombatant(0, constellationCount);

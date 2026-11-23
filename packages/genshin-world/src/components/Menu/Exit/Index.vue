@@ -8,8 +8,8 @@ import { GameTextKey } from "genshin-text";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // A state a fixture forces on Confirm, the choice the game's pointer rests on in its shots; a reader's pointer lights a
-  // Choice itself
+  // A state a fixture forces on Confirm, the choice the game's pointer rests on in its shots; a reader's pointer lights
+  // A Choice itself
   interactionState?: InteractionState | undefined;
 }
 

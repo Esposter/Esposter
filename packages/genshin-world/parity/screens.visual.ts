@@ -15,15 +15,16 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 import { defineComponent, h } from "vue";
 
-// Each screen against its own image, `Index.png` in its own folder beside its `Index.vue` and `Index.fixture.ts`, and each
-// Of its fixture's variants against one named after it, a moving screen held still by its fixture's `stillProps`. A
-// Mismatch is listed after the cases rather than failed, and a missing image is written; `genshin:parity approve` writes an
-// Image as a snapshot of the current render, beside the compare's score. Each is shot in the parity page's box, over a grey
-// Backdrop, as the page draws it
-// The grey a screen is drawn over in its box: the screens are drawn pale for the game's world, which a white backdrop hides,
-// And a mid tone keeps both their light and their dark pieces visible
+// Each screen against its own image, `Index.png` in its own folder beside its `Index.vue` and `Index.fixture.ts`, and
+// Each Of its fixture's variants against one named after it, a moving screen held still by its fixture's `stillProps`.
+// A Mismatch is listed after the cases rather than failed, and a missing image is written; `genshin:parity approve`
+// Writes an Image as a snapshot of the current render, beside the compare's score. Each is shot in the parity page's
+// Box, over a grey Backdrop, as the page draws it The grey a screen is drawn over in its box: the screens are drawn
+// Pale for the game's world, which a white backdrop hides, And a mid tone keeps both their light and their dark pieces
+// Visible
 const SCREEN_BACKDROP_COLOR = "#4a5560";
-// The window the box fills at its width, so the box's height is the window's and a unit is a pixel, as on the parity page
+// The window the box fills at its width, so the box's height is the window's and a unit is a pixel, as on the parity
+// Page
 const SCREEN_BOX_HEIGHT = 1080;
 // Set by the browser config from the run's update flag (`vitest.browser.config.ts`)
 declare const IS_VISUAL_UPDATE: boolean;
@@ -46,7 +47,8 @@ for (const screen of screens.filter(({ isMotionOnly }) => !isMotionOnly)) {
 }
 
 describe("interface screens", () => {
-  // The window's size as the file opens it, put back once the cases are shot so the browser suite's other files keep theirs
+  // The window's size as the file opens it, put back once the cases are shot so the browser suite's other files keep
+  // Theirs
   const viewportBefore = { height: window.innerHeight, width: window.innerWidth };
   const visualComparison = createVisualComparisonRecord();
 
@@ -63,8 +65,8 @@ describe("interface screens", () => {
     expect.hasAssertions();
 
     const warnings = await recordConsoleWarnings(async () => {
-      // The screen drawn the way the parity page draws it: in the page's box over the grey backdrop, so the image is the box
-      // And not the body around it
+      // The screen drawn the way the parity page draws it: in the page's box over the grey backdrop, so the image is
+      // The box And not the body around it
       const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
       const readyProps = readyEvent ? { [`on${capitalize(readyEvent)}`]: resolveReady } : {};
       if (!readyEvent) resolveReady();
@@ -80,14 +82,15 @@ describe("interface screens", () => {
       );
       await window.document.fonts.ready;
       await ready;
-      // Held before the first capture, as the interface suite holds its components: a screen's mount animation is otherwise
-      // Caught mid-run by the matcher's first capture
+      // Held before the first capture, as the interface suite holds its components: a screen's mount animation is
+      // Otherwise Caught mid-run by the matcher's first capture
       holdAnimations();
 
       const box = container.firstElementChild;
       assert(box);
       await getResultAsync(async () => {
-        // The update path writes what the matcher captured, so a render still changing across frames is refused before it
+        // The update path writes what the matcher captured, so a render still changing across frames is refused before
+        // It
         if (IS_VISUAL_UPDATE) await assertSettledRender(page.elementLocator(box), title);
         await expect.element(page.elementLocator(box)).toMatchScreenshot(`${directory}/${imageName}`);
       }).match(

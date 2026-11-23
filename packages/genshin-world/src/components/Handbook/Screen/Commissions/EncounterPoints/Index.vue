@@ -23,7 +23,8 @@ const emit = defineEmits<{ useLongTermEncounterPoints: [] }>();
 <template>
   <li class="encounter-points">
     <p class="encounter-points-title">{{ gameText[GameTextKey.AdventureEncounterRewards] }}</p>
-    <!-- The daily points held over the storage's limit. The dump has no label for this count, so it stands bare until a recording measures the panel -->
+    <!-- The daily points held over the storage's limit. The dump has no label for this count, so it stands bare
+      until a recording measures the panel -->
     <p class="encounter-points-daily">{{ encounterPoints }}/{{ encounterPointLimit }}</p>
     <p class="encounter-points-stored">
       {{ gameText[GameTextKey.LongTermEncounterPointsStored] }}

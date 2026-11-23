@@ -70,8 +70,8 @@ const confirmSegments = computed(() =>
 </script>
 
 <template>
-  <!-- The Mystic Offering at the Crafting Bench: the set a strongbox holds, the bag's unlocked five-star artifacts to give up
-       for it, and the confirm before they are given up -->
+  <!-- The Mystic Offering at the Crafting Bench: the set a strongbox holds, the bag's unlocked five-star artifacts
+    to give up for it, and the confirm before they are given up -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.MysticOffering]">
     <h2>{{ gameText[GameTextKey.MysticOffering] }}</h2>
     <p>

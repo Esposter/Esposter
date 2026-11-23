@@ -5,8 +5,8 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 
 // Gains an amount of Nightsoul points up to the maximum and returns the points it added, none once a character's points
-// Are full, as gcsim (MIT) nightsoul/nightsoul.go GeneratePoints clamps them and reports what it added. The caller raises
-// The generation event, since a step returns its events and a hook sends them as it runs
+// Are full, as gcsim (MIT) nightsoul/nightsoul.go GeneratePoints clamps them and reports what it added. The caller
+// Raises The generation event, since a step returns its events and a hook sends them as it runs
 export const gainKitNightsoulPoints = (
   kitEffectState: KitEffectState,
   characterId: number,

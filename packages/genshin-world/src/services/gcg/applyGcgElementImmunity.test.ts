@@ -16,7 +16,8 @@ describe("the Electro Slime's Elemental Lifeform", () => {
   const SEED = 4;
   const MONSTER_DECK_ID = 11_002;
   const TUTORIAL_DECK_ID = 1;
-  // Electro Slime is the monster deck's last character, the one that holds Elemental Lifeform: Electro from the battle's start
+  // Electro Slime is the monster deck's last character, the one that holds Elemental Lifeform: Electro from the
+  // Battle's start
   const ELECTRO_SLIME_INDEX = 2;
 
   test("should have Electro applied from the battle's start, and take no Electro DMG", async () => {

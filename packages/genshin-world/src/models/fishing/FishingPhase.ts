@@ -1,5 +1,5 @@
-// Where a cast stands: the lure drifting out, the fish biting or nibbling, the reel's tension held against the fish, and
-// Its end, the fish caught or got away
+// Where a cast stands: the lure drifting out, the fish biting or nibbling, the reel's tension held against the fish,
+// And Its end, the fish caught or got away
 export const FishingPhase = {
   Aiming: "Aiming",
   Biting: "Biting",

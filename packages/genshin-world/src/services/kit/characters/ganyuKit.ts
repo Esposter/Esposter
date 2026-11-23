@@ -19,12 +19,13 @@ import { grantKitChargeSkip } from "#src/services/kit/effects/grantKitChargeSkip
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
-// Provisional: no source gives the lotus health, so it stands until its seconds run out, unless a taunt's health is taken
+// Provisional: no source gives the lotus health, so it stands until its seconds run out, unless a taunt's health is
+// Taken
 const ICE_LOTUS_HEALTH = Number.POSITIVE_INFINITY;
 
-// Measured: gcsim v2.47.2 (MIT) ganyu/burst.go, Celestial Shower's field of radius 10 from the cast, each tick's hit landing
-// On a random enemy in the field, or a random point in it when none is
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/burst.go
+// Measured: gcsim v2.47.2 (MIT) ganyu/burst.go, Celestial Shower's field of radius 10 from the cast, each tick's hit
+// Landing On a random enemy in the field, or a random point in it when none is
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/burst.go`
 const CELESTIAL_SHOWER_RADIUS = 10;
 // Measured: gcsim v2.47.2 (MIT) ganyu/burst.go, Harmony between Heaven and Earth's 20% Cryo DMG Bonus for the
 // Active character inside the field for 60 frames, from Ascension 4
@@ -41,9 +42,9 @@ const UNDIVIDED_HEART_SECONDS = 5;
 const UNDIVIDED_HEART_SOURCE = "ganyu-undivided-heart";
 const HARMONY_SOURCE = "ganyu-harmony";
 
-// Measured: gcsim v2.47.2 (MIT) ganyu/cons.go, Frostflake Arrows and their Bloom reduce the enemy's Cryo RES by 15% for 300
-// Frames from Constellation 1, which the wiki's text gives as 6 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/cons.go
+// Measured: gcsim v2.47.2 (MIT) ganyu/cons.go, Frostflake Arrows and their Bloom reduce the enemy's Cryo RES by 15% for
+// 300 Frames from Constellation 1, which the wiki's text gives as 6 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/cons.go`
 const FROSTFLAKE_CONSTELLATION = 1;
 // Measured: gcsim v2.47.2 (MIT) ganyu/aimed.go, the fully charged shot skips 83 frames of its charge while the status
 // Constellation 6 gives stands, which ganyu/skill.go adds at the Ice Lotus's cast for 1800 frames
@@ -61,10 +62,10 @@ const FROSTFLAKE_STATUS: EnemyStatus = {
 const getFrostflakeStatus = ({ constellationCount }: Combatant): EnemyStatus | undefined =>
   constellationCount >= FROSTFLAKE_CONSTELLATION ? FROSTFLAKE_STATUS : undefined;
 
-// Measured: gcsim v2.47.2 (MIT) ganyu/burst.go, each tick of Celestial Shower gives the enemies in its area Constellation 4's
-// Status for 3 seconds, and every tenth tick, 3 seconds, adds a stack of 5% DMG taken, up to five, which every character's
-// Hits on the enemy read
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/burst.go
+// Measured: gcsim v2.47.2 (MIT) ganyu/burst.go, each tick of Celestial Shower gives the enemies in its area
+// Constellation 4's Status for 3 seconds, and every tenth tick, 3 seconds, adds a stack of 5% DMG taken, up to five,
+// Which every character's Hits on the enemy read
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/burst.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_STATUS_ID = "ganyu-c4";
 const CONSTELLATION_4_DAMAGE_TAKEN_PER_STACK = 0.05;
@@ -72,8 +73,8 @@ const CONSTELLATION_4_MAXIMUM_STACKS = 5;
 const CONSTELLATION_4_SECONDS = 3;
 const CONSTELLATION_4_STACK_TICKS = 10;
 
-// Each enemy in the field's circle is refreshed on every tick, and on every tenth tick gains a stack that its status keeps
-// Through the refresh, as the refresh carries none
+// Each enemy in the field's circle is refreshed on every tick, and on every tenth tick gains a stack that its status
+// Keeps Through the refresh, as the refresh carries none
 const applyConstellation4Status = (enemies: Iterable<Enemy>, field: KitField, tickIndex: number): void => {
   const isStackTick = tickIndex % CONSTELLATION_4_STACK_TICKS === 0;
   for (const enemy of enemies) {
@@ -92,11 +93,11 @@ const applyConstellation4Status = (enemies: Iterable<Enemy>, field: KitField, ti
 
 export const GANYU_CHARACTER_ID = 10_000_037;
 
-// Ganyu's behaviour: the fully charged shot's Frostflake Arrow and its Bloom cut the enemy's Cryo RES from Constellation
-// 1, and the arrow gives her Undivided Heart's CRIT Rate from Ascension 1. Ice Lotus casts its taunt where she stands,
-// Exploding as its seconds from the flower's hit run out. Celestial Shower casts its field, whose ticks each strike from
-// Where it was cast and give the active character Harmony between Heaven and Earth's Cryo DMG Bonus from Ascension 4, and
-// Each enemy in the field the DMG taken Constellation 4 stacks
+// Ganyu's behaviour: the fully charged shot's Frostflake Arrow and its Bloom cut the enemy's Cryo RES from
+// Constellation 1, and the arrow gives her Undivided Heart's CRIT Rate from Ascension 1. Ice Lotus casts its taunt
+// Where she stands, Exploding as its seconds from the flower's hit run out. Celestial Shower casts its field, whose
+// Ticks each strike from Where it was cast and give the active character Harmony between Heaven and Earth's Cryo DMG
+// Bonus from Ascension 4, and Each enemy in the field the DMG taken Constellation 4 stacks
 export const createGanyuKitBehaviour = ({
   kit,
   readHit,

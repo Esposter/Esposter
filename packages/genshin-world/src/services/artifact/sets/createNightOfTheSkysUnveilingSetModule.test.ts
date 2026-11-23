@@ -31,8 +31,9 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-// A wearer of four pieces with a kit holding the set's four-piece, the rest of the characters in the map, and the party in the
-// Order given. The characters given in benedictedIds carry a Moonsign benediction, which sets the team's Moonsign level
+// A wearer of four pieces with a kit holding the set's four-piece, the rest of the characters in the map, and the party
+// In the Order given. The characters given in benedictedIds carry a Moonsign benediction, which sets the team's
+// Moonsign level
 const createWearer = (characterId = TRAVELER_CHARACTER_ID) =>
   createKitCombatant(
     characterId,

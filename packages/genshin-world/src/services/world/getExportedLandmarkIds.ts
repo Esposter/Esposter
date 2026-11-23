@@ -4,8 +4,8 @@ import type { Landmark } from "#src/models/world/Landmark";
 import { checkIsPlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { LandmarkKindSceneExportFamilyMap } from "#src/services/world/LandmarkKindSceneExportFamilyMap";
 
-// The landmarks the game's exports draw in place of ours: each standing within the ground's extent of an exported family
-// Its kind stands in for, as the great oak stands within the exported oak's and a capital within its buildings'
+// The landmarks the game's exports draw in place of ours: each standing within the ground's extent of an exported
+// Family Its kind stands in for, as the great oak stands within the exported oak's and a capital within its buildings'
 export const getExportedLandmarkIds = (
   landmarks: readonly Landmark[],
   sceneExports: Iterable<SceneExport>,

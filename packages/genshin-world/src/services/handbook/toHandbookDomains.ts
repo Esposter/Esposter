@@ -6,8 +6,8 @@ import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBo
 import { checkIsWeeklyBossFirstClaimable } from "#src/services/bosses/checkIsWeeklyBossFirstClaimable";
 import { checkIsWeeklyBossQuickChallengeable } from "#src/services/bosses/checkIsWeeklyBossQuickChallengeable";
 
-// The rows of the Domains tab, one per entrance in the order given. A weekly boss's domain is locked until its introducing
-// Quests are done, and any other domain until its landmark is unlocked
+// The rows of the Domains tab, one per entrance in the order given. A weekly boss's domain is locked until its
+// Introducing Quests are done, and any other domain until its landmark is unlocked
 export const toHandbookDomains = (
   entrances: readonly DomainEntranceLandmark[],
   {

@@ -41,9 +41,10 @@ const XILONEN_TALENT_LEVELS: TalentLevels = {
 const XILONEN_ASCENSION = 6;
 // All six of Xilonen's constellations activated, as the recording's Constellation tab shows them lit
 const XILONEN_CONSTELLATION_COUNT = 6;
-// The Scroll of the Hero of Cinder City, whose two- and four-piece bonuses the recording shows lit, worn as five five-star
-// Pieces. Each main and roll is read off the game's tables at the level given: Sands and Goblet hold their Defense main at
-// +17 and +19, which with the Defense rolls on Plume and Circlet sum Xilonen's Defense to the recording's +1,398 from them
+// The Scroll of the Hero of Cinder City, whose two- and four-piece bonuses the recording shows lit, worn as five
+// `five-star` Pieces. Each main and roll is read off the game's tables at the level given: Sands and Goblet hold their
+// Defense main at +17 and +19, which with the Defense rolls on Plume and Circlet sum Xilonen's Defense to the
+// Recording's +1,398 from them
 const SCROLL_SET_ID = 15037;
 // Gilded Dreams, the second set the two-set variant wears two pieces of beside the Scroll
 const GILDED_DREAMS_SET_ID = 15026;
@@ -59,7 +60,8 @@ const getPieceItemId = (slot: ArtifactSlot, setId: number): number => {
   if (!piece) throw new InvalidOperationError(Operation.Read, getPieceItemId.name, `${slot} of set ${setId}`);
   return piece.itemId;
 };
-// A minor affix at its tier in the rarity's table, each roll worth that tier's value and the rolls summed on its one line
+// A minor affix at its tier in the rarity's table, each roll worth that tier's value and the rolls summed on its one
+// Line
 const getMinorAffix = (attribute: Attribute, tier: number, rolls = 1): AttributeLine => {
   const value = statTables.artifactRarityDataMap
     .get(ARTIFACT_RARITY)
@@ -122,8 +124,8 @@ const asPieceOfSet = (artifact: Artifact, setId: number): Artifact => ({
   itemId: getPieceItemId(artifact.slot, setId),
   setId,
 });
-// Xilonen's Flower of Life and Plume of Death from the Scroll and her Sands and Goblet from Gilded Dreams, two pieces each
-// Of two sets, with the Circlet of Logos unworn, so both sets reach their two-piece bonus
+// Xilonen's Flower of Life and Plume of Death from the Scroll and her Sands and Goblet from Gilded Dreams, two pieces
+// Each Of two sets, with the Circlet of Logos unworn, so both sets reach their two-piece bonus
 const TWO_SETS_ARTIFACTS: Artifact[] = [
   ...XILONEN_ARTIFACTS.slice(0, 2),
   ...XILONEN_ARTIFACTS.slice(2, 4).map((artifact) => asPieceOfSet(artifact, GILDED_DREAMS_SET_ID)),

@@ -1,5 +1,5 @@
-// The card ids in one leaf module with no imports, so a card reads a sibling's id at load without the import cycle that a
-// Sibling module would close
+// The card ids in one leaf module with no imports, so a card reads a sibling's id at load without the import cycle that
+// A Sibling module would close
 export const ABSORBING_PRISM_ID = 224_011;
 export const ABYSSAL_SUMMONS_ID = 332_015;
 export const ADVENTURERS_BANDANA_ID = 312_001;

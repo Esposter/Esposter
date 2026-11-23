@@ -1,4 +1,5 @@
-/* oxlint-disable no-await-in-loop -- Stop at the first: a refused line ends the script, and each run reads what the last wrote; Stop at the first: a failed step ends the script, and each step reads what the last wrote */
+/* oxlint-disable no-await-in-loop -- Stop at the first: a refused line ends the script, and each run reads what the
+   last wrote; Stop at the first: a failed step ends the script, and each step reads what the last wrote */
 import type { DevResult } from "#src/models/dev/DevResult";
 import type { ScriptedSessionDriver } from "#src/models/dev/ScriptedSessionDriver";
 import type { ScriptedStep } from "#src/models/dev/ScriptedStep";

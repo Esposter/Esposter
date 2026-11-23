@@ -16,8 +16,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 describe(createNetSnapperPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
-  // Net Snapper at its first rank: after an Elemental Skill, Flowrider for 15 seconds, dealing 80% ATK as AoE DMG on an attack
-  // Hit, up to three times and at most once every 2 seconds, and Flowrider can be triggered once every 12 seconds
+  // Net Snapper at its first rank: after an Elemental Skill, Flowrider for 15 seconds, dealing 80% ATK as AoE DMG on an
+  // Attack Hit, up to three times and at most once every 2 seconds, and Flowrider can be triggered once every 12
+  // Seconds
   const passiveModule = createNetSnapperPassiveModule([0.8, 15, 3, 2, 12]);
 
   test("an attack hit queues the rank's AoE at most once every 2 seconds, and only three times after the wielder's Elemental Skill", () => {

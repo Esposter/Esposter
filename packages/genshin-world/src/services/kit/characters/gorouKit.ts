@@ -141,8 +141,8 @@ export const createGorouKitBehaviour = ({
   const burstDefenseDamageBonus = createDefenseDamageBonus(BURST_DEFENSE_SHARE);
   const crystalCollapseHit = readHit("crystalCollapse", { additiveBaseDamageBonus: burstDefenseDamageBonus });
   // Crystal Collapse ticks from its own hitmark, the burst's hit with its task's 90 frames and its own 1, each its
-  // Interval after the last, while the field stands: gcsim's task finds the field spent on its end frame, so a tick that
-  // Falls there or past it is not set out
+  // Interval after the last, while the field stands: gcsim's task finds the field spent on its end frame, so a tick
+  // That Falls there or past it is not set out
   const crystalCollapseHits = Array.from(
     {
       length: Math.ceil(

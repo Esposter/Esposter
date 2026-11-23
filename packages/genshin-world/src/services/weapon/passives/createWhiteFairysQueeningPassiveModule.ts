@@ -13,9 +13,9 @@ const TRANSCENDENCE_STACK_COOLDOWN_SECONDS = 0.2;
 const MAXIMUM_STACKS = 3;
 const STELLAR_REACTIONS = [{ reactionType: ReactionType.StellarConduct }, { reactionType: ReactionType.StellarSwirl }];
 
-// White Fairy's Queening at its rank: its ATK is a static line. Each Charged Attack hit its wielder lands gives a stack of
-// Transcendence, once every 0.2 seconds and up to three, each raising the Stellar-Conduct and Stellar Swirl DMG the wielder
-// Triggers by the rank's amount for the rank's seconds
+// White Fairy's Queening at its rank: its ATK is a static line. Each Charged Attack hit its wielder lands gives a stack
+// Of Transcendence, once every 0.2 seconds and up to three, each raising the Stellar-Conduct and Stellar Swirl DMG the
+// Wielder Triggers by the rank's amount for the rank's seconds
 export const createWhiteFairysQueeningPassiveModule = (params: number[]): PassiveModule => {
   const damageBonusPerStack = takeOne(params, 1);
   const seconds = takeOne(params, 2);

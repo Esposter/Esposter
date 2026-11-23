@@ -5,8 +5,9 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { takeOne } from "@esposter/shared";
 
-// A passive that, after its wielder is healed, raises one of its attributes by the rank's amount for the rank's seconds. A
-// Heal is a change of HP that gains a share, which a loss does not, and it counts whether or not its wielder is on the field
+// A passive that, after its wielder is healed, raises one of its attributes by the rank's amount for the rank's
+// Seconds. A Heal is a change of HP that gains a share, which a loss does not, and it counts whether or not its wielder
+// Is on the field
 export const createHealBuffPassiveModule = (
   params: number[],
   { attribute, source }: { attribute: Attribute; source: string },

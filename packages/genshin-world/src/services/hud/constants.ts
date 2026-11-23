@@ -15,8 +15,8 @@ export const TOUCH_STICK_FADE_MS = 100;
 // And attack's discs on `hud-world-pickup` the scene reads 0.84, 0.88 and 0.91 of itself just outside them, red to blue
 export const ACTION_BUTTON_BACKGROUND = "rgb(0 27 61 / 0.16)";
 // The share of the pool under which the stamina meter flashes red: on the climb `hud-stamina-climb` is taken from, its
-// Fill is still yellow at a sixth of the arc and at an eighth (the clip's 32.75 and 32.83 seconds) and red from the next
-// Frame on, as the pool empties
+// Fill is still yellow at a sixth of the arc and at an eighth (the clip's 32.75 and 32.83 seconds) and red from the
+// Next Frame on, as the pool empties
 export const STAMINA_METER_LOW_SHARE = 0.125;
 // The stamina each section of the meter holds, the arc cut at each multiple of it short of the pool
 export const STAMINA_METER_SECTION = 100;
@@ -39,9 +39,9 @@ export const HUD_SHORTCUTS: readonly { icon: MenuEntryIcon; inputAction: InputAc
 // (`hud-world-keys`, the 90 pixel box at 16, 2 of the 1080 high still, enlarged four times), its paths in that
 // Enlargement's pixels: a layer a tone from the bottom, each tone's pixels told apart by the nearest of the still's own
 // Colours and each layer filled with its tone as sampled there. The whole head in the navy its star and eye show
-// Through, then its white, the grey of its left lock, its crown's tan and its cape's blue
-// Its navy is measured on `hud-paimon-button`: the reference averages (47, 61, 75) under our navy's mask, where the still's
-// #364f69 (54, 79, 105) ran its blue 27 levels high
+// Through, then its white, the grey of its left lock, its crown's tan and its cape's blue Its navy is measured on
+// `hud-paimon-button`: the reference averages (47, 61, 75) under our navy's mask, where the still's #364f69 (54, 79,
+// 105) ran its blue 27 levels high
 export const PAIMON_EMBLEM_LAYERS: readonly { color: string; path: string }[] = [
   {
     color: "#2f3d4b",
@@ -64,5 +64,6 @@ export const PAIMON_EMBLEM_LAYERS: readonly { color: string; path: string }[] = 
     path: "M202 260h5v8.5l1.5.5 2-4 .5 4.5-3 3-1 4-3.5 3.5h-3l-4 2h-5l-4.5-3.5 1.5-2.5 2 4 4 1q1.5-3.5 8-2l3.5-3.5 1-4.5q-3-.75-4 1.5.87 3-3.5 1.5l-1.5-1.5v-4.5l3-1.5q1.83-2.32 1-6.5z M81.5 270l1.5 3.5v5l3 6.5q4.5 1.75 3-3.5.5-2 3.5-1.5l3-3q2.2 6.8 8 10 5.39 1.11 8 5h6l1 1h11l1-1 11-1 2-2 7-3h4.5l1 4h8.5q.75-1.75 4-1v1l-3.5 1q-.5 3.25 3 4.5-2 1.12-1 4.5h1.5l3.5-3.5q-.75-2.25 1.5-1.5l4-3h4.5l.5-5 3 5 5 4h1.5q.75 3-1.5 4l-5-1q-2.25.75-1.5 4.5l4.5 3.5 6.5 2.5-4.5.5-9 4h-4.5l1 4-5.5 2-2-1-2.5 1v6.5l-1.5 1.5-4-1-2.5 2.5v3l-1 2.5-14 3-1 4h-4.5l-5 2h-38q-1-3-6-2-1.25 2.25-2.5-.5v-4.5h-1.5q-1-2-5-1l-2.5-2.5v-5l2-2q-1-4.5 1.5-5.5l5 1q1.25-2.25 6-1l3.5-2.5-2-6 1-2.5h9.5q1 2 5 1l2.5-4.5q-.75-3.25-5.5-2.5l-1 1h-11l-1-1h-13l-5-5-4-2h-5l-3.5-2.5-1-8.5 7.5 1 .5-.5-3.5-3.5-3.5-2.5 2.5-.5 6.5 5.5 2.5 3.5 7 4h6.5q1.25-5.5-2.5-7-2.25.75-1.5-1.5l-3-5q.75-3.25-1-4l.5-5.5zm31.5 24v2h23l2-1v-1h-10l-1 1q-5 1-5-1h-9z",
   },
 ];
-// The width of the touch stick's drawing, in the units its marks and head are drawn in, which its group's canvas width spans
+// The width of the touch stick's drawing, in the units its marks and head are drawn in, which its group's canvas width
+// Spans
 export const STICK_VIEW_BOX_SIZE = 204;

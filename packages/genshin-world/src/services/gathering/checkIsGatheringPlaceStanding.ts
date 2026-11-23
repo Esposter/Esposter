@@ -2,7 +2,8 @@ import type { GatheringRespawn } from "#src/models/gathering/GatheringRespawn";
 
 import { computeGatheringRespawn } from "#src/services/gathering/computeGatheringRespawn";
 
-// Whether a point stands in the world now: one never picked does, and a picked one stands again once its respawn has come
+// Whether a point stands in the world now: one never picked does, and a picked one stands again once its respawn has
+// Come
 export const checkIsGatheringPlaceStanding = (
   pickedAt: Temporal.Instant | undefined,
   respawn: GatheringRespawn,

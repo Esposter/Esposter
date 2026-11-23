@@ -13,8 +13,8 @@ const readBuffs = (context: KitContext) => readBuffTuples(context.kitEffectState
 describe(createJadeCirculationPassiveModule, () => {
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
-  // Jade Circulation at its first rank: off the field for more than five seconds, Max HP rises by 32% and Elemental Mastery by
-  // 40, until the wielder has been on the field for ten seconds
+  // Jade Circulation at its first rank: off the field for more than five seconds, Max HP rises by 32% and Elemental
+  // Mastery by 40, until the wielder has been on the field for ten seconds
   const passiveModule = createJadeCirculationPassiveModule([10, 5, 0.32, 40]);
   const createOffFieldContext = (): KitContext => createKitTestContext(wielder, { activeCombatant: other });
   const buffsUp = [

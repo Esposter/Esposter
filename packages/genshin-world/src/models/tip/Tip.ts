@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-// A tutorial's push tip by the game's own id: the Archive entry the codex files it under, where it has one, its title and
-// Subtitle by their text ids, and the trigger its watcher gives, where the game's table gives one. A tip with no trigger in
-// The tables is shown by a script the dump does not hold, so the world never shows it
+// A tutorial's push tip by the game's own id: the Archive entry the codex files it under, where it has one, its title
+// And Subtitle by their text ids, and the trigger its watcher gives, where the game's table gives one. A tip with no
+// Trigger in The tables is shown by a script the dump does not hold, so the world never shows it
 export interface Tip {
   codexId?: number | undefined;
   id: number;

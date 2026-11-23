@@ -1,14 +1,15 @@
 // How near a locked jump landmark the HUD points to it, and how far it stays pointed to once the player is past the
-// Show distance, in metres, as the wiki gives the two. The gap between them keeps the pointer from flickering at the show distance
+// Show distance, in metres, as the wiki gives the two. The gap between them keeps the pointer from flickering at the
+// Show distance
 export const NAVIGATION_POINTER_SHOW_DISTANCE = 30;
 export const NAVIGATION_POINTER_HIDE_DISTANCE = 40;
-// Provisional: how far in from the screen's edge the navigation mark is held, as a share of the screen, so the mark sits
-// Inside the screen. Not yet read off the game's pointer at the edge
+// Provisional: how far in from the screen's edge the navigation mark is held, as a share of the screen, so the mark
+// Sits Inside the screen. Not yet read off the game's pointer at the edge
 export const NAVIGATION_MARK_INSET_SHARE = 0.04;
 // Provisional: the metres from the minimap's centre to its rim, not yet read off the game's minimap against the world
 export const MINIMAP_RADIUS = 120;
-// The ground the open map's drawing stands on where the game paints its terrain, which is not drawn here: the English PC
-// Client's map over Jueyun Karst at 1080 high, averaged over its whole frame. Only the overlay reads it; the minimap
+// The ground the open map's drawing stands on where the game paints its terrain, which is not drawn here: the English
+// PC Client's map over Jueyun Karst at 1080 high, averaged over its whole frame. Only the overlay reads it; the minimap
 // Stands its disc on the terrain's own measured mean colour
 export const MAP_GROUND = "#67817d";
 // Provisional: the map's marks measured off the game's map with the HUD's reference. A mark's radius is a share of the
@@ -17,14 +18,15 @@ export const MAP_MARK_SHARE = 0.02;
 // The open map's disc at the reference's scale, about 14.5 pixels of 1080 high, its disc's radius read off the English
 // Map's pointer over Jueyun Karst. The minimap keeps its own share, its view being a fraction of the open map's extent
 export const MAP_OVERLAY_MARK_SHARE = 0.00756;
-// A traced pin is cut from a 42 by 46 box of the reference's pixels, its place at the box's centre. The mark's circle is
-// 14.5 of those pixels across its radius at the reference's zoom, so a pin is drawn at the view's own scale by its mark's radius
+// A traced pin is cut from a 42 by 46 box of the reference's pixels, its place at the box's centre. The mark's circle
+// Is 14.5 of those pixels across its radius at the reference's zoom, so a pin is drawn at the view's own scale by its
+// Mark's radius
 export const MAP_PIN_CENTRE = { x: 21, y: 23 };
 export const MAP_MARK_RADIUS_PIXELS = 14.5;
-// An area's name and its progress line, each a share of the open map's extent so they are drawn at the view's own scale.
-// Read off the English PC client's map over Galesong Hill (yt-kgW2IgWKukg at 4.6 seconds, 1080p): the name's capitals
-// 28.8 pixels high and the line's 16.0, their middles 45.9 apart, which Signika's capitals, 0.706 of its size as the page
-// Draws them, take at these sizes at the default view's 4.8 pixels a metre
+// An area's name and its progress line, each a share of the open map's extent so they are drawn at the view's own
+// Scale. Read off the English PC client's map over Galesong Hill (yt-kgW2IgWKukg at 4.6 seconds, 1080p): the name's
+// Capitals 28.8 pixels high and the line's 16.0, their middles 45.9 apart, which Signika's capitals, 0.706 of its size
+// As the page Draws them, take at these sizes at the default view's 4.8 pixels a metre
 export const MAP_LABEL_SHARE = 0.02125;
 export const MAP_PROGRESS_SHARE = 0.012;
 export const MAP_PROGRESS_OFFSET_SHARE = 0.0227;
@@ -51,7 +53,8 @@ export const MAP_SUBAREA_LABEL_OFFSETS: Readonly<Partial<Record<string, { x: num
   "4268537278": { x: 25.7, z: -114 },
 };
 // Provisional: the metres across the map's width at the slider's two ends, the closest and the furthest zoom. The range
-// Is spaced so the default sits where the reference's slider thumb does, and is read off the game's levels when measured
+// Is spaced so the default sits where the reference's slider thumb does, and is read off the game's levels when
+// Measured
 export const MAP_VIEW_METRES_MIN = 384;
 export const MAP_VIEW_METRES_MAX = 10_752;
 // Provisional: the share of the slider's track one wheel unit moves the zoom, a notch of the wheel moving it about a

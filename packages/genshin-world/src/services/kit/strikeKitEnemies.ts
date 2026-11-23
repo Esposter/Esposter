@@ -42,7 +42,8 @@ import { getReactionParticleDrops } from "#src/services/party/getReactionParticl
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
 
-// Whether a strike's reach misses an enemy: its target's hitbox, its target alone, or else its hit's area about the body
+// Whether a strike's reach misses an enemy: its target's hitbox, its target alone, or else its hit's area about the
+// Body
 const checkIsOutOfStrikeReach = ({ body, hit, hitbox, target }: KitStrike, enemy: Enemy): boolean => {
   if (target === undefined) return !checkIsInAttackArea(hit.hitArea, body, enemy);
   if (hitbox === undefined) return target !== enemy;
@@ -94,7 +95,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         party.lunarCrystallize.moondrifts,
         context.body.position,
       );
-      // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit does
+      // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit
+      // Does
       const enemyHit = strike.isAimed && checkHasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
       // The kit's per-strike hooks read the striker as it is priced, with the buffs on it
       const pricedStrike = { ...targetedStrike, combatant: pricedCombatant, hit: enemyHit };

@@ -92,8 +92,8 @@ describe(useWorldTalks, () => {
     });
   };
 
-  // Marjorie and Ellin, seated on Mondstadt's residents by their talks, and the duel each seat is at. Their games are at
-  // The first Player Level, so the rank is the only gate left to them once the tutorial is finished
+  // Marjorie and Ellin, seated on Mondstadt's residents by their talks, and the duel each seat is at. Their games are
+  // At The first Player Level, so the rank is the only gate left to them once the tutorial is finished
   const MARJORIE_TALK_ID = "40172";
   const MARJORIE_DUEL_GAME_ID = 1021;
   const ELLIN_TALK_ID = "6970401";

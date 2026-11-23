@@ -8,8 +8,9 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 
-// The energy an enemy dropped, of an element or of none, collected by the member on the field: each drop is written into
-// The deployed team's energy, then sent to its kits, as gcsim's particles are distributed before they are announced
+// The energy an enemy dropped, of an element or of none, collected by the member on the field: each drop is written
+// Into The deployed team's energy, then sent to its kits, as gcsim's particles are distributed before they are
+// Announced
 export const collectKitEnergyDrops = (
   energyDrops: readonly (EnergyDrop | ParticleDrop)[],
   element: Element | undefined,

@@ -2,8 +2,8 @@ import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBoun
 
 import { z } from "zod";
 
-// The bounty the player has taken as the save holds it: the bounty, the region its target spawns in, the spawn point, the
-// Kind of target drawn for it, and whether that target is defeated
+// The bounty the player has taken as the save holds it: the bounty, the region its target spawns in, the spawn point,
+// The Kind of target drawn for it, and whether that target is defeated
 export const reputationBountyHuntSaveSchema = z.object({
   bountyId: z.int().positive(),
   isTargetDefeated: z.boolean(),

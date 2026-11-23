@@ -24,7 +24,8 @@ interface Props {
   getGroundHeight: (x: number, z: number) => number;
   // The game's names by text id in the reader's language, which an enemy's name is read from once they arrive
   nameText?: Readonly<Record<string, string>> | undefined;
-  // The world coordinate the scene's origin stands on, taken off each enemy's place before it is projected through the camera
+  // The world coordinate the scene's origin stands on, taken off each enemy's place before it is projected through the
+  // Camera
   origin: Vector3;
 }
 
@@ -32,7 +33,8 @@ const { elementalSight, enemyKindMap, enemyMap, getCamera, getGroundHeight, name
 const nameTags = shallowRef<SightNameTag[]>([]);
 const point = new Vector3();
 // Each living enemy within the sight's reach that has a name is projected through the camera where it stands, its head
-// Lifted by its capsule, and the tags are handed on only when there are some or there were, so a sight that is off re-renders nothing
+// Lifted by its capsule, and the tags are handed on only when there are some or there were, so a sight that is off
+// `re-renders` nothing
 useRafFn(() => {
   const camera = getCamera();
   if (!camera || !elementalSight.isOn) {

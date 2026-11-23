@@ -15,7 +15,8 @@ interface Props {
   getCamera: () => Camera | undefined;
   // The world's ground at a point in its own coordinates, which each effect is lifted from
   getGroundHeight: (x: number, z: number) => number;
-  // The world coordinate the scene's origin stands on, taken off each effect's point before it is projected through the camera
+  // The world coordinate the scene's origin stands on, taken off each effect's point before it is projected through the
+  // Camera
   origin: Vector3;
 }
 

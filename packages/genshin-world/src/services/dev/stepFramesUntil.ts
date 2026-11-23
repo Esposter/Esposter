@@ -1,10 +1,11 @@
-/* oxlint-disable no-await-in-loop -- Order is the contract: each frame lands before the next steps; Each step reads the last: the check reads what the frame just drew */
+/* oxlint-disable no-await-in-loop -- Order is the contract: each frame lands before the next steps; Each step reads
+   the last: the check reads what the frame just drew */
 import { SCRIPTED_FRAME_LIMIT } from "#src/services/dev/constants";
 
 // Steps frames until `check` gives a value, reading it before each frame so a check that already holds steps none, and
 // Returns that value. The first `minFrames` frames step before the check is first read, so a change has applied before
-// Anything is read. Undefined once SCRIPTED_FRAME_LIMIT frames have passed without one, counting those first frames too:
-// The bound every scripted wait shares, so each caller names its own failure
+// Anything is read. Undefined once SCRIPTED_FRAME_LIMIT frames have passed without one, counting those first frames
+// Too: The bound every scripted wait shares, so each caller names its own failure
 export const stepFramesUntil = async <T>(
   frame: () => Promise<void>,
   check: () => T | undefined,

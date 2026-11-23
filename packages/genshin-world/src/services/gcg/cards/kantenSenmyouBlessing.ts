@@ -8,9 +8,10 @@ import { takeOne } from "@esposter/shared";
 
 const KANTEN_SENMYOU_BLESSING_DAMAGE_BONUS = 1;
 
-// Kanten Senmyou Blessing, Kamisato Ayaka's equipment: while she holds Cryo Elemental Infusion, she deals +1 Cryo DMG, and
-// When she is switched to, the switch costs one die less, once per Round (the wiki's Kanten Senmyou Blessing (Equipment
-// Card)). Only the active character's equipment is listed for DMG, so the active character is the one it is attached to
+// Kanten Senmyou Blessing, Kamisato Ayaka's equipment: while she holds Cryo Elemental Infusion, she deals +1 Cryo DMG,
+// And When she is switched to, the switch costs one die less, once per Round (the wiki's Kanten Senmyou Blessing
+// (Equipment Card)). Only the active character's equipment is listed for DMG, so the active character is the one it is
+// Attached to
 export const kantenSenmyouBlessing: GcgCardModule = {
   modifyDamageDealt: ({ duel, sideIndex }, damage) => {
     const side = takeOne(duel.sides, sideIndex);

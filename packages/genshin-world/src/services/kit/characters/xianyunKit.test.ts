@@ -161,7 +161,8 @@ describe(createXianyunKitBehaviour, () => {
         { attribute: Attribute.BaseHealth, value: 10_000 },
       ]),
     };
-    // A press cast at constellation 1 gives no ATK, which a constellation 2 press would, so the buff under test is the only one
+    // A press cast at constellation 1 gives no ATK, which a constellation 2 press would, so the buff under test is the
+    // Only one
     const kitEffectState = castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(1));
     const context = createKitTestContext(combatant, { enemyTables, kitEffectState });
     getPartyMember(context.party, XIANYUN_CHARACTER_ID).healthShare = 0.1;

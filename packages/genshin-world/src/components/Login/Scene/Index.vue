@@ -217,10 +217,12 @@ const doorLightNode = color(LOGIN_DOOR_GLOW_COLOR).mul(
 );
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
 // Them, alone when it asks
-// oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
+// The parity page reaches
+// oxlint-disable-next-line no-restricted-globals -- a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 // The login's own exports where the host serves them, lit as our stone is, by the game's deferred pass from the scene's
-// Stone light, and riding the glide as a witness render's parts do, which are drawn instead where the page provides them
+// Stone light, and riding the glide as a witness render's parts do, which are drawn instead where the page provides
+// Them
 const sceneExportMap = useSceneExports(
   sceneExportBaseUrl,
   () => [LOGIN_SCENE_EXPORT_COMPONENT],
@@ -331,14 +333,15 @@ towersMaterial.colorNode = towerFacade.shade
   .mul(createSceneSurfaceDetail(towersMaterial, LoginPartFamily.Towers, LOGIN_TOWER_SURFACE_DETAIL));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
-// The towers' and bridges' procedural normal detail, at the wavelength their exports' surfaces read and the amplitude that
-// Brings their mean lean to the exports' bend (`LOGIN_TOWER_NORMAL_DETAIL_*`, `LOGIN_BRIDGE_NORMAL_DETAIL_*`)
+// The towers' and bridges' procedural normal detail, at the wavelength their exports' surfaces read and the amplitude
+// That Brings their mean lean to the exports' bend (`LOGIN_TOWER_NORMAL_DETAIL_*`, `LOGIN_BRIDGE_NORMAL_DETAIL_*`)
 towersMaterial.normalNode = createNormalDetailNode(
   LOGIN_TOWER_NORMAL_DETAIL_WAVELENGTH,
   LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE,
 );
 const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
-// The bridges' grain over their flat colour, its octaves fitted to their exports' structure (`LOGIN_BRIDGE_SURFACE_DETAIL`)
+// The bridges' grain over their flat colour, its octaves fitted to their exports' structure
+// (`LOGIN_BRIDGE_SURFACE_DETAIL`)
 bridgesMaterial.colorNode = color(stone.bridges.albedo).mul(
   createSceneSurfaceDetail(bridgesMaterial, LoginPartFamily.Bridges, LOGIN_BRIDGE_SURFACE_DETAIL),
 );
@@ -348,7 +351,8 @@ bridgesMaterial.normalNode = createNormalDetailNode(
 );
 const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
 const doorMaterial = createStoneMaterial(stone.doorPanel, loginStoneLight, doorLightNode);
-// The door's frame and panel lean their normals by the detail their exports' normal map gives them (`LOGIN_DOOR_NORMAL_DETAIL_*`)
+// The door's frame and panel lean their normals by the detail their exports' normal map gives them
+// (`LOGIN_DOOR_NORMAL_DETAIL_*`)
 doorFrameMaterial.normalNode = createNormalDetailNode(
   LOGIN_DOOR_NORMAL_DETAIL_WAVELENGTH,
   LOGIN_DOOR_NORMAL_DETAIL_AMPLITUDE,
@@ -427,9 +431,9 @@ cloudSeaMaterial.colorNode = mix(
 const cloudSeaPosition: [number, number, number] = [0, LOGIN_CLOUD_SEA_HEIGHT, 0];
 const cloudSeaRotation: [number, number, number] = [-Math.PI / 2, 0, 0];
 const cloudSeaGeometryArgs: [number, number] = [LOGIN_CLOUD_SEA_SIZE, LOGIN_CLOUD_SEA_SIZE];
-// No grade: every colour of the login is measured off its references through the tone mapping, the sky's, the haze's and
-// The stone's light. The bloom is the game's own, lifting only what is past its threshold, and a reference that reads it
-// Against its frame without it is opened with `isBloomed` off
+// No grade: every colour of the login is measured off its references through the tone mapping, the sky's, the haze's
+// And The stone's light. The bloom is the game's own, lifting only what is past its threshold, and a reference that
+// Reads it Against its frame without it is opened with `isBloomed` off
 usePostPipeline(
   () => qualityTier,
   { bloomStructure, fogUniforms, isBloomed, postUniforms, stoneLight: loginStoneLight },
@@ -612,7 +616,8 @@ onUnmounted(() => {
   </primitive>
   <!-- The door turns to face the camera coming up the walkway from -z, and stands only once it is due and has come -->
   <!-- Within the walkway's far end, on the copy the glide comes to rest on: the title's frames show no door at all. -->
-  <!-- Until then it is drawn at no size and never culled, so its pipelines compile while the scene loads rather than -->
+  <!-- Until then it is drawn at no size and never culled, so its pipelines compile while the scene loads rather
+    than -->
   <!-- Stalling the frame it rises on -->
   <TresGroup :position="doorPosition" :rotation="doorRotation" :scale="isDoorRising ? 1 : 0">
     <primitive :object="doorPieceGroup" />

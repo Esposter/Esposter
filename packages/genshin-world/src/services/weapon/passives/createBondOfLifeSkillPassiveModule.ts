@@ -11,15 +11,17 @@ import { takeOne } from "@esposter/shared";
 
 interface BondOfLifeSkillPassiveOptions {
   clearedAttributes: readonly Attribute[];
-  // The amount each cleared attribute rises by, from the HP the Bond of Life cleared, the rank's rate of it and the rank's maximum
+  // The amount each cleared attribute rises by, from the HP the Bond of Life cleared, the rank's rate of it and the
+  // Rank's maximum
   priceClearedAmount: (clearedHealth: number, rate: number, max: number) => number;
   skillAttributes: readonly Attribute[];
   source: string;
 }
 
-// A passive that, after its wielder uses its Elemental Skill, once every cooldown the rank gives, raises its skill attributes by
-// The rank's amount for the rank's seconds and grants it a Bond of Life worth the rank's share of its Max HP. When that Bond of
-// Life is cleared, its cleared attributes rise by the amount the cleared HP is priced at, for the rank's cleared seconds
+// A passive that, after its wielder uses its Elemental Skill, once every cooldown the rank gives, raises its skill
+// Attributes by The rank's amount for the rank's seconds and grants it a Bond of Life worth the rank's share of its Max
+// HP. When that Bond of Life is cleared, its cleared attributes rise by the amount the cleared HP is priced at, for the
+// Rank's cleared seconds
 export const createBondOfLifeSkillPassiveModule = (
   params: number[],
   { clearedAttributes, priceClearedAmount, skillAttributes, source }: BondOfLifeSkillPassiveOptions,

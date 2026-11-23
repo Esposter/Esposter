@@ -92,7 +92,8 @@ const defeatEnemy = (combatant: Combatant, context: KitContext) =>
     combatant,
   );
 
-// The energy the party holds after a use of Frostgnaw that freezes the given number of opponents, at the given ascension
+// The energy the party holds after a use of Frostgnaw that freezes the given number of opponents, at the given
+// Ascension
 const getEnergyAfterFreezes = (
   ascension: number,
   freezes: number,

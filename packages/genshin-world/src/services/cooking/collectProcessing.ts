@@ -6,9 +6,10 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 
-// The bag and queue after every unit of a processing done by `now` is taken into the bag. The units done are counted from
-// The moment the queue began, and a unit's results are taken all together, so the units done before the first the bag has
-// No room for are taken in, and that unit waits in the queue for the room, with the units behind it. A queue emptied is no job
+// The bag and queue after every unit of a processing done by `now` is taken into the bag. The units done are counted
+// From The moment the queue began, and a unit's results are taken all together, so the units done before the first the
+// Bag has No room for are taken in, and that unit waits in the queue for the room, with the units behind it. A queue
+// Emptied is no job
 export const collectProcessing = (
   recipe: ProcessingRecipe,
   job: ProcessingJob | undefined,

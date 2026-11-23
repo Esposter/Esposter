@@ -1,4 +1,5 @@
-// A colour a variable takes as its text: a hash and six hexadecimal digits, as a colour is written in the game's own tables
+// A colour a variable takes as its text: a hash and six hexadecimal digits, as a colour is written in the game's own
+// Tables
 export const HEX_COLOUR_REGEX = /^#[\da-f]{6}$/iu;
 // A clock a console line gives as `HH:MM`, from `00:00` to `23:59`
 export const DEV_CLOCK_TIME_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
@@ -22,9 +23,9 @@ export const SCRIPTED_START_MS = Temporal.Instant.from("2026-01-01T00:00:00Z").e
 // The space a record's fields are split on: the one before a lower-case key and its equals sign, so a value keeps
 // Its own spaces
 export const DEV_RECORD_FIELD_SEPARATOR_REGEX = / (?=[a-z]+=)/u;
-// The most frames a scripted session steps while it waits on the world, to be ready, to settle, before it fails: a minute of
-// Scripted time, far past what a settle takes on a screen
+// The most frames a scripted session steps while it waits on the world, to be ready, to settle, before it fails: a
+// Minute of Scripted time, far past what a settle takes on a screen
 export const SCRIPTED_FRAME_LIMIT = 3600;
-// The frames a settle steps before its first read: one for a view change to apply, and one for the terrain's selection to
-// Run on the new view, so a read never answers from the view the change left
+// The frames a settle steps before its first read: one for a view change to apply, and one for the terrain's selection
+// To Run on the new view, so a read never answers from the view the change left
 export const SCRIPTED_SETTLE_MIN_FRAMES = 2;

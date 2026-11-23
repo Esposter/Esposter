@@ -16,7 +16,8 @@ import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 const YEARNING_ID = `songOfDaysPast${ID_SEPARATOR}yearning`;
 const WAVES_ID = `songOfDaysPast${ID_SEPARATOR}waves`;
 const SNAPSHOT_ID = `songOfDaysPast${ID_SEPARATOR}snapshot`;
-// The attack tags a Waves stage's hits are counted from: a Normal, Charged or Plunging attack, or an elemental skill or burst
+// The attack tags a Waves stage's hits are counted from: a Normal, Charged or Plunging attack, or an elemental skill or
+// Burst
 const WAVES_ATTACK_TAGS: ReadonlySet<AttackTag> = new Set([
   AttackTag.ChargedAttack,
   AttackTag.ElementalBurst,
@@ -32,12 +33,12 @@ const checkIsWavesAttackTag = (attackTag: AttackTag | undefined): boolean =>
 const findYearning = (effects: readonly KitEffect[]): KitStatus | undefined =>
   effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === YEARNING_ID);
 
-// Song of Days Past. Its four-piece bonus records the HP its wearers' heals restore to the team, up to fifth param's HP, in a
-// Yearning that lasts the first param's seconds, one at a time for the team. When it runs out, the record becomes a Waves
-// Stage that lasts the second param's seconds and holds the third param's charges: each hit the active character lands with a
-// Normal, Charged or Plunging attack, or an elemental skill or burst, adds the fourth param of the record as DMG, and spends one.
-// The stage belongs to the wearer whose heal opened the Yearning, so its hooks read it from that wearer's kit alone and the
-// Team's hits are priced and spent once
+// Song of Days Past. Its four-piece bonus records the HP its wearers' heals restore to the team, up to fifth param's
+// HP, in a Yearning that lasts the first param's seconds, one at a time for the team. When it runs out, the record
+// Becomes a Waves Stage that lasts the second param's seconds and holds the third param's charges: each hit the active
+// Character lands with a Normal, Charged or Plunging attack, or an elemental skill or burst, adds the fourth param of
+// The record as DMG, and spends one. The stage belongs to the wearer whose heal opened the Yearning, so its hooks read
+// It from that wearer's kit alone and the Team's hits are priced and spent once
 export const createSongOfDaysPastSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const yearningSeconds = takeOne(bonus.params, 0);
   const wavesSeconds = takeOne(bonus.params, 1);
@@ -86,7 +87,8 @@ export const createSongOfDaysPastSetModule = (bonus: ArtifactSetBonus): PassiveM
           });
         return;
       }
-      // The record the Yearning ran out with is snapshotted into the Waves stage, which the wearer whose heal opened it holds
+      // The record the Yearning ran out with is snapshotted into the Waves stage, which the wearer whose heal opened it
+      // Holds
       if (
         event.kind === KitEventKind.EffectExpired &&
         event.effect.kind === "status" &&

@@ -8,11 +8,11 @@ import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 
-// A hit combat lands on an enemy, written into it in place. A shield it holds takes the damage first, and the rest falls
-// On its health, where the energy of every threshold it falls to is dropped, each once for the enemy's life however it is
-// Healed. A hit on a broken poise, or one that breaks it or the shield, staggers it, and any other hit sets an unengaged
-// Enemy on its attacker. A returning or dead enemy is immune, and any other hit restarts the seconds since the enemy was
-// Last hit. It returns the energy the hit dropped
+// A hit combat lands on an enemy, written into it in place. A shield it holds takes the damage first, and the rest
+// Falls On its health, where the energy of every threshold it falls to is dropped, each once for the enemy's life
+// However it is Healed. A hit on a broken poise, or one that breaks it or the shield, staggers it, and any other hit
+// Sets an unengaged Enemy on its attacker. A returning or dead enemy is immune, and any other hit restarts the seconds
+// Since the enemy was Last hit. It returns the energy the hit dropped
 export const damageEnemy = (enemy: Enemy, { damage, poiseDamage }: EnemyHit): EnergyDrop[] => {
   if (!checkIsEnemyStrikable(enemy)) return [];
   enemy.hitSeconds = 0;

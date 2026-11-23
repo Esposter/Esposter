@@ -41,7 +41,8 @@ const emit = defineEmits<{ claimCommission: [commissionId: number]; useLongTermE
       :name-text
       @claim-commission="(commissionId) => emit('claimCommission', commissionId)"
     />
-    <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter Points -->
+    <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter
+      Points -->
     <HandbookScreenCommissionsEncounterPoints
       v-if="isAdventureEncountersUnlocked"
       :is-long-term-encounter-point-usable

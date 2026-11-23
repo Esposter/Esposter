@@ -32,9 +32,9 @@ describe(wakeEnemyCamps, () => {
     return enemies;
   };
 
-  // The population is settled, every idle enemy in a camp with none engaged, so a call changes nothing and only reads it.
-  // Each call measures the cost a frame pays after the step that alerted its camps.
-  // The population is safe to share across iterations
+  // The population is settled, every idle enemy in a camp with none engaged, so a call changes nothing and only reads
+  // It. Each call measures the cost a frame pays after the step that alerted its camps. The population is safe to share
+  // Across iterations
   test.for(BENCH_ENEMY_COUNTS)("%i enemies", async (count, { bench }) => {
     const enemies = createEnemyPopulation(count);
     await bench("wake", () => {

@@ -12,9 +12,9 @@ import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 import { computed, watch } from "vue";
 
-// The areas the map counts the exploration of, each with the placed doings that stand in it. The doings the save records
-// Count toward their areas whatever the statues have unlocked, and each exploration threshold the nation's percentage passes
-// Pays its Reputation EXP and wallet items once
+// The areas the map counts the exploration of, each with the placed doings that stand in it. The doings the save
+// Records Count toward their areas whatever the statues have unlocked, and each exploration threshold the nation's
+// Percentage passes Pays its Reputation EXP and wallet items once
 export const useWorldExploration = ({
   catalogue,
   placedDoings,
@@ -39,14 +39,14 @@ export const useWorldExploration = ({
   const placedExplorationAreas = computed(() =>
     placeExplorationDoings(explorationAreas.value, catalogue, placedDoings.value),
   );
-  // The unlocked landmarks and the recorded doings whose exploration thresholds are paid: the saved ones, which paid when
-  // They were made, and the ones the settle below has counted. An unlock or a doing made before every read has landed
-  // Waits outside these sets
+  // The unlocked landmarks and the recorded doings whose exploration thresholds are paid: the saved ones, which paid
+  // When They were made, and the ones the settle below has counted. An unlock or a doing made before every read has
+  // Landed Waits outside these sets
   let thresholdPaidLandmarkIds: ReadonlySet<string> = savedUnlockedLandmarkIds;
   let thresholdPaidDoingIds: ReadonlySet<string> = recordedDoingIds.value;
   // Each exploration threshold the nation's percentage passes since the last settle pays once, and a threshold the
-  // Percentage already held pays nothing. Nothing settles until the areas, the Reputation and every region are in, so the
-  // Percentage before the unlocks is the one the saved landmarks reach
+  // Percentage already held pays nothing. Nothing settles until the areas, the Reputation and every region are in, so
+  // The Percentage before the unlocks is the one the saved landmarks reach
   const settleExplorationThresholds = () => {
     if (!reputationCity.value || placedExplorationAreas.value.length === 0 || !isJumpLandmarksLoaded.value) return;
     const { explores } = reputationCity.value;

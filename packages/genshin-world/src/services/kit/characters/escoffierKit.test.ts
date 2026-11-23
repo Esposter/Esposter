@@ -171,7 +171,8 @@ describe(createEscoffierKitBehaviour, () => {
     ]),
   });
 
-  // The share of her health the one heal of Scoring Cuts raises her by, after the cast, with whatever the callback puts on her then
+  // The share of her health the one heal of Scoring Cuts raises her by, after the cast, with whatever the callback puts
+  // On her then
   const readScoringCutsRaise = (afterCast: (context: KitContext) => void): number => {
     const context = createKitTestContext(createHealableCombatant(0));
     const member = getPartyMember(context.party, ESCOFFIER_CHARACTER_ID);
@@ -204,8 +205,8 @@ describe(createEscoffierKitBehaviour, () => {
     const member = getPartyMember(context.party, ESCOFFIER_CHARACTER_ID);
     member.healthShare = HEAL_HEALTH_SHARE;
     ESCOFFIER_KIT.elementalBurst.onStart?.(context);
-    // How far her health share rises on each frame's step. Its rises are the heals, Scoring Cuts' at 97 frames, then Rehab
-    // Diet's first at 157 frames and its second at 215.5
+    // How far her health share rises on each frame's step. Its rises are the heals, Scoring Cuts' at 97 frames, then
+    // Rehab Diet's first at 157 frames and its second at 215.5
     const raises: number[] = [];
     let healthShare = member.healthShare;
     for (let frame = 0; frame < 230; frame++) {

@@ -32,10 +32,10 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { computeGroundDistance } from "genshin-engine";
 
-// Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick strikes
-// The closest enemy in the circle, which the kit cannot pick, so each tick reaches every enemy in its reach, which
-// Overstates a tick against several enemies
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/layla
+// Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick
+// Strikes The closest enemy in the circle, which the kit cannot pick, so each tick reaches every enemy in its reach,
+// Which Overstates a tick against several enemies
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/layla`
 const STARLIGHT_SLUG_RADIUS = 12;
 
 export const LAYLA_CHARACTER_ID = 10_000_074;
@@ -51,9 +51,9 @@ const ASCENSION_4_MAX_HEALTH_SHARE = 0.015;
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_SHIELD_ABSORPTION_BONUS = 0.2;
 const CONSTELLATION_2 = 2;
-// Constellation 6: Shooting Stars and Starlight Slugs deal 40% more DMG, and the Night Stars' tick comes 20% sooner, as gcsim
-// `v2.47.2` (MIT) layla/cons.go and shield.go give them
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/layla/cons.go
+// Constellation 6: Shooting Stars and Starlight Slugs deal 40% more DMG, and the Night Stars' tick comes 20% sooner, as
+// Gcsim `v2.47.2` (MIT) layla/cons.go and shield.go give them
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/layla/cons.go`
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.4;
 const CONSTELLATION_6_NIGHT_STAR_TICK_SHARE = 0.8;
@@ -66,8 +66,8 @@ const CONSTELLATION_4_MAX_HEALTH_SHARE = 0.05;
 const CONSTELLATION_4_SECONDS = 3;
 const CONSTELLATION_4_REMOVAL_SECONDS = 0.05;
 
-// Gcsim's shield.go: four Night Stars fire the Shooting Stars, and a shield's tick adds one each 1.5 seconds while it lasts.
-// A skill adds two and a burst strike one, each on its own internal cooldown
+// Gcsim's shield.go: four Night Stars fire the Shooting Stars, and a shield's tick adds one each 1.5 seconds while it
+// Lasts. A skill adds two and a burst strike one, each on its own internal cooldown
 const NIGHT_STARS_MAXIMUM = 4;
 const NIGHT_STAR_TICK_SECONDS = 1.5;
 const SKILL_NIGHT_STAR_ICD = { id: "layla-night-star-skill-icd", seconds: 0.3 };
@@ -109,15 +109,15 @@ const getDawnStarBonus = (
     ? createMaxHealthScaledBonus(CONSTELLATION_4_MAX_HEALTH_SHARE)(layla)
     : 0;
 
-// Layla's behaviour: Nights of Formal Focus sets her Cryo shield, its health its flat HP plus its share of her Max HP, as
-// It is cast. Starlight Slug casts its field where she stands, each tick striking from there with a flat damage of its share
-// Of her Max HP as the burst was cast, which its talent multiplier does not scale. Her shield's tick, her skill's and her
-// Burst strikes' Night Stars fire Shooting Stars at the nearest enemy in reach, each striking its circle after its travel,
-// Her Ascension 4 adds to each, Constellation 2 gives her energy on each one's first strike, and Constellation 6 adds 40%
-// DMG to them and to Starlight Slug and shortens the Night Stars' tick. The first Shooting Star gives each deployed
-// Member Constellation 4's Dawn Star, which adds her Max HP's share to its Normal and Charged Attacks until one lands.
-// Her Ascension 1 is not built, and neither are Constellation 1's team shields for members not under a Curtain, which
-// Need the Cryo Effectiveness a shield does not carry
+// Layla's behaviour: Nights of Formal Focus sets her Cryo shield, its health its flat HP plus its share of her Max HP,
+// As It is cast. Starlight Slug casts its field where she stands, each tick striking from there with a flat damage of
+// Its share Of her Max HP as the burst was cast, which its talent multiplier does not scale. Her shield's tick, her
+// Skill's and her Burst strikes' Night Stars fire Shooting Stars at the nearest enemy in reach, each striking its
+// Circle after its travel, Her Ascension 4 adds to each, Constellation 2 gives her energy on each one's first strike,
+// And Constellation 6 adds 40% DMG to them and to Starlight Slug and shortens the Night Stars' tick. The first Shooting
+// Star gives each deployed Member Constellation 4's Dawn Star, which adds her Max HP's share to its Normal and Charged
+// Attacks until one lands. Her Ascension 1 is not built, and neither are Constellation 1's team shields for members not
+// Under a Curtain, which Need the Cryo Effectiveness a shield does not carry
 export const createLaylaKitBehaviour = ({
   readFramesList,
   readHit,
@@ -142,8 +142,8 @@ export const createLaylaKitBehaviour = ({
   const shootingStarStrike = readHit("shootingStarStrike");
   const shootingStarTravelFrames = readFramesList("shootingStarTravels");
 
-  // Adds Night Stars to the team's effects, as gcsim's addNightStars does: none while Shooting Stars fire, none inside the
-  // Cooldown of the source they come from, and four starts the Shooting Stars
+  // Adds Night Stars to the team's effects, as gcsim's addNightStars does: none while Shooting Stars fire, none inside
+  // The Cooldown of the source they come from, and four starts the Shooting Stars
   const addNightStars = (
     kitEffectState: KitEffectState,
     combatant: Combatant,
@@ -182,9 +182,10 @@ export const createLaylaKitBehaviour = ({
       });
   };
 
-  // One Shooting Star, fired at the closest enemy in reach, or at the last one fired at when none is in reach. It spends a
-  // Night Star, its travel the frames the Night Stars left before it allow, and the next one is fired 0.45 seconds on. The
-  // Last one ends the Shooting Stars, and restarts the tick that adds Night Stars while the shield lasts
+  // One Shooting Star, fired at the closest enemy in reach, or at the last one fired at when none is in reach. It
+  // Spends a Night Star, its travel the frames the Night Stars left before it allow, and the next one is fired 0.45
+  // Seconds on. The Last one ends the Shooting Stars, and restarts the tick that adds Night Stars while the shield
+  // Lasts
   const fireShootingStar = (context: KitContext, combatant: Combatant, lastTarget: Enemy) => {
     const { kitEffectState, party } = context;
     const target = findShootingStarTarget(context) ?? lastTarget;
@@ -211,8 +212,8 @@ export const createLaylaKitBehaviour = ({
     if (checkIsLaylaShieldLive(kitEffectState.effects)) startNightStarTick(kitEffectState, combatant);
   };
 
-  // A Shooting Star cast where its target stands, its hit landing from there after its travel. From Ascension 4 it adds to
-  // Its damage, and from Constellation 2 its first strike gives Layla energy, once
+  // A Shooting Star cast where its target stands, its hit landing from there after its travel. From Ascension 4 it adds
+  // To Its damage, and from Constellation 2 its first strike gives Layla energy, once
   const castShootingStar = (
     kitEffectState: KitEffectState,
     combatant: Combatant,
@@ -238,8 +239,9 @@ export const createLaylaKitBehaviour = ({
     });
   };
 
-  // Restarts the tick that adds a Night Star each 1.5 seconds while the shield lasts, as gcsim's tickNightStar re-arms it,
-  // 1.2 seconds from Constellation 6. When the skill is used and when the Shooting Stars end. The shield's end ends it
+  // Restarts the tick that adds a Night Star each 1.5 seconds while the shield lasts, as gcsim's tickNightStar re-arms
+  // It, 1.2 seconds from Constellation 6. When the skill is used and when the Shooting Stars end. The shield's end ends
+  // It
   const startNightStarTick = (kitEffectState: KitEffectState, combatant: Combatant) => {
     removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === LAYLA_NIGHT_STAR_TICK_ID);
     const tickSeconds =

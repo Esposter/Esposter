@@ -1,11 +1,13 @@
 import { HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 
-// A hosted object is named by the sha256 its last segment holds, under the scope before it, and its extension names its content type.
-// That one shape is what a dataset's JSON and every other hosted file share, so a dataset needs no rule of its own.
+// A hosted object is named by the sha256 its last segment holds, under the scope before it, and its extension names its
+// Content type. That one shape is what a dataset's JSON and every other hosted file share, so a dataset needs no rule
+// Of its own.
 const HOSTED_OBJECT_NAME_REGEX = /^.+\/(?<hash>[\da-f]{64})(?<extension>\.[a-z\d]+)$/u;
 
-// The hosted file a request under the mirror's base names, given the path after the base, or nothing when it names none.
-// A url with a `sha256` query names its file by that hash, since the content cache keeps each object under the hash of its bytes
+// The hosted file a request under the mirror's base names, given the path after the base, or nothing when it names
+// None. A url with a `sha256` query names its file by that hash, since the content cache keeps each object under the
+// Hash of its bytes
 export const parseGameDataObjectPath = (
   path: string,
 ): { contentType: string; hash: string; sourcePath: string } | undefined => {

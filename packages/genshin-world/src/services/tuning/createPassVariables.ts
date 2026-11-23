@@ -5,9 +5,9 @@ import type { Ref } from "vue";
 import { PASS_POST_GROUP, PASS_SHADOWS_GROUP } from "#src/services/tuning/constants";
 import { createBooleanVariable } from "#src/services/tuning/createBooleanVariable";
 
-// The passes the world draws that a developer can switch off to see what a slow frame pays for: the temporal anti-aliasing
-// The post chain resolves with, and the sun's shadows. Bloom, the god rays and the occlusion are not drawn by the world's
-// Chain at all, so they have no switch here
+// The passes the world draws that a developer can switch off to see what a slow frame pays for: the temporal
+// `anti-aliasing` The post chain resolves with, and the sun's shadows. Bloom, the god rays and the occlusion are not
+// Drawn by the world's Chain at all, so they have no switch here
 export const createPassVariables = ({
   isTemporalAntialiasingOn,
   sun,

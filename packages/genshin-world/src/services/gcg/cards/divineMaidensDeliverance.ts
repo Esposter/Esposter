@@ -7,8 +7,8 @@ import { createGcgSummonAfterDamage } from "#src/services/gcg/effects/createGcgS
 
 const DIVINE_MAIDENS_DELIVERANCE_DAMAGE = 1;
 
-// Divine Maiden's Deliverance, Shenhe's burst: 1 Cryo DMG, and a Talisman Spirit is summoned on her side once the damage is
-// Dealt (the wiki's Divine Maiden's Deliverance (Character Card Skill))
+// Divine Maiden's Deliverance, Shenhe's burst: 1 Cryo DMG, and a Talisman Spirit is summoned on her side once the
+// Damage is Dealt (the wiki's Divine Maiden's Deliverance (Character Card Skill))
 export const divineMaidensDeliverance: GcgSkillModule = {
   afterDamage: createGcgSummonAfterDamage(TALISMAN_SPIRIT_ID, talismanSpirit),
   getDamage: () => ({ damageType: Element.Cryo, value: DIVINE_MAIDENS_DELIVERANCE_DAMAGE }),

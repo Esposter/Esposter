@@ -43,7 +43,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const countPoints = (context: KitContext) =>
   countKitResource(context.kitEffectState.effects, CITLALI_CHARACTER_ID, NIGHTSOUL_POINTS_ID);
 
-// A team whose skill's press and two bursts put Citlali's points at 72 in the Blessing, which starts the Opal Fire at once
+// A team whose skill's press and two bursts put Citlali's points at 72 in the Blessing, which starts the Opal Fire at
+// Once
 const createOpalFireContext = (enemies: Enemy[]) => {
   const context = createKitTestContext(createCitlaliCombatant(), {
     enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),

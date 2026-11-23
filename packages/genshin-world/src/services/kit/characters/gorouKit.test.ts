@@ -43,7 +43,8 @@ const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
 
 const checkIsField = (effect: KitEffect): effect is KitField => effect.kind === "field";
 
-// Gorou at the constellation, with the given combatants beside him on the team, the Geo ones counted for Crunch and Constellation 6
+// Gorou at the constellation, with the given combatants beside him on the team, the Geo ones counted for Crunch and
+// Constellation 6
 const createTeam = (constellationCount: number, others: Combatant[], gorou = createGorouCombatant()) => {
   const combatant = { ...gorou, constellationCount };
   const members = [combatant, ...others];

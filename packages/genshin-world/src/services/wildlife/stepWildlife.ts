@@ -17,10 +17,11 @@ const setWildlifeState = (wildlife: Wildlife, state: WildlifeState): void => {
   wildlife.state = state;
   wildlife.stateSeconds = 0;
 };
-// One fixed step of a boar's charge at the target, the character's feet, written into the boar in place. An idle boar in
-// Charge reach of the target starts charging, and a charging one moves straight at the target until it makes contact, which
-// Is its one hit: the boar then runs off as a fleeing animal does, so its next charge waits until the target is in reach
-// Again. A target out of reach, or none, ends the charge where the boar stands. Returns whether this step's contact hit
+// One fixed step of a boar's charge at the target, the character's feet, written into the boar in place. An idle boar
+// In Charge reach of the target starts charging, and a charging one moves straight at the target until it makes
+// Contact, which Is its one hit: the boar then runs off as a fleeing animal does, so its next charge waits until the
+// Target is in reach Again. A target out of reach, or none, ends the charge where the boar stands. Returns whether this
+// Step's contact hit
 const stepBoarCharge = (boar: Wildlife, target: GroundPoint | undefined, stepSeconds: number): boolean => {
   const distance = target === undefined ? Number.POSITIVE_INFINITY : computeGroundDistance(target, boar.position);
   if (boar.state === WildlifeState.Idle) {

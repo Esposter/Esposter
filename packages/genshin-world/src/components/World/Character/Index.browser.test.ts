@@ -84,7 +84,8 @@ describe("worldCharacter", () => {
     expect(body.position.distanceTo(start)).toBeLessThan(0.01);
   });
 
-  // The control for the test above: the same move with no wheel open walks the body, so a still body is the wheel's doing
+  // The control for the test above: the same move with no wheel open walks the body, so a still body is the wheel's
+  // Doing
   test("walks under the same move while no wheel is open", async () => {
     expect.hasAssertions();
 

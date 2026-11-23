@@ -33,7 +33,8 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
-  // Whether the main pointer is a finger, which lays the buttons out as the touch layout does, beside its action buttons
+  // Whether the main pointer is a finger, which lays the buttons out as the touch layout does, beside its action
+  // Buttons
   isTouch: boolean;
   // The member on the field's skill: the seconds left of its cooldown and its whole cooldown
   skillCooldown: number;
@@ -48,8 +49,8 @@ const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
 const gadgetCode = getActionKeyCode(InputAction.QuickUseGadget);
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
-// The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
-// Kit's own, as a stance's end sets
+// The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than
+// The Kit's own, as a stance's end sets
 const getCooldownShare = (secondsLeft: number, seconds: number) =>
   seconds > 0 ? Math.min(1, secondsLeft / seconds) : 0;
 // Hidden with the HUD, the buttons let go of the keys they hold
@@ -60,11 +61,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- The skill and burst buttons at the bottom right. A cooldown darkens its button by the share left and counts its
-       Seconds down to a tenth, each carries its icon, and the burst fills with its energy from the foot in its element's
-       colour, its icon dim until the whole disc is in that colour once full. The keys' layout caps each with its key.
-       Pressing and holding one holds its key, as the touch controls hold theirs, and Enter or Space holds a focused one's,
-       stopped before the world's own keys hear them -->
+  <!-- The skill and burst buttons at the bottom right. A cooldown darkens its button by the share left and counts
+    its Seconds down to a tenth, each carries its icon, and the burst fills with its energy from the foot in its
+    element's colour, its icon dim until the whole disc is in that colour once full. The keys' layout caps each with
+    its key. Pressing and holding one holds its key, as the touch controls hold theirs, and Enter or Space holds a
+    focused one's, stopped before the world's own keys hear them -->
   <div class="skills" :class="isTouch ? 'touch' : 'keys'">
     <button
       class="skill lit-disc"
@@ -95,8 +96,8 @@ onUnmounted(() => {
     <template v-if="!isTouch">
       <HudKeyCap class="key skill-key" :code="skillCode" />
       <HudKeyCap class="key burst-key" :code="burstCode" />
-      <!-- The equipped gadget's disc above the burst, its cooldown counted on it and its quick-use key under it. Bare, as a
-           Character's buttons are until its icon is read, since no gadget's icon is read yet -->
+      <!-- The equipped gadget's disc above the burst, its cooldown counted on it and its quick-use key under it.
+        Bare, as a Character's buttons are until its icon is read, since no gadget's icon is read yet -->
       <template v-if="gadgetCooldownSeconds !== undefined">
         <div class="gadget" :style="{ '--cooldown': getCooldownShare(gadgetCooldown, gadgetCooldownSeconds) }">
           <span v-if="gadgetCooldown > 0" class="cooldown">{{ gadgetCooldown.toFixed(1) }}</span>

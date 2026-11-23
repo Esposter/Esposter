@@ -12,10 +12,11 @@ import { takeOne } from "@esposter/shared";
 
 const CONSUMMATION_ID = "consummation";
 
-// Extinguishing Precept at its rank: its All Elemental DMG Bonus is a passive bonus on each element. After the wielder uses an
-// Elemental Skill, it obtains Consummation for the rank's seconds, and its ATK rises by the rank's amount for each second that
-// Has passed since, up to the rank's stacks, doubled while the wielder is off the field. The stacks are read from the seconds
-// The status has left, so they need no clock of their own. The rank's second value is not read
+// Extinguishing Precept at its rank: its All Elemental DMG Bonus is a passive bonus on each element. After the wielder
+// Uses an Elemental Skill, it obtains Consummation for the rank's seconds, and its ATK rises by the rank's amount for
+// Each second that Has passed since, up to the rank's stacks, doubled while the wielder is off the field. The stacks
+// Are read from the seconds The status has left, so they need no clock of their own. The rank's second value is not
+// Read
 export const createExtinguishingPreceptPassiveModule = (params: number[]): PassiveModule => {
   const elementalDamageBonus = takeOne(params, 0);
   const attackBonusPerSecond = takeOne(params, 2);
@@ -25,7 +26,8 @@ export const createExtinguishingPreceptPassiveModule = (params: number[]): Passi
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants, effects) => {
       const { characterId } = combatant;
       const consummation = findKitStatus(effects, characterId, CONSUMMATION_ID);
-      // Float error can leave the seconds passed a sliver under a whole second, so FLOAT_RESIDUE is added before the floor
+      // Float error can leave the seconds passed a sliver under a whole second, so FLOAT_RESIDUE is added before the
+      // Floor
       const stacks =
         consummation !== undefined && checkIsKitStatusActive(effects, characterId, CONSUMMATION_ID)
           ? Math.min(maximumStacks, Math.floor(seconds - consummation.secondsRemaining + FLOAT_RESIDUE))

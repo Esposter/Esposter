@@ -21,10 +21,10 @@ import { defineStore } from "pinia";
 import { computed, shallowRef, watch } from "vue";
 
 // The roster the player fields: the characters they hold, the party those characters make up and the kits the deployed
-// Team plays with. The kits are built at the world's gate for the starting team and read once for each character the team
-// Takes in after, a failed read read again a wait later. The party is one reactive object the session starts with the
-// Save's and changes where it stands, so everything that was handed it keeps the same one. The session starts it before
-// The combat and every feature that reads the team, and stops it as it unmounts
+// Team plays with. The kits are built at the world's gate for the starting team and read once for each character the
+// Team Takes in after, a failed read read again a wait later. The party is one reactive object the session starts with
+// The Save's and changes where it stands, so everything that was handed it keeps the same one. The session starts it
+// Before The combat and every feature that reads the team, and stops it as it unmounts
 export const useWorldPartyStore = defineStore("world/party", () => {
   const worldSessionStore = useWorldSessionStore();
   const characters = shallowRef<Character[]>([]);

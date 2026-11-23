@@ -65,15 +65,16 @@ interface Props {
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
   isHeld: boolean;
-  // Whether the body holds still on the move while the Shortcut Wheel is open, which reads the move as its pick, and its
-  // Presses still play
+  // Whether the body holds still on the move while the Shortcut Wheel is open, which reads the move as its pick, and
+  // Its Presses still play
   isMoveHeld: boolean;
-  // Whether a held body still has its camera orbit it, as photo mode's does: the look turns and zooms the view round the
-  // Body, which neither steps nor moves
+  // Whether a held body still has its camera orbit it, as photo mode's does: the look turns and zooms the view round
+  // The Body, which neither steps nor moves
   isOrbiting: boolean;
-  // The world's combat state the character's kit steps in: the deployed team's party and combatants, whose HP, energy and
-  // Cooldowns the kit reads and writes, the enemies it strikes and aims at, and the effects on the team, which outlive a
-  // Switch as the field's buffs and infusions do, and are cleared on a drown or a jump, which the screen answers
+  // The world's combat state the character's kit steps in: the deployed team's party and combatants, whose HP, energy
+  // And Cooldowns the kit reads and writes, the enemies it strikes and aims at, and the effects on the team, which
+  // Outlive a Switch as the field's buffs and infusions do, and are cleared on a drown or a jump, which the screen
+  // Answers
   kitContext: KitContext;
   landmarkCollider: LandmarkCollider;
   // How the character the body carries moves, its body type's, which a party switch changes
@@ -142,7 +143,8 @@ const landedHits: KitHit[] = [];
 // Where the character is on the ground and how fast it moves across it, which the grass trail is stamped from
 const trailPosition = new Vector2();
 const trailVelocity = new Vector2();
-// The input an action or the open wheel plays under: the same presses with no move, so the body holds still while it plays
+// The input an action or the open wheel plays under: the same presses with no move, so the body holds still while it
+// Plays
 const stillInput: InputState = { ...inputState, moveForward: 0, moveRight: 0 };
 const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   // The controller's step spends the frame's presses, so the kit reads them first

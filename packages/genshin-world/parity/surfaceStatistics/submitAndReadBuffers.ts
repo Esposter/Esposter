@@ -4,7 +4,8 @@ export interface BufferRead {
   length: number;
 }
 
-// Copies each read's floats to a staging buffer on the encoder, submits it, and returns the floats as the host reads them
+// Copies each read's floats to a staging buffer on the encoder, submits it, and returns the floats as the host reads
+// Them
 export const submitAndReadBuffers = async (
   device: GPUDevice,
   encoder: GPUCommandEncoder,

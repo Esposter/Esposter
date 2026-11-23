@@ -38,8 +38,8 @@ const castShield = (action: KitAction, combatant = createDionaCombatant()): KitS
   return shield;
 };
 
-// The status each of Signature Mix's hits, its initial hit and its ticks, gives an enemy it strikes, struck by Diona at the
-// Ascension
+// The status each of Signature Mix's hits, its initial hit and its ticks, gives an enemy it strikes, struck by Diona at
+// The Ascension
 const readSignatureMixEnemyStatuses = (ascension: number) => {
   const combatant: Combatant = { ...createDionaCombatant(), ascension };
   const context = createKitTestContext(combatant);
@@ -107,7 +107,8 @@ describe("cat's Tail Closing Time", () => {
   const ABOVE_HALF_CHARACTER_ID = 1;
   const AT_HALF_CHARACTER_ID = 2;
   // Diona casts Signature Mix at the constellation on a team of herself and two members, one above half its HP and one
-  // At it, then the cast is stepped to a quarter second past its first tick, inside the half-second that tick's buffs last
+  // At it, then the cast is stepped to a quarter second past its first tick, inside the half-second that tick's buffs
+  // Last
   const readTickEffects = (constellationCount: number) => {
     const combatant = createDionaCombatant(constellationCount);
     const party = createParty([DIONA_CHARACTER_ID, ABOVE_HALF_CHARACTER_ID, AT_HALF_CHARACTER_ID]);

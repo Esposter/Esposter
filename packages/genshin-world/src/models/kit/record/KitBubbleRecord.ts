@@ -7,8 +7,8 @@ import { kitOmenRecordSchema } from "#src/models/kit/record/KitOmenRecord";
 import { kitParameterSchema } from "#src/models/kit/record/KitParameter";
 import { z } from "zod";
 
-// The bubble a hit holds the enemy it strikes in, in a kit's record: the explosion it bursts into, which holds no bubble
-// Of its own, the status the burst leaves, and its seconds
+// The bubble a hit holds the enemy it strikes in, in a kit's record: the explosion it bursts into, which holds no
+// Bubble Of its own, the status the burst leaves, and its seconds
 export interface KitBubbleRecord {
   explosion: BaseKitHitRecord;
   omen: KitOmenRecord;

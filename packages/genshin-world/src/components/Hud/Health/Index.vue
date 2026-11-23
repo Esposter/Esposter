@@ -16,8 +16,8 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- The member on the field's HP bar filling its container at the bottom's middle, its HP over it and its level before
-       It, whole numbers as the game writes them -->
+  <!-- The member on the field's HP bar filling its container at the bottom's middle, its HP over it and its level
+    before It, whole numbers as the game writes them -->
   <div class="health">
     <span class="level">{{ fillGameTextValues(gameText[GameTextKey.LevelFormat], level) }}</span>
     <div

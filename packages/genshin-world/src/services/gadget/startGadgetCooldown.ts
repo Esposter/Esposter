@@ -3,8 +3,8 @@ import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 
 import { getCooldownGroup } from "#src/services/gadget/getCooldownGroup";
 
-// The cooldown map with the gadget's group started at `now`: a use that works starts the gadget's cooldown, and a failed
-// Use starts its cooldown on a failed use. The map given is left as it was
+// The cooldown map with the gadget's group started at `now`: a use that works starts the gadget's cooldown, and a
+// Failed Use starts its cooldown on a failed use. The map given is left as it was
 export const startGadgetCooldown = (
   cooldownGroupReadyAtMap: CooldownGroupReadyAtMap,
   gadget: GadgetRow,

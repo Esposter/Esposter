@@ -8,8 +8,8 @@ import { useWorldSessionStore } from "#src/store/session";
 import { shallowRef } from "vue";
 
 // The tips the world shows: each tip a world event triggers and the save has not shown is shown in turn, the next only
-// Once the one on screen is closed. A tip is kept in the save once it is shown, so it is shown once per save. A tip still
-// Waiting in the queue is kept in the save too, so a reload shows it on the next event, as the save left it
+// Once the one on screen is closed. A tip is kept in the save once it is shown, so it is shown once per save. A tip
+// Still Waiting in the queue is kept in the save too, so a reload shows it on the next event, as the save left it
 export const useWorldTips = ({
   queuedTipIds,
   shownTipIds,
@@ -39,7 +39,8 @@ export const useWorldTips = ({
     showingTip.value = undefined;
     showNextTip();
   };
-  // The triggered tips join the queue behind the ones waiting, each once, and the first of them is shown if none is on screen
+  // The triggered tips join the queue behind the ones waiting, each once, and the first of them is shown if none is on
+  // Screen
   const queueTips = (triggeredTips: Tip[]) => {
     queuedTipIds.value = [
       ...queuedTipIds.value,
@@ -47,8 +48,8 @@ export const useWorldTips = ({
     ];
     if (!showingTip.value) showNextTip();
   };
-  // A finished quest triggers the quest-or tips naming it, and the quest-all tips naming only it: a quest-all tip naming
-  // Several quests never fires, since the world reads one finished quest at a time
+  // A finished quest triggers the quest-or tips naming it, and the quest-all tips naming only it: a quest-all tip
+  // Naming Several quests never fires, since the world reads one finished quest at a time
   events.on("finishQuest", ({ id: questId }) => {
     queueTips([
       ...getTipsTriggered(tips, shownTipIds.value, TipTriggerType.FinishQuestOr, (paramList) =>
@@ -70,7 +71,8 @@ export const useWorldTips = ({
       ),
     );
   });
-  // A change to the bag triggers the obtain tips whose item the bag holds one of. A parameter names items by their ids joined by ';'
+  // A change to the bag triggers the obtain tips whose item the bag holds one of. A parameter names items by their ids
+  // Joined by ';'
   events.on("bagChange", (inventory) => {
     queueTips(
       getTipsTriggered(tips, shownTipIds.value, TipTriggerType.ObtainMaterialNum, (paramList) =>
@@ -80,8 +82,8 @@ export const useWorldTips = ({
       ),
     );
   });
-  // The first unlock of a domain entrance triggers the dungeon-entry tips. Their parameter names a dungeon entry whose meaning is
-  // Not read yet, so any entry's first unlock fires them, and the save keeps each shown once
+  // The first unlock of a domain entrance triggers the dungeon-entry tips. Their parameter names a dungeon entry whose
+  // Meaning is Not read yet, so any entry's first unlock fires them, and the save keeps each shown once
   events.on("domainEntryUnlocked", () => {
     queueTips(getTipsTriggered(tips, shownTipIds.value, TipTriggerType.DungeonEntryToBeExplored, () => true));
   });

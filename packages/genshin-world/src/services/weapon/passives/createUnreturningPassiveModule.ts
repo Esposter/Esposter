@@ -6,8 +6,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
-// Unreturning at its rank: a charged attack hit on a weak point raises its wielder's Movement SPD and ATK for the seconds
-// Given. The strike sets the weak-point flag on an aimed hit to a Ruin machine, so it fires on those hits
+// Unreturning at its rank: a charged attack hit on a weak point raises its wielder's Movement SPD and ATK for the
+// Seconds Given. The strike sets the weak-point flag on an aimed hit to a Ruin machine, so it fires on those hits
 export const createUnreturningPassiveModule = (params: number[]): PassiveModule => {
   const movementSpeed = takeOne(params, 0);
   const attackPercentage = takeOne(params, 1);

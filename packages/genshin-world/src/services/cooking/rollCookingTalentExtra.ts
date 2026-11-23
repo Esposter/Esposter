@@ -5,8 +5,9 @@ import type { CookingTalent } from "#src/models/cooking/CookingTalent";
 import { PERCENT_TOTAL } from "#src/services/cooking/constants";
 import { CookingTalentQualityMap } from "#src/services/cooking/CookingTalentQualityMap";
 
-// How many more of a dish one cooking talent adds: a roll is drawn from `random` for every dish the talent's cook makes,
-// And it is one more where the dish's quality and kind are the talent's and the roll falls under its chance, else none
+// How many more of a dish one cooking talent adds: a roll is drawn from `random` for every dish the talent's cook
+// Makes, And it is one more where the dish's quality and kind are the talent's and the roll falls under its chance,
+// Else none
 export const rollCookingTalentExtra = (
   talent: CookingTalent | undefined,
   recipe: CookingRecipe,

@@ -17,8 +17,8 @@ const BURNING_ASSAULT_DAMAGE = 2;
 const PYRO_SCORPION_NEGATED_DAMAGE = 1;
 const PYRO_SCORPION_ENERGY_COST = 1;
 
-// Burning Assault, the Technique of Spirit of Omen: Pyro Scorpion: 2 Matching dice for 2 Pyro DMG, plus 1 for each stack of
-// Scorpion Blessing, which it spends
+// Burning Assault, the Technique of Spirit of Omen: Pyro Scorpion: 2 Matching dice for 2 Pyro DMG, plus 1 for each
+// Stack of Scorpion Blessing, which it spends
 export const BURNING_ASSAULT_SKILL: GcgSkill = {
   costs: [{ count: 2, kind: GcgCostKind.Matching }],
   effect: "Card_Vehicle_1230311",
@@ -27,8 +27,8 @@ export const BURNING_ASSAULT_SKILL: GcgSkill = {
   kind: GcgSkillKind.Technique,
 };
 
-// Burning Assault: its damage is read before it is dealt, and the Scorpocalypse's mark is cleared then, so only a defeat this
-// Use makes is heard after it
+// Burning Assault: its damage is read before it is dealt, and the Scorpocalypse's mark is cleared then, so only a
+// Defeat this Use makes is heard after it
 export const burningAssault: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
@@ -47,8 +47,8 @@ export const burningAssault: GcgSkillModule = {
   },
 };
 
-// Spirit of Omen: Pyro Scorpion, an equipment giving its character the Technique: while she is active and holds energy, a DMG she
-// Takes is 1 less for 1 Energy, and a stack of Scorpion Blessing is generated. Its one usage is spent on that
+// Spirit of Omen: Pyro Scorpion, an equipment giving its character the Technique: while she is active and holds energy,
+// A DMG she Takes is 1 less for 1 Energy, and a stack of Scorpion Blessing is generated. Its one usage is spent on that
 export const pyroScorpion: GcgCardModule = {
   initialUsages: 1,
   modifyDamageReceived: ({ duel, sideIndex }, value, zoneCard) => {

@@ -29,18 +29,18 @@ import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarge
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
-// The world's puzzles, the Seelies and the Time Trial Challenges held reactive so the sight's trails, the Seelies' states
-// And the challenges' clocks read as they change. A Seelie the save names as settled starts settled at its court, each one
-// Steps on the fixed step, led while the character stands within reach of it. A challenge starts once the character
-// Reaches its marker, then its clock runs on the same step. A challenge the save names as solved starts solved, and the
-// Puzzles solved are the saved ones with each challenge solved in play added. The session starts it with the places the
-// Regions hold and the save's, and stops it as it unmounts
+// The world's puzzles, the Seelies and the Time Trial Challenges held reactive so the sight's trails, the Seelies'
+// States And the challenges' clocks read as they change. A Seelie the save names as settled starts settled at its
+// Court, each one Steps on the fixed step, led while the character stands within reach of it. A challenge starts once
+// The character Reaches its marker, then its clock runs on the same step. A challenge the save names as solved starts
+// Solved, and the Puzzles solved are the saved ones with each challenge solved in play added. The session starts it
+// With the places the Regions hold and the save's, and stops it as it unmounts
 export const useWorldPuzzlesStore = defineStore("world/puzzles", () => {
   const puzzleSeelies = ref<Seelie[]>([]);
   const monumentMarkers = ref<MonumentMarker[]>([]);
   const timeTrialMarkers = ref<TimeTrialMarker[]>([]);
-  // Each shrine is shut until the save names it open or a key opens it, and an open one is kept as solved, the save's one
-  // Record of what is opened, so a reload keeps it open with no field of its own
+  // Each shrine is shut until the save names it open or a key opens it, and an open one is kept as solved, the save's
+  // One Record of what is opened, so a reload keeps it open with no field of its own
   const shrineMarkers = ref<ShrineMarker[]>([]);
   const savedSolvedPuzzleIds = shallowRef<ReadonlySet<string>>(new Set());
   const settledSeelieIds = computed<ReadonlySet<string>>(
@@ -57,7 +57,8 @@ export const useWorldPuzzlesStore = defineStore("world/puzzles", () => {
           .map(({ id }) => id),
       ]),
   );
-  // The chests the puzzles spawn, a settled Seelie's at its court, a solved challenge's at its marker and an open shrine's
+  // The chests the puzzles spawn, a settled Seelie's at its court, a solved challenge's at its marker and an open
+  // Shrine's
   const puzzleChestPlaces = computed(() => [
     ...computeSeelieChestPlaces(puzzleSeelies.value),
     ...computeTimeTrialChestPlaces(timeTrialMarkers.value),
@@ -74,9 +75,9 @@ export const useWorldPuzzlesStore = defineStore("world/puzzles", () => {
       stepTimeTrialChallenge(marker.challenge, deltaSeconds);
     }
   };
-  // A hit a step lands strikes each monument its area reaches with the hit's element and gauge, and a hit with no element
-  // Lights none. It also strikes the target of each time trial marker its area reaches, a stand-in for the rings, objects
-  // And enemies a target is struck by, since those are not in the world yet
+  // A hit a step lands strikes each monument its area reaches with the hit's element and gauge, and a hit with no
+  // Element Lights none. It also strikes the target of each time trial marker its area reaches, a stand-in for the
+  // Rings, objects And enemies a target is struck by, since those are not in the world yet
   const strikeWorldPuzzles = (body: KitBody, hit: PuzzleHit): void => {
     for (const { position, puzzle } of monumentMarkers.value) {
       if (hit.element === undefined || !checkIsInAttackArea(hit.hitArea, body, { position })) continue;

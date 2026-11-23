@@ -59,8 +59,8 @@ const startSkyladderPress = (kitEffectState: KitEffectState, characterId: number
   });
 };
 
-// Constellation 4: a Driftcloud Wave's hit heals each deployed member by a share of Xianyun's ATK for the presses it was
-// Made after, once every five seconds, from her ATK with the buffs on her as they stand at the hit
+// Constellation 4: a Driftcloud Wave's hit heals each deployed member by a share of Xianyun's ATK for the presses it
+// Was Made after, once every five seconds, from her ATK with the buffs on her as they stand at the hit
 const healFromDriftcloud = (context: KitContext, strike: KitStrike): void => {
   const { kitEffectState, party } = context;
   const { characterId, constellationCount } = strike.combatant;

@@ -1,7 +1,7 @@
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-// The index of the character standing one step away from another, in the given direction and round the side's characters,
-// Or nothing when no other character stands
+// The index of the character standing one step away from another, in the given direction and round the side's
+// Characters, Or nothing when no other character stands
 export const findGcgAdjacentCharacterIndex = (
   side: GcgSideState,
   fromIndex: number,

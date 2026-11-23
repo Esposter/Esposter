@@ -61,7 +61,8 @@ export const computeWindrisePlants = (
     rotation.setFromAxisAngle(UP, random() * Math.PI * 2);
     scale.setScalar(MathUtils.lerp(FLOWER_MIN_SIZE, FLOWER_MAX_SIZE, random()));
     matrix.compose(translation, rotation, scale).toArray(plantMatrices, plantIndex * 16);
-    // The terrain worker draws these and loads no package but three, so the colour is picked here, not by a shared helper
+    // The terrain worker draws these and loads no package but three, so the colour is picked here, not by a shared
+    // Helper
     flowerColors[Math.floor(random() * flowerColors.length)]?.toArray(plantColors, plantIndex * 3);
   }
   return { plantColors, plantMatrices };

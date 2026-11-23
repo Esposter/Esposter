@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 const MAGIC_AFFINITY_MAXIMUM_STACKS = 2;
 const MAGIC_AFFINITY_SECONDS = 12;
 
-// Magic Affinity at its rank: after its wielder uses an elemental skill, its normal and charged attacks deal the rank's DMG
-// More per stack, up to two stacks for twelve seconds
+// Magic Affinity at its rank: after its wielder uses an elemental skill, its normal and charged attacks deal the rank's
+// DMG More per stack, up to two stacks for twelve seconds
 export const createMagicAffinityPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   return {

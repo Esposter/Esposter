@@ -17,17 +17,17 @@ import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMu
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
-// Measured: gcsim (MIT) sayu/burst.go, Muji-Muji Daruma a field of radius 10 a metre and a half ahead, each of its ticks a
-// Strike on the nearest enemy in it and a heal of the active character at 70% HP or under. The Daruma's strike is a
-// Summon here, its every tick striking whatever is in reach, as gcsim strikes one enemy
+// Measured: gcsim (MIT) sayu/burst.go, Muji-Muji Daruma a field of radius 10 a metre and a half ahead, each of its
+// Ticks a Strike on the nearest enemy in it and a heal of the active character at 70% HP or under. The Daruma's strike
+// Is a Summon here, its every tick striking whatever is in reach, as gcsim strikes one enemy
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/burst.go
 const BURST_FIELD_CENTRE_METRES = 1.5;
 const BURST_FIELD_RADIUS = 10;
 const BURST_HEAL_HP_SHARE = 0.7;
-// Measured: gcsim v2.47.2 (MIT) sayu/asc.go, and burst.go for the Daruma's strike. Ascension 1: a Swirl Sayu triggers while
-// On the field heals the active character by 300 and 1.2 Elemental Mastery, once every 2 seconds. Ascension 4: the Daruma's
-// Ticks strike within 3.5 metres, where they strike within 1 below it
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/asc.go
+// Measured: gcsim v2.47.2 (MIT) sayu/asc.go, and burst.go for the Daruma's strike. Ascension 1: a Swirl Sayu triggers
+// While On the field heals the active character by 300 and 1.2 Elemental Mastery, once every 2 seconds. Ascension 4:
+// The Daruma's Ticks strike within 3.5 metres, where they strike within 1 below it
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/asc.go`
 const ASCENSION_1 = 1;
 const ASCENSION_1_HEAL_FLAT = 300;
 const ASCENSION_1_HEAL_ELEMENTAL_MASTERY_SHARE = 1.2;
@@ -45,10 +45,10 @@ const withAscension4Radius = (hit: KitHit): KitHit => ({
 });
 
 const CONSTELLATION_1 = 1;
-// Constellation 1 and 6, as gcsim v2.47.2 (MIT) sayu/burst.go gives them: from Constellation 1 the Daruma's heal ignores the
-// HP threshold. From Constellation 6 each of its ticks adds ATK times 0.2% of Elemental Mastery, at most 400% of ATK, to its
-// DMG and heals by 3 Elemental Mastery, at most 6000, read from Sayu as she stood at the cast
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/burst.go
+// Constellation 1 and 6, as gcsim v2.47.2 (MIT) sayu/burst.go gives them: from Constellation 1 the Daruma's heal
+// Ignores the HP threshold. From Constellation 6 each of its ticks adds ATK times 0.2% of Elemental Mastery, at most
+// 400% of ATK, to its DMG and heals by 3 Elemental Mastery, at most 6000, read from Sayu as she stood at the cast
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/burst.go`
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_ELEMENTAL_MASTERY_SHARE = 0.002;
 const CONSTELLATION_6_DAMAGE_ATTACK_SHARE_MAX = 4;
@@ -83,11 +83,12 @@ const getConstellation6TickHeal = (combatant: Combatant): number => {
   );
 };
 
-// Sayu's behaviour: Yoohoo Art: Mujina Flurry heals the active character as it is cast, and casts Muji-Muji Daruma, whose
-// Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl, Ascension 4's wider Daruma, Constellation 1's
-// Heal at any HP, Constellation 4's Energy on a Swirl and Constellation 6's Elemental Mastery on the Daruma are built. Her
-// Constellation 2 is not built: it needs the roll's time spent rolling for the kick's DMG, and the roll's elemental kick,
-// Which takes the element a roll absorbs, is not built, as the kit has no absorption check to read it
+// Sayu's behaviour: Yoohoo Art: Mujina Flurry heals the active character as it is cast, and casts Muji-Muji Daruma,
+// Whose Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl, Ascension 4's wider Daruma,
+// Constellation 1's Heal at any HP, Constellation 4's Energy on a Swirl and Constellation 6's Elemental Mastery on the
+// Daruma are built. Her Constellation 2 is not built: it needs the roll's time spent rolling for the kick's DMG, and
+// The roll's elemental kick, Which takes the element a roll absorbs, is not built, as the kit has no absorption check
+// To read it
 export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   // Mujina Flurry's heal and Muji-Muji Daruma's heal are each a flat amount and a share of Sayu's ATK, read at the cast
   const burstInitialHealFlat = readParameter("mujinaFlurryFlatHealing");
@@ -100,8 +101,8 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
   const darumaSeconds = readSeconds("mujiMujiDaruma");
   return {
     burst: {
-      // The initial heal lands at the cast, on the active character, from the ATK the cast reads, and the Daruma is a field
-      // Of its ticks, each a strike and a heal, cast where Sayu stands and priced by her as she stood then
+      // The initial heal lands at the cast, on the active character, from the ATK the cast reads, and the Daruma is a
+      // Field Of its ticks, each a strike and a heal, cast where Sayu stands and priced by her as she stood then
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { attack } = combatant.attributes;
         const initialHeal = burstInitialHealFlat + attack * burstInitialHealAttackShare;
@@ -135,8 +136,8 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
         });
       },
     },
-    // Ascension 1: a Swirl Sayu triggers while she is on the field heals the active character, which is her, once every 2
-    // Seconds, from the Elemental Mastery she has with the buffs on her as they stand at that Swirl
+    // Ascension 1: a Swirl Sayu triggers while she is on the field heals the active character, which is her, once every
+    // 2 Seconds, from the Elemental Mastery she has with the buffs on her as they stand at that Swirl
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered) return;
       const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;

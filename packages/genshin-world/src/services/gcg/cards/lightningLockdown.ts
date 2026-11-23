@@ -7,8 +7,8 @@ import { createGcgSummonAfterDamage } from "#src/services/gcg/effects/createGcgS
 
 const LIGHTNING_LOCKDOWN_DAMAGE = 2;
 
-// Lightning Lockdown, Electro Hypostasis' elemental burst: 2 Electro DMG, and Chains of Warding Thunder is summoned (the wiki's
-// Lightning Lockdown)
+// Lightning Lockdown, Electro Hypostasis' elemental burst: 2 Electro DMG, and Chains of Warding Thunder is summoned
+// (the wiki's Lightning Lockdown)
 export const lightningLockdown: GcgSkillModule = {
   afterDamage: createGcgSummonAfterDamage(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder),
   getDamage: () => ({ damageType: Element.Electro, value: LIGHTNING_LOCKDOWN_DAMAGE }),

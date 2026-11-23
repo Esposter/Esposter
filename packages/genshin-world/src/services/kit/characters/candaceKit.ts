@@ -33,19 +33,19 @@ const INFUSION_SECONDS = 1;
 const PRAYER_FIELD_ID = "candace-prayer";
 const WAVES_STATUS_ID = "candace-waves";
 
-// Measured: gcsim (MIT) candace/cons.go, Constellation 1 lengthens the Prayer to 12 seconds, three past the table's nine, and
-// Constellation 6 sets a wave off on each elemental normal attack a party member lands, once every 2.3 seconds. The table
-// Gives both, and the 2.3 seconds read the same from its constellation row
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace
+// Measured: gcsim (MIT) candace/cons.go, Constellation 1 lengthens the Prayer to 12 seconds, three past the table's
+// Nine, and Constellation 6 sets a wave off on each elemental normal attack a party member lands, once every 2.3
+// Seconds. The table Gives both, and the 2.3 seconds read the same from its constellation row
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace`
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_PRAYER_EXTRA_SECONDS = 3;
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_COOLDOWN_SECONDS = 2.3;
 const CONSTELLATION_6_STATUS_ID = "candace-constellation-6";
-// Constellation 2 raises her Max HP by 20% for 15 seconds from each Sacred Rite: Heron's Sanctum hit on an enemy, each hit
-// Restarting it. Constellation 4 sets the charged hold's cooldown to the tap's. Measured: gcsim v2.47.2 (MIT) candace/cons.go
-// And skill.go, the HPP mod of 0.2 for 15 seconds, and the hold's cooldown taken from skillCD[0] at Constellation 4
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace
+// Constellation 2 raises her Max HP by 20% for 15 seconds from each Sacred Rite: Heron's Sanctum hit on an enemy, each
+// Hit Restarting it. Constellation 4 sets the charged hold's cooldown to the tap's. Measured: gcsim v2.47.2 (MIT)
+// `candace/cons.go` And skill.go, the HPP mod of 0.2 for 15 seconds, and the hold's cooldown taken from skillCD[0] at
+// Constellation 4 https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_MAX_HEALTH_SHARE = 0.2;
 const CONSTELLATION_2_SECONDS = 15;
@@ -73,14 +73,14 @@ const infuse = (kitEffectState: KitEffectState, { characterId, weaponType }: Com
 export const CANDACE_CHARACTER_ID = 10_000_072;
 const ASCENSION_1 = 1;
 
-// Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands, and
-// Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on the
-// Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body. Constellations 1,
-// 2, 4 and 6 are built: the sixth's wave on a party member's elemental normal attack, the second's Max HP from each
-// Heron's Sanctum hit on an enemy, and the fourth's shorter charged hold. Ascension 1's Aegis of Crossed Arrows, which
-// Completes a charge on a hit taken, is built, see its design note. Not built: Ascension 4's DMG and the Prayer's DMG
-// Bonus of 20% on the Team's normal attacks, as no hook reads another member's normal attack DMG; and the talent levels
-// Of Constellations 3 and 5, which no kit reads yet
+// Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands,
+// And Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on
+// The Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body.
+// Constellations 1, 2, 4 and 6 are built: the sixth's wave on a party member's elemental normal attack, the second's
+// Max HP from each Heron's Sanctum hit on an enemy, and the fourth's shorter charged hold. Ascension 1's Aegis of
+// Crossed Arrows, which Completes a charge on a hit taken, is built, see its design note. Not built: Ascension 4's DMG
+// And the Prayer's DMG Bonus of 20% on the Team's normal attacks, as no hook reads another member's normal attack DMG;
+// And the talent levels Of Constellations 3 and 5, which no kit reads yet
 export const createCandaceKitBehaviour = ({
   kit,
   readHit,
@@ -125,8 +125,8 @@ export const createCandaceKitBehaviour = ({
     },
   };
   return {
-    // The Prayer's field infuses the character on the field each tick, from the hitmark, and the wave count is a status,
-    // Restarted by each burst
+    // The Prayer's field infuses the character on the field each tick, from the hitmark, and the wave count is a
+    // Status, Restarted by each burst
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId, constellationCount } = combatant;
@@ -155,7 +155,8 @@ export const createCandaceKitBehaviour = ({
     onKitEvent: (event, { activeCombatant, body, characterIdCombatantMap, kitEffectState }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       const { effects } = kitEffectState;
-      // Ascension 1: a strike on her while she holds her skill completes its charge, so its release plays the charged hold
+      // Ascension 1: a strike on her while she holds her skill completes its charge, so its release plays the charged
+      // Hold
       if (ascension >= ASCENSION_1 && checkIsStrikeOn(event, characterId))
         completeKitSkillCharge(kitEffectState, characterId);
       if (!findPrayerField(effects, characterId)) return;

@@ -3,8 +3,9 @@ import type { StandingFishingStock } from "#src/models/fishing/StandingFishingSt
 
 import { drawFishingPointFish } from "#src/services/fishing/drawFishingPointFish";
 
-// The bait a cast uses when the player has chosen none: the first of the baits held, in the bag's order, that pulls a fish
-// From the point's standing stocks, drawing only among the fish the bait names. Undefined where no held bait pulls one
+// The bait a cast uses when the player has chosen none: the first of the baits held, in the bag's order, that pulls a
+// Fish From the point's standing stocks, drawing only among the fish the bait names. Undefined where no held bait pulls
+// One
 export const pickFishingBait = (
   heldBaits: readonly FishBait[],
   standingStocks: readonly StandingFishingStock[],

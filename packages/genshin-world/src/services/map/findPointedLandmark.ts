@@ -5,8 +5,8 @@ import { NAVIGATION_POINTER_HIDE_DISTANCE, NAVIGATION_POINTER_SHOW_DISTANCE } fr
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { computeGroundDistance } from "genshin-engine";
 
-// The locked jump landmark the HUD points to from the character's ground point: the one pointed to last while it is still
-// Locked and within the hide distance, otherwise the nearest locked one within the show distance, or none
+// The locked jump landmark the HUD points to from the character's ground point: the one pointed to last while it is
+// Still Locked and within the hide distance, otherwise the nearest locked one within the show distance, or none
 export const findPointedLandmark = (
   lockedLandmarks: readonly PlaceLandmark[],
   point: GroundPoint,

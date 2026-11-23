@@ -5,9 +5,10 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 
-// The bag and garden after one seed is planted on a plot at `now`: the seed taken from the bag, and the planting recorded
-// On the plot. Undefined, with nothing spent, where the garden does not grow the seed, the plot already holds a planting,
-// Or the bag holds none of the seed. The plot's field is not checked until the realm's layout export names the plots
+// The bag and garden after one seed is planted on a plot at `now`: the seed taken from the bag, and the planting
+// Recorded On the plot. Undefined, with nothing spent, where the garden does not grow the seed, the plot already holds
+// A planting, Or the bag holds none of the seed. The plot's field is not checked until the realm's layout export names
+// The plots
 export const plantHomeSeed = (
   { plotId, seedItemId }: { plotId: number; seedItemId: number },
   {

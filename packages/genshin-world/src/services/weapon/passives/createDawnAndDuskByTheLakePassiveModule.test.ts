@@ -33,9 +33,9 @@ describe(createDawnAndDuskByTheLakePassiveModule, () => {
   const wielder = createWielderCombatant();
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
-  // Dawn and Dusk by the Lake (Splendor of Tranquil Waters) at its first rank: 8% Elemental Skill DMG for each stack of the
-  // Wielder's own HP changes, up to three, and 14% Max HP for each of the others', up to two. Each stack waits out a
-  // 0.2 second Cooldown, and each stack added restarts the six seconds of all of them, as addPassiveStack does
+  // Dawn and Dusk by the Lake (Splendor of Tranquil Waters) at its first rank: 8% Elemental Skill DMG for each stack of
+  // The Wielder's own HP changes, up to three, and 14% Max HP for each of the others', up to two. Each stack waits out
+  // A 0.2 second Cooldown, and each stack added restarts the six seconds of all of them, as addPassiveStack does
   const passiveModule = createDawnAndDuskByTheLakePassiveModule([0.08, 6, 0.2, 0.14, 6, 0.2]);
 
   test("the wielder's own HP change gives a stack of Elemental Skill DMG, which a skill hit reads, and a normal attack reads none of it", () => {

@@ -29,7 +29,8 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 // A normal attack of the character on the field starts, its first strike of a string or a later one
 const startNormalAttack = (action: KitAction, isFirstStrike: boolean, context: KitContext, combatant: Combatant) =>
   XINGQIU_KIT.onKitEvent?.({ action, isFirstStrike, kind: KitEventKind.NormalAttackStarted }, context, combatant);
-// The strikes the team's effects land over the given frames, each frame stepped on its own, so a tick lands on its frame
+// The strikes the team's effects land over the given frames, each frame stepped on its own, so a tick lands on its
+// Frame
 const stepKitFrames = (frames: number, context: KitContext): KitStrike[] =>
   Array.from({ length: frames }, () => stepKitTestEffects(1 / KIT_FRAMES_PER_SECOND, context)).flat();
 const createXingqiuCombatant = (ascension: number, constellationCount: number): Combatant => ({

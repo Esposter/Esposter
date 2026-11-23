@@ -18,8 +18,8 @@ interface WishTimeRemainingSource {
   getWishSchedule: () => WishScheduleEvent[];
 }
 
-// The seconds left as the game's three parts, each counted in its unit's words, and the three joined by the game's format,
-// "" on a banner with no window and otherwise the open event banner's window left by the screen's clock
+// The seconds left as the game's three parts, each counted in its unit's words, and the three joined by the game's
+// Format, "" on a banner with no window and otherwise the open event banner's window left by the screen's clock
 export const useWishTimeRemaining = ({ bannerId, getGameText, getNow, getWishSchedule }: WishTimeRemainingSource) =>
   computed(() => {
     const event = getWishSchedule().find(({ id }) => id === bannerId.value);

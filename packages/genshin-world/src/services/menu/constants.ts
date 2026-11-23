@@ -25,7 +25,8 @@ interface PaimonMenuScreenEntry<Icon> {
 }
 
 // The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is not
-// Among them, since no still of the menu the references hold shows it. Which of them carry a red dot is the host's state
+// Among them, since no still of the menu the references hold shows it. Which of them carry a red dot is the host's
+// State
 export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>[] = [
   { icon: EntryIcon.Shop, screenKind: ScreenKind.PaimonsBargains },
   { icon: EntryIcon.PartySetup, screenKind: ScreenKind.PartySetup },
@@ -47,7 +48,8 @@ export const TIME_DIAL_ORNAMENT_POSITIONS: readonly TimeDialOrnamentPosition[] =
   TimeDialOrnamentPosition.Top,
   TimeDialOrnamentPosition.Bottom,
 ];
-// The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
+// The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option
+// Allows
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
 // The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
@@ -65,13 +67,13 @@ export const PAIMON_MENU_SIDE_BAR: readonly PaimonMenuScreenEntry<MenuFrameIcon>
   { icon: FrameIcon.Time, screenKind: ScreenKind.Time },
   { icon: FrameIcon.Settings, screenKind: ScreenKind.Settings },
 ];
-// The Paimon menu's transition, read off the English PC client's menu recording (`yt-IegFADn-Lmk-menu-paimon`, 60 frames
-// A second): the opening from 35.0 seconds and the closing from 109.0, each frame's side bar and panel alpha taken
-// Against the world and the menu's own stills. The side bar's fade is the one that fits a smoothstep (its RMS error
-// 0.011 opening, 0.006 closing), starting at 35.75 and ending at 35.91, and at 109.98 and 110.15 closing. The panel
-// Fades in across its width together, half way at about 35.95 and done by 36.02, and as the menu closes it goes first,
-// Half way at 109.90 and gone by 110.02. The HUD vanishes in about 0.05 seconds at 35.43, and returns over 110.07 to
-// 110.48, a third of the way at 110.07 and half at 110.32
+// The Paimon menu's transition, read off the English PC client's menu recording (`yt-IegFADn-Lmk-menu-paimon`, 60
+// Frames A second): the opening from 35.0 seconds and the closing from 109.0, each frame's side bar and panel alpha
+// Taken Against the world and the menu's own stills. The side bar's fade is the one that fits a smoothstep (its RMS
+// Error 0.011 opening, 0.006 closing), starting at 35.75 and ending at 35.91, and at 109.98 and 110.15 closing. The
+// Panel Fades in across its width together, half way at about 35.95 and done by 36.02, and as the menu closes it goes
+// First, Half way at 109.90 and gone by 110.02. The HUD vanishes in about 0.05 seconds at 35.43, and returns over
+// 110.07 to 110.48, a third of the way at 110.07 and half at 110.32
 export const PAIMON_MENU_FADE_MS = 160;
 export const PAIMON_MENU_PANEL_DELAY_MS = 100;
 export const PAIMON_MENU_CLOSE_MS = PAIMON_MENU_FADE_MS + PAIMON_MENU_PANEL_DELAY_MS;
@@ -101,8 +103,8 @@ export const VOLUME_LEVEL_MINIMUM = 1;
 export const VOLUME_LEVEL_MAXIMUM = 10;
 // The track each volume slider moves across, from its first level to its last
 export const VOLUME_RANGE: SettingRange = { max: VOLUME_LEVEL_MAXIMUM, min: VOLUME_LEVEL_MINIMUM, step: 1 };
-// The camera's ranges on the wiki's Settings page: the sensitivities from 1 to 5 and the default distance from 4.5 to 6.0.
-// The distance's step is provisional until a recording shows the slider's notches
+// The camera's ranges on the wiki's Settings page: the sensitivities from 1 to 5 and the default distance from 4.5 to
+// 6.0. The distance's step is provisional until a recording shows the slider's notches
 export const CAMERA_SENSITIVITY_RANGE: SettingRange = { max: 5, min: 1, step: 1 };
 export const CAMERA_DISTANCE_RANGE: SettingRange = { max: 6, min: 4.5, step: 0.1 };
 // The key the settings are kept under on this device, as the game keeps its settings per device
@@ -120,9 +122,11 @@ export const GENSHIN_SETTINGS_DEFAULTS: GenshinSettings = {
   verticalSensitivity: FOLLOW_CAMERA_DEFAULT_SETTINGS.verticalSensitivity,
   volume: VOLUME_LEVEL_MAXIMUM,
 };
-// The quality tiers the Graphics Quality row lists, from the lowest to the highest, as the wiki's Graphics list orders them
+// The quality tiers the Graphics Quality row lists, from the lowest to the highest, as the wiki's Graphics list orders
+// Them
 export const GRAPHICS_QUALITY_TIERS: readonly QualityTier[] = [QualityTier.Low, QualityTier.Medium, QualityTier.High];
-// The keys the list screens step between their tabs with, by their physical code, as the Q and E marks on their band show
+// The keys the list screens step between their tabs with, by their physical code, as the Q and E marks on their band
+// Show
 export const LIST_SCREEN_TAB_PREVIOUS_CODE = "KeyQ";
 export const LIST_SCREEN_TAB_NEXT_CODE = "KeyE";
 // The event a gamepad's bumper steps a list screen's tab with, carrying the step as its detail, which the Q and E

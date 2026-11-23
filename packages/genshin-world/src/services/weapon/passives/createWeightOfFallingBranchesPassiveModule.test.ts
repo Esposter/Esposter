@@ -27,8 +27,8 @@ describe(createWeightOfFallingBranchesPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
   const wielder = createWielderCombatant();
-  // The Weight of Falling Branches at its first rank: 16% Plunging Attack CRIT Rate, and 16% Normal, Charged and Plunging
-  // Attack DMG for 10 seconds after a Plunging Attack hits
+  // The Weight of Falling Branches at its first rank: 16% Plunging Attack CRIT Rate, and 16% Normal, Charged and
+  // Plunging Attack DMG for 10 seconds after a Plunging Attack hits
   const passiveModule = createWeightOfFallingBranchesPassiveModule([0.16, 0.16, 10]);
 
   test("the rank's CRIT Rate is added to the wielder's Plunging Attack strikes only", () => {

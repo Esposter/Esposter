@@ -3,9 +3,9 @@
 export const AURA_TAX = 0.8;
 export const AURA_SECONDS_PER_GAUGE = 2.5;
 export const AURA_BASE_SECONDS = 7;
-// Frozen leaves twice the gauge it consumed as Freeze, which decays at 0.4 units a second and 0.1 faster every second it
-// Holds, so a gauge G lasts 2√(5G + 4) - 4 seconds. A blunt hit drains 0.006 units of it a point of poise damage, and a
-// Shatter takes 8
+// Frozen leaves twice the gauge it consumed as Freeze, which decays at 0.4 units a second and 0.1 faster every second
+// It Holds, so a gauge G lasts 2√(5G + 4) - 4 seconds. A blunt hit drains 0.006 units of it a point of poise damage,
+// And a Shatter takes 8
 export const FREEZE_GAUGE_PER_CONSUMED_GAUGE = 2;
 export const FREEZE_DECAY_RATE = 0.4;
 export const FREEZE_DECAY_ACCELERATION = 0.1;
@@ -26,8 +26,8 @@ export const BURNING_MINIMUM_DRAIN_RATE = 0.4;
 export const ELECTRO_CHARGED_TICK_SECONDS = 1;
 export const ELECTRO_CHARGED_TICK_GAUGE = 0.4;
 export const ELECTRO_CHARGED_FINAL_TICK_SECONDS = 0.5;
-// A Lunar-Charged hit strikes a target once every 2 seconds at most, taking 0.4 units from its Electro and its Hydro, as
-// Gcsim (MIT) pkg/reactable/lunarcharged.go strikes it
+// A Lunar-Charged hit strikes a target once every 2 seconds at most, taking 0.4 units from its Electro and its Hydro,
+// As Gcsim (MIT) pkg/reactable/lunarcharged.go strikes it
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/lunarcharged.go
 export const LUNAR_CHARGED_INTERNAL_COOLDOWN_SECONDS = 2;
 export const LUNAR_CHARGED_HIT_GAUGE = 0.4;

@@ -5,7 +5,8 @@ import {
   IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER,
 } from "#src/services/imaginarium/constants";
 
-// The stats a Blessing Level adds to one cast member: each stat its level's amount times the level, doubled for a special guest
+// The stats a Blessing Level adds to one cast member: each stat its level's amount times the level, doubled for a
+// Special guest
 export const getImaginariumBlessingStats = (blessingLevel: number, isSpecialGuest: boolean): ImaginariumStats => {
   const multiplier = blessingLevel * (isSpecialGuest ? IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER : 1);
   return {

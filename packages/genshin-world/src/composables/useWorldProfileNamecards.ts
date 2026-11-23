@@ -7,7 +7,8 @@ import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-// The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
+// The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's
+// Language
 export const useWorldProfileNamecards = () => {
   const worldAchievementsStore = useWorldAchievementsStore();
   const { achievementData, achievementProgressMap } = storeToRefs(worldAchievementsStore);

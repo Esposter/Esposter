@@ -20,7 +20,8 @@ export interface ScreenRecords {
   cookingTalents: Record<string, CookingTalent>;
   // The bench's recipes in the game's order, which the crafting screen offers the learned ones of
   craftingRecipes: CraftingRecipe[];
-  // The Mystic Offering's strongboxes, one for each set the offering may choose, which the bench offers from its Adventure Rank
+  // The Mystic Offering's strongboxes, one for each set the offering may choose, which the bench offers from its
+  // Adventure Rank
   craftingStrongboxes: CraftingStrongboxData[];
   // The dishes' uses, each by the item its dish is eaten from, which the bag uses
   dishes: Record<string, DishUse>;
@@ -30,7 +31,8 @@ export interface ScreenRecords {
   forgeDailyPointCap: number;
   // The blacksmith's recipes, which the forge offers and the bag learns from
   forgeRecipes: ForgeRecipe[];
-  // The Serenitea Pot's furnishings Tubby makes, each with the diagrams that open it, which a diagram's Use learns it from
+  // The Serenitea Pot's furnishings Tubby makes, each with the diagrams that open it, which a diagram's Use learns it
+  // From
   homeBlueprints: HomeBlueprint[];
   // The characters and weapons Paimon's Bargains offers in turn, which its screen reads each month's pair and set from
   paimonsBargainsRotation: PaimonsBargainsRotation;

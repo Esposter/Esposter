@@ -41,8 +41,8 @@ export const TARGET_ANGLE_WEIGHT = 0.3;
 // Provisional: an enemy's strike is its ATK at this multiple, which no table gives
 // Until a recording of an enemy's attack measures it
 export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
-// Provisional: the gauge an enemy's elemental strike applies, one of the 1, 1.5, 2 and 4 units the Elemental Gauge Theory
-// Page says most enemy attacks apply, until each attack's own gauge is authored
+// Provisional: the gauge an enemy's elemental strike applies, one of the 1, 1.5, 2 and 4 units the Elemental Gauge
+// Theory Page says most enemy attacks apply, until each attack's own gauge is authored
 export const ENEMY_STRIKE_GAUGE = 1;
 // A summon lives this many seconds past its last hitmark, so the step that lands its last hit still has it on the field
 // However its clock and its seconds left round
@@ -60,8 +60,8 @@ export const ELECTRO_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
   ReactionType.Quicken,
   ReactionType.Superconduct,
 ]);
-// The weapons a melee infusion converts the attacks of, a sword's, a claymore's or a polearm's, while a bow or a catalyst
-// Wielder keeps its own, as gcsim v2.47.2 (MIT) gives Fantastic Voyage's and Layered Frost's infusions
+// The weapons a melee infusion converts the attacks of, a sword's, a claymore's or a polearm's, while a bow or a
+// Catalyst Wielder keeps its own, as gcsim v2.47.2 (MIT) gives Fantastic Voyage's and Layered Frost's infusions
 export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
   WeaponType.Claymore,
   WeaponType.Polearm,
@@ -77,11 +77,13 @@ export const KIT_CHARGE_SKIP_ID = "kit-charge-skip";
 export const KIT_SWAP_LOCK_ID = "kit-swap-lock";
 // The resource a Natlan character holds its Nightsoul points as, which it holds only while its blessing lasts
 export const NIGHTSOUL_POINTS_ID = "nightsoul-points";
-// The status Haunted Night puts a Geo character in, for the seconds it lasts, which its Nightingale's Song stacks last with
+// The status Haunted Night puts a Geo character in, for the seconds it lasts, which its Nightingale's Song stacks last
+// With
 export const HAUNTED_NIGHT_STATUS_ID = "haunted-night";
 // The stacks of Nightingale's Song a character holds in Haunted Night, each one a hit of Geo DMG by its party consumes
 export const NIGHTINGALE_SONG_STATUS_ID = "nightingale-song";
-// The Nightingale's Song stacks a character has gained from Geo Constructs since its Haunted Night began, against the cap
+// The Nightingale's Song stacks a character has gained from Geo Constructs since its Haunted Night began, against the
+// Cap
 export const NIGHTINGALE_SONG_EXTRA_STATUS_ID = "nightingale-song-extra";
 
 // The Polestar Field a Stellar-Conduct leaves round the body, 15 metres in radius, as the wiki and gcsim give it
@@ -96,7 +98,8 @@ export const POLESTAR_FIELD_ID = "polestar";
 // The Physical RES a Polestar Field takes off the enemies inside it, 40%: the wiki's Stellar-Conduct page, and gcsim's
 // Physical RES of -0.40 in the field's area (pkg/reactable/stellarconduct_gadget.go)
 export const POLESTAR_PHYSICAL_RES_REDUCTION = 0.4;
-// The id a Polestar Field's reduction is held under on each enemy it is over, so each step refreshes it rather than adds
+// The id a Polestar Field's reduction is held under on each enemy it is over, so each step refreshes it rather than
+// Adds
 export const POLESTAR_SHRED_STATUS_ID = "polestar-shred";
 // The source the Starlight Prism's Cryo and Electro DMG Bonus buffs are held under, so each step restarts them
 export const POLESTAR_BUFF_SOURCE = "polestar";

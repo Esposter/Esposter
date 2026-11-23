@@ -22,17 +22,17 @@ const COIL_RESOURCE_ID = "aloy-coil";
 // The Chillwater Bomblets Freeze Bomb releases, each a hit after its own, as the wiki's Gameplay Notes give them
 const CHILLWATER_BOMBLET_COUNT = 6;
 const RUSHING_ICE_STATUS_ID = "aloy-rushing-ice";
-// Measured: gcsim v2.47.2 (MIT) aloy/asc.go, Ascension 1: while Rushing Ice holds, Aloy's ATK rises by 16% and each nearby
-// Party member's by 8%, for its seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go
+// Measured: gcsim v2.47.2 (MIT) aloy/asc.go, Ascension 1: while Rushing Ice holds, Aloy's ATK rises by 16% and each
+// Nearby Party member's by 8%, for its seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go`
 const ASCENSION_1 = 1;
 const ASCENSION_1_ATTACK_SHARE = 0.08;
 const ASCENSION_1_SELF_ATTACK_SHARE = 0.08;
 const ASCENSION_1_SOURCE = "aloy-ascension-1";
 const ASCENSION_1_SELF_SOURCE = "aloy-ascension-1-self";
-// Measured: gcsim v2.47.2 (MIT) aloy/asc.go, Ascension 4: while Rushing Ice holds, Aloy's Cryo DMG Bonus rises by 3.5% each
-// Second, up to 35% at the tenth, as gcsim's stacks do
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go
+// Measured: gcsim v2.47.2 (MIT) aloy/asc.go, Ascension 4: while Rushing Ice holds, Aloy's Cryo DMG Bonus rises by 3.5%
+// Each Second, up to 35% at the tenth, as gcsim's stacks do
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go`
 const ASCENSION_4 = 4;
 const ASCENSION_4_CRYO_SHARE_PER_STACK = 0.035;
 const ASCENSION_4_MAX_STACKS = 10;
@@ -40,7 +40,8 @@ const ASCENSION_4_SOURCE = "aloy-ascension-4";
 
 export const ALOY_CHARACTER_ID = 10_000_062;
 
-// Aloy's Cryo DMG Bonus at a count of Ascension 4 stacks, as one buff restarted with each stack, so it ends with Rushing Ice
+// Aloy's Cryo DMG Bonus at a count of Ascension 4 stacks, as one buff restarted with each stack, so it ends with
+// Rushing Ice
 const addCryoStacks = (
   kitEffectState: KitEffectState,
   characterId: number,
@@ -56,17 +57,18 @@ const addCryoStacks = (
 };
 
 // Aloy's behaviour: each of Freeze Bomb's six Chillwater Bomblets adds a coil stack as it strikes, and four coil stacks
-// Give Cryo infusion for the table's seconds of Rushing Ice. From Ascension 1, Rushing Ice raises the ATK of the deployed
-// Team, and Aloy's own by 8% more, and from Ascension 4 it raises her Cryo DMG Bonus a step each second. Her Coil and Rushing
-// Ice normal attack bonuses are not built, as no kit step reads a normal attack's DMG bonus from the team's effects. Her
-// Constellations are not built, as the game cannot activate them
+// Give Cryo infusion for the table's seconds of Rushing Ice. From Ascension 1, Rushing Ice raises the ATK of the
+// Deployed Team, and Aloy's own by 8% more, and from Ascension 4 it raises her Cryo DMG Bonus a step each second. Her
+// Coil and Rushing Ice normal attack bonuses are not built, as no kit step reads a normal attack's DMG bonus from the
+// Team's effects. Her Constellations are not built, as the game cannot activate them
 export const createAloyKitBehaviour = ({ readSeconds }: KitRecordReader): KitBehaviour => {
   const rushingIceSeconds = readSeconds("rushingIceDuration");
-  // The bomblets' landings that have counted their coil stack. A landing runs its onStrike once for each enemy it strikes,
-  // And gcsim's coil callback is held back by its 6-frame internal cooldown for every enemy after the first at that frame
+  // The bomblets' landings that have counted their coil stack. A landing runs its onStrike once for each enemy it
+  // Strikes, And gcsim's coil callback is held back by its 6-frame internal cooldown for every enemy after the first at
+  // That frame
   const countedCoilStrikes = new WeakSet<KitStrike>();
-  // Each Chillwater Bomblet that lands counts a coil stack, and the fourth gives Rushing Ice, which holds off any more coils
-  // Until it ends
+  // Each Chillwater Bomblet that lands counts a coil stack, and the fourth gives Rushing Ice, which holds off any more
+  // Coils Until it ends
   const addCoilStack = ({ kitEffectState, party }: KitContext, strike: KitStrike): void => {
     if (countedCoilStrikes.has(strike)) return;
     countedCoilStrikes.add(strike);

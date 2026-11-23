@@ -6,10 +6,10 @@ import { forgeResultSchema } from "#src/models/forging/ForgeResult";
 import { itemCountSchema } from "#src/models/inventory/ItemCount";
 import { z } from "zod";
 
-// One recipe as the game's forge table holds it: its kind and the game's forge type, the materials it takes, the Mora it
-// Costs, the seconds one item takes, the most one queue holds, the Adventure Rank it needs, the forge points one item counts
-// Toward the day's cap, and what one item yields. The instruction items that open it are listed, none where it is open
-// From the start
+// One recipe as the game's forge table holds it: its kind and the game's forge type, the materials it takes, the Mora
+// It Costs, the seconds one item takes, the most one queue holds, the Adventure Rank it needs, the forge points one
+// Item counts Toward the day's cap, and what one item yields. The instruction items that open it are listed, none where
+// It is open From the start
 export interface ForgeRecipe {
   forgePoint: number;
   forgeType: number;

@@ -36,8 +36,8 @@ const createYanfeiCombatant = (constellationCount = 0): Combatant => ({
   level: 90,
   weaponType: WeaponType.Catalyst,
 });
-// The hits of the summons a charged attack of Yanfei's at the ascension casts once its hit lands the CRIT hits given on an
-// Enemy, the charged attack's own first, as [element, talent multiplier, attack tag, radius]
+// The hits of the summons a charged attack of Yanfei's at the ascension casts once its hit lands the CRIT hits given on
+// An Enemy, the charged attack's own first, as [element, talent multiplier, attack tag, radius]
 const landCriticalChargedAttack = (ascension: number, criticalHitCount = 1) => {
   const combatant: Combatant = { ...createYanfeiCombatant(), ascension };
   const context = createKitTestContext(combatant);

@@ -20,9 +20,10 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { defineStore } from "pinia";
 import { ref, shallowRef } from "vue";
 
-// The mailbox's rows and texts, read as the world starts, with the Traveler's birthday mail delivered and the expired mails
-// Removed as the clock stands then. A claim takes a mail's items into the bag and wallet once, and a claim the bag cannot
-// Take whole leaves the mail held and says so. The session starts it after the session store and stops it as it unmounts
+// The mailbox's rows and texts, read as the world starts, with the Traveler's birthday mail delivered and the expired
+// Mails Removed as the clock stands then. A claim takes a mail's items into the bag and wallet once, and a claim the
+// Bag cannot Take whole leaves the mail held and says so. The session starts it after the session store and stops it as
+// It unmounts
 export const useWorldMailStore = defineStore("world/mail", () => {
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow, setInventory, setWallet } = worldSessionStore;
@@ -34,7 +35,8 @@ export const useWorldMailStore = defineStore("world/mail", () => {
     textMap: TextChunk;
   }>();
   const isBagFull = ref(false);
-  // The load in flight, which a stop retires, so a load the session outlived returns without reading the session it stopped
+  // The load in flight, which a stop retires, so a load the session outlived returns without reading the session it
+  // Stopped
   let loading: symbol | undefined;
 
   const start = (savedMails: MailSave[], savedTravelerBirthday?: TravelerBirthdaySave) => {
@@ -43,7 +45,8 @@ export const useWorldMailStore = defineStore("world/mail", () => {
     const { gameDataBaseUrl, language } = worldSessionStore;
     const load = Symbol("mail load");
     loading = load;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    // `match(`) handles both branches, so the promise
+    // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
     getResultAsync(async () => {
       const birthdayMailRows = await readBirthdayMailRows(gameDataBaseUrl);
       const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));

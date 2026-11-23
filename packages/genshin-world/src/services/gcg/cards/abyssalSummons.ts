@@ -17,8 +17,8 @@ const ABYSSAL_SUMMON_POOL: [number, GcgCardModule][] = [
   [ELECTRO_HILICHURL_SHOOTER_ID, electroHilichurlShooter],
 ];
 
-// Abyssal Summons, an event: summons one of the three Hilichurl summons at random, with the draw the duel gives (the wiki's
-// Abyssal Summons)
+// Abyssal Summons, an event: summons one of the three Hilichurl summons at random, with the draw the duel gives (the
+// Wiki's Abyssal Summons)
 export const abyssalSummons: GcgCardModule = {
   play: ({ duel, sideIndex }) => {
     const [cardId, module] = takeRandom(ABYSSAL_SUMMON_POOL, duel.random);

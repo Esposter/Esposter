@@ -11,11 +11,11 @@ import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 const MASTERY_CLOCK_ID = "masteryClock";
 
 // A passive that, on each tick of a clock it keeps from the start of the battle, gives its wielder a buff of the rank's
-// Share of its Elemental Mastery, buffed as it stands at the tick, for the rank's seconds, whether or not the wielder is on
-// The field. Each other member of the deployed team gets the rank's share of that buff. The buffs are sourced by their
-// Wielder, so two wielders' buffs on one member stack, and a wielder's own buff restarts on each tick rather than stacking.
-// The attribute and scale say what the rank's rate is in, as the Elemental Mastery's rate is a percentage in one weapon's
-// Rows and a fraction in another's
+// Share of its Elemental Mastery, buffed as it stands at the tick, for the rank's seconds, whether or not the wielder
+// Is on The field. Each other member of the deployed team gets the rank's share of that buff. The buffs are sourced by
+// Their Wielder, so two wielders' buffs on one member stack, and a wielder's own buff restarts on each tick rather than
+// Stacking. The attribute and scale say what the rank's rate is in, as the Elemental Mastery's rate is a percentage in
+// One weapon's Rows and a fraction in another's
 export const createMasteryClockPassiveModule = (
   params: number[],
   { attribute, valueScale }: { attribute: Attribute; valueScale: number },

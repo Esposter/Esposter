@@ -9,8 +9,8 @@ import { STELLAR_VORTEX_LEVEL_ONE_RADIUS, STELLAR_VORTEX_LEVEL_TWO_RADIUS } from
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
 
-// A Stellar Vortex's explosion: Cryo damage to each living enemy within its radius, which its third stack widens, at the
-// Coefficient its stacks give, priced for the combatant that cast it as the one contributor
+// A Stellar Vortex's explosion: Cryo damage to each living enemy within its radius, which its third stack widens, at
+// The Coefficient its stacks give, priced for the combatant that cast it as the one contributor
 export const detonateStellarVortex = (vortex: KitSummon, context: KitContext): void => {
   const { combatant, stacks = 0 } = vortex;
   const radius =

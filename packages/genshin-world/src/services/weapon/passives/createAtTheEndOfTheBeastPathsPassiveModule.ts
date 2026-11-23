@@ -5,9 +5,10 @@ import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives
 import { createAttackInstancePassiveModule } from "#src/services/weapon/passives/createAttackInstancePassiveModule";
 import { takeOne } from "@esposter/shared";
 
-// At the End of the Beast-Paths at its rank: the rank's All Elemental DMG Bonus is a passive bonus on each element. After a
-// Charged Attack, the wielder obtains Tireless Hunt, once every cooldown. It adds the rank's share of Elemental Mastery as base
-// Damage to the Charged Attacks it deals, and ends after the rank's Charged Attacks or seconds, whichever comes first
+// At the End of the Beast-Paths at its rank: the rank's All Elemental DMG Bonus is a passive bonus on each element.
+// After a Charged Attack, the wielder obtains Tireless Hunt, once every cooldown. It adds the rank's share of Elemental
+// Mastery as base Damage to the Charged Attacks it deals, and ends after the rank's Charged Attacks or seconds,
+// Whichever comes first
 export const createAtTheEndOfTheBeastPathsPassiveModule = (params: number[]): PassiveModule => {
   const elementalDamageBonus = takeOne(params, 0);
   const huntPassiveModule = createAttackInstancePassiveModule({

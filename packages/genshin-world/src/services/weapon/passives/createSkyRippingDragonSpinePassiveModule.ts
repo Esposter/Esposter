@@ -11,10 +11,10 @@ import { takeOne } from "@esposter/shared";
 
 const SKY_RIPPING_DRAGON_SPINE_ID = "skyRippingDragonSpine";
 
-// Skyward Pride's Sky-ripping Dragon Spine at its rank: its All DMG Bonus is a static line the rank carries. A burst its
-// Wielder uses starts the rank's seconds and the rank's count of vacuum blades, and each Normal or Charged Attack hit the
-// Wielder lands while both last queues a blade at the rank's multiplier of ATK, using one blade. The blade's area is
-// Provisional, as the game's area is not in the dump, so it is the small AoE
+// Skyward Pride's Sky-ripping Dragon Spine at its rank: its All DMG Bonus is a static line the rank carries. A burst
+// Its Wielder uses starts the rank's seconds and the rank's count of vacuum blades, and each Normal or Charged Attack
+// Hit the Wielder lands while both last queues a blade at the rank's multiplier of ATK, using one blade. The blade's
+// Area is Provisional, as the game's area is not in the dump, so it is the small AoE
 export const createSkyRippingDragonSpinePassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 1);
   const seconds = takeOne(params, 2);

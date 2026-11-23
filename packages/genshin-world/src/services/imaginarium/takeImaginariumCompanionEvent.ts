@@ -6,8 +6,8 @@ import type { ImaginariumSeason } from "#src/models/imaginarium/ImaginariumSeaso
 import { drawImaginariumCompanionOffers } from "#src/services/imaginarium/drawImaginariumCompanionOffers";
 import { spendImaginariumCount } from "#src/services/imaginarium/spendImaginariumCount";
 
-// A Companion event taken with the Fantasia Flowers a run holds: its price spent and its offers drawn, or, when the flowers
-// Do not cover the price, refused with the flowers as they were and no offers
+// A Companion event taken with the Fantasia Flowers a run holds: its price spent and its offers drawn, or, when the
+// Flowers Do not cover the price, refused with the flowers as they were and no offers
 export const takeImaginariumCompanionEvent = (
   event: ImaginariumCompanionEvent,
   flowers: number,

@@ -15,8 +15,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 describe(createSecretSilversTestamentPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
-  // Secret Silver's Testament at its first rank: 20% Elemental Burst DMG, raised by 16% for a burst costing no more than
-  // 60 Energy and by 28% for one costing no more than 40
+  // Secret Silver's Testament at its first rank: 20% Elemental Burst DMG, raised by 16% for a burst costing no more
+  // Than 60 Energy and by 28% for one costing no more than 40
   const passiveModule = createSecretSilversTestamentPassiveModule([0.2, 0.16, 0.28]);
 
   test.each([

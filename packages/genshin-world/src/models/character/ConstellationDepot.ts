@@ -11,8 +11,8 @@ export interface ConstellationDepot {
   stellaFortuna: StellaFortuna;
 }
 
-// The Stella Fortuna a set's constellations spend, one each: the game's id for its item, and the text id of its name, which
-// The names are read by. Every constellation of a set spends the one item
+// The Stella Fortuna a set's constellations spend, one each: the game's id for its item, and the text id of its name,
+// Which The names are read by. Every constellation of a set spends the one item
 interface StellaFortuna {
   itemId: number;
   nameTextId: string;

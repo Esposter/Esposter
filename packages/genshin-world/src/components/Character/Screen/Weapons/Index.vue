@@ -26,8 +26,8 @@ interface Props {
 }
 
 const { character, gameText, nameText, statTables } = defineProps<Props>();
-// The weapon the character wields at its level and phase: its name, base ATK and secondary attribute, as the Weapons tab
-// Shows them
+// The weapon the character wields at its level and phase: its name, base ATK and secondary attribute, as the Weapons
+// Tab Shows them
 const weaponPanel = computed(() => {
   const weapon = character.weapon;
   const weaponData = weapon && statTables.weaponDataMap.get(weapon.id);

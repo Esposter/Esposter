@@ -3,9 +3,9 @@ import type { ComponentReference } from "genshin-interface";
 import { boardTopic } from "#src/components/Gcg/Screen/Board.reference";
 import { GameSourceKind } from "genshin-interface";
 
-// The duel board's reference: the public frame it is judged against, the community's tables its opponents and cards come
-// From, and its one topic, the board, with what every investigation found and what is still open. The frame is a video's,
-// So its words and marks are read off the frame and never shipped
+// The duel board's reference: the public frame it is judged against, the community's tables its opponents and cards
+// Come From, and its one topic, the board, with what every investigation found and what is still open. The frame is a
+// Video's, So its words and marks are read off the frame and never shipped
 export const reference: ComponentReference = {
   sources: {
     boardFrame: {

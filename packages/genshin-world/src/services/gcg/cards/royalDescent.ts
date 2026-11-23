@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 const ROYAL_DESCENT_DAMAGE = 4;
 
-// Royal Descent: Behold, Itto the Evil!, Arataki Itto's Elemental Burst: 4 Geo DMG, and her active character gains Raging Oni
-// King once the damage is dealt
+// Royal Descent: Behold, Itto the Evil!, Arataki Itto's Elemental Burst: 4 Geo DMG, and her active character gains
+// Raging Oni King once the damage is dealt
 export const royalDescent: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

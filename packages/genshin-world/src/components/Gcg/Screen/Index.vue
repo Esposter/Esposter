@@ -102,10 +102,10 @@ const battleLabel = computed(() =>
 </script>
 
 <template>
-  <!-- The duel board as the game lays it out: the opponent's three characters across the top and the player's across the
-       bottom, the active one raised, the band between them naming the phase, the dice down the right edge, the hand fanned
-       along the bottom, and the round and end-round button at centre-left. Every word is the game's. The board holds only
-       what the player is choosing; each choice leaves as an event for its host to play -->
+  <!-- The duel board as the game lays it out: the opponent's three characters across the top and the player's
+    across the bottom, the active one raised, the band between them naming the phase, the dice down the right edge,
+    the hand fanned along the bottom, and the round and end-round button at centre-left. Every word is the game's.
+    The board holds only what the player is choosing; each choice leaves as an event for its host to play -->
   <GameScreen class="gcg-screen">
     <GcgScreenTable />
     <GcgScreenHud :battle-label :game-text @concede="emit('leave', false)" />

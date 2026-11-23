@@ -15,7 +15,8 @@ const { characterId, characterPackReaders } = defineProps<Props>();
 const terms = ref("");
 const isFailed = ref(false);
 const characterPackReader = getCharacterPackReader(characterPackReaders, characterId, new Set());
-// The terms are the character's own pack's, the Traveler's when the index lists none for the character, so with no reader at all it shows none
+// The terms are the character's own pack's, the Traveler's when the index lists none for the character, so with no
+// Reader at all it shows none
 if (characterPackReader)
   readCharacterTerms(characterPackReader).match(
     (text) => {

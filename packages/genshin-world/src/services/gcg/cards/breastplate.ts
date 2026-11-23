@@ -10,8 +10,8 @@ import { takeOne } from "@esposter/shared";
 const BREASTPLATE_DAMAGE = 1;
 const FULL_PLATE_SHIELD = 2;
 
-// Breastplate, Noelle's elemental skill: 1 Geo DMG, and a Full Plate onstage, which grants 2 Shield points to the active
-// Character as it is created (the wiki's Breastplate (Character Card Skill))
+// Breastplate, Noelle's elemental skill: 1 Geo DMG, and a Full Plate onstage, which grants 2 Shield points to the
+// Active Character as it is created (the wiki's Breastplate (Character Card Skill))
 export const breastplate: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

@@ -6,7 +6,8 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 
 // The one enemy a hit with a target index strikes: among the living enemies its area reaches from the body, the one at
-// Its index, wrapped to their count as gcsim's shells take their enemies in turn. None when its area reaches no living one
+// Its index, wrapped to their count as gcsim's shells take their enemies in turn. None when its area reaches no living
+// One
 export const selectKitHitTarget = (hit: KitHit, body: KitBody, enemies: Iterable<Enemy>): Enemy | undefined => {
   if (hit.targetIndex === undefined) return undefined;
   const reachedEnemies = [...enemies].filter(

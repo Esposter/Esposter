@@ -13,10 +13,11 @@ const GILDED_DREAMS_SOURCE = "Gilded Dreams";
 // The most other members either count of the buffs counts
 const MAXIMUM_COUNTED_MEMBERS = 3;
 
-// Gilded Dreams. Its four-piece bonus, for the third param's seconds after an Elemental Reaction its wearer's strike triggers, gives its
-// Wearer ATK by the first param for each other member of its element, and Elemental Mastery by the second param for each
-// Other member of another element, each counting up to three members. A reaction triggers it once every fourth-param seconds,
-// And the wearer carries the buffs from off the field too. The set's two-piece bonus is attributes only, so it builds no module
+// Gilded Dreams. Its four-piece bonus, for the third param's seconds after an Elemental Reaction its wearer's strike
+// Triggers, gives its Wearer ATK by the first param for each other member of its element, and Elemental Mastery by the
+// Second param for each Other member of another element, each counting up to three members. A reaction triggers it once
+// Every fourth-param seconds, And the wearer carries the buffs from off the field too. The set's two-piece bonus is
+// Attributes only, so it builds no module
 export const createGildedDreamsSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const attackBonusPerMember = takeOne(bonus.params, 0);
   const masteryBonusPerMember = takeOne(bonus.params, 1);

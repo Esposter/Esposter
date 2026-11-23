@@ -24,10 +24,10 @@ import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
-// Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's heal lands on the active character while it stands within a circle
-// Of radius 6 whose centre lies 3 metres ahead, every tick. Its 12 seconds are Kurage's Oath's duration on the Genshin Impact
-// Wiki (https://genshin-impact.fandom.com/wiki/Kurage%27s_Oath) and proud skill group 5432 index 3 of the game data dump's
-// ProudSkillExcelConfigData.json, 12.0 seconds
+// Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's heal lands on the active character while it stands within a
+// Circle Of radius 6 whose centre lies 3 metres ahead, every tick. Its 12 seconds are Kurage's Oath's duration on the
+// Genshin Impact Wiki (https://genshin-impact.fandom.com/wiki/Kurage%27s_Oath) and proud skill group 5432 index 3 of
+// The game data dump's ProudSkillExcelConfigData.json, 12.0 seconds
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/skill.go
 const SKILL_DURATION_SECONDS = 12;
 const SKILL_CENTRE_METRES = 3;
@@ -35,9 +35,9 @@ const SKILL_RADIUS = 6;
 const ASCENSION_1 = 1;
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_NORMAL_ATTACK_SPEED_BONUS = 0.1;
-// Measured: gcsim (MIT) kokomi/cons.go, Constellation 4's energy: while she dons the garment, each normal attack that hits an
-// Opponent restores 0.8 energy to her, once every 0.2 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/cons.go
+// Measured: gcsim (MIT) kokomi/cons.go, Constellation 4's energy: while she dons the garment, each normal attack that
+// Hits an Opponent restores 0.8 energy to her, once every 0.2 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/cons.go`
 const CONSTELLATION_4_ENERGY = 0.8;
 const CONSTELLATION_4_ENERGY_SECONDS = 0.2;
 const CONSTELLATION_4_ENERGY_STATUS_ID = "kokomi-c4-energy";
@@ -49,13 +49,13 @@ const GARMENT_SECONDS = 10;
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/asc.go
 const ASCENSION_4 = 4;
 const SONG_OF_PEARLS_HEALING_BONUS_SHARE = 0.15;
-// Flawless Strategy, Kokomi's passive she holds from the start, as its text gives it: 25% Healing Bonus, and a CRIT Rate
-// Decreased by 100%
+// Flawless Strategy, Kokomi's passive she holds from the start, as its text gives it: 25% Healing Bonus, and a CRIT
+// Rate Decreased by 100%
 const FLAWLESS_STRATEGY_HEALING_BONUS = 0.25;
 const FLAWLESS_STRATEGY_CRITICAL_RATE = -1;
-// Constellation 6's Hydro DMG Bonus, as the wiki's text gives it: a Normal or Charged Attack's heal on a member at 80% or more HP,
-// Including one at maximum HP, gives Kokomi 40% Hydro DMG for four seconds. The wiki decides where gcsim differs, and gcsim's
-// Kokomi/cons.go starts the bonus from her burst for 480 frames, which this does not copy
+// Constellation 6's Hydro DMG Bonus, as the wiki's text gives it: a Normal or Charged Attack's heal on a member at 80%
+// Or more HP, Including one at maximum HP, gives Kokomi 40% Hydro DMG for four seconds. The wiki decides where gcsim
+// Differs, and gcsim's Kokomi/cons.go starts the bonus from her burst for 480 frames, which this does not copy
 // Https://genshin-impact.fandom.com/wiki/Sangonomiya_Kokomi
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_HEALTH_SHARE = 0.8;
@@ -79,8 +79,8 @@ const giveGarmentNormalAttackEnergy = ({ kitEffectState, party }: KitContext, { 
 };
 
 // A garment attack's hit adds its share of her Max HP to its damage, and from Ascension 4 Song of Pearls' share of her
-// Healing Bonus of her Max HP as well. Its heal is rolled every time, whether or not she holds a shield, as gcsim's heal
-// On each normal and charged attack is
+// Healing Bonus of her Max HP as well. Its heal is rolled every time, whether or not she holds a shield, as gcsim's
+// Heal On each normal and charged attack is
 const createGarmentAttackHit = (maxHealthShare: number): KitHitBehaviour => {
   const addMaxHealthShare = createMaxHealthScaledBonus(maxHealthShare);
   return {
@@ -101,8 +101,8 @@ const getPassiveBonuses = (): { amount: number; attribute: Attribute }[] => [
   { amount: FLAWLESS_STRATEGY_CRITICAL_RATE, attribute: Attribute.CriticalRate },
 ];
 
-// Tamakushi Casket, Kokomi's Ascension 1 passive, as its text gives it: Nereid's Ascension refreshes Bake-Kurage on the field to
-// Its full duration. gcsim's kokomi/asc.go sets it to 12 seconds and a frame instead, which this does not copy
+// Tamakushi Casket, Kokomi's Ascension 1 passive, as its text gives it: Nereid's Ascension refreshes Bake-Kurage on the
+// Field to Its full duration. gcsim's kokomi/asc.go sets it to 12 seconds and a frame instead, which this does not copy
 const refreshBakeKurage = (effects: KitEffect[], characterId: number): void => {
   for (const effect of effects)
     if (
@@ -173,8 +173,9 @@ export const createKokomiKitBehaviour = ({
       },
     ],
   };
-  // The garment's normal attacks are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
-  // In kokomi/attack.go and AttackTagExtra in kokomi/charge.go; its Bake-Kurage is Elemental Skill DMG in skill.go
+  // The garment's normal attacks are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's
+  // AttackTagNormal In kokomi/attack.go and AttackTagExtra in kokomi/charge.go; its Bake-Kurage is Elemental Skill DMG
+  // In skill.go
   const ceremonialGarment = readStance("ceremonialGarment", {
     chargedAttack: { hits: [createGarmentAttackHit(readParameter("garmentChargedAttackMaxHealthBonus"))] },
     normalAttacks: kit.normalAttacks.map(() => garmentNormalAttack),
@@ -201,7 +202,8 @@ export const createKokomiKitBehaviour = ({
       (hit.element ?? combatant.element) === Element.Hydro
         ? CONSTELLATION_6_HYDRO_DAMAGE_BONUS
         : 0,
-    // Constellation 6: a Normal or Charged Attack's heal of hers on a member at 80% or more HP gives her the Hydro DMG Bonus
+    // Constellation 6: a Normal or Charged Attack's heal of hers on a member at 80% or more HP gives her the Hydro DMG
+    // Bonus
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (
         combatant.constellationCount >= CONSTELLATION_6 &&

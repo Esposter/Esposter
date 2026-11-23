@@ -20,10 +20,10 @@ import { startPartyLunarReactions } from "#src/services/party/startPartyLunarRea
 
 // The reactions that landed with a reach, each with the enemy it landed on or the Dendro Core it burst from, reaching
 // The enemies round it, priced from the combatant that triggered them, as the party's Moonsign turns them Lunar. Each
-// Enemy reached drops its energy to the team, a Bloom there leaves its Dendro Core, a Lunar reaction there is the party's
-// To answer, its reactions are sent to the deployed team's kits, and those of them that reach are reached in turn.
-// A reaction whose own hit is blunt, an Overloaded's explosion, strikes the ores in its reach as well, from where it
-// Landed, once the step's strikes have landed
+// Enemy reached drops its energy to the team, a Bloom there leaves its Dendro Core, a Lunar reaction there is the
+// Party's To answer, its reactions are sent to the deployed team's kits, and those of them that reach are reached in
+// Turn. A reaction whose own hit is blunt, an Overloaded's explosion, strikes the ores in its reach as well, from where
+// It Landed, once the step's strikes have landed
 export const landKitReactionReaches = (
   reaches: [Pick<Enemy, "position">, TransformativeReaction][],
   combatant: Combatant,

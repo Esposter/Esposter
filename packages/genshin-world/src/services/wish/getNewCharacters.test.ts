@@ -27,7 +27,8 @@ describe(getNewCharacters, () => {
       [3, createCharacterData(3)],
     ]);
 
-    // Character 1 was held before the set and only gains a copy, so the two drawn for the first time join in the order drawn
+    // Character 1 was held before the set and only gains a copy, so the two drawn for the first time join in the order
+    // Drawn
     const newCharacters = getNewCharacters(
       new Map([[1, 1]]),
       new Map([

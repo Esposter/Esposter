@@ -1,6 +1,6 @@
-// Each offering of the game, named for the place it stands in. Its value is its key in the hosted game data, so its levels
-// Are published under `offerings/<value>`. The Nordkalai and Snezhnaya offerings are the meeting points' own, numbered as
-// The game's open states number them
+// Each offering of the game, named for the place it stands in. Its value is its key in the hosted game data, so its
+// Levels Are published under `offerings/<value>`. The Nordkalai and Snezhnaya offerings are the meeting points' own,
+// Numbered as The game's open states number them
 export const OfferingKind = {
   AmritaPool: "amritaPool",
   FountainOfLucine: "fountainOfLucine",

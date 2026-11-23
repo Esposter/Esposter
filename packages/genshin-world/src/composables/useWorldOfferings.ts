@@ -19,10 +19,11 @@ import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // Each offering in the world is offered to on the key: every offering item the bag holds is offered to it at once, its
-// Levels reached, their Adventure EXP gained at the Adventure Rank and their other rewards paid in, what the bag has no room
-// For dropped at the offering as a pick up, and the held counts and level it keeps by its kind are the progress the save
-// Holds. Its levels are read from the game's table as an offer is made rather than with the world, and the bag is read once
-// They have arrived, so an offer made while another's levels are still arriving offers the bag that one left
+// Levels reached, their Adventure EXP gained at the Adventure Rank and their other rewards paid in, what the bag has no
+// Room For dropped at the offering as a pick up, and the held counts and level it keeps by its kind are the progress
+// The save Holds. Its levels are read from the game's table as an offer is made rather than with the world, and the bag
+// Is read once They have arrived, so an offer made while another's levels are still arriving offers the bag that one
+// Left
 export const useWorldOfferings = ({
   offeringLandmarks,
   offeringProgressMap,
@@ -64,8 +65,9 @@ export const useWorldOfferings = ({
           ...offeringProgressMap.value,
           [offeringKind, { heldCounts: offer.progress.heldCounts, level: offer.progress.level }],
         ]);
-        // The Frostbearing Tree's level reached is one doing, its quantity the level, which a level trigger reads against
-        // Its own. The other offerings' game ids are not published with their places, so their levels reach no trigger yet
+        // The Frostbearing Tree's level reached is one doing, its quantity the level, which a level trigger reads
+        // Against Its own. The other offerings' game ids are not published with their places, so their levels reach no
+        // Trigger yet
         if (offeringKind === OfferingKind.FrostbearingTree && offer.progress.level > progress.level)
           events.emit("achievementEvents", [
             {

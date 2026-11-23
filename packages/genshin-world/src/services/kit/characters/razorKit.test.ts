@@ -132,7 +132,8 @@ describe(createRazorKitBehaviour, () => {
       [Element.Electro, 0.24 * takeOne(firstStrike.hits).talentMultiplier],
     ]);
 
-    // Switching Barbara in ends the Wolf Within, as the swap's kit event does, so a strike after it casts no Soul Companion
+    // Switching Barbara in ends the Wolf Within, as the swap's kit event does, so a strike after it casts no Soul
+    // Companion
     const barbaraContext = { ...context, activeCombatant: { ...combatant, characterId: BARBARA_CHARACTER_ID } };
     RAZOR_KIT.onKitEvent?.(
       {

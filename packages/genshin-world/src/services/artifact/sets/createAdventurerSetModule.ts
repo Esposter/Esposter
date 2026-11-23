@@ -13,8 +13,8 @@ const ADVENTURER_FIELD_ID = "adventurer";
 // Adventurer's four-piece bonus, its seconds, its tick interval and the share of its wearer's Max HP each tick
 // Restores, in the set table's order. A chest opened in the world restores that share to its wearer on each tick of a
 // Field with no edge, for those seconds, raised by the Healing Bonuses as every heal is. Only a wearer's kit carries
-// This module, so an opened chest restores no other member. A chest opened while the restoration runs restarts it, so two
-// Chests never restore at once
+// This module, so an opened chest restores no other member. A chest opened while the restoration runs restarts it, so
+// Two Chests never restore at once
 export const createAdventurerSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(params, 0);
   const tickIntervalSeconds = takeOne(params, 1);

@@ -11,10 +11,10 @@ import { checkIsCurrencyOnlyGood } from "#src/services/shop/checkIsCurrencyOnlyG
 import { checkIsPaimonsBargainsCharacterBuyable } from "#src/services/shop/checkIsPaimonsBargainsCharacterBuyable";
 import { payShopGoodCosts } from "#src/services/shop/payShopGoodCosts";
 
-// The wallet, roster and purchases after a character of Paimon's Bargains is bought at `now`, the character being the good's
-// Item id. A character the player does not hold joins the roster at level one; one held below its sixth constellation gains
-// A Stella Fortuna instead, as a wish's duplicate does. Undefined where the character is at its sixth constellation, or the
-// Good is sold out this month, or the wallet cannot pay its price
+// The wallet, roster and purchases after a character of Paimon's Bargains is bought at `now`, the character being the
+// Good's Item id. A character the player does not hold joins the roster at level one; one held below its sixth
+// Constellation gains A Stella Fortuna instead, as a wish's duplicate does. Undefined where the character is at its
+// Sixth constellation, or the Good is sold out this month, or the wallet cannot pay its price
 export const buyPaimonsBargainsCharacter = (
   wallet: Wallet,
   characters: readonly Character[],

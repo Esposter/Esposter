@@ -6,9 +6,9 @@ import { ARTIFACT_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS } from "#src/services/artifa
 import { drawWeightedValue } from "#src/services/shared/drawWeightedValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The piece of a set an artifact in a slot at a star count is rolled from, drawn as the game drops one: its starting minor
-// Affix count by the wiki's distribution for those stars, then the piece the reliquary tables hold for all four. The
-// Distribution is the one a domain drops, so it is provisional too
+// The piece of a set an artifact in a slot at a star count is rolled from, drawn as the game drops one: its starting
+// Minor Affix count by the wiki's distribution for those stars, then the piece the reliquary tables hold for all four.
+// The Distribution is the one a domain drops, so it is provisional too
 export const drawArtifactPiece = (
   set: ReliquarySetData,
   slot: ArtifactSlot,

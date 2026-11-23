@@ -305,7 +305,8 @@ describe(createAinoKitBehaviour, () => {
     stepKitSeconds(context, 4);
     strikeEnemy(context, teammate, aino);
     const countWhileCoolingDown = countQueuedBalls();
-    // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the ball is read once a step past five
+    // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the ball is read once a step past
+    // Five
     stepKitSeconds(context, 1 + FIXED_STEP_SECONDS);
     strikeEnemy(context, teammate, aino);
 

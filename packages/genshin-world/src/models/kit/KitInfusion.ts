@@ -7,7 +7,8 @@ export interface KitInfusion extends KitSwapEndable {
   // The DMG Bonus each hit it infuses carries, if it raises them
   damageBonus?: number;
   element: Element;
-  // Whether the infusion converts the attacks it infuses, so each hit with a converted poise or reach deals that instead
+  // Whether the infusion converts the attacks it infuses, so each hit with a converted poise or reach deals that
+  // Instead
   isConverted?: true;
   kind: "infusion";
   // The share the infusion raises its character's Normal ATK SPD by, if it raises it, which plays each normal attack's

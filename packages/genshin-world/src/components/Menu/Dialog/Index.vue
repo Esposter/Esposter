@@ -6,7 +6,8 @@ interface Props {
   title: string;
 }
 
-// The default slot is the body, which the panel scrolls with; the footer slot is the row drawn under it, in the same panel
+// The default slot is the body, which the panel scrolls with; the footer slot is the row drawn under it, in the same
+// Panel
 defineSlots<{ default: () => VNode; footer?: () => VNode }>();
 defineProps<Props>();
 </script>

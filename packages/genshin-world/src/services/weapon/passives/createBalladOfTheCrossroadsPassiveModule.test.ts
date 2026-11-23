@@ -36,7 +36,8 @@ describe(createBalladOfTheCrossroadsPassiveModule, () => {
     striker,
   });
   // Ballad of the Crossroads at its first rank: 14 Energy and 14% more Max HP for 12 seconds, and 60% CRIT DMG from the
-  // Lunar Reaction DMG the wielder deals while the effect lasts, the energy recovery triggered at most once every 18 seconds
+  // Lunar Reaction DMG the wielder deals while the effect lasts, the energy recovery triggered at most once every 18
+  // Seconds
   const passiveModule = createBalladOfTheCrossroadsPassiveModule([0.14, 0.6, 12, 14, 18]);
 
   test("a Lunar reaction the wielder triggers restores the rank's Energy and raises Max HP for the rank's seconds", () => {

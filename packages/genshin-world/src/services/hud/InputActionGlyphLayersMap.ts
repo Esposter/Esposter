@@ -5,10 +5,10 @@ import { InputAction } from "genshin-engine";
 // The glyphs the touch layout's aim, jump and sprint buttons carry. The jump's and the sprint's are traced from the
 // Wiki's renders of their icons (`File:Talent Jump.png` four times enlarged, `File:Talent Normal Sprint.png` at its own
 // 640 pixels), each pixel's share of white over the icon's grey disc traced at two splits, all of its ink and its white
-// Alone, each drawn at its icon's own share: the jumper at 0.8 and the sprint's steps at 0.7 under its white arrows. The
-// Aim's has no render of its own, so it is drawn from its measure on `hud-world-pickup` (the 54 pixel box at 1292, 672,
-// Its centre the button's): a ring of radius 20.75 and width 3.5 pixels at 0.45 of white, four arrowheads from 9.5 to 24
-// Pixels out, 9 wide at their foot, and a dot of radius 4.5, both white
+// Alone, each drawn at its icon's own share: the jumper at 0.8 and the sprint's steps at 0.7 under its white arrows.
+// The Aim's has no render of its own, so it is drawn from its measure on `hud-world-pickup` (the 54 pixel box at 1292,
+// 672, Its centre the button's): a ring of radius 20.75 and width 3.5 pixels at 0.45 of white, four arrowheads from 9.5
+// To 24 Pixels out, 9 wide at their foot, and a dot of radius 4.5, both white
 export const InputActionGlyphLayersMap: Readonly<
   Record<typeof InputAction.Aim | typeof InputAction.Jump | typeof InputAction.Sprint, readonly GlyphLayer[]>
 > = {

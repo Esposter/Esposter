@@ -155,7 +155,8 @@ describe(createFurinaKitBehaviour, () => {
     expect(teammateHydroBonus?.kind === "buff" ? teammateHydroBonus.amount : undefined).toBeCloseTo(20 * 0.0007);
   });
 
-  // Endless Waltz heals every member 2% of Max HP every two seconds while another's heal past full HP on the character on the field is under four seconds old
+  // Endless Waltz heals every member 2% of Max HP every two seconds while another's heal past full HP on the character
+  // On the field is under four seconds old
   test("the Ascension 1 passive, Endless Waltz, takes effect at its ascension phase", () => {
     expect.hasAssertions();
     const furina = createFurinaCombatant({ ascension: 1 });
@@ -242,7 +243,8 @@ describe(createFurinaKitBehaviour, () => {
     expect(findKitStatus(kitEffectState.effects, FURINA_CHARACTER_ID, "furina-surging-blade-cooldown")).toBeDefined();
   });
 
-  // The first attack of the Salon, 90 frames after the skill, at the ascension stood, with a teammate and an enemy in reach
+  // The first attack of the Salon, 90 frames after the skill, at the ascension stood, with a teammate and an enemy in
+  // Reach
   const getSalonAttackDamageBonus = (ascension: number): number[] => {
     const furina = createFurinaCombatant({ ascension });
     const context = createKitTestContext(furina, {

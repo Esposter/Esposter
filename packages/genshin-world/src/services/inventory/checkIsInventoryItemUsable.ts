@@ -5,8 +5,9 @@ import { checkIsFragileResin } from "#src/services/inventory/checkIsFragileResin
 import { getInventoryItemLearning } from "#src/services/inventory/getInventoryItemLearning";
 import { ItemCategory } from "genshin-interface";
 
-// Whether the bag offers an entry its Use: Fragile Resin, as `useInventoryEntry` routes it, a food the dish table gives a use,
-// And an item that teaches a dish, recipe or blueprint not yet open. Each kind that teaches is routed by `getInventoryItemLearning`
+// Whether the bag offers an entry its Use: Fragile Resin, as `useInventoryEntry` routes it, a food the dish table gives
+// A use, And an item that teaches a dish, recipe or blueprint not yet open. Each kind that teaches is routed by
+// `getInventoryItemLearning`
 export const checkIsInventoryItemUsable = (item: InventoryItem, context: InventoryUseContext): boolean => {
   if (checkIsFragileResin(item)) return true;
   const learning = getInventoryItemLearning(item, context);

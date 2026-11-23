@@ -16,9 +16,10 @@ import { HALF_POINTS_PER_ENCOUNTER_POINT } from "#src/services/commission/consta
 import { readEncounterPoints } from "#src/services/commission/readEncounterPoints";
 import { routeCommissionClaim } from "#src/services/commission/routeCommissionClaim";
 
-// A dealt commission claimed with the Encounter Points the save holds: the points as they stand at `now`, the claim drawn
-// Through `claimCommissionReward` and routed by `routeCommissionClaim`, and the point an unfinished commission takes
-// Spent from the half points held. Undefined where either refuses the claim, so nothing is spent, routed or recorded
+// A dealt commission claimed with the Encounter Points the save holds: the points as they stand at `now`, the claim
+// Drawn Through `claimCommissionReward` and routed by `routeCommissionClaim`, and the point an unfinished commission
+// Takes Spent from the half points held. Undefined where either refuses the claim, so nothing is spent, routed or
+// Recorded
 export const claimCommissionWithPoints = ({
   adventureExp,
   adventureRankTables,

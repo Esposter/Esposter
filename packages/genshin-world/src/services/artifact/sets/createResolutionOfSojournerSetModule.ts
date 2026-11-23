@@ -4,7 +4,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { takeOne } from "@esposter/shared";
 
-// Resolution of Sojourner. Its four-piece bonus raises the CRIT Rate of its wearer's Charged Attacks by the table's first param
+// Resolution of Sojourner. Its four-piece bonus raises the CRIT Rate of its wearer's Charged Attacks by the table's
+// First param
 export const createResolutionOfSojournerSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const criticalRateBonus = takeOne(bonus.params, 0);
   return {

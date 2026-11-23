@@ -8,8 +8,8 @@ import { computeGroundDistance } from "genshin-engine";
 
 // Whether an area, a cylinder centred on the body's feet or ahead of them by its forward offset, reaches a target's
 // Capsule: within its radius plus the capsule's, within half its fan plus the capsule's angular half width as seen from
-// That centre, and overlapping in height. The capsule stands on the ground and the cylinder spans half its height either
-// Side of the feet. An ore is struck as an enemy's capsule is, at its ground point
+// That centre, and overlapping in height. The capsule stands on the ground and the cylinder spans half its height
+// Either Side of the feet. An ore is struck as an enemy's capsule is, at its ground point
 export const checkIsInAttackArea = (
   area: AttackArea,
   { facing, height, position }: KitBody,

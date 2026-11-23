@@ -6,14 +6,14 @@ import { z } from "zod";
 // Enemies' level it is set at, and the days of the week its pair is set for. A Domain of Blessing's levels are set for
 // Every day
 export const domainLevelSchema = z.object({
-  // The ley line disorder the level's fight runs under, named by the dump's level config. The modifiers the fight models are in
-  // Services/domains/DisorderDefinitionMap, and a disorder not there changes nothing yet
+  // The ley line disorder the level's fight runs under, named by the dump's level config. The modifiers the fight
+  // Models are in Services/domains/DisorderDefinitionMap, and a disorder not there changes nothing yet
   disorder: z.string(),
   dungeonId: z.int(),
   enemyLevel: z.int(),
   recommendedRank: z.int(),
-  // The resin a Petrified Tree claim of this level costs, the items each claim draws, each by its least and most, and the
-  // Artifacts each claim draws, from the dump's tables and the wiki's counts
+  // The resin a Petrified Tree claim of this level costs, the items each claim draws, each by its least and most, and
+  // The Artifacts each claim draws, from the dump's tables and the wiki's counts
   resinCost: z.int().nonnegative(),
   scheduledDaysOfWeek: z.array(z.int().min(1).max(7)),
   treeArtifacts: z.array(treeArtifactSchema),

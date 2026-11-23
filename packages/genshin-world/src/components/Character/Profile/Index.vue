@@ -43,7 +43,7 @@ getResultAsync(() => readCharacterProfile(gameDataBaseUrl, avatarId, language, f
 </script>
 
 <template>
-  <!-- The Profile tab, its stories loaded for the character, the reader's language and the Companionship EXP, each of which
-       The screen keys it by so a change reads them again, the panel empty until they arrive -->
+  <!-- The Profile tab, its stories loaded for the character, the reader's language and the Companionship EXP, each
+    of which The screen keys it by so a change reads them again, the panel empty until they arrive -->
   <CharacterMenuProfile :entries :namecard-name />
 </template>

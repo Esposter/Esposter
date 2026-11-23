@@ -40,9 +40,10 @@ import { storeToRefs } from "pinia";
 import { computed, shallowRef, watch } from "vue";
 
 // The Trounce Blossoms the defeated normal bosses leave where they fell, keyed by the spawn each boss fell under. A
-// Blossom waits until it is claimed or its boss is released by a teleport out of its area, and a claim spends the boss's
-// Original Resin and grants its World Level's rewards and its own drop, the claim setting the boss's respawn five seconds
-// On. Choosing a claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it was
+// Blossom waits until it is claimed or its boss is released by a teleport out of its area, and a claim spends the
+// Boss's Original Resin and grants its World Level's rewards and its own drop, the claim setting the boss's respawn
+// Five seconds On. Choosing a claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it
+// Was
 export const useWorldTrounceBlossoms = ({
   catalogue,
   emitGrant,
@@ -130,7 +131,8 @@ export const useWorldTrounceBlossoms = ({
   const closeTrounceBlossomClaim = () => {
     claimPrompt.value = undefined;
   };
-  // A boss's claim pays its Adventure EXP through the rank and its Companionship EXP to the deployed team, as the game does
+  // A boss's claim pays its Adventure EXP through the rank and its Companionship EXP to the deployed team, as the game
+  // Does
   const grantBossExp = (adventureAmount: number, companionshipAmount: number, levels: FriendshipLevels) => {
     gainWorldAdventureExp(adventureAmount);
     characters.value = gainCompanionshipExp(
@@ -146,8 +148,8 @@ export const useWorldTrounceBlossoms = ({
     if (!prompt || !trounceBlossom || !checkIsTrounceBlossomClaimable(trounceBlossom, now) || !friendshipLevels.value)
       return;
     claimPrompt.value = undefined;
-    // A weekly boss's prompt holds its one claim, so its single offer is the one paid. The reward is drawn before the resin
-    // Is spent, so the random draws keep their order
+    // A weekly boss's prompt holds its one claim, so its single offer is the one paid. The reward is drawn before the
+    // Resin Is spent, so the random draws keep their order
     const { adventureExp, companionshipExp, resin, rewards } =
       trounceBlossom.kind === BlossomKind.WeeklyBoss
         ? {

@@ -20,9 +20,9 @@ describe(createAquaRemembrancePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
   const wielder = createWielderCombatant();
-  // Aqua Remembrance at its first rank: once every 15 seconds, for 14 seconds after an Elemental Skill, four Scorching Summer
-  // Stacks, each raising Normal Attack DMG by 12%. A Normal Attack hit loses one stack and a Vaporize the wielder triggers
-  // Gains one, each once every 1.5 seconds, up to four
+  // Aqua Remembrance at its first rank: once every 15 seconds, for 14 seconds after an Elemental Skill, four Scorching
+  // Summer Stacks, each raising Normal Attack DMG by 12%. A Normal Attack hit loses one stack and a Vaporize the
+  // Wielder triggers Gains one, each once every 1.5 seconds, up to four
   const passiveModule = createAquaRemembrancePassiveModule([0.2, 15, 14, 4, 0.12, 1.5, 1, 1.5]);
   const readNormalAttackBonus = (context: ReturnType<typeof createKitTestContext>) =>
     passiveModule.getStrikeDamageBonus?.(

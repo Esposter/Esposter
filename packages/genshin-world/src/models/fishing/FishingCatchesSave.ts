@@ -7,7 +7,8 @@ import {
 import { createRecordSchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The catches each stock holds that are not yet back, by the stock's key, each catch as an ISO instant on the server's clock
+// The catches each stock holds that are not yet back, by the stock's key, each catch as an ISO instant on the server's
+// Clock
 export const fishingCatchesSaveSchema = createRecordSchema(
   z.string().max(MAX_SAVE_ID_LENGTH),
   createUniquePrimitiveArraySchema(z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH)).max(MAX_FISHING_CATCH_COUNT),

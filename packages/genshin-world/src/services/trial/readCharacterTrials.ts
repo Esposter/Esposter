@@ -12,7 +12,8 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// The character trials' published tables: the trial avatars, builds, reliquaries, first-clear rewards, stages and templates
+// The character trials' published tables: the trial avatars, builds, reliquaries, first-clear rewards, stages and
+// Templates
 export interface CharacterTrialTables {
   avatars: Record<string, TrialAvatar>;
   builds: Record<string, TrialBuild>;

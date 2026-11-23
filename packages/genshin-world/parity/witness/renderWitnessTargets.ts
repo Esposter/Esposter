@@ -58,8 +58,8 @@ let renderTarget: RenderTarget | undefined;
 // Scene's camera under the scene's own direction, which a read in that frame would reuse whatever direction it was
 // Given. So the shadow target is drawn from a camera of its own, standing where the scene's does, in a frame of its own
 const shadowCameraMap = new WeakMap<Camera, Camera>();
-// The pipeline the occlusion target is drawn through, the scene's own occlusion over the parts' depth, rebuilt only when
-// The scene, its camera or the occlusion's reach changes. The pipeline, the depth pass and the occlusion each hold
+// The pipeline the occlusion target is drawn through, the scene's own occlusion over the parts' depth, rebuilt only
+// When The scene, its camera or the occlusion's reach changes. The pipeline, the depth pass and the occlusion each hold
 // Targets of their own, so a rebuild releases all three
 let occlusion:
   | {
@@ -74,19 +74,18 @@ let occlusion:
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
 // Metres, the light the material adds after lighting, the world normal its normal map bends and the one its geometry
-// Carries before the map (each encoded into 0 to 1, as `readWitnessTargets` decodes it), the share of the sun reaching it through the scene's shadows, the share of light
-// The scene's occlusion leaves it over the parts' own depth (all of it where the scene draws none), the part (its
-// Identifier from one, the order the header lists it in) with its family's index, the families listed in that order,
-// And the place on the part's own geometry it shows, before its placement moves it (where a plan of ours reads it),
-// Lifted by the lift handed back with them.
-// Only the witness's parts are drawn, over nothing, so a pixel no part covers is zero throughout but in the occlusion,
-// Which leaves it whole. Only the targets asked for are drawn, every
-// One unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
-// Part keeps its own material, handed back once the targets are read. Told to, it draws the scene's own parts in
-// Place of the witness's, each object the scene marks with a family (`SCENE_FAMILY_KEY`) a part of that family, under
-// The witness's family indices, so ours and the exports' are compared target by target. Told a direction, the sun
-// Casts from it for this read alone, at its own distance from its target, so the light pass prices where a sun's
-// Shadows would fall without the scene's hour moving
+// Carries before the map (each encoded into 0 to 1, as `readWitnessTargets` decodes it), the share of the sun reaching
+// It through the scene's shadows, the share of light The scene's occlusion leaves it over the parts' own depth (all of
+// It where the scene draws none), the part (its Identifier from one, the order the header lists it in) with its
+// Family's index, the families listed in that order, And the place on the part's own geometry it shows, before its
+// Placement moves it (where a plan of ours reads it), Lifted by the lift handed back with them. Only the witness's
+// Parts are drawn, over nothing, so a pixel no part covers is zero throughout but in the occlusion, Which leaves it
+// Whole. Only the targets asked for are drawn, every One unless told, each handed back as base64, the one form a page
+// Hands its caller bytes in. Every Part keeps its own material, handed back once the targets are read. Told to, it
+// Draws the scene's own parts in Place of the witness's, each object the scene marks with a family (`SCENE_FAMILY_KEY`)
+// A part of that family, under The witness's family indices, so ours and the exports' are compared target by target.
+// Told a direction, the sun Casts from it for this read alone, at its own distance from its target, so the light pass
+// Prices where a sun's Shadows would fall without the scene's hour moving
 export const renderWitnessTargets = async (
   witness: SceneWitness,
   context: SceneContext | undefined,
@@ -170,9 +169,9 @@ export const renderWitnessTargets = async (
     const albedo =
       mesh.material instanceof NodeMaterial && mesh.material.colorNode ? asVec3Node(mesh.material.colorNode) : null;
     // The part's own normal map bends the normal the target writes, as the G-buffer the game lights holds it, taken
-    // From the view into the world as `normalWorld` takes the geometry's. A face drawn from behind writes its geometry's
-    // Own normal, never the flip `normalWorld` gives a back face, unless a map bends it: a leaf card's normal is its
-    // Crown's from either side
+    // From the view into the world as `normalWorld` takes the geometry's. A face drawn from behind writes its
+    // Geometry's Own normal, never the flip `normalWorld` gives a back face, unless a map bends it: a leaf card's
+    // Normal is its Crown's from either side
     const sourceNormal =
       mesh.material instanceof NodeMaterial && mesh.material.normalNode ? asVec3Node(mesh.material.normalNode) : null;
     const geometryNormal = material.side === DoubleSide ? normalWorldGeometry : normalWorld;
@@ -256,7 +255,8 @@ export const renderWitnessTargets = async (
       renderer.setClearColor(0, 0);
       for (const target of requestedTargets) {
         const targetMaterials = drawnMeshes.map((drawn) => getTargetMaterial(target, drawn));
-        // oxlint-disable-next-line no-await-in-loop -- One device: every target is drawn into the one render target with the same meshes, so each is read back before the next is drawn
+        // With the same meshes, so each is read back before the next is drawn
+        // oxlint-disable-next-line no-await-in-loop -- One device: every target is drawn into the one render target
         targets[target] = await withFinalizerAsync(
           async () => {
             for (const [index, { mesh }] of drawnMeshes.entries())

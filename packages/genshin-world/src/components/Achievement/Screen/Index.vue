@@ -77,11 +77,11 @@ useListScreenTabStep(
 </script>
 
 <template>
-  <!-- The game's achievements screen over the blurred world: its title under a laurel and the back disc across the top,
-       the count of finished achievements beside the disc, the search box, and the categories down the left, each with its
-       share of finished achievements. The selected category's banner and its achievements sit on the cream panel to the
-       right, each with its reward, its progress and a stamp once it is finished. The namecard and the Primogem are the game's
-       art, so they are flat placeholders -->
+  <!-- The game's achievements screen over the blurred world: its title under a laurel and the back disc across the
+    top, the count of finished achievements beside the disc, the search box, and the categories down the left, each
+    with its share of finished achievements. The selected category's banner and its achievements sit on the cream
+    panel to the right, each with its reward, its progress and a stamp once it is finished. The namecard and the
+    Primogem are the game's art, so they are flat placeholders -->
   <GameScreen class="achievement-screen">
     <svg class="mark mark-laurel" viewBox="0 0 68 68" aria-hidden="true">
       <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.Laurel]" />

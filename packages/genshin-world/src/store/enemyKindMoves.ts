@@ -7,13 +7,14 @@ import { getResultAsync } from "@esposter/shared";
 import { defineStore } from "pinia";
 import { shallowRef } from "vue";
 
-// How many times a kind's moves are asked for before a failure is final, so a persistent failure is never re-asked forever
+// How many times a kind's moves are asked for before a failure is final, so a persistent failure is never re-asked
+// Forever
 const ENEMY_KIND_MOVES_ATTEMPTS = 3;
 
-// The moves of each boss kind, held once its module has loaded. The camps that spawn a kind ask for its moves, and a camp
-// Waits for them, so a boss is never on the field without its moves. Each kind loads once, and a failed load is logged and
-// Counted: the count is a change the camps waiting on the kind re-run on, so the kind is asked for again until its attempts
-// Run out, and then its camps wait for good
+// The moves of each boss kind, held once its module has loaded. The camps that spawn a kind ask for its moves, and a
+// Camp Waits for them, so a boss is never on the field without its moves. Each kind loads once, and a failed load is
+// Logged and Counted: the count is a change the camps waiting on the kind re-run on, so the kind is asked for again
+// Until its attempts Run out, and then its camps wait for good
 export const useWorldEnemyKindMovesStore = defineStore("world/enemyKindMoves", () => {
   const enemyKindMovesMap = shallowRef<Partial<Record<EnemyKindId, readonly BossMove[]>>>({});
   const enemyKindMovesFailureMap = shallowRef<Partial<Record<EnemyKindId, number>>>({});
@@ -28,7 +29,8 @@ export const useWorldEnemyKindMovesStore = defineStore("world/enemyKindMoves", (
       isLoading = true;
       if (requestedEnemyKindIds.has(enemyKindId)) continue;
       requestedEnemyKindIds.add(enemyKindId);
-      // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+      // `match(`) handles both branches, so the promise
+      // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
       getResultAsync(loadMoves).match(
         (moves) => {
           enemyKindMovesMap.value = { ...enemyKindMovesMap.value, [enemyKindId]: moves };

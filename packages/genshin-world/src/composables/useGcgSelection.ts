@@ -21,8 +21,8 @@ interface GcgSelectionEvents {
   useSkill: [skillId: number, dieIndices: number[]];
 }
 
-// The player's choices on the duel board and the events each one leaves with. The duel and the side the player steers are
-// Read where each choice is made, so they are passed as getters that follow the board's props
+// The player's choices on the duel board and the events each one leaves with. The duel and the side the player steers
+// Are Read where each choice is made, so they are passed as getters that follow the board's props
 export const useGcgSelection = (
   duel: MaybeRefOrGetter<GcgDuel>,
   playerSideIndex: MaybeRefOrGetter<number>,
@@ -36,7 +36,8 @@ export const useGcgSelection = (
   const isTuning = ref(false);
   const switchedHandIndices = ref<number[]>([]);
   const preparedActiveIndex = ref(0);
-  // A Toss-Up being played: its hand card, the dice its payment took, and the groups of dice the player has picked to reroll
+  // A Toss-Up being played: its hand card, the dice its payment took, and the groups of dice the player has picked to
+  // Reroll
   const rerollHandIndex = ref<number>();
   const paidDiceIndices = ref<number[]>([]);
   const rerollGroups = ref<number[][]>([]);
@@ -65,7 +66,8 @@ export const useGcgSelection = (
     else if (playerSide.value.isReplacementPending) return character.hp > 0;
     return isPlayerTurn.value && characterIndex !== playerSide.value.activeIndex && character.hp > 0;
   };
-  // The player's characters in the order it holds them, each with whether a click on it does something for the player now
+  // The player's characters in the order it holds them, each with whether a click on it does something for the player
+  // Now
   const playerCharacters = computed(() =>
     playerSide.value.characters.map((character, characterIndex) => ({
       character,

@@ -6,8 +6,8 @@ import { getLaidGroundSquares } from "#src/services/world/getLaidGroundSquares";
 import { parseGroundPieceKey } from "#src/services/world/parseGroundPieceKey";
 import { NotFoundError } from "@esposter/shared";
 
-// A ground laid over Windrise's with the domain its key names. A piece of an outlined area is the surface of that area's
-// Outline, clipped to the squares its key's path names, and a plateau's key names no area, so it has none
+// A ground laid over Windrise's with the domain its key names. A piece of an outlined area is the surface of that
+// Area's Outline, clipped to the squares its key's path names, and a plateau's key names no area, so it has none
 export const toLaidGround = (
   key: string,
   ground: RegionGround,

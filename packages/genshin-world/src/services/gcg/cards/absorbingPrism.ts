@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 const ABSORBING_PRISM_HEAL = 3;
 
-// Absorbing Prism, an event: when the active character is Electro Hypostasis, it is healed for 3 HP and gains the Electro
-// Crystal Core (the wiki's Absorbing Prism). Refused when the active character is another
+// Absorbing Prism, an event: when the active character is Electro Hypostasis, it is healed for 3 HP and gains the
+// Electro Crystal Core (the wiki's Absorbing Prism). Refused when the active character is another
 export const absorbingPrism: GcgCardModule = {
   canPlay: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

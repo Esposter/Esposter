@@ -3,9 +3,9 @@ import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import { reputationRewardSchema } from "#src/models/reputation/ReputationReward";
 import { z } from "zod";
 
-// One level of a nation's Reputation as the game's table gives it: the EXP it needs to reach the next, zero at a nation's
-// Last level, the reward reaching it pays, the unlock functions and shop goods it opens, and the request group its keeper
-// Offers from it
+// One level of a nation's Reputation as the game's table gives it: the EXP it needs to reach the next, zero at a
+// Nation's Last level, the reward reaching it pays, the unlock functions and shop goods it opens, and the request group
+// Its keeper Offers from it
 export interface ReputationLevel {
   functionIds: number[];
   goodsIds: number[];

@@ -17,9 +17,9 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 
 export const CHEVREUSE_CHARACTER_ID = 10_000_090;
 
-// Constellation 4: Ring of Bursting Grenades lets the next two holds within six seconds start with no cooldown, as gcsim
-// (MIT) chevreuse/burst.go and skill.go give it, the status's two shots spent by each hold it lets through
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chevreuse/skill.go
+// Constellation 4: Ring of Bursting Grenades lets the next two holds within six seconds start with no cooldown, as
+// Gcsim (MIT) chevreuse/burst.go and skill.go give it, the status's two shots spent by each hold it lets through
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chevreuse/skill.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_SECONDS = 6;
 const CONSTELLATION_4_SHOTS = 2;
@@ -28,9 +28,9 @@ const CONSTELLATION_4_STATUS_ID = "chevreuse-constellation-4";
 // Overloaded reactions set the Overcharged Ball going for the next hold, as gcsim's overcharged-ball subscription does,
 // Whoever triggers them, until a hold casts the ball
 const OVERCHARGED_BALL_STATUS_ID = "chevreuse-overcharged-ball";
-// Vertical Force Coordination, from Ascension 4, gives the Pyro and Electro members of the party 1% ATK for every 1,000 of
-// Chevreuse's Max HP, up to 40%, for 30 seconds when the Overcharged Ball is fired, as gcsim (MIT) chevreuse/asc.go does
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chevreuse/asc.go
+// Vertical Force Coordination, from Ascension 4, gives the Pyro and Electro members of the party 1% ATK for every 1,000
+// Of Chevreuse's Max HP, up to 40%, for 30 seconds when the Overcharged Ball is fired, as gcsim (MIT) chevreuse/asc.go
+// Does https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chevreuse/asc.go
 const ASCENSION_4 = 4;
 const VERTICAL_FORCE_ATK_PER_1000_MAX_HEALTH = 0.01;
 const VERTICAL_FORCE_ATK_MAX = 0.4;
@@ -68,13 +68,15 @@ const waiveHoldCooldown = ({ activeCombatant: combatant, kitEffectState, party }
   changeKitSkillCooldown(party, combatant.characterId, -skillCooldownSeconds);
 };
 
-// Chevreuse's behaviour: an Overloaded reaction sets the Overcharged Ball going, and the hold casts the ball in place of
-// Its own shot while it is going, spending it. Constellation 4 is built: Ring of Bursting Grenades sets a status that the
-// Next two holds spend, and a hold it lets through starts with no cooldown. Constellation 1 needs the Coordinated
-// Tactics status on other members, which the kit does not apply. Constellation 2 needs the chain explosions after the
-// Hold hits a target, and Constellation 6 needs the hold's 12-second healing effect and the team heals it triggers
+// Chevreuse's behaviour: an Overloaded reaction sets the Overcharged Ball going, and the hold casts the ball in place
+// Of Its own shot while it is going, spending it. Constellation 4 is built: Ring of Bursting Grenades sets a status
+// That the Next two holds spend, and a hold it lets through starts with no cooldown. Constellation 1 needs the
+// Coordinated Tactics status on other members, which the kit does not apply. Constellation 2 needs the chain explosions
+// After the Hold hits a target, and Constellation 6 needs the hold's 12-second healing effect and the team heals it
+// Triggers
 export const createChevreuseKitBehaviour = (): KitBehaviour => ({
-  // Ring of Bursting Grenades sets the Constellation 4 waiver going, its two shots and six seconds restarted by each Ring
+  // Ring of Bursting Grenades sets the Constellation 4 waiver going, its two shots and six seconds restarted by each
+  // Ring
   burst: {
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       if (combatant.constellationCount < CONSTELLATION_4) return;
@@ -106,8 +108,8 @@ export const createChevreuseKitBehaviour = (): KitBehaviour => ({
         checkIsActive: ({ activeCombatant: combatant, kitEffectState }) =>
           checkHasKitStatus(kitEffectState.effects, combatant.characterId, OVERCHARGED_BALL_STATUS_ID),
         // The Overcharged Ball's hold spends the ball as it starts, so the next hold is a plain one again, and from
-        // Ascension 4 the ball's firing gives the Pyro and Electro members their ATK. Constellation 4 waives its cooldown
-        // As it does a plain hold's
+        // Ascension 4 the ball's firing gives the Pyro and Electro members their ATK. Constellation 4 waives its
+        // Cooldown As it does a plain hold's
         onStart: (context) => {
           removeKitEffects(
             context.kitEffectState,

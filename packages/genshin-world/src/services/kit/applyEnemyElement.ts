@@ -12,8 +12,8 @@ import { checkIsElectroCharged } from "#src/services/combat/aura/checkIsElectroC
 // A combatant's element applied to an enemy at a gauge, written in place, and the reactions it triggered. An Electro or
 // Hydro that lands and leaves the enemy Electro-Charged makes its combatant the one those ticks are priced from, and a
 // Pyro or Dendro that lands and leaves it Burning the one Burning's are, as gcsim moves each to every application that
-// Starts or feeds it, and the one that triggers Lunar-Charged the one that owns it. Its reactions are those the combatant's
-// Party's Moonsign turns Lunar where it does, and the aura it leaves keeps the combatant as a source
+// Starts or feeds it, and the one that triggers Lunar-Charged the one that owns it. Its reactions are those the
+// Combatant's Party's Moonsign turns Lunar where it does, and the aura it leaves keeps the combatant as a source
 export const applyEnemyElement = (
   enemy: Enemy,
   element: Element,

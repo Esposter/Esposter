@@ -62,8 +62,9 @@ const readGarmentEnergy = (constellationCount: number, strikeSeconds: number[]):
   return getPartyMember(context.party, KOKOMI_CHARACTER_ID).energy;
 };
 
-// The Hydro DMG Bonus Kokomi's strike gets after a heal, by the given source, of the given attack or of none, on a member at the
-// Given share of its Max HP, then the given seconds later, with the given constellations, on a strike that deals the given element
+// The Hydro DMG Bonus Kokomi's strike gets after a heal, by the given source, of the given attack or of none, on a
+// Member at the Given share of its Max HP, then the given seconds later, with the given constellations, on a strike
+// That deals the given element
 const readConstellation6Bonus = ({
   attackTag,
   constellationCount = 6,

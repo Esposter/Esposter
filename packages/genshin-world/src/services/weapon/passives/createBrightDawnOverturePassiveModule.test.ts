@@ -30,7 +30,8 @@ describe(createBrightDawnOverturePassiveModule, () => {
     reactions: [{ reactionType: ReactionType.Burning }],
     striker,
   });
-  // Bright Dawn Overture at its first rank: 18% DMG for 8 seconds per stack, up to two, and 12 Energy at two stacks every 12s
+  // Bright Dawn Overture at its first rank: 18% DMG for 8 seconds per stack, up to two, and 12 Energy at two stacks
+  // Every 12s
   const passiveModule = createBrightDawnOverturePassiveModule([0.15, 0.18, 8, 12, 12]);
 
   test("a Burning the wielder triggers raises its DMG by the rank's amount for the rank's seconds", () => {

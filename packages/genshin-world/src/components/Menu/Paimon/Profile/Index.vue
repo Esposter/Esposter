@@ -44,8 +44,8 @@ defineExpose({ focusWorldLevelInfo: () => info.value?.focusWorldLevelInfo() });
 </script>
 
 <template>
-  <!-- The profile card, the Traveler's disc and name over the panel, with the rank, the World Level, the birthday and the
-       namecard the player has set, each one a button where the game's is one -->
+  <!-- The profile card, the Traveler's disc and name over the panel, with the rank, the World Level, the birthday
+    and the namecard the player has set, each one a button where the game's is one -->
   <div class="card" />
   <NuxtImg v-if="accountAvatarUrl" :alt="accountName" class="avatar-image" :src="accountAvatarUrl" />
   <div v-else class="avatar" />

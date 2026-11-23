@@ -37,9 +37,9 @@ const TALISMAN_HEAL_COOLDOWN_SECONDS = 1;
 // Seconds on a 50% roll, at most once every 30 seconds, unless it holds a longer one. Measured: gcsim v2.47.2 (MIT)
 // Qiqi/burst.go. https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/burst.go
 const A_GLIMPSE_INTO_ARCANUM_ASCENSION = 4;
-// From Ascension 1, a reaction the character on the field triggers gives her 20% Healing Bonus for 8 seconds, unless Herald
-// Of Frost stands, as gcsim v2.47.2 (MIT) qiqi/asc.go gives it
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/asc.go
+// From Ascension 1, a reaction the character on the field triggers gives her 20% Healing Bonus for 8 seconds, unless
+// Herald Of Frost stands, as gcsim v2.47.2 (MIT) qiqi/asc.go gives it
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/asc.go`
 const ASCENSION_1 = 1;
 const ASCENSION_1_HEALING_BONUS = 0.2;
 const ASCENSION_1_SECONDS = 8;
@@ -94,8 +94,8 @@ export const QIQI_CHARACTER_ID = 10_000_035;
 // Qiqi's behaviour: her Normal and Charged Attack hits regenerate the party while Herald of Frost stands. Herald of
 // Frost casts the Herald, a summon whose swipes follow her, and its continuous regeneration, which snapshots her ATK on
 // Cast and heals the character on the field. Fortune-Preserving Talisman marks each enemy it strikes with the Talisman
-// Before its damage, and from six constellations revives the fallen. The Talisman's heal, A Glimpse into Arcanum and the
-// Constellations answer the kit's events, and Life-Prolonging Methods from Ascension 1 is built as a passive
+// Before its damage, and from six constellations revives the fallen. The Talisman's heal, A Glimpse into Arcanum and
+// The Constellations answer the kit's events, and Life-Prolonging Methods from Ascension 1 is built as a passive
 export const createQiqiKitBehaviour = ({
   kit,
   readHits,
@@ -139,9 +139,9 @@ export const createQiqiKitBehaviour = ({
         ? FROZEN_TO_THE_BONE_DAMAGE_BONUS
         : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => regenerationOnHit) })),
-    // Damage an enemy holding a Talisman takes from the character on the field heals that character, a Normal or Charged
-    // Attack of Qiqi's may give the enemy a Talisman from Ascension 4, and the Herald's hits on it give her energy from
-    // One constellation
+    // Damage an enemy holding a Talisman takes from the character on the field heals that character, a Normal or
+    // Charged Attack of Qiqi's may give the enemy a Talisman from Ascension 4, and the Herald's hits on it give her
+    // Energy from One constellation
     onKitEvent: (event, context, combatant) => {
       const { activeCombatant, characterIdCombatantMap, kitEffectState, party, random } = context;
       if (event.kind === KitEventKind.ReactionTriggered) {

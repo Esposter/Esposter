@@ -3,9 +3,9 @@ import type { AbyssPeriodBlessing } from "#src/models/spiralAbyss/AbyssPeriodBle
 import { abyssPeriodBlessingSchema } from "#src/models/spiralAbyss/AbyssPeriodBlessing";
 import { z } from "zod";
 
-// One period of the Abyssal Moon Spire: its schedule id, the four floors it runs, the reward group its floors draw from, the
-// Blessing it gives, and the moments in the game's time zone it opens and closes, as wall-clock times the game's time zone
-// Reads. The close is the last second the period runs
+// One period of the Abyssal Moon Spire: its schedule id, the four floors it runs, the reward group its floors draw
+// From, the Blessing it gives, and the moments in the game's time zone it opens and closes, as wall-clock times the
+// Game's time zone Reads. The close is the last second the period runs
 export interface AbyssPeriod {
   blessing: AbyssPeriodBlessing;
   closesAt: string;

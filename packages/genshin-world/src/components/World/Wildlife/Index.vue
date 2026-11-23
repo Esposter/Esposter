@@ -28,7 +28,8 @@ interface Props {
   isHeld: boolean;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
-  // The fitted bounds of each kind's silhouette, read once as its mesh is made; a kind with none is drawn as the capsule
+  // The fitted bounds of each kind's silhouette, read once as its mesh is made; a kind with none is drawn as the
+  // Capsule
   silhouetteSizes?: Partial<Record<WildlifeKind, SilhouetteSize>>;
   // The point the animals run from, the character's feet, which none is given while no character stands in the world
   target?: GroundPoint | undefined;
@@ -52,9 +53,9 @@ const fixedStepLoop = createFixedStepLoop(WILDLIFE_STEP_SECONDS, () => {
   for (const wildlife of wildlifeList) if (stepWildlife(wildlife, target, WILDLIFE_STEP_SECONDS)) emit("charge");
 });
 const material = createToonMaterial({ color: WILDLIFE_COLOR, lightUniforms, rampTexture });
-// Every animal without a silhouette is one capsule of one instanced draw, and each kind with one is an instanced draw of
-// Its silhouette. Each is stood on the ground and turned to its heading, as a stand-in until its model lands. The animals
-// Move, so each mesh's bounds, measured once, would cull them where they once stood
+// Every animal without a silhouette is one capsule of one instanced draw, and each kind with one is an instanced draw
+// Of Its silhouette. Each is stood on the ground and turned to its heading, as a stand-in until its model lands. The
+// Animals Move, so each mesh's bounds, measured once, would cull them where they once stood
 const capsuleMesh = createInstancedMesh(
   new CapsuleGeometry(WILDLIFE_CAPSULE_RADIUS, WILDLIFE_CAPSULE_HEIGHT - WILDLIFE_CAPSULE_RADIUS * 2),
   material,

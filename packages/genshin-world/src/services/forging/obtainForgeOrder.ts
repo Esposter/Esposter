@@ -12,9 +12,9 @@ import { Currency } from "#src/models/inventory/Currency";
 import { gainAdventureExp } from "#src/services/adventureRank/gainAdventureExp";
 import { collectForgeOrder } from "#src/services/forging/collectForgeOrder";
 
-// Obtains a queue's order at `now`: the units done are taken in by collectForgeOrder, and the Adventure EXP they yield is
-// Gained at the Adventure Rank as an Original Resin claim gains its own. The Mora the EXP past rank 60 pays goes into the
-// Wallet, and the order left queued is what collectForgeOrder leaves
+// Obtains a queue's order at `now`: the units done are taken in by collectForgeOrder, and the Adventure EXP they yield
+// Is Gained at the Adventure Rank as an Original Resin claim gains its own. The Mora the EXP past rank 60 pays goes
+// Into the Wallet, and the order left queued is what collectForgeOrder leaves
 export const obtainForgeOrder = (
   recipe: ForgeRecipe,
   order: ForgeOrder,

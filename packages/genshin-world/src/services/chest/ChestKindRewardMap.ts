@@ -3,12 +3,12 @@ import type { ChestReward } from "#src/models/chest/ChestReward";
 import { ChestKind } from "#src/models/chest/ChestKind";
 
 // The wallet's share of each tier's rewards, from the wiki's chest reward table, and each tier's Adventure EXP from the
-// Adventure EXP page's chest table, which gives 30 for each of these five. Provisional: the ranges are the table's
-// For the areas it names as the default, and the Primogems of Dragonspine, the Stormbearer Mountains and the high
-// Zone-level areas differ. The Sigil ranges are the table's for each kind. A Luxurious chest gives no Mora, since only the
-// Named Luxurious chests carry Mora of their own, and a Remarkable chest's Primogems are its outside-Tsurumi 5, with no
-// Sigils, the table giving it no row, and its blueprints left out until a page names each one. A kind with no entry,
-// Buried and Sealed, is unrewarded
+// Adventure EXP page's chest table, which gives 30 for each of these five. Provisional: the ranges are the table's For
+// The areas it names as the default, and the Primogems of Dragonspine, the Stormbearer Mountains and the high
+// Zone-level areas differ. The Sigil ranges are the table's for each kind. A Luxurious chest gives no Mora, since only
+// The Named Luxurious chests carry Mora of their own, and a Remarkable chest's Primogems are its outside-Tsurumi 5,
+// With no Sigils, the table giving it no row, and its blueprints left out until a page names each one. A kind with no
+// Entry, Buried and Sealed, is unrewarded
 export const ChestKindRewardMap: Partial<Record<ChestKind, ChestReward>> = {
   [ChestKind.Common]: {
     adventureExp: 30,

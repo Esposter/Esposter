@@ -24,8 +24,9 @@ interface ModeTransition {
   mode: PerpetualMechanicalArrayMode;
 }
 
-// The mode the fight moves into next, if its current one is over. A disabled sentinel paralyses the boss in Defensive Mode
-// Before its exit time is read, and each mode's seconds carry past its end into the next, so one long step crosses several
+// The mode the fight moves into next, if its current one is over. A disabled sentinel paralyses the boss in Defensive
+// Mode Before its exit time is read, and each mode's seconds carry past its end into the next, so one long step crosses
+// Several
 const computeModeTransition = (
   { fightSeconds, isDefensiveModeTriggered, mode, modeSeconds }: PerpetualMechanicalArrayFight,
   healthFraction: number,
@@ -59,9 +60,10 @@ const computeModeTransition = (
   return undefined;
 };
 
-// Steps the fight by the time that passed, the boss's health as a share of its max and whether its highlighted sentinel has
-// Been disabled since. It returns the fight and the modes it entered, in order, so the arena starts and stops what each one
-// Brings: the boss attacks only while Attacking, and its attack pattern starts again from its first move when Attacking resumes
+// Steps the fight by the time that passed, the boss's health as a share of its max and whether its highlighted sentinel
+// Has Been disabled since. It returns the fight and the modes it entered, in order, so the arena starts and stops what
+// Each one Brings: the boss attacks only while Attacking, and its attack pattern starts again from its first move when
+// Attacking resumes
 export const stepPerpetualMechanicalArrayFight = (
   fight: PerpetualMechanicalArrayFight,
   elapsedSeconds: number,

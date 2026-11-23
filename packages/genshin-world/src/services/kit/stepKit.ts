@@ -67,7 +67,8 @@ export const stepKit = (
   const enteredMovementAction = getEnteredMovementAction(kit, previousLocomotionState, locomotionState);
   kitState.locomotionState = locomotionState;
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
-  // A skill held to its maximum is released there, once: holding on past it neither starts it again nor releases it twice
+  // A skill held to its maximum is released there, once: holding on past it neither starts it again nor releases it
+  // Twice
   const previousHeldSeconds = kitState.skillHeldSeconds;
   const maximumHeldSeconds = kit.elementalSkillMaximumHeldSeconds ?? Infinity;
   if (isSkillHeld) {
@@ -152,7 +153,8 @@ export const stepKit = (
         landedHits,
         context,
       );
-      // A hook may add one hit after each hit of a normal attack that lands, as a passive's or a constellation's follow-up
+      // A hook may add one hit after each hit of a normal attack that lands, as a passive's or a constellation's
+      // `follow-up`
       const chainIndex = kit.normalAttacks.indexOf(action);
       if (kit.getNormalAttackExtraHit && chainIndex !== -1)
         for (const hit of landedHits.slice(landedCount)) {

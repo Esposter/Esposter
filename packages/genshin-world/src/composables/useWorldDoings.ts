@@ -16,8 +16,8 @@ export const useWorldDoings = ({ clearedCamps, monumentPlaces, timeTrialPlaces }
   const { foundOculusIds, oculusPlaces } = storeToRefs(worldStatuesStore);
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { puzzleSeelies, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
-  // The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles' marks
-  // And Seelies at their courts, and the camps the save records as cleared
+  // The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles'
+  // Marks And Seelies at their courts, and the camps the save records as cleared
   const placedDoings = computed<PlacedDoing[]>(() => [
     ...worldChestPlaces.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Chest, position })),
     ...oculusPlaces.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Oculus, position })),
@@ -27,8 +27,8 @@ export const useWorldDoings = ({ clearedCamps, monumentPlaces, timeTrialPlaces }
     ...puzzleSeelies.value.map(({ court, id }) => ({ id, kind: ExplorationKind.Puzzle, position: court })),
     ...clearedCamps.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Camp, position })),
   ]);
-  // The doings the save records as done, by id: the chests opened, the Oculi found, the puzzles and Seelies settled, and
-  // The camps cleared
+  // The doings the save records as done, by id: the chests opened, the Oculi found, the puzzles and Seelies settled,
+  // And The camps cleared
   const recordedDoingIds = computed<ReadonlySet<string>>(
     () =>
       new Set([

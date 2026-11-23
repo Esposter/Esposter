@@ -39,8 +39,9 @@ const accessibleName = computed(() =>
 </script>
 
 <template>
-  <!-- A character card on the board: its HP in the corner, its energy as pips down its right edge, its aura and shield
-       beside it. Its name is read with its HP, energy and shield. A defeated one is greyed; the board raises the active one by its class -->
+  <!-- A character card on the board: its HP in the corner, its energy as pips down its right edge, its aura and
+    shield beside it. Its name is read with its HP, energy and shield. A defeated one is greyed; the board raises
+    the active one by its class -->
   <button
     class="character"
     :aria-label="accessibleName"

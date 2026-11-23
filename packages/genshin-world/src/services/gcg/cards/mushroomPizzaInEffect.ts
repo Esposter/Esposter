@@ -5,7 +5,8 @@ import { takeOne } from "@esposter/shared";
 
 const HEAL_VALUE = 1;
 
-// Mushroom Pizza (In Effect): at each End Phase it heals the character it is on for 1 HP, and it is spent after two End Phases
+// Mushroom Pizza (In Effect): at each End Phase it heals the character it is on for 1 HP, and it is spent after two End
+// Phases
 export const mushroomPizzaInEffect: GcgCardModule = {
   initialUsages: 2,
   onEndPhase: ({ characterIndex, duel, sideIndex }, zoneCard) => {

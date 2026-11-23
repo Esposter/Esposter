@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 const ELEMENTAL_MASTERY_MAXIMUM_STACKS = 2;
 
-// Elemental Mastery at its rank: each normal attack hit its wielder deals raises every elemental DMG bonus by the rank's
-// Percentage per stack, up to two stacks for the rank's seconds
+// Elemental Mastery at its rank: each normal attack hit its wielder deals raises every elemental DMG bonus by the
+// Rank's Percentage per stack, up to two stacks for the rank's seconds
 export const createElementalMasteryPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const seconds = takeOne(params, 1);

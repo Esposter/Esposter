@@ -8,7 +8,8 @@ interface SheerColdGaugeOptions {
   catalogue: Catalogue;
   // The ratio of anti-cold the character on the field holds the gauge's fill down with
   getAntiColdRatio: () => number;
-  // The character on the field, whose maximum health and locomotion phase the gauge reads, undefined before it has loaded
+  // The character on the field, whose maximum health and locomotion phase the gauge reads, undefined before it has
+  // Loaded
   getCharacter: () => { maxHealth: number; phase: LocomotionPhase } | undefined;
   // The character's body, whose position the gauge is read at, undefined until the body is given
   getCharacterBody: () => Object3D | undefined;
@@ -20,8 +21,8 @@ interface SheerColdGaugeOptions {
   onSheerCold: (value: number) => void;
 }
 
-// The Sheer Cold gauge of the character on the field, which the HUD reads from the value emitted each change. No campfire
-// Is placed in the world yet, so no heat source drains it
+// The Sheer Cold gauge of the character on the field, which the HUD reads from the value emitted each change. No
+// Campfire Is placed in the world yet, so no heat source drains it
 export const useSheerColdGauge = ({
   catalogue,
   getAntiColdRatio,

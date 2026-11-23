@@ -23,8 +23,8 @@ describe(createWhiteFairysQueeningPassiveModule, () => {
     enemy,
     reactionType,
   });
-  // White Fairy's Queening at its first rank: 16% Stellar-Conduct and Stellar Swirl DMG for 5 seconds per stack of Transcendence,
-  // A stack each Charged Attack hit once every 0.2 seconds and up to three
+  // White Fairy's Queening at its first rank: 16% Stellar-Conduct and Stellar Swirl DMG for 5 seconds per stack of
+  // Transcendence, A stack each Charged Attack hit once every 0.2 seconds and up to three
   const passiveModule = createWhiteFairysQueeningPassiveModule([0.28, 0.16, 5]);
 
   test("a Charged Attack hit gives the wielder a stack, raising its Stellar Swirl DMG by the rank's amount", () => {

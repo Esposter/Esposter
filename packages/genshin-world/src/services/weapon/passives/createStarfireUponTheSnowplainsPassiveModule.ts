@@ -6,9 +6,9 @@ import { takeOne } from "@esposter/shared";
 
 const STARFIRE_UPON_THE_SNOWPLAINS_SOURCE = "starfireUponTheSnowplains";
 
-// Starfire Upon the Snowplains, Emberwell's passive at its rank: after its wielder causes a reaction, its ATK rises by the rank's
-// Percentage for its seconds, and after a Stellar Glimmer reaction the wielder triggers, its Stellar Glimmer reaction DMG rises by
-// The rank's percentage for its seconds, whether or not the wielder is on the field
+// Starfire Upon the Snowplains, Emberwell's passive at its rank: after its wielder causes a reaction, its ATK rises by
+// The rank's Percentage for its seconds, and after a Stellar Glimmer reaction the wielder triggers, its Stellar Glimmer
+// Reaction DMG rises by The rank's percentage for its seconds, whether or not the wielder is on the field
 export const createStarfireUponTheSnowplainsPassiveModule = (params: number[]): PassiveModule =>
   createReactionStellarBuffPassiveModule({
     reactionAmount: takeOne(params, 0),

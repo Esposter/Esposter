@@ -6,9 +6,9 @@ import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { describe } from "vitest";
 
-// A character in one duel for a suite to read: a Hydro character of 10 HP and 3 maximum energy, with no skills, equipment,
-// Statuses, shield, energy or Frozen status. The overrides replace those values, and a character's own fields are given
-// Inside the character they name
+// A character in one duel for a suite to read: a Hydro character of 10 HP and 3 maximum energy, with no skills,
+// Equipment, Statuses, shield, energy or Frozen status. The overrides replace those values, and a character's own
+// Fields are given Inside the character they name
 export const createGcgCharacterState = (
   overrides: Partial<SetFieldType<GcgCharacterState, "character", Partial<GcgCharacter>>> = {},
 ): GcgCharacterState => {

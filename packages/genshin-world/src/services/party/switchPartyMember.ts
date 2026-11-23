@@ -8,9 +8,9 @@ import { PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Puts the deployed team's member at this index on the field, as its key does at these seconds on the world's clock:
-// Nothing for the member already there or an empty slot, refused while the fall of the member on the field plays, refused
-// For a character who is down, refused while the swap lock on the member on the field holds, and refused until the
-// Cooldown since the last switch has passed
+// Nothing for the member already there or an empty slot, refused while the fall of the member on the field plays,
+// Refused For a character who is down, refused while the swap lock on the member on the field holds, and refused until
+// The Cooldown since the last switch has passed
 export const switchPartyMember = (
   party: Party,
   index: number,

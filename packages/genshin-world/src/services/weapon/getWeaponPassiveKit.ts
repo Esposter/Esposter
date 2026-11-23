@@ -6,8 +6,8 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { WeaponPassiveNameTextIdCreateModuleMap } from "#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap";
 
 // A character's kit with its weapon's passive answering beside it: the module of the passive the weapon's table names,
-// Built from the numbers of the rank the weapon holds, read as the kit's own passives are. A weapon whose passive has no
-// Module, or a weapon with no passive, leaves the kit as it is
+// Built from the numbers of the rank the weapon holds, read as the kit's own passives are. A weapon whose passive has
+// No Module, or a weapon with no passive, leaves the kit as it is
 export const getWeaponPassiveKit = (kit: Kit, weapon: Weapon, weaponData: undefined | WeaponData): Kit => {
   const createModule = weaponData && WeaponPassiveNameTextIdCreateModuleMap[weaponData.passiveNameTextId];
   const params = weaponData?.passiveRankParams[weapon.refinement - 1];

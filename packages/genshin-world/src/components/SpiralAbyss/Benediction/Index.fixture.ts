@@ -5,7 +5,8 @@ import { AbyssBenedictionIcon } from "#src/models/spiralAbyss/AbyssBenedictionIc
 import { AbyssBenedictionScope } from "#src/models/spiralAbyss/AbyssBenedictionScope";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-// The first list of the Corridor's first chamber, its three Benedictions with their descriptions' text hashes, over the English
+// The first list of the Corridor's first chamber, its three Benedictions with their descriptions' text hashes, over the
+// English
 const choices: AbyssBenedictionChoice[] = [
   {
     descriptionTextHash: 2678391710,

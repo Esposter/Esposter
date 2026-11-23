@@ -3,7 +3,8 @@ import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeNextWeeklyReset, () => {
-  // The epoch is a Thursday eight in the morning in the server's zone, so the Monday after it is four days on, less four hours
+  // The epoch is a Thursday eight in the morning in the server's zone, so the Monday after it is four days on, less
+  // Four hours
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   const NEXT_WEEKLY_RESET = EPOCH.add({ hours: 24 * 4 - GAME_DAY_START_HOUR });
 

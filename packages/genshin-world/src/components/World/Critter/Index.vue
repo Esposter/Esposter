@@ -21,8 +21,8 @@ interface Props {
 
 const { getGroundHeight, lightUniforms, materialSources, rampTexture } = defineProps<Props>();
 const { onBeforeRender } = useLoop();
-// Every critter point is one stand-in of one instanced draw, stood on the ground until its species is fitted. The points
-// Are filtered when the material sources change, not each frame, and the critters stand still
+// Every critter point is one stand-in of one instanced draw, stood on the ground until its species is fitted. The
+// Points Are filtered when the material sources change, not each frame, and the critters stand still
 const standInPlaces = computed(() => getCritterStandInPlaces(materialSources));
 const critterMaterial = createToonMaterial({ color: WILDLIFE_COLOR, lightUniforms, rampTexture });
 const critterMesh = createInstancedMesh(createCritterGeometry(), critterMaterial, WILDLIFE_CAPACITY);

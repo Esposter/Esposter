@@ -6,8 +6,8 @@ import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCa
 
 const CROSSFIRE_DAMAGE = 1;
 
-// Crossfire, Xiangling's talent: equipped to her while she is active, and her Guoba Attack is used at once. Each Guoba Attack
-// She then uses also deals 1 Pyro DMG
+// Crossfire, Xiangling's talent: equipped to her while she is active, and her Guoba Attack is used at once. Each Guoba
+// Attack She then uses also deals 1 Pyro DMG
 export const crossfire: GcgCardModule = {
   ...createGcgTalentCard(XIANGLING_ID, GUOBA_ATTACK_ID),
   onSkillUsed: (context) =>

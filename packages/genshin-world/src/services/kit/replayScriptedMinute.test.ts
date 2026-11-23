@@ -130,16 +130,16 @@ export const createScriptedMinute = ({
   };
 };
 
-// One minute of the world's fixed step for the team createScriptedMinute builds, run as the world runs it: the session's
-// Switch, then the character's step, where the body steps, the party's cooldowns run down, a switch starts the kit on
-// The field over and that kit steps, in the context the world builds, its combatants built as `useWorldCombat` builds
-// Them and its rolls on the world's seeded random source. In combat, three enemies stand in reach and never step, every
-// Member starts with its burst charged, and the team plays the minute in turns of seven and a half seconds, the next
-// Member switched in at each. A turn presses the skill every step of its first second and a half, held for a tap through
-// The minute's first half and for three and a quarter seconds through its second, then presses the burst every step to
-// The turn's end, so it plays whenever it is charged, mashes the string from a quarter second after the skill's release
-// To 4.75, and presses an attack at 5 and holds it for a second and a half, into a charged attack. Idle, no enemy
-// Stands near, nothing is pressed and no one is switched in
+// One minute of the world's fixed step for the team createScriptedMinute builds, run as the world runs it: the
+// Session's Switch, then the character's step, where the body steps, the party's cooldowns run down, a switch starts
+// The kit on The field over and that kit steps, in the context the world builds, its combatants built as
+// `useWorldCombat` builds Them and its rolls on the world's seeded random source. In combat, three enemies stand in
+// Reach and never step, every Member starts with its burst charged, and the team plays the minute in turns of seven and
+// A half seconds, the next Member switched in at each. A turn presses the skill every step of its first second and a
+// Half, held for a tap through The minute's first half and for three and a quarter seconds through its second, then
+// Presses the burst every step to The turn's end, so it plays whenever it is charged, mashes the string from a quarter
+// Second after the skill's release To 4.75, and presses an attack at 5 and holds it for a second and a half, into a
+// Charged attack. Idle, no enemy Stands near, nothing is pressed and no one is switched in
 export const replayScriptedMinute = (minute: ReturnType<typeof createScriptedMinute>): void => {
   const {
     characterController,

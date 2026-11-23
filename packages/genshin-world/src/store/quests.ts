@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot
+   reject and nothing waits on it */
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestChapter } from "#src/models/quest/QuestChapter";
@@ -30,10 +31,10 @@ const readQuestChaptersOrEmpty = (gameDataBaseUrl: string) =>
     },
   );
 
-// The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
-// One stays in the progress map at its last step, so the quests in progress are those started and not yet finished. Each
-// Quest event the world records is handed to every quest in progress, the steps and quests it finishes reach the
-// Achievements and the Travel Log, and a talk that ends starts each quest it offers
+// The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a
+// Finished One stays in the progress map at its last step, so the quests in progress are those started and not yet
+// Finished. Each Quest event the world records is handed to every quest in progress, the steps and quests it finishes
+// Reach the Achievements and the Travel Log, and a talk that ends starts each quest it offers
 export const useWorldQuestsStore = defineStore("world/quests", () => {
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
@@ -46,7 +47,8 @@ export const useWorldQuestsStore = defineStore("world/quests", () => {
       return progress !== undefined && !checkIsQuestFinished(quest, progress);
     }),
   );
-  // The targets the quests in progress name at their current steps, which the commissions hold places for and the sight leads trails to
+  // The targets the quests in progress name at their current steps, which the commissions hold places for and the sight
+  // Leads trails to
   const questTargetIds = computed(() =>
     questsInProgress.value.map((quest) => getQuestTargetId(quest, questProgressMap.value.get(quest.id))),
   );
@@ -67,8 +69,8 @@ export const useWorldQuestsStore = defineStore("world/quests", () => {
       ),
   );
   const trackedQuestId = ref("");
-  // The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and the
-  // Navigated one's objective, which its beam rises over
+  // The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and
+  // The Navigated one's objective, which its beam rises over
   const trackerQuest = computed(
     () => questsInProgress.value.find(({ id }) => id === trackedQuestId.value) ?? questsInProgress.value[0],
   );
@@ -78,7 +80,8 @@ export const useWorldQuestsStore = defineStore("world/quests", () => {
       ? getQuestTargetId(trackerQuest.value, questProgressMap.value.get(trackerQuest.value.id))
       : "",
   );
-  // A quest the player accepts from a Reputation request's offer starts at its first step, once, as the carried quests do
+  // A quest the player accepts from a Reputation request's offer starts at its first step, once, as the carried quests
+  // Do
   const acceptQuest = (questId: string) => {
     questProgressMap.value = startQuests(quests.value, questProgressMap.value, undefined, questChapters.value, questId);
   };

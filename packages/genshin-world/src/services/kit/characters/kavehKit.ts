@@ -9,11 +9,12 @@ import { findKitStance } from "#src/services/kit/effects/findKitStance";
 
 export const KAVEH_CHARACTER_ID = 10_000_081;
 
-// Constellation 4 raises each Bloom its character triggers by 60%, as gcsim (MIT) kaveh/cons.go's c4 does on AttackTagBloom
+// Constellation 4 raises each Bloom its character triggers by 60%, as gcsim (MIT) kaveh/cons.go's c4 does on
+// AttackTagBloom
 const CONSTELLATION_4 = 4;
 const BLOOM_DAMAGE_BONUS = 0.6;
-// Constellation 1: after Artistic Ingenuity, Kaveh gains 50% Dendro RES and 25% Incoming Healing Bonus for three seconds,
-// As the wiki gives it. gcsim (MIT) models only the healing, so the RES is the wiki's alone
+// Constellation 1: after Artistic Ingenuity, Kaveh gains 50% Dendro RES and 25% Incoming Healing Bonus for three
+// Seconds, As the wiki gives it. gcsim (MIT) models only the healing, so the RES is the wiki's alone
 const CONSTELLATION_1 = 1;
 const ARTISTIC_INGENUITY_DENDRO_RESISTANCE = 0.5;
 const ARTISTIC_INGENUITY_INCOMING_HEALING_BONUS = 0.25;

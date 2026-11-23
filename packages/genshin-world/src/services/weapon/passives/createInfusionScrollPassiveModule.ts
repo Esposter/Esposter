@@ -6,13 +6,13 @@ import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives
 import { takeOne } from "@esposter/shared";
 
 const INFUSION_SCROLL_STATUS_ID = "infusionScroll";
-// Provisional readings from the passive's text, which its numbers do not carry: two stacks at most, each lasting ten seconds
-// From the reaction that adds it, a stack restarting every stack's seconds with it
+// Provisional readings from the passive's text, which its numbers do not carry: two stacks at most, each lasting ten
+// Seconds From the reaction that adds it, a stack restarting every stack's seconds with it
 const INFUSION_SCROLL_MAXIMUM_STACKS = 2;
 const INFUSION_SCROLL_SECONDS = 10;
 
-// Infusion Scroll's Elemental DMG Bonus at its rank, which each reaction its wielder triggers adds a stack of, up to two,
-// Given to its wielder on every element
+// Infusion Scroll's Elemental DMG Bonus at its rank, which each reaction its wielder triggers adds a stack of, up to
+// Two, Given to its wielder on every element
 export const createInfusionScrollPassiveModule = (params: number[]): PassiveModule => {
   const bonusPerStack = takeOne(params, 0);
   return {

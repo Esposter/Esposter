@@ -8,9 +8,9 @@ import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 
-// Pays the rewards of the levels an offering reaches, in order: the Adventure EXP they give is returned for the Adventure
-// Rank to gain, as a forge order returns its own, and every other reward is paid in as a pick up pays it, what the bag
-// Has no room for returned to be dropped
+// Pays the rewards of the levels an offering reaches, in order: the Adventure EXP they give is returned for the
+// Adventure Rank to gain, as a forge order returns its own, and every other reward is paid in as a pick up pays it,
+// What the bag Has no room for returned to be dropped
 export const payOfferingLevels = (
   gainedLevels: OfferingLevel[],
   inventory: Inventory,

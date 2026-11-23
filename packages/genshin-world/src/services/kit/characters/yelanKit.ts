@@ -52,9 +52,9 @@ const ASCENSION_4_MAX_DAMAGE_BONUS = 0.5;
 export const YELAN_CHARACTER_ID = 10_000_060;
 
 const CONSTELLATION_1 = 1;
-// Constellation 2, as gcsim (MIT) yelan/burst.go gives it: each Exquisite Throw volley adds a hit of 14% of her Max HP on
-// The primary enemy, 17 frames after the volley and at most once each 1.8 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yelan/burst.go
+// Constellation 2, as gcsim (MIT) yelan/burst.go gives it: each Exquisite Throw volley adds a hit of 14% of her Max HP
+// On The primary enemy, 17 frames after the volley and at most once each 1.8 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yelan/burst.go`
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_HEALTH_SHARE = 0.14;
 const CONSTELLATION_2_HITMARK_SECONDS = toKitSeconds(17);
@@ -81,8 +81,8 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
     hitmarkSeconds: CONSTELLATION_2_HITMARK_SECONDS,
     talentMultiplier: CONSTELLATION_2_HEALTH_SHARE,
   };
-  // A volley of Exquisite Throws from a body, which from Constellation 2 adds the hit on the primary enemy once its interval
-  // Lapses
+  // A volley of Exquisite Throws from a body, which from Constellation 2 adds the hit on the primary enemy once its
+  // Interval Lapses
   const castExquisiteThrowVolley = (context: KitContext, body: KitBody, combatant: Combatant): void => {
     const { kitEffectState, primaryTarget } = context;
     castKitSummon(kitEffectState, body, combatant, exquisiteThrows, { attackTag: AttackTag.ElementalBurst });
@@ -101,8 +101,8 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
     });
   };
   return {
-    // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
-    // Ticks do not depend on where the body stands
+    // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the
+    // Field's Ticks do not depend on where the body stands
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { facing, height, position } = body;
@@ -160,8 +160,8 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
         source: ASCENSION_4_STATUS_ID,
       });
     },
-    // A Lingering Lifeline hit throws an Exquisite Throw from her body while the burst's field stands, as gcsim's marked
-    // Hit does while its burst status holds
+    // A Lingering Lifeline hit throws an Exquisite Throw from her body while the burst's field stands, as gcsim's
+    // Marked Hit does while its burst status holds
     skill: {
       hits: [
         {

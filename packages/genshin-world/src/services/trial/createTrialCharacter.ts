@@ -17,9 +17,10 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The level the trial's weapon is held at: the wiki's Character Trial builds are level-ninety blocks
 const TRIAL_WEAPON_LEVEL = 90;
 
-// The party member a trial fights with: its character at the trial's level, every combat talent at its template's talent
-// Level, the reliquaries its template names as the artifacts it wears, and the weapon its wiki build holds at level ninety.
-// None when no build is cited for the character, since a party member holds a weapon and there is none to give it
+// The party member a trial fights with: its character at the trial's level, every combat talent at its template's
+// Talent Level, the reliquaries its template names as the artifacts it wears, and the weapon its wiki build holds at
+// Level ninety. None when no build is cited for the character, since a party member holds a weapon and there is none to
+// Give it
 export const createTrialCharacter = (
   trial: Trial,
   { builds, reliquaries, templates }: Pick<CharacterTrialTables, "builds" | "reliquaries" | "templates">,

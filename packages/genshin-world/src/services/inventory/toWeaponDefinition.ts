@@ -3,8 +3,8 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { ItemCategory } from "genshin-interface/save";
 
-// A weapon in the bag as its table holds it: a weapon category entry of one, with no rank of its own, since its tab sorts
-// It by level and quality, and carrying the destroy rule and return its table gives
+// A weapon in the bag as its table holds it: a weapon category entry of one, with no rank of its own, since its tab
+// Sorts It by level and quality, and carrying the destroy rule and return its table gives
 export const toWeaponDefinition = (
   { destroyReturnMaterial, destroyReturnMaterialCount, destroyRule, id, rarity }: WeaponData,
   name: string,

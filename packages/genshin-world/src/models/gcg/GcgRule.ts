@@ -1,6 +1,7 @@
 import type { GcgReactionRule } from "#src/models/gcg/GcgReactionRule";
 
-// The duel rule a duel runs: how many cards a side draws at each end phase, its hand's limit, and the reactions it lists
+// The duel rule a duel runs: how many cards a side draws at each end phase, its hand's limit, and the reactions it
+// Lists
 export interface GcgRule {
   drawCount: number;
   handCardLimit: number;

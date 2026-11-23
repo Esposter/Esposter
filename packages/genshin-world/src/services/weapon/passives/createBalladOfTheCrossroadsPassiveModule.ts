@@ -19,9 +19,10 @@ const LUNAR_REACTIONS = [
   { reactionType: ReactionType.LunarCrystallize },
 ];
 
-// Ballad of the Crossroads at its rank: a Lunar reaction the wielder triggers restores it the rank's Energy and gives the
-// Sacred Wine effect for the rank's seconds, which raises its Max HP by the rank's percentage and the CRIT DMG of the Lunar
-// Reaction DMG it deals by the rank's amount. The whole effect is triggered at most once every the rank's cooldown in seconds
+// Ballad of the Crossroads at its rank: a Lunar reaction the wielder triggers restores it the rank's Energy and gives
+// The Sacred Wine effect for the rank's seconds, which raises its Max HP by the rank's percentage and the CRIT DMG of
+// The Lunar Reaction DMG it deals by the rank's amount. The whole effect is triggered at most once every the rank's
+// Cooldown in seconds
 export const createBalladOfTheCrossroadsPassiveModule = (params: number[]): PassiveModule => {
   const healthPercentage = takeOne(params, 0);
   const criticalDamageBonus = takeOne(params, 1);

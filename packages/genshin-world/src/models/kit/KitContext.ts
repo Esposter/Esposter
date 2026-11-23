@@ -16,8 +16,8 @@ import type { LocomotionState, Stamina } from "genshin-engine";
 
 // The world's combat state, which every call of a kit reads and writes: built once by useWorldCombat and written in
 // Place each step, it holds the character on the field as its combatant and the body it stands as, every built
-// Combatant of the deployed team by its id, the enemies with the tables they are priced by, the effects on the team, the
-// Events raised outside a kit's own calls, which the step sends in the order they were raised, the deployed team's
+// Combatant of the deployed team by its id, the enemies with the tables they are priced by, the effects on the team,
+// The Events raised outside a kit's own calls, which the step sends in the order they were raised, the deployed team's
 // Party, and the world's one seeded random source, so the world plays the same under the same seed. The step's own
 // Lists, the effects that ran out on it, the ores its reactions strike and the strikes it lands, are kept here too and
 // Emptied by their length, so a step where nothing lands makes nothing
@@ -33,7 +33,8 @@ export interface KitContext {
   // On a hit it takes
   isSkillHeld: boolean;
   kitEffectState: KitEffectState;
-  // The active character's locomotion state as the step's input gives it, which a kit reads to tell a dash or a jump from standing
+  // The active character's locomotion state as the step's input gives it, which a kit reads to tell a dash or a jump
+  // From standing
   locomotionState: LocomotionState;
   // The ores the step's reactions strike, each from where its reaction landed, sent once its strikes have landed
   oreStrikes: OreStrike[];
@@ -42,20 +43,21 @@ export interface KitContext {
   party: Party;
   // Where the drops a struck animal gives lie, given the animal and the drops it gives
   placeWildlifeDrops: (wildlife: Wildlife, droppedItems: DroppedItem[]) => void;
-  // The enemy the character on the field's last action that targeted turned to, as gcsim's primary target is the one its
-  // Attacks fall on, which a kit places a hit on that no action of its own targets. It outlasts its action and a swap, and
-  // Is let go once it dies or leaves the world, none until an action targets one
+  // The enemy the character on the field's last action that targeted turned to, as gcsim's primary target is the one
+  // Its Attacks fall on, which a kit places a hit on that no action of its own targets. It outlasts its action and a
+  // Swap, and Is let go once it dies or leaves the world, none until an action targets one
   primaryTarget?: Enemy | undefined;
   random: () => number;
   // The reactions the step's hits and ticks triggered on enemies, sent to the world once the step's strikes have landed
   reactionTriggers: KitReactionTrigger[];
-  // The character controller's stamina pool, which the team's kits spend from and a kit's effect restores to, written each step
+  // The character controller's stamina pool, which the team's kits spend from and a kit's effect restores to, written
+  // Each step
   stamina: Stamina;
   // The strikes the step lands, the summons' and then its own, which keep only those that struck an enemy once struck
   strikes: KitStrike[];
   // The birds and beasts in the world, each struck down by a hit its area reaches, as the enemies are
   wildlifeList: Wildlife[];
-  // The visuals the world draws over its scene: a spark and a number at each hit, a flash at a cast and at a reaction. The
-  // Step runs each one's life down and drops it once that runs out, and the effects layer draws the rest
+  // The visuals the world draws over its scene: a spark and a number at each hit, a flash at a cast and at a reaction.
+  // The Step runs each one's life down and drops it once that runs out, and the effects layer draws the rest
   worldEffects: WorldEffect[];
 }

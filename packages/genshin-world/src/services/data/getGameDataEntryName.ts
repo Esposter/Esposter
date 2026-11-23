@@ -3,8 +3,8 @@ import type { HostedAssetName } from "hosted-assets";
 import { gameDataLock } from "#src/services/data/gameDataLock";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The name an entry of an index is stored under: its index's own scope and extension, which the index's lock entry names, so
-// A reader and the walk over the lock name the same object
+// The name an entry of an index is stored under: its index's own scope and extension, which the index's lock entry
+// Names, so A reader and the walk over the lock name the same object
 export const getGameDataEntryName = (indexKey: string, sha256: string): HostedAssetName => {
   const indexObject = gameDataLock.indexes[indexKey];
   if (indexObject === undefined)

@@ -8,8 +8,8 @@ import {
   STARDREAD_NAME_TEXT_HASH,
 } from "#src/services/spiralAbyss/blessings/stardreadBlessing";
 
-// A reaction the world triggers on an enemy, handed to the module of the period blessing the chamber is in. A blessing without a
-// Module, or a chamber with none, leaves the state as it was
+// A reaction the world triggers on an enemy, handed to the module of the period blessing the chamber is in. A blessing
+// Without a Module, or a chamber with none, leaves the state as it was
 export const applyAbyssBlessingReaction = (
   blessing: AbyssPeriodBlessing | undefined,
   state: AbyssBlessingState,

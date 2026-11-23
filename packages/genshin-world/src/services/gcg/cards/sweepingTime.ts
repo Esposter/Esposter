@@ -13,8 +13,9 @@ const SWEEPING_TIME_ROUNDS = 2;
 const sweepingTimeReduction = createGcgElementCostReduction(SWEEPING_TIME_ID, Element.Geo, GcgSkillKind.NormalAttack);
 
 // Sweeping Time, a status on the character it is attached to, for two rounds: its Normal Attacks deal 2 more DMG, its
-// Physical DMG is converted to Geo DMG, and once a round its Normal Attack spends one Geo die less. The reduction is the
-// Holder's alone, since the cost reductions of the field are read for every character's cost, a standby holder's included
+// Physical DMG is converted to Geo DMG, and once a round its Normal Attack spends one Geo die less. The reduction is
+// The Holder's alone, since the cost reductions of the field are read for every character's cost, a standby holder's
+// Included
 export const sweepingTime: GcgCardModule = {
   ...sweepingTimeReduction,
   initialRounds: SWEEPING_TIME_ROUNDS,

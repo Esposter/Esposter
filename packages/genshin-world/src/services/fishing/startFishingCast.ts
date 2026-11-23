@@ -5,8 +5,9 @@ import type { FishRod } from "#src/models/fishing/FishRod";
 
 import { FishingPhase } from "#src/models/fishing/FishingPhase";
 
-// The cast a lure lands as: the fish drawn for it, the rod, the reel gear and the zone's travel it is fought with, and the
-// Bite, whose nibble is drawn by the caller from the fish's feeler times. The reel starts at the fish's hit points, not yet running
+// The cast a lure lands as: the fish drawn for it, the rod, the reel gear and the zone's travel it is fought with, and
+// The Bite, whose nibble is drawn by the caller from the fish's feeler times. The reel starts at the fish's hit points,
+// Not yet running
 export const startFishingCast = ({
   fish,
   gear,

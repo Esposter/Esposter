@@ -16,7 +16,8 @@ export const IMAGINARIUM_BLESSING_LEVEL_STATS: Readonly<ImaginariumStats> = {
 };
 // The multiple a special guest's Blessing Level stats are given at, twice a cast member's
 export const IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER = 2;
-// The percent an owned opening character takes more of its Max HP, ATK and DEF for the season, against a base of one hundred
+// The percent an owned opening character takes more of its Max HP, ATK and DEF for the season, against a base of one
+// Hundred
 export const IMAGINARIUM_OPENING_CHARACTER_BONUS_PERCENT = 20;
 export const IMAGINARIUM_PERCENT_BASE = 100;
 // The Stellas an act's star challenge gives, every reward of a run taking this many
@@ -26,18 +27,18 @@ export const IMAGINARIUM_STELLAS_PER_REWARD = 3;
 export const IMAGINARIUM_BATTLE_FLOWERS = 90;
 // The Alternate Cast members a Battle Event offers to join the Principal Cast, one of them chosen
 export const IMAGINARIUM_BATTLE_CHOICE_COUNT = 2;
-// The Fantasia Flowers a Companion: Select or Companion: Random event costs. The installed dump holds no Imaginarium table,
-// So Select's 80 is not read from it, and Random's is the wiki's
+// The Fantasia Flowers a Companion: Select or Companion: Random event costs. The installed dump holds no Imaginarium
+// Table, So Select's 80 is not read from it, and Random's is the wiki's
 export const IMAGINARIUM_COMPANION_FLOWER_PRICE = 80;
 // The Invite event: six characters of any element, offered for 100 Fantasia Flowers
 export const IMAGINARIUM_INVITE_COMPANION_EVENT: ImaginariumCompanionEvent = {
   flowerPrice: 100,
   pool: { offerCount: 6 },
 };
-// The chances to reroll the events a Mystery Cache's Surprise: Reroll! option gives, and the rerolls one reroll spends. The
-// Wiki gives no base count of rerolls and no price of one, so both are provisional
+// The chances to reroll the events a Mystery Cache's Surprise: Reroll! option gives, and the rerolls one reroll spends.
+// The Wiki gives no base count of rerolls and no price of one, so both are provisional
 export const IMAGINARIUM_REROLL_CHANCES = 2;
 export const IMAGINARIUM_REROLL_COST = 1;
-// The rewinds one rewind spends. The wiki gives no count of the rewinds a run holds, only that they are limited, so the run
-// States its count and one rewind costs one
+// The rewinds one rewind spends. The wiki gives no count of the rewinds a run holds, only that they are limited, so the
+// Run States its count and one rewind costs one
 export const IMAGINARIUM_REWIND_COST = 1;

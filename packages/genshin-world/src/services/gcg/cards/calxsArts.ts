@@ -4,8 +4,8 @@ import { takeOne } from "@esposter/shared";
 
 const CALXS_ARTS_STANDBY_LIMIT = 2;
 
-// Calx's Arts: one energy shifts from each of at most two standing characters on standby to the active character, while it
-// Has room for it
+// Calx's Arts: one energy shifts from each of at most two standing characters on standby to the active character, while
+// It Has room for it
 export const calxsArts: GcgCardModule = {
   canPlay: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

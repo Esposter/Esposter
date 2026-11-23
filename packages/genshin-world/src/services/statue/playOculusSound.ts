@@ -1,8 +1,8 @@
 import { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import { getStoredChannelGain } from "#src/services/menu/getStoredChannelGain";
 
-// Provisional: the game's own Oculus sound is not in the game data this recreation reads, so a short chime is synthesised
-// Until the owed minimap recording gives the game's sound, which then replaces it
+// Provisional: the game's own Oculus sound is not in the game data this recreation reads, so a short chime is
+// Synthesised Until the owed minimap recording gives the game's sound, which then replaces it
 let audioContext: AudioContext | undefined;
 
 export const playOculusSound = (): void => {

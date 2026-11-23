@@ -28,8 +28,8 @@ const disposeTileMesh = (mesh: Mesh) => {
   for (const child of mesh.children) if (child instanceof Mesh) child.geometry.dispose();
 };
 
-// The tiles the view holds, each as a streamed tile or, past the shadows' reach, a slot in its level's ring. The streamer asks
-// The pool for each tile the view wants and frees the one the view has moved on from
+// The tiles the view holds, each as a streamed tile or, past the shadows' reach, a slot in its level's ring. The
+// Streamer asks The pool for each tile the view wants and frees the one the view has moved on from
 export const useTerrainResidency = ({
   checkIsSettled,
   devRegistry,
@@ -53,9 +53,9 @@ export const useTerrainResidency = ({
   tileIndices: Uint16Array | Uint32Array;
 }) => {
   const { cellsPerSide, finestTileSize } = terrainOptions;
-  // The rings past the shadows' reach are one mesh a level, made as the level's first tile arrives: a far tile is written
-  // Into its level's ring as it arrives and freed from it as it leaves, so the frame never rebuilds a ring, and the
-  // Streamer holds the far tile by its key alone. Beside each ring, the tiles the view draws in it this frame
+  // The rings past the shadows' reach are one mesh a level, made as the level's first tile arrives: a far tile is
+  // Written Into its level's ring as it arrives and freed from it as it leaves, so the frame never rebuilds a ring, and
+  // The Streamer holds the far tile by its key alone. Beside each ring, the tiles the view draws in it this frame
   const ringMap = new Map<number, TerrainRing>();
   const ringDrawnKeysMap = new Map<number, number[]>();
   const getRing = (level: number): TerrainRing => {
@@ -95,10 +95,10 @@ export const useTerrainResidency = ({
       postTile(key, message);
     },
   });
-  // A region's ground arrives after the tiles over it may have been built, so each worker is sent the grounds so far ahead
-  // Of any tile asked of it after, and every tile held or generating whose heights an arriving ground reaches is asked for
-  // Again over them, each held one drawn until its replacement arrives. A tile past every arriving ground's reach would be
-  // Built again over the very heights it holds, so it is kept
+  // A region's ground arrives after the tiles over it may have been built, so each worker is sent the grounds so far
+  // Ahead Of any tile asked of it after, and every tile held or generating whose heights an arriving ground reaches is
+  // Asked for Again over them, each held one drawn until its replacement arrives. A tile past every arriving ground's
+  // Reach would be Built again over the very heights it holds, so it is kept
   watch(
     () => toValue(laidGrounds),
     (grounds, previousGrounds) => {
@@ -120,7 +120,8 @@ export const useTerrainResidency = ({
     if (tileStreamer.fail(key))
       console.error(`Terrain tile ${key} failed ${MAX_TILE_ATTEMPTS} times, so it is given up and drawn without`);
   };
-  // Ends the refresh once `checkIsViewSettled` says every tile round the eye is settled, so it is only asked while one is under way
+  // Ends the refresh once `checkIsViewSettled` says every tile round the eye is settled, so it is only asked while one
+  // Is under way
   const endRefresh = (checkIsViewSettled: () => boolean) => {
     if (refreshStart === undefined || !checkIsViewSettled()) return;
     performance.measure(`${LOAD_STEP_MEASURE_PREFIX}terrain-refresh`, {

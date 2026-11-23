@@ -7,8 +7,9 @@ import { takeOne } from "@esposter/shared";
 
 const WIND_UNATTAINED_SOURCE = "windUnattained";
 
-// The Wind Unattained at its rank: an Elemental Reaction triggered raises the wielder's ATK by the rank's percentage and its
-// Elemental Mastery by the rank's amount, each for the rank's seconds. Every reaction counts, the wielder's or a member's
+// The Wind Unattained at its rank: an Elemental Reaction triggered raises the wielder's ATK by the rank's percentage
+// And its Elemental Mastery by the rank's amount, each for the rank's seconds. Every reaction counts, the wielder's or
+// A member's
 export const createWindUnattainedPassiveModule = (params: number[]): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   const elementalMastery = takeOne(params, 1);

@@ -36,8 +36,8 @@ const createKleeCombatant = (constellationCount: number): Combatant => ({
 });
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-// The energy Klee and the Traveler beside her hold once the bomb of a charged attack of Klee's at the ascension lands the
-// CRIT hits given, as [Klee's, the Traveler's]
+// The energy Klee and the Traveler beside her hold once the bomb of a charged attack of Klee's at the ascension lands
+// The CRIT hits given, as [Klee's, the Traveler's]
 const landCriticalChargedAttacks = (ascension: number, criticalHitCount = 1): [number, number] => {
   const combatant: Combatant = { ...createKleeCombatant(0), ascension };
   const traveler: Combatant = { ...createKleeCombatant(0), characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };

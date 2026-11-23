@@ -6,8 +6,8 @@ import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
-// Dandelion Breeze, Jean's elemental burst: every character of the side heals for 2 HP, and a Dandelion Field is summoned (the
-// Wiki's Dandelion Breeze (Character Card Skill) and the card's text)
+// Dandelion Breeze, Jean's elemental burst: every character of the side heals for 2 HP, and a Dandelion Field is
+// Summoned (the Wiki's Dandelion Breeze (Character Card Skill) and the card's text)
 const DANDELION_BREEZE_HEAL = 2;
 
 export const dandelionBreeze: GcgSkillModule = {

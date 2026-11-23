@@ -23,7 +23,8 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 describe(createIsshinArtClarityPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
-  // Isshin Art Clarity with synthetic params: 180% ATK as the Gale's hit, 15% ATK for eight seconds, once every eight seconds
+  // Isshin Art Clarity with synthetic params: 180% ATK as the Gale's hit, 15% ATK for eight seconds, once every eight
+  // Seconds
   const isshinArtClarityPassiveModule = createIsshinArtClarityPassiveModule([1.8, 0.15, 8, 8]);
   const createDamageTaken = (attackTag: AttackTag, striker: Combatant = wielder) => ({
     attackTag,

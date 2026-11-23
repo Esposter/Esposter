@@ -19,31 +19,31 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // Of mean difference and 0.5942 to 0.5878 FLIP; the dusk's stone light is still solved under the old direction
 const DUSK_LIGHT_DIRECTION = new Vector3(0.493, 0.763, 0.418);
 // Where the night's moonlight falls from, apart from where the moon shows. Its shadows set it: the solve over the door
-// Session's shadows (genshin:parity shadows, after the night shadows' strength was fitted to the frame) casts their edges
-// 23.35 px from the reference's, against 137.44 px from the moon's own direction, 113.3 degrees away. What is left is
-// The casters' and the softness's, never a further solve
+// Session's shadows (genshin:parity shadows, after the night shadows' strength was fitted to the frame) casts their
+// Edges 23.35 px from the reference's, against 137.44 px from the moon's own direction, 113.3 degrees away. What is
+// Left is The casters' and the softness's, never a further solve
 const NIGHT_LIGHT_DIRECTION = new Vector3(-0.67, 0.57, -0.476).normalize();
 
-// Each hour's sky is solved as the game's sky shader draws it over the clear sky of every reference at that hour at once
-// (genshin:parity sky, its clouds left out by the cloud mask), its colours with its own shape, no halo under none and
-// No gradient colour under the tone curve's floor, the night's colour away from the moon standing in red under its
+// Each hour's sky is solved as the game's sky shader draws it over the clear sky of every reference at that hour at
+// Once (genshin:parity sky, its clouds left out by the cloud mask), its colours with its own shape, no halo under none
+// And No gradient colour under the tone curve's floor, the night's colour away from the moon standing in red under its
 // Black at none, each pixel weighed by how steeply the tone curve shows it: solved in scene colour alone, the curve's
 // Inverse took a pixel near white to many times its neighbours' colour, and the day's horizon came out pure blue.
-// Solved on its title alone, the day's sky drew its door frame's patch of sky three hundredths worse. The haze
-// Over the cloud sea (the mean of its brightest two samples low in the frame) is read off each reference too. The
-// Day's and the dusk's cloud colours are solved by their spread against the recordings' (genshin:parity clouds); the
-// Dawn's and the night's so solved score their frames worse, so theirs stay read off the references. The stone's light
-// Is solved apart, as the game's deferred pass casts it (`login/stoneLight`), so the sun light here lends the
-// Stone only its direction and its shadow, and the hemisphere lights nothing of the login's. Each hour's haze, its
-// Density at the cloud sea's top and how fast it thins with height, is solved over that hour's frames under a light
-// Left free in each part's bins (genshin:parity calibrate --haze): the dawn's and the night's are a wall hiding all
-// The stone under the cloud sea's billows, a few metres under the walkway, and none above it. The day's and the
-// Dusk's, which that measure does not settle, stay as solved with the light: the dusk's rises gently and hides no more
-// Than its most opacity, its far towers darker than a haze hiding all of them draws, and the day's thins slowly from a
-// Light haze and hides all, its title scoring better and its phone door frame a little worse. The night passes
-// Through its own white balance before the tone curve, solved where its stone's light lies flattest over both its
-// Frames (genshin:parity balance), which takes the red of its moonlit stone under the curve's black as the game's
-// _WhiteBalanceMat does, its stone light solved under it
+// Solved on its title alone, the day's sky drew its door frame's patch of sky three hundredths worse. The haze Over the
+// Cloud sea (the mean of its brightest two samples low in the frame) is read off each reference too. The Day's and the
+// Dusk's cloud colours are solved by their spread against the recordings' (genshin:parity clouds); the Dawn's and the
+// Night's so solved score their frames worse, so theirs stay read off the references. The stone's light Is solved
+// Apart, as the game's deferred pass casts it (`login/stoneLight`), so the sun light here lends the Stone only its
+// Direction and its shadow, and the hemisphere lights nothing of the login's. Each hour's haze, its Density at the
+// Cloud sea's top and how fast it thins with height, is solved over that hour's frames under a light Left free in each
+// Part's bins (genshin:parity calibrate --haze): the dawn's and the night's are a wall hiding all The stone under the
+// Cloud sea's billows, a few metres under the walkway, and none above it. The day's and the Dusk's, which that measure
+// Does not settle, stay as solved with the light: the dusk's rises gently and hides no more Than its most opacity, its
+// Far towers darker than a haze hiding all of them draws, and the day's thins slowly from a Light haze and hides all,
+// Its title scoring better and its phone door frame a little worse. The night passes Through its own white balance
+// Before the tone curve, solved where its stone's light lies flattest over both its Frames (genshin:parity balance),
+// Which takes the red of its moonlit stone under the curve's black as the game's _WhiteBalanceMat does, its stone light
+// Solved under it
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf5efe8),

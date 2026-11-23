@@ -15,10 +15,11 @@ const PALE_FLAME_COOLDOWN_ID = "paleFlameCooldown";
 // The most stacks the set gives, as its text says
 const MAXIMUM_STACKS = 2;
 
-// Pale Flame. Its four-piece bonus gives its wearer a stack on each Elemental Skill hit the wearer lands on an enemy while it is the
-// Active character, no more than once every third param's seconds. A stack raises ATK by the first param, up to two stacks, and two
-// Stacks add the fourth param's Physical DMG on top of the two-piece's. The stacks share one timer of the second param's seconds, which
-// Each stack gained restarts, and they end together, as gcsim's stat mod does. The two-piece bonus is attributes only
+// Pale Flame. Its four-piece bonus gives its wearer a stack on each Elemental Skill hit the wearer lands on an enemy
+// While it is the Active character, no more than once every third param's seconds. A stack raises ATK by the first
+// Param, up to two stacks, and two Stacks add the fourth param's Physical DMG on top of the two-piece's. The stacks
+// Share one timer of the second param's seconds, which Each stack gained restarts, and they end together, as gcsim's
+// Stat mod does. The two-piece bonus is attributes only
 export const createPaleFlameSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const attackBonusPerStack = takeOne(bonus.params, 0);
   const seconds = takeOne(bonus.params, 1);

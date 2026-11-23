@@ -111,8 +111,8 @@ describe(createFocusPassiveModule, () => {
       return STURDY_HEALTH - sturdyEnemy.health;
     };
 
-    // A roll of 10% lands under the stacked 20% CRIT Rate, so the reaction is critical and deals twice the damage that a
-    // Roll of 99%, which lands over it, does
+    // A roll of 10% lands under the stacked 20% CRIT Rate, so the reaction is critical and deals twice the damage that
+    // A Roll of 99%, which lands over it, does
     expect(getStackedDamage(0.1)).toBeCloseTo(4687.8052);
     expect(getStackedDamage(0.99)).toBeCloseTo(2343.9026);
   });

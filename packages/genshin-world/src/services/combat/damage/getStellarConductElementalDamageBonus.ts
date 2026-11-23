@@ -5,8 +5,8 @@ import {
 } from "#src/services/combat/damage/constants";
 import { getStellarConductByHits } from "#src/services/combat/damage/getStellarConductByHits";
 
-// The Cryo and Electro DMG Bonus of a character in a Starlight Prism's field by the hits it recorded: 20% with none, otherwise
-// 28% plus 1% for each hit up to 12, from the wiki's Stellar-Conduct page
+// The Cryo and Electro DMG Bonus of a character in a Starlight Prism's field by the hits it recorded: 20% with none,
+// Otherwise 28% plus 1% for each hit up to 12, from the wiki's Stellar-Conduct page
 export const getStellarConductElementalDamageBonus = (recordedHits: number): number =>
   getStellarConductByHits(
     recordedHits,

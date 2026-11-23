@@ -33,8 +33,8 @@ import { GameTextKey } from "genshin-text";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-// Every prompt the world offers, joined from the sources that hold them and read beside the character's body: what is in
-// Reach is listed, selected and acted on as the key is pressed. Each prompt stands on the ground beneath its point
+// Every prompt the world offers, joined from the sources that hold them and read beside the character's body: what is
+// In Reach is listed, selected and acted on as the key is pressed. Each prompt stands on the ground beneath its point
 export const useWorldInteractables = ({
   blacksmithPlace,
   characterBody,
@@ -66,7 +66,8 @@ export const useWorldInteractables = ({
   const worldMapStore = useWorldMapStore();
   const { lockedJumpLandmarks, unlockedLandmarks } = storeToRefs(worldMapStore);
   const worldSessionStore = useWorldSessionStore();
-  // The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
+  // The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's
+  // Centre
   const domainArenaInteractables = computed<Interactable[]>(() => {
     if (!domainArena.value) return [];
     const { x, z } = domainArena.value.center;
@@ -90,7 +91,8 @@ export const useWorldInteractables = ({
         : []),
     ];
   });
-  // The offered viewpoints, each a prompt on the ground beneath its place, named by its own name in the reader's language
+  // The offered viewpoints, each a prompt on the ground beneath its place, named by its own name in the reader's
+  // Language
   const viewpointInteractables = computed<Interactable[]>(() =>
     archiveData.value
       ? computeViewpointInteractables(
@@ -103,7 +105,8 @@ export const useWorldInteractables = ({
   );
   const interactables = computed<Interactable[]>(() => {
     if (homeRealmVisit.value) return computeHomeRealmInteractables(worldSessionStore.gameText);
-    // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
+    // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of
+    // Cape Oath
     const { x: abyssX, z: abyssZ } = ABYSS_ENTRANCE_POSITION;
     const abyssEntrance: Interactable = {
       id: ABYSS_ENTRANCE_INTERACTABLE_ID,

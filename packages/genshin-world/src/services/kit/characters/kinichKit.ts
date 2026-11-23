@@ -29,18 +29,20 @@ const NIGHTSOUL_MAXIMUM = 20;
 const NIGHTSOUL_BLESSING_SECONDS = toKitSeconds(10 * 60 + 10);
 // One point every thirty frames while the blessing lasts, two a second, as gcsim skill.go timePassGenerateNSPoints does
 const NIGHTSOUL_POINTS_PER_SECOND = 2;
-// Each Loop Shot gains three points as it starts, as gcsim (MIT) kinich/skill.go loopShotGenerateNSPoints does (line 176)
+// Each Loop Shot gains three points as it starts, as gcsim (MIT) kinich/skill.go loopShotGenerateNSPoints does (line
+// 176)
 const LOOP_SHOT_POINTS = 3;
-// The blind spot appears thirty frames after the press, as gcsim kinich/skill.go blindSpotAppearanceDelays does (line 32),
-// And Kinich standing in it gives four points, as attack.go does (line 153). Its window is thirty-five degrees either side
-// Of its centre, as attack.go's blindSpotBoundary has it (line 38)
+// The blind spot appears thirty frames after the press, as gcsim kinich/skill.go blindSpotAppearanceDelays does (line
+// 32), And Kinich standing in it gives four points, as attack.go does (line 153). Its window is thirty-five degrees
+// Either side Of its centre, as attack.go's blindSpotBoundary has it (line 38)
 const BLIND_SPOT_APPEARANCE_FRAMES = 30;
 const BLIND_SPOT_POINTS = 4;
 const BLIND_SPOT_HALF_ANGLE = (35 * Math.PI) / 180;
 
 // The blind spot lies a quarter turn either side of Kinich's bearing from the enemy his press turns to, on the side the
-// Random source draws, as gcsim's createBlindSpot does, at the distance he stands from it. Its circle is the chord of its
-// Window, which Kinich's body must stand within on the frame the blind spot is due, or any frame after it until it is filled
+// Random source draws, as gcsim's createBlindSpot does, at the distance he stands from it. Its circle is the chord of
+// Its Window, which Kinich's body must stand within on the frame the blind spot is due, or any frame after it until it
+// Is filled
 const castBlindSpot = (context: KitContext, target: Enemy) => {
   const {
     activeCombatant: { characterId },
@@ -80,16 +82,17 @@ const gainLoopShotPoints = (context: KitContext) => {
   generateKitNightsoulPoints(context, LOOP_SHOT_POINTS, NIGHTSOUL_MAXIMUM);
 };
 
-// Kinich's behaviour: the burst calls the Ajaw as it is cast, a summon at the body whose lasers' intervals are drawn from
-// The world's seeded random source then, as gcsim draws each as the laser before it fires. Its schedule is counted in
-// Frames, as gcsim counts it. His skill's press enters the Nightsoul Blessing with no points, which gain two a second up
-// To twenty while it lasts, and his Loop Shots replace his normal attacks in it, each gaining three points as it starts.
-// The press also places the blind spot on the enemy it turns to, which Kinich standing in gives four points to.
-// Not built: the press inside the blessing, the Scalespiker Cannon, which spends the points and deals the blessing's hits,
-// And waits on the cooldown bypass and the points gate. Constellation 1 needs Movement SPD after a mid-air swing, which no
-// Attribute carries, and Cannon CRIT DMG. Constellation 2 needs the Dendro RES cut on his skill's hits, and the first
-// Scalespiker shot after the blessing. Constellation 4 needs the Nightsoul's Blessing, its Loop Shots and Scalespiker's
-// Energy, which wait on it. Constellation 6 needs its bounce hit, which the kit does not build
+// Kinich's behaviour: the burst calls the Ajaw as it is cast, a summon at the body whose lasers' intervals are drawn
+// From The world's seeded random source then, as gcsim draws each as the laser before it fires. Its schedule is counted
+// In Frames, as gcsim counts it. His skill's press enters the Nightsoul Blessing with no points, which gain two a
+// Second up To twenty while it lasts, and his Loop Shots replace his normal attacks in it, each gaining three points as
+// It starts. The press also places the blind spot on the enemy it turns to, which Kinich standing in gives four points
+// To. Not built: the press inside the blessing, the Scalespiker Cannon, which spends the points and deals the
+// Blessing's hits, And waits on the cooldown bypass and the points gate. Constellation 1 needs Movement SPD after a
+// `mid-air` swing, which no Attribute carries, and Cannon CRIT DMG. Constellation 2 needs the Dendro RES cut on his
+// Skill's hits, and the first Scalespiker shot after the blessing. Constellation 4 needs the Nightsoul's Blessing, its
+// Loop Shots and Scalespiker's Energy, which wait on it. Constellation 6 needs its bounce hit, which the kit does not
+// Build
 export const createKinichKitBehaviour = ({
   readFramesList,
   readHitFields,

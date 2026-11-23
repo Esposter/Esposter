@@ -14,8 +14,8 @@ import { payGcgCost } from "#src/services/gcg/payGcgCost";
 import { takeOne } from "@esposter/shared";
 
 // Pays the costs of a skill a character uses or a card played: the field's reductions are taken off the costs first, in
-// The order the field lists them, then the dice chosen pay what is left and the energy the skill's own costs name is spent.
-// A refused payment leaves the dice and energy as they were, and a paid one tells each reduction that applied
+// The order the field lists them, then the dice chosen pay what is left and the energy the skill's own costs name is
+// Spent. A refused payment leaves the dice and energy as they were, and a paid one tells each reduction that applied
 export const payGcgSubjectCost = (
   context: GcgEffectContext,
   characterIndex: number,
@@ -73,9 +73,9 @@ export const payGcgSubjectCost = (
   return true;
 };
 
-// The cards a cost's reductions are read from: the field of the character paying, then every other character's equipments
-// And statuses, since a side-wide card reduces a cost whoever pays it (a switch's incoming character among them). A card that
-// Reduces only its own holder's costs checks that the holder is the active character, the one paying
+// The cards a cost's reductions are read from: the field of the character paying, then every other character's
+// Equipments And statuses, since a side-wide card reduces a cost whoever pays it (a switch's incoming character among
+// Them). A card that Reduces only its own holder's costs checks that the holder is the active character, the one paying
 const listGcgCostCards = (side: GcgSideState, characterIndex: number): GcgZoneCard[] => [
   ...listGcgFieldCards(side, characterIndex),
   ...side.characters.flatMap((character, index) =>

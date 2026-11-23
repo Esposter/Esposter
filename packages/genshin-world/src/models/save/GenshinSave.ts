@@ -70,8 +70,9 @@ export const genshinSaveSchema = z
     ),
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
-    // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its blossom's
-    // Claim or a teleport out of its area after the defeat, so a reload keeps it down. Absent until a boss is defeated
+    // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its
+    // Blossom's Claim or a teleport out of its area after the defeat, so a reload keeps it down. Absent until a boss is
+    // Defeated
     bossDefeats: bossDefeatSaveSchema.optional(),
     cardGameExp: cardGameExpSaveSchema,
     cardGameRewardedGameIds: createUniquePrimitiveArraySchema(z.int().positive()).max(GCG_REWARDABLE_GAME_COUNT),
@@ -94,8 +95,8 @@ export const genshinSaveSchema = z
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,
-    // The fish caught from each stock that are not yet back, by the stock's key, each held until its seventy-two hours have
-    // Run. Absent while no fish is caught from any stock
+    // The fish caught from each stock that are not yet back, by the stock's key, each held until its seventy-two hours
+    // Have Run. Absent while no fish is caught from any stock
     fishingCatchAts: fishingCatchesSaveSchema.optional(),
     // The forge's learned recipe ids, absent until a recipe is learned from a diagram
     forging: forgingSaveSchema.optional(),
@@ -103,16 +104,18 @@ export const genshinSaveSchema = z
     homePlacements: homePlacementSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
     homePlantings: homePlantingSaveSchema,
-    // The realm's progress: the Trust EXP, blueprints, queues, companions, one-time rewards given, and the stores as they stood
+    // The realm's progress: the Trust EXP, blueprints, queues, companions, one-time rewards given, and the stores as
+    // They stood
     homeProgress: homeProgressSaveSchema,
     inventory: inventorySaveSchema,
     // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
     // (empty before the day's first investigation)
     investigationDay: investigationDaySaveSchema,
-    // The last teleport into each area, which holds a boss down until a teleport lands outside its area after its defeat.
-    // Absent before the player's first teleport
+    // The last teleport into each area, which holds a boss down until a teleport lands outside its area after its
+    // Defeat. Absent before the player's first teleport
     lastTeleportAts: lastTeleportsSaveSchema.optional(),
-    // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves on
+    // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves
+    // On
     longTermEncounterPoints: longTermEncounterPointsSaveSchema,
     // The mails the player holds, each once per delivery by its id and when it was delivered, with whether it was
     // Claimed and read
@@ -139,7 +142,8 @@ export const genshinSaveSchema = z
     reputationRequestClaimedAts: z
       .array(z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH))
       .max(REPUTATION_WEEKLY_CLAIM_LIMIT),
-    // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
+    // The goods bought that still count against a limit, each good once, with how many were bought in its refresh
+    // Window
     shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT),
     // The Spiral Abyss's progress by cycle: the Corridor's one cycle, and each Moon Spire period by its id
     spiralAbyss: spiralAbyssSaveSchema,
@@ -151,7 +155,8 @@ export const genshinSaveSchema = z
     travelerBirthday: travelerBirthdaySaveSchema.optional(),
     // The name the player chose for the Traveler, empty while none is chosen
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
-    // The Trounce Blossoms the defeated bosses left, each by the spawn key its boss fell under, with the newest claims kept
+    // The Trounce Blossoms the defeated bosses left, each by the spawn key its boss fell under, with the newest claims
+    // Kept
     trounceBlossoms: trounceBlossomsSaveSchema.optional(),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,

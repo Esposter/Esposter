@@ -351,7 +351,8 @@ describe(stepKit, () => {
     expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBeUndefined();
   });
 
-  // A charged attack started with its hold reached and its strike ended, read off the start alone, so no strike's timing decides it
+  // A charged attack started with its hold reached and its strike ended, read off the start alone, so no strike's
+  // Timing decides it
   const startChargedAttack = (kit: Kit, stamina: Stamina) =>
     startNextKitAction(
       { ...createKitState(), attackHeldSeconds: CHARGED_ATTACK_HOLD_SECONDS },
@@ -714,8 +715,8 @@ describe(stepKit, () => {
     stepFor(2);
     expect(kitState.action).toBeUndefined();
   });
-  // Bennett's kit, whose skill has holds, for a hold on it: its character, the kit's skill held for the steps given and then
-  // Released. The kit completes its charge after the hold's step given, or before the hold begins when asked to
+  // Bennett's kit, whose skill has holds, for a hold on it: its character, the kit's skill held for the steps given and
+  // Then Released. The kit completes its charge after the hold's step given, or before the hold begins when asked to
   const BENNETT_COMBATANT: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

@@ -16,7 +16,8 @@ const ELEMENT_BONUS_LINE_MAP: Readonly<Record<Element, AttributeLine>> = {
   [Element.Pyro]: { attribute: Attribute.AttackPercent, value: 0.2 },
 };
 
-// Anemo and Pyro the Traveler holds before the quest is done, so their bonuses come with it rather than with a resonance
+// Anemo and Pyro the Traveler holds before the quest is done, so their bonuses come with it rather than with a
+// Resonance
 const ELEMENTS_HELD_BEFORE_HOMECOMING: Element[] = [Element.Anemo, Element.Pyro];
 
 // The bonus line of each element the Traveler holds once Welkin Moon's Homecoming is done: Anemo and Pyro, and each

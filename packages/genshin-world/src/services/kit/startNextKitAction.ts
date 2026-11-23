@@ -46,8 +46,8 @@ export const startNextKitAction = (
     const chargedAttackAction = kit.chargedAttackVariant?.checkIsActive(context)
       ? kit.chargedAttackVariant.action
       : kit.chargedAttack;
-    // A charged attack still needs some stamina in the pool when its cost is cut to none, as the wiki's note on Bloodstained
-    // Chivalry says, so an empty pool starts none
+    // A charged attack still needs some stamina in the pool when its cost is cut to none, as the wiki's note on
+    // Bloodstained Chivalry says, so an empty pool starts none
     if (
       checkCanStartKitAction(chargedAttackAction, context) &&
       stamina.value > 0 &&

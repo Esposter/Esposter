@@ -3,8 +3,8 @@ import type { TransformativeReactionType } from "#src/models/combat/Transformati
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 
-// A transformative reaction's damage with its creator's party reaction bonuses: the DMG Bonus inside its multiplier, and the
-// Flat base added before the enemy's RES, as strikeReactionDamage takes it
+// A transformative reaction's damage with its creator's party reaction bonuses: the DMG Bonus inside its multiplier,
+// And the Flat base added before the enemy's RES, as strikeReactionDamage takes it
 export const getPartyTransformativeDamage = (
   reactionType: TransformativeReactionType,
   level: number,

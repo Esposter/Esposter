@@ -22,7 +22,8 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 describe(createOceanicVictoryPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
-  // Oceanic Victory with synthetic params: 20% burst DMG, a certain chance, a 150% multiplier and a fifteen-second cooldown
+  // Oceanic Victory with synthetic params: 20% burst DMG, a certain chance, a 150% multiplier and a fifteen-second
+  // Cooldown
   const oceanicVictoryPassiveModule = createOceanicVictoryPassiveModule([0.2, 1, 1.5, 15]);
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,

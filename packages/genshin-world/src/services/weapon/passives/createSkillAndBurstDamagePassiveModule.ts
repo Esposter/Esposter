@@ -3,7 +3,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { takeOne } from "@esposter/shared";
 
-// The Stringless at its rank: an Elemental Skill or Elemental Burst its wielder deals is raised by the rank's percentage of DMG
+// The Stringless at its rank: an Elemental Skill or Elemental Burst its wielder deals is raised by the rank's
+// Percentage of DMG
 export const createSkillAndBurstDamagePassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   return {

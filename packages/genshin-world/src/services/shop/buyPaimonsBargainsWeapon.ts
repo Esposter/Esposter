@@ -9,9 +9,9 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { checkIsCurrencyOnlyGood } from "#src/services/shop/checkIsCurrencyOnlyGood";
 import { payShopGoodCosts } from "#src/services/shop/payShopGoodCosts";
 
-// The wallet, bag and purchases after a weapon of Paimon's Bargains is bought at `now`, the weapon being the good's item id,
-// Its price taken and the weapon put in the bag whole. Undefined where the good is sold out this month, the wallet cannot pay
-// Its price, or the bag cannot take the weapon
+// The wallet, bag and purchases after a weapon of Paimon's Bargains is bought at `now`, the weapon being the good's
+// Item id, Its price taken and the weapon put in the bag whole. Undefined where the good is sold out this month, the
+// Wallet cannot pay Its price, or the bag cannot take the weapon
 export const buyPaimonsBargainsWeapon = (
   wallet: Wallet,
   inventory: Inventory,

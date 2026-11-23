@@ -60,11 +60,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The game's settings over the blurred world: the breadcrumb of the screen's name and its tab in the header, the tabs
-       Down the left and the open tab's rows on the right under their headings, scrolling under the header with a thumb
-       Beside them. A row is its label with its value: the graphics quality and the game language open a list of the
-       World's own, a volume the world backs sets its level, and every other row is drawn disabled at the value the clip
-       Shows -->
+  <!-- The game's settings over the blurred world: the breadcrumb of the screen's name and its tab in the header,
+    the tabs Down the left and the open tab's rows on the right under their headings, scrolling under the header
+    with a thumb Beside them. A row is its label with its value: the graphics quality and the game language open a
+    list of the World's own, a volume the world backs sets its level, and every other row is drawn disabled at the
+    value the clip Shows -->
   <GameScreen class="settings" role="dialog" aria-modal="true" :aria-label="shownGameText[GameTextKey.Settings]">
     <div class="header" />
     <svg class="small-gear" aria-hidden="true" viewBox="0 0 27 27">

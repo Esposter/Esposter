@@ -19,18 +19,18 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
-// Measured: gcsim v2.47.2 (MIT) rosaria/burst.go, Rites of Termination's field ticks every 120 frames from 120 after the
-// Lance, and Constellation 2 adds 240 frames to it. Provisional: gcsim's field lasts 510 frames, half a second past the
-// Table's 8 seconds, which this adds to it as Diona's does
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/burst.go
+// Measured: gcsim v2.47.2 (MIT) rosaria/burst.go, Rites of Termination's field ticks every 120 frames from 120 after
+// The Lance, and Constellation 2 adds 240 frames to it. Provisional: gcsim's field lasts 510 frames, half a second past
+// The Table's 8 seconds, which this adds to it as Diona's does
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/burst.go`
 const RITES_TICK_INTERVAL_SECONDS = 2;
 const RITES_FIELD_ID = "rosaria-rites-of-termination-field";
 const RITES_FIELD_MARGIN_SECONDS = 0.5;
 const RITES_CONSTELLATION = 2;
 const RITES_CONSTELLATION_SECONDS = 4;
-// Measured: gcsim v2.47.2 (MIT) rosaria/asc.go, Ascension 4 gives each other member of the team 15% of her own Crit Rate,
-// At most 15%, for 600 frames from the cast
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/asc.go
+// Measured: gcsim v2.47.2 (MIT) rosaria/asc.go, Ascension 4 gives each other member of the team 15% of her own Crit
+// Rate, At most 15%, for 600 frames from the cast
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/asc.go`
 const ASCENSION_4 = 4;
 const ASCENSION_4_CRIT_RATE_SHARE = 0.15;
 const ASCENSION_4_CRIT_RATE_MAX = 0.15;
@@ -45,9 +45,9 @@ const REGINA_PROBATIONUM_CRITICAL_RATE = 0.12;
 const REGINA_PROBATIONUM_SECONDS = 5;
 const REGINA_PROBATIONUM_SOURCE = "rosaria-regina-probationum";
 
-// Constellation 1, as gcsim v2.47.2 (MIT) rosaria/cons.go gives it: a CRIT hit of hers on the field gives her 10% Normal
-// ATK SPD and 10% Normal Attack DMG for 4 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/cons.go
+// Constellation 1, as gcsim v2.47.2 (MIT) rosaria/cons.go gives it: a CRIT hit of hers on the field gives her 10%
+// Normal ATK SPD and 10% Normal Attack DMG for 4 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/cons.go`
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_ATTACK_SPEED_BONUS = 0.1;
 const CONSTELLATION_1_DAMAGE_BONUS = 0.1;
@@ -71,11 +71,12 @@ const CONSTELLATION_6_STATUS: EnemyStatus = {
 export const ROSARIA_CHARACTER_ID = 10_000_045;
 
 // Rosaria's behaviour: Rites of Termination places a field where she casts it, ticking from the lance on, each tick a
-// Summon cast where the lance landed, for the table's seconds, longer from Constellation 2. Ascension 4's Crit Rate share
-// Is built on the cast. From Ascension 1 Ravaging Confession's first hit gives her CRIT Rate, as gcsim has the hit land from behind.
-// The kit does too, since her teleport, which decides whether a hit lands from behind, is not built. Her Constellations 1,
-// 4 and 6 are built on the kit's own CRIT events, its skill's status and the enemies' Physical RES
-// Ascension 4: the cast's Crit Rate for every other member of the deployed team, from her own Crit Rate as it stands
+// Summon cast where the lance landed, for the table's seconds, longer from Constellation 2. Ascension 4's Crit Rate
+// Share Is built on the cast. From Ascension 1 Ravaging Confession's first hit gives her CRIT Rate, as gcsim has the
+// Hit land from behind. The kit does too, since her teleport, which decides whether a hit lands from behind, is not
+// Built. Her Constellations 1, 4 and 6 are built on the kit's own CRIT events, its skill's status and the enemies'
+// Physical RES Ascension 4: the cast's Crit Rate for every other member of the deployed team, from her own Crit Rate as
+// It stands
 const addAscension4CritRate = (combatant: Combatant, kitEffectState: KitEffectState, party: Party): void => {
   const amount = Math.min(
     ASCENSION_4_CRIT_RATE_MAX,
@@ -131,8 +132,8 @@ export const createRosariaKitBehaviour = ({ kit, readHit, readParameter }: KitRe
       checkIsKitStatusActive(effects, ROSARIA_CHARACTER_ID, CONSTELLATION_1_STATUS_ID)
         ? CONSTELLATION_1_DAMAGE_BONUS
         : 0,
-    // A CRIT hit of hers on the field starts Constellation 1's status and, from Ravaging Confession while Constellation 4's
-    // Status stands, gives her its Energy once
+    // A CRIT hit of hers on the field starts Constellation 1's status and, from Ravaging Confession while Constellation
+    // 4's Status stands, gives her its Energy once
     onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
       if (
         event.kind !== KitEventKind.DamageTaken ||
@@ -170,8 +171,8 @@ export const createRosariaKitBehaviour = ({ kit, readHit, readParameter }: KitRe
           },
         },
       ],
-      // Constellation 4's status is armed as each cast starts, and lasts through the skill's second hit, so the first CRIT
-      // Hit of the cast gives its Energy and no later one does
+      // Constellation 4's status is armed as each cast starts, and lasts through the skill's second hit, so the first
+      // CRIT Hit of the cast gives its Energy and no later one does
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         if (combatant.constellationCount >= CONSTELLATION_4)
           addKitStatus(kitEffectState, combatant.characterId, {

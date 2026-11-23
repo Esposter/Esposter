@@ -10,10 +10,10 @@ import { gainAdventureExp } from "#src/services/adventureRank/gainAdventureExp";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 
 // The routing every claim's rewards share: the Adventure EXP the claim gives, taken into the rank with the Mora its EXP
-// Pays past rank 60 going into the wallet, and the items taken in as `grantRewardItems` takes them. The Adventure EXP is
-// The caller's amount, the EXP its resin spent gives or the EXP its items hold, and is not read off the items here. The
-// Companionship EXP is the caller's too, since it goes to the deployed team, which this does not hold. Undefined where the
-// Bag cannot take an item whole, so nothing is routed
+// Pays past rank 60 going into the wallet, and the items taken in as `grantRewardItems` takes them. The Adventure EXP
+// Is The caller's amount, the EXP its resin spent gives or the EXP its items hold, and is not read off the items here.
+// The Companionship EXP is the caller's too, since it goes to the deployed team, which this does not hold. Undefined
+// Where the Bag cannot take an item whole, so nothing is routed
 export const routeRewardItems = (
   adventureRankTables: AdventureRankTables,
   adventureExp: number,

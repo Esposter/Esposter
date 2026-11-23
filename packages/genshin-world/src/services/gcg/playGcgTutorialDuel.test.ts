@@ -27,7 +27,8 @@ const playGcgDuel = (decks: Parameters<typeof createGcgDuel>[0], rule: GcgDuel["
 
 describe("the duels a player meets, each between two decks read from the game data", () => {
   // The tutorial deck against itself, the opponent decks 3 and 4, the tutorial's opponent decks 30111 and 30112, the
-  // Player's deck 7 against opponent deck 30111, the Oceanid's deck 2, and the Mondstadt challengers' decks 11005 and 11002
+  // Player's deck 7 against opponent deck 30111, the Oceanid's deck 2, and the Mondstadt challengers' decks 11005 and
+  // 11002
   test.each([
     [1, 1],
     [3, 4],

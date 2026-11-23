@@ -11,9 +11,9 @@ import { takeOne } from "@esposter/shared";
 
 const GOLDEN_TROUPE_LINGER_STATUS_ID = "goldenTroupeLinger";
 
-// Golden Troupe. Its two-piece bonus raises the Elemental Skill DMG of its wearer by the table's first param. Its four-piece
-// Bonus raises it by the same again while its wearer is off the field, and for the third param's seconds after it takes the
-// Field, as the game's bonus is cleared that long after. The second param is left unread
+// Golden Troupe. Its two-piece bonus raises the Elemental Skill DMG of its wearer by the table's first param. Its
+// `four-piece` Bonus raises it by the same again while its wearer is off the field, and for the third param's seconds
+// After it takes the Field, as the game's bonus is cleared that long after. The second param is left unread
 export const createGoldenTroupeSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const damageBonus = takeOne(bonus.params, 0);
   if (bonus.pieceCount === 2)

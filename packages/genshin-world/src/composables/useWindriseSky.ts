@@ -40,9 +40,9 @@ interface WindriseSkyOptions {
   windUniforms: WindUniforms;
 }
 
-// Windrise's sky and the game's clock running under it, which the sun's shadow follows: the clock starts at its held minute
-// Or the region's start, and a minute held anew is set on it. The clock is handed back for the tuning panel and the clock
-// Control to set
+// Windrise's sky and the game's clock running under it, which the sun's shadow follows: the clock starts at its held
+// Minute Or the region's start, and a minute held anew is set on it. The clock is handed back for the tuning panel and
+// The clock Control to set
 export const useWindriseSky = ({
   checkIsHeld,
   enemyMap,
@@ -73,7 +73,8 @@ export const useWindriseSky = ({
     tilt: SUN_TILT,
     windUniforms,
   });
-  // The sun's shadows are drawn again only when the sun, the view or a caster has moved, after the sky has turned the sun
+  // The sun's shadows are drawn again only when the sun, the view or a caster has moved, after the sky has turned the
+  // Sun
   useSunShadow({ enemyMap, getCharacterBody, getCharacterLocomotion, sunLight });
   // The clock only starts at its held minute, so a minute held anew is set on it
   watch(getHeldMinutes, (minutes) => {

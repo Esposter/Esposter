@@ -9,9 +9,9 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 
 export const DEHYA_CHARACTER_ID = 10_000_079;
 
-// Stalwart and True, from Ascension 4: a drain that takes Dehya under 40% of her HP heals her 20% of her Max HP at once and
-// 6% on each of five ticks, every 2 seconds for 10, and it can be triggered once every 20 seconds, as gcsim (MIT) does
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/dehya/asc.go
+// Stalwart and True, from Ascension 4: a drain that takes Dehya under 40% of her HP heals her 20% of her Max HP at once
+// And 6% on each of five ticks, every 2 seconds for 10, and it can be triggered once every 20 seconds, as gcsim (MIT)
+// Does https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/dehya/asc.go
 const ASCENSION_4 = 4;
 const STALWART_AND_TRUE_THRESHOLD = 0.4;
 const STALWART_AND_TRUE_COOLDOWN_SECONDS = 20;
@@ -21,15 +21,14 @@ const STALWART_AND_TRUE_TICK_HEAL_SHARE = 0.06;
 const STALWART_AND_TRUE_TICK_INTERVAL_SECONDS = 2;
 const STALWART_AND_TRUE_TICK_COUNT = 5;
 
-// Dehya's behaviour: none of her own, since her strikes, charged attack, plunges and Molten Inferno's initial hit are her
-// Record's alone. Stalwart and True is built as her drain's hook. Not built: the Sanctum Molten Inferno leaves, with
-// Its DoT and Redmane's Blood's mitigation, Ranging Flame's reposition, the burst's Flame-Mane's Fists and
-// Incineration Drive. Her Ascension 1 passive waits on the Sanctum
-// A Max HP buff of 20% reaches her damage reads, so Constellation 1 needs Molten Inferno's DMG, whose DoT waits on the
-// Sanctum Molten Inferno leaves
-// Constellation 2 needs the Fiery Sanctum field that Molten Inferno: Ranging Flame recreates, not built by the burst
-// Constellation 4 needs the Flame-Mane's Fist and Incineration Drive hits during Leonine Bite, not built
-// Constellation 6 needs Leonine Bite's CRIT Rate and the Flame-Mane's Fist follow-up, not built
+// Dehya's behaviour: none of her own, since her strikes, charged attack, plunges and Molten Inferno's initial hit are
+// Her Record's alone. Stalwart and True is built as her drain's hook. Not built: the Sanctum Molten Inferno leaves,
+// With Its DoT and Redmane's Blood's mitigation, Ranging Flame's reposition, the burst's Flame-Mane's Fists and
+// Incineration Drive. Her Ascension 1 passive waits on the Sanctum A Max HP buff of 20% reaches her damage reads, so
+// Constellation 1 needs Molten Inferno's DMG, whose DoT waits on the Sanctum Molten Inferno leaves Constellation 2
+// Needs the Fiery Sanctum field that Molten Inferno: Ranging Flame recreates, not built by the burst Constellation 4
+// Needs the Flame-Mane's Fist and Incineration Drive hits during Leonine Bite, not built Constellation 6 needs Leonine
+// Bite's CRIT Rate and the Flame-Mane's Fist follow-up, not built
 export const createDehyaKitBehaviour = (): KitBehaviour => ({
   onKitEvent: (event, context, combatant) => {
     if (

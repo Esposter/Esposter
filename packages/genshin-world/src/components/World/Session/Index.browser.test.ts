@@ -17,7 +17,8 @@ import { useWorldSessionStore } from "#src/store/session";
 import { assert, describe, expect, onTestFinished, test } from "vitest";
 import { z } from "zod";
 
-// The three readings a session holds across a save: a quest's step, the defeats the Archive counts and Mora in the wallet
+// The three readings a session holds across a save: a quest's step, the defeats the Archive counts and Mora in the
+// Wallet
 const readHolds = (devRegistry: DevRegistry) => ({
   defeats: devRegistry.run("kills"),
   mora: devRegistry.run(`bag ${Currency.Mora}`),
@@ -121,7 +122,8 @@ describe("worldSession", () => {
 
       expect(mounted).toStrictEqual({ ok: true });
       expect(saved).toStrictEqual({ error: " ", ok: false });
-      // The world's commands leave the registry only once its screen unmounts, so a command still answering here means it did not
+      // The world's commands leave the registry only once its screen unmounts, so a command still answering here means
+      // It did not
       expect(kills).toStrictEqual({ error: "not available here", ok: false, usage: "kills" });
     },
     timeoutMs,
@@ -135,7 +137,8 @@ describe("worldSession", () => {
       const devRegistry = createDevRegistry();
       const sessionDriver = createSessionDriver(devRegistry);
       onTestFinished(() => sessionDriver.dispose());
-      // A save holding one Mora, so a second mount that kept the first session's bag would read it where its own save has none
+      // A save holding one Mora, so a second mount that kept the first session's bag would read it where its own save
+      // Has none
       const moraSave: GenshinSave = {
         ...EMPTY_GENSHIN_SAVE,
         wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies: { ...EMPTY_CURRENCIES, [Currency.Mora]: 1 } },
@@ -204,7 +207,8 @@ describe("worldSession", () => {
       const firstMounted = await sessionDriver.mount();
       const secondMounted = await sessionDriver.mount();
       await sessionDriver.dispose();
-      // Only the second screen was ever unmounted by the dispose, so the first one's commands answer here if it was orphaned
+      // Only the second screen was ever unmounted by the dispose, so the first one's commands answer here if it was
+      // Orphaned
       const kills = devRegistry.run("kills");
 
       expect(firstMounted).toStrictEqual({ ok: true });

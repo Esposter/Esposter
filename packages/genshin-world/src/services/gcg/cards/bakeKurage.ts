@@ -8,8 +8,8 @@ const BAKE_KURAGE_DAMAGE = 1;
 const BAKE_KURAGE_HEAL = 1;
 const BAKE_KURAGE_MAX_USAGES = 4;
 
-// Bake-Kurage, a summon of two usages that stack up to four: at the End Phase it heals its side's active character 1 HP,
-// Deals 1 Hydro DMG and spends a usage
+// Bake-Kurage, a summon of two usages that stack up to four: at the End Phase it heals its side's active character 1
+// HP, Deals 1 Hydro DMG and spends a usage
 export const bakeKurage: GcgCardModule = {
   initialUsages: 2,
   maxUsages: BAKE_KURAGE_MAX_USAGES,

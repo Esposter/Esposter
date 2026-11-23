@@ -99,8 +99,8 @@ const listScaleBuffers = (buffers: ScaleBuffers): GPUBuffer[] => [
 
 // The similarity of each label between two grey images, as `scoreLabelSimilarity` reads it on the CPU, with each
 // Label's blurs, products and terms computed on the GPU. A label's window at each scale is built from its coverage
-// Planes: the blurred coverage, the blurred first and second, and the blurred squares and product over the coverage. The
-// Terms are summed per label on the GPU, and each scale's term map is the sum of every label's term over its share
+// Planes: the blurred coverage, the blurred first and second, and the blurred squares and product over the coverage.
+// The Terms are summed per label on the GPU, and each scale's term map is the sum of every label's term over its share
 export const computeLabelSimilarity = async ({
   height,
   labelCount,

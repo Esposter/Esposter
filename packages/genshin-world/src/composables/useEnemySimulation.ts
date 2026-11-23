@@ -92,9 +92,9 @@ export const useEnemySimulation = ({
         ENEMY_STEP_SECONDS,
         checkIsEnemyKindId(enemy.enemyKindId) ? enemyKindMovesMap.value[enemy.enemyKindId] : undefined,
       );
-      // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step sees
-      // Broken that it did not see broken before is a break. It is read after the step, where a shield stands again, so a
-      // Break after that stand is seen as a new one
+      // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step
+      // Sees Broken that it did not see broken before is a break. It is read after the step, where a shield stands
+      // Again, so a Break after that stand is seen as a new one
       if (!checkIsEnemyShieldBroken(enemy)) brokenShieldEnemies.delete(enemy);
       else if (!brokenShieldEnemies.has(enemy)) {
         brokenShieldEnemies.add(enemy);
@@ -112,13 +112,15 @@ export const useEnemySimulation = ({
           enemy,
           computeEnemyDrops(enemyKind, enemyDropTableMap.get(enemy.enemyKindId), enemy.level, () => Math.random()),
         );
-        // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are down
+        // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are
+        // Down
         const camp = getEnemyCamps().find(({ id }) => id === enemy.campId);
         // A camp with no boss brings each defeated member back at an instant the save keeps
         const campEnemyTypes = camp && getCampEnemyTypes(camp.members);
         const respawnAt = campEnemyTypes && computeEnemyRespawnTime(campEnemyTypes, defeatedAt);
         if (respawnAt) onSaveRespawn(spawnKey, respawnAt.toString());
-        // A boss's defeat is kept too, since its return waits on a claim or a teleport out of its area that the save holds
+        // A boss's defeat is kept too, since its return waits on a claim or a teleport out of its area that the save
+        // Holds
         if (campEnemyTypes?.includes(EnemyType.Boss)) onSaveBossDefeat(spawnKey, defeatedAt.toString());
         const [firstMember] = camp?.members ?? [];
         if (camp && firstMember && camp.members.every(({ id }) => spawnKeyDefeatedAtMap.has(getSpawnKey(camp.id, id))))

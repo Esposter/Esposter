@@ -20,13 +20,13 @@ export const REEL_BAR_MAX = 100;
 export const REEL_LOST_OUT_OF_ZONE_SECONDS = 3;
 // The Serenitea Pot as the bag holds it: the widget material the game names by its own text. Fishing needs one owned
 export const SERENITEA_POT_ITEM_ID = 220026;
-// The main quest the wiki names beside the Pot for the unlock, Exploding Population, by the id its progress is saved under.
-// The save carries a quest only once it is in the carried quests, which holds it out for now
+// The main quest the wiki names beside the Pot for the unlock, Exploding Population, by the id its progress is saved
+// Under. The save carries a quest only once it is in the carried quests, which holds it out for now
 export const SERENITEA_POT_QUEST_ID = "70661";
 // Provisional: how long a strike's splash shows, in seconds, from the moment the strike hooks the fish
 export const FISHING_SPLASH_SECONDS = 1;
-// The body a hooked fish is drawn as until a fit gives it one, in metres. Every fish without a fitted body takes this one:
-// The table names no body per category, so a fish's category does not choose its shape
+// The body a hooked fish is drawn as until a fit gives it one, in metres. Every fish without a fitted body takes this
+// One: The table names no body per category, so a fish's category does not choose its shape
 export const FISH_STAND_IN_OPTIONS: FishGeometryOptions = { bodyDepth: 0.3, bodyLength: 0.9, tailSpread: 0.35 };
 // The stand-ins of the rod, the float, the splash and a point's ring, each in metres, and their colours
 export const FISHING_ROD_OPTIONS: RodGeometryOptions = { baseRadius: 0.02, length: 2.4, tipRadius: 0.004 };

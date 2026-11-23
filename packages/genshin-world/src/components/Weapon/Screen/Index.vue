@@ -157,10 +157,10 @@ const { act, isActionDisabled, pendingMora } = useWeaponActions({
 </script>
 
 <template>
-  <!-- The weapon screen, a dialog over the world, on the game's 1920 by 864 reference: the open tab's header (its level and EXP, its
-       ascension phases, or its refinement rank), its panel (the ores and fodder weapons, the ascension materials or the refinement
-       slots), the Required line's Mora and the tab's action beneath. The weapon's rarity and refinement rank are read aloud beside
-       the picture -->
+  <!-- The weapon screen, a dialog over the world, on the game's 1920 by 864 reference: the open tab's header (its
+    level and EXP, its ascension phases, or its refinement rank), its panel (the ores and fodder weapons, the
+    ascension materials or the refinement slots), the Required line's Mora and the tab's action beneath. The
+    weapon's rarity and refinement rank are read aloud beside the picture -->
   <GameScreen class="weapon-screen" role="dialog" aria-modal="true" :aria-label="name">
     <!-- The weapon's kind in the reader's language, the word its header puts before the slash -->
     <WeaponMenu
@@ -183,7 +183,8 @@ const { act, isActionDisabled, pendingMora } = useWeaponActions({
         :refinement="weapon.refinement"
       />
       <WeaponScreenFooter :game-text :pending-mora />
-      <!-- The EXP the weapon's level takes to rise past, which the Enhance header sets beside the EXP the weapon holds -->
+      <!-- The EXP the weapon's level takes to rise past, which the Enhance header sets beside the EXP the weapon
+        holds -->
       <WeaponScreenEnhance
         v-if="openTab === WeaponMenuTab.Enhance"
         :base-attack-text

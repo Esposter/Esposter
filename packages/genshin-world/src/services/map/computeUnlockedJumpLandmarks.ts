@@ -3,9 +3,9 @@ import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { checkIsWeeklyBossEntrance } from "#src/services/map/checkIsWeeklyBossEntrance";
 
-// The jump landmarks the player has unlocked, which the map, the minimap and the jump list offer as jump targets. A domain
-// Entrance is one of them once unlocked, as a statue or a waypoint is. A weekly boss's Trounce Domain entrance is unlocked
-// By its introducing quests instead, so it needs no resonance, and stays locked until they are done
+// The jump landmarks the player has unlocked, which the map, the minimap and the jump list offer as jump targets. A
+// Domain Entrance is one of them once unlocked, as a statue or a waypoint is. A weekly boss's Trounce Domain entrance
+// Is unlocked By its introducing quests instead, so it needs no resonance, and stays locked until they are done
 export const computeUnlockedJumpLandmarks = (
   jumpLandmarks: readonly PlaceLandmark[],
   unlockedLandmarkIds: ReadonlySet<string>,

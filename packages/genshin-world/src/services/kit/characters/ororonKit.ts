@@ -19,24 +19,24 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
-// Dark Voices' Echo's field of radius 6.5 round where it was cast, as gcsim v2.47.2 (MIT) ororon/burst.go gives it. From
-// Constellation 4 its soundwaves tick on the interval gcsim's c4BurstInterval gives
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/burst.go
+// Dark Voices' Echo's field of radius 6.5 round where it was cast, as gcsim v2.47.2 (MIT) ororon/burst.go gives it.
+// From Constellation 4 its soundwaves tick on the interval gcsim's c4BurstInterval gives
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/burst.go`
 const FIELD_RADIUS = 6.5;
 const CONSTELLATION_4 = 4;
 
-// Measured: gcsim v2.47.2 (MIT) ororon/cons.go, Constellation 2's 8% Electro DMG Bonus for each enemy a burst's ritual or
-// Soundwave hits, up to 32%, for the burst's nine seconds from its cast. It is refreshed by the burst, not extended by a hit
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/cons.go
+// Measured: gcsim v2.47.2 (MIT) ororon/cons.go, Constellation 2's 8% Electro DMG Bonus for each enemy a burst's ritual
+// Or Soundwave hits, up to 32%, for the burst's nine seconds from its cast. It is refreshed by the burst, not extended
+// By a hit https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_STACK = 0.08;
 const CONSTELLATION_2_MAXIMUM = 0.32;
 const CONSTELLATION_2_SOURCE = "ororon-c2";
 
-// Measured: gcsim v2.47.2 (MIT) ororon/asc.go, Ascension 4's energy: each normal attack, charged attack or plunge of the
-// Active character that hits an enemy while the Spirit Orb's hit has set it going gives 3 energy to the active character and
-// To Ororon, up to three times, with a second between them. The orb's hit sets it going for 15 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/asc.go
+// Measured: gcsim v2.47.2 (MIT) ororon/asc.go, Ascension 4's energy: each normal attack, charged attack or plunge of
+// The Active character that hits an enemy while the Spirit Orb's hit has set it going gives 3 energy to the active
+// Character and To Ororon, up to three times, with a second between them. The orb's hit sets it going for 15 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/asc.go`
 const ASCENSION_4 = 4;
 const ASCENSION_4_ENERGY = 3;
 const ASCENSION_4_MAXIMUM_TRIGGERS = 3;
@@ -94,10 +94,10 @@ const onKitEvent = (
   else removeKitEffects(kitEffectState, (effect) => effect === status);
 };
 // Ororon's behaviour: Dark Voices' Echo casts its soundwave field where he stands, each tick a summon landing the
-// Soundwave from where it was cast. Constellations 2 and 4 and Ascension 4 are built. The Spirit Orb's bounce, Ascension 1
-// And Constellations 1 and 6 wait on Hypersense and a chained hit, and Constellation 4's Energy restore on the ritual's hit
-// Constellation 1 needs the Spirit Orb's extra bounces and Nighttide, which wait on a chained hit and Hypersense
-// Constellation 6 needs the ATK stacks after Hypersense, which wait on Hypersense and a chained hit
+// Soundwave from where it was cast. Constellations 2 and 4 and Ascension 4 are built. The Spirit Orb's bounce,
+// Ascension 1 And Constellations 1 and 6 wait on Hypersense and a chained hit, and Constellation 4's Energy restore on
+// The ritual's hit Constellation 1 needs the Spirit Orb's extra bounces and Nighttide, which wait on a chained hit and
+// Hypersense Constellation 6 needs the ATK stacks after Hypersense, which wait on Hypersense and a chained hit
 export const createOroronKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const soundwave = readHit("soundwave", { onStrike: addConstellation2Stack });
   const darkVoicesEchoSeconds = readParameter("darkVoicesEchoSeconds");

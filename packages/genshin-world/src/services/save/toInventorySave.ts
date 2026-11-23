@@ -7,8 +7,8 @@ import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface/save";
 
-// An entry of the bag as its save holds it, by the item's id and its kind: a weapon with its state, an artifact with the
-// Artifact it was rolled as, and a stack with its count. Its name and tab are left to the game's tables
+// An entry of the bag as its save holds it, by the item's id and its kind: a weapon with its state, an artifact with
+// The Artifact it was rolled as, and a stack with its count. Its name and tab are left to the game's tables
 const toInventoryItemSave = ({ definition, ...entry }: InventoryItem): InventoryItemSave => {
   const { id, quantity } = entry;
   const itemId = definition.id;
@@ -27,8 +27,8 @@ const toInventoryItemSave = ({ definition, ...entry }: InventoryItem): Inventory
   return { id, itemId, kind: InventoryItemKind.Stack, quantity };
 };
 
-// The bag as its save holds it: each entry by the item's id and its kind, its definition's name and tab left to the game's
-// Tables
+// The bag as its save holds it: each entry by the item's id and its kind, its definition's name and tab left to the
+// Game's Tables
 export const toInventorySave = ({ items, ...inventory }: Inventory): InventorySave => ({
   ...inventory,
   items: items.map((item) => toInventoryItemSave(item)),

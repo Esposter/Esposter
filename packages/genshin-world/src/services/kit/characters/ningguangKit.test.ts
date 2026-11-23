@@ -42,7 +42,8 @@ const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
     stepKitTestEffects(FIXED_STEP_SECONDS, context),
   ).flat();
 
-// Runs the team's effects and Ningguang's own step on at the world's fixed step for the given seconds, as the world steps them
+// Runs the team's effects and Ningguang's own step on at the world's fixed step for the given seconds, as the world
+// Steps them
 const stepKitWithStep = (seconds: number, context: KitContext, combatant: Combatant): void => {
   for (let index = 0; index < Math.round(seconds / FIXED_STEP_SECONDS); index++) {
     stepKitTestEffects(FIXED_STEP_SECONDS, context);
@@ -181,7 +182,8 @@ describe(createNingguangKitBehaviour, () => {
       expect.hasAssertions();
       const context = createKitTestContext(createNingguangCombatant(0, constellationCount));
       const partyMember = getPartyMember(context.party, NINGGUANG_CHARACTER_ID);
-      // The cooldown a cast leaves a second on: set as the skill starts, as the kit's step sets it, then the screen cast
+      // The cooldown a cast leaves a second on: set as the skill starts, as the kit's step sets it, then the screen
+      // Cast
       const cast = (waitSeconds: number): number => {
         stepEffects(waitSeconds, context);
         partyMember.skillCooldownSeconds = NINGGUANG_KIT.skillCooldownSeconds;

@@ -1,7 +1,8 @@
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { AchievementProgressSave } from "#src/models/achievement/AchievementProgressSave";
 
-// Each achievement's progress read from its save, its id read back from its key and its finish moment from its ISO string
+// Each achievement's progress read from its save, its id read back from its key and its finish moment from its ISO
+// String
 export const toAchievementProgressMap = (
   achievementProgressSave: AchievementProgressSave,
 ): Map<number, AchievementProgress> =>

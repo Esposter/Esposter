@@ -7,8 +7,9 @@ import type { Party } from "#src/models/party/Party";
 
 import { sumKitBonuses } from "#src/services/kit/sumKitBonuses";
 
-// The flat base damage, CRIT DMG, CRIT Rate, DMG Bonus and defence ignored the deployed members' party strike hooks add to a strike, each hook
-// Given its own member, and the striker's own kit left out, as its own hooks already price the strike
+// The flat base damage, CRIT DMG, CRIT Rate, DMG Bonus and defence ignored the deployed members' party strike hooks add
+// To a strike, each hook Given its own member, and the striker's own kit left out, as its own hooks already price the
+// Strike
 export const getDeployedStrikeBonuses = (
   strike: KitStrike,
   deployedCombatants: readonly DeployedCombatant[],

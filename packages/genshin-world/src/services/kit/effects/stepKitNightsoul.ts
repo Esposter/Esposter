@@ -15,10 +15,11 @@ import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 // The events a step raises for the points a blessing gains or drains, and for a blessing its points run out of
 type NightsoulStepEvent = KitEffectExpiredEvent | KitNightsoulPointsConsumedEvent | KitNightsoulPointsGainedEvent;
 
-// The points each blessing gains or drains over a step, a blessing that drains to none ending with it, and then the points
-// A character holds with no blessing left, which a blessing that ran out on the step took with it. Each walk reads the
-// List it starts with, and the step runs this after its own walks, so its writes land on the list they left. The points a
-// Blessing drains or gains are the places points are consumed or generated, so the step returns them as events for its caller to raise
+// The points each blessing gains or drains over a step, a blessing that drains to none ending with it, and then the
+// Points A character holds with no blessing left, which a blessing that ran out on the step took with it. Each walk
+// Reads the List it starts with, and the step runs this after its own walks, so its writes land on the list they left.
+// The points a Blessing drains or gains are the places points are consumed or generated, so the step returns them as
+// Events for its caller to raise
 export const stepKitNightsoul = (stepSeconds: number, kitEffectState: KitEffectState): NightsoulStepEvent[] => {
   const events: NightsoulStepEvent[] = [];
   for (const effect of kitEffectState.effects) {

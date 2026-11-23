@@ -12,9 +12,9 @@ import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { triggerKitNightsoulBurst } from "#src/services/kit/triggerKitNightsoulBurst";
 
 // The one point every damage a kit writes into an enemy goes through, in place: a hit, a tick, a reaction or a reach.
-// And the Energy it drops. Damage a party member deals sets off the team's Nightsoul burst when it is Elemental and deals
-// Damage, a shield's share included, as gcsim's OnEnemyDamage handler reads it. A Physical hit sets none off, nor does one
-// On an enemy already Dead, and a reaction's Elemental damage sets one off alone
+// And the Energy it drops. Damage a party member deals sets off the team's Nightsoul burst when it is Elemental and
+// Deals Damage, a shield's share included, as gcsim's OnEnemyDamage handler reads it. A Physical hit sets none off, nor
+// Does one On an enemy already Dead, and a reaction's Elemental damage sets one off alone
 export const dealKitEnemyDamage = (
   enemy: Enemy,
   hit: EnemyHit,

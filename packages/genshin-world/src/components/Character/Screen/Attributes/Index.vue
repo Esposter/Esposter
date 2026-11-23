@@ -50,9 +50,9 @@ const wallet = defineModel<Wallet>("wallet", { required: true });
 const { adventureRank, character, gameText, materialDataMap, nameText, statTables } = defineProps<Props>();
 // The chosen character's ascension phases, looked up once for the rows and the two results below
 const ascensionPhases = computed(() => statTables.characterDataMap.get(character.id)?.ascensionPhases);
-// The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it needs
-// Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
-// The table carries no cost for that phase yet
+// The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it
+// Needs Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or
+// Where The table carries no cost for that phase yet
 const ascendRows = computed(() => {
   const nextPhase = ascensionPhases.value && getNextAscensionPhase(ascensionPhases.value, character.ascension);
   if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return [];

@@ -8,8 +8,8 @@ import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 const AEGIS_SHIELD_POINTS = 2;
 const AEGIS_PIERCING_DAMAGE = 1;
 
-// Aegis of Abyssal Flame, a state its character gains: 2 shield points, and once they are depleted, 1 piercing DMG to every
-// Opposing character (the wiki's Aegis of Abyssal Flame). The state is then spent
+// Aegis of Abyssal Flame, a state its character gains: 2 shield points, and once they are depleted, 1 piercing DMG to
+// Every Opposing character (the wiki's Aegis of Abyssal Flame). The state is then spent
 export const aegisOfAbyssalFlame: GcgCardModule = {
   initialUsages: 1,
   onShieldDepleted: (_context, zoneCard) => {

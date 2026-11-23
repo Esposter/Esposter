@@ -10,15 +10,15 @@ import { LEAF_SHADER } from "#src/services/scene/constants";
 import { DoubleSide } from "three";
 import { color, faceDirection, normalMap, step, texture, vec3 } from "three/tsl";
 
-// One exported material drawn as the stone's shader writes it into the game's G-buffer (`miHoYo/Scene/Login Base`):
-// The diffuse texture tinted by its colour, its normal map, and its mask texture (`SMBE`, read by the inventory) with
+// One exported material drawn as the stone's shader writes it into the game's G-buffer (`miHoYo/Scene/Login Base`): The
+// Diffuse texture tinted by its colour, its normal map, and its mask texture (`SMBE`, read by the inventory) with
 // Emission in alpha where the material turns it on, drawn only where its length reaches the material's emission range,
 // The program writing every glow under it as none. It is laid over a material of the host's, whose colour it multiplies
 // And whose emission it adds to, so it is lit as the host's own stand-ins are: the login's by the game's deferred pass
-// From its stone light, the world's by the ramp with their wetness and rim, and a stand-in and its export differ only in
-// What each draws. Its rim glow is not drawn: the deferred pass lights the glow's pixels apart, and drawn as the program
-// Grades it, the walkway's own glow lit its middle lane near white where the game shows grey-blue stone, so a scene's
-// Glow is its host's, as fitted to the frames; the mask's smoothness and metal wait on the pass's highlight
+// From its stone light, the world's by the ramp with their wetness and rim, and a stand-in and its export differ only
+// In What each draws. Its rim glow is not drawn: the deferred pass lights the glow's pixels apart, and drawn as the
+// Program Grades it, the walkway's own glow lit its middle lane near white where the game shows grey-blue stone, so a
+// Scene's Glow is its host's, as fitted to the frames; the mask's smoothness and metal wait on the pass's highlight
 export const createWitnessMaterial = (
   sceneMaterial: SceneMaterial,
   nameTextureMap: ReadonlyMap<string, Texture>,
@@ -50,7 +50,8 @@ export const createWitnessMaterial = (
   }
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal) {
-    // Three's typings leave a normal map's output untyped, though it is a vec3, so the annotation is what the compiler cannot see
+    // Three's typings leave a normal map's output untyped, though it is a vec3, so the annotation is what the compiler
+    // Cannot see
     const mappedNormal: Node = normalMap(texture(normal));
     // Three turns a double-sided face's whole tangent frame round on its back, so a card's mapped normal is turned
     // Back to the crown's, as the stand-in's card reads it

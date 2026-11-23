@@ -8,7 +8,8 @@ import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameText
 import { getItemName } from "#src/services/inventory/getItemName";
 
 // The item a line's name names, among the wallet's currencies and the bag's materials, by the name the game shows each
-// Under. A name no item holds is unknown, and one several hold is refused with the nearest names, as `resolveDevName` does
+// Under. A name no item holds is unknown, and one several hold is refused with the nearest names, as `resolveDevName`
+// Does
 export const resolveDevItem = (
   item: string,
   tables: DevItemTables,

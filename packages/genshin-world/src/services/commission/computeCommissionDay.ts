@@ -4,9 +4,9 @@ import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import { dealCommissions } from "#src/services/commission/dealCommissions";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 
-// The day the session holds once its save is loaded: a day dealt at or after the latest daily reset with commissions in it is
-// Kept as it is. A day dealt before the reset, or with none in it (dealt before Adventure Rank 12 opened), is dealt again from
-// The pool, the places no quest in progress holds and the rank the session holds
+// The day the session holds once its save is loaded: a day dealt at or after the latest daily reset with commissions in
+// It is Kept as it is. A day dealt before the reset, or with none in it (dealt before Adventure Rank 12 opened), is
+// Dealt again from The pool, the places no quest in progress holds and the rank the session holds
 export const computeCommissionDay = (
   day: CommissionDay,
   now: Temporal.Instant,

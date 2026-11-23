@@ -3,8 +3,8 @@ import type { GroundPoint } from "genshin-engine";
 import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
-// A material source's kind as the build writes it: the id of the item it gives when picked, and whether a critter stands
-// At its point, which it does unless the dump types that item a chest
+// A material source's kind as the build writes it: the id of the item it gives when picked, and whether a critter
+// Stands At its point, which it does unless the dump types that item a chest
 export interface MaterialSourceKind {
   hasStandIn: boolean;
   itemId: number;

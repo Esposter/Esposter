@@ -15,7 +15,8 @@ const emit = defineEmits<{ select: [] }>();
 </script>
 
 <template>
-  <!-- A die of a side's dice: a hexagon in its element's colour, lifted and brightened while it is chosen to be paid or rerolled -->
+  <!-- A die of a side's dice: a hexagon in its element's colour, lifted and brightened while it is chosen to be
+    paid or rerolled -->
   <button class="die" :class="{ selected: isSelected }" :data-face="face" type="button" @click="emit('select')" />
 </template>
 

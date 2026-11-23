@@ -7,8 +7,9 @@ import { takeOne } from "@esposter/shared";
 
 const HEAL_VALUE = 2;
 
-// Lucky Dog's Silver Circlet, an artifact: once a Round, after the character it is equipped to uses an Elemental Skill, that
-// Character heals for 2 HP. The skill reaches it only from the active character's equipment, so the user is the one it is on
+// Lucky Dog's Silver Circlet, an artifact: once a Round, after the character it is equipped to uses an Elemental Skill,
+// That Character heals for 2 HP. The skill reaches it only from the active character's equipment, so the user is the
+// One it is on
 export const luckyDogsSilverCirclet: GcgCardModule = {
   onSkillUsed: ({ characterIndex, duel, sideIndex }, skill) => {
     const side = takeOne(duel.sides, sideIndex);

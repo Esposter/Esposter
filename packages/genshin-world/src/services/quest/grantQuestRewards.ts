@@ -9,8 +9,9 @@ import { addRewardItem } from "#src/services/inventory/addRewardItem";
 import { CHARACTER_EXP_ITEM_ID } from "#src/services/inventory/constants";
 
 // The bag and the wallet after a quest's finish pays its rewards in order. The Adventure EXP they pay goes to the rank,
-// Which takes it rather than the bag or the wallet, and the Character EXP to the party's characters, which take it through
-// Their levels. An item the bag cannot take whole is left out, as a catch leaves its overflow out, since no mail carries it
+// Which takes it rather than the bag or the wallet, and the Character EXP to the party's characters, which take it
+// Through Their levels. An item the bag cannot take whole is left out, as a catch leaves its overflow out, since no
+// Mail carries it
 export const grantQuestRewards = (
   rewards: QuestRewardItem[],
   inventory: Inventory,

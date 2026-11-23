@@ -32,8 +32,8 @@ const createMember = (characterId: number, element: Element): DeployedCombatant 
 
 describe(createSecretsOfFrostPassiveModule, () => {
   const wielder: Combatant = createMember(TRAVELER_CHARACTER_ID, Element.Cryo);
-  // Winter's Heavy Heart at its first rank: 24 Elemental Mastery for each Cryo member and 4.8% ATK for each Electro one, and in
-  // Radiance 20 Elemental Mastery and 6% Stellar Glimmer DMG for each of either, with no ATK
+  // Winter's Heavy Heart at its first rank: 24 Elemental Mastery for each Cryo member and 4.8% ATK for each Electro
+  // One, and in Radiance 20 Elemental Mastery and 6% Stellar Glimmer DMG for each of either, with no ATK
   const passiveModule = createSecretsOfFrostPassiveModule([24, 0.048, 20, 0.06, 4]);
 
   test("each Cryo member in the party adds the rank's Elemental Mastery, and each Electro member its ATK", () => {

@@ -7,8 +7,8 @@ import { takeOne } from "@esposter/shared";
 
 const SPIRIT_OF_OMENS_AWAKENING_DAMAGE = 3;
 
-// Spirit of Omen's Awakening: Pyro Scorpion, Eremite Scorching Loremaster's Elemental Burst: 3 Pyro DMG, and once each Match,
-// A Pyro Scorpion card to the hand
+// Spirit of Omen's Awakening: Pyro Scorpion, Eremite Scorching Loremaster's Elemental Burst: 3 Pyro DMG, and once each
+// Match, A Pyro Scorpion card to the hand
 export const spiritOfOmensAwakening: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

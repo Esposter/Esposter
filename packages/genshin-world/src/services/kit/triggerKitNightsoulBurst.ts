@@ -11,9 +11,9 @@ import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants
 // NightsoulBurstICD gives them: 18 for one, 12 for two, and 9 for three or four
 const NIGHTSOUL_BURST_INTERVAL_SECONDS = [0, 18, 12, 9, 9];
 
-// Sets off the team's Nightsoul burst for the Elemental damage a party member dealt an enemy, while a Natlan character is in
-// The party and the interval since the last burst has run out. The damage point decides which damage is Elemental (see
-// DealKitEnemyDamage). The interval is the team's, held on the Party, and the burst goes to every kit of the team
+// Sets off the team's Nightsoul burst for the Elemental damage a party member dealt an enemy, while a Natlan character
+// Is in The party and the interval since the last burst has run out. The damage point decides which damage is Elemental
+// (see DealKitEnemyDamage). The interval is the team's, held on the Party, and the burst goes to every kit of the team
 export const triggerKitNightsoulBurst = (enemy: Enemy, striker: Combatant, context: KitContext): void => {
   const { characterIdCombatantMap, party } = context;
   const natlanCount = getDeployedCombatants(party, characterIdCombatantMap).filter(

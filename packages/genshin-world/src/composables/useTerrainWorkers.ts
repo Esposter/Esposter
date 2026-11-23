@@ -7,8 +7,9 @@ import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessage
 import { TERRAIN_WORKER_COUNT } from "#src/services/constants";
 import { createTileHolders } from "#src/services/world/createTileHolders";
 
-// The pool of terrain workers, each loaded with the ground as it starts. A tile is held by the worker it is asked of until
-// That worker answers or fails it, and a worker that errors fails only the tiles it holds, so the others keep generating
+// The pool of terrain workers, each loaded with the ground as it starts. A tile is held by the worker it is asked of
+// Until That worker answers or fails it, and a worker that errors fails only the tiles it holds, so the others keep
+// Generating
 export const useTerrainWorkers = ({
   createTerrainWorker,
   onTerrainTile,
@@ -20,8 +21,8 @@ export const useTerrainWorkers = ({
   onTileFailed: (key: number) => void;
   terrainWorkerGround: TerrainWorkerGround;
 }) => {
-  // Each worker is loaded with its ground as it starts. A worker takes its messages in the order they were posted, so its
-  // Ground is loaded before any tile asked of it, with nothing to wait for
+  // Each worker is loaded with its ground as it starts. A worker takes its messages in the order they were posted, so
+  // Its Ground is loaded before any tile asked of it, with nothing to wait for
   const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => {
     const worker = createTerrainWorker();
     const message: TerrainWorkerMessage = { ground: terrainWorkerGround, kind: TerrainWorkerMessageKind.Load };

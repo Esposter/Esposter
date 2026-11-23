@@ -44,7 +44,8 @@ const progress = ref<TalkProgress>(startProgress ?? { isRevealed: false, lineId:
 const isAutoPlaying = ref(false);
 // The reply lit, -1 for none: as the game does, a reply is lit only by the pointer over it or the arrows
 const selectedChoiceIndex = ref(-1);
-// Time since the line on screen was shown, which writes it out, and then since it was whole, which auto-play holds it for
+// Time since the line on screen was shown, which writes it out, and then since it was whole, which auto-play holds it
+// For
 const elapsedMs = ref(0);
 const talkLine = computed(() => (progress.value.lineId ? getTalkLine(talk, progress.value.lineId) : undefined));
 // The Traveler's title as the login fills it, which stands for the player's nickname and the login's twin for their

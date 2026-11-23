@@ -11,10 +11,10 @@ import { takeOne } from "@esposter/shared";
 const BYAKUYA_KOUGETSU_ID = "byakuyaKougetsu";
 const BYAKUYA_KOUGETSU_COOLDOWN_ID = "byakuyaKougetsuCooldown";
 
-// Byakuya Kougetsu at its rank: its Normal Attack DMG rises by the rank's share of the wielder's Max HP as base damage. For the
-// Rank's seconds after the wielder uses an Elemental Burst, each Normal Attack it lands restores the rank's Energy to it, once
-// Every cooldown. The rank's Healing Bonus line is a table line the weapon carries whatever its conditions, so this passive
-// Does not repeat it
+// Byakuya Kougetsu at its rank: its Normal Attack DMG rises by the rank's share of the wielder's Max HP as base damage.
+// For the Rank's seconds after the wielder uses an Elemental Burst, each Normal Attack it lands restores the rank's
+// Energy to it, once Every cooldown. The rank's Healing Bonus line is a table line the weapon carries whatever its
+// Conditions, so this passive Does not repeat it
 export const createByakuyaKougetsuPassiveModule = (params: number[]): PassiveModule => {
   const maxHealthShare = takeOne(params, 1);
   const seconds = takeOne(params, 2);

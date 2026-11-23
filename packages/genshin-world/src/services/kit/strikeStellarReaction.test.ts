@@ -123,7 +123,8 @@ describe(strikeStellarReaction, () => {
       context,
     );
 
-    // The unbuffed share with its reaction bonus of sixteen per cent added to the Elemental Mastery's bonus, which is nil at zero
+    // The unbuffed share with its reaction bonus of sixteen per cent added to the Elemental Mastery's bonus, which is
+    // Nil at zero
     expect(enemy.maxHealth - enemy.health).toBeCloseTo(
       takeOne(CharacterLevelMultiplierMap, LEVEL) *
         0.75 *

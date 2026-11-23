@@ -21,10 +21,10 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { priceTransformativeReaction } from "#src/services/kit/priceTransformativeReaction";
 
 // The reactions an element of the combatant's triggered on an enemy, priced from the combatant, written into the enemy
-// In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them, and
-// Aggravate and Spread add to its base, each raised by the deployed team's party reaction DMG Bonus inside its Elemental
-// Mastery term, as gcsim (MIT) pkg/enemy/damage.go and pkg/core/combat/reaction.go read it. Each transformative reaction
-// That lands adds its own hit's poise, as the published reaction table gives it
+// In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them,
+// And Aggravate and Spread add to its base, each raised by the deployed team's party reaction DMG Bonus inside its
+// Elemental Mastery term, as gcsim (MIT) pkg/enemy/damage.go and pkg/core/combat/reaction.go read it. Each
+// Transformative reaction That lands adds its own hit's poise, as the published reaction table gives it
 export const priceEnemyReactions = (
   kind: EnemyKind,
   enemy: Enemy,
@@ -73,7 +73,9 @@ export const priceEnemyReactions = (
       applySimultaneousReactionInternalCooldown(enemy.internalCooldownMap, reactionType, reactionElement, seconds) > 0
     ) {
       if (TransformativeReactionReachRadiusMap[reactionType] !== undefined)
-        // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the spread brings Reaction's reactionType (the wider ReactionType union), which this literal overrides with the narrowed TransformativeReactionType of the condition above; the literal's reactionType is exactly TransformativeReaction's
+        // The spread brings Reaction's reactionType (the wider ReactionType union), which this literal overrides with
+        // The narrowed TransformativeReactionType of the condition above; the literal's reactionType
+        // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- is exactly TransformativeReaction's
         reachingReactions.push({ ...reaction, reactionType });
       const reactionPoise = context.enemyTables.reactionPoiseMap.get(reactionType);
       poiseDamage += reactionPoise?.poiseDamage ?? 0;

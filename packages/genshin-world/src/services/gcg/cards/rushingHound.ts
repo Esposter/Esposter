@@ -11,8 +11,9 @@ import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
 
-// Rushing Hound: Swift as the Wind, Gorou's Talent: it is equipped to her and uses her Elemental Skill at once. While it is
-// On her, a skill of her side that deals Geo DMG draws a card while a General's War Banner is in play, once per Round
+// Rushing Hound: Swift as the Wind, Gorou's Talent: it is equipped to her and uses her Elemental Skill at once. While
+// It is On her, a skill of her side that deals Geo DMG draws a card while a General's War Banner is in play, once per
+// Round
 export const rushingHound: GcgCardModule = {
   ...createGcgTalentCard(GOROU_ID, INUZAKA_ALL_ROUND_DEFENSE_SKILL_ID),
   onAnySkillUsed: (context, _skill, _zoneCard, dealt) => {

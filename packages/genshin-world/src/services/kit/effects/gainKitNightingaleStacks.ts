@@ -9,8 +9,8 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { setKitNightingaleCount } from "#src/services/kit/effects/setKitNightingaleCount";
 
-// Gains Nightingale's Song for each Geo Construct on the battlefield while Haunted Night holds, up to the most extra stacks
-// The state may gain from constructs, and returns how many it gained
+// Gains Nightingale's Song for each Geo Construct on the battlefield while Haunted Night holds, up to the most extra
+// Stacks The state may gain from constructs, and returns how many it gained
 export const gainKitNightingaleStacks = (
   kitEffectState: KitEffectState,
   characterId: number,

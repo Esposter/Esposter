@@ -13,10 +13,11 @@ import { takeOne } from "@esposter/shared";
 const GLEAMING_MOON_DEVOTION_ID = "gleamingMoonDevotion";
 const SILKEN_MOON_SERENADE_SOURCE = "Silken Moon's Serenade";
 
-// Silken Moon's Serenade's four-piece. An Elemental DMG hit its wearer deals, off the field as on it, gives the Gleaming Moon:
-// Devotion effect for the first param's seconds, which raises every party member's Elemental Mastery by the second param at Nascent
-// Gleam and the third at Ascendant Gleam, none with no Moonsign, and raises every party member's Lunar Reaction DMG by the fourth param
-// While it holds. The effect is gained with no Moonsign, as the text says, where gcsim's Init returns before it at Moonsign level zero
+// Silken Moon's Serenade's four-piece. An Elemental DMG hit its wearer deals, off the field as on it, gives the
+// Gleaming Moon: Devotion effect for the first param's seconds, which raises every party member's Elemental Mastery by
+// The second param at Nascent Gleam and the third at Ascendant Gleam, none with no Moonsign, and raises every party
+// Member's Lunar Reaction DMG by the fourth param While it holds. The effect is gained with no Moonsign, as the text
+// Says, where gcsim's Init returns before it at Moonsign level zero
 export const createSilkenMoonsSerenadeSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(bonus.params, 0);
   const nascentElementalMasteryBonus = takeOne(bonus.params, 1);

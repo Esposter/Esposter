@@ -17,9 +17,9 @@ import { WINDRISE_SCENE_EXPORT_COMPONENT } from "#src/services/windrise/constant
 import { WindrisePartFamilyMeshRegexMap } from "#src/services/windrise/WindrisePartFamilyMeshRegexMap";
 
 // The families of each component's exports the world draws in place of its stand-ins, by the component's folder, which
-// Is Windrise's or a region's id: Windrise's oak, paving and statue, and each capital's buildings. The ground stays ours
-// Everywhere, since its exports hold each terrain tile's far base map alone, none of the layers painted over it near,
-// And the body walks on our heights and the grass grows on our tiles; Windrise's exports place no grass, and
+// Is Windrise's or a region's id: Windrise's oak, paving and statue, and each capital's buildings. The ground stays
+// Ours Everywhere, since its exports hold each terrain tile's far base map alone, none of the layers painted over it
+// Near, And the body walks on our heights and the grass grows on our tiles; Windrise's exports place no grass, and
 // Snezhnaya's no building of its capital yet, so it is drawn from its stand-ins alone
 export const WorldSceneExportFamilyMeshRegexMap: Record<string, Record<string, RegExp>> = {
   fontaine: { [FontainePartFamily.Buildings]: FontainePartFamilyMeshRegexMap[FontainePartFamily.Buildings] },

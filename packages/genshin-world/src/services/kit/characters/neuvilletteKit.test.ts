@@ -17,7 +17,8 @@ import { describe, expect, test } from "vitest";
 
 const NEUVILLETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEUVILLETTE_CHARACTER_ID);
 
-// The passive bonuses a combatant gets at an ascension phase and HP share, each as its attribute and amount to a thousandth
+// The passive bonuses a combatant gets at an ascension phase and HP share, each as its attribute and amount to a
+// Thousandth
 const getPassiveBonusPairs = (ascension: number, healthShare: number): [Attribute, number][] =>
   (
     createNeuvilletteKitBehaviour({ kit: NEUVILLETTE_KIT, readHits: () => [] }).getPassiveBonuses?.(

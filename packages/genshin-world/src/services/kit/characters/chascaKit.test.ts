@@ -38,7 +38,8 @@ const readShells = ({ kitEffectState }: KitContext) => {
   return summon?.kind === "summon" ? summon.hits : [];
 };
 
-// The seconds stepped as the world steps them: the team's cooldowns, then its effects, then each deployed kit's own step
+// The seconds stepped as the world steps them: the team's cooldowns, then its effects, then each deployed kit's own
+// Step
 const stepWorldSeconds = (context: KitContext, seconds: number): void => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
     stepPartyCooldowns(context.party, FIXED_STEP_SECONDS);
@@ -287,7 +288,8 @@ describe(createChascaKitBehaviour, () => {
       ...createChascaCombatant(),
       deployedElements: [undefined, Element.Pyro, Element.Hydro],
     };
-    // The four bullets' keys are 0.9, 0.1, 0.5 and 0.2 in the order they are dealt, so they sort Hydro, Hydro, Pyro, Pyro
+    // The four bullets' keys are 0.9, 0.1, 0.5 and 0.2 in the order they are dealt, so they sort Hydro, Hydro, Pyro,
+    // Pyro
     const draws = [0.9, 0.1, 0.5, 0.2];
     let drawIndex = 0;
     const context = createKitTestContext(chasca, {

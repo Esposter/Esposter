@@ -32,8 +32,8 @@ describe(createAubadeOfMorningstarAndMoonSetModule, () => {
   const FOURTH_CHARACTER_ID = 4;
   // A Moonsign character's kit, which counts toward the team's Moonsign level
   const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-  // A wearer of four pieces, the three other members, and the party in the order given, with the members in benedictedIds
-  // Carrying a Moonsign benediction, which sets the team's Moonsign level
+  // A wearer of four pieces, the three other members, and the party in the order given, with the members in
+  // `benedictedIds` Carrying a Moonsign benediction, which sets the team's Moonsign level
   const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
     const wearer = createKitCombatant(
       TRAVELER_CHARACTER_ID,
@@ -56,8 +56,8 @@ describe(createAubadeOfMorningstarAndMoonSetModule, () => {
       kitEffectState,
       party: createParty(characterIds),
     });
-    // The party after a swap, with the swap's event, which the wearer's kit hears as the battle emits it. A battle's opening has no
-    // Character it came from, so the event carries none
+    // The party after a swap, with the swap's event, which the wearer's kit hears as the battle emits it. A battle's
+    // Opening has no Character it came from, so the event carries none
     const swap = (nextCharacterIds: number[], characterId: number, previousCharacterId?: number) => {
       context = createKitTestContext(wearer, {
         characterIdCombatantMap,

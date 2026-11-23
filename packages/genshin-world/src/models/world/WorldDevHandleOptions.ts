@@ -13,7 +13,8 @@ import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GameClock, WeatherKind } from "genshin-engine";
 import type { Object3D } from "three";
 
-// What the session hands the world's developer commands: the state each one reads or changes, and the registry they join
+// What the session hands the world's developer commands: the state each one reads or changes, and the registry they
+// Join
 export interface WorldDevHandleOptions {
   body: Object3D;
   catalogue: Catalogue;

@@ -4,8 +4,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 
-// A set's bonus that gives its wearer Normal Attack and Charged Attack DMG for the seconds given after the wearer uses its
-// Elemental Skill, as the next use restarts the buffs rather than stacking them
+// A set's bonus that gives its wearer Normal Attack and Charged Attack DMG for the seconds given after the wearer uses
+// Its Elemental Skill, as the next use restarts the buffs rather than stacking them
 export const createAfterSkillAttackDamageSetModule = ({
   amount,
   seconds,

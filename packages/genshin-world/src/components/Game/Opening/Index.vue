@@ -28,15 +28,16 @@ interface Props {
   // How far the world's loading has gone, from 0 to 1, which the startup loading screen's marks show once the door
   // Is opened
   progress: number;
-  // Where the host serves the developer's own exports of the game's scenes, which the login screen's scene is drawn from
+  // Where the host serves the developer's own exports of the game's scenes, which the login screen's scene is drawn
+  // From
   sceneExportBaseUrl: string;
 }
 
 const { gameDataBaseUrl, language } = defineProps<Props>();
 const emit = defineEmits<{ begin: []; finish: []; held: [] }>();
-// The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
-// Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
-// Which loads the world and whose white the world cuts in from. The login screen's bar is the character packs' download,
+// The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's Hour,
+// Its title waiting for a click, its flight and its door waiting for another, then the startup loading screen, Which
+// Loads the world and whose white the world cuts in from. The login screen's bar is the character packs' download,
 // Which the door waits on as the game's does on its bar. Each phase says when it is done, so the handoffs are the
 // Screens' own timings rather than a host's, and `begin` tells the host the door has been opened
 const phase = ref<OpeningPhase>(OpeningPhase.Splash);

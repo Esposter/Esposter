@@ -3,8 +3,8 @@ import { createHoldCommand } from "#src/services/dev/commands/createHoldCommand"
 import { createInput, InputAction } from "genshin-engine";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// An event target standing in for the window the input reads, which reports no gamepad and no pointer lock, and in which
-// The element given, if any, is the one field a key is typed into
+// An event target standing in for the window the input reads, which reports no gamepad and no pointer lock, and in
+// Which The element given, if any, is the one field a key is typed into
 const createTarget = (fieldElement: null | object = null) =>
   Object.assign(new EventTarget(), {
     checkIsFieldTarget: (eventTarget: EventTarget | null) => eventTarget !== null && eventTarget === fieldElement,
@@ -40,7 +40,8 @@ describe(createHoldCommand, () => {
   const FRAME_COUNT = 5;
 
   beforeEach(() => {
-    // The browser's keyboard and mouse events, which a Node suite has no globals for: each keeps the one field the input reads
+    // The browser's keyboard and mouse events, which a Node suite has no globals for: each keeps the one field the
+    // Input reads
     vi.stubGlobal("KeyboardEvent", createEventStub());
     vi.stubGlobal("MouseEvent", createEventStub());
   });

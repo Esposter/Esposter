@@ -9,12 +9,13 @@ import { weaponAscensionPhaseSchema } from "#src/models/weapon/WeaponAscensionPh
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { z } from "zod";
 
-// A weapon of the game's as its tables hold it, by the game's own id: its name by text id, its kind, its rarity in stars,
-// Its base ATK and secondary attribute growing with its level, its ascension phases, the EXP it gives as fodder, its
-// Passive by its name's text id and each refinement rank's description, numbers and the stats it adds, and what each refinement rank
-// Takes: the Mora per rank gained, from the second rank, and the material that may stand for a copy,
-// And what destroying it gives back: the game's destroy rule, and the material and how many of it a destroy returns, which
-// A weapon whose rule returns materials must name, so no destroy returns a material the table never named
+// A weapon of the game's as its tables hold it, by the game's own id: its name by text id, its kind, its rarity in
+// Stars, Its base ATK and secondary attribute growing with its level, its ascension phases, the EXP it gives as fodder,
+// Its Passive by its name's text id and each refinement rank's description, numbers and the stats it adds, and what
+// Each refinement rank Takes: the Mora per rank gained, from the second rank, and the material that may stand for a
+// Copy, And what destroying it gives back: the game's destroy rule, and the material and how many of it a destroy
+// Returns, which A weapon whose rule returns materials must name, so no destroy returns a material the table never
+// Named
 export interface WeaponData {
   ascensionPhases: WeaponAscensionPhase[];
   baseExp: number;

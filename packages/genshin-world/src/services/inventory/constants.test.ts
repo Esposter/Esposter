@@ -32,7 +32,8 @@ export const COOKING_RECIPE: CookingRecipe = {
   specialties: [],
   unlockItemIds: [INSTRUCTION_ITEM_ID],
 };
-// A forge recipe opened by its diagram, and a crafting recipe opened by its instruction, the one that crafts Condensed Resin
+// A forge recipe opened by its diagram, and a crafting recipe opened by its instruction, the one that crafts Condensed
+// Resin
 export const FORGE_DIAGRAM_ID = 221_010;
 export const FORGE_RECIPE: ForgeRecipe = {
   forgePoint: 0,

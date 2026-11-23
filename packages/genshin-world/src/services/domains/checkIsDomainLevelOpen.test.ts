@@ -7,7 +7,8 @@ import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsDomainLevelOpen, () => {
-  // The epoch fell on a Thursday in the server's zone, so the reset four days after it opens a Monday and five a Tuesday
+  // The epoch fell on a Thursday in the server's zone, so the reset four days after it opens a Monday and five a
+  // Tuesday
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   const RESET_ZONED = computeLastDailyReset(EPOCH).toZonedDateTimeISO(GAME_TIME_ZONE);
   const MONDAY = RESET_ZONED.add({ days: 4 }).toInstant();

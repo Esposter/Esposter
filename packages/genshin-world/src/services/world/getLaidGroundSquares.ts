@@ -5,9 +5,10 @@ import { getGroundPieceQuarter } from "#src/services/world/getGroundPieceQuarter
 import { getGroundPieceSquare } from "#src/services/world/getGroundPieceSquare";
 import { getJoinedGroundSquare } from "#src/services/world/getJoinedGroundSquare";
 
-// The squares a split or joined piece is clipped to, read one level at a time from its area's square: each level's indices
-// Name quarters of the square the levels above it name, and a level that joins several names the square over them, which
-// The next level splits as the fit does. On the last level a group covers the union of its quarters' squares
+// The squares a split or joined piece is clipped to, read one level at a time from its area's square: each level's
+// Indices Name quarters of the square the levels above it name, and a level that joins several names the square over
+// Them, which The next level splits as the fit does. On the last level a group covers the union of its quarters'
+// Squares
 export const getLaidGroundSquares = (
   outline: readonly GroundPoint[],
   path: readonly (readonly number[])[],

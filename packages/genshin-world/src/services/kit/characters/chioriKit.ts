@@ -29,8 +29,8 @@ const castTamoto =
 
 export const CHIORI_CHARACTER_ID = 10_000_094;
 
-// Chiori's behaviour: the upward sweep, Tamoto's attacks and Hiyoku: Twin Blades' strike each add their share of her DEF
-// To the damage their ATK share makes, and Fluttering Hasode's press and hold each cast Tamoto where she stands
+// Chiori's behaviour: the upward sweep, Tamoto's attacks and Hiyoku: Twin Blades' strike each add their share of her
+// DEF To the damage their ATK share makes, and Fluttering Hasode's press and hold each cast Tamoto where she stands
 // Constellation 1 needs Tamoto's AoE raised by 50% and Fluttering Hasode's Geo follow-up, which are not built
 // Constellation 2 needs Kinu, a summon every three seconds for ten seconds after Hiyoku, which is not built
 // Constellation 4 needs the follow-up window and the active character's attacks' Kinu strikes, which are not built

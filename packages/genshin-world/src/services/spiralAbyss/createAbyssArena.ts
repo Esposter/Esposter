@@ -8,8 +8,8 @@ import { createAbyssChallenge } from "#src/services/spiralAbyss/createAbyssChall
 import { createAbyssHalfCamp } from "#src/services/spiralAbyss/createAbyssHalfCamp";
 import { getAbyssCampId } from "#src/services/spiralAbyss/getAbyssCampId";
 
-// A chamber entered in the arena on a party set: its challenge, and its first half's camp spawned beside the entrance. A
-// Party set the challenge refuses, or a chamber a half of which lists no enemies yet, is not entered
+// A chamber entered in the arena on a party set: its challenge, and its first half's camp spawned beside the entrance.
+// A Party set the challenge refuses, or a chamber a half of which lists no enemies yet, is not entered
 export const createAbyssArena = (
   floor: AbyssFloor,
   chamber: AbyssChamber,

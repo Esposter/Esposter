@@ -20,8 +20,8 @@ export const useWorldScreenBehaviour = ({ closeFishing, input }: { closeFishing:
       if (isPointerReleased) window.document.exitPointerLock();
     },
   );
-  // The press that closes a screen is spent with it, so the F, Space or click that ended it never reaches the world as an
-  // Interact, a jump or an attack
+  // The press that closes a screen is spent with it, so the F, Space or click that ended it never reaches the world as
+  // An Interact, a jump or an attack
   watch(screenKind, (newScreenKind) => {
     if (newScreenKind !== ScreenKind.Fishing) closeFishing();
     if (newScreenKind === ScreenKind.World) input.readInput(0);
@@ -32,8 +32,9 @@ export const useWorldScreenBehaviour = ({ closeFishing, input }: { closeFishing:
     isCursorShown = true;
     window.document.exitPointerLock();
   };
-  // The browser keeps Escape for itself while the pointer is locked, letting the lock go in place of passing the key on,
-  // So a lock lost with the world in play opens the Paimon menu as Escape does, unless it was let go to show the cursor
+  // The browser keeps Escape for itself while the pointer is locked, letting the lock go in place of passing the key
+  // On, So a lock lost with the world in play opens the Paimon menu as Escape does, unless it was let go to show the
+  // Cursor
   useEventListener(
     () => window.document,
     "pointerlockchange",

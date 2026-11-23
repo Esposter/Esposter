@@ -6,8 +6,8 @@ import { takeOne } from "@esposter/shared";
 
 const COURAGE_COOLDOWN_SECONDS = 0.5;
 
-// Courage at its rank: each normal or charged attack hit raises its wielder's ATK by the rank's percentage per stack, up to
-// Four stacks for six seconds, a stack at most once every half a second
+// Courage at its rank: each normal or charged attack hit raises its wielder's ATK by the rank's percentage per stack,
+// Up to Four stacks for six seconds, a stack at most once every half a second
 export const createCouragePassiveModule = (params: number[]): PassiveModule =>
   createAttackStackPassiveModule({
     cooldownSeconds: COURAGE_COOLDOWN_SECONDS,

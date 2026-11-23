@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot
+   reject and nothing waits on it */
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { GcgLevels } from "#src/models/gcg/GcgLevels";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -21,8 +22,8 @@ import { InteractionKind } from "genshin-interface";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
-// The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, the quests not
-// Yet started the talks offering them, and the residents their standing talks, read with their words as the world
+// The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, the quests
+// Not Yet started the talks offering them, and the residents their standing talks, read with their words as the world
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
   getCardGameExp,
@@ -51,9 +52,9 @@ export const useWorldTalks = ({
   const gcgGameId = shallowRef<number>();
   const standingTalks = shallowRef<Talk[]>([]);
   const standingTalkTextMap = shallowRef<Readonly<Record<string, string>>>({});
-  // The card game's levels, which open each challenger's duels by the Player Level, and the rule that opens a talk's duel
-  // From them. Both are imported as the levels are read, so the card game's services stay out of the first screen's static
-  // Graph. Until they arrive, or if they cannot be read, no duel is offered
+  // The card game's levels, which open each challenger's duels by the Player Level, and the rule that opens a talk's
+  // Duel From them. Both are imported as the levels are read, so the card game's services stay out of the first
+  // Screen's static Graph. Until they arrive, or if they cannot be read, no duel is offered
   const gcgLevels = shallowRef<GcgLevels>();
   const gcgDuelRule = shallowRef<typeof findGcgTalkDuelGameId>();
   getResultAsync(async () => {
@@ -102,8 +103,8 @@ export const useWorldTalks = ({
   const questsOpen = computed(() => [...questsInProgress.value, ...questsOffered.value]);
   // Every talk's words, the quests' and the standing talks', which name a standing talk's offers by their quest's title
   const talkTextMap = computed(() => ({ ...questTextMap.value, ...standingTalkTextMap.value }));
-  // The quest talks the talk running offers on its first line: a standing talk offers each one open to the characters it
-  // Is begun on, and a quest's talk offers none
+  // The quest talks the talk running offers on its first line: a standing talk offers each one open to the characters
+  // It Is begun on, and a quest's talk offers none
   const talkOffers = computed(() =>
     talk.value && standingTalks.value.includes(talk.value)
       ? getTalkOffers(questsOpen.value, questProgressMap.value, talk.value.npcIds)

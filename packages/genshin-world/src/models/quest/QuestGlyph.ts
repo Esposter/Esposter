@@ -1,5 +1,5 @@
-// The quest screen's own marks besides its lists': the banner by its title, the All tab's, a series' and a quest's place
-// Pins, the objective's two layers and the overview button's
+// The quest screen's own marks besides its lists': the banner by its title, the All tab's, a series' and a quest's
+// Place Pins, the objective's two layers and the overview button's
 export const QuestGlyph = {
   AllQuests: "AllQuests",
   Banner: "Banner",

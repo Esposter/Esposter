@@ -16,9 +16,9 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- The Sheer Cold gauge across the screen's top: shown while the gauge holds any cold, faded out where it stands empty,
-       and filled from its left. It shows no words; its name reaches assistive technology as its label. Provisional: its
-       placement and colours are not read off a recording -->
+  <!-- The Sheer Cold gauge across the screen's top: shown while the gauge holds any cold, faded out where it stands
+    empty, and filled from its left. It shows no words; its name reaches assistive technology as its label.
+    Provisional: its placement and colours are not read off a recording -->
   <div
     class="sheer-cold"
     :class="{ shown: frame.sheerCold > 0 }"

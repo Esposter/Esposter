@@ -8,8 +8,8 @@ import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodE
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
-// Minty Meat Rolls: until the round ends, the target character's next three Normal Attacks cost one Unaligned die less, as
-// A status the target holds, and it eats no other food this round
+// Minty Meat Rolls: until the round ends, the target character's next three Normal Attacks cost one Unaligned die less,
+// As A status the target holds, and it eats no other food this round
 export const mintyMeatRolls: GcgCardModule = {
   canPlay: ({ duel, sideIndex }, targetIndex) => checkIsGcgFoodEatable(duel, sideIndex, targetIndex),
   initialRounds: 1,

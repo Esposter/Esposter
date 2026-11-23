@@ -26,9 +26,9 @@ import { takeOne } from "@esposter/shared";
 // The count Sweeping Fervor keeps as it strikes lasts this long past the press, long enough for its one hit to strike
 // Every enemy it reaches
 const SKILL_HIT_WINDOW_SECONDS = 0.5;
-// The shield's level is raised by the enemies Sweeping Fervor hits: Lead-In at 2 and Rave at 3, Ascension 1 lowering each
-// By one, and the shield stands at level 1 without one
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/xinyan.go
+// The shield's level is raised by the enemies Sweeping Fervor hits: Lead-In at 2 and Rave at 3, Ascension 1 lowering
+// Each By one, and the shield stands at level 1 without one
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/xinyan.go`
 const LEAD_IN_ENEMY_COUNT = 2;
 const RAVE_ENEMY_COUNT = 3;
 const ASCENSION_SHIELD_REQUIREMENT_ASCENSION = 1;
@@ -44,17 +44,16 @@ const SHIELD_LEVEL_STATUS_ID = "xinyan-shield-level";
 const HIT_COUNT_STATUS_ID = "xinyan-sweeping-fervor-hits";
 const SHIELD_DOT_FIELD_ID = "xinyan-shield-dot";
 // "...Now That's Rock 'N' Roll!", as the dump's Xinyan_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT)
-// Xinyan/asc.go give it: from Ascension 4, characters shielded by Sweeping Fervor deal 15% more Physical DMG, for as long
-// As the shield stands
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/asc.go
+// Xinyan/asc.go give it: from Ascension 4, characters shielded by Sweeping Fervor deal 15% more Physical DMG, for as
+// Long As the shield stands https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/asc.go
 const ROCK_N_ROLL_ASCENSION = 4;
 const ROCK_N_ROLL_PHYSICAL_DAMAGE_BONUS = 0.15;
 const ROCK_N_ROLL_SOURCE = "xinyan-a4";
 
-// Constellation gates, as gcsim v2.47.2 (MIT) gives them: 1's ATK SPD is not built, as the kit's normal attack speed reads
-// Only an infusion's, 2's Riff Revolution CRIT Rate and shield, and 4's Physical RES cut. Constellation 6 has no gcsim
-// Implementation, so it is not built
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/cons.go
+// Constellation gates, as gcsim v2.47.2 (MIT) gives them: 1's ATK SPD is not built, as the kit's normal attack speed
+// Reads Only an infusion's, 2's Riff Revolution CRIT Rate and shield, and 4's Physical RES cut. Constellation 6 has no
+// Gcsim Implementation, so it is not built
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/cons.go`
 const CRITICAL_RATE_CONSTELLATION = 2;
 const SHIELD_ON_BURST_CONSTELLATION = 2;
 const PHYSICAL_RESISTANCE_CONSTELLATION = 4;
@@ -88,15 +87,15 @@ const findShieldLevel = (effects: readonly KitEffect[], characterId: number): nu
 
 export const XINYAN_CHARACTER_ID = 10_000_044;
 
-// Xinyan's behaviour: Sweeping Fervor sets her level-1 shield when none stands, and each enemy its hit strikes steps the
-// Shield's level up, lowered by Ascension 1, its health read off the table at the level it stands at, and Rave's field
-// Striking every 2 seconds while it stands at level 3. Riff Revolution casts its Pyro DoT, a summon that follows the
-// Body. Constellation 2 gives its Physical hit CRIT Rate and sets Rave's shield as it is cast, its DoT striking Rave's
-// Two pulses besides, and Constellation 4's skill hit cuts Physical RES. From Ascension 4 the team deals more Physical DMG
-// While her shield stands. Her Constellation 1 is not built, as the kit's normal attack speed reads only an infusion's,
-// And Constellation 6 is not, as gcsim has none
-// Constellation 1 needs an ATK SPD bonus on her normal and charged attacks, which no attribute carries
-// Constellation 6 needs the Charged Attacks' stamina cut and ATK bonus, which the kit does not build
+// Xinyan's behaviour: Sweeping Fervor sets her level-1 shield when none stands, and each enemy its hit strikes steps
+// The Shield's level up, lowered by Ascension 1, its health read off the table at the level it stands at, and Rave's
+// Field Striking every 2 seconds while it stands at level 3. Riff Revolution casts its Pyro DoT, a summon that follows
+// The Body. Constellation 2 gives its Physical hit CRIT Rate and sets Rave's shield as it is cast, its DoT striking
+// Rave's Two pulses besides, and Constellation 4's skill hit cuts Physical RES. From Ascension 4 the team deals more
+// Physical DMG While her shield stands. Her Constellation 1 is not built, as the kit's normal attack speed reads only
+// An infusion's, And Constellation 6 is not, as gcsim has none Constellation 1 needs an ATK SPD bonus on her normal and
+// Charged attacks, which no attribute carries Constellation 6 needs the Charged Attacks' stamina cut and ATK bonus,
+// Which the kit does not build
 export const createXinyanKitBehaviour = ({
   kit,
   readHitFields,
@@ -116,9 +115,9 @@ export const createXinyanKitBehaviour = ({
   // The shield's share of DEF and flat HP at each level from 1, picked by the level the shield is set at as she plays
   const shieldDefenseShares = readParameters("shieldDefenseShares");
   const shieldFlatHealths = readParameters("shieldFlatHealths");
-  // Sets a shield at a level, its health its flat HP plus its share of DEF at that level, and at level 3 starts the field
-  // That strikes each 2 seconds while it stands, the earlier fields of the same kind ending. From Ascension 4 the team
-  // It shields deals more Physical DMG for the shield's seconds, ended sooner if it breaks
+  // Sets a shield at a level, its health its flat HP plus its share of DEF at that level, and at level 3 starts the
+  // Field That strikes each 2 seconds while it stands, the earlier fields of the same kind ending. From Ascension 4 the
+  // Team It shields deals more Physical DMG for the shield's seconds, ended sooner if it breaks
   const setShield = (context: KitContext, combatant: Combatant, body: KitBody, level: number): void => {
     const { kitEffectState, party } = context;
     const { characterId } = combatant;
@@ -160,8 +159,8 @@ export const createXinyanKitBehaviour = ({
     });
   };
   return {
-    // Riff Revolution's DoT is a summon that follows the body, struck from the cast as its hits fall. At Constellation 2
-    // The shield is set as the burst is cast, with the Physical hit's CRIT Rate for the moment it lands
+    // Riff Revolution's DoT is a summon that follows the body, struck from the cast as its hits fall. At Constellation
+    // 2 The shield is set as the burst is cast, with the Physical hit's CRIT Rate for the moment it lands
     burst: {
       onStart: (context) => {
         const { activeCombatant: combatant, body, kitEffectState } = context;
@@ -197,8 +196,8 @@ export const createXinyanKitBehaviour = ({
       hits: [
         {
           enemyStatus: getPhysicalResistanceStatus,
-          // Each enemy the hit strikes counts toward the shield's level, which the hit steps up as the count reaches each
-          // Level
+          // Each enemy the hit strikes counts toward the shield's level, which the hit steps up as the count reaches
+          // Each Level
           onStrike: (context, { body, combatant }) => {
             const { kitEffectState } = context;
             const hitCount = findKitStatus(kitEffectState.effects, combatant.characterId, HIT_COUNT_STATUS_ID);

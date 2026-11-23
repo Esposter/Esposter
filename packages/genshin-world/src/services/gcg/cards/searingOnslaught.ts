@@ -5,7 +5,8 @@ import { SEARING_ONSLAUGHT_ID } from "#src/services/gcg/cards/constants";
 import { takeOne } from "@esposter/shared";
 
 const THIRD_USE = 2;
-// Searing Onslaught, Diluc's elemental skill: 3 Pyro DMG, and +2 on the third use each round (the wiki's Searing Onslaught)
+// Searing Onslaught, Diluc's elemental skill: 3 Pyro DMG, and +2 on the third use each round (the wiki's Searing
+// Onslaught)
 const SEARING_ONSLAUGHT_DAMAGE = 3;
 const SEARING_ONSLAUGHT_THIRD_USE_BONUS = 2;
 

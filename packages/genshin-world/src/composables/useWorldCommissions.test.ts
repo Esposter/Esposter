@@ -44,7 +44,8 @@ const createSlice = (): CommissionSlice => ({
 describe(useWorldCommissions, () => {
   const RANK = 12;
 
-  // The epoch is eight in the morning in the server's zone, four hours past that day's 04:00 reset, whatever the reader's zone
+  // The epoch is eight in the morning in the server's zone, four hours past that day's 04:00 reset, whatever the
+  // Reader's zone
   const todayReset = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
   const afterReset = todayReset.add({ hours: 1 });
   const nextReset = todayReset.add({ hours: 24 });
@@ -53,7 +54,8 @@ describe(useWorldCommissions, () => {
     savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
   };
 
-  // The commissions composable as a load of the save reads it an hour past the daily reset, holding the given Encounter Points
+  // The commissions composable as a load of the save reads it an hour past the daily reset, holding the given Encounter
+  // Points
   const useAfterReset = (
     savedEncounterPoints: EncounterPoints = { earnedOn: todayReset, halfPoints: 0 },
     { getWorldNow, worldNow } = createWorldClock(afterReset),

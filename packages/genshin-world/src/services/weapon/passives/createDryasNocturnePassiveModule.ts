@@ -14,10 +14,10 @@ const REMEDY_ID = "remedy";
 const REMEDY_CRITICAL_RATE_ID = "remedyCriticalRate";
 const REMEDY_MAXIMUM_STACKS = 3;
 
-// Dryas's Nocturne at its rank: Max HP rises by the rank's share for one, two or three Remedy stacks. A stack is held for the
-// Rank's seconds from an Elemental Skill the wielder uses, from an increase of its Bond of Life, and for the rank's other seconds
-// From a heal the wielder performs. With three stacks its Elemental Burst's CRIT Rate rises by the rank's amount, which holds
-// For the rank's grace seconds after it falls under three
+// Dryas's Nocturne at its rank: Max HP rises by the rank's share for one, two or three Remedy stacks. A stack is held
+// For the Rank's seconds from an Elemental Skill the wielder uses, from an increase of its Bond of Life, and for the
+// Rank's other seconds From a heal the wielder performs. With three stacks its Elemental Burst's CRIT Rate rises by the
+// Rank's amount, which holds For the rank's grace seconds after it falls under three
 export const createDryasNocturnePassiveModule = (params: number[]): PassiveModule => {
   const maxHealthShares = [takeOne(params, 0), takeOne(params, 1), takeOne(params, 2)];
   const skillSeconds = takeOne(params, 3);

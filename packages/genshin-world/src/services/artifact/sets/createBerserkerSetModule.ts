@@ -4,8 +4,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { takeOne } from "@esposter/shared";
 
-// Berserker's four-piece bonus, its CRIT Rate and the share of its wearer's Max HP in the set table's order: its wearer's
-// Hits are priced with that CRIT Rate while its HP is below that share
+// Berserker's four-piece bonus, its CRIT Rate and the share of its wearer's Max HP in the set table's order: its
+// Wearer's Hits are priced with that CRIT Rate while its HP is below that share
 export const createBerserkerSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const criticalRate = takeOne(params, 0);
   const maxHealthShare = takeOne(params, 1);

@@ -35,10 +35,10 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- A member's row in the deployed team: the name over its HP bar before a round portrait and, for the keys, its slot's
-       Key. The member on the field has its name and portrait stand forward on a band, and no bar, its health being the
-       HUD's own; a member who is down is greyed, and every other row darkens by the share of the switch's cooldown left.
-       A press taps its slot's key, as the number keys do -->
+  <!-- A member's row in the deployed team: the name over its HP bar before a round portrait and, for the keys, its
+    slot's Key. The member on the field has its name and portrait stand forward on a band, and no bar, its health
+    being the HUD's own; a member who is down is greyed, and every other row darkens by the share of the switch's
+    cooldown left. A press taps its slot's key, as the number keys do -->
   <button
     class="member"
     :class="{ active: index === party.activeIndex, down: checkIsCharacterDown(party, characterId) }"

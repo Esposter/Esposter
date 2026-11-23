@@ -21,9 +21,9 @@ const checkIsKitCrystallizeShard = (effect: KitEffect): effect is KitCrystallize
   effect.kind === "crystallizeShard";
 
 // The Crystallize shards the reactions a combatant triggered on an enemy drop, added to the team's effects: each
-// Crystallize drops one half a metre out from the enemy's edge at a bearing drawn from the world's random source, holding
-// The shield of its element the combatant's level and Elemental Mastery price. Every shard past the newest three goes
-// Within two seconds
+// Crystallize drops one half a metre out from the enemy's edge at a bearing drawn from the world's random source,
+// Holding The shield of its element the combatant's level and Elemental Mastery price. Every shard past the newest
+// Three goes Within two seconds
 export const addCrystallizeShards = (
   kitEffectState: KitEffectState,
   { position }: Enemy,

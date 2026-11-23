@@ -7,8 +7,8 @@ import { useWorldMapStore } from "#src/store/map";
 import { storeToRefs } from "pinia";
 import { shallowRef, watch } from "vue";
 
-// The locked jump landmark the HUD points to, re-read as the character moves and as a landmark unlocks, so unlocking the
-// One it points to lets the pointer go at once
+// The locked jump landmark the HUD points to, re-read as the character moves and as a landmark unlocks, so unlocking
+// The One it points to lets the pointer go at once
 export const useWorldPointedLandmark = ({ mapCamera }: { mapCamera: Readonly<Ref<MapCamera>> }) => {
   const worldMapStore = useWorldMapStore();
   const { lockedJumpLandmarks } = storeToRefs(worldMapStore);

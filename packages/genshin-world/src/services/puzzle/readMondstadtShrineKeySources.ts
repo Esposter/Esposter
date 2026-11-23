@@ -5,8 +5,9 @@ import { readGameData } from "#src/services/data/readGameData";
 import { SHRINE_REGION_ID } from "#src/services/puzzle/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 
-// The Shrine of Depths keys Mondstadt's region is opened with, as `genshin:assets shrineKeySources` publishes them, fetched
-// By their key from the hosted game data and checked against their schema as they arrive, with each source's id unique
+// The Shrine of Depths keys Mondstadt's region is opened with, as `genshin:assets shrineKeySources` publishes them,
+// Fetched By their key from the hosted game data and checked against their schema as they arrive, with each source's id
+// Unique
 export const readMondstadtShrineKeySources = (gameDataBaseUrl: string): Promise<ShrineKeySource[]> =>
   readGameData(
     gameDataBaseUrl,

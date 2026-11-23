@@ -7,10 +7,10 @@ import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { RegionGameTextKeyMap } from "#src/services/handbook/RegionGameTextKeyMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The day's commissions in the order they were dealt, each with its title, its preferred region, its progress against the
-// Count that finishes it, and whether it is claimed or claimable: a finished one is claimable free, an unfinished one for a
-// Whole Encounter Point, and none once the day's four are claimed. A dealt commission the slice holds no task for is an error,
-// As findDealtCommission reads it
+// The day's commissions in the order they were dealt, each with its title, its preferred region, its progress against
+// The Count that finishes it, and whether it is claimed or claimable: a finished one is claimable free, an unfinished
+// One for a Whole Encounter Point, and none once the day's four are claimed. A dealt commission the slice holds no task
+// For is an error, As findDealtCommission reads it
 export const toHandbookDayCommissions = (
   day: CommissionDay,
   { tasks }: CommissionSlice,

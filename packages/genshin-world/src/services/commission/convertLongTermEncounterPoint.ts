@@ -9,9 +9,9 @@ import { readEncounterPoints } from "#src/services/commission/readEncounterPoint
 import { readLongTermEncounterPoints } from "#src/services/commission/readLongTermEncounterPoints";
 import { spendOriginalResin } from "#src/services/originalResin/spendOriginalResin";
 
-// A Long-Term Encounter Point converted into an Encounter Point for the Original Resin it costs, while the daily points fall
-// Short of the storage by a whole point. Undefined where the long-term points hold less than a whole point, the daily points
-// Leave no room for one, or the resin cannot pay, so nothing is converted or spent
+// A Long-Term Encounter Point converted into an Encounter Point for the Original Resin it costs, while the daily points
+// Fall Short of the storage by a whole point. Undefined where the long-term points hold less than a whole point, the
+// Daily points Leave no room for one, or the resin cannot pay, so nothing is converted or spent
 export const convertLongTermEncounterPoint = ({
   encounterPoints,
   longTermEncounterPoints,

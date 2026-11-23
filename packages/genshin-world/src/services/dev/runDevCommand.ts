@@ -3,8 +3,8 @@ import type { DevResult } from "#src/models/dev/DevResult";
 
 import { formatDevUsage } from "#src/services/dev/formatDevUsage";
 
-// Runs a command on the line's words, each read as the argument its command names in that place, and runs nothing when a
-// Word is refused by its schema or there is a word past the last argument
+// Runs a command on the line's words, each read as the argument its command names in that place, and runs nothing when
+// A Word is refused by its schema or there is a word past the last argument
 export const runDevCommand = (command: DevCommand, words: readonly string[]): DevResult => {
   const usage = formatDevUsage(command);
   const { argumentNames } = command;

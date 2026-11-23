@@ -6,8 +6,8 @@ import { landmarkArrivalSchema } from "#src/models/world/LandmarkArrival";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { z } from "zod";
 
-// A Statue of the New Moon, which stands where other regions have a Statue of The Seven and, once discovered, is a waypoint
-// Exploring jumps to. A jump lands at its arrival, so it always has one
+// A Statue of the New Moon, which stands where other regions have a Statue of The Seven and, once discovered, is a
+// Waypoint Exploring jumps to. A jump lands at its arrival, so it always has one
 export interface StatueOfTheNewMoonLandmark extends BaseLandmark {
   arrival: LandmarkArrival;
   kind: typeof LandmarkKind.StatueOfTheNewMoon;

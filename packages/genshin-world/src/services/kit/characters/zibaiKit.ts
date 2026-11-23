@@ -15,8 +15,8 @@ import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 export const ZIBAI_CHARACTER_ID = 10_000_126;
-// The Phase Shift Radiance the shift accrues and Spirit Steed's Stride spends, the cooldowns that let each gain come once a
-// Time, and the Strides a shift lasts for
+// The Phase Shift Radiance the shift accrues and Spirit Steed's Stride spends, the cooldowns that let each gain come
+// Once a Time, and the Strides a shift lasts for
 export const PHASE_SHIFT_RADIANCE_STATUS_ID = "phase-shift-radiance";
 const PHASE_SHIFT_RADIANCE_MAXIMUM = 100;
 const RADIANCE_PER_SECOND = 10;
@@ -36,20 +36,19 @@ const SPIRIT_STEED_STRIDES_PER_SHIFT = 4;
 const checkIsInLunarPhaseShift = ({ activeCombatant: { characterId }, kitEffectState }: KitContext): boolean =>
   findKitStance(kitEffectState.effects, characterId) !== undefined;
 
-// Zibai's behaviour: Heaven and Earth Made Manifest enters the Lunar Phase Shift for its record's seconds, at most 15 as
-// The wiki gives it, where her normal attacks and charged attack are Geo and her skill is Spirit Steed's Stride. The shift
-// Accrues Phase Shift Radiance: 10 a second, 5 for a normal attack's hit once every half second, and 35 for each Lunar-
-// Crystallize nearby party members trigger while Ascendant Gleam holds, once every four seconds. Spirit Steed's Stride
-// Spends 70 of it, resets the cooldown on the Moonsign's Radiance, and the fourth Stride ends the shift. Her strikes outside
-// The shift, her burst and her plunges are her record's alone, and her frames and areas are provisional, read from a
-// Borrowed donor's gcsim hitmarks and areas.
-// The fourth normal attack's extra instance of Geo DMG is the stance's second hit there, gated by Ascendant Gleam through
-// Its landing condition. Not built, each waiting on its own rule: the normal attack's Radiance is read at the normal
-// Attack's first hit's hitmark, not at a hit on an enemy, since no event tells the two apart
-// Constellation 1 needs Heaven and Earth Made Manifest's effects, which the kit does not build
-// Constellation 2 needs the Lunar Phase Shift's effects, which the kit does not build
-// Constellation 4 needs the Lunar Phase Shift's effects, which the kit does not build
-// Constellation 6 needs the Lunar Phase Shift's effects, which the kit does not build
+// Zibai's behaviour: Heaven and Earth Made Manifest enters the Lunar Phase Shift for its record's seconds, at most 15
+// As The wiki gives it, where her normal attacks and charged attack are Geo and her skill is Spirit Steed's Stride. The
+// Shift Accrues Phase Shift Radiance: 10 a second, 5 for a normal attack's hit once every half second, and 35 for each
+// Lunar- Crystallize nearby party members trigger while Ascendant Gleam holds, once every four seconds. Spirit Steed's
+// Stride Spends 70 of it, resets the cooldown on the Moonsign's Radiance, and the fourth Stride ends the shift. Her
+// Strikes outside The shift, her burst and her plunges are her record's alone, and her frames and areas are
+// Provisional, read from a Borrowed donor's gcsim hitmarks and areas. The fourth normal attack's extra instance of Geo
+// DMG is the stance's second hit there, gated by Ascendant Gleam through Its landing condition. Not built, each waiting
+// On its own rule: the normal attack's Radiance is read at the normal Attack's first hit's hitmark, not at a hit on an
+// Enemy, since no event tells the two apart Constellation 1 needs Heaven and Earth Made Manifest's effects, which the
+// Kit does not build Constellation 2 needs the Lunar Phase Shift's effects, which the kit does not build Constellation
+// 4 needs the Lunar Phase Shift's effects, which the kit does not build Constellation 6 needs the Lunar Phase Shift's
+// Effects, which the kit does not build
 export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {
   const lunarPhaseShiftSeconds = readParameter("lunarPhaseShiftSeconds");
   const spiritSteedStride: KitActionBehaviour = {

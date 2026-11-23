@@ -15,10 +15,11 @@ const PRAYER_OF_THE_FAR_NORTH_ID = "prayerOfTheFarNorth";
 const NEW_MOON_VERSE_ID = "newMoonVerse";
 const LUNAR_BLOOM_REACTIONS = [{ reactionType: ReactionType.LunarBloom }];
 
-// Millennial Hymn at its rank: an Elemental Skill of Hydro or Dendro the wielder deals gives Prayer of the Far North, Elemental
-// Mastery for the rank's first seconds, and a Lunar-Bloom a nearby member triggers gives New Moon Verse, Elemental Mastery for
-// The rank's second seconds, on the wielder off the field too. With both in effect, every Bloom reaction of the party gains
-// The rank's Bloom amount, a Hyperbloom or Burgeon the rank's second, and a Lunar-Bloom the rank's third, not stacking
+// Millennial Hymn at its rank: an Elemental Skill of Hydro or Dendro the wielder deals gives Prayer of the Far North,
+// Elemental Mastery for the rank's first seconds, and a Lunar-Bloom a nearby member triggers gives New Moon Verse,
+// Elemental Mastery for The rank's second seconds, on the wielder off the field too. With both in effect, every Bloom
+// Reaction of the party gains The rank's Bloom amount, a Hyperbloom or Burgeon the rank's second, and a Lunar-Bloom the
+// Rank's third, not stacking
 export const createMillennialHymnPassiveModule = (params: number[]): PassiveModule => {
   const prayerElementalMastery = takeOne(params, 0);
   const newMoonSeconds = takeOne(params, 1);

@@ -1,6 +1,7 @@
 import type { DevScenario } from "#src/models/dev/DevScenario";
 
-// Gives the wallet's Mora and Primogems and the materials whose stack holds 99,999, each named by one word only it holds
+// Gives the wallet's Mora and Primogems and the materials whose stack holds 99,999, each named by one word only it
+// Holds
 export const fullBagScenario: DevScenario = {
   lines: [
     "give Mora 99999",

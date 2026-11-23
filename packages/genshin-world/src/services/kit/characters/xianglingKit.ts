@@ -23,10 +23,10 @@ const GUOBA_OFFSET = 1.3;
 // Xiangling/asc.go give it
 // https://genshin-impact.fandom.com/wiki/Crossfire
 const CROSSFIRE_ASCENSION = 1;
-// Beware, It's Super Hot!, from Ascension 4, leaves a chili pepper where Guoba disappears for 10 seconds, and the character
-// Who picks it up gains 10% ATK for 10 seconds, as the wiki's passive page gives it. Provisional: no source gives the
-// Pepper's pickup reach, so the body on the field picks it up within a metre of it
-// https://genshin-impact.fandom.com/wiki/Beware,_It%27s_Super_Hot!
+// Beware, It's Super Hot!, from Ascension 4, leaves a chili pepper where Guoba disappears for 10 seconds, and the
+// Character Who picks it up gains 10% ATK for 10 seconds, as the wiki's passive page gives it. Provisional: no source
+// Gives the Pepper's pickup reach, so the body on the field picks it up within a metre of it
+// `https://genshin-impact.fandom.com/wiki/Beware,_It%27s_Super_Hot`!
 const BEWARE_ITS_SUPER_HOT_ASCENSION = 4;
 const CHILI_PEPPER_SECONDS = 10;
 const CHILI_PEPPER_PICKUP_RADIUS = 1;
@@ -52,9 +52,9 @@ const OIL_MEETS_FIRE_CONSTELLATION = 2;
 // https://genshin-impact.fandom.com/wiki/Slowbake
 const SLOWBAKE_CONSTELLATION = 4;
 const SLOWBAKE_DURATION_MULTIPLIER = 1.4;
-// Condensed Pyronado, from six constellations, gives every party member a 15% Pyro DMG Bonus for the Pyronado's seconds,
-// From its start, as the wiki's constellation page and gcsim v2.47.2 (MIT) xiangling/cons.go give it
-// https://genshin-impact.fandom.com/wiki/Condensed_Pyronado
+// Condensed Pyronado, from six constellations, gives every party member a 15% Pyro DMG Bonus for the Pyronado's
+// Seconds, From its start, as the wiki's constellation page and gcsim v2.47.2 (MIT) xiangling/cons.go give it
+// `https://genshin-impact.fandom.com/wiki/Condensed_Pyronado`
 const CONDENSED_PYRONADO_CONSTELLATION = 6;
 const CONDENSED_PYRONADO_PYRO_DAMAGE_BONUS = 0.15;
 const CONDENSED_PYRONADO_SOURCE = "Condensed Pyronado";
@@ -86,11 +86,12 @@ const castChiliPepper = (
 
 export const XIANGLING_CHARACTER_ID = 10_000_023;
 
-// Xiangling's behaviour: from two constellations, the fifth strike casts Oil Meets Fire's Implode as it starts, a summon
-// Where she stands. Guoba Attack casts Guoba ahead of her, breathing its flame, widened from Ascension 1 and taking
-// Crispy Outside, Tender Inside's Pyro RES from one constellation, and from Ascension 4 leaving its chili pepper where it
-// Stood. Pyronado casts the Pyronado, a summon that follows the body on the field for its seconds, which Slowbake
-// Lengthens from four constellations; from six, a task as it starts gives the team Condensed Pyronado's Pyro DMG Bonus
+// Xiangling's behaviour: from two constellations, the fifth strike casts Oil Meets Fire's Implode as it starts, a
+// Summon Where she stands. Guoba Attack casts Guoba ahead of her, breathing its flame, widened from Ascension 1 and
+// Taking Crispy Outside, Tender Inside's Pyro RES from one constellation, and from Ascension 4 leaving its chili pepper
+// Where it Stood. Pyronado casts the Pyronado, a summon that follows the body on the field for its seconds, which
+// Slowbake Lengthens from four constellations; from six, a task as it starts gives the team Condensed Pyronado's Pyro
+// DMG Bonus
 export const createXianglingKitBehaviour = ({
   readHit,
   readHits,

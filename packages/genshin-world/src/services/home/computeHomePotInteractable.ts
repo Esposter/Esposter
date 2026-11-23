@@ -5,8 +5,8 @@ import { HOME_POT_GADGET_ID } from "#src/services/home/constants";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
-// The Serenitea Pot set down in the open world: an activation the key takes, named by the pot's own text, standing on the
-// Ground beneath the point it was set down at
+// The Serenitea Pot set down in the open world: an activation the key takes, named by the pot's own text, standing on
+// The Ground beneath the point it was set down at
 export const computeHomePotInteractable = (
   gameText: GameText,
   { x, z }: { x: number; z: number },

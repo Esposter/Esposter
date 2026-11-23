@@ -9,8 +9,8 @@ const GENERALS_GLORY_DAMAGE = 1;
 const GENERALS_GLORY_USAGES = 2;
 const GENERALS_GLORY_GEO_CHARACTERS = 2;
 
-// General's Glory, a summon: at each End Phase it deals 1 Geo DMG, and with two Geo characters in the party, a Crystallize
-// Shield goes to its side's active character, for 2 usages
+// General's Glory, a summon: at each End Phase it deals 1 Geo DMG, and with two Geo characters in the party, a
+// Crystallize Shield goes to its side's active character, for 2 usages
 export const generalsGlory: GcgCardModule = {
   initialUsages: GENERALS_GLORY_USAGES,
   onEndPhase: ({ duel, sideIndex }, zoneCard) => {

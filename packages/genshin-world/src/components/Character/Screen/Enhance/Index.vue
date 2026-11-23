@@ -32,7 +32,8 @@ interface Props {
 }
 
 const characters = defineModel<Character[]>("characters", { required: true });
-// The bag's artifacts chosen as fodder and the ore counts chosen by item id, which the Artifacts panel clears as it opens the picker
+// The bag's artifacts chosen as fodder and the ore counts chosen by item id, which the Artifacts panel clears as it
+// Opens the picker
 const enhanceFodderIds = defineModel<number[]>("enhanceFodderIds", { required: true });
 const enhanceMaterialCounts = defineModel<Record<number, number>>("enhanceMaterialCounts", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });

@@ -6,8 +6,9 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 const HANACHIRUSATO_PROGRESS_LIMIT = 3;
 const HANACHIRUSATO_REDUCTION = 2;
 
-// Hanachirusato, a companion support: each summon that disappears from its side gives it 1 Cleansing Ritual Progress, up to
-// Three. Playing a Weapon or an Artifact with three Progress costs two Elemental Dice less, and discards Hanachirusato
+// Hanachirusato, a companion support: each summon that disappears from its side gives it 1 Cleansing Ritual Progress,
+// Up to Three. Playing a Weapon or an Artifact with three Progress costs two Elemental Dice less, and discards
+// Hanachirusato
 export const hanachirusato: GcgCardModule = {
   initialUsages: 1,
   onCostPaid: (_context, _subject, zoneCard) => {

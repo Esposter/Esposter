@@ -15,8 +15,8 @@ const emit = defineEmits<{ concede: [] }>();
 </script>
 
 <template>
-  <!-- The battle counter under the host's name at the top left, and the three round discs at the top right: the record and
-       the history, their icons not drawn, and the concede that leaves the duel -->
+  <!-- The battle counter under the host's name at the top left, and the three round discs at the top right: the
+    record and the history, their icons not drawn, and the concede that leaves the duel -->
   <div class="battle">{{ battleLabel }}</div>
   <div class="hud-disc record" />
   <div class="hud-disc history" />

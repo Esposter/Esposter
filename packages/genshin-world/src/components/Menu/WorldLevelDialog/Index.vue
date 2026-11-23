@@ -64,10 +64,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The World Level dialog the profile card's info icon opens over the dimmed menu: its title and the cross that closes
-       It, what the World Level is, scrolled to its end where the change is told, and the button that lowers the World
-       Level by one or restores it, held while the last change's cooldown runs. Every place is the 1080 high recording's
-       own pixels from the frame's top left -->
+  <!-- The World Level dialog the profile card's info icon opens over the dimmed menu: its title and the cross that
+    closes It, what the World Level is, scrolled to its end where the change is told, and the button that lowers the
+    World Level by one or restores it, held while the last change's cooldown runs. Every place is the 1080 high
+    recording's own pixels from the frame's top left -->
   <!-- Escape closes the dialog alone, back to the menu, so it stops here short of the input the screens close on -->
   <GameScreen
     class="world-level-dialog"

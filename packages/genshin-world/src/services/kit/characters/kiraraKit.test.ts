@@ -125,7 +125,8 @@ describe(createKiraraKitBehaviour, () => {
   });
 });
 
-// The DMG Bonus Pupillary Variance gives a hit of hers from her Max HP, for the given attack, with her at the given ascension
+// The DMG Bonus Pupillary Variance gives a hit of hers from her Max HP, for the given attack, with her at the given
+// Ascension
 const readStrikeDamageBonus = (ascension: number, attackTag: AttackTag): number => {
   const combatant = {
     ...createKiraraCombatant(),

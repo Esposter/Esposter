@@ -23,7 +23,8 @@ export const createPlanTonesNode = (options: PlanCanvasOptions, { stone, tones }
           loop.map((point) => toCanvas(point)),
         );
       context.fillStyle = getHalfShadeStyle(shade);
-      // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
+      // A canvas's
+      // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- fill takes a path, not an array's value
       context.fill(path, "evenodd");
     }
   });

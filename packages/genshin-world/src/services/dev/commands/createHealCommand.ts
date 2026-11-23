@@ -5,8 +5,8 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { healPartyMember } from "#src/services/party/healPartyMember";
 import { z } from "zod";
 
-// `heal` restores every member of the deployed team to all of its HP, the way a statue's heal does, and answers how many
-// It healed. A member who is down stays down, as a heal leaves one
+// `heal` restores every member of the deployed team to all of its HP, the way a statue's heal does, and answers how
+// Many It healed. A member who is down stays down, as a heal leaves one
 export const createHealCommand = ({ party }: { party: Party }): DevCommand => ({
   args: z.object({}),
   argumentNames: [],

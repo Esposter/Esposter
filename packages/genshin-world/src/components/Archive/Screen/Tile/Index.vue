@@ -18,21 +18,23 @@ interface Props {
   kills?: number | undefined;
   // The name the tile shows, which reads "?" while the entry is unopened
   name: string;
-  // The entry's rarity in stars, which tints the tile and draws its stars, absent for an entry the weapon data gives none
+  // The entry's rarity in stars, which tints the tile and draws its stars, absent for an entry the weapon data gives
+  // None
   rarity?: number | undefined;
 }
 
 const { rarity } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
-// The face gradient of a four or five star tile, held as one style so the button is not handed a fresh object on each render
+// The face gradient of a four or five star tile, held as one style so the button is not handed a fresh object on each
+// Render
 const faceStyle = computed(() => ({
   background: rarity !== undefined && rarity >= 4 ? ItemRarityFaceGradientMap[rarity] : undefined,
 }));
 </script>
 
 <template>
-  <!-- A four or five star weapon's tile takes its face gradient from the item tile, which owns the gradients. The two and three
-       star tiles keep the flat tints in the stylesheet -->
+  <!-- A four or five star weapon's tile takes its face gradient from the item tile, which owns the gradients. The
+    two and three star tiles keep the flat tints in the stylesheet -->
   <GameButton
     class="tile"
     :aria-pressed="isSelected"

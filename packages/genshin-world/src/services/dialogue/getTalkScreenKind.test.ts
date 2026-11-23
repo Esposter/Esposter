@@ -33,8 +33,8 @@ describe(getTalkScreenKind, () => {
     expect(getTalkScreenKind("vendorTalkId", [VENDOR], { vendorId: 1 })).toBe(ScreenKind.Shop);
   });
 
-  // Each Fishing Association member placed in the world, by his NPC id and the shop his association sells from. Zherebtsov
-  // Is not placed, since Snezhnaya has no fitted region yet, so his association's shop does not open
+  // Each Fishing Association member placed in the world, by his NPC id and the shop his association sells from.
+  // Zherebtsov Is not placed, since Snezhnaya has no fitted region yet, so his association's shop does not open
   test.each([
     ["1673", 1064],
     ["2615", 1065],

@@ -35,7 +35,8 @@ const getAttackBuff = (kitEffectState: KitEffectState): number =>
     (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent,
   )?.amount ?? 0;
 
-// Chevreuse, a Pyro character with 10,000 Max HP, fires the Overcharged Ball from a hold with the Overloaded reaction set
+// Chevreuse, a Pyro character with 10,000 Max HP, fires the Overcharged Ball from a hold with the Overloaded reaction
+// Set
 const fireOverchargedBall = (ascension: number): KitEffectState => {
   const kitEffectState: KitEffectState = { effects: [] };
   const pyroCombatant = { ...createChevreuseCombatant(), ascension, element: Element.Pyro };

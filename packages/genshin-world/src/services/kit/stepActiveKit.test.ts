@@ -244,7 +244,8 @@ describe(stepActiveKit, () => {
     const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     const kitState = createKitState();
     const controls = createControls();
-    // A single press starts a normal attack, and the attack held past the press starts a charged one as that attack ends
+    // A single press starts a normal attack, and the attack held past the press starts a charged one as that attack
+    // Ends
     stepActiveKit(kitState, { ...IDLE_INPUT, isAttackHeld: true, isAttackPressed: true }, 0.1, context, controls);
     stepActiveKit(kitState, { ...IDLE_INPUT, isAttackHeld: true }, 2, context, controls);
     stepActiveKit(kitState, IDLE_INPUT, 1, context, controls);

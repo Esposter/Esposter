@@ -26,9 +26,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <!-- The claims F offers at a revealed blossom, one row for each way the held resin pays a claim, a restore row where a
-       Fragile Resin can restore the Original Resin, and a row that leaves the blossom unclaimed. Drawn in the prompts
-       beside the character, where the prompt list is -->
+  <!-- The claims F offers at a revealed blossom, one row for each way the held resin pays a claim, a restore row
+    where a Fragile Resin can restore the Original Resin, and a row that leaves the blossom unclaimed. Drawn in the
+    prompts beside the character, where the prompt list is -->
   <div class="offer-choice">
     <GameButton
       v-for="offer of offers"

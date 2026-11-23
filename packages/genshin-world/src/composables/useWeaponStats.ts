@@ -25,8 +25,8 @@ export const useWeaponStats = (
     formatWholeNumber(getAttributeTotals(ascension)[Attribute.BaseAttack]);
   const baseAttackText = computed(() => getBaseAttackText(weapon.value.ascension));
   const nextBaseAttackText = computed(() => getBaseAttackText(weapon.value.ascension + 1));
-  // The secondary attribute the weapon grows beside its base ATK, at the held phase, written whole or as a percentage by its
-  // Kind; a secondary the label map names no caption for leaves its caption undrawn
+  // The secondary attribute the weapon grows beside its base ATK, at the held phase, written whole or as a percentage
+  // By its Kind; a secondary the label map names no caption for leaves its caption undrawn
   const secondaryAttribute = computed(() => getSecondaryAttribute(weaponData.value));
   const secondaryText = computed(() =>
     secondaryAttribute.value === undefined

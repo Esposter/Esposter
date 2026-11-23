@@ -18,8 +18,8 @@ import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 // Whether an ISO instant is later than another
 const checkIsLaterInstant = (instant: string, than: string): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(instant), Temporal.Instant.from(than)) > 0;
-// An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
-// Is the earlier of the two, since a finished achievement stays finished
+// An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first
+// Finished Is the earlier of the two, since a finished achievement stays finished
 const mergeAchievementProgress = (
   account: AchievementProgressSave[string],
   guest: AchievementProgressSave[string],
@@ -40,8 +40,8 @@ const checkIsFurtherByLevel = <T extends { level: number }>(
 // Mondstadt's Reputation is the further of the two, by its level and then by the EXP toward the next
 const checkIsFurtherReputation = (reputation: ReputationProgress, than: ReputationProgress): boolean =>
   checkIsFurtherByLevel(reputation, than, ({ exp }) => exp);
-// A character is the copy further on by its level and then its constellations, kept whole so its weapon and artifacts stay
-// One copy's. A tie on both keeps the account's
+// A character is the copy further on by its level and then its constellations, kept whole so its weapon and artifacts
+// Stay One copy's. A tie on both keeps the account's
 const checkIsFurtherCharacter = (character: CharacterSave, than: CharacterSave): boolean =>
   checkIsFurtherByLevel(character, than, ({ constellationCount }) => constellationCount);
 // The characters both copies hold merge to the copy further on, with the larger copy count, and a character only the
@@ -86,7 +86,8 @@ const checkIsLaterWorldLevelAdjustment = (
 // The day dealt later is the one the player is on, since a day is dealt again at each daily reset
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
   checkIsLaterInstant(day.dealtAt, than.dealtAt);
-// The Encounter Points of the later daily reset are the ones the player holds, and on the same reset the larger count is
+// The Encounter Points of the later daily reset are the ones the player holds, and on the same reset the larger count
+// Is
 const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPointsSave): EncounterPointsSave => {
   const order = Temporal.Instant.compare(
     Temporal.Instant.from(account.earnedOn),
@@ -95,8 +96,8 @@ const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPoin
   if (order === 0) return { ...account, halfPoints: Math.max(account.halfPoints, guest.halfPoints) };
   return order > 0 ? account : guest;
 };
-// The later major version's Long-Term Encounter Points are held, and within one major version the larger count, as the daily
-// Points of one day are
+// The later major version's Long-Term Encounter Points are held, and within one major version the larger count, as the
+// Daily Points of one day are
 const mergeLongTermEncounterPoints = (
   account: LongTermEncounterPointsSave,
   guest: LongTermEncounterPointsSave,
@@ -250,8 +251,8 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   };
 };
 
-// The Abyss's progress is the union of both copies' cycles: a chamber is cleared if either copy cleared it, with the most stars
-// Either copy holds, and the rewards a cycle claimed are the account's copy
+// The Abyss's progress is the union of both copies' cycles: a chamber is cleared if either copy cleared it, with the
+// Most stars Either copy holds, and the rewards a cycle claimed are the account's copy
 const mergeSpiralAbyssCycle = (account: SpiralAbyssCycleSave, guest: SpiralAbyssCycleSave): SpiralAbyssCycleSave => {
   const chambers = { ...guest.chambers };
   for (const [chamberId, { isCleared, stars }] of Object.entries(account.chambers)) {

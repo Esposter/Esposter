@@ -4,8 +4,8 @@ import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 
 describe("achievementScreen", () => {
-  // The traced marks the screen draws in their stand-ins' places: the header's laurel, a category's badge, an achievement's medal
-  // And stamp ring, and the frame's corner ornaments and bottom tab
+  // The traced marks the screen draws in their stand-ins' places: the header's laurel, a category's badge, an
+  // Achievement's medal And stamp ring, and the frame's corner ornaments and bottom tab
   const MARK_CLASSES = [
     "mark-laurel",
     "mark-category-badge",

@@ -31,8 +31,8 @@ const emit = defineEmits<{
   toggleFodder: [id: number];
   unpickOre: [id: number];
 }>();
-// The slots left empty after the open tab's candidates: the Enhance strip's seven, the seventh cut off at its right edge
-// As the game's strip cuts it, and the Refine tab's rank slots that no candidate has taken
+// The slots left empty after the open tab's candidates: the Enhance strip's seven, the seventh cut off at its right
+// Edge As the game's strip cuts it, and the Refine tab's rank slots that no candidate has taken
 const emptySlotCount = computed(() =>
   openTab === WeaponMenuTab.Enhance
     ? Math.max(0, ENHANCE_SLOT_COUNT - oreCells.length - fodderCells.length)

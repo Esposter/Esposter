@@ -65,14 +65,16 @@ interface Props {
   // The dish each instruction item teaches, by the item's id, which an instruction's Use is offered from
   instructionRecipeMap: ReadonlyMap<number, CookingRecipe>;
   inventory: Inventory;
-  // The tabs' rooms the game gives each tab it counts on its own, by the tab's category, which a tab's capacity is read from
+  // The tabs' rooms the game gives each tab it counts on its own, by the tab's category, which a tab's capacity is read
+  // From
   itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which a destroy's returned materials are defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The game's names in the reader's language, by their text ids, for the materials a destroy returns
   names: Readonly<Record<string, string>>;
   wallet: Wallet;
-  // The weapons' details by the entry's id, for the entries whose weapon the bag can already read, the detail panel's stats
+  // The weapons' details by the entry's id, for the entries whose weapon the bag can already read, the detail panel's
+  // Stats
   weaponDetails?: Record<string, InventoryWeaponDetails> | undefined;
 }
 
@@ -136,8 +138,8 @@ const capacity = computed(() => {
         room,
       );
 });
-// The open tab's entries, a weapon's level as the game writes one and an artifact's as its plus, a stack's count, and on
-// Precious Items the wish's currencies the player holds ahead of the bag's own
+// The open tab's entries, a weapon's level as the game writes one and an artifact's as its plus, a stack's count, and
+// On Precious Items the wish's currencies the player holds ahead of the bag's own
 const cells = computed((): InventoryCell[] => {
   const bagUseContext: InventoryUseContext = {
     blueprintMap,

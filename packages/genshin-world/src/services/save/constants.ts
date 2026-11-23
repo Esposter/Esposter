@@ -51,8 +51,8 @@ export const MAX_PARTY_TEAM_NAME_LENGTH = 32;
 export const MAX_UNLOCKED_LANDMARK_COUNT = 512;
 // The chests a player opens once each, so the bound is every chest the world's regions hold at once with room to spare
 export const MAX_OPENED_CHEST_COUNT = 4096;
-// The one-time domains a player clears once each: only those enter the save, so the bound is every domain the game has with
-// Room to spare
+// The one-time domains a player clears once each: only those enter the save, so the bound is every domain the game has
+// With Room to spare
 export const MAX_CLEARED_DOMAIN_COUNT = 64;
 // The Oculi a player finds once each, across every region the game has, so the bound is the whole map's with room to
 // Spare
@@ -62,18 +62,18 @@ export const MAX_CLEARED_CAMP_COUNT = 4795;
 // The mined outcrops a save holds, each once by its place: a mining prunes the ones whose respawn has come, so the save
 // Holds only the ones mined since the last reset
 export const MAX_MINED_OUTCROP_COUNT = 256;
-// The Seelies a player settles in their courts once each, so the bound is the map's 547 Seelie marks on the ground in the
-// Mapped regions, counted from the official map's point list the puzzles build places
+// The Seelies a player settles in their courts once each, so the bound is the map's 547 Seelie marks on the ground in
+// The Mapped regions, counted from the official map's point list the puzzles build places
 export const MAX_SETTLED_SEELIE_COUNT = 547;
 // The puzzles a player solves once each, so the bound is the map's 632 Time Trial Challenge marks and 200 Elemental
 // Monument marks on the ground in the mapped regions, counted from the same point list on the same day
 export const MAX_SOLVED_PUZZLE_COUNT = 832;
-// The goods a player holds a purchase of, one entry each, bounded by the shop goods that hold a buy limit: 5134 of the game's
-// Shop goods table, a good with no limit keeping no entry
+// The goods a player holds a purchase of, one entry each, bounded by the shop goods that hold a buy limit: 5134 of the
+// Game's Shop goods table, a good with no limit keeping no entry
 export const MAX_SHOP_PURCHASE_COUNT = 5134;
 
-// The Moon Spire periods a save keeps progress for, one cycle each beside the Corridor's, and the chambers of the longest cycle:
-// The Corridor's eight floors of three
+// The Moon Spire periods a save keeps progress for, one cycle each beside the Corridor's, and the chambers of the
+// Longest cycle: The Corridor's eight floors of three
 export const MAX_ABYSS_CYCLE_COUNT = 256;
 export const MAX_ABYSS_CHAMBER_COUNT = 24;
 // The character trials' stages: the dump holds 120 of them, and the cap leaves headroom over that
@@ -83,7 +83,8 @@ export const MAX_CHARACTER_TRIAL_STAGE_COUNT = 256;
 export const MAX_STATUE_REGION_COUNT = 32;
 // The offerings a player holds progress in, one entry each, bounded by the game's offerings with room to spare
 export const MAX_OFFERING_COUNT = 32;
-// The kinds of item an offering holds at once, one entry each, bounded by the widest level's two kinds with room to spare
+// The kinds of item an offering holds at once, one entry each, bounded by the widest level's two kinds with room to
+// Spare
 export const MAX_OFFERING_ITEM_KIND_COUNT = 8;
 // The entries a section of the Archive holds open, one each, bounded by the codex's largest section with room to spare
 export const MAX_ARCHIVE_ENTRY_COUNT = 4096;
@@ -99,11 +100,11 @@ export const MAX_BOSS_DEFEAT_COUNT = 512;
 // The areas a teleport has landed in, one entry each, bounded by the catalogue's seventy areas and the landing outside
 // Every one of them, with room to spare
 export const MAX_TELEPORT_AREA_COUNT = 128;
-// The stocks a fishing catch is held under, one entry each by the stock's key, bounded by the 195 stocks the mapped regions'
-// Pools hold in the dump's pool and stock tables, with room to spare
+// The stocks a fishing catch is held under, one entry each by the stock's key, bounded by the 195 stocks the mapped
+// Regions' Pools hold in the dump's pool and stock tables, with room to spare
 export const MAX_FISHING_STOCK_COUNT = 256;
-// The fish a stock holds not yet back, one entry each, bounded by the largest pool's fish count in the mapped regions, which
-// Is five, with room to spare
+// The fish a stock holds not yet back, one entry each, bounded by the largest pool's fish count in the mapped regions,
+// Which Is five, with room to spare
 export const MAX_FISHING_CATCH_COUNT = 8;
 // The Trounce Blossoms the bosses leave, one each, bounded the same way as the defeats
 export const MAX_TROUNCE_BLOSSOM_COUNT = 512;
@@ -113,18 +114,18 @@ export const MAX_BLOSSOM_CLAIM_COUNT = 64;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
-// The draws the wish history keeps, the newest of those within its window and never more than this, so a year of draws is
-// Bounded
+// The draws the wish history keeps, the newest of those within its window and never more than this, so a year of draws
+// Is Bounded
 export const MAX_WISH_HISTORY_COUNT = 10_000;
-// The games the card game names with a reward, which the save holds once each: the 535 the week rows name and the 407 the dump
-// Rewards a victory of, none the same
+// The games the card game names with a reward, which the save holds once each: the 535 the week rows name and the 407
+// The dump Rewards a victory of, none the same
 export const GCG_REWARDABLE_GAME_COUNT = 942;
-// The bench's recipes are the craft and conversion rows of the combine table, each named by its id once in the learned list
-// And once in the counts. The cap holds every row the bench holds with some room to spare, so a save that has crafted or
-// Converted each one is never refused
+// The bench's recipes are the craft and conversion rows of the combine table, each named by its id once in the learned
+// List And once in the counts. The cap holds every row the bench holds with some room to spare, so a save that has
+// Crafted or Converted each one is never refused
 export const MAX_CRAFTING_RECIPE_COUNT = 576;
-// The cook table's rows, dishes and processings alike, each named by its id once in the learned list and once in each of
-// The proficiency and queue maps, so the cooking slice is bounded by the table's rows
+// The cook table's rows, dishes and processings alike, each named by its id once in the learned list and once in each
+// Of The proficiency and queue maps, so the cooking slice is bounded by the table's rows
 export const MAX_COOKING_RECIPE_COUNT = 512;
 // The blacksmith's recipes are the rows of the forge table, each named by its id once in the learned list, so the cap
 // Is the table's rows with room to spare: the dump holds 56 of them, and 64 is the next power of two above them
@@ -132,10 +133,10 @@ export const MAX_FORGE_RECIPE_COUNT = 64;
 // The game's achievement table keeps this many achievements, counted by `genshin:assets achievements` into the
 // World's data
 export const MAX_ACHIEVEMENT_COUNT: number = achievementCount.count;
-// The most entries the bag holds: the app's own storage ceiling, which the save schema bounds its items by, so a crafted
-// Save cannot grow the blob without limit. The game's counts are its kinds of item and its rooms (the stats dataset's
-// `itemRooms`, which the bag counts its tabs against), 9,600 together, and the ceiling sits above them, so every bag the
-// Game allows is stored
+// The most entries the bag holds: the app's own storage ceiling, which the save schema bounds its items by, so a
+// Crafted Save cannot grow the blob without limit. The game's counts are its kinds of item and its rooms (the stats
+// Dataset's `itemRooms`, which the bag counts its tabs against), 9,600 together, and the ceiling sits above them, so
+// Every bag the Game allows is stored
 export const MAX_STORED_INVENTORY_ITEM_COUNT = 10000;
 // The longest instant a save holds: Temporal's own string at its nanosecond, Z-suffixed, which the schemas bound to
 // This length
@@ -155,8 +156,8 @@ const getLongestMember = (members: readonly string[]): string =>
 const LONGEST_ATTRIBUTE = getLongestMember(Object.values(Attribute));
 const LONGEST_ARTIFACT_SLOT = getLongestMember(Object.values(ArtifactSlot));
 const LONGEST_BANNER_KIND = getLongestMember(Object.values(BannerKind));
-// An artifact at its longest: every number at its largest, every enum at its longest member, and each minor affix's value
-// At the longest a finite number is written
+// An artifact at its longest: every number at its largest, every enum at its longest member, and each minor affix's
+// Value At the longest a finite number is written
 const LONGEST_ARTIFACT = {
   experience: MAX_SAVE_NUMBER,
   isLocked: true,
@@ -171,8 +172,8 @@ const LONGEST_ARTIFACT = {
   setId: MAX_SAVE_NUMBER,
   slot: LONGEST_ARTIFACT_SLOT,
 };
-// A character at its longest: every number at its largest, every enum at its longest member, an attribute's value at the
-// Longest a finite number is written, and every list at its cap
+// A character at its longest: every number at its largest, every enum at its longest member, an attribute's value at
+// The Longest a finite number is written, and every list at its cap
 const LONGEST_CHARACTER_SAVE = {
   artifacts: Array.from({ length: Object.values(ArtifactSlot).length }, () => LONGEST_ARTIFACT),
   ascension: MAX_SAVE_NUMBER,
@@ -227,7 +228,8 @@ const LONGEST_INVENTORY_ITEM_LENGTH = Math.max(
   }),
 );
 
-// The Abyss cycle at its longest: every chamber of the Corridor cleared at three stars, and each reward claimed at the largest number
+// The Abyss cycle at its longest: every chamber of the Corridor cleared at three stars, and each reward claimed at the
+// Largest number
 const LONGEST_ABYSS_CYCLE_SAVE = {
   chambers: Object.fromEntries(
     Array.from({ length: MAX_ABYSS_CHAMBER_COUNT }, (_value, index) => [
@@ -407,8 +409,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
 const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0, quickSwapItemIds: [] };
 // Mondstadt's Reputation at its first level, with no EXP toward the next
 const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
-// A new player's party as the game starts one: the four default teams, the starting team deployed with its characters on
-// The field, and nobody down
+// A new player's party as the game starts one: the four default teams, the starting team deployed with its characters
+// On The field, and nobody down
 const EMPTY_PARTY_SAVE: PartySave = {
   activeIndex: 0,
   deployedTeamIndex: 0,
@@ -418,9 +420,9 @@ const EMPTY_PARTY_SAVE: PartySave = {
     name: "",
   })),
 };
-// A new player's save: the wallet as a new player's holds it, its Original Resin at zero, and nothing Else. The starting
-// Original Resin is the game's cap, which createStartingGenshinSave sets from the record. The instants are ISO strings,
-// As the save stores them
+// A new player's save: the wallet as a new player's holds it, its Original Resin at zero, and nothing Else. The
+// Starting Original Resin is the game's cap, which createStartingGenshinSave sets from the record. The instants are ISO
+// Strings, As the save stores them
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,

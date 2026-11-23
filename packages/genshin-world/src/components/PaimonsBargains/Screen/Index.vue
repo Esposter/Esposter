@@ -228,8 +228,9 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
 </script>
 
 <template>
-  <!-- Paimon's Bargains, opened from the Paimon menu's Shop entry: the Fates the shop sells, and the characters and weapons of
-       the month's rotation, each with its costs, limit and refresh, the count the player buys and the Buy button -->
+  <!-- Paimon's Bargains, opened from the Paimon menu's Shop entry: the Fates the shop sells, and the characters and
+    weapons of the month's rotation, each with its costs, limit and refresh, the count the player buys and the Buy
+    button -->
   <GameScreen
     class="paimons-bargains"
     role="dialog"

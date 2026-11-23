@@ -51,7 +51,8 @@ const places = ref<ExpeditionPlace[]>();
 const expeditionLimitAdds = ref<ExpeditionLimitAdd[]>();
 // Each character's expedition talents, read when the screen opens, so the screen sees the talents of the one sent
 const characterExpeditionPassives = ref<ReadonlyMap<number, ExpeditionPassive[]>>();
-// Each place's pin takes its position in the order the table holds the places, and a place past the last position is not drawn
+// Each place's pin takes its position in the order the table holds the places, and a place past the last position is
+// Not drawn
 const pinPositions = computed(
   () =>
     new Map(

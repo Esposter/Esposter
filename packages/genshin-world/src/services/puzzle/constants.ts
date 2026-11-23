@@ -4,8 +4,8 @@ import { ChestKind } from "#src/models/chest/ChestKind";
 // Provisional: a recording of a timed monument going out, on the roadmap's References sought list, until then
 // The wiki gives no time
 export const ELEMENTAL_MONUMENT_LIT_SECONDS = 60;
-// The chest a Seelie settled in its court spawns: the Seelie page's general rule gives the chest on settling but names no
-// Kind, so a court takes the Exquisite Chest the Chest page lists for it, as the puzzles design decides
+// The chest a Seelie settled in its court spawns: the Seelie page's general rule gives the chest on settling but names
+// No Kind, so a court takes the Exquisite Chest the Chest page lists for it, as the puzzles design decides
 export const SEELIE_CHEST_KIND = ChestKind.Exquisite;
 // A Seelie led along its route goes back to where it rests once it has not been followed this many seconds
 // Provisional: a recording of a Seelie left behind, on the roadmap's References sought list, until then
@@ -33,8 +33,8 @@ export const TIME_TRIAL_CHEST_KIND = ChestKind.Exquisite;
 // A Seelie is followed while the character stands within this many metres of it on the ground
 // Provisional: a stand-in until a recording of a Seelie led home measures it, on the roadmap's References sought list
 export const SEELIE_FOLLOW_DISTANCE = 10;
-// The region whose Shrines of Depths the world holds: the shrines the map marks in Mondstadt, and the keys that open them
-// Are the ones of the same region, the region's key being the one a shrine names by its region
+// The region whose Shrines of Depths the world holds: the shrines the map marks in Mondstadt, and the keys that open
+// Them Are the ones of the same region, the region's key being the one a shrine names by its region
 export const SHRINE_REGION_ID = "mondstadt";
 // The chest an open Shrine of Depths holds: the Shrine of Depths page gives each shrine a Luxurious chest, so it is not
 // Provisional, and the chests change opens it as it opens any Luxurious chest

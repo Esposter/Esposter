@@ -5,7 +5,8 @@ import { createUniqueArraySchema, createUniquePrimitiveArraySchema } from "@espo
 import { z } from "zod";
 
 // The day's commissions as the save holds them: the four dealt, each unique by its id, the moment they were dealt as an
-// ISO string, the ids of those claimed so far, each unique and at most a day's four, and whether Katheryne's bonus is claimed
+// ISO string, the ids of those claimed so far, each unique and at most a day's four, and whether Katheryne's bonus is
+// Claimed
 export const commissionDaySaveSchema = z.object({
   claimedCommissionIds: createUniquePrimitiveArraySchema(z.int().positive()).max(COMMISSIONS_PER_DAY),
   dealtAt: z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH),

@@ -28,8 +28,8 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-// The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events the team
-// Sends, and reads the reactions a member makes in the party's hooks
+// The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events
+// The team Sends, and reads the reactions a member makes in the party's hooks
 const createTeam = (characterIds: number[]) => {
   const wearer = createKitCombatant(
     TRAVELER_CHARACTER_ID,

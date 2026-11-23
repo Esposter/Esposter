@@ -151,7 +151,8 @@ describe("benison stacks", () => {
     striker,
   });
 
-  // A normal attack hit by the active member, then the three frames its hit has a cooldown for before the next one counts
+  // A normal attack hit by the active member, then the three frames its hit has a cooldown for before the next one
+  // Counts
   const landNormalAttackHit = (context: ReturnType<typeof createKitTestContext>, combatant: Combatant) => {
     DAHLIA_KIT.onKitEvent?.(createEnemyHit(combatant), context, combatant);
     stepKitSeconds(context, 0.05);

@@ -4,8 +4,8 @@ export const INTERACTION_REACH = 2.5;
 // Provisional best estimate: how many rows the prompt list shows at once. No
 // Published clip or wiki still shows a pile of more things than the list holds
 export const INTERACTION_WINDOW_SIZE = 5;
-// How often a held F picks up again, in seconds: three pick ups by F, each 27 frames at 60 a second after the last, in a
-// Published PC clip of the English client, `captures/world-pickup.mkv` from 38.5 to 39.6 seconds. Whether F is held
+// How often a held F picks up again, in seconds: three pick ups by F, each 27 frames at 60 a second after the last, in
+// A Published PC clip of the English client, `captures/world-pickup.mkv` from 38.5 to 39.6 seconds. Whether F is held
 // There rather than tapped is provisional
 export const INTERACTION_HELD_REPEAT_SECONDS = 0.45;
 // The radius of a drop's stand-in sphere, in metres

@@ -7,8 +7,9 @@ import { ABYSS_CORRIDOR_LAST_FLOOR_INDEX } from "#src/services/spiralAbyss/const
 import { findAbyssPeriodAt } from "#src/services/spiralAbyss/findAbyssPeriodAt";
 import { pickAbyssBenedictionList } from "#src/services/spiralAbyss/pickAbyssBenedictionList";
 
-// What a chamber offers when entered at an instant: a Moon Spire chamber shows the blessing of the period covering the instant,
-// And a Corridor chamber offers the Benedictions its game day's list holds. Undefined for a Moon Spire floor no period covers
+// What a chamber offers when entered at an instant: a Moon Spire chamber shows the blessing of the period covering the
+// Instant, And a Corridor chamber offers the Benedictions its game day's list holds. Undefined for a Moon Spire floor
+// No period covers
 export const getAbyssChamberBlessing = (
   floor: AbyssFloor,
   periods: readonly AbyssPeriod[],

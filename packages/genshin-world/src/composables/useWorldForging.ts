@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot
+   reject and nothing waits on it */
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 import type { Ref } from "vue";
@@ -17,8 +18,8 @@ import { ForgeTab } from "genshin-interface";
 import { storeToRefs } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
-// The blacksmith's recipes, which the screen records hold as the forge opens, and its place in Mondstadt as the world starts,
-// Read from the hosted game data, and the recipe each diagram opens, by the diagram's item id
+// The blacksmith's recipes, which the screen records hold as the forge opens, and its place in Mondstadt as the world
+// Starts, Read from the hosted game data, and the recipe each diagram opens, by the diagram's item id
 export const useWorldForging = ({
   forgeRecipeRecord,
 }: {
@@ -38,8 +39,8 @@ export const useWorldForging = ({
       console.error(error);
     },
   );
-  // The forge's state for this session: the save holds the recipes learned, not the queues, so a reload empties them, and its
-  // Clock is read again each Interval while the forge screen is open so its queues' time left moves
+  // The forge's state for this session: the save holds the recipes learned, not the queues, so a reload empties them,
+  // And its Clock is read again each Interval while the forge screen is open so its queues' time left moves
   const forgeAmount = ref(1);
   const forgeDefinitions = computed(() =>
     computeForgeDefinitions(forgeRecipes.value, worldSessionStore.materialDataMap, worldSessionStore.nameText),

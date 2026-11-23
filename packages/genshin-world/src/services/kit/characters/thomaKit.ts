@@ -21,11 +21,11 @@ import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
-// Measured: gcsim v2.47.2 (MIT) thoma/burst.go, thoma.go and shield.go, Fiery Collapse: for the burst's seconds, a normal
-// Attack the character on the field starts sets one off from its body, at most once in the table's seconds. The first
-// Enemy it strikes gives the team Thoma's shield, its share of his Max HP and its flat HP added to his shield already
-// Standing, up to the most Blazing Blessing's shield may hold, for the table's seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go
+// Measured: gcsim v2.47.2 (MIT) thoma/burst.go, thoma.go and shield.go, Fiery Collapse: for the burst's seconds, a
+// Normal Attack the character on the field starts sets one off from its body, at most once in the table's seconds. The
+// First Enemy it strikes gives the team Thoma's shield, its share of his Max HP and its flat HP added to his shield
+// Already Standing, up to the most Blazing Blessing's shield may hold, for the table's seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go`
 const FIERY_COLLAPSE_COOLDOWN_STATUS_ID = "thoma-fiery-collapse-cooldown";
 // Flaming Assault, as the dump's Tohma_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT) thoma/asc.go give it: a
 // Fiery Collapse deals 2.2% of Thoma's Max HP more DMG. gcsim gates it at Ascension 1, but the talent table names
@@ -33,18 +33,18 @@ const FIERY_COLLAPSE_COOLDOWN_STATUS_ID = "thoma-fiery-collapse-cooldown";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/asc.go
 const FLAMING_ASSAULT_ASCENSION = 4;
 const FLAMING_ASSAULT_MAX_HEALTH_SHARE = 0.022;
-// Measured: gcsim v2.47.2 (MIT) thoma/burst.go, Constellation 2 holds Crimson Ooyoroi for 18 seconds, three past its 15, and
-// Constellation 4 restores 15 energy to Thoma 8 frames into the burst, which a delayed energy gives as its status runs out
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go
+// Measured: gcsim v2.47.2 (MIT) thoma/burst.go, Constellation 2 holds Crimson Ooyoroi for 18 seconds, three past its
+// 15, and Constellation 4 restores 15 energy to Thoma 8 frames into the burst, which a delayed energy gives as its
+// Status runs out https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_OOYOROI_EXTRA_SECONDS = 3;
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_ENERGY = 15;
 const CONSTELLATION_4_ENERGY_SECONDS = 8 * FIXED_STEP_SECONDS;
 const CONSTELLATION_4_ENERGY_STATUS_ID = "thoma-c4-energy";
-// Measured: gcsim v2.47.2 (MIT) thoma/shield.go and thoma.go, Constellation 6 gives the team 15% DMG for normal, charged and
-// Plunging attacks for six seconds each time a Blazing Blessing sets its shield. The wiki's Burning Heart gives the same
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/shield.go
+// Measured: gcsim v2.47.2 (MIT) thoma/shield.go and thoma.go, Constellation 6 gives the team 15% DMG for normal,
+// Charged and Plunging attacks for six seconds each time a Blazing Blessing sets its shield. The wiki's Burning Heart
+// Gives the same https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/shield.go
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.15;
 const CONSTELLATION_6_SECONDS = 6;
@@ -57,7 +57,8 @@ const CONSTELLATION_6_ATTACK_TAGS = new Set<AttackTag | undefined>([
 
 export const THOMA_CHARACTER_ID = 10_000_050;
 
-// The DMG Bonus Constellation 6 gives a normal, charged or plunging attack while Thoma's status stands, zero for other attacks
+// The DMG Bonus Constellation 6 gives a normal, charged or plunging attack while Thoma's status stands, zero for other
+// Attacks
 const getConstellation6DamageBonus = (
   thomaCharacterId: number,
   strike: KitStrike,
@@ -69,11 +70,12 @@ const getConstellation6DamageBonus = (
     : 0;
 
 // Thoma's behaviour: Blazing Blessing sets its shield as it starts and infuses his own attacks with Pyro, and Crimson
-// Ooyoroi stands for its seconds, setting off a Fiery Collapse from each normal attack the character on the field starts,
-// At most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing Blessing's may
-// Hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive is not built yet.
-// Constellations 2, 4 and 6 are built, as the burst's seconds, its energy and the Blazing Barrier's party DMG Bonus
-// Constellation 1 needs the Blazing Barrier's protected-ally attacks and the cooldown cuts they give, not built
+// Ooyoroi stands for its seconds, setting off a Fiery Collapse from each normal attack the character on the field
+// Starts, At most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing
+// Blessing's may Hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive
+// Is not built yet. Constellations 2, 4 and 6 are built, as the burst's seconds, its energy and the Blazing Barrier's
+// Party DMG Bonus Constellation 1 needs the Blazing Barrier's protected-ally attacks and the cooldown cuts they give,
+// Not built
 export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const blazingBlessingShieldMaxHealthShare = readParameter("blazingBlessingShieldMaxHealthShare");
   const blazingBlessingShieldFlatHealth = readParameter("blazingBlessingShieldFlatHealth");
@@ -155,7 +157,8 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
           });
       },
     },
-    // Constellation 6's DMG Bonus on Thoma's own attacks, and on the attacks of each other member through the party hook
+    // Constellation 6's DMG Bonus on Thoma's own attacks, and on the attacks of each other member through the party
+    // Hook
     getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
       damageBonus: getConstellation6DamageBonus(member.characterId, strike, effects),
     }),

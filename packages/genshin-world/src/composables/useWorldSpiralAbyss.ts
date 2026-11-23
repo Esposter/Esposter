@@ -45,10 +45,11 @@ interface AbyssPendingChoice {
   floor: AbyssFloor;
 }
 
-// The Spiral Abyss on the world: its periods, floors, enemy kinds, Benedictions and rewards read once, a chamber entered in
-// The arena beside the entrance, and the bonus lines the chamber's Benediction gives the party. The arena's camp is fought on
-// The domain's mechanism. A clear is settled into the progress of its cycle, its rewards paid and its health and energy carried
-// Into the next chamber, and a reaction in a Moon Spire chamber is answered by the period's blessing
+// The Spiral Abyss on the world: its periods, floors, enemy kinds, Benedictions and rewards read once, a chamber
+// Entered in The arena beside the entrance, and the bonus lines the chamber's Benediction gives the party. The arena's
+// Camp is fought on The domain's mechanism. A clear is settled into the progress of its cycle, its rewards paid and its
+// Health and energy carried Into the next chamber, and a reaction in a Moon Spire chamber is answered by the period's
+// Blessing
 export const useWorldSpiralAbyss = ({
   areaId,
   bonusLines,
@@ -74,9 +75,11 @@ export const useWorldSpiralAbyss = ({
   const abyssEntrancePeriod = shallowRef<AbyssPeriod>();
   const abyssPendingChoice = shallowRef<AbyssPendingChoice>();
   const abyssArena = shallowRef<AbyssArena>();
-  // The progress of each cycle, keyed as the save keys it, replaced whole on each clear so the save sync sees the change
+  // The progress of each cycle, keyed as the save keys it, replaced whole on each clear so the save sync sees the
+  // Change
   const abyssProgressMap = shallowRef<ReadonlyMap<string, AbyssProgress>>(new Map(savedProgressMap));
-  // The Moon Spire period the running chamber is fought in, none for a Corridor chamber, and what the blessing has done in its arena
+  // The Moon Spire period the running chamber is fought in, none for a Corridor chamber, and what the blessing has done
+  // In its arena
   const abyssChamberPeriod = shallowRef<AbyssPeriod>();
   const abyssBlessingState = shallowRef<AbyssBlessingState>(createInitialAbyssBlessingState());
   // The health and energy the last clear leaves the party with, which the next chamber starts from
@@ -94,9 +97,10 @@ export const useWorldSpiralAbyss = ({
     return camp ? [camp] : [];
   });
 
-  // The entrance opened: its tables are read the first time it opens and held after, and the period covering the instant it
-  // Opened gives the entry its blessing and the floors it offers. A read that fails is logged, and the next open reads again.
-  // An open while the read is on its way starts no second read, and the read's period is the one its first open gave
+  // The entrance opened: its tables are read the first time it opens and held after, and the period covering the
+  // Instant it Opened gives the entry its blessing and the floors it offers. A read that fails is logged, and the next
+  // Open reads again. An open while the read is on its way starts no second read, and the read's period is the one its
+  // First open gave
   let isReadingAbyssTables = false;
   const openAbyssEntrance = () => {
     const openedAt = getWorldNow();
@@ -106,7 +110,8 @@ export const useWorldSpiralAbyss = ({
     }
     if (isReadingAbyssTables) return;
     isReadingAbyssTables = true;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    // `match(`) handles both branches, so the promise
+    // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
     getResultAsync(() => readAbyssTables(worldSessionStore.gameDataBaseUrl)).match(
       (tables) => {
         abyssTables.value = tables;
@@ -118,8 +123,9 @@ export const useWorldSpiralAbyss = ({
       },
     );
   };
-  // A chamber's arena starts on the party set, and a Benediction's lines hold for the chamber alone, so a refused arena keeps none.
-  // The carry of the last clear lands on the members still in the party as the chamber starts, and is spent with it
+  // A chamber's arena starts on the party set, and a Benediction's lines hold for the chamber alone, so a refused arena
+  // Keeps none. The carry of the last clear lands on the members still in the party as the chamber starts, and is spent
+  // With it
   const startAbyssChamber = (floor: AbyssFloor, chamber: AbyssChamber, towerBuffId?: number) => {
     const teams = party.teams.filter(({ characterIds }) => characterIds.length > 0).slice(0, floor.teamCount);
     const arena = createAbyssArena(
@@ -140,8 +146,8 @@ export const useWorldSpiralAbyss = ({
     abyssCarry.value = [];
     bonusLines.value = towerBuffId === undefined ? [] : getAbyssBenedictionAttributeLines(towerBuffId);
   };
-  // A chamber picked at the entry: a Corridor chamber offers its Benedictions first, a Moon Spire chamber starts at once, and a
-  // Chamber nothing offers is not entered
+  // A chamber picked at the entry: a Corridor chamber offers its Benedictions first, a Moon Spire chamber starts at
+  // Once, and a Chamber nothing offers is not entered
   const enterAbyssChamber = (floorId: number, chamberId: number) => {
     const floor = abyssFloors.value.find(({ id }) => id === floorId);
     const chamber = floor?.chambers.find(({ id }) => id === chamberId);
@@ -167,9 +173,9 @@ export const useWorldSpiralAbyss = ({
     startAbyssChamber(pending.floor, pending.chamber, towerBuffId);
   };
 
-  // A chamber over, cleared or failed. A clear is settled into its cycle's progress with its first-time rewards paid, and carries
-  // The party into the next chamber. A clear whose rewards the bag cannot take, or whose rewards have not read, is not recorded,
-  // And the console names it. Either way the arena and the Benediction's lines end
+  // A chamber over, cleared or failed. A clear is settled into its cycle's progress with its first-time rewards paid,
+  // And carries The party into the next chamber. A clear whose rewards the bag cannot take, or whose rewards have not
+  // Read, is not recorded, And the console names it. Either way the arena and the Benediction's lines end
   const endAbyssChamber = (arena: AbyssArena) => {
     const period = abyssChamberPeriod.value;
     abyssArena.value = undefined;
@@ -245,8 +251,8 @@ export const useWorldSpiralAbyss = ({
     );
   });
 
-  // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open, and a
-  // Party down ends the chamber without its stars
+  // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open, and
+  // A Party down ends the chamber without its stars
   const stepAbyss = ({ deltaMilliseconds, isPartyDown, isPlaying }: WorldChallengeStep) => {
     const arena = abyssArena.value;
     if (!arena) return;

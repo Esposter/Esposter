@@ -8,9 +8,9 @@ import { takeOne } from "@esposter/shared";
 
 const UNTAINTED_DESIRE_ID = "untaintedDesire";
 
-// Untainted Desire at its rank: each Elemental Skill hit its wielder deals adds a stack, raising its ATK and Energy Recharge
-// By the rank's amounts per stack for its seconds, up to the rank's count of stacks. A hit counts whether or not the wielder
-// Is on the field
+// Untainted Desire at its rank: each Elemental Skill hit its wielder deals adds a stack, raising its ATK and Energy
+// Recharge By the rank's amounts per stack for its seconds, up to the rank's count of stacks. A hit counts whether or
+// Not the wielder Is on the field
 export const createUntaintedDesirePassiveModule = (params: number[]): PassiveModule => {
   const seconds = takeOne(params, 0);
   const attackPercentPerStack = takeOne(params, 1);

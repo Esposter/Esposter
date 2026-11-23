@@ -39,7 +39,8 @@ describe(levelUpCharacter, () => {
   };
   const WANDERERS_ADVICE: ItemDefinition = { ...ADVENTURERS_EXPERIENCE, id: 104_001 };
 
-  // Level 7 needs 3,725 Character EXP to reach level 8: one Adventurer's Experience covers it, at 1,000 Mora for its 5,000
+  // Level 7 needs 3,725 Character EXP to reach level 8: one Adventurer's Experience covers it, at 1,000 Mora for its
+  // 5,000
   test("level Up spends Character EXP materials", () => {
     expect.hasAssertions();
     expect(

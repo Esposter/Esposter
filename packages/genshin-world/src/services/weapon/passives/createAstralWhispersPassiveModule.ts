@@ -7,8 +7,9 @@ import { takeOne } from "@esposter/shared";
 
 const ASTRAL_WHISPERS_SOURCE = "astralWhispers";
 
-// Astral Whispers Beyond the Sacred Throne at its rank: a hit its wielder deals while the wielder is off the field raises its
-// ATK by the rank's percentage for the rank's seconds. The field is read as the character the context holds on it
+// Astral Whispers Beyond the Sacred Throne at its rank: a hit its wielder deals while the wielder is off the field
+// Raises its ATK by the rank's percentage for the rank's seconds. The field is read as the character the context holds
+// On it
 export const createAstralWhispersPassiveModule = (params: number[]): PassiveModule => {
   const seconds = takeOne(params, 0);
   const attackPercentage = takeOne(params, 1);

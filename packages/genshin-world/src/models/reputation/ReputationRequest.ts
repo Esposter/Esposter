@@ -3,8 +3,8 @@ import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import { reputationRewardSchema } from "#src/models/reputation/ReputationReward";
 import { z } from "zod";
 
-// One request a nation's keeper offers, by its request group: the world quest it runs as, its reward and how often it is
-// Drawn against the others of its group
+// One request a nation's keeper offers, by its request group: the world quest it runs as, its reward and how often it
+// Is Drawn against the others of its group
 export interface ReputationRequest {
   groupId: number;
   questId: number;

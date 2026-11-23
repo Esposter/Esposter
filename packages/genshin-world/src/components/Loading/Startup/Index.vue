@@ -18,9 +18,9 @@ interface Props {
 const { progress } = defineProps<Props>();
 const emit = defineEmits<{ finish: [] }>();
 // The game's startup screen, the elemental loading screen between scenes: the seven marks in a row on white, pale until
-// Loading reaches them, then darkened by a wipe from the left that jumps as loading does, with no easing. The lit row is
-// The pale one again, clipped to what has loaded. The marks fade in as it starts; once loading completes they fade out,
-// The white holds, and `finish` says the world may cut in
+// Loading reaches them, then darkened by a wipe from the left that jumps as loading does, with no easing. The lit row
+// Is The pale one again, clipped to what has loaded. The marks fade in as it starts; once loading completes they fade
+// Out, The white holds, and `finish` says the world may cut in
 const litInset = computed(() => `inset(0 ${(1 - Math.min(Math.max(progress, 0), 1)) * 100}% 0 0)`);
 // Loading counts as complete only once the marks have faded in, so a page that finished loading while the splashes
 // Played still shows its row, lit, before it goes, as the game's always does

@@ -225,7 +225,8 @@ describe(createLaylaKitBehaviour, () => {
 
   test("the Night Stars clear when the shield runs out, and no tick adds one after", () => {
     expect.hasAssertions();
-    // The enemy lets the four stars the tick builds fire, so the stars left after they do build again on the restarted tick
+    // The enemy lets the four stars the tick builds fire, so the stars left after they do build again on the restarted
+    // Tick
     const context = createLaylaContext({ effects: [] }, {}, [createEnemyAt(3, 0)]);
     LAYLA_KIT.elementalSkill.onStart?.(context);
 

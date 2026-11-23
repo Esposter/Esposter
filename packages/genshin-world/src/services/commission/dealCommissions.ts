@@ -4,9 +4,9 @@ import type { CommissionProgress } from "#src/models/commission/CommissionProgre
 import { COMMISSION_UNLOCK_RANK, COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { takeOne } from "@esposter/shared";
 
-// The day's commissions dealt from the reached areas' tasks, none before commissions open at their rank. A task whose place
-// A quest in progress holds is never dealt, and the rest are shuffled by `random` and the first of them taken, each kept at
-// The rank it was dealt at
+// The day's commissions dealt from the reached areas' tasks, none before commissions open at their rank. A task whose
+// Place A quest in progress holds is never dealt, and the rest are shuffled by `random` and the first of them taken,
+// Each kept at The rank it was dealt at
 export const dealCommissions = (
   commissions: readonly Commission[],
   heldPlaces: ReadonlySet<string>,

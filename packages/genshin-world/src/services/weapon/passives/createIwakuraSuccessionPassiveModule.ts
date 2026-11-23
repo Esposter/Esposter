@@ -14,8 +14,8 @@ const SUCCESSION_ENERGY_SECONDS = 2;
 const SUCCESSION_ID = "succession";
 
 // Iwakura Succession at its rank: an Elemental Skill its wielder uses gains a seed, once in the cooldown, and the seeds
-// Last the rank's seconds, up to the rank's maximum. A burst consumes every seed and, after two seconds, gives the wielder
-// The rank's energy for each seed it consumed
+// Last the rank's seconds, up to the rank's maximum. A burst consumes every seed and, after two seconds, gives the
+// Wielder The rank's energy for each seed it consumed
 export const createIwakuraSuccessionPassiveModule = (params: number[]): PassiveModule => {
   const seedSeconds = takeOne(params, 0);
   const maximumSeeds = takeOne(params, 1);

@@ -44,9 +44,9 @@ useRafFn(() => {
 </script>
 
 <template>
-  <!-- The game's navigation mark on the HUD: a disc at the pointed landmark's place on the screen, or held at the screen's
-       Edge with its arrow turned toward the landmark while the landmark is out of view. Its own screen, so it reads the
-       Same `--unit` as the HUD's pieces and lets every press through to the world -->
+  <!-- The game's navigation mark on the HUD: a disc at the pointed landmark's place on the screen, or held at the
+    screen's Edge with its arrow turned toward the landmark while the landmark is out of view. Its own screen, so it
+    reads the Same `--unit` as the HUD's pieces and lets every press through to the world -->
   <GameScreen class="navigation">
     <svg
       v-if="navigationMark"

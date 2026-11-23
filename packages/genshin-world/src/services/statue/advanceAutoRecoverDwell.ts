@@ -7,8 +7,8 @@ interface AdvancedAutoRecoverDwell {
   isDue: boolean;
 }
 
-// Advances a stand by a statue's base by a frame's seconds. A stand is due once, when it reaches the dwell, so its revive
-// And heal run one time; a step away from the statue ends the stand, and the next one runs its own
+// Advances a stand by a statue's base by a frame's seconds. A stand is due once, when it reaches the dwell, so its
+// Revive And heal run one time; a step away from the statue ends the stand, and the next one runs its own
 export const advanceAutoRecoverDwell = (
   dwell: AutoRecoverDwell,
   isNearStatue: boolean,

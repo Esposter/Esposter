@@ -1,7 +1,8 @@
 import { UNDRAWN_EFFECTS_MESH_REGEX, UNDRAWN_STAGE_PLANES_MESH_REGEX } from "#src/services/constants";
 
-// The game's meshes round the Court of Fontaine that the scene does not draw yet, by kind, under any region's code where
-// The export borrows another's: with its families, every renderer of its exports is claimed once (the inventory pass)
+// The game's meshes round the Court of Fontaine that the scene does not draw yet, by kind, under any region's code
+// Where The export borrows another's: with its families, every renderer of its exports is claimed once (the inventory
+// Pass)
 export const FontaineUndrawnMeshRegexMap: Record<string, RegExp> = {
   commonBuildings: /^Area_Common_Build_/u,
   effects: UNDRAWN_EFFECTS_MESH_REGEX,

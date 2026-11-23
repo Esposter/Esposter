@@ -13,18 +13,19 @@ export interface Party {
   activeIndex: number;
   characterIdMemberMap: Map<number, PartyMember>;
   deployedTeamIndex: number;
-  // The seconds left of the fall the member on the field plays, while no member may be switched to, none once it ends or
-  // When nobody on the field has fallen. Not saved, so a reload onto a fallen member asks for the next one at once
+  // The seconds left of the fall the member on the field plays, while no member may be switched to, none once it ends
+  // Or When nobody on the field has fallen. Not saved, so a reload onto a fallen member asks for the next one at once
   fallSecondsRemaining: number;
-  // The changes to its members' HP not yet sent to the deployed team's kits, which the step on the field sends and empties
+  // The changes to its members' HP not yet sent to the deployed team's kits, which the step on the field sends and
+  // Empties
   healthChanges: PartyHealthChange[];
   lunarChargedCloud: LunarChargedCloud;
   lunarCrystallize: PartyLunarCrystallize;
-  // The Moonridge Dew the party holds, up to three, which Columbina's Lunar-Blooms gain and a Lunar-Bloom skill spends after
-  // Its Verdant Dew
+  // The Moonridge Dew the party holds, up to three, which Columbina's Lunar-Blooms gain and a Lunar-Bloom skill spends
+  // After Its Verdant Dew
   moonridgeDew: number;
-  // The seconds left before the team's Nightsoul burst may go off again, none once it runs out, as the team holds one burst's
-  // Interval for the whole team rather than for a character
+  // The seconds left before the team's Nightsoul burst may go off again, none once it runs out, as the team holds one
+  // Burst's Interval for the whole team rather than for a character
   nightsoulBurstCooldownSeconds: number;
   // The seconds left before each source may drop its particle again, none once it is spent
   particleCooldownSecondsMap: Map<ParticleSource, number>;

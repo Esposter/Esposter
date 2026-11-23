@@ -10,8 +10,8 @@ import { createParty } from "#src/services/party/createParty";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 const { characterDataMap } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
-// The deployed team the English PC client's Party Setup shows at rest: Venti, Xiangling, Raiden Shogun and Alhaitham, each
-// At level 90 in its sixth phase, with Party 1 the team deployed
+// The deployed team the English PC client's Party Setup shows at rest: Venti, Xiangling, Raiden Shogun and Alhaitham,
+// Each At level 90 in its sixth phase, with Party 1 the team deployed
 const TEAM_CHARACTER_IDS = [VENTI_CHARACTER_ID, XIANGLING_CHARACTER_ID, RAIDEN_CHARACTER_ID, ALHAITHAM_CHARACTER_ID];
 const LEVEL_CAP_ASCENSION = 6;
 const LEVEL_CAP = 90;

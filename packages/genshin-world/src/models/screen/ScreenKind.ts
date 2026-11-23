@@ -1,5 +1,6 @@
 // What is open over the world: the world itself, in play with nothing over it, or one of the screens the game opens
-// From it, by a shortcut, the Paimon menu's entries, or an interaction with the world (ScreenKindOpenerMap names each one's way in)
+// From it, by a shortcut, the Paimon menu's entries, or an interaction with the world (ScreenKindOpenerMap names each
+// One's way in)
 export const ScreenKind = {
   Achievements: "Achievements",
   AdventurerHandbook: "AdventurerHandbook",

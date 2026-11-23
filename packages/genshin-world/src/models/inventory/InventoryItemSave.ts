@@ -7,10 +7,10 @@ import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { z } from "zod";
 
 export type InventoryItemSave = ArtifactInventoryItemSave | StackInventoryItemSave | WeaponInventoryItemSave;
-// One entry of the bag as the save holds it, by its kind: a stack by its count, an artifact by the artifact rolled as it
-// Dropped, and a weapon by its level, the EXP it holds towards the next, its ascension and its refinement. Each is the
-// Item's id in the game's tables, and its name and tab are read back from them in the reader's language, never saved. A
-// Stack holds no more than the most any item can be held at
+// One entry of the bag as the save holds it, by its kind: a stack by its count, an artifact by the artifact rolled as
+// It Dropped, and a weapon by its level, the EXP it holds towards the next, its ascension and its refinement. Each is
+// The Item's id in the game's tables, and its name and tab are read back from them in the reader's language, never
+// Saved. A Stack holds no more than the most any item can be held at
 interface ArtifactInventoryItemSave {
   artifact: Artifact;
   id: number;

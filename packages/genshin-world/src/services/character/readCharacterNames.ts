@@ -1,7 +1,8 @@
 import { readCharacterIdNamesMap } from "#src/services/character/readCharacterIdNamesMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The names a character goes by in the languages the official packs name their models in, read from the hosted game data
+// The names a character goes by in the languages the official packs name their models in, read from the hosted game
+// Data
 export const readCharacterNames = async (gameDataBaseUrl: string, characterId: number): Promise<string[]> => {
   const characterIdNamesMap = await readCharacterIdNamesMap(gameDataBaseUrl);
   const characterNames = characterIdNamesMap.get(characterId);

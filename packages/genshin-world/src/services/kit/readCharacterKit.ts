@@ -15,10 +15,10 @@ import { createTravelerKitBehaviour } from "#src/services/kit/travelerKit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A character's kit, built once from its record, its talent multipliers and its behaviour module, the three read on
-// Demand together with its skill and burst icons, its entry of the hosted `skillGlyphs` index, which the kit carries for
-// The HUD's buttons. A character with no module of its own fights with the Traveler's kit, from the Traveler's record,
-// Multipliers and behaviour, and carries only icons of its own. Each talent plays at the level given for it, its
-// Parameters read off its table at that level, and a character given no levels plays at the levels it is created at
+// Demand together with its skill and burst icons, its entry of the hosted `skillGlyphs` index, which the kit carries
+// For The HUD's buttons. A character with no module of its own fights with the Traveler's kit, from the Traveler's
+// Record, Multipliers and behaviour, and carries only icons of its own. Each talent plays at the level given for it,
+// Its Parameters read off its table at that level, and a character given no levels plays at the levels it is created at
 export const readCharacterKit = async (
   gameDataBaseUrl: string,
   characterId: number,
@@ -33,7 +33,8 @@ export const readCharacterKit = async (
     SkillGlyphsLoaderMap[characterId]?.(gameDataBaseUrl),
     readCharacterTalentKits(gameDataBaseUrl),
   ]);
-  // The record's parameters name the proud skill group of each talent, so each group is given the level its talent plays at
+  // The record's parameters name the proud skill group of each talent, so each group is given the level its talent
+  // Plays at
   const talentGroupIds = characterTalentKits.find(
     ({ characterId: talentKitCharacterId }) => talentKitCharacterId === kitCharacterId,
   )?.talentGroupIds;

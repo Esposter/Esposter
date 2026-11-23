@@ -1,7 +1,8 @@
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { GameTextKey } from "genshin-text";
 
-// One domain in the Adventurer Handbook's Domains tab: its entrance, the title its row shows, and what the player can do
+// One domain in the Adventurer Handbook's Domains tab: its entrance, the title its row shows, and what the player can
+// Do
 export interface HandbookDomain {
   entryId: number;
   // A weekly boss's first clear, claimable once its highest difficulty is cleared

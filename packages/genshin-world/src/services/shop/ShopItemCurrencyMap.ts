@@ -1,9 +1,10 @@
 import { Currency } from "#src/models/inventory/Currency";
 
 // The items a shop trades in as currencies, by their ids in the game's tables: Mora, which the general goods are priced
-// In, Masterless Starglitter and Stardust, which the shop takes, the two Fates it gives, Realm Currency, which the Realm
-// Depot prices its goods in, and the eight region Sigils, which each Souvenir Shop takes. The ids are read from the Table;
-// The pairing of the Masterless two is settled on the shop Page's Decisions and awaits a recording's check of their names
+// In, Masterless Starglitter and Stardust, which the shop takes, the two Fates it gives, Realm Currency, which the
+// Realm Depot prices its goods in, and the eight region Sigils, which each Souvenir Shop takes. The ids are read from
+// The Table; The pairing of the Masterless two is settled on the shop Page's Decisions and awaits a recording's check
+// Of their names
 export const ShopItemCurrencyMap: Partial<Record<number, Currency>> = {
   202: Currency.Mora,
   204: Currency.RealmCurrency,

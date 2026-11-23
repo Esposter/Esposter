@@ -12,8 +12,9 @@ import { GameTextKey } from "genshin-text";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-// Each shut shrine is offered on the ground beneath its point while the bag holds a key of its region. Opening it spends
-// One such key from the bag and opens the shrine with it, and a shrine no key of its region is held for is offered nothing
+// Each shut shrine is offered on the ground beneath its point while the bag holds a key of its region. Opening it
+// Spends One such key from the bag and opens the shrine with it, and a shrine no key of its region is held for is
+// Offered nothing
 export const useWorldShrines = ({ shrineKeySources }: { shrineKeySources: readonly ShrineKeySource[] }) => {
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { shrineMarkers } = storeToRefs(worldPuzzlesStore);

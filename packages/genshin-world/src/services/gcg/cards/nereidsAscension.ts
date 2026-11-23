@@ -10,8 +10,8 @@ import { takeOne } from "@esposter/shared";
 const NEREIDS_ASCENSION_DAMAGE = 2;
 const NEREIDS_ASCENSION_HEAL = 1;
 
-// Nereid's Ascension, Kokomi's Elemental Burst: 2 Hydro DMG, every character of hers is healed 1 HP, and her active character
-// Gains Ceremonial Garment once the damage is dealt
+// Nereid's Ascension, Kokomi's Elemental Burst: 2 Hydro DMG, every character of hers is healed 1 HP, and her active
+// Character Gains Ceremonial Garment once the damage is dealt
 export const nereidsAscension: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

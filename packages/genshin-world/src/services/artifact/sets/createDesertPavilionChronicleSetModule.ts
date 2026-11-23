@@ -10,9 +10,9 @@ import { takeOne } from "@esposter/shared";
 
 const DESERT_PAVILION_CHRONICLE_STATUS_ID = "desertPavilionChronicle";
 
-// Desert Pavilion Chronicle. Its four-piece bonus, once a Charged Attack its wearer deals hits an opponent, raises the wearer's
-// Normal Attack SPD by the table's first param and its Normal, Charged and Plunging Attack DMG by the second for the third
-// Param's seconds, a later hit restarting them
+// Desert Pavilion Chronicle. Its four-piece bonus, once a Charged Attack its wearer deals hits an opponent, raises the
+// Wearer's Normal Attack SPD by the table's first param and its Normal, Charged and Plunging Attack DMG by the second
+// For the third Param's seconds, a later hit restarting them
 export const createDesertPavilionChronicleSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const normalAttackSpeedBonus = takeOne(bonus.params, 0);
   const damageBonus = takeOne(bonus.params, 1);

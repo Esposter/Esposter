@@ -2,8 +2,9 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A combat talent's parameter at a level, read from the multipliers loaded for the characters in the party, by its index
-// In the proud skill row's paramList, which the table keeps up to the last parameter not zero, so an index past it is zero
+// A combat talent's parameter at a level, read from the multipliers loaded for the characters in the party, by its
+// Index In the proud skill row's paramList, which the table keeps up to the last parameter not zero, so an index past
+// It is zero
 export const getTalentMultiplier = (
   talentMultiplierMap: TalentMultiplierMap,
   proudSkillGroupId: number,

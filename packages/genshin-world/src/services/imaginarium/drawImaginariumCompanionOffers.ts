@@ -6,8 +6,8 @@ import type { ImaginariumSeason } from "#src/models/imaginarium/ImaginariumSeaso
 import { checkIsImaginariumCastEligible } from "#src/services/imaginarium/checkIsImaginariumCastEligible";
 import { drawRandomSubset } from "#src/services/imaginarium/drawRandomSubset";
 
-// A Companion event's offers: the eligible characters of its pool's element, or of any element, drawn at random from the
-// World's one seeded source. The same source gives the same offers
+// A Companion event's offers: the eligible characters of its pool's element, or of any element, drawn at random from
+// The World's one seeded source. The same source gives the same offers
 export const drawImaginariumCompanionOffers = (
   pool: ImaginariumCompanionPool,
   season: ImaginariumSeason,

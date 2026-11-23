@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// One level of a weekly boss's trounce domain as the game's tables set it: its boss dungeon, the enemies' level it fights at
-// And the recommended Adventure Rank it is set at
+// One level of a weekly boss's trounce domain as the game's tables set it: its boss dungeon, the enemies' level it
+// Fights at And the recommended Adventure Rank it is set at
 interface WeeklyBossLevel {
   dungeonId: number;
   enemyLevel: number;

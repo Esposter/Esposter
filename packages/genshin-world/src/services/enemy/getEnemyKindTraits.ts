@@ -15,9 +15,9 @@ const TYPE_POISE_TYPE_MAP: Record<EnemyType, PoiseType> = {
   [EnemyType.Elite]: PoiseType.HumanoidDemiboss,
 };
 
-// A kind's traits: the ones the traits map writes for it, else defaults from its row. Its poise is its family's, the one the
-// Kinds of its family and type share, the poise of its type where they share none. Its element, its attack element and its
-// Energy drops are its own, so it has none of them, and no energy drops
+// A kind's traits: the ones the traits map writes for it, else defaults from its row. Its poise is its family's, the
+// One the Kinds of its family and type share, the poise of its type where they share none. Its element, its attack
+// Element and its Energy drops are its own, so it has none of them, and no energy drops
 export const getEnemyKindTraits = (
   enemyKindMap: ReadonlyMap<number, EnemyKind>,
   enemyKindId: number,

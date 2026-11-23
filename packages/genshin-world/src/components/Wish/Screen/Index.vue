@@ -68,7 +68,8 @@ const {
   wishSchedule,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; startTrial: [trial: Trial] }>();
-// An amount of a currency as the game's count text: its name and its count in the item-count format, in the reader's language
+// An amount of a currency as the game's count text: its name and its count in the item-count format, in the reader's
+// Language
 const toCountText = (currency: Currency, quantity: number) =>
   fillGameTextValues(gameText[GameTextKey.ItemCount], gameText[CurrencyGameTextKeyMap[currency]], quantity);
 const { banner, bannerId, bannerKind, bannerOffers, pool } = useWishBanners({

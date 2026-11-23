@@ -15,9 +15,9 @@ const { x = 0, y = 0, yaw = 0 } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The player on the map: a disc with a white cap above it that points the way the view faces, up the map at a yaw of
-       None, and turned the other way about the vertical than three turns it, since the map looks down on the ground.
-       A dark tip hangs under it -->
+  <!-- The player on the map: a disc with a white cap above it that points the way the view faces, up the map at a
+    yaw of None, and turned the other way about the vertical than three turns it, since the map looks down on the
+    ground. A dark tip hangs under it -->
   <g :transform="`translate(${x} ${y}) rotate(${-MathUtils.radToDeg(yaw)}) scale(${size})`">
     <circle class="rim" r="1.2" />
     <circle class="disc" r="1" />

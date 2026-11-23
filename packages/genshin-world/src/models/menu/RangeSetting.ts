@@ -1,5 +1,5 @@
-// The settings a range slider holds, by their names in GenshinSettings: the camera's default distance and its horizontal
-// And vertical sensitivity
+// The settings a range slider holds, by their names in GenshinSettings: the camera's default distance and its
+// Horizontal And vertical sensitivity
 export const RangeSetting = {
   DefaultDistance: "defaultDistance",
   HorizontalSensitivity: "horizontalSensitivity",

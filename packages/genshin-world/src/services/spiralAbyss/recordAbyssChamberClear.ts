@@ -10,10 +10,11 @@ import { computeAbyssChamberStars } from "#src/services/spiralAbyss/computeAbyss
 import { computeAbyssFloorStars } from "#src/services/spiralAbyss/computeAbyssFloorStars";
 import { takeAbyssCarry } from "#src/services/spiralAbyss/takeAbyssCarry";
 
-// The progress after a cleared chamber: its stars kept as the most any clear has earned, and its rewards given once. A first
-// Clear gives the chamber's own reward, and each star milestone the floor's stars reach gives its reward, each only the first
-// Time in the cycle. The rewards this clear gives are returned, and a clear that gives none leaves the claimed ids as they were.
-// The party's health and energy as they stand here are taken as the carry the next chamber starts from
+// The progress after a cleared chamber: its stars kept as the most any clear has earned, and its rewards given once. A
+// First Clear gives the chamber's own reward, and each star milestone the floor's stars reach gives its reward, each
+// Only the first Time in the cycle. The rewards this clear gives are returned, and a clear that gives none leaves the
+// Claimed ids as they were. The party's health and energy as they stand here are taken as the carry the next chamber
+// Starts from
 export const recordAbyssChamberClear = (
   progress: AbyssProgress,
   floor: AbyssFloor,

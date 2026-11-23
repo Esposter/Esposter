@@ -24,7 +24,8 @@ describe(switchGcgCharacter, () => {
   const DILUC_INDEX = 0;
   const KAEYA_INDEX = 1;
 
-  // A duel of two copies of the player's deck, both sides prepared and rolled, with the first side to act holding the given dice
+  // A duel of two copies of the player's deck, both sides prepared and rolled, with the first side to act holding the
+  // Given dice
   const openDuel = async (dice: Element[]): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
     const deck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, PLAYER_DECK_ID);

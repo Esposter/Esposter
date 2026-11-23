@@ -1,5 +1,5 @@
-// The challenges that leave a blossom to claim Original Resin's rewards from: a ley line outcrop, a domain's Petrified Tree,
-// A normal boss's Trounce Blossom, and a weekly boss's, which is claimed once a week at a lower price
+// The challenges that leave a blossom to claim Original Resin's rewards from: a ley line outcrop, a domain's Petrified
+// Tree, A normal boss's Trounce Blossom, and a weekly boss's, which is claimed once a week at a lower price
 export const BlossomKind = {
   Domain: "Domain",
   LeyLine: "LeyLine",

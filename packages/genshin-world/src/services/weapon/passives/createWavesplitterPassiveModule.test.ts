@@ -13,8 +13,8 @@ import { describe, expect, test } from "vitest";
 describe(createWavesplitterPassiveModule, () => {
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
-  // Wavesplitter at its first rank: every four seconds on the field the wielder gains a stack, dealing 6% more DMG and taking
-  // 3% more DMG a stack, up to five. A DMG taken takes one stack away
+  // Wavesplitter at its first rank: every four seconds on the field the wielder gains a stack, dealing 6% more DMG and
+  // Taking 3% more DMG a stack, up to five. A DMG taken takes one stack away
   const passiveModule = createWavesplitterPassiveModule([4, 0.06, 0.03]);
   const readBonuses = (context: KitContext) =>
     passiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects) ?? [];

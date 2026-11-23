@@ -373,7 +373,8 @@ describe(createNicoleKitBehaviour, () => {
       enemyTables,
       party: createParty([NICOLE_CHARACTER_ID, KLEE_CHARACTER_ID]),
     };
-    // Nicole's burst starts on her, and Klee, a Hexerei of the team with her, is the active character whose hits project
+    // Nicole's burst starts on her, and Klee, a Hexerei of the team with her, is the active character whose hits
+    // Project
     const burstContext = createKitTestContext(nicole, scene);
     NICOLE_KIT.elementalBurst.onStart?.(burstContext);
     const context = createKitTestContext(klee, { ...scene, kitEffectState: burstContext.kitEffectState });

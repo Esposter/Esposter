@@ -24,7 +24,8 @@ vi.mock(import("genshin-engine"), async (importOriginal) => {
   return {
     ...actual,
     createCharacterMaterial: vi.fn<typeof createCharacterMaterial>(),
-    // A typed mock takes one signature, and the mesh builder is generic over its materials, so the mock's mesh holds none
+    // A typed mock takes one signature, and the mesh builder is generic over its materials, so the mock's mesh holds
+    // None
     createPmxMesh: vi.fn<(...parameters: Parameters<typeof createPmxMesh>) => SkinnedMesh<BufferGeometry, never[]>>(),
     createPmxTexture: vi.fn<typeof createPmxTexture>(),
     createPmxToonTexture: vi.fn<typeof createPmxToonTexture>(),
@@ -49,8 +50,8 @@ describe(readCharacterMesh, () => {
   test("a texture drawn both as a colour and as a toon ramp is decoded once each way, not shared", async () => {
     expect.hasAssertions();
 
-    // Node has no ImageBitmap, which the reader names when it checks a decoded image for transparent texels, so a stand-in
-    // Class is given it, and no mocked texture carries an image to be an instance of it
+    // Node has no ImageBitmap, which the reader names when it checks a decoded image for transparent texels, so a
+    // `stand-in` Class is given it, and no mocked texture carries an image to be an instance of it
     vi.stubGlobal("ImageBitmap", Blob);
     const colourTexture = new Texture();
     const toonTexture = new Texture();

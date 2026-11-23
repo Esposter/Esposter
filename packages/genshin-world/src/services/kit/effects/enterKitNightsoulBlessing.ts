@@ -6,9 +6,9 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 
-// Enters the Nightsoul's Blessing for the seconds given, with the points it starts with in place of any it held, as gcsim
-// (MIT) nightsoul/nightsoul.go EnterTimedBlessing sets them outright. Entering again restarts the blessing, and the rate
-// It runs on is the one given, if it has one
+// Enters the Nightsoul's Blessing for the seconds given, with the points it starts with in place of any it held, as
+// Gcsim (MIT) nightsoul/nightsoul.go EnterTimedBlessing sets them outright. Entering again restarts the blessing, and
+// The rate It runs on is the one given, if it has one
 export const enterKitNightsoulBlessing = (
   kitEffectState: KitEffectState,
   characterId: number,

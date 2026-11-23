@@ -38,10 +38,10 @@ const ASCENSION_4 = 4;
 const A1_PHANTOM_SECONDS = 2;
 // Measured: gcsim v2.47.2 (MIT) mona/asc.go, Ascension 4 adds 20% of Mona's Energy Recharge to her Hydro DMG Bonus
 const A4_HYDRO_BONUS_OF_ENERGY_RECHARGE = 0.2;
-// Constellation 1: a party member's hit on an enemy under the Omen gives it the Hydro-related reactions' DMG bonus for 8 seconds,
-// Which is 160% of 15% when Mona is Hexerei with a second Hexerei member and the member is off the field, as gcsim v2.47.2 (MIT)
-// Mona/cons.go gives them. A Swirl counts only for the Hydro it absorbs, as a reaction carries that element
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
+// Constellation 1: a party member's hit on an enemy under the Omen gives it the Hydro-related reactions' DMG bonus for
+// 8 seconds, Which is 160% of 15% when Mona is Hexerei with a second Hexerei member and the member is off the field, as
+// Gcsim v2.47.2 (MIT) Mona/cons.go gives them. A Swirl counts only for the Hydro it absorbs, as a reaction carries that
+// Element https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_STATUS_ID = "mona-constellation-1";
 const CONSTELLATION_1_REACTION_TYPES = new Set<ReactionType>([
@@ -54,10 +54,10 @@ const CONSTELLATION_1_REACTION_TYPES = new Set<ReactionType>([
 const checkIsConstellation1Reaction = ({ element, reactionType }: KitReaction): boolean =>
   CONSTELLATION_1_REACTION_TYPES.has(reactionType) ||
   (reactionType === TransformativeReactionType.Swirl && element === Element.Hydro);
-// Constellation 4: each party member's strike on an enemy under the Omen or her bubble gains 15% CRIT Rate, and a Hexerei
-// Member's gains 15% CRIT DMG while Mona is Hexerei with a second Hexerei member, as gcsim v2.47.2 (MIT) mona/cons.go gives them
-// Its Lunar-Charged and Lunar-Crystallize reactions on such an enemy gain the same, which the reaction hook carries
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
+// Constellation 4: each party member's strike on an enemy under the Omen or her bubble gains 15% CRIT Rate, and a
+// Hexerei Member's gains 15% CRIT DMG while Mona is Hexerei with a second Hexerei member, as gcsim v2.47.2 (MIT)
+// `mona/cons.go` gives them Its Lunar-Charged and Lunar-Crystallize reactions on such an enemy gain the same, which the
+// Reaction hook carries https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_CRITICAL_DAMAGE = 0.15;
 const CONSTELLATION_4_CRITICAL_RATE = 0.15;
@@ -65,19 +65,19 @@ const CONSTELLATION_4_REACTION_TYPES = new Set<ReactionType>([
   LunarReactionType.LunarCharged,
   LunarReactionType.LunarCrystallize,
 ]);
-// Constellation 2: the last hit of a normal attack has a 20% chance to be followed by her Charged Attack's hit, which can
-// Happen once every 5 seconds, as gcsim v2.47.2 (MIT) mona/cons.go gives it. The follow-up lands with that hit, as an
-// Extra hit of a normal attack does
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
+// Constellation 2: the last hit of a normal attack has a 20% chance to be followed by her Charged Attack's hit, which
+// Can Happen once every 5 seconds, as gcsim v2.47.2 (MIT) mona/cons.go gives it. The follow-up lands with that hit, as
+// An Extra hit of a normal attack does
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go`
 const CONSTELLATION_2 = 2;
 const FOLLOW_UP_CHANCE = 0.2;
 const FOLLOW_UP_COOLDOWN_SECONDS = 5;
 const FOLLOW_UP_STATUS_ID = "mona-constellation-2";
-// Constellation 6, Illusory Torrent: each second of sprint gives her next Charged Attack 60% more DMG, up to three seconds, for
-// Eight seconds from the last stack, and the Charged Attack that strikes resets them, as gcsim v2.47.2 (MIT) mona/cons.go
-// Gives them. The sprint's second is kept on a clock status a sprint's first step starts, and the sprint on a status that
-// Runs out a moment after the sprint ends
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
+// Constellation 6, Illusory Torrent: each second of sprint gives her next Charged Attack 60% more DMG, up to three
+// Seconds, for Eight seconds from the last stack, and the Charged Attack that strikes resets them, as gcsim v2.47.2
+// (MIT) mona/cons.go Gives them. The sprint's second is kept on a clock status a sprint's first step starts, and the
+// Sprint on a status that Runs out a moment after the sprint ends
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go`
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_BONUS_PER_STACK = 0.6;
 const CONSTELLATION_6_MAX_STACKS = 3;
@@ -94,8 +94,8 @@ const getConstellation6Stacks = (effects: readonly KitEffect[], characterId: num
     ? (findKitStatus(effects, characterId, CONSTELLATION_6_BUFF_STATUS_ID)?.stacks ?? 0)
     : 0;
 
-// Constellation 6, run each step she sprints on the field: a sprint's first step starts the clock, and each second the clock
-// Runs out while she still sprints adds a stack, which refreshes the buff's eight seconds
+// Constellation 6, run each step she sprints on the field: a sprint's first step starts the clock, and each second the
+// Clock Runs out while she still sprints adds a stack, which refreshes the buff's eight seconds
 const stepConstellation6Sprint = ({ activeCombatant: combatant, kitEffectState }: KitContext): void => {
   const { characterId } = combatant;
   const { effects } = kitEffectState;
@@ -140,8 +140,8 @@ const checkIsOmened = (enemy: Enemy, effects: readonly KitEffect[]): boolean =>
   effects.some((effect) => effect.kind === "bubble" && effect.enemy === enemy && !effect.isBurst);
 
 // Constellation 4's CRIT on a strike or a Lunar reaction of the team's, given the member whose kit it is, the striker,
-// The enemy it lands on, the team and the effects on it. A Hexerei striker's CRIT DMG needs Mona to be Hexerei too, with
-// A second Hexerei member on the team
+// The enemy it lands on, the team and the effects on it. A Hexerei striker's CRIT DMG needs Mona to be Hexerei too,
+// With A second Hexerei member on the team
 const getConstellation4Bonus = (
   member: Combatant,
   striker: Combatant,
@@ -191,11 +191,10 @@ const getConstellation4ReactionBonus = (
 export const MONA_CHARACTER_ID = 10_000_041;
 
 // Mona's behaviour: Mirror Reflection of Doom casts its phantom where she stands, ticking and then exploding, and
-// Stellaris Phantasm holds each enemy its cast strikes in its bubble, whose burst leaves the Omen. From Ascension 1 every
-// 2 seconds of sprint casts a phantom that explodes as it ends, and from Ascension 4 her Energy Recharge raises her Hydro
-// DMG Bonus
-// Constellation 1 is built but for the Frozen duration, which no reaction or status carries, and Constellation 4 is
-// Built in full, its Lunar reactions included
+// Stellaris Phantasm holds each enemy its cast strikes in its bubble, whose burst leaves the Omen. From Ascension 1
+// Every 2 seconds of sprint casts a phantom that explodes as it ends, and from Ascension 4 her Energy Recharge raises
+// Her Hydro DMG Bonus Constellation 1 is built but for the Frozen duration, which no reaction or status carries, and
+// Constellation 4 is Built in full, its Lunar reactions included
 export const createMonaKitBehaviour = ({
   kit,
   readHits,
@@ -211,7 +210,8 @@ export const createMonaKitBehaviour = ({
   const constellation1Seconds = readSeconds("constellation1Duration");
   return {
     burst: { hits: [{ bubbleOmenId: OMEN_STATUS_ID }] },
-    // Constellation 6: her Charged Attack's damage grows with her sprint's stacks, and the attack that strikes resets them
+    // Constellation 6: her Charged Attack's damage grows with her sprint's stacks, and the attack that strikes resets
+    // Them
     chargedAttack: {
       hits: kit.chargedAttack.hits.map((_hit, index, hits) =>
         index === hits.length - 1
@@ -228,7 +228,8 @@ export const createMonaKitBehaviour = ({
           : {},
       ),
     },
-    // Constellation 2: the last hit of a normal attack may be followed by her Charged Attack's hit, once every 5 seconds
+    // Constellation 2: the last hit of a normal attack may be followed by her Charged Attack's hit, once every 5
+    // Seconds
     getNormalAttackExtraHit: ({ activeCombatant, kitEffectState, random }, hit, chainIndex) => {
       const { characterId, constellationCount } = activeCombatant;
       if (
@@ -244,15 +245,15 @@ export const createMonaKitBehaviour = ({
       });
       return { ...takeOne(kit.chargedAttack.hits), hitmarkSeconds: hit.hitmarkSeconds };
     },
-    // Constellation 1: a struck member's Hydro-related reactions gain 15% DMG while its bonus holds, 160% of that for an off-field
-    // Member when Mona is Hexerei with a second Hexerei member
-    // Constellation 4: a Lunar reaction a member makes on an enemy under the Omen gains CRIT
+    // Constellation 1: a struck member's Hydro-related reactions gain 15% DMG while its bonus holds, 160% of that for
+    // An off-field Member when Mona is Hexerei with a second Hexerei member Constellation 4: a Lunar reaction a member
+    // Makes on an enemy under the Omen gains CRIT
     getPartyReactionBonus: (member, reaction, context) => ({
       ...getConstellation1ReactionBonus(member, reaction, context, constellation1),
       ...getConstellation4ReactionBonus(member, reaction, context),
     }),
-    // Constellation 4: a deployed member's strike on an enemy under the Omen or her bubble, other than Mona's own strike,
-    // Which her own hooks price
+    // Constellation 4: a deployed member's strike on an enemy under the Omen or her bubble, other than Mona's own
+    // Strike, Which her own hooks price
     getPartyStrikeBonus: (member, strike, enemy, party, effects) =>
       getConstellation4Bonus(member, strike.combatant, enemy, party, effects),
     getPassiveBonuses,
@@ -264,7 +265,8 @@ export const createMonaKitBehaviour = ({
       combatant.constellationCount >= CONSTELLATION_6 && attackTag === AttackTag.ChargedAttack
         ? CONSTELLATION_6_BONUS_PER_STACK * getConstellation6Stacks(effects, combatant.characterId)
         : 0,
-    // Constellation 1: a hit on an enemy under the Omen gives its striker the Hydro-related reactions' bonus for 8 seconds
+    // Constellation 1: a hit on an enemy under the Omen gives its striker the Hydro-related reactions' bonus for 8
+    // Seconds
     onKitEvent: (event, context, combatant) => {
       if (combatant.constellationCount < CONSTELLATION_1 || event.kind !== KitEventKind.EnemyHit) return;
       if (!event.enemy.statuses.some(({ id }) => id === OMEN_STATUS_ID)) return;

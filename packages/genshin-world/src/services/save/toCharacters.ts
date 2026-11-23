@@ -1,8 +1,8 @@
 import type { Character } from "#src/models/character/Character";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 
-// The characters a save holds as the world holds them, each with the Companionship EXP the save keeps under its id, zero
-// When it keeps none. Its copies are read apart as the world's copy counts
+// The characters a save holds as the world holds them, each with the Companionship EXP the save keeps under its id,
+// Zero When it keeps none. Its copies are read apart as the world's copy counts
 export const toCharacters = (
   characterSaves: CharacterSave[],
   companionshipExpMap: ReadonlyMap<number, number>,

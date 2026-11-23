@@ -1,6 +1,7 @@
 import type { DevScenario } from "#src/models/dev/DevScenario";
 
-// Stands on one Mondstadt chest of each tier the map marks, from Common to Remarkable, at the places the published chests give
+// Stands on one Mondstadt chest of each tier the map marks, from Common to Remarkable, at the places the published
+// Chests give
 export const chestsEveryTierScenario: DevScenario = {
   lines: [
     "teleport 1984.06 0 -658.46",

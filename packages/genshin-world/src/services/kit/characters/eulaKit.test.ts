@@ -59,8 +59,8 @@ const castBurstStacks = (ascension: number, stacks: number): number => {
   return countGrimheartStacks(kitEffectState);
 };
 
-// The seconds left on Icetide Vortex's cooldown once Glacial Illumination is cast, as Eula at the ascension stood with a
-// Second of it left
+// The seconds left on Icetide Vortex's cooldown once Glacial Illumination is cast, as Eula at the ascension stood with
+// A Second of it left
 const castBurstSkillCooldown = (ascension: number): number => {
   const party = createParty([EULA_CHARACTER_ID]);
   getPartyMember(party, EULA_CHARACTER_ID).skillCooldownSeconds = 1;

@@ -29,7 +29,8 @@ const createAmberCombatant = (constellationCount = 0): Combatant => ({
   level: 90,
 });
 
-// Fiery Rain's arrows as its burst strikes them from a Amber of the given ascension, each strike with the striker it is priced from
+// Fiery Rain's arrows as its burst strikes them from a Amber of the given ascension, each strike with the striker it is
+// Priced from
 const strikeFieryRain = (ascension: number) => {
   const context = createKitTestContext({ ...createAmberCombatant(), ascension });
   AMBER_KIT.elementalBurst.onStart?.(context);

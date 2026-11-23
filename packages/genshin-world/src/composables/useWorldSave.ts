@@ -18,10 +18,11 @@ import { useWorldSessionStore } from "#src/store/session";
 import { useWorldStatuesStore } from "#src/store/statues";
 import { ref, shallowRef, watch } from "vue";
 
-// The wish counters and the bench's crafting the player holds, beside the bag and the wallet the session store holds and
-// The progress and defeats the achievements', the cooking's, the Archive's, the chests' and the statues' stores hold.
-// A change to any of them is a grant the host saves: the changes made in one tick are one grant, so a pickup is one save, a
-// Wish is one save with its spend and its pity, and an achievement's progress is saved with the Primogems it paid
+// The wish counters and the bench's crafting the player holds, beside the bag and the wallet the session store holds
+// And The progress and defeats the achievements', the cooking's, the Archive's, the chests' and the statues' stores
+// Hold. A change to any of them is a grant the host saves: the changes made in one tick are one grant, so a pickup is
+// One save, a Wish is one save with its spend and its pity, and an achievement's progress is saved with the Primogems
+// It paid
 export const useWorldSave = ({
   emitGrant,
   savedState,
@@ -57,7 +58,8 @@ export const useWorldSave = ({
   const travelerBirthday = shallowRef<TravelerBirthdaySave | undefined>(savedState.travelerBirthday);
   const wishHistory = ref(savedState.wishHistory);
   const wishPityMap = ref(savedState.wishPityMap);
-  // The tips the world has shown, each once by its id, kept with the save, and the tips it has triggered and not yet shown
+  // The tips the world has shown, each once by its id, kept with the save, and the tips it has triggered and not yet
+  // Shown
   const shownTipIds = shallowRef<ReadonlySet<number>>(savedState.shownTipIds);
   const queuedTipIds = shallowRef<readonly number[]>(savedState.queuedTipIds);
   // The camps cleared, each once: a camp whose last enemy falls is kept, and one cleared again is not added twice
@@ -65,8 +67,8 @@ export const useWorldSave = ({
   const clearedDomainIds = shallowRef<ReadonlySet<string>>(savedState.clearedDomainIds);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
-  // The forge's progress for the session: the recipes learned from diagrams are the save's, and the queues and forge points
-  // Start empty on each load, as the save does not hold them
+  // The forge's progress for the session: the recipes learned from diagrams are the save's, and the queues and forge
+  // Points Start empty on each load, as the save does not hold them
   const forgeProgress = shallowRef<ForgeProgress>({
     ...createForgeProgress(worldSessionStore.getWorldNow()),
     learnedRecipeIds: savedState.forgeLearnedRecipeIds,
@@ -118,7 +120,8 @@ export const useWorldSave = ({
   const setEnemyRespawnAt = (spawnKey: string, respawnAt: string) => {
     enemyRespawnMap.value = new Map([...enemyRespawnMap.value, [spawnKey, respawnAt]]);
   };
-  // A defeated boss's moment of defeat is the save's too, since its return waits on a claim or a teleport the save keeps
+  // A defeated boss's moment of defeat is the save's too, since its return waits on a claim or a teleport the save
+  // Keeps
   const setBossDefeatAt = (spawnKey: string, defeatedAt: string) => {
     bossDefeatMap.value = new Map([...bossDefeatMap.value, [spawnKey, defeatedAt]]);
   };
@@ -129,7 +132,8 @@ export const useWorldSave = ({
   const setNamecardItemId = (nextItemId: number) => {
     namecardItemId.value = nextItemId;
   };
-  // The birthday the profile's dialog confirms is set once: a held one is kept, and a date its month does not hold is refused
+  // The birthday the profile's dialog confirms is set once: a held one is kept, and a date its month does not hold is
+  // Refused
   const chooseTravelerBirthday = (chosen: TravelerBirthdaySave) => {
     travelerBirthday.value = setTravelerBirthday(travelerBirthday.value, chosen);
   };

@@ -64,8 +64,8 @@ const readEnergyAfterReactions = (constellationCount: number, reactions: Reactio
   return party.characterIdMemberMap.get(INEFFA_CHARACTER_ID)?.energy ?? 0;
 };
 
-// Steps Ineffa's kit for the frames given, emitting each enemy hit at its frame, and returns each frame on which a Lunar
-// Hit is queued, once for each hit queued on it
+// Steps Ineffa's kit for the frames given, emitting each enemy hit at its frame, and returns each frame on which a
+// Lunar Hit is queued, once for each hit queued on it
 const readLunarHitFrames = (
   combatant: Combatant,
   enemies: Enemy[],

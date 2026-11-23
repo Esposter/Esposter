@@ -8,8 +8,8 @@ import type { FriendshipNamecard } from "#src/models/friendship/FriendshipNameca
 import { computeAchievementNamecardItemIds } from "#src/services/achievement/computeAchievementNamecardItemIds";
 import { computeHeldNamecardItemIds } from "#src/services/friendship/computeHeldNamecardItemIds";
 
-// The namecards the profile holds: each character's once its Friendship reaches level 10, then each finished category's.
-// Both are read from the Friendship and the achievements each time, so the profile stores neither
+// The namecards the profile holds: each character's once its Friendship reaches level 10, then each finished
+// Category's. Both are read from the Friendship and the achievements each time, so the profile stores neither
 export const computeProfileNamecardItemIds = ({
   achievements,
   categories,

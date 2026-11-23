@@ -13,7 +13,8 @@ const BOUNDLESS_BLESSING_CLOCK_ID = "boundlessBlessingClock";
 const BOUNDLESS_BLESSING_INTERVAL_SECONDS = 4;
 const BOUNDLESS_BLESSING_MAXIMUM_STACKS = 4;
 
-// Drops the stacks, their buffs and the clock that adds them from the wielder, which a swap off the field or a fall does
+// Drops the stacks, their buffs and the clock that adds them from the wielder, which a swap off the field or a fall
+// Does
 const clearBoundlessBlessing = (kitEffectState: KitEffectState, characterId: number): void => {
   removeKitEffects(
     kitEffectState,
@@ -24,10 +25,10 @@ const clearBoundlessBlessing = (kitEffectState: KitEffectState, characterId: num
   );
 };
 
-// Boundless Blessing at its rank: its Movement SPD is a passive bonus on the wielder. While the wielder is on the field, every
-// Four seconds it gains a stack of the rank's Elemental DMG Bonus on each element, up to four, and the stacks clear when it
-// Leaves the field or falls. The clock starts on the wielder's swap onto the field, the battle's opening swap
-// Included. Provisional: the stacks are the text's, read without the game's timing
+// Boundless Blessing at its rank: its Movement SPD is a passive bonus on the wielder. While the wielder is on the
+// Field, every Four seconds it gains a stack of the rank's Elemental DMG Bonus on each element, up to four, and the
+// Stacks clear when it Leaves the field or falls. The clock starts on the wielder's swap onto the field, the battle's
+// Opening swap Included. Provisional: the stacks are the text's, read without the game's timing
 export const createBoundlessBlessingPassiveModule = (params: number[]): PassiveModule => {
   const movementSpeed = takeOne(params, 0);
   const elementalDamageBonus = takeOne(params, 1);

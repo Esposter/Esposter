@@ -1,6 +1,6 @@
-// Each city vendor's shop by the vendor's NPC id, as the resident's id names it, from the wiki's vendor pages, region by
-// Region, Mondstadt first, then each Fishing Association's shop, matched to its member by the stock the wiki lists for them.
-// The dump links no NPC to a shop, so each entry is provisional until a recording confirms it
+// Each city vendor's shop by the vendor's NPC id, as the resident's id names it, from the wiki's vendor pages, region
+// By Region, Mondstadt first, then each Fishing Association's shop, matched to its member by the stock the wiki lists
+// For them. The dump links no NPC to a shop, so each entry is provisional until a recording confirms it
 export const VendorShopTypeMap: Partial<Record<string, number>> = {
   // Sara, the waitress at Good Hunter in Mondstadt, on the Good Hunter shop
   "1419": 1005,
@@ -38,7 +38,8 @@ export const VendorShopTypeMap: Partial<Record<string, number>> = {
   "7086": 1137,
   // Zherebtsov, Snezhnaya's Fishing Association, on the Snezhnaya fishing shop
   "7418": 1156,
-  // Tubby, the Serenitea Pot's steward, on the Realm Depot: the dump's one NPC row named Tubby, and the depot's shop type
-  // The depot is reached through him in the realm, which is not built yet, so this entry is provisional until it is
+  // Tubby, the Serenitea Pot's steward, on the Realm Depot: the dump's one NPC row named Tubby, and the depot's shop
+  // Type The depot is reached through him in the realm, which is not built yet, so this entry is provisional until it
+  // Is
   "13276": 1048,
 };

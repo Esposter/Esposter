@@ -18,9 +18,10 @@ const BRIGHT_DAWN_ENERGY_COOLDOWN_ID = "brightDawnOvertureEnergyCooldown";
 const BURNING_REACTIONS = [{ reactionType: ReactionType.Burning }];
 const MAXIMUM_STACKS = 2;
 
-// Bright Dawn Overture at its rank: a Burning the wielder triggers, or a Dendro hit it deals on a Burning enemy, adds a stack
-// That raises the wielder's DMG by the rank's amount for the rank's seconds, up to two stacks. Two stacks, or the second
-// Refreshed, restore the rank's Energy at most once per the rank's cooldown in seconds. The rank's ATK is its attribute line's
+// Bright Dawn Overture at its rank: a Burning the wielder triggers, or a Dendro hit it deals on a Burning enemy, adds a
+// Stack That raises the wielder's DMG by the rank's amount for the rank's seconds, up to two stacks. Two stacks, or the
+// Second Refreshed, restore the rank's Energy at most once per the rank's cooldown in seconds. The rank's ATK is its
+// Attribute line's
 export const createBrightDawnOverturePassiveModule = (params: number[]): PassiveModule => {
   const damageBonusPerStack = takeOne(params, 1);
   const seconds = takeOne(params, 2);

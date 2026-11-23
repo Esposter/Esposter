@@ -27,8 +27,8 @@ export const OAK_LEAF_PART = "Stages_Unique_CyTree01_Leaf_Lod1";
 export const PLANT_DOME_SCALE: [number, number, number] = [0.4, 0.3, 0.4];
 // A plant prefab whose name holds this is a tree, drawn as the oak's impostor, and every other plant as a low dome
 export const TREE_PREFAB_NAME_PART = "Tree";
-// How far from the eye a plant is drawn, past which it is culled whole, so its stand-in pops out there. Provisional until
-// The valley's fog settles it
+// How far from the eye a plant is drawn, past which it is culled whole, so its stand-in pops out there. Provisional
+// Until The valley's fog settles it
 export const PLANT_DRAW_DISTANCE = 120;
 // The ramp every material shades through: a narrow step, a little past the grazing angle
 export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, shade: 0, softness: 0.08, terminator: 0.52 };

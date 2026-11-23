@@ -39,8 +39,8 @@ export interface WorldTables {
   // The reader of each published character pack, by the id of the character it is of.
   // The world draws each character's model from its reader, and the Character screen its terms
   characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
-  // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
-  // Reads a talent's upgrades by
+  // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents
+  // Tab Reads a talent's upgrades by
   characterTalentKits: CharacterTalentKit[];
   // The crafting bench's place in Mondstadt, in the region's axes, which its prompt stands on
   craftingBenchPlace: CraftingBenchPlace;
@@ -62,11 +62,13 @@ export interface WorldTables {
   nameText: Readonly<Record<string, string>>;
   // Each region's city in the game's city table, which its ley line kinds and its statue's unlock are read through
   regionCityIds: RegionCityIds;
-  // The artifact pieces of the reliquary tables by item id, each with its set, which a bag entry of an artifact is defined from
+  // The artifact pieces of the reliquary tables by item id, each with its set, which a bag entry of an artifact is
+  // Defined from
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   // The artifact sets of the reliquary tables, each with its pieces, which the chests roll their artifacts from
   reliquarySets: readonly ReliquarySetData[];
-  // The Original Resin constants the game's constant table holds, which the cap, the regeneration and the refills are read by
+  // The Original Resin constants the game's constant table holds, which the cap, the regeneration and the refills are
+  // Read by
   resinParam: ResinParam;
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
   seelies: Seelie[];

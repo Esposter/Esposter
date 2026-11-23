@@ -61,7 +61,8 @@ interface Props {
   random: () => number;
   // Every recipe the bench holds, in the game's order; the ones the player has not opened are not offered
   recipes: CraftingRecipe[];
-  // The pieces of each artifact set by item id, which the Mystic Offering's strongbox artifact is taken into the bag with
+  // The pieces of each artifact set by item id, which the Mystic Offering's strongbox artifact is taken into the bag
+  // With
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   // The Original Resin constants of the game, which the cap, the regeneration and the refills are read by
   resinParam: ResinParam;
@@ -95,8 +96,8 @@ const crafterId = ref(initialCrafterId);
 const recipeId = ref(0);
 const tabId = ref(0);
 const openRecipes = computed(() => recipes.filter((recipe) => checkIsRecipeOpen(recipe, progress, adventureRank)));
-// One tab per bench tab the open recipes fall under, in order and named by the game's own text for the combine type each
-// Files under: a conversion's tab is apart from the craft tab of the same combine type
+// One tab per bench tab the open recipes fall under, in order and named by the game's own text for the combine type
+// Each Files under: a conversion's tab is apart from the craft tab of the same combine type
 const recipeTabCells = computed(() =>
   [...new Map(openRecipes.value.map((recipe): [number, number] => [getCraftingTabId(recipe), recipe.combineType]))]
     .toSorted(([firstTabId], [secondTabId]) => firstTabId - secondTabId)
@@ -193,9 +194,9 @@ const craft = () => {
 </script>
 
 <template>
-  <!-- The crafting bench, opened by an NPC or a world object: the recipes it holds open, the picked one's count and cost,
-       and the party's crafter who may pass a talent's extra on to the bag. Its last tab is the Mystic Offering, whose panel
-       takes the screen while that tab is picked -->
+  <!-- The crafting bench, opened by an NPC or a world object: the recipes it holds open, the picked one's count and
+    cost, and the party's crafter who may pass a talent's extra on to the bag. Its last tab is the Mystic Offering,
+    whose panel takes the screen while that tab is picked -->
   <CraftingStrongbox
     v-if="pickedTabId === MYSTIC_OFFERING_TAB_ID"
     :artifact-drop-tables

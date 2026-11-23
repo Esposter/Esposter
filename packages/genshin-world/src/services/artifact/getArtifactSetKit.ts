@@ -8,9 +8,9 @@ import { WILDLIFE_ANSWERING_ARTIFACT_SET_IDS } from "#src/services/artifact/cons
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 
-// A character's kit with the sets its artifacts make pricing and answering the events of combat after it: each bonus its
-// Worn pieces reach that the set table gives numbers to, built as its set's module where the set has one. A character
-// Whose sets build none keeps its kit as it is
+// A character's kit with the sets its artifacts make pricing and answering the events of combat after it: each bonus
+// Its Worn pieces reach that the set table gives numbers to, built as its set's module where the set has one. A
+// Character Whose sets build none keeps its kit as it is
 export const getArtifactSetKit = (
   kit: Kit,
   artifacts: readonly Artifact[],
@@ -31,7 +31,8 @@ export const getArtifactSetKit = (
     ];
   });
   if (artifactSetModules.length === 0) return kit;
-  // A hit on wildlife triggers a weapon's passive, and an artifact set's only where it is one of those sets; the rest hear none of it
+  // A hit on wildlife triggers a weapon's passive, and an artifact set's only where it is one of those sets; the rest
+  // Hear none of it
   const wildlifeKit = getPassiveKit(
     kit,
     artifactSetModules.filter(({ isWildlifeAnswering }) => isWildlifeAnswering).map(({ module }) => module),

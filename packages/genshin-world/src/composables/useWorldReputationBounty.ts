@@ -23,8 +23,8 @@ interface Props {
   savedBountyHunt?: ReputationBountyHunt | undefined;
 }
 
-// The Mondstadt bounty the player has taken, in progress until its claim pays, and the moments of the bounty claims made.
-// Both are the save's, so a reload finds the hunt and the week's count where they were left
+// The Mondstadt bounty the player has taken, in progress until its claim pays, and the moments of the bounty claims
+// Made. Both are the save's, so a reload finds the hunt and the week's count where they were left
 export const useWorldReputationBounty = ({ random, savedBountyClaimedAts, savedBountyHunt }: Props) => {
   const worldReputationStore = useWorldReputationStore();
   const { reputation, reputationCity } = storeToRefs(worldReputationStore);
@@ -35,8 +35,8 @@ export const useWorldReputationBounty = ({ random, savedBountyClaimedAts, savedB
   const { events, getWorldNow } = worldSessionStore;
   const bountyHunt = shallowRef<ReputationBountyHunt | undefined>(savedBountyHunt);
   const bountyClaimedAts = shallowRef<readonly Temporal.Instant[]>(savedBountyClaimedAts);
-  // The camp of the taken bounty while its target stands, made from the hunt once at the world level held then, so the enemy
-  // Stays put as the hunt changes
+  // The camp of the taken bounty while its target stands, made from the hunt once at the world level held then, so the
+  // Enemy Stays put as the hunt changes
   const bountyCamp = shallowRef<EnemyCamp | undefined>(
     savedBountyHunt && !savedBountyHunt.isTargetDefeated
       ? createReputationBountyCamp(savedBountyHunt, worldLevel.value)
@@ -61,7 +61,8 @@ export const useWorldReputationBounty = ({ random, savedBountyClaimedAts, savedB
   events.on("defeatEnemy", (enemy) => {
     if (bountyHunt.value) bountyHunt.value = defeatReputationBountyTarget(bountyHunt.value, enemy.campId);
   });
-  // The claim pays the bounty's reward once its target is defeated and the week's limit is not reached, and ends the hunt
+  // The claim pays the bounty's reward once its target is defeated and the week's limit is not reached, and ends the
+  // Hunt
   const claimBounty = () => {
     const city = reputationCity.value;
     const claim =

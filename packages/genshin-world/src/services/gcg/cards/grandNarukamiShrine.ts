@@ -7,8 +7,8 @@ import { takeOne } from "@esposter/shared";
 
 const GRAND_NARUKAMI_SHRINE_ROUND_LIMIT = 2;
 
-// Grand Narukami Shrine, a Support: after a character of its side uses a Skill, if the total of Elemental Dice is odd, an
-// Omni Die is generated, twice per Round
+// Grand Narukami Shrine, a Support: after a character of its side uses a Skill, if the total of Elemental Dice is odd,
+// An Omni Die is generated, twice per Round
 export const grandNarukamiShrine: GcgCardModule = {
   onAnySkillUsed: ({ duel, sideIndex, userSideIndex }) => {
     if (sideIndex !== userSideIndex) return;

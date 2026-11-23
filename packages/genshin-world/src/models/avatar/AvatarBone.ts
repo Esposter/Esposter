@@ -2,7 +2,8 @@ import type { Vector3Tuple, Vector4Tuple } from "three";
 
 import { z } from "zod";
 
-// One bone of a rig: its path in the rig, the index of its parent (-1 for the root), and its rest pose, local to its parent
+// One bone of a rig: its path in the rig, the index of its parent (-1 for the root), and its rest pose, local to its
+// Parent
 export interface AvatarBone {
   name: string;
   parent: number;

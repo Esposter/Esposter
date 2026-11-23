@@ -39,7 +39,8 @@ const counts = ref<Record<number, number>>({});
 const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, materialDataMap);
 const pickedCount = (recipe: ProcessingRecipe) => counts.value[recipe.id] ?? 1;
 const queuedCount = (recipe: ProcessingRecipe) => jobs.value[recipe.id]?.count ?? 0;
-// The start a picked count of the processing would make from the bag and the queue as they stand, undefined where it cannot
+// The start a picked count of the processing would make from the bag and the queue as they stand, undefined where it
+// Cannot
 const planStart = (recipe: ProcessingRecipe) =>
   startProcessing(recipe, pickedCount(recipe), { inventory: inventory.value, job: jobs.value[recipe.id], now: now() });
 const checkCanStart = (recipe: ProcessingRecipe) => planStart(recipe) !== undefined;

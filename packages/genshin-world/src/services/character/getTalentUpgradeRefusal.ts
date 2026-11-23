@@ -9,9 +9,9 @@ import { Currency } from "#src/models/inventory/Currency";
 import { getTalentUpgrade } from "#src/services/character/getTalentUpgrade";
 import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 
-// Why a combat talent cannot rise one level now, as the game refuses it, or undefined when every requirement is met: the
-// Level above its own is looked up among its upgrades, and the character's phase, the wallet's Mora and the bag's items
-// Are checked in that order
+// Why a combat talent cannot rise one level now, as the game refuses it, or undefined when every requirement is met:
+// The Level above its own is looked up among its upgrades, and the character's phase, the wallet's Mora and the bag's
+// Items Are checked in that order
 export const getTalentUpgradeRefusal = (
   character: Character,
   talent: CombatTalent,

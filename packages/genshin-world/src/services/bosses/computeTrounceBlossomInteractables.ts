@@ -5,7 +5,8 @@ import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrou
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
-// The interactables the claimable Trounce Blossoms are at the time given, each standing where its blossom lies on the ground
+// The interactables the claimable Trounce Blossoms are at the time given, each standing where its blossom lies on the
+// Ground
 export const computeTrounceBlossomInteractables = (
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>,
   gameText: Readonly<Record<string, string>>,

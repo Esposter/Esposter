@@ -5,8 +5,8 @@ import { GCG_DENDRO_CORE_MAX_USAGES } from "#src/services/gcg/constants";
 
 const DENDRO_CORE_BONUS = 2;
 
-// Dendro Core: when its side's skill deals Pyro or Electro DMG to the opposing active character, that DMG is two more and
-// The core spends its usage, for one usage
+// Dendro Core: when its side's skill deals Pyro or Electro DMG to the opposing active character, that DMG is two more
+// And The core spends its usage, for one usage
 export const dendroCore: GcgCardModule = {
   initialUsages: 1,
   maxUsages: GCG_DENDRO_CORE_MAX_USAGES,

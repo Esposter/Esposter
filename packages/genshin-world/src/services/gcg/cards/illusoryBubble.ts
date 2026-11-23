@@ -1,6 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-// Illusory Bubble: when the side's skill deals DMG, the bubble is removed and that DMG doubled, after every additive bonus
+// Illusory Bubble: when the side's skill deals DMG, the bubble is removed and that DMG doubled, after every additive
+// Bonus
 export const illusoryBubble: GcgCardModule = {
   initialUsages: 1,
   multiplyDamageDealt: (_context, damage, zoneCard) => {

@@ -205,8 +205,8 @@ interface Props {
   sceneExportBaseUrl: string;
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
-  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of its
-  // Area comes
+  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of
+  // Its Area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The animals in the world, each stood at its place or fallen, which the session holds
   wildlifeList: Wildlife[];
@@ -264,7 +264,8 @@ const emit = defineEmits<{
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
 // Within reach of the origin
-// oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
+// The parity page reaches
+// oxlint-disable-next-line no-restricted-globals -- a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 const checkIsWitnessed = (family: WindrisePartFamily): boolean => witness?.families.value.includes(family) ?? false;
 const hiddenLandmarkKinds = computed(() => [
@@ -279,8 +280,8 @@ const drawnCharacterAvatar = useCharacterAvatar(sceneExportBaseUrl, () => active
   rampTexture,
 });
 const { baseGrounds, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
-// The ground's quadtree, which the terrain streams and the grass reads, bounded by the heights Windrise's ground and each
-// Region's ground laid over it stand between, and the records each terrain worker computes its tiles over
+// The ground's quadtree, which the terrain streams and the grass reads, bounded by the heights Windrise's ground and
+// Each Region's ground laid over it stand between, and the records each terrain worker computes its tiles over
 const terrainOptions = reactive(createWindriseTerrainOptions(baseGrounds, []));
 const terrainWorkerGround: TerrainWorkerGround = { baseGrounds, groundLayers, surfaces, waterLevel: water.level };
 // The trees the landmarks grow and the plants' impostor is baked from
@@ -293,7 +294,8 @@ const pavingMaterial = createToonMaterial({
   lightUniforms,
   rampTexture,
 });
-// The families the ground, paving and grass groups mark themselves as, held once so each group is handed the same object
+// The families the ground, paving and grass groups mark themselves as, held once so each group is handed the same
+// Object
 const groundUserData = { [SCENE_FAMILY_KEY]: WindrisePartFamily.Ground };
 const pavingUserData = { [SCENE_FAMILY_KEY]: WindrisePartFamily.Paving };
 const grassUserData = { [SCENE_FAMILY_KEY]: WindrisePartFamily.Grass };
@@ -313,8 +315,8 @@ const { isRegionDataSettled, regionChestMap, regionDataMap, regionGroundMap } = 
   gameDataBaseUrl,
   catalogue,
 );
-// The game's own exports of Windrise and of each region in reach, where the host serves them, lit as our stand-ins are and
-// Drawn in their place: the leaf cards in the wind as our crowns are, and every other part in the toon material
+// The game's own exports of Windrise and of each region in reach, where the host serves them, lit as our stand-ins are
+// And Drawn in their place: the leaf cards in the wind as our crowns are, and every other part in the toon material
 const sceneExportMap = useSceneExports(
   sceneExportBaseUrl,
   () => [WINDRISE_SCENE_EXPORT_COMPONENT, ...regionDataMap.keys()],
@@ -339,10 +341,10 @@ const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
-// The sight's mask: the drops, the residents and the enemies, drawn in the colours the sight lights them, which the post
-// Chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is drawn
-// While no screen gives one. Its stand-ins are placed in the world's own coordinates, so the scene is offset by the floating
-// Origin as the world's group is, and the reach's origin is read against the camera the same way
+// The sight's mask: the drops, the residents and the enemies, drawn in the colours the sight lights them, which the
+// Post Chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is
+// Drawn While no screen gives one. Its stand-ins are placed in the world's own coordinates, so the scene is offset by
+// The floating Origin as the world's group is, and the reach's origin is read against the camera the same way
 const sightScene = new Scene();
 const sightUniforms = createSightUniforms();
 const { onBeforeRender } = useLoop();
@@ -393,8 +395,8 @@ const sightTrailEnds = useSightTrailEnds({
 });
 // The characters whose model has failed to read, which the field draws from the Traveler's pack in their place
 const unreadableCharacterIds = shallowRef<ReadonlySet<number>>(new Set());
-// The reader of the pack that draws the character on the field: the Traveler's for a character the index lists no pack for
-// Or whose model has failed to read
+// The reader of the pack that draws the character on the field: the Traveler's for a character the index lists no pack
+// For Or whose model has failed to read
 const characterPackReader = computed(() =>
   getCharacterPackReader(characterPackReaders, activeCharacterId, unreadableCharacterIds.value),
 );
@@ -476,9 +478,11 @@ onUnmounted(() => {
   <!-- Everything placed in the world is in this group, which the floating origin offsets -->
   <TresGroup :position="worldOffset">
     <primitive v-for="[component, { parts }] of sceneExportMap" :key="component" :object="parts" />
-    <!-- Hidden rather than unmounted where the witness draws the ground, since the world is ready once its ground is -->
+    <!-- Hidden rather than unmounted where the witness draws the ground, since the world is ready once its ground
+      is -->
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Ground)">
-      <!-- Marked as the ground's family alone, so the grass, which a witness render never draws, is left out of ours -->
+      <!-- Marked as the ground's family alone, so the grass, which a witness render never draws, is left out of
+        ours -->
       <TresGroup :user-data="groundUserData">
         <WorldTerrain
           :create-terrain-worker
@@ -513,12 +517,14 @@ onUnmounted(() => {
         :wind-uniforms
       />
     </TresGroup>
-    <!-- Marked as the paving family alone, so a witness render draws ours of the stones round the statue in place of the exports' -->
+    <!-- Marked as the paving family alone, so a witness render draws ours of the stones round the statue in place
+      of the exports' -->
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Paving)" :user-data="pavingUserData">
       <TresMesh :geometry="pavingGeometry" :material="pavingMaterial" cast-shadow receive-shadow />
     </TresGroup>
     <!-- Ahead of the water, whose haze replaces the weather's under its surface -->
-    <!-- Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone -->
+    <!-- Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges
+      alone -->
     <WorldWeather
       :base-cloud-coverage="witness?.isAlone.value ? 0 : CLOUD_COVERAGE"
       :base-fog-density="witness?.isAlone.value ? 0 : FOG_DENSITY"
@@ -550,7 +556,8 @@ onUnmounted(() => {
       :tree-species-options-map
       :wind-uniforms
     />
-    <!-- The plants the game places round the oak, instanced once per prefab, drawn as the grass family alone where the witness does not -->
+    <!-- The plants the game places round the oak, instanced once per prefab, drawn as the grass family alone where
+      the witness does not -->
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Grass)" :user-data="grassUserData">
       <WorldPlants
         :get-ground-height

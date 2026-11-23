@@ -6,7 +6,8 @@ import { z } from "zod";
 
 // The party as the save holds it: the teams Party Setup set up, the one deployed, the index of its member on the field
 // And the characters who are down, by id. A member's HP, energy and cooldowns are not held, so a reload brings each
-// Standing member back at full HP with its energy and cooldowns none. The member on the field must be in the deployed team
+// Standing member back at full HP with its energy and cooldowns none. The member on the field must be in the deployed
+// Team
 export const partySaveSchema = z
   .object({
     activeIndex: z.int().nonnegative(),

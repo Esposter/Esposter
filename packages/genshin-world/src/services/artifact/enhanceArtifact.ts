@@ -10,9 +10,9 @@ import { getFodderEnhancement } from "#src/services/artifact/getFodderEnhancemen
 import { drawWeightedValue } from "#src/services/shared/drawWeightedValue";
 import { takeOne } from "@esposter/shared";
 
-// An artifact fed the materials' EXP and its fodders': the bonus drawn for the enhancement multiplies what they bring, and
-// The artifact levels as far as its EXP now reaches, a minor affix added or raised at each affix level it passes. EXP past
-// The highest level is lost. The Mora is paid before this, as getEnhancementMoraCost says
+// An artifact fed the materials' EXP and its fodders': the bonus drawn for the enhancement multiplies what they bring,
+// And The artifact levels as far as its EXP now reaches, a minor affix added or raised at each affix level it passes.
+// EXP past The highest level is lost. The Mora is paid before this, as getEnhancementMoraCost says
 export const enhanceArtifact = ({
   artifact,
   artifactRarityDataMap,

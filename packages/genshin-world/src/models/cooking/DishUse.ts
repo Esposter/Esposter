@@ -7,7 +7,8 @@ import { z } from "zod";
 
 // A dish's use when it is eaten, as its item names it: the heal its buff gives, as a flat amount and a share of its
 // Target's Max HP, the HP its revive buff restores to a fallen character, the bonus its buff gives, the fill its
-// Anti-cold buff holds down, and who the use reaches. A dish has a heal, a revive, a bonus, an anti-cold, or any of them
+// Anti-cold buff holds down, and who the use reaches. A dish has a heal, a revive, a bonus, an anti-cold, or any of
+// Them
 export interface DishUse {
   antiCold?: { ratio: number; seconds: number } | undefined;
   bonus?: DishBonus | undefined;

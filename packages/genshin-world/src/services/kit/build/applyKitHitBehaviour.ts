@@ -4,8 +4,9 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import { checkIsKitHitIncomplete } from "#src/services/kit/build/checkIsKitHitIncomplete";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A built hit given what its behaviour runs and completes, in place. It fails where the behaviour completes what the hit
-// Holds none of, prices a hit its record already scales, or leaves a party heal, a bubble or a stacked hit incomplete
+// A built hit given what its behaviour runs and completes, in place. It fails where the behaviour completes what the
+// Hit Holds none of, prices a hit its record already scales, or leaves a party heal, a bubble or a stacked hit
+// Incomplete
 export const applyKitHitBehaviour = (hit: KitHit, behaviour: KitHitBehaviour, path: string): KitHit => {
   const {
     additiveBaseDamageBonus,

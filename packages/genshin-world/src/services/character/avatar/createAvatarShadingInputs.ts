@@ -42,8 +42,9 @@ const readOutlineWidthKnots = (colors: Readonly<Record<string, Vector4Tuple>>): 
   return { depths: depths ?? UNIT_OUTLINE_WIDTH_KNOTS.depths, scales: scales ?? UNIT_OUTLINE_WIDTH_KNOTS.scales };
 };
 
-// An outline's offset along the view ray, "_MaxOutlineZOffset" times 0.01, with the block-B flag the vertex's blue is read
-// Through (Exact on the form: the flag below a half takes the blue less a half, and the flag at one or above takes one)
+// An outline's offset along the view ray, "_MaxOutlineZOffset" times 0.01, with the block-B flag the vertex's blue is
+// Read Through (Exact on the form: the flag below a half takes the blue less a half, and the flag at one or above takes
+// One)
 const readOutlineOffset = (
   nameFloatMap: ReadonlyMap<string, number>,
 ): { blockBChannel: number; size: number } | undefined => {
@@ -53,8 +54,8 @@ const readOutlineOffset = (
     : { blockBChannel: nameFloatMap.get("_OutlineOffsetBlockBChannel") ?? 0, size: size * 0.01 };
 };
 
-// A value for each region, read by the name the game gives it: the region one's by the bare name and the later regions' by
-// Its number after it
+// A value for each region, read by the name the game gives it: the region one's by the bare name and the later regions'
+// By Its number after it
 const readRegionValues = <T>(
   name: string,
   readValue: (valueName: string) => T,
@@ -103,7 +104,8 @@ export const createAvatarShadingInputs = (
     faceSoftness: nameFloatMap.get("_FaceMapSoftness"),
     isCoolShadow: readSwitch(nameFloatMap, "_UseCoolShadowColorOrTex"),
     isLightMapAo: readSwitch(nameFloatMap, "_UseLightMapColorAO"),
-    // The game's outline weights its width by each vertex's colour alpha, so its width is read from the vertex, not the material
+    // The game's outline weights its width by each vertex's colour alpha, so its width is read from the vertex, not the
+    // Material
     isOutlineVertexWeighted: true,
     isVertexAo: readSwitch(nameFloatMap, "_UseVertexColorAO"),
     isVertexRampWidth: readSwitch(nameFloatMap, "_UseVertexRampWidth"),
@@ -129,7 +131,8 @@ export const createAvatarShadingInputs = (
       three: readColour(colors, "_Color3") ?? color,
       two: readColour(colors, "_Color2") ?? color,
     },
-    // A later region is the lightmap's to select only where the material turns it on, "_UseMaterial2" to "_UseMaterial5"
+    // A later region is the lightmap's to select only where the material turns it on, "_UseMaterial2" to
+    // "_UseMaterial5"
     regionToggles: {
       five: readSwitch(nameFloatMap, "_UseMaterial5") ?? false,
       four: readSwitch(nameFloatMap, "_UseMaterial4") ?? false,

@@ -46,8 +46,8 @@ const ASCENSION_1 = 1;
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yunjin
 const ASCENSION_1_COUNTER_WINDOW_SECONDS = 0.5;
 const ASCENSION_1_COUNTER_WINDOW_ID = "yunjin-ascension-1-counter-window";
-// Opening Flourish's cooldown is cut by 18%, which gcsim (MIT) yunjin/skill.go gives as 443 frames for its 9 seconds, rounded up
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yunjin/skill.go
+// Opening Flourish's cooldown is cut by 18%, which gcsim (MIT) yunjin/skill.go gives as 443 frames for its 9 seconds,
+// Rounded up https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yunjin/skill.go
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_SKILL_COOLDOWN_MULTIPLIER = 0.82;
 // Once the banner is unleashed, every deployed member's Normal Attack DMG rises 15% for 12 seconds, as gcsim (MIT)
@@ -73,8 +73,8 @@ const spendBannerStack = (effects: readonly KitEffect[], characterId: number): v
   if (banner) banner.stacks = countKitResource(effects, characterId, BANNER_STATUS_ID) - 1;
 };
 
-// Ascension 4's share of Yun Jin's DEF for the Elemental Types the deployed team holds, each member's element as the team
-// Stands, read from the party and the team's built combatants by id
+// Ascension 4's share of Yun Jin's DEF for the Elemental Types the deployed team holds, each member's element as the
+// Team Stands, read from the party and the team's built combatants by id
 const getAscension4DefenseShare = (
   banner: Combatant,
   party: Party,
@@ -96,19 +96,19 @@ const getBannerIncrease = (
   (BANNER_DEFENSE_SHARE + getAscension4DefenseShare(banner, party, characterIdCombatantMap)) *
   banner.attributes.defense;
 
-// Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they start.
-// Cliffbreaker's Banner's DEF-scaled DMG Increase is party-wide, as gcsim gives it: her own normal attacks take it through
-// Her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the Elemental Types on top
-// Ascension 1's counter window is built. Constellation 1's Opening Flourish cooldown cut, Constellation 2's party Normal
-// Attack DMG Bonus from the unleashed banner and Constellation 4's DEF from her own Crystallize are built
-// Constellation 6's party Normal ATK SPD while the banner stands is not built: gcsim gates it on each member's own banner
-// Stacks, and the kit spends one pool of stacks for the banner, so the gate has no reading the kit can give
+// Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they
+// Start. Cliffbreaker's Banner's DEF-scaled DMG Increase is party-wide, as gcsim gives it: her own normal attacks take
+// It through Her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the Elemental
+// Types on top Ascension 1's counter window is built. Constellation 1's Opening Flourish cooldown cut, Constellation
+// 2's party Normal Attack DMG Bonus from the unleashed banner and Constellation 4's DEF from her own Crystallize are
+// Built Constellation 6's party Normal ATK SPD while the banner stands is not built: gcsim gates it on each member's
+// Own banner Stacks, and the kit spends one pool of stacks for the banner, so the gate has no reading the kit can give
 export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader): KitBehaviour => {
   const burstHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   const shieldShare = readParameter("shieldShare");
   const shieldFlat = readParameter("shieldFlatHealth");
-  // Opening Flourish's shield is set as the skill starts, from Yun Jin's Max HP and the table's share and flat HP, until its
-  // Hit lands, as gcsim expires it at that frame
+  // Opening Flourish's shield is set as the skill starts, from Yun Jin's Max HP and the table's share and flat HP,
+  // Until its Hit lands, as gcsim expires it at that frame
   const createShieldOnStart = ({ hits }: KitAction): KitAction["onStart"] => {
     const shieldSeconds = takeOne(hits).hitmarkSeconds;
     return (context) => {
@@ -149,7 +149,8 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
     // Opening Flourish's cooldown is cut from Constellation 1, as gcsim's skill sets its cooldown
     getSkillCooldownMultiplier: ({ activeCombatant }) =>
       activeCombatant.constellationCount >= CONSTELLATION_1 ? CONSTELLATION_1_SKILL_COOLDOWN_MULTIPLIER : 1,
-    // The banner's DMG Increase on her own normal attacks while it stands, priced from the striker as its buffs leave it
+    // The banner's DMG Increase on her own normal attacks while it stands, priced from the striker as its buffs leave
+    // It
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) =>
       strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
         ? getBannerIncrease(strike.combatant, party, characterIdCombatantMap)
@@ -170,7 +171,8 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
           id: ASCENSION_1_COUNTER_WINDOW_ID,
           seconds: ASCENSION_1_COUNTER_WINDOW_SECONDS,
         });
-      // Flower and a Fighter, from Constellation 4: her own Crystallize or Lunar-Crystallize gives her 20% DEF for 12 seconds
+      // Flower and a Fighter, from Constellation 4: her own Crystallize or Lunar-Crystallize gives her 20% DEF for 12
+      // Seconds
       if (
         !checkIsOwnReactionTriggered(event, combatant) ||
         combatant.constellationCount < CONSTELLATION_4 ||

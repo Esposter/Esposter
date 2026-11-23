@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 const HERITAGE_COOLDOWN_ID = "heritageCooldown";
 
-// Heritage at its rank: the character who comes on the field after a switch gains the rank's ATK percentage for the rank's
-// Seconds, and holds off the next for the rank's cooldown on its wielder
+// Heritage at its rank: the character who comes on the field after a switch gains the rank's ATK percentage for the
+// Rank's Seconds, and holds off the next for the rank's cooldown on its wielder
 export const createHeritagePassiveModule = (params: number[]): PassiveModule => {
   const percentage = takeOne(params, 0);
   const seconds = takeOne(params, 1);

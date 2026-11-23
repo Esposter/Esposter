@@ -12,10 +12,10 @@ import { getNearestLivingEnemies } from "#src/services/kit/getNearestLivingEnemi
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
-// The robots' timings and the strike they deal, as the record gives them. A robot checks its circle for an aura from its
-// First check, then every interval while it finds none, and the next robot checks a spacing after the one before. Once a
-// Robot absorbs an element it strikes the nearest enemies from the first strike after the absorb, then every strike
-// Interval, until the burst's seconds end
+// The robots' timings and the strike they deal, as the record gives them. A robot checks its circle for an aura from
+// Its First check, then every interval while it finds none, and the next robot checks a spacing after the one before.
+// Once a Robot absorbs an element it strikes the nearest enemies from the first strike after the absorb, then every
+// Strike Interval, until the burst's seconds end
 interface JahodaRobotSettings {
   absorbArea: AttackArea;
   // The energy each absorb gives her, from Constellation 4

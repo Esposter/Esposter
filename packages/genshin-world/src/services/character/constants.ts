@@ -51,8 +51,9 @@ export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
   GameLanguage.English,
   GameLanguage.Japanese,
 ];
-// The folder the published packs sit in under the hosted game data, and the scope their files are kept under in the shared
-// `hosted-assets` cache, each under its url with its whole sha256 as a query, so a republished file is a key of its own
+// The folder the published packs sit in under the hosted game data, and the scope their files are kept under in the
+// Shared `hosted-assets` cache, each under its url with its whole sha256 as a query, so a republished file is a key of
+// Its own
 export const CHARACTER_PACKS_FOLDER = "characterPacks";
 // The Traveler the world plays, the female twin, as the login's Traveler is
 export const TRAVELER_CHARACTER_ID = 10_000_007;
@@ -69,7 +70,8 @@ export const TRAVELER_LOCOMOTION_CLIPS: Partial<Record<LocomotionState, string>>
 export const CHARACTER_PMX_RECKONED_UNIT_METRES = 0.08;
 // The main quest whose completion unlocks the Traveler's bonus for each element it holds, Welkin Moon's Homecoming
 export const TRAVELER_BONUS_QUEST_ID = 6017;
-// The Attributes tab's base attributes, the Details list's first group, and the game's name for each, in the order it lists them
+// The Attributes tab's base attributes, the Details list's first group, and the game's name for each, in the order it
+// Lists them
 export const BASE_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.BaseHealth, GameTextKey.AttributeBaseHealth],
   [Attribute.BaseAttack, GameTextKey.AttributeBaseAttack],

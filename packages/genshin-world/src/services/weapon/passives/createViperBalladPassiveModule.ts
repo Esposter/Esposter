@@ -15,10 +15,11 @@ const HYMN_OF_THE_PURE_ID = "hymnOfThePure";
 const HYMN_OF_THE_PURE_COOLDOWN_ID = "hymnOfThePureCooldown";
 const THUS_LIED_THE_VIPER_ID = "thusLiedTheViper";
 
-// Viper's Ballad at its rank: an Elemental Skill or Burst hit its wielder deals adds a stack of Hymn of the Pure, once every
-// Cooldown, up to the rank's stacks. The stack that makes the last one clears them and gives Thus Lied the Viper instead, which
-// Raises every deployed member's Stellar Glimmer reaction DMG by the rank's amount for the rank's seconds, and holds back
-// Any stack for those seconds. The rank's second twelve, the stacks' hold, is the same seconds, so it is not read apart
+// Viper's Ballad at its rank: an Elemental Skill or Burst hit its wielder deals adds a stack of Hymn of the Pure, once
+// Every Cooldown, up to the rank's stacks. The stack that makes the last one clears them and gives Thus Lied the Viper
+// Instead, which Raises every deployed member's Stellar Glimmer reaction DMG by the rank's amount for the rank's
+// Seconds, and holds back Any stack for those seconds. The rank's second twelve, the stacks' hold, is the same seconds,
+// So it is not read apart
 export const createViperBalladPassiveModule = (params: number[]): PassiveModule => {
   const stellarGlimmerDamageBonus = takeOne(params, 0);
   const maximumStacks = takeOne(params, 1);

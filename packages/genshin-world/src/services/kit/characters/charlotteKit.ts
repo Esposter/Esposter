@@ -30,8 +30,9 @@ import { takeOne } from "@esposter/shared";
 
 export const CHARLOTTE_CHARACTER_ID = 10_000_088;
 
-// Ascension 4's bonus per other member, Healing Bonus for each from Fontaine and Cryo DMG Bonus for each from outside it, as
-// Gcsim (MIT) charlotte/asc.go gives it. The region a member is from is the catalogue region its association names
+// Ascension 4's bonus per other member, Healing Bonus for each from Fontaine and Cryo DMG Bonus for each from outside
+// It, as Gcsim (MIT) charlotte/asc.go gives it. The region a member is from is the catalogue region its association
+// Names
 const ASCENSION_4 = 4;
 const ASCENSION_4_BONUS_PER_MEMBER = 0.05;
 const FONTAINE_REGION_ID = "fontaine";
@@ -40,18 +41,18 @@ const FONTAINE_REGION_ID = "fontaine";
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte
 const THORN_COOLDOWN_STATUS_ID = "charlotte-thorn-cooldown";
 
-// Framing's press marks each enemy it strikes with Snappy Silhouette, ticking every 1.5 seconds from the mark, and no more
-// Than five enemies a cast, as gcsim (MIT) charlotte/skill.go gives it
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte
+// Framing's press marks each enemy it strikes with Snappy Silhouette, ticking every 1.5 seconds from the mark, and no
+// More Than five enemies a cast, as gcsim (MIT) charlotte/skill.go gives it
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte`
 const SNAPPY_MARK_STATUS_ID = "charlotte-snappy-silhouette";
 const SNAPPY_MARK_INTERVAL_SECONDS = 1.5;
 const SNAPPY_MARK_CAP = 5;
 
-// Constellations 1, 2 and 4, as gcsim (MIT) charlotte/cons.go gives them. Constellation 1 heals a member one of her heals
-// Lands on, at once and every two seconds for six, for 80% of her ATK. Constellation 2 raises her ATK by 10% for each of
-// The press's first three hits on an enemy, for 12 seconds. Constellation 4 raises her burst's hits on an enemy the press
-// Marked by 10% DMG, five times in 20 seconds from the first, and gives her 2 energy for each
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte
+// Constellations 1, 2 and 4, as gcsim (MIT) charlotte/cons.go gives them. Constellation 1 heals a member one of her
+// Heals Lands on, at once and every two seconds for six, for 80% of her ATK. Constellation 2 raises her ATK by 10% for
+// Each of The press's first three hits on an enemy, for 12 seconds. Constellation 4 raises her burst's hits on an enemy
+// The press Marked by 10% DMG, five times in 20 seconds from the first, and gives her 2 energy for each
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte`
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_STATUS_ID = "charlotte-constellation-1";
 const CONSTELLATION_1_HEAL_ATTACK_SHARE = 0.8;
@@ -82,8 +83,8 @@ const countConstellation4Hits = (effects: readonly KitEffect[], characterId: num
 const BURST_OFFSET_METRES = 4.5;
 const BURST_HEAL_RADIUS = 7;
 
-// A heal of Constellation 1's on a member, for 80% of Charlotte's ATK with the buffs on her as they stand at the heal, as gcsim's
-// C1 heal reads TotalAtk each time it runs
+// A heal of Constellation 1's on a member, for 80% of Charlotte's ATK with the buffs on her as they stand at the heal,
+// As gcsim's C1 heal reads TotalAtk each time it runs
 const healConstellation1 = (context: KitContext, combatant: Combatant, characterId: number): void => {
   changeKitMemberHealth(
     context,
@@ -99,13 +100,13 @@ const healTeam = (context: KitContext, caster: Combatant, flatHealth: number, at
     changeKitMemberHealth(context, caster, characterId, healedHealth);
 };
 
-// Charlotte's behaviour: the charged attack opens Spiritbreath Thorn on its target, off its cooldown, and Framing's press
-// Marks the first five enemies it strikes with Snappy Silhouette, each tick of which is a hit on that enemy alone. Still
-// Photo casts Kamera's strikes, heals the whole party as its hit lands, and each Kamera tick heals the character on the
-// Field within the circle it was cast at. Constellations 1, 2 and 4 are built, each on the press's marks or hits and the
-// Heals her own heals land on. Constellation 4 reads the press's marks alone, as the hold's Focused Impression is not
-// Built, and Constellation 2 counts the press's hits alone for the same reason. Constellation 6 needs the hold's
-// Focused Impression mark, which is not built, and the active character's hits on it
+// Charlotte's behaviour: the charged attack opens Spiritbreath Thorn on its target, off its cooldown, and Framing's
+// Press Marks the first five enemies it strikes with Snappy Silhouette, each tick of which is a hit on that enemy
+// Alone. Still Photo casts Kamera's strikes, heals the whole party as its hit lands, and each Kamera tick heals the
+// Character on the Field within the circle it was cast at. Constellations 1, 2 and 4 are built, each on the press's
+// Marks or hits and the Heals her own heals land on. Constellation 4 reads the press's marks alone, as the hold's
+// Focused Impression is not Built, and Constellation 2 counts the press's hits alone for the same reason. Constellation
+// 6 needs the hold's Focused Impression mark, which is not built, and the active character's hits on it
 export const createCharlotteKitBehaviour = ({
   kit,
   readHit,

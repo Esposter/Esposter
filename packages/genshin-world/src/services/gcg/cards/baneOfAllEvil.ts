@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 const BANE_OF_ALL_EVIL_DAMAGE = 4;
 
-// Bane of All Evil, Xiao's burst: 4 Anemo DMG, and Xiao gains Yaksha's Mask once the damage is dealt (the wiki's Bane of All
-// Evil (Character Card Skill))
+// Bane of All Evil, Xiao's burst: 4 Anemo DMG, and Xiao gains Yaksha's Mask once the damage is dealt (the wiki's Bane
+// Of All Evil (Character Card Skill))
 export const baneOfAllEvil: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

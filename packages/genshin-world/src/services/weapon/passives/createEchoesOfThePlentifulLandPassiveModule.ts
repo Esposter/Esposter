@@ -10,9 +10,9 @@ const JADE_FORGED_CROWN_SOURCE = "jadeForgedCrown";
 // The Max HP each step of the passive's bonus counts, which its text gives as every thousand
 const MAX_HEALTH_STEP = 1000;
 
-// Echoes of the Plentiful Land at its rank: an Elemental Skill its wielder uses grants the Jade-Forged Crown, which raises
-// Its Normal Attack DMG by the rank's share for each whole thousand of its Max HP, up to the rank's maximum, for the rank's
-// Seconds
+// Echoes of the Plentiful Land at its rank: an Elemental Skill its wielder uses grants the Jade-Forged Crown, which
+// Raises Its Normal Attack DMG by the rank's share for each whole thousand of its Max HP, up to the rank's maximum, for
+// The rank's Seconds
 export const createEchoesOfThePlentifulLandPassiveModule = (params: number[]): PassiveModule => {
   const amountPerStep = takeOne(params, 0);
   const maximumAmount = takeOne(params, 1);

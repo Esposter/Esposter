@@ -17,8 +17,8 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 // Character's own, the cylinder it reaches, when its hitmark falls from the action's start, its internal cooldown tag,
 // Its poise damage and the talent's multiplier
 export interface KitHit {
-  // The kind of attack the action the hit sits in deals, set as its kit or its stance is built, which an infusion and an
-  // Ore follow whatever kind the hit is dealt as. None for a hit no action holds
+  // The kind of attack the action the hit sits in deals, set as its kit or its stance is built, which an infusion and
+  // An Ore follow whatever kind the hit is dealt as. None for a hit no action holds
   actionAttackTag?: AttackTag | undefined;
   // The flat damage the hit adds to its base damage, given its striker, if a passive adds one from the striker's stats
   additiveBaseDamageBonus?: ((combatant: Combatant) => number) | undefined;
@@ -27,26 +27,31 @@ export interface KitHit {
   attackTag?: AttackTag | undefined;
   // The bubble it holds each enemy it strikes in, if it casts one
   bubble?: KitBubbleSpec | undefined;
-  // The cylinder the hit reaches while its attacks are converted by an infusion that converts them, if it reaches another
+  // The cylinder the hit reaches while its attacks are converted by an infusion that converts them, if it reaches
+  // Another
   convertedHitArea?: AttackArea;
   // The poise the hit deals while its attacks are converted by an infusion that converts them, if it has one
   convertedPoiseDamage?: number;
   // The CRIT DMG the hit adds to its striker's as its critical damage is priced, if it carries one of its own
   criticalDamageBonus?: number;
-  // The CRIT Rate the hit adds to its striker's as its roll is made, as a passive prices it on the strike, if it carries one
+  // The CRIT Rate the hit adds to its striker's as its roll is made, as a passive prices it on the strike, if it
+  // Carries one
   criticalRateBonus?: number;
   // The DMG Bonus the hit adds to its striker's as it is priced, if it carries one of its own
   damageBonus?: number;
-  // The share of its enemy's defence the hit ignores as it is dealt, if a constellation or a deployed member's kit gives it one
+  // The share of its enemy's defence the hit ignores as it is dealt, if a constellation or a deployed member's kit
+  // Gives it one
   defenseIgnored?: number | undefined;
   element?: Element | undefined;
   // The status it gives each enemy it strikes, given its striker and the striker's Max HP as the hit lands, before its
   // Damage is taken
   enemyStatus?: ((combatant: Combatant, maxHealth: number) => EnemyStatus | undefined) | undefined;
-  // The status it gives each enemy it strikes once its damage lands, given its striker, if the hit deals that enemy damage
+  // The status it gives each enemy it strikes once its damage lands, given its striker, if the hit deals that enemy
+  // Damage
   enemyStatusAfterDamage?: ((combatant: Combatant) => EnemyStatus | undefined) | undefined;
   gauge?: number | undefined;
-  // The share of its striker's ATK the hit heals its striker's character by for each enemy it strikes, given the striker
+  // The share of its striker's ATK the hit heals its striker's character by for each enemy it strikes, given the
+  // Striker
   healAttackShare?: ((combatant: Combatant) => number) | undefined;
   // The heal the party may take from the hit as it strikes, if the hit can give one
   healParty?: KitPartyHeal;
@@ -65,8 +70,8 @@ export interface KitHit {
   // Whether the hit lands as its hitmark falls, given the context it lands in, for a hit a condition such as a Moonsign
   // Level gates. A hit with none always lands
   landsWhen?: ((context: KitContext) => boolean) | undefined;
-  // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather than
-  // As a talent's hit
+  // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather
+  // Than As a talent's hit
   lunarHit?: KitLunarHit;
   // Run for each enemy the hit strikes, given the strike with the body it lands from and its striker, and the enemy it
   // Strikes, for a hit that gives its striker something back as it lands
@@ -81,6 +86,7 @@ export interface KitHit {
   // The index of the one enemy the hit strikes among those its area reaches, wrapped to their count, instead of each of
   // Them, as a shell's hit takes its enemies in turn. None for a hit that strikes every enemy its area reaches
   targetIndex?: number;
-  // Whether the hit lands on an enemy's weak point, read as it lands: the strike sets it on an aimed hit to an enemy with weak points
+  // Whether the hit lands on an enemy's weak point, read as it lands: the strike sets it on an aimed hit to an enemy
+  // With weak points
   weakPoint?: boolean;
 }

@@ -41,8 +41,8 @@ export const useWorldGadgets = ({
   )();
   const cooldownGroupReadyAtMap = shallowRef<CooldownGroupReadyAtMap>(new Map());
   const equippedGadget = computed(() => gadgetRows.value.find(({ id }) => id === inventory.value.equippedGadgetItemId));
-  // Z uses the equipped gadget at `now`, which starts its group's cooldown when it is used. The gadget used is returned,
-  // None when no gadget is equipped or its cooldown refuses the use
+  // Z uses the equipped gadget at `now`, which starts its group's cooldown when it is used. The gadget used is
+  // Returned, None when no gadget is equipped or its cooldown refuses the use
   const quickUseEquippedGadget = (now: Temporal.Instant): GadgetRow | undefined => {
     const gadget = equippedGadget.value;
     if (!gadget) return undefined;
@@ -54,12 +54,12 @@ export const useWorldGadgets = ({
   // The seconds left of the equipped gadget's cooldown at `now`, none when no gadget is equipped
   const getEquippedGadgetCooldown = (now: Temporal.Instant) =>
     equippedGadget.value ? getGadgetCooldownSeconds(cooldownGroupReadyAtMap.value, equippedGadget.value, now) : 0;
-  // Z's hold, read each frame: a press released before the quick swap's hold uses the equipped gadget, and a longer hold
-  // Opens the quick swap instead. A frame outside the world drops the hold, so a release there is never a use
+  // Z's hold, read each frame: a press released before the quick swap's hold uses the equipped gadget, and a longer
+  // Hold Opens the quick swap instead. A frame outside the world drops the hold, so a release there is never a use
   let quickUseHeldSeconds = 0;
   const isQuickSwapOpen = shallowRef(false);
-  // The chest the last used gadget points to, from the position it was used at, the pointer the HUD draws once its look is
-  // Read. A use that points to no box, as any gadget but a compass does, clears it
+  // The chest the last used gadget points to, from the position it was used at, the pointer the HUD draws once its look
+  // Is Read. A use that points to no box, as any gadget but a compass does, clears it
   const detectorTarget = shallowRef<ChestPlace>();
   const stepQuickUse = ({
     isActive,

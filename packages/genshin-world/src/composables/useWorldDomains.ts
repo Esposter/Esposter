@@ -59,8 +59,8 @@ import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
-// The arena a domain's level is entered into: its stand-in beside the entrance, the level it runs, and the reward items its
-// Tree grants when cleared
+// The arena a domain's level is entered into: its stand-in beside the entrance, the level it runs, and the reward items
+// Its Tree grants when cleared
 interface DomainArena {
   areaId: string;
   artifactSetIds: readonly number[];
@@ -91,9 +91,10 @@ interface DomainChallengeRun {
   waveIndex: number;
 }
 
-// The domain entrances the player has unlocked, the one whose screen is open, and the arena its level runs in. A level's
-// Waves spawn one after another at the arena, the defeats of the wave in play count toward the level's target, and the
-// Challenge ends as the rule says. A clear raises the Petrified Tree the player claims before leaving the domain
+// The domain entrances the player has unlocked, the one whose screen is open, and the arena its level runs in. A
+// Level's Waves spawn one after another at the arena, the defeats of the wave in play count toward the level's target,
+// And the Challenge ends as the rule says. A clear raises the Petrified Tree the player claims before leaving the
+// Domain
 export const useWorldDomains = ({
   adventureRankTables,
   clearedDomainIds,
@@ -139,7 +140,8 @@ export const useWorldDomains = ({
         )
       : [],
   );
-  // A weekly boss's trounce domain is read from the weekly record, which holds none before a publish, so its schedule is empty then
+  // A weekly boss's trounce domain is read from the weekly record, which holds none before a publish, so its schedule
+  // Is empty then
   const readDomainSchedule = async (landmark: DomainEntranceLandmark): Promise<DomainSchedule> => {
     if (landmark.domainKind === DomainKind.Trounce) {
       const domains = await readWeeklyBossDomains(worldSessionStore.gameDataBaseUrl);
@@ -169,7 +171,8 @@ export const useWorldDomains = ({
 
   const domainArena = shallowRef<DomainArena>();
   const domainChallenge = shallowRef<DomainChallengeRun>();
-  // The seconds a triggered disorder may trigger again from, read off the challenge's clock and reset as each arena is entered
+  // The seconds a triggered disorder may trigger again from, read off the challenge's clock and reset as each arena is
+  // Entered
   let disorderReadySeconds = 0;
   // Whether a clear has raised the Petrified Tree the player has not claimed yet
   const isDomainTreeRaised = shallowRef(false);
@@ -185,7 +188,8 @@ export const useWorldDomains = ({
       arena.enemyLevel,
       random,
     );
-  // A defeat of the wave in play counts toward the level, and the wave that follows spawns when the wave's last enemy falls
+  // A defeat of the wave in play counts toward the level, and the wave that follows spawns when the wave's last enemy
+  // Falls
   events.on("defeatEnemy", (enemy) => {
     const arena = domainArena.value;
     const challenge = domainChallenge.value;
@@ -212,8 +216,8 @@ export const useWorldDomains = ({
     domainChallenge.value = { ...challenge, pendingShieldBreaks: challenge.pendingShieldBreaks + 1 };
   });
 
-  // A disorder that triggers on the fight is answered while its challenge runs, its cooldown read off the challenge's clock,
-  // Which pauses with the world as the challenge's own does
+  // A disorder that triggers on the fight is answered while its challenge runs, its cooldown read off the challenge's
+  // Clock, Which pauses with the world as the challenge's own does
   const triggerDisorder = (trigger: DomainDisorderTrigger) => {
     const arena = domainArena.value;
     const challenge = domainChallenge.value;
@@ -234,8 +238,9 @@ export const useWorldDomains = ({
     triggerDisorder({ kind: "reaction", reactions });
   });
 
-  // A level entered from the screen fades into its stand-in arena beside the entrance, where its first wave spawns. A level
-  // With no challenge data or closed at the moment does not enter, and an arena already entered is not entered again
+  // A level entered from the screen fades into its stand-in arena beside the entrance, where its first wave spawns. A
+  // Level With no challenge data or closed at the moment does not enter, and an arena already entered is not entered
+  // Again
   const enterDomain = (dungeonId: number) => {
     const entrance = domainEntrance.value;
     const schedule = domainSchedule.value;
@@ -244,7 +249,8 @@ export const useWorldDomains = ({
     const level = scheduledLevel && domainChallengeLevels.value[entrance.entryId]?.[scheduledLevel.recommendedRank];
     if (!scheduledLevel || !level) return;
     const now = getWorldNow();
-    // The row the player pressed was read at the world's clock, which can be a minute behind a reset that has passed since
+    // The row the player pressed was read at the world's clock, which can be a minute behind a reset that has passed
+    // Since
     if (!checkIsDomainLevelOpen(schedule.kind, scheduledLevel, rank.value, now)) return;
     const scenePose = computeDomainScenePose(entrance.arrival);
     const arena: DomainArena = {
@@ -290,7 +296,8 @@ export const useWorldDomains = ({
     if (entrance) jumpTo(computeJumpPose(entrance));
   };
   // The challenge's step, each frame and when the party falls. The clock counts only while the world is open. A clear
-  // Raises the tree and keeps the player in the arena, while a timed-out or wiped run returns the player to the entrance
+  // Raises the tree and keeps the player in the arena, while a timed-out or wiped run returns the player to the
+  // Entrance
   const stepDomainChallenge = ({ deltaMilliseconds, isPartyDown, isPlaying }: WorldChallengeStep): string[] => {
     const arena = domainArena.value;
     if (!arena) return [];
@@ -304,7 +311,8 @@ export const useWorldDomains = ({
       deltaMilliseconds,
       isPlaying,
     );
-    // Stormterror's fight counts the same clock as the level, and takes in the shield breaks counted since the last step
+    // Stormterror's fight counts the same clock as the level, and takes in the shield breaks counted since the last
+    // Step
     const stormterrorStep = challenge.stormterrorFight
       ? stepStormterrorFight(
           challenge.stormterrorFight,
@@ -332,8 +340,8 @@ export const useWorldDomains = ({
     }
     if (outcome === DomainChallengeOutcome.Cleared) {
       domainChallenge.value = undefined;
-      // A weekly boss's defeat leaves its weekly blossom where it fell, so its trounce domain raises no tree. Its highest
-      // Tier's clear marks the boss's first clear to claim in the handbook
+      // A weekly boss's defeat leaves its weekly blossom where it fell, so its trounce domain raises no tree. Its
+      // Highest Tier's clear marks the boss's first clear to claim in the handbook
       isDomainTreeRaised.value = arena.domainKind !== DomainKind.Trounce;
       if (arena.domainKind === DomainKind.Trounce && arena.isTopTier)
         clearedDomainIds.value = markWeeklyBossTopClear(clearedDomainIds.value, arena.entryId);
@@ -343,7 +351,8 @@ export const useWorldDomains = ({
     return [];
   };
 
-  // A weekly boss's first clear, claimed once from the handbook: its talent materials go into the bag, and the claim is recorded
+  // A weekly boss's first clear, claimed once from the handbook: its talent materials go into the bag, and the claim is
+  // Recorded
   const claimWeeklyBossFirstClearReward = (entryId: number) => {
     if (!checkIsWeeklyBossFirstClaimable(clearedDomainIds.value, entryId)) return;
     const claim = claimWeeklyBossFirstClear(clearedDomainIds.value, String(entryId));
@@ -377,12 +386,14 @@ export const useWorldDomains = ({
         return false;
       },
     );
-  // A level entered from a domain's screen leaves the screen for the world, where its challenge begins at the stand-in arena
+  // A level entered from a domain's screen leaves the screen for the world, where its challenge begins at the stand-in
+  // Arena
   const enterDomainLevel = (dungeonId: number) => {
     closeScreen();
     enterDomain(dungeonId);
   };
-  // The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the player can do
+  // The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the
+  // Player can do
   const handbookDomains = computed(() =>
     toHandbookDomains(
       jumpLandmarks.value.filter(
@@ -396,8 +407,8 @@ export const useWorldDomains = ({
       },
     ),
   );
-  // A locked weekly boss is challenged from the handbook. Its quick challenge enters the domain at the tier the rank reaches
-  // And the world opens once that fight has started
+  // A locked weekly boss is challenged from the handbook. Its quick challenge enters the domain at the tier the rank
+  // Reaches And the world opens once that fight has started
   const challengeWeeklyBoss = async (landmark: DomainEntranceLandmark) => {
     const isEntered = await quickChallengeDomain(
       landmark,
@@ -428,8 +439,8 @@ export const useWorldDomains = ({
     // A claim waits until the Friendship levels load, since its Companionship EXP has no top to stop at without them
     if (!arena || !isDomainTreeRaised.value || !friendshipLevels.value) return;
     domainClaimOffers.value = undefined;
-    // Each claim draws its artifacts apart from the domain's sets before the resin is spent, so a domain with none to draw
-    // From is refused with the resin still held
+    // Each claim draws its artifacts apart from the domain's sets before the resin is spent, so a domain with none to
+    // Draw From is refused with the resin still held
     const artifacts = Array.from({ length: offer.claimCount }, () =>
       drawDomainArtifacts(arena.treeArtifacts, arena.artifactSetIds, worldSessionStore.reliquarySets, random, {
         artifactMainAffixPools: worldSessionStore.artifactMainAffixPools,

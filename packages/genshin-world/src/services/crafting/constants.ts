@@ -1,10 +1,10 @@
-// The item id a recipe names for Original Resin. It is a currency the wallet holds, regenerating, rather than a stack in
-// The bag, so a recipe that names it is paid from the wallet
+// The item id a recipe names for Original Resin. It is a currency the wallet holds, regenerating, rather than a stack
+// In The bag, so a recipe that names it is paid from the wallet
 export const ORIGINAL_RESIN_ITEM_ID = 106;
 // The item id Condensed Resin is crafted as, a stack in the bag rather than a wallet currency
 export const CONDENSED_RESIN_ITEM_ID = 220_007;
-// The combine types of the bench's tabs a crafting talent names: enhancement materials, weapon ascension materials, talent
-// Materials, and the potions, which the table splits across two types
+// The combine types of the bench's tabs a crafting talent names: enhancement materials, weapon ascension materials,
+// Talent Materials, and the potions, which the table splits across two types
 export const COMBINE_TYPE_ENHANCEMENT = 1;
 export const COMBINE_TYPE_WEAPON_ASCENSION = 2;
 export const COMBINE_TYPE_CHARACTER_TALENT_MATERIAL = 3;
@@ -12,12 +12,12 @@ export const COMBINE_TYPE_POTION: readonly number[] = [4, 12];
 // The id of the bench's row in the prompts, which holds the one bench the world offers
 export const CRAFTING_BENCH_INTERACTABLE_ID = "craftingBench";
 
-// The Adventure Rank the Mystic Offering opens at, from the wiki's Mystic Offering page, which the dump's tables for it do
-// Not hold
+// The Adventure Rank the Mystic Offering opens at, from the wiki's Mystic Offering page, which the dump's tables for it
+// Do Not hold
 export const MYSTIC_OFFERING_ADVENTURE_RANK = 45;
 
-// The bench's conversions are listed under tabs of their own, each the id of its combine type past this offset: the craft
-// Tabs run to the highest combine type the bench names, twelve, so the two sections never share a tab
+// The bench's conversions are listed under tabs of their own, each the id of its combine type past this offset: the
+// Craft Tabs run to the highest combine type the bench names, twelve, so the two sections never share a tab
 export const CONVERSION_TAB_ID_OFFSET = 100;
 
 // The id of the bench's Mystic Offering tab, listed after the recipe tabs: the conversions' tabs run to the offset plus

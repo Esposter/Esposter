@@ -21,8 +21,8 @@ describe(createSolarShinePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
   const wielder = createWielderCombatant();
-  // Solar Shine at its first rank: 20% Elemental Skill and Elemental Burst DMG after a normal attack, and 20% Normal Attack
-  // DMG after an Elemental Skill or Elemental Burst
+  // Solar Shine at its first rank: 20% Elemental Skill and Elemental Burst DMG after a normal attack, and 20% Normal
+  // Attack DMG after an Elemental Skill or Elemental Burst
   const passiveModule = createSolarShinePassiveModule([0.2]);
 
   test("a normal attack hit raises the wielder's Elemental Skill and Elemental Burst DMG by the rank's amount", () => {

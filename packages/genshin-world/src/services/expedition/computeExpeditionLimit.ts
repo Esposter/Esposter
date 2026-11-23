@@ -2,7 +2,8 @@ import type { ExpeditionLimitAdd } from "#src/models/expedition/ExpeditionLimitA
 
 import { EXPEDITION_BASE_LIMIT } from "#src/services/expedition/constants";
 
-// How many expeditions may be out at once at this Adventure Rank: the base limit, raised by each rank's addition up to it
+// How many expeditions may be out at once at this Adventure Rank: the base limit, raised by each rank's addition up to
+// It
 export const computeExpeditionLimit = (adventureRank: number, limitAdds: readonly ExpeditionLimitAdd[]): number =>
   limitAdds
     .filter(({ level }) => level <= adventureRank)

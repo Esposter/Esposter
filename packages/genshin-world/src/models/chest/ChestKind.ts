@@ -1,7 +1,7 @@
-// The chests the official map marks by tier, from Common to Remarkable, and the two places it marks with no tier of their
-// Own: a Buried chest, dug up where it stands, and a Sealed chest, freed of its seal first. The map names no tier for
-// Either, so what a dug or freed one holds is not yet settled. The two Mora chests, a wooden one and a stone pile, are
-// Marked by labels of their own and carry no tier either
+// The chests the official map marks by tier, from Common to Remarkable, and the two places it marks with no tier of
+// Their Own: a Buried chest, dug up where it stands, and a Sealed chest, freed of its seal first. The map names no tier
+// For Either, so what a dug or freed one holds is not yet settled. The two Mora chests, a wooden one and a stone pile,
+// Are Marked by labels of their own and carry no tier either
 export const ChestKind = {
   Buried: "Buried",
   Common: "Common",

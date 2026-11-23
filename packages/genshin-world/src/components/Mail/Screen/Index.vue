@@ -86,14 +86,14 @@ const selectTab = (isGift: boolean) => {
 </script>
 
 <template>
-  <!-- The game's mailbox, which the Paimon menu opens: its header with the Mailbox and Gift Mail Box tabs and the close
-       mark, its mails down the left, pinned first and each with its sender and time left, and the selected mail on the
-       right with its text, its date and the items it gives, claimed once. Claim All claims every mail's items the bag can
-       take, and Delete Read, once confirmed, removes every read mail with nothing left to claim. Delete on a Gift Mail Box
-       mail, once its warning is confirmed, removes that one mail. A pin keeps a mail at the top of the list. The envelope and
-       the nine marks are traced vectors, and the items' icons are the game's art, which does not ship, so an item tile draws
-       its face and count without one; the pills' dark discs are the pill's own disc (`pill-disc`), and the pin's cream disc
-       is a plain shape, drawn here -->
+  <!-- The game's mailbox, which the Paimon menu opens: its header with the Mailbox and Gift Mail Box tabs and the
+    close mark, its mails down the left, pinned first and each with its sender and time left, and the selected mail
+    on the right with its text, its date and the items it gives, claimed once. Claim All claims every mail's items
+    the bag can take, and Delete Read, once confirmed, removes every read mail with nothing left to claim. Delete on
+    a Gift Mail Box mail, once its warning is confirmed, removes that one mail. A pin keeps a mail at the top of the
+    list. The envelope and the nine marks are traced vectors, and the items' icons are the game's art, which does
+    not ship, so an item tile draws its face and count without one; the pills' dark discs are the pill's own disc
+    (`pill-disc`), and the pin's cream disc is a plain shape, drawn here -->
   <GameScreen class="mail-screen">
     <span class="band" />
     <svg class="mailbox-glyph" aria-hidden="true" viewBox="0 0 72 56" preserveAspectRatio="none">

@@ -1,8 +1,8 @@
 import type { HomeFurnishing } from "#src/models/home/HomeFurnishing";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 
-// The load the placements in one area hold: the first copy of a furnishing takes its load and each further copy its reduced
-// Load. A stored placement whose furnishing the table no longer holds counts nothing
+// The load the placements in one area hold: the first copy of a furnishing takes its load and each further copy its
+// Reduced Load. A stored placement whose furnishing the table no longer holds counts nothing
 export const computeHomeAreaLoad = (
   placements: HomePlacement[],
   itemIdFurnishingMap: Map<number, HomeFurnishing>,

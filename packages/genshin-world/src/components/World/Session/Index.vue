@@ -185,9 +185,9 @@ const {
   wildlifePlaces,
   windriseData,
 } = defineProps<Props>();
-// Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish counters or
-// The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
-// Which the host saves on its own cadence
+// Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish
+// Counters or The achievements' progress, which the host saves once per tick, and a save is every change to what the
+// World holds, Which the host saves on its own cadence
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 // The card game's session loads when a duel opens, so the world's first screen does not load the game's modules
 const GcgSession = defineAsyncComponent(() => import("#src/components/Gcg/Session/Index.vue"));
@@ -207,7 +207,8 @@ const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The bends the character leaves as it walks through the grass, written by the character and read by the grass
 const grassTrail = createGrassTrail();
 // A witness render's tools set the camera themselves, which the controls would move off the pose they set
-// oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
+// The parity page reaches
+// oxlint-disable-next-line no-restricted-globals -- a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 // The keys, pointer and gamepad, read once a frame ahead of everything the frame moves, which reads the same state
 const input = createInput(createWindowInputTarget(window));
@@ -230,8 +231,8 @@ const savedState = readGenshinSave(
 );
 // The world's time: every saved timer is read against the server's clock, and a ref the computeds read
 const { getWorldNow, worldNow } = useWorldClock(() => serverClockOffsetMs);
-// What the systems share and none owns: the context the world starts with, the one emitter they react through, and the bag
-// And the wallet, which the session stops as it unmounts so a second session starts from nothing
+// What the systems share and none owns: the context the world starts with, the one emitter they react through, and the
+// Bag And the wallet, which the session stops as it unmounts so a second session starts from nothing
 const worldSessionStore = useWorldSessionStore();
 const { events, setInventory, setWallet, start, stop } = worldSessionStore;
 const { inventory, wallet } = storeToRefs(worldSessionStore);
@@ -255,9 +256,9 @@ start(
   { inventory: savedState.inventory, wallet: savedState.wallet },
 );
 onUnmounted(stop);
-// Every region's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random.
-// The store reads them from the scene's region chest map as each record arrives.
-// They start before the save watches them, so the load is not a change the save grants
+// Every region's chests, each unopened one a row to open beneath its point, and opened on the key with the world's
+// Random. The store reads them from the scene's region chest map as each record arrives. They start before the save
+// Watches them, so the load is not a change the save grants
 const worldChestsStore = useWorldChestsStore();
 const { start: startChests, stop: stopChests } = worldChestsStore;
 startChests({
@@ -269,8 +270,8 @@ onUnmounted(stopChests);
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
 // World
 const characterBody = new Group();
-// The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats. They
-// Start before the save watches them, as the chests do
+// The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats.
+// They Start before the save watches them, as the chests do
 const worldArchiveStore = useWorldArchiveStore();
 const { start: startArchive, stop: stopArchive } = worldArchiveStore;
 startArchive({
@@ -279,8 +280,8 @@ startArchive({
   enemyKindMap: enemyTables.enemyKindMap,
 });
 onUnmounted(stopArchive);
-// The statues' Oculi and resonances, which pay their levels as the bag's offers do, with the Oculi of the region published. They start before
-// The save watches them, as the chests do
+// The statues' Oculi and resonances, which pay their levels as the bag's offers do, with the Oculi of the region
+// Published. They start before The save watches them, as the chests do
 const worldStatuesStore = useWorldStatuesStore();
 const { start: startStatues, stop: stopStatues } = worldStatuesStore;
 startStatues({
@@ -291,19 +292,19 @@ startStatues({
   regionStatueProgressMap: savedState.regionStatueProgressMap,
 });
 onUnmounted(stopStatues);
-// The achievements the finished steps and quests move, and their data, read as the Achievements screen opens. They start
-// Before the save watches them, as the chests do
+// The achievements the finished steps and quests move, and their data, read as the Achievements screen opens. They
+// Start Before the save watches them, as the chests do
 const worldAchievementsStore = useWorldAchievementsStore();
 const { start: startAchievements, stop: stopAchievements } = worldAchievementsStore;
 const { achievementData, achievementProgressMap } = storeToRefs(worldAchievementsStore);
 startAchievements(savedState.achievementProgressMap);
 onUnmounted(stopAchievements);
-// The cooking recipes, the processing recipes and the cooks' talents, read as the world starts, with the progress the save
-// Holds. They start before the save watches them, as the chests do
+// The cooking recipes, the processing recipes and the cooks' talents, read as the world starts, with the progress the
+// Save Holds. They start before the save watches them, as the chests do
 const worldCookingStore = useWorldCookingStore();
 const { start: startCooking, stop: stopCooking } = worldCookingStore;
-// The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
-// Is held here while the screen is open
+// The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe,
+// Which Is held here while the screen is open
 const { cookingProgress, cookingRecipe, instructionRecipeMap, openCookingRecipes, processingJobs } =
   storeToRefs(worldCookingStore);
 startCooking({ cookingProgress: savedState.cookingProgress, processingJobs: savedState.processingJobs });
@@ -369,7 +370,8 @@ const {
   random: () => kitContext.random(),
   savedFishingCatchAts: savedState.fishingCatchAts,
 });
-// The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
+// The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main
+// Quests
 const worldAdventureRankStore = useWorldAdventureRankStore();
 const {
   adventureExp,
@@ -394,8 +396,8 @@ const { reputation, reputationCity, requestClaimedAts } = storeToRefs(worldReput
 const { start: startReputation, stop: stopReputation } = worldReputationStore;
 startReputation({ reputation: savedState.reputation, requestClaimedAts: savedState.reputationRequestClaimedAts });
 onUnmounted(stopReputation);
-// The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
-// The quests in progress that finish
+// The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and
+// Finished by The quests in progress that finish
 const {
   commissionDay,
   commissionSlice,
@@ -437,10 +439,11 @@ startGround({
 onUnmounted(stopGround);
 // What the character's body and the camera collide with, given the landmarks as they arrive
 const landmarkCollider = createLandmarkCollider();
-// Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
+// Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned
+// On
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
-// The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed as
-// The Mail screen claims them into the bag and wallet
+// The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed
+// As The Mail screen claims them into the bag and wallet
 const worldMailStore = useWorldMailStore();
 const { mailData, mails } = storeToRefs(worldMailStore);
 const { start: startMail, stop: stopMail } = worldMailStore;
@@ -452,8 +455,8 @@ const { bagFullHint } = storeToRefs(worldPickupsStore);
 const { start: startPickups, stop: stopPickups, strikeGatheringOres } = worldPickupsStore;
 startPickups();
 onUnmounted(stopPickups);
-// The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit, led,
-// Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
+// The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit,
+// Led, Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
 const worldPuzzlesStore = useWorldPuzzlesStore();
 const { puzzleSeelies, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
 const { start: startPuzzles, stop: stopPuzzles, strikeWorldPuzzles } = worldPuzzlesStore;
@@ -502,9 +505,11 @@ const {
   travelerBonusLines,
   travelerElement,
 } = useWorldRestorativePower({ unlockedLandmarkIds: savedState.unlockedLandmarkIds });
-// The bonus lines the Spiral Abyss's chamber gives the whole party, held here as the combat and the chamber both read them
+// The bonus lines the Spiral Abyss's chamber gives the whole party, held here as the combat and the chamber both read
+// Them
 const abyssBonusLines = shallowRef<AttributeLine[]>([]);
-// The constellations each character holds and the name of its own Stella Fortuna, which the character screen and the wish read
+// The constellations each character holds and the name of its own Stella Fortuna, which the character screen and the
+// Wish read
 const { characterIdConstellationsMap, stellaFortunaNameTextIdMap } = useWorldConstellations();
 // The roster the player fields, which the combat and every feature that reads the team are started over
 const worldPartyStore = useWorldPartyStore();
@@ -518,7 +523,8 @@ startParty({
   startingCharacterIdKitMap,
 });
 onUnmounted(stopParty);
-// The combat of the party, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
+// The combat of the party, the enemies and the kit's effects, which a defeat places drops among and a team's fall
+// Revives
 const {
   chargeParty,
   clearKitEffects,
@@ -534,14 +540,15 @@ const {
 } = useWorldCombat({
   enemyTables,
   onPartyDown: () => {
-    // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
+    // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing
+    // Revives
     if (trialArena.value) {
       const returnPose = stepTrial({ deltaMilliseconds: 0, isPartyDown: true, isPlaying: false });
       if (returnPose) jumpTo(returnPose);
       return;
     }
-    // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the revive's
-    // Jump to the nearest waypoint, so the entrance is where the player lands
+    // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the
+    // Revive's Jump to the nearest waypoint, so the entrance is where the player lands
     if (!domainArena.value) {
       screenKind.value = ScreenKind.GameOver;
       return;
@@ -647,7 +654,8 @@ const {
 });
 const shopId = shallowRef(0);
 const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
-// The Spiral Abyss on the world: its entry, its chambers in the arena beside the entrance, and the Benediction a Corridor chamber offers
+// The Spiral Abyss on the world: its entry, its chambers in the arena beside the entrance, and the Benediction a
+// Corridor chamber offers
 const {
   abyssBlessing,
   abyssCamps,
@@ -668,8 +676,8 @@ const {
 const reputationLevel = shallowRef(reputation.value.level);
 // The doings the world places and the ids the save records of them as done, which each area's exploration counts
 const { placedDoings, recordedDoingIds } = useWorldDoings({ clearedCamps, monumentPlaces, timeTrialPlaces });
-// The landmarks the world holds and the ones the player has unlocked, with the first unlock of each paid and the pose a jump
-// Lands at, and Mondstadt's Reputation with the rewards the exploration and the finished requests pay into it
+// The landmarks the world holds and the ones the player has unlocked, with the first unlock of each paid and the pose a
+// Jump Lands at, and Mondstadt's Reputation with the rewards the exploration and the finished requests pay into it
 const worldMapStore = useWorldMapStore();
 const { jumpLandmarks, jumpPose, subareaLabels, unlockedLandmarkIds, unlockedLandmarks } = storeToRefs(worldMapStore);
 const { jumpTo, start: startMap, stop: stopMap } = worldMapStore;
@@ -682,8 +690,8 @@ const { explorationAreas } = useWorldExploration({
   recordedDoingIds,
   savedUnlockedLandmarkIds: savedState.unlockedLandmarkIds,
 });
-// The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
-// Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
+// The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's
+// Target is Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
 const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, reputationBountyOffer, takeBounty } =
   useWorldReputationBounty({
     random: () => kitContext.random(),
@@ -736,9 +744,9 @@ const crafting = computed(() =>
 );
 // The regions the world has loaded, which each region's outcrops are read for as it is entered
 const loadedRegionIds = computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]);
-// The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
-// With resin, and each region's day is drawn at the daily reset. The outcrop places of each region the world has loaded,
-// By the region's id
+// The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims
+// It With resin, and each region's day is drawn at the daily reset. The outcrop places of each region the world has
+// Loaded, By the region's id
 const outcropPlacesMap = computed(
   () =>
     new Map(
@@ -809,7 +817,8 @@ const {
   kitEffectState: kitContext.kitEffectState,
   random: () => kitContext.random(),
 });
-// The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
+// The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken
+// Bounty's camp
 const fightingCamps = computed(() => [
   ...outcropCamps.value,
   ...domainCamps.value,
@@ -1052,9 +1061,9 @@ useWorldSaveSync({
       />
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
-        <!-- The character walks the world with the camera behind it, held under any screen but the world, as a menu,
-        photo mode or a talk holds it. Photo mode's camera orbits the held character, and under the tuning panel it flies
-        free from where the orbit left it -->
+        <!-- The character walks the world with the camera behind it, held under any screen but the world, as a
+          menu, photo mode or a talk holds it. Photo mode's camera orbits the held character, and under the tuning
+          panel it flies free from where the orbit left it -->
         <WorldCharacter
           v-if="!witness && locomotion"
           ref="character"

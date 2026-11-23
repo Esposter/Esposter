@@ -10,9 +10,9 @@ import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 
-// The active character uses one of its skills, paying its dice and energy: the skill's effect runs for it, its user gains
-// The energy the skill gives, and the turn passes. Refused, and the duel left as it was, when the character is Frozen, the
-// Skill is not its own or is a passive, its effect is one no module covers, or the costs are not covered
+// The active character uses one of its skills, paying its dice and energy: the skill's effect runs for it, its user
+// Gains The energy the skill gives, and the turn passes. Refused, and the duel left as it was, when the character is
+// Frozen, the Skill is not its own or is a passive, its effect is one no module covers, or the costs are not covered
 export const useGcgSkill = (
   duel: GcgDuel,
   sideIndex: number,

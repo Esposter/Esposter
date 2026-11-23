@@ -2,8 +2,8 @@ import type { BossMove } from "#src/models/bosses/BossMove";
 
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
 
-// The Anemo Hypostasis's moves from its wiki page. The wiki gives no timings, so each move's windup and recovery are the
-// Common enemies' until measured, the provisional timings the change names
+// The Anemo Hypostasis's moves from its wiki page. The wiki gives no timings, so each move's windup and recovery are
+// The Common enemies' until measured, the provisional timings the change names
 export const ANEMO_HYPOSTASIS_MOVES: BossMove[] = [
   { atkPercent: 100, name: "Crystalfly", recoverySeconds: ENEMY_RECOVERY_SECONDS, windupSeconds: ENEMY_WINDUP_SECONDS },
   { atkPercent: 150, name: "Vacuum", recoverySeconds: ENEMY_RECOVERY_SECONDS, windupSeconds: ENEMY_WINDUP_SECONDS },

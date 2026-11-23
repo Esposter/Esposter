@@ -8,7 +8,8 @@ import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 
-// The Adventure EXP, Primogems and Anemo Sigil a level pays are items the materials table does not hold, so their names are the game's own text
+// The Adventure EXP, Primogems and Anemo Sigil a level pays are items the materials table does not hold, so their names
+// Are the game's own text
 const GAME_TEXT_ITEM_KEY_MAP: Partial<Record<number, GameTextKey>> = {
   [ADVENTURE_EXP_ITEM_ID]: GameTextKey.AdventureExp,
   [CurrencyItemIdMap[Currency.AnemoSigil]]: GameTextKey.AnemoSigil,

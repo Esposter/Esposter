@@ -9,8 +9,8 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { setKitNightingaleCount } from "#src/services/kit/effects/setKitNightingaleCount";
 
-// Starts Haunted Night for the seconds given, restarting it if the character holds it already. Its stacks of Nightingale's
-// Song are added to those it holds, and the cap on what Geo Constructs gain it renews
+// Starts Haunted Night for the seconds given, restarting it if the character holds it already. Its stacks of
+// Nightingale's Song are added to those it holds, and the cap on what Geo Constructs gain it renews
 export const startKitHauntedNight = (
   kitEffectState: KitEffectState,
   characterId: number,

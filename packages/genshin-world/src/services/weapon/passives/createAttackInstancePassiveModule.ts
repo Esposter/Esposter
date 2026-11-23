@@ -21,9 +21,9 @@ interface AttackInstancePassive {
   seconds: number;
 }
 
-// A passive whose wielder obtains a status on a hit its predicate names, once every cooldown. The status adds the share of
-// Elemental Mastery as base damage to the hits of its attack tags the wielder deals, and ends after its instances or its
-// Seconds, whichever comes first
+// A passive whose wielder obtains a status on a hit its predicate names, once every cooldown. The status adds the share
+// Of Elemental Mastery as base damage to the hits of its attack tags the wielder deals, and ends after its instances or
+// Its Seconds, whichever comes first
 export const createAttackInstancePassiveModule = ({
   attackTags,
   checkIsObtainedBy,

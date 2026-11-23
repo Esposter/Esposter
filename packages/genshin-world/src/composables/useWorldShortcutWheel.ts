@@ -26,8 +26,8 @@ export const useWorldShortcutWheel = () => {
     shortcutWheelPickedIndex.value = shortcutWheelStep.pickedIndex;
     if (shortcutWheelStep.openedScreenKind !== undefined) screenKind.value = shortcutWheelStep.openedScreenKind;
   };
-  // A screen that takes the world closes the wheel without opening the entry its key was let go on, so the wheel does not
-  // Open on the world's first frame after the screen
+  // A screen that takes the world closes the wheel without opening the entry its key was let go on, so the wheel does
+  // Not Open on the world's first frame after the screen
   const closeShortcutWheel = (): void => {
     if (!shortcutWheelStep.isOpen) return;
     shortcutWheelStep = {

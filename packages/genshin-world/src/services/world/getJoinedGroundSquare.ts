@@ -1,7 +1,7 @@
 import type { GroundPieceSquare } from "#src/models/world/GroundPieceSquare";
 
-// The square a joined group is fitted over: the bounding box of its squares, centred on the box and as wide as its longer
-// Side
+// The square a joined group is fitted over: the bounding box of its squares, centred on the box and as wide as its
+// Longer Side
 export const getJoinedGroundSquare = (squares: readonly GroundPieceSquare[]): GroundPieceSquare => {
   const minX = Math.min(...squares.map(({ centre, half }) => centre.x - half));
   const maxX = Math.max(...squares.map(({ centre, half }) => centre.x + half));

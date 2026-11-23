@@ -2,8 +2,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A bag artifact is locked or unlocked by its entry's id, so fodder never takes it. An entry that holds no artifact, or no
-// Entry of that id, is refused
+// A bag artifact is locked or unlocked by its entry's id, so fodder never takes it. An entry that holds no artifact, or
+// No Entry of that id, is refused
 export const toggleInventoryArtifactLock = (inventory: Inventory, entryId: number): Inventory => {
   const entry = inventory.items.find(({ id }) => id === entryId);
   if (!entry?.artifact)

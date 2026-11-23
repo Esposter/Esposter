@@ -23,11 +23,11 @@ import { useLoop, useTres } from "@tresjs/core";
 // Each region's data and the palettes its buildings are drawn in are fetched when the camera comes within reach of any
 // Of its areas' outlines, and released when it leaves. Each region's ground, its own record or its areas' pieces, is
 // Fetched as the region or that area comes within reach and kept once it arrives, since it is drawn past the reach a
-// Region is released at. It is fetched rather than imported. Because the browser keeps an imported module for the life of
-// The page, so an imported region could never be released.
-// Reach is rechecked only once the camera has moved a stretch, and a region whose data fails its schema or does not
-// Arrive in time is logged and left undrawn while the rest of the world loads. The data is settled whenever every region
-// In reach has arrived or failed, which the first view's settling marks as the world ready to be shown
+// Region is released at. It is fetched rather than imported. Because the browser keeps an imported module for the life
+// Of The page, so an imported region could never be released. Reach is rechecked only once the camera has moved a
+// Stretch, and a region whose data fails its schema or does not Arrive in time is logged and left undrawn while the
+// Rest of the world loads. The data is settled whenever every region In reach has arrived or failed, which the first
+// View's settling marks as the world ready to be shown
 export const useRegionData = (
   origin: Vector3,
   regionDataBaseUrl: string,
@@ -37,7 +37,8 @@ export const useRegionData = (
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const regionDataMap = shallowReactive(new Map<string, LoadedRegion>());
-  // Each ground laid over Windrise's, by its lock key, with the domain its key names, set once as it arrives and kept after
+  // Each ground laid over Windrise's, by its lock key, with the domain its key names, set once as it arrives and kept
+  // After
   const regionGroundMap = shallowReactive(new Map<string, LaidGround>());
   // Each region's chest record by its id, set once as the region comes within reach and kept after, as its ground is
   const regionChestMap = shallowReactive(new Map<string, ChestPlace[]>());
@@ -61,7 +62,8 @@ export const useRegionData = (
     onLoaded: (loaded: TLoaded) => void,
   ) => {
     pendingIds.add(id);
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
+    // `match(`) handles both branches, so the promise it returns
+    // oxlint-disable-next-line typescript/no-floating-promises -- cannot reject and a frame has nothing to await it
     getResultAsync(() => measureLoadStep("regions", load())).match(
       (loaded) => {
         pendingIds.delete(id);

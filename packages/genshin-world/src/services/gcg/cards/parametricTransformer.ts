@@ -8,8 +8,9 @@ import { takeOne } from "@esposter/shared";
 const PARAMETRIC_TRANSFORMER_PROGRESS = 3;
 const PARAMETRIC_TRANSFORMER_DICE = 3;
 
-// Parametric Transformer, an item: after either side uses a Skill that deals Elemental DMG, it gains 1 Qualitative Progress.
-// At three it is discarded, and its side creates three different basic Elemental Dice (the wiki's Parametric Transformer)
+// Parametric Transformer, an item: after either side uses a Skill that deals Elemental DMG, it gains 1 Qualitative
+// Progress. At three it is discarded, and its side creates three different basic Elemental Dice (the wiki's Parametric
+// Transformer)
 export const parametricTransformer: GcgCardModule = {
   checkIsSpent: (_side, zoneCard) => zoneCard.counter >= PARAMETRIC_TRANSFORMER_PROGRESS,
   onAnySkillUsed: ({ duel, sideIndex }, _skill, zoneCard, dealt) => {

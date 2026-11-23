@@ -17,7 +17,8 @@ const clickDie = (dieIndex: number) => {
   document.querySelectorAll<HTMLButtonElement>("button.die").item(dieIndex)?.click();
 };
 
-// The duel board's Toss-Up: its payment is picked first, then the dice it rerolls, numbered among the dice its payment leaves
+// The duel board's Toss-Up: its payment is picked first, then the dice it rerolls, numbered among the dice its payment
+// Leaves
 describe("gcgScreen", () => {
   const { duel } = screenFixtureProps;
   // Toss-Up's name and description are made-up text ids, named by the test's own text map beside the fixture's

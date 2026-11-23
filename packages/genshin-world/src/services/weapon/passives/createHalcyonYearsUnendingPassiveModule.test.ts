@@ -28,9 +28,9 @@ const readAttributeTotal = (context: KitContext, wielder: Combatant, attribute: 
 describe(createHalcyonYearsUnendingPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
-  // Halcyon Years Unending at its first rank: each Normal or Plunging Attack hit gives Ode to Flowers, 8% DEF and 10% All
-  // Elemental DMG Bonus for 6 seconds, up to two stacks, and two stacks raise the party's All Elemental DMG Bonus by 8% per 1,000
-  // DEF the wielder has, up to 25.6%, for 15 seconds
+  // Halcyon Years Unending at its first rank: each Normal or Plunging Attack hit gives Ode to Flowers, 8% DEF and 10%
+  // All Elemental DMG Bonus for 6 seconds, up to two stacks, and two stacks raise the party's All Elemental DMG Bonus
+  // By 8% per 1,000 DEF the wielder has, up to 25.6%, for 15 seconds
   const passiveModule = createHalcyonYearsUnendingPassiveModule([0.08, 6, 0.1, 0.1, 0, 0.08, 15, 3200]);
 
   test("a Normal Attack hit gives one stack of the rank's DEF and All Elemental DMG Bonus", () => {

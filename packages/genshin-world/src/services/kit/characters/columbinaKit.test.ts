@@ -143,7 +143,8 @@ describe(createColumbinaKitBehaviour, () => {
   };
 
   const combatant = createColumbinaCombatant();
-  // The CRIT Rate her charged attack gains after the given Gravity Ripples, each built by six seconds of Lunar-Charged gravity
+  // The CRIT Rate her charged attack gains after the given Gravity Ripples, each built by six seconds of Lunar-Charged
+  // Gravity
   const getCriticalRateBonus = (ascension: number, ripples: number): number => {
     const ascendedCombatant: Combatant = { ...combatant, ascension };
     const kitEffectState: KitEffectState = { effects: [] };

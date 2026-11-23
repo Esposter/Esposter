@@ -12,10 +12,11 @@ const SECRET_OF_LIES_ID = "secretOfLies";
 const MOON_OF_TRUTH_ID = "moonOfTruth";
 const LUNAR_BLOOM_REACTIONS = [{ reactionType: ReactionType.LunarBloom }];
 
-// Essence of Falsity at its rank: CRIT Rate rises by the rank's amount. An Elemental Skill its wielder uses gives it Secret of
-// Lies, raising its Elemental Mastery by the first amount for the first seconds, and Lunar-Bloom DMG it deals gives it Moon of
-// Truth, raising its CRIT DMG by the second amount for the second seconds. While both stand, each raise is increased by the
-// Rank's last share, read from the effects as they stand, so ending either one drops the increase
+// Essence of Falsity at its rank: CRIT Rate rises by the rank's amount. An Elemental Skill its wielder uses gives it
+// Secret of Lies, raising its Elemental Mastery by the first amount for the first seconds, and Lunar-Bloom DMG it deals
+// Gives it Moon of Truth, raising its CRIT DMG by the second amount for the second seconds. While both stand, each
+// Raise is increased by the Rank's last share, read from the effects as they stand, so ending either one drops the
+// Increase
 export const createEssenceOfFalsityPassiveModule = (params: number[]): PassiveModule => {
   const elementalMastery = takeOne(params, 0);
   const criticalDamage = takeOne(params, 1);

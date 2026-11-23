@@ -134,7 +134,8 @@ describe(createYoimiyaKitBehaviour, () => {
 
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
-    // Ascension 1: two Blazing Arrows that strike an enemy while Niwabi Fire-Dance stands count two, 2% Pyro DMG Bonus each
+    // Ascension 1: two Blazing Arrows that strike an enemy while Niwabi Fire-Dance stands count two, 2% Pyro DMG Bonus
+    // Each
     const combatant = createYoimiyaCombatant(1);
     const kitEffectState: KitEffectState = { effects: [] };
     YOIMIYA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));

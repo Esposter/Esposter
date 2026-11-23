@@ -5,9 +5,9 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { takeOne } from "@esposter/shared";
 
-// A card that shifts one equipment of a kind from one of its side's characters to the character chosen, which holds none of
-// That kind. A weapon moves only to a character of its weapon type, and an artifact to any other. The moved equipment's
-// Once-a-round limit is reset, so it may be used again on its new character
+// A card that shifts one equipment of a kind from one of its side's characters to the character chosen, which holds
+// None of That kind. A weapon moves only to a character of its weapon type, and an artifact to any other. The moved
+// Equipment's Once-a-round limit is reset, so it may be used again on its new character
 export const createGcgEquipmentShift = (kind: GcgCardKind): Pick<GcgCardModule, "canPlay" | "play"> => ({
   canPlay: ({ duel, sideIndex }, targetIndex) =>
     findGcgShiftSource(takeOne(duel.sides, sideIndex), kind, targetIndex) !== undefined,
@@ -24,8 +24,8 @@ export const createGcgEquipmentShift = (kind: GcgCardKind): Pick<GcgCardModule, 
   },
 });
 
-// The first equipment of the kind a standing character other than the target holds, that the target may take, with where
-// It sits
+// The first equipment of the kind a standing character other than the target holds, that the target may take, with
+// Where It sits
 const findGcgShiftSource = (
   side: GcgSideState,
   kind: GcgCardKind,

@@ -16,13 +16,15 @@ export interface EnemyKind {
   baseDefense: number;
   baseHealth: number;
   defenseCurve: string;
-  // Where the kind's defeat takes its drops from, as its wiki article names it, so the reader joins a family or a template to it
+  // Where the kind's defeat takes its drops from, as its wiki article names it, so the reader joins a family or a
+  // Template to it
   dropSource: EnemyDropSource;
   elementResistances: Record<Element, number>;
   enemyFamily: EnemyFamily;
   enemyType: EnemyType;
   healthCurve: string;
-  // The monster id the kind is read from in the game's monster table, which the regions' camps place or a Spiral Abyss chamber fights
+  // The monster id the kind is read from in the game's monster table, which the regions' camps place or a Spiral Abyss
+  // Chamber fights
   id: number;
   // The text id of the kind's name in the game's text, which the names of the world's language are read by
   nameTextId: string;

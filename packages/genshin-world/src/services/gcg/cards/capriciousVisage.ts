@@ -7,8 +7,8 @@ import { CAPRICIOUS_VISAGE_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { takeOne } from "@esposter/shared";
 
-// Capricious Visage: once a round, a talent card played or an elemental skill used spends one Elemental Die less. The reduction
-// Takes off a Dice line alone, so the Unaligned line of a normal attack or event is left as it is
+// Capricious Visage: once a round, a talent card played or an elemental skill used spends one Elemental Die less. The
+// Reduction Takes off a Dice line alone, so the Unaligned line of a normal attack or event is left as it is
 export const capriciousVisage: GcgCardModule = {
   onCostPaid: ({ duel, sideIndex }) => {
     takeOne(duel.sides, sideIndex).usedCardIds.push(CAPRICIOUS_VISAGE_ID);

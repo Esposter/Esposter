@@ -24,12 +24,12 @@ const RING_CONSTELLATION = 2;
 const RING_CONSTELLATION_SECONDS = 3;
 // The ring's field id: a second cast restarts the ring it finds, as gcsim keeps one Grass Ring status for her skill
 const RING_FIELD_ID = "kuki-grass-ring";
-// Measured: gcsim (MIT) kuki/skill.go, Kuki drains 30% of her current HP as she casts, but no further than to 20% of her
-// Max HP. Her HP is a party member's health share, so the drain reads it at the cast's first step
+// Measured: gcsim (MIT) kuki/skill.go, Kuki drains 30% of her current HP as she casts, but no further than to 20% of
+// Her Max HP. Her HP is a party member's health share, so the drain reads it at the cast's first step
 const HP_DRAIN_SHARE = 0.3;
 const HP_DRAIN_FLOOR_SHARE = 0.2;
-// Measured: gcsim (MIT) kuki/asc.go, from Ascension 4 the ring's healing is raised by 75% of Elemental Mastery and its tick's
-// DMG by 25% of it, and the initial hit's DMG by 25% of it at every ascension
+// Measured: gcsim (MIT) kuki/asc.go, from Ascension 4 the ring's healing is raised by 75% of Elemental Mastery and its
+// Tick's DMG by 25% of it, and the initial hit's DMG by 25% of it at every ascension
 const ASCENSION_4 = 4;
 // Breaking Free, Kuki's Ascension 1 passive as its text gives it: Healing Bonus +15% while her HP is at or under 50%
 const ASCENSION_1 = 1;
@@ -68,11 +68,11 @@ const toLowHealthBurstHits = (hits: KitHit[]): KitHit[] => {
   ];
 };
 
-// Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the initial
-// Hit's share of Elemental Mastery, Gyoei Narukami Kariyama Rite's hits and Breaking Free's Healing Bonus. Constellations
-// 1 and 2 are built. Constellations 4 and 6 are not, as each reads her HP
-// Constellation 4 needs charged and plunging hits as events, which only normal attacks emit
-// Constellation 6 needs a lethal hit held at 1 HP once a minute, which damage taken does not allow
+// Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the
+// Initial Hit's share of Elemental Mastery, Gyoei Narukami Kariyama Rite's hits and Breaking Free's Healing Bonus.
+// Constellations 1 and 2 are built. Constellations 4 and 6 are not, as each reads her HP Constellation 4 needs charged
+// And plunging hits as events, which only normal attacks emit Constellation 6 needs a lethal hit held at 1 HP once a
+// Minute, which damage taken does not allow
 export const createKukiKitBehaviour = ({
   readHit,
   readHits,
@@ -96,8 +96,8 @@ export const createKukiKitBehaviour = ({
   const burstHits = readHits("gyoeiNarukamiKariyamaRite");
   const constellationBurstHits = readHits("toCloisterCompassionGyoeiNarukamiKariyamaRite");
 
-  // The ring ticks from its first tick each interval. Each tick's heal reads the ring's caster's Max HP, and from Ascension 4 her
-  // Elemental Mastery, each with the buffs on her as they stand at that tick
+  // The ring ticks from its first tick each interval. Each tick's heal reads the ring's caster's Max HP, and from
+  // Ascension 4 her Elemental Mastery, each with the buffs on her as they stand at that tick
   const castRing = (
     kitEffectState: KitEffectState,
     { facing, height, position }: KitBody,

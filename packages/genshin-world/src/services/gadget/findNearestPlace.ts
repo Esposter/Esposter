@@ -2,8 +2,8 @@ import type { GroundPoint } from "genshin-engine";
 
 import { computeGroundDistanceSquared } from "genshin-engine";
 
-// The place nearest the position on the ground. None when there are no places, so a detector with nothing left to point to
-// Points to nothing
+// The place nearest the position on the ground. None when there are no places, so a detector with nothing left to point
+// To Points to nothing
 export const findNearestPlace = <Place extends { position: GroundPoint }>(
   places: readonly Place[],
   position: GroundPoint,

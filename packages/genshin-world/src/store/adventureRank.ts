@@ -37,7 +37,8 @@ export const useWorldAdventureRankStore = defineStore("world/adventureRank", () 
   );
   // None until the store starts, so the first World Level it reaches is not a level gained
   const unlockedWorldLevel = computed(() => (tables.value ? standing.value.worldLevel : 0));
-  // Every World Level the unlocked one passes raises its event, so a step past several levels at once raises each of them
+  // Every World Level the unlocked one passes raises its event, so a step past several levels at once raises each of
+  // Them
   watch(unlockedWorldLevel, (newWorldLevel, previousWorldLevel) => {
     if (previousWorldLevel === 0) return;
     for (let worldLevel = previousWorldLevel + 1; worldLevel <= newWorldLevel; worldLevel++)

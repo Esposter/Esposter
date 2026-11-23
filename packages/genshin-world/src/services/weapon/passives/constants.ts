@@ -3,8 +3,8 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 
-// The area a passive's extra hit reaches about its wielder when the passive names a small AoE. The game's own area is not
-// In the dump, so this is provisional
+// The area a passive's extra hit reaches about its wielder when the passive names a small AoE. The game's own area is
+// Not In the dump, so this is provisional
 export const SMALL_AOE_AREA: AttackArea = { angle: 2 * Math.PI, height: 5, radius: 2 };
 // The status ids of the passives whose suites read their stacks back by id
 export const BOUNDLESS_BLESSING_ID = "boundlessBlessing";

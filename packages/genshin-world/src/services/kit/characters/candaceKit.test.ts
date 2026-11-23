@@ -76,7 +76,8 @@ const strikeOn = (characterId: number): KitEvent => ({
 });
 
 describe(createCandaceKitBehaviour, () => {
-  // The seconds the Prayer of the Crimson Crown stands once the burst is cast by a combatant of the given constellations
+  // The seconds the Prayer of the Crimson Crown stands once the burst is cast by a combatant of the given
+  // Constellations
   const getPrayerSeconds = (constellationCount: number): number | undefined =>
     castAction(CANDACE_KIT.elementalBurst, createCandaceCombatant(constellationCount)).effects.find(
       (effect): effect is KitField => effect.kind === "field",
@@ -236,8 +237,8 @@ describe(createCandaceKitBehaviour, () => {
     expect({ afterFirst, afterSecond: countSummons(kitEffectState) }).toStrictEqual({ afterFirst: 1, afterSecond: 1 });
   });
 
-  // Candace's combatant at an ascension, holding her skill for two steps with the given event heard after the first, and
-  // Released: the action the release starts, which is her charged hold when its charge is complete
+  // Candace's combatant at an ascension, holding her skill for two steps with the given event heard after the first,
+  // And Released: the action the release starts, which is her charged hold when its charge is complete
   const CHARGED_ACTION = CANDACE_KIT.elementalSkillHolds?.at(-1)?.action;
   const STEP_SECONDS = 0.1;
   const IDLE_INPUT: KitInput = {

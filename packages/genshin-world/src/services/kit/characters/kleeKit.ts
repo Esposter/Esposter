@@ -47,16 +47,16 @@ const EXPLOSIVE_SPARK_SOURCE = "Explosive Spark";
 // The seconds past the charged attack's hit its spark's damage bonus lasts, so the step that lands the hit still has it
 const CHARGED_ATTACK_LINGER_SECONDS = 0.1;
 
-// Sparkling Burst, as the dump's Klee_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT) klee/asc.go give it: from
-// Ascension 4, a CRIT hit of her charged attack's bomb gives every member of the party 2 energy, once in 0.6 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/klee/asc.go
+// Sparkling Burst, as the dump's Klee_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT) klee/asc.go give it:
+// From Ascension 4, a CRIT hit of her charged attack's bomb gives every member of the party 2 energy, once in 0.6
+// Seconds https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/klee/asc.go
 const SPARKLING_BURST_ASCENSION = 4;
 const SPARKLING_BURST_ENERGY = 2;
 const SPARKLING_BURST_COOLDOWN_SECONDS = 0.6;
 const SPARKLING_BURST_COOLDOWN_ID = "klee-sparkling-burst-cooldown";
-// Explosive Frags, from Constellation 2, lowers the DEF of each enemy a Jumpy Dumpty mine strikes by 23.3% for 10 seconds,
-// As gcsim v2.47.2 (MIT) klee/skill.go's mine callback and klee/cons.go give it
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/klee/cons.go
+// Explosive Frags, from Constellation 2, lowers the DEF of each enemy a Jumpy Dumpty mine strikes by 23.3% for 10
+// Seconds, As gcsim v2.47.2 (MIT) klee/skill.go's mine callback and klee/cons.go give it
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/klee/cons.go`
 const EXPLOSIVE_FRAGS_CONSTELLATION = 2;
 const EXPLOSIVE_FRAGS_DEFENSE_REDUCTION = 0.233;
 const EXPLOSIVE_FRAGS_ID = "klee-explosive-frags";
@@ -66,8 +66,8 @@ const JUMPY_DUMPTY_BOUNCE_COUNT = 3;
 
 export const KLEE_CHARACTER_ID = 10_000_029;
 
-// Each hit of her normal attacks or Jumpy Dumpty rolls for a spark once a strike of Klee's with Ascension 1 lands, unless
-// The roll is on cooldown, which the roll starts only when it passes
+// Each hit of her normal attacks or Jumpy Dumpty rolls for a spark once a strike of Klee's with Ascension 1 lands,
+// Unless The roll is on cooldown, which the roll starts only when it passes
 const rollExplosiveSpark = ({ kitEffectState, random }: KitContext, { combatant }: KitStrike): void => {
   if (
     combatant.ascension < EXPLOSIVE_SPARK_ASCENSION ||
@@ -98,17 +98,19 @@ const addExplosiveFrags = ({ combatant }: KitStrike, enemy: Enemy): void => {
   });
 };
 
-// Klee's behaviour: each strike's and the charged attack's bomb, Jumpy Dumpty's bounces and mines and Sparks 'n' Splash's
-// Sparks land from summons, the sparks' while she stays on the field, with Sparkly Explosion and Blazing Delight's Pyro DMG
-// Bonus. From Ascension 4 a CRIT hit of her charged attack gives the party energy. Constellation 2's Explosive Frags cuts the
-// DEF of each enemy a mine strikes. Constellation 1 needs its spark bombardment, which the kit does not build
+// Klee's behaviour: each strike's and the charged attack's bomb, Jumpy Dumpty's bounces and mines and Sparks 'n'
+// Splash's Sparks land from summons, the sparks' while she stays on the field, with Sparkly Explosion and Blazing
+// Delight's Pyro DMG Bonus. From Ascension 4 a CRIT hit of her charged attack gives the party energy. Constellation 2's
+// Explosive Frags cuts the DEF of each enemy a mine strikes. Constellation 1 needs its spark bombardment, which the kit
+// Does not build
 export const createKleeKitBehaviour = ({
   readHit,
   readHits,
   readParameter,
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
-  // A bomb lands from a summon cast where Klee stands as the strike starts, as gcsim throws it whatever cancels the strike
+  // A bomb lands from a summon cast where Klee stands as the strike starts, as gcsim throws it whatever cancels the
+  // Strike
   const bombs = readHits("bomb", { onStrike: rollExplosiveSpark });
   const chargedAttackBomb = readHit("chargedAttackBomb");
   // Each mine is a hit of its own from the bounces' list, so the mines take their DEF cut on top of the spark roll
@@ -128,9 +130,9 @@ export const createKleeKitBehaviour = ({
   // Sparkly Explosion lands a frame past Klee's leaving, so the step that casts it lands it
   const sparklyExplosion = readHit("sparklyExplosion");
 
-  // Sparks 'n' Splash's sparks land from a summon that follows the body on the field, which her leaving the field ends, as
-  // Gcsim ends the burst on a swap, and from six constellations a task runs once and gives each member of the deployed
-  // Team Blazing Delight's bonus
+  // Sparks 'n' Splash's sparks land from a summon that follows the body on the field, which her leaving the field ends,
+  // As Gcsim ends the burst on a swap, and from six constellations a task runs once and gives each member of the
+  // Deployed Team Blazing Delight's bonus
   const castSparksNSplash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { characterId, constellationCount } = combatant;
     castKitSummon(kitEffectState, body, combatant, sparkHits, {
@@ -180,8 +182,8 @@ export const createKleeKitBehaviour = ({
       },
     })),
     // From four constellations her leaving the field while her sparks stand, which the swap has just ended, sets off
-    // Sparkly Explosion where they stood, priced as she cast the burst. From Ascension 4 a CRIT hit of her charged attack's
-    // Bomb gives each member of the deployed team its energy, unless one did within the cooldown
+    // Sparkly Explosion where they stood, priced as she cast the burst. From Ascension 4 a CRIT hit of her charged
+    // Attack's Bomb gives each member of the deployed team its energy, unless one did within the cooldown
     onKitEvent: (
       event,
       { characterIdCombatantMap, kitEffectState, party },

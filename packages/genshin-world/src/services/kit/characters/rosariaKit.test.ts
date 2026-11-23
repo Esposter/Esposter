@@ -75,7 +75,8 @@ describe(createRosariaKitBehaviour, () => {
 
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
-    // Ascension 4: the cast gives each other member of the team 15% of Rosaria's Crit Rate (0.15 * 0.4 = 0.06) for 10 seconds
+    // Ascension 4: the cast gives each other member of the team 15% of Rosaria's Crit Rate (0.15 * 0.4 = 0.06) for 10
+    // Seconds
     const context = createKitTestContext(createRosariaCombatant(0, 4, 0.4), {
       party: createParty([ROSARIA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
     });

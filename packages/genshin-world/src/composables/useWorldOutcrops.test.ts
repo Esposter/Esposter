@@ -93,8 +93,8 @@ describe(useWorldOutcrops, () => {
   // A region's first resonance, which unlocks its city
   const FIRST_RESONANCE = { claimedLevel: 0, heldCount: 0, level: 1 };
 
-  // A region's outcrops over the world's stores, with a held wallet of resin and the setters writing back. The camps the
-  // Outcrops fight spawn into the enemy map the way the world spawns them, at WORLD_LEVEL
+  // A region's outcrops over the world's stores, with a held wallet of resin and the setters writing back. The camps
+  // The Outcrops fight spawn into the enemy map the way the world spawns them, at WORLD_LEVEL
   const startOutcrops = (resin: number, placesMap: Ref<Map<string, OutcropPlacement[]>>) => {
     const worldSessionStore = startTestWorldSession(
       { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL },
@@ -422,7 +422,8 @@ describe(useWorldOutcrops, () => {
   test("a claim moves the outcrop to the nearest other place of its own region", async () => {
     expect.hasAssertions();
 
-    // The other region's place stands nearer the claimed one than the fixture region's second place does, and holds no kind
+    // The other region's place stands nearer the claimed one than the fixture region's second place does, and holds no
+    // Kind
     const context = createOutcrops();
     context.placesMap.value = new Map([
       ["other", [{ id: 3, position: { x: 10, z: 0 } }]],

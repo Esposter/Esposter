@@ -47,11 +47,12 @@ const SKILL_BUFF_SOURCE = "grace-of-kenosis";
 
 // The burst's status lasts 20 seconds, gcsim's burstKey
 const BURST_SECONDS = 20;
-// The burst starts its status and clears its projections one frame after its hit, as gcsim's task at burstHitmark+1 does,
-// So a hit before that makes no projection
+// The burst starts its status and clears its projections one frame after its hit, as gcsim's task at burstHitmark+1
+// Does, So a hit before that makes no projection
 const BURST_STATUS_FRAMES = 109;
 const BURST_STATUS_ID = "nicole-burst";
-// A projection lands 30 frames after the hit that starts it, gcsim's projectionHitmark, and four come from one burst at most
+// A projection lands 30 frames after the hit that starts it, gcsim's projectionHitmark, and four come from one burst at
+// Most
 const PROJECTION_FRAMES = 30;
 const PROJECTION_LIMIT = 4;
 // A projection holds a 3-second internal cooldown, gcsim's burstICDKey
@@ -59,12 +60,14 @@ const PROJECTION_ICD_SECONDS = 3;
 const PROJECTION_ICD_ID = "nicole-burst-projection-icd";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/nicole/burst.go
 
-// The offsets are gcsim's meleeOffset and rangeOffset: a projection's hitbox sits about the enemy its burst hits, in the world's axes
+// The offsets are gcsim's meleeOffset and rangeOffset: a projection's hitbox sits about the enemy its burst hits, in
+// The world's axes
 const MELEE_OFFSET = { x: -1.5, z: 2.5 };
 const RANGE_OFFSET = { x: -2.5, z: 2.5 };
 const PROJECTION_RADIUS = 4.5;
 
-// The kleeOffset is gcsim's: the melee offset pulled back a metre and a half along its own direction, then half a metre across it
+// The kleeOffset is gcsim's: the melee offset pulled back a metre and a half along its own direction, then half a metre
+// Across it
 const createKleeOffset = ({ x, z }: { x: number; z: number }): { x: number; z: number } => {
   const length = Math.hypot(x, z);
   const normX = x / length;
@@ -73,8 +76,8 @@ const createKleeOffset = ({ x, z }: { x: number; z: number }): { x: number; z: n
   return { x: x - normX * 1.5 - normZ * 0.5, z: z - normZ * 1.5 + normX * 0.5 };
 };
 
-// The hitbox a projection takes by the character it projects, as gcsim's projectionHitbox table has it, and the default for a
-// Character the table does not name
+// The hitbox a projection takes by the character it projects, as gcsim's projectionHitbox table has it, and the default
+// For a Character the table does not name
 const PROJECTION_HITBOXES = new Map<number, KitHitbox>([
   [ALBEDO_CHARACTER_ID, { offset: MELEE_OFFSET, shape: { kind: "box", length: 8, width: 3 } }],
   [KLEE_CHARACTER_ID, { offset: createKleeOffset(MELEE_OFFSET), shape: { kind: "circle", radius: PROJECTION_RADIUS } }],
@@ -88,9 +91,10 @@ const DEFAULT_PROJECTION_HITBOX: KitHitbox = {
 // A projection reaches its enemies by its hitbox alone, so its hit has no area of its own
 const PROJECTION_HIT_AREA = { angle: 0, height: 0, radius: 0 };
 
-// The first ascension gives the character on the field ATK 300 for as long as her skill's buff on it stands, three seconds
-// After the swap in, at once for a Hexerei, and before the sixth constellation a swap away takes it off the character it
-// Leaves, as gcsim's asc.go does. Her fourth ascension gives her own buff for eight seconds on each elemental hit of hers
+// The first ascension gives the character on the field ATK 300 for as long as her skill's buff on it stands, three
+// Seconds After the swap in, at once for a Hexerei, and before the sixth constellation a swap away takes it off the
+// Character it Leaves, as gcsim's asc.go does. Her fourth ascension gives her own buff for eight seconds on each
+// Elemental hit of hers
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 const CONSTELLATION_6 = 6;
@@ -100,8 +104,9 @@ const ASCENSION_1_SWAP_SECONDS = 3;
 const ASCENSION_1_SWAP_ID = "nicole-a1-swap";
 const ASCENSION_4_SECONDS = 8;
 
-// Her first constellation projects Arcane Projection: Unity from each hit of the active character, at six times the hit's
-// Damage with a 6-second internal cooldown of its own, in a circle of 4.5 metres about the enemy it struck, as gcsim's cons.go does
+// Her first constellation projects Arcane Projection: Unity from each hit of the active character, at six times the
+// Hit's Damage with a 6-second internal cooldown of its own, in a circle of 4.5 metres about the enemy it struck, as
+// Gcsim's cons.go does
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_MULTIPLIER = 6;
 const CONSTELLATION_1_ICD_SECONDS = 6;
@@ -111,9 +116,9 @@ const CONSTELLATION_1_HITBOX: KitHitbox = {
   shape: { kind: "circle", radius: PROJECTION_RADIUS },
 };
 
-// Her second constellation gives each deployed member ATK 300 with her skill, and while an upgraded character's buff stands,
-// Lowers the RES of that character's element by a quarter on each enemy within 10 metres of the team, every 0.3 seconds for
-// A second, as gcsim's cons.go does
+// Her second constellation gives each deployed member ATK 300 with her skill, and while an upgraded character's buff
+// Stands, Lowers the RES of that character's element by a quarter on each enemy within 10 metres of the team, every 0.3
+// Seconds for A second, as gcsim's cons.go does
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_AMOUNT = 300;
 const CONSTELLATION_2_SOURCE = "nicole-c2";
@@ -128,12 +133,12 @@ const CONSTELLATION_2_HITBOX: KitHitbox = {
 };
 
 // Her sixth constellation ignores 40% of the defence of each hit an upgraded character lands, its own and the team's,
-// As gcsim's c6Init does, and its upgrades last for as long as her skill's buff stands, her own and each one she gives the
-// Team, as gcsim's c6SelfBuffDur and c6OnUpgrade do
+// As gcsim's c6Init does, and its upgrades last for as long as her skill's buff stands, her own and each one she gives
+// The Team, as gcsim's c6SelfBuffDur and c6OnUpgrade do
 const CONSTELLATION_6_DEFENCE_IGNORED = 0.4;
 
-// Whether a character holds an ascension upgrade, which her second constellation's RES reduction and her sixth's defence
-// Ignored read
+// Whether a character holds an ascension upgrade, which her second constellation's RES reduction and her sixth's
+// Defence Ignored read
 const checkIsUpgraded = (effects: readonly KitEffect[], characterId: number): boolean =>
   effects.some(
     (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === ASCENSION_1_SOURCE,
@@ -145,10 +150,10 @@ const getC6DefenceIgnored = (constellationCount: number, striker: Combatant, eff
     ? CONSTELLATION_6_DEFENCE_IGNORED
     : 0;
 
-// Her fourth constellation gives an upgraded character 0.7 of her attack in flat base damage on each of its hits that is a
-// Normal, charged, plunging, skill or burst attack, for eight stacks spent one each on the hits it lands. An upgrade gives
-// Them again only once the character's 16-second cooldown has run out, as gcsim's c4OnUpgrade does. A projection carries no
-// Attack tag, so it takes none
+// Her fourth constellation gives an upgraded character 0.7 of her attack in flat base damage on each of its hits that
+// Is a Normal, charged, plunging, skill or burst attack, for eight stacks spent one each on the hits it lands. An
+// Upgrade gives Them again only once the character's 16-second cooldown has run out, as gcsim's c4OnUpgrade does. A
+// Projection carries no Attack tag, so it takes none
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_RATIO = 0.7;
 const CONSTELLATION_4_STACKS = 8;
@@ -164,7 +169,8 @@ const CONSTELLATION_4_ATTACK_TAGS = new Set<AttackTag>([
   AttackTag.PlungingAttack,
 ]);
 
-// The stacks of her fourth constellation a striker holds for a hit of the attack tag given, which the next hit it lands takes
+// The stacks of her fourth constellation a striker holds for a hit of the attack tag given, which the next hit it lands
+// Takes
 const getC4Stacks = (effects: readonly KitEffect[], striker: number, attackTag: AttackTag | undefined): number => {
   if (attackTag === undefined || !CONSTELLATION_4_ATTACK_TAGS.has(attackTag)) return 0;
   const status = findKitStatus(effects, striker, CONSTELLATION_4_ID);
@@ -178,8 +184,8 @@ const takeC4Stack = (effects: readonly KitEffect[], event: KitEnemyHitEvent): vo
   if (status) status.stacks = (status.stacks ?? 0) - 1;
 };
 
-// Schedules a projection of a hit onto the enemy it struck, landing 30 frames on as gcsim's projectionHitmark does. It deals
-// The striker's element and prices the Hexerei bonus at its tick
+// Schedules a projection of a hit onto the enemy it struck, landing 30 frames on as gcsim's projectionHitmark does. It
+// Deals The striker's element and prices the Hexerei bonus at its tick
 const scheduleProjection = (
   kitEffectState: KitEffectState,
   nicole: Combatant,
@@ -188,8 +194,8 @@ const scheduleProjection = (
   hitbox: KitHitbox,
 ): void => {
   scheduleKitTask(kitEffectState, nicole.characterId, toKitSeconds(PROJECTION_FRAMES), (tick) => {
-    // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack when she and the projected character are
-    // Hexerei and two or more Hexerei are deployed
+    // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack when she and the projected
+    // Character are Hexerei and two or more Hexerei are deployed
     const { attack } = getBuffedCombatant(
       nicole,
       tick.kitEffectState.effects,
@@ -224,9 +230,9 @@ const scheduleProjection = (
   });
 };
 
-// Starts the ticker of the second constellation for an upgraded character, which each 0.3 seconds lowers its element's RES by a
-// Quarter on each enemy within 10 metres of the team, gcsim's c2Ticker. A newer upgrade of the character replaces its ticker,
-// And the ticker stops with the upgrade's own seconds
+// Starts the ticker of the second constellation for an upgraded character, which each 0.3 seconds lowers its element's
+// RES by a Quarter on each enemy within 10 metres of the team, gcsim's c2Ticker. A newer upgrade of the character
+// Replaces its ticker, And the ticker stops with the upgrade's own seconds
 const startC2Ticker = (
   kitEffectState: KitEffectState,
   nicoleCharacterId: number,
@@ -259,9 +265,9 @@ const startC2Ticker = (
   );
 };
 
-// Upgrades a member's ascension buff for the seconds given, or, when none is given, for as long as her skill's buff on the
-// Member stands, and never longer than that skill's buff. A repeat upgrade restarts the buff rather than stacking it, as
-// Gcsim's mod with the same key does
+// Upgrades a member's ascension buff for the seconds given, or, when none is given, for as long as her skill's buff on
+// The Member stands, and never longer than that skill's buff. A repeat upgrade restarts the buff rather than stacking
+// It, as Gcsim's mod with the same key does
 const upgradeAscensionBuff = (
   context: KitContext,
   nicole: Combatant,
@@ -298,9 +304,9 @@ const upgradeAscensionBuff = (
       if (memberId !== nicole.characterId) upgradeAscensionBuff(context, nicole, memberId);
 };
 
-// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, her ascensions, and her first, second,
-// Fourth and sixth constellations. Her strikes, charged attack, plunges, and
-// Her skill's and burst's own hits are her record's alone
+// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, her ascensions, and her first,
+// Second, Fourth and sixth constellations. Her strikes, charged attack, plunges, and Her skill's and burst's own hits
+// Are her record's alone
 export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
   const burstProjection = readParameter("burstProjection");
   const skillShieldAtk = readParameter("skillShieldAtk");
@@ -310,7 +316,8 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
 
   return {
     burst: {
-      // Her burst clears any status it left, and starts its own one frame after its hit, which then counts its projections
+      // Her burst clears any status it left, and starts its own one frame after its hit, which then counts its
+      // Projections
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         removeKitEffects(kitEffectState, (effect) => effect.kind === "status" && effect.id === BURST_STATUS_ID);
         scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(BURST_STATUS_FRAMES), (tick) => {
@@ -366,7 +373,8 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
       }
       if (event.kind !== KitEventKind.EnemyHit || event.striker.characterId !== context.activeCombatant.characterId)
         return;
-      // Her fourth ascension upgrades her own buff on each elemental hit of the active character, as gcsim's a4Init does
+      // Her fourth ascension upgrades her own buff on each elemental hit of the active character, as gcsim's a4Init
+      // Does
       if (combatant.ascension >= ASCENSION_4 && event.element !== undefined)
         upgradeAscensionBuff(
           context,
@@ -374,7 +382,8 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           combatant.characterId,
           combatant.constellationCount >= CONSTELLATION_6 ? Infinity : ASCENSION_4_SECONDS,
         );
-      // Her first constellation projects each hit of the active character on a cooldown of its own, with no burst's status needed
+      // Her first constellation projects each hit of the active character on a cooldown of its own, with no burst's
+      // Status needed
       if (
         combatant.constellationCount >= CONSTELLATION_1 &&
         startKitCooldown(
@@ -405,10 +414,11 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
       );
     },
     skill: {
-      // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed member an
-      // ATK buff scaled by her attack, capped at the skill's maximum
+      // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed
+      // Member an ATK buff scaled by her attack, capped at the skill's maximum
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        // Her skill takes off the buff it gave the team before and every ascension and second-constellation buff, as gcsim's cast does
+        // Her skill takes off the buff it gave the team before and every ascension and second-constellation buff, as
+        // Gcsim's cast does
         removeKitEffects(
           kitEffectState,
           (effect) =>

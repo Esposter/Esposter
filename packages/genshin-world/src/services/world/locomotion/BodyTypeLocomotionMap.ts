@@ -4,15 +4,14 @@ import { BodyType } from "#src/models/character/BodyType";
 import { PROVISIONAL_LOCOMOTION } from "#src/services/world/locomotion/constants";
 
 // How each body type moves, since how far its characters sprint and jump differs by body: each type's own entry, never
-// Another's, over the provisional movement every type shares for what nothing of the game holds yet.
-// - Its speeds, dash, climb, climb jump, swim and drowning are its own clips' root motion at its human scale, read by
-//   `genshin:assets locomotion <body>`.
-// - Its jump is its jump clip's root curve at that scale: the apex is the jump's height, and the gravity is the one that
-//   Brings the body back to its take-off height when the clip's root does, half a second on. Its fall tops out at the
-//   Speed the clip's root settles at as it falls.
-// - Its capsule is as tall as the character whose avatar gives its scale, by that character's height in the dump's
-//   Configuration, and it swims where water reaches seven tenths of that height. Provisional: the wiki gives deep
-//   Water's threshold varying with the character's height, and seven tenths keeps the old provisional depth's share
+// Another's, over the provisional movement every type shares for what nothing of the game holds yet. - Its speeds,
+// Dash, climb, climb jump, swim and drowning are its own clips' root motion at its human scale, read by `genshin:assets
+// Locomotion <body>`. - Its jump is its jump clip's root curve at that scale: the apex is the jump's height, and the
+// Gravity is the one that Brings the body back to its take-off height when the clip's root does, half a second on. Its
+// Fall tops out at the Speed the clip's root settles at as it falls. - Its capsule is as tall as the character whose
+// Avatar gives its scale, by that character's height in the dump's Configuration, and it swims where water reaches
+// Seven tenths of that height. Provisional: the wiki gives deep Water's threshold varying with the character's height,
+// And seven tenths keeps the old provisional depth's share
 export const BodyTypeLocomotionMap = {
   [BodyType.MediumFemale]: {
     ...PROVISIONAL_LOCOMOTION,

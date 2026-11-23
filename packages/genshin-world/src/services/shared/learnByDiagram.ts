@@ -3,8 +3,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 
-// The bag and learned ids after a thing is learned by using one of its diagrams, the diagram taken from the bag. Undefined,
-// With nothing used, where the item is not one of its diagrams, is not held, or it is learned already
+// The bag and learned ids after a thing is learned by using one of its diagrams, the diagram taken from the bag.
+// Undefined, With nothing used, where the item is not one of its diagrams, is not held, or it is learned already
 export const learnByDiagram = (
   { id, learnedIds, unlockItemIds }: { id: number; learnedIds: number[]; unlockItemIds: number[] },
   diagramItemId: number,

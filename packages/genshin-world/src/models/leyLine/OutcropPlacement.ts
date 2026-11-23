@@ -4,7 +4,8 @@ import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // One ley line blossom of the official map placed in its region: the map point's id, which the outcrop standing at it
-// Is known by, and the ground point it stands at, carried into the game's axes round the origin as the region's waypoints are
+// Is known by, and the ground point it stands at, carried into the game's axes round the origin as the region's
+// Waypoints are
 export interface OutcropPlacement {
   id: number;
   position: GroundPoint;

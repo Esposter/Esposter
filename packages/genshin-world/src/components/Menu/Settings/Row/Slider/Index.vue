@@ -11,8 +11,8 @@ import { snapToRange } from "#src/services/menu/snapToRange";
 interface Props {
   // The game's words in the reader's language, which the slider's label reads
   gameText: GameText;
-  // The range or the volume the slider moves across, whose setting the world backs it with, or the slider the world does
-  // Not back, which is drawn at its value and moves by no pointer or key
+  // The range or the volume the slider moves across, whose setting the world backs it with, or the slider the world
+  // Does Not back, which is drawn at its value and moves by no pointer or key
   row: SettingsTrackRow;
 }
 

@@ -2,9 +2,9 @@ import { MAX_FOUND_OCULUS_COUNT, MAX_SAVE_ID_LENGTH, MAX_STATUE_REGION_COUNT } f
 import { createRecordSchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// A region's statues as the save holds them: the Oculi held toward its next level, the level it has reached, and the level
-// Its rewards have been claimed through. A region holds the one kind of Oculus its statues take, and a region the player
-// Has not started holds only the Oculi it has found, at level zero and with no level claimed
+// A region's statues as the save holds them: the Oculi held toward its next level, the level it has reached, and the
+// Level Its rewards have been claimed through. A region holds the one kind of Oculus its statues take, and a region the
+// Player Has not started holds only the Oculi it has found, at level zero and with no level claimed
 const statueRegionProgressSaveSchema = z.object({
   claimedLevel: z.int().nonnegative(),
   heldCount: z.int().nonnegative(),

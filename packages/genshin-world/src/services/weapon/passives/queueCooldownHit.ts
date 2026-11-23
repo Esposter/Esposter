@@ -6,8 +6,8 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 
-// A passive's extra hit that waits on a cooldown: queued, and the cooldown started, only once the cooldown has run out, so
-// A hit inside it queues nothing. Reports whether it queued the hit
+// A passive's extra hit that waits on a cooldown: queued, and the cooldown started, only once the cooldown has run out,
+// So A hit inside it queues nothing. Reports whether it queued the hit
 export const queueCooldownHit = (
   context: KitContext,
   combatant: Combatant,

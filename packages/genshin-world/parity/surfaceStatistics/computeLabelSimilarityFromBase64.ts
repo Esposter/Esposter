@@ -16,7 +16,8 @@ interface EncodedLabelSimilarityOutput extends Except<LabelSimilarityOutput, "te
   termMaps: { height: number; terms: string; width: number }[];
 }
 
-// The label similarities read from base64 bytes, as the page's host hands them over, and its term maps returned the same way
+// The label similarities read from base64 bytes, as the page's host hands them over, and its term maps returned the
+// Same way
 export const computeLabelSimilarityFromBase64 = async ({
   labels,
   reference,

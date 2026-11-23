@@ -5,9 +5,9 @@ import { terrainFeatureSchema } from "#src/models/world/terrainFeatureSchema";
 import { terrainResidualSchema } from "#src/models/world/terrainResidualSchema";
 import { z } from "zod";
 
-// A region's ground as its fit draws it: the Gaussian hills over its base, the plateaus, cliffs and ridges over them, the
-// Residual's noise below both, and the heights it stands between, which bound every tile. A region no fit has drawn yet
-// Holds no hills, so its base is never drawn, only the plateaus its places stand on over the world's base, and no
+// A region's ground as its fit draws it: the Gaussian hills over its base, the plateaus, cliffs and ridges over them,
+// The Residual's noise below both, and the heights it stands between, which bound every tile. A region no fit has drawn
+// Yet Holds no hills, so its base is never drawn, only the plateaus its places stand on over the world's base, and no
 // Residual or bounds
 export interface RegionGround extends TerrainShape {
   features: TerrainFeature[];

@@ -20,8 +20,8 @@ describe(createKaidanRainfallEarthbinderPassiveModule, () => {
   const otherEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   const party = createParty([TRAVELER_CHARACTER_ID]);
-  // Kaidan: Rainfall Earthbinder at its first rank: an attack hit inflicts Cursed Parasol on the enemy it struck for 10 seconds,
-  // Once every 15 seconds, and the wielder deals 16% more DMG to that enemy while it lasts
+  // Kaidan: Rainfall Earthbinder at its first rank: an attack hit inflicts Cursed Parasol on the enemy it struck for 10
+  // Seconds, Once every 15 seconds, and the wielder deals 16% more DMG to that enemy while it lasts
   const passiveModule = createKaidanRainfallEarthbinderPassiveModule([10, 0.16, 15]);
 
   test("an attack hit the wielder deals inflicts Cursed Parasol, which raises the wielder's DMG to that enemy", () => {

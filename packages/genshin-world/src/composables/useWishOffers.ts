@@ -26,8 +26,8 @@ interface WishOffersSource {
   wallet: Ref<Wallet>;
 }
 
-// The open banner's offers and the wallet they are paid from: its ×1 and ×10 sets, the Fate bought with Primogems once the
-// Wallet holds too few Fates for its ×1, and the currencies the screen shows beside them
+// The open banner's offers and the wallet they are paid from: its ×1 and ×10 sets, the Fate bought with Primogems once
+// The Wallet holds too few Fates for its ×1, and the currencies the screen shows beside them
 export const useWishOffers = ({ bannerKind, getGameText, pityMap, toCountText, wallet }: WishOffersSource) => {
   // The open banner's ×1 and ×10, each offered while the wallet holds its Fates and the beginners' wish has room for it
   const sets = computed(() => {
@@ -44,7 +44,8 @@ export const useWishOffers = ({ bannerKind, getGameText, pityMap, toCountText, w
       };
     });
   });
-  // The open banner's Fate bought with Primogems once the wallet holds too few Fates for its ×1, the game's direct purchase
+  // The open banner's Fate bought with Primogems once the wallet holds too few Fates for its ×1, the game's direct
+  // Purchase
   const purchases = computed(() => {
     const kind = bannerKind.value;
     if (!kind) return [];
@@ -59,7 +60,8 @@ export const useWishOffers = ({ bannerKind, getGameText, pityMap, toCountText, w
       },
     ];
   });
-  // The Primogems at the head, and at the foot the open banner's Fate beside the Genesis Crystals the game counts there too
+  // The Primogems at the head, and at the foot the open banner's Fate beside the Genesis Crystals the game counts there
+  // Too
   const currencies = computed(() => {
     const text = getGameText();
     return [

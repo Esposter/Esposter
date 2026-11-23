@@ -1,12 +1,12 @@
 import { GadgetKind } from "#src/models/gadget/GadgetKind";
 import { z } from "zod";
 
-// A gadget as the widget config gives it: its item id, its kind, whether it can be equipped on Z, its cooldown in seconds, its
-// Cooldown on a failed use and its cooldown group. The config gives no cooldown on a failed use or a group for some
-// Gadgets, and those read as zero. The region is the one a Treasure Compass's city joins, and is empty for a gadget that
-// Names no city. The gather item is the one an Oculus Resonance Stone finds, read from the gather point type its widget
-// Names, and is zero for a gadget of another kind. The maximum points a collector holds are zero for any other gadget
-// The most of a device the scene holds and a player places are zero for a gadget that is no device
+// A gadget as the widget config gives it: its item id, its kind, whether it can be equipped on Z, its cooldown in
+// Seconds, its Cooldown on a failed use and its cooldown group. The config gives no cooldown on a failed use or a group
+// For some Gadgets, and those read as zero. The region is the one a Treasure Compass's city joins, and is empty for a
+// Gadget that Names no city. The gather item is the one an Oculus Resonance Stone finds, read from the gather point
+// Type its widget Names, and is zero for a gadget of another kind. The maximum points a collector holds are zero for
+// Any other gadget The most of a device the scene holds and a player places are zero for a gadget that is no device
 export interface GadgetRow {
   cooldownGroup: number;
   cooldownOnFailSeconds: number;

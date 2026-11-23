@@ -7,7 +7,8 @@ import { describe, expect, test } from "vitest";
 const place = (id: string, kind: PuzzleKind, x: number, z: number): PuzzlePlace => ({ id, kind, position: { x, z } });
 
 describe(findSeelieDetectorTarget, () => {
-  // The puzzle places of the region the player stands in: a court nearest of all, which is no Seelie, and a settled Seelie
+  // The puzzle places of the region the player stands in: a court nearest of all, which is no Seelie, and a settled
+  // Seelie
   const nearest = place("nearest", PuzzleKind.Seelie, 10, 10);
   const farther = place("farther", PuzzleKind.Seelie, 50, 50);
   const settled = place("settled", PuzzleKind.Seelie, 1, 1);

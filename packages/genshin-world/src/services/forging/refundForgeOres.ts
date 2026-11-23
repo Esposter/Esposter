@@ -9,8 +9,8 @@ import { FORGE_ORE_ITEM_IDS } from "#src/services/forging/constants";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The bag after the ores that the refund talents of a recipe's forge give back, each ore refunded its talent's share of what
-// The `count` units took. A refund the bag has no room for is lost, as the game's own refund is
+// The bag after the ores that the refund talents of a recipe's forge give back, each ore refunded its talent's share of
+// What The `count` units took. A refund the bag has no room for is lost, as the game's own refund is
 export const refundForgeOres = (
   inventory: Inventory,
   recipe: ForgeRecipe,

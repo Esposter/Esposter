@@ -13,9 +13,9 @@ const SUPERLATIVE_SUPERSTRENGTH_MAX_USAGES = 3;
 // The usages a Superlative Superstrength needs left for its character's Charged Attacks to cost one Unaligned die less
 const SUPERLATIVE_SUPERSTRENGTH_REDUCTION_USAGES = 2;
 
-// Superlative Superstrength, a status on the character it is attached to: each Charged Attack she uses deals 1 more DMG and
-// Spends a usage, and with at least two usages a Charged Attack costs one Unaligned die less. Each attachment is one usage,
-// And they stack up to three
+// Superlative Superstrength, a status on the character it is attached to: each Charged Attack she uses deals 1 more DMG
+// And Spends a usage, and with at least two usages a Charged Attack costs one Unaligned die less. Each attachment is
+// One usage, And they stack up to three
 export const superlativeSuperstrength: GcgCardModule = {
   initialUsages: 1,
   maxUsages: SUPERLATIVE_SUPERSTRENGTH_MAX_USAGES,

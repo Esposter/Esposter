@@ -27,9 +27,9 @@ const title = computed(() => (blessing ? gameText[GameTextKey.AbyssMoonSpire] : 
 </script>
 
 <template>
-  <!-- The Spiral Abyss's entry: the title of the part the player enters over the cross that closes it, and for the Moon Spire
-       the period's blessing, its name and its description, in the reader's language. Each floor is a button that opens its
-       chambers, and a chamber's button starts it -->
+  <!-- The Spiral Abyss's entry: the title of the part the player enters over the cross that closes it, and for the
+    Moon Spire the period's blessing, its name and its description, in the reader's language. Each floor is a button
+    that opens its chambers, and a chamber's button starts it -->
   <GameScreen class="abyss-entry" role="dialog" aria-modal="true" :aria-label="title">
     <ScreenHeader :game-text :title @close="emit('close')" />
     <div v-if="blessing" class="blessing">

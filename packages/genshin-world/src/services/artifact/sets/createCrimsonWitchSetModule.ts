@@ -19,15 +19,16 @@ const CRIMSON_WITCH_STACKS_ID = "crimsonWitchStacks";
 // The most stacks the four-piece gives, as its text says
 const MAXIMUM_STACKS = 3;
 
-// The stacks the wearer holds. The status they run on is dropped when it runs out, so a lapsed count reads as none, as gcsim's
-// Cw4pc status does
+// The stacks the wearer holds. The status they run on is dropped when it runs out, so a lapsed count reads as none, as
+// Gcsim's Cw4pc status does
 const getStacks = (effects: readonly KitEffect[], characterId: number): number =>
   findKitStatus(effects, characterId, CRIMSON_WITCH_STACKS_ID)?.stacks ?? 0;
 
-// Crimson Witch of Flames' four-piece. Its first param raises the DMG its wearer's own Overloaded, Burning and Burgeon deal, and its
-// Second the DMG its own Vaporize and Melt deal. Each Elemental Skill the wearer uses while it is the active character adds a stack,
-// Up to three, which raises the Pyro DMG Bonus the two-piece gives by the fourth param of its Pyro DMG Bonus per stack, for the fifth
-// Param's seconds from that skill, as gcsim's (MIT) internal/artifacts/crimson/crimson.go does. The two-piece bonus is attributes only
+// Crimson Witch of Flames' four-piece. Its first param raises the DMG its wearer's own Overloaded, Burning and Burgeon
+// Deal, and its Second the DMG its own Vaporize and Melt deal. Each Elemental Skill the wearer uses while it is the
+// Active character adds a stack, Up to three, which raises the Pyro DMG Bonus the two-piece gives by the fourth param
+// Of its Pyro DMG Bonus per stack, for the fifth Param's seconds from that skill, as gcsim's (MIT)
+// `internal/artifacts/crimson/crimson.go` does. The two-piece bonus is attributes only
 export const createCrimsonWitchSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const transformativeDamageBonus = takeOne(bonus.params, 0);
   const ampedDamageBonus = takeOne(bonus.params, 1);

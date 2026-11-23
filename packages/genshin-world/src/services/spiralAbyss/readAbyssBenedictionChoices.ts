@@ -4,9 +4,9 @@ import { abyssBenedictionChoiceSchema } from "#src/models/spiralAbyss/AbyssBened
 import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// The Benediction lists of every chamber `pnpm -C scripts genshin:assets spiral-abyss` publishes, keyed by the chamber's level
-// Id, each with its three lists as the level row gives them
-// Fetched by its key from the hosted game data and checked against its shape as it arrives
+// The Benediction lists of every chamber `pnpm -C scripts genshin:assets spiral-abyss` publishes, keyed by the
+// Chamber's level Id, each with its three lists as the level row gives them Fetched by its key from the hosted game
+// Data and checked against its shape as it arrives
 export const readAbyssBenedictionChoices = (
   gameDataBaseUrl: string,
 ): Promise<Record<string, AbyssBenedictionChoice[][]>> =>

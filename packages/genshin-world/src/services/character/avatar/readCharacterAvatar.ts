@@ -11,9 +11,9 @@ import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "#src/service
 import { readJson } from "#src/services/shared/readJson";
 import { readFileResponse } from "@esposter/shared";
 
-// The game's model of a component the host serves: its manifest, its binary read once as an ArrayBuffer, and each texture
-// The materials the model draws name, decoded once and shared by the materials that name it. A file that fails rejects the
-// Whole model, so it is drawn whole or not at all
+// The game's model of a component the host serves: its manifest, its binary read once as an ArrayBuffer, and each
+// Texture The materials the model draws name, decoded once and shared by the materials that name it. A file that fails
+// Rejects the Whole model, so it is drawn whole or not at all
 export const readCharacterAvatar = async (
   componentUrl: string,
   options: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,

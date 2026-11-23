@@ -16,7 +16,8 @@ interface Props {
   floor?: number | undefined;
   // The game's words in the reader's language
   gameText: GameText;
-  // The Benediction the pointer rests on, drawn lit at rest as the game lights it; a fixture sets the one its reference shows
+  // The Benediction the pointer rests on, drawn lit at rest as the game lights it; a fixture sets the one its reference
+  // Shows
   litTowerBuffId?: number | undefined;
   // The names in the reader's language, each by its text id
   nameText: TextChunk;
@@ -33,7 +34,8 @@ const title = computed(() =>
 
 <template>
   <!-- The Benediction the player takes into a chamber, offered at its start: the game's own hint over a card per
-       Benediction in the list, its name in the reader's language, the span it lasts and its glyph, and a press chooses it -->
+    Benediction in the list, its name in the reader's language, the span it lasts and its glyph, and a press chooses
+    it -->
   <GameScreen
     class="abyss-benediction"
     role="dialog"

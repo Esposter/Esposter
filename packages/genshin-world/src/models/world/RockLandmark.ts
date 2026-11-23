@@ -1,10 +1,10 @@
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { z } from "zod";
 
-// A rock the game places in a region, drawn from the boxes of its hull by `createBoxesGeometry`. It keeps the place, turn
-// And scale its record gives it, since a rock stands where the game sets it down and not on the ground beneath it, and
-// Its hull's boxes, which every place of the hull shares. The hull's name is the mesh's, the same in every load of a
-// Region, so a hull's geometry is found by it and never by the boxes' identity, which each load makes anew
+// A rock the game places in a region, drawn from the boxes of its hull by `createBoxesGeometry`. It keeps the place,
+// Turn And scale its record gives it, since a rock stands where the game sets it down and not on the ground beneath it,
+// And Its hull's boxes, which every place of the hull shares. The hull's name is the mesh's, the same in every load of
+// A Region, so a hull's geometry is found by it and never by the boxes' identity, which each load makes anew
 export interface RockLandmark {
   boxes: readonly (readonly number[])[];
   hull: string;

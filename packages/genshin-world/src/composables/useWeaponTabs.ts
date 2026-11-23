@@ -9,7 +9,8 @@ import { WeaponMenuTab } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { computed, toValue } from "vue";
 
-// The tabs a weapon offers and the one its body draws, which the parent's tab model asks for while the weapon still offers it
+// The tabs a weapon offers and the one its body draws, which the parent's tab model asks for while the weapon still
+// Offers it
 export const useWeaponTabs = (
   tab: Ref<WeaponMenuTab>,
   weapon: ComputedRef<Weapon>,
@@ -22,8 +23,8 @@ export const useWeaponTabs = (
     return [canAscend ? WeaponMenuTab.Ascend : WeaponMenuTab.Enhance, ...(canRefine ? [WeaponMenuTab.Refine] : [])];
   };
   const offeredTabs = computed(() => getOfferedTabs(weapon.value));
-  // The tab the body draws: the one asked for while the weapon still offers it, else the first it offers, so a weapon that
-  // Levels to its cap leaves Enhance for Ascend without the parent changing the tab
+  // The tab the body draws: the one asked for while the weapon still offers it, else the first it offers, so a weapon
+  // That Levels to its cap leaves Enhance for Ascend without the parent changing the tab
   const openTab = computed({
     get: () => (offeredTabs.value.includes(tab.value) ? tab.value : (offeredTabs.value[0] ?? WeaponMenuTab.Enhance)),
     set: (value: WeaponMenuTab) => {

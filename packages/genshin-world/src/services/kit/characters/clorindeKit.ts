@@ -15,24 +15,25 @@ import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMember
 
 export const CLORINDE_CHARACTER_ID = 10_000_098;
 
-// Constellation 6, "And So Shall I Never Despair": for 12 seconds after Hunter's Vigil is used, her CRIT Rate rises by 10% and
-// Her CRIT DMG by 70%, as the wiki's constellation page gives it
+// Constellation 6, "And So Shall I Never Despair": for 12 seconds after Hunter's Vigil is used, her CRIT Rate rises by
+// 10% and Her CRIT DMG by 70%, as the wiki's constellation page gives it
 const CONSTELLATION_6 = 6;
 const HUNTERS_VIGIL_CRIT_DAMAGE = 0.7;
 const HUNTERS_VIGIL_CRIT_RATE = 0.1;
 const HUNTERS_VIGIL_CRIT_SECONDS = 12;
 
-// Night Vigil's Bond of Life thresholds, as gcsim v2.47.2 (MIT) clorinde/skill.go and attack.go read her HP debt ratio: a
-// Full share is 100%, and Impale the Night takes its no-share variant within gcsim's tolerance of zero
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/clorinde/skill.go
+// Night Vigil's Bond of Life thresholds, as gcsim v2.47.2 (MIT) clorinde/skill.go and attack.go read her HP debt ratio:
+// A Full share is 100%, and Impale the Night takes its no-share variant within gcsim's tolerance of zero
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/clorinde/skill.go`
 const BOND_OF_LIFE_FULL_SHARE = 1;
 const BOND_OF_LIFE_TOLERANCE = 0.0000001;
 
-// Clorinde's behaviour: Hunter's Vigil's press starts Night Vigil for its table's seconds, ending as she leaves the field,
-// And its Constellation 6 buffs her CRIT. Night Vigil's Swift Hunt steps cast their entry of the piercing shot below a
-// Full Bond of Life share, which gains Bond of Life as it strikes, and of the normal shot otherwise, and its Impale the
-// Night press casts the variant the share picks, each where her body stands, and the low and full ones heal her by the
-// Share they clear of her Bond of Life. Not built: Last Lightfall's Bond of Life, her passives, Constellations 1, 2, 4
+// Clorinde's behaviour: Hunter's Vigil's press starts Night Vigil for its table's seconds, ending as she leaves the
+// Field, And its Constellation 6 buffs her CRIT. Night Vigil's Swift Hunt steps cast their entry of the piercing shot
+// Below a Full Bond of Life share, which gains Bond of Life as it strikes, and of the normal shot otherwise, and its
+// Impale the Night press casts the variant the share picks, each where her body stands, and the low and full ones heal
+// Her by the Share they clear of her Bond of Life. Not built: Last Lightfall's Bond of Life, her passives,
+// Constellations 1, 2, 4
 export const createClorindeKitBehaviour = ({
   readHit,
   readHits,

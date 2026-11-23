@@ -57,7 +57,8 @@ const readWeaponData = (id: number): WeaponData => {
 // One value of a weapon's passive at a refinement rank, as its record in the stats table gives it
 const readPassiveParam = (weaponData: WeaponData, refinement: number, index: number): number =>
   takeOne(takeOne(weaponData.passiveRankParams, refinement - 1), index);
-// The wielder every passive test is given: a level 90 traveler with no attributes or resonances, holding the kit under test
+// The wielder every passive test is given: a level 90 traveler with no attributes or resonances, holding the kit under
+// Test
 const createCombatant = (kit: Kit): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),

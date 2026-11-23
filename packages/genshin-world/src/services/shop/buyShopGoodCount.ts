@@ -7,9 +7,9 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { buyShopGood } from "#src/services/shop/buyShopGood";
 
-// The wallet, bag and purchases after the player buys a good `count` times at `now`, each buy taking the price and giving
-// The item as `buyShopGood` does. The first buy refused ends the count, so a count past what the player can pay buys what
-// It can
+// The wallet, bag and purchases after the player buys a good `count` times at `now`, each buy taking the price and
+// Giving The item as `buyShopGood` does. The first buy refused ends the count, so a count past what the player can pay
+// Buys what It can
 export const buyShopGoodCount = (
   wallet: Wallet,
   inventory: Inventory,

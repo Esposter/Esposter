@@ -4,8 +4,9 @@ import { findSceneSurfaceDetails } from "#parity/findSceneSurfaceDetails";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The amplitudes of one family's grain, set on the live materials that draw that family, one per octave in the order
-// `computeSurfaceOctaves` gives them. A tool solves a family's grain by setting each candidate and reading the frame the
-// Scene draws, without rebuilding the scene for it. A family no material draws is an error, since its grain is then unset
+// `computeSurfaceOctaves` gives them. A tool solves a family's grain by setting each candidate and reading the frame
+// The Scene draws, without rebuilding the scene for it. A family no material draws is an error, since its grain is then
+// Unset
 export const setSceneSurfaceAmplitudes = (
   context: SceneContext | undefined,
   family: string,

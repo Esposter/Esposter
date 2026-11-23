@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 const CURSED_PARASOL_ID = "cursedParasol";
 const CURSED_PARASOL_COOLDOWN_ID = "kaidanCursedParasolCooldown";
 
-// Kaidan: Rainfall Earthbinder at its rank: an attack hit its wielder lands inflicts Cursed Parasol on the enemy it struck for the
-// Rank's seconds, once every the rank's cooldown in seconds. The wielder deals the rank's amount more DMG to that enemy while it
-// Lasts, and an enemy with it defeated refreshes the cooldown
+// Kaidan: Rainfall Earthbinder at its rank: an attack hit its wielder lands inflicts Cursed Parasol on the enemy it
+// Struck for the Rank's seconds, once every the rank's cooldown in seconds. The wielder deals the rank's amount more
+// DMG to that enemy while it Lasts, and an enemy with it defeated refreshes the cooldown
 export const createKaidanRainfallEarthbinderPassiveModule = (params: number[]): PassiveModule => {
   const seconds = takeOne(params, 0);
   const damageBonus = takeOne(params, 1);

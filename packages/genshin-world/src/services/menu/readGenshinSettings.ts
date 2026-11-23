@@ -7,7 +7,8 @@ import { getResult, omitUndefined } from "@esposter/shared";
 // Refuses is read as none, so an edited or out-of-date value never reaches the screen unchecked
 export const readGenshinSettings = (raw: null | string, defaults: GenshinSettings): GenshinSettings => {
   if (raw === null) return defaults;
-  // oxlint-disable-next-line no-restricted-properties -- the settings hold no instants, so there is no Date for a reviver to restore
+  // The settings
+  // oxlint-disable-next-line no-restricted-properties -- hold no instants, so there is no Date for a reviver to restore
   const parsedJson: unknown = getResult(() => JSON.parse(raw))
     .orTee(console.error)
     .unwrapOr(undefined);

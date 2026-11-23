@@ -21,20 +21,20 @@ import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMu
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
-// Measured: gcsim v2.47.2 (MIT) sucrose/burst.go, Forbidden Creation's field five metres ahead of the body and its absorb
-// Check four metres ahead, the absorbing enemy's aura taken from the first aura of Pyro, Hydro, Electro or Cryo an enemy
-// Within its reach carries
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/burst.go
+// Measured: gcsim v2.47.2 (MIT) sucrose/burst.go, Forbidden Creation's field five metres ahead of the body and its
+// Absorb Check four metres ahead, the absorbing enemy's aura taken from the first aura of Pyro, Hydro, Electro or Cryo
+// An enemy Within its reach carries
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/burst.go`
 const BURST_OFFSET_METRES = 5;
 const ABSORB_CHECK_OFFSET_METRES = 4;
 // The field lives a tenth of a second past its last tick, so the step that runs it still has it
 const FIELD_LINGER_SECONDS = 0.1;
 
-// Sucrose's passives and constellations, as gcsim v2.47.2 (MIT) gives them. A1 raises the Elemental Mastery of the members
-// Of the swirled element by 50 for 8 seconds on a Swirl she triggers, and A4 gives the rest of the team 20% of her
-// Elemental Mastery for 8 seconds on each skill and burst hit. Constellation 2 lengthens the burst by 2 seconds, and
-// Constellation 6 gives the team 20% DMG Bonus of the absorbed element for 10 seconds when the field absorbs one
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/asc.go
+// Sucrose's passives and constellations, as gcsim v2.47.2 (MIT) gives them. A1 raises the Elemental Mastery of the
+// Members Of the swirled element by 50 for 8 seconds on a Swirl she triggers, and A4 gives the rest of the team 20% of
+// Her Elemental Mastery for 8 seconds on each skill and burst hit. Constellation 2 lengthens the burst by 2 seconds,
+// And Constellation 6 gives the team 20% DMG Bonus of the absorbed element for 10 seconds when the field absorbs one
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/asc.go`
 const SWIRL_ASCENSION = 1;
 const SWIRL_ELEMENTAL_MASTERY_BONUS = 50;
 const SWIRL_SECONDS = 8;
@@ -53,22 +53,22 @@ const ABSORBED_ELEMENT_SOURCE = "sucrose-absorbed-element";
 export const SUCROSE_CHARACTER_ID = 10_000_043;
 
 const CONSTELLATION_1 = 1;
-// Measured: gcsim v2.47.2 (MIT) sucrose/cons.go, Alchemania: every seventh normal or charged attack that strikes an enemy
-// Cuts Astable's cooldown by 1 to 7 seconds, the kit's own range: the cached wiki page gives no range text to check it
-// Against. gcsim's code draws whole seconds from 1 to 6, which this does not follow: the cut is drawn from the world's
-// Random source as a fraction of a second. The kit counts an attack at its first hit's hitmark whether or not it struck anything,
-// Which is the kit's NormalAttackLanded and ChargedAttackLanded, where gcsim counts only the attacks that strike
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/cons.go
+// Measured: gcsim v2.47.2 (MIT) sucrose/cons.go, Alchemania: every seventh normal or charged attack that strikes an
+// Enemy Cuts Astable's cooldown by 1 to 7 seconds, the kit's own range: the cached wiki page gives no range text to
+// Check it Against. gcsim's code draws whole seconds from 1 to 6, which this does not follow: the cut is drawn from the
+// World's Random source as a fraction of a second. The kit counts an attack at its first hit's hitmark whether or not
+// It struck anything, Which is the kit's NormalAttackLanded and ChargedAttackLanded, where gcsim counts only the
+// Attacks that strike https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/cons.go
 const CONSTELLATION_4 = 4;
 const ALCHEMANIA_ATTACKS = 7;
 const ALCHEMANIA_MIN_CUT_SECONDS = 1;
 const ALCHEMANIA_CUT_RANGE_SECONDS = 6;
 const ALCHEMANIA_STATUS_ID = "sucrose-alchemania";
 
-// Sucrose's behaviour: Forbidden Creation-Isomer 75 / Type II sets its field ahead of her, whose Anemo tick lands from a
-// Summon while it lasts, and whose absorb check takes the first aura an enemy within its reach carries, the absorbed
-// Element's hit then landing on every tick. Her passives and Constellations 1, 2, 4 and 6 are built. The skill's pull is
-// Not, as no enemy moves on a kit's terms. Her Hexerei team bonus is not built, though the team's Hexerei count is
+// Sucrose's behaviour: Forbidden Creation-Isomer 75 / Type II sets its field ahead of her, whose Anemo tick lands from
+// A Summon while it lasts, and whose absorb check takes the first aura an enemy within its reach carries, the absorbed
+// Element's hit then landing on every tick. Her passives and Constellations 1, 2, 4 and 6 are built. The skill's pull
+// Is Not, as no enemy moves on a kit's terms. Her Hexerei team bonus is not built, though the team's Hexerei count is
 // Read by checkIsKitSecretRite, as the bonus itself is the team effect every Hexerei kit waits on
 export const createSucroseKitBehaviour = ({
   kit,

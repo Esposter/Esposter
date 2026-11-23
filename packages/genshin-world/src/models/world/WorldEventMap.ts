@@ -10,8 +10,8 @@ import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Tip } from "#src/models/tip/Tip";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
-// Every reaction one world system has to another, by its name, with the payload its listeners are handed. A system emits
-// What it did, and each system that reads it listens, so none calls another's state directly
+// Every reaction one world system has to another, by its name, with the payload its listeners are handed. A system
+// Emits What it did, and each system that reads it listens, so none calls another's state directly
 export interface WorldEventMap {
   achievementEvents: [AchievementEvent[]];
   bagChange: [Inventory];
@@ -19,13 +19,15 @@ export interface WorldEventMap {
   campCleared: [camp: ClearedCamp];
   chestOpened: [];
   defeatEnemy: [Enemy];
-  // The first unlock of a domain entrance, by the entry id it enters. A domain's weekly boss entrance opens by its quests, so it raises none
+  // The first unlock of a domain entrance, by the entry id it enters. A domain's weekly boss entrance opens by its
+  // Quests, so it raises none
   domainEntryUnlocked: [entryId: number];
   // The party entering combat, once an enemy is aggravated on it
   enterCombat: [];
   // A quest's progress moving from its progress before to the one that finishes it, emitted once on that move
   finishQuest: [quest: Quest, progress: QuestProgress, nextProgress: QuestProgress];
-  // A gathering point picked up into the bag, by the id of the item it gave: the only pick up that earns a collected item
+  // A gathering point picked up into the bag, by the id of the item it gave: the only pick up that earns a collected
+  // Item
   gatheringPickedUp: [itemId: string];
   // The party leaving combat, once no enemy has been aggravated on it for the grace period
   leaveCombat: [];

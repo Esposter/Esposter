@@ -1,8 +1,8 @@
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { GroundPoint } from "genshin-engine";
 
-// Whether a chest stands locked: within reach of a camp or a puzzle that is not yet done, a source being within reach when
-// Any of its points is. The reach is passed in, since the wiki gives no distance to read it from
+// Whether a chest stands locked: within reach of a camp or a puzzle that is not yet done, a source being within reach
+// When Any of its points is. The reach is passed in, since the wiki gives no distance to read it from
 export const checkIsChestLocked = (
   { x, z }: GroundPoint,
   lockSources: readonly ChestLockSource[],

@@ -30,9 +30,9 @@ const createHealthChange = (characterId: number): KitHealthChangedEvent => ({
 describe(createGoldenBloodTidePassiveModule, () => {
   const wielder = createWielderCombatant();
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  // Golden Blood-Tide (Cashflow Supervision) at its first rank: 16% ATK static, and for each stack of the wielder's HP change
-  // 16% Normal Attack DMG, 14% Charged Attack DMG and 14% Stellar-Conduct DMG for four seconds, up to three stacks, each stack
-  // Once every 0.3 seconds, and with three stacks 8% ATK SPD
+  // Golden Blood-Tide (Cashflow Supervision) at its first rank: 16% ATK static, and for each stack of the wielder's HP
+  // Change 16% Normal Attack DMG, 14% Charged Attack DMG and 14% Stellar-Conduct DMG for four seconds, up to three
+  // Stacks, each stack Once every 0.3 seconds, and with three stacks 8% ATK SPD
   const passiveModule = createGoldenBloodTidePassiveModule([4, 0.3, 0.16, 0.14, 0.08, 0.14]);
 
   test("the rank's ATK is static on the wielder", () => {

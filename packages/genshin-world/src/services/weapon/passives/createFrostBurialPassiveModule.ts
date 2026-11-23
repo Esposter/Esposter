@@ -8,9 +8,10 @@ import { takeOne } from "@esposter/shared";
 
 const FROST_BURIAL_COOLDOWN_ID = "frostBurialCooldown";
 
-// Frost Burial at its rank: a normal or charged attack hit its wielder deals has the rank's chance of an Everfrost Icicle
-// Above the enemy it struck, dealing the rank's multiplier of ATK as AoE DMG, or the Cryo multiplier on an enemy under Cryo,
-// Once every the rank's cooldown in seconds. The enemy's Cryo is read as the hit lands; the icicle's area is provisional
+// Frost Burial at its rank: a normal or charged attack hit its wielder deals has the rank's chance of an Everfrost
+// Icicle Above the enemy it struck, dealing the rank's multiplier of ATK as AoE DMG, or the Cryo multiplier on an enemy
+// Under Cryo, Once every the rank's cooldown in seconds. The enemy's Cryo is read as the hit lands; the icicle's area
+// Is provisional
 export const createFrostBurialPassiveModule = (params: number[]): PassiveModule => {
   const chance = takeOne(params, 0);
   const talentMultiplier = takeOne(params, 1);

@@ -10,8 +10,8 @@ import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
 import { runGcgSideDamageHook } from "#src/services/gcg/runGcgSideDamageHook";
 import { takeOne } from "@esposter/shared";
 
-// A side's one reroll of its dice in the roll phase, and any extra reroll a card grants it: any dice it names are thrown
-// Again, and none named passes. Once both sides have rolled, the action phase opens with the round's first side
+// A side's one reroll of its dice in the roll phase, and any extra reroll a card grants it: any dice it names are
+// Thrown Again, and none named passes. Once both sides have rolled, the action phase opens with the round's first side
 export const rerollGcgDice = (duel: GcgDuel, sideIndex: number, diceIndices: number[]): GcgActionResult => {
   if (duel.phase !== GcgPhase.Roll) return GcgActionResult.WrongPhase;
   const side = takeOne(duel.sides, sideIndex);

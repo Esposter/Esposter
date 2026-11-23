@@ -22,7 +22,8 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 describe(createDodocoTalesPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
-  // Dodoco Tales with synthetic params: 32% charged attack DMG for six seconds after a normal attack, 16% ATK for six after a charged attack
+  // Dodoco Tales with synthetic params: 32% charged attack DMG for six seconds after a normal attack, 16% ATK for six
+  // After a charged attack
   const dodocoTalesPassiveModule = createDodocoTalesPassiveModule([0.32, 6, 0.16, 6]);
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,

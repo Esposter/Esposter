@@ -15,8 +15,8 @@ describe("mailScreen", () => {
   const CONTENT_TEXT_ID = "103";
   const SENDER_TEXT_ID = "102";
   const DELIVERED_AT = new Date(0).toISOString();
-  // The classes of the traced marks the Mailbox draws: the header's pin, folder, help and pointer, the list's sender and star, the
-  // Claim All and Claim arrows, the star on the foot and the delete mark
+  // The classes of the traced marks the Mailbox draws: the header's pin, folder, help and pointer, the list's sender
+  // And star, the Claim All and Claim arrows, the star on the foot and the delete mark
   const MAIL_MARK_CLASSES = [
     "mark-pin",
     "mark-folder",

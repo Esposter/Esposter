@@ -9,7 +9,8 @@ import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
 import type { GameText } from "genshin-text";
 
 // The records a save command reads the names and the rules of the save from: the names the bag and the screens show.
-// Also the tables an item, a character and a rank are defined from, the catalogue's regions and the map's Teleport Waypoints
+// Also the tables an item, a character and a rank are defined from, the catalogue's regions and the map's Teleport
+// Waypoints
 export interface DevSaveTables {
   adventureRankLevels: AdventureRankLevel[];
   catalogue: Catalogue;

@@ -17,10 +17,11 @@ import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
 
-// The effects a reaction leaves that deal no DMG: the Frozen status on the character it hits, the Shield its user's active
-// Character gains, the forced switch of an Overloaded active character, and the card a Burning, Bloom or Quicken leaves on
-// Its user's side. The side the reaction is made on is sourceSideIndex, and the one its character is on is targetSideIndex.
-// The forced switch is switchActiveCharacter, handed in by the caller, since a switch's hooks can deal damage in turn
+// The effects a reaction leaves that deal no DMG: the Frozen status on the character it hits, the Shield its user's
+// Active Character gains, the forced switch of an Overloaded active character, and the card a Burning, Bloom or Quicken
+// Leaves on Its user's side. The side the reaction is made on is sourceSideIndex, and the one its character is on is
+// `targetSideIndex`. The forced switch is switchActiveCharacter, handed in by the caller, since a switch's hooks can
+// Deal Damage in turn
 export const applyGcgNonDamageReactionEffects = (
   duel: GcgDuel,
   sourceSideIndex: number,

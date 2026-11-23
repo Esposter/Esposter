@@ -31,8 +31,8 @@ export const IANSAN_CHARACTER_ID = 10_000_110;
 // The status a Nightsoul burst by a nearby party member gives Iansan at Ascension 4, which her restore's heal reads
 export const IANSAN_WARMING_UP_ID = "iansan-warming-up";
 
-// Her Nightsoul points are set to 54 as her blessing is entered, which lasts 16 seconds, as gcsim (MIT) iansan/skill.go and
-// Iansan.go set them, and her blessing drains 0.6 points every six frames, six a second (nightsoulPointReduceTask)
+// Her Nightsoul points are set to 54 as her blessing is entered, which lasts 16 seconds, as gcsim (MIT) iansan/skill.go
+// And Iansan.go set them, and her blessing drains 0.6 points every six frames, six a second (nightsoulPointReduceTask)
 const NIGHTSOUL_POINTS = 54;
 const NIGHTSOUL_BLESSING_SECONDS = 16;
 const NIGHTSOUL_DRAIN_PER_SECOND = 6;
@@ -45,8 +45,9 @@ const BURST_POINTS_FRAMES = 40;
 const BURST_RESTORE_SECONDS = 12;
 const BURST_RESTORE_ID = "iansan-burst-restore";
 
-// The Kinetic Energy Scale the burst starts, which logs the movement of the field character, a point for each two metres
-// It moves in a second, as the wiki gives it. Constellation 6's extra seconds reach it through the restore's own length
+// The Kinetic Energy Scale the burst starts, which logs the movement of the field character, a point for each two
+// Metres It moves in a second, as the wiki gives it. Constellation 6's extra seconds reach it through the restore's own
+// Length
 const KINETIC_ENERGY_SCALE_ID = "iansan-kinetic-energy-scale";
 const METRES_PER_MOVEMENT_POINT = 2;
 
@@ -59,8 +60,8 @@ const takeKitScaleMovementPoints = (kitEffectState: KitEffectState, characterId:
   return movement / METRES_PER_MOVEMENT_POINT;
 };
 
-// Constellation 1's energy, as gcsim (MIT) iansan/cons.go c1 gives it: each 6 points her blessing consumes restore her 15
-// Energy, then her cooldown of 18 seconds starts, and points consumed while it runs are not counted
+// Constellation 1's energy, as gcsim (MIT) iansan/cons.go c1 gives it: each 6 points her blessing consumes restore her
+// 15 Energy, then her cooldown of 18 seconds starts, and points consumed while it runs are not counted
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_COOLDOWN_ID = "iansan-constellation-1-cooldown";
 const CONSTELLATION_1_COOLDOWN_SECONDS = 18;
@@ -68,15 +69,16 @@ const CONSTELLATION_1_ENERGY = 15;
 const CONSTELLATION_1_POINTS = 6;
 const CONSTELLATION_1_POINTS_ID = "iansan-constellation-1-points";
 
-// Constellation 2's party ATK, as gcsim (MIT) iansan/cons.go c2Init gives it: every other member gets 30% ATK while Precise
-// Movement lasts, and the burst gives Precise Movement too, as c2OnBurst does
+// Constellation 2's party ATK, as gcsim (MIT) iansan/cons.go c2Init gives it: every other member gets 30% ATK while
+// Precise Movement lasts, and the burst gives Precise Movement too, as c2OnBurst does
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_ATTACK_PERCENT = 0.3;
 const CONSTELLATION_2_SOURCE = "iansan-constellation-2";
 
-// Constellation 4's Surging Force, as gcsim (MIT) iansan/cons.go c4Init and c4Points give it: another member's burst, while
-// Her restore runs and she is off the field, gives her two stacks once per burst of hers, and each stack adds 4 points to a
-// Restore tick. Half the overflow of the last tick joins the points too, held as a status for the next tick to read
+// Constellation 4's Surging Force, as gcsim (MIT) iansan/cons.go c4Init and c4Points give it: another member's burst,
+// While Her restore runs and she is off the field, gives her two stacks once per burst of hers, and each stack adds 4
+// Points to a Restore tick. Half the overflow of the last tick joins the points too, held as a status for the next tick
+// To read
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_GENERATED_ID = "iansan-constellation-4-generated";
 const CONSTELLATION_4_OVERFLOW_ID = "iansan-constellation-4-overflow";
@@ -85,42 +87,42 @@ const CONSTELLATION_4_STACK_POINTS = 4;
 const CONSTELLATION_4_STACKS = 2;
 const CONSTELLATION_4_STACKS_ID = "iansan-constellation-4-stacks";
 
-// Constellation 6's Kinetic Energy Scale and Extreme Force, as gcsim (MIT) iansan/cons.go c6BurstBonusDur and c6OnOverflow
-// Give: the burst's restore runs 3 seconds longer, and points that overflow her maximum give the active character 25% DMG
-// Bonus for 3 seconds
+// Constellation 6's Kinetic Energy Scale and Extreme Force, as gcsim (MIT) iansan/cons.go c6BurstBonusDur and
+// `c6OnOverflow` Give: the burst's restore runs 3 seconds longer, and points that overflow her maximum give the active
+// Character 25% DMG Bonus for 3 seconds
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_BURST_BONUS_SECONDS = 3;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.25;
 const CONSTELLATION_6_SECONDS = 3;
 export const CONSTELLATION_6_SOURCE = "iansan-constellation-6";
 
-// Ascension 1's Precise Movement, as gcsim (MIT) iansan/asc.go gives it: the Stormflight's first strike on an enemy gives
-// Her 20% ATK for 15 seconds. Every strike of the Stormflight lands at its one hitmark, so giving it on each strike is the
-// Same as on the first, and a strike restarts the status rather than stacking it
+// Ascension 1's Precise Movement, as gcsim (MIT) iansan/asc.go gives it: the Stormflight's first strike on an enemy
+// Gives Her 20% ATK for 15 seconds. Every strike of the Stormflight lands at its one hitmark, so giving it on each
+// Strike is the Same as on the first, and a strike restarts the status rather than stacking it
 const ASCENSION_1 = 1;
 const PRECISE_MOVEMENT_ID = "iansan-precise-movement";
 const PRECISE_MOVEMENT_ATTACK_PERCENT = 0.2;
 const PRECISE_MOVEMENT_SECONDS = 15;
 
-// Ascension 1's points, as gcsim (MIT) iansan/asc.go gives them: while Precise Movement lasts, each second's restore gives
-// A point, or 4 once after she gains or consumes points on the field, which she can do again 2.8 seconds on
+// Ascension 1's points, as gcsim (MIT) iansan/asc.go gives them: while Precise Movement lasts, each second's restore
+// Gives A point, or 4 once after she gains or consumes points on the field, which she can do again 2.8 seconds on
 const PRECISE_MOVEMENT_POINTS = 1;
 const PRECISE_MOVEMENT_ARMED_ID = "iansan-precise-movement-armed";
 const PRECISE_MOVEMENT_ARMED_POINTS = 4;
 const PRECISE_MOVEMENT_ARMING_COOLDOWN_ID = "iansan-precise-movement-arming-cooldown";
 const PRECISE_MOVEMENT_ARMING_COOLDOWN_SECONDS = 2.8;
 
-// Ascension 4's Warming Up, as gcsim (MIT) iansan/asc.go gives it: a Nightsoul burst gives Iansan the status for 10 seconds,
-// And while it lasts a restore of at least one point heals the active character for 60% of her ATK, once every 2.8 seconds.
-// Her ATK is her current one, with her buffs in it
+// Ascension 4's Warming Up, as gcsim (MIT) iansan/asc.go gives it: a Nightsoul burst gives Iansan the status for 10
+// Seconds, And while it lasts a restore of at least one point heals the active character for 60% of her ATK, once every
+// 2.8 seconds. Her ATK is her current one, with her buffs in it
 const ASCENSION_4 = 4;
 const WARMING_UP_SECONDS = 10;
 const WARMING_UP_HEAL_ATTACK_PERCENT = 0.6;
 const WARMING_UP_ICD_ID = "iansan-warming-up-icd";
 const WARMING_UP_ICD_SECONDS = 2.8;
 
-// The heal a restore of points gives the active character, as gcsim's a4Heal gives it, once the status is up and its cooldown
-// Is not, which the cooldown then starts
+// The heal a restore of points gives the active character, as gcsim's a4Heal gives it, once the status is up and its
+// Cooldown Is not, which the cooldown then starts
 const healWarmingUp = (context: KitContext, characterId: number): void => {
   const { activeCombatant, characterIdCombatantMap, kitEffectState } = context;
   const { effects } = kitEffectState;
@@ -136,8 +138,9 @@ const healWarmingUp = (context: KitContext, characterId: number): void => {
   addKitStatus(kitEffectState, characterId, { id: WARMING_UP_ICD_ID, secondsRemaining: WARMING_UP_ICD_SECONDS });
 };
 
-// Precise Movement's status and, from Constellation 2, the ATK it gives each other member while it lasts, as gcsim's c2Init
-// Gates its mod on the status. The party buff runs on the same seconds, and the blessing's exit ends it with the status
+// Precise Movement's status and, from Constellation 2, the ATK it gives each other member while it lasts, as gcsim's
+// `c2Init` Gates its mod on the status. The party buff runs on the same seconds, and the blessing's exit ends it with
+// The Status
 const addPreciseMovement = (
   kitEffectState: KitEffectState,
   party: Party,
@@ -169,8 +172,8 @@ const restorePreciseMovementPoints = (kitEffectState: KitEffectState, characterI
   return PRECISE_MOVEMENT_ARMED_POINTS;
 };
 
-// The points Constellation 4 adds to a restore tick, as gcsim's c4Points gives them: half the overflow the last tick had,
-// And 4 for each Surging Force stack, one of which a tick spends
+// The points Constellation 4 adds to a restore tick, as gcsim's c4Points gives them: half the overflow the last tick
+// Had, And 4 for each Surging Force stack, one of which a tick spends
 const restoreConstellationFourPoints = (
   kitEffectState: KitEffectState,
   characterId: number,
@@ -188,8 +191,9 @@ const restoreConstellationFourPoints = (
   return overflow * CONSTELLATION_4_OVERFLOW_RATIO + (stacks > 0 ? CONSTELLATION_4_STACK_POINTS : 0);
 };
 
-// Constellation 6's Extreme Force, as gcsim's c6OnOverflow gives it: the active character takes 25% DMG Bonus on every element
-// And the Physical DMG Bonus for 3 seconds, the overflow that set it off on the restore tick, given to the field character
+// Constellation 6's Extreme Force, as gcsim's c6OnOverflow gives it: the active character takes 25% DMG Bonus on every
+// Element And the Physical DMG Bonus for 3 seconds, the overflow that set it off on the restore tick, given to the
+// Field character
 const addExtremeForce = (kitEffectState: KitEffectState, fieldCharacterId: number): void => {
   for (const attribute of DAMAGE_BONUS_ATTRIBUTES)
     buffKitMember(kitEffectState, fieldCharacterId, {
@@ -200,19 +204,17 @@ const addExtremeForce = (kitEffectState: KitEffectState, fieldCharacterId: numbe
     });
 };
 
-// Iansan's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain six a second for the 16
-// Seconds it lasts. gcsim ends the blessing when the points fall to 0.2, and the kit ends it when they reach none, a gap of
-// A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and her restore's first tick falls
-// A second after the press, for 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
-// Burst's Party ATK bonus and its conversion of the points into ATK. Her restore's share of the field character's movement
-// Is logged on the Kinetic Energy Scale her burst starts, and its points heal Warming Up too. Her strikes and plunges are
-// Her record's alone
-// Constellation 1's energy from each 6 Nightsoul points consumed is built
-// Constellation 2's party ATK and the Precise Movement on the burst are built, from Ascension 1
-// Constellation 4's Surging Force and the overflow it reads are built
-// Constellation 6's longer restore and Extreme Force on overflow are built
-// Ascension 1's Precise Movement is built on the Stormflight's strikes, and gives its points on the burst's restore
-// Ascension 4's Warming Up is built: a nearby Nightsoul burst gives it, and the restore's points heal the active character on it
+// Iansan's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain six a second for the
+// 16 Seconds it lasts. gcsim ends the blessing when the points fall to 0.2, and the kit ends it when they reach none, a
+// Gap of A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and her restore's first tick
+// Falls A second after the press, for 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
+// Burst's Party ATK bonus and its conversion of the points into ATK. Her restore's share of the field character's
+// Movement Is logged on the Kinetic Energy Scale her burst starts, and its points heal Warming Up too. Her strikes and
+// Plunges are Her record's alone Constellation 1's energy from each 6 Nightsoul points consumed is built Constellation
+// 2's party ATK and the Precise Movement on the burst are built, from Ascension 1 Constellation 4's Surging Force and
+// The overflow it reads are built Constellation 6's longer restore and Extreme Force on overflow are built Ascension
+// 1's Precise Movement is built on the Stormflight's strikes, and gives its points on the burst's restore Ascension 4's
+// Warming Up is built: a nearby Nightsoul burst gives it, and the restore's points heal the active character on it
 export const createIansanKitBehaviour = (): KitBehaviour => ({
   burst: {
     onStart: ({ activeCombatant, kitEffectState, party }) => {
@@ -286,11 +288,12 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
       : [],
   onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
     const { characterId, constellationCount } = combatant;
-    // Warming Up is given by a Nightsoul burst that goes off anywhere in the team, on the field or off it, as gcsim subscribes
+    // Warming Up is given by a Nightsoul burst that goes off anywhere in the team, on the field or off it, as gcsim
+    // Subscribes
     if (event.kind === KitEventKind.NightsoulBurst && combatant.ascension >= ASCENSION_4)
       addKitStatus(kitEffectState, characterId, { id: IANSAN_WARMING_UP_ID, secondsRemaining: WARMING_UP_SECONDS });
-    // Another member's burst, while her restore runs and she is off the field, gives her Surging Force once per burst of hers,
-    // As gcsim's OnBurst subscription does
+    // Another member's burst, while her restore runs and she is off the field, gives her Surging Force once per burst
+    // Of hers, As gcsim's OnBurst subscription does
     if (
       event.kind === KitEventKind.BurstUsed &&
       constellationCount >= CONSTELLATION_4 &&
@@ -309,8 +312,8 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
       });
     }
     // The blessing's exit, by its seconds or by its points, ends Precise Movement and the burst's restore, as gcsim's
-    // ExitNightsoul deletes a1Key and resets burstSrc, so a blessing she enters again resumes neither. The party ATK that
-    // Constellation 2 gave runs on Precise Movement, so it ends with it
+    // ExitNightsoul deletes a1Key and resets burstSrc, so a blessing she enters again resumes neither. The party ATK
+    // That Constellation 2 gave runs on Precise Movement, so it ends with it
     if (
       event.kind === KitEventKind.EffectExpired &&
       event.effect.kind === "status" &&
@@ -367,8 +370,8 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     startKitCooldown(kitEffectState, characterId, CONSTELLATION_1_COOLDOWN_ID, CONSTELLATION_1_COOLDOWN_SECONDS);
     gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
   },
-  // Gcsim's OnMovement does for her burst's restore: the field character's movement is logged on the Kinetic Energy Scale
-  // While it is up, but none of Iansan's own, as she is not the active character then
+  // Gcsim's OnMovement does for her burst's restore: the field character's movement is logged on the Kinetic Energy
+  // Scale While it is up, but none of Iansan's own, as she is not the active character then
   onStep: ({ kitEffectState }, { characterId }, _stepSeconds, movement = 0) => {
     if (movement <= 0 || kitEffectState.fieldCharacterId === characterId) return;
     const scale = findKitStatus(kitEffectState.effects, characterId, KINETIC_ENERGY_SCALE_ID);

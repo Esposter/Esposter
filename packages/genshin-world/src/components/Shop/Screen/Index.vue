@@ -69,8 +69,8 @@ const { count, goodId, resetShopPick } = useShopPick();
 const tabId = ref(0);
 const tabs = computed(() => computeShopTabs(goods, gameText));
 const pickedTabId = computed(() => tabs.value.find(({ id }) => id === tabId.value)?.id ?? tabs.value[0]?.id);
-// The goods on offer to this rank now, on the picked tab where the shop has tabs, priced at the reputation the player has. A
-// Good's costs are currencies, or items the bag holds, as a fish is
+// The goods on offer to this rank now, on the picked tab where the shop has tabs, priced at the reputation the player
+// Has. A Good's costs are currencies, or items the bag holds, as a fish is
 const offeredGoods = computed(() =>
   goods.flatMap((good) =>
     checkIsShopGoodOffered(good, adventureRank, now) &&
@@ -144,9 +144,9 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
 </script>
 
 <template>
-  <!-- The shop a city vendor sells from, opened by their talk: the goods on offer to the player's rank, and the picked
-       good's detail with its costs, limit and refresh, the count the player buys and the Buy button. A shop with no tabs
-       lists its goods one under another, as the General Goods does -->
+  <!-- The shop a city vendor sells from, opened by their talk: the goods on offer to the player's rank, and the
+    picked good's detail with its costs, limit and refresh, the count the player buys and the Buy button. A shop
+    with no tabs lists its goods one under another, as the General Goods does -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Shop]">
     <ShopScreenList
       v-if="tabs.length === 0"

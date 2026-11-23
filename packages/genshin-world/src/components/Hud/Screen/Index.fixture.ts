@@ -20,11 +20,11 @@ import { InteractionKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The English mobile client's world HUD on a 1920 by 935 screen, from the public recording of a session at 70 seconds,
-// Letterboxed, so cropped to the game's screen and scored over the part clear of its subtitles. Its touch layout is drawn,
-// As the recording plays on a phone. Mona, Klee and the Traveler, named Tabibito by its player, are the party's rows it
-// Shows, and Venti, a bow's wielder, is on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full, so no
-// Meter shows, and the quest tracked is the one the recording shows: its title, and its objective 1540m off and higher,
-// At the least height the line names, its own height unread
+// Letterboxed, so cropped to the game's screen and scored over the part clear of its subtitles. Its touch layout is
+// Drawn, As the recording plays on a phone. Mona, Klee and the Traveler, named Tabibito by its player, are the party's
+// Rows it Shows, and Venti, a bow's wielder, is on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full,
+// So no Meter shows, and the quest tracked is the one the recording shows: its title, and its objective 1540m off and
+// Higher, At the least height the line names, its own height unread
 const PARTY_CHARACTER_IDS = [MONA_CHARACTER_ID, 10000029, VENTI_CHARACTER_ID, TRAVELER_CHARACTER_ID];
 const FIELD_MEMBER_INDEX = 2;
 const characterDataMap = new Map(

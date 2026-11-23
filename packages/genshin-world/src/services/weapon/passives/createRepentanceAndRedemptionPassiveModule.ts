@@ -6,9 +6,9 @@ import { takeOne } from "@esposter/shared";
 
 const REPENTANCE_AND_REDEMPTION_SOURCE = "repentanceAndRedemption";
 
-// Repentance and Redemption, Blade of Atonement's passive at its rank: after its wielder triggers an Elemental Reaction, its
-// Elemental Mastery rises by the rank's amount for the rank's seconds, and after a Stellar Glimmer reaction its ATK rises by
-// The rank's percentage for the rank's seconds, whether or not the wielder is on the field
+// Repentance and Redemption, Blade of Atonement's passive at its rank: after its wielder triggers an Elemental
+// Reaction, its Elemental Mastery rises by the rank's amount for the rank's seconds, and after a Stellar Glimmer
+// Reaction its ATK rises by The rank's percentage for the rank's seconds, whether or not the wielder is on the field
 export const createRepentanceAndRedemptionPassiveModule = (params: number[]): PassiveModule =>
   createReactionStellarBuffPassiveModule({
     reactionAmount: takeOne(params, 0),

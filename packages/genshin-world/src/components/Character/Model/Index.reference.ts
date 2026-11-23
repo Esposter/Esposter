@@ -2,9 +2,9 @@ import type { ComponentReference } from "genshin-interface";
 
 import { GameSourceKind, InvestigationOutcome } from "genshin-interface";
 
-// The Traveler's model's motion in the game's data: the four locomotion clips the fit takes its motion from, and the rig
-// Of PlayerGirl's model whose bone paths those clips name. Each topic lists what each investigation found and what is
-// Still open, the way the locomotion reference does for the body's speeds
+// The Traveler's model's motion in the game's data: the four locomotion clips the fit takes its motion from, and the
+// Rig Of PlayerGirl's model whose bone paths those clips name. Each topic lists what each investigation found and what
+// Is Still open, the way the locomotion reference does for the body's speeds
 export const reference: ComponentReference = {
   sources: {
     playerGirlAvatar: {

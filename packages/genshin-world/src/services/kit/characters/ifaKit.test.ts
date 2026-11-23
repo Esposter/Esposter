@@ -38,7 +38,8 @@ const createIfaCombatant = (constellationCount = 0, ascension = 0): Combatant =>
   weaponType: WeaponType.Catalyst,
 });
 
-// The DMG Bonus Ifa's party reaction hook adds to a reaction of the given type, read with her points in the given context
+// The DMG Bonus Ifa's party reaction hook adds to a reaction of the given type, read with her points in the given
+// Context
 const partyDamageBonusOf = (combatant: Combatant, reactionType: KitReaction["reactionType"], context: KitContext) =>
   IFA_KIT.getPartyReactionBonus?.(
     combatant,

@@ -3,9 +3,9 @@ import type { WorldDrop } from "#src/models/world/WorldDrop";
 
 import { ID_SEPARATOR } from "@esposter/shared";
 
-// Where the items one source drops lie, an enemy that fell, an ore that broke or an offering whose rewards the bag had no
-// Room for: each a drop of its own at the source's ground point, numbered from the drops the page has placed so far, so
-// No two drops of the page share an id. A drop keeps the artifact it rolled, so the artifact is the one picked up
+// Where the items one source drops lie, an enemy that fell, an ore that broke or an offering whose rewards the bag had
+// No Room for: each a drop of its own at the source's ground point, numbered from the drops the page has placed so far,
+// So No two drops of the page share an id. A drop keeps the artifact it rolled, so the artifact is the one picked up
 export const placeDroppedItems = (
   { id, position }: Pick<WorldDrop, "id" | "position">,
   droppedItems: DroppedItem[],

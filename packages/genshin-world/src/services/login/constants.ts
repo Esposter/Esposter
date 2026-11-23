@@ -7,7 +7,8 @@ import { TravelerGender } from "genshin-text";
 // The server the English recording's account is on (`yt-rBnfA4pXw6U`, 1080 high): the game names its servers from the
 // List it is sent, so no text of its own carries the name
 export const LOGIN_SERVER_NAME = "Asia";
-// The folder the login scene's exports are extracted into, which the scene reads them from under a host that serves them
+// The folder the login scene's exports are extracted into, which the scene reads them from under a host that serves
+// Them
 export const LOGIN_SCENE_EXPORT_COMPONENT = "login";
 // The empty list a frame reads while the witness has no exported parts, named once so a frame builds none
 export const LOGIN_NO_EXPORTED_GROUPS: readonly Object3D[] = [];
@@ -73,15 +74,15 @@ export const LOGIN_DOOR_PROMPT_FADE_MS = 300;
 // The last stretch's pace, a share of the path a millisecond, which bounds the flight while loading too
 export const LOGIN_LAST_STRETCH_PACE: number = (1 - LOGIN_FLIGHT_LOADING_SHARE) / LOGIN_DOOR_AFTER_LOAD_MS;
 // The procedural normal detail the bridges' stone leans its normals by: a cell as wide as the exports' own surface
-// Wavelength read from their frame (21.8913 metres), and the amplitude that brings our mean lean to the exports' bend of
-// 1.7607 degrees, solved at that wavelength (openspec/changes/genshin-recreation-passes/design.md)
+// Wavelength read from their frame (21.8913 metres), and the amplitude that brings our mean lean to the exports' bend
+// Of 1.7607 degrees, solved at that wavelength (openspec/changes/genshin-recreation-passes/design.md)
 export const LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH = 21.8913;
 export const LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE = 0.8388;
 // The bridges' grain: their exports' structure over their pixels (the surface pass's terms, variance then bands finest
-// First), each divided by their mean lightness of 0.6256 squared as the textures' statistics are relative, and scaled by
-// The ratio the surface pass read our grain's terms at against the exports' (0.20 to 0.26), since a colour's multiplier
-// Moves its lightness at a fraction of its own share. At a pixel's 0.2280 metres at the bridges' depth, the octave
-// Amplitudes that reproduce these are solved by `computeSurfaceOctaves`
+// First), each divided by their mean lightness of 0.6256 squared as the textures' statistics are relative, and scaled
+// By The ratio the surface pass read our grain's terms at against the exports' (0.20 to 0.26), since a colour's
+// Multiplier Moves its lightness at a fraction of its own share. At a pixel's 0.2280 metres at the bridges' depth, the
+// Octave Amplitudes that reproduce these are solved by `computeSurfaceOctaves`
 export const LOGIN_BRIDGE_SURFACE_DETAIL: SurfaceDetail = {
   bands: [0.00083468, 0.00017876, 0.00009911, 0.000058],
   metresPerTexel: 0.228,

@@ -32,9 +32,8 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { spendDew } from "#src/services/party/spendDew";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
-// Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding the
-// RES below for 10 seconds
-// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
+// Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding
+// The RES below for 10 seconds Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const SANCTUARY_SECONDS = 15;
 const SHRED_SECONDS = 10;
 const SHRED_STATUS_ID = "lauma-skill-shred";
@@ -45,26 +44,26 @@ const SHRED_STATUS_ID = "lauma-skill-shred";
 // Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const SKILL_HOLD_MAXIMUM_DEW_COUNT = 3;
 
-// Measured: gcsim (MIT) lauma/asc.go, her Moonsign Benediction turns the party's Bloom into Lunar-Bloom and adds 0.0175%
-// Base DMG Bonus to its Lunar-Bloom for each point of her Elemental Mastery, at most 14%
+// Measured: gcsim (MIT) lauma/asc.go, her Moonsign Benediction turns the party's Bloom into Lunar-Bloom and adds
+// 0.0175% Base DMG Bonus to its Lunar-Bloom for each point of her Elemental Mastery, at most 14%
 // Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.000175;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
-// Cleansing for the Spring, Lauma's Ascension 4 passive as its text gives it: her Elemental Skill's DMG rises by 0.04% for
-// Each point of her Elemental Mastery, to at most 32%
+// Cleansing for the Spring, Lauma's Ascension 4 passive as its text gives it: her Elemental Skill's DMG rises by 0.04%
+// For Each point of her Elemental Mastery, to at most 32%
 const ASCENSION_4 = 4;
 const CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.0004;
 const CLEANSING_MAXIMUM_DAMAGE_BONUS = 0.32;
 
-// Measured: gcsim (MIT) lauma/burst.go, her burst gives the party 18 Pale Hymn 96 frames after it starts, and the burst and
-// Each Pale Hymn last 15 seconds. Each Bloom or Lunar-Bloom reaction then spends one, Moon Song's before the burst's
-// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
+// Measured: gcsim (MIT) lauma/burst.go, her burst gives the party 18 Pale Hymn 96 frames after it starts, and the burst
+// And Each Pale Hymn last 15 seconds. Each Bloom or Lunar-Bloom reaction then spends one, Moon Song's before the
+// Burst's Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const BURST_SECONDS = 15;
 const PALE_HYMN_SECONDS = 15;
 const PALE_HYMN_BURST_STACKS = 18;
 const PALE_HYMN_GAIN_FRAMES = 96;
-// Measured: gcsim (MIT) lauma/skill.go, each Dew Hymn of Eternal Rest spends during her burst gives the Moon Song six Pale
-// Hymn, once in each burst. A Dew spent outside it waits for the burst's gain, for 15 seconds
+// Measured: gcsim (MIT) lauma/skill.go, each Dew Hymn of Eternal Rest spends during her burst gives the Moon Song six
+// Pale Hymn, once in each burst. A Dew spent outside it waits for the burst's gain, for 15 seconds
 // Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const MOON_SONG_PALE_HYMN_PER_DEW = 6;
 
@@ -144,15 +143,16 @@ const spendPaleHymn = (kitEffectState: KitEffectState, characterId: number): voi
     consumeKitResource(kitEffectState, characterId, LAUMA_PALE_HYMN_BURST_ID, 1);
 };
 
-// The Elemental Mastery ratio Constellation 2 adds to a Pale Hymn Bloom, or to a Lunar-Bloom, from Constellation 2 onward
+// The Elemental Mastery ratio Constellation 2 adds to a Pale Hymn Bloom, or to a Lunar-Bloom, from Constellation 2
+// Onward
 const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: boolean): number => {
   if (constellationCount < C2_CONSTELLATION) return 0;
   return isLunar ? C2_LUNAR_BLOOM_INCREASE : C2_BLOOM_INCREASE;
 };
 
-// Constellation 4 restores 5 energy to Lauma as a Frostgrove Sanctuary tick strikes an enemy, once every 5 seconds, as gcsim
-// `v2.47.2` (MIT) lauma/skill.go's tick callback and lauma/cons.go give it
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go
+// Constellation 4 restores 5 energy to Lauma as a Frostgrove Sanctuary tick strikes an enemy, once every 5 seconds, as
+// Gcsim `v2.47.2` (MIT) lauma/skill.go's tick callback and lauma/cons.go give it
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_COOLDOWN_ID = "lauma-constellation-4-cooldown";
 const CONSTELLATION_4_COOLDOWN_SECONDS = 5;
@@ -202,21 +202,22 @@ const restoreSanctuaryEnergy = ({ kitEffectState, party }: KitContext, { combata
 
 // Lauma's behaviour: Hymn of Hunting's press and its hold each plant the Frostgrove Sanctuary where she stands, whose
 // Ticks add the table's share of her Elemental Mastery, and every hit of the skill's sheds the table's Dendro and Hydro
-// RES. Hymn of Eternal Rest plays while the party holds Dew, spending up to three on a direct Lunar-Bloom hit
-// Following her, its multiplier of her Elemental Mastery for each Dew spent. Her Moonsign Benediction adds Base DMG Bonus
-// For her Elemental Mastery. Her burst gives the party Pale Hymn 96 frames in, a Dew Hymn of Eternal Rest spends during
-// The burst gives the Moon Song its Pale Hymn, each Bloom or Lunar-Bloom reaction spends one, and the Pale Hymn adds her
+// RES. Hymn of Eternal Rest plays while the party holds Dew, spending up to three on a direct Lunar-Bloom hit Following
+// Her, its multiplier of her Elemental Mastery for each Dew spent. Her Moonsign Benediction adds Base DMG Bonus For her
+// Elemental Mastery. Her burst gives the party Pale Hymn 96 frames in, a Dew Hymn of Eternal Rest spends during The
+// Burst gives the Moon Song its Pale Hymn, each Bloom or Lunar-Bloom reaction spends one, and the Pale Hymn adds her
 // Elemental Mastery to each of those reactions the party makes. Not built yet: the Spirit Envoy state her charged
 // Attack's first press enters, which waits on a stance that drains stamina; Light for the Frosty Night and her
-// Constellations; the Spirit Envoy's cooldown reduction of Cleansing for the Spring, as the charged attack's cooldown is not
-// Read by a kit
-// Constellation 1's Threads of Life heal is built, from each Lunar-Bloom reaction; the Spirit Envoy's deer is not
-// Constellation 4's energy is built, from each Sanctuary tick that strikes an enemy, once every 5 seconds
-// Constellation 6 needs the Pale Hymn stacks it gives and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
+// Constellations; the Spirit Envoy's cooldown reduction of Cleansing for the Spring, as the charged attack's cooldown
+// Is not Read by a kit Constellation 1's Threads of Life heal is built, from each Lunar-Bloom reaction; the Spirit
+// Envoy's deer is not Constellation 4's energy is built, from each Sanctuary tick that strikes an enemy, once every 5
+// Seconds Constellation 6 needs the Pale Hymn stacks it gives and an extra Lunar-Bloom Dendro hit per Sanctuary attack,
+// Not built
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
-  // Pale Hymn's flat Elemental Mastery on Bloom, Hyperbloom and Burgeon, and on Lunar-Bloom, at her burst's talent level
+  // Pale Hymn's flat Elemental Mastery on Bloom, Hyperbloom and Burgeon, and on Lunar-Bloom, at her burst's talent
+  // Level
   const paleHymnBloomIncrease = readParameter("paleHymnBloomDamageIncrease");
   const paleHymnLunarBloomIncrease = readParameter("paleHymnLunarBloomDamageIncrease");
   // The RES Dendro and Hydro enemies lose to a hit of the skill's, for its seconds
@@ -240,8 +241,8 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
     enemyStatus: createShredStatus,
     talentMultiplier: holdLunarBloomFields.talentMultiplier * dewCount,
   });
-  // The Frostgrove Sanctuary the press and the hold each plant where she stands, its ticks striking as her Elemental Skill,
-  // As gcsim v2.47.2 (MIT) lauma/skill.go tags them, so Cleansing for the Spring reaches them
+  // The Frostgrove Sanctuary the press and the hold each plant where she stands, its ticks striking as her Elemental
+  // Skill, As gcsim v2.47.2 (MIT) lauma/skill.go tags them, so Cleansing for the Spring reaches them
   const plantSanctuary = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     castKitSummon(kitEffectState, body, combatant, sanctuaryTicks, {
       attackTag: AttackTag.ElementalSkill,
@@ -250,8 +251,8 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
   };
   const pressBehaviour: KitActionBehaviour = { hits: [shredBehaviour], onStart: plantSanctuary };
   return {
-    // Her burst starts the Pale Hymn's gain, which comes 96 frames later as a status's expiry, and clears the Moon Song's
-    // Internal cooldown from the last burst
+    // Her burst starts the Pale Hymn's gain, which comes 96 frames later as a status's expiry, and clears the Moon
+    // Song's Internal cooldown from the last burst
     burst: {
       onStart: ({ activeCombatant, kitEffectState }) => {
         const { characterId } = activeCombatant;
@@ -268,9 +269,9 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
           });
       },
     },
-    // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it holds
-    // Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery, and Constellation 2 adds to each ratio as
-    // Lauma/cons.go does
+    // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it
+    // Holds Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery, and Constellation 2 adds to each
+    // Ratio as Lauma/cons.go does
     getPartyReactionBonus: (member, { reactionType }, { kitEffectState }) => {
       if (!PALE_HYMN_REACTION_TYPES.has(reactionType) || !checkHasPaleHymn(kitEffectState.effects, member.characterId))
         return {};

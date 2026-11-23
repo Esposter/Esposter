@@ -15,9 +15,10 @@ const grantElectroInfusion = (context: GcgEffectContext): void => {
   addGcgZoneCardToCharacter(context, takeOne(duel.sides, sideIndex).activeIndex, ELECTRO_INFUSION_ID, electroInfusion);
 };
 
-// Stellar Restoration, Keqing's elemental skill: 3 Electro DMG. Once the damage is dealt, a Lightning Stiletto is created in
-// Hand if the hand has room (the wiki's Stellar Restoration (Character Card Skill)). With a Lightning Stiletto in hand, every
-// Copy there is discarded instead and Keqing gains Electro Infusion, and no copy is created (the card's own text)
+// Stellar Restoration, Keqing's elemental skill: 3 Electro DMG. Once the damage is dealt, a Lightning Stiletto is
+// Created in Hand if the hand has room (the wiki's Stellar Restoration (Character Card Skill)). With a Lightning
+// Stiletto in hand, every Copy there is discarded instead and Keqing gains Electro Infusion, and no copy is created
+// (the card's own text)
 export const stellarRestoration: GcgSkillModule = {
   afterDamage: (context) => {
     const side = takeOne(context.duel.sides, context.sideIndex);

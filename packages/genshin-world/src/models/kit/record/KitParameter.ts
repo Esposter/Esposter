@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 // A value of a kit's record read from a talent's table, by its proud skill group and its parameter's index, or a number
-// Where no table holds it. A multiplier of a constellation's variant also names the constellation its loop bounds read at
+// Where no table holds it. A multiplier of a constellation's variant also names the constellation its loop bounds read
+// At
 export type KitParameter = { constellation?: number | undefined; index: number; proudSkillGroupId: number } | number;
 
 export const kitParameterSchema = z.union([

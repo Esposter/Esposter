@@ -3,10 +3,10 @@ import type { BossMove } from "#src/models/bosses/BossMove";
 import { Element } from "#src/models/Element";
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
 
-// The Legatus Golem's attacks from its wiki page, in the order the page lists them. Geo Shield is the golem's shield and the
-// Paralysis its break leaves, not an attack, so it is not a move, and its numbers are constants below. Most attack names are
-// Unofficial, as the wiki gives them. The World Quest version of Resonant Detonation is not modelled. Each move's windup and
-// Recovery are the common enemies' and are PROVISIONAL until measured
+// The Legatus Golem's attacks from its wiki page, in the order the page lists them. Geo Shield is the golem's shield
+// And the Paralysis its break leaves, not an attack, so it is not a move, and its numbers are constants below. Most
+// Attack names are Unofficial, as the wiki gives them. The World Quest version of Resonant Detonation is not modelled.
+// Each move's windup and Recovery are the common enemies' and are PROVISIONAL until measured
 export const LEGATUS_GOLEM_MOVES: BossMove[] = [
   // Disabled in the Spiral Abyss, which the move does not yet read
   { atkPercent: 50, name: "Overture", recoverySeconds: ENEMY_RECOVERY_SECONDS, windupSeconds: ENEMY_WINDUP_SECONDS },

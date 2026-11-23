@@ -100,10 +100,11 @@ const getAdjacentSection = (step: number): ArchiveSection =>
 </script>
 
 <template>
-  <!-- The game's Archive as its Equipment section's weapons draw it: the section's title across the head with the close mark, the
-       count of open entries, its entries in a grid five across, each tile tinted by its rarity with its stars and name on a band,
-       the "New" badges, the grid's scrollbar, the picked entry's name and lore down the right and the filter bar under the grid.
-       The arrows at the screen's edges step between the sections, as Q and E do -->
+  <!-- The game's Archive as its Equipment section's weapons draw it: the section's title across the head with the
+    close mark, the count of open entries, its entries in a grid five across, each tile tinted by its rarity with
+    its stars and name on a band, the "New" badges, the grid's scrollbar, the picked entry's name and lore down the
+    right and the filter bar under the grid. The arrows at the screen's edges step between the sections, as Q and E
+    do -->
   <GameScreen class="archive-screen">
     <ArchiveScreenDecoration />
     <ScreenHeader :game-text :mark="CloseButtonMark.Back" :title="sectionTitle" @close="emit('close')" />

@@ -2,9 +2,9 @@ import type { Object3D, SkinnedMesh } from "three";
 
 import { findSkinnedMesh } from "genshin-engine";
 
-// The skinned mesh a body holds, found again only after a child is added to or taken from a node of the body's tree. A model
-// Arrives and is taken away as a child, which three reports on its parent at any depth, so the finder listens on every node
-// It has walked, and a skinned mesh attached deeper under a model is found once that model arrives
+// The skinned mesh a body holds, found again only after a child is added to or taken from a node of the body's tree. A
+// Model Arrives and is taken away as a child, which three reports on its parent at any depth, so the finder listens on
+// Every node It has walked, and a skinned mesh attached deeper under a model is found once that model arrives
 export const createSkinnedMeshFinder = (
   body: Object3D,
 ): { dispose: () => void; find: () => SkinnedMesh | undefined } => {

@@ -8,8 +8,9 @@ import { readCatalogue } from "#src/services/world/readCatalogue";
 import { readRegionLandmarks } from "#src/services/world/readRegionLandmarks";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
-// The map on M over the English PC client's Jueyun Karst, the pointer where the subarea labels the reference draws stand
-// Round it at the zoom the reference's slider stands at, scored against the wiki's full-screen 1080p screenshot of it
+// The map on M over the English PC client's Jueyun Karst, the pointer where the subarea labels the reference draws
+// Stand Round it at the zoom the reference's slider stands at, scored against the wiki's full-screen 1080p screenshot
+// Of it
 const catalogue = await readCatalogue(GAME_DATA_LOCAL_BASE_URL);
 // Every region's landmarks, read from the region data the parity page serves as the world's start reads them. The map
 // Draws the unlocked ones alone, so every landmark is unlocked here and no quest is done, which holds a weekly boss's

@@ -4,12 +4,10 @@ import { InteractionState } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The menu with every screen built, so each entry is drawn as the game draws it, the world's own unbuilt ones disabled
-// Being a state of their own
-// The account is at Adventure Rank 2 with 385 of its 500 Adventure EXP, a World Level of 0, no birthday set and no main
-// Quest finished, as the reference reads, so Friends at rank 2 is the one system a rank or quest gates that is open, and the
-// Menu draws the frame's nine contents
-// The red dots are the frame's: on Achievements, the Community, Version Highlights and Survey links, the notices and mail
-// Icons, and the profile's pencil
+// Being a state of their own The account is at Adventure Rank 2 with 385 of its 500 Adventure EXP, a World Level of 0,
+// No birthday set and no main Quest finished, as the reference reads, so Friends at rank 2 is the one system a rank or
+// Quest gates that is open, and the Menu draws the frame's nine contents The red dots are the frame's: on Achievements,
+// The Community, Version Highlights and Survey links, the notices and mail Icons, and the profile's pencil
 export const props = {
   accountName: "",
   adventureExpProgress: 0.77,

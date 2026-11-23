@@ -21,9 +21,10 @@ const checkHasJadeBuffs = (effects: readonly KitEffect[], characterId: number): 
     (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === JADE_SOURCE,
   );
 
-// Jade Circulation at its rank: off the field for more than the rank's away seconds, its wielder's Max HP and Elemental Mastery
-// Rise by the rank's two amounts, and they stand until she has been on the field for the rank's on-field seconds. Each count
-// Restarts when she leaves or returns to the field, so the buffs come up only after a full run of seconds away
+// Jade Circulation at its rank: off the field for more than the rank's away seconds, its wielder's Max HP and Elemental
+// Mastery Rise by the rank's two amounts, and they stand until she has been on the field for the rank's on-field
+// Seconds. Each count Restarts when she leaves or returns to the field, so the buffs come up only after a full run of
+// Seconds away
 export const createJadeCirculationPassiveModule = (params: number[]): PassiveModule => {
   const onFieldSeconds = takeOne(params, 0);
   const awaySeconds = takeOne(params, 1);

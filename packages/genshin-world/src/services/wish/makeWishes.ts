@@ -38,7 +38,8 @@ export const makeWishes = (
     const stellaFortuna: Pick<WishResult, "masterlessStellaFortunaCount" | "stellaFortunaCount"> = {};
     if (item.kind === WishItemKind.Character) {
       nextHeldCountMap.set(item.id, heldCount + 1);
-      // A duplicate among the first six brings its character's own Stella Fortuna; a five-star past them, a Masterless one
+      // A duplicate among the first six brings its character's own Stella Fortuna; a five-star past them, a Masterless
+      // One
       if (heldCount > 0 && heldCount <= CONSTELLATION_COUNT) {
         nextStellaFortunaCountMap.set(item.id, (nextStellaFortunaCountMap.get(item.id) ?? 0) + 1);
         stellaFortuna.stellaFortunaCount = 1;

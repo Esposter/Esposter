@@ -6,12 +6,12 @@ import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { z } from "zod";
 
 // One character or weapon of Paimon's Bargains as a good: its goods id and limit, the id it gives (an avatar's for a
-// Character, a weapon's for a weapon), how many it gives, and the costs it is bought with. It has no sale dates, since the
-// Rotation gives none, so it is always on offer while its month holds
+// Character, a weapon's for a weapon), how many it gives, and the costs it is bought with. It has no sale dates, since
+// The Rotation gives none, so it is always on offer while its month holds
 export type PaimonsBargainsGood = Pick<ShopGood, "costs" | "itemCount" | "itemId"> & ShopGoodLimit;
 
-// The costs one of Paimon's Bargains' sets is sold at each time: the items it is bought with and how many of each, and how many
-// Of the set a player may buy in a refresh, and when that limit comes back
+// The costs one of Paimon's Bargains' sets is sold at each time: the items it is bought with and how many of each, and
+// How many Of the set a player may buy in a refresh, and when that limit comes back
 export interface PaimonsBargainsPrice {
   buyLimit: number;
   costs: ShopGoodCost[];
@@ -19,9 +19,9 @@ export interface PaimonsBargainsPrice {
 }
 
 // Paimon's Bargains' rotation as the shops dataset holds it: the pairs of characters it offers in turn, by their avatar
-// Ids, in the order the pairs come round, and the five weapons of each set, Blackcliff and Royal, by their weapon ids. Each
-// Slot of the pair and of the set is bought as one good, by its goods id, and the characters and the weapons each have the
-// Price their goods give
+// Ids, in the order the pairs come round, and the five weapons of each set, Blackcliff and Royal, by their weapon ids.
+// Each Slot of the pair and of the set is bought as one good, by its goods id, and the characters and the weapons each
+// Have the Price their goods give
 export interface PaimonsBargainsRotation {
   blackcliffWeaponIds: number[];
   characterGoodIds: number[];

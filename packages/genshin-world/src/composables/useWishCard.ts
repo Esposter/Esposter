@@ -19,7 +19,8 @@ interface WishCardSource {
   getTrials: () => readonly Trial[];
 }
 
-// The card the open banner shows, its trial and the five-star notice a drawn five-star gives, each in the reader's language
+// The card the open banner shows, its trial and the five-star notice a drawn five-star gives, each in the reader's
+// Language
 export const useWishCard = ({ banner, bannerKind, getGameText, getTrials }: WishCardSource) => {
   // The trial the open banner's featured character has, which the card's button opens
   const bannerTrial = computed(() =>

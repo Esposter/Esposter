@@ -43,7 +43,8 @@ describe(deliverBirthdayMail, () => {
     expect(deliverBirthdayMail(delivered, BIRTHDAY, BIRTHDAY_ROWS, BIRTHDAY_NOON)).toStrictEqual(delivered);
   });
 
-  // The next birthday delivers its own copy beside the one claimed on an earlier birthday, which the Gift Mail Box keeps
+  // The next birthday delivers its own copy beside the one claimed on an earlier birthday, which the Gift Mail Box
+  // Keeps
   test("the birthday mail is delivered again on a later birthday beside the copy claimed on an earlier one", () => {
     expect.hasAssertions();
 

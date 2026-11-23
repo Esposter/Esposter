@@ -8,8 +8,8 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 
 // A passive whose wielder's normal attack hit opens a status, which raises the damage of the wielder's strikes with the
-// Skill attack tags it names by its amount while it holds. Each such hit the wielder lands raises its Normal Attack DMG by
-// The buff's amount for the buff's seconds. Each raise restarts when its hit lands again
+// Skill attack tags it names by its amount while it holds. Each such hit the wielder lands raises its Normal Attack DMG
+// By The buff's amount for the buff's seconds. Each raise restarts when its hit lands again
 export const createNormalAttackStatusPassiveModule = (
   skillAttackTags: readonly AttackTag[],
   {

@@ -2,9 +2,9 @@ import { ExpeditionPassiveKind } from "#src/models/expedition/ExpeditionPassiveK
 import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 import { z } from "zod";
 
-// A utility passive whose description names an expedition, by the proud skill group it belongs to: a time talent shortens
-// The expedition sent to its region by its percent, and a reward talent adds that percent to the rewards of the one sent to
-// Its region for its hours. A time talent names no hours, so only a reward talent has them
+// A utility passive whose description names an expedition, by the proud skill group it belongs to: a time talent
+// Shortens The expedition sent to its region by its percent, and a reward talent adds that percent to the rewards of
+// The one sent to Its region for its hours. A time talent names no hours, so only a reward talent has them
 export type ExpeditionPassive = ExpeditionRewardPassive | ExpeditionTimePassive;
 
 interface ExpeditionRewardPassive {

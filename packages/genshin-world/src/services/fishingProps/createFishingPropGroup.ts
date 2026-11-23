@@ -6,9 +6,9 @@ import { FISHING_PROP_STAND_IN_COLOR } from "#src/services/fishingProps/constant
 import { createPropStandInGeometry, setObjectSurface } from "genshin-engine";
 import { Group, Mesh } from "three";
 
-// The stand-ins of one region's fishing-area props: one mesh for each place, at the place's position, turn and scale, with
-// One geometry shared by the places of each prop name and the one material every stand-in shares. The geometries are
-// Returned so the component holding the group disposes them with the material
+// The stand-ins of one region's fishing-area props: one mesh for each place, at the place's position, turn and scale,
+// With One geometry shared by the places of each prop name and the one material every stand-in shares. The geometries
+// Are Returned so the component holding the group disposes them with the material
 export const createFishingPropGroup = (
   places: readonly FishingPropPlace[],
   material: Material,

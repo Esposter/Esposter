@@ -9,8 +9,8 @@ import { learnForgeRecipe } from "#src/services/forging/learnForgeRecipe";
 import { learnHomeBlueprint } from "#src/services/home/learnHomeBlueprint";
 
 // What an item of the bag teaches when it is used: a cooking instruction, a forge diagram, a crafting instruction or a
-// Blueprint's diagram, by the item's id. Undefined where the item teaches none. Every kind is routed here, so the check that
-// Offers the Use and the use itself read the same kind and cannot disagree about it
+// Blueprint's diagram, by the item's id. Undefined where the item teaches none. Every kind is routed here, so the check
+// That Offers the Use and the use itself read the same kind and cannot disagree about it
 export const getInventoryItemLearning = (
   { definition: { id } }: InventoryItem,
   {

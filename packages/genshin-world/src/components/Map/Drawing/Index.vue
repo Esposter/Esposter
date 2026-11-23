@@ -32,7 +32,7 @@ const areaOutlines = computed(() => {
 
 <template>
   <!-- The map's one drawing, which the overlay and the minimap each view: the catalogue's drawn outlines and the
-       landmarks a jump lands at, in the catalogue's metres, turned into the view's frame by the transform it is given -->
+    landmarks a jump lands at, in the catalogue's metres, turned into the view's frame by the transform it is given -->
   <g :transform>
     <polygon v-for="{ id, points } of areaOutlines" :key="id" class="area" :points />
     <MapDrawingMark

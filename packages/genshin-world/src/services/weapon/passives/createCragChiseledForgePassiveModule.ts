@@ -11,8 +11,8 @@ const CRAG_CHISELED_FORGE_SOURCE = "cragChiseledForge";
 
 // Crag-Chiseled Forge at its rank: each Elemental Burst its wielder uses, which spends its Energy, raises its Elemental
 // Mastery by the rank's amount for the rank's seconds, up to two stacks. Each stack runs on its own timer, as Press the
-// Advantage's do, and a burst at the cap adds none. The Energy decrease is read as the wielder's own burst, the spend its
-// Kit event carries
+// Advantage's do, and a burst at the cap adds none. The Energy decrease is read as the wielder's own burst, the spend
+// Its Kit event carries
 export const createCragChiseledForgePassiveModule = (params: number[]): PassiveModule => {
   const elementalMastery = takeOne(params, 0);
   const seconds = takeOne(params, 1);

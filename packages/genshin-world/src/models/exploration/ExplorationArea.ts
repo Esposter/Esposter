@@ -4,8 +4,9 @@ import { explorationDoingSchema } from "#src/models/exploration/ExplorationDoing
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// An area's exploration as the game's table gives it: the catalogue area it is, the total its progress is a share of, the
-// Reputation ratio its nation's exploration weighs it by where the table sets one, and the doings its progress counts
+// An area's exploration as the game's table gives it: the catalogue area it is, the total its progress is a share of,
+// The Reputation ratio its nation's exploration weighs it by where the table sets one, and the doings its progress
+// Counts
 export interface ExplorationArea {
   areaId: string;
   doings: ExplorationDoing[];

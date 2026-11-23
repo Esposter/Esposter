@@ -15,9 +15,10 @@ import {
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { takeOne, takeRandom } from "@esposter/shared";
 
-// What a weekly boss's claim pays at a World Level: its Mora, a talent count of one of Dvalin's Plume, Claw and Sigh, one
-// Northlander billet and one Dream Solvent where `random` falls under their chances, and each star tier's Ascension Gem at the
-// Count its average rounds to at random. A row paying no talent material pays none, and no talent item is drawn
+// What a weekly boss's claim pays at a World Level: its Mora, a talent count of one of Dvalin's Plume, Claw and Sigh,
+// One Northlander billet and one Dream Solvent where `random` falls under their chances, and each star tier's Ascension
+// Gem at the Count its average rounds to at random. A row paying no talent material pays none, and no talent item is
+// Drawn
 export const drawWeeklyBossReward = (worldLevel: number, random: () => number): ItemCount[] => {
   const row = computeWeeklyBossRow(worldLevel);
   const { chance, count } = takeOne(WEEKLY_BOSS_TALENT_DROPS, row);

@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 
 const BROCADE_BLOOM_BOOST_ID = "brocadeBloomGeoBoost";
 
-// Brocade Bloom, Shrine Sword at its rank: the wielder's Normal Attack DMG and Elemental Skill DMG are raised by the rank's
-// First and second amounts. A Geo hit a nearby active character deals boosts both by the rank's share, which is 100% at every
-// Rank, for the rank's seconds
+// Brocade Bloom, Shrine Sword at its rank: the wielder's Normal Attack DMG and Elemental Skill DMG are raised by the
+// Rank's First and second amounts. A Geo hit a nearby active character deals boosts both by the rank's share, which is
+// 100% at every Rank, for the rank's seconds
 export const createBrocadeBloomShrineSwordPassiveModule = (params: number[]): PassiveModule => {
   const normalAttackBonus = takeOne(params, 1);
   const elementalSkillBonus = takeOne(params, 2);

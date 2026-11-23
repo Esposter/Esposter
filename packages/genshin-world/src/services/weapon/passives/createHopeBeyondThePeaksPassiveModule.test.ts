@@ -21,8 +21,8 @@ describe(createHopeBeyondThePeaksPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
   const wielder = createWielderCombatant();
-  // Hope Beyond the Peaks at its first rank: 12% Elemental Skill DMG, and 12% more for eight seconds after another member's
-  // Elemental Skill. Its climbing Stamina line is not read here
+  // Hope Beyond the Peaks at its first rank: 12% Elemental Skill DMG, and 12% more for eight seconds after another
+  // Member's Elemental Skill. Its climbing Stamina line is not read here
   const passiveModule = createHopeBeyondThePeaksPassiveModule([0.15, 0.12, 0.12, 8]);
   const getSkillStrikeBonus = (effects: readonly KitEffect[]) =>
     passiveModule.getStrikeDamageBonus?.(createWeaponStrike(wielder, AttackTag.ElementalSkill), enemy, party, effects);

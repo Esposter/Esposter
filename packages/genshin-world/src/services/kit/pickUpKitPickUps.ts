@@ -6,8 +6,8 @@ import type { GroundPoint } from "genshin-engine";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { computeGroundDistance } from "genshin-engine";
 
-// Whether a body standing where it stands picks up an effect: a pick-up that has not run out, may be picked up, and lies
-// Within its radius of the body
+// Whether a body standing where it stands picks up an effect: a pick-up that has not run out, may be picked up, and
+// Lies Within its radius of the body
 const checkIsPickedUp = (effect: KitEffect, body: GroundPoint): effect is KitPickUp =>
   effect.kind === "pickUp" &&
   effect.secondsRemaining > 0 &&

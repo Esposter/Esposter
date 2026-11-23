@@ -12,8 +12,9 @@ const CARDS_TO_DRAW = 2;
 const checkIsGcgInspiringHit = (hit: GcgDealtDamage): boolean =>
   hit.damageType === GcgDamageKind.Physical || hit.damageType === GcgDamageKind.Piercing || hit.reaction !== undefined;
 
-// Chang the Ninth: after either side uses a Skill that deals Physical or Piercing DMG, or triggers an Elemental Reaction, it
-// Gains one Inspiration, once for the skill. At three Inspiration it is discarded, and its side draws two cards
+// Chang the Ninth: after either side uses a Skill that deals Physical or Piercing DMG, or triggers an Elemental
+// Reaction, it Gains one Inspiration, once for the skill. At three Inspiration it is discarded, and its side draws two
+// Cards
 export const changTheNinth: GcgCardModule = {
   initialUsages: 1,
   onAnySkillUsed: ({ duel, sideIndex }, _skill, zoneCard, dealt) => {

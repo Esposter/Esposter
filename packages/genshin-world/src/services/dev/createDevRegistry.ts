@@ -11,8 +11,8 @@ import { runDevScenario } from "#src/services/dev/runDevScenario";
 import { setDevVariable } from "#src/services/dev/setDevVariable";
 import { splitDevLine } from "#src/services/dev/splitDevLine";
 
-// The table an owner's handles are registered into. A disposed command moves to the unmounted table rather than leaving,
-// So a line naming it says the command is not available here instead of that it is unknown
+// The table an owner's handles are registered into. A disposed command moves to the unmounted table rather than
+// Leaving, So a line naming it says the command is not available here instead of that it is unknown
 export const createDevRegistry = (): DevRegistry => {
   const commands = new Map<string, DevCommand>();
   const unmountedCommands = new Map<string, DevCommand>();

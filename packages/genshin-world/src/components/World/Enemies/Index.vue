@@ -59,7 +59,8 @@ interface Props {
   // Boss down until a teleport lands outside its area after its defeat
   lastTeleportAts: ReadonlyMap<string, Temporal.Instant>;
   lightUniforms: LightUniforms;
-  // The camps of the ley line outcrops whose fights run: each spawns whole as its fight starts, and is dropped as it is won
+  // The camps of the ley line outcrops whose fights run: each spawns whole as its fight starts, and is dropped as it is
+  // Won
   outcropCamps: EnemyCamp[];
   rampTexture: DataTexture;
   regionDataMap: ReadonlyMap<string, RegionData>;
@@ -67,8 +68,8 @@ interface Props {
   sightScene: Scene;
   // The point the enemies target, the character's feet, which none is given while no character stands in the world
   target?: GroundPoint | undefined;
-  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of its
-  // Area comes
+  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of
+  // Its Area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The World Level the camps spawn at, which a change of it spawns every camp anew at
   worldLevel: number;

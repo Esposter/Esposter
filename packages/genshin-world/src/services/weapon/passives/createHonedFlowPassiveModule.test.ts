@@ -18,8 +18,8 @@ const getWavespikeStacks = (effects: readonly KitEffect[]) =>
 
 describe(createHonedFlowPassiveModule, () => {
   const wielder = createWielderCombatant();
-  // Honed Flow at its first rank: 12% All Elemental DMG Bonus, two Wavespike stacks at most once every 0.3 seconds, and each
-  // Stack consumed by the wielder's Elemental Skill raises its Normal Attack DMG by 20% for eight seconds
+  // Honed Flow at its first rank: 12% All Elemental DMG Bonus, two Wavespike stacks at most once every 0.3 seconds, and
+  // Each Stack consumed by the wielder's Elemental Skill raises its Normal Attack DMG by 20% for eight seconds
   const passiveModule = createHonedFlowPassiveModule([0.12, 2, 0.3, 0.2, 8]);
   const otherUsesSkill = (context: KitContext) =>
     passiveModule.onKitEvent?.({ characterId: OTHER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, wielder);

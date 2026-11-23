@@ -5,7 +5,8 @@ import { DEV_CLOCK_TIME_REGEX } from "#src/services/dev/constants";
 import { parseDevClockTime } from "#src/services/dev/parseDevClockTime";
 import { z } from "zod";
 
-// `time <HH:MM>` sets the game clock to the hour and minute given, and is not available while the world's clock is unmounted
+// `time <HH:MM>` sets the game clock to the hour and minute given, and is not available while the world's clock is
+// Unmounted
 export const createTimeCommand = ({
   getGameClock,
 }: {

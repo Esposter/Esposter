@@ -6,9 +6,9 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
 
-// Pays a skill's or a card's dice costs from the dice chosen, which must be exactly the number the costs take: dice of an
-// Element first, then Matching dice of the character's element, then Unaligned dice of any face, each taking an Omni die
-// Once its own face runs out. Refused, and the dice left as they were, when the chosen dice do not cover the costs
+// Pays a skill's or a card's dice costs from the dice chosen, which must be exactly the number the costs take: dice of
+// An Element first, then Matching dice of the character's element, then Unaligned dice of any face, each taking an Omni
+// Die Once its own face runs out. Refused, and the dice left as they were, when the chosen dice do not cover the costs
 export const payGcgCost = (
   side: GcgSideState,
   matchingElement: Element,

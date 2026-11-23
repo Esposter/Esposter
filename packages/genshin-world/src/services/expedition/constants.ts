@@ -2,8 +2,8 @@
 export const EXPEDITION_BASE_LIMIT = 2;
 // The Adventure Rank expeditions are sent from, at Katheryne's branch of the Adventurers' Guild
 export const EXPEDITION_UNLOCK_RANK = 14;
-// Katheryne's NPC id, whose talk opens the expedition screen. Provisional: the Adventurers' Guild row the NPC table holds
-// For her, the lowest id of the Katheryne rows, placed at the Adventurers' building point
+// Katheryne's NPC id, whose talk opens the expedition screen. Provisional: the Adventurers' Guild row the NPC table
+// Holds For her, the lowest id of the Katheryne rows, placed at the Adventurers' building point
 export const KATHERYNE_NPC_ID = "1512";
 // Mondstadt's expedition pins at 1080 high in the frame, in the order of the places the table holds, measured off the
 // Public clip of the expedition screen at 26 seconds

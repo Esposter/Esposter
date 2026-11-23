@@ -21,8 +21,9 @@ import { toTrounceBlossom } from "#src/services/save/toTrounceBlossom";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
 
-// The world's systems read from a save, the derived ones left to the rules that read them on load. The bag's definitions
-// Are read by the item's id, the one thing a save does not hold about an item, and its names from the name-text chunks
+// The world's systems read from a save, the derived ones left to the rules that read them on load. The bag's
+// Definitions Are read by the item's id, the one thing a save does not hold about an item, and its names from the
+// `name-text` chunks
 export const readGenshinSave = (
   {
     achievements,

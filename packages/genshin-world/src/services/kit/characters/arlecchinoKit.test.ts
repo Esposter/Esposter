@@ -113,7 +113,8 @@ describe(createArlecchinoKitBehaviour, () => {
     expect(ARLECCHINO_KIT.burstCooldownSeconds).toBe(15);
   });
 
-  // Her utility passive, The Balemoon Alone May Know, has no ascension phase: it holds from the start, below every phase
+  // Her utility passive, The Balemoon Alone May Know, has no ascension phase: it holds from the start, below every
+  // Phase
   test("the utility passive, The Balemoon Alone May Know, holds from ascension 0, having no phase to reach", () => {
     expect.hasAssertions();
     const combatant = createArlecchinoCombatant(0);

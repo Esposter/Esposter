@@ -34,7 +34,8 @@ describe(createSilkenMoonsSerenadeSetModule, () => {
   const FOURTH_CHARACTER_ID = 4;
   // A Moonsign character's kit, which counts toward the team's Moonsign level
   const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-  // The wearer, who wears four pieces, and the other members in the map, the ones in benedictedIds carrying a Moonsign benediction
+  // The wearer, who wears four pieces, and the other members in the map, the ones in benedictedIds carrying a Moonsign
+  // Benediction
   const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
     const wearer = createKitCombatant(
       TRAVELER_CHARACTER_ID,

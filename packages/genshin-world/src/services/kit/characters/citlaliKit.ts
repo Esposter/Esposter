@@ -18,8 +18,8 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 export const CITLALI_CHARACTER_ID = 10_000_107;
 
-// Her Nightsoul points hold 100 at most. Her burst gives 24, and her skill's press enters the Blessing for 20 seconds with
-// Its points plus 24, as gcsim (MIT) citlali/burst.go and skill.go do
+// Her Nightsoul points hold 100 at most. Her burst gives 24, and her skill's press enters the Blessing for 20 seconds
+// With Its points plus 24, as gcsim (MIT) citlali/burst.go and skill.go do
 const NIGHTSOUL_MAXIMUM = 100;
 const NIGHTSOUL_BURST_POINTS = 24;
 const NIGHTSOUL_SKILL_POINTS = 24;
@@ -27,7 +27,8 @@ const NIGHTSOUL_BLESSING_SECONDS = 20;
 
 // The Opal Fire takes effect in the Blessing at 50 points or more and drains 0.8 points every 6 frames, eight a second,
 // Until none is left, as gcsim (MIT) citlali/skill.go tryEnterOpalFireState and nightsoulPointReduceTask do. Itzpapa's
-// Frostfall Storm strikes every 59 frames from when it takes effect, as skill.go's itzpapaInterval and itzpapaHitTask do
+// Frostfall Storm strikes every 59 frames from when it takes effect, as skill.go's itzpapaInterval and itzpapaHitTask
+// Do
 const OPAL_FIRE_POINTS = 50;
 const OPAL_FIRE_DRAIN_POINTS = 0.8;
 const OPAL_FIRE_DRAIN_FRAMES = 6;
@@ -38,16 +39,16 @@ const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_SELF_ELEMENTAL_MASTERY = 125;
 
-// Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her burst
-// Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
-// Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit
-// Constellation 2 gives Citlali her own 125 Elemental Mastery. Built: that share alone; the 250 it gives the active member
-// While the Opal Shield or the Blessing stands waits on the Opal Shield, which is not built. Not built: Ascension 1 and 4,
-// Constellations 1, 4 and 6, among them Constellation 6, which lets the Opal Fire start Below 50 points and outlast its
-// Points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7 metres, which the burst's start
-// Cannot place since it reads no enemies but its target. Ascension 4's flat damage on the Frostfall Storm from Elemental
-// Mastery is not built either
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/citlali/burst.go
+// Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her
+// Burst Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle
+// Every 59 Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage
+// Landing on every hit Constellation 2 gives Citlali her own 125 Elemental Mastery. Built: that share alone; the 250 it
+// Gives the active member While the Opal Shield or the Blessing stands waits on the Opal Shield, which is not built.
+// Not built: Ascension 1 and 4, Constellations 1, 4 and 6, among them Constellation 6, which lets the Opal Fire start
+// Below 50 points and outlast its Points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7
+// Metres, which the burst's start Cannot place since it reads no enemies but its target. Ascension 4's flat damage on
+// The Frostfall Storm from Elemental Mastery is not built either
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/citlali/burst.go`
 export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBehaviour => {
   // The Frostfall Storm as its record holds it, the strike every enemy in its circle takes on each storm
   const frostfallStormHit = readHit("frostfallStorm");
@@ -60,9 +61,9 @@ export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBeha
         queueKitPassiveHit(context, combatant, frostfallStormHit, enemy);
   };
 
-  // Puts the Opal Fire on the team's effects once Citlali is in the Blessing with 50 points or more and it is not on already,
-  // As gcsim's tryEnterOpalFireState does. It is a field ticking every frame, so its drain and its storms fall on the frames
-  // Gcsim queues them on, from the frame it takes effect
+  // Puts the Opal Fire on the team's effects once Citlali is in the Blessing with 50 points or more and it is not on
+  // Already, As gcsim's tryEnterOpalFireState does. It is a field ticking every frame, so its drain and its storms fall
+  // On the frames Gcsim queues them on, from the frame it takes effect
   const enterOpalFire = (context: KitContext) => {
     const { activeCombatant, kitEffectState } = context;
     const { characterId } = activeCombatant;

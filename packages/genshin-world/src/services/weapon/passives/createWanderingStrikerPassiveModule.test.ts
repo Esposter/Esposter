@@ -24,8 +24,8 @@ describe(createWanderingStrikerPassiveModule, () => {
     { attribute: Attribute.BaseAttack, value: 100 },
     { attribute: Attribute.BaseHealth, value: 1000 },
   ]);
-  // Wandering Striker at its first rank: an attack hit releases an Accursed Spirit at 180% ATK, once every 8 seconds, restoring
-  // 100% ATK as HP, and the wielder's DMG is decreased by 50%
+  // Wandering Striker at its first rank: an attack hit releases an Accursed Spirit at 180% ATK, once every 8 seconds,
+  // Restoring 100% ATK as HP, and the wielder's DMG is decreased by 50%
   const passiveModule = createWanderingStrikerPassiveModule([1.8, 1, 8, -0.5], { heals: true });
 
   test("an attack hit the wielder deals queues an Accursed Spirit at the rank's multiplier on the enemy it struck", () => {

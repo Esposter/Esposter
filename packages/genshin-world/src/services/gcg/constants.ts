@@ -75,8 +75,8 @@ export const GcgReactionPairs: [Element, Element, GcgReactionKind][] = [
   [Element.Hydro, Element.Dendro, GcgReactionKind.Bloom],
   [Element.Electro, Element.Dendro, GcgReactionKind.Quicken],
 ];
-// The element or physical damage each damage effect's name spells: Physic is Physical, and the game spells the other six
-// Elements its own way, which the world's Element enum spells otherwise
+// The element or physical damage each damage effect's name spells: Physic is Physical, and the game spells the other
+// Six Elements its own way, which the world's Element enum spells otherwise
 export const GcgEffectDamageNameMap: Map<string, Element | GcgDamageKind> = new Map<string, Element | GcgDamageKind>([
   ["Elec", Element.Electro],
   ["Electric", Element.Electro],
@@ -90,8 +90,8 @@ export const GcgEffectDamageNameMap: Map<string, Element | GcgDamageKind> = new 
 ]);
 // The name of a shared damage effect, its element or Physic and its damage: Effect_Damage_Fire_3 names Fire and 3
 export const GCG_EFFECT_DAMAGE_REGEX = /^Effect_Damage_(?<element>\w+)_(?<count>\d+)$/u;
-// The cards the reactions leave on their attacker's side: Burning Flame as a summon that stacks to two usages, and Dendro
-// Core and Catalyzing Field onstage, each with the usages it holds once it is left
+// The cards the reactions leave on their attacker's side: Burning Flame as a summon that stacks to two usages, and
+// Dendro Core and Catalyzing Field onstage, each with the usages it holds once it is left
 export const GCG_BURNING_FLAME_ID = 115;
 export const GCG_BURNING_FLAME_MAX_USAGES = 2;
 export const GCG_DENDRO_CORE_ID = 116;
@@ -103,10 +103,12 @@ export const GCG_FOOD_STATUS_CARD_IDS: number[] = [333_001, 333_003, 333_004, 33
 // Toss-Up, whose play takes the dice it rerolls as its choice, and the two rerolls it makes
 export const GCG_TOSS_UP_CARD_ID = 332_003;
 export const GCG_TOSS_UP_REROLL_COUNT = 2;
-// The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its turns by
+// The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its
+// Turns by
 export const GCG_PLAYER_SIDE_INDEX = 0;
 export const GCG_OPPONENT_SIDE_INDEX = 1;
-// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst, then a Technique
+// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst, then
+// A Technique
 export const GCG_SKILL_KIND_DISPLAY_ORDER: GcgSkillKind[] = [
   GcgSkillKind.NormalAttack,
   GcgSkillKind.ElementalSkill,

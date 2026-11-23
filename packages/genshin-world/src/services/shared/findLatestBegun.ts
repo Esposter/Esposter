@@ -1,8 +1,8 @@
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
 
-// The item that began latest before `now`, its start a wall-clock time in the game's time zone that `getStartsAt` reads off
-// It. An item has no recorded end, so a dump read months on keeps its last item rather than none, and undefined only when no
-// Item has begun yet
+// The item that began latest before `now`, its start a wall-clock time in the game's time zone that `getStartsAt` reads
+// Off It. An item has no recorded end, so a dump read months on keeps its last item rather than none, and undefined
+// Only when no Item has begun yet
 export const findLatestBegun = <TItem>(
   items: readonly TItem[],
   getStartsAt: (item: TItem) => string,

@@ -1,10 +1,11 @@
-/* oxlint-disable selector-ban/no-restricted-syntax -- a lazy-loader contract: each boss kind's moves load as its camp spawns, keeping every boss module out of the world's first screen */
+/* oxlint-disable selector-ban/no-restricted-syntax -- a lazy-loader contract: each boss kind's moves load as its
+   camp spawns, keeping every boss module out of the world's first screen */
 import type { BossMove } from "#src/models/bosses/BossMove";
 
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 
-// Each boss kind's moves, loaded by the camp that spawns it: a boss's module is a chunk of its own, so the world's first
-// Screen loads none it does not spawn. A kind with no entry is a common enemy that makes its basic attack
+// Each boss kind's moves, loaded by the camp that spawns it: a boss's module is a chunk of its own, so the world's
+// First Screen loads none it does not spawn. A kind with no entry is a common enemy that makes its basic attack
 export const EnemyKindMovesLoaderMap: Partial<Record<EnemyKindId, () => Promise<readonly BossMove[]>>> = {
   [EnemyKindId.AeonblightDrake]: async () =>
     (await import("#src/services/bosses/aeonblightDrake")).AEONBLIGHT_DRAKE_MOVES,

@@ -10,8 +10,8 @@ import { sumItemCount } from "#src/services/inventory/sumItemCount";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 
 // How many times a recipe can be crafted at `now` from what the bag and the wallet hold: the least of the times each
-// Material's cost per craft and the Mora allow, a material the recipe names twice costing both counts together. Original
-// Resin is paid from the wallet regenerated to `now`, not from the bag
+// Material's cost per craft and the Mora allow, a material the recipe names twice costing both counts together.
+// Original Resin is paid from the wallet regenerated to `now`, not from the bag
 export const computeCraftableCount = (
   recipe: CraftingRecipe,
   { inventory, resinParam, wallet }: { inventory: Inventory; resinParam: ResinParam; wallet: Wallet },

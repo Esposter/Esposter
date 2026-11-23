@@ -23,8 +23,9 @@ const worldSessionStore = useWorldSessionStore();
 const { gameDataBaseUrl } = storeToRefs(worldSessionStore);
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
-// The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted with its character,
-// So the field draws another model in its place, and a model arriving after its character has gone is released at once
+// The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted with its
+// Character, So the field draws another model in its place, and a model arriving after its character has gone is
+// Released at once
 readCharacterMesh(characterPackReader, {
   characterId,
   gameDataBaseUrl: gameDataBaseUrl.value,
@@ -50,6 +51,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- An MMD model faces +z, turned half round to face -z as a yaw of none does, so it faces where whatever holds it does -->
+  <!-- An MMD model faces +z, turned half round to face -z as a yaw of none does, so it faces where whatever holds
+    it does -->
   <primitive v-if="mesh" :object="mesh" :rotation-y="Math.PI" cast-shadow receive-shadow />
 </template>

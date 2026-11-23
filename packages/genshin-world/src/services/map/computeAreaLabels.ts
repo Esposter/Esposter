@@ -4,8 +4,8 @@ import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
 import { computeFilledAreaIds } from "#src/services/map/computeFilledAreaIds";
 
-// Each filled area's name at the middle of its outline, or of its unlocked landmarks where its outline is not drawn yet,
-// And no name for an area with neither, since the map has nowhere to put it. A blank area carries no name
+// Each filled area's name at the middle of its outline, or of its unlocked landmarks where its outline is not drawn
+// Yet, And no name for an area with neither, since the map has nowhere to put it. A blank area carries no name
 export const computeAreaLabels = (
   catalogue: Catalogue,
   unlockedLandmarks: readonly PlaceLandmark[],

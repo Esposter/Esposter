@@ -7,8 +7,8 @@ import { changeKitTeamHealth } from "#src/services/kit/effects/changeKitTeamHeal
 
 // Rolls a hit's party heal, if the hit has one and its striker's character holds a shield it cast, never a Crystallize
 // Shield, or the heal is unshielded, and on a pass heals each member of the deployed team by the flat HP plus the
-// Striker's ATK, DEF and Max HP shares as it is priced. It returns whether it healed, so a hit with several Enemies rolls
-// Until one heal passes
+// Striker's ATK, DEF and Max HP shares as it is priced. It returns whether it healed, so a hit with several Enemies
+// Rolls Until one heal passes
 export const healKitParty = (
   context: KitContext,
   combatant: Combatant,

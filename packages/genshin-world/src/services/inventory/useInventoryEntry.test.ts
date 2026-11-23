@@ -123,7 +123,8 @@ describe(useInventoryEntry, () => {
     expect(use?.inventory.items).toStrictEqual([]);
   });
 
-  // The instruction's materials row as the dump gives it: a Consume material of stack limit 2000, read by its name's text id
+  // The instruction's materials row as the dump gives it: a Consume material of stack limit 2000, read by its name's
+  // Text id
   const INSTRUCTION_NAME_TEXT_ID = "3664176372";
   const instructionMaterial: MaterialData = {
     id: INSTRUCTION_ITEM_ID,

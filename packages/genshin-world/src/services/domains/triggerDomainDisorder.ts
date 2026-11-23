@@ -9,7 +9,8 @@ import { getDomainDisorderSource } from "#src/services/domains/getDomainDisorder
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 
 // Gives the team a triggered disorder's bonus when its trigger lands, and returns the seconds the disorder may trigger
-// Again. A trigger inside its cooldown, or one with every stack given, changes nothing and keeps the seconds it was given
+// Again. A trigger inside its cooldown, or one with every stack given, changes nothing and keeps the seconds it was
+// Given
 export const triggerDomainDisorder = (
   kitEffectState: KitEffectState,
   party: Party,

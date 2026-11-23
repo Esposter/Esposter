@@ -2,10 +2,11 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 // Whether an effect restarts an earlier one: a buff, an infusion, a status or a stance of the same kind on the same
-// Character, and for a buff the same attribute from the same source, for an infusion the same element, for a status the same id,
-// And for an element's CRIT DMG the same character, element and source. An anti-cold is restarted by the next, as the team holds one.
-// A field its character casts again under the same name restarts it, as the game does, unless it is stacked, several standing
-// Under one name as gcsim keeps each one. A field with no name, a bubble and a summon are never restarted, as each one is its own
+// Character, and for a buff the same attribute from the same source, for an infusion the same element, for a status the
+// Same id, And for an element's CRIT DMG the same character, element and source. An anti-cold is restarted by the next,
+// As the team holds one. A field its character casts again under the same name restarts it, as the game does, unless it
+// Is stacked, several standing Under one name as gcsim keeps each one. A field with no name, a bubble and a summon are
+// Never restarted, as each one is its own
 const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
   if (earlier.kind === "buff" && effect.kind === "buff")
     return (
@@ -35,9 +36,9 @@ const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
   return false;
 };
 
-// Adds an effect to the field's list, the game restarting what it is given again rather than stacking it.
-// A shield is recast over the one a character holds, which ends there, so the earlier one is dropped on the next step and
-// Its explosion, if it has one, goes off then. A Crystallize shield overwrites the team's one Crystallize shield alone,
+// Adds an effect to the field's list, the game restarting what it is given again rather than stacking it. A shield is
+// Recast over the one a character holds, which ends there, so the earlier one is dropped on the next step and Its
+// Explosion, if it has one, goes off then. A Crystallize shield overwrites the team's one Crystallize shield alone,
 // Beside every character's own
 export const addKitEffect = (kitEffectState: KitEffectState, effect: KitEffect): void => {
   if (effect.kind === "shield")

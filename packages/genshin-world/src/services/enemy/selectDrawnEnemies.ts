@@ -3,9 +3,9 @@ import type { GroundPoint } from "genshin-engine";
 
 import { computeGroundDistanceSquared } from "genshin-engine";
 
-// The enemies the draw takes this frame, as many as its capacity, the nearest to the character first. The map holds every
-// Camp of every loaded region, so the nearest are kept in one pass, each inserted in order, rather than sorting them all.
-// While no character stands in the world there is no nearest, so the map's own order decides
+// The enemies the draw takes this frame, as many as its capacity, the nearest to the character first. The map holds
+// Every Camp of every loaded region, so the nearest are kept in one pass, each inserted in order, rather than sorting
+// Them all. While no character stands in the world there is no nearest, so the map's own order decides
 export const selectDrawnEnemies = (
   enemies: Iterable<Enemy>,
   target: GroundPoint | undefined,

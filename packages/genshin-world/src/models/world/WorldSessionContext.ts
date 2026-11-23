@@ -9,9 +9,9 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { GameLanguage, GameText } from "genshin-text";
 import type { Ref } from "vue";
 
-// What the session reads from where it starts and never changes: the game's data and words in the reader's language, the
-// Item tables a drop is named and an artifact is rolled from, and the world's clock, which the session store hands to
-// Every feature that needs one of them
+// What the session reads from where it starts and never changes: the game's data and words in the reader's language,
+// The Item tables a drop is named and an artifact is rolled from, and the world's clock, which the session store hands
+// To Every feature that needs one of them
 export interface WorldSessionContext {
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;

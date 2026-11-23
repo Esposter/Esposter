@@ -47,8 +47,8 @@ const definitions = new Map<number, ItemDefinition>(
 const now = Temporal.Instant.fromEpochMilliseconds(0);
 const gameDay = computeGameDay(now);
 const UNIT_SECONDS = 3;
-// The Enhancement Ore queue forging its fifth unit, four done and two seconds left in it, and the Adventure Rank that opens
-// The third queue
+// The Enhancement Ore queue forging its fifth unit, four done and two seconds left in it, and the Adventure Rank that
+// Opens The third queue
 const progress: ForgeProgress = {
   forgedPoints: 0,
   forgedPointsDay: gameDay,
@@ -58,8 +58,8 @@ const progress: ForgeProgress = {
   ],
 };
 
-// A four-star weapon the forge yields, and a three-star weapon the bag already holds, whose entry the order's weapons are
-// Told from
+// A four-star weapon the forge yields, and a three-star weapon the bag already holds, whose entry the order's weapons
+// Are Told from
 const getWeaponData = (rarity: number) => {
   const weaponData = [...weaponDataMap.values()].find((data) => data.rarity === rarity);
   if (!weaponData)
@@ -91,8 +91,8 @@ const heldWeaponEntry: InventoryItem = {
   quantity: 1,
   refinement: 1,
 };
-// An order of `count` units of the recipe, every unit done by `now`, in the Forge Queues tab above a bag holding the weapon
-// And the ore left after the order's materials were taken
+// An order of `count` units of the recipe, every unit done by `now`, in the Forge Queues tab above a bag holding the
+// Weapon And the ore left after the order's materials were taken
 const createDoneOrderVariant = (recipeId: number, count: number) => ({
   inventory: createBag(heldWeaponEntry, createOreEntry(1, 28)),
   progress: {
@@ -134,8 +134,8 @@ export const props = {
   wallet: createWallet(375_527),
   weapons,
 };
-// The Forge Queues tab, and the day's forge points spent to the cap, which refuses the Enhancement Ore in place of Start,
-// And the Queues tab holding a finished order of the first ore's recipe or of the four-star weapon's
+// The Forge Queues tab, and the day's forge points spent to the cap, which refuses the Enhancement Ore in place of
+// Start, And the Queues tab holding a finished order of the first ore's recipe or of the four-star weapon's
 export const variants = {
   oresDone: createDoneOrderVariant(takeOne(recipes, 0).id, 5),
   queues: { inventory: createBag(createOreEntry(0, 28)), tab: ForgeTab.Queues, wallet: createWallet(375_502) },

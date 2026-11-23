@@ -28,13 +28,13 @@ const PARAMITA_SOURCE = "hu-tao-paramita";
 const FLUTTER_BY_SOURCE = "hu-tao-a1";
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
-// Flutter By, as gcsim v2.47.2 (MIT) hutao/asc.go gives it: when the Paramita Guide to Afterlife activated ends, each ally
-// Other than Hu Tao gains 12% CRIT Rate for 8 seconds, from Ascension 1
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/asc.go
+// Flutter By, as gcsim v2.47.2 (MIT) hutao/asc.go gives it: when the Paramita Guide to Afterlife activated ends, each
+// Ally Other than Hu Tao gains 12% CRIT Rate for 8 seconds, from Ascension 1
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/asc.go`
 const FLUTTER_BY_CRITICAL_RATE = 0.12;
 const FLUTTER_BY_SECONDS = 8;
-// Sanguine Rouge, as gcsim v2.47.2 hutao/asc.go gives it: from Ascension 4, her Pyro DMG Bonus is 33% while her HP is at
-// Or under half
+// Sanguine Rouge, as gcsim v2.47.2 hutao/asc.go gives it: from Ascension 4, her Pyro DMG Bonus is 33% while her HP is
+// At Or under half
 const SANGUINE_ROUGE_HEALTH_SHARE = 0.5;
 const SANGUINE_ROUGE_PYRO_DAMAGE_BONUS = 0.33;
 // Guide to Afterlife's HP cost never takes Hu Tao below this much HP
@@ -48,15 +48,15 @@ const BLOOD_BLOSSOM_STATUS_ID = "hu-tao-blood-blossom";
 // The count of heals is a kit resource, which a cast's start clears.
 const SPIRIT_SOOTHER_HEAL_RESOURCE = "hu-tao-spirit-soother-heals";
 const SPIRIT_SOOTHER_MAXIMUM_HEALS = 5;
-// Constellation 4, as gcsim v2.47.2 (MIT) hutao/cons.go gives it: upon defeating an enemy Blood Blossom marked, each ally
-// Other than Hu Tao gains 12% CRIT Rate for 15 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/cons.go
+// Constellation 4, as gcsim v2.47.2 (MIT) hutao/cons.go gives it: upon defeating an enemy Blood Blossom marked, each
+// Ally Other than Hu Tao gains 12% CRIT Rate for 15 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/cons.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_CRITICAL_RATE = 0.12;
 const CONSTELLATION_4_SECONDS = 15;
 const CONSTELLATION_4_SOURCE = "hu-tao-c4";
-// Constellation 6, as gcsim v2.47.2 hutao/cons.go gives it: once a drain leaves her at a quarter of her HP or under, her
-// CRIT Rate is 100% for 10 seconds, and it comes once in 60 seconds
+// Constellation 6, as gcsim v2.47.2 hutao/cons.go gives it: once a drain leaves her at a quarter of her HP or under,
+// Her CRIT Rate is 100% for 10 seconds, and it comes once in 60 seconds
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_HEALTH_SHARE = 0.25;
 const CONSTELLATION_6_CRITICAL_RATE = 1;
@@ -71,13 +71,12 @@ const CONSTELLATION_2_MAX_HEALTH_SHARE = 0.1;
 
 export const HU_TAO_CHARACTER_ID = 10_000_046;
 // Hu Tao's behaviour: Guide to Afterlife pays its HP cost from the party and holds the Paramita Papilio stance for its
-// Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack
-// Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
-// Under. Spirit Soother heals her on each enemy its hit strikes, up to five a cast. Flutter By, Sanguine Rouge and the CRIT
-// Rate of Constellations 4 and 6 are built, and Constellation 6 refuses a fall to none once a minute.
-// Constellation 1's stamina is built as the charged attack's multiplier, while the Paramita stance holds her.
-// Constellation 2 is built: Spirit Soother applies Blood Blossom, and a tick adds 10% of the Max HP she had when the
-// Effect was applied
+// Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack Puts Blood
+// Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or Under.
+// Spirit Soother heals her on each enemy its hit strikes, up to five a cast. Flutter By, Sanguine Rouge and the CRIT
+// Rate of Constellations 4 and 6 are built, and Constellation 6 refuses a fall to none once a minute. Constellation 1's
+// Stamina is built as the charged attack's multiplier, while the Paramita stance holds her. Constellation 2 is built:
+// Spirit Soother applies Blood Blossom, and a tick adds 10% of the Max HP she had when the Effect was applied
 const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
     ? []
@@ -128,16 +127,17 @@ export const createHuTaoKitBehaviour = ({
   // Spirit Soother also applies Blood Blossom from Constellation 2, to each enemy its hit strikes
   const getSpiritSootherStatus = (combatant: Combatant, wielderMaxHealth: number): EnemyStatus | undefined =>
     combatant.constellationCount < CONSTELLATION_2 ? undefined : createBloodBlossomStatus(wielderMaxHealth);
-  // Guide to Afterlife's Paramita Papilio: a stance on her for its seconds, playing her strikes and charged attack in its
-  // Own reach, which infuses her normal attacks, charged attack and plunges with Pyro, and raises her ATK by her Max HP.
-  // Its strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
+  // Guide to Afterlife's Paramita Papilio: a stance on her for its seconds, playing her strikes and charged attack in
+  // Its Own reach, which infuses her normal attacks, charged attack and plunges with Pyro, and raises her ATK by her
+  // Max HP. Its strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
   // Hutao/attack.go's ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
   const paramita = readStance("paramita", {
     chargedAttack: {
       hits: [{ enemyStatus: (_combatant, wielderMaxHealth) => createBloodBlossomStatus(wielderMaxHealth) }],
     },
   });
-  // Spirit Soother's heal from one enemy its hit strikes, the larger share at her HP at or under half, read as it strikes
+  // Spirit Soother's heal from one enemy its hit strikes, the larger share at her HP at or under half, read as it
+  // Strikes
   const healOnSpiritSootherStrike = (context: KitContext, strike: KitStrike) => {
     const { characterId } = strike.combatant;
     const { healthShare } = getPartyMember(context.party, characterId);
@@ -242,8 +242,8 @@ export const createHuTaoKitBehaviour = ({
         { attackTag: AttackTag.ElementalSkill, target: event.enemy },
       );
     },
-    // Constellation 6: a fall that would take her to none is refused once a minute, leaving her at 1 HP, as gcsim v2.47.2
-    // (MIT) hutao/cons.go revives her to 1 HP. Its cooldown starts with the refusal
+    // Constellation 6: a fall that would take her to none is refused once a minute, leaving her at 1 HP, as gcsim
+    // `v2.47.2` (MIT) hutao/cons.go revives her to 1 HP. Its cooldown starts with the refusal
     refusesFall: (combatant, kitEffectState) =>
       combatant.constellationCount >= CONSTELLATION_6 &&
       startConstellation6Cooldown(kitEffectState, combatant.characterId),

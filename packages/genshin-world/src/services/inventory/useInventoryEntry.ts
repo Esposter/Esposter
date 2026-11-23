@@ -12,10 +12,10 @@ import { getInventoryItemLearning } from "#src/services/inventory/getInventoryIt
 import { refillOriginalResinWithFragileResin } from "#src/services/originalResin/refillOriginalResinWithFragileResin";
 import { ItemCategory } from "genshin-interface";
 
-// The bag, wallet and progress after one of its entries is used, routed by the entry's kind: a food is eaten, up to `count`
-// Of it, through its dish's use by the Character on the field, Fragile Resin is routed by its id, since The published material
-// Table does not yet carry the item, and an item that teaches a dish, recipe or blueprint is used by learning it. Undefined,
-// With nothing changed, where the bag holds no such entry or its kind has no use yet
+// The bag, wallet and progress after one of its entries is used, routed by the entry's kind: a food is eaten, up to
+// `count` Of it, through its dish's use by the Character on the field, Fragile Resin is routed by its id, since The
+// Published material Table does not yet carry the item, and an item that teaches a dish, recipe or blueprint is used by
+// Learning it. Undefined, With nothing changed, where the bag holds no such entry or its kind has no use yet
 export const useInventoryEntry = (
   inventory: Inventory,
   entryId: number,

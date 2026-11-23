@@ -37,7 +37,8 @@ describe(addInventoryItem, () => {
     ]);
   });
 
-  // Most items stack to their own limit, under the save's ceiling in `MAX_ITEM_QUANTITY`, so a pick up is clamped by the item's own limit
+  // Most items stack to their own limit, under the save's ceiling in `MAX_ITEM_QUANTITY`, so a pick up is clamped by
+  // The item's own limit
   test("fills a stack to its item's limit of 9,999 and refuses the 10,000th", () => {
     expect.hasAssertions();
 

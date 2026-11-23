@@ -5,9 +5,10 @@ import { computeDoneWeight } from "#src/services/exploration/computeDoneWeight";
 import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
 import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
 
-// A nation's exploration as the map shows it. Where the areas carry their reputation ratios, each area's share of its total
-// Counts for its ratio of the nation, rounded down once at the end. Where every ratio is zero, the areas read as one area
-// Holding every doing over their summed totals, so the done weight rounds down the way an area's own share does
+// A nation's exploration as the map shows it. Where the areas carry their reputation ratios, each area's share of its
+// Total Counts for its ratio of the nation, rounded down once at the end. Where every ratio is zero, the areas read as
+// One area Holding every doing over their summed totals, so the done weight rounds down the way an area's own share
+// Does
 export const computeNationExplorationPercentage = (
   areas: readonly ExplorationArea[],
   unlockedLandmarks: readonly PlaceLandmark[],
@@ -25,6 +26,7 @@ export const computeNationExplorationPercentage = (
     );
     return sum + (area.reputationRatio * doneWeight * 100) / area.total;
   }, 0);
-  // A ratio is a float, so a share that is whole in exact arithmetic can sum a little under it, and rounding first keeps it whole
+  // A ratio is a float, so a share that is whole in exact arithmetic can sum a little under it, and rounding first
+  // Keeps it whole
   return Math.min(Math.floor(Math.round(percentage * 1e9) / 1e9), 100);
 };

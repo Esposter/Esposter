@@ -2,21 +2,22 @@ import { RegionId } from "#src/models/shared/RegionId";
 
 // The region whose ground is the world's base, read whole and laid over by none of the others
 export const WINDRISE_GROUND_REGION = "windrise";
-// Mondstadt's plateau is not laid over Windrise's base: over the base it changes 2.2 km2 of the disc by 11 m on average,
-// And against the game's own terrain tiles it takes the base from 3 m to 30 m RMS error. Clipped out of the disc instead,
-// It would step 13 m on average at the disc's edge. It stays out until a measurement holds the overlap
+// Mondstadt's plateau is not laid over Windrise's base: over the base it changes 2.2 km2 of the disc by 11 m on
+// Average, And against the game's own terrain tiles it takes the base from 3 m to 30 m RMS error. Clipped out of the
+// Disc instead, It would step 13 m on average at the disc's edge. It stays out until a measurement holds the overlap
 const MONDSTADT_GROUND_REGION = RegionId.Mondstadt;
 // The regions whose ground the world does not lay over Windrise's: Windrise's own base, read whole, and Mondstadt's
 // Plateau, measured to overlap the base
 export const UNLAID_GROUND_REGIONS: readonly string[] = [WINDRISE_GROUND_REGION, MONDSTADT_GROUND_REGION];
-// The colour a rock is drawn in: its record carries none, so a neutral stone grey stands in until a rock's colour is fitted
+// The colour a rock is drawn in: its record carries none, so a neutral stone grey stands in until a rock's colour is
+// Fitted
 export const ROCK_STAND_IN_COLOR = "#8c8a84";
 // Inazuma, whose permanent thunderstorm is lifted in its areas unless the player has restored it
 export const INAZUMA_REGION_ID = "inazuma";
-// The half width of the band either side of a region piece's outline across which its ground is blended into the base and
-// Its neighbours, one sample step of the fit's grid, the distance its gate reads its ground at
+// The half width of the band either side of a region piece's outline across which its ground is blended into the base
+// And Its neighbours, one sample step of the fit's grid, the distance its gate reads its ground at
 export const GROUND_BLEND_WIDTH = 6;
-// The separators of a ground piece's key: a slash names the next level of the split under its area, and a dash joins the
-// Quarter indices a joined group names on its level
+// The separators of a ground piece's key: a slash names the next level of the split under its area, and a dash joins
+// The Quarter indices a joined group names on its level
 export const GROUND_KEY_SEPARATOR = "/";
 export const GROUND_GROUP_SEPARATOR = "-";

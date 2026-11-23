@@ -3,8 +3,9 @@ import type { EnemyWeakPoint } from "#src/models/enemy/EnemyWeakPoint";
 import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 
 const WIKI_PAGE_BASE = "https://genshin-impact.fandom.com/wiki/";
-// The weak points the wiki states for the Ruin machines, the Automatons family, each part cited to the page of its kind. The
-// Game's kind ids here name only Ruin Drake, so the map is keyed by family; exposure conditions per kind are not modelled
+// The weak points the wiki states for the Ruin machines, the Automatons family, each part cited to the page of its
+// Kind. The Game's kind ids here name only Ruin Drake, so the map is keyed by family; exposure conditions per kind are
+// Not modelled
 export const ENEMY_FAMILY_WEAK_POINTS: Partial<Record<EnemyFamily, readonly EnemyWeakPoint[]>> = {
   [EnemyFamily.Automatons]: [
     { kind: "Ruin Guard", part: "glowing eye", source: `${WIKI_PAGE_BASE}Ruin_Guard` },

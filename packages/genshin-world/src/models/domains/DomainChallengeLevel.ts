@@ -15,7 +15,8 @@ export interface DomainChallengeLevel {
 
 export const domainChallengeLevelSchema = z.object({
   defeatTarget: z.int().positive(),
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- published game data holds null for a level with no time limit, since JSON cannot hold an infinite number
+  // Published game data holds null for a level with no
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- time limit, since JSON cannot hold an infinite number
   timeLimitSeconds: z
     .int()
     .positive()

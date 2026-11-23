@@ -10,10 +10,10 @@ import { takeOne } from "@esposter/shared";
 
 const BLOODSTAINED_CHIVALRY_STATUS_ID = "bloodstainedChivalry";
 
-// Bloodstained Chivalry. Its four-piece bonus, once its wearer defeats an opponent while it is the active character, raises
-// The DMG of its Charged Attacks by the table's second param and reduces their stamina cost to none, for the first param's
-// Seconds. The wiki counts a defeat by wildlife too, and a swap off the field does not end it. The table's last two params
-// Are not read, as the text names neither
+// Bloodstained Chivalry. Its four-piece bonus, once its wearer defeats an opponent while it is the active character,
+// Raises The DMG of its Charged Attacks by the table's second param and reduces their stamina cost to none, for the
+// First param's Seconds. The wiki counts a defeat by wildlife too, and a swap off the field does not end it. The
+// Table's last two params Are not read, as the text names neither
 export const createBloodstainedChivalrySetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(bonus.params, 0);
   const damageBonus = takeOne(bonus.params, 1);

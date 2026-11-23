@@ -6,9 +6,9 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { takeOne } from "@esposter/shared";
 
-// Nocturnal Dreams at its rank: for the rank's seconds after a charged attack hits, its wielder's Elemental Mastery rises by
-// The rank's first amount, and for the rank's second seconds after an Elemental Skill hits, by the rank's second amount. Each
-// Hit restarts its own buff, and the two buffs stand apart
+// Nocturnal Dreams at its rank: for the rank's seconds after a charged attack hits, its wielder's Elemental Mastery
+// Rises by The rank's first amount, and for the rank's second seconds after an Elemental Skill hits, by the rank's
+// Second amount. Each Hit restarts its own buff, and the two buffs stand apart
 export const createNocturnalDreamsPassiveModule = (params: number[]): PassiveModule => {
   const chargedAttackMastery = takeOne(params, 0);
   const chargedAttackSeconds = takeOne(params, 1);

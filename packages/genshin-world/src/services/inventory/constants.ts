@@ -15,7 +15,8 @@ export const WEAPON_START_LEVEL = 1;
 export const WEAPON_START_ASCENSION = 0;
 export const WEAPON_START_EXPERIENCE = 0;
 export const WEAPON_START_REFINEMENT = 1;
-// The currencies the foot of the bag shows where the sort is not, and those it files among its Precious Items, in the game's order
+// The currencies the foot of the bag shows where the sort is not, and those it files among its Precious Items, in the
+// Game's order
 export const INVENTORY_CURRENCIES: readonly Currency[] = [Currency.Primogem, Currency.Mora];
 export const PRECIOUS_CURRENCIES: readonly Currency[] = [
   Currency.MasterlessStarglitter,
@@ -26,7 +27,8 @@ export const PRECIOUS_CURRENCIES: readonly Currency[] = [
 ];
 // A new player's bag holds nothing
 export const EMPTY_INVENTORY: Readonly<Inventory> = { items: [], nextId: 0, quickSwapItemIds: [] };
-// A new player's currencies, every one at zero: the starting save gives Original Resin the game's cap from the resin record
+// A new player's currencies, every one at zero: the starting save gives Original Resin the game's cap from the resin
+// Record
 export const EMPTY_CURRENCIES: Readonly<Record<Currency, number>> = {
   [Currency.AcquaintFate]: 0,
   [Currency.AnemoSigil]: 0,
@@ -55,8 +57,8 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
 };
 // Mora's item id in the game's tables, which every pile of it a defeated enemy drops is filed under
 export const MORA_ITEM_ID = 202;
-// Character EXP's item id, which a quest's reward names. It is no bag item and no wallet currency, and no grant pays it yet,
-// So it is left out of the items and skipped by a quest's finish
+// Character EXP's item id, which a quest's reward names. It is no bag item and no wallet currency, and no grant pays it
+// Yet, So it is left out of the items and skipped by a quest's finish
 export const CHARACTER_EXP_ITEM_ID = 101;
 // The item id each currency the wallet holds is filed under in the game's material table, so a drop or a reward naming
 // One is a wallet grant, never a bag item

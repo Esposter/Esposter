@@ -17,7 +17,8 @@ import { GAME_CREAM } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
-  // The Adventure Rank, Mora and materials the character's next phase takes, each held against what it takes, none at its last phase
+  // The Adventure Rank, Mora and materials the character's next phase takes, each held against what it takes, none at
+  // Its last phase
   ascendRows: { label: string; value: string }[];
   character: Character;
   // The element mark the panel draws beside its stars, empty where the character has no element yet
@@ -26,7 +27,8 @@ interface Props {
   friendshipLevel?: number | undefined;
   // The game's words in the reader's language
   gameText: GameText;
-  // Whether the character can ascend now, at its level cap with the Adventure Rank, Mora and materials its next phase takes
+  // Whether the character can ascend now, at its level cap with the Adventure Rank, Mora and materials its next phase
+  // Takes
   isAscendable: boolean;
   // Whether the character can be raised a level with its Character EXP materials now
   isLevelUpable: boolean;
@@ -81,8 +83,8 @@ const detailGroups = computed(() =>
 </script>
 
 <template>
-  <!-- The Attributes tab's panel: the character's name and level over its cap, the experience bar, and its base attributes
-       as the game shows them. Details opens its groups beneath, each under its title -->
+  <!-- The Attributes tab's panel: the character's name and level over its cap, the experience bar, and its base
+    attributes as the game shows them. Details opens its groups beneath, each under its title -->
   <div class="attribute-list">
     <p class="name">{{ name }}</p>
     <div class="stars" aria-hidden="true">

@@ -6,9 +6,9 @@ import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCa
 
 const SHRINES_SACRED_SHADE_REDUCTION = 2;
 
-// The Shrine's Sacred Shade, Yae Miko's talent: it is equipped and Great Secret Art: Tenko Kenshin is used at once. Its counter
-// Is set to the round when Yae Miko destroys a Sesshou Sakura through Tenko Kenshin, and the next Yakan Evocation this round
-// Then costs two Elemental Dice less
+// The Shrine's Sacred Shade, Yae Miko's talent: it is equipped and Great Secret Art: Tenko Kenshin is used at once. Its
+// Counter Is set to the round when Yae Miko destroys a Sesshou Sakura through Tenko Kenshin, and the next Yakan
+// Evocation this round Then costs two Elemental Dice less
 export const theShrinesSacredShade: GcgCardModule = {
   ...createGcgTalentCard(YAE_MIKO_ID, TENKO_KENSHIN_ID),
   onCostPaid: (_context, subject, zoneCard) => {

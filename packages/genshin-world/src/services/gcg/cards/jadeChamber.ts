@@ -5,8 +5,8 @@ import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { setGcgDiceFaces } from "#src/services/gcg/effects/setGcgDiceFaces";
 import { takeOne } from "@esposter/shared";
 
-// Jade Chamber: the first two dice rolled are of the active character's element, and when the action phase begins, with at
-// Most three cards in hand, it is discarded for an Omni die
+// Jade Chamber: the first two dice rolled are of the active character's element, and when the action phase begins, with
+// At Most three cards in hand, it is discarded for an Omni die
 export const jadeChamber: GcgCardModule = {
   initialUsages: 1,
   onActionPhase: ({ duel, sideIndex }, zoneCard) => {

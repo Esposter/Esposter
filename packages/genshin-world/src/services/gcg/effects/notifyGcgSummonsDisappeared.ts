@@ -3,7 +3,8 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 import { takeOne } from "@esposter/shared";
 
-// Tells a side's supports that each summon it held before, and no longer holds, has disappeared, once for each such summon
+// Tells a side's supports that each summon it held before, and no longer holds, has disappeared, once for each such
+// Summon
 export const notifyGcgSummonsDisappeared = (duel: GcgDuel, sideIndex: number, summonsBefore: GcgZoneCard[]): void => {
   const side = takeOne(duel.sides, sideIndex);
   const disappearedCount = summonsBefore.filter((summon) => !side.summons.includes(summon)).length;

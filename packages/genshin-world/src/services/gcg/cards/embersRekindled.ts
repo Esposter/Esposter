@@ -5,9 +5,9 @@ import { attachGcgAegisOfAbyssalFlame } from "#src/services/gcg/cards/aegisOfAby
 import { EMBERS_REKINDLED_ID, FIERY_REBIRTH_ID } from "#src/services/gcg/cards/constants";
 import { takeOne } from "@esposter/shared";
 
-// Embers Rekindled, Abyss Lector's talent: once its character has triggered Fiery Rebirth, whether when the card is played on it
-// Or when the character triggers it, the card is discarded and the character gains the Aegis of Abyssal Flame (the wiki's
-// Embers Rekindled). The card's single usage marks it discarded
+// Embers Rekindled, Abyss Lector's talent: once its character has triggered Fiery Rebirth, whether when the card is
+// Played on it Or when the character triggers it, the card is discarded and the character gains the Aegis of Abyssal
+// Flame (the wiki's Embers Rekindled). The card's single usage marks it discarded
 export const embersRekindled: GcgCardModule = {
   initialUsages: 1,
   onDefeatReplaced: ({ characterIndex, duel, sideIndex }, zoneCard) => {

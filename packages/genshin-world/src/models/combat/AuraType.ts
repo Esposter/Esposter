@@ -1,5 +1,5 @@
-// What an element leaves on a target: the five elements an attack can leave as an aura, and the three a reaction leaves,
-// Freeze over a frozen target, Quicken where Dendro met Electro, and Burning over a burning target
+// What an element leaves on a target: the five elements an attack can leave as an aura, and the three a reaction
+// Leaves, Freeze over a frozen target, Quicken where Dendro met Electro, and Burning over a burning target
 export const AuraType = {
   Burning: "Burning",
   Cryo: "Cryo",

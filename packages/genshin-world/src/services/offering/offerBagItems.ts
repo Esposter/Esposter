@@ -13,7 +13,8 @@ import { offerItems } from "#src/services/offering/offerItems";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
 
 // Offers every offering item the bag holds at once: each item the levels take is taken out of the bag and counted into
-// The offering, which reaches the levels it now covers, and those levels' rewards are paid as payOfferingLevels pays them
+// The offering, which reaches the levels it now covers, and those levels' rewards are paid as payOfferingLevels pays
+// Them
 export const offerBagItems = (
   inventory: Inventory,
   wallet: Wallet,

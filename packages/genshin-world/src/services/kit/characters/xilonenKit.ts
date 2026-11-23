@@ -28,13 +28,13 @@ const NIGHTSOUL_POINTS = 45;
 const NIGHTSOUL_DRAIN_PER_SECOND = 5;
 const NIGHTSOUL_SECONDS = 9;
 const NIGHTSOUL_SPRINT_DRAIN = 5;
-// Constellation 1, as gcsim (MIT) xilonen/cons.go gives it: the Blessing lasts 45% longer, and its points drain 30% less
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xilonen/cons.go
+// Constellation 1, as gcsim (MIT) xilonen/cons.go gives it: the Blessing lasts 45% longer, and its points drain 30%
+// Less https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xilonen/cons.go
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_NIGHTSOUL_DURATION_MULTIPLIER = 1.45;
 const CONSTELLATION_1_NIGHTSOUL_CONSUMPTION_MULTIPLIER = 0.7;
-// Constellation 4, as gcsim gives it: from her skill, each deployed member's Normal Attacks, Charged Attacks and Plunges
-// That hit an enemy add 65% of Xilonen's DEF as flat damage, six times, for 15 seconds
+// Constellation 4, as gcsim gives it: from her skill, each deployed member's Normal Attacks, Charged Attacks and
+// Plunges That hit an enemy add 65% of Xilonen's DEF as flat damage, six times, for 15 seconds
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_DEFENSE_SHARE = 0.65;
 const CONSTELLATION_4_SECONDS = 15;
@@ -89,17 +89,17 @@ const spendConstellation4Stack = (effects: readonly KitEffect[], characterId: nu
 };
 
 // Xilonen's behaviour: her skill's press enters the Nightsoul Blessing, which drains its points and ends after nine
-// Seconds as gcsim does, with Blade Roller in place of her normal attacks for the same nine seconds, a press in it leaves
-// The Blessing, and a sprint in it drains points. Leaving the field ends the Blessing, as gcsim's swap exit does. Points
-// Drained to none end the Blessing with the expiry the step sends, which ends the stance with it. Not built: the strike
-// Of the press that leaves the Blessing, which gcsim's exit press does not deal and Chasca's kit leaves out through the
-// Skill's state-ending check. Ocelotlicue Point's damage is read only with fewer than two Samplers in the party, which
-// A kit step cannot count yet, and its heal, which it gives with two or more, is a timed heal that is not built either
-// Constellation 1 lengthens the Blessing and cuts its points' drain, and Constellation 4's stacks give each deployed
-// Member's Normal, Charged and Plunge hits a share of her DEF as flat damage, both built
+// Seconds as gcsim does, with Blade Roller in place of her normal attacks for the same nine seconds, a press in it
+// Leaves The Blessing, and a sprint in it drains points. Leaving the field ends the Blessing, as gcsim's swap exit
+// Does. Points Drained to none end the Blessing with the expiry the step sends, which ends the stance with it. Not
+// Built: the strike Of the press that leaves the Blessing, which gcsim's exit press does not deal and Chasca's kit
+// Leaves out through the Skill's state-ending check. Ocelotlicue Point's damage is read only with fewer than two
+// Samplers in the party, which A kit step cannot count yet, and its heal, which it gives with two or more, is a timed
+// Heal that is not built either Constellation 1 lengthens the Blessing and cuts its points' drain, and Constellation
+// 4's stacks give each deployed Member's Normal, Charged and Plunge hits a share of her DEF as flat damage, both built
 // Constellation 2 needs the Geo Source Sample off the field and its party effect, which the kit does not build
-// Constellation 6 needs the Nightsoul's Blessing extension by sprinting or attacking, its heals and its Nightsoul-tagged
-// Attacks, none of which the kit builds
+// Constellation 6 needs the Nightsoul's Blessing extension by sprinting or attacking, its heals and its
+// Nightsoul-tagged Attacks, none of which the kit builds
 export const createXilonenKitBehaviour = ({ readStance }: KitRecordReader): KitBehaviour => {
   const bladeRoller = readStance("blessing");
   return {

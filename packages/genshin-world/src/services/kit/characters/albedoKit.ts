@@ -24,42 +24,42 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { computeGroundDistance } from "genshin-engine";
 
-// Measured: gcsim v2.47.2 (MIT) albedo/skill.go, Abiogenesis: Solar Isotoma's field set 3 metres ahead of the body with a
-// Radius of 10, and each Transient Blossom set off by a hit on an enemy inside it once every 2 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/skill.go
+// Measured: gcsim v2.47.2 (MIT) albedo/skill.go, Abiogenesis: Solar Isotoma's field set 3 metres ahead of the body with
+// A Radius of 10, and each Transient Blossom set off by a hit on an enemy inside it once every 2 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/skill.go`
 const SOLAR_ISOTOMA_ID = "albedo-solar-isotoma";
 const TRANSIENT_BLOSSOM_COOLDOWN_STATUS_ID = "albedo-transient-blossom-cooldown";
-// Calcite Might, as the dump's Albedo_PermanentSkill_1 row and gcsim v2.47.2 (MIT) albedo/asc.go give it: from Ascension
-// 1, a Transient Blossom deals 25% more DMG to an enemy under half its HP
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/asc.go
+// Calcite Might, as the dump's Albedo_PermanentSkill_1 row and gcsim v2.47.2 (MIT) albedo/asc.go give it: from
+// Ascension 1, a Transient Blossom deals 25% more DMG to an enemy under half its HP
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/asc.go`
 const CALCITE_MIGHT_ASCENSION = 1;
 const CALCITE_MIGHT_HEALTH_SHARE = 0.5;
 const CALCITE_MIGHT_DAMAGE_BONUS = 0.25;
-// Measured: gcsim v2.47.2 (MIT) albedo/asc.go, A4: Rite of Progeniture: Tectonic Tide raises the Elemental Mastery of the
-// Party for 10 seconds by 125, as its A4 gives it
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/asc.go
+// Measured: gcsim v2.47.2 (MIT) albedo/asc.go, A4: Rite of Progeniture: Tectonic Tide raises the Elemental Mastery of
+// The Party for 10 seconds by 125, as its A4 gives it
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/asc.go`
 const TECTONIC_TIDE_ASCENSION = 4;
 const TECTONIC_TIDE_ELEMENTAL_MASTERY = 125;
 const TECTONIC_TIDE_ELEMENTAL_MASTERY_SECONDS = 10;
 const TECTONIC_TIDE_SOURCE = "albedo-tectonic-tide";
-// Constellation 1, Flower of Eden, from the wiki: each Transient Blossom of the Solar Isotoma regenerates 1.2 Energy for
-// Albedo, and his Solar Isotoma raises his DEF by 50% for 20 seconds
+// Constellation 1, Flower of Eden, from the wiki: each Transient Blossom of the Solar Isotoma regenerates 1.2 Energy
+// For Albedo, and his Solar Isotoma raises his DEF by 50% for 20 seconds
 const ALBEDO_CONSTELLATION_1 = 1;
-// Constellation 4: the active party member within the standing Solar Isotoma's field has its Plunging Attack DMG raised 30%
-// For a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it. gcsim checks the field every 0.3 seconds from the skill's
-// Hitmark, when the Solar Isotoma is made, and a status here counts those 0.3 seconds, so a check runs as it runs out. A
-// Check that finds the field standing gives the active member the bonus for a second
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
+// Constellation 4: the active party member within the standing Solar Isotoma's field has its Plunging Attack DMG raised
+// 30% For a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it. gcsim checks the field every 0.3 seconds from the
+// Skill's Hitmark, when the Solar Isotoma is made, and a status here counts those 0.3 seconds, so a check runs as it
+// Runs out. A Check that finds the field standing gives the active member the bonus for a second
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go`
 const ALBEDO_CONSTELLATION_4 = 4;
 const CONSTELLATION_4_PLUNGING_ATTACK_BONUS = 0.3;
 const CONSTELLATION_4_SECONDS = 1;
 const CONSTELLATION_4_CHECK_SECONDS = 0.3;
 const CONSTELLATION_4_CHECK_STATUS_ID = "albedo-constellation-4-check";
 const CONSTELLATION_4_SOURCE = "albedo-constellation-4";
-// Constellation 6, Dust of Purification: on the same check as Constellation 4, the active member within the standing Solar
-// Isotoma's field has its DMG raised 17% for a second while a Crystallize shield protects it or a Moondrift stands within the
-// Field, as the game's text gives it. gcsim (MIT) albedo/cons.go checks the shield alone, so the Moondrift clause is the text's
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
+// Constellation 6, Dust of Purification: on the same check as Constellation 4, the active member within the standing
+// Solar Isotoma's field has its DMG raised 17% for a second while a Crystallize shield protects it or a Moondrift
+// Stands within the Field, as the game's text gives it. gcsim (MIT) albedo/cons.go checks the shield alone, so the
+// Moondrift clause is the text's https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
 const ALBEDO_CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.17;
 const CONSTELLATION_6_SECONDS = 1;
@@ -68,10 +68,10 @@ const TRANSIENT_BLOSSOM_ENERGY = 1.2;
 const SOLAR_ISOTOMA_DEFENSE_PERCENT = 0.5;
 const SOLAR_ISOTOMA_DEFENSE_SECONDS = 20;
 const FLOWER_OF_EDEN_SOURCE = "albedo-flower-of-eden";
-// Constellation 2, Opening of Phanerozoic, from the wiki and gcsim v2.47.2 (MIT): each Transient Blossom gives Albedo a stack
-// Of Fatal Reckoning, up to four, lasting 30 seconds, and each stack consumed by Tectonic Tide adds 30% of his DEF to each
-// Fatal Blossom as flat damage
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
+// Constellation 2, Opening of Phanerozoic, from the wiki and gcsim v2.47.2 (MIT): each Transient Blossom gives Albedo a
+// Stack Of Fatal Reckoning, up to four, lasting 30 seconds, and each stack consumed by Tectonic Tide adds 30% of his
+// DEF to each Fatal Blossom as flat damage
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go`
 const ALBEDO_CONSTELLATION_2 = 2;
 const FATAL_RECKONING_DEFENSE_SHARE = 0.3;
 const FATAL_RECKONING_MAX_STACKS = 4;
@@ -100,8 +100,8 @@ const withFatalReckoningBonus = (hit: KitHit, bonus: number): KitHit => ({
   additiveBaseDamageBonus: (combatant) => (hit.additiveBaseDamageBonus?.(combatant) ?? 0) + bonus,
 });
 
-// Tectonic Tide consumes every stack of Fatal Reckoning, and returns the flat damage they add to each Fatal Blossom, priced
-// By Albedo's DEF with the buffs on her
+// Tectonic Tide consumes every stack of Fatal Reckoning, and returns the flat damage they add to each Fatal Blossom,
+// Priced By Albedo's DEF with the buffs on her
 const consumeFatalReckoningBonus = (context: KitContext): number => {
   const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
   const { characterId } = combatant;
@@ -117,16 +117,17 @@ const consumeFatalReckoningBonus = (context: KitContext): number => {
   return stacks * FATAL_RECKONING_DEFENSE_SHARE * defense;
 };
 
-// Albedo's behaviour: Abiogenesis: Solar Isotoma casts the Solar Isotoma 3 metres ahead as the press starts, a summon that
-// Spawns as its hit lands and ends the one standing. A hit on an enemy inside the standing field sets off a Transient
-// Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite of Progeniture:
-// Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma, and from Ascension 4 raises the Elemental Mastery of
-// The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its HP. Constellation 1's energy
-// And Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic Tide adds the stacks as flat
-// Damage to each Fatal Blossom, though not to its own first hit, which the record plays and the kit cannot change per cast.
-// Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field, and Constellation 6's
-// DMG bonus does too, read off the team's Crystallize shield and the Moondrifts the field holds. The Silver Isotoma clause an
-// Earlier note named for Constellation 4 is not built: gcsim v2.47.2 does not model it, and the wiki text was not checked
+// Albedo's behaviour: Abiogenesis: Solar Isotoma casts the Solar Isotoma 3 metres ahead as the press starts, a summon
+// That Spawns as its hit lands and ends the one standing. A hit on an enemy inside the standing field sets off a
+// Transient Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite
+// Of Progeniture: Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma, and from Ascension 4 raises the
+// Elemental Mastery of The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its
+// HP. Constellation 1's energy And Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic
+// Tide adds the stacks as flat Damage to each Fatal Blossom, though not to its own first hit, which the record plays
+// And the kit cannot change per cast. Constellation 4's plunging attack bonus reaches the active member within the
+// Solar Isotoma's field, and Constellation 6's DMG bonus does too, read off the team's Crystallize shield and the
+// Moondrifts the field holds. The Silver Isotoma clause an Earlier note named for Constellation 4 is not built: gcsim
+// `v2.47.2` does not model it, and the wiki text was not checked
 export const createAlbedoKitBehaviour = ({
   readHit,
   readHits,
@@ -171,8 +172,8 @@ export const createAlbedoKitBehaviour = ({
       enemy.health / enemy.maxHealth < CALCITE_MIGHT_HEALTH_SHARE
         ? CALCITE_MIGHT_DAMAGE_BONUS
         : 0,
-    // A hit that lands on an enemy inside the standing Solar Isotoma's field sets off a Transient Blossom at that enemy, once
-    // Every 2 seconds, while the cooldown Albedo carries is not up
+    // A hit that lands on an enemy inside the standing Solar Isotoma's field sets off a Transient Blossom at that
+    // Enemy, once Every 2 seconds, while the cooldown Albedo carries is not up
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { characterId } = combatant;
@@ -199,9 +200,9 @@ export const createAlbedoKitBehaviour = ({
       const member = getPartyMember(party, characterId);
       member.energy = Math.min(combatant.kit.burstEnergyCost, member.energy + TRANSIENT_BLOSSOM_ENERGY);
     },
-    // Constellations 4 and 6: the active member, while it stands in the standing Solar Isotoma's field, has its plunges raised
-    // And, with a Crystallize shield or a Moondrift in the field, its DMG too, checked every 0.3 seconds from the Solar
-    // Isotoma's spawn
+    // Constellations 4 and 6: the active member, while it stands in the standing Solar Isotoma's field, has its plunges
+    // Raised And, with a Crystallize shield or a Moondrift in the field, its DMG too, checked every 0.3 seconds from
+    // The Solar Isotoma's spawn
     onStep: ({ activeCombatant, body, kitEffectState, party }, combatant) => {
       if (combatant.constellationCount < ALBEDO_CONSTELLATION_4) return;
       if (
@@ -248,7 +249,8 @@ export const createAlbedoKitBehaviour = ({
           });
         for (const effect of kitEffectState.effects)
           if (effect.kind === "summon" && effect.id === SOLAR_ISOTOMA_ID) effect.secondsRemaining = 0;
-        // Constellation 4's clock starts at the hitmark, the Solar Isotoma's spawn, so its first check runs 0.3 seconds after it
+        // Constellation 4's clock starts at the hitmark, the Solar Isotoma's spawn, so its first check runs 0.3 seconds
+        // After it
         if (combatant.constellationCount >= ALBEDO_CONSTELLATION_4)
           addKitStatus(kitEffectState, combatant.characterId, {
             id: CONSTELLATION_4_CHECK_STATUS_ID,

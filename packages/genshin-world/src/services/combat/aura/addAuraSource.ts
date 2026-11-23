@@ -2,9 +2,9 @@ import type { AuraType } from "#src/models/combat/AuraType";
 import type { ElementalState } from "#src/models/combat/ElementalState";
 
 // A source's application written into an aura's sources in place, once the aura holds it: an aura that was not there
-// Before starts its sources afresh. The gauge the aura rose by is no other source's, so each other source stands that much
-// Further below it, and the applying source's share becomes the larger of what it held and what it applied, as gcsim
-// (MIT) pkg/reactable/reactable.go's attachOverlap adds to one source's durability
+// Before starts its sources afresh. The gauge the aura rose by is no other source's, so each other source stands that
+// Much Further below it, and the applying source's share becomes the larger of what it held and what it applied, as
+// Gcsim (MIT) pkg/reactable/reactable.go's attachOverlap adds to one source's durability
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/reactable.go
 export const addAuraSource = (
   state: ElementalState,

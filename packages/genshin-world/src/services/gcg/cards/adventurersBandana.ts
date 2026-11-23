@@ -9,8 +9,8 @@ import { takeOne } from "@esposter/shared";
 const ADVENTURERS_BANDANA_HEAL = 1;
 const ADVENTURERS_BANDANA_HEALS_PER_ROUND = 3;
 
-// Adventurer's Bandana, an artifact: after its character uses a Normal Attack, it heals that character for 1 HP, up to three
-// Times per Round (the wiki's Adventurer's Bandana (Equipment Card))
+// Adventurer's Bandana, an artifact: after its character uses a Normal Attack, it heals that character for 1 HP, up to
+// Three Times per Round (the wiki's Adventurer's Bandana (Equipment Card))
 export const adventurersBandana: GcgCardModule = {
   onSkillUsed: ({ characterIndex, duel, sideIndex }, skill) => {
     if (skill.kind !== GcgSkillKind.NormalAttack || characterIndex === undefined) return;

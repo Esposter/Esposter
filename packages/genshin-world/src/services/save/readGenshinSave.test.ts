@@ -53,8 +53,8 @@ describe(readGenshinSave, () => {
     proficiencies: { [COOKING_RECIPE_ID]: COOKING_PROFICIENCY },
   };
   const REPUTATION = { exp: 150, level: 2 };
-  // The Frostbearing Tree offered to: the count held of each item toward its next level, by the item's id, and the level
-  // It has reached
+  // The Frostbearing Tree offered to: the count held of each item toward its next level, by the item's id, and the
+  // Level It has reached
   const FROSTBEARING_TREE_PROGRESS = { heldCounts: { 1001: 3 }, level: 2 };
   // A region's statues offered to: the Oculi held toward its next level and the level it has reached, and one Oculus
   // Found in it
@@ -66,7 +66,8 @@ describe(readGenshinSave, () => {
   const SOLVED_PUZZLE_ID = "puzzle-1";
   // A furnishing placed in the realm: its item, the area of its scene it stands in and where, and the turn it faces
   const PLACEMENT = { areaId: 1, furnishingItemId: 3, position: { x: 1, y: 0, z: 2 }, rotation: 0.5, sceneId: 2001 };
-  // The realm's progress and a seed in its garden, each instant as the save holds it, at a made-up moment after the epoch
+  // The realm's progress and a seed in its garden, each instant as the save holds it, at a made-up moment after the
+  // Epoch
   const REALM_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
   const HOME_PROGRESS_SAVE = {
     claimedRewardIds: [6],

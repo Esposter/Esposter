@@ -32,8 +32,8 @@ import { describe, expect, test } from "vitest";
 const DILUC_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DILUC_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
-// A party member losing a tenth of its Max HP, as an enemy's strike, a drown or a wildlife's charge takes it, or as a kit
-// Of the team takes it when it names its own source
+// A party member losing a tenth of its Max HP, as an enemy's strike, a drown or a wildlife's charge takes it, or as a
+// Kit Of the team takes it when it names its own source
 const createHealthLossEvent = (characterId: number, sourceCharacterId?: number): KitHealthChangedEvent => ({
   bondOfLifeShare: 0,
   characterId,
@@ -370,7 +370,8 @@ describe(createDilucKitBehaviour, () => {
     expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
   });
 
-  // Constellation 4's bonus is read at the damage hook against an enemy under half its HP, where Constellation 1's does not add
+  // Constellation 4's bonus is read at the damage hook against an enemy under half its HP, where Constellation 1's does
+  // Not add
   const createConstellation4Fixture = (constellationCount = 4) => {
     const combatant = { ...createCombatant(0), constellationCount };
     const kitEffectState: KitEffectState = { effects: [] };
@@ -449,7 +450,8 @@ describe(createDilucKitBehaviour, () => {
     expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
   });
 
-  // Constellation 6's two normal attacks are read at the damage hook and the speed bonus, as each attack of the combo starts
+  // Constellation 6's two normal attacks are read at the damage hook and the speed bonus, as each attack of the combo
+  // Starts
   const createConstellation6Fixture = (constellationCount = 6) => {
     const combatant = { ...createCombatant(0), constellationCount };
     const kitEffectState: KitEffectState = { effects: [] };

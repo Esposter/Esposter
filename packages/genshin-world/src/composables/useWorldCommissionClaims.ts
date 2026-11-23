@@ -20,8 +20,9 @@ import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // The claims a screen makes with the points the save holds: a dealt commission claimed for its reward, free when it is
-// Finished and for a whole Encounter Point when it is not, and a Long-Term Encounter Point converted for Original Resin. What
-// A claim leaves is written back to the session's state, the day and the points held here and the rest where it is kept
+// Finished and for a whole Encounter Point when it is not, and a Long-Term Encounter Point converted for Original
+// Resin. What A claim leaves is written back to the session's state, the day and the points held here and the rest
+// Where it is kept
 export const useWorldCommissionClaims = ({
   adventureRankTables,
   commissionDay,
@@ -52,7 +53,8 @@ export const useWorldCommissionClaims = ({
     setInventory(routing.inventory);
     setWallet(routing.wallet);
   };
-  // A dealt commission claimed: nothing changes where the claim is refused, and the rewards are routed where they are kept
+  // A dealt commission claimed: nothing changes where the claim is refused, and the rewards are routed where they are
+  // Kept
   const claimCommission = (commissionId: number) => {
     const slice = commissionSlice.value;
     if (!slice || !friendshipLevels.value) return;
@@ -80,8 +82,8 @@ export const useWorldCommissionClaims = ({
     encounterPoints.value = outcome.encounterPoints;
     writeRouting(outcome.routing);
   };
-  // Katheryne's bonus, given once the day's four commissions are claimed: its items are routed as a claim's are, and the day
-  // Records it, so a second talk gives nothing
+  // Katheryne's bonus, given once the day's four commissions are claimed: its items are routed as a claim's are, and
+  // The day Records it, so a second talk gives nothing
   const claimKatheryneBonus = () => {
     const slice = commissionSlice.value;
     if (!slice || !friendshipLevels.value) return;
@@ -105,7 +107,8 @@ export const useWorldCommissionClaims = ({
     commissionDay.value = bonusClaim.day;
     writeRouting(routing);
   };
-  // The conversion of a Long-Term Encounter Point at a moment, made for the Original Resin it costs where the daily points fall short
+  // The conversion of a Long-Term Encounter Point at a moment, made for the Original Resin it costs where the daily
+  // Points fall short
   const computeConversion = (now: Temporal.Instant) =>
     convertLongTermEncounterPoint({
       encounterPoints: encounterPoints.value,

@@ -5,8 +5,8 @@ import { takeOne } from "@esposter/shared";
 
 const LIU_SU_USES = 2;
 
-// Liu Su, a companion: after a switch, the character switched to gains 1 Energy if she has none, once per Round and twice per
-// Match (the wiki's Liu Su (Support Card))
+// Liu Su, a companion: after a switch, the character switched to gains 1 Energy if she has none, once per Round and
+// Twice per Match (the wiki's Liu Su (Support Card))
 export const liuSu: GcgCardModule = {
   initialUsages: LIU_SU_USES,
   onSwitch: ({ duel, sideIndex }, zoneCard) => {

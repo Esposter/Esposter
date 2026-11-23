@@ -2,8 +2,9 @@ import type { TerrainPieceDomain } from "#src/models/world/TerrainPieceDomain";
 
 import { computeOutlineSignedDistance } from "genshin-engine/terrainWorker";
 
-// How far inside a piece's domain a point stands, positive inside and negative outside. The outline's distance is clipped
-// To each square: a square's distance is the nearest of its four sides, and a point in any one of the squares is inside
+// How far inside a piece's domain a point stands, positive inside and negative outside. The outline's distance is
+// Clipped To each square: a square's distance is the nearest of its four sides, and a point in any one of the squares
+// Is inside
 export const getTerrainPieceSignedDistance = (
   { outline, squares }: TerrainPieceDomain,
   x: number,

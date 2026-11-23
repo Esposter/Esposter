@@ -6,7 +6,8 @@ import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
-// Pyronado, Xiangling's elemental burst: 3 Pyro DMG, and a Pyronado is created (the wiki's Pyronado (Character Card Skill))
+// Pyronado, Xiangling's elemental burst: 3 Pyro DMG, and a Pyronado is created (the wiki's Pyronado (Character Card
+// Skill))
 const PYRONADO_DAMAGE = 3;
 
 export const pyronado: GcgSkillModule = {

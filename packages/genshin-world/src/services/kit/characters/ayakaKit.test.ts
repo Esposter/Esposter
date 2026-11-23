@@ -38,7 +38,8 @@ const createAyakaCombatant = (constellationCount: number): Combatant => ({
   level: 90,
 });
 
-// A normal attack's first hit on an enemy, with the team the context holds and Ayaka's Hyouka cooled as the test sets it
+// A normal attack's first hit on an enemy, with the team the context holds and Ayaka's Hyouka cooled as the test sets
+// It
 const strikeWithFirstNormalAttack = (constellationCount: number, random: () => number): number => {
   const combatant = createAyakaCombatant(constellationCount);
   const context = createKitTestContext(combatant, { random });

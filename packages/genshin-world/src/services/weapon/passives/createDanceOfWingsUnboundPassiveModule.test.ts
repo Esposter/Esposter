@@ -20,7 +20,8 @@ describe(createDanceOfWingsUnboundPassiveModule, () => {
   const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
   const wielder = createWielderCombatant();
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  // Beyond the Chrysalis at its first rank: CRIT DMG 56%, Stellar Swirl DMG 36%, 5 Energy every four seconds, for ten seconds
+  // Beyond the Chrysalis at its first rank: CRIT DMG 56%, Stellar Swirl DMG 36%, 5 Energy every four seconds, for ten
+  // Seconds
   const passiveModule = createDanceOfWingsUnboundPassiveModule([0.56, 0.36, 5, 10, 4]);
 
   test("the first skill use gives the rank's CRIT DMG for its ten seconds", () => {

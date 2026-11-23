@@ -11,10 +11,10 @@ import { takeOne } from "@esposter/shared";
 
 const MISTSPLITTERS_EMBLEM_ID = "mistsplittersEmblem";
 
-// Mistsplitter's Edge at its rank: its wielder's Elemental DMG Bonus rises on every element by the rank's first amount, and
-// Its Emblem's stacks raise its element's by the amount their count gives, one, two or three stacks reading the params after
-// The first. A stack is held by a normal attack's elemental hit for the rank's fifth seconds, by a burst for its sixth, and by
-// An Energy short of full, which holds one until the Energy is full
+// Mistsplitter's Edge at its rank: its wielder's Elemental DMG Bonus rises on every element by the rank's first amount,
+// And Its Emblem's stacks raise its element's by the amount their count gives, one, two or three stacks reading the
+// Params after The first. A stack is held by a normal attack's elemental hit for the rank's fifth seconds, by a burst
+// For its sixth, and by An Energy short of full, which holds one until the Energy is full
 export const createMistsplittersEdgePassiveModule = (params: number[]): PassiveModule => {
   const elementalDamageBonus = takeOne(params, 0);
   const normalAttackSeconds = takeOne(params, 4);

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-// The measured scale of one character's PMX: the game's own model's height in metres over the PMX's height in units, and
-// The metres one PMX unit stands for, which is the first over the second. The heights are kept beside it, so the record
-// Shows its own measure agrees with its unit
+// The measured scale of one character's PMX: the game's own model's height in metres over the PMX's height in units,
+// And The metres one PMX unit stands for, which is the first over the second. The heights are kept beside it, so the
+// Record Shows its own measure agrees with its unit
 export interface CharacterScale {
   metresPerUnit: number;
   modelHeightMetres: number;

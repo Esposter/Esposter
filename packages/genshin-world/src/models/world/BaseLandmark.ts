@@ -5,8 +5,8 @@ import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { landmarkArrivalSchema } from "#src/models/world/LandmarkArrival";
 import { z } from "zod";
 
-// What every landmark records: where it stands on the ground, how far above or into the ground its base sits, which
-// Way it faces about the vertical in radians, the catalogue area it belongs to, and, for a landmark a jump may go to, the
+// What every landmark records: where it stands on the ground, how far above or into the ground its base sits, which Way
+// It faces about the vertical in radians, the catalogue area it belongs to, and, for a landmark a jump may go to, the
 // Place a jump lands at it. A landmark nothing jumps to has none
 export interface BaseLandmark {
   areaId: string;

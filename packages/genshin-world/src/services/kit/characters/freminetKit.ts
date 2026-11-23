@@ -18,10 +18,10 @@ export const FREMINET_CHARACTER_ID = 10_000_085;
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/freminet/skill.go
 const SKILL_ALIGNED_SECONDS = 9;
 const SPIRITBREATH_THORN_STATUS_ID = "freminet-spiritbreath-thorn";
-// Measured: gcsim (MIT, v2.47.2) freminet/cons.go, c4c6: Freminet's own attack that triggers a Shatter, Frozen, Superconduct or
-// Stellar-Conduct gives him Constellation 4's ATK stacks and, from Constellation 6, its CRIT DMG stacks, each once every 18
-// Frames, both lasting six seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/freminet/cons.go
+// Measured: gcsim (MIT, v2.47.2) freminet/cons.go, c4c6: Freminet's own attack that triggers a Shatter, Frozen,
+// Superconduct or Stellar-Conduct gives him Constellation 4's ATK stacks and, from Constellation 6, its CRIT DMG
+// Stacks, each once every 18 Frames, both lasting six seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/freminet/cons.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_PROC_ICD_SECONDS = 0.3;
@@ -40,10 +40,10 @@ const PROC_REACTION_TYPES = new Set<ReactionType>([
   ReactionType.Superconduct,
 ]);
 
-// Freminet's behaviour: his strikes, charged attack, plunges, Pressurized Floe's Upward Thrust and Shadowhunter's Ambush
-// Come from his record. Spiritbreath Thorn lands at its hitmark after a press of the skill, unless one queued it within
-// The last nine seconds. Constellation 4 and 6 answer his own reactions that Shatter, freeze or conduct. What is not built
-// Is listed in openspec/specs/genshin/kits/freminet/design.md
+// Freminet's behaviour: his strikes, charged attack, plunges, Pressurized Floe's Upward Thrust and Shadowhunter's
+// Ambush Come from his record. Spiritbreath Thorn lands at its hitmark after a press of the skill, unless one queued it
+// Within The last nine seconds. Constellation 4 and 6 answer his own reactions that Shatter, freeze or conduct. What is
+// Not built Is listed in openspec/specs/genshin/kits/freminet/design.md
 export const createFreminetKitBehaviour = ({ readHit }: KitRecordReader): KitBehaviour => {
   const spiritbreathThorn = readHit("spiritbreathThorn");
   return {

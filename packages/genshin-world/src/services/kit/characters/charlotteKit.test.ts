@@ -135,7 +135,8 @@ describe(createCharlotteKitBehaviour, () => {
     });
     const member = getPartyMember(context.party, PARTNER_CHARACTER_ID);
     member.healthShare = 0.1;
-    // Charlotte's heal lands on the partner, and the step sends the change, which starts constellation 1 and heals at once
+    // Charlotte's heal lands on the partner, and the step sends the change, which starts constellation 1 and heals at
+    // Once
     changeKitMemberHealth(context, charlotte, PARTNER_CHARACTER_ID, 1);
     emitKitEvent({ ...takeOne(context.party.healthChanges), kind: KitEventKind.HealthChanged }, context);
     buffKitMember(context.kitEffectState, CHARLOTTE_CHARACTER_ID, {

@@ -4,7 +4,8 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { z } from "zod";
 
-// One line of a cost as a deck slice writes it: dice of an element, or a Matching, Unaligned or energy cost with no element
+// One line of a cost as a deck slice writes it: dice of an element, or a Matching, Unaligned or energy cost with no
+// Element
 const gcgDeckCostSchema = z.union([
   z.object({ count: z.int().positive(), element: z.enum(Element), kind: z.literal(GcgCostKind.Dice) }),
   z.object({

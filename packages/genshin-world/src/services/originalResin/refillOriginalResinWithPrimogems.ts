@@ -6,10 +6,10 @@ import { refillOriginalResin } from "#src/services/originalResin/refillOriginalR
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { computeGameDay } from "#src/services/time/computeGameDay";
 
-// The wallet after Original Resin is refilled with Primogems at `now`, or undefined where the day's refills are used up.
-// The Primogems held fall short of the next price, or the refill would pass the refill cap, as the game refuses it above
-// The cap less one refill. The day's refills count
-// From the game's day, which starts at its hour in the game's time zone, and restart when that day changes
+// The wallet after Original Resin is refilled with Primogems at `now`, or undefined where the day's refills are used
+// Up. The Primogems held fall short of the next price, or the refill would pass the refill cap, as the game refuses it
+// Above The cap less one refill. The day's refills count From the game's day, which starts at its hour in the game's
+// Time zone, and restart when that day changes
 export const refillOriginalResinWithPrimogems = (
   wallet: Wallet,
   now: Temporal.Instant,

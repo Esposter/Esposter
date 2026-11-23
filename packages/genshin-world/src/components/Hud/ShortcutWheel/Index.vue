@@ -49,8 +49,8 @@ const wedges = computed(() => {
 </script>
 
 <template>
-  <!-- The entries as wedges around the centre, the one the pointer points toward lit. The layout is provisional, drawn from
-       the wiki's description of the wheel until the parity loop traces the game's own -->
+  <!-- The entries as wedges around the centre, the one the pointer points toward lit. The layout is provisional,
+    drawn from the wiki's description of the wheel until the parity loop traces the game's own -->
   <svg class="shortcut-wheel" role="listbox" :viewBox="`0 0 ${SHORTCUT_WHEEL_CENTER * 2} ${SHORTCUT_WHEEL_CENTER * 2}`">
     <g
       v-for="({ isPicked, label, labelX, labelY, path }, index) of wedges"

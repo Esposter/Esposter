@@ -152,7 +152,8 @@ describe(createXianyunKitBehaviour, () => {
     const strike = { attackTag: AttackTag.PlungingAttack, combatant } as KitStrike;
     behaviour.plungeVariants?.[0]?.hits?.[0]?.onStrike?.(context, strike, {} as never);
 
-    // The press's constellation 2 buff of 20% ATK is on her at the hit, so her ATK there is 1200, and the heal is half of it
+    // The press's constellation 2 buff of 20% ATK is on her at the hit, so her ATK there is 1200, and the heal is half
+    // Of it
     expect(member.healthShare).toBeCloseTo(0.5 + (0.5 * 1200) / 10_000, 10);
     expect(
       checkIsKitStatusActive(context.kitEffectState.effects, XIANYUN_CHARACTER_ID, XIANYUN_CONSTELLATION_4_ICD_ID),
@@ -196,7 +197,8 @@ describe(createXianyunKitBehaviour, () => {
     const strike = { attackTag: AttackTag.PlungingAttack, combatant } as KitStrike;
     behaviour.plungeVariants?.[0]?.hits?.[0]?.onStrike?.(context, strike, {} as never);
 
-    // The heal is half of Xianyun's ATK at the hit, which the constellation 2 buff raises, over the Traveler's own Max HP
+    // The heal is half of Xianyun's ATK at the hit, which the constellation 2 buff raises, over the Traveler's own Max
+    // HP
     const heal = 0.5 * getBuffedAttack(combatant, context);
     expect(travelerMember.healthShare).toBeCloseTo(0.5 + heal / traveler.attributes.maxHealth, 10);
   });

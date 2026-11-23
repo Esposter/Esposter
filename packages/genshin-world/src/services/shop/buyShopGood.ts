@@ -9,10 +9,10 @@ import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffere
 import { giveShopGood } from "#src/services/shop/giveShopGood";
 import { payShopGoodCosts } from "#src/services/shop/payShopGoodCosts";
 
-// The wallet, bag and purchases after one of a good is bought at `now` by a player of this Adventure Rank, every cost taken and
-// Its item given. A cost in a currency this rule trades in is paid from the wallet; any other is an item the bag holds, and is
-// Paid from the bag. Undefined where the good is not offered: below its Rank, outside its dates, sold out this refresh, not
-// Affordable in every cost, or where the bag cannot take the item whole
+// The wallet, bag and purchases after one of a good is bought at `now` by a player of this Adventure Rank, every cost
+// Taken and Its item given. A cost in a currency this rule trades in is paid from the wallet; any other is an item the
+// Bag holds, and is Paid from the bag. Undefined where the good is not offered: below its Rank, outside its dates, sold
+// Out this refresh, not Affordable in every cost, or where the bag cannot take the item whole
 export const buyShopGood = (
   wallet: Wallet,
   inventory: Inventory,

@@ -44,7 +44,8 @@ const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, i
 });
 
 export const props = {
-  // The weapons hold no cooking instruction, diagram or blueprint, and nothing is learned, so the bag's Use check reads none
+  // The weapons hold no cooking instruction, diagram or blueprint, and nothing is learned, so the bag's Use check reads
+  // None
   blueprintMap: new Map(),
   cookingProgress: { learnedRecipeIds: [], proficiencies: {} },
   craftingProgress: { learnedRecipeIds: [] },
@@ -63,7 +64,8 @@ export const props = {
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
   names: englishNameText,
   wallet: EMPTY_WALLET,
-  // The Eye of Perception's panel as the reference shows it, its words the game's own, its passive and description read off it
+  // The Eye of Perception's panel as the reference shows it, its words the game's own, its passive and description read
+  // Off it
   weaponDetails: {
     [String(EYE_OF_PERCEPTION_INDEX)]: {
       baseAttack: { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeBaseAttack], value: "238" },

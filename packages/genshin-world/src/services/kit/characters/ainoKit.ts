@@ -22,13 +22,12 @@ import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
-// Measured: gcsim (MIT) aino/burst.go, Cool Your Jets Ducky's Water Balls fall for 14.2 seconds from the first, each on a
-// Random enemy within 10 metres of the body. Ascension 1's faster and wider balls at Ascendant Gleam are read as the burst
-// Is cast
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/aino
+// Measured: gcsim (MIT) aino/burst.go, Cool Your Jets Ducky's Water Balls fall for 14.2 seconds from the first, each on
+// A Random enemy within 10 metres of the body. Ascension 1's faster and wider balls at Ascendant Gleam are read as the
+// Burst Is cast https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/aino
 const ASCENSION_4 = 4;
-// Ascension 1 at Ascendant Gleam, as gcsim's aino/asc.go gives the balls: one every 0.7 seconds, each landing with a radius
-// Of 4 metres where the base ball's is 1
+// Ascension 1 at Ascendant Gleam, as gcsim's aino/asc.go gives the balls: one every 0.7 seconds, each landing with a
+// Radius Of 4 metres where the base ball's is 1
 const ASCENSION_1 = 1;
 const ASCENSION_1_WATER_BALL_INTERVAL_SECONDS = 0.7;
 const ASCENSION_1_WATER_BALL_RADIUS = 4;
@@ -36,14 +35,16 @@ const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_COOLDOWN_SECONDS = 10;
 const CONSTELLATION_4_ENERGY = 10;
 const CONSTELLATION_4_STATUS_ID = "aino-constellation-4";
-// Constellation 1: 80 Elemental Mastery on Aino for fifteen seconds after her skill or burst, and on the member a swap brings on
-// While it runs, as gcsim (MIT) aino/cons.go gives it. The status is the clock, and the buff is sourced to it so a recast restarts it
+// Constellation 1: 80 Elemental Mastery on Aino for fifteen seconds after her skill or burst, and on the member a swap
+// Brings on While it runs, as gcsim (MIT) aino/cons.go gives it. The status is the clock, and the buff is sourced to it
+// So a recast restarts it
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_MASTERY = 80;
 const CONSTELLATION_1_SECONDS = 15;
 const CONSTELLATION_1_STATUS_ID = "aino-constellation-1";
-// Constellation 2, The Principle of Transference in Gear Differentials: the water ball's Attack and Elemental Mastery shares
-// Are the dump's paramList 0.25 and 1.0, and its cooldown 5 seconds, as gcsim (MIT) aino/cons.go gives them with a 1.5 metre circle
+// Constellation 2, The Principle of Transference in Gear Differentials: the water ball's Attack and Elemental Mastery
+// Shares Are the dump's paramList 0.25 and 1.0, and its cooldown 5 seconds, as gcsim (MIT) aino/cons.go gives them with
+// A 1.5 metre circle
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_ATTACK_SHARE = 0.25;
 const CONSTELLATION_2_MASTERY_SHARE = 1;
@@ -52,8 +53,9 @@ const CONSTELLATION_2_COOLDOWN_SECONDS = 5;
 const CONSTELLATION_2_RADIUS = 1.5;
 // The field Precision Hydronic Cooler casts, which Constellation 2 reads for as long as it stands
 const BURST_FIELD_ID = "aino-precision-hydronic-cooler";
-// Constellation 6, The Burden of Creative Genius: for fifteen seconds after her burst, the reactions the active member makes
-// Deal 15% more DMG, and 20% more at Ascendant Gleam, as the dump's paramList 0.15, 0.2 and 15 give and gcsim's aino/cons.go does
+// Constellation 6, The Burden of Creative Genius: for fifteen seconds after her burst, the reactions the active member
+// Makes Deal 15% more DMG, and 20% more at Ascendant Gleam, as the dump's paramList 0.15, 0.2 and 15 give and gcsim's
+// `aino/cons.go` does
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.15;
 const CONSTELLATION_6_ASCENDANT_GLEAM_DAMAGE_BONUS = 0.2;
@@ -72,18 +74,18 @@ export const AINO_CHARACTER_ID = 10_000_121;
 
 // Aino's behaviour: Cool Your Jets Ducky casts a field following the body, which drops a Water Ball every interval from
 // Its first tick to its last, and Ascension 4 adds half her Elemental Mastery to each ball's damage. Ascension 1 at
-// Ascendant Gleam drops the balls faster and wider, read as the burst is cast. Constellation 4 gives her 10 energy on each
-// Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Constellation 1 gives her, and the member on the field
-// Through a swap, 80 Elemental Mastery for fifteen seconds after her skill or burst. Constellation 2 queues a water ball on each
-// Enemy her active teammate hits while she is off the field and the burst's zone stands, once every five seconds. The ball
-// Strikes the enemy it is queued on alone, where gcsim's circle of 1.5 metres also reaches the enemies beside it. Constellation
-// 6 raises the reactions the active member makes for fifteen seconds after the burst. Musecatcher's hold is not built, as gcsim
-// Does not implement it either
+// Ascendant Gleam drops the balls faster and wider, read as the burst is cast. Constellation 4 gives her 10 energy on
+// Each Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Constellation 1 gives her, and the
+// Member on the field Through a swap, 80 Elemental Mastery for fifteen seconds after her skill or burst. Constellation
+// 2 queues a water ball on each Enemy her active teammate hits while she is off the field and the burst's zone stands,
+// Once every five seconds. The ball Strikes the enemy it is queued on alone, where gcsim's circle of 1.5 metres also
+// Reaches the enemies beside it. Constellation 6 raises the reactions the active member makes for fifteen seconds after
+// The burst. Musecatcher's hold is not built, as gcsim Does not implement it either
 export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");
   const burstFirstTickSeconds = readSeconds("burstStart");
-  // Gcsim queues each ball at its hitmark from the burst's start, a tick at a time, and a summon's hits count from its own
-  // Spawn, so a ball lands its hitmark less the first tick's seconds past the tick that drops it
+  // Gcsim queues each ball at its hitmark from the burst's start, a tick at a time, and a summon's hits count from its
+  // Own Spawn, so a ball lands its hitmark less the first tick's seconds past the tick that drops it
   const waterBallHit = readHit("waterBall", {
     additiveBaseDamageBonus: (combatant) =>
       combatant.ascension >= ASCENSION_4 ? elementalMasteryMultiplier(combatant, masteryShare) : 0,
@@ -100,8 +102,8 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
     internalCooldownTag: InternalCooldownTag.AinoBurstMoonHit,
   };
   const { internalCooldownTag: _internalCooldownTag, ...waterBallWithoutCooldown } = waterBall;
-  // Constellation 2's ball is the water ball, with the Attack and Elemental Mastery shares of its own in place of the burst's
-  // Its ball has no internal cooldown, as gcsim's cons.go gives it
+  // Constellation 2's ball is the water ball, with the Attack and Elemental Mastery shares of its own in place of the
+  // Burst's Its ball has no internal cooldown, as gcsim's cons.go gives it
   const constellation2WaterBall: KitHit = {
     ...waterBallWithoutCooldown,
     additiveBaseDamageBonus: (combatant) =>
@@ -147,8 +149,8 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
           });
       },
     },
-    // Constellation 6: the Electro-Charged, Bloom and Lunar reactions the active member makes deal more DMG for fifteen seconds
-    // After her burst, 20% more at Ascendant Gleam, as gcsim's aino/cons.go gives them
+    // Constellation 6: the Electro-Charged, Bloom and Lunar reactions the active member makes deal more DMG for fifteen
+    // Seconds After her burst, 20% more at Ascendant Gleam, as gcsim's aino/cons.go gives them
     getPartyReactionBonus: (
       member,
       { combatant, reactionType },

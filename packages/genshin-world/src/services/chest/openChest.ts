@@ -12,8 +12,8 @@ import { drawRangeCount } from "#src/services/reward/drawRangeCount";
 // Region's own, `sigilCurrency`, its Adventure EXP is paid to the Adventure Rank, and what it holds is rolled from its
 // Pool and kept apart by where it stands: poured out where the chest stands, or sent straight to the bag where a drop
 // Would fall away there. The chest is kept as opened. A chest already opened, or of a kind with no reward yet, is left
-// As it is, so it stays openable. The random number is supplied by the caller, so the roll is seeded wherever its caller
-// Is
+// As it is, so it stays openable. The random number is supplied by the caller, so the roll is seeded wherever its
+// Caller Is
 export const openChest = (
   { id, kind }: ChestPlace,
   openedChestIds: ReadonlySet<string>,

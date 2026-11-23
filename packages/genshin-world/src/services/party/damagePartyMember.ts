@@ -6,12 +6,12 @@ import { PARTY_FALL_SECONDS } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
-// Takes a share of a character's Max HP from it, never below none, and records the change for the kits with the character
-// Whose kit took it as its source, none for an enemy's strike. A character whose HP runs out is down and loses its
-// Energy, and if it was on the field, its fall starts, after which the player is asked for the next member standing.
-// Where a fall refusal holds for the damage, the member is left at the share the refusal keeps and its change is
-// Recorded as refused, and a character already down takes nothing
-// A change carries the element of the attack that caused it, where the attack has one
+// Takes a share of a character's Max HP from it, never below none, and records the change for the kits with the
+// Character Whose kit took it as its source, none for an enemy's strike. A character whose HP runs out is down and
+// Loses its Energy, and if it was on the field, its fall starts, after which the player is asked for the next member
+// Standing. Where a fall refusal holds for the damage, the member is left at the share the refusal keeps and its change
+// Is Recorded as refused, and a character already down takes nothing A change carries the element of the attack that
+// Caused it, where the attack has one
 export const damagePartyMember = (
   party: Party,
   characterId: number,

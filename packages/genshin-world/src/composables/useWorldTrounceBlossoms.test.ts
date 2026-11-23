@@ -95,7 +95,8 @@ describe(useWorldTrounceBlossoms, () => {
       { getWorldNow: () => epoch, worldNow: shallowRef(epoch), ...overrides },
       { inventory: { ...EMPTY_INVENTORY }, wallet },
     );
-    // The Adventure EXP a claim gains is the rank store's to take, and a claim over a store that has not started has none to gain
+    // The Adventure EXP a claim gains is the rank store's to take, and a claim over a store that has not started has
+    // None to gain
     const worldAdventureRankStore = useWorldAdventureRankStore();
     vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
     return worldSessionStore;

@@ -28,11 +28,11 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 const COLD_BLOODED_STRIKE_ASCENSION = 1;
 const COLD_BLOODED_STRIKE_ATTACK_SHARE = 0.15;
 
-// Measured: gcsim v2.47.2 (MIT) kaeya/cons.go. Constellation 1: his normal and charged attacks crit 15% more often against
-// An enemy under Cryo or Frozen. Constellation 2: each enemy defeated during Glacial Waltz extends it by 2.5 seconds, up to
-// 15 seconds in all. Constellation 4: a drain that takes him under 20% HP shields him for 30% of his Max HP as Cryo, for 20
-// Seconds, once every 60 seconds
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/cons.go
+// Measured: gcsim v2.47.2 (MIT) kaeya/cons.go. Constellation 1: his normal and charged attacks crit 15% more often
+// Against An enemy under Cryo or Frozen. Constellation 2: each enemy defeated during Glacial Waltz extends it by 2.5
+// Seconds, up to 15 seconds in all. Constellation 4: a drain that takes him under 20% HP shields him for 30% of his Max
+// HP as Cryo, for 20 Seconds, once every 60 seconds
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/cons.go`
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_CRITICAL_RATE_BONUS = 0.15;
 const CONSTELLATION_2 = 2;
@@ -44,7 +44,8 @@ const CONSTELLATION_4_COOLDOWN_SECONDS = 60;
 const CONSTELLATION_4_HEALTH_SHARE = 0.2;
 const CONSTELLATION_4_SHIELD_HEALTH_SHARE = 0.3;
 const CONSTELLATION_4_SHIELD_SECONDS = 20;
-// Constellation 6's Energy on the cast, as gcsim v2.47.2 (MIT) kaeya/burst.go gives it: 15 Energy 52 frames after the burst
+// Constellation 6's Energy on the cast, as gcsim v2.47.2 (MIT) kaeya/burst.go gives it: 15 Energy 52 frames after the
+// Burst
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_ENERGY = 15;
 const CONSTELLATION_6_ENERGY_FRAMES = 52;
@@ -66,8 +67,8 @@ const extendGlacialWaltz = (kitEffectState: KitEffectState, characterId: number)
   summon.secondsRemaining += Math.min(CONSTELLATION_2_EXTENSION_SECONDS, Math.max(0, lifetimeLeftSeconds));
 };
 
-// A use of Frostgnaw sets two holds of Glacial Heart, each spent by an opponent it freezes, and they run as long as the skill's
-// Action does, so every hit of the use can spend one
+// A use of Frostgnaw sets two holds of Glacial Heart, each spent by an opponent it freezes, and they run as long as the
+// Skill's Action does, so every hit of the use can spend one
 const startGlacialHeartParticles = (kitEffectState: KitEffectState, characterId: number, seconds: number): void => {
   releaseKitHolds(kitEffectState, characterId, GLACIAL_HEART_HOLD_ID);
   for (let index = 0; index < GLACIAL_HEART_MAX_PARTICLES; index++)
@@ -88,10 +89,10 @@ const spendGlacialHeartParticle = (kitEffectState: KitEffectState, characterId: 
   return false;
 };
 
-// Kaeya's behaviour: Frostgnaw's hit heals him from Ascension 1, and Glacial Waltz's icicles are a summon's hits, landing
-// From where he cast it and priced by him. Frostgnaw's damage against Water and Glacial Waltz's Activation knockback are
-// Not built. Ascension 4 and Constellations 1, 2 and 4 are built, with Constellation 6's Energy on the cast
-// Constellation 6's fourth icicle needs its timing, which the record's icicle hits do not give, so it is not built
+// Kaeya's behaviour: Frostgnaw's hit heals him from Ascension 1, and Glacial Waltz's icicles are a summon's hits,
+// Landing From where he cast it and priced by him. Frostgnaw's damage against Water and Glacial Waltz's Activation
+// Knockback are Not built. Ascension 4 and Constellations 1, 2 and 4 are built, with Constellation 6's Energy on the
+// Cast Constellation 6's fourth icicle needs its timing, which the record's icicle hits do not give, so it is not built
 export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const icicles = readHits("icicle");
   const glacialHeartSeconds = kit.elementalSkill.seconds;

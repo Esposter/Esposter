@@ -30,10 +30,10 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
-// Sacred Rite: Wolf's Swiftness, as gcsim (MIT) cyno/burst.go and cyno/skill.go give it: each Mortuary Rite extends it by
-// The table's seconds, up to two times. From Ascension 4, Pactsworn's normal attacks and the Duststalker Bolts take 150%
-// And 250% of his Elemental Mastery as flat DMG
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/cyno
+// Sacred Rite: Wolf's Swiftness, as gcsim (MIT) cyno/burst.go and cyno/skill.go give it: each Mortuary Rite extends it
+// By The table's seconds, up to two times. From Ascension 4, Pactsworn's normal attacks and the Duststalker Bolts take
+// 150% And 250% of his Elemental Mastery as flat DMG
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/cyno`
 const BURST_EXTENSIONS_MAX = 2;
 const BURST_EXTENSIONS_STATUS_ID = "cyno-burst-extensions";
 const BURST_BUFF_SOURCE = "cyno-burst";
@@ -42,20 +42,20 @@ const ELEMENTAL_MASTERY_SHARE_ASCENSION_4_BOLT = 2.5;
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 // Judication, as gcsim (MIT) cyno/asc.go gives it: once Pactsworn Pathclearer has run a while, Endseer recurs while the
-// Burst holds. A Mortuary Rite under Endseer fires three Duststalker Bolts, and its press sets the 35% on the hit it lands
-// As gcsim's a1Buff does, for one second
+// Burst holds. A Mortuary Rite under Endseer fires three Duststalker Bolts, and its press sets the 35% on the hit it
+// Lands As gcsim's a1Buff does, for one second
 const JUDICATION_FIELD_ID = "cyno-judication";
 const ENDSEER_STATUS_ID = "cyno-endseer";
-// The 35% DMG Judication gives Mortuary Rite's own hit, as gcsim (MIT) cyno/asc.go's a1Buff gives it: a press under Endseer
-// Sets its status, which the hit that press lands reads. gcsim's comment there names Secret Rite, but its code gates the
-// Buff on skill B, Mortuary Rite, which the kit follows
+// The 35% DMG Judication gives Mortuary Rite's own hit, as gcsim (MIT) cyno/asc.go's a1Buff gives it: a press under
+// Endseer Sets its status, which the hit that press lands reads. gcsim's comment there names Secret Rite, but its code
+// Gates the Buff on skill B, Mortuary Rite, which the kit follows
 const JUDICATION_DAMAGE_BONUS = 0.35;
 const JUDICATION_DAMAGE_SECONDS = 1;
 const JUDICATION_DAMAGE_STATUS_ID = "cyno-judication-damage";
 // As gcsim (MIT) cyno/cons.go gives them, Constellation 2 raises his Electro DMG 10% for four seconds per normal attack
-// That hits, up to five stacks, once every 0.1 seconds. Constellation 4 restores 3 energy to each other member for up to
-// Five reactions a burst. Constellation 6 gives four stacks of Day of the Jackal, up to eight, which last eight seconds,
-// And each normal attack consumes one to fire a Duststalker Bolt, once every 0.4 seconds
+// That hits, up to five stacks, once every 0.1 seconds. Constellation 4 restores 3 energy to each other member for up
+// To Five reactions a burst. Constellation 6 gives four stacks of Day of the Jackal, up to eight, which last eight
+// Seconds, And each normal attack consumes one to fire a Duststalker Bolt, once every 0.4 seconds
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_6 = 6;
@@ -105,21 +105,23 @@ const checkIsC4Reaction = ({ element, reactionType }: Reaction): boolean =>
 
 export const CYNO_CHARACTER_ID = 10_000_071;
 
-// Constellation 1, Ordinance: Unceasing Vigil: for 10 seconds after Sacred Rite: Wolf's Swiftness, his normal attack speed rises
-// By 20%, as the wiki's constellation page gives it, and each Judication under Endseer restores those 10 seconds
+// Constellation 1, Ordinance: Unceasing Vigil: for 10 seconds after Sacred Rite: Wolf's Swiftness, his normal attack
+// Speed rises By 20%, as the wiki's constellation page gives it, and each Judication under Endseer restores those 10
+// Seconds
 const CONSTELLATION_1 = 1;
 const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_BONUS = 0.2;
 const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_SECONDS = 10;
 const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_STATUS_ID = "cyno-wolf-swiftness-attack-speed";
 
 // Cyno's behaviour: each normal attack's strike stacks Constellation 2's Electro DMG and, in Pactsworn, spends
-// Constellation 6's Day of the Jackal on a Duststalker Bolt. Sacred Rite: Wolf's Swiftness sets Pactsworn Pathclearer on
-// Him as a stance for the burst's seconds, its strikes taking Ascension 4's share of his Elemental Mastery and its skill
-// Mortuary Rite, which extends the stance and, under Endseer, fires Duststalker Bolts; the burst adds its Elemental
-// Mastery, and from Ascension 1 casts Judication, a field giving Endseer. Leaving the field ends the Elemental Mastery
-// And Judication. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while the stance holds, and
-// Constellation 4's reactions in the stance restore the other members' energy. Constellation 1's attack speed, and its
-// Refresh on each Judication, are built. The plunges of Pactsworn Pathclearer are not, as the kit has no hook for them
+// Constellation 6's Day of the Jackal on a Duststalker Bolt. Sacred Rite: Wolf's Swiftness sets Pactsworn Pathclearer
+// On Him as a stance for the burst's seconds, its strikes taking Ascension 4's share of his Elemental Mastery and its
+// Skill Mortuary Rite, which extends the stance and, under Endseer, fires Duststalker Bolts; the burst adds its
+// Elemental Mastery, and from Ascension 1 casts Judication, a field giving Endseer. Leaving the field ends the
+// Elemental Mastery And Judication. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while the stance
+// Holds, and Constellation 4's reactions in the stance restore the other members' energy. Constellation 1's attack
+// Speed, and its Refresh on each Judication, are built. The plunges of Pactsworn Pathclearer are not, as the kit has no
+// Hook for them
 export const createCynoKitBehaviour = ({
   kit,
   readHit,
@@ -138,9 +140,9 @@ export const createCynoKitBehaviour = ({
   const duststalkerBoltBehaviour = { additiveBaseDamageBonus: getDuststalkerBoltBonus };
   const duststalkerBolt = readHit("duststalkerBolt", duststalkerBoltBehaviour);
   const mortuaryRiteDuststalkerBolts = readHits("mortuaryRiteDuststalkerBolts", duststalkerBoltBehaviour);
-  // Constellation 2's Electro DMG bonus and Constellation 6's bolts are struck by each normal attack that hits an enemy,
-  // The Constellation 2 stacks rising once every 0.1 seconds and Constellation 6's bolt once every 0.4, both only in
-  // Pactsworn
+  // Constellation 2's Electro DMG bonus and Constellation 6's bolts are struck by each normal attack that hits an
+  // Enemy, The Constellation 2 stacks rising once every 0.1 seconds and Constellation 6's bolt once every 0.4, both
+  // Only in Pactsworn
   const onNormalAttackStrike = ({ kitEffectState }: KitContext, { body, combatant }: KitStrike): void => {
     const { characterId, constellationCount } = combatant;
     if (
@@ -192,9 +194,9 @@ export const createCynoKitBehaviour = ({
   };
   // The Pactsworn Pathclearer strikes stay Normal Attack DMG though they deal Electro, gcsim's AttackTagNormal in
   // Cyno/attack.go's attackB, beside AttackTagExtra in cyno/charge.go's chargeB and AttackTagElementalArt in
-  // Cyno/skill.go's skillB. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while Pactsworn Pathclearer
-  // Holds, which is the press that the stance's skill plays; the skill's cooldown the press then sets is the one left
-  // After the stance
+  // Cyno/skill.go's skillB. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while Pactsworn
+  // Pathclearer Holds, which is the press that the stance's skill plays; the skill's cooldown the press then sets is
+  // The one left After the stance
   const pactswornPathclearer = readStance("pactswornPathclearer", {
     normalAttacks: [
       { hits: [pactswornStrikeHit] },
@@ -298,8 +300,8 @@ export const createCynoKitBehaviour = ({
       { hits: [invokerStrikeHit, invokerStrikeHit] },
       { hits: [invokerStrikeHit] },
     ],
-    // Leaving the field ends Pactsworn Pathclearer's Elemental Mastery and Judication with it, as gcsim's exit deletes the
-    // Burst
+    // Leaving the field ends Pactsworn Pathclearer's Elemental Mastery and Judication with it, as gcsim's exit deletes
+    // The Burst
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
@@ -314,8 +316,8 @@ export const createCynoKitBehaviour = ({
         return;
       }
       if (event.kind !== KitEventKind.ReactionTriggered) return;
-      // Constellation 4's energy: a reaction a normal attack or any Pactsworn hit of Cyno's sets off restores 3 energy to
-      // Each other member of the deployed team, up to five times a burst
+      // Constellation 4's energy: a reaction a normal attack or any Pactsworn hit of Cyno's sets off restores 3 energy
+      // To Each other member of the deployed team, up to five times a burst
       const counter = findKitStatus(kitEffectState.effects, characterId, C4_STATUS_ID);
       if (
         combatant.constellationCount < CONSTELLATION_4 ||

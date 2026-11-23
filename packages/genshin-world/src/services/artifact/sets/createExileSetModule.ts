@@ -12,10 +12,10 @@ const EXILE_FIELD_ID = "exile";
 // Measured: the wiki's The Exile, its energy every 2 seconds, the first tick 2 seconds after the burst
 const EXILE_TICK_INTERVAL_SECONDS = 2;
 
-// The Exile's four-piece bonus, its energy and its seconds in the set table's order: a burst its wearer uses regenerates
-// That energy for every other member of the deployed team on each tick of a field with no edge, for those seconds. The
-// Energy is flat, as Energy Recharge does not raise it, and a burst while the field still ticks, its wearer's or another
-// Wearer's, starts no second one, as gcsim (MIT) exile.go rejects it
+// The Exile's four-piece bonus, its energy and its seconds in the set table's order: a burst its wearer uses
+// Regenerates That energy for every other member of the deployed team on each tick of a field with no edge, for those
+// Seconds. The Energy is flat, as Energy Recharge does not raise it, and a burst while the field still ticks, its
+// Wearer's or another Wearer's, starts no second one, as gcsim (MIT) exile.go rejects it
 export const createExileSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const energy = takeOne(params, 0);
   const seconds = takeOne(params, 1);

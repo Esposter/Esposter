@@ -19,8 +19,8 @@ const emit = defineEmits<{ cancel: []; confirm: [] }>();
 </script>
 
 <template>
-  <!-- The dialog a delete asks first, with its way out and the button that does it. Delete Read's sits over the screen, and
-       the Gift Mail Box's warning in the mail's detail -->
+  <!-- The dialog a delete asks first, with its way out and the button that does it. Delete Read's sits over the
+    screen, and the Gift Mail Box's warning in the mail's detail -->
   <section :class="isGift ? 'confirm-gift' : 'confirm'" role="dialog">
     <p v-if="title" class="confirm-title">{{ title }}</p>
     <p class="confirm-text">{{ text }}</p>

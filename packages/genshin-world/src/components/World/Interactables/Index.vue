@@ -49,7 +49,8 @@ const residentMesh = createInstancedMesh(
   createToonMaterial({ color: RESIDENT_STAND_IN_COLOR, lightUniforms, rampTexture }),
   INTERACTABLE_CAPACITY,
 );
-// The stand-ins are placed anywhere in the world, so the mesh's bounds, measured from its geometry alone, would cull them
+// The stand-ins are placed anywhere in the world, so the mesh's bounds, measured from its geometry alone, would cull
+// Them
 dropMesh.frustumCulled = false;
 residentMesh.frustumCulled = false;
 chestMesh.frustumCulled = false;

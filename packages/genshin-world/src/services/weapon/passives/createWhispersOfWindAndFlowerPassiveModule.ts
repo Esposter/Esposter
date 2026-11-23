@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 
 const WHISPERS_OF_WIND_AND_FLOWER_SOURCE = "whispersOfWindAndFlower";
 
-// Whispers of Wind and Flower at its rank: for the rank's seconds after its wielder's Elemental Skill hits an opponent or
-// The wielder triggers an Elemental Reaction, its ATK and Elemental Mastery rise by the rank's amounts. Each one restarts
-// The buffs it raises
+// Whispers of Wind and Flower at its rank: for the rank's seconds after its wielder's Elemental Skill hits an opponent
+// Or The wielder triggers an Elemental Reaction, its ATK and Elemental Mastery rise by the rank's amounts. Each one
+// Restarts The buffs it raises
 export const createWhispersOfWindAndFlowerPassiveModule = (params: number[]): PassiveModule => {
   const seconds = takeOne(params, 0);
   const attackPercentage = takeOne(params, 1);

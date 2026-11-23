@@ -3,7 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { createHealBuffPassiveModule } from "#src/services/weapon/passives/createHealBuffPassiveModule";
 
-// Tidal Shadow's White Cruising Wave at its rank: after its wielder is healed, its ATK rises by the rank's percentage for the
-// Rank's seconds
+// Tidal Shadow's White Cruising Wave at its rank: after its wielder is healed, its ATK rises by the rank's percentage
+// For the Rank's seconds
 export const createTidalShadowPassiveModule = (params: number[]): PassiveModule =>
   createHealBuffPassiveModule(params, { attribute: Attribute.AttackPercent, source: "tidalShadow" });

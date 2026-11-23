@@ -12,8 +12,8 @@ export interface FishRod {
 }
 
 export const fishRodSchema = z.object({
-  // The dump omits a zero field: an omitted multiplier reads as one, so the rod leaves the reel unchanged, and an omitted
-  // City or maximum reads as zero
+  // The dump omits a zero field: an omitted multiplier reads as one, so the rod leaves the reel unchanged, and an
+  // Omitted City or maximum reads as zero
   attackAcc: z.number().nonnegative().default(1),
   attackMag: z.number().nonnegative().default(1),
   baseAttack: z.number().nonnegative(),

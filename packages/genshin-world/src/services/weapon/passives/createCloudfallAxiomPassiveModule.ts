@@ -11,9 +11,9 @@ import { takeOne } from "@esposter/shared";
 const CLOUDFALL_AXIOM_ENERGY_COOLDOWN_ID = "cloudfallAxiomEnergyCooldown";
 const CLOUDFALL_AXIOM_SOURCE = "cloudfallAxiom";
 
-// Cloudfall Axiom at its rank: a Plunging Attack its wielder hits with raises every deployed member's Plunging Attack DMG by
-// The rank's amount for the rank's seconds. A nearby member's Plunging Attack hit restores the rank's Energy to the wielder,
-// Whether or not it is on the field, at most once every the rank's energy cooldown in seconds
+// Cloudfall Axiom at its rank: a Plunging Attack its wielder hits with raises every deployed member's Plunging Attack
+// DMG by The rank's amount for the rank's seconds. A nearby member's Plunging Attack hit restores the rank's Energy to
+// The wielder, Whether or not it is on the field, at most once every the rank's energy cooldown in seconds
 export const createCloudfallAxiomPassiveModule = (params: number[]): PassiveModule => {
   const energy = takeOne(params, 0);
   const energyCooldownSeconds = takeOne(params, 1);

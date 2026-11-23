@@ -22,7 +22,8 @@ interface Props {
   avatarId: number;
   // The game's words in the reader's language
   gameText: GameText;
-  // The place of the pointer held still for a shot, where the indicator does not sweep; it sweeps from the opening when none is given
+  // The place of the pointer held still for a shot, where the indicator does not sweep; it sweeps from the opening when
+  // None is given
   heldPointer?: number | undefined;
   itemRooms: ItemCategoryRoomMap;
   // The game's material table by item id, which each dish is defined from
@@ -86,8 +87,8 @@ const stopCooking = () => {
   }
   emit("close");
 };
-// Auto Cook makes a whole batch of Delicious dishes from the bag, once the dish's proficiency is full, and the screen closes
-// As Stop does, whether or not a batch was made
+// Auto Cook makes a whole batch of Delicious dishes from the bag, once the dish's proficiency is full, and the screen
+// Closes As Stop does, whether or not a batch was made
 const autoCook = () => {
   const made = autoCookRecipe(recipe.value, {
     avatarId,

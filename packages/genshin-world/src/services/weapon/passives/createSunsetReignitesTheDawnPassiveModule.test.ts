@@ -31,8 +31,8 @@ describe(createSunsetReignitesTheDawnPassiveModule, () => {
     createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]) });
 
   // Sunset Reignites the Dawn at its first rank: a skill or burst gives Scorching Brilliance, 20% CRIT DMG and 28% ATK
-  // For six seconds, once every ten; an elemental normal or charged attack hit extends it by two seconds, once a second,
-  // Three times at most; and in Nightsoul's Blessing its effects rise by 75%
+  // For six seconds, once every ten; an elemental normal or charged attack hit extends it by two seconds, once a
+  // Second, Three times at most; and in Nightsoul's Blessing its effects rise by 75%
   const passiveModule = createSunsetReignitesTheDawnPassiveModule([0.2, 0.28, 0.75, 6, 10, 2, 1, 3]);
   const useSkill = (context: KitContext) =>
     passiveModule.onKitEvent?.({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, wielder);

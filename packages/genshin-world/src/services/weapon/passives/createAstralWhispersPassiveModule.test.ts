@@ -18,7 +18,8 @@ describe(createAstralWhispersPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
-  // Astral Whispers Beyond the Sacred Throne at its first rank: 28% ATK for eight seconds after the wielder's hits off the field
+  // Astral Whispers Beyond the Sacred Throne at its first rank: 28% ATK for eight seconds after the wielder's hits off
+  // The field
   const passiveModule = createAstralWhispersPassiveModule([8, 0.28]);
 
   test("a hit the wielder deals off the field raises its ATK by the rank's amount for the rank's seconds", () => {

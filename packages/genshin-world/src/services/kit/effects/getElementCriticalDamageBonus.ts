@@ -1,8 +1,8 @@
 import type { Element } from "#src/models/Element";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
-// The CRIT DMG a character's strikes of an element take from the effects on the field, summed over every effect that gives
-// It. A strike of no element takes none
+// The CRIT DMG a character's strikes of an element take from the effects on the field, summed over every effect that
+// Gives It. A strike of no element takes none
 export const getElementCriticalDamageBonus = (
   effects: readonly KitEffect[],
   characterId: number,

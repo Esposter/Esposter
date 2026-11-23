@@ -14,10 +14,10 @@ const HALCYON_YEARS_TEAM_SOURCE = "halcyonYearsUnendingTeam";
 const MAXIMUM_STACKS = 2;
 const DEFENSE_PER_THOUSAND = 1000;
 
-// Halcyon Years Unending at its rank: a Normal or Plunging Attack hit the wielder lands gives Ode to Flowers, the rank's DEF and
-// All Elemental DMG Bonus for the rank's seconds, up to two stacks, at most once every the rank's stack cooldown. Two stacks raise
-// Every deployed member's All Elemental DMG Bonus by the rank's amount per 1,000 DEF the wielder has, up to the rank's DEF cap,
-// For the rank's team seconds
+// Halcyon Years Unending at its rank: a Normal or Plunging Attack hit the wielder lands gives Ode to Flowers, the
+// Rank's DEF and All Elemental DMG Bonus for the rank's seconds, up to two stacks, at most once every the rank's stack
+// Cooldown. Two stacks raise Every deployed member's All Elemental DMG Bonus by the rank's amount per 1,000 DEF the
+// Wielder has, up to the rank's DEF cap, For the rank's team seconds
 export const createHalcyonYearsUnendingPassiveModule = (params: number[]): PassiveModule => {
   const defenseShare = takeOne(params, 0);
   const seconds = takeOne(params, 1);

@@ -18,10 +18,10 @@ import {
 
 // A character's model from its pack: the PMX read, then every texture a material draws with read once: its Texture, its
 // Sphere map and its toon ramp where the file names one in the model's list, each decoded for each role it is drawn in,
-// As a colour and as a toon ramp, since a toon is read differently. A material's shared toon ramp is the world's own, so
-// No file of it is read. A texture the pack does not hold draws its material without it, logged once for the model, and
-// A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all. The model stands at its
-// Character's unit of metres, which the published measure gives its id
+// As a colour and as a toon ramp, since a toon is read differently. A material's shared toon ramp is the world's own,
+// So No file of it is read. A texture the pack does not hold draws its material without it, logged once for the model,
+// And A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all. The model stands
+// At its Character's unit of metres, which the published measure gives its id
 export const readCharacterMesh = (
   characterPackReader: CharacterPackReader,
   {
@@ -56,8 +56,8 @@ export const readCharacterMesh = (
     );
     if (missingTexturePaths.length > 0)
       console.warn(`The model draws untextured the textures its release lacks: ${missingTexturePaths.join(", ")}`);
-    // A toon is flipped and read without sRGB, so a texture drawn both as a colour and as a toon is decoded once each way
-    // Rather than shared, where the one decoded as a toon would draw its colour flipped and unconverted
+    // A toon is flipped and read without sRGB, so a texture drawn both as a colour and as a toon is decoded once each
+    // Way Rather than shared, where the one decoded as a toon would draw its colour flipped and unconverted
     const colourTextures = await Promise.all(
       blobs.map((blob, textureIndex) =>
         blob && colourTextureIndices.has(textureIndex) ? createPmxTexture(blob) : Promise.resolve(undefined),

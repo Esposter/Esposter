@@ -6,7 +6,8 @@ import type { DevVariable } from "#src/models/dev/DevVariable";
 
 // The one table of commands and variables a console, a panel, a scenario and an automation all call into
 export interface DevRegistry {
-  // The renderer of the handle registered last that holds one, read each time, so a stats overlay sees the scene it draws
+  // The renderer of the handle registered last that holds one, read each time, so a stats overlay sees the scene it
+  // Draws
   getRenderer: () => DevRenderer | undefined;
   getScenarios: () => readonly DevScenario[];
   getVariables: () => readonly DevVariable[];

@@ -433,7 +433,8 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
-  // A mail is held once per delivery, so a birthday mail delivered again on a later birthday is kept beside the copy held
+  // A mail is held once per delivery, so a birthday mail delivered again on a later birthday is kept beside the copy
+  // Held
   test("a mail held on two deliveries is kept", () => {
     expect.hasAssertions();
     const mail = { ...baseMail, isClaimed: true, isRead: true };

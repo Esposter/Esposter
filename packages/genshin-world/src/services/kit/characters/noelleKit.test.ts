@@ -283,7 +283,8 @@ describe("noelle kit", () => {
 
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
-    // Ascension 1: a drain that takes the active character under 30% HP shields it with 4 times Noelle's DEF for 20 seconds
+    // Ascension 1: a drain that takes the active character under 30% HP shields it with 4 times Noelle's DEF for 20
+    // Seconds
     const shieldedContext = createKitTestContext({ ...createNoelleCombatant(), ascension: 1 });
     getPartyMember(shieldedContext.party, NOELLE_CHARACTER_ID).healthShare = 0.2;
     NOELLE_KIT.onKitEvent?.(

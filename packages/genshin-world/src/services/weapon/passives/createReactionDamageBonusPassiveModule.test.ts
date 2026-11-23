@@ -16,8 +16,8 @@ describe(createReactionDamageBonusPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   const createReaction = (reactionType: ReactionType): KitReaction => ({ combatant: wielder, enemy, reactionType });
-  // Swift and Sure at its first rank: 48% Electro-Charged DMG and 12% Lunar-Charged DMG, the Lunar-Charged one 12% more under
-  // Ascendant Gleam, and Token of Covenant reads the same shape over Bloom and Lunar-Bloom
+  // Swift and Sure at its first rank: 48% Electro-Charged DMG and 12% Lunar-Charged DMG, the Lunar-Charged one 12% more
+  // Under Ascendant Gleam, and Token of Covenant reads the same shape over Bloom and Lunar-Bloom
   const passiveModule = createReactionDamageBonusPassiveModule([0.48, 0.12, 0.12], {
     firstReactionType: ReactionType.ElectroCharged,
     secondReactionType: ReactionType.LunarCharged,

@@ -10,10 +10,11 @@ import { createKitRecordReader } from "#src/services/kit/build/createKitRecordRe
 import { createKitRecordResolver } from "#src/services/kit/build/createKitRecordResolver";
 import { tagKitHits } from "#src/services/kit/tagKitHits";
 
-// A character's kit, from its record and its behaviour, once as the character joins: the record's slots resolved against
-// The character's multipliers and the level each talent plays at, its frames divided into seconds once and its talents'
-// Parameters read off their tables at those levels, the behaviour given the record to read what else it plays by name,
-// And what it returns joined to the slots' actions and hits, each tagged with the kind of attack its action deals
+// A character's kit, from its record and its behaviour, once as the character joins: the record's slots resolved
+// Against The character's multipliers and the level each talent plays at, its frames divided into seconds once and its
+// Talents' Parameters read off their tables at those levels, the behaviour given the record to read what else it plays
+// By name, And what it returns joined to the slots' actions and hits, each tagged with the kind of attack its action
+// Deals
 export const buildKit = (
   record: KitRecord,
   talentMultiplierMap: TalentMultiplierMap,

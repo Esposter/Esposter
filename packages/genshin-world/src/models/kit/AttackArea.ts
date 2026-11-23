@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-// A hit's reach as a cylinder about the body's feet: a fan of an angle in radians, a radius and a height, where an angle
-// Of 2π is the whole circle. A forward offset, in metres ahead of the feet along the facing, moves the cylinder's centre
-// Ahead of them; it is absent for every area but the Darkgold Wolfbite's, whose circle sits ahead of the body
+// A hit's reach as a cylinder about the body's feet: a fan of an angle in radians, a radius and a height, where an
+// Angle Of 2π is the whole circle. A forward offset, in metres ahead of the feet along the facing, moves the cylinder's
+// Centre Ahead of them; it is absent for every area but the Darkgold Wolfbite's, whose circle sits ahead of the body
 export interface AttackArea {
   angle: number;
   forward?: number | undefined;

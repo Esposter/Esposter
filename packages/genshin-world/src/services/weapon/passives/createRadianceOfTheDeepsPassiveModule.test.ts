@@ -19,8 +19,8 @@ describe(createRadianceOfTheDeepsPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
-  // Radiance of the Deeps at its first rank: three states raising DMG dealt by 6%, 10% and 14%, switched by each attack the
-  // Wielder hits with, once every seven seconds, the wielder off the field too
+  // Radiance of the Deeps at its first rank: three states raising DMG dealt by 6%, 10% and 14%, switched by each attack
+  // The Wielder hits with, once every seven seconds, the wielder off the field too
   const passiveModule = createRadianceOfTheDeepsPassiveModule([7, 0.06, 0.1, 0.14]);
   const hitWith = (context: KitContext, striker: typeof wielder) =>
     passiveModule.onKitEvent?.(createWeaponDamageTaken(striker, AttackTag.NormalAttack, enemy), context, wielder);

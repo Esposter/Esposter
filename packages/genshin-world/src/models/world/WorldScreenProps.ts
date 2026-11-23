@@ -6,13 +6,15 @@ import type { GameLanguage, GameText } from "genshin-text";
 
 // The props the world's screen takes from its host, which it loads the game's names and tables for before it opens
 export interface WorldScreenProps {
-  // The signed-in player's avatar and name, which the Paimon menu's profile card shows, given while the player is signed in
+  // The signed-in player's avatar and name, which the Paimon menu's profile card shows, given while the player is
+  // Signed in
   accountAvatarUrl: string;
   accountName: string;
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: undefined | WorldCameraPose;
   createTerrainWorker: () => Worker;
-  // The development registry the host makes in development alone, which the world's commands and variables register with
+  // The development registry the host makes in development alone, which the world's commands and variables register
+  // With
   devRegistry?: DevRegistry | undefined;
   // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
   gameDataBaseUrl: string;
@@ -32,8 +34,8 @@ export interface WorldScreenProps {
   // The player's save the world's systems start from, a new player's when there is none
   save?: GenshinSave | undefined;
   // Where the host serves the developer's own exports of the game's scenes: the index of the components it holds, and
-  // Under each its witness layout and the meshes and textures the layout names. Without it every scene is drawn from our
-  // Own stand-ins alone, as everywhere but the development server
+  // Under each its witness layout and the meshes and textures the layout names. Without it every scene is drawn from
+  // Our Own stand-ins alone, as everywhere but the development server
   sceneExportBaseUrl: string;
   // The server's clock minus this machine's, which every saved timer is read against
   serverClockOffsetMs: number;

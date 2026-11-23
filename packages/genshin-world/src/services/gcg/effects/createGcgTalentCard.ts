@@ -2,8 +2,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { takeOne } from "@esposter/shared";
 
-// A talent card a character equips while she is the active character, and whose skill is used once at once: the skill of
-// The game's id, which the character holds
+// A talent card a character equips while she is the active character, and whose skill is used once at once: the skill
+// Of The game's id, which the character holds
 export const createGcgTalentCard = (
   characterId: number,
   skillId: number,

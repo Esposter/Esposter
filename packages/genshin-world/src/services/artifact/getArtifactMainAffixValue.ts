@@ -3,8 +3,8 @@ import type { ArtifactMainAffixCurve } from "#src/models/artifact/ArtifactMainAf
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The value an artifact's main affix raises its attribute by, at its rarity's curve and its enhancement level. A rarity the
-// Curves hold no level for the attribute at is refused
+// The value an artifact's main affix raises its attribute by, at its rarity's curve and its enhancement level. A rarity
+// The Curves hold no level for the attribute at is refused
 export const getArtifactMainAffixValue = (
   artifact: Artifact,
   artifactMainAffixCurves: readonly ArtifactMainAffixCurve[],

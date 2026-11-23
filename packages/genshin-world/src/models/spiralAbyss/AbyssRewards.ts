@@ -4,8 +4,9 @@ import type { AbyssFloorReward } from "#src/models/spiralAbyss/AbyssFloorReward"
 import { abyssFloorRewardSchema } from "#src/models/spiralAbyss/AbyssFloorReward";
 import { z } from "zod";
 
-// The Spiral Abyss's rewards: each floor's rewards in every reward group, and the items each reward id they name pays, keyed
-// By the reward id as the record writes it. A claim gives the items of the reward ids a clear gives, never the ids themselves
+// The Spiral Abyss's rewards: each floor's rewards in every reward group, and the items each reward id they name pays,
+// Keyed By the reward id as the record writes it. A claim gives the items of the reward ids a clear gives, never the
+// Ids themselves
 export interface AbyssRewards {
   floorRewards: AbyssFloorReward[];
   rewardItems: Record<string, DroppedItem[]>;

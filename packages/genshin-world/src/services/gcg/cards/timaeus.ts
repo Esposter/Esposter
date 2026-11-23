@@ -13,9 +13,10 @@ const countGcgDeckArtifacts = (side: GcgSideState): number =>
   side.deckCardIds.filter((cardId) => side.cards.find((card) => card.id === cardId)?.kind === GcgCardKind.Artifact)
     .length;
 
-// Timaeus: it comes with two Transmutation Materials and gains one at each End Phase. When played, with at least six Artifact
-// Cards in the deck it was built with, it draws one Artifact Card at random from the rest of the deck. Once per Round, when an
-// Artifact Card is played, it spends materials equal to the Artifact's total cost, and that Artifact is equipped for free
+// Timaeus: it comes with two Transmutation Materials and gains one at each End Phase. When played, with at least six
+// Artifact Cards in the deck it was built with, it draws one Artifact Card at random from the rest of the deck. Once
+// Per Round, when an Artifact Card is played, it spends materials equal to the Artifact's total cost, and that Artifact
+// Is equipped for free
 export const timaeus: GcgCardModule = {
   initialCounter: 2,
   onCostPaid: ({ duel, sideIndex }, subject, zoneCard) => {

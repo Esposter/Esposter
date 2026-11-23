@@ -4,8 +4,8 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEventKind } from "#src/models/kit/KitEventKind";
 
-// A hit landed on an enemy: the attack tag of the strike that landed it, the element it was dealt as where it deals one,
-// And the combatant that dealt it
+// A hit landed on an enemy: the attack tag of the strike that landed it, the element it was dealt as where it deals
+// One, And the combatant that dealt it
 export interface KitEnemyHitEvent {
   attackTag?: AttackTag | undefined;
   element?: Element | undefined;

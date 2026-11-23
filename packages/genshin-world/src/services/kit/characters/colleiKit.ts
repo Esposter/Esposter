@@ -12,8 +12,8 @@ import { takeOne } from "@esposter/shared";
 
 export const COLLEI_CHARACTER_ID = 10_000_067;
 
-// Constellation 4, Gift of the Woods: Trump-Card Kitty raises the Elemental Mastery of each other deployed member by 60 for 12
-// Seconds, as the wiki's constellation page gives it
+// Constellation 4, Gift of the Woods: Trump-Card Kitty raises the Elemental Mastery of each other deployed member by 60
+// For 12 Seconds, as the wiki's constellation page gives it
 const CONSTELLATION_4 = 4;
 // Constellation 1: off the field, Collei gains 20% Energy Recharge, as gcsim (MIT) collei/cons.go's c1 gives it
 const CONSTELLATION_1 = 1;
@@ -43,8 +43,8 @@ export const createColleiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
                 attribute: Attribute.ElementalMastery,
                 secondsRemaining: TRUMP_CARD_KITTY_BUFF_SECONDS,
               });
-        // The leap's field ticks from the kitty's first leap while its status lasts, and each tick's hit is cast where the
-        // Kitty was cast, so it lands from there whatever the body does after
+        // The leap's field ticks from the kitty's first leap while its status lasts, and each tick's hit is cast where
+        // The Kitty was cast, so it lands from there whatever the body does after
         const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: leapFirstTickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {

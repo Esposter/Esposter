@@ -3,8 +3,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { takeOne } from "@esposter/shared";
 
-// Undying Admiration at its rank: an Elemental Skill its wielder deals has its DMG raised by the rank's percentage and its
-// CRIT Rate by the rank's second percentage
+// Undying Admiration at its rank: an Elemental Skill its wielder deals has its DMG raised by the rank's percentage and
+// Its CRIT Rate by the rank's second percentage
 export const createUndyingAdmirationPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const criticalRateBonus = takeOne(params, 1);

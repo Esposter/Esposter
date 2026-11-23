@@ -29,10 +29,10 @@ import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
-// The character trials on the world: a trial entered in place of the player's roster with its party
-// Member alone and no enemies, and its clock stepped each frame. The arena's clock is the only clear there is, so its end pays
-// The stage's first-clear reward once (PROVISIONAL, until the design names the rule). A party down ends the arena with no
-// Reward, and either end gives the player's roster back as it was
+// The character trials on the world: a trial entered in place of the player's roster with its party Member alone and no
+// Enemies, and its clock stepped each frame. The arena's clock is the only clear there is, so its end pays The stage's
+// `first-clear` reward once (PROVISIONAL, until the design names the rule). A party down ends the arena with no Reward,
+// And either end gives the player's roster back as it was
 export const useWorldTrials = ({
   characterBody,
   characterDataMap,
@@ -57,14 +57,15 @@ export const useWorldTrials = ({
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { setInventory, setWallet } = worldSessionStore;
-  // The stages whose first clear has paid, which the save keeps: the ones the save held when the world loaded, and each first
-  // Clear since
+  // The stages whose first clear has paid, which the save keeps: the ones the save held when the world loaded, and each
+  // First Clear since
   const trialClaimedStageIds = shallowRef<ReadonlySet<number>>(claimedStageIds);
   const trialArena = shallowRef<TrialArena>();
-  // The player's roster while a trial holds its place, which the save keeps in the trial's stead and the trial's end restores
+  // The player's roster while a trial holds its place, which the save keeps in the trial's stead and the trial's end
+  // Restores
   const playerRoster = shallowRef<TrialRoster>();
-  // The seconds the arena's clock has left, rounded up so the last second shows until the clock runs out, none while no trial
-  // Is entered
+  // The seconds the arena's clock has left, rounded up so the last second shows until the clock runs out, none while no
+  // Trial Is entered
   const trialSecondsRemaining = computed(() =>
     trialArena.value
       ? Math.ceil((TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS - trialArena.value.elapsedMilliseconds) / 1000)
@@ -79,11 +80,11 @@ export const useWorldTrials = ({
     })),
   );
 
-  // A trial entered in place of the player's roster, on the first stage its trial id names, and the pose the player was at is
-  // Kept to go back to. Its party member's kit is read at
-  // The talents it plays with no constellations, since a trial's build has none, and the kit replaces the player's kits for the
-  // Fight. A trial whose tables are not read, whose stage is not named, whose character has no build or whose kit is not read
-  // Does not enter, and an arena already entered is not entered again. Resolves whether the trial entered
+  // A trial entered in place of the player's roster, on the first stage its trial id names, and the pose the player was
+  // At is Kept to go back to. Its party member's kit is read at The talents it plays with no constellations, since a
+  // Trial's build has none, and the kit replaces the player's kits for the Fight. A trial whose tables are not read,
+  // Whose stage is not named, whose character has no build or whose kit is not read Does not enter, and an arena
+  // Already entered is not entered again. Resolves whether the trial entered
   const enterTrial = async (trial: Trial, returnPose: WorldJumpPose): Promise<boolean> => {
     const tables = trialTables.value;
     if (!tables || trialArena.value) return false;
@@ -120,7 +121,8 @@ export const useWorldTrials = ({
     return true;
   };
 
-  // The player's roster held for the trial is given back in place, so the party the world holds is the one it held before
+  // The player's roster held for the trial is given back in place, so the party the world holds is the one it held
+  // Before
   const restorePlayerRoster = () => {
     const roster = playerRoster.value;
     if (!roster) return;
@@ -130,8 +132,8 @@ export const useWorldTrials = ({
     playerRoster.value = undefined;
   };
 
-  // A trial's first clear pays its stage's reward into the bag and the wallet and records the claim. A later clear pays nothing,
-  // And a bag with no room for the reward records nothing, and the console names it
+  // A trial's first clear pays its stage's reward into the bag and the wallet and records the claim. A later clear pays
+  // Nothing, And a bag with no room for the reward records nothing, and the console names it
   const clearTrial = (stageId: number) => {
     const tables = trialTables.value;
     if (!tables || trialClaimedStageIds.value.has(stageId)) return;
@@ -154,9 +156,10 @@ export const useWorldTrials = ({
     trialClaimedStageIds.value = claim.claimedStageIds;
   };
 
-  // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open. When it runs
-  // Out the trial is cleared, and its first clear pays once (PROVISIONAL). Either end gives the player's roster back and returns
-  // The pose the player was at when the trial was entered, which the world jumps them to; none while the trial runs on
+  // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open. When
+  // It runs Out the trial is cleared, and its first clear pays once (PROVISIONAL). Either end gives the player's roster
+  // Back and returns The pose the player was at when the trial was entered, which the world jumps them to; none while
+  // The trial runs on
   const stepTrial = ({ deltaMilliseconds, isPartyDown, isPlaying }: WorldChallengeStep): undefined | WorldJumpPose => {
     const arena = trialArena.value;
     if (!arena) return undefined;
@@ -180,8 +183,8 @@ export const useWorldTrials = ({
     return arena.returnPose;
   };
 
-  // A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its stand-in arena,
-  // East of where the player stands (PROVISIONAL until the trial's scene is read)
+  // A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its
+  // `stand-in` arena, East of where the player stands (PROVISIONAL until the trial's scene is read)
   const openTrial = async (trial: Trial) => {
     const returnPose = computeStandingPose(
       { position: characterBody.position, yaw: characterBody.rotation.y },

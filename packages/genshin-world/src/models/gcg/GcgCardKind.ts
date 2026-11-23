@@ -1,5 +1,6 @@
-// The kinds of card a duel knows. Artifact, Talent, Vehicle and Weapon are equipped to a character, Support sits in a side's
-// Support zone, Event is played and gone, and Onstage, State and Summon are the cards a skill creates on the field
+// The kinds of card a duel knows. Artifact, Talent, Vehicle and Weapon are equipped to a character, Support sits in a
+// Side's Support zone, Event is played and gone, and Onstage, State and Summon are the cards a skill creates on the
+// Field
 export const GcgCardKind = {
   Artifact: "Artifact",
   Event: "Event",

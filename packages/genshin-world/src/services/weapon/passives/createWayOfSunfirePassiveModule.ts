@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 const SUNFIRE_ARROW_COOLDOWN_ID = "wayOfSunfireArrowCooldown";
 const HEARTSEARER_ID = "heartsearer";
 
-// The Way of Sunfire at its rank: a Charged Attack hit its wielder lands queues a Sunfire Arrow at the rank's multiplier of ATK
-// On the enemy it struck, once every the rank's cooldown in seconds, and the arrow gives that enemy Heartsearer for the rank's
-// Seconds, while the wielder's Charged Attacks deal the rank's amount more DMG to it
+// The Way of Sunfire at its rank: a Charged Attack hit its wielder lands queues a Sunfire Arrow at the rank's
+// Multiplier of ATK On the enemy it struck, once every the rank's cooldown in seconds, and the arrow gives that enemy
+// Heartsearer for the rank's Seconds, while the wielder's Charged Attacks deal the rank's amount more DMG to it
 export const createWayOfSunfirePassiveModule = (params: number[]): PassiveModule => {
   const cooldownSeconds = takeOne(params, 0);
   const talentMultiplier = takeOne(params, 1);

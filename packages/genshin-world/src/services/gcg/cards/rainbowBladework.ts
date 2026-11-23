@@ -6,7 +6,8 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 const RAINBOW_BLADEWORK_DAMAGE = 1;
 const RAINBOW_BLADEWORK_USAGES = 3;
 
-// Rainbow Bladework, an onstage: after the side's character uses a Normal Attack, it deals 1 Hydro DMG, for three usages
+// Rainbow Bladework, an onstage: after the side's character uses a Normal Attack, it deals 1 Hydro DMG, for three
+// Usages
 export const rainbowBladework: GcgCardModule = {
   initialUsages: RAINBOW_BLADEWORK_USAGES,
   onSkillUsed: (_context, skill, zoneCard) => {

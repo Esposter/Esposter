@@ -17,9 +17,10 @@ import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The state after a character's returned expedition is claimed at `now`: each item of its duration drawn to a count in
-// Its range by `random`, each count raised by the percent the talents of the character sent add to it, the Mora into the
-// Wallet and the rest into the bag, the expedition taken off the list. Undefined where the character is not out, its time
-// Is not yet out (its talents shorten the time it takes, in the place's region), or the bag cannot take every item whole
+// Its range by `random`, each count raised by the percent the talents of the character sent add to it, the Mora into
+// The Wallet and the rest into the bag, the expedition taken off the list. Undefined where the character is not out,
+// Its time Is not yet out (its talents shorten the time it takes, in the place's region), or the bag cannot take every
+// Item whole
 export const claimExpedition = (
   expeditions: readonly Expedition[],
   characterId: number,

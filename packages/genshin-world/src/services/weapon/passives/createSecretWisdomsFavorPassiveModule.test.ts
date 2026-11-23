@@ -22,7 +22,8 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 describe(createSecretWisdomsFavorPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
-  // Secret Wisdom's Favor with synthetic params: 80 Elemental Mastery a stack, six seconds, two stacks, a half-second cooldown
+  // Secret Wisdom's Favor with synthetic params: 80 Elemental Mastery a stack, six seconds, two stacks, a half-second
+  // Cooldown
   const secretWisdomsFavorPassiveModule = createSecretWisdomsFavorPassiveModule([80, 6, 2, 0.5]);
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,

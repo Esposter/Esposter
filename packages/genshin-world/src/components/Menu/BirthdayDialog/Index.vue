@@ -29,7 +29,8 @@ const days = computed(() =>
 const birthday = computed<TravelerBirthdaySave | undefined>(() =>
   month.value !== undefined && day.value !== undefined ? { day: day.value, month: month.value } : undefined,
 );
-// The confirm line names the date, the twenty-ninth of February with a line of its own, and is coloured as the game colours it
+// The confirm line names the date, the twenty-ninth of February with a line of its own, and is coloured as the game
+// Colours it
 const confirmSegments = computed(() => {
   if (!birthday.value) return [];
   const { day: pickedDay, month: pickedMonth } = birthday.value;

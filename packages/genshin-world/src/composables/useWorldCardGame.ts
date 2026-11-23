@@ -1,4 +1,5 @@
-/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot
+   reject and nothing waits on it */
 import type { WorldCardGameOptions } from "#src/models/gcg/WorldCardGameOptions";
 
 import { useWorldSessionStore } from "#src/store/session";
@@ -13,9 +14,9 @@ export const useWorldCardGame = ({ getResidents, savedCardGameExp, savedRewarded
   const { setInventory, setWallet } = worldSessionStore;
   const cardGameExp = ref(savedCardGameExp);
   const cardGameRewardedGameIds = ref(savedRewardedGameIds);
-  // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
-  // The way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing. The reward's rules are
-  // Imported as the reward is paid, so the card game stays out of the first screen's static graph
+  // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and
+  // Wallet, The way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing. The
+  // Reward's rules are Imported as the reward is paid, so the card game stays out of the first screen's static graph
   const payCardGameReward = (gameId: number | undefined, won: boolean) => {
     const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
     if (!won || !weekGame) return;

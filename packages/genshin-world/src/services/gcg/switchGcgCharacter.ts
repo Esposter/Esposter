@@ -14,9 +14,9 @@ import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveChara
 import { takeOne } from "@esposter/shared";
 
 // A combat action: the side pays one die of any face, fewer where the field reduces the switch, to make a standing
-// Character on standby its active one, and the turn passes. A switch the field makes fast passes no turn. Each card on the
-// Field then hears the switch, and the damage it deals after it is dealt. Refused for the active character itself, a
-// Character who is down, or dice that cannot be paid
+// Character on standby its active one, and the turn passes. A switch the field makes fast passes no turn. Each card on
+// The Field then hears the switch, and the damage it deals after it is dealt. Refused for the active character itself,
+// A Character who is down, or dice that cannot be paid
 export const switchGcgCharacter = (
   duel: GcgDuel,
   sideIndex: number,

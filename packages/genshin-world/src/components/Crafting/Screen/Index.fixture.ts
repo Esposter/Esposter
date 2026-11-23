@@ -18,8 +18,8 @@ const resinParam = await readResinParam(GAME_DATA_LOCAL_BASE_URL);
 
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
-// Condensed Resin on the Consumable tab, which the player has learned from its Instruction and which is open at Adventure
-// Rank 10, with Diluc as the crafter and one already crafted, as the Crafting Table clip shows it
+// Condensed Resin on the Consumable tab, which the player has learned from its Instruction and which is open at
+// Adventure Rank 10, with Diluc as the crafter and one already crafted, as the Crafting Table clip shows it
 const recipes: CraftingRecipe[] = [
   {
     combineType: 6,

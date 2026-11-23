@@ -13,8 +13,8 @@ import { createSkyVariables } from "#src/services/tuning/createSkyVariables";
 import { createWaterVariables } from "#src/services/tuning/createWaterVariables";
 import { createWindVariables } from "#src/services/tuning/createWindVariables";
 
-// The look's every uniform as a development variable, in the panel's sections of it, so the hour, clouds, wind, ramp, rim,
-// Outline, fog, water, grade and god rays are set against reference screenshots rather than guessed. A ramp or a
+// The look's every uniform as a development variable, in the panel's sections of it, so the hour, clouds, wind, ramp,
+// Rim, Outline, fog, water, grade and god rays are set against reference screenshots rather than guessed. A ramp or a
 // Grade is written into its texture at once; nothing is saved, and a value that looks right is copied into the region's
 // Constants
 export const createLookVariables = (

@@ -8,8 +8,8 @@ import { Object3D } from "three";
 import { describe } from "vitest";
 import { ref } from "vue";
 
-// Each step of the frame as a no-op, over a character on the field with nothing in reach and an input holding nothing, so
-// A test overrides only the step it watches
+// Each step of the frame as a no-op, over a character on the field with nothing in reach and an input holding nothing,
+// So A test overrides only the step it watches
 export const createFrameOptions = (overrides: Partial<WorldFrameOptions> = {}): WorldFrameOptions => {
   const inputState = createIdleInputState();
   const input: Input = {

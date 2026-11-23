@@ -4,8 +4,8 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { describe, expect, test } from "vitest";
 
 describe(readEnemyTables, () => {
-  // A kind whose article names a Drops template takes the template's materials as its drop source, one tier each, and the
-  // Wiki gives them no count, so none is read
+  // A kind whose article names a Drops template takes the template's materials as its drop source, one tier each, and
+  // The Wiki gives them no count, so none is read
   test.each([
     {
       enemyKindId: EnemyKindId.ErodingAvatarOfLava,

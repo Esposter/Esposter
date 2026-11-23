@@ -8,8 +8,8 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
-// Gilding at its rank: after its wielder uses a burst, on each interval for the seconds given it regenerates energy to the
-// Wielder and a share of Max HP to each member of the deployed team
+// Gilding at its rank: after its wielder uses a burst, on each interval for the seconds given it regenerates energy to
+// The Wielder and a share of Max HP to each member of the deployed team
 export const createGildingPassiveModule = (params: number[]): PassiveModule => {
   const seconds = takeOne(params, 0);
   const intervalSeconds = takeOne(params, 1);

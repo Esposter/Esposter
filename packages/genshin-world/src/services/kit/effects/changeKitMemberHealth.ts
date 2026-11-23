@@ -8,9 +8,9 @@ import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
-// The one way a kit changes a party member's current HP, its own or another's, by an amount of HP: a positive amount heals
-// It, raised by the source's Healing Bonus and the member's Incoming Healing Bonus as the buffs on them stand, and a
-// Negative one drains it as it is, as gcsim's Heal and Drain price them. The change is recorded with the source's
+// The one way a kit changes a party member's current HP, its own or another's, by an amount of HP: a positive amount
+// Heals It, raised by the source's Healing Bonus and the member's Incoming Healing Bonus as the buffs on them stand,
+// And a Negative one drains it as it is, as gcsim's Heal and Drain price them. The change is recorded with the source's
 // Character, so every kit of the team hears it. A member whose combatant is not built yet has no Max HP to take it by
 export const changeKitMemberHealth = (
   { characterIdCombatantMap, kitEffectState, party }: KitContext,

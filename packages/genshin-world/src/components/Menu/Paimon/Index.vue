@@ -34,8 +34,8 @@ interface Props {
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
   adventureRank: number;
-  // The icons that carry a red dot, the news the player has not seen, among the entries, the links, the side bar and the
-  // Profile's pencil; none is []
+  // The icons that carry a red dot, the news the player has not seen, among the entries, the links, the side bar and
+  // The Profile's pencil; none is []
   alertedIcons: (MenuEntryIcon | MenuFrameIcon)[];
   // Whether a screen is built, which its entry opens; an unbuilt one's entry is drawn disabled
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;
@@ -104,7 +104,8 @@ const closeWorldLevelDialog = async () => {
 // Quit Game opens the quit prompt over the menu, which stays behind it dimmed and inert
 // Cancel closes the prompt back to the menu, and Confirm leaves through the quit event
 const isExitPrompted = ref(false);
-// The Quit Game button is inert until the menu is patched, so the focus goes back to it on the tick after the prompt closes
+// The Quit Game button is inert until the menu is patched, so the focus goes back to it on the tick after the prompt
+// Closes
 const closeExitPrompt = async () => {
   isExitPrompted.value = false;
   await nextTick();
@@ -128,10 +129,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- The game's pause menu, laid out in the reference's own pixels: its side bar down the left, of Back, the side bar's
-       Screens and Quit Game, the profile card over the panel's entries in the game's four columns, and the world drawn
-       past the panel, where Paimon floats. Every entry the player's rank and quests have opened is here in its order: one
-       whose screen is not built yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
+  <!-- The game's pause menu, laid out in the reference's own pixels: its side bar down the left, of Back, the side
+    bar's Screens and Quit Game, the profile card over the panel's entries in the game's four columns, and the world
+    drawn past the panel, where Paimon floats. Every entry the player's rank and quests have opened is here in its
+    order: one whose screen is not built yet is drawn disabled, and the links out to web pages are drawn disabled
+    whole -->
   <GameScreen
     :class="{ closing: isClosing }"
     class="paimon-menu"

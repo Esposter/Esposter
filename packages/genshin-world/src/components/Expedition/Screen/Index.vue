@@ -25,7 +25,8 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   adventureRank: number;
-  // The expedition talents each character has unlocked, by character id, which shorten its expeditions and add to their rewards
+  // The expedition talents each character has unlocked, by character id, which shorten its expeditions and add to their
+  // Rewards
   characterExpeditionPassives: ReadonlyMap<number, readonly ExpeditionPassive[]>;
   // The characters the picker lists, each by its id and its name in the reader's language
   characters: { id: number; name: string }[];

@@ -2,11 +2,12 @@ import type { WeightedValue } from "#src/models/shared/WeightedValue";
 
 import { WeatherKind } from "genshin-engine";
 
-// The game's standard chain of weathers, the one regular areas turn through: each weather's row of weights for the next,
-// Normalised over the row. An eruption interrupts rain, so rain can turn to one, and an eruption always turns back to
-// Rain where the area has it. Snow and fog name no row and hold. The eruption and sandstorm weights are provisional, the
-// Game's chains for a volcano and a desert unread: the dump holds no template for a sandstorm, and the wiki says only that
-// The desert has them intermittently. Only an area that lists a sandstorm draws one, as it only draws the weathers it lists
+// The game's standard chain of weathers, the one regular areas turn through: each weather's row of weights for the
+// Next, Normalised over the row. An eruption interrupts rain, so rain can turn to one, and an eruption always turns
+// Back to Rain where the area has it. Snow and fog name no row and hold. The eruption and sandstorm weights are
+// Provisional, the Game's chains for a volcano and a desert unread: the dump holds no template for a sandstorm, and the
+// Wiki says only that The desert has them intermittently. Only an area that lists a sandstorm draws one, as it only
+// Draws the weathers it lists
 export const WeatherKindTransitionWeightsMap: Partial<Record<WeatherKind, WeightedValue<WeatherKind>[]>> = {
   [WeatherKind.Clear]: [
     { value: WeatherKind.Clear, weight: 50 },

@@ -17,9 +17,10 @@ const WAX_AND_WANE_MAXIMUM_STACKS = 5;
 const countWaxAndWaneStacks = (effects: readonly KitEffect[], characterId: number): number =>
   findKitStatus(effects, characterId, WAX_AND_WANE_ID)?.stacks ?? 0;
 
-// Full Circle at its rank: an Elemental Reaction, by any character, gains a stack of Wax and Wane, once every cooldown, up to
-// Five. Each stack raises Elemental Mastery by the rank's first amount and lowers ATK by the second. Each decay seconds that go
-// By without a reaction lose a stack, and a reaction restarts the count. The stacks count whether or not the wielder is on the field
+// Full Circle at its rank: an Elemental Reaction, by any character, gains a stack of Wax and Wane, once every cooldown,
+// Up to Five. Each stack raises Elemental Mastery by the rank's first amount and lowers ATK by the second. Each decay
+// Seconds that go By without a reaction lose a stack, and a reaction restarts the count. The stacks count whether or
+// Not the wielder is on the field
 export const createFullCirclePassiveModule = (params: number[]): PassiveModule => {
   const attackPercent = takeOne(params, 0);
   const elementalMastery = takeOne(params, 1);

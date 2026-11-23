@@ -41,7 +41,8 @@ export const useTerrainSelection = ({
   const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
   const surrounding = createTerrainSelection(TILE_SELECTION_CAPACITY);
   const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);
-  // The tiles the view draws, which the far rings draw by: the wanted ones resolved, so only what the camera sees is indexed
+  // The tiles the view draws, which the far rings draw by: the wanted ones resolved, so only what the camera sees is
+  // Indexed
   const viewDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
   const eye = new Vector3();
   const frustum = new Frustum();

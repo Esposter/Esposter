@@ -27,7 +27,8 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-// Sturdy, so no hit is clamped to the health the camp member starts with, and standing at the wearer's feet unless placed
+// Sturdy, so no hit is clamped to the health the camp member starts with, and standing at the wearer's feet unless
+// Placed
 const createSturdyEnemy = (id = "enemy", position = { x: 0, z: 0 }) => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   health: 1e9,

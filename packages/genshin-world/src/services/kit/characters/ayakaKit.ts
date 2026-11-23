@@ -19,36 +19,35 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 // Constellation page and gcsim v2.47.2 (MIT) ayaka/burst.go give it
 // https://genshin-impact.fandom.com/wiki/Blizzard_Blade_Seki_no_To
 const BLIZZARD_BLADE_SEKI_NO_TO_CONSTELLATION = 2;
-// Kamisato Art: Senho infuses Ayaka's attacks with Cryo for 5 seconds as she reappears, as the wiki's Senho page and gcsim
-// V2.47.2 (MIT) ayaka/dash.go's 300 frames give. Each step of the sprint restarts it, so it runs out 5 seconds after the
-// Sprint ends
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/dash.go
+// Kamisato Art: Senho infuses Ayaka's attacks with Cryo for 5 seconds as she reappears, as the wiki's Senho page and
+// Gcsim V2.47.2 (MIT) ayaka/dash.go's 300 frames give. Each step of the sprint restarts it, so it runs out 5 seconds
+// After the Sprint ends https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/dash.go
 const SENHO_INFUSION_SECONDS = 5;
-// Constellation 1, Snowswept Sakura: each of her normal or charged attacks' hits on an enemy has a 50% chance to cut Kamisato
-// Art: Hyouka's running cooldown by 0.3 seconds, once every 0.1 seconds, from the wiki's constellation table
+// Constellation 1, Snowswept Sakura: each of her normal or charged attacks' hits on an enemy has a 50% chance to cut
+// Kamisato Art: Hyouka's running cooldown by 0.3 seconds, once every 0.1 seconds, from the wiki's constellation table
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_CHANCE = 0.5;
 const CONSTELLATION_1_CUT_SECONDS = 0.3;
 const CONSTELLATION_1_ICD_SECONDS = 0.1;
 const CONSTELLATION_1_ICD_STATUS_ID = "ayaka-snowswept-sakura-icd";
-// Amatsumi Kunitsumi Sanctification, from Ascension 1: after Kamisato Art: Hyouka her Normal and Charged attacks deal 30%
-// Increased DMG for 6 seconds, as gcsim v2.47.2 (MIT) ayaka/asc.go gives it: an additive DMG Bonus on each Normal and Extra
-// (Charged) attack, for 360 frames
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/asc.go
+// Amatsumi Kunitsumi Sanctification, from Ascension 1: after Kamisato Art: Hyouka her Normal and Charged attacks deal
+// 30% Increased DMG for 6 seconds, as gcsim v2.47.2 (MIT) ayaka/asc.go gives it: an additive DMG Bonus on each Normal
+// And Extra (Charged) attack, for 360 frames
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/asc.go`
 const ASCENSION_1 = 1;
 const AMATSUMI_KUNITSUMI_SANCTIFICATION_DAMAGE_BONUS = 0.3;
 const AMATSUMI_KUNITSUMI_SANCTIFICATION_SECONDS = 6;
 const AMATSUMI_KUNITSUMI_SANCTIFICATION_STATUS_ID = "ayaka-amatsumi-kunitsumi-sanctification";
-// Constellation 4, from gcsim v2.47.2 (MIT) ayaka/cons.go: an opponent Kamisato Art: Soumetsu's storms damage has its DEF
-// Reduced by 30% for 6 seconds, which the defence multiplier reads as an enemy status
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go
+// Constellation 4, from gcsim v2.47.2 (MIT) ayaka/cons.go: an opponent Kamisato Art: Soumetsu's storms damage has its
+// DEF Reduced by 30% for 6 seconds, which the defence multiplier reads as an enemy status
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_DEFENCE_REDUCTION = 0.3;
 const CONSTELLATION_4_SECONDS = 6;
 const CONSTELLATION_4_STATUS_ID = "ayaka-frostflake-defence-reduction";
-// Constellation 6, Dance of Suigetsu, from gcsim v2.47.2 (MIT) ayaka/cons.go: the first Charged Attack hit on an enemy clears
-// Usurahi Butou's 298% DMG bonus 0.5 seconds on, and it returns 10 seconds after that clear
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go
+// Constellation 6, Dance of Suigetsu, from gcsim v2.47.2 (MIT) ayaka/cons.go: the first Charged Attack hit on an enemy
+// Clears Usurahi Butou's 298% DMG bonus 0.5 seconds on, and it returns 10 seconds after that clear
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go`
 const CONSTELLATION_6 = 6;
 const USURAHI_BUTOU_DAMAGE_BONUS = 2.98;
 const USURAHI_BUTOU_CLEAR_SECONDS = 0.5;
@@ -59,10 +58,10 @@ export const AYAKA_CHARACTER_ID = 10_000_002;
 
 // Kamisato Ayaka's behaviour: Kamisato Art: Soumetsu casts its storm, a summon standing where she cast it and priced by
 // Her, and from two constellations Blizzard Blade Seki no To's two smaller storms beside it, and Kamisato Art: Senho
-// Infuses her attacks with Cryo as she sprints. Constellation 1 cuts Hyouka's running cooldown on her normal and charged
-// Hits. Senho's Cryo application and movement, and A4's effect, are not built. Constellations 4 and 6 are built: 4's DEF
-// Reduction is an enemy status on the storm hits, and 6's charged attack bonus runs on its own clear and recharge
-// Constellation 4's DEF cut, on each storm hit that deals an enemy damage, is applied once that damage lands,
+// Infuses her attacks with Cryo as she sprints. Constellation 1 cuts Hyouka's running cooldown on her normal and
+// Charged Hits. Senho's Cryo application and movement, and A4's effect, are not built. Constellations 4 and 6 are
+// Built: 4's DEF Reduction is an enemy status on the storm hits, and 6's charged attack bonus runs on its own clear and
+// Recharge Constellation 4's DEF cut, on each storm hit that deals an enemy damage, is applied once that damage lands,
 // As gcsim's callback does
 const getFrostflakeDefenceReduction = ({ constellationCount }: Combatant): EnemyStatus | undefined =>
   constellationCount >= CONSTELLATION_4

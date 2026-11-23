@@ -5,8 +5,8 @@ import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitch
 
 const CHAINS_OF_WARDING_THUNDER_DAMAGE = 1;
 
-// Chains of Warding Thunder, Electro Hypostasis' summon: 1 Electro DMG at each End Phase, for two usages. While it is on the
-// Field, the opposing side spends 1 more die on each switch, once a round (the wiki's Chains of Warding Thunder)
+// Chains of Warding Thunder, Electro Hypostasis' summon: 1 Electro DMG at each End Phase, for two usages. While it is
+// On the Field, the opposing side spends 1 more die on each switch, once a round (the wiki's Chains of Warding Thunder)
 export const chainsOfWardingThunder: GcgCardModule = {
   initialUsages: 2,
   onCostPaid: ({ duel }, subject, zoneCard) => {

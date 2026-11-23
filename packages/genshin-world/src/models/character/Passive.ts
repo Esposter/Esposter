@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 // A passive a character holds, by its proud skill group's id, the text id of its name, and the ascension phase it opens
-// At. The utility passive opens at the first phase, the character's own, and the two ascension passives at the first and
-// The fourth
+// At. The utility passive opens at the first phase, the character's own, and the two ascension passives at the first
+// And The fourth
 export interface Passive {
   nameTextId: string;
   phase: number;

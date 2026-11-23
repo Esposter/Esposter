@@ -10,6 +10,7 @@ export interface WitnessView {
   // How many times each family's parts are scaled about their own places, each at once
   familyScales?: Record<string, number> | undefined;
   isAlone?: boolean;
-  // Which half of the witness's leaf cards are drawn, each card in a half of its own (`applyLeafHalf`), every card unless told
+  // Which half of the witness's leaf cards are drawn, each card in a half of its own (`applyLeafHalf`), every card
+  // Unless told
   leafHalf?: 0 | 1;
 }

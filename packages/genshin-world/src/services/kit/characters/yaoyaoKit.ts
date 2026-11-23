@@ -45,8 +45,8 @@ const YUEGUI_SPAWN_METRES = 2;
 const JUMPING_YUEGUI_METRES = 2;
 const BURST_STATUS_ID = "yaoyao-burst";
 const JUMPING_YUEGUI_ID = "yaoyao-jumping-yuegui";
-// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 1 gives the active character 15% Dendro DMG Bonus for eight seconds
-// After each radish heal, and restores 15 stamina to the party's pool behind a five-second cooldown
+// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 1 gives the active character 15% Dendro DMG Bonus for eight
+// Seconds After each radish heal, and restores 15 stamina to the party's pool behind a five-second cooldown
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_1 = 1;
 const C1_DENDRO_DMG_BONUS = 0.15;
@@ -54,37 +54,37 @@ const C1_SECONDS = 8;
 const C1_STAMINA_RESTORE = 15;
 const C1_STAMINA_COOLDOWN_SECONDS = 5;
 const C1_STAMINA_COOLDOWN_ID = "yaoyao-c1-stamina-cooldown";
-// Measured: gcsim (MIT) yaoyao/asc.go and radish.go, Ascension 4 heals the active character each second for five seconds
-// After each radish heal, by 0.8% of Yaoyao's Max HP, and a newer radish heal replaces the one running
+// Measured: gcsim (MIT) yaoyao/asc.go and radish.go, Ascension 4 heals the active character each second for five
+// Seconds After each radish heal, by 0.8% of Yaoyao's Max HP, and a newer radish heal replaces the one running
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/asc.go
 const ASCENSION_4 = 4;
 const A4_HEAL_MAX_HEALTH_SHARE = 0.008;
 const A4_INTERVAL_SECONDS = 1;
 const A4_SECONDS = 5;
 const A4_HEAL_ID = "yaoyao-a4-heal";
-// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 2 gives Yaoyao 3 energy when a radish strikes an enemy while her burst
-// Lasts, once each 0.8 seconds
+// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 2 gives Yaoyao 3 energy when a radish strikes an enemy while her
+// Burst Lasts, once each 0.8 seconds
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_2 = 2;
 const C2_ENERGY = 3;
 const C2_INTERVAL_SECONDS = 0.8;
 const C2_ICD_ID = "yaoyao-c2-icd";
-// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 4 gives Yaoyao Elemental Mastery of 0.3% of her Max HP, up to 120,
-// For 8.8 seconds on each skill and burst cast
+// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 4 gives Yaoyao Elemental Mastery of 0.3% of her Max HP, up to
+// 120, For 8.8 seconds on each skill and burst cast
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_4 = 4;
 const C4_ELEMENTAL_MASTERY_SHARE = 0.003;
 const C4_ELEMENTAL_MASTERY_CAP = 120;
 const C4_SECONDS = 8.8;
-// Measured: gcsim (MIT) yaoyao/cons.go and yuegui.go, Constellation 6 throws a Mega Radish at the target of a skill Yuegui's
-// Third and sixth radishes, healing the active character by 7.5% of Yaoyao's Max HP
+// Measured: gcsim (MIT) yaoyao/cons.go and yuegui.go, Constellation 6 throws a Mega Radish at the target of a skill
+// Yuegui's Third and sixth radishes, healing the active character by 7.5% of Yaoyao's Max HP
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_6 = 6;
 const C6_THROW_INDICES = new Set([2, 5]);
 const C6_HEAL_MAX_HEALTH_SHARE = 0.075;
-// Measured: gcsim (MIT) yaoyao/asc.go, Ascension 1 throws a burst radish every 0.6 seconds of the burst while Yaoyao dashes or
-// Jumps, at a random enemy within the 8 metres round her that a Yuegui targets, and throws none while no enemy stands there
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/asc.go
+// Measured: gcsim (MIT) yaoyao/asc.go, Ascension 1 throws a burst radish every 0.6 seconds of the burst while Yaoyao
+// Dashes or Jumps, at a random enemy within the 8 metres round her that a Yuegui targets, and throws none while no
+// Enemy stands there Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/asc.go
 const ASCENSION_1 = 1;
 const A1_INTERVAL_SECONDS = 0.6;
 const A1_LOCOMOTION_STATES = new Set<LocomotionState>([LocomotionState.Dash, LocomotionState.Jump]);
@@ -128,8 +128,8 @@ const pickRadishTarget = (context: KitContext, yueguiCentre: GroundPoint): Groun
   return enemy?.position ?? body.position;
 };
 
-// A radish's heal: its share of the thrower's Max HP and its flat amount, given to the active character, or to each member of
-// The deployed team when it heals the team
+// A radish's heal: its share of the thrower's Max HP and its flat amount, given to the active character, or to each
+// Member of The deployed team when it heals the team
 interface RadishHeal {
   flat: number;
   healsTeam: boolean;
@@ -179,8 +179,8 @@ const applyRadishHealRiders = (context: KitContext, combatant: Combatant): void 
   if (combatant.ascension >= ASCENSION_4) startA4Heal(context, combatant);
 };
 
-// A healing radish lands at a target, pricing its heal from the thrower's Max HP as it is thrown: the team's members, or
-// The active character, heal by it, and it rides Constellation 1 and Ascension 4 as it lands
+// A healing radish lands at a target, pricing its heal from the thrower's Max HP as it is thrown: the team's members,
+// Or The active character, heal by it, and it rides Constellation 1 and Ascension 4 as it lands
 const landHealingRadish = (
   context: KitContext,
   combatant: Combatant,
@@ -238,8 +238,8 @@ const throwMegaRadish = (context: KitContext, combatant: Combatant, target: Grou
   });
 };
 
-// Ascension 1's radish lands on a random enemy within the circle round Yaoyao, healing as a burst radish does, and none is
-// Thrown while no enemy stands there
+// Ascension 1's radish lands on a random enemy within the circle round Yaoyao, healing as a burst radish does, and none
+// Is Thrown while no enemy stands there
 const throwAscensionRadish = (
   context: KitContext,
   combatant: Combatant,
@@ -252,8 +252,8 @@ const throwAscensionRadish = (
   if (enemy) landHealingRadish(context, combatant, enemy.position, hit, heal, attackTag);
 };
 
-// Ascension 1's ticker: each interval of the burst it throws while Yaoyao dashes or jumps, and queues its next tick while the
-// Burst lasts, which a swap ends
+// Ascension 1's ticker: each interval of the burst it throws while Yaoyao dashes or jumps, and queues its next tick
+// While the Burst lasts, which a swap ends
 const scheduleAscensionTick = (
   context: KitContext,
   combatant: Combatant,
@@ -295,12 +295,12 @@ const applyConstellation4 = ({
   });
 };
 
-// Yaoyao's behaviour: her Yuegui, which her skill spawns, throws a White Jade Radish each throw interval at a target the
-// Pick above chooses. Her burst spawns three Yuegui behind her while it lasts, whose radishes heal the whole team, and a
-// Swap ends the burst and the Yuegui it spawned. Each radish heal gives Constellation 1's Dendro DMG Bonus and stamina
-// Restore, and Ascension 4's heal chain, and Constellation 2 and 4 follow her radishes' strikes and her casts
-// Ascension 1 throws a burst radish each 0.6 seconds of the burst while she dashes or jumps
-// Constellation 6 throws a Mega Radish at the skill Yuegui's third and sixth radishes, at the same target
+// Yaoyao's behaviour: her Yuegui, which her skill spawns, throws a White Jade Radish each throw interval at a target
+// The Pick above chooses. Her burst spawns three Yuegui behind her while it lasts, whose radishes heal the whole team,
+// And a Swap ends the burst and the Yuegui it spawned. Each radish heal gives Constellation 1's Dendro DMG Bonus and
+// Stamina Restore, and Ascension 4's heal chain, and Constellation 2 and 4 follow her radishes' strikes and her casts
+// Ascension 1 throws a burst radish each 0.6 seconds of the burst while she dashes or jumps Constellation 6 throws a
+// Mega Radish at the skill Yuegui's third and sixth radishes, at the same target
 export const createYaoyaoKitBehaviour = ({
   readHits,
   readParameter,
@@ -329,8 +329,8 @@ export const createYaoyaoKitBehaviour = ({
 
   return {
     burst: {
-      // Moonjade Descent lasts for its duration, and spawns a Yuegui behind her at each of its three spawns while it lasts,
-      // The three standing together under one name, as gcsim keeps each
+      // Moonjade Descent lasts for its duration, and spawns a Yuegui behind her at each of its three spawns while it
+      // Lasts, The three standing together under one name, as gcsim keeps each
       onStart: (context) => {
         const { activeCombatant: combatant, kitEffectState } = context;
         const { characterId } = combatant;
@@ -372,7 +372,8 @@ export const createYaoyaoKitBehaviour = ({
       removeKitEffects(context.kitEffectState, (effect) => effect.kind === "field" && effect.id === JUMPING_YUEGUI_ID);
     },
     skill: {
-      // Raphanus Sky Cluster schedules the Yuegui's spawn, two metres ahead of where Yaoyao's body stands when it spawns
+      // Raphanus Sky Cluster schedules the Yuegui's spawn, two metres ahead of where Yaoyao's body stands when it
+      // Spawns
       onStart: (context) => {
         const { activeCombatant: combatant, kitEffectState } = context;
         applyConstellation4(context);

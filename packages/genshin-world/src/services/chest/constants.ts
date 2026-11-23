@@ -1,5 +1,5 @@
-// The one-star weapons the wiki lists as dropping from Common and Exquisite chests, by their item ids: the weapon's id is
-// Its item's. The wiki names no 2 or 3-star weapon, so none is listed beyond them
+// The one-star weapons the wiki lists as dropping from Common and Exquisite chests, by their item ids: the weapon's id
+// Is Its item's. The wiki names no 2 or 3-star weapon, so none is listed beyond them
 export const CHEST_ONE_STAR_WEAPON_ITEM_IDS: readonly number[] = [
   11101, 11201, 11301, 11303, 11305, 12101, 12201, 12303, 12306, 13101, 13201, 13301, 13302, 14101, 14201, 14303, 14305,
   15101, 15201, 15303, 15305,

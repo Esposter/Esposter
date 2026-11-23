@@ -5,17 +5,19 @@ import { GameTextKey } from "genshin-text";
 
 // The moment a good that never refreshes counts its purchases from, before any of them
 export const SHOP_NEVER_REFRESHED_AT = Temporal.Instant.fromEpochMilliseconds(0);
-// How many pairs of characters Paimon's Bargains' rotation holds, and the offset that puts January on the fourth of them
+// How many pairs of characters Paimon's Bargains' rotation holds, and the offset that puts January on the fourth of
+// Them
 export const PAIMON_BARGAINS_PAIR_COUNT = 6;
 export const PAIMON_BARGAINS_PAIR_OFFSET = 2;
-// The three General Goods shops, by the ids their goods are read under: Mondstadt's grocery, which the shop table types as an
-// Activity shop (see the shops page's Open), and Liyue's and Inazuma's, which the table types as groceries
+// The three General Goods shops, by the ids their goods are read under: Mondstadt's grocery, which the shop table types
+// As an Activity shop (see the shops page's Open), and Liyue's and Inazuma's, which the table types as groceries
 export const MONDSTADT_GENERAL_GOODS_SHOP_ID = 1004;
 export const LIYUE_GENERAL_GOODS_SHOP_ID = 1008;
 export const INAZUMA_GENERAL_GOODS_SHOP_ID = 1056;
 // Marjorie's shop, the Mondstadt Souvenir Shop, which the Frostbearing Tree's last level opens
 export const MONDSTADT_SOUVENIR_SHOP_ID = 1002;
-// Brook's and Draff's shops, the two city vendors the wiki gives by day only, from six in the morning until seven at night
+// Brook's and Draff's shops, the two city vendors the wiki gives by day only, from six in the morning until seven at
+// Night
 const BROOK_SHOP_ID = 1015;
 export const DRAFF_SHOP_ID = 1017;
 export const DAY_VENDOR_SHOP_IDS: readonly number[] = [BROOK_SHOP_ID, DRAFF_SHOP_ID];
@@ -23,8 +25,9 @@ export const DAY_VENDOR_SHOP_IDS: readonly number[] = [BROOK_SHOP_ID, DRAFF_SHOP
 export const PAIMON_BARGAINS_SHOP_ID = 1001;
 // The Lucky Coin, which the Card Shop prices its cards in and the card game's weekly rewards pay
 export const GCG_LUCKY_COIN_ITEM_ID = 107_021;
-// Paimon's Bargains' tabs in the order the screen shows them, each by its id, the currency its goods are bought with and the
-// Key of its name. The Primogem tab's Fates are the inventory's, which the slice does not hold, so that tab is empty for now
+// Paimon's Bargains' tabs in the order the screen shows them, each by its id, the currency its goods are bought with
+// And the Key of its name. The Primogem tab's Fates are the inventory's, which the slice does not hold, so that tab is
+// Empty for now
 export const PAIMON_BARGAINS_TABS: readonly { currency: Currency; id: number; nameKey: GameTextKey }[] = [
   { currency: Currency.MasterlessStarglitter, id: 1, nameKey: GameTextKey.StarglitterExchange },
   { currency: Currency.MasterlessStardust, id: 2, nameKey: GameTextKey.StardustExchange },

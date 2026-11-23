@@ -1,8 +1,8 @@
 import type { EnemyCampMember } from "#src/models/enemy/EnemyCampMember";
 import type { GroundPoint } from "genshin-engine";
 
-// The members of a camp standing evenly round its centre at a radius, in the order given, each of the kind and level its
-// Spawn names and standing at that spawn, with no patrol
+// The members of a camp standing evenly round its centre at a radius, in the order given, each of the kind and level
+// Its Spawn names and standing at that spawn, with no patrol
 export const placeCampRing = (
   center: GroundPoint,
   radius: number,

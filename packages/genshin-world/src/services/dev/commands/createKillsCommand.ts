@@ -3,7 +3,8 @@ import type { DevCommand } from "#src/models/dev/DevCommand";
 
 import { z } from "zod";
 
-// `kills` answers the defeats the Archive counts, every Living Being's count added up, read from the kills as they are now
+// `kills` answers the defeats the Archive counts, every Living Being's count added up, read from the kills as they are
+// Now
 export const createKillsCommand = ({ getKills }: { getKills: () => ArchiveKills }): DevCommand => ({
   args: z.object({}),
   argumentNames: [],

@@ -57,16 +57,17 @@ const FLASK_GAUGE_STATUS_ID = "jahoda-flask-gauge";
 const FLASK_ABSORBED_STATUS_PREFIX = "jahoda-flask-absorbed-";
 // The drain timer outlives its one tick, so it ticks as the pursuit runs out
 const PURSUIT_TICK_EXTRA_SECONDS = 0.1;
-// Measured: gcsim (MIT, v2.47.2) jahoda/cons.go, Constellation 6: a full flask's drain at Ascendant Gleam gives each Moonsign
-// Character 5% Crit Rate and 40% Crit DMG for 20 seconds, the buff a source names restarting only itself
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go
+// Measured: gcsim (MIT, v2.47.2) jahoda/cons.go, Constellation 6: a full flask's drain at Ascendant Gleam gives each
+// Moonsign Character 5% Crit Rate and 40% Crit DMG for 20 seconds, the buff a source names restarting only itself
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go`
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_CRITICAL_RATE = 0.05;
 const CONSTELLATION_6_CRITICAL_DAMAGE = 0.4;
 const CONSTELLATION_6_SECONDS = 20;
 const MEOWBALL_FIELD_ID = "jahoda-meowball";
 const MEOWBALL_ENERGY_ICD_STATUS_ID = "jahoda-meowball-energy-icd";
-// A full flask's drain gives ten Meowballs, one for each tenth of its gauge, as gcsim (MIT, v2.47.2) jahoda/skill.go does
+// A full flask's drain gives ten Meowballs, one for each tenth of its gauge, as gcsim (MIT, v2.47.2) jahoda/skill.go
+// Does
 const MEOWBALL_COUNT = FLASK_GAUGE_MAXIMUM / 10;
 // A Meowball gives her 2 energy on each enemy it strikes, at most once per 3.5 seconds, as gcsim's energy callback does
 const MEOWBALL_ENERGY = 2;
@@ -153,9 +154,11 @@ export const createJahodaKitBehaviour = ({
   const meowballFirstSeconds = readSeconds("firstMeowballFirstHitmark");
   const meowballIntervalSeconds = readSeconds("meowballHitmarkInterval");
   const meowballHitFields = readHitFields("meowball", ["hitArea", "hitmarkSeconds"]);
-  // Each Meowball reaches the enemies within its circle about the enemy it strikes, as gcsim's circle on the primary target does
+  // Each Meowball reaches the enemies within its circle about the enemy it strikes, as gcsim's circle on the primary
+  // Target does
   const meowballHitbox: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: meowballArea.radius } };
-  // A Meowball's hit gives her energy on each enemy it strikes, at most once per 3.5 seconds, as gcsim's energy callback does
+  // A Meowball's hit gives her energy on each enemy it strikes, at most once per 3.5 seconds, as gcsim's energy
+  // Callback does
   const meowballHit: KitHit = {
     ...meowballHitFields,
     // The circle the hitbox above gives, as the record holds no area for the hit
@@ -173,14 +176,14 @@ export const createJahodaKitBehaviour = ({
         gainPartyMemberEnergy(party, combatant, MEOWBALL_ENERGY);
     },
   };
-  // The filled flask's hit lands sooner from a press, or the pursuit running out, than from the fill that fills it, and the
-  // Unfilled flask's hit the same from each
+  // The filled flask's hit lands sooner from a press, or the pursuit running out, than from the fill that fills it, and
+  // The Unfilled flask's hit the same from each
   const filledDrainHit: KitHit = { ...filledDrainHitFields, hitmarkSeconds: readSeconds("filledDrainHit") };
   const filledPressHit: KitHit = { ...filledDrainHitFields, hitmarkSeconds: readSeconds("filledPressHit") };
   const unfilledHit: KitHit = { ...unfilledDrainHitFields, hitmarkSeconds: readSeconds("unfilledHit") };
 
-  // Each Meowball strikes the living enemy nearest her body, which the kit takes as the primary target, since it reads no
-  // Default target as gcsim does
+  // Each Meowball strikes the living enemy nearest her body, which the kit takes as the primary target, since it reads
+  // No Default target as gcsim does
   const strikeMeowball = (context: KitContext, combatant: Combatant, element: Element): void => {
     const [primary] = getNearestLivingEnemies(context.enemyMap.values(), context.body.position, 1);
     if (primary !== undefined)
@@ -203,9 +206,9 @@ export const createJahodaKitBehaviour = ({
     });
   };
 
-  // Drains the flask as gcsim's drainFlask does: its unfilled hit, or the filled hit given, then the pursuit and its drain
-  // Timer end, the gauge and the absorbed element with them. The hit is a summon cast where the drain is. A full flask's
-  // Drain at Ascendant Gleam buffs each Moonsign member, as Constellation 6 gives
+  // Drains the flask as gcsim's drainFlask does: its unfilled hit, or the filled hit given, then the pursuit and its
+  // Drain Timer end, the gauge and the absorbed element with them. The hit is a summon cast where the drain is. A full
+  // Flask's Drain at Ascendant Gleam buffs each Moonsign member, as Constellation 6 gives
   const drainFlask = (context: KitContext, body: KitBody, combatant: Combatant, filledHit: KitHit): void => {
     const { characterIdCombatantMap, kitEffectState, party } = context;
     const isFilled = readFlaskGauge(kitEffectState, combatant.characterId) >= FLASK_GAUGE_MAXIMUM;
@@ -248,7 +251,8 @@ export const createJahodaKitBehaviour = ({
     kitEffectState,
   }: KitContext): void => {
     const { characterId } = combatant;
-    // A press starts a new pursuit, which ends the Meowballs still running, as gcsim's Skill zeroes the flask and stops their ticks
+    // A press starts a new pursuit, which ends the Meowballs still running, as gcsim's Skill zeroes the flask and stops
+    // Their ticks
     removeMeowballs(kitEffectState);
     const pursuit = castKitField(kitEffectState, characterId, position, {
       id: PURSUIT_FIELD_ID,
@@ -285,7 +289,8 @@ export const createJahodaKitBehaviour = ({
       secondsRemaining: pursuitSeconds,
       stacks: 0,
     });
-    // The drain timer ticks once, when the pursuit's frames run out, on no circle, so it drains wherever the body stands
+    // The drain timer ticks once, when the pursuit's frames run out, on no circle, so it drains wherever the body
+    // Stands
     castKitField(kitEffectState, characterId, position, {
       id: DRAIN_FIELD_ID,
       nextTickSeconds: pursuitSeconds,
@@ -370,8 +375,8 @@ export const createJahodaKitBehaviour = ({
       },
     },
     skill: { onStart: startPursuit },
-    // The second press drains the flask at once, its hit a summon cast where the body stands, since the hit depends on the
-    // Gauge
+    // The second press drains the flask at once, its hit a summon cast where the body stands, since the hit depends on
+    // The Gauge
     skillChain: [
       {
         onStart: (context) => {

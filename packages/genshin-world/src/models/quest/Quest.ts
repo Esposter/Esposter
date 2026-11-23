@@ -16,11 +16,13 @@ export interface Quest {
   descriptionTextId: string;
   id: string;
   kind: QuestKind;
-  // The main quest the quest is filed under: its own id for a main quest, and the one a Reputation request is a sub quest of
+  // The main quest the quest is filed under: its own id for a main quest, and the one a Reputation request is a sub
+  // Quest of
   mainId: string;
   // The talks offering the quest, any one of which ending starts it, none for a quest that starts otherwise
   offerTalkIds: string[];
-  // The quests that must all be finished before this one starts, read from the accept conditions of its sub quests, none for a quest that starts otherwise
+  // The quests that must all be finished before this one starts, read from the accept conditions of its sub quests,
+  // None for a quest that starts otherwise
   parentQuestIds: string[];
   // The items the quest's reward rows pay on its finish, in the rows' order, none for a quest that pays nothing
   rewards: QuestRewardItem[];
@@ -29,8 +31,8 @@ export interface Quest {
   titleTextId: string;
 }
 
-// Every talk a talk-to objective or the offer names is one the quest runs, so no step waits on a talk that never happens
-// And no offer begins one
+// Every talk a talk-to objective or the offer names is one the quest runs, so no step waits on a talk that never
+// Happens And no offer begins one
 export const questSchema = z
   .object({
     descriptionTextId: z.string().min(1),

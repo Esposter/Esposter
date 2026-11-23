@@ -2,16 +2,18 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const RANGE_SEGMENT_REGEX = /^(?<start>\d+)-(?<end>\d+)$/u;
 
-// The part of an overlay entry the expansion reads: a cited entry names its file, and carries a value for each hit of a run
+// The part of an overlay entry the expansion reads: a cited entry names its file, and carries a value for each hit of a
+// Run
 interface KitOverlayRangeEntry {
   file?: string;
   index?: number;
   value?: unknown;
 }
 
-// An overlay key may name a run of consecutive hits, `hits.fatalBlossoms.0-6.hitmarkFrames`, which expands to one key per
-// Hit. A cited entry's array gives one value per hit, so each hit takes its own element and its position in the run as its
-// Index, which the cited reader matches against the loop's element at that index; any other entry is shared by the run
+// An overlay key may name a run of consecutive hits, `hits.fatalBlossoms.0-6.hitmarkFrames`, which expands to one key
+// Per Hit. A cited entry's array gives one value per hit, so each hit takes its own element and its position in the run
+// As its Index, which the cited reader matches against the loop's element at that index; any other entry is shared by
+// The run
 export const expandKitOverlay = <Entry extends KitOverlayRangeEntry>(
   overlay: Record<string, Entry>,
 ): Record<string, Entry> => {

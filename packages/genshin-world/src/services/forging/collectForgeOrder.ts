@@ -16,13 +16,13 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The bag, the Adventure EXP and order after every unit of a queue's order done by `now` is taken in. Each done unit yields
-// One result drawn by weight from its recipe's results, and an extra copy of it at the chance the talents of this forge type
-// Give. A material result is taken from the item definitions, and a weapon result, the weapon recipes' only kind, from the
-// Weapons' names and rarities, each a weapon entry of its own. The units done are counted from the moment the order began
-// At its seconds a unit, and a unit's result is taken whole, so the units done before the first the bag has no room for
-// Are taken in, and that unit waits in the queue with the units behind it. An order fully collected is no order, and its
-// Queue is free again
+// The bag, the Adventure EXP and order after every unit of a queue's order done by `now` is taken in. Each done unit
+// Yields One result drawn by weight from its recipe's results, and an extra copy of it at the chance the talents of
+// This forge type Give. A material result is taken from the item definitions, and a weapon result, the weapon recipes'
+// Only kind, from the Weapons' names and rarities, each a weapon entry of its own. The units done are counted from the
+// Moment the order began At its seconds a unit, and a unit's result is taken whole, so the units done before the first
+// The bag has no room for Are taken in, and that unit waits in the queue with the units behind it. An order fully
+// Collected is no order, and its Queue is free again
 export const collectForgeOrder = (
   recipe: ForgeRecipe,
   order: ForgeOrder,

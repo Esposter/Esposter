@@ -15,10 +15,10 @@ import { createPinia } from "pinia";
 import { render } from "vitest-browser-vue";
 import { z } from "zod";
 
-// The browser driver of a scripted session, which implements the runner's driver over one world screen and its registry:
-// It mounts the screen, steps the frame clock, saves the world's last save through the save schema and mounts a fresh
-// Screen from the saved blob. The session's commands join the registry while a screen is mounted and leave it once the
-// Screen unmounts
+// The browser driver of a scripted session, which implements the runner's driver over one world screen and its
+// Registry: It mounts the screen, steps the frame clock, saves the world's last save through the save schema and mounts
+// A fresh Screen from the saved blob. The session's commands join the registry while a screen is mounted and leave it
+// Once the Screen unmounts
 export const createSessionDriver = (devRegistry: DevRegistry) => {
   // Taken before the clock is faked, so a real frame still comes between two scripted frames, for a worker to answer in
   const requestRealFrame = window.requestAnimationFrame.bind(window);
@@ -46,7 +46,8 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
     unmountScreen = undefined;
   };
   // Mounts the world screen on the registry from the save given, or a new player's, and steps frames until the world is
-  // Ready and has emitted its first save: the quests load after the screen is up, and that load is the first change a save takes
+  // Ready and has emitted its first save: the quests load after the screen is up, and that load is the first change a
+  // Save takes
   const mount = async (save?: GenshinSave): Promise<ScriptedSessionOutcome> => {
     // A screen still mounted is unmounted first, so its commands leave the registry and its DOM leaves the document
     await unmount();
@@ -81,7 +82,8 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
       if (emittedSave === undefined) return { error: "the world has emitted no save", ok: false };
 
       const savedJson = JSON.stringify(emittedSave);
-      // oxlint-disable-next-line no-restricted-properties -- the save schema types its instants as strings, so a revived Date would be refused
+      // The save schema types its
+      // oxlint-disable-next-line no-restricted-properties -- instants as strings, so a revived Date would be refused
       const parsedResult = genshinSaveSchema.safeParse(JSON.parse(savedJson));
       if (!parsedResult.success) return { error: z.prettifyError(parsedResult.error), ok: false };
 
@@ -98,7 +100,8 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
     await unmount();
     scriptedClock.dispose();
   };
-  // The runner's driver, typed by its interface so a change to the interface reaches this implementation at compile time
+  // The runner's driver, typed by its interface so a change to the interface reaches this implementation at compile
+  // Time
   const driver: ScriptedSessionDriver = { frame, load, run: devRegistry.run, save };
 
   return { ...driver, dispose, mount, pinia };

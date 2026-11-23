@@ -6,8 +6,8 @@ import { GadgetKind } from "#src/models/gadget/GadgetKind";
 import { findTreasureCompassTarget } from "#src/services/gadget/findTreasureCompassTarget";
 
 // The chest a used detector points to. A Treasure Compass names its city's region, so it points to the nearest unopened
-// Box of that region. A detector that names no region is the Seelie detector, which points to nothing until its region's
-// Puzzle places are read, and a gadget of any other kind points to no box
+// Box of that region. A detector that names no region is the Seelie detector, which points to nothing until its
+// Region's Puzzle places are read, and a gadget of any other kind points to no box
 export const computeDetectorTarget = (
   gadget: GadgetRow,
   regionChestPlaces: readonly ChestPlace[],

@@ -60,7 +60,8 @@ const withFieldCharacter = (context: KitContext, characterId: number) => {
 };
 const healthShareOf = (context: KitContext) => getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare;
 
-// Iansan on the field in Natlan with 1000 ATK, her burst landed and a Nightsoul burst set off, her HP at half so a heal shows
+// Iansan on the field in Natlan with 1000 ATK, her burst landed and a Nightsoul burst set off, her HP at half so a heal
+// Shows
 const createWarmingUpIansan = (ascension: number) => {
   const combatant: Combatant = {
     ...createIansanCombatant(),

@@ -30,7 +30,8 @@ interface Props {
   // Whether every region in reach has arrived or failed, so no ground to lay over the terrain is still coming. The
   // Terrain is not ready before then, since a ground arriving after would rebuild the tiles its first view waited on
   isGroundSettled: boolean;
-  // The regions' grounds laid over Windrise's so far, each as its region first comes within reach, with the domain its key names
+  // The regions' grounds laid over Windrise's so far, each as its region first comes within reach, with the domain its
+  // Key names
   laidGrounds: LaidGround[];
   lightUniforms: LightUniforms;
   // The world coordinate the scene's origin stands on, which the floating origin moves
@@ -67,7 +68,8 @@ const { camera } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide } = terrainOptions;
 const morphEye = uniform(new Vector3());
-// The box the terrain is bounded by, read by the material's lift as its uniforms, which follow the options as a ground widens them
+// The box the terrain is bounded by, read by the material's lift as its uniforms, which follow the options as a ground
+// Widens them
 const terrainBox = { maxHeight: uniform(terrainOptions.maxHeight), minHeight: uniform(terrainOptions.minHeight) };
 watch([() => terrainOptions.maxHeight, () => terrainOptions.minHeight], ([maxHeight, minHeight]) => {
   terrainBox.maxHeight.value = maxHeight;
@@ -82,8 +84,8 @@ const terrainMaterial = createTerrainMaterial(
 );
 const tileIndices = computeTerrainIndices(cellsPerSide);
 const index = new BufferAttribute(tileIndices, 1);
-// Every finest tile's flowers are one instanced draw of the one flower in the one flower material, a child of its tile's
-// Mesh, so they show, hide and go with the tile
+// Every finest tile's flowers are one instanced draw of the one flower in the one flower material, a child of its
+// Tile's Mesh, so they show, hide and go with the tile
 const flowerMaterial = createFlowerMaterial({ lightUniforms, rampTexture }, windUniforms);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into range costs a flag
 const tileGroup = new Group();

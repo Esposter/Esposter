@@ -1,9 +1,9 @@
 import type { RarityRate } from "#src/models/wish/RarityRate";
 import type { WishPity } from "#src/models/wish/WishPity";
 
-// Capturing Radiance's published base rate is 0.018% a wish, a share of the five-star's 0.6%, so it triggers on 3% of the
-// Character event five-stars the 50/50 decides, and on the next one for certain once the promotional character has come
-// Second three times running
+// Capturing Radiance's published base rate is 0.018% a wish, a share of the five-star's 0.6%, so it triggers on 3% of
+// The Character event five-stars the 50/50 decides, and on the next one for certain once the promotional character has
+// Come Second three times running
 export const CAPTURING_RADIANCE_RATE = 0.03;
 export const CAPTURING_RADIANCE_LOSS_LIMIT = 3;
 // One Fate Point charts the next five-star to the Epitomized Path's weapon
@@ -29,8 +29,8 @@ export const FOUR_STAR_WEAPON_STARGLITTER = 2;
 export const THREE_STAR_WEAPON_STARDUST = 15;
 // The five-star's and the four-star's rates on every wish but the weapon wish, and on the weapon wish. The base rates
 // And the hard pity are the game's published details; the soft pity is the community's model from millions of recorded
-// Wishes, which the wiki publishes: the five-star rate climbs six points a wish from the 74th, or seven from the 63rd on
-// The weapon wish, and the four-star rate 51 points at the 9th, or 60 at the 8th
+// Wishes, which the wiki publishes: the five-star rate climbs six points a wish from the 74th, or seven from the 63rd
+// On The weapon wish, and the four-star rate 51 points at the 9th, or 60 at the 8th
 export const WISH_FIVE_STAR_RATE: RarityRate = { base: 0.006, hardPity: 90, softPityStart: 74, softPityStep: 0.06 };
 export const WISH_FOUR_STAR_RATE: RarityRate = { base: 0.051, hardPity: 10, softPityStart: 9, softPityStep: 0.51 };
 export const WEAPON_WISH_FIVE_STAR_RATE: RarityRate = {
@@ -65,17 +65,17 @@ export const STANDARD_WISH_CHARACTER_IDS: readonly number[] = [
   10_000_020, 10_000_045, 10_000_053, 10_000_097, 10_000_059, 10_000_043, 10_000_050, 10_000_023, 10_000_025,
   10_000_044, 10_000_048, 10_000_077, 10_000_064,
 ];
-// The standard wish's five-star weapons by the game's ids, as the wiki lists them: Amos' Bow, Aquila Favonia, Lost Prayer to
-// The Sacred Winds, Primordial Jade Winged-Spear, Skyward Atlas, Skyward Blade, Skyward Harp, Skyward Pride, Skyward Spine
-// And Wolf's Gravestone
+// The standard wish's five-star weapons by the game's ids, as the wiki lists them: Amos' Bow, Aquila Favonia, Lost
+// Prayer to The Sacred Winds, Primordial Jade Winged-Spear, Skyward Atlas, Skyward Blade, Skyward Harp, Skyward Pride,
+// Skyward Spine And Wolf's Gravestone
 const STANDARD_WISH_FIVE_STAR_WEAPON_IDS: readonly number[] = [
   15_502, 11_501, 14_502, 13_505, 14_501, 11_502, 15_501, 12_501, 13_502, 12_502,
 ];
 // The standard wish's four-star and three-star weapons by the game's ids, as the wiki lists them: Dragon's Bane, Eye of
-// Perception, the five Favonius weapons, Lion's Roar, Rainslasher, Rust, the four Sacrificial weapons, The Bell, The Flute,
-// The Stringless and The Widsith at four; and Black Tassel, Bloodtainted Greatsword, Cool Steel, Debate Club, Emerald Orb,
-// Ferrous Shadow, Harbinger of Dawn, Magic Guide, Raven Bow, Sharpshooter's Oath, Skyrider Sword, Slingshot and Thrilling
-// Tales of Dragon Slayers at three
+// Perception, the five Favonius weapons, Lion's Roar, Rainslasher, Rust, the four Sacrificial weapons, The Bell, The
+// Flute, The Stringless and The Widsith at four; and Black Tassel, Bloodtainted Greatsword, Cool Steel, Debate Club,
+// Emerald Orb, Ferrous Shadow, Harbinger of Dawn, Magic Guide, Raven Bow, Sharpshooter's Oath, Skyrider Sword,
+// Slingshot and Thrilling Tales of Dragon Slayers at three
 const STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS: readonly number[] = [
   13_401, 14_409, 14_401, 12_401, 13_407, 11_401, 15_401, 11_405, 12_405, 15_405, 15_403, 14_403, 12_403, 11_403,
   12_402, 11_402, 15_402, 14_402, 13_303, 12_302, 11_301, 12_305, 14_304, 12_301, 11_302, 14_301, 15_301, 15_302,

@@ -2,7 +2,8 @@ import type { Attribute } from "#src/models/character/Attribute";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import type { WeaponType } from "#src/models/weapon/WeaponType";
 
-// A set's bonus that prices its wearer at the amount in the attribute while the wearer wields one of the weapon types given
+// A set's bonus that prices its wearer at the amount in the attribute while the wearer wields one of the weapon types
+// Given
 export const createWeaponTypeAttackDamageSetModule = ({
   amount,
   attribute,

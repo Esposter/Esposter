@@ -16,9 +16,9 @@ import { spendOriginalResin } from "#src/services/originalResin/spendOriginalRes
 import { routeRewardItems } from "#src/services/reward/routeRewardItems";
 
 // The one claim every resin reward goes through, whatever challenge pays it: a cost of Original Resin, or of Condensed
-// Resin where its count is above zero, and the reward list the challenge drew. The Original Resin spent gives its Adventure
-// EXP, and the reward list is taken in through `routeRewardItems`. Undefined where the cost is not held, or the bag cannot
-// Take every item whole, which keeps the resin or the Condensed Resin in hand
+// Resin where its count is above zero, and the reward list the challenge drew. The Original Resin spent gives its
+// Adventure EXP, and the reward list is taken in through `routeRewardItems`. Undefined where the cost is not held, or
+// The bag cannot Take every item whole, which keeps the resin or the Condensed Resin in hand
 export const claimResinReward = (
   adventureRankTables: AdventureRankTables,
   wallet: Wallet,

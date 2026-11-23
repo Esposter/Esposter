@@ -18,10 +18,10 @@ const LOSE_STACK_COOLDOWN_ID = "aquaRemembranceLoseStackCooldown";
 const GAIN_STACK_COOLDOWN_ID = "aquaRemembranceGainStackCooldown";
 const VAPORIZE_REACTIONS = [{ reactionType: ReactionType.Vaporize }];
 
-// Aqua Remembrance at its rank: its Max HP is a static line. Once every the rank's cooldown, its wielder's Elemental Skill gives
-// Four Scorching Summer stacks for the rank's seconds, each raising its Normal Attack DMG by the rank's amount. A Normal Attack
-// Hit loses a stack, and a Vaporize the wielder triggers gains one, each once every the rank's cooldown in seconds, up to the
-// Rank's stacks
+// Aqua Remembrance at its rank: its Max HP is a static line. Once every the rank's cooldown, its wielder's Elemental
+// Skill gives Four Scorching Summer stacks for the rank's seconds, each raising its Normal Attack DMG by the rank's
+// Amount. A Normal Attack Hit loses a stack, and a Vaporize the wielder triggers gains one, each once every the rank's
+// Cooldown in seconds, up to the Rank's stacks
 export const createAquaRemembrancePassiveModule = (params: number[]): PassiveModule => {
   const cooldownSeconds = takeOne(params, 1);
   const seconds = takeOne(params, 2);

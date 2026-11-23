@@ -16,7 +16,8 @@ interface WishEpitomizedPathSource {
   pityMap: Ref<Readonly<Record<BannerKind, WishPity>>>;
 }
 
-// The Epitomized Path of the weapon wish: whether the open banner is one, and its Fate Points in the game's words and colours
+// The Epitomized Path of the weapon wish: whether the open banner is one, and its Fate Points in the game's words and
+// Colours
 export const useWishEpitomizedPath = ({ bannerKind, getGameText, pityMap }: WishEpitomizedPathSource) => {
   const isWeaponWish = computed(() => bannerKind.value === BannerKind.WeaponEvent);
   const fatePoints = computed(() =>

@@ -7,8 +7,8 @@ import type { PartyTeamSlot } from "#src/models/party/PartyTeamSlot";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { PARTY_TEAM_SIZE } from "#src/services/party/constants";
 
-// A team's four slots in slot order, each member's name in the reader's language, the Traveler's being the one the player
-// Chose while there is one, and its level and element. A name the text has not loaded is blank until it arrives
+// A team's four slots in slot order, each member's name in the reader's language, the Traveler's being the one the
+// Player Chose while there is one, and its level and element. A name the text has not loaded is blank until it arrives
 export const getPartyTeamSlots = (
   { characterIds }: PartyTeam,
   characters: readonly Pick<Character, "id" | "level">[],

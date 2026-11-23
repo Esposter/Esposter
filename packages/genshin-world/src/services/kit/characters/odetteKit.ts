@@ -28,11 +28,11 @@ const checkIsStellarVortex = (effect: KitEffect): effect is KitSummon =>
   effect.kind === "summon" && effect.id === STELLAR_VORTEX_ID;
 
 // Odette's behaviour: her Dance Double, which her skill and her burst each summon, alternating Plume and Wing on the
-// Intervals gcsim gives them. A Stellar Swirl leaves a Stellar Vortex, one at a time. Her Polestar Field on a Stellar-Conduct is
-// Not kept here: the reaction path places it for any enabler's Stellar-Conduct (`addPolestarField`). This places the
-// Vortex on the next step, where gcsim v2.47.2 creates it inside the reaction (pkg/reactable/stellarswirl_gadget.go)
-// Each further Stellar Swirl adds a stack, and the sixth explodes it at once, while one that runs out explodes as it stands
-// https://genshin-impact.fandom.com/wiki/Odette
+// Intervals gcsim gives them. A Stellar Swirl leaves a Stellar Vortex, one at a time. Her Polestar Field on a
+// Stellar-Conduct is Not kept here: the reaction path places it for any enabler's Stellar-Conduct (`addPolestarField`).
+// This places the Vortex on the next step, where gcsim v2.47.2 creates it inside the reaction
+// (pkg/reactable/stellarswirl_gadget.go) Each further Stellar Swirl adds a stack, and the sixth explodes it at once,
+// While one that runs out explodes as it stands https://genshin-impact.fandom.com/wiki/Odette
 export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecordReader): KitBehaviour => {
   const danceDoubleDurationSeconds = readSeconds("danceDoubleDuration");
   const recastDanceDoubleFirstTickSeconds = readSeconds("danceDoubleRecastFirstTick");
@@ -41,7 +41,8 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
     { hit: readHit("plume"), intervalSeconds: readSeconds("plumeTickInterval") },
     { hit: readHit("wing"), intervalSeconds: readSeconds("wingTickInterval") },
   ];
-  // The skill and the burst each summon the Dance Double a while after their own start, and its first tick counts from there
+  // The skill and the burst each summon the Dance Double a while after their own start, and its first tick counts from
+  // There
   const skillDanceDouble = {
     firstTickSeconds: readSeconds("danceDoubleFirstTick"),
     spawnSeconds: readSeconds("danceDoubleSkillSpawn"),
@@ -52,7 +53,8 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   };
   const stellarVortexSeconds = readSeconds("stellarVortex");
 
-  // The Dance Double's hits from its summon, alternating from the attack given on each attack's interval, while its status runs
+  // The Dance Double's hits from its summon, alternating from the attack given on each attack's interval, while its
+  // Status runs
   const createDanceDoubleHits = (
     firstAttack: typeof PLUME | typeof WING,
     firstTickSeconds: number,
@@ -85,7 +87,8 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
       spawnSeconds,
     });
   };
-  // Her Coda recast restarts a standing Dance Double on a Plume, from the recast's own clock, on the status it already has
+  // Her Coda recast restarts a standing Dance Double on a Plume, from the recast's own clock, on the status it already
+  // Has
   const restartDanceDouble = (kitEffectState: KitEffectState, characterId: number): void => {
     const standing = findStandingKitSummon(kitEffectState.effects, DANCE_DOUBLE_ID, characterId);
     if (!standing) return;

@@ -37,11 +37,12 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // Material each of its submeshes names, laid over one the host makes, in a group per family of the scene's parts its
 // Mesh's name falls in; given families, a mesh none of them names is left out, and without them every mesh is drawn in
 // One unnamed family. A family's placements of one submesh in one material are one instanced mesh named by its mesh,
-// Set once, since they stand still: a capital places tens of thousands of parts, which the renderer would otherwise walk
-// And project in every pass of every frame. A moving family's parts each stand in a group named by its mesh instead,
-// For its scene to move, and a rigidly skinned family's in a group per piece its bones carry. The meshes and textures
-// Are served beside the layout, by their export folders, and only those of the meshes drawn are loaded, each texture
-// Once however many slots name it: a capital's exports run to over a gigabyte, most of it in meshes no family draws
+// Set once, since they stand still: a capital places tens of thousands of parts, which the renderer would otherwise
+// Walk And project in every pass of every frame. A moving family's parts each stand in a group named by its mesh
+// Instead, For its scene to move, and a rigidly skinned family's in a group per piece its bones carry. The meshes and
+// Textures Are served beside the layout, by their export folders, and only those of the meshes drawn are loaded, each
+// Texture Once however many slots name it: a capital's exports run to over a gigabyte, most of it in meshes no family
+// Draws
 export const loadWitness = async (
   layoutUrl: string,
   createMaterial: WitnessMaterialFactory,

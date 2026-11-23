@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// A bait as the generated bait slice holds it: the item id it is held in the bag under, and the ids of the fish it draws,
-// Each joined from the game's tables, so a cast with it draws only among those
+// A bait as the generated bait slice holds it: the item id it is held in the bag under, and the ids of the fish it
+// Draws, Each joined from the game's tables, so a cast with it draws only among those
 export interface FishBait {
   fishIds: number[];
   id: number;

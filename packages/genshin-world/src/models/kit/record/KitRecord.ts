@@ -27,9 +27,9 @@ const createNamedSchema = <T extends z.ZodType>(
   z.record(z.string(), z.union([schema, z.array(schema)]));
 
 // A character's kit as values, published as the `kits` index by avatar id: each action's frames, targeting and hits,
-// The skill's and burst's cooldowns, cost, charges and holds, and the charged attack's stamina. Beside them, by the name
-// Its behaviour module reads each by, the actions, areas, frames, hits, parameters and stances the module plays outside
-// Those slots, a list where it reads one name at several places, and the fields of each hit it builds as it
+// The skill's and burst's cooldowns, cost, charges and holds, and the charged attack's stamina. Beside them, by the
+// Name Its behaviour module reads each by, the actions, areas, frames, hits, parameters and stances the module plays
+// Outside Those slots, a list where it reads one name at several places, and the fields of each hit it builds as it
 // Plays. What the character does with them is its behaviour module's
 export interface KitRecord {
   actions?: Record<string, KitActionRecord | KitActionRecord[]> | undefined;

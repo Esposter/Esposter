@@ -11,12 +11,12 @@ import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExp
 import { getWeaponInvestedExp } from "#src/services/weapon/getWeaponInvestedExp";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A weapon levelled with ores and fodder weapons, as the game takes them: each ore gives its EXP, a fodder weapon its base
-// And the share of its own levelling EXP. Ten points of the EXP the weapon takes in cost a Mora, the share recovered
-// From a fodder costing none. Levels are gained while the EXP holds their requirement, up to the phase's cap; past it, the
-// EXP left comes back as the Enhancement Ores it fills, largest first. What is under the smallest ore is lost: the
-// Provisional: the game's rule for that remainder is not known, a recording on the roadmap's References sought
-// List settles it
+// A weapon levelled with ores and fodder weapons, as the game takes them: each ore gives its EXP, a fodder weapon its
+// Base And the share of its own levelling EXP. Ten points of the EXP the weapon takes in cost a Mora, the share
+// Recovered From a fodder costing none. Levels are gained while the EXP holds their requirement, up to the phase's cap;
+// Past it, the EXP left comes back as the Enhancement Ores it fills, largest first. What is under the smallest ore is
+// Lost: the Provisional: the game's rule for that remainder is not known, a recording on the roadmap's References
+// Sought List settles it
 export const enhanceWeapon = (
   weapon: Weapon,
   weaponData: WeaponData,

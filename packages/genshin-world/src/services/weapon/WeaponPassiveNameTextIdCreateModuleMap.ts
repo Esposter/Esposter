@@ -188,8 +188,8 @@ const createBaneOfStormAndTidePassiveModule = (params: number[]): PassiveModule 
 const createBaneOfFlameAndWaterPassiveModule = (params: number[]): PassiveModule =>
   createBaneOfElementsPassiveModule([Element.Hydro, Element.Pyro], params);
 
-// Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
-// Found by the name its table gives it. A passive with no module here gives its wielder nothing
+// Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive
+// Is Found by the name its table gives it. A passive with no module here gives its wielder nothing
 export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   Partial<Record<string, (params: number[]) => PassiveModule>>
 > = {

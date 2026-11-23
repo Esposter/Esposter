@@ -55,8 +55,8 @@ interface Props {
   wallet: Wallet;
 }
 
-// The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset the
-// Map is dragged to from the player
+// The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset
+// The Map is dragged to from the player
 const metres = defineModel<number>("metres", { required: true });
 const { camera, catalogue, explorationAreas, gameText, landmarks, nameText, recordedDoingIds, subareaLabels } =
   defineProps<Props>();
@@ -128,9 +128,9 @@ const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegment
 
 <template>
   <!-- The map on M, full screen as the game shows it: the one drawing of the catalogue placed on the player, north
-       Up, each area's name and the player's pointer, the close button and the zoom slider. The jump list is kept for the
-       Keyboard and a screen reader, since the game shows no list, and each filled area's progress is listed for a screen
-       Reader beside the hidden drawing. A landmark chosen on the map or in the list jumps there -->
+    Up, each area's name and the player's pointer, the close button and the zoom slider. The jump list is kept for
+    the Keyboard and a screen reader, since the game shows no list, and each filled area's progress is listed for a
+    screen Reader beside the hidden drawing. A landmark chosen on the map or in the list jumps there -->
   <GameScreen class="map-overlay" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Map]">
     <svg
       ref="map"

@@ -3,13 +3,13 @@ import type { BossMove } from "#src/models/bosses/BossMove";
 import { Element } from "#src/models/Element";
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
 
-// The Millennial Pearl Seahorse's attacks from its wiki page, in the order the page lists them. Xenomare Pearl is the pearl's
-// Shield and RES, not an attack, so it is not a move. Earthshock Descent to Tail Swipe are used only while the pearl is
-// Intact, and Single Swipe to Charge only once it is destroyed, both phases not yet run. Each move's windup and recovery are
-// The common enemies' and are PROVISIONAL until measured
+// The Millennial Pearl Seahorse's attacks from its wiki page, in the order the page lists them. Xenomare Pearl is the
+// Pearl's Shield and RES, not an attack, so it is not a move. Earthshock Descent to Tail Swipe are used only while the
+// Pearl is Intact, and Single Swipe to Charge only once it is destroyed, both phases not yet run. Each move's windup
+// And recovery are The common enemies' and are PROVISIONAL until measured
 export const MILLENNIAL_PEARL_SEAHORSE_MOVES: BossMove[] = [
-  // Used only while the Xenomare Pearl is intact. The electrified ground it leaves deals 6% ATK as Electro DMG every 0.5s, a
-  // Lingering effect not yet run
+  // Used only while the Xenomare Pearl is intact. The electrified ground it leaves deals 6% ATK as Electro DMG every
+  // 0.5s, a Lingering effect not yet run
   {
     atkPercent: 95,
     element: Element.Electro,
@@ -49,8 +49,8 @@ export const MILLENNIAL_PEARL_SEAHORSE_MOVES: BossMove[] = [
     recoverySeconds: ENEMY_RECOVERY_SECONDS,
     windupSeconds: ENEMY_WINDUP_SECONDS,
   },
-  // Used only while the Xenomare Pearl is intact, and once per fight. Its electrified ground is a lingering effect not yet run,
-  // And the Resonant Coral Orbs it summons are objects not yet run
+  // Used only while the Xenomare Pearl is intact, and once per fight. Its electrified ground is a lingering effect not
+  // Yet run, And the Resonant Coral Orbs it summons are objects not yet run
   {
     atkPercent: 100,
     element: Element.Electro,

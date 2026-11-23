@@ -2,7 +2,8 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 
-// The two skills a Rock-Paper-Scissors Combo prepares: Scissors (2 Electro DMG, then prepares Paper) and Paper (3 Electro DMG)
+// The two skills a Rock-Paper-Scissors Combo prepares: Scissors (2 Electro DMG, then prepares Paper) and Paper (3
+// Electro DMG)
 export const ROCK_PAPER_SCISSORS_SCISSORS: GcgSkill = {
   costs: [],
   effect: "Char_Skill_24015",

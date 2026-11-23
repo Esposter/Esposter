@@ -34,7 +34,8 @@ export const usePostPipeline = (
   isTemporalAntialiasingOn: MaybeRefOrGetter<boolean> = true,
 ) => {
   const { camera, renderer, scene } = useTres();
-  /* oxlint-disable no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see */
+  /* oxlint-disable no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a
+     host to see */
   const witness = inject(SceneWitnessKey, null);
   const sceneContext = inject(SceneContextKey, null);
   /* oxlint-enable no-restricted-globals */

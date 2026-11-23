@@ -78,10 +78,10 @@ export const useMiningOutcrops = ({
       drawnMap.value = new Map([...drawnMap.value, [regionId, { at, placeIds }]]);
     }
   };
-  // Read each frame, so a place drawn at a draw or come back from its respawn shows at once. A draw reaches the standing
-  // Places only through its day's draw, which replaces the draws, and a respawn comes between draws, so they are worked
-  // Out again when the places, the draws or the mined map is replaced or the next respawn has come, and the list is
-  // Replaced only when its places change
+  // Read each frame, so a place drawn at a draw or come back from its respawn shows at once. A draw reaches the
+  // Standing Places only through its day's draw, which replaces the draws, and a respawn comes between draws, so they
+  // Are worked Out again when the places, the draws or the mined map is replaced or the next respawn has come, and the
+  // List is Replaced only when its places change
   let standingInputs: readonly unknown[] | undefined;
   let nextRespawnAt: Temporal.Instant | undefined;
   const refreshMiningOutcrops = (now: Temporal.Instant, random: () => number) => {
@@ -115,7 +115,8 @@ export const useMiningOutcrops = ({
         continue;
       }
       breakOre({ id, kind, position }, random);
-      // The mining keeps only the outcrops still gone at this moment, so the save holds the day's mined ones and no more
+      // The mining keeps only the outcrops still gone at this moment, so the save holds the day's mined ones and no
+      // More
       minedAtMap.value = new Map(
         [...minedAtMap.value, [id, now] as const].filter(([, minedAt]) => !checkIsMiningOutcropStanding(minedAt, now)),
       );

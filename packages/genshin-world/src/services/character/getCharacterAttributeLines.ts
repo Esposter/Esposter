@@ -9,10 +9,10 @@ import { getGrownAttributeLines } from "#src/services/character/getGrownAttribut
 import { getWeaponPassiveAttributeLines } from "#src/services/weapon/getWeaponPassiveAttributeLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Every attribute line a character carries: its own at its level and phase and those every level of it starts with,
-// Its weapon's at the weapon's and its passive's stats at the rank it holds, each artifact's main affix at its rarity and level
-// And its minor affixes, the bonuses of the sets its artifacts make, for the Traveler the bonuses of the elements it holds, and
-// The party-wide bonuses every character holds
+// Every attribute line a character carries: its own at its level and phase and those every level of it starts with, Its
+// Weapon's at the weapon's and its passive's stats at the rank it holds, each artifact's main affix at its rarity and
+// Level And its minor affixes, the bonuses of the sets its artifacts make, for the Traveler the bonuses of the elements
+// It holds, and The party-wide bonuses every character holds
 export const getCharacterAttributeLines = (
   { artifacts, ascension, id, level, weapon }: Character,
   {

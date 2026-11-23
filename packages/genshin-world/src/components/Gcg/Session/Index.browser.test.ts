@@ -8,8 +8,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
-// The hosted games record holds no game, since no resident offers a duel yet, so the duel's game is the one a test hands
-// The reader for its one case, and the decks it names are still read from the hosted game data
+// The hosted games record holds no game, since no resident offers a duel yet, so the duel's game is the one a test
+// Hands The reader for its one case, and the decks it names are still read from the hosted game data
 vi.mock(import("#src/services/gcg/readGcgGame"), async (importOriginal) => {
   const actual = await importOriginal();
   return { readGcgGame: vi.fn<(gameDataBaseUrl: string, gameId: number) => Promise<GcgGame>>(actual.readGcgGame) };

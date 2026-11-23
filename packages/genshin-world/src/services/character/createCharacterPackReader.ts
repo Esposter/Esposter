@@ -40,7 +40,8 @@ export const createCharacterPackReader = (
     );
     return modelPathRequest;
   };
-  // A pack with no terms file still draws its model, and its terms read as unloaded, so the error is logged where it is found
+  // A pack with no terms file still draws its model, and its terms read as unloaded, so the error is logged where it is
+  // Found
   const termsPath = getResult(() => chooseCharacterTermsFile(String(avatarId), filePaths)).match(
     (termsFile) => termsFile,
     (error) => {

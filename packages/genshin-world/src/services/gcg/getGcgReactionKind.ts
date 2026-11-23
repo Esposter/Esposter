@@ -4,7 +4,8 @@ import type { GcgRule } from "#src/models/gcg/GcgRule";
 
 import { GcgReactionPairs } from "#src/services/gcg/constants";
 
-// The reaction two elements make under a rule, when the rule lists the pair in either order, or nothing when it does not
+// The reaction two elements make under a rule, when the rule lists the pair in either order, or nothing when it does
+// Not
 export const getGcgReactionKind = (
   rule: GcgRule,
   firstElement: Element,

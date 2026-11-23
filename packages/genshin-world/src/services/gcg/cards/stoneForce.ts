@@ -7,8 +7,9 @@ import { takeOne } from "@esposter/shared";
 
 const STONE_FORCE_BONUS = 1;
 
-// Stone Force, a status on the character it is attached to: its Physical DMG is converted to Geo DMG, and its first DMG of
-// Each round is one more. It is removed alongside the Stonehide its character holds, so it is taken off once none is left
+// Stone Force, a status on the character it is attached to: its Physical DMG is converted to Geo DMG, and its first DMG
+// Of Each round is one more. It is removed alongside the Stonehide its character holds, so it is taken off once none is
+// Left
 export const stoneForce: GcgCardModule = {
   checkIsSpent: (side, zoneCard) => {
     const owner = side.characters.find(({ statuses }) => statuses.includes(zoneCard));

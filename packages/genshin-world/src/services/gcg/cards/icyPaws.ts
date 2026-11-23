@@ -4,8 +4,8 @@ import { Element } from "#src/models/Element";
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { takeOne } from "@esposter/shared";
 
-// Icy Paws, Diona's elemental skill: 2 Cryo DMG, and Cat-Claw Shield grants one Shield point to the active character as it
-// Is created, which takes no place on the field (the wiki's Icy Paws (Character Card Skill) and the card's text)
+// Icy Paws, Diona's elemental skill: 2 Cryo DMG, and Cat-Claw Shield grants one Shield point to the active character as
+// It Is created, which takes no place on the field (the wiki's Icy Paws (Character Card Skill) and the card's text)
 const ICY_PAWS_DAMAGE = 2;
 const CAT_CLAW_SHIELD_POINTS = 1;
 

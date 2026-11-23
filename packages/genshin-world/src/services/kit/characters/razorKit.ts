@@ -29,19 +29,18 @@ const WOLFS_INSTINCT_DAMAGE_BONUS = 0.1;
 const WOLFS_INSTINCT_SECONDS = 8;
 const WOLFS_INSTINCT_SOURCE = "Wolf's Instinct";
 const WOLF_WITHIN_ID = "razor-wolf-within";
-// Awakening, from Ascension 1, cuts Claw and Thunder's cooldown by 18% and resets it as Lightning Fang hits, as the wiki's
-// Passive page and gcsim v2.47.2 (MIT) razor/asc.go give it
-// https://genshin-impact.fandom.com/wiki/Awakening
+// Awakening, from Ascension 1, cuts Claw and Thunder's cooldown by 18% and resets it as Lightning Fang hits, as the
+// Wiki's Passive page and gcsim v2.47.2 (MIT) razor/asc.go give it https://genshin-impact.fandom.com/wiki/Awakening
 const AWAKENING_ASCENSION = 1;
 const AWAKENING_COOLDOWN_MULTIPLIER = 0.82;
-// Lupus Fulguris, from six constellations, charges Razor's claymore every 10 seconds, and the next strike's hit releases
-// Lightning, as gcsim v2.47.2 (MIT) razor/cons.go gives it
-// https://genshin-impact.fandom.com/wiki/Lupus_Fulguris
+// Lupus Fulguris, from six constellations, charges Razor's claymore every 10 seconds, and the next strike's hit
+// Releases Lightning, as gcsim v2.47.2 (MIT) razor/cons.go gives it
+// `https://genshin-impact.fandom.com/wiki/Lupus_Fulguris`
 const LUPUS_FULGURIS_CONSTELLATION = 6;
 const LUPUS_FULGURIS_RECHARGE_SECONDS = 10;
 
-// Whether an effect is a buff on Razor from one of his own sources: his Electro Sigils, whose Energy Recharge holds each
-// Sigil's share of it, or the Wolf Within's Electro RES, which marks Lightning Fang standing
+// Whether an effect is a buff on Razor from one of his own sources: his Electro Sigils, whose Energy Recharge holds
+// Each Sigil's share of it, or the Wolf Within's Electro RES, which marks Lightning Fang standing
 const checkIsRazorBuff = (effect: KitEffect, characterId: number, source: string): effect is KitBuff =>
   effect.kind === "buff" && effect.characterId === characterId && effect.source === source;
 
@@ -50,9 +49,9 @@ export const RAZOR_CHARACTER_ID = 10_000_020;
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_CRIT_RATE_BONUS = 0.1;
 const CONSTELLATION_2_HEALTH_SHARE = 0.3;
-// Constellation 4, Bite: each enemy Claw and Thunder's press strikes takes 15% less DEF for 7 seconds, as gcsim v2.47.2 (MIT)
-// Gives it on the press's attacks, and the hold gives none
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/cons.go
+// Constellation 4, Bite: each enemy Claw and Thunder's press strikes takes 15% less DEF for 7 seconds, as gcsim v2.47.2
+// (MIT) Gives it on the press's attacks, and the hold gives none
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/cons.go`
 const CONSTELLATION_4 = 4;
 const BITE_DEFENSE_REDUCTION = 0.15;
 const BITE_SECONDS = 7;
@@ -66,9 +65,9 @@ const getBiteStatus = ({ constellationCount }: Combatant): EnemyStatus | undefin
   constellationCount >= CONSTELLATION_4 ? BITE_STATUS : undefined;
 
 // Razor's behaviour: Claw and Thunder's press gives him an Electro Sigil, up to three, and its hold clears them into
-// Energy at its hit. Lightning Fang clears them too and casts the Wolf Within, which stands while he stays on the field,
-// Resets the skill's cooldown from Ascension 1 and casts a strike's Soul Companion beside it. Awakening cuts the skill's
-// Cooldown from Ascension 1, and from six constellations a strike while his claymore is charged releases Lupus
+// Energy at its hit. Lightning Fang clears them too and casts the Wolf Within, which stands while he stays on the
+// Field, Resets the skill's cooldown from Ascension 1 and casts a strike's Soul Companion beside it. Awakening cuts the
+// Skill's Cooldown from Ascension 1, and from six constellations a strike while his claymore is charged releases Lupus
 // Fulguris's lightning
 export const createRazorKitBehaviour = ({
   kit,
@@ -189,8 +188,9 @@ export const createRazorKitBehaviour = ({
     }),
     // Leaving the field ends the Wolf Within and the Electro RES bonus it gives, as gcsim's swap does
     onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
-      // Wolf's Instinct, from Constellation 1: a particle or orb collected while he is on the field raises his all-DMG bonus
-      // For 8 seconds, as gcsim v2.47.2 (MIT) razor/cons.go gives it, which ignores a pickup with another on the field
+      // Wolf's Instinct, from Constellation 1: a particle or orb collected while he is on the field raises his all-DMG
+      // Bonus For 8 seconds, as gcsim v2.47.2 (MIT) razor/cons.go gives it, which ignores a pickup with another on the
+      // Field
       if (
         event.kind === KitEventKind.EnergyParticleCollected &&
         combatant.constellationCount >= WOLFS_INSTINCT_CONSTELLATION &&
@@ -210,7 +210,8 @@ export const createRazorKitBehaviour = ({
           checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
       );
     },
-    // The press gains its Electro Sigil as it starts, and each enemy it strikes takes Bite's DEF cut from Constellation 4
+    // The press gains its Electro Sigil as it starts, and each enemy it strikes takes Bite's DEF cut from Constellation
+    // 4
     skill: {
       hits: [{ enemyStatus: getBiteStatus }],
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {

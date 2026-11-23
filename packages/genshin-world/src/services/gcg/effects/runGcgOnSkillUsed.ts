@@ -8,8 +8,9 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { takeOne } from "@esposter/shared";
 
-// The on-use hooks of the cards on a field, for a skill used by the context's character: each card hears the skill with the
-// Hits it landed. A card's damage on the skill is not the skill's own hit, so the Plunging Attack bonus does not bear on it
+// The on-use hooks of the cards on a field, for a skill used by the context's character: each card hears the skill with
+// The Hits it landed. A card's damage on the skill is not the skill's own hit, so the Plunging Attack bonus does not
+// Bear on it
 export const runGcgOnSkillUsed = (
   context: GcgEffectContext,
   zoneCards: GcgZoneCard[],

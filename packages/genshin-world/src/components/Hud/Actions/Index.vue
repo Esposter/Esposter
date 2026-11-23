@@ -33,8 +33,8 @@ const attackCode = getActionKeyCode(InputAction.NormalAttack);
 const aimCode = getActionKeyCode(InputAction.Aim);
 const jumpCode = getActionKeyCode(InputAction.Jump);
 const sprintCode = getActionKeyCode(InputAction.Sprint);
-// Each button in the order a reader tabs through them: the key it holds, its glyph's layers, its name in the game's words
-// And the class that places it
+// Each button in the order a reader tabs through them: the key it holds, its glyph's layers, its name in the game's
+// Words And the class that places it
 const buttons = computed<{ code: string; glyphLayers: readonly GlyphLayer[]; label: string; name: string }[]>(() => [
   {
     code: attackCode,
@@ -79,10 +79,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- The touch layout's action buttons at the bottom right beside the skill and the burst: the normal attack carrying its
-       Weapon's glyph, the aim a bow's wielder has, the jump and the sprint, each holding its action's key while pressed,
-       So a press passes the same checks as the key. A focused button holds it on Enter or Space, stopped before the
-       World's own keys hear them -->
+  <!-- The touch layout's action buttons at the bottom right beside the skill and the burst: the normal attack
+    carrying its Weapon's glyph, the aim a bow's wielder has, the jump and the sprint, each holding its action's key
+    while pressed, So a press passes the same checks as the key. A focused button holds it on Enter or Space,
+    stopped before the World's own keys hear them -->
   <button
     v-for="{ code, glyphLayers, label, name } of buttons"
     :key="name"

@@ -37,7 +37,8 @@ const consumedText = computed(() =>
 <template>
   <p class="level">{{ levelText }}</p>
   <p class="exp-tag">{{ gameText[GameTextKey.WeaponExp] }}</p>
-  <!-- The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level -->
+  <!-- The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next
+    level -->
   <p class="experience-text">{{ weapon.level >= maxLevel ? "" : `${weapon.experience}/${requiredExp}` }}</p>
   <span class="exp-track" aria-hidden="true" />
   <p class="consumed">{{ consumedText }}</p>

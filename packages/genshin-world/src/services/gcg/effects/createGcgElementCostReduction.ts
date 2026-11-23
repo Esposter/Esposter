@@ -7,8 +7,8 @@ import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 
-// A once-per-round reduction of one die of an element, spent by the first talent card played or skill used in a round that
-// Costs such a die, or, given a skill kind, by the first skill of that kind alone
+// A once-per-round reduction of one die of an element, spent by the first talent card played or skill used in a round
+// That Costs such a die, or, given a skill kind, by the first skill of that kind alone
 export const createGcgElementCostReduction = (
   cardId: number,
   element: Element,

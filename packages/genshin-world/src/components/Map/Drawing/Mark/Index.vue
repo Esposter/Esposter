@@ -15,7 +15,8 @@ interface Props {
 
 const { landmark, markRadius } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
-// A class with a traced pin is drawn as that pin, its box's centre on the landmark's place and its pixels at the mark's scale
+// A class with a traced pin is drawn as that pin, its box's centre on the landmark's place and its pixels at the mark's
+// Scale
 const pinPath = computed(() => MapPinPathMap[landmark.kind]);
 const pinTransform = computed(
   () =>

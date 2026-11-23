@@ -26,7 +26,8 @@ const group = useTemplateRef("group");
 const { height, width } = useWindowSize();
 // The thumb holding the stick, and how far it pushes, each axis from -1 to 1 of its reach
 const stick = reactive({ isHeld: false, pointerId: 0, x: 0, y: 0 });
-// Where the group stands in the area, in pixels: the centre of a held stick, its landing pulled in from the screen's edges
+// Where the group stands in the area, in pixels: the centre of a held stick, its landing pulled in from the screen's
+// Edges
 const centre = reactive({ x: 0, y: 0 });
 let originX = 0;
 let originY = 0;
@@ -112,12 +113,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- The touch layout's stick on the screen's left half, which draws nothing at rest. A thumb landing there holds it, the
-       Group centred where the thumb landed and pulled in from the edges so the ring stays on the screen. Its back and head
-       Are the game's `GrpJoyStick` and `ImgJoyStickHead`, the head moving within the ring as the thumb drags. A push shows as
-       A mark on a quarter of the rim turned to its direction, a thin teal arc nearer the head while the character walks, and
-       While it runs a cyan arc with an arrow at the rim, inside the back's faint dark ring. Provisional: the chevrons' shape,
-       The back's stroke and the arrow's size, which the recordings show too small to measure -->
+  <!-- The touch layout's stick on the screen's left half, which draws nothing at rest. A thumb landing there holds
+    it, the Group centred where the thumb landed and pulled in from the edges so the ring stays on the screen. Its
+    back and head Are the game's `GrpJoyStick` and `ImgJoyStickHead`, the head moving within the ring as the thumb
+    drags. A push shows as A mark on a quarter of the rim turned to its direction, a thin teal arc nearer the head
+    while the character walks, and While it runs a cyan arc with an arrow at the rim, inside the back's faint dark
+    ring. Provisional: the chevrons' shape, The back's stroke and the arrow's size, which the recordings show too
+    small to measure -->
   <div ref="area" class="area">
     <svg ref="group" class="group" :style="groupStyle" aria-hidden="true" :viewBox>
       <circle v-if="stick.isHeld && isRunning" class="back" r="107" />

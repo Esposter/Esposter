@@ -29,9 +29,10 @@ import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
-// The day's commissions the session holds: every region's daily tasks read as the world opens, and the day dealt again from
-// Them once the save is loaded when it was dealt before the latest daily reset. A quest in progress that finishes finishes
-// Its quest task, and a load that fails is logged and left with no day dealt, so no commission is offered rather than a wrong one
+// The day's commissions the session holds: every region's daily tasks read as the world opens, and the day dealt again
+// From Them once the save is loaded when it was dealt before the latest daily reset. A quest in progress that finishes
+// Finishes Its quest task, and a load that fails is logged and left with no day dealt, so no commission is offered
+// Rather than a wrong one
 export const useWorldCommissions = ({
   savedCommissionDay,
   savedEncounterPoints,
@@ -62,7 +63,8 @@ export const useWorldCommissions = ({
       tasks: commissionSlices.value.flatMap(({ tasks }) => tasks),
     };
   });
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  // `match(`) handles both branches, so the promise
+  // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
   getResultAsync(() => readCommissionSlices(worldSessionStore.gameDataBaseUrl)).match(
     (slices) => {
       commissionSlices.value = slices;
@@ -81,8 +83,9 @@ export const useWorldCommissions = ({
       console.error(error);
     },
   );
-  // Earns half points, held up to the storage the day's finished commissions leave, which is read here so a commission finished by
-  // The same event counts, and the points past the storage are kept as Long-Term Encounter Points in the major version the game is in now
+  // Earns half points, held up to the storage the day's finished commissions leave, which is read here so a commission
+  // Finished by The same event counts, and the points past the storage are kept as Long-Term Encounter Points in the
+  // Major version the game is in now
   const earnEncounterHalfPoints = (halfPoints: number) => {
     const points = readEncounterPoints(encounterPoints.value, getWorldNow());
     const storage = computeEncounterPointStorage(commissionDay.value, commissionSlice.value);
@@ -122,7 +125,8 @@ export const useWorldCommissions = ({
         HALF_POINTS_PER_ENCOUNTER_POINT,
     ),
   );
-  // The Adventure Encounters panel opens at its unlock rank, below which no Encounter Point is spent from the Commissions tab
+  // The Adventure Encounters panel opens at its unlock rank, below which no Encounter Point is spent from the
+  // Commissions tab
   const isAdventureEncountersUnlocked = computed(() => checkIsAdventureEncountersUnlocked(rank.value));
   // The daily points the storage holds at most, in whole points, which the panel shows beside the points held
   const encounterPointLimit = computed(() =>

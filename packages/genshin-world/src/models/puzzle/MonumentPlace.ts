@@ -1,8 +1,8 @@
 import { Element } from "#src/models/Element";
 import { z } from "zod";
 
-// An Elemental Monument's element and whether it is timed, as its place gives them. Either is provisional where the wiki
-// Gives neither for the monument's kind, and the place says so until a recording measures it
+// An Elemental Monument's element and whether it is timed, as its place gives them. Either is provisional where the
+// Wiki Gives neither for the monument's kind, and the place says so until a recording measures it
 export interface MonumentPlace {
   element: Element;
   isProvisional: boolean;

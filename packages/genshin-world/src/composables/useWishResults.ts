@@ -26,8 +26,8 @@ export const useWishResults = ({
   toCountText,
 }: WishResultsSource) => {
   const results = ref<WishResultCell[]>([]);
-  // The Stella Fortuna a result brought, as its count text: the drawn character's own, named in the reader's language, or the
-  // Masterless one a five-star past six copies brought, "" for none
+  // The Stella Fortuna a result brought, as its count text: the drawn character's own, named in the reader's language,
+  // Or the Masterless one a five-star past six copies brought, "" for none
   const toStellaFortunaText = ({ item, masterlessStellaFortunaCount, stellaFortunaCount }: WishResult): string => {
     if (stellaFortunaCount) {
       const nameTextId = getStellaFortunaNameTextIdMap().get(item.id);

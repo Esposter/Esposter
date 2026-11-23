@@ -3,7 +3,8 @@ import { computeNextDailyReset } from "#src/services/time/computeNextDailyReset"
 import { computeNextMonthlyReset } from "#src/services/time/computeNextMonthlyReset";
 import { computeNextWeeklyReset } from "#src/services/time/computeNextWeeklyReset";
 
-// The refresh after the one at or before `now`, which a good's countdown runs to. Undefined for a good that never refreshes
+// The refresh after the one at or before `now`, which a good's countdown runs to. Undefined for a good that never
+// Refreshes
 export const computeNextShopRefreshTime = (
   refresh: ShopRefresh,
   now: Temporal.Instant,

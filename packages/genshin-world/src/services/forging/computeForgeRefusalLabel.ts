@@ -6,8 +6,8 @@ import { checkIsForgeDailyCapReached } from "#src/services/forging/checkIsForgeD
 import { ForgeRefusalGameTextKeyMap } from "#src/services/forging/ForgeRefusalGameTextKeyMap";
 import { takeOne } from "@esposter/shared";
 
-// The words the blacksmith shows in place of starting an order past the day's forge points: the refusal line of the ore the
-// Recipe yields, in the reader's language. An order that fits under the cap shows none
+// The words the blacksmith shows in place of starting an order past the day's forge points: the refusal line of the ore
+// The Recipe yields, in the reader's language. An order that fits under the cap shows none
 export const computeForgeRefusalLabel = (
   recipe: ForgeRecipe,
   count: number,

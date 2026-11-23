@@ -46,7 +46,8 @@ describe("wishScreen", () => {
     const character = featuredCharacterOf();
     await render(WishScreen, { props: { ...props, trials: [], wishHistory: [] } });
 
-    // The card names the featured character once the banner is shown, so the button's absence is checked on a drawn screen
+    // The card names the featured character once the banner is shown, so the button's absence is checked on a drawn
+    // Screen
     await expect.element(page.getByText(character.name, { exact: true })).toBeVisible();
     expect(
       page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.WishGoToTrial] }).query(),

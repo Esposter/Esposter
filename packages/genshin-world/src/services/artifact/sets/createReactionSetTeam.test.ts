@@ -20,8 +20,8 @@ import { describe } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
-// The Traveler wearing a set's four-piece and another member, in the party order given. The wearer's kit hears the events the
-// Team sends, and reads the reactions a member makes in the party's hooks
+// The Traveler wearing a set's four-piece and another member, in the party order given. The wearer's kit hears the
+// Events the Team sends, and reads the reactions a member makes in the party's hooks
 export const createReactionSetTeam = (setModule: PassiveModule, characterIds: number[]) => {
   const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(KIT, [setModule]));
   const other = createKitCombatant(OTHER_CHARACTER_ID, KIT);

@@ -6,8 +6,8 @@ import { CHONGHUA_FROST_FIELD_ID } from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
-// Chonghua's Layered Frost, Chongyun's elemental skill: 3 Cryo DMG, and a Chonghua Frost Field is created once the damage is
-// Dealt (the wiki's Chonghua's Layered Frost (Character Card Skill))
+// Chonghua's Layered Frost, Chongyun's elemental skill: 3 Cryo DMG, and a Chonghua Frost Field is created once the
+// Damage is Dealt (the wiki's Chonghua's Layered Frost (Character Card Skill))
 const CHONGHUAS_LAYERED_FROST_DAMAGE = 3;
 
 export const chonghuasLayeredFrost: GcgSkillModule = {

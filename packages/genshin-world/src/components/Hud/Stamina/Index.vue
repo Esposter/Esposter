@@ -26,9 +26,9 @@ const sectionAngles = computed(() =>
 </script>
 
 <template>
-  <!-- The party's stamina, an arc round the character's right wherever it stands on the screen, filled from its foot:
-       Shown while the pool is spent or refilling, faded out once it is full, and pulsing red once it runs low. The arc is
-       Drawn round the pivot itself, its view's origin, so it rings the character as the game's does -->
+  <!-- The party's stamina, an arc round the character's right wherever it stands on the screen, filled from its
+    foot: Shown while the pool is spent or refilling, faded out once it is full, and pulsing red once it runs low.
+    The arc is Drawn round the pivot itself, its view's origin, so it rings the character as the game's does -->
   <div
     class="stamina-meter"
     :class="{ low: frame.stamina < maxStamina * STAMINA_METER_LOW_SHARE, shown: frame.stamina < maxStamina }"

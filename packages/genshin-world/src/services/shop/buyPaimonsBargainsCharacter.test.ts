@@ -12,7 +12,8 @@ import { buyPaimonsBargainsCharacter } from "#src/services/shop/buyPaimonsBargai
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { assert, describe, expect, test } from "vitest";
 
-// A character's data as the tables hold it, with the rest of its fields left empty since a purchase reads only its weapon
+// A character's data as the tables hold it, with the rest of its fields left empty since a purchase reads only its
+// Weapon
 const createCharacterData = (id: number): CharacterData => ({
   ascensionPhases: [],
   attributeLines: [],

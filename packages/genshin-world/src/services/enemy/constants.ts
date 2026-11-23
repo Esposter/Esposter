@@ -38,10 +38,11 @@ export const ENGAGED_ENEMY_STATES: EnemyState[] = [
   EnemyState.Windup,
 ];
 // Provisional: how long after the last enemy stops being aggravated on the party the party stays in combat, in seconds.
-// The wiki's Aggravation page names the Distance Clear Time and the Out of Zone Clear Time as the clear timers and gives
-// No figure for either, so this is a placeholder until a recording measures it
+// The wiki's Aggravation page names the Distance Clear Time and the Out of Zone Clear Time as the clear timers and
+// Gives No figure for either, so this is a placeholder until a recording measures it
 export const COMBAT_CLEAR_SECONDS = 5;
-// A common enemy comes back this long after its defeat, and a camp with an elite at the next daily reset of the server's clock
+// A common enemy comes back this long after its defeat, and a camp with an elite at the next daily reset of the
+// Server's clock
 export const COMMON_ENEMY_RESPAWN_DURATION: Temporal.Duration = Temporal.Duration.from({ hours: 12 });
 // Drops are set by an enemy's level band, five levels wide, the last band holding every level from 90
 export const ENEMY_LEVEL_BAND_SIZE = 5;
@@ -94,11 +95,11 @@ export const ENEMY_MATERIAL_TIER_SHARES: number[][] = [
 export const ENEMY_CAPSULE_RADIUS = 0.4;
 export const ENEMY_CAPSULE_HEIGHT = 1.6;
 export const ENEMY_CAPACITY = 64;
-// What a reaction on an enemy leaves, a Crystallize shard or a Dendro Core, drops half a metre out from its edge, as gcsim
-// Drops both
+// What a reaction on an enemy leaves, a Crystallize shard or a Dendro Core, drops half a metre out from its edge, as
+// Gcsim Drops both
 export const ENEMY_DROP_OFFSET = 0.5;
-// Provisional: how long a hit tints an enemy's capsule, and how long a small flash stands at its middle, in seconds, with
-// The flash's radius in metres and the tint's colour, until a recording of a hit measures them
+// Provisional: how long a hit tints an enemy's capsule, and how long a small flash stands at its middle, in seconds,
+// With The flash's radius in metres and the tint's colour, until a recording of a hit measures them
 export const ENEMY_HIT_TINT_SECONDS = 0.15;
 export const ENEMY_HIT_FLASH_SECONDS = 0.1;
 export const ENEMY_HIT_FLASH_RADIUS = 0.3;

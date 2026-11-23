@@ -124,7 +124,8 @@ describe(useWorldMapStore, () => {
     position: { x: 20, z: 0 },
     rotation: 0,
   };
-  // A Teleport Waypoint and a domain's entrance far from the origin, so the statue alone is in the pointer's reach there
+  // A Teleport Waypoint and a domain's entrance far from the origin, so the statue alone is in the pointer's reach
+  // There
   const waypoint: WaypointLandmark = {
     areaId: AREA_ID,
     arrival: { heightOffset: 0, position: { x: 500, z: 0 }, rotation: 0 },
@@ -250,7 +251,8 @@ describe(useWorldMapStore, () => {
   test("reaching a passed threshold again pays nothing", async () => {
     expect.hasAssertions();
 
-    // The statue is activated once, passing the threshold, and again: the second settle finds the percentage already held
+    // The statue is activated once, passing the threshold, and again: the second settle finds the percentage already
+    // Held
     const { activateLandmark, reputation, wallet } = createWorldMap();
     await waitForReads();
 
@@ -341,8 +343,8 @@ describe(useWorldMapStore, () => {
   test("an unlock before the reads settle pays its threshold once", async () => {
     expect.hasAssertions();
 
-    // Every read is still pending when the statue is unlocked, so the unlock lands before the areas, the regions and the
-    // Reputation are in
+    // Every read is still pending when the statue is unlocked, so the unlock lands before the areas, the regions and
+    // The Reputation are in
     const regionRead = Promise.withResolvers<RegionLandmarks>();
     const explorationAreasRead = Promise.withResolvers<ExplorationArea[]>();
     const reputationRead = Promise.withResolvers<ReputationCity>();
@@ -405,7 +407,8 @@ describe(useWorldMapStore, () => {
   test("a quest step that names a waypoint finishes when it is unlocked", async () => {
     expect.hasAssertions();
 
-    // The step names the waypoint by its transport point, as the quest data does, so the unlock is the Interact it finishes on
+    // The step names the waypoint by its transport point, as the quest data does, so the unlock is the Interact it
+    // Finishes on
     const quest: Quest = {
       descriptionTextId: "",
       id: "quest",
@@ -500,7 +503,8 @@ describe(useWorldMapStore, () => {
   test("a hidden waypoint is not offered before its step", async () => {
     expect.hasAssertions();
 
-    // The unlock table lists the waypoint's point and a quest step names it, so the waypoint is hidden until that step is reached
+    // The unlock table lists the waypoint's point and a quest step names it, so the waypoint is hidden until that step
+    // Is reached
     vi.mocked(readOpenWorldTransPointUnlocks).mockResolvedValue([{ pointId: TRANS_POINT_ID, sceneId: 3 }]);
     const { lockedJumpLandmarks } = createWorldMap(new Set());
     const worldQuestsStore = useWorldQuestsStore();

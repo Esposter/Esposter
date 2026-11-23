@@ -37,7 +37,8 @@ export const collectProcessingJobs = (
     nextInventory = collected.inventory;
     if (collected.job) nextJobs[recipe.id] = collected.job;
   }
-  // A queue with no unit done is kept as it was, so a collect that takes nothing leaves the jobs, and their save, unchanged
+  // A queue with no unit done is kept as it was, so a collect that takes nothing leaves the jobs, and their save,
+  // Unchanged
   const isUnchanged =
     Object.keys(nextJobs).length === Object.keys(jobs).length &&
     Object.entries(nextJobs).every(([recipeId, job]) => jobs[recipeId] === job);

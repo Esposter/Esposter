@@ -13,8 +13,8 @@ import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
 
 // A character's combat once its kit is built: its attributes summed under the deployed team's resonances, its kit with
 // The modules of the sets it wears and of its weapon's passive answering beside it, and its element and the kind of
-// Weapon it wields read off its row of the roster, which the gauge a hit applies and the energy a drop gives it read. The
-// Traveler's is the element of the statue she resonated with last, which her row does not hold
+// Weapon it wields read off its row of the roster, which the gauge a hit applies and the energy a drop gives it read.
+// The Traveler's is the element of the statue she resonated with last, which her row does not hold
 export const createCombatant = (
   character: Character,
   kit: Kit,

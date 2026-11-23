@@ -2,6 +2,7 @@ import type { PerpetualMechanicalArrayFight } from "#src/models/bosses/Perpetual
 
 import { PERPETUAL_MECHANICAL_ARRAY_HEALTH_GATE } from "#src/services/bosses/constants";
 
-// The share of its max health the boss can be damaged down to: the gate until Defensive Mode has been triggered, then none
+// The share of its max health the boss can be damaged down to: the gate until Defensive Mode has been triggered, then
+// None
 export const computePerpetualMechanicalArrayHealthFloor = (fight: PerpetualMechanicalArrayFight): number =>
   fight.isDefensiveModeTriggered ? 0 : PERPETUAL_MECHANICAL_ARRAY_HEALTH_GATE;

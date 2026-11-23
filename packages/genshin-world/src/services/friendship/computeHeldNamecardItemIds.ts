@@ -5,8 +5,8 @@ import type { FriendshipNamecard } from "#src/models/friendship/FriendshipNameca
 import { FRIENDSHIP_NAMECARD_LEVEL } from "#src/services/friendship/constants";
 import { computeLevelReached } from "#src/services/shared/computeLevelReached";
 
-// The item ids of the namecards the characters' Friendship has opened, a namecard held from the level it is reached at and
-// Never stored, so a character's Friendship and the namecards it holds cannot disagree
+// The item ids of the namecards the characters' Friendship has opened, a namecard held from the level it is reached at
+// And Never stored, so a character's Friendship and the namecards it holds cannot disagree
 export const computeHeldNamecardItemIds = (
   namecards: readonly FriendshipNamecard[],
   characters: readonly Pick<Character, "friendshipExp" | "id">[],

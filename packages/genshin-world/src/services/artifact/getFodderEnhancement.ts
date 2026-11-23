@@ -5,8 +5,8 @@ import { FODDER_RECOVERY_RATE } from "#src/services/artifact/constants";
 import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// What a fodder artifact feeds an enhancement: its rarity's base EXP and the share of what it was levelled with that the
-// Game gives back. The base costs a Mora a point and the share costs nothing. A locked artifact is never fodder
+// What a fodder artifact feeds an enhancement: its rarity's base EXP and the share of what it was levelled with that
+// The Game gives back. The base costs a Mora a point and the share costs nothing. A locked artifact is never fodder
 export const getFodderEnhancement = (
   fodder: Artifact,
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>,

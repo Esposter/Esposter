@@ -29,12 +29,12 @@ import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
-// The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi held,
-// And the Oculi found, with the Oculi of the region published, read as the world starts. A touch within the touch radius
-// Collects an Oculus and holds it in its region, a resonance starts its region at level one, and the Worship Statue
-// Offers the Oculi held and pays each level's rewards as that level is claimed, one level an action. What the bag has no
-// Room for drops where the claim was made. The session starts it after the pickups and the adventure rank, and stops it as
-// It unmounts
+// The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi
+// Held, And the Oculi found, with the Oculi of the region published, read as the world starts. A touch within the touch
+// Radius Collects an Oculus and holds it in its region, a resonance starts its region at level one, and the Worship
+// Statue Offers the Oculi held and pays each level's rewards as that level is claimed, one level an action. What the
+// Bag has no Room for drops where the claim was made. The session starts it after the pickups and the adventure rank,
+// And stops it as It unmounts
 export const useWorldStatuesStore = defineStore("world/statues", () => {
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const worldPickupsStore = useWorldPickupsStore();
@@ -99,8 +99,8 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
     regionLevelsMap.value = new Map([...regionLevelsMap.value, [regionId, levels]]);
     return levels;
   };
-  // The levels a region's statues take, handed to the caller once they have arrived, so the Worship Statue opens with its
-  // Screen showing each level and its rewards, and a resonance reads them before it acts
+  // The levels a region's statues take, handed to the caller once they have arrived, so the Worship Statue opens with
+  // Its Screen showing each level and its rewards, and a resonance reads them before it acts
   const readRegionLevels = getSynchronizedFunction((regionId: string, onRead: (levels: StatueLevel[]) => void) =>
     getResultAsync(() => readRegionStatueLevels(regionId)).match(onRead, (error) => {
       console.error(error);
@@ -149,15 +149,15 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
       setRegionProgress(regionId, toStatueRegionProgressSave(resonated, progress.claimedLevel));
     });
   };
-  // The Worship Statue offers the Oculi a started region holds, reaching each level they complete and leaving its rewards
-  // To be claimed
+  // The Worship Statue offers the Oculi a started region holds, reaching each level they complete and leaving its
+  // Rewards To be claimed
   const offerOculi = (regionId: string, levels: StatueLevel[]) => {
     const progress = getRegionProgress(regionId);
     const offered = offerStatueOculi(toStatueRegionProgress(progress, levels));
     setRegionProgress(regionId, toStatueRegionProgressSave(offered, progress.claimedLevel));
   };
-  // A claim takes the next level the region has reached, paying its rewards once; a region with none left to claim is left
-  // As it is
+  // A claim takes the next level the region has reached, paying its rewards once; a region with none left to claim is
+  // Left As it is
   const claimLevel = (regionId: string, levels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
     const progress = getRegionProgress(regionId);
     const offeringProgress = toStatueRegionProgress(progress, levels);
@@ -209,7 +209,8 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
     ({ characterBody, getMapCamera, regionCityIds } = saved);
     foundOculusIds.value = saved.foundOculusIds;
     regionStatueProgressMap.value = saved.regionStatueProgressMap;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    // `match(`) handles both branches, so the promise
+    // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
     getResultAsync(() => readOculusPlaces(worldSessionStore.gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
       (places) => {
         oculusPlaces.value = places;
@@ -218,8 +219,8 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
         console.error(error);
       },
     );
-    // A region the save has started reads its levels on load, so the maximum stamina it raised holds from the start, not
-    // From the region's next read
+    // A region the save has started reads its levels on load, so the maximum stamina it raised holds from the start,
+    // Not From the region's next read
     for (const [regionId, { level }] of saved.regionStatueProgressMap)
       if (level > 0) readRegionLevels(regionId, () => undefined);
   };

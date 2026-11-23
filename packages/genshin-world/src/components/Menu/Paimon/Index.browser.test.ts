@@ -122,7 +122,8 @@ describe("menuPaimon", () => {
       .not.toBeInTheDocument();
   });
 
-  // A locked account draws the frame's nine contents, the systems its rank and quests have not opened left out, not drawn
+  // A locked account draws the frame's nine contents, the systems its rank and quests have not opened left out, not
+  // Drawn
   test("a locked account's menu draws only the contents it has opened", async () => {
     expect.hasAssertions();
 
@@ -215,7 +216,8 @@ describe("menuPaimon", () => {
       .toBeInTheDocument();
   });
 
-  // The row offers the button that sets the birthday while it is unset, and the dialog's confirm sets the picked date once
+  // The row offers the button that sets the birthday while it is unset, and the dialog's confirm sets the picked date
+  // Once
   test("confirming the dialog sets the birthday once", async () => {
     expect.hasAssertions();
 

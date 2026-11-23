@@ -3,9 +3,9 @@ import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
 
-// The wheel's default entries by its direction count, clockwise from the top, each the screen it opens, as the wiki gives
-// Them. The eight-direction wheel's eighth default, the Battle Pass, draws no entry in the world, so its direction is left
-// Empty rather than given another screen, and the wheel draws no slot for an unassigned direction
+// The wheel's default entries by its direction count, clockwise from the top, each the screen it opens, as the wiki
+// Gives Them. The eight-direction wheel's eighth default, the Battle Pass, draws no entry in the world, so its
+// Direction is left Empty rather than given another screen, and the wheel draws no slot for an unassigned direction
 export const ShortcutWheelDirectionCountScreenKindsMap: Readonly<
   Record<ShortcutWheelDirectionCount, readonly TitledScreenKind[]>
 > = {

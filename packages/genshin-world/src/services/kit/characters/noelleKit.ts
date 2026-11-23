@@ -31,9 +31,9 @@ const COMBAT_MAID_CHARGED_ATTACK_STAMINA_MULTIPLIER = 0.8;
 const COMBAT_MAID_CHARGED_ATTACK_DAMAGE_BONUS = 0.15;
 
 // Must Be Spotless, from Constellation 6: Sweeping Time's ATK bonus takes an additional 50% of her DEF, and every enemy
-// Noelle defeats during it adds a second to its duration, 10 seconds in all. gcsim v2.47.2 (MIT) noelle/burst.go gives the bonus,
-// And takes the extension as a parameter at its full 10 seconds, not per enemy defeated
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/burst.go
+// Noelle defeats during it adds a second to its duration, 10 seconds in all. gcsim v2.47.2 (MIT) noelle/burst.go gives
+// The bonus, And takes the extension as a parameter at its full 10 seconds, not per enemy defeated
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/burst.go`
 const MUST_BE_SPOTLESS_CONSTELLATION = 6;
 const MUST_BE_SPOTLESS_DEFENSE_SHARE = 0.5;
 const MUST_BE_SPOTLESS_SECONDS_PER_DEFEAT = 1;
@@ -41,9 +41,9 @@ const MUST_BE_SPOTLESS_MAX_SECONDS = 10;
 const MUST_BE_SPOTLESS_STATUS_ID = "noelle-must-be-spotless";
 const SWEEPING_TIME_SOURCE = "noelle-sweeping-time";
 
-// Devotion, from Ascension 1, shields the active character with 4 times Noelle's DEF for 20 seconds when a drain takes it
-// Under 30% HP, once every 60 seconds, as gcsim v2.47.2 (MIT) noelle/asc.go gives it
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/asc.go
+// Devotion, from Ascension 1, shields the active character with 4 times Noelle's DEF for 20 seconds when a drain takes
+// It Under 30% HP, once every 60 seconds, as gcsim v2.47.2 (MIT) noelle/asc.go gives it
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/asc.go`
 const DEVOTION_ASCENSION = 1;
 const DEVOTION_HEALTH_SHARE = 0.3;
 const DEVOTION_DEFENSE_MULTIPLIER = 4;
@@ -51,8 +51,9 @@ const DEVOTION_SECONDS = 20;
 const DEVOTION_COOLDOWN_SECONDS = 60;
 const DEVOTION_COOLDOWN_STATUS_ID = "noelle-devotion-cooldown";
 
-// From Ascension 4, each fourth normal attack or charged attack that strikes an enemy cuts the skill's cooldown by a second,
-// Counting each attack once on the first enemy it strikes, and a skill restarts the count, as gcsim's makeA4CB does
+// From Ascension 4, each fourth normal attack or charged attack that strikes an enemy cuts the skill's cooldown by a
+// Second, Counting each attack once on the first enemy it strikes, and a skill restarts the count, as gcsim's makeA4CB
+// Does
 const ASCENSION_4 = 4;
 const ASCENSION_4_ATTACK_COUNT = 4;
 const ASCENSION_4_SKILL_COOLDOWN_REDUCTION_SECONDS = 1;
@@ -72,10 +73,10 @@ export const NOELLE_CHARACTER_ID = 10_000_034;
 // Noelle's behaviour: Breastplate's heal on a hit of her attacks and her press while the shield stands rolls at the
 // Table's chance, certain from one constellation under Sweeping Time. Breastplate shields her from her DEF for the
 // Table's seconds, exploding as it ends from four constellations, and Sweeping Time adds a share of her DEF to her ATK,
-// Which Constellation 6 raises by half her DEF again, and extends by a second for each enemy she defeats, 10 seconds at most.
-// It converts her attacks to Geo for the table's seconds past its start. Ascension 1's Devotion shield and Ascension 4's
-// Skill cooldown cut are built. The charged attack is one cycle of its spin and its final slash
-// The count an attack adds to Ascension 4's, which a fourth one spends on the skill's cooldown
+// Which Constellation 6 raises by half her DEF again, and extends by a second for each enemy she defeats, 10 seconds at
+// Most. It converts her attacks to Geo for the table's seconds past its start. Ascension 1's Devotion shield and
+// Ascension 4's Skill cooldown cut are built. The charged attack is one cycle of its spin and its final slash The count
+// An attack adds to Ascension 4's, which a fourth one spends on the skill's cooldown
 const countAttack = ({ kitEffectState, party }: KitContext, characterId: number): void => {
   const stacks = (findKitStatus(kitEffectState.effects, characterId, ASCENSION_4_COUNT_STATUS_ID)?.stacks ?? 0) + 1;
   if (stacks < ASCENSION_4_ATTACK_COUNT) {
@@ -95,8 +96,9 @@ const countAttack = ({ kitEffectState, party }: KitContext, characterId: number)
     );
 };
 
-// Must Be Spotless: an enemy Noelle defeats during Sweeping Time adds a second to its buff and its Geo infusion, and the
-// Seconds added so far are counted on her status, which the burst's start clears, so the extension stops at 10 seconds
+// Must Be Spotless: an enemy Noelle defeats during Sweeping Time adds a second to its buff and its Geo infusion, and
+// The Seconds added so far are counted on her status, which the burst's start clears, so the extension stops at 10
+// Seconds
 const extendSweepingTime = (kitEffectState: KitEffectState, characterId: number): void => {
   const buff = kitEffectState.effects.find(
     (effect): effect is KitBuff =>
@@ -120,7 +122,8 @@ const extendSweepingTime = (kitEffectState: KitEffectState, characterId: number)
   });
 };
 
-// An attack's hits, each counting once toward Ascension 4 on the first enemy it strikes, which the attack's start clears
+// An attack's hits, each counting once toward Ascension 4 on the first enemy it strikes, which the attack's start
+// Clears
 const createCountedAttack = (healBehaviour: KitHitBehaviour, hitCount: number): KitActionBehaviour => {
   const hasCountedList = Array.from({ length: hitCount }, () => false);
   return {
@@ -239,8 +242,8 @@ export const createNoelleKitBehaviour = ({
         const defense = getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         castKitShield(context, combatant.characterId, {
           element: Element.Geo,
-          // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the character
-          // On the field as the shield ends, whoever holds it then
+          // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the
+          // Character On the field as the shield ends, whoever holds it then
           ...(combatant.constellationCount >= TO_BE_CLEANED_CONSTELLATION && {
             explosion: { combatant, hit: toBeCleanedHit },
           }),

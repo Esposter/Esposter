@@ -5,9 +5,9 @@ import { EQUIPMENT_CATEGORIES, QUALITY_SORTED_CATEGORIES } from "#src/services/i
 import { InventorySort, ItemCategory } from "genshin-interface";
 
 // A tab's entries in the order the game shows them. Weapons and artifacts sort by level or quality as chosen, the other
-// Breaking a tie the same way; furnishings run from the first obtained, gadgets and quest items from the highest quality
-// Down, and every other tab in the game's own order of its items. A tie left falls to that order, then to the order
-// The entries were obtained in
+// Breaking a tie the same way; furnishings run from the first obtained, gadgets and quest items from the highest
+// Quality Down, and every other tab in the game's own order of its items. A tie left falls to that order, then to the
+// Order The entries were obtained in
 export const computeInventoryTab = (
   items: InventoryItem[],
   category: ItemCategory,

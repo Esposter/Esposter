@@ -8,9 +8,9 @@ import { takeOne } from "@esposter/shared";
 
 const TENACITY_OF_THE_MILLELITH_COOLDOWN_ID = "tenacityOfTheMillelithCooldown";
 
-// Tenacity of the Millelith. Its four-piece bonus, when its wearer's Elemental Skill hits an opponent, gives every deployed
-// Member the first param's ATK and the second's Shield Strength for the third param's seconds. It triggers once in the fourth
-// Param's seconds, and whether or not its wearer is on the field
+// Tenacity of the Millelith. Its four-piece bonus, when its wearer's Elemental Skill hits an opponent, gives every
+// Deployed Member the first param's ATK and the second's Shield Strength for the third param's seconds. It triggers
+// Once in the fourth Param's seconds, and whether or not its wearer is on the field
 export const createTenacityOfTheMillelithSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const attackPercent = takeOne(bonus.params, 0);
   const shieldStrength = takeOne(bonus.params, 1);

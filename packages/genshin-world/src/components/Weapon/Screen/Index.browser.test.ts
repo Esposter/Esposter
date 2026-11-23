@@ -61,7 +61,8 @@ describe("weaponScreen", () => {
 
     const { container } = await render(WeaponScreenContainer, { props });
 
-    // The header names the open weapon; the fodder row names its copy in the bag by the same name, so the header is read alone
+    // The header names the open weapon; the fodder row names its copy in the bag by the same name, so the header is
+    // Read alone
     expect(container.querySelector(".breadcrumb")?.textContent?.trim()).toBe(weaponName);
     await expect.element(page.getByLabelText(`${weaponData.rarity}`, { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText(levelText, { exact: true })).toBeVisible();
@@ -100,7 +101,8 @@ describe("weaponScreen", () => {
     await expect.element(page.getByText(gameText[GameTextKey.WeaponAscend], { exact: true }).first()).toBeVisible();
   });
 
-  // Enhance with an ore picked while the wallet holds no Mora to pay its EXP: nothing is spent, and the bag is not written back
+  // Enhance with an ore picked while the wallet holds no Mora to pay its EXP: nothing is spent, and the bag is not
+  // Written back
   test("enhance is refused when the wallet is short of Mora", async () => {
     expect.hasAssertions();
 
@@ -122,7 +124,8 @@ describe("weaponScreen", () => {
     expect(onUpdateWallet).not.toHaveBeenCalled();
   });
 
-  // Enhance with an ore and a fodder weapon picked: both leave the bag, the ore's count drops by one and the weapon levels up
+  // Enhance with an ore and a fodder weapon picked: both leave the bag, the ore's count drops by one and the weapon
+  // Levels up
   test("enhance applies the chosen ores and fodder", async () => {
     expect.hasAssertions();
 
@@ -146,7 +149,8 @@ describe("weaponScreen", () => {
     expect(onUpdateWallet.mock.calls[0]?.[0][Currency.Mora]).toBe(enhanced.wallet[Currency.Mora]);
   });
 
-  // The Enhance strip holds seven candidates in view, so the eighth fodder weapon scrolls into reach inside the strip and is picked there
+  // The Enhance strip holds seven candidates in view, so the eighth fodder weapon scrolls into reach inside the strip
+  // And is picked there
   test("the Enhance strip scrolls to a candidate past the seventh", async () => {
     expect.hasAssertions();
 
@@ -191,7 +195,8 @@ describe("weaponScreen", () => {
       .toBeVisible();
   });
 
-  // The weapon at its cap with the next phase's Mora and items held: the weapon's entry moves one phase up, and the Mora is spent
+  // The weapon at its cap with the next phase's Mora and items held: the weapon's entry moves one phase up, and the
+  // Mora is spent
   test("ascend spends the phase's Mora and items", async () => {
     expect.hasAssertions();
 

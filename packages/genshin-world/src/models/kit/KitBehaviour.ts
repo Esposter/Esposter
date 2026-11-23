@@ -9,8 +9,8 @@ import type { KitPlunge } from "#src/models/kit/record/KitPlunge";
 
 // What a character alone does, which no value of its record can hold: what each action of the record's slots sets going
 // And each of their hits runs, the variants' checks, the Benediction's and the Stellar Jubilee's bonuses, and the
-// Passives and constellations that answer the kit's events and price its strikes. Its module returns it from its record's
-// Reader, and buildKit joins the two into the kit
+// Passives and constellations that answer the kit's events and price its strikes. Its module returns it from its
+// Record's Reader, and buildKit joins the two into the kit
 export interface KitBehaviour extends Partial<
   Pick<
     Kit,

@@ -36,7 +36,8 @@ const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const { character, characterTalentKits, gameText, materialDataMap, nameText, talentUpgradeMap } = defineProps<Props>();
-// The kit the character's combat talents and passives are read from, which names each talent's proud skill group and name
+// The kit the character's combat talents and passives are read from, which names each talent's proud skill group and
+// Name
 const talentKit = computed(() =>
   characterTalentKits.find(({ characterId: kitCharacterId }) => kitCharacterId === character.id),
 );

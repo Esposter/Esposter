@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 const AQUILA_FAVONIA_HEAL = 1;
 const AQUILA_FAVONIA_HEALS_PER_ROUND = 2;
 
-// Aquila Favonia, a sword that only a sword user may equip, and that makes its character deal +1 DMG. After the opposing
-// Character uses a Skill, if this character is the active one, it heals 1 HP, up to twice per Round (the wiki's Aquila
-// Favonia (Equipment Card))
+// Aquila Favonia, a sword that only a sword user may equip, and that makes its character deal +1 DMG. After the
+// Opposing Character uses a Skill, if this character is the active one, it heals 1 HP, up to twice per Round (the
+// Wiki's Aquila Favonia (Equipment Card))
 export const aquilaFavonia: GcgCardModule = {
   ...createGcgWeaponCard("SWORD"),
   onAnySkillUsed: ({ characterIndex, duel, sideIndex }) => {

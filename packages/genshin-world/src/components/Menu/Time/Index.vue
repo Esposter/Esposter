@@ -43,10 +43,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The Time screen the Paimon menu's side bar opens: its title and the cross that closes it, the clock's dial on the
-       right of the screen and, in the middle, the clock's time and the hour the dial points at, with the day beneath that
-       hour (Today, Tomorrow or the day after) then Confirm, which sets the world's clock to that hour. The dial and the
-       column are placed from the English PC client's screen (1080 high, a reference pixel a unit). -->
+  <!-- The Time screen the Paimon menu's side bar opens: its title and the cross that closes it, the clock's dial on
+    the right of the screen and, in the middle, the clock's time and the hour the dial points at, with the day
+    beneath that hour (Today, Tomorrow or the day after) then Confirm, which sets the world's clock to that hour.
+    The dial and the column are placed from the English PC client's screen (1080 high, a reference pixel a unit). -->
   <GameScreen class="menu-time" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Time]">
     <ScreenHeader :game-text :mark="CloseButtonMark.Cross" :title="gameText[GameTextKey.Time]" @close="emit('close')" />
     <MenuTimeDial v-model="advance" :clock-minutes :target-minutes />

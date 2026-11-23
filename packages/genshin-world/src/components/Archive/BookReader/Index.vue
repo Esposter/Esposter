@@ -18,9 +18,9 @@ const emit = defineEmits<{ close: [] }>();
 </script>
 
 <template>
-  <!-- A volume the Archive's Books section opens: its title across the top and its text on one page, as the game's reader
-       sets it. Provisional: its size, place and colours wait on the parity pass against a recording of the English client's
-       reader, the search for one having found none -->
+  <!-- A volume the Archive's Books section opens: its title across the top and its text on one page, as the game's
+    reader sets it. Provisional: its size, place and colours wait on the parity pass against a recording of the
+    English client's reader, the search for one having found none -->
   <GameScreen class="book-reader-screen">
     <ScreenHeader :game-text :title @close="emit('close')" />
     <p class="body">{{ body }}</p>

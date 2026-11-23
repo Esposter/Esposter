@@ -13,8 +13,8 @@ import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterSta
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-// Plays a resonance card on a side whose characters have the given elements, and reports whether it may be played and the
-// Dice the side holds afterwards
+// Plays a resonance card on a side whose characters have the given elements, and reports whether it may be played and
+// The Dice the side holds afterwards
 const playResonance = (module: GcgCardModule, elements: Element[]) => {
   const duel: GcgDuel = {
     actingSideIndex: 0,

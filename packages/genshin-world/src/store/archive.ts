@@ -34,9 +34,9 @@ import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { defineStore } from "pinia";
 import { computed, shallowRef, watch } from "vue";
 
-// The Archive's entries, the volumes it reads and the defeats it counts. Its entries are read once the quest it opens after
-// Is done, as the game opens it, and its progress and defeats are the save's, the bag's items and the defeats opening its
-// Entries as they come in. The session starts it after the quests store and stops it as it unmounts
+// The Archive's entries, the volumes it reads and the defeats it counts. Its entries are read once the quest it opens
+// After Is done, as the game opens it, and its progress and defeats are the save's, the bag's items and the defeats
+// Opening its Entries as they come in. The session starts it after the quests store and stops it as it unmounts
 export const useWorldArchiveStore = defineStore("world/archive", () => {
   const worldQuestsStore = useWorldQuestsStore();
   const worldScreenStore = useWorldScreenStore();
@@ -51,8 +51,8 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
   const viewpointPlaceMap = shallowRef<ReadonlyMap<number, SceneGroupPlace>>(new Map());
   // The volume the Archive is reading, its title and its text in the reader's language
   const bookReading = shallowRef<{ body: string; title: string }>();
-  // The volume last chosen whose text is still loading, let go once the Archive closes, so a text that arrives for another
-  // Volume or after the Archive has closed opens no reader
+  // The volume last chosen whose text is still loading, let go once the Archive closes, so a text that arrives for
+  // Another Volume or after the Archive has closed opens no reader
   let loadingBookId: number | undefined;
   watch(
     () => worldScreenStore.screenKind,
@@ -86,8 +86,8 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
       },
     );
   };
-  // The Equipment entry of each artifact set the bag holds every piece of is opened, once the Archive's entries are read,
-  // Since an artifact set opens by what the bag holds whenever it is read
+  // The Equipment entry of each artifact set the bag holds every piece of is opened, once the Archive's entries are
+  // Read, Since an artifact set opens by what the bag holds whenever it is read
   const openHeldArtifactSets = (items: readonly InventoryItem[]) => {
     if (!archiveData.value) return;
     const equipmentEntryIds = new Set(
@@ -138,10 +138,11 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
     ({ enemyKindMap } = saved);
     // The quest may already be done as the world opens, when the watch above has nothing to change to
     if (isArchiveUnlocked.value) loadArchive();
-    // The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table when
-    // First needed, since the Archive's own screen may not have been opened
+    // The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table
+    // When First needed, since the Archive's own screen may not have been opened
     events.on("parentQuestFinish", () => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+      // `match(`) handles both branches, so the promise
+      // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
       getResultAsync(() => readTravelLogEntries(worldSessionStore.gameDataBaseUrl)).match(
         (entries) => {
           archiveProgressMap.value = openTravelLogEntries(
@@ -155,8 +156,8 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
         },
       );
     });
-    // Every change to the bag opens the entries of what the bag takes in, and the Equipment entry of each artifact set the bag
-    // Now holds every piece of
+    // Every change to the bag opens the entries of what the bag takes in, and the Equipment entry of each artifact set
+    // The bag Now holds every piece of
     events.on("bagChange", (nextInventory) => {
       archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
       openHeldArtifactSets(nextInventory.items);
@@ -192,8 +193,8 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
       new Set(viewpointPlaceMap.value.keys()),
     );
   });
-  // A volume picked up from the world is taken straight into the Archive, which opens its entry, and is told apart from any
-  // Other item by its material id: whether the item was a volume
+  // A volume picked up from the world is taken straight into the Archive, which opens its entry, and is told apart from
+  // Any Other item by its material id: whether the item was a volume
   const takeBook = (itemId: number) => {
     const books = archiveData.value?.sectionEntriesMap[ArchiveSection.Books] ?? [];
     if (!books.some(({ materialId }) => materialId === itemId)) return false;

@@ -100,7 +100,8 @@ export const props = {
   weaponGrowCurveMap: statTables.weaponGrowCurveMap,
 };
 
-// The bag at the cap, and the same bag with the next phase's items held, with the Mora and the Adventure Rank it requires
+// The bag at the cap, and the same bag with the next phase's items held, with the Mora and the Adventure Rank it
+// Requires
 const nextPhase = weaponData.ascensionPhases[1];
 const atCapBag = createBag(atCapWeapon);
 const ascendInventory: Inventory = {
@@ -116,7 +117,8 @@ const ascendInventory: Inventory = {
   quickSwapItemIds: [],
 };
 
-// The bag holding the open weapon, the ores and eight fodder weapons, one more than the Enhance strip's seven slots hold in view
+// The bag holding the open weapon, the ores and eight fodder weapons, one more than the Enhance strip's seven slots
+// Hold in view
 const MANY_FODDER_COUNT = 8;
 const manyFodderBag: Inventory = {
   items: [
@@ -142,7 +144,8 @@ export const variants = {
   manyFodder: { inventory: manyFodderBag },
   // A weapon at rank five, which no Refine tab is offered for
   rankFive: { inventory: createBag({ ...openWeapon, refinement: 5 }) },
-  // The Refine tab open on the weapon at its cap, which offers Ascend in place of Enhance, with the copy in the bag to pick
+  // The Refine tab open on the weapon at its cap, which offers Ascend in place of Enhance, with the copy in the bag to
+  // Pick
   refine: { inventory: atCapBag, tab: WeaponMenuTab.Refine },
   // The two-star weapon, which no Refine tab is offered for
   twoStar: { inventory: createBag({ ...openWeapon, id: TWO_STAR_WEAPON_ID }) },

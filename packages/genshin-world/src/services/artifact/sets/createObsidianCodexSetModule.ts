@@ -14,9 +14,10 @@ import { takeOne } from "@esposter/shared";
 const OBSIDIAN_CODEX_COOLDOWN_ID = "obsidianCodexCooldown";
 const OBSIDIAN_CODEX_CRITICAL_RATE_ID = "obsidianCodexCriticalRate";
 
-// Obsidian Codex. Its two-piece bonus raises the DMG its wearer deals by the table's first param while it is in Nightsoul's
-// Blessing and on the field. Its four-piece bonus raises its wearer's CRIT Rate by the second param for the third param's
-// Seconds after it consumes the first param's Nightsoul points on the field, once every the fourth param's seconds
+// Obsidian Codex. Its two-piece bonus raises the DMG its wearer deals by the table's first param while it is in
+// Nightsoul's Blessing and on the field. Its four-piece bonus raises its wearer's CRIT Rate by the second param for the
+// Third param's Seconds after it consumes the first param's Nightsoul points on the field, once every the fourth
+// Param's seconds
 export const createObsidianCodexSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;
   if (bonus.pieceCount === 2) {

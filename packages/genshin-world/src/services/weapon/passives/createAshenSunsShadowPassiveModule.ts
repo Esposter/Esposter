@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 
 const ASHEN_SUN_COOLDOWN_ID = "ashenSunsShadowCooldown";
 
-// Ashen Sun's Shadow at its rank: a Charged Attack hit its wielder lands grants it a Bond of Life of the rank's share of its Max
-// HP, once every the rank's cooldown in seconds. While it has a Bond of Life, its DMG is raised by the rank's amount, and by the
-// Rank's last amount more at a Bond of the rank's threshold share of its Max HP or more
+// Ashen Sun's Shadow at its rank: a Charged Attack hit its wielder lands grants it a Bond of Life of the rank's share
+// Of its Max HP, once every the rank's cooldown in seconds. While it has a Bond of Life, its DMG is raised by the
+// Rank's amount, and by the Rank's last amount more at a Bond of the rank's threshold share of its Max HP or more
 export const createAshenSunsShadowPassiveModule = (params: number[]): PassiveModule => {
   const bondShare = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 1);

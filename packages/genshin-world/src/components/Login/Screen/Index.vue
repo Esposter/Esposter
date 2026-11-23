@@ -52,7 +52,8 @@ interface Props {
   // How far the packs' download has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a
   // Fixed time after it is done
   progress: number;
-  // The tier the scene draws at, the client's own: the phone's draws no screen-space occlusion where the computer's does
+  // The tier the scene draws at, the client's own: the phone's draws no screen-space occlusion where the computer's
+  // Does
   qualityTier?: QualityTier | undefined;
   // Where the host serves the developer's own exports of the game's scenes, which the scene draws the login's from
   sceneExportBaseUrl: string;

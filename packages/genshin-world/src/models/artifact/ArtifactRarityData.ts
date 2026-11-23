@@ -4,7 +4,8 @@ import { artifactMinorAffixGroupSchema } from "#src/models/artifact/ArtifactMino
 import { z } from "zod";
 
 // What every artifact of a rarity shares, as the game's tables give it: its highest level, the EXP each level costs to
-// Leave, its base EXP as fodder, the levels at which a minor affix is added or raised, and the minor affixes it may roll
+// Leave, its base EXP as fodder, the levels at which a minor affix is added or raised, and the minor affixes it may
+// Roll
 export interface ArtifactRarityData {
   affixLevels: number[];
   baseExperience: number;

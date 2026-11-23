@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 const PIGEONS_TO_DISCARD = 3;
 
-// Timmie: once per round at the end phase it gains a Pigeon, and at three Pigeons it is discarded, a card is drawn and an
-// Omni die is created
+// Timmie: once per round at the end phase it gains a Pigeon, and at three Pigeons it is discarded, a card is drawn and
+// An Omni die is created
 export const timmie: GcgCardModule = {
   initialUsages: 1,
   onEndPhase: ({ duel, sideIndex }, zoneCard) => {

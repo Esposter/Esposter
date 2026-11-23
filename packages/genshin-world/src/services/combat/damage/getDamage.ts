@@ -3,9 +3,9 @@ import type { DamageOptions } from "#src/models/combat/DamageOptions";
 import { ATTACKER_LEVEL_DEFENSE_OFFSET, ATTACKER_LEVEL_DEFENSE_SCALE } from "#src/services/combat/damage/constants";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 
-// A hit's damage by the game's general formula: its base damage, the talent's multiplier of its stat plus any flat bonus,
-// Raised by its damage bonus and a crit, and cut by the enemy's defence against the attacker's level, which reduction or
-// Ignoring lowers, and by its resistance, then multiplied by an amplifying reaction's multiplier
+// A hit's damage by the game's general formula: its base damage, the talent's multiplier of its stat plus any flat
+// Bonus, Raised by its damage bonus and a crit, and cut by the enemy's defence against the attacker's level, which
+// Reduction or Ignoring lowers, and by its resistance, then multiplied by an amplifying reaction's multiplier
 export const getDamage = ({
   additiveBaseDamageBonus = 0,
   amplifyingMultiplier = 1,
