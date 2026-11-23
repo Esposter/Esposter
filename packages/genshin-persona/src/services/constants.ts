@@ -107,6 +107,8 @@ export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
   referer: `${WIKI_ORIGIN}/`,
   "user-agent": WIKI_USER_AGENT,
 };
+// Every file is held whole in memory, so a response that runs past this ceiling is refused rather than read on
+export const WIKI_FILE_MAX_BYTES: number = 32 * 1024 * 1024;
 // A line's file is `VO_`, the dub's prefix, the character's name and the line's title; the English dub has no prefix
 export const WIKI_VOICE_FILE_PREFIX = "VO_";
 export const WIKI_VOICE_FILE_EXTENSION = ".ogg";
