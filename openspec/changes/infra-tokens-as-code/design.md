@@ -75,7 +75,7 @@ Read with the bootstrap: the account holds `bootstrap`, `tok-esposter-infra`, `t
 | "apps/infra/src/cloudflare/services/getAccountTokenPermissionGroupId.ts" | the one helper: a permission group's id by name, shared by the token resources               |
 | "apps/infra/src/cloudflare/outputs/"                                     | the stack outputs the ESC writes read                                                        |
 | `apps/infra/src/github/secrets/cloudflareApiToken.ts`                    | the GitHub secret, now the deploy token's value                                              |
-| `apps/infra/src/cloudflareConfiguration.ts`                              | deleted: its provider namespace read `cloudflare:apiToken`                                   |
+| "apps/infra/src/cloudflareConfiguration.ts"                              | deleted: its provider namespace read `cloudflare:apiToken`                                   |
 | `scripts/src/services/realtimeKit/applyRealtimeKitActions.ts`            | the token branch is removed, the token is Pulumi's                                           |
 | `apps/infra/docs/cloudflare/naming-conventions.md`                       | the token names                                                                              |
 | `.agents/skills/security/references/credentials.md`                      | the rules this change carries                                                                |
