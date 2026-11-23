@@ -14,6 +14,7 @@ import { computePatternEvaluated } from "#src/services/oxlint/sorting/computePat
 import { computeSortingDependencies } from "#src/services/oxlint/sorting/computeSortingDependencies";
 import { getOxlintDisabledLines } from "#src/services/oxlint/sorting/getOxlintDisabledLines";
 import { reportSortingPartitions } from "#src/services/oxlint/sorting/reportSortingPartitions";
+import { partitionAtBoundaries } from "#src/services/oxlint/sorting/reportSortingPartitions/partitionAtBoundaries";
 import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { defineRule } from "@oxlint/plugins";
 
@@ -26,34 +27,26 @@ const partitionProperties = (
   sourceCode: Context["sourceCode"],
   disabledLines: Set<number>,
   isNumericSet: boolean,
-): SortingNode[][] => {
-  const partitions: SortingNode[][] = [];
-  let partition: SortingNode[] = [];
-  partitions.push(partition);
-  for (const property of node.properties) {
-    if (property.type === "SpreadElement" || property.type === "RestElement") {
-      partition = [];
-      partitions.push(partition);
-      continue;
-    }
-    // A computed key runs as the property is built, and a value runs with it, or for a pattern the defaults it reads
-    partition.push(
-      buildSortingNode(computeDeclarationName(property, sourceCode), property, {
-        dependencyNames:
-          node.type === "ObjectPattern"
-            ? [...new Set(computeDependencyNames(property.value))]
-            : [computeDeclarationName(property, sourceCode)],
+): SortingNode[][] =>
+  partitionAtBoundaries(
+    [...node.properties],
+    (property): property is ESTree.BindingProperty | ESTree.ObjectProperty => property.type === "Property",
+    (property) => {
+      const name = computeDeclarationName(property, sourceCode);
+      // A computed key runs as the property is built, and a value runs with it, or for a pattern the defaults it reads
+      return buildSortingNode(name, property, {
+        ...(node.type === "ObjectPattern"
+          ? { dependencyNames: [...new Set(computeDependencyNames(property.value))] }
+          : {}),
         ...withEvaluated(
           ...(property.computed ? [property.key] : []),
           ...(node.type === "ObjectPattern" ? computePatternEvaluated(property.value) : [property.value]),
         ),
         isOxlintDisabled: disabledLines.has(property.loc.start.line),
         value: isNumericSet ? (computeExpressionNumberValue(property.value)?.toString() ?? "") : "",
-      }),
-    );
-  }
-  return partitions;
-};
+      });
+    },
+  );
 
 // A numeric set sorts by value, an object written to keep its order compares equal throughout, and anything else by name
 const computeComparator = (node: ObjectNode, sourceCode: Context["sourceCode"], isNumericSet: boolean): Comparator => {
