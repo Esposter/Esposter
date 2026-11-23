@@ -2,10 +2,10 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A pathspec with no `*` names a file or a directory's whole tree, and `.` the whole tree of the root. A `*` matches any
 // Run of characters, `/` included, as git's default pathspec does, so `*.bench.ts` names every bench file under every
-// Folder. The ledger index writes no other pattern, so one that uses it (a `:` magic prefix, `?`, `[`) throws rather than
-// Matching what git would not
+// Folder. The ledger index writes no other pattern, so one that uses it (a `:` magic prefix, `?`, `[`, a trailing `/`)
+// Throws rather than matching what git would not
 const getPathspecMatcher = (pathspec: string): ((file: string) => boolean) => {
-  if (/^:|[?[\]]/u.test(pathspec))
+  if (/^:|[?[\]]|\/$/u.test(pathspec))
     throw new InvalidOperationError(
       Operation.Read,
       `pathspec ${pathspec}`,

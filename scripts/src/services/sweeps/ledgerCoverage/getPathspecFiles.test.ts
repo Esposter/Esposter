@@ -19,4 +19,12 @@ describe(getPathspecFiles, () => {
 
     expect(getPathspecFiles(files, pathspecs)).toStrictEqual(expected);
   });
+
+  test("throws on a directory written with a trailing slash, which git lists and the matcher would not", () => {
+    expect.hasAssertions();
+
+    expect(() => getPathspecFiles(files, ["a/"])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: pathspec a/, uses a pattern getPathspecFiles does not match]`,
+    );
+  });
 });
