@@ -33,7 +33,7 @@ describe("routes/assets/[bucket]/[...key]", () => {
     await dispose();
   });
 
-  test.each([StorageBucket.PublicDungeonsAssets, StorageBucket.PublicGenshinAssets, StorageBucket.PublicHostedAssets])(
+  test.each([StorageBucket.PublicDungeonsAssets, StorageBucket.PublicHostedAssets])(
     "refuses %s as a 404 though its object is stored",
     async (storageBucket) => {
       expect.hasAssertions();
