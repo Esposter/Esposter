@@ -47,6 +47,8 @@ describe(publishHostedAssets, () => {
     ...publication,
     objects: { ...publication.objects, "stats/shields": [3] },
   };
+  // The bytes a stored object is altered to, which no hash of its name matches
+  const alteredBytes = Buffer.from(" ");
   const scopes = [GameDataset.Profile, GameDataset.Stats];
   const product: HostedAssetProduct = {
     bucket: StorageBucket.PublicGenshinAssets,
@@ -56,6 +58,20 @@ describe(publishHostedAssets, () => {
     scopes,
     source: { kind: "records" },
   };
+  // Publishes the base publication into a bucket map from no lock, and returns the lock it planned
+  const publishPublication = async (
+    bucketClientMap: ReturnType<typeof createBucketClientMap>,
+  ): Promise<HostedAssetLock> =>
+    getPlannedLock(
+      await publishHostedAssets({
+        createBucketClientMap: () => bucketClientMap,
+        currentLock: emptyLock,
+        otherLocks: [],
+        product,
+        plan: planHostedAssetPublication(publication),
+        scopes,
+      }),
+    );
   const filesScope = TEST_FILENAME;
   const filesProduct: HostedAssetProduct = {
     ...filesProductBase,
@@ -100,16 +116,7 @@ describe(publishHostedAssets, () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
-    const currentLock = getPlannedLock(
-      await publishHostedAssets({
-        createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
-        plan: planHostedAssetPublication(publication),
-        scopes,
-      }),
-    );
+    const currentLock = await publishPublication(bucketClientMap);
     const createBucketClientMapSpy = vi.fn<typeof createBucketClientMap>(() => bucketClientMap);
     const rerun = await publishHostedAssets({
       createBucketClientMap: createBucketClientMapSpy,
@@ -133,16 +140,7 @@ describe(publishHostedAssets, () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
-    const currentLock = getPlannedLock(
-      await publishHostedAssets({
-        createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
-        plan: planHostedAssetPublication(publication),
-        scopes,
-      }),
-    );
+    const currentLock = await publishPublication(bucketClientMap);
     const record = takeOne(
       planHostedAssetPublication(publication).records.filter(({ isIndex: isRecordIndex }) => isRecordIndex === isIndex),
     );
@@ -172,16 +170,7 @@ describe(publishHostedAssets, () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
-    const currentLock = getPlannedLock(
-      await publishHostedAssets({
-        createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
-        plan: planHostedAssetPublication(publication),
-        scopes,
-      }),
-    );
+    const currentLock = await publishPublication(bucketClientMap);
     const index = takeOne(planHostedAssetPublication(publication).records.filter(({ isIndex }) => isIndex));
     bucketClientMap[CloudflareEnvironment.Production].store.delete(getHostedAssetPath(index));
 
@@ -204,16 +193,7 @@ describe(publishHostedAssets, () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
-    const currentLock = getPlannedLock(
-      await publishHostedAssets({
-        createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
-        plan: planHostedAssetPublication(publication),
-        scopes,
-      }),
-    );
+    const currentLock = await publishPublication(bucketClientMap);
     const changedPublication: HostedAssetPublication = {
       ...publication,
       indexes: { [PROFILE_KEY]: { ...publication.indexes[PROFILE_KEY], "10000003": { name: "c" } } },
@@ -336,16 +316,7 @@ describe(publishHostedAssets, () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();
-    const currentLock = getPlannedLock(
-      await publishHostedAssets({
-        createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
-        plan: planHostedAssetPublication(publication),
-        scopes,
-      }),
-    );
+    const currentLock = await publishPublication(bucketClientMap);
     const result = await publishHostedAssets({
       createBucketClientMap: () => bucketClientMap,
       currentLock,
@@ -492,7 +463,7 @@ describe(publishHostedAssets, () => {
     const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
     const storedGet = productionBucket.get;
     vi.spyOn(productionBucket, "get").mockImplementation((key) =>
-      key === alteredPath ? Promise.resolve(Buffer.from(" ")) : storedGet(key),
+      key === alteredPath ? Promise.resolve(alteredBytes) : storedGet(key),
     );
 
     await expect(
@@ -516,7 +487,7 @@ describe(publishHostedAssets, () => {
 
     const bucketClientMap = createBucketClientMap();
     const alteredPath = getHostedAssetPath(takeOne(planHostedAssetPublication(publication).records));
-    await bucketClientMap[CloudflareEnvironment.Production].put(alteredPath, new Uint8Array(Buffer.from(" ")));
+    await bucketClientMap[CloudflareEnvironment.Production].put(alteredPath, new Uint8Array(alteredBytes));
 
     await expect(
       publishHostedAssets({
