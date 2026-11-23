@@ -14,7 +14,7 @@ Genshin already publishes its game data as content-addressed objects under a com
 - A placement rule that replaces the two-place rule in the static-assets design: bundled, hosted or public, decided by size, format and the loader that reads the file.
 - One shared public bucket, `public-hosted-assets`, with one custom domain per environment in place of the Worker route, so hashed objects are cached at the edge by one Cache Rule. Each product's scope is a key prefix, so a new product edits no infrastructure. The Worker route keeps serving the user buckets.
 - Genshin's binaries are audited: parity references and snapshots stay committed by their owner rule, and the one hosted candidate, the login's recordings, moves.
-- The dead file-pack generator under `apps/web/scripts/phaser` is removed.
+- The dead file-pack generator under "apps/web/scripts/phaser" is removed.
 
 ## Capabilities
 

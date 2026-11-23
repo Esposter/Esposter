@@ -15,7 +15,7 @@ This change depends on `architecture-hosted-assets`. It is the first product to 
 - Every file Phaser loads is published as a hosted object: the images, the audio, the WOFF2 font, the tileset definitions and the tilemaps. The bundle holds none of them.
 - The Preloader scene shows the generic preloader's download progress as its one bar, then starts the title scene once Phaser's own load completes.
 - The prior art, `origin/migrate-assets` at `158d95e9d1`, is carried for its save-safe key decisions. Its pack and base url are dropped, because the Phaser source gives every file its own absolute url (see the design).
-- The dead file-pack generator under `apps/web/scripts/phaser` and its generated `FileKey.ts` and `files.json` are removed.
+- The dead file-pack generator under "apps/web/scripts/phaser" and its generated `FileKey.ts` and `files.json` are removed.
 - The third-party notices move out of the app's asset folder, since no code imports them.
 
 ## Capabilities

@@ -1,10 +1,9 @@
 # SigV4 signing
 
-`packages/shared/src/services/sigv4` signs requests to R2's S3 API with AWS Signature Version 4, on Web Crypto alone, so the same code runs in the web Worker, in Node and in a browser. It replaces `aws4fetch` in its three callers:
+`packages/shared/src/services/sigv4` signs requests to R2's S3 API with AWS Signature Version 4, on Web Crypto alone, so the same code runs in the web Worker, in Node and in a browser. It replaces `aws4fetch` in its two callers:
 
 - the Worker's presigned R2 URLs (`presignStorageUrl` in `packages/db`), since a binding cannot sign a URL;
-- the tooling's R2 transport (`createR2Transport` in `scripts`);
-- the Phaser file pack's bucket listing (`apps/web/scripts/phaser/filePack`).
+- the tooling's R2 transport (`createR2Transport` in `scripts`).
 
 Nothing Cloudflare provides signs a request: a browser uploads straight to R2 through a presigned PUT, past the Worker's request body limit, and a script on a developer's machine has no binding at all.
 

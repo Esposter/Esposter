@@ -23,7 +23,7 @@ A second visit in the same profile: the preload's 76 downloads do not repeat, bu
 
 ## 6.3: the client bundle before and after
 
-`pnpm -C apps/web build` on the parent commit of the loader change (`178c16f21e^`, in a detached worktree with its own install and packages) and on this tree. The client output is `apps/web/.output/public`:
+`pnpm -C apps/web build` on the parent commit of the loader change (`178c16f21e^`, in a detached worktree with its own install and packages) and on this tree. The client output is "apps/web/.output/public":
 
 - Before: 41,285,843 bytes (39.37 MiB), of which media 13,815,527 bytes (13.18 MiB), JS and CSS 17,814,718 bytes (16.99 MiB).
 - After: 30,391,195 bytes (28.98 MiB), of which media 2,963,830 bytes (2.83 MiB), JS and CSS 17,786,725 bytes (16.96 MiB).

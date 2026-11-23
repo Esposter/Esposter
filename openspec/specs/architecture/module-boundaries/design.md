@@ -42,10 +42,9 @@ Nor does the rule reach `scripts/`. The Tiled and Phaser code generators import 
 
 The ban guards the import direction. It says nothing about the weaker case: a module that lives in `shared/` and imports no client code, but which no server module ever uses. That is client code paying a shared-tree tax, and it is what drags client concerns back toward the boundary over time — so the default is that such a module moves to `app/`.
 
-Two exceptions are deliberate, and are recorded here so an audit does not keep rediscovering them:
+One exception is deliberate, and is recorded here so an audit does not keep rediscovering it:
 
 - **`shared/generated/tiled/**`** — only some of its outputs are server-reached, but the generator hardcodes a single output root, so splitting them is a generator change rather than a relocation.
-- **`shared/generated/phaser/**`** — currently has no consumer at all. It is retained deliberately: the generator was ported ahead of the code that will read it, and deleting the output without deleting the generator only recreates it.
 
 ## A workspace package is imported where it lives
 

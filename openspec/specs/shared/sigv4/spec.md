@@ -1,6 +1,6 @@
 ## Purpose
 
-SigV4 signing in @esposter/shared — the signer the Worker, the tooling and the file pack use for R2's S3 API, and the absorption of aws4fetch it replaces, with every upstream issue's verdict.
+SigV4 signing in @esposter/shared — the signer the Worker and the tooling use for R2's S3 API, and the absorption of aws4fetch it replaces, with every upstream issue's verdict.
 
 ## Requirements
 
