@@ -123,8 +123,10 @@ const knipConfiguration: KnipConfig = {
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
     "packages/vue-block-editor-headless": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     scripts: {
-      // Knip follows each `node` command entry from the manifest; the oxlint plugins load by path from the root config
-      entry: ["src/oxlint/**/*.ts"],
+      // Knip follows each `node` command entry from the manifest; the oxlint plugins load by path from the root config.
+      // The sorting plugin reads its rules' folder at load and imports each rule by a path knip cannot follow, so each
+      // Rule module is an entry, its test left out
+      entry: ["src/oxlint/**/*.ts", "src/services/oxlint/sorting/rules/!(*.test).ts"],
       // Loaded by path through createRequire, which knip cannot follow
       ignoreDependencies: ["jscpd"],
     },
