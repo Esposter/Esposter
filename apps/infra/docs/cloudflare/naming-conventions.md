@@ -49,17 +49,27 @@ Asset type (`CloudflareAssetType`):
 
 ## Examples
 
-| Resource          | Production                                                               | Development                        |
-| :---------------- | :----------------------------------------------------------------------- | :--------------------------------- |
-| R2 bucket         | `prod-r2-esposter-message-assets`                                        | `dev-r2-esposter-message-assets`   |
-| D1 database       | `prod-d1-esposter-core`                                                  | `dev-d1-esposter-core`             |
-| Queue             | `prod-q-esposter-delete-account`                                         | `dev-q-esposter-process-webhook`   |
-| Dead-letter queue | `prod-dlq-esposter-delete-account`                                       | `dev-dlq-esposter-process-webhook` |
-| Worker            | `prod-wkr-esposter-web`                                                  | `dev-wkr-esposter-jobs`            |
-| RealtimeKit app   | `prod-rtk-esposter-calls`                                                | `dev-rtk-esposter-calls`           |
-| API token         | `tok-esposter-infra`, `tok-esposter-r2`, `prod-tok-esposter-realtimekit` | `dev-tok-esposter-realtimekit`     |
+| Resource          | Production                                                                                           | Development                                           |
+| :---------------- | :--------------------------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| R2 bucket         | `prod-r2-esposter-message-assets`                                                                    | `dev-r2-esposter-message-assets`                      |
+| D1 database       | `prod-d1-esposter-core`                                                                              | `dev-d1-esposter-core`                                |
+| Queue             | `prod-q-esposter-delete-account`                                                                     | `dev-q-esposter-process-webhook`                      |
+| Dead-letter queue | `prod-dlq-esposter-delete-account`                                                                   | `dev-dlq-esposter-process-webhook`                    |
+| Worker            | `prod-wkr-esposter-web`                                                                              | `dev-wkr-esposter-jobs`                               |
+| RealtimeKit app   | `prod-rtk-esposter-calls`                                                                            | `dev-rtk-esposter-calls`                              |
+| API token         | `prod-tok-esposter-r2`, `prod-tok-esposter-realtimekit`, `tok-esposter-infra`, `tok-esposter-deploy` | `dev-tok-esposter-r2`, `dev-tok-esposter-realtimekit` |
 
 The longest name, `prod-dlq-esposter-reconcile-storage-ledger-entry`, is well inside the 63-character limit buckets and queues share.
+
+## API Tokens
+
+An API token is named by the one responsibility it serves, so the dashboard shows which consumer holds it:
+
+- An environment's token is `<environment>-tok-esposter-<responsibility>`, such as `prod-tok-esposter-r2` and `dev-tok-esposter-realtimekit`.
+- An account's token is `tok-esposter-<responsibility>`, such as `tok-esposter-infra` and `tok-esposter-deploy`.
+- The one hand-made token, `bootstrap`, keeps its name: it creates the others, and nothing renames it.
+
+A token's name is its `AccountToken` resource's logical name, and its file is the camelCase of that name, as every resource's is. An ESC key takes the form `pulumiConfig.esposter-infra:<NAME>` for an account's secret, with `NAME` in SCREAMING_SNAKE_CASE, a Cloudflare token's being `CLOUDFLARE_<RESPONSIBILITY>_API_TOKEN`, and `pulumiConfig.esposter-infra:<environment>_<NAME>` for a Worker's secret, where `NAME` is the Worker secret's name in `.github/worker-secrets.json`. One consumer holds one token, as `.agents/skills/security/references/credentials.md` states.
 
 ## Hostnames
 

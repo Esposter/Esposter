@@ -1,0 +1,84 @@
+# Design
+
+## Decisions
+
+**One token per consumer, merged only where it costs nothing.** A consumer is the infra provider, the Deploy workflow, RealtimeKit, or an environment's R2 publisher. The table below holds each consumer's permission groups, all read by name from the account's own list (`GET /accounts/{account_id}/tokens/permission_groups`).
+
+| Account token (Cloudflare name)                                 | Consumer                                                                                             | Permission groups                                                                                                                                                                                                                                                                  | Scope                                                                                         | Value goes to                                                                                             |
+| :-------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| `bootstrap` (hand-made, ESC `bootstrapToken`)                   | `tokenAdmin` provider, the token module only                                                         | Account API Tokens Write                                                                                                                                                                                                                                                           | account                                                                                       | nowhere: it only creates the tokens below                                                                 |
+| `tok-esposter-infra`                                            | the `cloudflare` provider, every resource the program declares                                       | Account Settings Read, D1 Write, Queues Write, Workers R2 Storage Write, Workers Scripts Write; zone: Zone Read, Zone Write, DNS Write, Zone DNS Settings Write, Zone Settings Write, Zone Transform Rules Write, Workers Routes Write, Bot Management Write, Cache Settings Write | account, zones of the account                                                                 | nowhere: the provider's `apiToken` in state                                                               |
+| `tok-esposter-deploy`                                           | the Deploy workflow: D1 migrations and `wrangler deploy` of the three Workers                        | Account Settings Read, D1 Write, Workers Scripts Write, Queues Write                                                                                                                                                                                                               | account                                                                                       | the GitHub secret `CLOUDFLARE_API_TOKEN`                                                                  |
+| `dev-tok-esposter-realtimekit`, `prod-tok-esposter-realtimekit` | RealtimeKit: the realtime Worker's calls and `realtimekit:provision`                                 | Realtime Admin                                                                                                                                                                                                                                                                     | account                                                                                       | ESC `<env>_REALTIMEKIT_API_TOKEN`                                                                         |
+| `dev-tok-esposter-r2`, `prod-tok-esposter-r2`                   | the environment's R2 publishers: the web Worker's presigned urls, the backfills, the Genshin publish | Workers R2 Storage Bucket Item Write                                                                                                                                                                                                                                               | each bucket of the environment, as `com.cloudflare.edge.r2.bucket.<account>_default_<bucket>` | ESC `<env>_R2_ACCESS_KEY_ID` (the token's id) and `<env>_R2_SECRET_ACCESS_KEY` (the SHA-256 of its value) |
+
+The merges considered and refused:
+
+- **Deploy with infra.** The Deploy workflow needs four groups the infra token also holds, and none of the infra token's zone groups. A merged token would give the Deploy workflow DNS, bot management and transform rules it does not call, and it runs on every push, so the widening would be the one a CI run exercised. The two stay apart.
+- **RealtimeKit's runtime with its provisioning.** Merged, because both make Realtime Admin calls and nothing else. Provisioning used to need the account's token permissions to make and roll the runtime token. Pulumi now makes that token, so the provisioning token no longer needs them, and one token serves both without widening either.
+- **R2 across environments.** Kept apart, because the dev and prod buckets are separate blast radii and each environment's publishers should hold only their own.
+
+**Bootstrap order.** The token module's provider takes its key from config, so the six `AccountToken` resources need only the bootstrap. The `cloudflare` provider takes `apiToken` from the infra token's output. That is a data dependency, so the engine creates the infra token before it configures the provider, and no `dependsOn` is written.
+
+Pulumi cannot preview the provider's resources until the infra token exists, because their provider configuration is unknown until then. So the first apply is read after it runs, not before. The expected plan on that first run is six creates, one provider create, one provider leaving state, and an update to each Cloudflare resource's provider with no replacement. A replacement would be refused by `protect: true`, so a surprise stops the apply rather than deleting a bucket.
+
+```mermaid
+flowchart TD
+  boot["bootstrap, hand-made, ESC bootstrapToken"] --> admin["tokenAdmin provider"]
+  admin --> infraTok["tok-esposter-infra"]
+  admin --> deployTok["tok-esposter-deploy"]
+  admin --> rtkTok["env tok-esposter-realtimekit"]
+  admin --> r2Tok["env tok-esposter-r2"]
+  infraTok -->|"apiToken"| provider["cloudflare provider"]
+  provider --> resources["every Cloudflare resource the program declares"]
+  deployTok -->|"value"| ghSecret["GitHub CLOUDFLARE_API_TOKEN"]
+  ghSecret --> deploy["Deploy workflow: D1 migrate, wrangler deploy"]
+  rtkTok -->|"value, ESC"| rtk["realtime Worker and realtimekit:provision"]
+  r2Tok -->|"id and sha256, ESC"| r2["R2 publishers: web presign, backfills, Genshin publish"]
+```
+
+**Derived R2 pair.** The access key id is the token's id, and the secret access key is the SHA-256 of its value. Cloudflare's R2 token documentation states both and does not name the digest's encoding, so the first signed request in the tasks confirms the encoding (hex is the expected one).
+
+**ESC keys keep their names.** A Worker secret's ESC key is `<env>_<NAME>`, because the deploy reads it by that name (`.github/actions/gather-worker-secrets`). The R2 and RealtimeKit keys therefore keep their names and take the new values, and the hand-made values are overwritten in place rather than deleted.
+
+**Names.** Tokens follow `apps/infra/docs/cloudflare/naming-conventions.md`: `<env>-tok-esposter-<responsibility>` for an environment's token and `tok-esposter-<responsibility>` for an account's. The bootstrap token keeps its name `bootstrap`, which the convention does not apply to, because it is the one hand-made token and nothing renames it.
+
+**Outputs over copies.** Each value a person or a workflow needs is a stack output in `apps/infra/src/cloudflare/outputs/`, and the write to ESC is one `pulumi env set` per key, which is why no script is added for it.
+
+## Inventory and verdicts
+
+Read with the bootstrap: the account holds `bootstrap`, `tok-esposter-infra`, `tok-esposter-r2`, `dev-tok-esposter-realtimekit` and `prod-tok-esposter-realtimekit`, none of which expire. Every credential the repository or ESC refers to is listed here with a verdict.
+
+| Credential                                                                                         | Where it is held                                                            | Verdict                                                                                                                                |
+| :------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| account token `tok-esposter-infra`                                                                 | the provider (ESC `pulumiConfig.cloudflare:apiToken`) and the GitHub secret | replaced by the resource of the same name, then deleted by its id                                                                      |
+| ESC `pulumiConfig.cloudflare:apiToken`                                                             | ESC                                                                         | deleted once the provider reads the output                                                                                             |
+| GitHub secret `CLOUDFLARE_API_TOKEN`                                                               | the repository                                                              | kept, its value now the deploy token's, set by the apply                                                                               |
+| account token `tok-esposter-r2`                                                                    | ESC `<env>_R2_*` keys                                                       | replaced by the two `tok-esposter-r2` resources, then deleted by its id                                                                |
+| ESC `pulumiConfig.esposter-infra:dev_R2_ACCESS_KEY_ID`, `_SECRET_ACCESS_KEY`, and the `prod_` pair | ESC                                                                         | values replaced in place by `pulumi env set`, keys kept                                                                                |
+| account tokens `dev-tok-esposter-realtimekit`, `prod-tok-esposter-realtimekit`                     | ESC `<env>_REALTIMEKIT_API_TOKEN`                                           | replaced by the resources of the same names, then deleted by their ids once the Deploy that puts the realtime Worker's secret is green |
+| ESC `pulumiConfig.esposter-infra:<env>_REALTIMEKIT_API_TOKEN`                                      | ESC                                                                         | value replaced in place                                                                                                                |
+| ESC `cloudflareBootstrapToken`                                                                     | ESC                                                                         | deleted: it has expired                                                                                                                |
+| ESC `bootstrapToken`                                                                               | ESC, top level                                                              | kept, and wired to `pulumiConfig.esposter-infra:CLOUDFLARE_BOOTSTRAP_API_TOKEN`                                                        |
+| account token `bootstrap`                                                                          | Cloudflare                                                                  | kept; never rotated or deleted, and renewed by the owner when it expires                                                               |
+| local copies of R2 and Cloudflare values in `apps/web/.env` and `apps/web/.env.production`         | the developer's machine, not tracked                                        | refreshed from ESC by hand after the apply                                                                                             |
+
+## Key files
+
+| File                                                                     | Role                                                                                         |
+| :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| `apps/infra/src/cloudflare/providers/tokenAdminProvider.ts`              | the bootstrap provider, used by the token resources only                                     |
+| `apps/infra/src/cloudflare/providers/cloudflareProvider.ts`              | the explicit provider for every Cloudflare resource, its `apiToken` the infra token's output |
+| `apps/infra/src/cloudflare/resources/accountTokens/`                     | one `AccountToken` per consumer                                                              |
+| `apps/infra/src/cloudflare/services/getAccountTokenPermissionGroupId.ts` | the one helper: a permission group's id by name, shared by the token resources               |
+| `apps/infra/src/cloudflare/outputs/`                                     | the stack outputs the ESC writes read                                                        |
+| `apps/infra/src/github/secrets/cloudflareApiToken.ts`                    | the GitHub secret, now the deploy token's value                                              |
+| `apps/infra/src/cloudflareConfiguration.ts`                              | deleted: its provider namespace read `cloudflare:apiToken`                                   |
+| `scripts/src/services/realtimeKit/applyRealtimeKitActions.ts`            | the token branch is removed, the token is Pulumi's                                           |
+| `apps/infra/docs/cloudflare/naming-conventions.md`                       | the token names                                                                              |
+| `.agents/skills/security/references/credentials.md`                      | the rules this change carries                                                                |
+
+## Notes
+
+- Nothing here replaces a resource on its first apply, and `protect: true` stays on every token and every resource. Rolling a RealtimeKit token later is a replacement, which means lifting its protection for that one run and putting it back, and it is not part of this change.
+- The permission groups were read from the account on the day of writing. If Cloudflare renames one, the data source's lookup fails the preview by name, which is the signal to change the name in code.
