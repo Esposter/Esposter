@@ -7,6 +7,7 @@ import { getHostedAssetFilesSource } from "#src/services/hostedAssets/getHostedA
 import { getHostedAssetLockKey } from "#src/services/hostedAssets/getHostedAssetLockKey";
 import { verifyHostedAssetObject } from "#src/services/hostedAssets/verifyHostedAssetObject";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
+import { HOSTED_ASSETS_FETCH_TIMEOUT_MS } from "hosted-assets";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, sep } from "node:path";
 
@@ -32,7 +33,7 @@ export const pullHostedAssetFiles = async (
       const path = join(directory, key);
       if (!path.startsWith(`${directory}${sep}`))
         throw new InvalidOperationError(Operation.Read, key, "leaves its product's folder");
-      const bytes = await verifyHostedAssetObject(baseUrl, object, object.bytes);
+      const bytes = await verifyHostedAssetObject(baseUrl, object, object.bytes, HOSTED_ASSETS_FETCH_TIMEOUT_MS);
       await mkdir(dirname(path), { recursive: true });
       await writeFile(path, bytes);
     }),
