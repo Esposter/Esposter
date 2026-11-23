@@ -155,11 +155,13 @@ describe(useResourceStore, () => {
     setRouteId("");
     const resourceStore = useResourceStore();
     const { readOpenResource } = resourceStore;
-    const executeRead = vi.fn<ReturnType<typeof useMutation>["executeQuery"]>();
+    // A read that must never run: a mock of the generic read itself loses its type parameter, so the store is handed a
+    // Plain function over it
+    const executeRead = vi.fn<() => never>();
     const runScope = effectScope().run(useRunScope);
     assert.exists(runScope);
 
-    await readOpenResource(executeRead, { key: resourceId, onRead: noop, runScope });
+    await readOpenResource(() => executeRead(), { key: resourceId, onRead: noop, runScope });
 
     expect(executeRead).not.toHaveBeenCalled();
   });
