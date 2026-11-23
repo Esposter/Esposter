@@ -6,6 +6,13 @@ import { getTestGame, removeTestScene, startTestScene } from "#src/test/fixtures
 import { Input } from "phaser";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const createPointer = (id: number) => new Input.Pointer(getTestGame().input, id);
+const movePointer = (pointer: Input.Pointer, x: number, y: number, isDown = true) => {
+  pointer.x = x;
+  pointer.y = y;
+  pointer.isDown = isDown;
+};
+
 describe(createVirtualJoystick, () => {
   const sceneKey = "sceneKey";
   const radius = 10;
@@ -16,12 +23,6 @@ describe(createVirtualJoystick, () => {
   let base: GameObjects.Rectangle;
   let thumb: GameObjects.Rectangle;
 
-  const createPointer = (id: number) => new Input.Pointer(getTestGame().input, id);
-  const movePointer = (pointer: Input.Pointer, x: number, y: number, isDown = true) => {
-    pointer.x = x;
-    pointer.y = y;
-    pointer.isDown = isDown;
-  };
   const press = (pointer: Input.Pointer, x: number, y: number) => {
     movePointer(pointer, x, y);
     scene.input.emit(Input.Events.POINTER_DOWN, pointer);

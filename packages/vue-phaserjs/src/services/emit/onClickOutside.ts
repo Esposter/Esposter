@@ -9,7 +9,7 @@ const checkIsVisible = (gameObject: GameObjects.GameObject): boolean => {
     current;
     current = current.parentContainer
   )
-    if ("visible" in current && current.visible === false) return false;
+    if ("visible" in current && !current.visible) return false;
   return true;
 };
 // The game object's own hit area through every camera under the pointer, so a zoomed, scrolled or nested object is

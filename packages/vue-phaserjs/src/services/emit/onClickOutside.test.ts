@@ -6,6 +6,8 @@ import { getTestGame, removeTestScene, startTestScene } from "#src/test/fixtures
 import { Input } from "phaser";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const createPointer = (id: number) => new Input.Pointer(getTestGame().input, id);
+
 describe(onClickOutside, () => {
   const sceneKey = "sceneKey";
   // A square at the origin whose hit area includes its far edge, so twice its size is the nearest point clear of it
@@ -15,7 +17,6 @@ describe(onClickOutside, () => {
   let scene: SceneWithPlugins;
   let gameObject: GameObjects.Rectangle;
 
-  const createPointer = (id: number) => new Input.Pointer(getTestGame().input, id);
   const press = (pointer: Input.Pointer, position: number) => {
     pointer.x = pointer.y = position;
     scene.input.emit(Input.Events.POINTER_DOWN, pointer);
@@ -37,7 +38,7 @@ describe(onClickOutside, () => {
   test("calls the listener with the pointer when it is pressed and released outside", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     onClickOutside(gameObject, listener);
     press(pointer, outside);
@@ -49,7 +50,7 @@ describe(onClickOutside, () => {
   test("ignores a press that starts on the game object", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     onClickOutside(gameObject, listener);
     press(pointer, inside);
@@ -61,7 +62,7 @@ describe(onClickOutside, () => {
   test("ignores a release on the game object", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     onClickOutside(gameObject, listener);
     press(pointer, outside);
@@ -73,7 +74,7 @@ describe(onClickOutside, () => {
   test("ignores a game object whose container is hidden", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     scene.add.container(0, 0, gameObject).setVisible(false);
     onClickOutside(gameObject, listener);
@@ -86,7 +87,7 @@ describe(onClickOutside, () => {
   test("does not carry a press whose release never reached the scene into the next click", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     onClickOutside(gameObject, listener);
     press(pointer, outside);
@@ -99,7 +100,7 @@ describe(onClickOutside, () => {
   test("follows each pointer on its own", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     const otherPointer = createPointer(2);
     onClickOutside(gameObject, listener);
@@ -113,7 +114,7 @@ describe(onClickOutside, () => {
   test("#438 counts a click on another game object covering the pointer", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     scene.add.rectangle(outside, outside, size, size).setInteractive();
     onClickOutside(gameObject, listener);
@@ -126,7 +127,7 @@ describe(onClickOutside, () => {
   test("stops listening once stopped", () => {
     expect.hasAssertions();
 
-    const listener = vi.fn();
+    const listener = vi.fn<(pointer: Input.Pointer) => void>();
     const pointer = createPointer(1);
     const stop = onClickOutside(gameObject, listener);
     stop();
