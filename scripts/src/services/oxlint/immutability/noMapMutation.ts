@@ -1,6 +1,7 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 
 import { MESSAGE } from "#src/services/oxlint/immutability/constants";
+import { getBoundNames } from "#src/services/oxlint/shared/getBoundNames";
 import { defineRule } from "@oxlint/plugins";
 
 // The array methods whose callback produces the new element, so writing to the one it is given changes the source array
@@ -13,26 +14,6 @@ const getRootName = (node: ESTree.Node): string | undefined => {
   let current = node;
   while (current.type === "MemberExpression") current = current.object;
   return current.type === "Identifier" && current !== node ? current.name : undefined;
-};
-
-// The names a parameter binds, through a destructuring pattern, a default and a rest element
-const getBoundNames = (parameter: ESTree.Node): string[] => {
-  switch (parameter.type) {
-    case "ArrayPattern":
-      return parameter.elements.flatMap((element) => (element ? getBoundNames(element) : []));
-    case "AssignmentPattern":
-      return getBoundNames(parameter.left);
-    case "Identifier":
-      return [parameter.name];
-    case "ObjectPattern":
-      return parameter.properties.flatMap((property) =>
-        getBoundNames(property.type === "RestElement" ? property : property.value),
-      );
-    case "RestElement":
-      return getBoundNames(parameter.argument);
-    default:
-      return [];
-  }
 };
 
 // The parameters a function binds, and the element one of them is when the function is a projecting callback

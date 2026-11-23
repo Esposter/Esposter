@@ -127,6 +127,18 @@ describe("pinia/no-return-global-properties", () => {
       source: `export const useUStore2 = defineStore("nestedRestParameterShadowsRoute", () => {\n  const route = useRoute();\n  const build = (...route) => {\n    return { route };\n  };\n  return { build, route: route.params };\n});`,
       violations: 0,
     },
+    // A destructured local in a nested block shadows the global only inside that block, so the return after it reports
+    {
+      name: "blockDestructuredLocalDoesNotShadowRoute",
+      source: `export const useVStore2 = defineStore("blockDestructuredLocalDoesNotShadowRoute", () => {\n  const route = useRoute();\n  if (cond) {\n    const { route } = makeLocal();\n    keep(route);\n  }\n  return { route };\n});`,
+      violations: 1,
+    },
+    // A `var` is function-scoped wherever it is declared, so a global var in a nested block still reaches the return
+    {
+      name: "blockVarRouteStillReports",
+      source: `export const useWStore2 = defineStore("blockVarRouteStillReports", () => {\n  if (cond) {\n    var route = useRoute();\n  }\n  return { route };\n});`,
+      violations: 1,
+    },
   ];
   setupPluginSuite({ fixtures: FIXTURES, plugin: "pinia", rules: [RULE] });
 });
