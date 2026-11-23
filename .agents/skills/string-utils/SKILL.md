@@ -42,6 +42,10 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 `.trimStart()` and `.trimEnd()` are separate methods — replace only when semantically equivalent to a full `.trim()`.
 
+## Blank tests — `checkIsBlankText`
+
+A field holding spaces is not blank, so a blank test on text a person or an input supplies reads the trimmed value: `checkIsBlankText(value)` (`@esposter/shared`), and `checkIsBlankText(value) ? fallback : value` in place of a `||` fallback. A component calls the predicate, since it may not trim. `=== ""` on a raw text value is the `restrictedSyntaxes.js` error. A raw empty that is the meaning disables it on its line with that reason: an id, a server-issued value, a sentinel, a number input (which holds no spaces), a parser's untrimmed line, or a value the caller has already normalised. A fallback to `""` is not a hit, since an empty fallback renders the same as a blank value.
+
 ## Zod Schema Alignment
 
 Base select schemas normalize so server validation matches client input. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateFooInput`, etc.) — only in the base select schema.

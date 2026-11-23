@@ -4,4 +4,11 @@
 
 ## Find recipe
 
-None: a blank test with `||` on a string an option or input supplies has no mechanical shape, since whether an operand is raw text is a fact of its type, which no pattern sees. The `|| ""` fallbacks are read by their unit, and a raw operand that reaches the test untrimmed is the hit.
+The blank test `=== ""` on a raw value is `restrictedSyntaxes.js`'s selector, so it is not a recipe. A `||` fallback on text has no pattern that sees whether its left side is raw, since that is a fact of its type, so the recipe finds the shape and the unit reads each hit:
+
+```bash
+# a `||` fallback to a constant or a non-empty literal: a fallback to "" renders the same as a blank value, so it is no hit
+git grep -nE ' \|\| *([A-Z][A-Z_]{3,}\b|"[^"]|`)' -- apps packages scripts
+```
+
+Read each hit's left side. A text a person or an input may leave untrimmed (a label, a title, a status message) is the hit, and takes `checkIsBlankText(value) ? fallback : value`; an id, a flag or generated text is not.

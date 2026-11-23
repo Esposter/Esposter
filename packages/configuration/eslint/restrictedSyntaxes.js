@@ -189,4 +189,14 @@ export default [
     selector:
       "CallExpression[callee.name='computed'] :matches(CallExpression[callee.object.name='Date'][callee.property.name='now'], NewExpression[callee.name='Date'][arguments.length=0])",
   },
+  {
+    // A field holding spaces is not blank, so a blank test on its raw value takes a space for text, and a `||` beside it
+    // Does the same. The test reads the trimmed value through `checkIsBlankText`, which a component may call where it may
+    // Not trim. A call is not matched, since the predicate is the trim already. Where a raw empty is the meaning (an id,
+    // A sentinel, an untrimmed line) the directive names that on its line
+    message:
+      "Test a blank text value with `checkIsBlankText(value)` from `@esposter/shared` — a field holding spaces is not blank. Where a raw empty is the meaning (an id, a sentinel, an untrimmed line), disable this on the line with that reason. See the string-utils skill.",
+    selector:
+      "BinaryExpression[operator=/^[!=]==?$/][right.value=''][left.type!='CallExpression'], BinaryExpression[operator=/^[!=]==?$/][left.value=''][right.type!='CallExpression']",
+  },
 ];
