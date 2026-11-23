@@ -219,6 +219,7 @@
 - `scripts/src/services/fleet` — `requireFleetWorker.ts`, `runFleetRefGit.ts`, `selectTakeableEntries.test.ts`, `selectTakeableEntries.ts`, `unquote.ts`, `writeHoldFile.ts`, `writeMachineProfile.ts`
 - `scripts/src/services/format` — `constants.test.ts`, `formatFiles.test.ts`, `formatFiles.ts`, `formatPaths.ts`, `formatSource.test.ts`, `formatSource.ts`, `readFormattedSource.test.ts`, `readFormattedSource.ts`, `resolveCheckoutRoot.test.ts`, `resolveCheckoutRoot.ts`, `resolveRepositoryPath.ts`, `setupFormatterTree.test.ts`
 - `scripts/src/services/hostedAssets` — the rest
+- `scripts/src/services/hostedAssets` — `filesProductFixture.test.ts`, `formatHostedAssetFilesDryRun.test.ts`, `formatHostedAssetFilesDryRun.ts`, `formatIdleHostedAssetPublish.ts`, `getHostedAssetFileKeys.test.ts`, `getHostedAssetFileKeys.ts`, `getHostedAssetFilesScope.ts`
 - `scripts/src/hostedAssets` — `index.ts`
 - `scripts/src/services/gameData` — `checkIsGameDataKeyScope.ts`, `checkIsGameDataset.ts`, `constants.ts`, `countGameDataPathChanges.test.ts`, `countGameDataPathChanges.ts`, `diffEntries.test.ts`, `diffEntries.ts`, `formatDiff.ts`, `mergeGameDataBuilds.ts`
 - `scripts/src/services/hostedAssets` — `createKeyTreeNode.ts`, `descendKeyTree.ts`, `getHostedAssetKeysSource.test.ts`, `getHostedAssetKeysSource.ts`, `insertKey.ts`
