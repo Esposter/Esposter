@@ -19,3 +19,7 @@
 - [ ] 2.1 Sample every question: the units `pnpm ai:sweep:sample` prints, read in full, each judged for every question listed beside it, and a `Sampled:` trailer per question naming its defects. Verified by `pnpm ai:sweep:status` listing each ledger's unread units as sampled or open.
 - [ ] 2.2 For each question whose sample found a defect, write the find recipe or lint rule for it and sample again; read the question unit by unit only where the defect has no mechanical shape. Verified by `pnpm ai:sweep:status` listing no open unit.
 - [ ] 2.3 Archive this change once `pnpm ai:sweep:status` lists no open unit. Verified by `pnpm exec openspec archive architecture-ledger-refresh --yes` succeeding.
+
+## 3. Decisions
+
+- [ ] 3.1 Decide whether the sweep-first rule holds for a sampled question. `.agents/skills/sweeps/references/draining.md` exempts a sampled question's open cells from the pass, so the pass is owed only for a question read unit by unit; AGENTS.md's Finishing step 3 states the rule with no such carve-out. Choose one rule, align the other to it in the same commit, and sweep the consequence. Verified by `draining.md`, `sweeps/SKILL.md`'s sample paragraph and AGENTS.md agreeing, and by `pnpm ai:sweep:status` listing the cells the decision leaves open.
