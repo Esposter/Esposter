@@ -49,6 +49,7 @@ describe("routes/assets/[bucket]/[...key]", () => {
 
     const response = await assetRoute(createEvent(StorageBucket.PublicUserAssets, key));
 
-    await expect(new Response(response).text()).resolves.toBe(body);
+    const { value } = await response.getReader().read();
+    expect(new TextDecoder().decode(value)).toBe(body);
   });
 });
