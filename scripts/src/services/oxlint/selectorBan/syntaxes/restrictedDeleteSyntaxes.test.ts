@@ -1,0 +1,59 @@
+import { setupSelectorBanSuite } from "#src/services/oxlint/selectorBan/setupSelectorBanSuite.test";
+import { RESTRICTED_DELETE_SYNTAXES } from "#src/services/oxlint/selectorBan/syntaxes/restrictedDeleteSyntaxes";
+import { describe } from "vitest";
+
+describe("restrictedDeleteSyntaxes", () => {
+  setupSelectorBanSuite({
+    entries: RESTRICTED_DELETE_SYNTAXES.bans,
+    fixtures: [
+      {
+        filePath: "handlerDelete.vue",
+        name: "handlerDelete",
+        source: '<template>\n  <Atom @click="deleteFoo(id)" />\n</template>',
+        violations: 1,
+      },
+      {
+        filePath: "arrowHandlerRemove.vue",
+        name: "arrowHandlerRemove",
+        source: '<template>\n  <Atom @delete="(ids) => removeFoos(ids)" />\n</template>',
+        violations: 1,
+      },
+      {
+        filePath: "handlerMemberDelete.vue",
+        name: "handlerMemberDelete",
+        source: '<template>\n  <Atom @click="store.deleteFoo(id)" />\n</template>',
+        violations: 1,
+      },
+      {
+        filePath: "confirmDelete.vue",
+        name: "confirmDelete",
+        source: '<template>\n  <Atom :confirm="() => deleteFoo(id)" />\n</template>',
+        violations: 0,
+      },
+      {
+        filePath: "handlerTarget.vue",
+        name: "handlerTarget",
+        source: '<template>\n  <Atom @click="deletingId = id" />\n</template>',
+        violations: 0,
+      },
+      {
+        filePath: "itemOnClick.ts",
+        name: "itemOnClick",
+        source: 'export const items = [{ onClick: () => purgeFoo(""), title: "" }];',
+        violations: 1,
+      },
+      {
+        filePath: "itemOnClickMember.ts",
+        name: "itemOnClickMember",
+        source: 'export const items = [{ onClick: () => store.revokeFoo(""), title: "" }];',
+        violations: 1,
+      },
+      {
+        filePath: "itemOnClickTarget.ts",
+        name: "itemOnClickTarget",
+        source: 'export const items = [{ onClick: () => openFoo(""), title: "" }];',
+        violations: 0,
+      },
+    ],
+  });
+});

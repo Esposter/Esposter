@@ -1,7 +1,7 @@
 import { noop } from "@esposter/shared";
 import { vi } from "vitest";
 
-/* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
+/* oxlint-disable selector-ban/no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
    runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
    global read before any phase could have chosen a branch, which is not a question a setup file has */
 // There is no canvas in happy-dom, and a prototype spy on `getContext` is bypassed by its instance
@@ -127,4 +127,4 @@ vi.stubGlobal(
   },
 );
 
-/* eslint-enable no-restricted-syntax */
+/* oxlint-enable selector-ban/no-restricted-syntax */

@@ -4,5 +4,5 @@ import { runGit } from "#src/services/shared/runGit";
 export const readRebaseConflicts = (cwd?: string): string[] =>
   runGit(["diff", "--name-only", "--diff-filter=U"], cwd)
     .split(/\r?\n/u)
-    // eslint-disable-next-line no-restricted-syntax -- a conflicted path git prints
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a conflicted path git prints
     .filter((path) => path !== "");

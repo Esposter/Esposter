@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax -- a path, empty when unset */
+/* oxlint-disable selector-ban/no-restricted-syntax -- a path, empty when unset */
 // A path overlaps another when they are the same, or one is a directory the other lies under, the root holding every path
 export const checkIsSameOrUnder = (path: string, otherPath: string): boolean =>
   path === "" ||

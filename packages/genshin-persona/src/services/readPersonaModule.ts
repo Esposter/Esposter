@@ -11,7 +11,7 @@ export const readPersonaModule = async <T>(directory: string, name: string): Pro
   const modulePath = join(directory, `${getPersonaCardName(name)}${MODULE_EXTENSION}`);
   if (!existsSync(modulePath)) return undefined;
 
-  // eslint-disable-next-line no-restricted-syntax -- the path is computed per character at runtime, so it cannot be a static import
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the path is computed per character at runtime, so it cannot be a static import
   const personaModule: { default: T } = await import(pathToFileURL(modulePath).href);
   return personaModule.default;
 };

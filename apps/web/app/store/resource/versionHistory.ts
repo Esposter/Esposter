@@ -33,7 +33,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const readingResourceId = ref("");
   let latestRead: symbol | undefined;
   const isPending = computed(
-    // eslint-disable-next-line no-restricted-syntax -- a resource id the store holds, never typed
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a resource id the store holds, never typed
     () => readingResourceId.value !== "" && readingResourceId.value === resourceStore.currentResourceId,
   );
   // The row a confirmation is open for, which is its channel and version together: a version alone names one

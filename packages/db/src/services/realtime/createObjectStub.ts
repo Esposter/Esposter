@@ -19,7 +19,7 @@ export const createObjectStub = <T extends object>(stub: T, onReadSet?: (readSet
         // The forced conversion: the stub's invoke is generic over the method's name, which only the type system can give, so the
         // Name a call is made by at run time is passed as the string the object's invoke takes
         // oxlint-disable typescript/no-unsafe-type-assertion -- a dispatch by a name taken at run time, which the stub's generic invoke cannot type
-        // eslint-disable-next-line no-restricted-syntax -- a dispatch by a name taken at run time, which the stub's generic invoke cannot type
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a dispatch by a name taken at run time, which the stub's generic invoke cannot type
         const { readSet, result } = await (stub as unknown as ObjectInvoker).invoke(member, args);
         // oxlint-enable typescript/no-unsafe-type-assertion
         onReadSet?.(readSet);

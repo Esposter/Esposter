@@ -18,7 +18,7 @@ mirrors a production constant, a value further from the least than the case need
 Enforced rather than swept, so not in this table:
 
 - no typed date: `test-values/no-typed-date`, in `oxlint.config.ts`
-- the fake clock's moments are `Temporal.Instant`s: `packages/configuration/eslint/restrictedTestSyntaxes.js`
+- the fake clock's moments are `Temporal.Instant`s: `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedTestSyntaxes.ts`
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state.

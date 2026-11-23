@@ -2,7 +2,7 @@
 
 Read before adding a dependency that ships `.vue` components, or when a component inside `node_modules` renders blank or throws off an undefined property.
 
-Our own components are `<script setup>` only, enforced by `vue/component-api-style` — that half needs no prose. This page is about the half a linter cannot reach: a dependency's compiled components.
+Our own components are `<script setup>` only, enforced by `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedComponentApiSyntaxes.ts` — that half needs no prose. This page is about the half a linter cannot reach: a dependency's compiled components.
 
 Nuxt 5 defaults `vue.optionsApi` to **off**, and nothing in the repo turns it back on. Turning it on is a whole-app cost paid for one dependency, so a component library that needs it is a library to replace rather than a flag to flip — and replacing it means writing the few components actually used, not swapping in the next wrapper.
 

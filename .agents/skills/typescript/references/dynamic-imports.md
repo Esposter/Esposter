@@ -12,7 +12,7 @@ finds mid-session: `apps/web/configuration/vite.ts` names the JSON Forms' Ajv pa
 load only in a dialog, and a lazy component's own imports are found only as it mounts and each late find re-runs the
 optimiser.
 
-`no-restricted-syntax` (`packages/configuration/eslint/restrictedSourceSyntaxes.js`) flags `await import(...)` in source;
+`selector-ban/no-restricted-syntax` (`scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSourceSyntaxes.ts`) flags `await import(...)` in source;
 tests are exempt. Two exceptions, each with a cause outside the repository: a library-mandated lazy-loader contract
 (codemirror's `LanguageDescription.load`, in `apps/web/app/services/codemirror/constants.ts`), and a heavy dependency
 reached only through a module the app always loads. The second's cause is the bundler: a statically imported module
@@ -20,8 +20,8 @@ is bundled into the chunk of the module that imports it, and the build splits on
 parsers `read-excel-file/browser` and `write-excel-file/browser` are reached through the format map in
 `apps/web/app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts`, which the command bar reaches on every
 resource page, so a static import would put both parsers in that eager chunk. Each exception is a
-`// eslint-disable-next-line no-restricted-syntax -- <reason>` directly above the import, and the reason says what it
+`// oxlint-disable-next-line selector-ban/no-restricted-syntax -- <reason>` directly above the import, and the reason says what it
 keeps out of the eager graph (or why the import must be lazy). A generated map of lazy loaders is the one place a
 directive is file-level instead: `GameLanguageGameTextLoaderMap` and `GameLanguageCharacterLinesLoaderMap` (`genshin-text`, `genshin-persona`)
-and `CharacterIdCreateKitBehaviourMap` (`genshin-world`) each carry `/* eslint-disable no-restricted-syntax -- <reason> */`
+and `CharacterIdCreateKitBehaviourMap` (`genshin-world`) each carry `/* oxlint-disable selector-ban/no-restricted-syntax -- <reason> */`
 on their first lines, emitted by their generators, since every entry of such a map is a lazy loader.

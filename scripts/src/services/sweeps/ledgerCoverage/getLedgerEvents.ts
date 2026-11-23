@@ -17,7 +17,7 @@ const DEFECTS_REGEX = /^\d+$/u;
 // Ledger, which is the shape a rule change with no find recipe wants.
 const getLedgerEvent = (type: LedgerEventType, value: string, date: string, model: string): LedgerEvent | undefined => {
   const [ledger = "", second, carried] = value.trim().split(TRAILER_VALUE_SEPARATOR);
-  // eslint-disable-next-line no-restricted-syntax -- a ledger name, empty when unset
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a ledger name, empty when unset
   if (ledger === "") return undefined;
 
   if (type === LedgerEventType.Sampled) {

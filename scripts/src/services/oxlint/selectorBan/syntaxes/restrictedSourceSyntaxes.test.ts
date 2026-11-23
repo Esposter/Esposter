@@ -1,0 +1,66 @@
+import { setupSelectorBanSuite } from "#src/services/oxlint/selectorBan/setupSelectorBanSuite.test";
+import { RESTRICTED_SOURCE_SYNTAXES } from "#src/services/oxlint/selectorBan/syntaxes/restrictedSourceSyntaxes";
+import { describe } from "vitest";
+
+describe("restrictedSourceSyntaxes", () => {
+  setupSelectorBanSuite({
+    entries: RESTRICTED_SOURCE_SYNTAXES.bans,
+    fixtures: [
+      { filePath: "doubleCast.ts", name: "doubleCast", source: "export const a = b as unknown as C;", violations: 1 },
+      {
+        filePath: "doubleCastComponent.vue",
+        name: "doubleCastComponent",
+        source: `<script setup lang="ts">\nconst a = b as unknown as C;\n</script>`,
+        violations: 1,
+      },
+      { filePath: "singleCast.ts", name: "singleCast", source: "export const a = b as C;", violations: 0 },
+      { filePath: "castToUnknown.ts", name: "castToUnknown", source: "export const a = b as unknown;", violations: 0 },
+      // A suite's fakes are where the genuine seams live, so only source is held to it
+      {
+        filePath: "doubleCast.test.ts",
+        name: "doubleCastInTest",
+        source: "export const a = b as unknown as C;",
+        violations: 0,
+      },
+      {
+        filePath: "discriminatedUnion.ts",
+        name: "discriminatedUnion",
+        source: `export const aSchema = z.discriminatedUnion("a", []);`,
+        violations: 1,
+      },
+      { filePath: "enumSchema.ts", name: "enumSchema", source: "export const aSchema = z.enum(A);", violations: 1 },
+      {
+        filePath: "satisfiedEnumSchema.ts",
+        name: "satisfiedEnumSchema",
+        source: "export const aSchema = z.enum(A) satisfies z.ZodType<A>;",
+        violations: 0,
+      },
+      // A literal list has no enum to point at the wrong one
+      {
+        filePath: "literalEnumSchema.ts",
+        name: "literalEnumSchema",
+        source: `export const aSchema = z.enum(["a"]);`,
+        violations: 0,
+      },
+      {
+        filePath: "awaitedImport.ts",
+        name: "awaitedImport",
+        source: `export const a = await import("x");`,
+        violations: 1,
+      },
+      // A lazy component is not awaited, so it is not the eager-loading shape this bans
+      {
+        filePath: "lazyComponent.ts",
+        name: "lazyComponent",
+        source: `export const a = defineAsyncComponent(() => import("x"));`,
+        violations: 0,
+      },
+      {
+        filePath: "satisfiedDiscriminatedUnion.ts",
+        name: "satisfiedDiscriminatedUnion",
+        source: `export const aSchema = z.discriminatedUnion("a", []) satisfies z.ZodType<A>;`,
+        violations: 0,
+      },
+    ],
+  });
+});

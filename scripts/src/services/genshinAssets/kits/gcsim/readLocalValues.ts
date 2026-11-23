@@ -32,7 +32,7 @@ export const readLocalValues = (
   )
     return undefined;
   const values = [...new Set([definition.expression, ...reassignments.map(({ expression }) => expression)])].filter(
-    // eslint-disable-next-line no-restricted-syntax -- a local value, empty when unset
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a local value, empty when unset
     (value) => value !== "",
   );
   return values.length === 0 ? undefined : values;

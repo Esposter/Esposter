@@ -7,5 +7,5 @@ export const checkIsFriendshipDialogueOpen = (
   friendshipLevel: number,
   completedQuestIds: ReadonlySet<string>,
 ): boolean =>
-  // eslint-disable-next-line no-restricted-syntax -- a quest id from the game data, empty when none is required
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a quest id from the game data, empty when none is required
   friendshipLevel >= dialogue.friendshipLevel && (dialogue.questId === "" || completedQuestIds.has(dialogue.questId));

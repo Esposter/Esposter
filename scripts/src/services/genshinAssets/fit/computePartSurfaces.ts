@@ -8,7 +8,7 @@ import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurf
 // So a part with no weight to fit is absent rather than fitted to nothing
 export const computePartSurfaces = (samples: readonly SurfaceSample[]): Record<string, FittedSurface> => {
   const partSamplesMap = Object.groupBy(
-    // eslint-disable-next-line no-restricted-syntax -- a sample's part, empty when none
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a sample's part, empty when none
     samples.filter(({ part, weight }) => part !== "" && weight > 0),
     ({ part }) => part,
   );

@@ -32,7 +32,7 @@ const isExportConfirmOpen = ref(false);
 const regeneratingKeyValue = ref("");
 const isRegenerateConfirmOpen = ref(false);
 const isIssuedLinkOpen = computed({
-  // eslint-disable-next-line no-restricted-syntax -- a link the server issued, never typed
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a link the server issued, never typed
   get: () => issuedLink.value !== "",
   set: (isOpen) => {
     if (!isOpen) issuedLink.value = "";

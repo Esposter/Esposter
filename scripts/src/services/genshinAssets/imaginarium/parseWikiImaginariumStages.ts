@@ -31,7 +31,7 @@ export const parseWikiImaginariumStages = (page: string): WikiImaginariumStage[]
             enemyNames: enemies
               .split(/\/\/|;/u)
               .map((member) => cleanWikiEnemyName(member))
-              // eslint-disable-next-line no-restricted-syntax -- a name from a wiki list, empty between separators
+              // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a name from a wiki list, empty between separators
               .filter((name) => name !== ""),
             variant,
           });

@@ -1,14 +1,8 @@
-import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
-import restrictedDeleteSyntaxes from "@esposter/configuration/eslint/restrictedDeleteSyntaxes.js";
-import restrictedImageSyntaxes from "@esposter/configuration/eslint/restrictedImageSyntaxes.js";
-import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
-import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
-import restrictedTrimSyntaxes from "@esposter/configuration/eslint/restrictedTrimSyntaxes.js";
+import { SELECTOR_BAN_LISTS } from "#scripts/services/oxlint/selectorBan/selectorBanLists";
 
-// The template's own selector bans; the script's are oxlint's
+// The template's selector bans: every list that marks itself as one, and the bans only a template can break
 export const TEMPLATE_RESTRICTED_SYNTAXES: { message: string; selector: string }[] = [
-  ...restrictedSyntaxes,
-  ...restrictedTrimSyntaxes,
+  ...SELECTOR_BAN_LISTS.filter(({ isTemplate }) => isTemplate).flatMap(({ bans }) => bans),
   {
     // The `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` rules oxlint ships cover the script and
     // Cannot see template expressions, so the same three bans are restated for the half they do not read. A mutating
@@ -65,8 +59,4 @@ export const TEMPLATE_RESTRICTED_SYNTAXES: { message: string; selector: string }
     message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
     selector: "VElement[rawName='time']",
   },
-  ...restrictedDateSyntaxes,
-  ...restrictedDeleteSyntaxes,
-  ...restrictedImageSyntaxes,
-  ...restrictedStoreSyntaxes,
 ];

@@ -18,7 +18,7 @@ ESLint still runs a short list of rule families once the bridge has switched off
 | eslint-plugin-vuejs-accessibility                                     | `.vue` templates         | vize's `a11y/*` rules, which name all but one of the rules we run                                   |
 | `directives/require-template-reason`, local                           | template comments        | a workspace test over every tracked template's directive comments, since vize's tree carries none   |
 | `scoped-styles/no-unknown-attribute`, local                           | scoped-style packages    | vize selector bans generated from the same HTML data, in an entry for those three packages          |
-| `no-restricted-syntax`, the script selector lists                     | `.ts` and `.vue` scripts | a local oxlint JS plugin that reads the same lists, composed per path in `oxlint.config.ts`         |
+| `no-restricted-syntax`, the script selector lists                     | `.ts` and `.vue` scripts | a local oxlint JS plugin that discovers the lists, each scoped to the paths it names                |
 | perfectionist                                                         | all code                 | `jsPlugins`, as `eslint-plugin-pinia` loads today                                                   |
 | UnoCSS `order`, `blocklist`                                           | script and class strings | `jsPlugins`                                                                                         |
 | UnoCSS `order-attributify`                                            | `.vue` templates         | deleted with ESLint, since no vize rule or selector expresses an order (Decisions)                  |
@@ -57,7 +57,13 @@ flowchart TD
 
 ## The script pass
 
-The script selector bans keep their data. The `restricted*Syntaxes.js` lists and the inline ones in `typescriptRules.js` move to `oxlint/`, beside the rest of the oxlint data, and one local JS plugin under `scripts/src/oxlint/` registers each entry's selector as a visitor and reports its message. The per-path composition that `index.vue.js` does with its `.append` blocks becomes `overrides` entries in `oxlint.config.ts`. An oxlint override replaces a rule's options as an ESLint block does, so each override still carries the base list it extends. The existing tests beside each list plant violations, and they move with the list, so each ban is proved in its new host before ESLint's copy goes.
+The script selector bans keep their data. Each list is one TypeScript module in `scripts/src/services/oxlint/selectorBan/syntaxes/`, exporting a `SelectorBanList`: its bans and the globs of the files it runs over. The inline bans of `typescriptRules.js` are the list `scriptRestrictedSyntaxes.ts`, and the `vue/component-api-style` rule is the list `restrictedComponentApiSyntaxes.ts`. The plugin `selector-ban/no-restricted-syntax` under `scripts/src/oxlint/` discovers every module in that folder, keeps the lists whose globs reach the file being linted, and registers their selectors. It is turned on once in `oxlint.config.ts` with no options and no overrides. A list with `isTemplate` set also runs in vize, whose template list is built from those lists. Each list's suite sits beside it and lints its fixtures through the whole plugin, so a suite proves both the selector and the list's scope.
+
+The lists live under `scripts/`, not `oxlint/`, because their suites need a vitest project, and `scripts` is the one that lints through oxlint already. `vite/` reaches them through the root `#scripts/*` import alias.
+
+Rejected: the per-path composition of `index.vue.js` as `overrides` entries in `oxlint.config.ts`. An override replaces a rule's options, so every override had to restate the base lists it extends, which is a matrix of lists by paths where one forgotten base list silently drops its bans on that path. Rejected: a single `**/*.ts` scope for every list. Several bans belong only to the Vue packages or only outside tests, and a list that states its own paths keeps that fact beside its bans.
+
+Some lists now reach more files than before, and this is deliberate. The base lists ran only on the paths that loaded them in ESLint, and now they reach every `.vue` file in every package. Lists for the Vue packages name those packages through `VUE_PACKAGES` in `constants.ts`. These globs start at the package path and never with `**/`, because Node's `path.matchesGlob` does not match a `**` with zero segments when it comes after a leading `**/`.
 
 The phase opens with its own gate: a planted violation for a selector of each shape the lists use, such as attribute regexes, `:not(...)`, descendant and `:has(...)`, must be reported by the JS plugin. A selector the plugin's engine cannot run is rewritten as a visitor in the same plugin. A rule is never dropped for that reason.
 
@@ -97,23 +103,22 @@ The gate passed whole. oxlint's JS plugins take an esquery selector as a visitor
 
 ## Key files
 
-| File                                                     | Role                                                                                     |
-| :------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| `oxlint.config.ts`                                       | gains the script selector bans by path, the JS plugins and the template pass's wiring    |
-| `vite/vueOptions.ts`                                     | the template pass's options: the incremental preset and the rules it runs                |
-| `vite/checkTasks.ts`                                     | the `lint:vue` and `lint:packages:vue` leaves of the root lint                           |
-| `oxlint/jsPlugins.ts`                                    | lists the JS plugins oxlint loads; the third-party ESLint plugins join it                |
-| `scripts/src/oxlint/`                                    | the local JS plugins; the selector-ban plugin joins them                                 |
-| `packages/configuration/eslint/index.vue.js`             | the per-path selector composition that moves to `oxlint.config.ts`, then is deleted      |
-| `packages/configuration/eslint/overrides/vueRules.js`    | the eslint-plugin-vue rules vize cannot run yet, each under its `@TODO`                  |
-| `vite/services/scopedStyleSyntaxes.ts`                   | the scoped-style packages' attribute bans, one selector per set of elements' attributes  |
-| `scripts/src/workspace/templateDirectiveReasons.test.ts` | the template half of the directive-reason check                                          |
-| `packages/configuration/eslint/typescriptRules.js`       | the inline script selector bans that move to `oxlint/`                                   |
-| `packages/configuration/eslint/plugins/depend.js`        | the dependency ban that becomes a workspace test                                         |
-| `packages/configuration/eslint/plugins/json.js`          | the JSON rules that become a workspace test                                              |
-| `apps/web/configuration/modules.ts`                      | loads `@nuxt/eslint`, which is removed                                                   |
-| `package.json`, `pnpm-workspace.yaml`                    | the lint scripts, the catalog entries removed, the override and the `typescript` entry   |
-| `openspec/specs/architecture/lint-toolchain/design.md`   | rewritten at archive for oxlint and vize, with no bridge and no blocker table for ESLint |
+| File                                                     | Role                                                                                       |
+| :------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| `oxlint.config.ts`                                       | turns on the selector-ban plugin, loads the JS plugins and wires the template pass         |
+| `vite/vueOptions.ts`                                     | the template pass's options: the incremental preset and the rules it runs                  |
+| `vite/checkTasks.ts`                                     | the `lint:vue` and `lint:packages:vue` leaves of the root lint                             |
+| `oxlint/jsPlugins.ts`                                    | lists the JS plugins oxlint loads; the third-party ESLint plugins join it                  |
+| `scripts/src/oxlint/selectorBan.ts`                      | the selector-ban plugin, beside the other local JS plugins                                 |
+| `scripts/src/services/oxlint/selectorBan/syntaxes/`      | one selector-ban list per module, each stating the files it runs over, its suite beside it |
+| `packages/configuration/eslint/overrides/vueRules.js`    | the eslint-plugin-vue rules vize cannot run yet, each under its `@TODO`                    |
+| `vite/services/scopedStyleSyntaxes.ts`                   | the scoped-style packages' attribute bans, one selector per set of elements' attributes    |
+| `scripts/src/workspace/templateDirectiveReasons.test.ts` | the template half of the directive-reason check                                            |
+| `packages/configuration/eslint/plugins/depend.js`        | the dependency ban that becomes a workspace test                                           |
+| `packages/configuration/eslint/plugins/json.js`          | the JSON rules that become a workspace test                                                |
+| `apps/web/configuration/modules.ts`                      | loads `@nuxt/eslint`, which is removed                                                     |
+| `package.json`, `pnpm-workspace.yaml`                    | the lint scripts, the catalog entries removed, the override and the `typescript` entry     |
+| `openspec/specs/architecture/lint-toolchain/design.md`   | rewritten at archive for oxlint and vize, with no bridge and no blocker table for ESLint   |
 
 ## Notes
 

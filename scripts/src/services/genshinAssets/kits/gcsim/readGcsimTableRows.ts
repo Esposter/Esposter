@@ -32,7 +32,7 @@ export const readGcsimTableRows = (lines: readonly string[], name: string): Gcsi
         .slice(1, -1)
         .split(",")
         .map((cell) => cell.trim())
-        // eslint-disable-next-line no-restricted-syntax -- a table cell as the table holds it
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a table cell as the table holds it
         .filter((cell) => cell !== ""),
       line: item.line,
     };

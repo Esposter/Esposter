@@ -33,7 +33,7 @@ export const wrapObjectStore = <
     },
   };
   // oxlint-disable typescript/no-unsafe-type-assertion -- the mode is the caller's and selects which methods the type keeps, which this function cannot resolve
-  // eslint-disable-next-line no-restricted-syntax -- The mode is the caller's and selects which of these methods the type keeps, so this function cannot resolve the conditional it returns
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- The mode is the caller's and selects which of these methods the type keeps, so this function cannot resolve the conditional it returns
   return { ...reader, ...writer, ...creator } as unknown as DatabaseObjectStore<TSchema, TStoreName, TMode>;
   // oxlint-enable typescript/no-unsafe-type-assertion
 };

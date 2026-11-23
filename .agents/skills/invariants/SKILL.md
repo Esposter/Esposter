@@ -52,7 +52,7 @@ is no ambient writer to reach for.
 stores solve the same problem two ways, neither is structural yet.
 
 **Linted** and **Tested** are where a mechanical rule lands when the shape genuinely cannot express it — `no-restricted-syntax`
-in `packages/configuration/eslint/` or an oxlint rule first, and a test that fails on the wrong version where no selector can see it. See the `oxlint` skill ("Which directive to use") for
+in `scripts/src/services/oxlint/selectorBan/syntaxes/` or an oxlint rule first, and a test that fails on the wrong version where no selector can see it. See the `oxlint` skill ("Which directive to use") for
 disable etiquette and the `sweeps` skill (`references/handing-to-an-enforcer.md`) for turning a repeated finding
 into an enforcer.
 

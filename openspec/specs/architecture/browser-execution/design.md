@@ -51,10 +51,10 @@ A genuine fork, where both branches are real and reachable: `useCursorPagination
 
 ## Key files
 
-| File                                                    | Role                                                    |
-| :------------------------------------------------------ | :------------------------------------------------------ |
-| `app/services/shared/LocalStorageKey.ts`                | Every persisted key, so two features cannot collide     |
-| `app/services/message/draft/draftsSerializer.ts`        | Map ⇄ storage with schema validation on read            |
-| `app/composables/useReadData.ts`                        | The client-only phase for an unauthenticated local read |
-| `packages/configuration/eslint/restrictedSyntaxes.js`   | The `window.localStorage` and module-scope bans         |
-| `packages/shared/src/util/environment/checkIsServer.ts` | The fork primitive                                      |
+| File                                                                     | Role                                                    |
+| :----------------------------------------------------------------------- | :------------------------------------------------------ |
+| `app/services/shared/LocalStorageKey.ts`                                 | Every persisted key, so two features cannot collide     |
+| `app/services/message/draft/draftsSerializer.ts`                         | Map ⇄ storage with schema validation on read            |
+| `app/composables/useReadData.ts`                                         | The client-only phase for an unauthenticated local read |
+| `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSyntaxes.ts` | The `window.localStorage` and module-scope bans         |
+| `packages/shared/src/util/environment/checkIsServer.ts`                  | The fork primitive                                      |

@@ -21,7 +21,7 @@ const booleanValue = computed<BooleanFilterValue>({
 });
 // A number range is one filter while either bound is set, and none once both are cleared
 const setNumberRange = (minimum: string, maximum: string) => {
-  // eslint-disable-next-line no-restricted-syntax -- a number input's value is never whitespace
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a number input's value is never whitespace
   modelValue.value = minimum !== "" || maximum !== "" ? { maximum, minimum, type: ColumnType.Number } : undefined;
 };
 const minimumValue = computed({

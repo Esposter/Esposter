@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax -- a path segment, where empty joins nothing */
+/* oxlint-disable selector-ban/no-restricted-syntax -- a path segment, where empty joins nothing */
 const ROOT_REGEX = /^(?:[a-zA-Z]:)?[/\\]/u;
 const SEPARATOR_REGEX = /[/\\]/u;
 

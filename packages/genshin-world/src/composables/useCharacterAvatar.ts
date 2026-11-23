@@ -27,7 +27,7 @@ export const useCharacterAvatar = (
       async (components) => {
         if (!components.includes(AVATAR_COMPONENT)) return;
         await getResultAsync(async () =>
-          // eslint-disable-next-line no-restricted-syntax -- the avatar builder loads on the first traveler avatar request, keeping it out of the world's eager graph
+          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the avatar builder loads on the first traveler avatar request, keeping it out of the world's eager graph
           (await import("#src/services/character/avatar/readCharacterAvatar")).readCharacterAvatar(
             `${sceneExportBaseUrl}/${AVATAR_COMPONENT}`,
             options,

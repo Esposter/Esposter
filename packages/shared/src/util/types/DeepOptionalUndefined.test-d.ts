@@ -23,18 +23,18 @@ describe("deepOptionalUndefined type", () => {
   test("optionalizes property", () => {
     expect.hasAssertions();
 
-    /* eslint-disable no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
+    /* oxlint-disable selector-ban/no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
     expectTypeOf<DeepOptionalUndefined<{ "": undefined | unknown }>>().toEqualTypeOf<{ ""?: unknown }>();
-    /* eslint-enable no-restricted-syntax */
+    /* oxlint-enable selector-ban/no-restricted-syntax */
   });
 
   test("optionalizes nested property", () => {
     expect.hasAssertions();
 
-    /* eslint-disable no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
+    /* oxlint-disable selector-ban/no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
     expectTypeOf<DeepOptionalUndefined<{ "": { "": undefined | unknown } }>>().toEqualTypeOf<{
       "": { ""?: unknown };
     }>();
-    /* eslint-enable no-restricted-syntax */
+    /* oxlint-enable selector-ban/no-restricted-syntax */
   });
 });

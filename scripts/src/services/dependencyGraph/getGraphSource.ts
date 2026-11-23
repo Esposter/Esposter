@@ -25,7 +25,7 @@ export const getGraphSource = (workspacePackages: WorkspacePackage[], workspaceE
     // A member sitting at the repository root is in no cluster: it belongs to neither of the things the repo
     // Ships, which is the whole reason it lives up there.
     ...workspacePackages
-      // eslint-disable-next-line no-restricted-syntax -- a workspace directory from the manifest, empty at the root
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a workspace directory from the manifest, empty at the root
       .filter(({ workspaceDirectory }) => workspaceDirectory === "")
       .map((workspacePackage) => `  ${getNodeLine(workspacePackage, workspaceEdges)}`),
     ...getEdgeLines(workspaceEdges.runtime, RUNTIME_EDGE_ATTRIBUTES),

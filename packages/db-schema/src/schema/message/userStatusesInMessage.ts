@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax -- the select schema refines the Drizzle columns' own nullable expiry and status */
+/* oxlint-disable selector-ban/no-restricted-syntax -- the select schema refines the Drizzle columns' own nullable expiry and status */
 import { UserStatus, userStatusSchema } from "#src/models/user/UserStatus";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";

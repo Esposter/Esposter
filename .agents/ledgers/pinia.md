@@ -23,8 +23,8 @@ Notes on a tree several units share:
 
 Enforced rather than swept, so not in the units above:
 
-- A store read by dot outside its own source — `packages/configuration/eslint/restrictedStoreSyntaxes.js`.
-- A store's own source calling a nested store's method by dot — `packages/configuration/eslint/restrictedStoreCallSyntaxes.js`.
+- A store read by dot outside its own source — `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedStoreSyntaxes.ts`.
+- A store's own source calling a nested store's method by dot — `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedStoreCallSyntaxes.ts`.
 
 ## Exclusions
 

@@ -7,7 +7,7 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 
 ## Settled — do not re-propose
 
-- **A rule for a ref destructured off a store without `storeToRefs`** — `const { rooms } = roomStore` and `const { createRoom } = roomStore` are the same syntax, and which loses reactivity is a fact about the member's type. The lint decides the dot read a consumer makes (`packages/configuration/eslint/restrictedStoreSyntaxes.js`). The destructure half is `apps/web/app/storeRefDestructure.test.ts`, a type-aware scan, because the repo has no typed ESLint path: no ESLint config sets `projectService` or `parserOptions.project`, so a custom rule would have no types, and oxlint's `typeAware` runs only its built-in rules (`oxlint.config.ts`).
+- **A rule for a ref destructured off a store without `storeToRefs`** — `const { rooms } = roomStore` and `const { createRoom } = roomStore` are the same syntax, and which loses reactivity is a fact about the member's type. The lint decides the dot read a consumer makes (`scripts/src/services/oxlint/selectorBan/syntaxes/restrictedStoreSyntaxes.ts`). The destructure half is `apps/web/app/storeRefDestructure.test.ts`, a type-aware scan, because the repo has no typed ESLint path: no ESLint config sets `projectService` or `parserOptions.project`, so a custom rule would have no types, and oxlint's `typeAware` runs only its built-in rules (`oxlint.config.ts`).
 - **A rollback closure that restores the value a write replaced** — a refused write drops its entry and changes no held state, since a restore drops every arrival that landed meanwhile (the overlay design's Decisions).
 
 ## Consuming a Store
@@ -15,7 +15,7 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 Everywhere a store is consumed, tests included (`references/consuming-a-store.md`):
 
 - **One binding per store, named after it**, then `storeToRefs(fooStore)` and `const { method } = fooStore`, each store's lines grouped before the next (`pinia-store/require-store-binding`).
-- **Never dot-access a store outside its own source** — a component, composable, service or test, in `.vue` and `.ts` under `app/` alike (`restrictedStoreSyntaxes.js`, `no-restricted-syntax`). A store's own source declares nested stores at the setup root, reads their refs by dot, destructures their methods at the root, and never calls a method by dot (`restrictedStoreCallSyntaxes.js`).
+- **Never dot-access a store outside its own source** — a component, composable, service or test, in `.vue` and `.ts` under `app/` alike (`restrictedStoreSyntaxes.ts`, `no-restricted-syntax`). A store's own source declares nested stores at the setup root, reads their refs by dot, destructures their methods at the root, and never calls a method by dot (`restrictedStoreCallSyntaxes.ts`).
 - **A store's id is its path under `app/store/`** (`apps/web/app/store/index.test.ts`).
 - **Stores reach each other one way only — no module cycle, auto-imports included** (`import/no-cycle`, `apps/web/app/moduleCycles.test.ts`).
 

@@ -7,7 +7,7 @@ import { renderConstant } from "#src/services/gameData/renderConstant";
 // `GameDataKeyOf<"shops">`, so a consumer narrows to one dataset without restating the strings
 export const getGameDataKeysSource = (lock: GameDataLock): string =>
   [
-    "/* eslint-disable no-restricted-syntax -- a mirror of the lock's own keys, which a reader looks up by a dataset's name at runtime, so a key keeps the spelling the data gives it */",
+    "/* oxlint-disable selector-ban/no-restricted-syntax -- a mirror of the lock's own keys, which a reader looks up by a dataset's name at runtime, so a key keeps the spelling the data gives it */",
     'import type { ValueOfDeep } from "type-fest";',
     "",
     "// The lock's keys as a nested constant, each path nested by its segments.",

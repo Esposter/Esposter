@@ -36,7 +36,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 ## When not to use `normalizeString`
 
-- **Never in Vue** — lint-enforced by `restrictedTrimSyntaxes.js`; the `vue` skill owns the why (`references/forms.md`).
+- **Never in Vue** — lint-enforced by `restrictedTrimSyntaxes.ts`; the `vue` skill owns the why (`references/forms.md`).
 - **User-facing transformation actions** — e.g. `computeStringTransformation.ts` `Trim` case; keep `value.trim()`, it's implementing a named user operation.
 - **Trimming a process's or a file's output inside a package** — stdout, a token file, a hook's stdin, an XML reader's own `trim` option. `.trim()` is correct there: none of it is user input crossing a Zod boundary, and a package that has no other use for `@esposter/shared` should not take it on for a trim.
 
@@ -44,7 +44,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 ## Blank tests — `checkIsBlankText`
 
-A field holding spaces is not blank, so a blank test on text a person or an input supplies reads the trimmed value: `checkIsBlankText(value)` (`@esposter/shared`), and `checkIsBlankText(value) ? fallback : value` in place of a `||` fallback. A component calls the predicate, since it may not trim. `=== ""` on a raw text value is the `restrictedSyntaxes.js` error. A raw empty that is the meaning disables it on its line with that reason: an id, a server-issued value, a sentinel, a number input (which holds no spaces), a parser's untrimmed line, or a value the caller has already normalised. A fallback to `""` is not a hit, since an empty fallback renders the same as a blank value.
+A field holding spaces is not blank, so a blank test on text a person or an input supplies reads the trimmed value: `checkIsBlankText(value)` (`@esposter/shared`), and `checkIsBlankText(value) ? fallback : value` in place of a `||` fallback. A component calls the predicate, since it may not trim. `=== ""` on a raw text value is the `restrictedSyntaxes.ts` error. A raw empty that is the meaning disables it on its line with that reason: an id, a server-issued value, a sentinel, a number input (which holds no spaces), a parser's untrimmed line, or a value the caller has already normalised. A fallback to `""` is not a hit, since an empty fallback renders the same as a blank value.
 
 ## Zod Schema Alignment
 

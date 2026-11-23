@@ -8,7 +8,7 @@ import { z } from "zod";
 // GitHub's answer for each aliased link: an issue or pull request carries its state, anything else carries none, and a
 // Url with no record at all is `null`, GitHub's own absent form kept inside this boundary shape
 const linksResponseSchema = z.object({
-  // eslint-disable-next-line no-restricted-syntax -- GitHub's GraphQL answers a url with no record as `null`, an external boundary's own absent form
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- GitHub's GraphQL answers a url with no record as `null`, an external boundary's own absent form
   data: z.record(z.string(), z.object({ state: z.enum(GitHubLinkState).optional() }).nullable()),
 });
 const LinkStateMap = {

@@ -18,7 +18,7 @@ export const parseGcsimYaml = (yaml: string): unknown => {
   for (const rawLine of yaml.split("\n")) {
     const text = stripComment(rawLine).trimEnd();
     const trimmedText = text.trimStart();
-    // eslint-disable-next-line no-restricted-syntax -- a YAML line already trimmed on the line above
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a YAML line already trimmed on the line above
     if (trimmedText !== "") {
       lines.push({ blankLines, indent: text.length - trimmedText.length, text: trimmedText });
       blankLines = 0;

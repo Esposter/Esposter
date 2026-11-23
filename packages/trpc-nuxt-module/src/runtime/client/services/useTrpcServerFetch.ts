@@ -5,7 +5,7 @@ import type { serverFetch as baseServerFetch } from "nitro/app";
 // Loads the Nitro app
 export const useTrpcServerFetch = (): typeof baseServerFetch => async (resource, init, context) => {
   if (!import.meta.server) throw new TypeError("The in-process tRPC fetch exists on the server only");
-  // eslint-disable-next-line no-restricted-syntax -- a lazy-loader contract: a static import would pull Nitro's app into the client graph
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a lazy-loader contract: a static import would pull Nitro's app into the client graph
   const { serverFetch } = await import("nitro/app");
   return serverFetch(resource, init, context);
 };

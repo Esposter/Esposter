@@ -7,7 +7,7 @@ export const getBindingNames = (bindings: string): string[] =>
       const words = part
         .trim()
         .split(/\s+/u)
-        // eslint-disable-next-line no-restricted-syntax -- a binding word, empty between separators
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a binding word, empty between separators
         .filter((word) => word !== "" && word !== "as" && word !== "type");
       const name = words.at(-1);
       return name === undefined ? [] : [name];

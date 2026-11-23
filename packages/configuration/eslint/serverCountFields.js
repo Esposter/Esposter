@@ -1,4 +1,4 @@
-// The fields the server derives as counts. The `no-restricted-syntax` selectors in `restrictedSyntaxes.js` read them.
+// The fields the server derives as counts. The selectors in `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSyntaxes.ts` read them.
 export const SERVER_COUNT_FIELDS = ["commentCount", "likeCount", "memberCount"];
 // A role's count sits one level down, as `countsByTopRole[i].count`, and is named by the list it is an item of.
 export const SERVER_COUNT_ROLE_LIST = "countsByTopRole";

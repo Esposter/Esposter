@@ -22,7 +22,8 @@ const ownAttributesTagNamesMap = Map.groupBy(
   (tagName) => (htmlElementAttributes[tagName] ?? []).join(","),
 );
 
-export const SCOPED_STYLE_SYNTAXES: { message: string; selector: string }[] = [...ownAttributesTagNamesMap].map(
+export const SCOPED_STYLE_SYNTAXES: { message: string; selector: string }[] = Array.from(
+  ownAttributesTagNamesMap,
   ([ownAttributes, tagNames]) => {
     const attributeNames = [
       ...(htmlElementAttributes["*"] ?? []),

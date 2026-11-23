@@ -77,7 +77,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
   onMounted(async () => {
     const containerValue = toValue(container);
     if (!containerValue) return;
-    // eslint-disable-next-line no-restricted-syntax -- the Inspector is the renderer's debug overlay, loaded only once the simulator mounts so it stays out of the server and eager graphs
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the Inspector is the renderer's debug overlay, loaded only once the simulator mounts so it stays out of the server and eager graphs
     const { Inspector } = await import("three/examples/jsm/inspector/Inspector.js");
     // An unmount during the import found no resources to release, so nothing is built after it
     if (isUnmounted) return;

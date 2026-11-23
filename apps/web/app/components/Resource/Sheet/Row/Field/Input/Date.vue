@@ -15,7 +15,7 @@ const { column, isInline } = defineProps<Props>();
 const date = computed({
   get: () => (modelValue.value ? parseDate(modelValue.value, column.format) : undefined),
   set: (newDate) => {
-    // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- writes the cell's stored value in the column's own format
     modelValue.value = newDate ? formatDate(newDate, column.format) : null;
   },
 });

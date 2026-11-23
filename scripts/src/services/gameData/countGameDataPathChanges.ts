@@ -31,7 +31,7 @@ export const countGameDataPathChanges = (
     for (const key of new Set([...Object.keys(before), ...Object.keys(after)])) {
       // A record keyed by id, such as a text map or a scene's groups, reads as one path for all its ids
       const segment = /^\d+$/u.test(key) ? "#" : key;
-      // eslint-disable-next-line no-restricted-syntax -- a path built from keys, empty at the root
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a path built from keys, empty at the root
       countGameDataPathChanges(countMap, path === "" ? segment : `${path}.${segment}`, before[key], after[key]);
     }
     return;

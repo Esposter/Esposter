@@ -8,12 +8,6 @@ export default {
   "@typescript-eslint/no-unused-vars": "off",
   // Nuxt's Vue block keeps it off for components, whose script bindings the template reads where ESLint cannot see
   "no-useless-assignment": "off",
-  // `<script setup>` is the only component authoring style here. The Options API runtime is compiled out of the
-  // Bundle entirely (Nuxt 5 defaults `vue.optionsApi` off), so an options component of
-  // Ours would mount against a runtime that cannot apply it and fail at render rather than at build. Plain
-  // `defineComponent(...)` composition is banned with it: it buys nothing script setup does not, and leaving it
-  // Allowed is what lets an options block back in one property at a time.
-  "vue/component-api-style": ["error", ["script-setup"]],
   // PascalCase for our components and PascalCase third-party (VuePdfEmbed); kebab-case is only for
   // TresJS's lowercase <primitive> special element, and a `v-*` tag is left to the Vuetify ban in
   // `vue/no-restricted-syntax` rather than reported twice. A compound part is PascalCase on both sides of its dot

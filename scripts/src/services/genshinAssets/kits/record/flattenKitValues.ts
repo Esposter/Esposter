@@ -8,7 +8,7 @@ export const flattenKitValues = (record: unknown): Map<string, unknown> => {
   const valueMap = new Map<string, unknown>();
   const visit = (value: unknown, path: string) => {
     if (value === undefined) return;
-    // eslint-disable-next-line no-restricted-syntax -- a path prefix, empty at the root
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a path prefix, empty at the root
     const prefix = path === "" ? "" : `${path}.`;
     if (Array.isArray(value)) {
       valueMap.set(`${prefix}${KIT_LENGTH_KEY}`, value.length);

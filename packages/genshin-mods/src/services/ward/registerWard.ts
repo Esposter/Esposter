@@ -7,9 +7,9 @@ const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => ne
 
 // The question dismissed or the record unreadable alike lets the edit through, since Cancel is the person's way to stop one
 export const registerWard = (on: On): void => {
-  /* eslint-disable no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise */
+  /* oxlint-disable selector-ban/no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise */
   on("tool.call", { tool: "Edit" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letThrough);
   on("tool.call", { tool: "Write" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letThrough);
   on("tool.call", { tool: "NotebookEdit" }, ($, e, next) => ward($, e.notebook_path, () => next(e))).catch(letThrough);
-  /* eslint-enable no-restricted-syntax */
+  /* oxlint-enable selector-ban/no-restricted-syntax */
 };

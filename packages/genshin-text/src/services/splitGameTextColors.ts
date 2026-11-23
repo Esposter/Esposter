@@ -14,6 +14,6 @@ export const splitGameTextColors = (text: string): GameTextSegment[] => {
     plainStart = match.index + match[0].length;
   }
   segments.push({ color: "", text: text.slice(plainStart) });
-  // eslint-disable-next-line no-restricted-syntax -- a colour segment of game text, whose spaces are its content
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a colour segment of game text, whose spaces are its content
   return segments.filter(({ text: segmentText }) => segmentText !== "");
 };

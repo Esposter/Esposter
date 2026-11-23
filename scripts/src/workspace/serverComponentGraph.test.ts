@@ -48,7 +48,7 @@ const resolveWorkspaceSpecifier = (specifier: string, packages: PackageSource[])
   const entry = owner.exports[`.${specifier.slice(owner.name.length)}`];
   const source =
     typeof entry === "object" && entry !== null ? (entry as Record<string, unknown>)[SOURCE_CONDITION] : "";
-  // eslint-disable-next-line no-restricted-syntax -- a source path a test builds, empty when there is none
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a source path a test builds, empty when there is none
   const file = typeof source === "string" && source !== "" ? resolve(owner.directory, source) : "";
   return checkIsFile(file) ? { file, owner } : undefined;
 };

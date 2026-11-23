@@ -21,7 +21,7 @@ export const readWishNameItemIdsMap = async (): Promise<Map<string, number[]>> =
   const nameIdsMap = new Map<string, number[]>();
   for (const { id, nameTextId } of [...characters, ...weapons]) {
     const name = englishNames[nameTextId];
-    // eslint-disable-next-line no-restricted-syntax -- a name the wish list holds, empty when absent
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a name the wish list holds, empty when absent
     if (name === undefined || name === "") continue;
 
     getOrCreate(nameIdsMap, name, () => []).push(id);

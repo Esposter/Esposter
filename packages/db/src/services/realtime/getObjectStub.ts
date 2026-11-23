@@ -10,5 +10,5 @@ export const getObjectStub = <TStub extends object, TId>(
   name: string,
   onReadSet?: (readSet: ColumnTopic[]) => void,
 ): TStub =>
-  // eslint-disable-next-line no-restricted-syntax -- the one place an object is named by its namespace, so every stub is wrapped here
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the one place an object is named by its namespace, so every stub is wrapped here
   createObjectStub(namespace.get(namespace.idFromName(name)), onReadSet);

@@ -1,0 +1,434 @@
+import type { SelectorBanList } from "#src/models/oxlint/selectorBan/SelectorBanList";
+
+import { SCRIPT_FILES } from "#src/services/oxlint/selectorBan/constants";
+
+// The map-naming selector reads these three shapes in every branch, so each is written once: the two name
+// Patterns it matches, and the type references that say the annotated thing is a lookup table.
+const MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/";
+const BY_MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*By[A-Z]/";
+const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
+// The callable-name selector matches a named function in each shape a function takes, so its name and the return type
+// That makes it a boolean-returning one are each written once.
+const CALLABLE_NAME_REGEX = "/^(is|has)[A-Z]/";
+const BOOLEAN_RETURN_TYPE = ":matches(TSBooleanKeyword, TSTypePredicate)";
+// An unannotated function answers with the boolean its body shows: a comparison, a negation or a literal true/false.
+// Only that syntax is read here, since a boolean that comes from a call or a variable is the checker's to know.
+const BOOLEAN_OPERATOR_REGEX = "/^(===|!==|==|!=|<|<=|>|>=|instanceof|in)$/";
+const BOOLEAN_LITERAL_REGEX = "/^(true|false)$/";
+const booleanExpressionOf = (field: string): string =>
+  `:matches([${field}.type='BinaryExpression'][${field}.operator=${BOOLEAN_OPERATOR_REGEX}], [${field}.type='UnaryExpression'][${field}.operator='!'], [${field}.raw=${BOOLEAN_LITERAL_REGEX}])`;
+// The two shapes a named function takes its body in: an arrow's expression, or a block whose top-level return is one.
+// `:not([returnType])` leaves an annotated function to the `BOOLEAN_RETURN_TYPE` selectors, so each is matched once.
+const UNANNOTATED_BOOLEAN_EXPRESSION_BODY = `ArrowFunctionExpression:not([returnType])${booleanExpressionOf("body")}`;
+const UNANNOTATED_BOOLEAN_BLOCK_RETURN = `:matches(ArrowFunctionExpression, FunctionExpression):not([returnType]) > BlockStatement > ReturnStatement${booleanExpressionOf("argument")}`;
+// The three places a named function sits, each keyed by the name `CALLABLE_NAME_REGEX` reads
+const CALLABLE_VARIABLE_SELECTOR = `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}]`;
+const CALLABLE_FUNCTION_SELECTOR = `FunctionDeclaration[id.name=${CALLABLE_NAME_REGEX}]`;
+const CALLABLE_MEMBER_SELECTOR = `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}]`;
+// The script bans with no list of their own: each runs over every script, whatever its path
+export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
+  bans: [
+    {
+      // A Durable Object is named by its namespace only inside `getObjectStub`, so every stub a Worker holds runs its RPC methods
+      // Through the object's invoke, which records the reads of each call and publishes its writes. A stub named any other way
+      // Records nothing and publishes nothing. A topic's Topic object is the one exception, named behind a disable by
+      // `publishTopics` and by a socket's subscriptions in UserObject, since it takes publishes and subscriptions, not invocations
+      message:
+        "Name a Durable Object through `getObjectStub` (`@esposter/db`), so its invoke records each call's reads and publishes its writes. See openspec/changes/archive/2026-11-20-architecture-inferred-live-topics/design.md (Object invocations).",
+      selector: "MemberExpression[property.name=/^(idFromName|idFromString|newUniqueId|getByName)$/]",
+    },
+    {
+      // A `catch` swallows the failure into a control-flow branch the type system cannot see, which is what
+      // Neverthrow's Result exists to replace; `try`/`finally` is `withFinalizer`/`withFinalizerAsync`. There is
+      // No standing exception — the repo holds none — so this rule has no disable convention to learn.
+      message:
+        "`try`/`catch`/`finally` is banned — use `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup) and `.match` on the Result. See the error-handling skill.",
+      selector: "TryStatement",
+    },
+    {
+      // A value set's key is a name in code, so it takes the code's casing whatever the value it stands for is spelled
+      // As: `Dark: "dark"`. A value set is an exported PascalCase object held `as const` whose values are literals. The
+      // Exceptions are a standard notation whose casing is its meaning, the date format tokens, and a mirror of a
+      // Library's own keys, each behind a disable. A lone capital is PascalCase; two or more with nothing lowercase is
+      // SCREAMING_CASE
+      message: 'A value set\'s key is PascalCase; its value keeps the outside spelling (`Dark: "dark"`).',
+      selector:
+        "ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[id.name=/^[A-Z][a-z]/] > TSAsExpression > ObjectExpression > Property[key.type='Identifier'][key.name=/^[a-z]|_|^[A-Z][A-Z0-9]+$/][value.type='Literal']",
+    },
+    {
+      // The `InMessage` suffix names the schema a message table sits in, and the table's own name is
+      // Already the plural — so a relation key or a local spelled `barsInFoo` has pluralised the schema, and
+      // Reads as bans across messages. The suffix is dropped from a variable (`const ban`) or kept whole as the
+      // Table's name (`r.many.bansInMessage`); nothing spells it plural. Unanchored, because a through-relation
+      // Key carries the table's name mid-word (`roomsInMessageViaInvitesInMessage`), which an end anchor passes
+      message:
+        "`InMessage` is a schema suffix, not a noun — the table's own name is the plural, so drop the `s`. See the naming skill and the drizzle relations reference.",
+      selector:
+        ":matches(Property, VariableDeclarator, PropertyDefinition, TSPropertySignature)[key.name=/InMessages/], VariableDeclarator[id.name=/InMessages/]",
+    },
+    {
+      // The `A` prefix marks an abstract class, so an interface wearing it claims a construct it is not and
+      // Sorts beside the classes it only resembles. The shared-shape interface takes `Base*` instead, which is
+      // Also what the schema it sits beside is already called.
+      message:
+        "The `A` prefix is for abstract classes — name the interface after what it holds, or `Base*` where it is the shape its implementors share. See the naming skill.",
+      selector: "TSInterfaceDeclaration[id.name=/^A[A-Z]/]",
+    },
+    {
+      // One structure, one spelling: the repo's own lookup tables already fix the word order
+      // (`EmojiGroupIconMap` is group -> icon), so a local reading `barByFoo` or `fooToBar` says the
+      // Same thing a second way. Every branch reads what the name is attached to rather than the name alone,
+      // Because the shape is what makes it a lookup: a map is data, so a function keeps its `By<Selector>`
+      // (`getFooByBar`), and `isGroupedByType` is a boolean. So a lookup is recognised by a
+      // `Map`/`Record` annotation, a `new Map`/`Object.groupBy` initialiser, or an object literal — and the
+      // Object-literal branches take the `By` infix only, since `To` collides with the `usersToRooms` join
+      // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byFoo`. A lookup
+      // Built inside a `computed` is the same lookup — the initialiser is the `computed` call rather than the
+      // `new Map`, so the arrow's body is read directly instead of by descent, which would report the wrong node
+      // And catch a `Map` built anywhere deeper for some other purpose.
+      message:
+        "Name a map `<key><value>Map` (or `<value>Map` where the key is a field the value already carries) — not `<value>By<key>` or `<key>To<value>`. See the naming skill.",
+      selector: `:matches(VariableDeclarator[id.name=${MAP_NAME_REGEX}]:matches([init.callee.name='Map'], [init.callee.object.name='Object'][init.callee.property.name='groupBy'], [id.typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}], [init.callee.name='computed'][init.arguments.0.body.callee.name='Map'], [init.callee.name='computed'][init.arguments.0.body.callee.object.name='Object'][init.arguments.0.body.callee.property.name='groupBy']), VariableDeclarator[id.name=${BY_MAP_NAME_REGEX}]:matches([init.type='ObjectExpression'], [init.expression.type='ObjectExpression']), :matches(PropertyDefinition, TSPropertySignature)[key.name=${MAP_NAME_REGEX}][typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}], Property[key.name=${BY_MAP_NAME_REGEX}]:matches([value.type='ObjectExpression'], [value.callee.name='Map'], [value.callee.object.name='Object'][value.callee.property.name='groupBy']), :matches(PropertyDefinition, Property)[key.name=/^by[A-Z]/]:not([value.type=/^(Arrow)?FunctionExpression$/]), TSPropertySignature[key.name=/^by[A-Z]/]:not([typeAnnotation.typeAnnotation.type='TSFunctionType']), VariableDeclarator[id.name=/^by[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]))`,
+    },
+    {
+      // A boolean says what is true, not what is permitted: `can`/`should` name a policy the value does not
+      // Carry, and the repo already spells a permission check `checkHasPermission` and a capability check
+      // `isScreenShareSupported`. Only a **named** declarator is matched, so a dependency's own key stays its own —
+      // `URL.canParse` is read and written under its name.
+      // A destructuring pattern is therefore out of scope on purpose rather than by omission: the name in
+      // `const { canPublish } = grant` is the foreign object's, so the only way to satisfy the rule there is to
+      // Rename on the spot and desync our vocabulary from the sdk's at every call site. A boolean we author has
+      // Its own declarator, which this does match.
+      message:
+        "Name a boolean `is*` (or `has*` for possession/membership) — `can*` and `should*` name a policy rather than the value. See the naming skill.",
+      selector: "VariableDeclarator[id.name=/^(can|should)[A-Z]/]",
+    },
+    {
+      // A call that answers with a boolean is `check*`; `get*` reads as a derivation, so the family grows
+      // Unnoticed. The name is all the selector sees, and it is enough: a `getIs*`/`getHas*` answers with a
+      // Boolean, and a getter that builds something says what — `getIsLoadedRef` is a destructuring rename off
+      // `useDataMap`, which is a pattern rather than an identifier and stays outside
+      message:
+        "Name a boolean-returning function `check*` — `getIs*`/`getHas*` reads as a derivation. See the naming skill.",
+      selector: "VariableDeclarator[id.name=/^get(Is|Has)[A-Z]/]",
+    },
+    {
+      // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name
+      // Reads as a value at every call site. The annotation is what makes it decidable without types — a
+      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`, and so
+      // Is a parameter typed as one: a callback handed in is called at every site that reads it. Each shape a
+      // Named function takes is matched: a declaration, a variable, a method, an object or class member, and a
+      // Member typed as a function (`isB?: (c) => boolean`), which an interface declares without a body. An
+      // Unannotated one is held too when its body is a boolean expression (`isA = (b) => b === 1`), since that is a
+      // Boolean without the annotation; a boolean that comes from a call or a variable needs the checker, so the review
+      // Holds it. An async one resolves to that boolean and is still a call, so it is held the same way (`checkHasBlob`)
+      message:
+        "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
+      selector: [
+        `${CALLABLE_VARIABLE_SELECTOR}[init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `${CALLABLE_FUNCTION_SELECTOR} > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `${CALLABLE_MEMBER_SELECTOR} > :matches(ArrowFunctionExpression, FunctionExpression, TSEmptyBodyFunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `TSMethodSignature[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `:matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition)[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `Identifier[name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `${CALLABLE_VARIABLE_SELECTOR} > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
+        `${CALLABLE_VARIABLE_SELECTOR} > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
+        `${CALLABLE_FUNCTION_SELECTOR}:not([returnType]) > BlockStatement > ReturnStatement${booleanExpressionOf("argument")}`,
+        `${CALLABLE_MEMBER_SELECTOR} > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
+        `${CALLABLE_MEMBER_SELECTOR} > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
+      ].join(", "),
+    },
+    {
+      // A where-fragment helper builds a clause, so it is a `get*`: the bare noun (`roomWhere = (id) => …`)
+      // Reads as the clause itself rather than the call that builds it. See the trpc skill.
+      message:
+        "Name a where-fragment builder `get*Where` — the bare `*Where` noun is the clause, not the call that builds it.",
+      selector:
+        "VariableDeclarator[id.name=/(?<!By)Where$/][id.name!=/^get/][init.type=/^(Arrow)?FunctionExpression$/]",
+    },
+    {
+      // `protected` is still allowed — no `#` equivalent exists for subclass access.
+      message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
+      selector:
+        ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
+    },
+    {
+      // A bare alias is a second name for one type, so two names hold it and a reader cannot tell they are the same.
+      // The type is written at each use, and a name that carried a meaning the type lacks moves to the type's owner.
+      // Only a reference with no type arguments and a keyword are matched: a generic, a union or an object literal says
+      // Something its name does not repeat, and a `typeof` query is not a second name for a type.
+      message:
+        "No type aliases — `type X = Y` is a second name for `Y`, a duplicate. Write `Y` at each use and name its meaning on the type that owns it. See the typescript skill.",
+      selector:
+        "TSTypeAliasDeclaration > :matches(TSTypeReference:not([typeArguments]), [type=/^TS[A-Za-z]+Keyword$/])",
+    },
+    {
+      // The child combinators are load-bearing — they match only the property's own annotation, so
+      // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched. Only a required
+      // Property is matched, since under `exactOptionalPropertyTypes` an optional one a value may hand `undefined` is
+      // `field?: T | undefined`: a property that may be absent is optional
+      message: "Declare the property optional (`field?: T | undefined`) instead of `field: T | undefined`.",
+      selector:
+        ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition):not([optional=true]) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
+    },
+    {
+      // An app-owned string is `string` with `""` as its empty sentinel, checked by truthiness — a bare
+      // `ref<string>()` is `Ref<string | undefined>`, which puts a second empty value beside the one the repo reads.
+      // Only the `string` argument is matched: an optional ref of anything else omits its initial value on purpose
+      message:
+        'A string ref starts at the `""` sentinel — `ref("")`, never `ref<string>()`, which adds `undefined` as a second empty value. See the typescript skill.',
+      selector:
+        "CallExpression[callee.name=/^(ref|shallowRef)$/][arguments.length=0][typeArguments.params.length=1][typeArguments.params.0.type='TSStringKeyword']",
+    },
+    {
+      // `ref()` already starts at `undefined`, so the argument only restates the default. The type check is
+      // Load-bearing: esquery compares an absent `name` as the string "undefined", which every literal would match
+      message: "Omit the initial value of an optional ref — `ref<T>()`, never `ref<T | undefined>(undefined)`.",
+      selector:
+        "CallExpression[callee.name=/^(ref|shallowRef)$/][arguments.length=1][arguments.0.type='Identifier'][arguments.0.name='undefined']",
+    },
+    {
+      // Which build is running is read once, in `shared/util/environment/constants.ts`, and named there — that file
+      // Is the one site that reads the flags themselves, so it disables this with that reason
+      message:
+        "Use `IS_PRODUCTION`/`IS_DEVELOPMENT` from `#shared/util/environment/constants` rather than reading the build mode off `import.meta`. See the typescript skill.",
+      selector:
+        "MemberExpression[object.type='MetaProperty'][property.name='dev'], MemberExpression[object.object.type='MetaProperty'][object.property.name='env'][property.name=/^(DEV|MODE|PROD)$/]",
+    },
+    {
+      // An export list names a binding a second time, away from its declaration, so a reader finds what a module
+      // Exports in two places. A re-export carries `from` and an empty `export {}` in a `.d.ts` carries no
+      // Specifier, so neither is matched — the generated barrels and every `eslint.config.js` stay as they are
+      message:
+        "Export at the declaration — `export const`/`class`/`interface`/`type`/`function` — never an `export { … }` list. See the file-organization skill.",
+      selector: "ExportNamedDeclaration[source=null][specifiers.length>0]",
+    },
+    {
+      // Every persisted browser key is an entry in the one registry, so an overlap between two features is visible
+      // Where the keys sit together; a literal at the call is a key nothing else can see
+      message:
+        "Name a localStorage key through the `LocalStorageKey` registry (`app/services/shared/LocalStorageKey.ts`), never a literal at the call. See the file-organization skill.",
+      selector:
+        ":matches(CallExpression[callee.name='useLocalStorage'], CallExpression[callee.property.name=/^(getItem|removeItem|setItem)$/]:matches([callee.object.name='localStorage'], [callee.object.property.name='localStorage']))[arguments.0.type=/^(Literal|TemplateLiteral)$/]",
+    },
+    {
+      // Destructuring an event detaches its methods from the event they read `this` off, so a `preventDefault`
+      // Pulled out that way throws "Illegal invocation" — and a handler reading only a field today is the one that
+      // Grows the method call tomorrow. A parameter is known to be an event by a DOM `*Event` annotation, or by the
+      // Listener API it is handed to; a component's emitted payload is neither, so destructuring one stays allowed
+      message:
+        'Keep the whole `event` parameter — destructuring it detaches its methods (`preventDefault` throws "Illegal invocation"). Read `event.key` instead. See the vue skill.',
+      selector:
+        ":function > ObjectPattern.params[typeAnnotation.typeAnnotation.typeName.name=/Event$/], CallExpression:matches([callee.name=/^(onKeyStroke|useEventListener)$/], [callee.property.name='addEventListener']) > :function.arguments > ObjectPattern.params",
+    },
+    {
+      // Zod 4 still parses the Zod 3 spellings, so a second form of each builder would sit in the tree with nothing
+      // Failing. The chained validators are matched only when the chain starts at the `z.string()`/`z.number()`/
+      // `z.object()` they refine, since `date`, `time` and `url` are ordinary method names everywhere else — so the
+      // Node reported is that opening call
+      message:
+        "Use the Zod 4 top-level builder — `z.email()`, `z.url()`, `z.uuidv7()`, `z.int()`, `z.iso.datetime()`, `z.strictObject()`, `z.looseObject()`, `z.enum(SomeEnum)` — never the Zod 3 chain or `z.nativeEnum`. See the zod skill.",
+      selector:
+        "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
+    },
+    {
+      // `z.uuid()` accepts versions 1 to 8 and the nil UUID while every id the repo holds is a v7, so a field written with it
+      // Would validate more than the data is, and nothing else would fail. The drizzle-zod mapping of an id column is
+      // A plain string, which no selector sees, and `id-validation`'s design names it
+      message: "Validate an id with `z.uuidv7()`, never `z.uuid()`. See the zod skill.",
+      selector: "CallExpression[callee.object.name='z'][callee.property.name='uuid']",
+    },
+    {
+      // `z.int().min(1)` and `z.int().positive()` parse alike, so a count could be written either way and the tree
+      // Would hold two spellings of one constraint. A bound paired with a `.max()` is a range, which only `.min()` can
+      // Say, so that pair is left alone — the Node reported is the `.min()` call
+      message:
+        "An unpaired lower bound of zero or one is `.nonnegative()` or `.positive()` — `z.int().positive()`, never `z.int().min(1)`. Pair `.min(n)` with a `.max()` only for a real range. See the zod skill.",
+      selector:
+        "CallExpression[callee.property.name='min']:matches([arguments.0.value=0], [arguments.0.value=1])[callee.object.callee.object.name='z'][callee.object.callee.property.name=/^(int|number)$/]:not(MemberExpression[property.name='max'] > CallExpression.object)",
+    },
+    {
+      // `.nonempty()` parses like `.min(1)`, which every other non-empty string and array in the tree is written with
+      message: "A non-empty string or array is `.min(1)`, never `.nonempty()`. See the zod skill.",
+      selector: "CallExpression[callee.property.name='nonempty']",
+    },
+    {
+      // Zod 3's `message` still parses under Zod 4, so a refinement written either way works and the tree would hold
+      // Two spellings of one key. The `message` of an issue pushed onto `ctx` is a different object and keeps its name
+      message:
+        "A refinement's custom text goes under `error` — `.refine(check, { error: \"…\" })` — never Zod 3's `message`. See the zod skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(refine|superRefine)$/] > ObjectExpression.arguments > Property[key.name='message']",
+    },
+    {
+      // A refinement's text goes under its `error` key, so a bare string as the second argument is a second spelling of
+      // The same parameter, and the object form is the one the rule above leaves alone
+      message:
+        'A refinement\'s text goes under `error` — `.refine(check, { error: "…" })` — never as a bare string in the second argument. See the zod skill.',
+      selector:
+        "CallExpression[callee.property.name=/^(refine|superRefine)$/] > :matches(Literal, TemplateLiteral):nth-child(2)",
+    },
+    {
+      // The Pulumi logical name is the resource name here, so an alias can never serve the rename it is
+      // Suggested for — a rename replaces through the name property whatever the URN says. A resource's options are
+      // The third argument of its constructor, which is the construct this reads rather than a path: nothing else
+      // In the repo passes a third options object carrying `aliases`
+      message:
+        "Never add `aliases` to a Pulumi resource — the logical name is the resource name, so an alias cannot spare the replacement a rename causes. See the pulumi-infra skill.",
+      selector: "NewExpression > ObjectExpression.arguments:nth-child(3) > Property[key.name='aliases']",
+    },
+    {
+      // Branching on a `Result` by asking which it is leaves one arm to be forgotten and the value unwrapped by hand;
+      // `.match` takes both arms at once and hands each its own value
+      message:
+        "`.isOk()`/`.isErr()` are banned — branch with `.match(onOk, onErr)`, throw inside the err handler to rethrow, or fall back with `.unwrapOr(value)`. See the error-handling skill.",
+      selector: "CallExpression[callee.property.name=/^(isErr|isOk)$/][arguments.length=0]",
+    },
+    {
+      // A branch is best-effort because the next run repairs it, which is exactly what makes its failure invisible:
+      // Nothing is wrong until the repair also stops happening, and by then the first one left no record
+      message:
+        "`.match(noop, noop)` is a silent swallow — the err handler names what was lost and what it costs (`.match(noop, console.error)` at the least). See the error-handling skill.",
+      selector:
+        "CallExpression[callee.property.name='match'][arguments.length=2][arguments.0.type='Identifier'][arguments.0.name='noop'][arguments.1.type='Identifier'][arguments.1.name='noop']",
+    },
+    {
+      // `getResult`/`getResultAsync` are the one wrapping, so every Result carries the same `toAppError` mapping; a
+      // Direct constructor is a second mapping of its own. The two helpers are its definition sites, and Nuxt's own
+      // Configuration, which loads before any workspace package is built, is the one caller that cannot import them
+      message:
+        "Wrap with `getResult`/`getResultAsync` from `@esposter/shared`, never neverthrow's `fromThrowable`/`fromPromise` directly. See the error-handling skill.",
+      selector:
+        "CallExpression[callee.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/], MemberExpression[object.name=/^(Result|ResultAsync)$/][property.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/]",
+    },
+    {
+      // A no-op ok handler is `noop`, so every terminator reads the same. `() => undefined` is matched only where the
+      // Match's own value is thrown away or handed straight back: assigned, it is the value the ok arm produces — an
+      // `Error | undefined` a caller then tests, which `noop`'s `void` would refuse
+      message:
+        "The no-op ok handler is `noop` — never an inline `() => {}` or `() => undefined`. See the error-handling skill.",
+      selector:
+        "CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='BlockStatement'][body.body.length=0], :matches(ExpressionStatement, ReturnStatement, ArrowFunctionExpression, ExpressionStatement > AwaitExpression) > CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='Identifier'][body.name='undefined']",
+    },
+    {
+      // `show` is a verb, so a value under it reads as a call at every site; the flag says what is true instead. A
+      // Function keeps the verb, a Vitest mock of one included, and an interface member is read only where it is
+      // Declared `boolean`, since an emitted event or a library's setter key is spelled by what it does. A declared
+      // Namespace is a library's own typings, whose option names are the library's
+      message: "Name a visibility flag `is*Visible` — `showFoo` → `isFooVisible`. See the naming skill.",
+      selector:
+        "VariableDeclarator[id.name=/^show[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]):not([init.callee.object.name='vi']), TSInterfaceBody > TSPropertySignature[key.name=/^show[A-Z]/][typeAnnotation.typeAnnotation.type='TSBooleanKeyword']:not(TSModuleDeclaration *)",
+    },
+    {
+      // Encoding a text only to read its length allocates every byte to count them. `getUtf8ByteLength` writes into one
+      // Scratch buffer kept for every call, which is faster at every length and allocates nothing. An encode whose bytes
+      // Are used — a hash, a signature, a body — is not matched
+      message:
+        "Count a text's UTF-8 bytes with `getUtf8ByteLength(text)` from `@esposter/shared`, never `encode(text).byteLength` or `.length`.",
+      selector:
+        "MemberExpression[property.name=/^(byteLength|length)$/][object.type='CallExpression'][object.callee.property.name='encode']:matches([object.callee.object.name=/(encoder|Encoder|ENCODER)$/], [object.callee.object.callee.name='TextEncoder'])",
+    },
+    {
+      // An underscore marks a binding nothing reads, so an import renamed with one reads as unused at every site
+      // That uses it; a name clash is settled with `base*`, which says the local one builds on it
+      message:
+        "Rename a clashing import with `base*` — `import { getMentions as baseMentions }` — never an `_` prefix. See the naming skill.",
+      selector: "ImportSpecifier[local.name=/^_/]",
+    },
+    {
+      // One suffix for one kind of constant, so a regex is found by grepping for it; `_RE` and `_PATTERN` are the
+      // Spellings that drift in. Module scope only, where a binding is a named constant rather than a local
+      message:
+        "Name a regex constant with the `_REGEX` suffix — `FOO_REGEX`, never `_RE` or `_PATTERN`. See the naming skill.",
+      selector:
+        ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/_REGEX$/]:matches([init.regex], [init.callee.name='RegExp'])",
+    },
+    {
+      // An `Intl` formatter, collator or segmenter made once for the module is a fixed object, so it takes the
+      // Scalar's casing as every shared one does (`PERCENT_FORMATTER`); camelCase reads as one more local at the call.
+      // Only a `new` is an instance — a static call such as `Intl.getCanonicalLocales` answers with plain data
+      message:
+        "Name a module-scope `Intl` instance in SCREAMING_SNAKE_CASE — `PERCENT_FORMATTER`, never `percentFormat`. See the naming skill's constant-casing page.",
+      selector:
+        ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/^[A-Z][0-9A-Z_]*$/][init.type='NewExpression'][init.callee.object.name='Intl']",
+    },
+    {
+      // A ref's value read out to narrow it is named for what it holds; `current*` says only that it is the value
+      // Now, which every read of a ref already is (naming skill)
+      message:
+        "Name a ref's narrowed value for what it holds — `targetValue`, never `currentTarget`. See the naming skill.",
+      selector: "VariableDeclarator[id.name=/^current[A-Z]/][init.type='MemberExpression'][init.property.name='value']",
+    },
+    {
+      // A sort's pair is named for what it compares, `first*`/`second*`, as every sort in the tree writes it; `a` and
+      // `b`, or a bare `first` and `second`, say nothing about what is compared. Read off the callback handed to
+      // `sort`/`toSorted` alone, since the two letters are also every fixture key and HTML tag a denylist would refuse
+      // With them
+      message:
+        "Name a comparator's pair for what it compares — `(firstRoom, secondRoom) =>` — never `(a, b)` or a bare `(first, second)`. See the naming skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments > Identifier.params[name=/^([ab]|first|second)$/]",
+    },
+    {
+      // The `pgTable` wrapper builds through drizzle's `camelCase` casing, so a column's DB name is its property key
+      // And a name string only restates it — or, spelled differently, forks the two. Read inside the columns object
+      // (a table builder's second argument) alone, where every bare call is a column builder; the constraint
+      // Builders in `extraConfig` do take a name
+      message:
+        'Call a column builder bare — `text()`, never `text("name")`: the `pgTable` wrapper names every column after its key. See the drizzle skill.',
+      selector:
+        "CallExpression:matches([callee.name='pgTable'], [callee.property.name='table']) > ObjectExpression.arguments:nth-child(2) > Property CallExpression[callee.type='Identifier'][arguments.0.type='Literal']",
+    },
+    {
+      // A page size is a named ceiling, so the number every read caps at is changed in one place. Read off a
+      // Relational `findMany`/`findFirst` options object, where `limit` is always the page — `.limit(1)` on a select
+      // Is an existence probe rather than a page, and a `limit` key elsewhere is some other API's
+      message:
+        "Cap a relational read with `MAX_READ_LIMIT` or `DEFAULT_PAGE_LIMIT`, never a number literal. See the drizzle skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(findFirst|findMany)$/] > ObjectExpression.arguments > Property[key.name='limit'][value.type='Literal']",
+    },
+    {
+      // An absent value is `?:` and `.optional()`; null is a shape a boundary hands us — Drizzle's nullable column, an
+      // SDK's payload — and never one a schema this repo authors picks. A schema refining a boundary's own nullable
+      // Value disables this, naming the boundary
+      message:
+        "Model an absent value with `.optional()`, never `.nullable()` — null belongs to an external boundary. See the absent-values skill.",
+      selector: "CallExpression[callee.property.name='nullable']",
+    },
+    {
+      // A missing key and an explicit `undefined` mean the same thing everywhere, so no schema of ours tells them apart:
+      // A field `.exactOptional()` makes would refuse the `undefined` a client or superjson sends for "not set". A
+      // Schema mirroring a library's type, whose optional key takes no `undefined`, names that type in its annotation,
+      // And the compiler holds the mirror to it, so a declaration with a type annotation is left to it
+      message:
+        "Use `.optional()`, never `.exactOptional()` — a missing key and an explicit `undefined` mean the same thing. Only a schema annotated with the library type it mirrors may use it. See the absent-values skill.",
+      selector:
+        "CallExpression[callee.property.name='exactOptional']:not(VariableDeclarator[id.typeAnnotation] CallExpression)",
+    },
+    {
+      // A spread replaces each key outright, so every nested option the factory set on `deps`, `dts` or `exports` is
+      // Gone the moment a package adds one field of its own, and nothing fails. The factories share one prefix, which
+      // Is the mechanism's own name rather than a list of them
+      message:
+        "Compose a tsdown factory with `mergeConfig(getTsdownConfiguration…(), { … })`, never a spread — a spread drops every nested option the factory set. See the build skill.",
+      selector: "SpreadElement > CallExpression[callee.name=/^getTsdownConfiguration/]",
+    },
+    {
+      // A parameter's name documents its slot even unread; a loop binding is not a parameter, so
+      // Neither is reached
+      message:
+        "Name an unused parameter for its slot behind the `_` prefix — `_value`, `_description`, `_match`, never bare `_`. See the naming skill's unused-bindings page.",
+      selector: ":function > Identifier.params[name='_']",
+    },
+    {
+      // A duration of one unit totalled in that same unit is the number it was built from, so the wrapper states
+      // Nothing the literal does not; a conversion between units is what `Temporal.Duration` is for
+      message:
+        'Write a duration totalled in the unit it is built from as its literal — `500`, never `Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds")`. See the naming skill\'s numbers-and-time page.',
+      selector:
+        "CallExpression[callee.property.name='total'][callee.object.callee.object.object.name='Temporal'][callee.object.callee.object.property.name='Duration'][callee.object.arguments.0.properties.length=1]:matches([arguments.0.value='milliseconds'][callee.object.arguments.0.properties.0.key.name='milliseconds'], [arguments.0.value='seconds'][callee.object.arguments.0.properties.0.key.name='seconds'], [arguments.0.value='minutes'][callee.object.arguments.0.properties.0.key.name='minutes'], [arguments.0.value='hours'][callee.object.arguments.0.properties.0.key.name='hours'], [arguments.0.value='days'][callee.object.arguments.0.properties.0.key.name='days'])",
+    },
+  ],
+  files: SCRIPT_FILES,
+};

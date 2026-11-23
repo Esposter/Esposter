@@ -13,7 +13,7 @@ export const parseGameDataObjectPath = (
   if (!sourcePath.endsWith(".json")) return undefined;
   const segments = sourcePath.replace(/\.json$/u, "").split("/");
   const dataset = segments.slice(0, -1).join("/");
-  // eslint-disable-next-line no-restricted-syntax -- a dataset name the path parser reads, never typed
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a dataset name the path parser reads, never typed
   if (dataset === "") return undefined;
   return { contentType: "application/json", hash: takeOne(segments.slice(-1)), sourcePath };
 };

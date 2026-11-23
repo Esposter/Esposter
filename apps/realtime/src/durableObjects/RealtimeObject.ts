@@ -67,7 +67,7 @@ export abstract class RealtimeObject<
   ): Promise<ObjectInvocation<MethodResult<TRpc, TMethod>>> {
     // The method is named by a string at run time, so the object is read by name here, and TRpc types the arguments each name takes
     // oxlint-disable typescript/no-unsafe-type-assertion -- a dispatch by a string name, which the type system cannot express: TRpc types each name's arguments
-    // eslint-disable-next-line no-restricted-syntax -- a dispatch by a string name, which the type system cannot express: TRpc types each name's arguments
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a dispatch by a string name, which the type system cannot express: TRpc types each name's arguments
     const target = this as unknown as Record<
       TMethod,
       (...args: MethodArgs<TRpc, TMethod>) => MethodResult<TRpc, TMethod>

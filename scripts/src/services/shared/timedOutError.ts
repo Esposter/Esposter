@@ -11,6 +11,6 @@ export const timedOutError = (
   subject = "",
 ): InvalidOperationError => {
   const ranPast = `ran past ${timeout} ms and was killed`;
-  // eslint-disable-next-line no-restricted-syntax -- a subject, empty when none
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a subject, empty when none
   return new InvalidOperationError(operation, name, subject === "" ? ranPast : `${subject} ${ranPast}`);
 };

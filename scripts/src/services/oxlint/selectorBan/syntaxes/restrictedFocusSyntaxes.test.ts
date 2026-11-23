@@ -1,0 +1,41 @@
+import { setupSelectorBanSuite } from "#src/services/oxlint/selectorBan/setupSelectorBanSuite.test";
+import { RESTRICTED_FOCUS_SYNTAXES } from "#src/services/oxlint/selectorBan/syntaxes/restrictedFocusSyntaxes";
+import { describe } from "vitest";
+
+describe("restrictedFocusSyntaxes", () => {
+  const focusOnMountSource = '<script setup lang="ts">\nonMounted(() => {\n  input.value?.focus();\n});\n</script>';
+
+  setupSelectorBanSuite({
+    entries: RESTRICTED_FOCUS_SYNTAXES.bans,
+    fixtures: [
+      { filePath: "app/components/focusOnMount.vue", name: "focusOnMount", source: focusOnMountSource, violations: 1 },
+      {
+        filePath: "app/composables/focusOnMount.ts",
+        name: "composableFocusOnMount",
+        source: "export const useThing = () => {\n  onMounted(() => {\n    input.value?.focus();\n  });\n};",
+        violations: 1,
+      },
+      {
+        filePath: "app/components/focusAfterAction.vue",
+        name: "focusAfterAction",
+        source:
+          '<script setup lang="ts">\nwatch(selected, async () => {\n  await nextTick();\n  row.value?.focus();\n});\n</script>',
+        violations: 0,
+      },
+      {
+        filePath: "app/components/editorChain.vue",
+        name: "editorChain",
+        source: '<script setup lang="ts">\nonMounted(() => {\n  editor.chain().focus().run();\n});\n</script>',
+        violations: 0,
+      },
+      {
+        filePath: "app/components/editorChainAfterCommand.vue",
+        name: "editorChainAfterCommand",
+        source:
+          '<script setup lang="ts">\nonMounted(() => {\n  editor.chain().setBold().focus().run();\n});\n</script>',
+        violations: 0,
+      },
+      { filePath: "src/components/gameScreen.vue", name: "gameScreen", source: focusOnMountSource, violations: 0 },
+    ],
+  });
+});

@@ -8,7 +8,7 @@ export const getNeedsState = (
   blocker: string,
   capabilities: readonly string[],
 ): GenshinUnitState => {
-  // eslint-disable-next-line no-restricted-syntax -- a blocker, empty when none
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a blocker, empty when none
   if (blocker !== "") return GenshinUnitState.Waiting;
   if (checkNeedsMet(needs, capabilities)) return GenshinUnitState.Runnable;
   return GenshinUnitState.Blocked;

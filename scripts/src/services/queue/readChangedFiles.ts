@@ -22,7 +22,7 @@ export const readChangedFiles = (): ChangedFile[] => {
   const untrackedPaths = runGit(["ls-files", "--others", "--exclude-standard", "-z"]).split("\0");
   return [
     ...trackedFiles,
-    // eslint-disable-next-line no-restricted-syntax -- an untracked path git prints
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- an untracked path git prints
     ...untrackedPaths.filter((path) => path !== "").map((path) => ({ path, status: ChangeStatus.Added })),
   ];
 };

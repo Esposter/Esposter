@@ -52,12 +52,12 @@ The rungs stack rather than replace each other. A primitive is usually backed by
 
 ## Key files
 
-| File                                                         | Role                                                           |
-| :----------------------------------------------------------- | :------------------------------------------------------------- |
-| `.agents/skills/invariants/SKILL.md`                         | The ladder as the rule a session follows                       |
-| `.agents/skills/oxlint/references/custom-js-plugins.md`      | When a lint rule earns a custom plugin, and the roster gate    |
-| `.agents/skills/sweeps/references/handing-to-an-enforcer.md` | Turning a repeated finding into an enforcer                    |
-| `apps/web/configuration/vite.ts`                             | The build rung: the bundler diagnostics the web build fails on |
-| `packages/configuration/eslint/`                             | The `no-restricted-syntax` lists, each with its fixture suite  |
-| `scripts/src/oxlint/`                                        | The custom oxlint plugins                                      |
-| `scripts/src/sweeps/`                                        | Whole-repo scans for what one file's syntax cannot decide      |
+| File                                                         | Role                                                                       |
+| :----------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `.agents/skills/invariants/SKILL.md`                         | The ladder as the rule a session follows                                   |
+| `.agents/skills/oxlint/references/custom-js-plugins.md`      | When a lint rule earns a custom plugin, and the roster gate                |
+| `.agents/skills/sweeps/references/handing-to-an-enforcer.md` | Turning a repeated finding into an enforcer                                |
+| `apps/web/configuration/vite.ts`                             | The build rung: the bundler diagnostics the web build fails on             |
+| `scripts/src/services/oxlint/selectorBan/syntaxes/`          | The `selector-ban/no-restricted-syntax` lists, each with its fixture suite |
+| `scripts/src/oxlint/`                                        | The custom oxlint plugins                                                  |
+| `scripts/src/sweeps/`                                        | Whole-repo scans for what one file's syntax cannot decide                  |

@@ -26,7 +26,7 @@ const items = computed(() => (isRequired ? (resources?.items ?? []) : prependNon
 const isMissing = computed(() =>
   Boolean(
     resources &&
-    // eslint-disable-next-line no-restricted-syntax -- a server cursor, empty when no page follows
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a server cursor, empty when no page follows
     resources.nextCursor === "" &&
     !isUnpublished &&
     modelValue.value &&

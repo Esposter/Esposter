@@ -23,6 +23,6 @@ The retirement runs in four phases. Each phase moves one kind of rule, and only 
 
 ## Out of scope
 
-- `typescript/naming-convention`, which stays parked in `packages/configuration/eslint/typescriptRules.js` until oxlint ships it. The parked block moves to `oxlint.config.ts` as a comment with that trigger.
+- `typescript/naming-convention`, which stays parked as a comment in `oxlint.config.ts` until oxlint ships it, the comment naming that trigger.
 - The type-aware lint backend. `tsrs-lint` is unchanged.
 - New bans. Each rule moves as it stands, and a rule that changes meaning in the move is a finding for its own change.

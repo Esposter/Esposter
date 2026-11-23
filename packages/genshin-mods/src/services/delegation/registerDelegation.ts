@@ -29,7 +29,7 @@ const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => ne
 export const registerDelegation = (on: On): void => {
   // An agent launch on any model but haiku is refused before it counts. A nudge rides on the call's own result as
   // Context the model reads after it, and never blocks the call
-  // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
   on("tool.call", { tool: [...LOOKUP_TOOLS, ...RESET_TOOLS, ...SHELL_TOOLS] }, async ($, e, next) => {
     const refusal = e.tool === AGENT_TOOL ? getLaunchRefusal(e) : undefined;
     if (refusal !== undefined) return { deny: refusal };

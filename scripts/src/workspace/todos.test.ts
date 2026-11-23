@@ -16,7 +16,7 @@ describe("todos", () => {
 
       expect(
         readTodoMarkers()
-          // eslint-disable-next-line no-restricted-syntax -- a todo's url, empty when unfiled
+          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a todo's url, empty when unfiled
           .filter(({ isUnfiled, url }) => !isUnfiled && url === "")
           .map(({ line, path }) => `${path}:${line}`),
       ).toStrictEqual([]);

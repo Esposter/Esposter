@@ -20,7 +20,7 @@ const readFreeText = (element: Element, index: number, usedIds: Set<string>): Re
   if (contents.trim() === "") return err(`Free text ${index + 1} has no contents`);
 
   const name = element.getAttribute("name") ?? "";
-  // eslint-disable-next-line no-restricted-syntax -- an XFDF field name, empty when the field has none
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- an XFDF field name, empty when the field has none
   const id = name === "" || usedIds.has(name) ? v7() : name;
   usedIds.add(id);
 

@@ -13,5 +13,5 @@ export const checkIsExpeditionPlaceOpen = (
 ): boolean =>
   adventureRank >= place.rankLevel &&
   (place.statuePointId === 0 || unlockedStatuePointIds.has(place.statuePointId)) &&
-  // eslint-disable-next-line no-restricted-syntax -- a quest id from the game data, empty when none is required
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a quest id from the game data, empty when none is required
   (place.questId === "" || completedQuestIds.has(place.questId));

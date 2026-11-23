@@ -27,8 +27,8 @@ ordinary `.then` someone has not got round to replacing.
 ## The ban in full
 
 `try` anywhere (no `try`/`catch`, no `try`/`finally`) and `.then()`/`.catch()`/`.finally()` on a promise are both
-`no-restricted-syntax` errors — the rules live in `packages/configuration/eslint/typescriptRules.js` and
-`restrictedSyntaxes.js`. Use `getResult`/`getResultAsync` + chain methods; for cleanup use
+`no-restricted-syntax` errors — the rules live in `scripts/src/services/oxlint/selectorBan/syntaxes/scriptRestrictedSyntaxes.ts` and
+`scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSyntaxes.ts`. Use `getResult`/`getResultAsync` + chain methods; for cleanup use
 `withFinalizer`/`withFinalizerAsync`.
 
 Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.

@@ -38,7 +38,7 @@ await runCommand(
         ];
       });
       const waiting = readFleetEntries()
-        // eslint-disable-next-line no-restricted-syntax -- a blocker the fleet record holds, empty when none
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a blocker the fleet record holds, empty when none
         .entries.filter(({ waiting: blocker }) => blocker !== "")
         .map(({ id, waiting: blocker }) => [id, blocker]);
       console.info("machines");

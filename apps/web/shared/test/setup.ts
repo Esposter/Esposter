@@ -101,7 +101,7 @@ vi.mock("nuxt/server", async (importOriginal) => ({
 // (`checkIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
 // Plain happy-dom files (a `window` but no Nuxt app) skip it via the env's own marker — mounting there would crash.
 let isNuxtRuntimeWarm = false;
-// eslint-disable-next-line no-restricted-syntax -- a genuine top-level fork: checkIsServer() guards the read, and the marker is set only on the happy-dom environment, so the read is the environment question itself
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- a genuine top-level fork: checkIsServer() guards the read, and the marker is set only on the happy-dom environment, so the read is the environment question itself
 if (!checkIsServer() && "__NUXT_VITEST_ENVIRONMENT__" in window && window.__NUXT_VITEST_ENVIRONMENT__)
   beforeEach(async () => {
     const [{ mountSuspended }, { useNuxtApp, useRouter }, { setActivePinia }, { defineComponent, h }] =

@@ -8,7 +8,7 @@ import { mergeColumnTopics } from "@esposter/db-schema";
 export const publishTopics = async <TId>(topicNamespace: TopicNamespace<TId>, topics: ColumnTopic[]): Promise<void> => {
   await Promise.all(
     mergeColumnTopics(topics).map(({ columns, topic }) =>
-      // eslint-disable-next-line no-restricted-syntax -- a topic is named to its Topic object, which takes publishes; no object's invoke answers one
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a topic is named to its Topic object, which takes publishes; no object's invoke answers one
       topicNamespace.get(topicNamespace.idFromName(topic)).publish(columns),
     ),
   );

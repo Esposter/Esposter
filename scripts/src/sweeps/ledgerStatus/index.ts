@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax -- a ledger name argument, empty when unset */
+/* oxlint-disable selector-ban/no-restricted-syntax -- a ledger name argument, empty when unset */
 import { UnitState } from "#src/models/sweeps/ledgerCoverage/UnitState";
 import { formatUnitCoverage } from "#src/services/sweeps/ledgerCoverage/formatUnitCoverage";
 import { getUnmatchedLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getUnmatchedLedgerEvents";

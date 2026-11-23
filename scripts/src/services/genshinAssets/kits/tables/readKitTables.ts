@@ -49,7 +49,7 @@ export const readKitTables = async (characterIds: readonly number[]): Promise<Ma
           Number(proudSkillGroupId),
           (levels[0]?.paramDescTextIds ?? []).flatMap((textId) => {
             const [label, format] = (textMap.get(String(textId)) ?? "").split("|");
-            // eslint-disable-next-line no-restricted-syntax -- a table label the wiki holds, empty when absent
+            // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a table label the wiki holds, empty when absent
             if (label === undefined || label === "" || format === undefined) return [];
             return [
               {

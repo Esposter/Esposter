@@ -52,7 +52,7 @@ const buildFileDirective = ({ directives, prefix, rule }: NextLineRule): string 
   const reasons = new Set(
     directives
       .map(({ reason }) => reason)
-      // eslint-disable-next-line no-restricted-syntax -- a directive reason, empty when none
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a directive reason, empty when none
       .filter((reason) => reason !== "" && !BACK_REFERENCE_REASON_REGEX.test(reason)),
   );
   const directive = `/* ${prefix}-disable ${rule}`;

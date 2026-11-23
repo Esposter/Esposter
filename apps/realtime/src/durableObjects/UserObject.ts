@@ -422,7 +422,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
 
   // A topic is named to its Topic object, which takes subscriptions, not invocations, so no object's invoke answers it
   #getTopicObject(topic: Topic) {
-    // eslint-disable-next-line no-restricted-syntax -- the one place a Topic object is named in this object; its subscriptions are not invocations
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the one place a Topic object is named in this object; its subscriptions are not invocations
     return this.env.TOPIC.get(this.env.TOPIC.idFromName(topic));
   }
 

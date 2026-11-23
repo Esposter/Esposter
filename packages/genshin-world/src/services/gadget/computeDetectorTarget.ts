@@ -14,7 +14,7 @@ export const computeDetectorTarget = (
   openedChestIds: ReadonlySet<string>,
   position: GroundPoint,
 ): ChestPlace | undefined =>
-  // eslint-disable-next-line no-restricted-syntax -- a region id from the game data, never typed
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a region id from the game data, never typed
   gadget.kind === GadgetKind.Detector && gadget.region !== ""
     ? findTreasureCompassTarget(regionChestPlaces, openedChestIds, position)
     : undefined;

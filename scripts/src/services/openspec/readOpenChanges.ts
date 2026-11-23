@@ -19,7 +19,7 @@ const readScenarioTitles = (changeDirectory: string): string[] => {
       .filter((path) => path.endsWith(OPENSPEC_SPEC_FILE))
       .flatMap((path) => readFileSync(join(specsDirectory, path), "utf8").split(/\r?\n/u))
       .map((line) => getScenarioTitle(line))
-      // eslint-disable-next-line no-restricted-syntax -- a change title from its folder, empty between separators
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a change title from its folder, empty between separators
       .filter((title) => title !== "")
   );
 };

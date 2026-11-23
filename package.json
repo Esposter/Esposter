@@ -36,6 +36,7 @@
   "type": "module",
   "imports": {
     "#oxlint/*": "./oxlint/*.ts",
+    "#scripts/*": "./scripts/src/*.ts",
     "#vite/*": "./vite/*.ts"
   },
   "scripts": {

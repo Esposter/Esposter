@@ -1,6 +1,6 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/desmos/index.d.ts
 /* oxlint-disable typescript/method-signature-style -- third-party declaration file with overloaded method signatures */
-/* eslint-disable no-restricted-syntax -- Desmos names its own types and members, so the declaration keeps those names even where one is a second name for a type */
+/* oxlint-disable selector-ban/no-restricted-syntax -- Desmos names its own types and members, so the declaration keeps those names even where one is a second name for a type */
 declare namespace Desmos {
   interface BasicCalculator extends Pick<
     Calculator,

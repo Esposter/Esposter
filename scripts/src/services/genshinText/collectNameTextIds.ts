@@ -13,7 +13,7 @@ export const collectNameTextIds = (value: unknown, textIds: Set<string>): void =
       collectNameTextIds(child, textIds);
       continue;
     }
-    // eslint-disable-next-line no-restricted-syntax -- a text id, empty when none
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a text id, empty when none
     for (const textId of [child].flat()) if (textId !== "") textIds.add(String(textId));
   }
 };

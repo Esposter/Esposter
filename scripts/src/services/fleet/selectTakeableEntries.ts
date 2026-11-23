@@ -28,7 +28,7 @@ export const selectTakeableEntries = (
       ({ area, id, needs, touches, waiting }) =>
         needs.every((need) => profile.capabilities.includes(need)) &&
         isLent(area) &&
-        // eslint-disable-next-line no-restricted-syntax -- a waiting reason the fleet holds, empty when none
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a waiting reason the fleet holds, empty when none
         waiting === "" &&
         !liveClaimIds.has(id) &&
         !checkTouchesOverlap(touches, liveTouches),

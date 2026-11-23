@@ -26,7 +26,7 @@ const emit = defineEmits<{ advance: []; choose: [id: string] }>();
 // The line split by character, so a pair of code units is never cut
 const characters = computed(() => [...line]);
 // Whole with no reply to choose, the game marks the line as one the reader goes on from
-// eslint-disable-next-line no-restricted-syntax -- a line of game text, never typed
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- a line of game text, never typed
 const isWhole = computed(() => line !== "" && choices.length === 0 && revealedLength >= characters.value.length);
 // The line split where it is written out to
 const lineParts = computed(() => ({

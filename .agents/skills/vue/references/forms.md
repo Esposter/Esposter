@@ -39,6 +39,6 @@ the row itself: the draft follows the row until the user edits it, and a rolled-
 
 ## Never normalize in Vue — trust the server schema
 
-**No trimming in Vue** — lint-enforced (`restrictedTrimSyntaxes.js`). Let raw input flow through `v-model="name"`; trimming as the user types swallows spaces mid-word, and the tRPC input schema normalizes what is sent. Parsing a string (CSV, a pasted link) is a service's job, where `normalizeString` is the default trim.
+**No trimming in Vue** — lint-enforced (`restrictedTrimSyntaxes.ts`). Let raw input flow through `v-model="name"`; trimming as the user types swallows spaces mid-word, and the tRPC input schema normalizes what is sent. Parsing a string (CSV, a pasted link) is a service's job, where `normalizeString` is the default trim.
 
 Validity checks `safeParse` the shared schema (`:disabled="!nameSchema.safeParse(name).success"`); dirty-state comparisons parse **both** sides (`topicSchema.safeParse(editedTopic).data !== topicSchema.safeParse(storedTopic).data`), since a stored value the schema would normalize otherwise reads as dirty the moment the form opens; submit handlers pass raw values with no guards, emptiness checks or local normalization. The only client-side validation is that disabled state plus the library's field rules (`UiRules`) for inline errors.

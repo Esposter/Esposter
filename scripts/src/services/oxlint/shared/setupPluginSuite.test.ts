@@ -21,8 +21,6 @@ interface SetupOxlintPluginSuiteOptions {
   // The extension fixtures are written with, for a rule whose subject only exists in one file type
   extension?: string;
   fixtures: OxlintFixture[];
-  // The rule's options after its severity, for a rule configured by one list that every fixture is linted against
-  options?: unknown[];
   // The plugin entrypoint's file name without its extension, under `scripts/src/oxlint/`
   plugin: string;
   rules: string[];
@@ -47,7 +45,6 @@ const TEMPORARY_DIRECTORY_PREFIX = "oxlint-plugin-";
 export const setupPluginSuite = ({
   extension = ".ts",
   fixtures,
-  options = [],
   plugin,
   rules,
   wrapSource = (source) => source,
@@ -68,7 +65,7 @@ export const setupPluginSuite = ({
         categories: {},
         jsPlugins: [join(PLUGINS_DIRECTORY, `${plugin}.ts`).replaceAll("\\", "/")],
         plugins: [],
-        rules: Object.fromEntries(rules.map((rule) => [rule, ["error", ...options]])),
+        rules: Object.fromEntries(rules.map((rule) => [rule, "error"])),
       }),
     );
 

@@ -29,7 +29,7 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
   ...(await importOriginal()),
   existsSync: vi.fn<() => boolean>(() => true),
   readdirSync: vi.fn<() => Dirent[]>(() => [
-    /* eslint-disable no-restricted-syntax -- the entry is a `Dirent`, whose `is*` methods are node's own names, read as the fs API reads them */
+    /* oxlint-disable selector-ban/no-restricted-syntax -- the entry is a `Dirent`, whose `is*` methods are node's own names, read as the fs API reads them */
     {
       isBlockDevice: () => false,
       isCharacterDevice: () => false,
@@ -41,7 +41,7 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
       name: "352.json",
       parentPath: QUEST_BINARY_DIRECTORY,
     } satisfies Dirent,
-    /* eslint-enable no-restricted-syntax */
+    /* oxlint-enable selector-ban/no-restricted-syntax */
   ]) as unknown as typeof readdirSync,
   readFileSync: vi.fn<() => Buffer>(() => Buffer.from(CONTENT)) as unknown as typeof readFileSync,
 }));

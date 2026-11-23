@@ -25,7 +25,7 @@ const { data, start, state, stop } = useMediaRecorder({
     if (data.value.length === 0) return;
 
     const blob = new Blob(data.value, { type: MimeType.AudioWebm });
-    // eslint-disable-next-line no-restricted-syntax -- a filename, not text a reader sees
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a filename, not text a reader sees
     const file = new File([blob], `Audio Message - ${formatDate(new Date(), AUDIO_MESSAGE_DATE_FORMAT)}.webm`, {
       type: MimeType.AudioWebm,
     });

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax -- each member is the standard format token itself, whose casing is its meaning (`MM` a month, `mm` a minute) */
+/* oxlint-disable selector-ban/no-restricted-syntax -- each member is the standard format token itself, whose casing is its meaning (`MM` a month, `mm` a minute) */
 // The subset of dayjs's format tokens this repo's format strings are written in. The order they are declared in
 // Is free: the tokenizer orders them longest first itself (DATE_TOKEN_REGEX)
 export const DateToken = {

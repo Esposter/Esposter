@@ -26,7 +26,7 @@ export const readTmxAttributes = <Table extends Record<string, AttributeKind>>(
     const isNumber = kind === AttributeKind.Number || kind === AttributeKind.RequiredNumber;
     const isRequired = kind === AttributeKind.RequiredNumber || kind === AttributeKind.RequiredString;
     const text = attributes[name];
-    // eslint-disable-next-line no-restricted-syntax -- a TMX attribute as the file holds it, empty when absent
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a TMX attribute as the file holds it, empty when absent
     if (text === undefined || (isNumber && text === "")) {
       if (isRequired) values[name] = isNumber ? 0 : "";
     } else if (isNumber) {

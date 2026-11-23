@@ -5,6 +5,6 @@ export const toWordSet = (text: string): Set<string> =>
   new Set(
     toTitleWords(text)
       .split(" ")
-      // eslint-disable-next-line no-restricted-syntax -- a word of a wiki list, empty between separators
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a word of a wiki list, empty between separators
       .filter((word) => word !== ""),
   );

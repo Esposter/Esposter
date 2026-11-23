@@ -21,7 +21,7 @@ export const toTipRecords = (
             [
               id,
               {
-                // eslint-disable-next-line no-restricted-syntax -- a tip parameter, empty when none
+                // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a tip parameter, empty when none
                 paramList: triggerConfig.paramList.filter((param) => param !== ""),
                 triggerType: triggerConfig.triggerType,
               },

@@ -7,7 +7,7 @@ Read when choosing between `undefined` and `null`, declaring an absent property,
 **App-owned code — prefer absence over an explicit `undefined`:**
 
 - Optional interface fields use `?:`, not `| null`. `exactOptionalPropertyTypes` is on everywhere, so `?:` alone means the key is left out when absent and takes no explicit `undefined`.
-- **A property that may be absent is optional, never `field: T | undefined`** — `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js` (covers interface/type-literal members, class fields, and `defineProps` interfaces in `.vue`). It is `field?: T` when every writer leaves the key out, and **`field?: T | undefined` when a value may hand it `undefined`**:
+- **A property that may be absent is optional, never `field: T | undefined`** — `selector-ban/no-restricted-syntax` in `scripts/src/services/oxlint/selectorBan/syntaxes/scriptRestrictedSyntaxes.ts` (covers interface/type-literal members, class fields, and `defineProps` interfaces in `.vue`). It is `field?: T` when every writer leaves the key out, and **`field?: T | undefined` when a value may hand it `undefined`**:
   - **a `.vue` component's props, always** — Vue reads a prop bound to `undefined` as absent, and binding `undefined` is how a template leaves a prop out (`:is-dense="dense || undefined"`);
   - **a type a tRPC or Zod input parses into** — `.optional()` parses to `T | undefined`, and superjson carries an explicit `undefined` across the wire;
   - any type a caller builds as `{ key: maybeValue }`.

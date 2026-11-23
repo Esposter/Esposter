@@ -25,7 +25,7 @@ export const collectSurveyFileUrls = (document: SurveyDocument): string[] => {
   const urls = [logo, backgroundImage, ...collectNodeFileUrls(document.content)];
   return (
     [...new Set(urls)]
-      // eslint-disable-next-line no-restricted-syntax -- a file URL the upload issued, never typed
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a file URL the upload issued, never typed
       .filter((url) => url !== "")
       .toSorted((firstUrl, secondUrl) => Number(firstUrl > secondUrl) - Number(firstUrl < secondUrl))
   );

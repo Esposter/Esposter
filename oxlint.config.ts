@@ -404,6 +404,11 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     // Reads a function returning a promise as awaited, so the core copy is off
     "require-await": "off",
     "routing/no-route-literal": "error",
+    // Each list under `scripts/src/services/oxlint/selectorBan/syntaxes/` states the paths it runs over, so the rule needs
+    // No options and no override. The naming convention typescript-eslint once enforced here stays parked until oxlint
+    // Ships `naming-convention`: variables of a primitive or array type in camelCase, PascalCase or UPPER_CASE, with a
+    // Leading underscore allowed
+    "selector-ban/no-restricted-syntax": "error",
     "sequential-loops/no-async-self-call": "error",
     "sequential-loops/require-loop-shape": "error",
     "setup-scope/no-detached-mutation": "error",

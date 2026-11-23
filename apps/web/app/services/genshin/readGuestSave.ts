@@ -8,7 +8,7 @@ import { getResult } from "@esposter/shared";
 // Player's account save still loads
 export const readGuestSave = (): GenshinSave | undefined => {
   const guestJson = getResult(
-    // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted`
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted`
     () => window.localStorage.getItem(genshinLocalSave.key),
   )
     .orTee(console.error)

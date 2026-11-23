@@ -209,7 +209,7 @@ export const useGenshinSave = async () => {
         // Logged and read as no journal, so the load still lands
         const journal = parseGenshinJournal(
           getResult(
-            // eslint-disable-next-line no-restricted-syntax -- the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy
+            // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy
             () => window.localStorage.getItem(LocalStorageKey.GenshinPending(accountUserId)),
           )
             .orTee(console.error)

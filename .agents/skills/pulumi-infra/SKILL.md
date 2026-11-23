@@ -38,7 +38,7 @@ The package's shape is `references/package-shape.md`. The stack holds only what 
 
 ## Provider Imports (namespace, not named)
 
-Provider packages are imported as a namespace (`import * as cloudflare from "@pulumi/cloudflare"`), and a named import off `@pulumi/*` is a `no-restricted-syntax` error (`packages/configuration/eslint/restrictedImportSyntaxes.js`).
+Provider packages are imported as a namespace (`import * as cloudflare from "@pulumi/cloudflare"`), and a named import off `@pulumi/*` is a `no-restricted-syntax` error (`scripts/src/services/oxlint/selectorBan/syntaxes/restrictedImportSyntaxes.ts`).
 
 The one exception to named imports from libraries, and a review suggestion to switch is closed: why is `references/provider-quirks.md`.
 

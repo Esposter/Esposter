@@ -5,7 +5,7 @@ const webhookDialogStore = useWebhookDialogStore();
 const { issuedUrl } = storeToRefs(webhookDialogStore);
 // Open while a URL is held, and closing it lets the URL go, since the server never answers it again
 const isOpen = computed({
-  // eslint-disable-next-line no-restricted-syntax -- a URL the server issued, never typed
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a URL the server issued, never typed
   get: () => issuedUrl.value !== "",
   set: (newIsOpen) => {
     if (!newIsOpen) issuedUrl.value = "";

@@ -9,7 +9,7 @@ export const getGameLanguageCharacterLinesLoaderMapSource = (): string => {
     (await import("#src/generated/characterLines/${language}.json", { with: { type: "json" } })).default,
 `,
   );
-  return `/* eslint-disable no-restricted-syntax -- each language is its own chunk: the map is the entry every spinner read loads, so the other fourteen languages' lines, hundreds of kilobytes each, stay out of the eager graph */
+  return `/* oxlint-disable selector-ban/no-restricted-syntax -- each language is its own chunk: the map is the entry every spinner read loads, so the other fourteen languages' lines, hundreds of kilobytes each, stay out of the eager graph */
 import type { VoiceLine } from "#src/models/VoiceLine";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax -- a generated id, which a test asserts is set; a rendered output line, generated rather than typed */
+/* oxlint-disable selector-ban/no-restricted-syntax -- a generated id, which a test asserts is set; a rendered output line, generated rather than typed */
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";

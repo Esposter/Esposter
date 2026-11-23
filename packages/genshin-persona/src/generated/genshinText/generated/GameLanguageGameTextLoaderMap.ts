@@ -1,5 +1,5 @@
 // Copied from `genshin-text` by `pnpm -C scripts genshin:text write`, never edited by hand
-/* eslint-disable no-restricted-syntax -- every language but English is its own chunk: the map is the entry every reader loads, so its dynamic imports keep the fourteen languages a page does not show out of the eager graph */
+/* oxlint-disable selector-ban/no-restricted-syntax -- every language but English is its own chunk: the map is the entry every reader loads, so its dynamic imports keep the fourteen languages a page does not show out of the eager graph */
 import type { GameText } from "#src/generated/genshinText/models/GameText";
 
 import English from "#src/generated/genshinText/generated/text/English.json" with { type: "json" };

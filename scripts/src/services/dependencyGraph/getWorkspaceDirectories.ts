@@ -4,7 +4,7 @@ import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 // In the same order however the workspace file happens to list its globs.
 export const getWorkspaceDirectories = (workspacePackages: WorkspacePackage[]): string[] => [
   ...new Set(
-    // eslint-disable-next-line no-restricted-syntax -- a workspace directory from the manifest, empty at the root
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a workspace directory from the manifest, empty at the root
     workspacePackages.flatMap(({ workspaceDirectory }) => (workspaceDirectory === "" ? [] : [workspaceDirectory])),
   ),
 ];

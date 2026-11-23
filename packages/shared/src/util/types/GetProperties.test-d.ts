@@ -58,7 +58,7 @@ describe("getProperties type", () => {
     expectTypeOf<GetProperties<symbol>>().toEqualTypeOf<
       | {
           path: "description";
-          // eslint-disable-next-line no-restricted-syntax -- mirrors GetPrimitiveProps' emitted shape exactly
+          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- mirrors GetPrimitiveProps' emitted shape exactly
           value: string | undefined;
         }
       | { path: "description.length"; value: number }

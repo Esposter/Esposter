@@ -5,6 +5,6 @@ import { serializeBlocks } from "#shared/services/resource/note/serialize/serial
 // The Markdown file a note exports as, which deserializeNoteMarkdown reads back to the same document
 export const serializeNoteMarkdown = (doc: JSONContent): string => {
   const markdown = serializeBlocks(doc.content ?? []);
-  // eslint-disable-next-line no-restricted-syntax -- generated markdown, never typed
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- generated markdown, never typed
   return markdown === "" ? "" : `${markdown}\n`;
 };

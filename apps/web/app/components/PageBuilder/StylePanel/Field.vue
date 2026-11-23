@@ -37,7 +37,7 @@ const unitItems = lengthUnits.map((lengthUnit) => ({ title: lengthUnit, value: l
 // Text field holds until focus leaves it
 const isEditingText = ref(false);
 // An empty number is an empty draft, which saves as no declaration, so clearing a length restores what it inherits
-// eslint-disable-next-line no-restricted-syntax -- a number input's value is never whitespace
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- a number input's value is never whitespace
 const getDraft = (amount: string, lengthUnit: string) => (amount === "" ? "" : `${amount}${lengthUnit}`);
 const setAmount = (amount: string) => {
   draft.value = getDraft(amount, unit.value);

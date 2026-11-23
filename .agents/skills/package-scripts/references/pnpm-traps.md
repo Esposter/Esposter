@@ -31,7 +31,7 @@ On the Windows PC, node and pnpm come from vite-plus's `bin` folder on the user 
 ## A script spawns `pnpm` as the file `pnpm run` names, never through a shell
 
 The `pnpm` on a Windows PATH is a `.cmd` shim only a shell resolves, and an args array under `shell` is the pair
-Node deprecates (DEP0190) — `no-restricted-syntax` in `packages/configuration/eslint/restrictedSyntaxes.js`
+Node deprecates (DEP0190) — `no-restricted-syntax` in `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSyntaxes.ts`
 rejects it. `pnpm run` puts the executable it is in `npm_execpath`, so `scripts` spawns `PNPM_FILE` with
 `PNPM_ARGS` ahead of its own (`scripts/src/services/shared/constants.ts`) and every argument reaches pnpm
 verbatim, with no quoting for a shell that is not there. A whole command line under `shell` — `crossOS`

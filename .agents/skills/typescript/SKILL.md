@@ -31,10 +31,10 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - `strict` mode, with oxlint's type-aware rules on (`typeAware` in `oxlint.config.ts`); the banned forms (`any`, `!`, `==`) are the lint rules' own. For `!`, a guard clause or optional chaining beats a cast, and a field with no initializer takes `declare` (`references/class-fields.md`).
 - `Omit` → `Except` from `type-fest`, enforced by oxlint `typescript/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
-- **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
+- **`private` → ECMAScript `#`** (`selector-ban/no-restricted-syntax` in `scripts/src/services/oxlint/selectorBan/syntaxes/scriptRestrictedSyntaxes.ts`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
 - **Iteration is `for...of`** (`references/loops.md`); `unicorn/no-array-for-each` and `vue/no-restricted-syntax` enforce it.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
-- **A type alias is never a second name for a type** — the type is written at each use and the meaning a name carried moves to the type's owner; `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js` enforces it. A name for a type that has no other name — a `typeof` query (`typeof bansInMessage.$inferSelect`), an indexed access, a generic instantiation — is the type's one name, not a second one, so it stays.
+- **A type alias is never a second name for a type** — the type is written at each use and the meaning a name carried moves to the type's owner; `selector-ban/no-restricted-syntax` in `scripts/src/services/oxlint/selectorBan/syntaxes/scriptRestrictedSyntaxes.ts` enforces it. A name for a type that has no other name — a `typeof` query (`typeof bansInMessage.$inferSelect`), an indexed access, a generic instantiation — is the type's one name, not a second one, so it stays.
 - **The newest platform API, always, and the form it replaces is banned** — every `unicorn/prefer-*` rule not turned off in `oxlint.config.ts` is on repo-wide for that reason, so a legacy form fails lint rather than review; one no rule decides is a finding, and a new replacement earns a `no-restricted-syntax` entry the first time it is re-found.
 - **Array methods are non-mutating** — write `toSorted`/`toReversed`/`toSpliced` and assign the result back; the mutating forms are lint errors (`references/collections.md`).
 - **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared` (`references/collections.md`).
@@ -47,7 +47,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **Interpolation coerces** — `${x}`, never `${x.toString()}`; `no-restricted-syntax` enforces it (a radix `toString(16)` stays). `String(x)` inside a template is only for the types `restrict-template-expressions` rejects (`unknown`, `symbol`).
 - **Regex** — a literal for a static pattern, `new RegExp` only when it interpolates, and the `u` flag always (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule ("Constants").
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
-- **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
+- **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.ts`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
 - **Never `Object.values(SomeSet)` inline**, except a citty command's enum option (`references/value-sets.md`), and never abbreviate a member (`Configuration`, not `Config`).
 - **A closed set is an `as const` object with a type of its name** — `export const ThemeMode = { Dark: "dark" } as const;` and `export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];`, a member in a type position is `typeof ThemeMode.Dark`, and `erasableSyntaxOnly` refuses an `enum` (`references/value-sets.md`).
@@ -57,10 +57,10 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 ## Functions
 
 - **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function — except a helper that takes a mod's `$` and is imported from a sibling file, which is a `function` declaration (the `claude-mods` skill).
-- **A bare function reference handed to an array method is wrapped** — `no-restricted-syntax` in `packages/configuration/eslint/restrictedSyntaxes.js` enforces it; the why, the hooks and listeners, and the `Number`/`String`/`Boolean` exception are `references/callbacks.md`.
+- **A bare function reference handed to an array method is wrapped** — `no-restricted-syntax` in `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSyntaxes.ts` enforces it; the why, the hooks and listeners, and the `Number`/`String`/`Boolean` exception are `references/callbacks.md`.
 - **Prefer inferred return types** — annotate only a narrower contract or a public API boundary (`references/function-signatures.md`).
 - **Syntax is never extracted into a helper** — the `over-engineering` skill (`references/syntax-extraction.md`).
-- **Use `RegExp.escape(value)` when embedding a string in a regular expression** — do not hand-roll a local `escapeRegExp` helper; ESLint enforces the named-helper ban in `restrictedSyntaxes`.
+- **Use `RegExp.escape(value)` when embedding a string in a regular expression** — do not hand-roll a local `escapeRegExp` helper; `selector-ban/no-restricted-syntax` enforces the named-helper ban in `restrictedSyntaxes.ts`.
 
 ## Promise Style
 

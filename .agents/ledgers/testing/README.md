@@ -18,10 +18,10 @@ Enforced rather than swept, so not in this table:
 - constants inside the `describe`: `scripts/src/workspace/constantScope.test.ts`
 - exact assertions: `vitest/prefer-strict-equal`, in `oxlint.config.ts`
 - a test file declares a suite, so a helper ends with `describe.todo`: `testing/require-suite`, in `scripts/src/oxlint/testing.ts`
-- a test's timeout is a named constant, never a literal: `packages/configuration/eslint/restrictedTestSyntaxes.js`
+- a test's timeout is a named constant, never a literal: `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedTestSyntaxes.ts`
 
 A bare zero-argument `vi.fn` is not in this table because
-`packages/configuration/eslint/restrictedTestSyntaxes.js` fails on the line that writes it.
+`scripts/src/services/oxlint/selectorBan/syntaxes/restrictedTestSyntaxes.ts` fails on the line that writes it.
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. The environment row is the one exception, and only because
