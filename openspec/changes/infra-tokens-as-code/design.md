@@ -43,7 +43,7 @@ flowchart TD
 
 **Names.** Tokens follow `apps/infra/docs/cloudflare/naming-conventions.md`: `<env>-tok-esposter-<responsibility>` for an environment's token and `tok-esposter-<responsibility>` for an account's. The bootstrap token keeps its name `bootstrap`, which the convention does not apply to, because it is the one hand-made token and nothing renames it.
 
-**Outputs over copies.** Each value a person or a workflow needs is a stack output in `apps/infra/src/cloudflare/outputs/`, and the write to ESC is one `pulumi env set` per key, which is why no script is added for it.
+**Outputs over copies.** Each value a person or a workflow needs is a stack output in "apps/infra/src/cloudflare/outputs/", and the write to ESC is one `pulumi env set` per key, which is why no script is added for it.
 
 ## Inventory and verdicts
 
@@ -61,17 +61,17 @@ Read with the bootstrap: the account holds `bootstrap`, `tok-esposter-infra`, `t
 | ESC `cloudflareBootstrapToken`                                                                     | ESC                                                                         | deleted: it has expired                                                                                                                |
 | ESC `bootstrapToken`                                                                               | ESC, top level                                                              | kept, and wired to `pulumiConfig.esposter-infra:CLOUDFLARE_BOOTSTRAP_API_TOKEN`                                                        |
 | account token `bootstrap`                                                                          | Cloudflare                                                                  | kept; never rotated or deleted, and renewed by the owner when it expires                                                               |
-| local copies of R2 and Cloudflare values in `apps/web/.env` and `apps/web/.env.production`         | the developer's machine, not tracked                                        | refreshed from ESC by hand after the apply                                                                                             |
+| local copies of R2 and Cloudflare values in "apps/web/.env" and "apps/web/.env.production"         | the developer's machine, not tracked                                        | refreshed from ESC by hand after the apply                                                                                             |
 
 ## Key files
 
 | File                                                                     | Role                                                                                         |
 | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `apps/infra/src/cloudflare/providers/tokenAdminProvider.ts`              | the bootstrap provider, used by the token resources only                                     |
-| `apps/infra/src/cloudflare/providers/cloudflareProvider.ts`              | the explicit provider for every Cloudflare resource, its `apiToken` the infra token's output |
-| `apps/infra/src/cloudflare/resources/accountTokens/`                     | one `AccountToken` per consumer                                                              |
-| `apps/infra/src/cloudflare/services/getAccountTokenPermissionGroupId.ts` | the one helper: a permission group's id by name, shared by the token resources               |
-| `apps/infra/src/cloudflare/outputs/`                                     | the stack outputs the ESC writes read                                                        |
+| "apps/infra/src/cloudflare/providers/tokenAdminProvider.ts"              | the bootstrap provider, used by the token resources only                                     |
+| "apps/infra/src/cloudflare/providers/cloudflareProvider.ts"              | the explicit provider for every Cloudflare resource, its `apiToken` the infra token's output |
+| "apps/infra/src/cloudflare/resources/accountTokens/"                     | one `AccountToken` per consumer                                                              |
+| "apps/infra/src/cloudflare/services/getAccountTokenPermissionGroupId.ts" | the one helper: a permission group's id by name, shared by the token resources               |
+| "apps/infra/src/cloudflare/outputs/"                                     | the stack outputs the ESC writes read                                                        |
 | `apps/infra/src/github/secrets/cloudflareApiToken.ts`                    | the GitHub secret, now the deploy token's value                                              |
 | `apps/infra/src/cloudflareConfiguration.ts`                              | deleted: its provider namespace read `cloudflare:apiToken`                                   |
 | `scripts/src/services/realtimeKit/applyRealtimeKitActions.ts`            | the token branch is removed, the token is Pulumi's                                           |

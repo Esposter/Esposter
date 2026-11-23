@@ -8,6 +8,12 @@ description: Apply when modifying apps/infra, or when a Cloudflare token, an ESC
 ## Settled — do not re-propose
 
 - **Credentials.** Every secret, ESC key and Cloudflare token follows `.agents/skills/security/references/credentials.md`, including the rule that no secret sits in a stack file.
+- **One consumer's permissions split across tokens.** A consumer holds one token with the least permission groups its calls need, merged with another only where the calls match and neither consumer gains a group (`.agents/skills/security/references/credentials.md`, "Cloudflare tokens as code").
+- **One token for every consumer.** The hand-made account token did this, so a permission one consumer needed widened the others. Every consumer has its own token.
+- **Rotation or expiry machinery.** No scheduler re-rolls a token and no job checks expiry; a token's value changes only when its resource is replaced, as a runbook step.
+- **A wrapper over `cloudflare.AccountToken`.** Each token is a plain resource. The one helper allowed is the permission-group lookup two or more tokens share.
+- **An edit to a token's permissions in the Cloudflare dashboard.** A permission lives in code, where the preview shows it; a dashboard edit is invisible to review and the next apply reverts it.
+- **A script that copies stack outputs into ESC.** `pulumi env set` writes each output with one command.
 - **Widening `.github/workflows/Pulumi.yaml`'s `paths:` — a gate job over the workspace graph, a content hash at two refs, a `pnpm-workspace.yaml` entry — so a pull request previews on a workspace-package edit or a `@pulumi/*` bump.** Nothing applies to the estate off a pull request: `up` is local with a preview in front of it (`references/operations.md`), and the workflow previews only pushes to `ai/queue` (`openspec/specs/architecture/monorepo-tooling/design.md` → "What a CI proposal has to beat").
 - **Adding an observability resource — a telemetry store, an alert rule — as an unprompted best practice.** The estate runs with none by a cost decision: paid ingestion recurs with no consumer, so the suggestion is closed, not applied. What a condition worth noticing does instead (`console.error`, the dead-letter queue) and what would reopen the decision: `openspec/specs/infra/observability/design.md`.
 
