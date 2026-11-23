@@ -1,6 +1,6 @@
 import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
-import type { GameDataObjectRef } from "#src/models/gameData/GameDataObjectRef";
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
+import type { GameDataObjectRef } from "genshin-world";
 
 import {
   GAME_DATA_CACHE_CONTROL,

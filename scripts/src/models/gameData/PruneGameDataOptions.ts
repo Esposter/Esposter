@@ -1,6 +1,6 @@
 import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
-import type { GameDataObjectRef } from "#src/models/gameData/GameDataObjectRef";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataObjectRef } from "genshin-world";
 
 export interface PruneGameDataOptions extends DryRunOptions {
   bucketClient: R2BucketClient;

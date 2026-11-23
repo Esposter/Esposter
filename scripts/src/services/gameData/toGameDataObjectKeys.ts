@@ -1,4 +1,4 @@
-import type { GameDataObjectRef } from "#src/models/gameData/GameDataObjectRef";
+import type { GameDataObjectRef } from "genshin-world";
 
 import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 

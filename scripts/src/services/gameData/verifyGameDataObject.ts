@@ -1,4 +1,4 @@
-import type { GameDataObjectRef } from "#src/models/gameData/GameDataObjectRef";
+import type { GameDataObjectRef } from "genshin-world";
 
 import { FETCH_TIMEOUT_MS } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
