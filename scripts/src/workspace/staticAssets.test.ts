@@ -22,8 +22,9 @@ describe("staticAssets", () => {
   const ENGINE_LOADER_PATHSPECS = ["apps/web/app/services/dungeons/loader"];
   // A loader names a file in a static import, a dynamic import or an import.meta.glob.
   // A glob names its files in one string or in an array of them, so every string in its argument is read
+  // An array's strings are read whole, so a bracket inside one (a character class such as `[a-c]`) does not end the array
   const LOADED_SPECIFIER_REGEX =
-    /(?:\bfrom |\bimport\(\s*)"(?<specifier>[^"]+)"|\bimport\.meta\.glob\(\s*(?<argument>\[[^\]]*\]|"[^"]+")/gu;
+    /(?:\bfrom |\bimport\(\s*)"(?<specifier>[^"]+)"|\bimport\.meta\.glob\(\s*(?<argument>\[(?:[^"\]]|"[^"]*")*\]|"[^"]+")/gu;
   const QUOTED_REGEX = /"(?<quoted>[^"]+)"/gu;
   const HOSTED_MEDIA_REGEX = /\.(?:mp3|ogg|png|tmx|tsx|webp|woff2)(?:\?|$)|tilemap\.json(?:\?|$)/u;
 
@@ -78,6 +79,7 @@ describe("staticAssets", () => {
           'const frames = import.meta.glob("#src/assets/dungeons/scene/**/*.png", { eager: true });',
           'const sheet = await import("#src/assets/dungeons/sheet.webp");',
           'const tiles = import.meta.glob(["#src/assets/dungeons/tiles/*.png", "./local.ts"]);',
+          'const bracketed = import.meta.glob(["#src/assets/dungeons/tiles/[a-c]*.png"]);',
         ].join("\n"),
       ),
     ).toStrictEqual([
@@ -85,6 +87,7 @@ describe("staticAssets", () => {
       "#src/assets/dungeons/scene/**/*.png",
       "#src/assets/dungeons/sheet.webp",
       "#src/assets/dungeons/tiles/*.png",
+      "#src/assets/dungeons/tiles/[a-c]*.png",
     ]);
   });
 });
