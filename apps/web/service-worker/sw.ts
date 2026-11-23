@@ -5,6 +5,7 @@ import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
 import { HostedAssetOriginMap } from "@esposter/db-schema";
 import { omitUndefined } from "@esposter/shared";
+import { cacheNames } from "@vite-pwa/workbox-swkit/core";
 import { ExpirationPlugin } from "@vite-pwa/workbox-swkit/expiration";
 import { cleanupOutdatedCaches, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
 import { NavigationRoute, registerRoute } from "@vite-pwa/workbox-swkit/routing";
@@ -21,6 +22,14 @@ declare let self: { __WB_MANIFEST: PrecacheEntry[] } & ServiceWorkerGlobalScope;
 
 const MAX_CACHED_PAGES = 32;
 const NETWORK_TIMEOUT_SECONDS = 3;
+const PAGES_CACHE_NAME = "pages";
+// The caches this worker owns: its precache, the pages it keeps, and the hosted objects its preloader fills. Activation deletes
+// Every other cache of the origin, so a cache an earlier build or an earlier product left under another name is not kept
+const OWNED_CACHE_NAMES: ReadonlySet<string> = new Set([
+  cacheNames.precache,
+  HOSTED_ASSETS_CACHE_NAME,
+  PAGES_CACHE_NAME,
+]);
 
 cleanupOutdatedCaches();
 // oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
@@ -33,7 +42,7 @@ const expirationPlugin = omitUndefined({ cacheDidUpdate, cachedResponseWillBeUse
 registerRoute(
   new NavigationRoute(
     new NetworkFirst({
-      cacheName: "pages",
+      cacheName: PAGES_CACHE_NAME,
       networkTimeoutSeconds: NETWORK_TIMEOUT_SECONDS,
       plugins: [expirationPlugin],
     }),
@@ -58,9 +67,16 @@ self.addEventListener("message", (event) => {
 });
 
 // A worker takes the open pages at activation, so the page that installed it is controlled without a second navigation,
-// And its hosted requests reach the cache
+// And its hosted requests reach the cache. It deletes the caches it does not own first, so the one an earlier build kept
+// Under a name this worker no longer uses is not kept for good
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    (async () => {
+      const names = await caches.keys();
+      await Promise.all(names.filter((name) => !OWNED_CACHE_NAMES.has(name)).map((name) => caches.delete(name)));
+      await self.clients.claim();
+    })(),
+  );
 });
 
 // The push handler lives here, typed, rather than in an

@@ -187,6 +187,8 @@ Three options, and the one that keeps `scene.load.image(key, url)` and `TextureL
 
 The worker's route is declared next to the shared cache name, and it does not read any product's lock. The Cache Storage name is one constant for every product, `hosted-assets`, because a url already embeds the product's scope.
 
+The worker's activation deletes every Cache Storage entry it does not own: its precache, its `pages` cache and `hosted-assets`. The first activation after a build therefore removes the cache that build kept under any other name, which is how the `genshin-character-pack-files` cache the character packs used before this design is removed from a returning browser. No retired name is kept in code for it, and the cleanup is the standard one, so a later orphan is removed the same way.
+
 ### CORS and CSP
 
 - **Images.** Phaser's loader sets `crossOrigin` per file, and the loader's own default is `undefined`: `LoaderPlugin.js` gives "a file that doesn't have its own crossOrigin set" the loader's value, and the loader's value is `undefined` by default ("which is undefined by default" in the source). A texture from another origin needs `anonymous`, so the game sets `loader.setCORS('anonymous')` (`LoaderPlugin.js`, `setCORS`), and three's `TextureLoader` gets the same value on its image loader.
