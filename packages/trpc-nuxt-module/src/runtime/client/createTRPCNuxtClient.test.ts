@@ -14,7 +14,8 @@ describe(createTRPCNuxtClient, () => {
   const read = vi.fn<(input: number) => number>((input) => input);
   const release = Promise.withResolvers<void>();
   const router = t.router({
-    // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
+    // A
+    // oxlint-disable-next-line require-await -- subscription is an AsyncIterable, which only an async generator yields
     count: t.procedure.subscription(async function* () {
       yield 0;
     }),

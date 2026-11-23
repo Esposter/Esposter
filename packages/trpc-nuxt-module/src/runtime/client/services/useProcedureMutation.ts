@@ -18,9 +18,10 @@ export const useProcedureMutation = (
   // Assigned onto the `AsyncData` itself, which is also its promise, so the return stays awaitable
   return Object.assign(asyncData, {
     mutate: async (input: unknown) => {
-      // The call's own request, which it resolves with. The entry cancels an earlier call's fetch when a later call runs,
-      // And holds the later call's data, so reading the entry would hand the earlier call the later result. The request
-      // Takes the caller's signal and the timeout, never the entry's signal, which is the one a cancellation aborts
+      // The call's own request, which it resolves with. The entry cancels an earlier call's fetch when a later call
+      // Runs, And holds the later call's data, so reading the entry would hand the earlier call the later result. The
+      // Request Takes the caller's signal and the timeout, never the entry's signal, which is the one a cancellation
+      // Aborts
       const signals = [trpc?.signal, options.timeout === undefined ? undefined : AbortSignal.timeout(options.timeout)];
       const ownRequest = client.mutation(path, input, {
         ...trpc,
@@ -37,7 +38,9 @@ export const useProcedureMutation = (
       if (!options.pick) return transformed;
       const picked: Record<string, unknown> = {};
       // The keys `pick` names are the transformed result's own, which its `unknown` type does not say
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the result's shape is the procedure's, which `unknown` does not carry; `pick` names keys of it, and a result that lacks one reads as undefined, as the entry reads it
+      // The result's shape is the procedure's, which `unknown` does not carry; `pick` names keys of it, and a result
+      // That lacks
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- one reads as undefined, as the entry reads it
       for (const key of options.pick) picked[key] = (transformed as Record<string, unknown>)[key];
       return picked;
     },
