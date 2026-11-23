@@ -1,5 +1,6 @@
 import { tokenAdminProvider } from "#src/cloudflare/providers/tokenAdminProvider";
 import { getAccountTokenPermissionGroupId } from "#src/cloudflare/services/getAccountTokenPermissionGroupId";
+import { getAccountWideResources } from "#src/cloudflare/services/getAccountWideResources";
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareAssetType, getCloudflareAccountResourceName } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -13,7 +14,7 @@ export const tokEsposterBackfill: cloudflare.AccountToken = new cloudflare.Accou
       {
         effect: "allow",
         permissionGroups: [{ id: getAccountTokenPermissionGroupId("D1 Write") }],
-        resources: JSON.stringify({ [`com.cloudflare.api.account.${CLOUDFLARE_ACCOUNT_ID}`]: "*" }),
+        resources: JSON.stringify(getAccountWideResources()),
       },
     ],
   },
