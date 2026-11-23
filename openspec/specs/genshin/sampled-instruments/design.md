@@ -13,7 +13,7 @@ flowchart TD
   S --> T{"Nearer the game's bands than the synthesizer,<br/>with its pitch agreement kept?"}
   T -->|"no"| X["The segment plays the synthesizer alone"]
   T -->|"yes"| E["Only the recordings its notes reach,<br/>trimmed, mono Opus"]
-  E --> W["The login/music record, published,<br/>and login/recordings, served from the world package"]
+  E --> W["The login/music record, published,<br/>and login/recordings, published under the lock's loginRecordings scope"]
   W -->|"fetched and decoded once the login shows"| P["Each note: the synthesized note,<br/>and its recording shifted to its pitch"]
 ```
 
@@ -46,7 +46,7 @@ flowchart TD
 | `packages/genshin-world/src/services/login/music/loadMusicRecordings.ts` | A piece's recordings fetched and decoded once, by file                          |
 | `packages/genshin-world/src/components/Login/Music/Index.vue`            | The login's music, started once its recordings are decoded                      |
 | `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`         | Each voice's recording and level over the synthesizer, pitch heard              |
-| `scripts/src/services/genshinAssets/music/writeLayeredRecordings.ts`     | The winning layering written into the data, its recordings encoded              |
+| `scripts/src/services/genshinAssets/music/writeLayeredRecordings.ts`     | The winning layering written to the working folder, its recordings encoded      |
 | `scripts/src/services/genshinAssets/music/selectShippedRecordings.ts`    | Only the regions the shipped notes play, each cut where it stops                |
 | `scripts/src/services/genshinParity/music/scoreShapedMusic.ts`           | A mix scored under an expression fitted to it                                   |
 | `scripts/src/services/genshinAssets/music/parseSfz.ts`                   | A mapping's regions                                                             |

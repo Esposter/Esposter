@@ -23,8 +23,6 @@ interface Props {
   gameText: GameText;
   // The reader's language, whose client's title logo the opening shows
   language: GameLanguage;
-  // Where the login music's recordings are served from
-  musicRecordingBaseUrl: string;
   // The name the login screen welcomes the player by
   playerName: string;
   // How far the world's loading has gone, from 0 to 1, which the startup loading screen's marks show once the door
@@ -67,7 +65,7 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
   },
 );
 // The game data's objects and the character packs download from the moment the opening mounts, so the splashes and the
-// title play while the bytes arrive, and the launch loading bar reports them once the game starts preparing
+// Title play while the bytes arrive, and the launch loading bar reports them once the game starts preparing
 const { downloadProgress, preload, status } = useHostedAssetsPreload(
   () => readGameDataPreloadSet(gameDataBaseUrl),
   () => emit("held"),
@@ -85,12 +83,12 @@ onMounted(preload);
   />
   <LoginScreen
     v-else-if="phase === OpeningPhase.Login && loginData"
+    :game-data-base-url
     :game-text
     :is-download-failed="status === HostedAssetPreloadStatus.Failed"
     :is-interface-hidden="false"
     :language
     :login-data
-    :music-recording-base-url
     :player-name
     :progress="downloadProgress"
     :scene-export-base-url

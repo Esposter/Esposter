@@ -4,6 +4,7 @@ import type { Music } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
+import { publishLoginRecordings } from "#src/services/gameData/publishLoginRecordings";
 import { readLoginMusicSources } from "#src/services/genshinAssets/music/readLoginMusicSources";
 import { readSampleCatalogue } from "#src/services/genshinAssets/music/readSampleCatalogue";
 import { solveSampledVoices } from "#src/services/genshinAssets/music/solveSampledVoices";
@@ -78,6 +79,7 @@ export const instrumentsCommand: SubCommandsDef[string] = defineCommand({
         );
     }
     for (const path of await writeLayeredRecordings(music, segmentSolutionMap)) console.log(path);
+    console.log(await publishLoginRecordings(false));
     console.log(await publishGameDataRecord("login/music", music));
   },
 });

@@ -5,7 +5,6 @@ import { getGameDataRecord } from "#src/services/data/getGameDataRecord";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import {
   LOGIN_DOOR_AFTER_LOAD_MS,
-  LOGIN_MUSIC_RECORDING_DIRECTORY,
   LOGIN_PROGRESS_FILL_MS,
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
@@ -78,7 +77,6 @@ describe("gameOpening", () => {
         gameDataBaseUrl: "/held",
         gameText: ENGLISH_GAME_TEXT,
         language: GameLanguage.English,
-        musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
         playerName: "",
         progress: 1,
         sceneExportBaseUrl: "",
@@ -103,7 +101,6 @@ describe("gameOpening", () => {
         gameDataBaseUrl: "/preload",
         gameText: ENGLISH_GAME_TEXT,
         language: GameLanguage.English,
-        musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
         playerName: "",
         progress: 1,
         sceneExportBaseUrl: "",
@@ -136,7 +133,6 @@ describe("gameOpening", () => {
           gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
           gameText: ENGLISH_GAME_TEXT,
           language: GameLanguage.English,
-          musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
           onFinish,
           playerName: "",
           progress: 1,

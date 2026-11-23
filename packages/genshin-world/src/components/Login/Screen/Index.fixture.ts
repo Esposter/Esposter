@@ -1,7 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
-import { LOGIN_MUSIC_RECORDING_DIRECTORY } from "#src/services/login/constants";
 import { LoginPartFamilyMeshRegexMap } from "#src/services/login/LoginPartFamilyMeshRegexMap";
 import { readLoginData } from "#src/services/login/readLoginData";
 import { QualityTier } from "genshin-engine";
@@ -14,7 +13,7 @@ export const props = {
   isInterfaceHidden: false,
   language: GameLanguage.English,
   loginData: await readLoginData(GAME_DATA_LOCAL_BASE_URL),
-  musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+  gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   playerName: "",
   progress: 0,
   sceneExportBaseUrl: "",

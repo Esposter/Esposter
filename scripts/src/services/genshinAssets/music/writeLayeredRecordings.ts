@@ -2,10 +2,10 @@
 import type { SampledVoiceSolution } from "#src/models/genshinAssets/music/SampledVoiceSolution";
 import type { Music } from "genshin-engine";
 
+import { LOGIN_RECORDINGS_DIRECTORY } from "#src/services/gameData/constants";
 import { encodeMusicRecording } from "#src/services/genshinAssets/music/encodeMusicRecording";
 import { fetchSampleFile } from "#src/services/genshinAssets/music/fetchSampleFile";
 import { selectShippedRecordings } from "#src/services/genshinAssets/music/selectShippedRecordings";
-import { LOGIN_MUSIC_RECORDING_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -52,28 +52,25 @@ export const writeLayeredRecordings = async (
   // Encoded beside the directory and swapped in once every recording is, so a failed encode leaves what ships whole;
   // What ships is set aside rather than removed until the swap lands, and put back if it does not. A failed put back is
   // Logged with where what shipped still lies, and the swap's own error is the one thrown
-  const partialDirectory = `${LOGIN_MUSIC_RECORDING_DIRECTORY}.partial`;
-  const backupDirectory = `${LOGIN_MUSIC_RECORDING_DIRECTORY}.backup`;
+  const partialDirectory = `${LOGIN_RECORDINGS_DIRECTORY}.partial`;
+  const backupDirectory = `${LOGIN_RECORDINGS_DIRECTORY}.backup`;
   await rm(partialDirectory, { force: true, recursive: true });
   await mkdir(partialDirectory, { recursive: true });
   for (const [file, { offset, seconds, sourcePath }] of fileRecordingMap)
     await encodeMusicRecording(sourcePath, offset, roundMusic(seconds), join(partialDirectory, file));
   await rm(backupDirectory, { force: true, recursive: true });
-  const isShipped = existsSync(LOGIN_MUSIC_RECORDING_DIRECTORY);
-  if (isShipped) await rename(LOGIN_MUSIC_RECORDING_DIRECTORY, backupDirectory);
-  const swapResult = await getResultAsync(() => rename(partialDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY));
+  const isShipped = existsSync(LOGIN_RECORDINGS_DIRECTORY);
+  if (isShipped) await rename(LOGIN_RECORDINGS_DIRECTORY, backupDirectory);
+  const swapResult = await getResultAsync(() => rename(partialDirectory, LOGIN_RECORDINGS_DIRECTORY));
   await swapResult.match(
     () => rm(backupDirectory, { force: true, recursive: true }),
     async (error) => {
       if (isShipped)
-        await getResultAsync(() => rename(backupDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY)).match(
-          noop,
-          (restoreError) => {
-            console.error(`The shipped recordings were not put back and remain at ${backupDirectory}`, restoreError);
-          },
-        );
+        await getResultAsync(() => rename(backupDirectory, LOGIN_RECORDINGS_DIRECTORY)).match(noop, (restoreError) => {
+          console.error(`The shipped recordings were not put back and remain at ${backupDirectory}`, restoreError);
+        });
       throw error;
     },
   );
-  return Array.from(fileRecordingMap.keys(), (file) => join(LOGIN_MUSIC_RECORDING_DIRECTORY, file));
+  return Array.from(fileRecordingMap.keys(), (file) => join(LOGIN_RECORDINGS_DIRECTORY, file));
 };

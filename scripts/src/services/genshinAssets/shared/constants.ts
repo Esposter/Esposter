@@ -350,9 +350,6 @@ export const OPEN_WORLD_SCENE_ID = 3;
 // Filed under
 export const SCENE_POINT_FILE = "BinOutput/Scene/Point/scene3_point.json";
 export const SCENE_POINT_CATEGORY = "points";
-// Where `genshin:parity instruments` writes the recordings the login's music plays, rewritten whole, which the world
-// Package serves from its `LOGIN_MUSIC_RECORDING_DIRECTORY`
-export const LOGIN_MUSIC_RECORDING_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "login", "recordings");
 // A tower is fitted in two metre bands, a band merged into the one below while its radius holds within 3% of it, and
 // Its numbers kept to the centimetre
 export const TOWER_BAND_HEIGHT = 2;

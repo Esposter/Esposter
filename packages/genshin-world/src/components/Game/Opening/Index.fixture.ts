@@ -1,5 +1,4 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { LOGIN_MUSIC_RECORDING_DIRECTORY } from "#src/services/login/constants";
 import { readLoginData } from "#src/services/login/readLoginData";
 import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitleLogoMap";
 import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
@@ -18,7 +17,6 @@ export const props = {
   gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,
   language: GameLanguage.English,
-  musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
   playerName: "",
   progress: 3 / 7,
   sceneExportBaseUrl: "",

@@ -31,6 +31,8 @@ import { PCFShadowMap } from "three";
 interface Props {
   // The shape of the bloom's chain, where a reference tests one of the game's other shapes, the game's own by default
   bloomStructure?: GameBloomStructure | undefined;
+  // Where the hosted game data is read from, whose lock names the music's recordings
+  gameDataBaseUrl: string;
   // The game's words in the reader's language
   gameText: GameText;
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
@@ -46,8 +48,6 @@ interface Props {
   language: GameLanguage;
   // Every record the screen is drawn from, read from the hosted game data, each handed to the part that draws it
   loginData: LoginData;
-  // Where the music's recordings are served from
-  musicRecordingBaseUrl: string;
   playerName: string;
   // How far the packs' download has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a
   // Fixed time after it is done
@@ -167,7 +167,7 @@ const onClick = (event: MouseEvent): void => {
       v-if="!isInterfaceHidden"
       :is-door-opened="stage === LoginStage.Entering"
       :music="loginData.music"
-      :music-recording-base-url
+      :game-data-base-url
       :sounds="loginData.sounds"
     />
     <LoginInterface

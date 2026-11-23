@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
-  GENSHIN_SCENE_EXPORT_BASE_URL,
-  LOADING_STALL_WARNING_SECONDS,
-} from "#shared/services/genshin/constants";
+import { GENSHIN_SCENE_EXPORT_BASE_URL, LOADING_STALL_WARNING_SECONDS } from "#shared/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
@@ -115,7 +111,6 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
         :game-data-base-url
         :game-text="gameText.text"
         :language="gameText.language"
-        :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"
         player-name=""
         :progress
         :scene-export-base-url="IS_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : ''"

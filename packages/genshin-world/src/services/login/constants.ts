@@ -65,9 +65,6 @@ export const LOGIN_MASTER_LIMITER_OPTIONS = {
   release: 0.15,
   threshold: -2,
 } as const satisfies DynamicsCompressorOptions;
-// Where the login music's recordings sit in the package, written by `genshin:parity instruments`, which the parity page
-// Serves them from as it serves any of the package's files
-export const LOGIN_MUSIC_RECORDING_DIRECTORY = "src/data/login/recordings";
 // The door's interface after the door has formed, from the English recording at 10 frames a second: formed by 12.7 s,
 // The corner buttons at 13.0, and the prompt's band fading in from 13.7 to full by 14.0
 export const LOGIN_DOOR_BUTTONS_DELAY_MS = 300;

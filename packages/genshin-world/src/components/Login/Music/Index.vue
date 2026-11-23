@@ -15,17 +15,18 @@ import { useEventListener } from "@vueuse/core";
 import { createMusicPlayer, createSoundEffectBuffer } from "genshin-engine";
 
 interface Props {
+  // Where the hosted game data is read from, whose lock names the music's recordings, which its voices play over their
+  // Synthesized notes
+  gameDataBaseUrl: string;
   // The door has been clicked open, which plays its sound once
   isDoorOpened: boolean;
   // The login's music as its fit and the parity loops solved it: its playlist, its instruments and its voices
   music: Music;
-  // Where the music's recordings are served from, which its voices play over their synthesized notes
-  musicRecordingBaseUrl: string;
   // The login's sounds by their names, the door's among them, as its fit matched them among the game's own
   sounds: LoginSounds;
 }
 
-const { isDoorOpened, music, musicRecordingBaseUrl, sounds } = defineProps<Props>();
+const { gameDataBaseUrl, isDoorOpened, music, sounds } = defineProps<Props>();
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
 // Screen shows, and the door's sound once the door opens through the effects bus's compressor and the master's limiter
 // As the game's mix passes it, both through one context. The browser's autoplay policy may
@@ -45,7 +46,7 @@ onMounted(() => {
     player = createMusicPlayer(context, music, recordingBufferMap, musicBus);
     player.start();
   };
-  getResultAsync(() => loadMusicRecordings(context, music, musicRecordingBaseUrl)).match(start, (error) => {
+  getResultAsync(() => loadMusicRecordings(context, music, gameDataBaseUrl)).match(start, (error) => {
     console.error(error);
     start(new Map());
   });

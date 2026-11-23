@@ -3,7 +3,6 @@ import type { Music, MusicVoice } from "genshin-engine";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { loginMusicSchema } from "#src/models/login/LoginMusic";
 import { readGameData } from "#src/services/data/readGameData";
-import { LOGIN_MUSIC_RECORDING_DIRECTORY } from "#src/services/login/constants";
 import { loadMusicRecordings } from "#src/services/login/music/loadMusicRecordings";
 import { renderMusicSegment } from "genshin-engine";
 
@@ -29,7 +28,7 @@ export const renderMusic = async (
     recordingBufferMapPromise ??= loadMusicRecordings(
       new OfflineAudioContext({ length: 1, sampleRate: DECODE_SAMPLE_RATE }),
       music,
-      LOGIN_MUSIC_RECORDING_DIRECTORY,
+      GAME_DATA_LOCAL_BASE_URL,
     );
     recordingBufferMap = await recordingBufferMapPromise;
   }

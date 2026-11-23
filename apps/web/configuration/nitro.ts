@@ -5,10 +5,7 @@ import { compatibilityDate } from "#configuration/compatibilityDate";
 import { TEMPORAL_POLYFILL_BASE_URL } from "#configuration/constants";
 import { getCloudflareEnvironment, getEnvironmentWrangler } from "#configuration/wrangler";
 import { MEGABYTE } from "#shared/services/app/constants";
-import {
-  GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
-  GENSHIN_REGION_DATA_BASE_URL,
-} from "#shared/services/genshin/constants";
+import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
 import { PDF_CMAP_BASE_URL, PDF_STANDARD_FONT_DATA_BASE_URL, PDF_WASM_BASE_URL } from "#src/services/pdf/constants";
 import { readdir, stat } from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -73,8 +70,6 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
     // Each Genshin region's data is served from the world package's own copy, so a region is fetched and released
     // By reach rather than bundled
     { baseURL: GENSHIN_REGION_DATA_BASE_URL, dir: join(genshinWorldDirectory, "src/data/regions") },
-    // The recordings the login's music plays over its synthesizer, fetched once the login shows
-    { baseURL: GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL, dir: join(genshinWorldDirectory, "src/data/login/recordings") },
     { baseURL: PDF_CMAP_BASE_URL, dir: join(pdfjsDistDirectory, "cmaps") },
     { baseURL: PDF_STANDARD_FONT_DATA_BASE_URL, dir: join(pdfjsDistDirectory, "standard_fonts") },
     { baseURL: PDF_WASM_BASE_URL, dir: join(pdfjsDistDirectory, "wasm") },
