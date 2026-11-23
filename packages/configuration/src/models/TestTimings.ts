@@ -6,9 +6,9 @@ export interface TestTimings {
   projects: Record<string, { files?: Record<string, { duration: number }> | undefined }>;
 }
 
-export const testTimingsSchema = z.object({
+export const testTimingsSchema: z.ZodType<TestTimings> = z.object({
   projects: z.record(
     z.string(),
     z.object({ files: z.record(z.string(), z.object({ duration: z.number() })).optional() }),
   ),
-}) satisfies z.ZodType<TestTimings>;
+});
