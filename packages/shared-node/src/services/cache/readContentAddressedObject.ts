@@ -8,9 +8,10 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // One object's bytes by the hex SHA-256 they hash to: read from the cache, else downloaded once and kept only when its
-// Bytes hash to that name, so a hit is served as kept and never goes stale, and a caller that needs proof checks it against the name. A writer that loses the race to the same
-// Name wrote the same bytes, so its rename failing over the winner's file is still a hit. The name is joined into a
-// Path before anything reads it, so one that is not a hex digest is refused first rather than read from outside the directory
+// Bytes hash to that name, so a hit is served as kept and never goes stale, and a caller that needs proof checks it against
+// The name. A writer that loses the race to the same name wrote the same bytes, so its rename failing over the winner's file
+// Is still a hit. The name is joined into a path before anything reads it, so one that is not a hex digest is refused first
+// Rather than read from outside the directory
 export const readContentAddressedObject = async (
   hash: string,
   download: () => Promise<Uint8Array>,
