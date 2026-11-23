@@ -3,8 +3,8 @@ import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { toMails } from "#src/services/genshinAssets/mail/toMails";
-import { readConstValue } from "#src/services/genshinAssets/shared/readConstValue";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
+import { readConstValue } from "#src/services/genshinAssets/shared/readConstValue";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";

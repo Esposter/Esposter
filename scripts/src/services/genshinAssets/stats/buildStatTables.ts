@@ -7,6 +7,7 @@ import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelRel
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
+import { RELIQUARY_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import {
   ARTIFACT_EXP_ITEM_USE,
@@ -14,7 +15,6 @@ import {
   CHARACTER_EXP_ITEM_USE,
   WEAPON_EXP_ITEM_USE,
 } from "#src/services/genshinAssets/stats/constants";
-import { RELIQUARY_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { getArtifactMainAffixCurves } from "#src/services/genshinAssets/stats/getArtifactMainAffixCurves";
 import { getArtifactMainAffixPools } from "#src/services/genshinAssets/stats/getArtifactMainAffixPools";
 import { getArtifactRarityDatas } from "#src/services/genshinAssets/stats/getArtifactRarityDatas";
