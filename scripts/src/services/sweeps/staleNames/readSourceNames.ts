@@ -1,20 +1,10 @@
-import type { SourceWordEntry } from "#src/models/sweeps/staleNames/SourceWordEntry";
-
 import { APP_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { writeFileAtomically } from "#src/services/shared/writeFileAtomically";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
-import {
-  SOURCE_EXTENSION_REGEX,
-  SOURCE_WORD_CACHE_PATH,
-  SOURCE_WORD_CACHE_VERSION,
-} from "#src/services/sweeps/staleNames/constants";
 import { getComponentName } from "#src/services/sweeps/staleNames/getComponentName";
-import { readGeneratedPatterns } from "#src/services/sweeps/staleNames/readGeneratedPatterns";
-import { readSourceWordCache } from "#src/services/sweeps/staleNames/readSourceWordCache";
-import { readSourceWordEntry } from "#src/services/sweeps/staleNames/readSourceWordEntry";
-import { globSync, readFileSync, statSync } from "node:fs";
-import { join, matchesGlob, resolve } from "node:path";
+import { readSourceEntries } from "#src/services/sweeps/staleNames/readSourceEntries";
+import { globSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const COMPONENT_PATH_REGEX = /\/components\/(?<componentPath>.+\.vue)$/u;
 // The declarations Nuxt generates for the app — its own components and auto-imports beside the app's — which are
@@ -30,12 +20,9 @@ const NUXT_DECLARATIONS_DIRECTORY = join(REPOSITORY_ROOT, APP_DIRECTORY, ".nuxt"
 // Rather than from every entry
 export const readSourceNames = (): Set<string> => {
   const names = new Set<string>();
-  const generatedPatterns = readGeneratedPatterns();
-  const cache = readSourceWordCache(generatedPatterns);
-  const entries: Record<string, SourceWordEntry> = {};
-  let isEntryChanged = false;
+  const paths = readSweepFilePaths(".");
 
-  for (const path of readSweepFilePaths(".")) {
+  for (const path of paths) {
     for (const segment of path.split("/")) {
       names.add(segment);
       for (const part of segment.split(".")) names.add(part);
@@ -43,33 +30,11 @@ export const readSourceNames = (): Set<string> => {
 
     const componentPath = COMPONENT_PATH_REGEX.exec(path)?.groups?.componentPath;
     if (componentPath) names.add(getComponentName(componentPath));
-    if (!SOURCE_EXTENSION_REGEX.test(path)) continue;
-
-    // Only a file the patterns did not generate has an entry, so a cached entry needs no pattern check again
-    const cached = cache.entries[path];
-    if (!cached && generatedPatterns.some((pattern) => matchesGlob(path, pattern))) continue;
-
-    const absolutePath = resolve(REPOSITORY_ROOT, path);
-    const { mtimeMs, size } = statSync(absolutePath);
-    const isCurrent = cached?.mtimeMs === mtimeMs && cached.size === size;
-    if (!isCurrent) isEntryChanged = true;
-    entries[path] = isCurrent ? cached : readSourceWordEntry(path, absolutePath, { mtimeMs, size });
   }
-
-  // A file read again, or a file gone since the last scan, changes the unions the cache holds
-  const isCacheUnchanged = !isEntryChanged && Object.keys(cache.entries).length === Object.keys(entries).length;
-  const codeWords = isCacheUnchanged
-    ? cache.codeWords
-    : [...new Set(Object.values(entries).flatMap((entry) => entry.codeWords))];
+  const { codeWords } = readSourceEntries(paths);
 
   for (const declarationPath of globSync("**/*.d.ts", { cwd: NUXT_DECLARATIONS_DIRECTORY }))
     addWords(names, readFileSync(join(NUXT_DECLARATIONS_DIRECTORY, declarationPath), "utf8"));
-
-  if (!isCacheUnchanged)
-    writeFileAtomically(
-      SOURCE_WORD_CACHE_PATH,
-      JSON.stringify({ codeWords, entries, generatedPatterns, version: SOURCE_WORD_CACHE_VERSION }),
-    );
 
   return names.union(new Set(codeWords));
 };

@@ -14,8 +14,7 @@ export const DECLARATION_REGEX: RegExp = /\.d\.[cm]?ts$/u;
 // And a stale name cited on two of them would otherwise vouch for itself.
 export const SOURCE_EXTENSION_REGEX: RegExp = /\.(?:[cm]?[jt]sx?|vue|json|ya?ml|toml|css|html|sh|ps1)$/u;
 export const SOURCE_WORD_CACHE_PATH: string = join(CACHE_DIRECTORY, "sourceWords.json");
-// Bumped whenever what a word is changes or a cache's shape does: a cache written before comments were blanked holds
-// The words of comments, which vouch for the names they cite, so it is read as empty rather than trusted. A cache
-// Written before the code words were kept lacks each entry's `codeWords`, and one written before the entries stopped
-// Keeping `words` still holds them, so each is read as empty too
-export const SOURCE_WORD_CACHE_VERSION: number = 4;
+// Bumped whenever what a word is changes or an entry's shape does. A cache of another version is read as empty: it
+// Holds the words of comments, which vouch for the names they cite, or entries lacking the code words or the comments
+// This version reads
+export const SOURCE_WORD_CACHE_VERSION: number = 5;
