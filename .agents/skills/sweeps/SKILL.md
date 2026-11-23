@@ -75,5 +75,5 @@ The convention a pass carries is evidence rather than authority: a unit that wil
 - `references/windows-and-convergence.md` — when planning a sitting, or a finding lands in another session's file.
 - `references/rule-gaps.md` — when the convention a pass carries is silent or produces something nobody would defend.
 - `references/sample-reader.md` — when judging a batch as a read-only reader in a sample sitting: the unit grammar, one question at a time, refuting first, and the output line.
-- `references/sample-fixer.md` — when fixing a sample sitting's units: refuting first, the three outcomes, the unread cells, and the trailers a fix carries.
+- `references/sample-fixer.md` — when fixing a sample sitting's units: refuting first, the outcomes, the unread cells, and the trailers a fix carries.
 - `references/handing-to-an-enforcer.md` — when a pass writes the same finding a second time.
