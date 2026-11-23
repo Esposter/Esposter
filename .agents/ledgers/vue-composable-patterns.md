@@ -56,6 +56,19 @@ git grep -nE "currentResourceId\.value *[!=]==|[!=]== *currentResourceId\b" -- a
 
 The scan runs wider than this ledger's Scope, since the blueprint import that fell into the same shape sits in `services/resource`. A hit is a finding when the id is read before an `await` and the write it guards lands after it; the fix takes `getOpening()` where the operation is issued, as the paste and the blueprint import now do. Not findings: `checkIsLoaded` and the reset comparisons, which are synchronous id checks with no write behind an await, and the blueprint and note exports, which download the content held now, the same resource's content whichever opening holds it. Proof the scan can fail: at the paste's parent commit it returns the guard the fix replaced.
 
+## The post-await open-target recipe
+
+A write that lands after an await on whatever resource, board or survey is open **when it lands**, not the one its operation was issued for. The id-guard recipe above finds a guard that compares an id; these writes have nothing to compare, because the writer takes no id and writes the open state (`insertElement`, `addFileUrl`, a board's `editState`). Two greps and a read:
+
+```bash
+# writers of the open resource's state: no id argument, so each writes whatever is open when it runs
+git grep -nE "(insertElement|removeElements|pasteClipboardText|pasteText|addFileUrl|commitOperations)[^A-Za-z]|webpageEditor\.value\.[a-zA-Z]+ = |editState\.value = " -- apps/web/app ':!*.test.*'
+# uploads and deletes: the resource id is read when the call is made, so one made after an await names the open resource of that moment
+git grep -nE "(uploadFile|deleteFile)\(" -- apps/web/app ':!*.test.*'
+```
+
+A hit is a finding when an `await` comes before it in the same function and the state it writes was not taken before that await. The fix takes `getOpening()` where the operation is issued and checks it before the write, as the sheet paste does (`usePasteRangeFromClipboard.ts`). A late delete names the resource it was issued for, since `useDeleteResourceFile` takes that id as an argument. Not findings: a write whose target is passed in or captured (`useInsertNoteImages` writes the editor it is handed, a keyed store writes the slice it names), and a call with no await before it, which reads its id as it is issued. Why the id-guard recipe missed these: nothing compares an id, so the grep has no guard to find. Proof the recipe can fail: at `0614b56916` the first grep returns the whiteboard image insert, the cut, the context-menu paste, the survey upload and the webpage share image.
+
 ## Exclusions
 
 - Store _shape_ — `storeToRefs`, dot-access, CRUD verbs, keyed state — is the `pinia` ledger. A store appears here only for what it does around an `await`.
