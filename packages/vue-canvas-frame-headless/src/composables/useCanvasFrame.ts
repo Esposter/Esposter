@@ -58,7 +58,8 @@ export const useCanvasFrame = ({
     if (!contentWindow || !contentDocument) return;
 
     // A sheet adopted into a document must be constructed in that document's realm, which the window's own type omits
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the DOM lib declares the frame's constructors on `typeof globalThis` alone, and its `Window` omits them, so the frame's window is asserted to both
+    // The DOM lib declares the frame's constructors on `typeof globalThis` alone, and its `Window` omits
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- them, so the frame's window is asserted to both
     const frameRealm = contentWindow as typeof globalThis & Window;
     const styleSheet = new frameRealm.CSSStyleSheet();
     contentDocument.adoptedStyleSheets = [styleSheet];
