@@ -60,7 +60,7 @@ describe(useHostedAssetsPreload, () => {
     expect(downloadProgress.value).toBe(1);
   });
 
-  test("every file already held is ready without a fetch", async () => {
+  test("a second visit downloads nothing", async () => {
     expect.hasAssertions();
 
     const cache = createMockCache();
@@ -78,7 +78,7 @@ describe(useHostedAssetsPreload, () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  test("a successful preload evicts the stale entries of its own scope and keeps another product's", async () => {
+  test("a stale object of one product is evicted and another product's object is kept", async () => {
     expect.hasAssertions();
 
     const cache = createMockCache();
@@ -117,7 +117,7 @@ describe(useHostedAssetsPreload, () => {
     expect(onHeld).toHaveBeenCalledExactlyOnceWith();
   });
 
-  test("a failed preload evicts nothing", async () => {
+  test("a failed preload deletes nothing", async () => {
     expect.hasAssertions();
 
     const cache = createMockCache();

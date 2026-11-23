@@ -10,7 +10,7 @@ describe("setupGameDataFetch", () => {
   const hash = "0".repeat(64);
   const bytes = Buffer.from("texture");
 
-  test("answers a hosted url from the mirror, with the content type its extension names", async () => {
+  test("a suite that loads a hosted object runs offline", async () => {
     expect.hasAssertions();
 
     vi.mocked(readMirroredGameDataFile).mockResolvedValueOnce(bytes);
