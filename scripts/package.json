@@ -119,7 +119,6 @@
     "imagetracerjs": "catalog:",
     "jscpd": "catalog:",
     "jsonc-parser": "catalog:",
-    "keyframe-store": "workspace:*",
     "module-replacements": "catalog:",
     "onnxruntime-common": "catalog:",
     "onnxruntime-node": "catalog:",
