@@ -29,3 +29,20 @@ A second visit in the same profile: the preload's 76 downloads do not repeat, bu
 - After: 30,391,195 bytes (28.98 MiB), of which media 2,963,830 bytes (2.83 MiB), JS and CSS 17,786,725 bytes (16.96 MiB).
 
 The second total is smaller by 10,894,648 bytes (10.39 MiB). The media fell by 10,851,697 bytes, which is 99.6% of that drop, and the JS and CSS and the rest moved by 42,951 bytes together. The workspace's bundle record is written by the review of `ai/queue`, as its design says, so this change commits no record.
+
+## 6.2: the deployed dev run of the title and the world
+
+A driven run of `https://dev.esposter.com/dungeons`, on the green Deploy of `ai/queue` at `417cf2678a`, a production build. It was anonymous and ran two visits in one browser context, with no request interception, so the HTTP cache and the service worker were both in play. On each visit the title was reached, then Space was held for 1.5 s, then the world. Chrome's DevTools network events gave each hosted request's source (`dungeons-run3.json` in the scratchpad's `deployed` folder).
+
+First visit: the title at 9.7 s, the world after Space.
+
+- Hosted requests: 163, every one 200. From the network 76, from the disk cache 87, from the service worker 0.
+- Non-hosted asset requests: 3, none a dungeons asset. They are the app's own `dev.esposter.com/pwa/favicon-196.png` (twice) and `assets.dev.esposter.com/public-app-assets/logo.png` (once).
+- Console errors 0, page errors 0, failed requests 0.
+
+Second visit: the title at 2.2 s, the world after Space.
+
+- Hosted requests: 87, every one 200. From the network 0, from the disk cache 87, from the service worker 0.
+- The same three app-level requests, console errors 0, page errors 0.
+
+"A second visit downloads nothing" holds on the deployed origin: no hosted request reached the network on the second visit. The disk cache answered all 87, and the service worker answered none. The worker did not control the second visit: its registration (`sw.js`) went to installing at about 3 s on each visit and never reached active, with `navigator.serviceWorker.controller` null throughout (`sw-state.json`). So this run does not show the worker serving a second visit. Two earlier runs of the same flow (`dungeons-run.json`, `dungeons-run2.json`) gave the same counts.

@@ -65,3 +65,28 @@ The record itself (`bundle-sizes.md`) is written by the review of `ai/queue` fro
 
 - `dungeons`: `nothing to copy`, exit 0.
 - `GameData`: `nothing to copy`, exit 0.
+
+## 6.6: the deployed dev run (its run half)
+
+Anonymous driven runs of `https://dev.esposter.com/genshin`, on the green Deploy of `ai/queue` at `417cf2678a`. The signed-in route answers only on a local server, so the runs are anonymous. Each run read the page for 240 s and counted its requests by host.
+
+- Every request to `hosted.dev.esposter.com`: 787 in each of the three runs that read the full page, every one 200. The two runs that clicked into the character packs counted 890 and 787, every one 200. None had a doubled slash in its path (counted by the first three runs). The later runs did not count doubled slashes.
+- `public-genshin-assets`: 0 requests in every run. The retired login mount `/data/genshin/login/recordings`: 0.
+- The login's recordings: 42 requests for the 21 recordings, each requested twice, all to `hosted.dev.esposter.com`, all 200.
+- Same-origin requests on `dev.esposter.com` are the app's own chunks, polyfills, `pwa/favicon-196.png`, `api/auth` and Cloudflare's beacon. The diagnostic run's path count holds no `/data/genshin/...` request.
+
+The run half of 6.6 holds: every game request goes to the hosted origin and answers 200, and none reaches the retired bucket. Its zero console errors do not hold (see 6.8). 6.6 stays unticked, since emptying the bucket is the lead's.
+
+## 6.8: the opening's loading bar on the deployed dev run
+
+The bar is drawn only from the login's Preparing stage, which a click on the title starts. The title was clicked until the bar showed. A page-side MutationObserver logged every change of the bar's `aria-valuenow` (`genshin-observe.json` in the scratchpad's `deployed` folder):
+
+- Drawn: the bar first reads 0 at 23.4 s after the page's start.
+- Advances: 46 logged values, rising from 0 to 100 over 31.6 s, in steps of one or two points.
+- Completes: 100 at 55.0 s. The bar is removed at 56.5 s, and "CLICK TO BEGIN" returns as the door's prompt at 55 s.
+
+Task 6.8's own Verify is met by this run. The brief's zero-console-error criterion is not: every login run logged the same five errors, `THREE.TSL: TypeError: Expected a vec3 node, got null "ac()"`, from the login's lighting (`setupDirectLight` under `setupLights`). Each run also logged `timer.worker-mMntE4pv.js` as blocked by its response (`ERR_BLOCKED_BY_RESPONSE`). 6.8 stays unticked until those errors are fixed or the lead rules them out of 6.8.
+
+One run (`genshin-bar-run2.json`) froze the bar at 67 from 28 s to 240 s, with every hosted response 200. Its `terrainTileWorker` was blocked by its response twice, and it logged a terrain-worker failure. The next two runs did not freeze, so this is one observation and not yet reproduced.
+
+The first run of the page did not click the title, so no bar was drawn (`genshin-run.json`). A single early click, at 18 s (`genshin-bar-run.json`), did not start the Preparing stage either.
