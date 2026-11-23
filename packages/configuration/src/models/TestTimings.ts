@@ -3,7 +3,7 @@ import { z } from "zod";
 // The durations Vitest records after a run (`results.json` in its cache directory), merged over every coverage shard:
 // Each project's files by their path from the root. Only the duration is read, so every other field is stripped
 export interface TestTimings {
-  projects: Record<string, { files?: Record<string, { duration: number }> }>;
+  projects: Record<string, { files?: Record<string, { duration: number }> | undefined }>;
 }
 
 export const testTimingsSchema = z.object({
