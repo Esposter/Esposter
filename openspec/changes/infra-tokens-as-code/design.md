@@ -40,11 +40,11 @@ flowchart TD
   backfillTok -->|"value, ESC"| backfill["backfill run: D1 reads and writes"]
 ```
 
-**Derived R2 pair.** The access key id is the token's id, and the secret access key is the SHA-256 of its value. Cloudflare's R2 token documentation states both and does not name the digest's encoding, so the first signed request in the tasks confirms the encoding (hex is the expected one).
+**Derived R2 pair.** The pair is derived from the token as the credentials page states (`.agents/skills/security/references/credentials.md`). The digest's encoding is hex, confirmed by the signed request of task 2.6.
 
 **ESC keys keep their names.** A Worker secret's ESC key is `<env>_<NAME>`, because the deploy reads it by that name (`.github/actions/gather-worker-secrets`). The R2 and RealtimeKit keys therefore keep their names and take the new values, and the hand-made values are overwritten in place rather than deleted.
 
-**Names.** Tokens follow `apps/infra/docs/cloudflare/naming-conventions.md`: `<env>-tok-esposter-<responsibility>` for an environment's token and `tok-esposter-<responsibility>` for an account's. The bootstrap token keeps its name `bootstrap`, which the convention does not apply to, because it is the one hand-made token and nothing renames it.
+**Names.** Tokens are named by `apps/infra/docs/cloudflare/naming-conventions.md`. The bootstrap token keeps its name `bootstrap`, which the convention does not apply to, because it is the one hand-made token and nothing renames it.
 
 **Outputs over copies.** Each value a person or a workflow needs is a stack output in "apps/infra/src/cloudflare/outputs/", and the write to ESC is one `pulumi env set` per key, which is why no script is added for it.
 
