@@ -10,6 +10,7 @@ interface SliderOptions {
   start: Types.Math.Vector2Like;
   value: number;
 }
+const clampValue = (newValue: number) => Math.min(Math.max(newValue, 0), 1);
 // A thumb dragged along the segment from start to end: the drag is projected onto the segment, so the slider runs in
 // Any direction, start to end, whichever way the segment points
 export const createSlider = (
@@ -19,7 +20,6 @@ export const createSlider = (
   const segmentX = end.x - start.x;
   const segmentY = end.y - start.y;
   const segmentLengthSquared = segmentX ** 2 + segmentY ** 2;
-  const clampValue = (newValue: number) => Math.min(Math.max(newValue, 0), 1);
   let currentValue = clampValue(value);
   const moveThumb = () => {
     thumb.setPosition(start.x + segmentX * currentValue, start.y + segmentY * currentValue);
@@ -32,6 +32,9 @@ export const createSlider = (
     return true;
   };
   const onDrag = (_pointer: PhaserInput.Pointer, dragX: number, dragY: number) => {
+    // A segment with no length has no direction to project a drag onto, so a drag leaves the value where it is
+    if (segmentLengthSquared === 0) return;
+    // A segment with no length has no direction to project a drag onto, so a drag leaves the value where it is
     if (setValue(((dragX - start.x) * segmentX + (dragY - start.y) * segmentY) / segmentLengthSquared))
       onValueChange(currentValue);
   };

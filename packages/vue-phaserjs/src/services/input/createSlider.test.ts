@@ -30,7 +30,7 @@ describe(createSlider, () => {
   test("places the thumb at its value along the segment", () => {
     expect.hasAssertions();
 
-    createSlider(thumb, { end, onValueChange: vi.fn(), start, value: 0.5 });
+    createSlider(thumb, { end, onValueChange: vi.fn<(value: number) => void>(), start, value: 0.5 });
 
     expect(thumb.x).toBe(length / 2);
     expect(thumb.y).toBe(0);
@@ -39,7 +39,7 @@ describe(createSlider, () => {
   test("reports the value a drag projects onto the segment", () => {
     expect.hasAssertions();
 
-    const onValueChange = vi.fn();
+    const onValueChange = vi.fn<(value: number) => void>();
     const slider = createSlider(thumb, { end, onValueChange, start, value: 0 });
     drag(length / 4, length);
 
@@ -52,7 +52,12 @@ describe(createSlider, () => {
   test("runs from start to end when the end is before the start", () => {
     expect.hasAssertions();
 
-    const slider = createSlider(thumb, { end: start, onValueChange: vi.fn(), start: end, value: 0 });
+    const slider = createSlider(thumb, {
+      end: start,
+      onValueChange: vi.fn<(value: number) => void>(),
+      start: end,
+      value: 0,
+    });
     drag(length / 4, 0);
 
     expect(slider.value).toBe(0.75);
@@ -62,7 +67,12 @@ describe(createSlider, () => {
   test("follows a diagonal segment", () => {
     expect.hasAssertions();
 
-    const slider = createSlider(thumb, { end: { x: length, y: length }, onValueChange: vi.fn(), start, value: 0 });
+    const slider = createSlider(thumb, {
+      end: { x: length, y: length },
+      onValueChange: vi.fn<(value: number) => void>(),
+      start,
+      value: 0,
+    });
     drag(length, 0);
 
     expect(slider.value).toBe(0.5);
@@ -73,7 +83,7 @@ describe(createSlider, () => {
   test("clamps a drag past either end", () => {
     expect.hasAssertions();
 
-    const slider = createSlider(thumb, { end, onValueChange: vi.fn(), start, value: 0.5 });
+    const slider = createSlider(thumb, { end, onValueChange: vi.fn<(value: number) => void>(), start, value: 0.5 });
     drag(length * 2, 0);
 
     expect(slider.value).toBe(1);
@@ -83,10 +93,21 @@ describe(createSlider, () => {
     expect(slider.value).toBe(0);
   });
 
+  test("keeps its value on a drag across a segment with no length", () => {
+    expect.hasAssertions();
+
+    const onValueChange = vi.fn<(value: number) => void>();
+    const slider = createSlider(thumb, { end: start, onValueChange, start, value: 0.5 });
+    drag(length, length);
+
+    expect(slider.value).toBe(0.5);
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
   test("moves the thumb for a value set through it without reporting it", () => {
     expect.hasAssertions();
 
-    const onValueChange = vi.fn();
+    const onValueChange = vi.fn<(value: number) => void>();
     const slider = createSlider(thumb, { end, onValueChange, start, value: 0 });
     slider.value = 1;
 
@@ -97,7 +118,7 @@ describe(createSlider, () => {
   test("ignores a drag once destroyed", () => {
     expect.hasAssertions();
 
-    const onValueChange = vi.fn();
+    const onValueChange = vi.fn<(value: number) => void>();
     const slider = createSlider(thumb, { end, onValueChange, start, value: 0 });
     slider.destroy();
     drag(length, 0);
