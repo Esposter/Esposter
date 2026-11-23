@@ -112,7 +112,7 @@ describe(publishHostedAssets, () => {
     expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
   });
 
-  test("a real rerun of an unchanged plan makes no bucket request", async () => {
+  test("a rerun of an unchanged plan makes no request", async () => {
     expect.hasAssertions();
 
     const bucketClientMap = createBucketClientMap();

@@ -91,7 +91,7 @@ A hosted object SHALL be served from the one hosted origin with an immutable one
 
 - **GIVEN** a url whose hash names no published object
 - **WHEN** it is requested
-- **THEN** the response is a 404 with no body
+- **THEN** the response is a 404, whose body is the bucket domain's own Not Found page and never another object
 
 ### Requirement: The preloader downloads every object of a lock before a game starts
 

@@ -2,6 +2,15 @@
 
 The evidence the change's tasks name, recorded where it was taken.
 
+## 4.3 and 4.4: the Cache Rule and the origin's lifetime
+
+GETs through `hosted.dev.esposter.com` with `curl -s -D - -o /dev/null`, after the Cache Rule's apply (`apps/infra/src/cloudflare/resources/rulesets/esposterComHostedAssetsCache.ts`):
+
+- A published `.tsx`: the first GET is `cf-cache-status: MISS`, the second `HIT`. A `.json` does the same.
+- Objects whose origin `Cache-Control` is `max-age=60`: after its 60 seconds the `.json` and the `.tsx` each answer `REVALIDATED`, so the rule's `respect_origin` mode keeps the origin's lifetime at the edge rather than overriding it.
+- A HEAD is never cached and answers `DYNAMIC`, which is why each probe is a GET.
+- An absent hash under `dungeons/` answers 404 on `hosted.dev.esposter.com` and on `hosted.esposter.com`, its body the bucket domain's own Not Found page.
+
 ## 6.5: Genshin's origin is the hosted domain
 
 A driven run of the Genshin page on the dev server (`pnpm dev --port 3001`, Chrome under Playwright, the driven user signed in, the page read for 240 s after it mounted), on the rebuilt packages:
