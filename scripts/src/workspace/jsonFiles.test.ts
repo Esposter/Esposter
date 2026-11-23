@@ -27,7 +27,10 @@ const readSyntaxFaults = (text: string, isJsonc: boolean): string[] => {
     );
   const errors: ParseError[] = [];
   parseTree(text, errors, { allowTrailingComma: true });
-  return errors.map(({ error, startLine }) => `${printParseErrorCode(error)} at line ${startLine + 1}`);
+  // A parse error carries its offset alone, so its line is counted from the text before it
+  return errors.map(
+    ({ error, offset }) => `${printParseErrorCode(error)} at line ${text.slice(0, offset).split("\n").length}`,
+  );
 };
 
 /**
