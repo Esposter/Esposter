@@ -21,8 +21,9 @@ const METHOD_OPERATION_MAP: Record<RequestMethod, Operation> = {
   [RequestMethod.Post]: Operation.Create,
 };
 
-// Every Cloudflare call the provisioning makes, under the account's token. The reply is checked against the envelope the
-// Caller reads, so a reply that is not what it reads fails the step. A refusal names the request and its status, never
+// Every Cloudflare call the provisioning makes, under the environment's RealtimeKit token, which
+// `readCloudflareCredentials` reads from ESC. The reply is checked against the envelope the caller reads, so a reply
+// That is not what it reads fails the step. A refusal names the request and its status, never
 // Its body, since a body can echo a token
 export const requestCloudflare = async <Schema extends z.ZodType>(
   { apiToken }: CloudflareCredentials,
