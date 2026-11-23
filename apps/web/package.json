@@ -183,6 +183,7 @@
     "trpc-msw": "workspace:*",
     "trpc-nuxt-module": "workspace:*",
     "type-fest": "catalog:",
+    "typescript": "catalog:",
     "unocss": "catalog:",
     "unplugin-pwa-nuxt": "workspace:*",
     "vite": "catalog:",

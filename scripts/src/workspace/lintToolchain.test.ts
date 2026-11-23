@@ -18,7 +18,6 @@ const CODE_PATHSPECS = ["*.cjs", "*.cts", "*.js", "*.mjs", "*.mts", "*.ts", "*.t
 const GENERATED_FILE_PATTERN = "**/auto-imports.d.ts";
 const ESLINT_DIRECTIVE_REGEX = /(?:\/\/|\/\*|<!--)\s*eslint-(?:disable|enable)/u;
 const CLASSIC_COMPILER = "typescript";
-const IMPORTERS_SECTION_REGEX = /^importers:\n[\s\S]*?(?=^\S|(?![\s\S]))/gmu;
 
 describe("lintToolchain", () => {
   test("linting the whole repository", { timeout: TREE_READ_TIMEOUT_MS }, () => {
@@ -32,7 +31,7 @@ describe("lintToolchain", () => {
     ).toStrictEqual([]);
   });
 
-  test("linting a workspace with no classic compiler", () => {
+  test("the classic compiler installed only for the app's Vue compiler", () => {
     expect.hasAssertions();
 
     const manifestListings = readSweepFilePaths("*package.json").flatMap((path) => {
@@ -41,15 +40,8 @@ describe("lintToolchain", () => {
         (field) => `${path} ${field}`,
       );
     });
-    // The lockfile is one YAML document per install, each with its own importers section listing every workspace package's
-    // Dependencies. A section runs from its key to the next line at column zero, or the end of the file
-    const lockfile = readRepositoryFile("pnpm-lock.yaml");
-    const importers = lockfile.match(IMPORTERS_SECTION_REGEX) ?? [];
 
-    expect(manifestListings).toStrictEqual([]);
-    expect(readRepositoryFile("pnpm-workspace.yaml")).not.toMatch(/^ {2}typescript:/mu);
-    expect(importers.length).toBeGreaterThan(0);
-    expect(importers.join("\n")).not.toMatch(/^ {6}typescript:/mu);
+    expect(manifestListings).toStrictEqual(["apps/web/package.json devDependencies"]);
   });
 
   test("a lint tool that needs the classic compiler", () => {

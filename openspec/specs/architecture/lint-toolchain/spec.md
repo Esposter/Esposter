@@ -128,16 +128,16 @@ A ban SHALL be written in the first mechanism that a planted violation shows can
 - **THEN** the violation is not reported
 - **AND** the ban is written as a visitor in the same plugin instead
 
-### Requirement: Lint runs without the classic TypeScript compiler installed
+### Requirement: Lint runs without the classic TypeScript compiler
 
-The lint SHALL run every rule with no classic TypeScript compiler installed in the workspace.
+The lint SHALL run every rule without loading the classic TypeScript compiler. The one manifest that declares it SHALL be the app's, whose Vue compiler resolves a props type imported from another file through it, and no lint tool SHALL resolve it from the repository root.
 
-#### Scenario: Linting a workspace with no classic compiler
+#### Scenario: The classic compiler installed only for the app's Vue compiler
 
-- **GIVEN** a fresh install of the workspace
-- **WHEN** lint runs over everything
-- **THEN** every rule runs
-- **AND** no lint step loads the classic TypeScript compiler
+- **GIVEN** the workspace's manifests
+- **WHEN** they are read for the classic TypeScript compiler
+- **THEN** only the app declares it, as a dev dependency
+- **AND** no lint step loads it
 
 #### Scenario: A lint tool that needs the classic compiler
 
