@@ -7,15 +7,11 @@ import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readRepositoryFile } from "#src/workspace/readRepositoryFile.test";
 import { spawnSync } from "@esposter/shared-node/child-process";
-import { matchesGlob } from "node:path";
 import { describe, expect, test } from "vitest";
 
 type Manifest = Partial<Record<DependencyField, Record<string, string>>>;
 
 const CODE_PATHSPECS = ["*.cjs", "*.cts", "*.js", "*.mjs", "*.mts", "*.ts", "*.tsx", "*.vue"];
-// Unimport writes an ESLint header into the declarations it generates on every run, so no edit keeps it out. oxlint
-// Already ignores these files, and no other tracked file is generated
-const GENERATED_FILE_PATTERN = "**/auto-imports.d.ts";
 const ESLINT_DIRECTIVE_REGEX = /(?:\/\/|\/\*|<!--)\s*eslint-(?:disable|enable)/u;
 const CLASSIC_COMPILER = "typescript";
 
@@ -25,9 +21,7 @@ describe("lintToolchain", () => {
 
     expect(readSweepFilePaths("*eslint.config.*")).toStrictEqual([]);
     expect(
-      readSweepFilePaths(...CODE_PATHSPECS)
-        .filter((path) => !matchesGlob(path, GENERATED_FILE_PATTERN))
-        .filter((path) => ESLINT_DIRECTIVE_REGEX.test(readRepositoryFile(path))),
+      readSweepFilePaths(...CODE_PATHSPECS).filter((path) => ESLINT_DIRECTIVE_REGEX.test(readRepositoryFile(path))),
     ).toStrictEqual([]);
   });
 
