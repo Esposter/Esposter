@@ -7,7 +7,6 @@ import { checkLedgerTrailers } from "#src/services/precheck/checkLedgerTrailers"
 import { checkLedgerUnits } from "#src/services/precheck/checkLedgerUnits";
 import { readBarrelPackages } from "#src/services/precheck/readBarrelPackages";
 import { readUnformattedPaths } from "#src/services/precheck/readUnformattedPaths";
-import { checkIsLinkedWorktree } from "#src/services/queue/checkIsLinkedWorktree";
 import { readChangedFiles } from "#src/services/queue/readChangedFiles";
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -22,9 +21,9 @@ export const runPrecheck = async (fix: boolean): Promise<PrecheckReport> => {
   const unformattedPaths = readUnformattedPaths(changedFiles, REPOSITORY_ROOT, mainCheckoutRoot);
   const barrelPackages = readBarrelPackages(changedFiles);
   const barrelChecks = barrelPackages.map((packageDirectory) => checkBarrel(packageDirectory, fix));
-  // The graph's edges are the links pnpm's installed state holds, and a linked worktree's narrowed install has none to its
-  // Siblings, so it would draw a graph with no edges and call the committed one stale. Only the main checkout can tell
-  const graphChecks = checkHasGraphInput(changedFiles) && !checkIsLinkedWorktree() ? [await checkGraph(fix)] : [];
+  // The graph's edges come from the committed lockfile, which every checkout holds the same way, so a manifest change in a
+  // Linked worktree is checked like one in the main checkout
+  const graphChecks = checkHasGraphInput(changedFiles) ? [await checkGraph(fix)] : [];
   const checks = [...barrelChecks, ...graphChecks];
   return {
     findings: [

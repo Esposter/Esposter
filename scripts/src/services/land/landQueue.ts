@@ -15,18 +15,12 @@ import { removeWorktree } from "#src/services/worktree/remove/removeWorktree";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 
-// Runs the precheck, then pulls and pushes up to the attempt limit, since another session's push can take the queue
-// Between the two. The pull replays this checkout's own commits, so a conflict stops the landing for its author to settle
+// Pulls and pushes up to the attempt limit, since another session's push can take the queue between the two. The pull
+// Replays this checkout's own commits, so a conflict stops the landing for its author to settle. The precheck runs on each
+// Pulled tree before its push, since that tree is what the push sends and the queue's commits are not checked before it
 export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise<number> => {
   if (remove && !checkIsLinkedWorktree())
     throw new InvalidOperationError(Operation.Delete, REPOSITORY_ROOT, "the main checkout is not a worktree to remove");
-  if (!skipPrecheck) {
-    const report = await runPrecheck(false);
-    if (report.findings.length > 0) {
-      for (const finding of report.findings) console.info(finding);
-      return LANDING_EXIT_STATUS.precheckFailed;
-    }
-  }
 
   let landedCount: number | undefined;
   for (let attempt = 1; landedCount === undefined; attempt += 1) {
@@ -38,6 +32,13 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
     if (pull.status !== 0) {
       await waitBeforeRetry(pull.stderr, attempt, MAX_LANDING_ATTEMPTS);
       continue;
+    }
+    if (!skipPrecheck) {
+      const report = await runPrecheck(false);
+      if (report.findings.length > 0) {
+        for (const finding of report.findings) console.info(finding);
+        return LANDING_EXIT_STATUS.precheckFailed;
+      }
     }
     // Counted after the pull has replayed this checkout's commits onto the queue's tip, so it is what this push adds
     const unlandedCount = Number(runGit(["rev-list", "--count", `${REMOTE_QUEUE_REF}..HEAD`]).trim());
