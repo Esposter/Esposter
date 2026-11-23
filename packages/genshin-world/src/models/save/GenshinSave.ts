@@ -43,7 +43,7 @@ import { characterTrialSaveSchema } from "#src/models/trial/CharacterTrialSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
-import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
+import { MAX_STORED_MAIL_COUNT } from "#src/services/mail/constants";
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
   GCG_REWARDABLE_GAME_COUNT,
@@ -116,7 +116,7 @@ export const genshinSaveSchema = z
     longTermEncounterPoints: longTermEncounterPointsSaveSchema,
     // The mails the player holds, each once per delivery by its id and when it was delivered, with whether it was
     // Claimed and read
-    mails: createUniqueArraySchema(mailSaveSchema, ["id", "deliveredAt"]).max(MAX_MAIL_COUNT),
+    mails: createUniqueArraySchema(mailSaveSchema, ["id", "deliveredAt"]).max(MAX_STORED_MAIL_COUNT),
     // The mining outcrops mined since the last reset, each once by its place's id, absent while none is mined
     minedOutcrops: createUniqueArraySchema(minedOutcropSaveSchema, "id").max(MAX_MINED_OUTCROP_COUNT).optional(),
     // The namecard the profile shows, by its item id

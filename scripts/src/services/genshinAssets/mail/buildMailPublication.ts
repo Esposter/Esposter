@@ -3,9 +3,11 @@ import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { toMails } from "#src/services/genshinAssets/mail/toMails";
+import { readConstValue } from "#src/services/genshinAssets/shared/readConstValue";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { takeOne } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // The mail table as one entry per mail, keyed by its id, with the birthday mail table kept under its own entry, and every
@@ -34,7 +36,10 @@ export const buildMailPublication = (): { note: string; publication: GameDataPub
           ...Object.fromEntries(mails.map((mail) => [String(mail.id), mail])),
         },
       },
-      objects,
+      objects: {
+        ...objects,
+        [`${GameDataset.Mail}/maxCount`]: Number(takeOne(readConstValue("CONST_VALUE_MAIL_MAX_NUM"), 0)),
+      },
     },
   };
 };

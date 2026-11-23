@@ -11,6 +11,7 @@ import { deleteGiftMail } from "#src/services/mail/deleteGiftMail";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
 import { readBirthdayMailRows } from "#src/services/mail/readBirthdayMailRows";
+import { readMailMaxCount } from "#src/services/mail/readMailMaxCount";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
@@ -29,6 +30,7 @@ export const useWorldMailStore = defineStore("world/mail", () => {
   const mailData = shallowRef<{
     birthdayMailIds: ReadonlySet<number>;
     mailRows: ReadonlyMap<number, Mail>;
+    maxMailCount: number;
     textMap: TextChunk;
   }>();
   const isBagFull = ref(false);
@@ -46,15 +48,16 @@ export const useWorldMailStore = defineStore("world/mail", () => {
       const birthdayMailRows = await readBirthdayMailRows(gameDataBaseUrl);
       const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));
       const mailIds = new Set([...savedMails.map(({ id }) => id), ...birthdayMailIds]);
-      const [mailRows, textMap] = await Promise.all([
+      const [mailRows, maxMailCount, textMap] = await Promise.all([
         readMailRows(gameDataBaseUrl, [...mailIds]),
+        readMailMaxCount(gameDataBaseUrl),
         readMailText(gameDataBaseUrl, language),
       ]);
       if (loading !== load) return;
       const now = getWorldNow();
       const held = removeExpiredMails(savedMails, mailRows, birthdayMailIds, now);
       mails.value = deliverBirthdayMail(held, savedTravelerBirthday, birthdayMailRows, now);
-      mailData.value = { birthdayMailIds, mailRows, textMap };
+      mailData.value = { birthdayMailIds, mailRows, maxMailCount, textMap };
     }).match(noop, (error) => {
       if (loading === load) console.error(error);
     });

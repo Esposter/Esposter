@@ -18,7 +18,7 @@ import {
   MAX_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
 import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
-import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
+import { MAX_STORED_MAIL_COUNT } from "#src/services/mail/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
@@ -230,7 +230,7 @@ describe("genshinSaveSchema", () => {
       },
       investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: maxInstant },
       longTermEncounterPoints: { halfPoints: maxNumber, majorVersion: maxNumber },
-      mails: Array.from({ length: MAX_MAIL_COUNT }, (_value, index) => ({
+      mails: Array.from({ length: MAX_STORED_MAIL_COUNT }, (_value, index) => ({
         deliveredAt: maxInstant,
         id: maxNumber - index,
         isClaimed: false,
@@ -418,7 +418,7 @@ describe("genshinSaveSchema", () => {
     expect.hasAssertions();
     const save = {
       ...EMPTY_GENSHIN_SAVE,
-      mails: Array.from({ length: MAX_MAIL_COUNT + 1 }, (_value, index) => ({ ...baseMail, id: index + 1 })),
+      mails: Array.from({ length: MAX_STORED_MAIL_COUNT + 1 }, (_value, index) => ({ ...baseMail, id: index + 1 })),
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);

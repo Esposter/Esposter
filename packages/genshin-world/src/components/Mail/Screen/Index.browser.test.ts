@@ -52,6 +52,7 @@ describe("mailScreen", () => {
     gameText: ENGLISH_GAME_TEXT,
     isBagFull: false,
     mailRows,
+    maxMailCount: 100,
     materialDataMap: new Map(),
     names: {},
     now: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 24 }),

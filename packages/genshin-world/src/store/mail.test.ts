@@ -2,6 +2,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { readBirthdayMailRows } from "#src/services/mail/readBirthdayMailRows";
+import type { readMailMaxCount } from "#src/services/mail/readMailMaxCount";
 import type { readMailRows } from "#src/services/mail/readMailRows";
 import type { readMailText } from "#src/services/mail/readMailText";
 
@@ -15,13 +16,15 @@ import { describe, expect, test, vi } from "vitest";
 
 type BirthdayMailRows = Awaited<ReturnType<typeof readBirthdayMailRows>>;
 
-const { readBirthdayMailRowsMock, readMailRowsMock, readMailTextMock } = vi.hoisted(() => ({
+const { readBirthdayMailRowsMock, readMailMaxCountMock, readMailRowsMock, readMailTextMock } = vi.hoisted(() => ({
   readBirthdayMailRowsMock: vi.fn<typeof readBirthdayMailRows>(),
+  readMailMaxCountMock: vi.fn<typeof readMailMaxCount>(),
   readMailRowsMock: vi.fn<typeof readMailRows>(),
   readMailTextMock: vi.fn<typeof readMailText>(),
 }));
 
 vi.mock(import("#src/services/mail/readBirthdayMailRows"), () => ({ readBirthdayMailRows: readBirthdayMailRowsMock }));
+vi.mock(import("#src/services/mail/readMailMaxCount"), () => ({ readMailMaxCount: readMailMaxCountMock }));
 vi.mock(import("#src/services/mail/readMailRows"), () => ({ readMailRows: readMailRowsMock }));
 vi.mock(import("#src/services/mail/readMailText"), () => ({ readMailText: readMailTextMock }));
 
@@ -62,7 +65,12 @@ describe(useWorldMailStore, () => {
     const worldMailStore = useWorldMailStore();
     const held = createHeld(row.id);
     worldMailStore.mails = [held];
-    worldMailStore.mailData = { birthdayMailIds: new Set(), mailRows: new Map([[row.id, row]]), textMap: {} };
+    worldMailStore.mailData = {
+      birthdayMailIds: new Set(),
+      mailRows: new Map([[row.id, row]]),
+      maxMailCount: 100,
+      textMap: {},
+    };
     return { held, worldMailStore, worldSessionStore };
   };
 
@@ -124,6 +132,7 @@ describe(useWorldMailStore, () => {
       }),
     );
     readMailRowsMock.mockResolvedValueOnce(new Map());
+    readMailMaxCountMock.mockResolvedValueOnce(100);
     readMailTextMock.mockResolvedValueOnce({});
     const worldSessionStore = startTestWorldSession();
     const worldMailStore = useWorldMailStore();
@@ -156,6 +165,7 @@ describe(useWorldMailStore, () => {
       }),
     );
     readMailRowsMock.mockResolvedValueOnce(new Map());
+    readMailMaxCountMock.mockResolvedValueOnce(100);
     readMailTextMock.mockResolvedValueOnce({});
     const worldSessionStore = startTestWorldSession();
     const worldMailStore = useWorldMailStore();

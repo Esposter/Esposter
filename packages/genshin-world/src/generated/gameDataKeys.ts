@@ -247,6 +247,7 @@ export const GameDataKeys = {
     towers: "login/towers",
     walkway: "login/walkway",
   },
+  mail: { maxCount: "mail/maxCount" },
   mailText: {
     ChineseSimplified: "mailText/ChineseSimplified",
     ChineseTraditional: "mailText/ChineseTraditional",

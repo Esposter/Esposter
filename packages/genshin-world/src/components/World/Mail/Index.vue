@@ -19,6 +19,7 @@ const { claim, claimAll, deleteGift, deleteRead, markMailRead, toggleMailPin } =
     :game-text
     :is-bag-full
     :mail-rows="mailData.mailRows"
+    :max-mail-count="mailData.maxMailCount"
     :mails
     :material-data-map
     :names="nameText"

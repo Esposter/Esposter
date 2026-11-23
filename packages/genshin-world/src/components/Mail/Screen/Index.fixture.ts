@@ -3,6 +3,7 @@ import type { MailSave } from "#src/models/mail/MailSave";
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { readMailMaxCount } from "#src/services/mail/readMailMaxCount";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
@@ -18,6 +19,7 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   isBagFull: false,
   mailRows: await readMailRows(GAME_DATA_LOCAL_BASE_URL, MAIL_IDS),
+  maxMailCount: await readMailMaxCount(GAME_DATA_LOCAL_BASE_URL),
   mails: [
     { deliveredAt, id: 14, isClaimed: false, isPinned: true, isRead: false },
     { deliveredAt, id: 15, isClaimed: false, isPinned: false, isRead: false },

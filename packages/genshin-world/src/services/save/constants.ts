@@ -25,7 +25,7 @@ import {
 import { EMPTY_CURRENCIES, INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
-import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
+import { MAX_STORED_MAIL_COUNT } from "#src/services/mail/constants";
 import {
   DEFAULT_PARTY_TEAM_COUNT,
   PARTY_TEAM_MAX_COUNT,
@@ -373,7 +373,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_HOME_BLUEPRINT_COUNT * 2 * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_HOME_REWARD_CLAIM_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ABYSS_CYCLE_COUNT * getRecordEntryLength(LONGEST_ABYSS_CYCLE_SAVE) +
-  MAX_MAIL_COUNT * getListEntryLength(LONGEST_MAIL_SAVE) +
+  MAX_STORED_MAIL_COUNT * getListEntryLength(LONGEST_MAIL_SAVE) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
       objectiveCounts: Array.from({ length: MAX_OBJECTIVE_COUNT }, () => MAX_SAVE_NUMBER),

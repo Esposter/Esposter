@@ -13,7 +13,6 @@ import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { checkIsClaimable } from "#src/services/mail/checkIsClaimable";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
-import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { MailMarkPathMap } from "#src/services/mail/MailMarkPathMap";
 import { sortMails } from "#src/services/mail/sortMails";
@@ -31,6 +30,8 @@ interface Props {
   isBagFull: boolean;
   // Each held mail's row, by its id, which the mail's text ids, items and expiry are read from
   mailRows: ReadonlyMap<number, Mail>;
+  // The most mails the mailbox holds, which the count of the held mails is read against
+  maxMailCount: number;
   mails: readonly MailSave[];
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The name texts of the items, in the reader's language, by their text id
@@ -127,7 +128,7 @@ const selectTab = (isGift: boolean) => {
     </GameButton>
     <p class="mail-count">
       {{ gameText[GameTextKey.MailItems] }}
-      <span>{{ mails.length }}/{{ MAX_MAIL_COUNT }}</span>
+      <span>{{ mails.length }}/{{ maxMailCount }}</span>
     </p>
     <CloseButton
       class="close"
@@ -136,7 +137,7 @@ const selectTab = (isGift: boolean) => {
       @click="emit('close')"
     />
     <p v-if="isBagFull" class="notice">{{ gameText[GameTextKey.BagFull] }}</p>
-    <p v-if="mails.length >= MAX_MAIL_COUNT" class="notice">{{ gameText[GameTextKey.MailFull] }}</p>
+    <p v-if="mails.length >= maxMailCount" class="notice">{{ gameText[GameTextKey.MailFull] }}</p>
     <svg class="mark mark-pointer" viewBox="0 0 12 19" aria-hidden="true">
       <path :d="MailMarkPathMap[MailMark.Pointer]" />
     </svg>
