@@ -68,10 +68,7 @@ const removeRow = (rowIndex: number) => {
               text-muted
               p-1
             >
-              <UiFieldLabel
-                :is-required="column.isRequired || undefined"
-                :label="checkIsBlankText(column.title) ? column.name : column.title"
-              />
+              <UiFieldLabel :is-required="column.isRequired || undefined" :label="getSurveyQuestionTitle(column)" />
             </th>
           </tr>
         </thead>

@@ -19,6 +19,7 @@ import { getActiveSurveyEditDraft } from "#src/services/resource/survey/getActiv
 import { getSurveyConditionAnswers } from "#src/services/resource/survey/getSurveyConditionAnswers";
 import { getSurveyConditionOperators } from "#src/services/resource/survey/getSurveyConditionOperators";
 import { getSurveyExpressionFault } from "#src/services/resource/survey/getSurveyExpressionFault";
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 import { parseSurveyConditionRows } from "#src/services/resource/survey/parseSurveyConditionRows";
 import { toSurveyConditionInputValue } from "#src/services/resource/survey/toSurveyConditionInputValue";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
@@ -35,7 +36,7 @@ const answers = computed(() => getSurveyConditionAnswers(surveyDocument.value));
 const answerItems = computed(() =>
   answers.value.map(({ name, title }) => ({
     description: !checkIsBlankText(title) && title !== name ? name : undefined,
-    title: checkIsBlankText(title) ? name : title,
+    title: getSurveyQuestionTitle({ name, title }),
     value: name,
   })),
 );

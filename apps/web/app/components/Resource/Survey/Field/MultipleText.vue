@@ -3,7 +3,7 @@ import type { SurveyAnswerValue, SurveyMultipleTextNode } from "vue-survey-engin
 
 import { SURVEY_TEXT_FIELD_TYPES } from "#src/services/resource/survey/constants";
 import { getSurveyAnswerText } from "#src/services/resource/survey/getSurveyAnswerText";
-import { checkIsBlankText } from "@esposter/shared";
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
@@ -31,7 +31,7 @@ const updateItem = (name: string, text: string) => {
           :is-disabled="isDisabled || undefined"
           :is-invalid="error ? true : undefined"
           :is-required="item.isRequired || undefined"
-          :label="checkIsBlankText(item.title) ? item.name : item.title"
+          :label="getSurveyQuestionTitle(item)"
           :model-value="getSurveyAnswerText(answers[item.name])"
           :type="SURVEY_TEXT_FIELD_TYPES[item.inputType]"
           @update:model-value="(text) => updateItem(item.name, text)"
