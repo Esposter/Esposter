@@ -2,7 +2,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
 import { createMockDb } from "@esposter/db-mock";
-import { clearRoomObjectCalls, createUser, roomObjectCalls } from "@esposter/db-mock/workers";
+import { clearRoomObjectCalls, createUser, roomObjectCalls, roomObjectReplies } from "@esposter/db-mock/workers";
 import { roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -66,6 +66,40 @@ describe(removeAccountFromMemberRooms, () => {
         method: "notifyOnlineMembers",
         objectId: room.id,
       },
+    ]);
+  });
+
+  test("a room whose removal fails is logged, and the account is still removed from the rooms after it", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const failingRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: failingRoom.id, userId },
+      { roomId: room.id, userId },
+    ]);
+    const error = new Error(" ");
+    roomObjectReplies.set("removeMember", (_args, objectId) =>
+      objectId === failingRoom.id ? Promise.reject(error) : undefined,
+    );
+    const errorSpy = vi.spyOn(console, "error");
+
+    await removeAccountFromMemberRooms(userId);
+
+    expect(errorSpy).toHaveBeenCalledExactlyOnceWith("An erased account's room state failed to clear", {
+      error,
+      roomId: failingRoom.id,
+      userId,
+    });
+    expect(
+      roomObjectCalls.filter(({ objectId }) => objectId === failingRoom.id).map(({ method }) => method),
+    ).toStrictEqual(["removeMember", "notifyOnlineMembers"]);
+    expect(roomObjectCalls.filter(({ objectId }) => objectId === room.id).map(({ method }) => method)).toStrictEqual([
+      "removeMember",
+      "notifyOnlineMembers",
     ]);
   });
 });

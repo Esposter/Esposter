@@ -1,42 +1,24 @@
-import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
-import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { useResourceStore } from "#src/store/resource/index";
-import { getRouteParam } from "#src/util/router/getRouteParam";
 
 // The read of the resource the page has open. executeQuery watches the topics the row names for as long as this page is
 // Mounted, so a change to the resource runs the read again. The store is app-lifetime, so a watch held there would outlive
-// The page and keep reading a resource nothing shows
+// The page and keep reading a resource nothing shows. The store's readOpenResource owns the route guard and the check that
+// The route still names the resource when the answer lands; this page's executor is what holds the watch
 export const useReadOpenResource = () => {
-  const { $trpc } = useNuxtApp();
-  const { currentRoute } = useRouter();
   const resourceStore = useResourceStore();
-  const { applyResource } = resourceStore;
+  const { applyResource, readOpenResource } = resourceStore;
   const { executeQuery, isPending } = useMutation();
   const runScope = useRunScope();
   // The open resource is one target, so its run scope orders the reads: a newer read of it aborts the one before it
   const key = Symbol("readOpenResource");
-  const readResource = async () => {
-    // Resolved per call rather than captured: the read takes whichever resource the route names when it runs
-    const id = getRouteParam(currentRoute.value.params, "id");
-    // A route with no resource segment — a list view, or one this read raced a navigation to — names nothing to read,
-    // And the empty sentinel would reach the server as a uuid that fails validation
-    if (!checkIsUuidV7(id)) return;
-
-    await rethrowFailedRead(
-      executeQuery(() => $trpc.resource.readResource.query({ id }), {
-        key,
-        // Logs and does not throw: a watch re-runs these same options with no caller to rethrow to, so a throw here would
-        // Be an unhandled rejection. The page's own failure still reaches its caller through rethrowFailedRead
-        onError: console.error,
-        onSuccess: ({ favorite, publication, ...fetchedResource }) => {
-          // Reads for two resources are not one target, so a navigation away can let the earlier one land last
-          if (getRouteParam(currentRoute.value.params, "id") !== id) return;
-
-          applyResource(fetchedResource, favorite, publication);
-        },
-        runScope,
-      }),
-    );
-  };
+  const readResource = () =>
+    readOpenResource(executeQuery, {
+      key,
+      // Logs and does not throw: a watch re-runs these same options with no caller to rethrow to, so a throw here would
+      // Be an unhandled rejection. The page's own failure still reaches its caller through rethrowFailedRead
+      onError: console.error,
+      onRead: applyResource,
+      runScope,
+    });
   return { isPending, readResource };
 };

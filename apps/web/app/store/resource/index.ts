@@ -8,6 +8,7 @@ import type {
   ResourceTags,
   ResourceType,
 } from "@esposter/db-schema";
+import type { Promisable } from "type-fest";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -213,33 +214,62 @@ export const useResourceStore = defineStore("resource", () => {
     isSaveContentFailed.value = false;
   };
 
+  // The open resource's read, issued through the executor its caller holds. The route names what to read, and a route with
+  // No resource segment names nothing, since the empty sentinel would reach the server as a uuid that fails validation. The
+  // Answer applies only while the route still names that resource: reads for two resources are not one target, so a navigation
+  // Away can let the earlier one land last. The executor is the caller's, because a read's topic watch ends with the scope of
+  // The useMutation() instance that issued it, so the page's watched read ends with the page and the store's read holds none
+  const readOpenResource = async (
+    executeRead: ReturnType<typeof useMutation>["executeQuery"],
+    {
+      isUnwatched,
+      key,
+      onError,
+      onRead,
+      runScope,
+    }: {
+      isUnwatched?: true | undefined;
+      key: PropertyKey;
+      onError?: ((error: Error) => Promisable<void>) | undefined;
+      onRead: (
+        newResource: ResourceInResource,
+        newFavorite: null | ResourceFavoriteInResource,
+        newPublication: null | ResourcePublicationInResource,
+      ) => void;
+      runScope: ReturnType<typeof useRunScope>;
+    },
+  ) => {
+    const id = getRouteParam(currentRoute.value.params, "id");
+    if (!checkIsUuidV7(id)) return;
+
+    await rethrowFailedRead(
+      executeRead(() => $trpc.resource.readResource.query({ id }), {
+        isUnwatched,
+        key,
+        onError,
+        onSuccess: ({ favorite: newFavorite, publication: newPublication, ...newResource }) => {
+          if (getRouteParam(currentRoute.value.params, "id") !== id) return;
+
+          onRead(newResource, newFavorite, newPublication);
+        },
+        runScope,
+      }),
+    );
+  };
   // A content reload follows a re-read of the row, so the row it takes is the version the reloaded content is read at.
   // Tracked on its own executor so the page's Refresh shows the read in flight, and one key so repeated clicks queue
   // Rather than overlap
   const { executeQuery: executeReloadQuery, isPending: isReloadPending } = useMutation();
   const reloadRunScope = useRunScope();
   const reloadKey = Symbol("reloadResource");
-  const reloadResource = async () => {
-    // A route with no resource segment names nothing to read, and the empty sentinel would reach the server as a uuid
-    // That fails validation
-    const id = getRouteParam(currentRoute.value.params, "id");
-    if (!checkIsUuidV7(id)) return;
-
-    await rethrowFailedRead(
-      executeReloadQuery(() => $trpc.resource.readResource.query({ id }), {
-        // The store outlives the page, and the page's own read keeps the open row live, so this one-shot read holds no watch
-        isUnwatched: true,
-        key: reloadKey,
-        onSuccess: ({ favorite: newFavorite, publication: newPublication, ...newResource }) => {
-          // Reads for two resources are not one target, so a navigation away can let the earlier one land last
-          if (getRouteParam(currentRoute.value.params, "id") !== id) return;
-
-          assignResource(newResource, newFavorite, newPublication);
-        },
-        runScope: reloadRunScope,
-      }),
-    );
-  };
+  const reloadResource = () =>
+    readOpenResource(executeReloadQuery, {
+      // The store outlives the page, and the page's own read keeps the open row live, so this one-shot read holds no watch
+      isUnwatched: true,
+      key: reloadKey,
+      onRead: assignResource,
+      runScope: reloadRunScope,
+    });
   // The page that opened this resource takes its state back down when it closes. A keyed page swap mounts the
   // Next resource's page before this one unmounts, so the teardown fires only while the state is still the one
   // The caller loaded — otherwise closing A would blank the B the swap has already loaded
@@ -724,6 +754,7 @@ export const useResourceStore = defineStore("resource", () => {
     publication,
     publishResource,
     readContent,
+    readOpenResource,
     refuseSaveContent,
     reloadResource,
     reloadResourceContent,

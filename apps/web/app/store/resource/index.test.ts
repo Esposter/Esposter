@@ -49,7 +49,7 @@ vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: 
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type: ResourceType = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
-type ReadResourceResult = ReturnType<typeof createResource> & { favorite: null; publication: null };
+type ReadResourceResult = { favorite: null; publication: null } & ReturnType<typeof createResource>;
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   Object.assign(useRouter().currentRoute.value.params, { id });
@@ -145,6 +145,23 @@ describe(useResourceStore, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  // The open resource's read is the store's, so its route guard is tested here once: a route with no resource segment names
+  // Nothing to read, and the caller's executor is never asked to issue one
+  test("issues no read of the open resource while the route names no resource", async () => {
+    expect.hasAssertions();
+
+    setRouteId("");
+    const resourceStore = useResourceStore();
+    const { readOpenResource } = resourceStore;
+    const executeRead = vi.fn<ReturnType<typeof useMutation>["executeQuery"]>();
+    const runScope = effectScope().run(useRunScope);
+    assert.exists(runScope);
+
+    await readOpenResource(executeRead, { key: resourceId, onRead: noop, runScope });
+
+    expect(executeRead).not.toHaveBeenCalled();
   });
 
   // `readResource()` swaps the loaded resource an await before the content store re-seeds its content ref from

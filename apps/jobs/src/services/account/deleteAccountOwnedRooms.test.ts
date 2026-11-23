@@ -10,10 +10,12 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
+  clearUserObjectCalls,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   roomObjectCalls,
+  userObjectCalls,
 } from "@esposter/db-mock/workers";
 import {
   AdminActionType,
@@ -32,6 +34,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vite
 
 vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock/workers"));
 
 describe(deleteAccountOwnedRooms, () => {
   let mockDb: Database;
@@ -48,6 +51,7 @@ describe(deleteAccountOwnedRooms, () => {
     MockPublishedTopics.length = 0;
     await clearMockBuckets();
     clearRoomObjectCalls();
+    clearUserObjectCalls();
     await mockDb.delete(usersInAuth);
   });
 
@@ -114,5 +118,25 @@ describe(deleteAccountOwnedRooms, () => {
     await expect(getReaderWakes(mockDb, (database) => getMemberRoomIds(database, memberUserId))).resolves.toContain(
       getScopeTopic(getTableName(usersToRoomsInMessage), "userId", memberUserId),
     );
+  });
+
+  test("tombstones each member's membership in an owned room and sends the tombstone to that member's object", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const memberUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
+    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId: memberUserId });
+
+    await runUnit(() => deleteAccountOwnedRooms(userId));
+
+    expect(userObjectCalls).toStrictEqual([
+      {
+        args: [expect.objectContaining({ deletedAt: expect.any(Date), roomId: ownedRoom.id, userId: memberUserId })],
+        method: "updateUserToRoom",
+        objectId: memberUserId,
+      },
+    ]);
   });
 });

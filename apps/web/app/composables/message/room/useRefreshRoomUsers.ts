@@ -19,13 +19,13 @@ export const useRefreshRoomUsers = () => {
     const memberIds = [...(getRoomMemberMap(roomId)?.keys() ?? [])];
     const authorIds = getSlice(roomId).items.value.flatMap(({ userId }) => (userId ? [userId] : []));
     const userIds = [...new Set([...memberIds, ...authorIds])];
-    if (userIds.length === 0) return [];
+    // A room with no one to show still reads once, with no ids: that read is what the room's topic watch is taken from, so a
+    // Member who joins later is watched from the start rather than from the first one the room loads
+    const userIdChunks = userIds.length > 0 ? chunk(userIds, MAX_READ_LIMIT) : [[]];
 
     return (
       await Promise.all(
-        chunk(userIds, MAX_READ_LIMIT).map((userIdChunk) =>
-          $trpc.room.readUsersByIds.query({ roomId, userIds: userIdChunk }),
-        ),
+        userIdChunks.map((userIdChunk) => $trpc.room.readUsersByIds.query({ roomId, userIds: userIdChunk })),
       )
     ).flat();
   };

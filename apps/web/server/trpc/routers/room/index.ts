@@ -374,7 +374,7 @@ export const baseRoomRouter = router({
         )[0];
     }),
   // The list reads the rooms table as a whole, so a rename or an image change of any room wakes it
-  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<Page<RoomInMessage & { displayName: string }>>(
+  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<Page<{ displayName: string } & RoomInMessage>>(
     async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sort } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
@@ -430,8 +430,12 @@ export const baseRoomRouter = router({
   // A row comes back for every id that has an account, a user who has left the room included, so a message whose author
   // Has left is still named. `isMember` tells the two apart, and a user with no membership is named by their account
   readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
-    ({ ctx, input: { roomId, userIds } }) =>
-      ctx.db
+    ({ ctx, input: { roomId, userIds } }) => {
+      // An empty list names no one, so it answers with none and issues no query. The membership check ahead of this handler
+      // still runs, and its statement is what the answer's topic is taken from
+      if (userIds.length === 0) return [];
+
+      return ctx.db
         .select({
           ...getPublicUserColumns(usersInAuth),
           displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth),
@@ -439,7 +443,8 @@ export const baseRoomRouter = router({
         })
         .from(usersInAuth)
         .leftJoin(usersToRoomsInMessage, getRoomMemberJoinCondition(roomId))
-        .where(inJsonArray(usersInAuth.id, userIds)),
+        .where(inJsonArray(usersInAuth.id, userIds));
+    },
   ),
   updateRoom: addProfanityFilterMiddleware(
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),

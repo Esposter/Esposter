@@ -20,7 +20,8 @@ export const getRestatedPointerFindings = (
 ): RestatedPointerFinding[] => {
   const pathPointerLinesMap = new Map(pages.map(({ path, text }) => [path, getPointerLines(text)]));
   return getDuplicateProse(pages).flatMap(({ paths: [firstPath, secondPath], words }) => {
-    if (checkIsPathRun(words, pathShingles)) return [];
+    // A pointer's run sets aside repository paths only, as before: its link targets are not read as citations here
+    if (checkIsPathRun(words, pathShingles, new Set())) return [];
 
     const runText = words.join(" ");
     return [

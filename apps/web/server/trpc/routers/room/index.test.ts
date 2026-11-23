@@ -1370,6 +1370,17 @@ describe("roomRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
+  // A room with no one to read still answers its refresh: an empty list reads no user, and the membership check ahead of it
+  // Is what the answer's topic is taken from
+  test("answers an empty list of user ids with no users", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const users = await roomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [] });
+
+    expect(users).toStrictEqual([]);
+  });
+
   // The dock lists a room its viewer is a member of, so the join that makes them one wakes the dock's read of it
   test("a join wakes the joiner's bookmark dock that lists the room", async () => {
     expect.hasAssertions();

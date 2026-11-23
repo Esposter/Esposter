@@ -5,6 +5,7 @@ import { getRoomObject } from "#src/services/room/getRoomObject";
 import { getDb } from "#src/services/shared/getDb";
 import { getMemberRoomIds } from "@esposter/db";
 import { getLiveRowWhere, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 // The account is taken out of each room it is still a member of before its row goes.
@@ -12,7 +13,9 @@ import { and, eq } from "drizzle-orm";
 // And a list holding it drops the row by that version.
 // The room drops its sockets and its online set first, then every member it still has online is sent that `leaveRoom`.
 // So an open room hears of the erase rather than finding the account gone at its next reload.
-// The rooms it owned went first, so the memberships left are the rooms it is still in
+// The rooms it owned went first, so the memberships left are the rooms it is still in.
+// Each room's two calls are best-effort, as announceRoomMemberDeparture makes them: a failure is logged and the sweep goes on
+// To the next room, so one room cannot hold the others back. A failed room is not revisited, since its membership is tombstoned
 export const removeAccountFromMemberRooms = async (userId: UserInAuth["id"]): Promise<void> => {
   const db = getDb();
   const memberRoomIds = await getMemberRoomIds(db, userId);
@@ -29,17 +32,27 @@ export const removeAccountFromMemberRooms = async (userId: UserInAuth["id"]): Pr
       )
       .returning();
     const roomObject = getRoomObject(roomId);
-    await roomObject.removeMember(userId);
+    await getResultAsync(() => roomObject.removeMember(userId)).match(noop, (error) => {
+      console.error("An erased account's room state failed to clear", { error, roomId, userId });
+    });
     if (removedMembership)
-      await roomObject.notifyOnlineMembers({
-        data: {
-          deletedAt: removedMembership.deletedAt,
-          displayName: removedMembership.displayName,
+      await getResultAsync(() =>
+        roomObject.notifyOnlineMembers({
+          data: {
+            deletedAt: removedMembership.deletedAt,
+            displayName: removedMembership.displayName,
+            roomId,
+            userId,
+            version: removedMembership.version,
+          },
+          type: "leaveRoom",
+        }),
+      ).match(noop, (error) => {
+        console.error("An erased account's departure failed to reach a room's online members", {
+          error,
           roomId,
           userId,
-          version: removedMembership.version,
-        },
-        type: "leaveRoom",
+        });
       });
   }
 };
