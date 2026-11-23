@@ -12,8 +12,6 @@ import { useCellStore } from "#src/store/resource/sheet/cell";
 import { useCommandStore } from "#src/store/ui/command";
 import { assert, describe, expect, test } from "vitest";
 
-const sheetExtendDown = `sheet-extend-${ArrowKeyDefinitionMap.ArrowDown.direction}`;
-
 // The sheet's commands are read back from the command store, the list the shortcuts dialog and the palette draw from
 const runSheetCommand = (id: string) => {
   const commandStore = useCommandStore();
@@ -24,6 +22,8 @@ const runSheetCommand = (id: string) => {
 };
 
 describe(useSheetCommands, () => {
+  const sheetExtendDown = `sheet-extend-${ArrowKeyDefinitionMap.ArrowDown.direction}`;
+
   setupCommandTest();
 
   test("leaves the selection alone when the grid has no rows", () => {
