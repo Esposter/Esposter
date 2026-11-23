@@ -8,6 +8,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { FORGE_ENHANCEMENT_TYPE, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "#src/services/forging/constants";
+import { readForgeDailyPointCap } from "#src/services/forging/readForgeDailyPointCap";
 import { startForge } from "#src/services/forging/startForge";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -17,6 +18,7 @@ import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
 const { forgeQueuePlayerLevels } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const dailyPointCap = await readForgeDailyPointCap(GAME_DATA_LOCAL_BASE_URL);
 
 const createDefinition = (id: number): ItemDefinition => ({
   category: ItemCategory.Material,
@@ -60,6 +62,7 @@ describe(startForge, () => {
   const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 100 };
   const startArguments = {
     adventureRank: 2,
+    dailyPointCap,
     definitions,
     forgeQueuePlayerLevels,
     inventory: createInventory(6),
@@ -111,7 +114,10 @@ describe(startForge, () => {
     expect.hasAssertions();
 
     expect(
-      startForge(recipe, 1, { ...startArguments, progress: { ...progress, forgedPoints: 399_000 } }),
+      startForge(recipe, 1, {
+        ...startArguments,
+        progress: { ...progress, forgedPoints: dailyPointCap - recipe.forgePoint + 1 },
+      }),
     ).toBeUndefined();
   });
 

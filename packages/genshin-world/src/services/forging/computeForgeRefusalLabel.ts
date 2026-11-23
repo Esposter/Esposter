@@ -13,9 +13,10 @@ export const computeForgeRefusalLabel = (
   count: number,
   progress: ForgeProgress,
   now: Temporal.Instant,
+  dailyPointCap: number,
   gameText: GameText,
 ): string => {
-  if (!checkIsForgeDailyCapReached(recipe, count, progress, now)) return "";
+  if (!checkIsForgeDailyCapReached(recipe, count, progress, now, dailyPointCap)) return "";
   const { itemId } = takeOne(recipe.results, 0);
   return gameText[takeOne(ForgeRefusalGameTextKeyMap, itemId)];
 };

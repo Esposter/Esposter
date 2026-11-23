@@ -6,6 +6,7 @@ export const ScreenRecordKey = {
   CraftingStrongboxes: "craftingStrongboxes",
   Dishes: "dishes",
   DomainChallengeLevels: "domainChallengeLevels",
+  ForgeDailyPointCap: "forgeDailyPointCap",
   ForgeRecipes: "forgeRecipes",
   HomeBlueprints: "homeBlueprints",
   PaimonsBargainsRotation: "paimonsBargainsRotation",

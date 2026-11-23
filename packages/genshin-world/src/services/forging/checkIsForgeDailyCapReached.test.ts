@@ -1,10 +1,14 @@
 import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { checkIsForgeDailyCapReached } from "#src/services/forging/checkIsForgeDailyCapReached";
 import { FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
+import { readForgeDailyPointCap } from "#src/services/forging/readForgeDailyPointCap";
 import { describe, expect, test } from "vitest";
+
+const dailyPointCap = await readForgeDailyPointCap(GAME_DATA_LOCAL_BASE_URL);
 
 describe(checkIsForgeDailyCapReached, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
@@ -24,7 +28,7 @@ describe(checkIsForgeDailyCapReached, () => {
     unlockItemIds: [],
   };
   const progress: ForgeProgress = {
-    forgedPoints: 390_000,
+    forgedPoints: dailyPointCap - 10_000,
     forgedPointsDay: EPOCH_GAME_DAY,
     learnedRecipeIds: [],
     orders: [],
@@ -33,20 +37,20 @@ describe(checkIsForgeDailyCapReached, () => {
   test("should allow the day's points to reach the cap exactly", () => {
     expect.hasAssertions();
 
-    expect(checkIsForgeDailyCapReached(recipe, 1, progress, EPOCH.add({ hours: 3 }))).toBe(false);
+    expect(checkIsForgeDailyCapReached(recipe, 1, progress, EPOCH.add({ hours: 3 }), dailyPointCap)).toBe(false);
   });
 
   test("should refuse a recipe that takes the day's points past the cap", () => {
     expect.hasAssertions();
 
-    expect(checkIsForgeDailyCapReached(recipe, 2, progress, EPOCH.add({ hours: 3 }))).toBe(true);
+    expect(checkIsForgeDailyCapReached(recipe, 2, progress, EPOCH.add({ hours: 3 }), dailyPointCap)).toBe(true);
   });
 
   test("should start the day's points again at the daily reset", () => {
     expect.hasAssertions();
 
     // Four in the morning in the game's time zone is twenty hours past the epoch's eight in the morning
-    expect(checkIsForgeDailyCapReached(recipe, 2, progress, EPOCH.add({ hours: 19 }))).toBe(true);
-    expect(checkIsForgeDailyCapReached(recipe, 2, progress, EPOCH.add({ hours: 20 }))).toBe(false);
+    expect(checkIsForgeDailyCapReached(recipe, 2, progress, EPOCH.add({ hours: 19 }), dailyPointCap)).toBe(true);
+    expect(checkIsForgeDailyCapReached(recipe, 2, progress, EPOCH.add({ hours: 20 }), dailyPointCap)).toBe(false);
   });
 });

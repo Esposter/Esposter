@@ -2,9 +2,6 @@ import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
 
-// The most forge points a player may forge in one game day, counted across the enhancement ores together. A recipe past it
-// Is refused until the daily reset, which the game's own words say
-export const FORGE_DAILY_POINT_CAP = 400_000;
 // The forge type of the enhancement ores, the forge type the talents of Venti and Bennett apply to
 export const FORGE_ENHANCEMENT_TYPE = 1;
 // The ores a weapon's forge refunds its share of, the forge's own ore items from Normal to Mystic Enhancement Ore's inputs

@@ -1702,7 +1702,7 @@ useWorldSaveSync({
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <ForgeScreen
-      v-if="screenKind === ScreenKind.Forge && records.forgeRecipes"
+      v-if="screenKind === ScreenKind.Forge && records.forgeDailyPointCap && records.forgeRecipes"
       v-model:adventure-exp="adventureExp"
       v-model:amount="forgeAmount"
       v-model:progress="forgeProgress"
@@ -1711,6 +1711,7 @@ useWorldSaveSync({
       :adventure-rank="rank"
       :adventure-rank-tables
       :completed-main-quest-ids
+      :daily-point-cap="records.forgeDailyPointCap"
       :definitions="forgeDefinitions"
       :forge-queue-player-levels="statTables.forgeQueuePlayerLevels"
       :game-text

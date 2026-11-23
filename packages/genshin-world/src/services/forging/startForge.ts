@@ -29,6 +29,7 @@ export const startForge = (
   count: number,
   {
     adventureRank,
+    dailyPointCap,
     definitions,
     forgeQueuePlayerLevels,
     inventory,
@@ -39,6 +40,7 @@ export const startForge = (
     wallet,
   }: {
     adventureRank: number;
+    dailyPointCap: number;
     definitions: Map<number, ItemDefinition>;
     forgeQueuePlayerLevels: readonly number[];
     inventory: Inventory;
@@ -62,7 +64,7 @@ export const startForge = (
     !Number.isInteger(count) ||
     count < 1 ||
     count > recipe.queueSize ||
-    checkIsForgeDailyCapReached(recipe, count, progress, now) ||
+    checkIsForgeDailyCapReached(recipe, count, progress, now, dailyPointCap) ||
     (isInRealm && checkIsForgeRecipeRefusedInRealm(recipe)) ||
     !checkIsItemCountsHeld(inventory.items, bagMaterials, count) ||
     !spentWallet ||

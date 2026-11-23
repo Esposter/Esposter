@@ -120,7 +120,7 @@ export const GameDataKeys = {
     rods: "fishing/rods",
     skills: "fishing/skills",
   },
-  forging: { recipes: "forging/recipes" },
+  forging: { dailyPointCap: "forging/dailyPointCap", recipes: "forging/recipes" },
   friendship: { friendship: "friendship/friendship" },
   frostbearingTreePlaces: { mondstadt: "frostbearingTreePlaces/mondstadt" },
   gadgets: { gadgets: "gadgets/gadgets" },

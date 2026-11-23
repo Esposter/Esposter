@@ -1,12 +1,16 @@
 import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { computeForgeRefusalLabel } from "#src/services/forging/computeForgeRefusalLabel";
-import { FORGE_DAILY_POINT_CAP, FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
+import { FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
+import { readForgeDailyPointCap } from "#src/services/forging/readForgeDailyPointCap";
 import { computeGameDay } from "#src/services/time/computeGameDay";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
+
+const dailyPointCap = await readForgeDailyPointCap(GAME_DATA_LOCAL_BASE_URL);
 
 describe(computeForgeRefusalLabel, () => {
   const now = Temporal.Instant.fromEpochMilliseconds(0);
@@ -30,13 +34,13 @@ describe(computeForgeRefusalLabel, () => {
     expect.hasAssertions();
 
     const progress: ForgeProgress = {
-      forgedPoints: FORGE_DAILY_POINT_CAP,
+      forgedPoints: dailyPointCap,
       forgedPointsDay: gameDay,
       learnedRecipeIds: [],
       orders: [],
     };
 
-    expect(computeForgeRefusalLabel(recipe, 1, progress, now, ENGLISH_GAME_TEXT)).toBe(
+    expect(computeForgeRefusalLabel(recipe, 1, progress, now, dailyPointCap, ENGLISH_GAME_TEXT)).toBe(
       ENGLISH_GAME_TEXT[GameTextKey.ForgeEnhancementOreRefusal],
     );
   });
@@ -46,6 +50,6 @@ describe(computeForgeRefusalLabel, () => {
 
     const progress: ForgeProgress = { forgedPoints: 0, forgedPointsDay: gameDay, learnedRecipeIds: [], orders: [] };
 
-    expect(computeForgeRefusalLabel(recipe, 1, progress, now, ENGLISH_GAME_TEXT)).toBe("");
+    expect(computeForgeRefusalLabel(recipe, 1, progress, now, dailyPointCap, ENGLISH_GAME_TEXT)).toBe("");
   });
 });

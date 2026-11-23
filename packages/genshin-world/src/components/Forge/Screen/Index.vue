@@ -29,6 +29,8 @@ interface Props {
   adventureRank: number;
   adventureRankTables: AdventureRankTables;
   completedMainQuestIds: ReadonlySet<string>;
+  // The most forge points a game day holds, which an order past it is refused for
+  dailyPointCap: number;
   // The items the forge yields and refunds, by their item ids
   definitions: Map<number, ItemDefinition>;
   // The Adventure Rank each queue at the blacksmith opens at, the first queue's at rank one, as the game's forge update table holds them
@@ -60,6 +62,7 @@ const {
   adventureRank,
   adventureRankTables,
   completedMainQuestIds,
+  dailyPointCap,
   definitions,
   forgeQueuePlayerLevels,
   gameText,
@@ -99,7 +102,9 @@ const materialCountLabel = computed(() => {
 });
 // The words shown in place of Start when the day's forge points would be passed by the picked order
 const refusalLabel = computed(() =>
-  pickedRecipe.value ? computeForgeRefusalLabel(pickedRecipe.value, amount.value, progress.value, now, gameText) : "",
+  pickedRecipe.value
+    ? computeForgeRefusalLabel(pickedRecipe.value, amount.value, progress.value, now, dailyPointCap, gameText)
+    : "",
 );
 const queueSlots = computed(() =>
   computeForgeQueueSlots(progress.value.orders, adventureRank, now, forgeQueuePlayerLevels),
@@ -173,6 +178,7 @@ const start = () => {
   if (!recipe) return;
   const started = startForge(recipe, amount.value, {
     adventureRank,
+    dailyPointCap,
     definitions,
     forgeQueuePlayerLevels,
     inventory: inventory.value,

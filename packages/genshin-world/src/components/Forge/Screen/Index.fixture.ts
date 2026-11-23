@@ -11,7 +11,8 @@ import { readAdventureRankTables } from "#src/services/adventureRank/readAdventu
 import { readStatTables } from "#src/services/character/readStatTables";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
-import { FORGE_DAILY_POINT_CAP, FORGE_ORE_ITEM_IDS } from "#src/services/forging/constants";
+import { FORGE_ORE_ITEM_IDS } from "#src/services/forging/constants";
+import { readForgeDailyPointCap } from "#src/services/forging/readForgeDailyPointCap";
 import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -29,6 +30,8 @@ const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const { weaponDataMap } = statTables;
 // Every recipe the Materials tab lists, in the game's order, the enhancement ores and the weapons alike
 const recipes: ForgeRecipe[] = await readForgeRecipes(GAME_DATA_LOCAL_BASE_URL);
+// The most forge points a game day holds, which the refused variant spends to
+const dailyPointCap = await readForgeDailyPointCap(GAME_DATA_LOCAL_BASE_URL);
 // The weapons the recipes yield, each named in English, as the world's forge screen reads them
 const weapons = computeForgeWeapons(recipes, weaponDataMap, englishNameText);
 const definitions = new Map<number, ItemDefinition>(
@@ -109,6 +112,7 @@ export const props = {
   adventureRankTables,
   amount: 5,
   completedMainQuestIds: new Set<string>(),
+  dailyPointCap,
   definitions,
   forgeQueuePlayerLevels: statTables.forgeQueuePlayerLevels,
   gameText: ENGLISH_GAME_TEXT,
@@ -129,7 +133,7 @@ export const props = {
 export const variants = {
   oresDone: createDoneOrderVariant(takeOne(recipes, 0).id, 5),
   queues: { inventory: createBag(createOreEntry(0, 28)), tab: ForgeTab.Queues, wallet: createWallet(375_502) },
-  refused: { progress: { ...progress, forgedPoints: FORGE_DAILY_POINT_CAP } },
+  refused: { progress: { ...progress, forgedPoints: dailyPointCap } },
   weaponsDone: {
     ...createDoneOrderVariant(weaponRecipe.id, 2),
     recipes: [...recipes, weaponRecipe],

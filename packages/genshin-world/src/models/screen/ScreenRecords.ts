@@ -26,6 +26,8 @@ export interface ScreenRecords {
   dishes: Record<string, DishUse>;
   // The domains' challenge levels by entry id and then by recommended rank, which a domain's level is entered from
   domainChallengeLevels: DomainChallengeLevelMap;
+  // The most forge points a game day holds, which the forge refuses an order past
+  forgeDailyPointCap: number;
   // The blacksmith's recipes, which the forge offers and the bag learns from
   forgeRecipes: ForgeRecipe[];
   // The Serenitea Pot's furnishings Tubby makes, each with the diagrams that open it, which a diagram's Use learns it from

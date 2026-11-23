@@ -6,7 +6,7 @@ export const ScreenRecordKeysMap: Partial<Record<ScreenKind, readonly ScreenReco
   [ScreenKind.Cooking]: [ScreenRecordKey.CookingTalents],
   [ScreenKind.Crafting]: [ScreenRecordKey.CraftingRecipes, ScreenRecordKey.CraftingStrongboxes],
   [ScreenKind.Domain]: [ScreenRecordKey.DomainChallengeLevels],
-  [ScreenKind.Forge]: [ScreenRecordKey.ForgeRecipes],
+  [ScreenKind.Forge]: [ScreenRecordKey.ForgeDailyPointCap, ScreenRecordKey.ForgeRecipes],
   [ScreenKind.Inventory]: [
     ScreenRecordKey.CraftingRecipes,
     ScreenRecordKey.Dishes,
