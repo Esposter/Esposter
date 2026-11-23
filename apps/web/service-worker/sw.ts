@@ -57,6 +57,12 @@ self.addEventListener("message", (event) => {
   if (event.data?.type === "SKIP_WAITING") event.waitUntil(self.skipWaiting());
 });
 
+// A worker takes the open pages at activation, so the page that installed it is controlled without a second navigation,
+// And its hosted requests reach the cache
+self.addEventListener("activate", (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
 // The push handler lives here, typed, rather than in an
 // `importScripts` file
 self.addEventListener("push", (event) => {
