@@ -328,7 +328,7 @@
 - `apps/infra/src/cloudflare/services` — `getR2BucketCorsRules.ts`
 - `apps/infra/src/cloudflare/services` — `createD1Database.ts`, `createDeadLetterQueueConsumer.ts`, `createQueueConsumer.ts`, `createR2Bucket.ts`, `queueJobResources.ts`
 - `apps/infra/src/cloudflare/services` — `getPublicR2BucketCorsRules.ts`
-- `apps/infra/src/cloudflare/services` — `getAccountTokenPermissionGroupId.ts`, `getR2BucketResources.ts`, `getR2SecretAccessKey.ts`
+- `apps/infra/src/cloudflare/services` — `getAccountTokenPermissionGroupId.ts`, `getAccountWideResources.ts`, `getR2BucketResources.ts`, `getR2SecretAccessKey.ts`
 - `apps/infra/src/cloudflare/outputs`, `apps/infra/src/cloudflare/providers`
 - `apps/infra/src/cloudflare/resources` — `accountTokens`
 - `apps/jobs/src/services/tombstone` — `purgeExpiredTombstones.test.ts`, `purgeExpiredTombstones.ts`
