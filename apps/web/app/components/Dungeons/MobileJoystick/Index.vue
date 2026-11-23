@@ -2,7 +2,7 @@
 import type { GameObjects } from "phaser";
 import type { VirtualJoystick } from "vue-phaserjs";
 
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { JOYSTICK_DEAD_ZONE, JOYSTICK_DEPTH, JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "#src/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "#src/services/dungeons/scene/joystick/getJoystickY";
@@ -47,7 +47,7 @@ onUnmounted(() => {
     :configuration="{
       displayWidth: JOYSTICK_RADIUS * 2,
       displayHeight: JOYSTICK_RADIUS * 2,
-      texture: ImageKey.Base,
+      texture: FileKey.UIJoystickBase,
       depth: JOYSTICK_DEPTH,
     }"
     :on-complete="
@@ -60,7 +60,7 @@ onUnmounted(() => {
     :configuration="{
       displayWidth: JOYSTICK_RADIUS,
       displayHeight: JOYSTICK_RADIUS,
-      texture: ImageKey.Thumb,
+      texture: FileKey.UIJoystickThumb,
       depth: JOYSTICK_DEPTH,
     }"
     :on-complete="

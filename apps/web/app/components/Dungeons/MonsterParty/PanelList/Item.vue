@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import { getHealthBarPercentage } from "#src/services/dungeons/monster/getHealthBarPercentage";
+import { MonsterKeyFileKeyMap } from "#src/services/dungeons/monster/MonsterKeyFileKeyMap";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { prettify } from "#src/util/text/prettify";
 import { checkIsDeepEqual } from "@esposter/shared";
@@ -31,7 +32,7 @@ const monsterName = computed(() => prettify(monster.key));
   <Container :configuration="{ x: columnIndex * 510, y: rowIndex * 150 + (columnIndex % 2) * 30 + 10 }">
     <Image
       :configuration="{
-        texture: ImageKey.HealthBarBackground,
+        texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI,
         origin: 0,
         scaleX: 1.1,
         scaleY: 1.2,
@@ -39,7 +40,7 @@ const monsterName = computed(() => prettify(monster.key));
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
     />
-    <Image :configuration="{ x: 35, y: 20, texture: monster.key, origin: 0, scale: 0.35 }" />
+    <Image :configuration="{ x: 35, y: 20, texture: MonsterKeyFileKeyMap[monster.key], origin: 0, scale: 0.35 }" />
     <Text :configuration="{ x: 162, y: 36, text: monsterName, style: { color: 'white', fontSize: 30 } }" />
     <Text
       :configuration="{

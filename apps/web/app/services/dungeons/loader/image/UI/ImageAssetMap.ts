@@ -1,4 +1,4 @@
-import { ImageKey } from "#shared/models/dungeons/keys/image/UI/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import blueButton from "#src/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
 import blueButtonSelected from "#src/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png";
 import barHorizontalBlueLeft from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png";
@@ -21,24 +21,24 @@ import { ControlsAssetMap } from "#src/services/dungeons/loader/image/UI/Control
 import { MonsterAssetMap } from "#src/services/dungeons/loader/image/UI/MonsterAssetMap";
 
 export const ImageAssetMap = {
-  [ImageKey.BarLeftCapShadow]: barHorizontalShadowLeft,
-  [ImageKey.BarMiddleShadow]: barHorizontalShadowMid,
-  [ImageKey.BarRightCapShadow]: barHorizontalShadowRight,
-  [ImageKey.BlueButton]: blueButton,
-  [ImageKey.BlueButtonSelected]: blueButtonSelected,
-  [ImageKey.Cursor]: cursor,
-  [ImageKey.CursorWhite]: cursorWhite,
-  [ImageKey.ExperienceBarLeftCap]: barHorizontalBlueLeft,
-  [ImageKey.ExperienceBarMiddle]: barHorizontalBlueMid,
-  [ImageKey.ExperienceBarRightCap]: barHorizontalBlueRight,
-  [ImageKey.GlassPanel]: glassPanel,
-  [ImageKey.GlassPanelGreen]: glassPanelGreen,
-  [ImageKey.GlassPanelPurple]: glassPanelPurple,
-  [ImageKey.HealthBarBackground]: customUI,
-  [ImageKey.HealthBarLeftCap]: barHorizontalGreenLeft,
-  [ImageKey.HealthBarMiddle]: barHorizontalGreenMid,
-  [ImageKey.HealthBarRightCap]: barHorizontalGreenRight,
+  [FileKey.ThirdPartyKenneysAssetsUIPackBlueButton00]: blueButton,
+  [FileKey.ThirdPartyKenneysAssetsUIPackBlueButton01]: blueButtonSelected,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft]: barHorizontalBlueLeft,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid]: barHorizontalBlueMid,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight]: barHorizontalBlueRight,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft]: barHorizontalGreenLeft,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid]: barHorizontalGreenMid,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight]: barHorizontalGreenRight,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowLeft]: barHorizontalShadowLeft,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowMid]: barHorizontalShadowMid,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowRight]: barHorizontalShadowRight,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI]: customUI,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanel]: glassPanel,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelGreen]: glassPanelGreen,
+  [FileKey.ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelPurple]: glassPanelPurple,
+  [FileKey.UICursorCursor]: cursor,
+  [FileKey.UICursorCursorWhite]: cursorWhite,
   ...BallAssetMap,
   ...ControlsAssetMap,
   ...MonsterAssetMap,
-} as const satisfies Record<ImageKey, string>;
+} as const satisfies Partial<Record<FileKey, string>>;

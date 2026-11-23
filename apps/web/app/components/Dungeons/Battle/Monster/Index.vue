@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
+import { MonsterKeyFileKeyMap } from "#src/services/dungeons/monster/MonsterKeyFileKeyMap";
 import { Image } from "vue-phaserjs";
 
 interface Props {
@@ -20,7 +21,12 @@ onUnmounted(() => {
 <template>
   <Image
     v-if="activeMonster"
-    :configuration="{ ...monsterPosition, texture: activeMonster.key, flipX: !isEnemy, tween: monsterTween }"
+    :configuration="{
+      ...monsterPosition,
+      texture: MonsterKeyFileKeyMap[activeMonster.key],
+      flipX: !isEnemy,
+      tween: monsterTween,
+    }"
   />
   <DungeonsBattleMonsterAvailableListContainer v-if="!isEnemy" />
   <DungeonsBattleMonsterInfoContainer v-if="activeMonster" :is-enemy />

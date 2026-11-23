@@ -2,7 +2,7 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { getExperienceGain } from "#src/services/dungeons/monster/getExperienceGain";

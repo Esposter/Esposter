@@ -1,4 +1,4 @@
-import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import openChest from "#src/assets/dungeons/sound/openChest.mp3";
 import openDoor from "#src/assets/dungeons/sound/openDoor.mp3";
 import textBlip from "#src/assets/dungeons/sound/textBlip.mp3";
@@ -8,11 +8,11 @@ import iceExplosion from "#src/assets/dungeons/thirdParty/leohpaz/iceExplosion.m
 import stepGrass from "#src/assets/dungeons/thirdParty/leohpaz/stepGrass.mp3";
 
 export const SoundEffectAssetMap = {
-  [SoundEffectKey.Claw]: claw,
-  [SoundEffectKey.Flee]: flee,
-  [SoundEffectKey.IceExplosion]: iceExplosion,
-  [SoundEffectKey.OpenChest]: openChest,
-  [SoundEffectKey.OpenDoor]: openDoor,
-  [SoundEffectKey.StepGrass]: stepGrass,
-  [SoundEffectKey.TextBlip]: textBlip,
-} as const satisfies Record<SoundEffectKey, string>;
+  [FileKey.SoundOpenChest]: openChest,
+  [FileKey.SoundOpenDoor]: openDoor,
+  [FileKey.SoundTextBlip]: textBlip,
+  [FileKey.ThirdPartyLeohpazClaw]: claw,
+  [FileKey.ThirdPartyLeohpazFlee]: flee,
+  [FileKey.ThirdPartyLeohpazIceExplosion]: iceExplosion,
+  [FileKey.ThirdPartyLeohpazStepGrass]: stepGrass,
+} as const satisfies Partial<Record<FileKey, string>>;

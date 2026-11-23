@@ -7,7 +7,7 @@ import { directionSchema } from "#shared/models/dungeons/data/player/directionSc
 import { inventorySchema } from "#shared/models/dungeons/data/player/Inventory";
 import { positionSchema } from "#shared/models/dungeons/data/player/Position";
 import { RespawnLocation, respawnLocationSchema } from "#shared/models/dungeons/data/player/RespawnLocation";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { Monster, monsterSchema } from "#shared/models/dungeons/monster/Monster";
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
 import { getItem } from "#shared/services/dungeons/item/getItem";

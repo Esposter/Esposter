@@ -1,8 +1,8 @@
-import { ControlsKey } from "#shared/models/dungeons/keys/image/UI/ControlsKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import base from "#src/assets/dungeons/UI/joystick/base.png";
 import thumb from "#src/assets/dungeons/UI/joystick/thumb.png";
 
-export const ControlsAssetMap = { [ControlsKey.Base]: base, [ControlsKey.Thumb]: thumb } as const satisfies Record<
-  ControlsKey,
-  string
->;
+export const ControlsAssetMap = {
+  [FileKey.UIJoystickBase]: base,
+  [FileKey.UIJoystickThumb]: thumb,
+} as const satisfies Partial<Record<FileKey, string>>;

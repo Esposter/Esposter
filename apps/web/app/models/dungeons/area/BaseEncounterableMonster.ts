@@ -1,4 +1,4 @@
-import type { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import type { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import type { Weight } from "#src/models/math/Weight";
 
 export interface BaseEncounterableMonster extends Weight {

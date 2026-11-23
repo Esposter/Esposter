@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/ExperienceLabelTextStyle";
 import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
 import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
@@ -29,7 +29,13 @@ const { barPercentage: experienceBarPercentage } = useExperience(monster);
 
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
-    <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY: isEnemy ? 0.8 : undefined }" />
+    <Image
+      :configuration="{
+        origin: 0,
+        texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI,
+        scaleY: isEnemy ? 0.8 : undefined,
+      }"
+    />
     <Text
       :configuration="{
         x: 30,

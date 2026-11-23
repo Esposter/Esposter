@@ -1,4 +1,4 @@
-import type { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import type { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 
 import { monstersData } from "#shared/assets/dungeons/data/monstersData";
 import { NotFoundError } from "@esposter/shared";

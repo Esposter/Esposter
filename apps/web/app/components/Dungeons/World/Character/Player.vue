@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
-import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "#src/services/dungeons/scene/world/constants";
@@ -87,7 +87,7 @@ onShutdown((scene) => {
         const tile = layerMap?.get(LayerName.Encounter)?.getTileAt(enterTile.x, enterTile.y, false);
         if (!tile) return;
 
-        getDungeonsSoundEffect(scene, SoundEffectKey.StepGrass).play();
+        getDungeonsSoundEffect(scene, FileKey.ThirdPartyLeohpazStepGrass).play();
         rollRandomEncounter(scene);
       }
     "

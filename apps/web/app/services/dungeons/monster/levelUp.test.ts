@@ -1,4 +1,4 @@
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { getLevelExperience } from "#src/services/dungeons/monster/getLevelExperience";
 import { levelUp } from "#src/services/dungeons/monster/levelUp";

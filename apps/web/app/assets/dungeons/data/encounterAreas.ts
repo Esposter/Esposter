@@ -3,7 +3,7 @@ import type { EncounterArea } from "#src/models/dungeons/area/EncounterArea";
 import type { Except } from "type-fest";
 
 import { Area } from "#shared/generated/tiled/propertyTypes/enum/Area";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 export const EncounterAreaMap = {

@@ -2,7 +2,7 @@ import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
 import { AttackId } from "#shared/models/dungeons/attack/AttackId";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { BASE_DEFENSE } from "#shared/services/dungeons/monster/constants";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 

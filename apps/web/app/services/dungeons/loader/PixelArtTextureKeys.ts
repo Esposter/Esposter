@@ -1,5 +1,4 @@
-import { MonsterPartyKey } from "#shared/models/dungeons/keys/image/MonsterPartyKey";
-import { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { WorldAssetMap } from "#src/services/dungeons/loader/image/WorldAssetMap";
 import { SpritesheetAssetMap } from "#src/services/dungeons/loader/spritesheet/SpritesheetAssetMap";
 import { TilesetAssetMap } from "#src/services/dungeons/loader/TilesetAssetMap";
@@ -11,6 +10,6 @@ export const PixelArtTextureKeys = [
   ...Object.keys(TilesetAssetMap),
   ...Object.keys(SpritesheetAssetMap),
   ...Object.keys(WorldAssetMap),
-  BallKey.CosmoBall,
-  MonsterPartyKey.MonsterPartyBackground,
+  FileKey.UIBallsCosmoBall,
+  FileKey.SceneMonsterPartyBackground,
 ];
