@@ -1318,9 +1318,18 @@ importers:
 
   packages/db-mock:
     dependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../db-schema
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.6(@cloudflare/workers-types@5.20261122.2)(@opentelemetry/api@1.9.1)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.7)
@@ -1331,15 +1340,6 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 5.20261122.2
-      '@esposter/configuration':
-        specifier: workspace:*
-        version: link:../configuration
-      '@esposter/shared':
-        specifier: workspace:*
-        version: link:../shared
-      '@esposter/shared-node':
-        specifier: workspace:*
-        version: link:../shared-node
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6

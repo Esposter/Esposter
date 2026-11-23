@@ -51,13 +51,13 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@esposter/shared": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "miniflare": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@esposter/configuration": "workspace:*",
-    "@esposter/shared": "workspace:*",
-    "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "uuid": "catalog:"
@@ -65,8 +65,5 @@
   "peerDependencies": {
     "@esposter/db-schema": "workspace:*",
     "drizzle-orm": "catalog:"
-  },
-  "inlinedDependencies": {
-    "neverthrow": "8.2.0"
   }
 }
