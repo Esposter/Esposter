@@ -60,7 +60,6 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
         <template v-if="item.origin.handedBackAt">· handed back</template>
       </span>
     </span>
-    <!-- eslint-disable-next-line vue/no-v-html -- the notes are the editor's sanitized HTML -->
     <span v-if="hasNotes" class="notes rich-text-content" text-sm ws-normal line-clamp-6 v-html="item.notes" />
   </span>
 </template>

@@ -28,7 +28,7 @@ defineExpose({ onKeyDown });
     :selected-index
     :title="getSuggestionListTitle('MERGE FIELDS', SuggestionTrigger.MergeField, query)"
   >
-    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
+    <!-- eslint-disable-next-line a11y/interactive-supports-focus -- focus stays in the editor, which walks the options -->
     <div
       v-for="(column, index) of items"
       :key="column"

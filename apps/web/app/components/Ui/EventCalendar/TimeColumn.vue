@@ -67,7 +67,7 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
     ui-guide
     relative
   >
-    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
+    <!-- eslint-disable-next-line a11y/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
     <div
       v-for="({ slotName, slotStart }, index) of slots"
       :key="index"

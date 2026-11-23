@@ -98,7 +98,6 @@ const getNudgeDuration = (key: string) => {
     </template>
     <template #content>
       <div text-heading-color>{{ event.title }}</div>
-      <!-- eslint-disable-next-line vue/no-v-html -- the description, sanitized by sanitizeTextHtml above where it is drawn -->
       <div v-if="hasDescription" class="rich-text-content" pt-2 v-html="descriptionHtml" />
     </template>
   </UiTooltip>

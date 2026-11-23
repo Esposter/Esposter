@@ -22,7 +22,9 @@ import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 // The script-side bans each `no-restricted-syntax` override below carries over, read off the base list once
 const scriptSyntaxBans = typescriptRules["no-restricted-syntax"].slice(1);
 
+// vize's lint holds a page, a layout and a server component to one root, so Nuxt's own block for it goes
 export default withNuxt(plugins)
+  .remove("nuxt/vue/single-root")
   .overrides({ ...nuxtOverrides, "nuxt/typescript/rules": { rules: typescriptRules } })
   .append(oxlint)
   .append({

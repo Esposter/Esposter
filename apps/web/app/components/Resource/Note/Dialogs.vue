@@ -34,7 +34,6 @@ const html = computed(() => (previewDoc.value ? renderNoteHtml(previewDoc.value)
     title="Import Markdown"
     :size="UiDialogSize.Large"
   >
-    <!-- eslint-disable-next-line vue/no-v-html -- the imported note's sanitized HTML -->
     <div class="rich-text-content" v-html="html" />
     <template #footer>
       <ResourceImportPreviewFooter

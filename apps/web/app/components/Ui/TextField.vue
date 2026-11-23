@@ -74,7 +74,7 @@ defineExpose({ element });
     flex-col
     gap-1
   >
-    <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
+    <!-- eslint-disable-next-line a11y/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted
       >{{ label }} <UiRequiredMark v-if="isRequired" is-silent
     /></label>

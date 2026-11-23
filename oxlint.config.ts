@@ -32,8 +32,11 @@ import { defineConfig } from "oxlint";
 // They are `--runExternalCode` and `--fast`, the two the typecheck scripts pass. The first runs the content mapper that
 // Nuxt's generated tsconfig and the Vue packages' `tsconfig.vue.json` name, and the second is the fast preset.
 // @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
-process.env.TSRS_FAST = "1";
-process.env.TSRS_LINT_RUN_EXTERNAL_CODE = "1";
+// vize evaluates this file through `vite.config.ts` and refuses a write over a variable already set, so each is set only
+// When absent
+// @TODO: no upstream issue — vize's config runtime throws on assigning a process.env variable that is already set (ubugeeei-prod/vize)
+process.env.TSRS_FAST ??= "1";
+process.env.TSRS_LINT_RUN_EXTERNAL_CODE ??= "1";
 
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
 // So the two passes never ignore different trees.

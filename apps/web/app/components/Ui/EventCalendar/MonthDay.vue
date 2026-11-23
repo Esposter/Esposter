@@ -39,7 +39,7 @@ const create = () => {
 </script>
 
 <template>
-  <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
+  <!-- eslint-disable-next-line a11y/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
   <div
     class="day"
     :aria-selected="isSelected"

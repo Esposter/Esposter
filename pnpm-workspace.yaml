@@ -138,7 +138,6 @@ catalog:
   eslint-plugin-oxlint: ^1.94.0
   eslint-plugin-perfectionist: ^5.14.0
   eslint-plugin-pinia: ^0.4.2
-  eslint-plugin-vuejs-accessibility: ^2.6.3
   fake-indexeddb: ^6.2.8
   fflate: ^0.8.3
   h3: ^2.0.8

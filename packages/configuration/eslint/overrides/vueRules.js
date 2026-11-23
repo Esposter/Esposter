@@ -1,16 +1,13 @@
-import restrictedAccessibilitySyntaxes from "@esposter/configuration/eslint/restrictedAccessibilitySyntaxes.js";
-import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
-import restrictedDeleteSyntaxes from "@esposter/configuration/eslint/restrictedDeleteSyntaxes.js";
 import restrictedEventSyntaxes from "@esposter/configuration/eslint/restrictedEventSyntaxes.js";
-import restrictedImageSyntaxes from "@esposter/configuration/eslint/restrictedImageSyntaxes.js";
-import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
-import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
-import restrictedTrimSyntaxes from "@esposter/configuration/eslint/restrictedTrimSyntaxes.js";
 
+// What eslint-plugin-vue still runs once vize's lint (`vite/vueOptions.ts`) took the rest. It replaces the rule set of
+// Nuxt's Vue block rather than merging into it, so a rule is on here because this map names it
 export default {
   // Not covered by eslint-plugin-oxlint on vue files — its vue-svelte-astro-exceptions config
   // Deliberately keeps unused-vars rules enabled there, so this off is still load-bearing.
   "@typescript-eslint/no-unused-vars": "off",
+  // Nuxt's Vue block keeps it off for components, whose script bindings the template reads where ESLint cannot see
+  "no-useless-assignment": "off",
   // `<script setup>` is the only component authoring style here. The Options API runtime is compiled out of the
   // Bundle entirely (Nuxt 5 defaults `vue.optionsApi` off), so an options component of
   // Ours would mount against a runtime that cannot apply it and fail at render rather than at build. Plain
@@ -23,6 +20,7 @@ export default {
   // (Vuetify 0's `Select.Root`), since the library exports each compound as one namespace object. The
   // `registeredComponentsOnly` option is useless under Nuxt auto-imports (nothing is locally registered), so every
   // Non-HTML tag is checked.
+  // @TODO: no upstream issue — vize's vue/component-name-in-template-casing has no ignores for TresJS's <primitive> (ubugeeei-prod/vize)
   "vue/component-name-in-template-casing": [
     "error",
     "PascalCase",
@@ -31,109 +29,13 @@ export default {
       registeredComponentsOnly: false,
     },
   ],
-  // A component's macros stand at the top of its script, after the imports and the types they read, in the order
-  // `defineOptions` → `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, with every declaration below them
-  // (`useHead` and the other page metadata included). `defineExpose` stays out of the order, since the `vue` skill puts
-  // It before the watches and lifecycle hooks and the rule's `defineExposeLast` would put it after them.
-  "vue/define-macros-order": [
-    "error",
-    { order: ["defineOptions", "defineSlots", "defineModel", "defineProps", "defineEmits"] },
-  ],
-  // Styles are scoped by default; the rare global block (e.g. transition classes for slotted content,
-  // Third-party DOM appended to document.body) carries an eslint-disable with its reason. Library CSS
-  // Belongs in a script-setup `import "lib.css"` (code-split with the component), not a global style block.
-  "vue/enforce-style-attribute": ["error", { allow: ["scoped"] }],
-  "vue/html-self-closing": "off",
-  "vue/multi-word-component-names": "off",
-  // Raw <a> bypasses client-side routing (full reloads) and default link styles. Use <NuxtLink :to> for internal
-  // Routes, <NuxtLink :to external target> for external URLs, <NuxtInvisibleLink :to="{ hash }"> for in-page anchors,
-  // And navigateTo for imperative navigation.
-  "vue/no-restricted-html-elements": [
-    "error",
-    {
-      element: "a",
-      message:
-        'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',
-    },
-    { element: "img", message: "Don't use a raw <img>. Use <NuxtImg>." },
-    {
-      element: "time",
-      message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
-    },
-  ],
-  // Object.* calls in a render-evaluated template expression (bind, v-for, interpolation) allocate a fresh
-  // Reference every render, breaking prop reference-equality and forcing needless re-renders. Hoist to a
-  // Script-setup const (static maps) or computed (reactive). Event handlers (@on) run per-event, so exempt.
-  "vue/no-restricted-syntax": [
-    "error",
-    ...restrictedSyntaxes,
-    ...restrictedTrimSyntaxes,
-    {
-      // The `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` rules oxlint ships cover the
-      // Script block and cannot see template expressions, so the same three bans are restated here for the
-      // Half it does not read.
-      // A mutating sort in a render expression is worse than in script: it rewrites the array it is rendering.
-      // The fourth of the set — splicing a fresh copy — is in `restrictedSyntaxes` instead, because no oxlint
-      // Rule covers either half of it, so one entry there reaches script and template alike.
-      message:
-        "Iterate with `v-for`, or move the loop into script/a computed — a template expression has no `for...of`, so `.forEach()` here has nowhere to go. Ordering takes the copying `toSorted()`/`toReversed()`: a render expression must not rewrite what it renders.",
-      selector: "CallExpression[callee.property.name=/^(forEach|reverse|sort)$/]",
-    },
-    {
-      message:
-        "Don't call Object.* inline in a template render expression — it allocates a new reference every render. Hoist it to a script-setup const (static) or computed (reactive). (Event handlers are exempt.)",
-      selector: "CallExpression[callee.object.name='Object']:not(VAttribute[key.name.name='on'] CallExpression)",
-    },
-    {
-      // An unconditional call at the start of a handler is exactly what Vue event modifiers express. Raw calls
-      // Remain allowed after a runtime guard (e.g. only preventDefault when the cursor is at position 0), where
-      // No modifier can encode the condition.
-      message:
-        "Use Vue event modifiers (@event.stop / @event.prevent, with key modifiers where applicable) instead of an unconditional event method call at the start of a handler. Raw calls are only for conditional use behind a guard.",
-      selector:
-        ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
-    },
-    {
-      // Vuetify's tags, which no package here provides: the UI library draws everything they did. Only the kebab-case
-      // Spelling is decidable, since a PascalCase `V` prefix is also another library's own name
-      message:
-        "Don't use a Vuetify component. Draw it with the UI library's (`app/components/Ui`), or grow the library first — see openspec/specs/architecture/ui-library/design.md. An image is <NuxtImg>.",
-      selector: "VElement[rawName=/^v-/]",
-    },
-    {
-      // `vue/v-bind-style` only reads a bound argument, so `v-bind:x` is caught and the argument-less object form is
-      // Not; this is the same shorthand for the half it does not see
-      message: 'Spread an object of bindings with the shorthand: `:="attrs"`, never `v-bind="attrs"`.',
-      selector: "VAttribute[directive=true][key.name.rawName='bind'][key.argument=null]",
-    },
-    {
-      // A bare reference forwards whatever the event hands it as the first argument, which the handler rarely
-      // Means to read — a DOM event lands in a parameter that wanted an id. A handler that does want the payload
-      // Says so with an arrow, so the call site shows what it passes
-      message:
-        'Call the handler instead of naming it: `@click="save()"`, or an arrow when it takes the payload — `@select="(id) => selectRole(id)"`.',
-      selector:
-        "VAttribute[directive=true][key.name.name='on'] > VExpressionContainer > :matches(Identifier, MemberExpression)",
-    },
-    ...restrictedAccessibilitySyntaxes,
-    ...restrictedDateSyntaxes,
-    ...restrictedDeleteSyntaxes,
-    ...restrictedEventSyntaxes,
-    ...restrictedImageSyntaxes,
-    ...restrictedStoreSyntaxes,
-  ],
-  "vue/no-unused-vars": "off",
-  "vue/no-v-html": "off",
-  "vue/no-v-text-v-html-on-component": "off",
+  // @TODO: no upstream issue — vize has no first-attribute-linebreak rule (ubugeeei-prod/vize)
+  "vue/first-attribute-linebreak": "warn",
+  // The bare `@click.stop` ban reads the directive's modifiers, which vize's template tree does not expose
+  // @TODO: no upstream issue — vize's VDirectiveKey has no modifier nodes for vue/no-restricted-syntax to match (ubugeeei-prod/vize)
+  "vue/no-restricted-syntax": ["error", ...restrictedEventSyntaxes],
+  // @TODO: no upstream issue — vize has no padding-line-between-blocks rule (ubugeeei-prod/vize)
   "vue/padding-line-between-blocks": ["error", "always"],
-  // Load-bearing, and a pair with the `"off"` in `oxlint.config.ts` rather than a duplicate of it.
-  // `eslint-plugin-oxlint` emits a disable for every rule in an enabled category and then deletes that disable
-  // Again for any rule the config deactivates — it only switches off the twins of rules oxlint actually runs.
-  // So dropping this half as redundant turns the rule back on in ESLint alone, on a tree oxlint passes clean.
-  "vue/require-default-prop": "off",
-  // Run by vize's template pass, configured in `vite/vueOptions.ts`
-  "vue/require-v-for-key": "off",
+  // @TODO: no upstream issue — vize's vue/v-bind-style has no same-name shorthand option (ubugeeei-prod/vize)
   "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
-  "vue/v-slot-style": ["error", { atComponent: "shorthand" }],
-  "vue/valid-template-root": "off",
 };

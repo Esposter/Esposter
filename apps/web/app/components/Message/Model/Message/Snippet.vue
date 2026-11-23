@@ -18,7 +18,6 @@ const isSanitizedHtml = computed(() => message.type === MessageType.Message || m
 <!-- A message's text cut to one line, as a line quoting or listing it shows it -->
 <template>
   <slot v-if="EMPTY_TEXT_REGEX.test(message.message)" />
-  <!-- eslint-disable-next-line vue/no-v-html -- a message or webhook body, sanitized at its Zod boundary -->
   <span v-else-if="isSanitizedHtml" class="rich-text-content" max-h-6 min-w-0 truncate v-html="message.message" />
   <span v-else class="rich-text-content" max-h-6 min-w-0 truncate>{{ message.message }}</span>
 </template>

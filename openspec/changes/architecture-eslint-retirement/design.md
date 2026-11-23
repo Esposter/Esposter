@@ -35,7 +35,9 @@ oxlint parses only the script blocks of a `.vue` file, and its JS plugins see th
 
 So the phase opens with a gate. A planted violation in a script-first component, and another in a component with no script block, must both be reported on their template lines. The gate is run against vize's oxlint plugin first, since a pass inside oxlint keeps the lint one command and one walk of the tree. If the plugin misses the script-less component, vize's own lint, which parses the whole component, runs as a step beside oxlint instead. Giving those components an empty script block to reach the plugin is rejected: it is a file shape that exists only for the linter. Either way the rest of the phase is the same, since only the host differs.
 
-The gate chose vize's own lint. The plugin inside oxlint reported the script-first finding on a script line, with the template position only in its message, and missed the script-less component entirely. The plugin's `oxlint-vize` wrapper reported both on their template lines, but it runs a second oxlint over temporary copies, cannot carry the type-aware backend or the timing flag the root lint passes, and took an order of magnitude longer than vize's own lint over every component. vize's own lint reported both on their template lines in a few seconds for the whole tree. So the template pass is the root `lint:vue` task, vize reads its options off the `vue` key of `vite.config.ts`, and `oxlint-plugin-vize` is not installed. The incremental preset runs only the rules those options name, so a rule is on because the options say so, never because vize's defaults changed.
+The gate chose vize's own lint. The plugin inside oxlint reported the script-first finding on a script line, with the template position only in its message, and missed the script-less component entirely. The plugin's `oxlint-vize` wrapper reported both on their template lines, but it runs a second oxlint over temporary copies, cannot carry the type-aware backend or the timing flag the root lint passes, and took an order of magnitude longer than vize's own lint over every component. vize's own lint reported both on their template lines in a few seconds for the whole tree. So the template pass is the root `lint:vue` task, vize reads its options off the `vue` key of `vite.config.ts`, the one place it reads them, and `oxlint-plugin-vize` is not installed. The incremental preset runs only the rules those options name, so a rule is on because the options say so, never because vize's defaults changed.
+
+The template rules moved as one batch. Every eslint-plugin-vue and vuejs-accessibility rule that had a vize twin runs in vize with its options, and Nuxt's Vue block in ESLint is replaced by the few rules vize cannot run yet, each under an `@TODO` naming the gap: casing with exceptions, the same-name bind shorthand, two layout rules vize does not have, and the bare `@click.stop` ban, since vize's template tree carries no node for a directive's modifiers. The three element bans are selectors, because vize's element ban takes no message. A page, a layout and a server component keep their one root through a scoped entry, since most components here render a fragment. The template selector list still carries the shared list's script-only entries; matching dispatches on node type, so they cost nothing, and the list splits when the script bans move to oxlint in the next phase. vize evaluates `vite.config.ts` and everything it imports, so `oxlint.config.ts` sets the type-aware backend's switches only when they are absent, which its config runtime allows.
 
 ```mermaid
 flowchart TD
@@ -93,29 +95,28 @@ The phase opens with its own gate: a planted violation for a selector of each sh
 
 ## Key files
 
-| File                                                          | Role                                                                                     |
-| :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
-| `oxlint.config.ts`                                            | gains the script selector bans by path, the JS plugins and the template pass's wiring    |
-| `vite/vueOptions.ts`                                          | the template pass's options: the incremental preset and the rules it runs                |
-| `vite/checkTasks.ts`                                          | the `lint:vue` and `lint:packages:vue` leaves of the root lint                           |
-| `oxlint/jsPlugins.ts`                                         | lists the JS plugins oxlint loads; the third-party ESLint plugins join it                |
-| `scripts/src/oxlint/`                                         | the local JS plugins; the selector-ban plugin joins them                                 |
-| `packages/configuration/eslint/index.vue.js`                  | the per-path selector composition that moves to `oxlint.config.ts`, then is deleted      |
-| `packages/configuration/eslint/overrides/vueRules.js`         | the eslint-plugin-vue options the template pass is configured to match                   |
-| `packages/configuration/eslint/plugins/vuejsAccessibility.js` | the accessibility options the vize `a11y/*` rules are configured to match                |
-| `packages/configuration/eslint/plugins/scopedStyles.js`       | the scoped-style attribute check that moves to the template pass                         |
-| `packages/configuration/eslint/plugins/directives.js`         | the template directive-reason check that moves to the template pass                      |
-| `packages/configuration/eslint/typescriptRules.js`            | the inline script selector bans that move to `oxlint/`                                   |
-| `packages/configuration/eslint/plugins/depend.js`             | the dependency ban that becomes a workspace test                                         |
-| `packages/configuration/eslint/plugins/json.js`               | the JSON rules that become a workspace test                                              |
-| `apps/web/configuration/modules.ts`                           | loads `@nuxt/eslint`, which is removed                                                   |
-| `package.json`, `pnpm-workspace.yaml`                         | the lint scripts, the catalog entries removed, the override and the `typescript` entry   |
-| `openspec/specs/architecture/lint-toolchain/design.md`        | rewritten at archive for oxlint and vize, with no bridge and no blocker table for ESLint |
+| File                                                    | Role                                                                                     |
+| :------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
+| `oxlint.config.ts`                                      | gains the script selector bans by path, the JS plugins and the template pass's wiring    |
+| `vite/vueOptions.ts`                                    | the template pass's options: the incremental preset and the rules it runs                |
+| `vite/checkTasks.ts`                                    | the `lint:vue` and `lint:packages:vue` leaves of the root lint                           |
+| `oxlint/jsPlugins.ts`                                   | lists the JS plugins oxlint loads; the third-party ESLint plugins join it                |
+| `scripts/src/oxlint/`                                   | the local JS plugins; the selector-ban plugin joins them                                 |
+| `packages/configuration/eslint/index.vue.js`            | the per-path selector composition that moves to `oxlint.config.ts`, then is deleted      |
+| `packages/configuration/eslint/overrides/vueRules.js`   | the eslint-plugin-vue rules vize cannot run yet, each under its `@TODO`                  |
+| `packages/configuration/eslint/plugins/scopedStyles.js` | the scoped-style attribute check that moves to the template pass                         |
+| `packages/configuration/eslint/plugins/directives.js`   | the template directive-reason check that moves to the template pass                      |
+| `packages/configuration/eslint/typescriptRules.js`      | the inline script selector bans that move to `oxlint/`                                   |
+| `packages/configuration/eslint/plugins/depend.js`       | the dependency ban that becomes a workspace test                                         |
+| `packages/configuration/eslint/plugins/json.js`         | the JSON rules that become a workspace test                                              |
+| `apps/web/configuration/modules.ts`                     | loads `@nuxt/eslint`, which is removed                                                   |
+| `package.json`, `pnpm-workspace.yaml`                   | the lint scripts, the catalog entries removed, the override and the `typescript` entry   |
+| `openspec/specs/architecture/lint-toolchain/design.md`  | rewritten at archive for oxlint and vize, with no bridge and no blocker table for ESLint |
 
 ## Notes
 
 - The baseline each phase is measured against is CI's Lint step before any rule moved, a few minutes on the hosted runner, nearly all of it the per-package ESLint passes. The template pass adds seconds to it.
-- The ESLint directives in the tree mostly name `no-restricted-syntax`, `perfectionist/sort-objects` and `vue/no-restricted-syntax`. Each is rewritten for its rule's new host in the phase that moves the rule, so a directive never names a rule nothing runs. The `vue/no-v-html` directives already name a rule that is off, and they are deleted rather than rewritten.
+- The ESLint directives in the tree mostly name `no-restricted-syntax`, `perfectionist/sort-objects` and `vue/no-restricted-syntax`. Each is rewritten for its rule's new host in the phase that moves the rule, so a directive never names a rule nothing runs.
 - vize describes itself as experimental and pre-1.0. The template pass is pinned by the catalog like every other dependency, and a vize bump is read against the gate's planted violations, which stay as tests.
 
 ## Sources

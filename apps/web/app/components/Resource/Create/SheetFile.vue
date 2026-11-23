@@ -74,6 +74,8 @@ const onUpdateFile = async (newFile?: File | File[]) => {
       Drop a {{ DATA_SOURCE_ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </p>
     <div flex gap-2 min-w-0 items-center>
+      <!-- @TODO: no upstream issue — vize's a11y/no-aria-hidden-on-focusable counts a hidden element as focusable (ubugeeei-prod/vize) -->
+      <!-- eslint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
       <input
         ref="fileInput"
         :accept="DATA_SOURCE_ACCEPT"
