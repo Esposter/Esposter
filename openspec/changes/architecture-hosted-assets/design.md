@@ -162,7 +162,7 @@ The asset route keeps serving the user buckets on `assets.esposter.com` and `ass
 
 ### Migration
 
-Genshin's objects are copied server-side with `CopyObject` into `public-hosted-assets`, under the same names, so no object is downloaded. `CopyObject` is a Class A operation at $4.50 per million, so the copy costs a fraction of a cent. Every locked hash is then verified in the new bucket from the hosted origin before the origin switches. The app reads the hosted domain, and only then are `public-genshin-assets` and `public-dungeons-assets` emptied and their Pulumi resources removed. A tab still running an older bundle requests a deleted url after the emptying. The window is one deploy, and the owner accepted it.
+Genshin's objects are copied server-side with `CopyObject` into `public-hosted-assets`, under the same names, so no object is downloaded. `CopyObject` is a Class A operation at $4.50 per million, so the copy costs a fraction of a cent. Every locked hash is then verified in the new bucket from the hosted origin before the origin switches. The app reads the hosted domain, and only then were `public-genshin-assets` and `public-dungeons-assets` emptied and their Pulumi resources removed. A tab still running an older bundle requests a deleted url after the emptying. The window is one deploy, and the owner accepted it.
 
 ## Load
 

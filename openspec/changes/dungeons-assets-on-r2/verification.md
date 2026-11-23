@@ -50,3 +50,17 @@ Second visit: the title at 2.2 s, the world after Space.
 ## 5.1: the dev bucket emptied
 
 The dev `public-dungeons-assets` was emptied once the deployed dev run read every dungeons asset from `hosted.dev.esposter.com`: 53 objects deleted, 0 left. The prod bucket waits for `main`.
+
+## 5.1: both buckets retired and their resources removed
+
+The lead emptied the prod `public-dungeons-assets` to 0 objects, as the dev bucket was before it, so both environments are empty. The code change removes the four Pulumi bucket resources, the `PublicDungeonsAssets` member, the `PUBLIC_DUNGEONS_ASSETS` bindings and the asset route's refused-bucket fixture that named it. The protect flag on the four bucket resources was cleared in the prod stack's state with `pulumi state unprotect` before the preview, as the architecture-hosted-assets 6.6 record gives in full.
+
+`pnpm -C apps/infra infra:preview --suppress-outputs` after the code change:
+
+```text
+Resources:
+    - 4 to delete
+    154 unchanged
+```
+
+The four deletes are the two dungeons buckets and the two genshin buckets, dev and prod, and the stack line shows no other change.

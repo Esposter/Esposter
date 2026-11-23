@@ -1,13 +1,14 @@
 import type { HostedAssetLock, HostedAssetName } from "hosted-assets";
 
 import { getLockRefs } from "#src/services/hostedAssets/getLockRefs";
+import { StorageBucket } from "@esposter/db-schema";
 import { getHostedAssetUrl } from "hosted-assets";
 import { describe, expect, test } from "vitest";
 
 const createIndex = (scope: string, hash: string) => ({ bytes: 0, extension: ".json", scope, sha256: hash });
 
 describe(getLockRefs, () => {
-  const baseUrl = "https://bucket.example/public-genshin-assets";
+  const baseUrl = `https://bucket.example/${StorageBucket.PublicHostedAssets}`;
   const sha256 = "a".repeat(64);
   const entrySha256 = "b".repeat(64);
   const ENGLISH_INDEX_KEY = "profile/English";

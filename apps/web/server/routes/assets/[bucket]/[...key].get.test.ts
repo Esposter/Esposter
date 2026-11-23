@@ -14,11 +14,7 @@ const createEvent = (bucket: string, key: string) =>
 describe("routes/assets/[bucket]/[...key]", () => {
   const key = TEST_FILENAME;
   const body = " ";
-  const storageBuckets = [
-    StorageBucket.PublicDungeonsAssets,
-    StorageBucket.PublicHostedAssets,
-    StorageBucket.PublicUserAssets,
-  ];
+  const storageBuckets = [StorageBucket.PublicHostedAssets, StorageBucket.PublicUserAssets];
   let buckets: Map<StorageBucket, R2Bucket>;
   let dispose: () => Promise<void>;
 
@@ -33,16 +29,13 @@ describe("routes/assets/[bucket]/[...key]", () => {
     await dispose();
   });
 
-  test.each([StorageBucket.PublicDungeonsAssets, StorageBucket.PublicHostedAssets])(
-    "refuses %s as a 404 though its object is stored",
-    async (storageBucket) => {
-      expect.hasAssertions();
+  test("refuses the shared hosted bucket as a 404 though its object is stored", async () => {
+    expect.hasAssertions();
 
-      await expect(assetRoute(createEvent(storageBucket, key))).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[HTTPError: HTTPError 404]`,
-      );
-    },
-  );
+    await expect(
+      assetRoute(createEvent(StorageBucket.PublicHostedAssets, key)),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[HTTPError: HTTPError 404]`);
+  });
 
   test("serves a user's public object", async () => {
     expect.hasAssertions();

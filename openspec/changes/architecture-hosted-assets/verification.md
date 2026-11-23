@@ -144,3 +144,19 @@ A driven run of `/genshin` (the machine's Chrome, no `page.route` workaround):
 The `404` is for `/data/genshin/exports/index.json`, under the base `GENSHIN_SCENE_EXPORT_BASE_URL` (`apps/web/shared/services/genshin/constants.ts`), which the `serveGenshinExtractions` module serves under `nuxt dev` alone. The production build passes an empty base outside development: `Index.client.vue` and `World.vue` do so. Both readers of that base, `useSceneExports` and `useCharacterAvatar`, return before `readSceneExportComponents` is called when the base is empty, and that function is the only one that reads `index.json`. So the paths traced here make no request for that file, and the source of the `404` is unidentified. Nothing here is changed for it.
 
 6.8 stays unticked. Its Verify holds on both clauses, the lock's total in the section above and the bar completing before the login scene in this run, but the opening logs the two console errors from that `404`, so the zero-console-error criterion for this run is not met.
+
+## 6.6: the buckets retired and their resources removed
+
+The lead emptied `public-genshin-assets` to 0 objects in dev and in prod before this change, and the owner approved retiring it. The code change removes the four Pulumi bucket resources, the `PublicGenshinAssets` member, the `PUBLIC_GENSHIN_ASSETS` bindings and the fixtures that named it.
+
+The preview before the prod state was touched refused the deletes: each of the four bucket resources failed with `cannot be deleted because it is protected`. The protect flag was then cleared in the prod stack's state on the four URNs with `pulumi state unprotect`, which printed `4 resources unprotected`, as `.agents/skills/pulumi-infra/references/migrations.md` gives for a protected delete. No `pulumi up` ran, so the preview's protect change is already in state and no protect line appears in the preview below.
+
+`pnpm -C apps/infra infra:preview --suppress-outputs` after the code change:
+
+```text
+Resources:
+    - 4 to delete
+    154 unchanged
+```
+
+The four deletes are `dev-r2-esposter-public-genshin-assets`, `dev-r2-esposter-public-dungeons-assets`, `prod-r2-esposter-public-dungeons-assets` and `prod-r2-esposter-public-genshin-assets`, and the stack line shows no other change.

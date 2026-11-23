@@ -25,5 +25,5 @@ Genshin already publishes its game data as content-addressed objects under a com
 - `openspec/specs/architecture/static-assets/design.md` loses its two-place rule, and the `pnpm phaser:gen` row in the generated-artifacts design goes.
 - `openspec/specs/genshin/hosted-game-data/design.md` and the genshin-data skill describe the generic system in place of Genshin's own machinery.
 - The change depends on no other change. `dungeons-assets-on-r2` depends on it.
-- The two game buckets, `public-genshin-assets` and `public-dungeons-assets`, are retired once the shared bucket verifies and the app reads from it. This change retires the first, and the dungeons change the second.
+- The two game buckets, `public-genshin-assets` and `public-dungeons-assets`, were retired once the shared bucket verified and the app read from it. This change retired the first, and the dungeons change the second.
 - Size: this change holds more open tasks than the change size budget, because the owner asked for one task per migrating Genshin group in the same arc. The owner accepted the size.

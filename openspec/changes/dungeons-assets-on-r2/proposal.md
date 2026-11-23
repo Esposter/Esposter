@@ -24,6 +24,6 @@ This change depends on `architecture-hosted-assets`. It is the first product to 
 
 ## Impact
 
-- **BREAKING for the public game bucket**: `public-dungeons-assets` is retired. The game reads its objects from the shared hosted domain, under the `dungeons/` prefix, and the old bucket's objects are deleted once the new ones verify and the game reads them.
+- **BREAKING for the public game bucket**: `public-dungeons-assets` was retired. The game reads its objects from the shared hosted domain, under the `dungeons/` prefix, and the old bucket's objects were deleted once the new ones verified and the game read them.
 - The save shapes do not change. The key decisions keep every saved monster and capture item readable, and no backfill is owed.
 - Prerequisite: the WAV-to-MP3 and over-2-MiB WebP re-encodes in progress elsewhere must land before the publish, since the publish refuses a WAV.

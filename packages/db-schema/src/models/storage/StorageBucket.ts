@@ -7,8 +7,6 @@ export const StorageBucket = {
   GenshinAssets: "genshin-assets",
   MessageAssets: "message-assets",
   PublicAppAssets: "public-app-assets",
-  PublicDungeonsAssets: "public-dungeons-assets",
-  PublicGenshinAssets: "public-genshin-assets",
   PublicHostedAssets: "public-hosted-assets",
   PublicUserAssets: "public-user-assets",
   ResourceAssets: "resource-assets",

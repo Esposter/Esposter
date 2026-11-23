@@ -25,7 +25,7 @@ describe(commitHostedAssetLock, () => {
   beforeEach(async () => {
     lockPath = join(await mkdtemp(join(tmpdir(), "game-data-lock-")), "gameDataLock.json");
     product = {
-      bucket: StorageBucket.PublicGenshinAssets,
+      bucket: StorageBucket.PublicHostedAssets,
       lockPath,
       lockRepositoryPath: TEST_FILENAME,
       name: TEST_FILENAME,

@@ -45,7 +45,7 @@ describe(publishHostedAssets, () => {
   const alteredBytes = Buffer.from(" ");
   const scopes = [GameDataset.Profile, GameDataset.Stats];
   const product: HostedAssetProduct = {
-    bucket: StorageBucket.PublicGenshinAssets,
+    bucket: StorageBucket.PublicHostedAssets,
     lockPath: TEST_FILENAME,
     lockRepositoryPath: TEST_FILENAME,
     name: TEST_FILENAME,
