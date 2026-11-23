@@ -1,5 +1,5 @@
-// Deletes the cached entries under the given scope prefixes that the current set does not name. The cache is shared by
-// Every product, so an entry under a prefix the caller does not own is never read for eviction and never deleted
+// Deletes the cached entries under the given scope prefixes that the current set does not name.
+// The cache is shared by every product, so an entry under a prefix the caller does not own is never read for eviction and never deleted.
 export const evictStaleHostedAssets = async (
   cache: Pick<Cache, "delete" | "keys">,
   scopePrefixes: readonly string[],

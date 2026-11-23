@@ -3,8 +3,9 @@ import { parseGameDataObjectPath } from "#scripts/gameData/mirror/parseGameDataO
 import { HOSTED_ASSETS_LOCAL_BASE_URL } from "hosted-assets";
 import { vi } from "vitest";
 
-// Every suite's fetch route to the hosted game data and the hosted objects: a read under a local base that names a hosted
-// File is answered from the mirror, and any other request goes to the fetch the environment had.
+// Every suite's fetch route to the hosted game data and the hosted objects.
+// A read under a local base that names a hosted file is answered from the mirror.
+// Any other request goes to the fetch the environment had.
 const LOCAL_BASE_URLS: readonly string[] = [GAME_DATA_LOCAL_BASE_URL, HOSTED_ASSETS_LOCAL_BASE_URL];
 const baseFetch = globalThis.fetch;
 

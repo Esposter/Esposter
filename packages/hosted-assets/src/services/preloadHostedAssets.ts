@@ -7,8 +7,8 @@ import { listHeldHostedAssetUrls } from "#src/services/listHeldHostedAssetUrls";
 import { planHostedAssetDownload } from "#src/services/planHostedAssetDownload";
 import { getResultAsync, noop } from "@esposter/shared";
 
-// The preload of a set's files into the shared cache: the files the cache lacks are fetched, with the bytes held reported
-// As progress, and once every file is held the entries under the set's scope prefixes that it does not name are evicted.
+// The preload of a set's files into the shared cache: the files the cache lacks are fetched, and the bytes held are reported as progress.
+// Once every file is held, the entries under the set's scope prefixes that it does not name are evicted.
 // A file that fails stops the preload before any eviction, so the cache keeps every entry it held
 export const preloadHostedAssets = (
   { files, scopePrefixes }: HostedAssetPreloadSet,

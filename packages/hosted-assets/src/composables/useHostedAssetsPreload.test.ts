@@ -29,7 +29,7 @@ describe(useHostedAssetsPreload, () => {
     vi.restoreAllMocks();
   });
 
-  test("a file the host cannot serve stops the loading and draws no capsule", async () => {
+  test("a file the host cannot serve fails the preload without calling onHeld", async () => {
     expect.hasAssertions();
 
     vi.stubGlobal("caches", { open: () => Promise.resolve(createHostedAssetCacheStub()) });
