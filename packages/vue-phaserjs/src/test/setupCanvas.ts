@@ -5,7 +5,7 @@ import { vi } from "vitest";
    runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
    global read before any phase could have chosen a branch, which is not a question a setup file has */
 // There is no canvas in happy-dom, and a prototype spy on `getContext` is bypassed by its instance
-// Method resolution, so the original createElement is stored and spied per-instance instead.
+// Method resolution, so the original createElement is stored and each canvas gets its own `getContext` instead.
 // oxlint-disable-next-line typescript/no-deprecated -- `bind` resolves to the string-tag overload marked deprecated; the copy only forwards the call
 const createElement = window.document.createElement.bind(window.document);
 // The cast is needed: tsrs requires `lang` on the context, and TypeScript's DOM lib lacks it, so no literal fits both.
@@ -99,17 +99,19 @@ const mockCanvasContext = {
   wordSpacing: "0px",
 } as unknown as CanvasRenderingContext2D;
 
-/* The createElement wrapper is a plain property, not a vi.spyOn: a test file's vi.restoreAllMocks() restores spies, and a
-   restored createElement would leave a canvas made by a later test with no mock context. A load a test starts can fire
-   after the file's last test, so the property stays for the whole file */
+/* The createElement wrapper and each canvas's getContext are plain properties, not vi.spyOn: a test file's
+   vi.restoreAllMocks() restores spies, and a restored one hands back happy-dom's original, which has no context. Phaser
+   pools its canvases, so a pooled canvas from an earlier test answers null to the next load that draws on it. A load a
+   test starts can fire after the file's last test, so the properties stay for the whole file */
 Object.defineProperty(window.document, "createElement", {
   configurable: true,
   value: (tagName: string, options?: ElementCreationOptions): HTMLElement => {
     const element = createElement(tagName, options);
     if (element instanceof HTMLCanvasElement)
-      vi.spyOn(element, "getContext").mockImplementation((contextId) =>
-        contextId === "2d" ? mockCanvasContext : null,
-      );
+      Object.defineProperty(element, "getContext", {
+        configurable: true,
+        value: (contextId: string) => (contextId === "2d" ? mockCanvasContext : null),
+      });
     return element;
   },
   writable: true,
