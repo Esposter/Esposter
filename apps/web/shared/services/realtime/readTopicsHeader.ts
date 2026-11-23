@@ -19,6 +19,7 @@ const readColumnTopic = (text: string) => {
   const [topicText = "", ...columnTexts] = text.split(TOPICS_HEADER_COLUMNS_SEPARATOR);
   const topic = getDecodedUriComponent(topicText, undefined);
   const columns = columnTexts
+    // eslint-disable-next-line no-restricted-syntax -- an encoded header segment, empty only when the column has no name
     .filter((columnText) => columnText !== "")
     .map((columnText) => getDecodedUriComponent(columnText, undefined));
   if (topic === undefined || columns.includes(undefined)) return undefined;

@@ -3,6 +3,7 @@ import type { SurveyAnswers, SurveyDocument } from "vue-survey-engine-headless";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { SURVEY_FOCUSABLE_SELECTOR } from "#src/services/resource/survey/constants";
+import { checkIsBlankText } from "@esposter/shared";
 import { SurveyProgressBarPlacement, useSurveyRunner } from "vue-survey-engine-headless";
 
 interface Props {
@@ -103,7 +104,7 @@ const focusFirstError = () => {
           emitChange();
         "
       >
-        {{ rootProps.pagePrevText || "Previous" }}
+        {{ checkIsBlankText(rootProps.pagePrevText) ? "Previous" : rootProps.pagePrevText }}
       </UiButton>
       <!-- A passing completion hands its answers to the page; a blocked one leaves focus where the error is -->
       <UiButton
@@ -118,7 +119,7 @@ const focusFirstError = () => {
           }
         "
       >
-        {{ rootProps.completeText || "Complete" }}
+        {{ checkIsBlankText(rootProps.completeText) ? "Complete" : rootProps.completeText }}
       </UiButton>
       <UiButton
         v-else
@@ -129,7 +130,7 @@ const focusFirstError = () => {
           nextTick(focusFirstError);
         "
       >
-        {{ rootProps.pageNextText || "Next" }}
+        {{ checkIsBlankText(rootProps.pageNextText) ? "Next" : rootProps.pageNextText }}
       </UiButton>
     </div>
     <UiLoadingLine

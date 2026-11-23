@@ -10,7 +10,7 @@ import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { usePageBuilderStyleClipboardStore } from "#src/store/pageBuilder/styleClipboard";
-import { noop, normalizeString } from "@esposter/shared";
+import { checkIsBlankText, noop, normalizeString } from "@esposter/shared";
 import { getBlockNode } from "vue-block-editor-headless";
 
 // What one field edit writes: the operations, and the history entry they record as
@@ -72,8 +72,10 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     if (operations.length === 0) return undefined;
 
     return {
-      interactionId: value === "" ? undefined : `style:${targetValue.nodeId}:${breakpoint}:${state}:${property}`,
-      label: value === "" ? "Reset style" : "Edit style",
+      interactionId: checkIsBlankText(value)
+        ? undefined
+        : `style:${targetValue.nodeId}:${breakpoint}:${state}:${property}`,
+      label: checkIsBlankText(value) ? "Reset style" : "Edit style",
       operations,
     };
   };

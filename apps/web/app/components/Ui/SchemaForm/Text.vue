@@ -13,6 +13,7 @@ const isNumber = computed(() => control.value.schema.type === "number" || contro
 <!-- A string or a number of a schema form, one line or several as its layout says; a read-only one is disabled -->
 <template>
   <!-- A schema's length limit is counted under the field, so the reader sees what the schema allows before a save is refused -->
+  <!-- eslint-disable vue/no-restricted-syntax -- a number input's value is never whitespace -->
   <UiTextField
     :counter="control.schema.maxLength"
     :error="issue"
@@ -23,4 +24,5 @@ const isNumber = computed(() => control.value.schema.type === "number" || contro
     :type="isNumber ? UiTextFieldType.Number : undefined"
     @update:model-value="(value) => change(isNumber ? (value === '' ? undefined : Number(value)) : value)"
   />
+  <!-- eslint-enable vue/no-restricted-syntax -->
 </template>

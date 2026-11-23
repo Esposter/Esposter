@@ -10,6 +10,7 @@ import { surveyNodeChildren } from "vue-survey-engine-headless";
 // The selected element holds, so a selected page takes an element at its end. With nothing selected, the end of the first page, then the end
 // Of the survey, where a page goes
 export const getSurveyInsertPlaces = (document: SurveyDocument, selectedPointer: string): DropTarget[] => {
+  // eslint-disable-next-line no-restricted-syntax -- a pointer the editor builds, never typed
   if (selectedPointer === "") {
     const surveyPlace = { index: getSurveySlotLength(document, "/content"), slotPointer: "/content" };
     // A survey with no page has no first page whose end could take an element, so only the survey's end is left

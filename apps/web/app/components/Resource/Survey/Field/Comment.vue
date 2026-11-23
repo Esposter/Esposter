@@ -2,6 +2,7 @@
 import type { SurveyAnswerValue, SurveyCommentNode } from "vue-survey-engine-headless";
 
 import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field and marking it invalid
@@ -16,7 +17,7 @@ defineProps<Props>();
 const comment = computed({
   get: () => (answer.value === undefined ? "" : String(answer.value)),
   set: (value) => {
-    answer.value = value === "" ? undefined : value;
+    answer.value = checkIsBlankText(value) ? undefined : value;
   },
 });
 </script>

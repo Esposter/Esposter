@@ -16,5 +16,6 @@ export const getWebpageCss = (document: WebpageDocument, definitions: WebpageNod
   const tokenCss = getTokenCss(document.root.props.tokens);
   const structuralCss = definitions.map((definition) => definition.css).join("\n");
 
+  // eslint-disable-next-line no-restricted-syntax -- generated CSS, never typed
   return [tokenCss, structuralCss, getWebpageStyleCss(document)].filter((part) => part !== "").join("\n");
 };

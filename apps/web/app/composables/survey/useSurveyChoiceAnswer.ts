@@ -2,6 +2,7 @@ import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyChoiceOptionsProps, SurveyNoneChoiceProps } from "vue-survey-engine-headless";
 
 import { SURVEY_NONE_TITLE, SURVEY_OTHER_KEY, SURVEY_OTHER_TITLE } from "#src/services/resource/survey/constants";
+import { normalizeString } from "@esposter/shared";
 import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "vue-survey-engine-headless";
 
 // What a choice question offers beside its choices: the other option every choice question may add, and the none
@@ -34,24 +35,24 @@ export const useSurveyChoiceAnswer = (
   });
   // The other text is held as it is typed, and is prefilled only from an answer that is one the other option gave
   const otherText = ref(selectedKey.value === SURVEY_OTHER_KEY && typeof answer.value === "string" ? answer.value : "");
-  const otherTitle = computed(() => getOptions().otherText || SURVEY_OTHER_TITLE);
+  const otherTitle = computed(() => normalizeString(getOptions().otherText) || SURVEY_OTHER_TITLE);
   const items = computed<UiMenuItem<string>[]>(() => {
     const { hasNone, hasOther, noneText } = getOptions();
     return [
       ...orderedChoices.value.map((choice, index) => ({ title: getSurveyChoiceText(choice), value: String(index) })),
       ...(hasOther ? [{ title: otherTitle.value, value: SURVEY_OTHER_KEY }] : []),
-      ...(hasNone ? [{ title: noneText || SURVEY_NONE_TITLE, value: SURVEY_NONE_ANSWER }] : []),
+      ...(hasNone ? [{ title: normalizeString(noneText) || SURVEY_NONE_TITLE, value: SURVEY_NONE_ANSWER }] : []),
     ];
   });
   const pick = (key: string | undefined) => {
     isOtherChosen.value = key === SURVEY_OTHER_KEY;
-    if (key === SURVEY_OTHER_KEY) answer.value = otherText.value === "" ? undefined : otherText.value;
+    if (key === SURVEY_OTHER_KEY) answer.value = normalizeString(otherText.value) === "" ? undefined : otherText.value;
     else if (key === SURVEY_NONE_ANSWER) answer.value = SURVEY_NONE_ANSWER;
     else answer.value = orderedChoices.value[Number(key)]?.value;
   };
   const updateOtherText = (value: string) => {
     otherText.value = value;
-    answer.value = value === "" ? undefined : value;
+    answer.value = normalizeString(value) === "" ? undefined : value;
   };
 
   return {

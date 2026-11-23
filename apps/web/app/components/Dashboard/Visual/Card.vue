@@ -3,7 +3,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { AxisVisualPropsData } from "#src/models/dashboard/AxisVisualPropsData";
 
 import { COMPACT_NUMBER_FORMATTER, NUMBER_FORMATTER } from "#shared/services/intl/constants";
-import { takeOne } from "@esposter/shared";
+import { checkIsBlankText, takeOne } from "@esposter/shared";
 
 interface Props {
   data: AxisVisualPropsData;
@@ -24,6 +24,8 @@ const displayValue = computed(() =>
 <template>
   <div p-3 text-center flex flex-col gap-1 size-full items-center justify-center>
     <span ui-display>{{ displayValue }}</span>
-    <span text-muted>{{ visual.chart.configuration.title || `${series.name}` }}</span>
+    <span text-muted>{{
+      checkIsBlankText(visual.chart.configuration.title) ? series.name : visual.chart.configuration.title
+    }}</span>
   </div>
 </template>

@@ -2,6 +2,7 @@
 import type { SurveyAnswerValue, SurveyCheckboxNode } from "vue-survey-engine-headless";
 
 import { SURVEY_NONE_TITLE, SURVEY_OTHER_TITLE } from "#src/services/resource/survey/constants";
+import { checkIsBlankText } from "@esposter/shared";
 import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "vue-survey-engine-headless";
 
 interface Props {
@@ -78,7 +79,7 @@ const setOtherText = (text: string) => {
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
           :is-mixed="isSomeChosen && !isAllChosen ? true : undefined"
-          :label="node.props.selectAllText || 'Select all'"
+          :label="checkIsBlankText(node.props.selectAllText) ? 'Select all' : node.props.selectAllText"
           :model-value="isAllChosen"
           @update:model-value="(isPicked) => toggleAll(isPicked)"
         />
@@ -97,7 +98,7 @@ const setOtherText = (text: string) => {
           is-label-visible
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
-          :label="node.props.noneText || SURVEY_NONE_TITLE"
+          :label="checkIsBlankText(node.props.noneText) ? SURVEY_NONE_TITLE : node.props.noneText"
           :model-value="isNoneChosen"
           @update:model-value="(isPicked) => toggleNone(isPicked)"
         />
@@ -106,7 +107,7 @@ const setOtherText = (text: string) => {
             is-label-visible
             :aria-invalid="error ? true : undefined"
             :disabled="isDisabled"
-            :label="node.props.otherText || SURVEY_OTHER_TITLE"
+            :label="checkIsBlankText(node.props.otherText) ? SURVEY_OTHER_TITLE : node.props.otherText"
             :model-value="isOtherChosen"
             @update:model-value="(isPicked) => toggleOther(isPicked)"
           />
@@ -114,7 +115,7 @@ const setOtherText = (text: string) => {
             v-if="isOtherChosen"
             :is-disabled="isDisabled ? true : undefined"
             is-label-hidden
-            :label="node.props.otherText || SURVEY_OTHER_TITLE"
+            :label="checkIsBlankText(node.props.otherText) ? SURVEY_OTHER_TITLE : node.props.otherText"
             :model-value="otherText"
             @update:model-value="(text) => setOtherText(text)"
           />

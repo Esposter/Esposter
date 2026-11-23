@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- a server cursor, empty when no older page exists */
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { ACTIVE_MESSAGE_HIGHLIGHT_MS } from "#src/services/message/constants";

@@ -23,7 +23,10 @@ const collectNodeFileUrls = (nodes: readonly SurveyNode[]): string[] =>
 export const collectSurveyFileUrls = (document: SurveyDocument): string[] => {
   const { backgroundImage, logo } = document.root.props;
   const urls = [logo, backgroundImage, ...collectNodeFileUrls(document.content)];
-  return [...new Set(urls)]
-    .filter((url) => url !== "")
-    .toSorted((firstUrl, secondUrl) => Number(firstUrl > secondUrl) - Number(firstUrl < secondUrl));
+  return (
+    [...new Set(urls)]
+      // eslint-disable-next-line no-restricted-syntax -- a file URL the upload issued, never typed
+      .filter((url) => url !== "")
+      .toSorted((firstUrl, secondUrl) => Number(firstUrl > secondUrl) - Number(firstUrl < secondUrl))
+  );
 };

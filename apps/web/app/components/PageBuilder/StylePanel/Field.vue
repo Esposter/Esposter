@@ -37,6 +37,7 @@ const unitItems = lengthUnits.map((lengthUnit) => ({ title: lengthUnit, value: l
 // Text field holds until focus leaves it
 const isEditingText = ref(false);
 // An empty number is an empty draft, which saves as no declaration, so clearing a length restores what it inherits
+// eslint-disable-next-line no-restricted-syntax -- a number input's value is never whitespace
 const getDraft = (amount: string, lengthUnit: string) => (amount === "" ? "" : `${amount}${lengthUnit}`);
 const setAmount = (amount: string) => {
   draft.value = getDraft(amount, unit.value);
@@ -78,6 +79,7 @@ watch(draft, (value) => {
     @update:model-value="(amount) => setAmount(amount)"
   >
     <template #trailing>
+      <!-- eslint-disable vue/no-restricted-syntax -- a number input's amount is never whitespace -->
       <UiSelect
         :is-disabled="lengthParts.amount === ''"
         :items="unitItems"
@@ -85,6 +87,7 @@ watch(draft, (value) => {
         :model-value="unit"
         @update:model-value="(lengthUnit) => setUnit(lengthUnit)"
       />
+      <!-- eslint-enable vue/no-restricted-syntax -->
     </template>
   </UiTextField>
   <UiTextField

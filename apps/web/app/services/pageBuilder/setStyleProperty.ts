@@ -3,6 +3,8 @@ import type { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import type { StyleState } from "#shared/models/pageBuilder/StyleState";
 
+import { checkIsBlankText } from "@esposter/shared";
+
 // Whether a record holds no entries, which a state or a breakpoint is once a reset has emptied it
 const checkIsEmpty = (record: object) => Object.keys(record).length === 0;
 // The style with one property set at a breakpoint and state. An empty value removes the override, so the property
@@ -18,7 +20,7 @@ export const setStyleProperty = (
   const fields = Object.fromEntries(
     Object.entries(style?.[breakpoint]?.[state] ?? {}).filter(([name]) => name !== property),
   );
-  const nextFields = value === "" ? fields : { ...fields, [property]: value };
+  const nextFields = checkIsBlankText(value) ? fields : { ...fields, [property]: value };
   const states = Object.fromEntries(
     Object.entries({ ...style?.[breakpoint], [state]: nextFields }).filter(
       ([, stateFields]) => !checkIsEmpty(stateFields ?? {}),

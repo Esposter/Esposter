@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { checkIsBlankText } from "@esposter/shared";
+
 interface Props {
   // Whether the field opens for typing as it is drawn, as a choice a new row is
   isInitiallyEditing?: true | undefined;
@@ -64,6 +66,6 @@ onMounted(() => {
     @click="startEditing()"
     @keydown.enter.prevent="startEditing()"
   >
-    {{ modelValue || label }}
+    {{ checkIsBlankText(modelValue) ? label : modelValue }}
   </span>
 </template>

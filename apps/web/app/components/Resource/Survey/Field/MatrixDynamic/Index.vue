@@ -10,6 +10,7 @@ import type {
 import { getSurveyAnswerRows } from "#src/services/resource/survey/getSurveyAnswerRows";
 import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 import { getSurveyChoiceText } from "vue-survey-engine-headless";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   error: string;
@@ -67,7 +68,10 @@ const removeRow = (rowIndex: number) => {
               text-muted
               p-1
             >
-              <UiFieldLabel :is-required="column.isRequired || undefined" :label="column.title || column.name" />
+              <UiFieldLabel
+                :is-required="column.isRequired || undefined"
+                :label="checkIsBlankText(column.title) ? column.name : column.title"
+              />
             </th>
           </tr>
         </thead>
@@ -82,7 +86,7 @@ const removeRow = (rowIndex: number) => {
             :invalid
             :is-disabled
             :is-remove-disabled="isDisabled || rows.length <= node.props.minRowCount"
-            :remove-label="node.props.removeRowText || 'Remove row'"
+            :remove-label="checkIsBlankText(node.props.removeRowText) ? 'Remove row' : node.props.removeRowText"
             :row
             @remove="removeRow(rowIndex)"
             @update="(newRow) => setRow(rowIndex, newRow)"
@@ -97,7 +101,7 @@ const removeRow = (rowIndex: number) => {
       self-start
       @click="answer = [...rows, {}]"
     >
-      {{ node.props.addRowText || "Add row" }}
+      {{ checkIsBlankText(node.props.addRowText) ? "Add row" : node.props.addRowText }}
     </UiButton>
     <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>
   </div>

@@ -8,7 +8,7 @@ import { getSurveyAnswerText } from "#src/services/resource/survey/getSurveyAnsw
 import { getSurveyRatingItems } from "#src/services/resource/survey/getSurveyRatingItems";
 import { getSurveyRatingStep } from "#src/services/resource/survey/getSurveyRatingStep";
 import { withSurveyAnswer } from "#src/services/resource/survey/withSurveyAnswer";
-import { takeOne } from "@esposter/shared";
+import { checkIsBlankText, takeOne } from "@esposter/shared";
 import {
   getSurveyChoiceText,
   MATRIX_CELL_RATING_COUNT,
@@ -50,7 +50,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn) => ({
   "aria-required": column.isRequired ? true : undefined,
   isDisabled: isDisabled || undefined,
   items: takeOne(choiceItemsMap, column.name),
-  label: column.title || column.name,
+  label: checkIsBlankText(column.title) ? column.name : column.title,
   modelValue: getChoiceKey(row[column.name]),
   "onUpdate:modelValue": (key: string) =>
     emit("update", withSurveyAnswer(row, column.name, findChoiceValue(column.choices, key))),
@@ -66,7 +66,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn) => ({
         :is-disabled="isDisabled || undefined"
         :is-invalid="invalid"
         :is-required="column.isRequired || undefined"
-        :label="column.title || column.name"
+        :label="checkIsBlankText(column.title) ? column.name : column.title"
         :model-value="getSurveyAnswerText(row[column.name])"
         :rows="column.cellType === SurveyMatrixCellType.Comment ? 2 : undefined"
         @update:model-value="(value) => emit('update', withSurveyAnswer(row, column.name, value))"
@@ -102,7 +102,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn) => ({
         :aria-invalid="invalid"
         :aria-labelledby="getHeaderId(columnIndex)"
         :disabled="isDisabled"
-        :label="column.title || column.name"
+        :label="checkIsBlankText(column.title) ? column.name : column.title"
         :model-value="row[column.name] === true"
         @update:model-value="(checked) => emit('update', withSurveyAnswer(row, column.name, checked))"
       />
@@ -112,7 +112,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn) => ({
         :aria-labelledby="getHeaderId(columnIndex)"
         :is-disabled="isDisabled || undefined"
         :items="ratingItems"
-        :label="column.title || column.name"
+        :label="checkIsBlankText(column.title) ? column.name : column.title"
         :model-value="getSurveyRatingStep(row[column.name])"
         @update:model-value="(step) => emit('update', withSurveyAnswer(row, column.name, step))"
       />

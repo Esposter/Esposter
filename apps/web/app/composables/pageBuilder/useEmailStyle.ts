@@ -9,7 +9,7 @@ import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
-import { noop } from "@esposter/shared";
+import { checkIsBlankText, noop, normalizeString } from "@esposter/shared";
 import { getMjmlAttributeFields } from "mjml-blocks";
 import { getBlockNode, getBlockPropValue, getBlockTypeDefinition } from "vue-block-editor-headless";
 
@@ -56,13 +56,17 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const setField = (attribute: string, value: string, nodeId = getSelectedNodeId(toValue(resourceId))) => {
     const writeTarget = getTarget(nodeId);
     // Clearing a field the node never set has nothing to remove, so it records no edit
-    if (!writeTarget || (value === "" && getBlockPropValue(writeTarget.node.props, attribute) === undefined)) return;
+    if (!writeTarget || (checkIsBlankText(value) && getBlockPropValue(writeTarget.node.props, attribute) === undefined))
+      return;
 
+    // A blank field is a reset, and a value is written without the spaces around it
+    const text = normalizeString(value);
+    const isReset = checkIsBlankText(text);
     applyEdit(
       toValue(resourceId),
-      [getEmailAttributeOperation(writeTarget.pointer, attribute, value)],
-      value === "" ? "Reset style" : "Edit style",
-      value === "" ? undefined : `email-style:${writeTarget.node.props.id}:${attribute}`,
+      [getEmailAttributeOperation(writeTarget.pointer, attribute, text)],
+      isReset ? "Reset style" : "Edit style",
+      isReset ? undefined : `email-style:${writeTarget.node.props.id}:${attribute}`,
     ).match(noop, console.error);
   };
 

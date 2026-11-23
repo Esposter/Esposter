@@ -6,6 +6,7 @@ import { getSurveyKindItems } from "#src/services/resource/survey/getSurveyKindI
 import { SurveyNodeTypeIconMap } from "#src/services/resource/survey/SurveyNodeTypeIconMap";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
+import { checkIsBlankText } from "@esposter/shared";
 
 // The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over its
 // Elements, a page and every element is chosen by a click or Enter, and the chosen one takes an accent line inside its edge
@@ -53,7 +54,7 @@ const getKindItems = (pageIndex: number, childrenCount: number) =>
             @update:model-value="(description) => updateNodeProps(getPagePointer(pageIndex), { description })"
           />
         </template>
-        <h2 v-else ui-title>{{ page.props.title || `Page ${pageIndex + 1}` }}</h2>
+        <h2 v-else ui-title>{{ checkIsBlankText(page.props.title) ? `Page ${pageIndex + 1}` : page.props.title }}</h2>
         <ResourceSurveyCreatorCanvasSlot :children="page.props.children" :slot-pointer="getSlotPointer(pageIndex)" />
         <div flex gap-1 items-center>
           <UiButton @click="insertNodeAt(SurveyNodeType.Text, getSlotPointer(pageIndex), page.props.children.length)">

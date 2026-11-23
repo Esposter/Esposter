@@ -4,6 +4,7 @@ import type { SurveyChoice } from "vue-survey-engine-headless";
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
 import { getMovedItems } from "#src/services/shared/getMovedItems";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
+import { checkIsBlankText } from "@esposter/shared";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren } from "vue-survey-engine-headless";
 
@@ -30,7 +31,7 @@ const updateText = (index: number, text: string) => {
   const currentChoices = readChoices();
   const choice = currentChoices.at(index);
   if (choice === undefined) return;
-  if (text === "") {
+  if (checkIsBlankText(text)) {
     if (currentChoices.length > 1) writeChoices(currentChoices.toSpliced(index, 1));
     return;
   }
@@ -39,7 +40,7 @@ const updateText = (index: number, text: string) => {
 // A choice a row leaves with no text is removed as it is emptied. A blur that changes nothing reports no edit, so an added
 // Choice left empty would otherwise stay in the document
 const onChoiceFocusout = (index: number) => {
-  if (readChoices().at(index)?.text === "") updateText(index, "");
+  if (checkIsBlankText(readChoices().at(index)?.text)) updateText(index, "");
 };
 // The smallest number no choice holds as its value, so a new choice is one an answer can name
 const getNextValue = (currentChoices: SurveyChoice[]) => {
@@ -51,7 +52,7 @@ const getNextValue = (currentChoices: SurveyChoice[]) => {
 // Enter in the last choice adds an empty one after it, which opens for typing
 const submitChoice = (index: number, text: string) => {
   const currentChoices = readChoices();
-  if (text === "" || index !== currentChoices.length - 1) return;
+  if (checkIsBlankText(text) || index !== currentChoices.length - 1) return;
 
   const value = getNextValue(currentChoices);
   addedValue.value = value;

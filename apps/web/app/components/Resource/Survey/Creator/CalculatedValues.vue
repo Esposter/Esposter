@@ -13,8 +13,8 @@ import { getNewCalculatedValueName } from "#src/services/resource/survey/getNewC
 import { getSurveyCalculatedValueIssue } from "#src/services/resource/survey/getSurveyCalculatedValueIssue";
 import { getSurveyConditionAnswers } from "#src/services/resource/survey/getSurveyConditionAnswers";
 import { getSurveyExpressionFault } from "#src/services/resource/survey/getSurveyExpressionFault";
-import { checkIsBlankSource } from "#src/services/shared/checkIsBlankSource";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
+import { checkIsBlankText } from "@esposter/shared";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
@@ -53,7 +53,7 @@ const holdOrWrite = (
 const setName = (index: number, newName: string): void => {
   const savedName = calculatedValues.value[index]?.name ?? "";
   const values = withValue(index, { name: newName });
-  const fault = checkIsBlankSource(newName)
+  const fault = checkIsBlankText(newName)
     ? SURVEY_CALCULATED_VALUE_NAME_REQUIRED_MESSAGE
     : getSurveyCalculatedValueIssue(surveyDocument.value, values, index);
   holdOrWrite(nameDrafts, index, savedName, newName, fault, values);

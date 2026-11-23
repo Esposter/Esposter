@@ -4,6 +4,7 @@ import type { SurveyAnswerValue, SurveyTagBoxNode } from "vue-survey-engine-head
 
 import { SURVEY_OTHER_TITLE } from "#src/services/resource/survey/constants";
 import { getSurveyChoiceText, getSurveyOrderedChoices } from "vue-survey-engine-headless";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   error: string;
@@ -39,7 +40,10 @@ const items = computed<UiMenuItem<string>[]>(() => {
     value: choiceKey(index),
   }));
   return node.props.hasOther
-    ? [...choices, { title: node.props.otherText || SURVEY_OTHER_TITLE, value: otherKey }]
+    ? [
+        ...choices,
+        { title: checkIsBlankText(node.props.otherText) ? SURVEY_OTHER_TITLE : node.props.otherText, value: otherKey },
+      ]
     : choices;
 });
 const selectedKeys = computed(() => {
@@ -85,7 +89,7 @@ const setOtherText = (text: string) => {
         v-if="isOtherChosen"
         :is-disabled="isDisabled ? true : undefined"
         is-label-hidden
-        :label="node.props.otherText || SURVEY_OTHER_TITLE"
+        :label="checkIsBlankText(node.props.otherText) ? SURVEY_OTHER_TITLE : node.props.otherText"
         :model-value="otherText"
         @update:model-value="(text) => setOtherText(text)"
       />

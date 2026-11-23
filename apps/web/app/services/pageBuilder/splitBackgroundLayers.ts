@@ -9,6 +9,7 @@ export const splitBackgroundLayers = (value: string): string[] => {
   // The quote mark the layer is inside of, or an empty string outside any quote
   let quote = "";
   for (const character of value)
+    // eslint-disable-next-line no-restricted-syntax -- a quote character the parser holds, not text
     if (quote !== "") {
       if (character === quote) quote = "";
       layer += character;

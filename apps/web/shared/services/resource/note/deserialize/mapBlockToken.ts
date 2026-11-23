@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- rich-text content, whose spaces are content */
 import type { TokensMapper } from "#shared/models/resource/note/deserialize/TokensMapper";
 import type { JSONContent } from "@tiptap/core";
 import type { Token, Tokens } from "marked";

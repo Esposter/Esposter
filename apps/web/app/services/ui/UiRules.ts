@@ -1,13 +1,13 @@
 import type { UiRule } from "#src/models/ui/UiRule";
 
-import { checkContainsProfanity } from "@esposter/shared";
+import { checkContainsProfanity, checkIsBlankText } from "@esposter/shared";
 
 // An empty field passes every rule but `required`, so a field that may be left empty says nothing until something is
 // Typed. Each rule below is wrapped in it, so a rule added here cannot forget it
 const optionalRule =
   (rule: UiRule): UiRule =>
   (value) =>
-    value === "" || rule(value);
+    checkIsBlankText(value) || rule(value);
 
 // Every rule a field takes, each worded the same way so a field mixing them reads as one form: "You must enter a
 // Minimum of {n} characters" beside "You must enter a value of at least {n}"
@@ -26,5 +26,5 @@ export const UiRules = {
   required:
     (message = "This field is required"): UiRule =>
     (value) =>
-      value !== "" || message,
+      !checkIsBlankText(value) || message,
 };

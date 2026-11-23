@@ -4,7 +4,7 @@ import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSche
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
-import { omitUndefined } from "@esposter/shared";
+import { checkIsBlankText, omitUndefined } from "@esposter/shared";
 import {
   composePaths,
   createDefaultValue,
@@ -37,7 +37,7 @@ const labelId = useId();
 const labelKey = computed(() => getFirstPrimitiveProp(control.value.schema));
 const getItemLabel = (item: unknown, index: number) => {
   const value = labelKey.value && item && typeof item === "object" ? Reflect.get(item, labelKey.value) : undefined;
-  return value === undefined || value === "" ? `${control.value.label} ${index + 1}` : String(value);
+  return value === undefined || checkIsBlankText(String(value)) ? `${control.value.label} ${index + 1}` : String(value);
 };
 </script>
 

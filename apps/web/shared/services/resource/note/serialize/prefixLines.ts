@@ -4,6 +4,7 @@ export const prefixLines = (body: string, firstPrefix: string, restPrefix: strin
     .split("\n")
     .map((line, index) => {
       const prefix = index === 0 ? firstPrefix : restPrefix;
+      // eslint-disable-next-line no-restricted-syntax -- a markdown line, whose spaces are content
       return line === "" ? prefix.trimEnd() : `${prefix}${line}`;
     })
     .join("\n");

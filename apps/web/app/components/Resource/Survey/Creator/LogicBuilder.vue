@@ -21,8 +21,8 @@ import { getSurveyConditionOperators } from "#src/services/resource/survey/getSu
 import { getSurveyExpressionFault } from "#src/services/resource/survey/getSurveyExpressionFault";
 import { parseSurveyConditionRows } from "#src/services/resource/survey/parseSurveyConditionRows";
 import { toSurveyConditionInputValue } from "#src/services/resource/survey/toSurveyConditionInputValue";
-import { checkIsBlankSource } from "#src/services/shared/checkIsBlankSource";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
+import { checkIsBlankText } from "@esposter/shared";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 const surveyCreatorStore = useSurveyCreatorStore();
@@ -34,8 +34,8 @@ const sections = computed(() => SURVEY_CONDITION_SECTIONS.filter(({ prop }) => O
 const answers = computed(() => getSurveyConditionAnswers(surveyDocument.value));
 const answerItems = computed(() =>
   answers.value.map(({ name, title }) => ({
-    description: title !== "" && title !== name ? name : undefined,
-    title: title || name,
+    description: !checkIsBlankText(title) && title !== name ? name : undefined,
+    title: checkIsBlankText(title) ? name : title,
     value: name,
   })),
 );
@@ -48,7 +48,7 @@ const getFault = (prop: SurveyConditionProp): string | undefined => getDraft(pro
 // A condition is written only while its text checks, and an empty one holds always. A text that does not check, or that
 // The store refuses, stays in its field as a draft, so the saved condition is left as it was
 const writeCondition = (prop: SurveyConditionProp, text: string): void => {
-  const fault = checkIsBlankSource(text) ? undefined : getSurveyExpressionFault(text);
+  const fault = checkIsBlankText(text) ? undefined : getSurveyExpressionFault(text);
   if (fault === undefined && updateNodeProps(selectedPointer.value, { [prop]: text })) {
     drafts.delete(prop);
     return;

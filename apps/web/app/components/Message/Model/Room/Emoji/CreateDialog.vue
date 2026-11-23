@@ -11,6 +11,7 @@ import { validateFile } from "#src/services/file/validateFile";
 import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
 import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   roomId: RoomInMessage["id"];
@@ -73,7 +74,7 @@ const isNameValid = computed(() => selectRoomEmojiInMessageSchema.shape.name.saf
         <h3 ui-heading>2. Give it a name</h3>
         <p text-sm text-muted>
           This is also what you'll type to add this emoji to your messages:
-          <code>{{ getEmojiShortcode(name || "avocado") }}</code>
+          <code>{{ getEmojiShortcode(checkIsBlankText(name) ? "avocado" : name) }}</code>
         </p>
         <MessageModelRoomEmojiNameField v-model="name" is-autofocus />
       </section>

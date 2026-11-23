@@ -2,11 +2,12 @@ import type { SurveyConditionJoin } from "#src/models/resource/survey/SurveyCond
 import type { SurveyConditionRow } from "#src/models/resource/survey/SurveyConditionRow";
 
 import { buildSurveyConditionRow } from "#src/services/resource/survey/buildSurveyConditionRow";
+import { checkIsBlankText } from "@esposter/shared";
 
 // The expression the rows write, each joined to the next by the one connective. A row with no question is not yet a
 // Condition, so it is skipped rather than written
 export const buildSurveyCondition = (rows: readonly SurveyConditionRow[], join: SurveyConditionJoin): string =>
   rows
-    .filter(({ questionName }) => questionName !== "")
+    .filter(({ questionName }) => !checkIsBlankText(questionName))
     .map((row) => buildSurveyConditionRow(row))
     .join(` ${join} `);

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -14,6 +15,6 @@ const roomName = useRoomName(() => room.id);
   <div px-4 py-8 flex flex-col gap-3>
     <UiAvatar :image="room.image" :name="roomName" is-large />
     <h2 ui-title>Welcome to {{ roomName }}</h2>
-    <p text-muted>{{ room.topic || "No messages yet." }}</p>
+    <p text-muted>{{ checkIsBlankText(room.topic) ? "No messages yet." : room.topic }}</p>
   </div>
 </template>

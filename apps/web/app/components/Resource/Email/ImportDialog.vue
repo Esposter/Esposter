@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
-import { checkIsBlankSource } from "#src/services/shared/checkIsBlankSource";
 import { useEmailImportDialogStore } from "#src/store/emailEditor/importDialog";
 import { useResourceStore } from "#src/store/resource/index";
+import { checkIsBlankText } from "@esposter/shared";
 
 const emailImportDialogStore = useEmailImportDialogStore();
 const { isImportOpen } = storeToRefs(emailImportDialogStore);
@@ -31,7 +31,7 @@ onUnmounted(() => {
     v-model="isOpen"
     confirm-label="Import"
     :confirm="() => importEmailSource(resourceId, source)"
-    :is-confirm-disabled="checkIsBlankSource(source) || undefined"
+    :is-confirm-disabled="checkIsBlankText(source) || undefined"
     title="Import MJML"
     :size="UiDialogSize.Large"
   >

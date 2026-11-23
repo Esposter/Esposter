@@ -103,6 +103,7 @@ export const useSurveyCreatorDrag = () => {
   };
   // The element a palette drag would insert, drawn in the place it would land while the drag is over a slot. A node drag draws none
   const previewNode = computed<SurveyPlaceableNode | undefined>(() => {
+    // eslint-disable-next-line no-restricted-syntax -- a node id the editor holds, never typed
     if (draggedType.value === undefined || draggedNodeId.value !== "") return undefined;
 
     const node = createSurveyNode(draggedType.value, v7(), "question");

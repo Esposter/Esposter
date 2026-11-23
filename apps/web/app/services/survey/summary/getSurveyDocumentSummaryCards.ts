@@ -10,6 +10,7 @@ import { SurveySummaryCardType } from "#src/models/resource/survey/SurveySummary
 import { SURVEY_NO_TITLE, SURVEY_OTHER_TITLE, SURVEY_YES_TITLE } from "#src/services/resource/survey/constants";
 import { getSurveyRatingItems } from "#src/services/resource/survey/getSurveyRatingItems";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "#src/services/survey/summary/constants";
+import { checkIsBlankText } from "@esposter/shared";
 import {
   checkIsSurveyAnsweringNode,
   getSurveyChoiceText,
@@ -54,8 +55,14 @@ const getChoiceSource = (question: SurveyQuestionNode): ChoiceSource | undefined
       return {
         isMultiple: false,
         options: [
-          { label: question.props.labelTrue || SURVEY_YES_TITLE, value: true },
-          { label: question.props.labelFalse || SURVEY_NO_TITLE, value: false },
+          {
+            label: checkIsBlankText(question.props.labelTrue) ? SURVEY_YES_TITLE : question.props.labelTrue,
+            value: true,
+          },
+          {
+            label: checkIsBlankText(question.props.labelFalse) ? SURVEY_NO_TITLE : question.props.labelFalse,
+            value: false,
+          },
         ],
       };
     case SurveyNodeType.ButtonGroup:
@@ -185,7 +192,9 @@ export const getSurveyDocumentSummaryCards = (
       const { name } = question.props;
       const answers = rows.flatMap((row) => {
         const value = row[name];
-        return value === null || value === undefined || value === "" ? [] : [value];
+        return value === null || value === undefined || (typeof value === "string" && checkIsBlankText(value))
+          ? []
+          : [value];
       });
       return getQuestionCard(
         question,

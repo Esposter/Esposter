@@ -14,9 +14,10 @@ describe("uiRules", () => {
     expect(rule("")).toBe(true);
   });
 
-  test("refuses an empty field it requires", () => {
+  // A field of spaces is empty once trimmed, so `required` refuses it as it refuses an empty one
+  test.each(["", "   "])("refuses a field it requires that holds %j", (value) => {
     expect.hasAssertions();
-    expect(UiRules.required()("")).toBe("This field is required");
+    expect(UiRules.required()(value)).toBe("This field is required");
   });
 
   // Zero is a value the field holds, and waving it through as nothing entered is exactly what the rule exists to stop

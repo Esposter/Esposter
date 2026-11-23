@@ -2,6 +2,7 @@
 import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
 import { UiRules } from "#src/services/ui/UiRules";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   isAutofocus?: true | undefined;
@@ -28,7 +29,7 @@ const enteredName = computed({
 const nameRules = [
   UiRules.required(),
   (value: string) =>
-    value === "" ||
+    checkIsBlankText(value) ||
     selectRoomEmojiInMessageSchema.shape.name.safeParse(value).success ||
     `You must enter ${ROOM_EMOJI_NAME_MAX_LENGTH} or fewer lowercase letters, numbers or underscores`,
 ];

@@ -8,6 +8,7 @@ import { createRowResponse } from "#src/services/shared/overlay/createRowRespons
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { UserStatus } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 
 export const useStatusStore = defineStore("message/user/status", () => {
   const { $trpc } = useNuxtApp();
@@ -27,7 +28,8 @@ export const useStatusStore = defineStore("message/user/status", () => {
       ),
   );
   const getUserStatus = (id: string) => statusMap.value.get(id)?.status ?? UserStatus.Online;
-  const getStatusMessage = (id: string) => statusMap.value.get(id)?.message ?? "";
+  // A message of only spaces is no message, so the readers' fallback to the status shows
+  const getStatusMessage = (id: string) => normalizeString(statusMap.value.get(id)?.message);
   // A row arrives at the version it carries, so an older copy of a person's status cannot put back the one it replaced
   const storeStatus = (userStatus: UserStatusInMessage) => {
     arrive(statusTable, userStatus);

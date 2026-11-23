@@ -8,7 +8,7 @@ import type {
 
 import { getSurveyAnswerRows } from "#src/services/resource/survey/getSurveyAnswerRows";
 import { withSurveyRequired } from "#src/services/resource/survey/withSurveyRequired";
-import { takeOne } from "@esposter/shared";
+import { checkIsBlankText, takeOne } from "@esposter/shared";
 
 interface Props {
   error: string;
@@ -87,7 +87,7 @@ const addPanel = () => {
           :fields="row.fields"
           :is-remove-disabled="isDisabled || panels.length <= node.props.minPanelCount"
           :panel="row.panel"
-          :remove-label="node.props.removePanelText || 'Remove panel'"
+          :remove-label="checkIsBlankText(node.props.removePanelText) ? 'Remove panel' : node.props.removePanelText"
           :seed
           @remove="removePanel(panelIndex)"
           @update="(panel) => setPanel(panelIndex, panel)"
@@ -99,7 +99,7 @@ const addPanel = () => {
           self-start
           @click="addPanel()"
         >
-          {{ node.props.addPanelText || "Add panel" }}
+          {{ checkIsBlankText(node.props.addPanelText) ? "Add panel" : node.props.addPanelText }}
         </UiButton>
       </div>
     </template>

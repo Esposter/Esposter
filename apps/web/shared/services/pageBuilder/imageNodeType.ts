@@ -10,6 +10,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { MAX_NODE_TEXT_LENGTH } from "#shared/services/pageBuilder/constants";
 import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
+import { checkIsBlankText } from "@esposter/shared";
 import { z } from "zod";
 
 // An image needs its alternative text or an explicit decorative flag, so a reader who cannot see it is never left without it
@@ -17,7 +18,7 @@ export const refineImageAlternative = (
   { alt, decorative }: { alt: string; decorative: boolean },
   context: z.RefinementCtx,
 ) => {
-  if (!decorative && alt === "")
+  if (!decorative && checkIsBlankText(alt))
     context.addIssue({ code: "custom", message: "needs alternative text or a decorative flag", path: ["alt"] });
 };
 

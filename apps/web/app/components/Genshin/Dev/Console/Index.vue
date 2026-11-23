@@ -5,6 +5,7 @@ import type { DevRegistry } from "genshin-world";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_CONSOLE_HISTORY_LENGTH } from "#src/services/genshin/dev/constants";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   registry: DevRegistry;
@@ -66,7 +67,7 @@ useCommands(() =>
     <UiForm
       @submit="
         () => {
-          if (line !== '')
+          if (!checkIsBlankText(line))
             entries = [...entries, { line, result: registry.run(line) }].slice(-GENSHIN_DEV_CONSOLE_HISTORY_LENGTH);
           line = '';
         }

@@ -4,6 +4,7 @@ import type { SurveyAnswerValue, SurveyTextNode } from "vue-survey-engine-headle
 import { useSurveyDescribedBy } from "#src/composables/resource/survey/useSurveyDescribedBy";
 import { SURVEY_TEXT_FIELD_TYPES } from "#src/services/resource/survey/constants";
 import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
+import { checkIsBlankText } from "@esposter/shared";
 import { SurveyTextInputType } from "vue-survey-engine-headless";
 
 interface Props {
@@ -22,7 +23,7 @@ const isDate = computed(
 // By the answer it has not yet become
 const text = ref(answer.value === undefined ? "" : String(answer.value));
 const toAnswer = (value: string): SurveyAnswerValue | undefined => {
-  if (value === "") return undefined;
+  if (checkIsBlankText(value)) return undefined;
   return node.props.inputType === SurveyTextInputType.Number ? Number(value) : value;
 };
 const updateText = (value: string) => {

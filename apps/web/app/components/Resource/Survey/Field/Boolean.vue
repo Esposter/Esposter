@@ -4,6 +4,7 @@ import type { SurveyAnswerValue, SurveyBooleanNode } from "vue-survey-engine-hea
 
 import { SURVEY_NO_TITLE, SURVEY_YES_TITLE } from "#src/services/resource/survey/constants";
 import { SurveyBooleanDisplayStyle } from "vue-survey-engine-headless";
+import { checkIsBlankText } from "@esposter/shared";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field and marking it invalid
@@ -26,8 +27,8 @@ const isChecked = computed({
 const stateLabel = computed(() => (isChecked.value ? node.props.labelTrue : node.props.labelFalse));
 // A radio group holds its answer as text, so each of its two options is read back as the boolean it stands for
 const items = computed<UiMenuItem<string>[]>(() => [
-  { title: node.props.labelTrue || SURVEY_YES_TITLE, value: "true" },
-  { title: node.props.labelFalse || SURVEY_NO_TITLE, value: "false" },
+  { title: checkIsBlankText(node.props.labelTrue) ? SURVEY_YES_TITLE : node.props.labelTrue, value: "true" },
+  { title: checkIsBlankText(node.props.labelFalse) ? SURVEY_NO_TITLE : node.props.labelFalse, value: "false" },
 ]);
 const choice = computed({
   get: () => (answer.value === undefined ? undefined : String(answer.value)),

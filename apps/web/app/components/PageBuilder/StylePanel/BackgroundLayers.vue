@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { splitBackgroundLayers } from "#src/services/pageBuilder/splitBackgroundLayers";
+import { checkIsBlankText } from "@esposter/shared";
 import { v7 } from "uuid";
 
 interface Layer {
@@ -20,7 +21,7 @@ const layers = ref(toLayers(modelValue.value));
 const joinLayers = () =>
   layers.value
     .map(({ value }) => value)
-    .filter((layer) => layer !== "")
+    .filter((layer) => !checkIsBlankText(layer))
     .join(", ");
 const commitLayers = () => {
   modelValue.value = joinLayers();

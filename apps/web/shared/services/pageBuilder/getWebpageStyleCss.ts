@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- generated CSS, never typed */
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { getNodeStyleCss } from "#shared/services/pageBuilder/getNodeStyleCss";
