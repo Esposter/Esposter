@@ -1,12 +1,11 @@
 import type { ESTree } from "@oxlint/plugins";
 
 // A function is deferred when it is not called where it is written, so a read inside it happens after the pattern
+// A function handed to a call runs inside that call, so it is not deferred; a `new` it is the callee of runs at once
 const checkIsFunctionDeferred = (functionNode: ESTree.Node): boolean => {
   const { parent } = functionNode;
-  if (!parent) return false;
-  const isImmediatelyCalled =
-    (parent.type === "CallExpression" || parent.type === "NewExpression") && parent.callee === functionNode;
-  return !isImmediatelyCalled && parent.type !== "CallExpression";
+  if (!parent || parent.type === "CallExpression") return false;
+  return !(parent.type === "NewExpression" && parent.callee === functionNode);
 };
 
 // Whether a node sits inside a deferred function written below the given ancestor

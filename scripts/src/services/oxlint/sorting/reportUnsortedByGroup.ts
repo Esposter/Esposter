@@ -10,9 +10,6 @@ import { splitAtImpureItems } from "#src/services/oxlint/sorting/splitAtImpureIt
 
 // Reports each item that sorts out of place against the one ahead of it, at the item, as perfectionist's class sort
 // Does. An item a reader ahead of it depends on is a dependency error; otherwise an item sorting before its neighbour
-// Is a group error across groups and an order error within one. The fix rewrites the whole list in the sorted order
-// Reports each item that sorts out of place against the one ahead of it, at the item, as perfectionist's class sort
-// Does. An item a reader ahead of it depends on is a dependency error; otherwise an item sorting before its neighbour
 // Is a group error across groups and an order error within one. Each run an impure item splits the list into sorts on
 // Its own, so the fix rewrites the whole list with every run in its sorted order
 export const reportUnsortedByGroup = (context: Context, items: SortingGroupItem[]): void => {
