@@ -17,7 +17,6 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
@@ -37,8 +36,8 @@ import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
+import { trackPending } from "#src/services/shared/trackPending";
 import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteLength";
-import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
 import { getRouteParam } from "#src/util/router/getRouteParam";
@@ -66,8 +65,7 @@ export const useResourceStore = defineStore("resource", () => {
   const resourceRows = view(resourceTable);
   const publicationRows = view(publicationTable);
   const { restoreResources } = useRestoreResources();
-  const cacheStore = useCacheStore();
-  const { invalidateTags } = cacheStore;
+  const resourceWrite = useResourceWrite();
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const getResourceRouter = useResourceRouter();
@@ -590,14 +588,9 @@ export const useResourceStore = defineStore("resource", () => {
     if (!resourceValue) return;
 
     const { id, type } = resourceValue;
-    writeOptimistic(
-      async () => {
-        const renamedResource = await getResourceRouter(type).updateResource.mutate({ id, name });
-        // The favorites and Recent rows carry the name, which nothing else re-reads once they have loaded
-        await invalidateTags([CacheTag.Resources]);
-        return createRowResponse(resourceTable, renamedResource);
-      },
-      { entry: getResourcePatchEntry(id, { name }), onError: createErrorNotification },
+    resourceWrite.writeOptimistic(
+      async () => createRowResponse(resourceTable, await getResourceRouter(type).updateResource.mutate({ id, name })),
+      { entry: getResourcePatchEntry(id, { name }) },
     );
   };
   // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag. Only the tags are
@@ -607,14 +600,9 @@ export const useResourceStore = defineStore("resource", () => {
     if (!resourceValue) return;
 
     const { id, type } = resourceValue;
-    writeOptimistic(
-      async () => {
-        const updatedResource = await getResourceRouter(type).updateResource.mutate({ id, tags });
-        // The favorites and Recent rows carry the tags, which nothing else re-reads once they have loaded
-        await invalidateTags([CacheTag.Resources]);
-        return createRowResponse(resourceTable, updatedResource);
-      },
-      { entry: getResourcePatchEntry(id, { tags }), onError: createErrorNotification },
+    resourceWrite.writeOptimistic(
+      async () => createRowResponse(resourceTable, await getResourceRouter(type).updateResource.mutate({ id, tags })),
+      { entry: getResourcePatchEntry(id, { tags }) },
     );
   };
   const deleteResource = () => {
@@ -624,26 +612,22 @@ export const useResourceStore = defineStore("resource", () => {
     const { id, type } = resourceValue;
     // The blade leaves the deleted resource at once, since every action it would send after this is refused
     navigateToExplorer();
-    const notificationId = createNotification({
-      // The same undo the list's delete leaves, spent once the restore lands
-      action: {
-        handler: () => {
-          restoreResources([resourceValue]);
-        },
-        isSingleUse: true,
-        title: RESTORE_ACTION_TITLE,
-      },
-      severity: NotificationSeverity.Success,
-      title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
-    });
-    writeOptimistic(
+    resourceWrite.writeOptimistic(
       async () => createRowResponse(resourceTable, await getResourceRouter(type).deleteResource.mutate({ id })),
       {
         entry: getDeleteResourcesEntry([id], new Date()),
-        // The resource was never removed, so its Restore is withdrawn
-        onError: (error) => {
-          dismissNotification(notificationId);
-          createErrorNotification(error);
+        // The same undo the list's delete leaves, spent once the restore lands. A refused delete never removed the
+        // Resource, so the write withdraws this notice with its Restore
+        notification: {
+          action: {
+            handler: () => {
+              restoreResources([resourceValue]);
+            },
+            isSingleUse: true,
+            title: RESTORE_ACTION_TITLE,
+          },
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
         },
       },
     );
@@ -652,26 +636,21 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
 
-    pendingDuplicateCount.value++;
-    await writeAwaited(
-      () =>
-        withFinalizerAsync(
-          async () => {
-            const newResource = await $trpc.resource.duplicateResource.mutate({ id: resourceValue.id });
-            createNotification({
-              action: { title: GO_TO_RESOURCE_TITLE, to: RoutePath.Resource(newResource.id) },
-              severity: NotificationSeverity.Success,
-              title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
-            });
-            // The page opens the copy by the id the server gives it
-            await navigateTo(RoutePath.Resource(newResource.id));
-            return [createArrival(resourceTable, newResource)];
-          },
-          () => {
-            pendingDuplicateCount.value--;
-          },
-        ),
-      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorNotification },
+    await trackPending(pendingDuplicateCount, () =>
+      resourceWrite.writeAwaited(
+        async () => {
+          const newResource = await $trpc.resource.duplicateResource.mutate({ id: resourceValue.id });
+          createNotification({
+            action: { title: GO_TO_RESOURCE_TITLE, to: RoutePath.Resource(newResource.id) },
+            severity: NotificationSeverity.Success,
+            title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
+          });
+          // The page opens the copy by the id the server gives it
+          await navigateTo(RoutePath.Resource(newResource.id));
+          return [createArrival(resourceTable, newResource)];
+        },
+        { awaitedBecause: AwaitedReason.ServerIssuedValue },
+      ),
     );
   };
   const publishResource = () => {
@@ -682,25 +661,19 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceRouter = getResourceRouter(type);
     // Nothing is drawn ahead of the answer: the publication is the server's, so it arrives with its version
     getSynchronizedFunction(() =>
-      writeAwaited(
-        () => {
-          pendingPublicationCount.value++;
-          return withFinalizerAsync(
-            async () => {
-              const newPublication = await resourceRouter.publishResource.mutate({ id });
-              createNotification({
-                action: { handler: () => copyLinkToClipboard(RoutePath.View(type, id)), title: "Copy public link" },
-                severity: NotificationSeverity.Success,
-                title: ResourceOperationTitleMap[ResourceOperationType.Published](name, newPublication.publishVersion),
-              });
-              return [createArrival(publicationTable, newPublication)];
-            },
-            () => {
-              pendingPublicationCount.value--;
-            },
-          );
-        },
-        { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorNotification },
+      trackPending(pendingPublicationCount, () =>
+        writeAwaited(
+          async () => {
+            const newPublication = await resourceRouter.publishResource.mutate({ id });
+            createNotification({
+              action: { handler: () => copyLinkToClipboard(RoutePath.View(type, id)), title: "Copy public link" },
+              severity: NotificationSeverity.Success,
+              title: ResourceOperationTitleMap[ResourceOperationType.Published](name, newPublication.publishVersion),
+            });
+            return [createArrival(publicationTable, newPublication)];
+          },
+          { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorNotification },
+        ),
       ),
     )();
   };

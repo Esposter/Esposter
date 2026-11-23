@@ -12,6 +12,7 @@ import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { trackPending } from "#src/services/shared/trackPending";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { compareBySort } from "@esposter/db-schema";
@@ -64,21 +65,16 @@ export const usePostStore = defineStore("post", () => {
   // Its alert has already been raised, so the caller's only job is to stay put
   const createPost = async (input: CreatePostInput): Promise<PostInPostWithRelations | undefined> => {
     const outcome: { post?: PostInPostWithRelations } = {};
-    createPendingCount.value += 1;
-    await withFinalizerAsync(
-      () =>
-        writeAwaited(
-          async () => {
-            const post = await $trpc.post.createPost.mutate(input);
-            outcome.post = post;
-            insertPostKey(post);
-            return [createArrival(postTable, storePostRelations(post))];
-          },
-          { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
-        ),
-      () => {
-        createPendingCount.value -= 1;
-      },
+    await trackPending(createPendingCount, () =>
+      writeAwaited(
+        async () => {
+          const post = await $trpc.post.createPost.mutate(input);
+          outcome.post = post;
+          insertPostKey(post);
+          return [createArrival(postTable, storePostRelations(post))];
+        },
+        { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
+      ),
     );
     return outcome.post;
   };
