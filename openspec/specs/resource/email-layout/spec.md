@@ -88,6 +88,17 @@ The bar SHALL hold Import MJML in its overflow menu at every width.
 - **THEN** Import MJML is not in the bar
 - **AND** it is in the overflow menu
 
+### Requirement: An MJML source the email's types refuse keeps the import open
+
+The import SHALL check the source as it is typed, and hold its Import action until the email's types take the source.
+
+#### Scenario: A refused source names its reason and holds Import
+
+- **GIVEN** the Import MJML dialog is open
+- **WHEN** the owner types a source the email's types refuse
+- **THEN** the reason is shown in the field
+- **AND** Import is disabled and the dialog stays open with its source
+
 ### Requirement: A compact window opens the panes as sheets
 
 On a compact window the email editor SHALL keep the canvas in view and open the blocks region and the inspector as sheets from their buttons.

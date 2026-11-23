@@ -68,6 +68,13 @@ The bell SHALL let the owner dismiss one notification or dismiss all of them.
 - **WHEN** the owner chooses Dismiss all
 - **THEN** the list is empty
 
+#### Scenario: A refused Dismiss all brings the list back
+
+- **GIVEN** the bell lists several notifications
+- **WHEN** the owner chooses Dismiss all and the server refuses it
+- **THEN** the delivered notifications are listed again
+- **AND** the notifications the tab made stay as they were
+
 ### Requirement: Delivered notifications page in as the owner scrolls
 
 The bell SHALL load older delivered notifications as the owner reaches the end of the list.
