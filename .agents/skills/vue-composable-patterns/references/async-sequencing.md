@@ -29,7 +29,7 @@ A task that must check mid-flight is run by a run scope, which hands it the run'
 
 A run is ordered **per target**, so a run of one target never aborts another's. An operation whose target itself moved on was aborted by nothing — re-check the source after the await and bail.
 
-The re-check for a write to the open resource's own state (a board's elements, a webpage's picture, a survey's file set) is `getOpening()` from the resource store, taken where the operation is issued and compared before the write, as the sheet paste does. A delete names the resource it was issued for, since a file can outlive the resource that was open when it was uploaded (`useDeleteResourceFile(type)` takes the id as its first argument).
+The re-check for a write to the open resource's own state (a board's elements, a webpage's picture, a survey's file set) is `getOpening()` from the resource store, taken where the operation is issued and compared before the write, as the sheet paste does. A delete names the resource it was issued for, since a file can outlive the resource that was open when it was uploaded (`useDeleteResourceFile(type)` takes the type, and the delete it returns takes the resource id, then the url).
 
 ## `useSave` options and snapshot semantics
 
