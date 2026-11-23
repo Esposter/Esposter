@@ -99,13 +99,20 @@ const mockCanvasContext = {
   wordSpacing: "0px",
 } as unknown as CanvasRenderingContext2D;
 
-// The spies are never restored at a file's end: a load a test starts can fire after the file's last test, and the canvas
-// Phaser makes then must keep its mock context, which a restored spy would leave as a null context
-vi.spyOn(window.document, "createElement").mockImplementation((tagName, options) => {
-  const element = createElement(tagName, options);
-  if (element instanceof HTMLCanvasElement)
-    vi.spyOn(element, "getContext").mockImplementation((contextId) => (contextId === "2d" ? mockCanvasContext : null));
-  return element;
+/* The createElement wrapper is a plain property, not a vi.spyOn: a test file's vi.restoreAllMocks() restores spies, and a
+   restored createElement would leave a canvas made by a later test with no mock context. A load a test starts can fire
+   after the file's last test, so the property stays for the whole file */
+Object.defineProperty(window.document, "createElement", {
+  configurable: true,
+  value: (tagName: string, options?: ElementCreationOptions): HTMLElement => {
+    const element = createElement(tagName, options);
+    if (element instanceof HTMLCanvasElement)
+      vi.spyOn(element, "getContext").mockImplementation((contextId) =>
+        contextId === "2d" ? mockCanvasContext : null,
+      );
+    return element;
+  },
+  writable: true,
 });
 // `happy-dom` dispatches a data-URL image's `load` synchronously when its
 // `src` is set, where a browser queues it as a task. Phaser's TextureManager registers its
