@@ -4,6 +4,7 @@ import type { SurveyLogicContext } from "survey-expression";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
+import { checkIsBlankText } from "@esposter/shared";
 
 // A node is enabled unless it is a calculated value, or it holds no answer and is not a container, or its enabling condition does not hold
 // A calculated value holds a value no respondent gives, so it is never enabled. A page or a panel is a container, enabled by its own condition
@@ -19,5 +20,5 @@ export const checkSurveyNodeEnabled = (
     return false;
 
   const enableIf = "enableIf" in node.props ? node.props.enableIf : "";
-  return enableIf === "" || checkSurveyExpressionHolds(enableIf, values, now, scopes);
+  return checkIsBlankText(enableIf) || checkSurveyExpressionHolds(enableIf, values, now, scopes);
 };

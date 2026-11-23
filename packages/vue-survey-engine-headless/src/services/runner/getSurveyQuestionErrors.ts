@@ -10,6 +10,7 @@ import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpr
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
+import { checkIsBlankText } from "@esposter/shared";
 import { toSurveyLogicAnswer } from "survey-expression";
 
 // The errors one element holds: a required question left empty, an answer its schema refuses, then each validator that does not hold
@@ -33,7 +34,9 @@ export const getSurveyQuestionErrors = (
       node.type === SurveyNodeType.MultipleText && node.props.items.some((item) => item.isRequired);
     if (!view.isRequired && !holdsRequiredItem) return [];
 
-    const message = node.props.requiredErrorText === "" ? SURVEY_REQUIRED_MESSAGE : node.props.requiredErrorText;
+    const message = checkIsBlankText(node.props.requiredErrorText)
+      ? SURVEY_REQUIRED_MESSAGE
+      : node.props.requiredErrorText;
     return [{ message, name, pointer }];
   }
 
