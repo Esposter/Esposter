@@ -104,6 +104,10 @@
     "test:visual": "vitest --config vitest.browser.config.ts",
     "typecheck": "tsrs --fast --runExternalCode"
   },
+  "dependencies": {
+    "genshin-interface": "workspace:*",
+    "genshin-text": "workspace:*"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
@@ -124,8 +128,6 @@
     "@tresjs/core": "catalog:",
     "@vueuse/core": "catalog:",
     "genshin-engine": "workspace:*",
-    "genshin-interface": "workspace:*",
-    "genshin-text": "workspace:*",
     "hosted-assets": "workspace:*",
     "pinia": "catalog:",
     "three": "catalog:",
