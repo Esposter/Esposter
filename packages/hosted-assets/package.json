@@ -1,0 +1,59 @@
+{
+  "name": "hosted-assets",
+  "version": "4.16.0",
+  "description": "Hosted assets: content-addressed objects under a committed lock, one url builder, one cache contract and one preloader for any product that loads its files by url.",
+  "keywords": [
+    "cache",
+    "content-addressed",
+    "preload",
+    "r2",
+    "vue"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/hosted-assets#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest",
+    "typecheck": "tsrs --fast"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:",
+    "zod": "catalog:"
+  }
+}

@@ -4,7 +4,7 @@ Ordered by dependency. Each task names how it is verified: a test written first 
 
 ## 1. The generic runtime
 
-- [ ] 1.1 Create the `hosted-assets` workspace package with its lock and key-map types. Verify: a test that parses a lock of two products and rejects a lock whose entry lacks a sha256, seen failing first, then `pnpm -C packages/hosted-assets exec vitest run`.
+- [x] 1.1 Create the `hosted-assets` workspace package with its lock and key-map types. Verify: a test that parses a lock of two products and rejects a lock whose entry lacks a sha256, seen failing first, then `pnpm -C packages/hosted-assets exec vitest run`.
 - [ ] 1.2 Add the url builder, `<origin>/<scope>/<sha256><extension>`, taking the origin as a parameter. Verify: a test that the same bytes produce one url and a changed byte a new one, seen failing first.
 - [ ] 1.3 Move the plan, the download, the held-set and the eviction from `genshin-world`'s character-pack services into the package, keyed on the shared `hosted-assets` cache name and the product's scope prefixes. Verify: the moved tests pass unchanged against the package, and `pnpm -C packages/genshin-world exec vitest run src/services/character` passes with the imports pointing at the package.
 - [ ] 1.4 Add the scoped eviction step: after a successful preload, delete each cache entry under the product's own scope prefixes that the lock does not name. Verify: a test with one shared cache holding product A's stale entry and product B's entry, which A's lock does not name, seen failing first; A's preload deletes only A's stale entry and keeps B's. A second test that a failed preload of A deletes nothing.
