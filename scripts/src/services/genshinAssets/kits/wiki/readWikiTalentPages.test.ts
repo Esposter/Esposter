@@ -23,7 +23,7 @@ describe(readWikiTalentPages, () => {
     await readWikiTalentPages("a", cacheDirectory);
 
     await expect(readWikiTalentPages("a", cacheDirectory)).resolves.toStrictEqual([]);
-    expect(fetchOk).toHaveBeenCalledOnce();
+    expect(fetchOk).toHaveBeenCalledTimes(1);
   });
 
   test("refuses a wiki error answer rather than caching it", async () => {

@@ -9,8 +9,8 @@ export const getDuplicateLiteralFindings = (files: QueueFile[]): DuplicateLitera
   for (const { path, text } of files)
     for (const [literal] of text.matchAll(LITERAL_REGEX))
       literalPathsMap.set(literal, (literalPathsMap.get(literal) ?? new Set<string>()).add(path));
-  return Array.from(literalPathsMap)
+  return [...literalPathsMap]
     .filter(([, paths]) => paths.size > 1)
-    .map(([literal, paths]) => ({ count: paths.size, literal, paths: Array.from(paths) }))
+    .map(([literal, paths]) => ({ count: paths.size, literal, paths: [...paths] }))
     .toSorted((firstFinding, secondFinding) => secondFinding.count - firstFinding.count);
 };
