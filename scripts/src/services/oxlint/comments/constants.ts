@@ -13,7 +13,7 @@ export const SENTENCE_END_REGEX: RegExp = /[.!?:]\s*$/u;
 // A disable directive: the whole-file, next-line and same-line forms, never the `-enable` that closes one
 export const DIRECTIVE_REGEX: RegExp = /^\s*oxlint-disable(?:-next-line|-line)?(?:\s|$)/u;
 // The reason a directive states after ` -- `, which tells a load-bearing exception from a stale one. Both halves of the
-// directive-reason check read it: the script half in `comments/require-directive-reason`, and the template half in
+// Directive-reason check read it: the script half in `comments/require-directive-reason`, and the template half in
 // `scripts/src/workspace/templateDirectiveReasons.test.ts`, so the two cannot disagree on what counts as a reason
 export const DIRECTIVE_REASON_REGEX: RegExp = /\s--\s+\S/u;
 export const DIRECTIVE_REASON_MESSAGE =

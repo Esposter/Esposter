@@ -432,7 +432,7 @@ export const baseRoomRouter = router({
   readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
     ({ ctx, input: { roomId, userIds } }) => {
       // An empty list names no one, so it answers with none and issues no query. The membership check ahead of this handler
-      // still runs, and its statement is what the answer's topic is taken from
+      // Still runs, and its statement is what the answer's topic is taken from
       if (userIds.length === 0) return [];
 
       return ctx.db

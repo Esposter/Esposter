@@ -1,8 +1,9 @@
 import type { SelectorBanList } from "#src/models/oxlint/selectorBan/SelectorBanList";
 
 import { SCRIPT_FILES } from "#src/services/oxlint/selectorBan/constants";
+
 // The fields the server derives as counts. A role's count sits one level down, as `countsByTopRole[i].count`, and is
-// named by the list it is an item of
+// Named by the list it is an item of
 const SERVER_COUNT_FIELDS = ["commentCount", "likeCount", "memberCount"];
 const SERVER_COUNT_ROLE_LIST = "countsByTopRole";
 const SERVER_COUNT_ROLE_FIELD = "count";

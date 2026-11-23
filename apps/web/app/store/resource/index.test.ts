@@ -49,7 +49,7 @@ vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: 
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type: ResourceType = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
-type ReadResourceResult = ReturnType<typeof createResource> & { favorite: null; publication: null };
+type ReadResourceResult = { favorite: null; publication: null } & ReturnType<typeof createResource>;
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   Object.assign(useRouter().currentRoute.value.params, { id });

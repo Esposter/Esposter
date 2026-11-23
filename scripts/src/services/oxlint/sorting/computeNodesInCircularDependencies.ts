@@ -25,13 +25,13 @@ export const computeNodesInCircularDependencies = (nodes: SortingNode[]): Set<So
     lowLinks.set(node, index);
     stack.push(node);
     onStack.add(node);
-    for (const target of edges.get(node) ?? []) {
+    for (const target of edges.get(node) ?? [])
       if (!indexes.has(target)) {
         strongConnect(target);
         lowLinks.set(node, Math.min(lowLinks.get(node) ?? index, lowLinks.get(target) ?? index));
       } else if (onStack.has(target))
         lowLinks.set(node, Math.min(lowLinks.get(node) ?? index, indexes.get(target) ?? index));
-    }
+
     if (lowLinks.get(node) !== index) return;
     const component: SortingNode[] = [];
     let member: SortingNode | undefined;

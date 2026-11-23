@@ -26,7 +26,7 @@ describe(useRefreshRoomUsers, () => {
     );
     trpcMsw.room.readUsersByIds.query(readUsersByIdsQuery);
 
-    expect(await useRefreshRoomUsers()(emptyRoomId)).toStrictEqual([]);
+    await expect(useRefreshRoomUsers()(emptyRoomId)).resolves.toStrictEqual([]);
     expect(takeOne(readUsersByIdsQuery.mock.calls)[0].input).toStrictEqual({ roomId: emptyRoomId, userIds: [] });
   });
 

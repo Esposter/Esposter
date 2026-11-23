@@ -18,7 +18,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
   entry: { constants: "src/services/constants.ts", index: "src/index.ts" },
   // The `oxfmt/`, `types/` and `vitest/` trees are published surface no bundle produces, and generating an
   // `exports` field is what encapsulates a package: without these, every `@esposter/configuration/oxfmt`
-  // import — the formatter's settings the root config and every
+  // Import — the formatter's settings the root config and every
   // Generator read, the app's `types/global.d.ts` import and the Vue hook every Vitest worker imports all resolve to
   // Nothing. The formatter's and the generator's are raw TypeScript Node strips, so they resolve before this package
   // Built. Every project under `packages/` picks the augmentation up Through `tsconfig.base.json`'s own `include`;
