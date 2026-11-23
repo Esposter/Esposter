@@ -1,6 +1,7 @@
 import { AGENTS_FILE, README_FILE } from "#src/services/package/new/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
+import { getUnnamedMemberPaths } from "#src/services/workspace/getUnnamedMemberPaths";
 import { readRepositoryFile } from "#src/workspace/readRepositoryFile.test";
 import { describe, expect, test } from "vitest";
 
@@ -20,11 +21,10 @@ describe("packageInventories", () => {
   test.each([AGENTS_FILE, README_FILE])("%s names every workspace member", (filename) => {
     expect.hasAssertions();
 
-    const text = readRepositoryFile(filename);
-    // A table cell holding the path whole, so `packages/db` is not answered by `packages/db-schema`'s row
-    const unnamedPackagePaths = workspacePackages
-      .map(({ path }) => path)
-      .filter((packagePath) => !text.includes(`\`${packagePath}\``));
+    const unnamedPackagePaths = getUnnamedMemberPaths(
+      readRepositoryFile(filename),
+      workspacePackages.map(({ path }) => path),
+    );
 
     expect(unnamedPackagePaths).toStrictEqual([]);
   });

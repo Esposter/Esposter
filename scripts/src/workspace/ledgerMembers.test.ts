@@ -1,6 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
 import { LEDGER_AREA_DIRECTORY } from "#src/services/sweeps/constants";
+import { getUnnamedMemberPaths } from "#src/services/workspace/getUnnamedMemberPaths";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -18,10 +19,7 @@ describe("ledgerMembers", () => {
     const text = readdirSync(ledgerDirectory)
       .map((filename) => readFileSync(join(ledgerDirectory, filename), "utf8"))
       .join("\n");
-    // The path up to a separator or the closing backtick, so `packages/db` is not answered by `packages/db-schema`
-    const unnamedPackageDirectories = readWorkspacePackageDirectories(REPOSITORY_ROOT).filter(
-      (packageDirectory) => !text.includes(`\`${packageDirectory}\``) && !text.includes(`\`${packageDirectory}/`),
-    );
+    const unnamedPackageDirectories = getUnnamedMemberPaths(text, readWorkspacePackageDirectories(REPOSITORY_ROOT));
 
     expect(unnamedPackageDirectories).toStrictEqual([]);
   });
