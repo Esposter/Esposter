@@ -1,5 +1,6 @@
 import { GRAPH_FILENAME } from "#src/services/dependencyGraph/constants";
 import { checkGraph } from "#src/services/precheck/checkGraph";
+import { PRECHECK_FIX_FINDING } from "#src/services/precheck/constants";
 import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, describe, expect, test, vi } from "vitest";
@@ -43,7 +44,7 @@ describe(checkGraph, () => {
     writeFileSync(graphPath, staleSvg);
 
     await expect(checkGraph(false)).resolves.toStrictEqual({
-      findings: [`stale ${GRAPH_FILENAME}`, "fix: pnpm ai:precheck --fix"],
+      findings: [`stale ${GRAPH_FILENAME}`, PRECHECK_FIX_FINDING],
       regenerated: [],
     });
     expect(readFileSync(graphPath, "utf8")).toBe(staleSvg);

@@ -1,4 +1,5 @@
 import { checkBarrel } from "#src/services/precheck/checkBarrel";
+import { PRECHECK_FIX_FINDING } from "#src/services/precheck/constants";
 import { generateExports } from "@esposter/configuration/generate-exports";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -43,6 +44,7 @@ describe(checkBarrel, () => {
     expect(checkBarrel(PACKAGE_DIRECTORY, false).findings).toStrictEqual([
       `${PACKAGE_DIRECTORY}/src/components/index.ts missing export { default as Bar } from "./Bar.vue";`,
       `${PACKAGE_DIRECTORY}/src/components/index.ts extra export { default as Foo } from "./Foo.vue";`,
+      PRECHECK_FIX_FINDING,
     ]);
   });
 

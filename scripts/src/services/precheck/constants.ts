@@ -6,3 +6,5 @@ export const EXPORT_LINE_DIRECTORY_REGEX = /^export (?:\*|\{ default as \S+ \}) 
 // Members and the catalog they resolve from, and the generator that draws them
 export const GRAPH_INPUT_REGEX =
   /^(?:(?:.+\/)?package\.json|pnpm-workspace\.yaml|scripts\/src\/(?:models|services)\/dependencyGraph\/.+)$/u;
+// The finding that closes a stale generated file's findings with the command the precheck writes it with, `--fix`
+export const PRECHECK_FIX_FINDING = "fix: pnpm ai:precheck --fix";

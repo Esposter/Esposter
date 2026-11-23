@@ -1,6 +1,7 @@
 import type { BarrelLines } from "#src/models/precheck/BarrelLines";
 import type { GeneratedFileCheck } from "#src/models/precheck/GeneratedFileCheck";
 
+import { PRECHECK_FIX_FINDING } from "#src/services/precheck/constants";
 import { generateBarrelLines } from "#src/services/precheck/generateBarrelLines";
 import { getBarrelFindings } from "#src/services/precheck/getBarrelFindings";
 import { getExpectedLines } from "#src/services/precheck/getExpectedLines";
@@ -51,5 +52,5 @@ export const checkBarrel = (packageDirectory: string, fix: boolean): GeneratedFi
     ]);
     return { findings: [], regenerated: exportsGeneration === "vue" ? [barrelLabel, componentsLabel] : [barrelLabel] };
   }
-  return { findings, regenerated: [] };
+  return { findings: [...findings, PRECHECK_FIX_FINDING], regenerated: [] };
 };

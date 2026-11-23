@@ -2,6 +2,7 @@ import type { GeneratedFileCheck } from "#src/models/precheck/GeneratedFileCheck
 
 import { GRAPH_FILENAME } from "#src/services/dependencyGraph/constants";
 import { readGraph } from "#src/services/dependencyGraph/readGraph";
+import { PRECHECK_FIX_FINDING } from "#src/services/precheck/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -15,5 +16,5 @@ export const checkGraph = async (fix: boolean): Promise<GeneratedFileCheck> => {
     writeFileSync(graphPath, svg);
     return { findings: [], regenerated: [GRAPH_FILENAME] };
   }
-  return { findings: [`stale ${GRAPH_FILENAME}`, "fix: pnpm ai:precheck --fix"], regenerated: [] };
+  return { findings: [`stale ${GRAPH_FILENAME}`, PRECHECK_FIX_FINDING], regenerated: [] };
 };
