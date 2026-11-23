@@ -6,9 +6,10 @@ import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsM
 import { readLedgerIndex } from "#src/services/sweeps/ledgerCoverage/readLedgerIndex";
 import { readPartitionUnits } from "#src/services/sweeps/ledgerCoverage/readPartitionUnits";
 
-// Each question's units, keyed by its index row: the partition's cells holding a file its `Scope` names. The caller
-// Lists The tracked files once, and each row's scope is matched against them in memory, so no row costs a git spawn. A
-// Caller That already holds the partition and its files passes them, rather than reading both again
+// Each question's units, keyed by its index row: the partition's cells holding a file its `Scope` names.
+// The caller lists the tracked files once, and each row's scope is matched against them in memory.
+// So no row costs a git spawn.
+// A caller that already holds the partition and its files passes them, rather than reading both again.
 export const readQuestionUnits = (
   trackedFiles: string[],
   units: string[] = readPartitionUnits(),

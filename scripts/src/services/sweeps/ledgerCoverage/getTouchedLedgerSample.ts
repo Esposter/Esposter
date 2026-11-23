@@ -6,9 +6,10 @@ import { getUnitFiles } from "#src/services/sweeps/ledgerCoverage/getUnitFiles";
 import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
 import { getOrCreate } from "@esposter/shared";
 
-// The open cells a range's changed paths reach: each partition unit holding one of them, with every question it is open
-// In, in the order the partition lists its units. A dated cell is not drawn though a file it holds changed, since only
-// A `Reopens:` trailer or a sample reopens a dated cell, which is the status's own rule
+// The open cells a range's changed paths reach, one per partition unit holding one of them.
+// Each carries every question the unit is open in, in the order the partition lists its units.
+// A dated cell is not drawn though a file it holds changed.
+// Only a `Reopens:` trailer or a sample reopens a dated cell, which is the status's own rule.
 export const getTouchedLedgerSample = (
   statuses: readonly LedgerCoverage[],
   partitionUnits: readonly string[],

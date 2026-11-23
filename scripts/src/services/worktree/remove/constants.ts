@@ -2,8 +2,8 @@
 export const WORKTREE_REMOVE_COMMAND = "pnpm ai:worktree:remove";
 export const GIT_FOLDER = ".git";
 export const NODE_MODULES_FOLDER = "node_modules";
-// The folder under the git common directory a loaded binary is moved into, so a later removal can delete it once
-// Nothing has it loaded
+// The folder under the git common directory a loaded binary is moved into.
+// A later removal can delete it once nothing has it loaded.
 export const WORKTREE_TRASH_FOLDER = "worktree-trash";
 // The binaries Windows refuses to delete while a process has them loaded, and lets one move
 export const LOADED_BINARY_EXTENSIONS: ReadonlySet<string> = new Set([".dll", ".exe", ".node"]);

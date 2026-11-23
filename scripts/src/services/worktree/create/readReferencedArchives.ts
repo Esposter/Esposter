@@ -2,8 +2,9 @@ import { TASK_CACHE_ARCHIVE_EXTENSION, TASK_CACHE_ARCHIVE_UUID_REGEX } from "#sr
 import { withFinalizer } from "@esposter/shared";
 import { DatabaseSync } from "node:sqlite";
 
-// The output archives a task cache's database names. A recorded run names its archive by the archive's UUID, inside a
-// Stored Value of the tables, so every UUID a value holds is an archive the cache expects beside it
+// The output archives a task cache's database names.
+// A recorded run names its archive by the archive's UUID, inside a stored value of the tables.
+// So every UUID a value holds is an archive the cache expects beside it.
 export const readReferencedArchives = (databasePath: string): string[] => {
   const database = new DatabaseSync(databasePath, { readOnly: true });
   return withFinalizer(

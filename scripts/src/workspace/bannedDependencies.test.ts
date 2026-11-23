@@ -17,9 +17,9 @@ interface PackageManifest {
   devDependencies?: Record<string, string>;
 }
 
-// A manifest names a banned dependency when its `dependencies` or `devDependencies` lists a package, or a subpath of
-// One, That `module-replacements` maps to a replacement in any of its manifests (`all`: native, micro-utilities,
-// Preferred)
+// A manifest names a banned dependency when its `dependencies` or `devDependencies` lists a package.
+// That includes a subpath of one, which `module-replacements` maps to a replacement in any of its manifests.
+// `all` joins the module-replacements manifests: native, micro-utilities and preferred.
 describe("bannedDependencies", () => {
   const DEPENDENCY_KEYS: (keyof PackageManifest)[] = ["dependencies", "devDependencies"];
   // A mapping kept on purpose: the ids are UUID v7, time-ordered so a table sorts by creation, and

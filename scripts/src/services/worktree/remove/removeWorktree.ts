@@ -14,12 +14,15 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-// Removes a linked worktree, and its branch once that has landed, or a folder under this checkout's worktrees folder
-// That Git no longer lists. Nothing is deleted for a path git would refuse: the main checkout, a linked worktree with
-// Uncommitted Changes and a folder in another checkout are refused before any install is touched. On Windows the
-// Junctions and the Loaded binaries are dealt with after that, so no deletion walks out of the worktree or stops part
-// Way on a long path. The git calls that act on the repository run from `repositoryRoot`, so a removal run from inside
-// The worktree it removes Still has a checkout to ask
+// Removes a linked worktree, and its branch once that has landed.
+// Or it removes a folder under this checkout's worktrees folder that git no longer lists.
+// Nothing is deleted for a path git would refuse.
+// The main checkout, a linked worktree with uncommitted changes and a folder in another checkout are refused.
+// They are refused before any install is touched.
+// On Windows the junctions and the loaded binaries are dealt with after that.
+// So no deletion walks out of the worktree or stops part way on a long path.
+// The git calls that act on the repository run from `repositoryRoot`.
+// So a removal run from inside the worktree it removes still has a checkout to ask.
 export const removeWorktree = (path: string, repositoryRoot: string = REPOSITORY_ROOT): void => {
   checkWorktreePath(path);
   const worktreePath = resolve(path);
