@@ -116,6 +116,7 @@
     "genshin-interface": "workspace:*",
     "genshin-persona": "workspace:*",
     "genshin-world": "workspace:*",
+    "hosted-assets": "workspace:*",
     "imagetracerjs": "catalog:",
     "jscpd": "catalog:",
     "jsonc-parser": "catalog:",
