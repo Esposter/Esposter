@@ -7,6 +7,6 @@ export const CORE_BINDING = "CORE";
 export const CORE_DATABASE_ID: string = CloudflareCoreDatabaseIdMap[CloudflareEnvironment.Development];
 // The table drizzle's D1 migrator writes its applied-migration ledger to, which a reset must leave alone
 export const DRIZZLE_MIGRATIONS_TABLE = "__drizzle_migrations";
-// The tables an FTS5 virtual table keeps beside itself, named `<table>_<suffix>`. A reset deletes from the virtual table,
-// Which clears these too, and deleting from them directly would corrupt the index
+// The tables an FTS5 virtual table keeps beside itself, named `<table>_<suffix>`. A reset deletes from the virtual
+// Table, Which clears these too, and deleting from them directly would corrupt the index
 export const FTS5_SHADOW_TABLE_SUFFIXES: string[] = ["config", "content", "data", "docsize", "idx"];

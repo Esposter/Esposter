@@ -1,6 +1,7 @@
-// oxlint-disable oxc/no-barrel-file -- the `workers` subpath is a barrel by design: the one entry the Workers packages import the doubles through
-// The Workers test doubles. Their types are the Workers globals, which only the packages that load the Workers types have, so
-// The main barrel that web compiles through its source condition never reaches them
+// The `workers` subpath is a
+// oxlint-disable oxc/no-barrel-file -- barrel by design: the one entry the Workers packages import the doubles through
+// The Workers test doubles. Their types are the Workers globals, which only the packages that load the Workers types
+// Have, so The main barrel that web compiles through its source condition never reaches them
 export * from "#src/workers/models/MockJobQueue";
 export type * from "#src/workers/models/ObjectCall";
 export type * from "#src/workers/models/ObjectReply";

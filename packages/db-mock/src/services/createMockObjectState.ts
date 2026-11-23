@@ -11,11 +11,11 @@ const createCursor = (rows: unknown[]): MockObjectCursor => {
   return { next: () => iterator.next(), toArray: () => rows };
 };
 
-// The state a Durable Object runs on, for a test in any suite. The SQLite is a real in-memory database, behind the SqlStorage
-// Shape the runtime gives an object. The socket registry answers getWebSockets and getTags as the runtime does. So a second
-// Object over the same state reads back the first's writes. A closed socket leaves the registry, so a close handler sees
-// Only the sockets still open. The alarm and the key-value storage are held as the runtime holds them, and deleteAll starts
-// Both again empty
+// The state a Durable Object runs on, for a test in any suite. The SQLite is a real in-memory database, behind the
+// SqlStorage Shape the runtime gives an object. The socket registry answers getWebSockets and getTags as the runtime
+// Does. So a second Object over the same state reads back the first's writes. A closed socket leaves the registry, so a
+// Close handler sees Only the sockets still open. The alarm and the key-value storage are held as the runtime holds
+// Them, and deleteAll starts Both again empty
 export const createMockObjectState = (name: string): MockObjectState => {
   let database = new DatabaseSync(":memory:");
   const keyValues = new Map<string, unknown>();
@@ -63,7 +63,8 @@ export const createMockObjectState = (name: string): MockObjectState => {
           return { ...createCursor(rows), raw: () => createCursor(rows.map((row) => Object.values(row))) };
         },
       },
-      // As the runtime does, a closure that throws rolls its writes back and rethrows, and one that returns commits them
+      // As the runtime does, a closure that throws rolls its writes back and rethrows, and one that returns commits
+      // Them
       transactionSync: (closure) => {
         database.exec("BEGIN");
         return getResult(closure).match(

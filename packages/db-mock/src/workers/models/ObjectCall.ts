@@ -1,5 +1,5 @@
-// Every RPC an object was sent, in send order, with the object it was sent to. The object exists only inside the realtime
-// Worker, so a suite asserts what the job asked of it, and what the job did with the answer
+// Every RPC an object was sent, in send order, with the object it was sent to. The object exists only inside the
+// Realtime Worker, so a suite asserts what the job asked of it, and what the job did with the answer
 export interface ObjectCall {
   args: unknown[];
   method: string;

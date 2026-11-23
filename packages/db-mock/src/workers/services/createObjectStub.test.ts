@@ -5,7 +5,8 @@ import { createObjectStub } from "#src/workers/services/createObjectStub";
 import { describe, expect, test } from "vitest";
 
 describe(createObjectStub, () => {
-  // A stub answers no `then`, so it is not a thenable and an await does not wait on it, and an RPC called on it is recorded
+  // A stub answers no `then`, so it is not a thenable and an await does not wait on it, and an RPC called on it is
+  // Recorded
   test("answers no then, and records only the RPCs called on it", async () => {
     expect.hasAssertions();
 
