@@ -93,6 +93,22 @@ The login's button clicks and its wind SHALL NOT play until they have been match
 - **WHEN** the player presses a login button
 - **THEN** no click sound plays
 
+### Requirement: The door's forming plays a low layer that starts a lead before the door rises
+
+The login's low layer SHALL start as the door begins to form, a fixed lead before the door rises, through the same bus as the door's sound.
+
+#### Scenario: The layer starts a lead before the door rises
+
+- **GIVEN** the door is due with at least the lead of glide left before it rises
+- **WHEN** the door begins to form
+- **THEN** the low layer starts the lead before the door rises (`LOGIN_DOOR_FORMING_LEAD_MS`)
+
+#### Scenario: The layer waits with the forming on the download
+
+- **GIVEN** the door's forming is held by the download
+- **WHEN** the download finishes
+- **THEN** the low layer starts with the forming, and not before
+
 ## Open
 
 - [ ] **A deployed product holds no game sound, only the measured levels** — no source yet: the built product's contents are not inspected here, and the hosted `login/sounds` record is named in the game-data lock by its hash only.

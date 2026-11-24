@@ -96,12 +96,19 @@ export const doorSoundTopic: ReferenceTopic = {
       result:
         "No bank sound matches the layer, and none clears the door pair's 0.91 and 3 decibels. Over 11.0 to 13.6 seconds the best single sound scores 0.798 (379943834, from 11.200 seconds), and the best set of four leaves 6.96 decibels unexplained. Over 11.6 to 13.2 seconds the best scores 0.788 (583669560, from 11.925 seconds), and the best set of four leaves 4.95 decibels. The same top sounds came out of re-scoring only the 63-hertz searches' candidates, so the candidate rule missed none of the top",
     },
+    {
+      method:
+        "The forming's low layer built from the readings above: the 63 hertz octave band of the engine's own noise at the band's level, under an attack of 1.0 second, a hold of 1.5 and a release of 0.4, started by the scene when the door's copy is a lead's glide from its rise",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The band covers 44.5 to 89 hertz, which holds the layer's excess at 40 to 80 hertz (15 to 26 decibels over the pre-door spectrum); the parts from 30 to 44 and from 89 to 100 hertz are left out. The envelope gives 2.9 seconds from the layer's 11.0-second onset to its fall by 13.9, and the level is the band's -27 decibels, which the layer holds at -27 to -30 from 12.0 to 13.5 seconds. The layer ships in no record, its levels being its envelope's own, so no publish is owed. The lead is 750 milliseconds before the rise, the onset at 11.0 seconds against the first piece's rise at 11.75. The glide holds its pace from the door being due until it rises, so the lead holds whenever the glide has that long to fly after the due; the walkway's copies are 16 metres, so a due within the lead of the rise starts the layer with the due. The layer's match is not measured here: the search above is its reference",
+    },
   ],
   openQuestions: [
     "The shared mixer's low-pass of 20 and high-pass of 15 on Wwise's scale, whose cutoffs sit behind Audiokinetic's documentation's captcha, and the compressor's detector, unpublished, so the browser's own stands in: each measured from a recording whose music is the login's own, or from the cutoff table",
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",
     "Whether the door's two sounds are one event of the game's: they start 75 milliseconds apart in the match, which the bank's own events would say",
-    "The layer under the door's forming, 30 to 100 hertz from 11.0 to 13.9 seconds: no Minimum.pck or bank sound matches it over 11.0 to 13.6 seconds, the best bank sound scoring 0.798 where the door clears 0.91, and the 13.6 to 13.9 tail is unsearched, so it stays an open row under the sound-effects spec until a sound matches it; a recording-measured layer would break that rule, and the record it would ship in needs a production R2 publish",
+    "The layer under the door's forming is built as a measured layer under the sound-effects spec, since no bank sound matches it over 11.0 to 13.6 seconds (the best scores 0.798 where the door clears 0.91, and the tail to 13.9 is unsearched): a sound that matched it would replace the built layer, and the music and streamed packages of the next question are where one could be",
     "The music and streamed packages, Music0 to Music31 and Streamed0 to Streamed31, are unsearched: 15.9 GB compressed, with 20,823 sounds that no bank or Minimum.pck holds across the packages the search pattern named. Many of those sounds run for minutes, and each decodes whole to a WAV of about 20 megabytes on average, so a full search would write several hundred gigabytes; a run over 917 of them was stopped before its results were written. A layer that lives in one of those tracks would be missed until a decode that stops after the window searches them",
   ],
 };

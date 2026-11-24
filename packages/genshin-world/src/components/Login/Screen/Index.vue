@@ -83,7 +83,9 @@ const shownPlayerName = computed(
   () => playerName || fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER),
 );
 const isSpinnerShown = ref(false);
-// Whether the door has risen into place, which the door's own interface waits on
+// Whether the door has begun to form, which starts its low layer, and whether it has risen into place, which the door's
+// Own interface waits on
+const isDoorForming = ref(false);
 const isDoorFormed = ref(false);
 // The step the timers reach from the title's click, which the foot shows unless a download takes its place
 const timedStep = ref<LoginStatusStep>(LoginStatusStep.PreparingDownload);
@@ -181,11 +183,13 @@ const onClick = (event: MouseEvent): void => {
         :towers="loginData.towers"
         :walkway="loginData.walkway"
         @door-formed="isDoorFormed = true"
+        @door-forming="isDoorForming = true"
         @ready="emit('ready')"
       />
     </TresCanvas>
     <LoginMusic
       v-if="!isInterfaceHidden"
+      :is-door-forming="isDoorForming"
       :is-door-opened="stage === LoginStage.Entering"
       :music="loginData.music"
       :game-data-base-url
