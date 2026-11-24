@@ -3,14 +3,17 @@ import type { BenchmarkProvider, BenchResult } from "vitest";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { Bench } from "tinybench";
 
-// The run a smoke check needs: one measured iteration and no warmup, with no time budget to fill. These are spread
-// Last, Over whatever a bench file passed, so a heavier group's own counts cannot bring the minutes back
+// The run a smoke check needs: one measured iteration and no warmup, with no time budget to fill.
+// These options are spread last, over whatever a bench file passed.
+// So a heavier group's own counts cannot bring the minutes back.
 const SMOKE_RUN_OPTIONS = { iterations: 1, time: 0, warmup: false, warmupIterations: 0, warmupTime: 0 };
 
-// Vitest's benchmark provider for a run whose numbers nobody reads, which is every CI run: each registered bench
-// Executes Once, so the run still proves every bench file loads, builds its fixtures and runs its tasks without
-// Throwing, at a Fraction of a measured run's cost. Otherwise it does what Vitest's own tinybench provider does, which
-// Vitest does not Export. `getBenchmarkTestConfiguration` selects it when `BENCHMARK_SMOKE_RUN` is set
+// Vitest's benchmark provider for a run whose numbers nobody reads, which is every CI run.
+// Each registered bench runs once, so the run still proves every bench file loads and builds its fixtures.
+// Its tasks run too.
+// It runs at a fraction of a measured run's cost.
+// Otherwise it does what Vitest's own tinybench provider does, which Vitest does not export.
+// `getBenchmarkTestConfiguration` selects it when `BENCHMARK_SMOKE_RUN` is set
 const benchmarkSmokeProvider: BenchmarkProvider = {
   run: async ({ config, options, registrations, test }) => {
     const bench = new Bench({

@@ -54,8 +54,7 @@ describe(createKeyframeStore, () => {
     const createSeededKeyframeStore = () => createKeyframeStore(createMemoryObjectStore(new Map(keyframeObjects)));
     const copyObjectStore = createMemoryObjectStore();
     await copyObjectStore.write(COPY_KEY, singleEditVersion);
-    // Each iteration's backend is built in its beforeEach, outside the timing, so a write's copy is never part of its
-    // Time
+    // Each iteration's backend is built in its beforeEach, outside the timing, so a write's copy is never timed.
     let nativeStore = createMemoryObjectStore();
     let writeStore = createSeededKeyframeStore();
     const beforeEachNative = () => {

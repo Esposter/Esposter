@@ -12,8 +12,8 @@ import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 describe(createTRPCWebSocketHandler, () => {
   const t = initTRPC.context<{ url?: string | undefined }>().create();
   const router = t.router({
-    // A
-    // oxlint-disable-next-line require-await -- subscription is an AsyncIterable, which only an async generator yields
+    // A subscription is an AsyncIterable, which only an async generator yields.
+    // oxlint-disable-next-line require-await -- the generator yields without awaiting
     count: t.procedure.subscription(async function* () {
       yield 0;
     }),

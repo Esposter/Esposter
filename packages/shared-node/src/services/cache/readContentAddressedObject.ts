@@ -7,11 +7,13 @@ import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// One object's bytes by the hex SHA-256 they hash to: read from the cache, else downloaded once and kept only when its
-// Bytes hash to that name, so a hit is served as kept and never goes stale, and a caller that needs proof checks it
-// Against The name. A writer that loses the race to the same name wrote the same bytes, so its rename failing over the
-// Winner's file Is still a hit. The name is joined into a path before anything reads it, so one that is not a hex
-// Digest is refused first Rather than read from outside the directory
+// One object's bytes, by the hex SHA-256 they hash to: read from the cache, else downloaded once.
+// The bytes are kept only when they hash to that name, so a hit is served as kept and never goes stale.
+// A caller that needs proof checks them against the name.
+// A writer that loses the race to the same name wrote the same bytes.
+// Its rename failing over the winner's file is still a hit.
+// The name is joined into a path before anything reads it, so a name that is not a hex digest is refused first.
+// That refusal keeps every read inside the directory.
 export const readContentAddressedObject = async (
   hash: string,
   download: () => Promise<Uint8Array>,

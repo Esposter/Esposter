@@ -35,11 +35,10 @@ export const ENERGY_TOLERANCE = 11;
 // Favours the bins nearest it
 export const PITCH_BEND_TOLERANCE = 25;
 export const PITCH_BEND_STANDARD_DEVIATION = 5;
-// A MIDI pitch bend spans two semitones either way by default, in steps of a fourteen-bit value either side of its
-// Centre
+// A MIDI pitch bend spans two semitones either way by default, in fourteen-bit steps either side of its centre
 export const MIDI_PITCH_BEND_SEMITONES = 2;
 export const MIDI_PITCH_BEND_STEPS: number = 2 ** 13;
-// A note's velocity is a seven-bit value, and a velocity of zero is a note off, so a note's is held between one and the
-// Top
+// A note's velocity is a seven-bit value, and zero is a note off.
+// So a sounding note's velocity is held between the minimum and the maximum.
 export const MIDI_MIN_VELOCITY = 1;
 export const MIDI_MAX_VELOCITY = 127;

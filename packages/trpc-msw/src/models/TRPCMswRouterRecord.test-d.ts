@@ -8,8 +8,8 @@ describe("tRPCMswRouterRecord type", () => {
   const t = initTRPC.context<{ id: string }>().create();
   const router = t.router({
     nested: t.router({ read: t.procedure.input(z.object({ id: z.string() })).query(() => new Date(0)) }),
-    // A
-    // oxlint-disable-next-line require-await -- subscription is an AsyncIterable, which only an async generator yields
+    // A subscription is an AsyncIterable, which only an async generator yields.
+    // oxlint-disable-next-line require-await -- the generator yields without awaiting
     subscribe: t.procedure.subscription(async function* () {
       yield 0;
     }),

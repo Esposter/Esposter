@@ -1,7 +1,5 @@
-// The
-// oxlint-disable oxc/no-barrel-file -- `notes` subpath is a barrel by design: the entry that never loads ONNX Runtime
-// Note creation alone, for a worker or a server that builds notes from readings it already has and never loads
-// ONNX Runtime
+// The `notes` entry never loads ONNX Runtime, so a worker or a server can build notes from readings it already has.
+// oxlint-disable oxc/no-barrel-file -- `notes` subpath is a barrel by design
 export * from "#src/constants";
 export type * from "#src/models/ModelReadings";
 export type * from "#src/models/NoteCreationOptions";
