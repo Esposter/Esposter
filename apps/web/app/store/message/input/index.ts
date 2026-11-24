@@ -37,7 +37,7 @@ export const useInputStore = defineStore("message/input", () => {
   const { checkIsFileLoading, getComposerFiles } = uploadFileStore;
   // Persisted state rather than a Map mirrored into localStorage by hand: the write happens because the Map
   // Changed, and a server render reads the default empty one — see
-  // Openspec/specs/architecture/browser-execution/design.md `flush: "sync"` because a draft is persisted state rather
+  // `openspec/specs/architecture/browser-execution/design.md` `flush: "sync"` because a draft is persisted state rather
   // Than rendered state: the default pre-flush write
   // Would leave a window in which the composer has been emptied but the storage still holds what was in it
   const drafts = useLocalStorage(LocalStorageKey.Drafts, new Map<string, Draft>(), {

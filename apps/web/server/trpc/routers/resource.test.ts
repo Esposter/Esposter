@@ -683,7 +683,7 @@ describe("resourceRouter", () => {
   });
 
   // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises an
-  // Object-create notification for A blob no reserve ever ledgered, so the counter would never move. The assets it
+  // `object-create` notification for a blob no reserve ever ledgered, so the counter would never move. The assets it
   // Names are the working copy's own objects, already charged when they were uploaded, so a publish adds only the
   // Snapshot
   test("charges the owner for the snapshot a publish takes, not for the assets it names", async () => {
