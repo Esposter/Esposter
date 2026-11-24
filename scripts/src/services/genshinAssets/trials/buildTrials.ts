@@ -7,10 +7,12 @@ import { toTrialTemplate } from "#src/services/genshinAssets/trials/toTrialTempl
 import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 import { GameDataset } from "genshin-world";
 
-// The character trials' records, each published under the dataset's key: the stages by id, the trial avatars by id, the
-// Reliquaries by id, the templates by level, the weapon each trial character is fought with by character id, and the
-// Items Each stage's first-clear reward pays, keyed by the reward id. A reliquary no set names is left out, since no
-// Artifact is Worn from it, and a reliquary the reliquary table lacks is refused
+// The character trials' records, each published under the dataset's key.
+// They are the stages by id, the trial avatars by id, the reliquaries by id, and the templates by level.
+// Also the weapon each trial character is fought with by character id.
+// And the items each stage's first-clear reward pays, keyed by the reward id.
+// A reliquary no set names is left out, since no artifact is worn from it.
+// A reliquary the reliquary table lacks is refused.
 export const buildTrials = ({
   affixRows,
   avatarRows,

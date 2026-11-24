@@ -13,13 +13,14 @@ import { sliceWikiTemplate } from "genshin-persona/src/services/sliceWikiTemplat
 
 const TEMPLATE_START = "{{Wish\n";
 const POOL_TEMPLATE_START = "{{Wish Pool\n";
-// An event banner page read into its kind, its window and the names of its featured items, as its Item Pool names them
-// For its kind. A page of another kind is not read and reads as undefined, while an event banner missing a field throws
-// Rather than reading as a banner without it
+// An event banner page is read into its kind, its window and the names of its featured items.
+// Its Item Pool names those items for its kind.
+// A page of another kind is not read and reads as undefined.
+// An event banner missing a field throws rather than reading as a banner without it.
 export const parseWishPage = (title: string, wikitext: string): undefined | WishEventPage => {
   const template = sliceWikiTemplate(wikitext, TEMPLATE_START);
-  // A
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- template the page holds, empty when the page has none
+  /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- a template the page holds,
+     empty when the page has none */
   if (template === "") throw new InvalidOperationError(Operation.Read, TEMPLATE_START, "is not on the page");
 
   const parameters = readParameters(template);

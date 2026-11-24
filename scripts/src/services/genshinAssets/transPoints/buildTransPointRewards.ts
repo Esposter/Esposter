@@ -7,9 +7,9 @@ import { toTransPointRewardRow } from "#src/services/genshinAssets/transPoints/t
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
-// The open world's transport point rewards, each point's Adventure EXP and Primogems joined from its reward row,
-// Published As one record of the transport points dataset, keyed by its scene. A point whose reward the reward table
-// Does not hold is An error, since a point paid nothing silently would be wrong
+// The open world's transport point rewards, each point's Adventure EXP and Primogems joined from its reward row.
+// They are published as one record of the transport points dataset, keyed by its scene.
+// A point whose reward the reward table does not hold is an error, since a point paid nothing silently would be wrong.
 export const buildTransPointRewards = (): Record<string, unknown> => {
   const currencyRewardMap = new Map(
     readExcelTable<ExcelCurrencyRewardRow>("RewardExcelConfigData").map((reward) => [reward.rewardId, reward] as const),

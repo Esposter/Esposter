@@ -41,16 +41,20 @@ import { selectCityAreasInView } from "#src/services/genshinAssets/world/selectC
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
-// View and its architecture radius cover and the StreamGen blob of every city area they reach, all read by path hash,
-// The placements those select (every one in view, and each architecture placement within the radius), each prefab of
-// Them rooted at the game object its name finds in the blocks that name its mesh or, for a building, hold its prefab
-// File (`readPrefabBlocks`) or, failing that, in any block dumped for the derivation (a game object's block need not
-// Index its own mesh), and the 2x2 of terrain tiles its place stands in. A sub-area's place is its outline's centre,
-// And Its terrain is the tiles its outline reaches instead of the region's. Each step reads the game's own data (the
-// Asset Index, the CAB map, the blobs, the game's LOD table, the community's path names and the ones the asset index's
-// Own Names hash to, the dumped layouts), so a region or a sub-area gives only its own place. Returns the block with
-// The Lines that report what did not resolve
+// A region's open world block derived from its capital the way Windrise's is laid out, with no hand step.
+// The tiles its view and its architecture radius cover are read, with the StreamGen blob of every city area they reach.
+// Those blobs are all read by path hash.
+// The placements those select are read too: every one in view, and each architecture placement within the radius.
+// Each prefab of them is rooted at the game object its name finds in the blocks that name its mesh.
+// For a building, it is rooted in the blocks that hold its prefab file (`readPrefabBlocks`).
+// Failing that, it is rooted in any block dumped for the derivation.
+// A game object's block need not index its own mesh.
+// The 2x2 of terrain tiles its place stands in is read as well.
+// A sub-area's place is its outline's centre, and its terrain is the tiles its outline reaches instead of the region's.
+// Each step reads the game's own data: the asset index, the CAB map, the blobs and the game's LOD table.
+// It also reads the community's path names, the ones the asset index's own names hash to, and the dumped layouts.
+// So a region or a sub-area gives only its own place.
+// It returns the block with the lines that report what did not resolve.
 export const deriveCapitalWorld = async (
   component: DerivedAssetComponent,
   directory: ComponentDirectory,
@@ -62,8 +66,9 @@ export const deriveCapitalWorld = async (
   const subarea = await readSubareaArea(component);
   const place = await readDerivedWorldPlace(component, subarea);
   const lines: string[] = [];
-  // Each covered tile's blob and index, then those of every city area the view reaches, by the names their path hash
-  // And Index name give. A city area's blob holds the props and buildings the tiles do not
+  // Each covered tile's blob and index are read, then those of every city area the view reaches.
+  // They are found by the names their path hash and index name give.
+  // A city area's blob holds the props and buildings the tiles do not.
   const tileNames = getCoveredTiles(place, ARCHITECTURE_VIEW_METRES).map(({ column, row }) =>
     getWorldTileName(column, row),
   );
@@ -87,8 +92,8 @@ export const deriveCapitalWorld = async (
   }
   exportWorldStreams(streams, directory.world);
   // Each stream's placements, read from the blobs the export just wrote, and the names every prefab they draw is given.
-  // A placement of a prefab grouped by level of detail carries no path hash, so it takes its finest level's from the
-  // Game's LOD table, the prefab it is rooted at
+  // A placement of a prefab grouped by level of detail carries no path hash.
+  // So it takes its finest level's from the game's LOD table, the prefab it is rooted at.
   const prefabIdLodPathHashMap = await readLodPathHashes(directory.world);
   const recordedPlacements = await Promise.all(streams.map((stream) => readStreamPlacements(directory.world, stream)));
   const streamPlacements = recordedPlacements.map((placements) =>
@@ -100,8 +105,9 @@ export const deriveCapitalWorld = async (
     .flat()
     .filter(({ pathHash, prefabId }) => !pathHash && prefabIdLodPathHashMap.has(prefabId)).length;
   lines.push(`${lodPlacementCount} placements named by their finest level in the game's LOD table`);
-  // Each path hash the community's index leaves unnamed is named in the same run by hashing the asset index's own
-  // Prefab names, so no step after the extraction is owed before its prefabs are named
+  // Each path hash the community's index leaves unnamed is named in the same run.
+  // The names come from hashing the asset index's own prefab names.
+  // So no step after the extraction is owed before its prefabs are named.
   const pathNames = await readAssetPathNames();
   const unnamedKeys = new Set(
     streamPlacements
@@ -127,9 +133,10 @@ export const deriveCapitalWorld = async (
     selectCapitalPlacements(placements, streamPrefabNames, place),
   );
   const prefabNames = getPrefabNames(viewPlacements.flat(), pathNames);
-  // The blocks each prefab's game object may stand in, dumped so the game objects of its name can be found in them,
-  // Found through the meshes of its name: an animator or a material named as a prefab can lie in a block of hundreds
-  // Of thousands of layout files (Inazuma City's `00/15424869` and `00/02666572`)
+  // The blocks each prefab's game object may stand in are dumped, so its game objects can be found in them.
+  // They are found through the meshes of its name.
+  // An animator or a material named as a prefab can lie in a block of hundreds of thousands of layout files.
+  // For example, Inazuma City's `00/15424869` and `00/02666572` are such blocks.
   const indexedNames = new Set(prefabNames.values());
   const prefabMeshes = await readIndexedAssets(
     ({ name, type }) => type === AssetType.Mesh && indexedNames.has(name),
@@ -146,9 +153,10 @@ export const deriveCapitalWorld = async (
   const prefabIdRootMap = new Map<number, AssetRoot>();
   const unrootedNames = new Set<string>();
   for (const [prefabId, name] of prefabNames) {
-    // A name's game object is looked for in the blocks indexing its mesh or, for a building, holding its prefab file
-    // First, then in every dumped block, since the index may name a prefab's mesh in a block its game object does not
-    // Stand in
+    // A name's game object is looked for first in the blocks indexing its mesh.
+    // For a building, it is the blocks holding its prefab file.
+    // Then it is looked for in every dumped block.
+    // The index may name a prefab's mesh in a block its game object does not stand in.
     const indexedRoot = resolvePrefabRoot(name, nameBlocksMap.get(name) ?? [], objects);
     const root = indexedRoot ?? resolvePrefabRoot(name, dumpedBlocks, objects);
     if (root) prefabIdRootMap.set(prefabId, root);
@@ -171,9 +179,10 @@ export const deriveCapitalWorld = async (
     ({ name }) => name.includes(TERRAIN_NAME_MARK),
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
-  // The blocks holding a tile's own textures are searched first, since a tile is often exported beside them. A tile
-  // They Lack is then searched for in every other block naming a terrain asset: the index names no TerrainData, but
-  // Each block Holding one names a terrain asset beside it, so a tile in none of these blocks is reported
+  // The blocks holding a tile's own textures are searched first, since a tile is often exported beside them.
+  // A tile they lack is then searched for in every other block naming a terrain asset.
+  // The index names no TerrainData.
+  // But each block holding one names a terrain asset beside it, so a tile in none of these blocks is reported.
   const tileAssets = terrainAssets.filter(({ name }) => name.startsWith(TERRAIN_NAME_PREFIX));
   const nearTerrainBlocks = tileAssets
     .filter(({ name }) => terrainNames.some((terrainName) => name.startsWith(`${terrainName}_`)))

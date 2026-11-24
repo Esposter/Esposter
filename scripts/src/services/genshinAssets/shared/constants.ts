@@ -47,9 +47,10 @@ export const INSTALLED_BLOCKS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), 
 // The environment variable that names AnimeStudio's command line in place of the one the build or the Windows unpack
 // Leaves
 export const ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE = "GENSHIN_ANIMESTUDIO_CLI";
-// AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where
-// Its Map is kept, or the one unpacked under Downloads on Windows, unless the environment variable names another. It
-// Writes its CAB map into a `Maps` folder beside its working directory, so it is run from its own folder
+// AnimeStudio's command line (github.com/Escartem/AnimeStudio) is the CLI the build publishes on macOS.
+// Its map is kept there, or in the one unpacked under Downloads on Windows.
+// The environment variable can name another CLI instead.
+// It writes its CAB map into a `Maps` folder beside its working directory, so it is run from its own folder.
 export const ANIMESTUDIO_CLI_PATH: string =
   process.env[ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE] ??
   (process.platform === "darwin"
@@ -451,8 +452,8 @@ export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;
 export const WINDRISE_REGION_FILE = "regions/mondstadt.json";
 // The path ID a root's parent is written as
 export const ROOT_PARENT_ID = "0";
-// How far a world position may stand from the origin and still count as at it, in metres: a placement a float off zero
-// Is Collapsed there all the same
+// How far a world position may stand from the origin and still count as at it, in metres.
+// A placement a float off zero is collapsed there all the same.
 export const ORIGIN_TOLERANCE_METRES = 0.001;
 // How near a placed point's nearest official map point must lie, in game units, for the point to be filed in that map
 // Point's region: about nine in ten placed NPCs lie within about twenty of it

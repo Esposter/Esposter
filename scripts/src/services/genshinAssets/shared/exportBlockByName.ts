@@ -7,9 +7,10 @@ import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStu
 import { existsSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
-// One block's objects of a type read by their exact names in one AnimeStudio run, each written to the directory under
-// Its Name (as a PNG unless an export type is given). AnimeStudio writes a type into a folder of its own, which is
-// Moved up Beside the others, and a block that yields none is left to the caller's check
+// One block's objects of a type are read by their exact names in one AnimeStudio run.
+// Each is written to the directory under its name, as a PNG unless an export type is given.
+// AnimeStudio writes a type into a folder of its own, which is moved up beside the others.
+// A block that yields none is left to the caller's check.
 export const exportBlockByName = (
   block: string,
   type: AssetType,

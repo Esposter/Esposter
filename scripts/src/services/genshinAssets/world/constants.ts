@@ -36,8 +36,8 @@ export const LOD_INFO_MAP_NAME = "LODFinInfoMap";
 export const ASSET_PATH_INDEX_COMMIT = "3192b1759a6d1f6879cc348ad92e078092c1fb9f";
 export const ASSET_PATH_INDEX_SHA256 = "108ea704b12389a76f547e459dfdfb1c938c111d99ad62524a80f3e02eb198c4";
 export const ASSET_PATH_INDEX_URL: string = `https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/${ASSET_PATH_INDEX_COMMIT}/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json`;
-// The index as a source an output built from its derived names is stamped with: the commit it is fetched at and its
-// SHA-256
+// The index as a source an output built from its derived names is stamped with.
+// That is the commit it is fetched at and its SHA-256.
 export const ASSET_PATH_INDEX_SOURCE: ProvenanceSource = {
   commit: ASSET_PATH_INDEX_COMMIT,
   name: "asset-path index",
@@ -50,16 +50,16 @@ export const ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS: number = Temporal.Duration.f
 // The most of the index a fetch holds whole: the index is about 92 MB, so the bound sits past it
 export const ASSET_PATH_INDEX_MAX_BYTES: number = 128 * MEBIBYTE;
 export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "asset-index", "gi-2.6.0.json");
-// A prefab's stem starts with one of the open world's name roots, each the folder its prefabs sit under in the game's
-// Tree
+// A prefab's stem starts with one of the open world's name roots.
+// Each is the folder its prefabs sit under in the game's tree.
 export const PREFAB_ROOT_MAP: Record<string, string> = {
   Area: "ART/Stages/Area",
   Indoor: "ART/Stages/Indoor",
   Level: "ART/Stages/Level",
 };
 export const PREFAB_STEM_REGEX: RegExp = /^(?:Area|Indoor|Level)_/u;
-// A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`, by the code the area is
-// Known by
+// A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`.
+// The code is the one the area is known by.
 export const CITY_AREA_PREFIX = "Area_";
 export const CITY_AREA_SUFFIX = "_City";
 // Every city area's extent, kept for one game version beside the exports and outside the repository

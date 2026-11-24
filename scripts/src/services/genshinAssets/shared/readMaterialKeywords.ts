@@ -1,11 +1,13 @@
 import { SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The shader keywords a material compiles its variant with, read from its serialized bytes as AnimeStudio exports them
-// Raw, since its JSON drops them: its name, a length and its characters aligned to four bytes, its shader's pointer, a
-// File index and a path ID, then its keywords as one string, separated by spaces. A toggle such as the stone's rim glow
-// Is drawn only where its keyword is set, whatever its float holds. Bytes ending before their keywords do are
-// Truncated, Never read as the keywords they still hold
+// The shader keywords a material compiles its variant with, read from its serialized bytes.
+// AnimeStudio exports those bytes raw, since its JSON drops them.
+// They hold its name, a length and its characters aligned to four bytes.
+// Then come its shader's pointer, a file index and a path ID.
+// Its keywords follow as one string, separated by spaces.
+// A toggle such as the stone's rim glow is drawn only where its keyword is set, whatever its float holds.
+// Truncated bytes, ending before their keywords do, are never read as the keywords they still hold.
 export const readMaterialKeywords = (bytes: Buffer): string[] => {
   const nameLength = bytes.readUInt32LE(0);
   const keywordsStart = Math.ceil((4 + nameLength) / 4) * 4 + SERIALIZED_POINTER_BYTES;
