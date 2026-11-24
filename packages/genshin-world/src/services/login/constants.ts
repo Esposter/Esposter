@@ -47,10 +47,9 @@ export const LOGIN_DOOR_LIGHT_MS = 400;
 // The door's sound starts this long after the click, from the English recording: its screen first whitens at 14.633
 // Seconds and the sound's rumble rises from 14.95, fitted over the burst its audio holds above the music
 export const LOGIN_DOOR_SOUND_DELAY_MS = 320;
-// The door's forming is a low layer of our own noise, the 63 hertz octave band of `createNoiseBuffer`, at about -27
-// Decibels RMS, where the recording's layer holds between -27 and -30 from 12.0 to 13.5 seconds in its band under 150
-// Hertz. Under an attack of 1.0 seconds, a hold of 1.5 and a release of 0.4, it runs 2.9 seconds in all, as the
-// Recording's layer does
+// The door's forming is a low layer of our own noise, the 63 hertz octave band of `createNoiseBuffer`, where the
+// Recording's layer holds between -27 and -30 decibels from 12.0 to 13.5 seconds in its band under 150 hertz. Its
+// Envelope spans the recording's layer from its 11.0-second onset to its fall
 export const LOGIN_DOOR_FORMING_LEVEL_DECIBELS = -27;
 export const LOGIN_DOOR_FORMING_ATTACK_MS = 1000;
 export const LOGIN_DOOR_FORMING_HOLD_MS = 1500;
