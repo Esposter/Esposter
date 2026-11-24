@@ -6,7 +6,7 @@ import { join } from "node:path";
 
 // What the migrated state is built from: the migrations, the lockfile that resolves the migrator and Miniflare, and the
 // Code that opens the database. A change to any of them is a new key and so a new template, never a stale one
-export const getTemplateKey = (coreMigrationsDirectory: string) => {
+export const getTemplateKey = (coreMigrationsDirectory: string): string => {
   const hash = createHash("sha256")
     .update(readFileSync(join(findRepositoryRoot(process.cwd()), "pnpm-lock.yaml")))
     .update(createMockDatabase.toString());

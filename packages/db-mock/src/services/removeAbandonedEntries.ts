@@ -18,7 +18,7 @@ const isUnusedTemplate = (path: string) => {
   return modifiedMilliseconds !== undefined && Date.now() - modifiedMilliseconds > TEMPLATE_UNUSED_MILLISECONDS;
 };
 
-export const removeAbandonedEntries = () => {
+export const removeAbandonedEntries = (): void => {
   for (const entry of readdirSync(TEMPLATE_ROOT)) {
     const path = join(TEMPLATE_ROOT, entry);
     const processId = Number(PROCESS_ENTRY_REGEX.exec(entry)?.groups?.processId);
