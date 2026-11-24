@@ -22,6 +22,7 @@ import {
   ASSET_DECISION_CLOCK_MARGIN_MS,
   ASSET_GRACE_MS,
   SNAPSHOT_INTERVAL_MS,
+  STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -602,6 +603,28 @@ describe(saveResourceContent, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash, otherAssetHash].toSorted());
+  });
+
+  // The version check reads the resource the caller holds, so a save it refuses takes no revision and no asset
+  test("refuses a stale save before it takes a revision or references an asset", async () => {
+    expect.hasAssertions();
+
+    const webpage = await createWebpage();
+    const savedWebpage = await saveResourceContent(ctx, {
+      content: createWebpageContent(webpage.id, []),
+      contentVersion: webpage.contentVersion,
+      resource: webpage,
+    });
+
+    await expect(
+      saveResourceContent(ctx, {
+        content: createWebpageContent(webpage.id, [assetHash]),
+        contentVersion: webpage.contentVersion,
+        resource: savedWebpage,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
+    await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([]);
+    await expect(readSnapshotHistory(mockContext.db, webpage.id, SnapshotChannel.Revisions)).resolves.toStrictEqual([]);
   });
 
   // The rollback finds the row by its owner and id rather than as a live row, so a resource binned after the bump

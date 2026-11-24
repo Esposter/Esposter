@@ -42,6 +42,18 @@ export const saveResourceContent = async (
   { activityType, content, contentVersion, resource }: SaveResourceContentInput,
 ): Promise<ResourceInResource> => {
   const { id } = resource;
+  // Parsed here rather than at each door, because this is the door.
+  // `content` arrives as `unknown`, and everything downstream reads it as the type's own shape.
+  // So an unparsed caller reaches the hook with strings where it declares dates.
+  // A blueprint manifest carries content as `z.unknown()`.
+  // So a deployed TodoList's `dueAt` is the ISO string its reminder scheduler calls `.getTime()` on.
+  // A caller that already parsed pays an idempotent second pass.
+  const parsedContent: unknown = ResourceDefinitionMap[resource.type].contentSchema.parse(content);
+  // A save naming a version the row has moved past is refused before anything is written, so it takes no revision,
+  // References no asset and is charged nothing. The update still checks the version as it writes, since the row can
+  // Move after this resource was read and before that write
+  if (contentVersion !== undefined && contentVersion !== resource.contentVersion)
+    throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
   // One recovery point per interval, so an hour of editing leaves a handful of them.
   // It is measured from the last revision rather than from the last save.
   // `updatedAt` moves on every autosave, so a save clock says "still busy" for as long as the owner keeps typing.
@@ -65,13 +77,6 @@ export const saveResourceContent = async (
       noop,
       console.error,
     );
-  // Parsed here rather than at each door, because this is the door.
-  // `content` arrives as `unknown`, and everything downstream reads it as the type's own shape.
-  // So an unparsed caller reaches the hook with strings where it declares dates.
-  // A blueprint manifest carries content as `z.unknown()`.
-  // So a deployed TodoList's `dueAt` is the ISO string its reminder scheduler calls `.getTime()` on.
-  // A caller that already parsed pays an idempotent second pass.
-  const parsedContent: unknown = ResourceDefinitionMap[resource.type].contentSchema.parse(content);
   // Read before the write overwrites it, so an after-save hook can diff against it (undefined on the first write).
   // Only paid where a hook is registered, and best-effort like the hook itself.
   // An unreadable prior blob degrades to "no previous content" rather than blocking a valid write.
