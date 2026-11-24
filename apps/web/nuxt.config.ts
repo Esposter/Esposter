@@ -1,3 +1,4 @@
+import { aiReady } from "#configuration/aiReady";
 import { app } from "#configuration/app";
 import { build } from "#configuration/build";
 import { compatibilityDate } from "#configuration/compatibilityDate";
@@ -12,6 +13,7 @@ import { modules } from "#configuration/modules";
 import { nitro } from "#configuration/nitro";
 import { ogImage } from "#configuration/ogImage";
 import { pwa } from "#configuration/pwa";
+import { robots } from "#configuration/robots";
 import { router } from "#configuration/router";
 import { routeRules } from "#configuration/routeRules";
 import { runtimeConfig } from "#configuration/runtimeConfig";
@@ -22,6 +24,7 @@ import { typescript, typescriptHooks } from "#configuration/typescript";
 import { vite, viteHooks } from "#configuration/vite";
 
 export default defineNuxtConfig({
+  aiReady,
   app,
   build,
   compatibilityDate,
@@ -37,6 +40,7 @@ export default defineNuxtConfig({
   nitro,
   ogImage,
   pwa,
+  robots,
   router,
   routeRules,
   runtimeConfig,
