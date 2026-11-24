@@ -3,6 +3,7 @@ import type { PinnedTool } from "#src/models/shared/PinnedTool";
 import { PINNED_TOOL_MAX_BYTES } from "#src/services/shared/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { findExecutable } from "#src/services/shared/findExecutable";
+import { getPinnedToolDirectory } from "#src/services/shared/getPinnedToolDirectory";
 import { getSystemTarPath } from "#src/services/shared/getSystemTarPath";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { execFileSync } from "@esposter/shared-node/child-process";
@@ -17,14 +18,9 @@ import { basename, dirname, join } from "node:path";
  * executable holds only a stale attempt, and is moved aside under a name of its own and removed before the rename is
  * made again.
  */
-export const installPinnedTool = async ({
-  archiveSha256,
-  archiveUrl,
-  directory,
-  downloadTimeoutMs,
-  executablePattern,
-  isArchive,
-}: PinnedTool): Promise<string> => {
+export const installPinnedTool = async (pinnedTool: PinnedTool): Promise<string> => {
+  const { archiveSha256, archiveUrl, downloadTimeoutMs, executablePattern, isArchive } = pinnedTool;
+  const directory = getPinnedToolDirectory(pinnedTool);
   const archive = await fetchOk(archiveUrl, { maxBytes: PINNED_TOOL_MAX_BYTES, timeoutMs: downloadTimeoutMs });
   const checksum = createHash("sha256").update(archive).digest("hex");
   if (checksum !== archiveSha256)

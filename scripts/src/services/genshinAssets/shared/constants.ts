@@ -316,28 +316,32 @@ const VGMSTREAM_DIRECTORY: string = join(CACHE_ROOT, "vgmstream");
 export const VGMSTREAM_WINDOWS_PINNED_TOOL: PinnedTool = {
   archiveSha256: "6c4a8a3813864fefed081bbd337dbc0ad93bf88e0b92f5db98d7ab258b22dc6c",
   archiveUrl: "https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-win64.zip",
-  directory: VGMSTREAM_DIRECTORY,
   downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
   executablePattern: "vgmstream-cli.exe",
   isArchive: true,
+  toolDirectory: VGMSTREAM_DIRECTORY,
 };
 // The macOS archive is r2168, since r2117 links the libavformat.62 that Homebrew's FFmpeg no longer ships, so it never
-// Loads. Its folder is named for the release, as yt-dlp's is, so a bump never reuses the binary it replaces
-const VGMSTREAM_MACOS_DIRECTORY: string = join(VGMSTREAM_DIRECTORY, "r2168");
+// Loads
 export const VGMSTREAM_MACOS_PINNED_TOOL: PinnedTool = {
   archiveSha256: "91fb9da354211acf41c3ea5626c003df1562900be90cb84ad3db278165b43dcb",
   archiveUrl: "https://github.com/vgmstream/vgmstream/releases/download/r2168/vgmstream-mac.zip",
-  directory: VGMSTREAM_MACOS_DIRECTORY,
   downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
   executablePattern: "vgmstream-cli",
   isArchive: true,
+  toolDirectory: VGMSTREAM_DIRECTORY,
 };
 // 3Dmigoto's command-line decompiler (github.com/bo3b/3Dmigoto), which writes a compiled DXBC program as HLSL: its last
 // Release to ship it on its own, pinned and checked as FFmpeg is, into the shared tool cache
-export const DECOMPILER_ARCHIVE_URL =
-  "https://github.com/bo3b/3Dmigoto/releases/download/1.3.16/cmd_Decompiler-1.3.16.zip";
-export const DECOMPILER_ARCHIVE_SHA256 = "5e72e067dfcb15c36f106efa74d805055eec5314dc84b8fca8e65d835683a1b2";
-export const DECOMPILER_DIRECTORY: string = join(CACHE_ROOT, "3dmigoto");
+const DECOMPILER_DIRECTORY: string = join(CACHE_ROOT, "3dmigoto");
+export const DECOMPILER_PINNED_TOOL: PinnedTool = {
+  archiveSha256: "5e72e067dfcb15c36f106efa74d805055eec5314dc84b8fca8e65d835683a1b2",
+  archiveUrl: "https://github.com/bo3b/3Dmigoto/releases/download/1.3.16/cmd_Decompiler-1.3.16.zip",
+  downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
+  executablePattern: "cmd_Decompiler.exe",
+  isArchive: true,
+  toolDirectory: DECOMPILER_DIRECTORY,
+};
 // How many programs one run of the decompiler is handed, so their names stay well within Windows' command line
 export const DECOMPILER_BATCH_SIZE = 200;
 // The catalogue's file in the world data, the regions, areas and subareas people edit and `fitAreaOutlines` outlines

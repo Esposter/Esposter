@@ -1,6 +1,7 @@
 import type { PinnedTool } from "#src/models/shared/PinnedTool";
 
 import { findExecutable } from "#src/services/shared/findExecutable";
+import { getPinnedToolDirectory } from "#src/services/shared/getPinnedToolDirectory";
 import { installPinnedTool } from "#src/services/shared/installPinnedTool";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -11,8 +12,8 @@ const installationMap = new Map<string, Promise<string>>();
 // A pinned tool's executable: fetched, checked against its checksum and unpacked the first time it is needed, and found
 // In its folder after that. A bare executable is the download itself, kept under the name its pattern names
 export const resolvePinnedTool = (pinnedTool: PinnedTool): Promise<string> => {
-  const { directory, executablePattern } = pinnedTool;
-  const held = findExecutable(directory, executablePattern);
+  const directory = getPinnedToolDirectory(pinnedTool);
+  const held = findExecutable(directory, pinnedTool.executablePattern);
   if (held) return Promise.resolve(held);
   let installation = installationMap.get(directory);
   if (!installation) {

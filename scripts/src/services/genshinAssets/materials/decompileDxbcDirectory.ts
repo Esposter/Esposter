@@ -1,10 +1,4 @@
-import {
-  DECOMPILER_ARCHIVE_SHA256,
-  DECOMPILER_ARCHIVE_URL,
-  DECOMPILER_BATCH_SIZE,
-  DECOMPILER_DIRECTORY,
-} from "#src/services/genshinAssets/shared/constants";
-import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS } from "#src/services/shared/constants";
+import { DECOMPILER_BATCH_SIZE, DECOMPILER_PINNED_TOOL } from "#src/services/genshinAssets/shared/constants";
 import { resolvePinnedTool } from "#src/services/shared/resolvePinnedTool";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -17,14 +11,7 @@ import { readdir } from "node:fs/promises";
 export const decompileDxbcDirectory = async (directory: string): Promise<number> => {
   if (process.platform !== "win32")
     throw new InvalidOperationError(Operation.Read, "HLSL", "needs 3Dmigoto's decompiler, which runs only on Windows");
-  const decompilerPath = await resolvePinnedTool({
-    archiveSha256: DECOMPILER_ARCHIVE_SHA256,
-    archiveUrl: DECOMPILER_ARCHIVE_URL,
-    directory: DECOMPILER_DIRECTORY,
-    downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
-    executablePattern: "cmd_Decompiler.exe",
-    isArchive: true,
-  });
+  const decompilerPath = await resolvePinnedTool(DECOMPILER_PINNED_TOOL);
   const programs = (await readdir(directory)).filter((name) => name.endsWith(".dxbc"));
   for (let start = 0; start < programs.length; start += DECOMPILER_BATCH_SIZE) {
     const { error } = spawnSync(decompilerPath, ["-D", ...programs.slice(start, start + DECOMPILER_BATCH_SIZE)], {
