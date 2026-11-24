@@ -13,6 +13,7 @@ import {
   LOGIN_EFFECTS_COMPRESSOR_OPTIONS,
   LOGIN_MASTER_LIMITER_OPTIONS,
 } from "#src/services/login/constants";
+import { getSourceEnded } from "#src/services/login/music/getSourceEnded";
 import { loadMusicRecordings } from "#src/services/login/music/loadMusicRecordings";
 import { getStoredChannelGain } from "#src/services/menu/getStoredChannelGain";
 import { getResultAsync } from "@esposter/shared";
@@ -34,11 +35,6 @@ interface Props {
 }
 
 const { doorFormingLeftMs, gameDataBaseUrl, isDoorOpened, music, sounds } = defineProps<Props>();
-// The promise a started source resolves when it has ended, which the context waits on before it closes
-const getSourceEnded = (source: AudioBufferSourceNode): Promise<void> =>
-  new Promise<void>((resolve) => {
-    source.addEventListener("ended", () => resolve(), { once: true });
-  });
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
 // Screen shows. The door's layer plays as the door forms, and its sound once the door opens, through the effects bus's
 // Compressor and the master's limiter as the game's mix passes them, all through one context. The browser's autoplay
