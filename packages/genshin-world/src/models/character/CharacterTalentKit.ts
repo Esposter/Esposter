@@ -4,9 +4,10 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { passiveSchema } from "#src/models/character/Passive";
 import { z } from "zod";
 
-// A character's talents as the game's tables hold them, by its id: the proud skill group of each combat talent, read
-// Off Its own form's skill set, the text id of each one's name, read off the same set's skill, and the passives its
-// Skill Depot opens
+// A character's talents as the game's tables hold them, by its id.
+// Each combat talent's proud skill group is read off its own form's skill set.
+// Each one's name text id is read off the same set's skill.
+// The passives are the ones its skill depot opens.
 export interface CharacterTalentKit {
   characterId: number;
   passives: Passive[];

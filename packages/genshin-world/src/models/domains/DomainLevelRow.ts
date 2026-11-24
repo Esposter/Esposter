@@ -1,7 +1,7 @@
 import type { DomainLevelState } from "#src/models/domains/DomainLevelState";
 
 // Each level of a domain as its entry screen lists it: its dungeon, its enemies' level, the Adventure Rank it asks for
-// And The state the player finds it in
+// And the state the player finds it in
 export interface DomainLevelRow {
   dungeonId: number;
   enemyLevel: number;

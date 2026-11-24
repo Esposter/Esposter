@@ -1,6 +1,6 @@
-// The modes the Perpetual Mechanical Array's fight passes through: it attacks, takes Defensive Mode until its
-// Highlighted Sentinel is disabled or its time runs out, is paralysed after a disabled sentinel, and is invulnerable as
-// The paralysis ends
+// The modes the Perpetual Mechanical Array's fight passes through.
+// It attacks, and takes Defensive Mode until its highlighted sentinel is disabled or its time runs out.
+// It is paralysed after a disabled sentinel, and is invulnerable as the paralysis ends.
 export const PerpetualMechanicalArrayMode = {
   Attacking: "Attacking",
   DefensiveMode: "DefensiveMode",

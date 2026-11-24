@@ -1,8 +1,10 @@
-// What a character's attributes are summed from, each spelt as the game's tables name it, so a table read from the game
-// Parses into them. A base is what its percentage multiplies, and its flat attribute is added after; every other is a
-// Total of its own, a percentage kept as a fraction. Movement and normal attack speeds, and the plunging attack bonus,
-// Name No row in those tables, so their keys are this repo's own, and so are those of the normal and charged attack
-// Damage Bonuses and the Stellar Glimmer Reaction DMG bonus
+// What a character's attributes are summed from, each spelt as the game's tables name it.
+// A table read from the game parses into them.
+// A base is what its percentage multiplies, and its flat attribute is added after.
+// Every other is a total of its own, a percentage kept as a fraction.
+// Movement and normal attack speeds, and the plunging attack bonus, name no row in those tables.
+// Their keys are this repo's own.
+// So are those of the normal and charged attack damage bonuses, and of the Stellar Glimmer Reaction DMG bonus.
 export const Attribute = {
   AllDamageBonus: "FIGHT_PROP_ADD_HURT",
   AnemoDamageBonus: "FIGHT_PROP_WIND_ADD_HURT",

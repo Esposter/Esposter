@@ -1,10 +1,11 @@
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The hosted index of the official character packs, one record of the game data: each published avatar with its name
-// And Every file of its folder, the path inside the folder with forward slashes, its bytes and the sha256 of its
-// Content, so a File's request url and its cache key come from the index alone, without a pack's manifest. The name is
-// "" where the Pack's manifest names none
+// The hosted index of the official character packs, one record of the game data.
+// Each published avatar has its name and every file of its folder.
+// A file's path inside the folder uses forward slashes, and it has its bytes and the sha256 of its content.
+// So a file's request url and its cache key come from the index alone, without a pack's manifest.
+// The name is "" where the pack's manifest names none.
 export interface CharacterPackIndex {
   avatars: { avatarId: number; files: { bytes: number; path: string; sha256: string }[]; name: string }[];
 }

@@ -4,7 +4,7 @@ import { enemyMaterialDropSchema } from "#src/models/enemy/EnemyMaterialDrop";
 import { z } from "zod";
 
 // A drop family's row of the enemies dataset: the key its kinds name it by, which is the Drops Table type the wiki
-// Gives Them, and the drop table its enemies share
+// Gives them, and the drop table its enemies share
 export interface EnemyDropFamilyRow extends EnemyDropTable {
   family: string;
 }

@@ -4,7 +4,7 @@ import type { Element } from "#src/models/Element";
 // Has left, the bonus its DMG taken gains, added to the damage bonus of each hit that strikes it while it lasts, and
 // The RES each element's hits and physical hits lose to it, subtracted from the enemy's RES where a hit reads it, and
 // The DEF it loses, taken off the enemy's defence where a hit reads it. A status that stacks counts its stacks, up to
-// Its Maximum, and each application adds to them. A status may cut the ATK the enemy strikes with, and one that strikes
+// Its maximum, and each application adds to them. A status may cut the ATK the enemy strikes with, and one that strikes
 // On its own schedule counts the seconds to its next tick, which the kit of the character that applied it answers
 export interface EnemyStatus {
   // The share of its ATK the enemy loses while it carries the status, if it lowers it

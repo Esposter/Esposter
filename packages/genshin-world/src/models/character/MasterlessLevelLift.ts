@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// A lift past a level cap with Masterless Stella Fortuna: the level it lifts from, the level it lifts to and how many
-// Of The item it takes
+// A lift past a level cap with Masterless Stella Fortuna.
+// It has the level it lifts from, the level it lifts to, and how many of the item it takes.
 export interface MasterlessLevelLift {
   count: number;
   fromLevel: number;

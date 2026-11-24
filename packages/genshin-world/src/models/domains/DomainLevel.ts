@@ -13,7 +13,7 @@ export const domainLevelSchema = z.object({
   enemyLevel: z.int(),
   recommendedRank: z.int(),
   // The resin a Petrified Tree claim of this level costs, the items each claim draws, each by its least and most, and
-  // The Artifacts each claim draws, from the dump's tables and the wiki's counts
+  // The artifacts each claim draws, from the dump's tables and the wiki's counts
   resinCost: z.int().nonnegative(),
   scheduledDaysOfWeek: z.array(z.int().min(1).max(7)),
   treeArtifacts: z.array(treeArtifactSchema),
