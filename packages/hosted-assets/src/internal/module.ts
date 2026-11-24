@@ -14,7 +14,7 @@ const toDerivedName = (lockKey: string): string =>
 // `nuxt prepare` runs before any package is built.
 // It lives under `internal`, so the build leaves it out of the entries, since it reads Node's file system.
 const hostedAssetKeysModule = (
-  { isNameDerived, keysPath, lockPath, product }: HostedAssetKeysModuleOptions,
+  { keysPath, lockPath, product }: HostedAssetKeysModuleOptions,
   nuxt: { hook: (name: "ready", callback: () => Promise<void>) => void; options: { rootDir: string } },
 ): void => {
   nuxt.hook("ready", () =>
@@ -22,7 +22,7 @@ const hostedAssetKeysModule = (
       product,
       join(nuxt.options.rootDir, lockPath),
       join(nuxt.options.rootDir, keysPath),
-      isNameDerived ? toDerivedName : (lockKey) => lockKey,
+      toDerivedName,
     ),
   );
 };

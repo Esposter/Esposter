@@ -16,7 +16,6 @@ const HOSTED_ASSETS_KEYS_MODULE_PATH = "../../packages/hosted-assets/src/interna
 const dungeonsKeysModule: [string, HostedAssetKeysModuleOptions] = [
   HOSTED_ASSETS_KEYS_MODULE_PATH,
   {
-    isNameDerived: true,
     keysPath: "shared/generated/hostedAssetKeys/dungeonsKeys.ts",
     lockPath: "shared/generated/hostedAssets/dungeonsLock.json",
     product: "Dungeons",
