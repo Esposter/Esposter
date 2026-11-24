@@ -6,8 +6,8 @@ import { settlePress } from "./settlePress";
 // oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
 export function press($: EngineInterface, action: () => Promise<unknown>): () => void {
   return () => {
-    // The press slot is the engine's and returns
-    // oxlint-disable-next-line typescript/no-floating-promises -- nothing, and settlePress settles every outcome itself
+    // The press slot is the engine's, and it returns nothing: settlePress settles every outcome itself.
+    // oxlint-disable-next-line typescript/no-floating-promises -- the promise is settled inside settlePress
     settlePress($, action);
   };
 }

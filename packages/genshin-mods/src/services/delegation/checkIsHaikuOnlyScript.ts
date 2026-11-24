@@ -4,8 +4,9 @@ import { findNonSpace } from "./findNonSpace";
 import { findTopLevelComma } from "./findTopLevelComma";
 import { maskScriptCode } from "./maskScriptCode";
 
-// Names a script can reach an agent, or a run of other code, through without spelling `agent(` in its code: a saved
-// Workflow, code evaluated from a string, a constructor reached through a value, and the objects a name is looked up on
+// Names a script can reach an agent, or a run of other code, through without spelling `agent(` in its code.
+// A saved workflow, code evaluated from a string, and a constructor reached through a value all do it.
+// So do the objects a name is looked up on.
 const HIDDEN_NAMES = [
   "Function",
   "Reflect",
@@ -22,15 +23,17 @@ const HIDDEN_NAMES = [
   "workflow",
 ];
 const HIDDEN_CALL_REGEX = new RegExp(String.raw`(?<![\w$])(?:${HIDDEN_NAMES.join("|")})(?![\w$])`, "u");
-// A name written as a quoted property, which the mask blanks with the rest of the string: `hub['agent']` reaches the
-// Agent And `({})['constructor']` reaches the constructor, neither spelling `agent(` nor the name in code
+// A name written as a quoted property, which the mask blanks with the rest of the string.
+// `hub['agent']` reaches the agent, and `({})['constructor']` reaches the constructor.
+// Neither spells `agent(` nor the name in code.
 const QUOTED_ACCESS_REGEX = new RegExp(String.raw`\[\s*(['"${"`"}])(?:agent|${HIDDEN_NAMES.join("|")})\1\s*\]`, "u");
 const AGENT_CALL_REGEX = /(?<![\w$])agent\s*\(/gu;
 const AGENT_NAME_REGEX = /(?<![\w$])agent(?![\w$])/gu;
 
-// Whether a script provably launches every agent on haiku: each `agent(` call in its code passes the haiku model in its
-// Options, and there is at least one. A script that is absent, cannot be read as code, or names a workflow it does not
-// Hold is refused, since its agents cannot be seen
+// Whether a script provably launches every agent on haiku.
+// Each `agent(` call in its code passes the haiku model in its options, and there is at least one.
+// A script that is absent, cannot be read as code, or names a workflow it does not hold is refused.
+// Its agents cannot be seen.
 export const checkIsHaikuOnlyScript = (script: string | undefined): boolean => {
   if (script === undefined) return false;
   const code = maskScriptCode(script);

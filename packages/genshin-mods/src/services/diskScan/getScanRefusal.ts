@@ -2,8 +2,8 @@ import { checkIsRecursiveFlag } from "./checkIsRecursiveFlag";
 import { checkIsRoot } from "./checkIsRoot";
 import { readGrepArguments } from "./readGrepArguments";
 
-// A flag group holding the scan's recursive letter, or the long form: grep takes r or R (`-R`, `-rn`, `-lR`), and ls
-// Takes The capital R alone, since its lowercase r sorts in reverse
+// A flag group holding the scan's recursive letter, or the long form.
+// Grep takes r or R (`-R`, `-rn`, `-lR`), and ls takes the capital R alone, since its lowercase r sorts in reverse.
 const GREP_RECURSIVE_FLAG_REGEX = /^-[a-zA-Z]*[rR]/u;
 const LS_RECURSIVE_FLAG_REGEX = /^-[a-zA-Z]*R/u;
 

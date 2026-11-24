@@ -8,11 +8,12 @@ import { readWorkflowScript } from "./readWorkflowScript";
 const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerWorkflowGuard = (on: On): void => {
-  // A workflow's agents are subagents, so each one must name haiku, as an agent launch does. A saved workflow named
-  // With No script, or a script that cannot be read as code, has agents the check cannot see, so it is refused. The
-  // Rule runs In every session, whichever mods are switched on, since it is not one of them
-  // The engine's registration
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- handler, run when the hook rejects, not a promise
+  // A workflow's agents are subagents, so each one must name haiku, as an agent launch does.
+  // A saved workflow named with no script, or a script the guard cannot read as code, is refused.
+  // Its agents cannot be seen.
+  // The rule runs in every session, whichever mods are switched on, since it is not one of them.
+  // The engine's registration takes a handler: it runs when the hook rejects, and is not a promise.
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a handler, not a promise
   on("tool.call", { tool: ["Workflow"] }, async ($, e, next) => {
     if (checkIsHaikuOnlyScript(await readWorkflowScript($, e))) return next(e);
     return { deny: WORKFLOW_MODEL_REFUSAL };

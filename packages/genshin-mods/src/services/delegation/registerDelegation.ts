@@ -14,8 +14,8 @@ import { getNudge } from "./getNudge";
 
 const lookupStreakAtom = atom({ key: "lookupStreak", plugin: "genshin-mods" } as const, InitialState.lookupStreak);
 
-// The count is one update, so calls the model sends in one batch each see the count the call before them left. The
-// Nudge is the count's, and a neutral call earns none
+// The count is one update, so calls the model sends in one batch each see the count the call before them left.
+// The nudge is the count's, and a neutral call earns none.
 const countCall = async ($: EngineInterface, call: DelegationCall): Promise<string | undefined> => {
   const step = getCallStep(call);
   if (step === DelegationStep.Neutral) return undefined;
@@ -27,10 +27,10 @@ const countCall = async ($: EngineInterface, call: DelegationCall): Promise<stri
 const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerDelegation = (on: On): void => {
-  // An agent launch on any model but haiku is refused before it counts. A nudge rides on the call's own result as
-  // Context the model reads after it, and never blocks the call
-  // The engine's registration
-  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- handler, run when the hook rejects, not a promise
+  // An agent launch on any model but haiku is refused before it counts.
+  // A nudge rides on the call's own result as context the model reads after it, and never blocks the call.
+  // The engine's registration takes a handler: it runs when the hook rejects, and is not a promise.
+  // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a handler, not a promise
   on("tool.call", { tool: [...LOOKUP_TOOLS, ...RESET_TOOLS, ...SHELL_TOOLS] }, async ($, e, next) => {
     const refusal = e.tool === AGENT_TOOL ? getLaunchRefusal(e) : undefined;
     if (refusal !== undefined) return { deny: refusal };

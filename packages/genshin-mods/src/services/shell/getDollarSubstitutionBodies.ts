@@ -1,6 +1,7 @@
-// The bodies of a command's `$(…)` substitutions, which run even inside double quotes: each runs to the parenthesis
-// Closing it, past any a quote or a backslash holds, so a body such as `find / -name '(x)'` is read whole. A
-// Substitution inside a body is the body's own, read when the body is
+// The bodies of a command's `$(…)` substitutions, which run even inside double quotes.
+// Each runs to the parenthesis closing it, past any quote or backslash it holds, so a body such as
+// `find / -name '(x)'` is read whole.
+// A substitution inside a body is the body's own, read when the body is.
 export const getDollarSubstitutionBodies = (command: string): string[] => {
   const bodies: string[] = [];
   let start = command.indexOf("$(");
@@ -11,8 +12,8 @@ export const getDollarSubstitutionBodies = (command: string): string[] => {
     for (; index < command.length && depth > 0; index++) {
       const character = command[index];
       if (character === "\\" && quote !== "'") index++;
-      // A
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- quote character the shell parser holds, not text
+      // The shell parser holds a quote, so a quote character inside one is text, not a token.
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a quote the shell parser holds, not a token
       else if (quote !== "") {
         if (character === quote) quote = "";
       } else if (character === '"' || character === "'") quote = character;

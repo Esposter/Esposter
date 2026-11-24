@@ -4,8 +4,8 @@ import type { SinStatusKind } from "../../models/SinStatusKind";
 import { SinNames } from "../../models/SinName";
 import { SIN_HISTORY_LENGTH, SIN_TOP_LEVEL } from "./constants";
 
-// Each sin's evidence gains this prompt's score as a share of the top level, clamped to [0, 1], and the oldest values
-// Fall Away past the history's length
+// Each sin's evidence gains this prompt's score as a share of the top level, clamped to [0, 1].
+// The oldest values fall away past the history's length.
 export const appendSinEvidence = (
   history: Record<string, number[]>,
   answers: Extract<SinsResult, { result: typeof SinStatusKind.Answered }>["answers"],

@@ -1,16 +1,18 @@
 import { MaskFrame } from "../../models/MaskFrame";
 
-// The characters that end a line comment, as the language defines its line terminators. Global, so the `lastIndex` set
-// Before Each search is honoured and the first terminator at or after the comment is found, not the first in the script
+// The characters that end a line comment, as the language defines its line terminators.
+// Global, so each search honours the `lastIndex` set before it and finds the first one at or after the comment.
 const LINE_TERMINATOR_REGEX = /[\n\r\u2028\u2029]/gu;
 // A quoted string's whole literal, escapes read, which a line ending before its closing quote fails to match
 const STRING_LITERAL_REGEX = /'(?:[^'\\\n]|\\[\s\S])*'|"(?:[^"\\\n]|\\[\s\S])*"/uy;
 // The template text from a position, up to its closing backtick or an interpolation's `${`
 const TEMPLATE_TEXT_REGEX = /(?:\\[\s\S]|\$(?!\{)|[^`\\$])*/uy;
 
-// The script with every string body, template text and comment blanked, so the scan reads only code at the same
-// Positions. Undefined when the script holds a construct the scan cannot be sure of: a slash, which may open a regular
-// Expression, a backslash outside a string, an HTML-style comment, or any literal or comment left open
+// The script with every string body, template text and comment blanked.
+// The scan reads only code, at the same positions as the script.
+// Undefined when the script holds a construct the scan cannot be sure of.
+// Those are a slash, which may open a regular expression, a backslash outside a string and an HTML-style comment.
+// Any literal or comment left open is one too.
 export const maskScriptCode = (script: string): string | undefined => {
   // Each open interpolation holds its count of open braces, and a template's text is the frame MaskFrame.Template
   const frames: (MaskFrame | number)[] = [];
