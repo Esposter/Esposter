@@ -24,3 +24,19 @@ export const CLASS_MEMBER_GROUPS: (string | string[])[] = [
   ["private-method", "private-function-property"],
   "unknown",
 ];
+
+// Every selector a class member can carry, most specific first, as perfectionist ranks them.
+// A function property also carries `property`, and a constructor also carries `method`.
+export const SELECTORS = [
+  "function-property",
+  "accessor-property",
+  "property",
+  "constructor",
+  "get-method",
+  "set-method",
+  "method",
+  "index-signature",
+  "static-block",
+];
+// Longest first, so `get-method` is read as a selector before `method` is, and `function-property` before `property`
+export const SELECTORS_LONGEST_FIRST = SELECTORS.toSorted((left, right) => right.length - left.length);

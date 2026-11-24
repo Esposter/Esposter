@@ -1,27 +1,11 @@
-import { CLASS_MEMBER_GROUPS } from "#src/services/oxlint/sorting/classMemberGroups";
+import { CLASS_MEMBER_GROUPS, SELECTORS } from "#src/services/oxlint/sorting/classMemberGroups";
 import { parsePredefinedGroup } from "#src/services/oxlint/sorting/computeClassMemberGroup/parsePredefinedGroup";
-
-// Every selector a class member can carry, most specific first, as perfectionist ranks them.
-// A function property also carries `property`, and a constructor also carries `method`.
-const SELECTORS = [
-  "function-property",
-  "accessor-property",
-  "property",
-  "constructor",
-  "get-method",
-  "set-method",
-  "method",
-  "index-signature",
-  "static-block",
-];
-// Longest first, so `get-method` is read as a selector before `method` is, and `function-property` before `property`
-const SELECTORS_LONGEST_FIRST = SELECTORS.toSorted((left, right) => right.length - left.length);
 
 // The predefined groups in the order a member is matched against them: the most specific selector first.
 // Then the group naming the most modifiers, since the default groups never tie on both.
 const PREDEFINED_GROUPS = CLASS_MEMBER_GROUPS.flat()
   .flatMap((name) => {
-    const predefinedGroup = parsePredefinedGroup(name, SELECTORS_LONGEST_FIRST);
+    const predefinedGroup = parsePredefinedGroup(name);
     return predefinedGroup ? [predefinedGroup] : [];
   })
   .toSorted(
