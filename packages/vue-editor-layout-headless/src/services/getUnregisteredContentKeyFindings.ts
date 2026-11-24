@@ -3,8 +3,9 @@ import type { Layout } from "#src/models/Layout";
 
 import { FindingKind } from "#src/models/FindingKind";
 
-// The finding for each content key a panel names that the editor did not register, each key once however many panels
-// Name it. A panel names its wildcard and each of its entries, and the empty key names none
+// The finding for each content key a panel names that the editor did not register, once per key.
+// However many panels name it, a key is reported once.
+// A panel names its wildcard and each of its entries, and the empty key names none
 export const getUnregisteredContentKeyFindings = (layout: Layout, registeredContentKeys: string[]): Finding[] => {
   const contentKeys = layout.panels.flatMap((panel) => [
     panel.wildcardContentKey,

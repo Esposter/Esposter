@@ -6,8 +6,8 @@ import type { SizeClass } from "#src/models/SizeClass";
 import { checkIsRegionOpen } from "#src/services/checkIsRegionOpen";
 import { getRegionEdge } from "#src/services/getRegionEdge";
 
-// Where a region is drawn for a size class: at the edge that class names, presented as that class presents it, and open
-// Or closed
+// Where a region is drawn for a size class: at the edge that class names, presented as that class presents it.
+// It is open or closed as the reader's state and the presentation decide
 export const presentRegion = (region: Region, sizeClass: SizeClass, readerState: ReaderState): RegionPlacement => {
   const edge = getRegionEdge(region, sizeClass);
   const presentation = region.sizeClassPresentationMap[sizeClass];
