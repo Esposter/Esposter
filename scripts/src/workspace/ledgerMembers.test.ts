@@ -19,7 +19,9 @@ describe("ledgerMembers", () => {
     const text = readdirSync(ledgerDirectory)
       .map((filename) => readFileSync(join(ledgerDirectory, filename), "utf8"))
       .join("\n");
-    const unnamedPackageDirectories = getUnnamedMemberPaths(text, readWorkspacePackageDirectories(REPOSITORY_ROOT));
+    const unnamedPackageDirectories = getUnnamedMemberPaths(text, readWorkspacePackageDirectories(REPOSITORY_ROOT), {
+      allowDeeperPaths: true,
+    });
 
     expect(unnamedPackageDirectories).toStrictEqual([]);
   });

@@ -24,6 +24,7 @@ describe("packageInventories", () => {
     const unnamedPackagePaths = getUnnamedMemberPaths(
       readRepositoryFile(filename),
       workspacePackages.map(({ path }) => path),
+      { allowDeeperPaths: false },
     );
 
     expect(unnamedPackagePaths).toStrictEqual([]);
