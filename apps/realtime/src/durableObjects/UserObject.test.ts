@@ -113,7 +113,6 @@ describe(UserObject, () => {
   const userId = v7();
   const firstPage = { cursor: START_PAGE_CURSOR, limit: 10 };
   const sessionId = v7();
-  const otherSessionId = v7();
   const deviceId = v7();
   const otherDeviceId = v7();
   // The time a watch's read began, which its subscribe carries to the topic
@@ -522,21 +521,6 @@ describe(UserObject, () => {
     expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
       { roomId, text: "kept", type: AppNotificationType.Reminder, userId },
     ]);
-  });
-
-  test("closing a session closes the sockets of that session and no other", async () => {
-    expect.hasAssertions();
-
-    const { object } = createUserObject();
-    const revokedSocket = await connect(object, { deviceId, sessionId });
-    const otherDeviceSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    const otherSessionSocket = await connect(object, { deviceId: v7(), sessionId: otherSessionId });
-
-    await object.closeSession(sessionId);
-
-    expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
-    expect(otherDeviceSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
-    expect(otherSessionSocket.close).not.toHaveBeenCalled();
   });
 
   test("a topic is held once however many of the person's tabs watch it, and let go when the last stops", async () => {

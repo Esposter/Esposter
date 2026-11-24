@@ -16,7 +16,6 @@ import {
   createPageInputSchema,
   getDeviceSocketTag,
   getRoomSearchPageSort,
-  getSessionSocketTag,
   getUserSocketTag,
   MessageType,
   QueueJob,
@@ -1346,36 +1345,5 @@ describe(RoomObject, () => {
 
     expect(memberSocket.close).toHaveBeenCalledExactlyOnceWith(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
     expect(bystanderSocket.close).not.toHaveBeenCalled();
-  });
-
-  test("closing a session closes the room's sockets of that session and no other", async () => {
-    expect.hasAssertions();
-
-    const { object, state } = createRoomObject();
-    const revokedSessionId = v7();
-    const revokedSocket = createSocket();
-    const revokedOtherDeviceSocket = createSocket();
-    const otherSessionSocket = createSocket();
-    state.ctx.acceptWebSocket(revokedSocket, [
-      getUserSocketTag(userId),
-      getSessionSocketTag(revokedSessionId),
-      getDeviceSocketTag(deviceId),
-    ]);
-    state.ctx.acceptWebSocket(revokedOtherDeviceSocket, [
-      getUserSocketTag(userId),
-      getSessionSocketTag(revokedSessionId),
-      getDeviceSocketTag(otherDeviceId),
-    ]);
-    state.ctx.acceptWebSocket(otherSessionSocket, [
-      getUserSocketTag(userId),
-      getSessionSocketTag(v7()),
-      getDeviceSocketTag(v7()),
-    ]);
-
-    await object.closeSession(revokedSessionId);
-
-    expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
-    expect(revokedOtherDeviceSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
-    expect(otherSessionSocket.close).not.toHaveBeenCalled();
   });
 });

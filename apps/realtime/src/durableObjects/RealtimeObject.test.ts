@@ -118,4 +118,24 @@ describe(RealtimeObject, () => {
     expect(socket.send).not.toHaveBeenCalled();
     expect(socket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session expired");
   });
+
+  // Every object's `closeSession` is this revoke, so the scoping is proved once here
+  test("a revoke closes every socket of that session and no other", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createObject();
+    const revokedSessionId = v7();
+    await upgrade(object, revokedSessionId);
+    await upgrade(object, revokedSessionId);
+    await upgrade(object, v7());
+    const [firstRevokedSocket, secondRevokedSocket, otherSessionSocket] = state.ctx.getWebSockets();
+    assert.exists(firstRevokedSocket);
+    assert.exists(secondRevokedSocket);
+    assert.exists(otherSessionSocket);
+    object.revoke(revokedSessionId);
+
+    expect(firstRevokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
+    expect(secondRevokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
+    expect(otherSessionSocket.close).not.toHaveBeenCalled();
+  });
 });
