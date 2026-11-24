@@ -19,7 +19,7 @@ import { defineComponent, h } from "vue";
 // Each Of its fixture's variants against one named after it, a moving screen held still by its fixture's `stillProps`.
 // A Mismatch is listed after the cases rather than failed, and a missing image is written; `genshin:parity approve`
 // Writes an Image as a snapshot of the current render, beside the compare's score. Each is shot in the parity page's
-// Box, over a grey Backdrop, as the page draws it The grey a screen is drawn over in its box: the screens are drawn
+// Box, over a grey Backdrop, as the page draws it. The grey a screen is drawn over in its box: the screens are drawn
 // Pale for the game's world, which a white backdrop hides, And a mid tone keeps both their light and their dark pieces
 // Visible
 const SCREEN_BACKDROP_COLOR = "#4a5560";

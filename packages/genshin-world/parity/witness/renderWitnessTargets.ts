@@ -255,8 +255,8 @@ export const renderWitnessTargets = async (
       renderer.setClearColor(0, 0);
       for (const target of requestedTargets) {
         const targetMaterials = drawnMeshes.map((drawn) => getTargetMaterial(target, drawn));
-        // With the same meshes, so each is read back before the next is drawn
-        // oxlint-disable-next-line no-await-in-loop -- One device: every target is drawn into the one render target
+        /* oxlint-disable-next-line no-await-in-loop -- One device: every target is drawn into the one render target
+           with the same meshes, so each is read back before the next is drawn */
         targets[target] = await withFinalizerAsync(
           async () => {
             for (const [index, { mesh }] of drawnMeshes.entries())

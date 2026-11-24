@@ -16,8 +16,8 @@ export const mountRegionData = ({ middlewares }: Pick<ViteDevServer, "middleware
       next();
       return;
     }
-    // `match(`) handles both branches, so the promise
-    // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
+    /* oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it
+       returns cannot reject and nothing waits on it */
     getResultAsync(() => readFile(join(REGION_DATA_DIRECTORY, basename(url)))).match(
       (json) => {
         response.setHeader("Content-Type", "application/json");

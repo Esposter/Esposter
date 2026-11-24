@@ -9,8 +9,8 @@ config.global.stubs = { ...config.global.stubs, NuxtImg: NuxtImgStub, NuxtTime: 
 // A browser test whose body logs a Vue warning fails by name, as a visual case does for its fixture
 aroundEach(async (runTest) => {
   const messages = await recordConsoleWarnings(runTest);
-  // AroundEach
-  // oxlint-disable-next-line vitest/no-standalone-expect -- is a hook, and its expect fails the test it wraps
+  /* oxlint-disable-next-line vitest/no-standalone-expect -- aroundEach is a hook, and its expect fails the test
+     it wraps */
   expect(
     messages.filter((message) => message.startsWith("[Vue warn]")),
     "the console logged a Vue warning while the test ran",

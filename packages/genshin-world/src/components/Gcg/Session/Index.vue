@@ -49,8 +49,8 @@ const createSessionDuel = async (): Promise<GcgDuel> => {
   advanceGcgOpponent(newDuel, GCG_OPPONENT_SIDE_INDEX);
   return newDuel;
 };
-// A duel that fails to load leaves to the world, since nothing is drawn without one and only the duel's own end closes
-// It
+// A duel that fails to load leaves to the world, since nothing is drawn without one, and only the duel's own end
+// Closes it
 getResultAsync(createSessionDuel).match(
   (newDuel) => {
     duel.value = newDuel;

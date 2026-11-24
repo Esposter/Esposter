@@ -50,8 +50,8 @@ export const setWitnessView = async (
     sceneCamera.matrixAutoUpdate = false;
   }
   for (let frame = 0; frame < SETTLE_FRAME_COUNT; frame++)
-    // Waits, so the frames land one at a time
-    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the view is drawn in the frame between the
+    /* oxlint-disable-next-line no-await-in-loop -- Order is the contract: the view is drawn in the frame
+       between the waits, so the frames land one at a time */
     await new Promise<void>((resolve) => {
       window.requestAnimationFrame(() => {
         resolve();
