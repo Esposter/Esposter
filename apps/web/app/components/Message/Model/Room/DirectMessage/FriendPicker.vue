@@ -16,7 +16,7 @@ interface Props {
 const modelValue = defineModel<FriendPickerModelValue<TMultiple>>();
 const { excludedUserIds = [], isMultiple } = defineProps<Props>();
 // The prop's type is the generic, so Vue gives it no Boolean runtime type and a bare `is-multiple` arrives as `""`.
-// Present Is on, as for an HTML attribute; only an absent or bound-false prop picks one
+// Presence is on, as for an HTML attribute; only an absent or bound-false prop picks one
 const isMultipleMode = computed(() => isMultiple !== undefined && isMultiple !== false);
 const friendStore = useFriendStore();
 const { friends, friendsError } = storeToRefs(friendStore);

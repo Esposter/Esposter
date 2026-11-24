@@ -27,8 +27,8 @@ const overflowWidth = ref(0);
 const gap = ref(0);
 // Nothing folds until the observer has read the toolbar's width
 const availableWidth = ref(Number.POSITIVE_INFINITY);
-// The variant each slot last drew, by its group's label. A variant in hand is the one its slot draws, whether a click
-// Or a key put it there
+// The variant each slot last drew, by its group's label.
+// A variant in hand is the one its slot draws, whether a click or a key put it there.
 const usedVariantValues = shallowReactive(new Map<string, string>());
 const flatEntries = computed(() =>
   groups.flatMap(({ items, kind, label: groupLabel }) => items.map((item) => ({ item, kind, label: groupLabel }))),
@@ -161,8 +161,7 @@ const measure = async () => {
   itemWidths.value = Array.from(itemElements, (element) => element.getBoundingClientRect().width);
   overflowWidth.value = toolbar.value?.querySelector("[data-toolbar-overflow]")?.getBoundingClientRect().width ?? 0;
   const bar = toolbar.value;
-  // A gap the browser does not report (a computed style with none, as happy-dom gives) reads NaN, which is no gap
-  // Computed
+  // A gap the browser does not report (a computed style with none, as happy-dom gives) reads NaN, which is no gap.
   // oxlint-disable-next-line unicorn/prefer-number-coercion -- styles are px-suffixed ("4px"), Number() would be NaN
   gap.value = bar ? Number.parseFloat(window.getComputedStyle(bar).columnGap) || 0 : 0;
   isMeasuring.value = false;

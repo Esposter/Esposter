@@ -18,8 +18,8 @@ const isLoaded = ref(false);
 const isReady = ref(false);
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
-// Whether every character pack the opening downloads is held, which the world waits on, since it draws each model from
-// Them
+// Whether every character pack the opening downloads is held, which the world waits on.
+// It draws each model from them.
 const isPacksHeld = ref(false);
 // A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
 // So a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too, and

@@ -65,8 +65,9 @@ describe("dashboardIndex", () => {
     );
   });
 
-  // A dashboard laid out over the editor's twelve columns takes the two a phone has The visual spanning the width fills
-  // Them, and the one at the right edge moves in to the left column, beneath the first
+  // A dashboard laid out over the editor's twelve columns takes the two a phone has.
+  // The visual spanning the width fills them.
+  // The one at the right edge moves in to the left column, beneath the first.
   test("opening a dashboard on a phone", async () => {
     expect.hasAssertions();
 

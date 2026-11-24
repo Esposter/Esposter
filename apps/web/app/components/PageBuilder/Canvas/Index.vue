@@ -142,10 +142,11 @@ const onFrameKeydown = (event: KeyboardEvent) => {
 // The frame's document is the one the keys are pressed in, so its listener follows the content root drawn in it
 useEventListener(() => contentRoot.value?.ownerDocument, "keydown", onFrameKeydown);
 defineExpose({ getFrameGeometry });
-// While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the
-// Node The style a drag is previewing is drawn over the document's, so the page follows the drag before it is recorded
-// An email is drawn with the inline styles MJML writes, so only a webpage has a sheet of its own to draw. The drag
-// Preview's rule Is in either sheet, since its node is drawn in either document
+// While a text node is edited, its rendered content is hidden in the frame.
+// The editor is mounted beside it inside the node.
+// The style a drag is previewing is drawn over the document's, so the page follows the drag before it is recorded.
+// An email is drawn with the inline styles MJML writes, so only a webpage has a sheet of its own to draw.
+// The drag Preview's rule is in either sheet, since its node is drawn in either document.
 const css = computed(() => {
   // An empty block has no height to outline, so the preview gets a minimum one. Its pointer events pass through it, so
   // Hover and Hit-testing reach the node it sits in, and it is faded so it reads as a preview

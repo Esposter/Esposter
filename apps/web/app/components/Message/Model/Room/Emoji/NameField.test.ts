@@ -6,9 +6,8 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomEmojiNameField", () => {
-  // The model holds the name without its colon, and a parent that keeps it does not redraw the field, so the typed
-  // Colon Has to be written back out of the field itself rather than left on screen beside a name that does not have
-  // One
+  // The model holds the name without its colon, and a parent that keeps it does not redraw the field.
+  // So a typed colon has to be written back out of the field itself, not left beside a name without one.
   test("removes a typed colon from the field, not only from the model", async () => {
     expect.hasAssertions();
 

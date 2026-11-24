@@ -39,8 +39,9 @@ describe("pageBuilderCanvas", () => {
     Reflect.deleteProperty(window, "frameElement");
   });
 
-  // The canvas's frame is an iframe whose page cannot be unmounted once it is attached in happy-dom, so the frame is
-  // Drawn As its own slot, in the app's document, and the toolbars are placed from a frame element and rects given here
+  // The canvas's frame is an iframe whose page cannot be unmounted once it is attached in happy-dom.
+  // So the frame is drawn as its own slot, in the app's document.
+  // The toolbars are placed from a frame element and rects given here.
   const FrameStub = defineComponent(
     (_props, { slots }) =>
       () =>

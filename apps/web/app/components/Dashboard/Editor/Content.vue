@@ -19,14 +19,13 @@ const { visuals } = storeToRefs(visualStore);
 const { clearSelection, editItem, moveVisual, updateVisual } = visualStore;
 const isEmpty = computed(() => visuals.value.length === 0);
 const canvas = useTemplateRef("canvas");
-// A press on the empty canvas clears the selection. A visual's tile is a nested interaction of the canvas, so a press
-// On the tile passes over it
+// A press on the empty canvas clears the selection.
+// A visual's tile is a nested interaction of the canvas, so a press on the tile passes over it
 onClickExceptDrag(canvas, () => {
   clearSelection();
 });
-// Every grid of the editor takes these keys and binds none, so the editor registers them once, however many groups it
-// Holds The keys are registered only while the editor draws a grid, since the empty dashboard has no visual for them to
-// Act on
+// Every grid of the editor takes these keys and binds none, so the editor registers them once for all its groups.
+// The keys are registered only while the editor draws a grid, since the empty dashboard has no visual to act on.
 useCommands(() => (isEmpty.value ? [] : DASHBOARD_GRID_COMMANDS));
 // The dashboard's grid and every group's grid write through these, so a nested commit, open or transfer is the same
 // Write By id as the dashboard's own, wherever the visual sits

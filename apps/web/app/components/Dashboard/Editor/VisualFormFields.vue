@@ -22,9 +22,9 @@ const schema = useZodSchema(
   () => editedItem.value.chart.type,
   () => editedItem.value.type,
 );
-// A valid draft is written onto its visual as it changes, so the tile redraws at once and the dashboard's autosave
-// Persists It. A draft the schema refuses stays in the form and is written nowhere, so an invalid value reaches neither
-// The tile nor a save
+// A valid draft is written onto its visual as it changes, so the tile redraws at once and autosave persists it.
+// A draft the schema refuses stays in the form and is written nowhere.
+// So an invalid value reaches neither the tile nor a save.
 watchDeep(editedItem, (newEditedItem) => {
   if (schema.value.safeParse(newEditedItem.chart.configuration).success) applyEdit(newEditedItem);
 });

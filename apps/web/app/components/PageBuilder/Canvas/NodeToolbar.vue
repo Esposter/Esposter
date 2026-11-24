@@ -24,8 +24,8 @@ const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
-// The document the resource holds under either kind, as the shell's keyboard commands read it, so a webpage's and an
-// Email's toolbar act alike
+// The document the resource holds under either kind, as the shell's keyboard commands read it.
+// So a webpage's and an email's toolbar act alike.
 const getPageDocument = () => getHeldDocument(resourceId)?.document;
 const { deleteSelected, duplicateSelected, getMoveDownRefusal, getMoveUpRefusal, moveDown, moveToScope, moveUp } =
   usePageBuilderMoves(kind, getPageDocument, () => resourceId, announce);

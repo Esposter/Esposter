@@ -50,8 +50,8 @@ describe("editorShell", () => {
       [SizeClass.Medium]: RegionPresentation.Sheet,
     },
   };
-  // A panel is shown while the reader has selected something of its kind, so a region with nothing selected is not
-  // Drawn
+  // A panel is shown while the reader has selected something of its kind.
+  // So a region with nothing selected is not drawn.
   const createLayout = (layoutRegion: Region): Layout => ({
     canvasId: "canvas",
     panels: [
