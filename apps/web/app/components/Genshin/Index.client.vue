@@ -23,17 +23,17 @@ const isDoorOpened = ref(false);
 const isPacksHeld = ref(false);
 // A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
 // So a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too, and
-// Started again at the door, so a step still unfinished then is timed from it. The character packs are named until they
-// Are held, and the world's two steps once the world is mounted, which the save and the packs allow before the door
-// Opens. Nothing is skipped or fallen back to, so the world's absence stays as it was. The save's flag is only returned
-// Once those awaits settle, so until then the warning reads the save as not loaded
+// Started again at the door, so a step still unfinished then is timed from it. The world's two steps are named once the
+// Save is loaded and the packs are held, which is before the door opens; the packs have their own timer, started at
+// Their request. Nothing is skipped or fallen back to, so the world's absence stays as it was. The save's flag is only
+// Returned once those awaits settle, so until then the warning reads the save as not loaded
 let isSaveLoadedRef: Ref<boolean> | undefined;
 const { start: startStallWarning } = useTimeoutFn(
   () => {
     if (!isOpeningShown.value) return;
     const steps: [string, boolean][] = [["save", isSaveLoadedRef?.value ?? false]];
-    if (!isPacksHeld.value) steps.push(["character packs", false]);
-    else if (isSaveLoadedRef?.value) steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
+    if (isPacksHeld.value && isSaveLoadedRef?.value)
+      steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
     for (const [step, isStepDone] of steps)
       if (!isStepDone)
         console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
@@ -41,6 +41,16 @@ const { start: startStallWarning } = useTimeoutFn(
   Temporal.Duration.from({ seconds: LOADING_STALL_WARNING_SECONDS }).total("milliseconds"),
 );
 watch(isDoorOpened, () => startStallWarning(), { once: true });
+// The character packs are timed from the request the opening makes at the title's click, so a player still at the title
+// Is never told that they stall
+const { start: startPacksStallWarning } = useTimeoutFn(
+  () => {
+    if (isOpeningShown.value && !isPacksHeld.value)
+      console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on character packs`);
+  },
+  Temporal.Duration.from({ seconds: LOADING_STALL_WARNING_SECONDS }).total("milliseconds"),
+  { immediate: false },
+);
 const gameText = await useGameText();
 // The origin the page reads its hosted game data from: the opening reads its title logo and its login screen from it
 const gameDataBaseUrl = useRuntimeConfig().public.hostedAssets.baseUrl;
@@ -117,6 +127,7 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
         :progress
         :scene-export-base-url="IS_NUXT_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : ''"
         @begin="isDoorOpened = true"
+        @download="startPacksStallWarning()"
         @finish="isOpeningShown = false"
         @held="isPacksHeld = true"
       />
