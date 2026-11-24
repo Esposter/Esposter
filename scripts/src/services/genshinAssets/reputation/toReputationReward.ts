@@ -2,8 +2,8 @@ import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewa
 
 import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
 
-// A reward split into the Reputation EXP its nation's own item pays and every other item it gives, each as its id and
-// Count
+// A reward split into the Reputation EXP its nation's own item pays, and every other item it gives.
+// Each item is given as its id and count.
 export const toReputationReward = (
   reward: ExcelRewardRow,
   reputationItemId: number,

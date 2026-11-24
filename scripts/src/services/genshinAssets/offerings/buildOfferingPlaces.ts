@@ -5,9 +5,9 @@ import { buildMapPointSlices } from "#src/services/genshinAssets/points/buildMap
 import { placeFittedMapPoints } from "#src/services/genshinAssets/points/placeFittedMapPoints";
 import { GameDataset } from "genshin-world";
 
-// Each region's offerings' places beside the Frostbearing Tree's, as one slice per region of the offering places
-// Dataset. Each place carries its offering's kind, the key its levels are published under. The tree keeps its own
-// Dataset
+// Each region's offering places, beside the Frostbearing Tree's, are one slice per region.
+// Each place carries its offering's kind, the key its levels are published under.
+// The tree keeps its own dataset.
 export const buildOfferingPlaces = async (): Promise<GameDataBuild> => {
   const placement = await placeFittedMapPoints(LabelIdOfferingKindMap, "offering");
   return buildMapPointSlices(GameDataset.OfferingPlaces, placement, "offering places");

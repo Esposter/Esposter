@@ -1,5 +1,5 @@
-// The official map's label id of the Frostbearing Tree in Dragonspine, Mondstadt's, whose one point in Mondstadt's area
-// Is The tree's place
+// The official map's label id of the Frostbearing Tree in Dragonspine, Mondstadt's.
+// Its one point in Mondstadt's area is the tree's place.
 export const FROSTBEARING_TREE_LABEL_ID = 158;
 // The offering ids of events that have ended, left out of the publish: Michiae Casket's, of the Three Realms Gateway
 // Offering, a Version 2.5 flagship event that ran from 2022/02/17 to 2022/03/30

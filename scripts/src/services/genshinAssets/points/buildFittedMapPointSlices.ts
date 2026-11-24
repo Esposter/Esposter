@@ -5,9 +5,11 @@ import type { GameDataset } from "genshin-world";
 import { buildMapPointSlices } from "#src/services/genshinAssets/points/buildMapPointSlices";
 import { placeFittedMapPoints } from "#src/services/genshinAssets/points/placeFittedMapPoints";
 
-// The official map's points of the labels given, fitted and placed as one slice of the dataset, each under the id
-// Prefix Given, and each region's places passed through the mapper given before they are sliced. The notes count each
-// Region's Places under the noun, then what was left out, then what the report given says of the mapped places
+// The official map's points of the labels given are fitted and placed as one slice of the dataset.
+// Each is under the id prefix given.
+// Each region's places are passed through the mapper given before they are sliced.
+// The notes count each region's places under the noun, then what was left out.
+// Then they say what the report given says of the mapped places.
 export const buildFittedMapPointSlices = async <Kind>(
   dataset: GameDataset,
   labelIdKindMap: ReadonlyMap<number, Kind>,

@@ -1,8 +1,9 @@
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { join } from "node:path";
 
-// The official Teyvat Interactive Map's public API on HoYoLAB, whose main map is read in English so its labels match
-// The Wiki's names. Its label tree and point list are kept as scratch, outside the repository with the other map files
+// The official Teyvat Interactive Map's public API on HoYoLAB, whose main map is read in English.
+// That makes its labels match the wiki's names.
+// Its label tree and point list are kept as scratch, outside the repository with the other map files.
 export const INTERACTIVE_MAP_API_URL = "https://sg-public-api-static.hoyolab.com/common/map_user/ys_obc/v1/map";
 export const INTERACTIVE_MAP_ID = 2;
 export const INTERACTIVE_MAP_APP_SN = "ys_obc";
@@ -11,9 +12,9 @@ export const INTERACTIVE_MAP_DIRECTORY: string = join(REFERENCE_SCRATCH_DIRECTOR
 export const INTERACTIVE_MAP_TREE_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "label-tree.json");
 export const INTERACTIVE_MAP_POINTS_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "points.json");
 export const INTERACTIVE_MAP_FIT_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "fit.json");
-// The map's Viewpoint label, whose points the list gives with no name: each point's info carries the text its
-// Contributors Wrote on it, which names the viewpoint, so the infos are read one point at a time, a batch of them at
-// Once
+// The map's Viewpoint label, whose points the list gives with no name.
+// Each point's info carries the text its contributors wrote on it, which names the viewpoint.
+// So the infos are read one point at a time, a batch of them at once.
 export const INTERACTIVE_MAP_VIEWPOINT_LABEL_ID = 85;
 export const INTERACTIVE_MAP_VIEWPOINTS_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "viewpoints.json");
 export const INTERACTIVE_MAP_INFO_BATCH_SIZE = 8;

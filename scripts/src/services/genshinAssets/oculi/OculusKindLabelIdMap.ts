@@ -1,7 +1,8 @@
 import { OculusKind } from "genshin-world";
 
-// The official map's label id of each Oculus kind, from its label tree as the points were read. Each region's Oculi
-// Carry One label between them, so a region's count is the points of its area under its kind's label
+// The official map's label id of each Oculus kind, from its label tree as the points were read.
+// Each region's Oculi carry one label between them.
+// So a region's count is the points of its area under its kind's label.
 export const OculusKindLabelIdMap: Record<OculusKind, number> = {
   [OculusKind.Anemoculus]: 5,
   [OculusKind.Cryoculus]: 833,

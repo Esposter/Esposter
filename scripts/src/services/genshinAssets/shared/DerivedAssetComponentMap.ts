@@ -23,12 +23,13 @@ const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: tr
 // And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
-  // The animals: their `Animal_` models, fish and pets among them, and the `Ani_Animal_` clips that move them. No
-  // Pointer Roots them, so the asset index's names find them
+  // The animals: their `Animal_` models, fish and pets among them, and the `Ani_Animal_` clips that move them.
+  // No pointer roots them, so the asset index's names find them.
   [DerivedAssetComponent.Animals]: { clipPattern: "^Ani_Animal_", namePattern: "^Animal_", screen: "WorldScreen" },
-  // Each sub-area with a catalogued extent: a catalogue area the game outlines, derived the way a capital is, from the
-  // Centre Of its outline's box (`readDerivedWorldPlace`) and the terrain tiles its outline reaches. An area with no
-  // Outline is no Component, so it keeps its region's ground
+  // Each sub-area with a catalogued extent is a catalogue area the game outlines, derived the way a capital is.
+  // It takes its place from the centre of its outline's box (`readDerivedWorldPlace`).
+  // Its tiles are the terrain its outline reaches.
+  // An area with no outline is no component, so it keeps its region's ground.
   [DerivedAssetComponent.ArdraviValley]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.AshavanRealm]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.AshveilPeak]: DERIVED_WORLD_OPTIONS,
@@ -39,9 +40,11 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.BerylRegion]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.BishuiPlain]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.BrightcrownMountains]: DERIVED_WORLD_OPTIONS,
-  // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside "AvatarInfoDescDialog", the
-  // Details dialog, and "AvatarLevelUpDialog". A tree that names none of the tabs is the wrong page Its portraits are
-  // The textures the character screen's discs take their colour from, so the component exports them by name
+  // The character screen's page is the `AvatarInfoDialogV2` GameObject.
+  // It holds the Animator beside "AvatarInfoDescDialog", the details dialog, and "AvatarLevelUpDialog".
+  // A tree that names none of the tabs is the wrong page.
+  // Its portraits are the textures the character screen's discs take their colour from.
+  // So the component exports them by name.
   [DerivedAssetComponent.Character]: {
     interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" },
     namePattern: `^${AVATAR_ICON_PREFIX}`,
@@ -63,11 +66,13 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     namePattern: "^(FishingRod_Normal_|Eff_(Ani_)?Avatar_Fishing_(Cork|Cast)|SkillObj_Fishing_Cast)",
     screen: "WorldScreen",
   },
-  // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
-  // Capital's index. Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob, a
-  // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
-  // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view
-  // Covers, Are what holds the city's props and buildings, each a prefab rooted by its game object's name
+  // A region's open world is derived from its capital's place (`deriveCapitalWorld`).
+  // So no region is rooted at its capital's index.
+  // Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob.
+  // It is a MonoBehaviour holding a blob's chunk offsets and no game object.
+  // A root that is one walks to nothing, since the closure starts from the layout of game objects.
+  // The blob's placements are read beside the tiles its capital's view covers.
+  // They are what holds the city's props and buildings, each a prefab rooted by its game object's name.
   [DerivedAssetComponent.Fontaine]: {
     isCapitalWorld: true,
     namePattern: String.raw`^(Area_Fd_Build_FDC_Zhonglou_01|Area_Fd_(Build|Plot)_FDC_POI_Zongzhan_)`,

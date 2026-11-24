@@ -5,8 +5,8 @@ import { CONSTANT_MODE, CURVE_REASON, NOT_HELD_REASON } from "#src/services/gens
 // The width of a float in bytes, which a constant's floats are read by after its mode word
 const WORD = 4;
 
-// A constant's floats after its mode word, read by index, or the reason it is not one: a field the layout does not
-// Place, And a curve, which is named rather than read as its first float
+// A constant's floats after its mode word, read by index, or the reason it is not one.
+// The reason is a field the layout does not place, or a curve, which is named rather than read as its first float.
 export const readEmitterConstant = <T>(
   bytes: Buffer,
   offset: number | undefined,
