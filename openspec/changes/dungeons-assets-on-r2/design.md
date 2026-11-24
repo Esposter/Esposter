@@ -85,7 +85,7 @@ So the Preloader calls `scene.load.setCORS('anonymous')` before it loads, and ev
 
 `apps/web/app/components/Dungeons/Preloader/Scene.vue` shows one bar. Its share is the generic preloader's `downloadProgress`, which is the bytes of the objects the browser's cache lacks, as a fraction of the bytes it must download. The download is the first half of the bar, and the second is the Phaser pass.
 
-The Phaser pass is near-instant. It runs after every object is held in the cache, so its requests are answered by the service worker from the cache, or by the HTTP cache under the immutable header. It does no network work, only decoding and texture upload. The bar does not follow Phaser's `progress` events, which would move in a jump: the bar stays on the download's share until Phaser's `complete` fires, then the scene switches to the title.
+The Phaser pass is near-instant. It runs after every object is held in the cache, so its requests are answered by the service worker from the cache. It does no network work, only decoding and texture upload. The bar does not follow Phaser's `progress` events, which would move in a jump: the bar stays on the download's share until Phaser's `complete` fires, then the scene switches to the title.
 
 ## Dev and tests
 

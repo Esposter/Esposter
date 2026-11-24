@@ -15,9 +15,9 @@ import { describe, expect, test } from "vitest";
 describe("staticAssets", () => {
   const BUNDLED_PATHSPECS = ["apps/web/app/assets"];
   const PUBLIC_PATHSPECS = ["apps/web/public"];
-  // The service worker precaches a build's js, css and html only up to this size, and leaves a larger one out of the
-  // List (`apps/web/configuration/pwa.ts`). The bundle holds a file only up to the same figure, so one limit is the
-  // Budget
+  // The service worker precaches a build's code, styles, images and fonts only up to this size, and leaves a larger one
+  // Out of its list (`apps/web/configuration/pwa.ts`). The bundle holds a file only up to the same figure, so one limit
+  // Is the budget
   const SIZE_LIMIT_BYTES = 2 * MEBIBYTE;
 
   const ENGINE_LOADER_PATHSPECS = ["apps/web/app/services/dungeons/loader"];
