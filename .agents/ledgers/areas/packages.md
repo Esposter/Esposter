@@ -152,7 +152,8 @@
 - `packages/genshin-engine/src/models/post` — `FogUniforms.ts`, `GradeOptions.ts`, `PostPipeline.ts`, `PostPipelineOptions.ts`, `PostUniforms.ts`, `SightUniforms.ts`, `WhiteBalance.ts`
 - `packages/genshin-engine/src/models/renderer`, `packages/genshin-engine/src/models/scene`, `packages/genshin-engine/src/models/simulation`, `packages/genshin-engine/src/models/streaming`, `packages/genshin-engine/src/models/terrain`
 - `packages/genshin-engine/src/models/vegetation`, `packages/genshin-engine/src/models/water`, `packages/genshin-engine/src/models/wind`, `packages/genshin-engine/src/models/world`
-- `packages/genshin-world/src/services/login/cloud`, `packages/genshin-world/src/services/login/door`, `packages/genshin-world/src/services/login/hull`, `packages/genshin-world/src/services/login/interface`, `packages/genshin-world/src/services/login/music`, `packages/genshin-world/src/services/login/scene`, `packages/genshin-world/src/services/login/shared`
+- `packages/genshin-world/src/services/login/cloud`, `packages/genshin-world/src/services/login/door`, `packages/genshin-world/src/services/login/hull`, `packages/genshin-world/src/services/login/interface`, `packages/genshin-world/src/services/login/music`
+- `packages/genshin-world/src/services/login/scene`, `packages/genshin-world/src/services/login/shared`
 - `packages/genshin-world/src/services/login/tower`, `packages/genshin-world/src/services/login/walkway`
 - `packages/genshin-world/src/services/login` — `GameClientVersionTextMap.ts`, `InterfaceIconGameTextKeyMap.ts`, `LoginPartFamilyMeshRegexMap.ts`, `LoginStatusStepGameTextKeyMap.ts`, `constants.ts`, `getLoginTimeOfDay.test.ts`, `getLoginTimeOfDay.ts`, `readLoginData.ts`
 - `packages/genshin-world/src/components/Achievement`, `packages/genshin-world/src/components/Archive`
