@@ -33,7 +33,7 @@ const trpcNuxtModule: [string, ModuleOptions] = [
   },
 ];
 // @TODO: https://github.com/vitest-dev/vitest/issues/11842 — add unplugin-pwa-nuxt to the Vitest branch below once a
-// Virtual id starting with `/` loads under Vitest on Windows Unit tests need only the modules whose
+// Virtual id starting with `/` loads under Vitest on Windows. Unit tests need only the modules whose
 // `runtime/auto-imports` they actually exercise. The rest are SSR/build/styling concerns that don't run under Vitest
 // But DO break or slow Nuxt config resolution — E.g. unplugin-pwa-nuxt builds a service worker, @nuxtjs/seo's
 // `nuxt-schema-org` plugin Leaks an EnvironmentTeardownError after teardown, and nuxt-security-module adds headers/CSP

@@ -52,8 +52,8 @@ export default defineEventHandler(async (event) => {
       return { message: "Invalid payload." };
     }
 
-    // Accepted once queued. The push is queued under the id it is accepted as, so a redelivery of it writes the message
-    // Once The job is handed the room and its app user alone, never the credential
+    // Accepted once queued. The push is queued under the id it is accepted as, so a redelivery writes the message once.
+    // The job is handed the room and its app user alone, never the credential
     await getJobQueue(QueueJob.ProcessWebhook).send({
       deliveryId: v7(),
       payload,

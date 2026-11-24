@@ -34,7 +34,6 @@ export const getCloudflareEnvironment = (): CloudflareEnvironment => {
       : CloudflareEnvironment.Production);
   const environment = CloudflareEnvironments.find((cloudflareEnvironment) => cloudflareEnvironment === value);
   if (!environment)
-    // The Nuxt
     // oxlint-disable-next-line error-handling/no-bare-error -- configuration loads before `@esposter/shared` is built
     throw new Error(`CLOUDFLARE_ENV must be one of ${CloudflareEnvironments.join(", ")}, got ${value}`);
   return environment;

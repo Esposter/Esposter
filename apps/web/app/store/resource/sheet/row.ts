@@ -72,9 +72,9 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
       const definition = ColumnStatisticsDefinitionMap[column.footerStatisticsKey];
       const value = definition.compute(context);
       // The key is only known at runtime, so the compiler cannot correlate this definition's `compute` output
-      // With its own `format` input — the two are the same statistic by construction of the map
-      // The definition is picked by a runtime key, so its compute and
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- format are a union the compiler cannot match up
+      // With its own `format` input — the two are the same statistic by construction of the map. The definition is
+      // Picked by a runtime key, so its compute and format are a union the compiler cannot match up
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the runtime key pairs compute with format
       summaryMap.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never, column)}`);
     }
     return summaryMap;

@@ -4,7 +4,7 @@ import { remove } from "#scripts/tiled/services/remove";
 await remove();
 await createPropertyTypes();
 // Order matters: the tmx properties are generated from the metadata enums (TilemapKey) createPropertyTypes writes, so
-// This
-// oxlint-disable-next-line selector-ban/no-restricted-syntax -- module loads only once those enum files exist on disk
+// This import waits until those enum files exist on disk
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- the dynamic import loads only after they are written
 const { createTmxProperties } = await import("#scripts/tiled/tmxProperties/createTmxProperties");
 await createTmxProperties();
