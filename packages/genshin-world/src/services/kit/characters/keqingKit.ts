@@ -23,7 +23,7 @@ import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Thundering Penance, as the dump's Keqing_PermanentSkill_1 row (promote 1, param 5.0) and gcsim v2.47.2 (MIT)
-// `keqing/asc.go` give it: from Ascension 1, the Lightning Stiletto's recast infuses her attacks with Electro for
+// "keqing/asc.go" give it: from Ascension 1, the Lightning Stiletto's recast infuses her attacks with Electro for
 // 5 seconds. Gcsim holds it 20 frames longer than the table's seconds, which stand
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/asc.go
 const THUNDERING_PENANCE_ASCENSION = 1;

@@ -30,7 +30,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 const COVER_SECONDS = 18;
 const COVER_ID = "sara-crowfeather-cover";
 // Stormcluster's bout of ticks goes out in four directions, six from Constellation 4, as gcsim v2.47.2 (MIT)
-// `sara/burst.go` gives it
+// "sara/burst.go" gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/burst.go
 const STORMCLUSTER_DIRECTIONS = 4;
 const STORMCLUSTER_DIRECTIONS_WITH_C4 = 6;

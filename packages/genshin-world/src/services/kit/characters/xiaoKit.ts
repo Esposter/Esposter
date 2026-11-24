@@ -19,7 +19,7 @@ import { takeOne } from "@esposter/shared";
 
 // Conqueror of Evil: Tamer of Demons, from Ascension 1, raises all of Xiao's DMG by 5% while Bane of All Evil stands,
 // And by 5% more every 3 seconds it stands, up to 25% at 12, as the wiki's passive page and gcsim v2.47.2 (MIT)
-// `xiao/asc.go` give it. All his damage is Anemo under the burst, so the bonus is to his Anemo DMG Bonus
+// "xiao/asc.go" give it. All his damage is Anemo under the burst, so the bonus is to his Anemo DMG Bonus
 // https://genshin-impact.fandom.com/wiki/Conqueror_of_Evil:_Tamer_of_Demons
 const TAMER_OF_DEMONS_ASCENSION = 1;
 const TAMER_OF_DEMONS_DAMAGE_BONUS = 0.05;

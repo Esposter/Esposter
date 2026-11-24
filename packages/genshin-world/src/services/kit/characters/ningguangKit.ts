@@ -34,7 +34,7 @@ const STAR_JADE_MAX_COUNT = 3;
 // https://genshin-impact.fandom.com/wiki/Backup_Plan
 const BACKUP_PLAN_ASCENSION = 1;
 // Piercing Fragments, from one constellation, widens a strike's gem to gcsim's circle of 3.5, as gcsim v2.47.2 (MIT)
-// `ningguang/attack.go` gives it
+// "ningguang/attack.go" gives it
 // https://genshin-impact.fandom.com/wiki/Piercing_Fragments
 const PIERCING_FRAGMENTS_CONSTELLATION = 1;
 // Exquisite be the Jade, Outshining All Beneath, from four constellations, raises the Elemental RES of nearby

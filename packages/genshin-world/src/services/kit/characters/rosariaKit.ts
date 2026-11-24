@@ -37,7 +37,7 @@ const ASCENSION_4_CRIT_RATE_MAX = 0.15;
 const ASCENSION_4_SECONDS = 10;
 
 // Regina Probationum, as the dump's Rosaria_PermanentSkill_1 row (promote 1, params 0.12 and 5) and gcsim v2.47.2 (MIT)
-// `rosaria/asc.go` and skill.go give it: from Ascension 1, Ravaging Confession's first hit gives her 12% CRIT Rate for
+// "rosaria/asc.go" and skill.go give it: from Ascension 1, Ravaging Confession's first hit gives her 12% CRIT Rate for
 // 5 seconds as it strikes an enemy. gcsim assumes the hit lands from behind, as the kit does without her teleport
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/asc.go
 const REGINA_PROBATIONUM_ASCENSION = 1;

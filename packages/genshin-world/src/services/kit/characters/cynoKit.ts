@@ -193,8 +193,8 @@ export const createCynoKitBehaviour = ({
     });
   };
   // The Pactsworn Pathclearer strikes stay Normal Attack DMG though they deal Electro, gcsim's AttackTagNormal in
-  // `cyno/attack.go`'s attackB, beside AttackTagExtra in cyno/charge.go's chargeB and AttackTagElementalArt in
-  // `cyno/skill.go`'s skillB. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while Pactsworn
+  // "cyno/attack.go"'s attackB, beside AttackTagExtra in cyno/charge.go's chargeB and AttackTagElementalArt in
+  // "cyno/skill.go"'s skillB. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while Pactsworn
   // Pathclearer holds, which is the press that the stance's skill plays; the skill's cooldown the press then sets is
   // The one left after the stance
   const pactswornPathclearer = readStance("pactswornPathclearer", {

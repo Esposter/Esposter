@@ -23,7 +23,7 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Low-Temperature Cooking's Surging Blade lands only while the Aligned interval is not running, as gcsim v2.47.2 (MIT)
-// `escoffier/skill.go` checks it, and starts it, in the task it queues at the blade's 83rd frame, its cooldown starting
+// "escoffier/skill.go" checks it, and starts it, in the task it queues at the blade's 83rd frame, its cooldown starting
 // 22 frames after the press there, which the framework does not hold. Arkhe's application is a TODO in gcsim, so it is
 // Not applied here
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/skill.go

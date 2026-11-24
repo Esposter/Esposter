@@ -20,7 +20,7 @@ import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 export const MIZUKI_CHARACTER_ID = 10_000_109;
 
 // The Dreamdrifter state her press starts lasts the seconds its record's dreamDrifterBaseDuration gives, as gcsim (MIT)
-// `mizuki/skill.go` gives it, and its id is gcsim's dreamDrifterStateKey
+// "mizuki/skill.go" gives it, and its id is gcsim's dreamDrifterStateKey
 export const DREAMDRIFTER_STATUS_ID = "dreamdrifter-state";
 // The summon her press casts for its clouds, the name it is found by among the team's effects
 const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";

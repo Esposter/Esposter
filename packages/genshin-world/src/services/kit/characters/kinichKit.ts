@@ -24,7 +24,7 @@ const DRAGON_BREATH_COUNT = 6;
 export const KINICH_CHARACTER_ID = 10_000_101;
 
 // The Nightsoul points his blessing holds at most, and the frames it lasts, ten seconds and ten frames, as gcsim (MIT)
-// `kinich/kinich.go` and skill.go set them
+// "kinich/kinich.go" and skill.go set them
 const NIGHTSOUL_MAXIMUM = 20;
 const NIGHTSOUL_BLESSING_SECONDS = toKitSeconds(10 * 60 + 10);
 // One point every thirty frames while the blessing lasts, two a second, as gcsim skill.go timePassGenerateNSPoints does

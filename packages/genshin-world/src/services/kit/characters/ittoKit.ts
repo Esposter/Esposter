@@ -43,7 +43,7 @@ const RAGING_ONI_KING_SUPERSTRENGTH_STACKS = [1, 0, 1, 0];
 
 // Ushi gives a stack of Superlative Superstrength the first time its hit strikes, one as it takes an enemy's strike, at
 // Most once every 2 seconds, and another as it leaves, its seconds run out or its health spent, as gcsim v2.47.2 (MIT)
-// `itto/skill.go` and ushi.go give it. Ushi flees as it leaves and deals no damage, so the taunt carries no explosion
+// "itto/skill.go" and ushi.go give it. Ushi flees as it leaves and deals no damage, so the taunt carries no explosion
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/skill.go
 const USHI_STRUCK_STATUS_ID = "itto-ushi-struck";
 const USHI_DAMAGED_COOLDOWN_STATUS_ID = "itto-ushi-damaged-cooldown";
@@ -131,7 +131,7 @@ export const createIttoKitBehaviour = ({
   }
   // Itto's stance while he holds stacks, whose charged attack is the Arataki Kesagiri for them at no stamina, held
   // Until a charged attack starts it. The Arataki Kesagiri slashes are Charged Attack DMG, gcsim's AttackTagExtra in
-  // `itto/charge.go`'s ChargeAttack
+  // "itto/charge.go"'s ChargeAttack
   const addKesagiriStance = (kitEffectState: KitEffectState, combatant: Combatant, stacks: number): void => {
     enterKitStance(
       kitEffectState,
