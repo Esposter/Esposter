@@ -48,6 +48,7 @@ import { rideLoginWitnessDoor } from "#src/services/login/door/rideLoginWitnessD
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { LoginPartFamilyMeshRegexMap } from "#src/services/login/LoginPartFamilyMeshRegexMap";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
+import { checkIsLoginDoorForming } from "#src/services/login/scene/checkIsLoginDoorForming";
 import { computeLoginCameraHeight } from "#src/services/login/scene/computeLoginCameraHeight";
 import { computeLoginCameraZ } from "#src/services/login/scene/computeLoginCameraZ";
 import { computeLoginGlideTitleScrolled } from "#src/services/login/scene/computeLoginGlideTitleScrolled";
@@ -194,7 +195,7 @@ const {
   towers,
   walkway,
 } = defineProps<Props>();
-const emit = defineEmits<{ doorFormed: []; ready: [] }>();
+const emit = defineEmits<{ doorFormed: []; doorForming: []; ready: [] }>();
 // Where the door stands and how long it takes to rise, the camera's pose over the walkway and short of the door, and
 // The walkway's and the towers' rows the glide wraps by, each read once from the records the scene is built from
 const doorRestPosition = getLoginDoorPosition(door);
@@ -443,6 +444,7 @@ usePostPipeline(
 );
 let renderedFrameCount = 0;
 let isReadyEmitted = false;
+let isDoorForming = false;
 let isDoorFormed = false;
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
 const rushMs = shallowRef(0);
@@ -527,6 +529,11 @@ onRender(({ delta: frameDelta }) => {
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = isDoorDue && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs = isDoorRising.value ? riseMs + delta * 1000 : 0;
+  // The door begins to form a lead before it rises, once; the screen takes that as the forming's start
+  if (!isDoorForming && isDoorDue && checkIsLoginDoorForming(doorAheadOfCamera, glide.speed)) {
+    isDoorForming = true;
+    emit("doorForming");
+  }
   if (!isDoorFormed)
     for (let pieceIndex = 0; pieceIndex < doorPieces.length; pieceIndex++) {
       const piece = doorPieces[pieceIndex];
