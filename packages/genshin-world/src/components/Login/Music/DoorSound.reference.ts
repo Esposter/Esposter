@@ -68,10 +68,25 @@ export const doorSoundTopic: ReferenceTopic = {
       result:
         "The rumble now plays 16 decibels over its source and the rush 9, the door 11 decibels nearer the music's level than at the sources'. Fitted so, the door reads 2.18 decibels off the game's sounds at their mix volumes, its channels correlated 0.58 against 0.53, every band's bias within about a decibel, as at the sources' level. The player's compressor holds the effects bus's -9 decibels, 4 to 1, no attack and 0.15 seconds' release, its threshold 5 decibels lower since the data carries the master's 5 down; the master's limiter holds -2 decibels at 20 to 1, the most a browser's compressor takes, against the game's 50. Neither dynamic is scored, since the recording's music hides the door",
     },
+    {
+      method:
+        "A one-off analysis of the English recording's audio, not committed: its band under 150 hertz as a root-mean-square every 50 milliseconds against the music's own level (7.5 to 10.5 seconds and 14.0 to 15.0), the thirds of an octave of 11.6 to 13.2 seconds against 8.0 to 10.5, and a spectrogram from 8 to 16 seconds read by eye",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The game plays a low layer while the door forms. The music's band under 150 hertz sits at -40.4 decibels, and the layer's own level in that band is -32 decibels from 11.0 seconds, -27 to -30 from 12.0 to 13.5, and it is gone by 13.9. Its excess lies in 30 to 100 hertz, 15 to 26 decibels over the pre-door spectrum at 40 to 80 hertz and little above 250 hertz, while the 150 to 600 hertz band holds its baseline to 12.5 seconds. The layer starts 0.6 seconds before the first piece shows at 11.6, and the click's rumble and rush reach -28 decibels in the same band. A sustained line near 100 hertz is present from 10.6 seconds. The 13.0 to 13.5 second swell lifts the whole spectrum by about 4 decibels, so the layer's level there is an upper bound",
+    },
+    {
+      method:
+        "genshin:assets sounds over the English recording's audio from 11.0 to 13.6 seconds and from 11.6 to 13.2, every sound of Minimum.pck by its bands' levels from 31 hertz and from 60 hertz up",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "No game sound matches the layer. The best single sound scores 0.79 from 11.9 seconds, a 2.85-second sound, and the best set of five leaves 5.9 decibels unexplained, where the door's own pair leaves 3.07 under the full-band match; the click's rumble scores 0.55 there. The banks were not searched: vgmstream-cli does not load on this machine, since the libvorbisfile.3 library it links is missing from Homebrew's prefix, so the Vorbis sounds of Banks0 to Banks31 do not decode",
+    },
   ],
   openQuestions: [
     "The shared mixer's low-pass of 20 and high-pass of 15 on Wwise's scale, whose cutoffs sit behind Audiokinetic's documentation's captcha, and the compressor's detector, unpublished, so the browser's own stands in: each measured from a recording whose music is the login's own, or from the cutoff table",
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",
     "Whether the door's two sounds are one event of the game's: they start 75 milliseconds apart in the match, which the bank's own events would say",
+    "The layer under the door's forming, 30 to 100 hertz from 11.0 to 13.9 seconds: no Minimum.pck sound matches it, so it stays an open row under the sound-effects spec until a bank sound matches it, its banks searched once vgmstream's libvorbis loads on this machine; a recording-measured layer would break that rule, and the record it would ship in needs a production R2 publish",
   ],
 };
