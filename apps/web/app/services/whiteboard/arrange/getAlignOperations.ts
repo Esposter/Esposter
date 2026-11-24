@@ -30,7 +30,7 @@ const getAlignedPoint = (edge: AlignEdge, bounds: Bounds, selectionBounds: Bound
 };
 
 // The operations that line each box of a selection up at one edge or centre of the selection's box. Each box moves
-// Through the move a drag uses, So an arrow bound to a moved box is rerouted in the same edit. A box already there is
+// Through the move a drag uses, so an arrow bound to a moved box is rerouted in the same edit. A box already there is
 // Not moved, and an arrow or a stroke stays where it is
 export const getAlignOperations = (
   document: PositionedDocument,

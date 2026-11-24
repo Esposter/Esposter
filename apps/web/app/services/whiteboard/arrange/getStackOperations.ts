@@ -16,7 +16,7 @@ const getRuns = (indexes: number[]): { end: number; start: number }[] =>
   }, []);
 
 // The z-order operations that stack a selection one way, keeping the order of the selected elements among themselves. A
-// Selection holding the top Element cannot bring forward or to the front, and one holding the bottom element cannot
+// Selection holding the top element cannot bring forward or to the front, and one holding the bottom element cannot
 // Send backward or to the back, so each is no operation
 export const getStackOperations = (
   document: PositionedDocument,
@@ -31,26 +31,26 @@ export const getStackOperations = (
   const topIndex = document.elements.length - 1;
   switch (move) {
     // The element above each run of neighbouring selected elements moves beneath the run, which lifts the run one step
-    // And leaves the order of the Elements that are not selected as it was. A move only shifts indexes inside its own
+    // And leaves the order of the elements that are not selected as it was. A move only shifts indexes inside its own
     // Run, so every run is read from its original indexes
     case StackMove.BringForward:
       return highestIndex === topIndex
         ? []
         : getRuns(indexes).flatMap(({ end, start }) => changePositionedElementZOrder(document, end + 1, start));
     // Each selected element moves to the top in turn, lowest first. Moving an element above it shifts the next selected
-    // One down, so each is read From its index less the moves before it
+    // One down, so each is read from its index less the moves before it
     case StackMove.BringToFront:
       return highestIndex === topIndex
         ? []
         : indexes.flatMap((index, position) => changePositionedElementZOrder(document, index - position, topIndex));
     // The element below each run of neighbouring selected elements moves above the run, which sinks the run one step
-    // And leaves the order of the Elements that are not selected as it was
+    // And leaves the order of the elements that are not selected as it was
     case StackMove.SendBackward:
       return lowestIndex === 0
         ? []
         : getRuns(indexes).flatMap(({ end, start }) => changePositionedElementZOrder(document, start - 1, end));
     // Each selected element moves to the bottom in turn, highest first. Moving an element below it shifts the next
-    // Selected one up, so each is read From its index plus the moves before it
+    // Selected one up, so each is read from its index plus the moves before it
     case StackMove.SendToBack:
       return lowestIndex === 0
         ? []

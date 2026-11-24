@@ -4,7 +4,7 @@ import { getSelectedElements } from "#src/services/whiteboard/getSelectedElement
 import { checkIsResizablePositionedElement, getElementBounds } from "vue-block-editor-headless";
 
 // The selected elements that take a size of their own, each with its index and its bounds, in the order of the element
-// List. An arrow and a stroke Are left out, since align and distribute move boxes alone
+// List. An arrow and a stroke are left out, since align and distribute move boxes alone
 export const getSelectedBoxes = (
   document: PositionedDocument,
   selectedIds: string[],

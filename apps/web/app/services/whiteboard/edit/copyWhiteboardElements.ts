@@ -8,9 +8,9 @@ import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 
 // Inserts a copy of each original on top of the element list under a new id, offset by the duplicate offset, as one
-// Edit. The shape Copies are inserted before the arrow copies, so an arrow copy finds the shape copy its binding names.
-// Returns the copies' ids, which The selection moves onto. The originals may come from the document or from the
-// Clipboard, so an arrow's binding follows only a shape That is among them
+// Edit. The shape copies are inserted before the arrow copies, so an arrow copy finds the shape copy its binding names.
+// Returns the copies' ids, which the selection moves onto. The originals may come from the document or from the
+// Clipboard, so an arrow's binding follows only a shape that is among them
 export const copyWhiteboardElements = (
   state: WhiteboardEditState,
   originals: PositionedElement[],

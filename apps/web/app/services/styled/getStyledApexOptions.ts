@@ -15,9 +15,9 @@ interface StyledApexOptionsInput {
 // Shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a Size
 // There for the shapes to be seen; every other type keeps its own. A legend entry, a tooltip's title and a tooltip
 // Row's name are written with innerHTML, and a single-series chart's entries are its category values — on a dashboard,
-// A Survey respondent's own answers, read by anyone once it is published — so each is escaped here, after the caller's
-// Own Formatter, where no caller's options can hand it raw text. The series is set over the merge rather than inside
-// It, Since defu would concatenate it with any series the options carry
+// A survey respondent's own answers, read by anyone once it is published — so each is escaped here, after the caller's
+// Own formatter, where no caller's options can hand it raw text. The series is set over the merge rather than inside
+// It, since defu would concatenate it with any series the options carry
 export const getStyledApexOptions = ({ isDark, options, series, type }: StyledApexOptionsInput): ApexOptions => {
   const resolvedType = type ?? options.chart?.type ?? "line";
   // The y tooltips are escaped whole in getTooltipOptions, so the merge takes the tooltip options without them: defu

@@ -17,8 +17,8 @@ const getPointAt = (bounds: Bounds, axis: DistributeAxis, start: number): Point 
   axis === DistributeAxis.Horizontal ? { x: start, y: bounds.y } : { x: bounds.x, y: start };
 
 // The operations that space the boxes of a selection with equal gaps between neighbours, keeping the outermost two in
-// Place. The gap is what the Outermost two leave once the boxes' extents are taken out, so the gaps are equal however
-// The boxes differ in size. A selection in which one box Spans the rest has no outer pair to keep, so it is given no
+// Place. The gap is what the outermost two leave once the boxes' extents are taken out, so the gaps are equal however
+// The boxes differ in size. A selection in which one box spans the rest has no outer pair to keep, so it is given no
 // Operations
 export const getDistributeOperations = (
   document: PositionedDocument,
@@ -39,7 +39,7 @@ export const getDistributeOperations = (
   if (hasSpanningBox) return [];
 
   // The box that ends furthest along the axis is the last, even when it starts before another does, so a box lying
-  // Inside another's span is never the One that is taken for the outer edge
+  // Inside another's span is never the one that is taken for the outer edge
   const lastBox = boxes.reduce((furthest, box) =>
     getStart(box.bounds, axis) + getExtent(box.bounds, axis) >
     getStart(furthest.bounds, axis) + getExtent(furthest.bounds, axis)

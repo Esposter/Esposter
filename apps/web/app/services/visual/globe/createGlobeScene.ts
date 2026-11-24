@@ -64,7 +64,7 @@ const getRandomColor = () => takeOne(COLORS, createRandomInteger(COLORS.length -
 
 // A rim of colour on the side of the sphere facing away from the camera: the cheapest edge there is, which is what lets
 // The renderer leave antialiasing off. It fades by alpha rather than adding light, so it reads the same over a light
-// Page And a dark one
+// Page and a dark one
 const createHalo = () =>
   new Mesh(
     new SphereGeometry(radius * atmosphereScale, 48, 48),

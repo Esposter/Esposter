@@ -10,9 +10,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 
 // The overlay's table over a Drizzle table. The row is the table's select model, or a projection of it that a caller
-// Names When a read returns only some of the columns, which must be columns of the table. The key is read from its
-// Primary key, So a caller names nothing. A write's header names each row by the same fields, so the key a header row
-// Carries is the key The row is held by. The schema holds the table object once, so every Table made over it shares one
+// Names when a read returns only some of the columns, which must be columns of the table. The key is read from its
+// Primary key, so a caller names nothing. A write's header names each row by the same fields, so the key a header row
+// Carries is the key the row is held by. The schema holds the table object once, so every Table made over it shares one
 // Slot
 export const createTable = <
   TSource extends TableSource,
