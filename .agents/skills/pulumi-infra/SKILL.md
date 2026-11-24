@@ -8,8 +8,7 @@ description: Apply when modifying apps/infra, or when a Cloudflare token, an ESC
 ## Settled — do not re-propose
 
 - **Credentials.** Every secret, ESC key and Cloudflare token follows `.agents/skills/security/references/credentials.md`, including the rule that no secret sits in a stack file.
-- **One consumer's permissions split across tokens.** A consumer holds one token with the least permission groups its calls need, merged with another only where the calls match and neither consumer gains a group (`.agents/skills/security/references/credentials.md`, "Cloudflare tokens as code").
-- **One shared token for every consumer.** A token every consumer holds widens all of them when one needs a permission, so each consumer gets its own token, merged with another's only as the rule above allows.
+- **One shared token for every consumer.** A token every consumer holds widens all of them when one needs a permission, so each consumer gets its own token (`openspec/specs/infra/cloudflare-tokens/design.md`).
 - **Rotation or expiry machinery.** No scheduler re-rolls a token and no job checks expiry; a token's value changes only when its resource is replaced, as a runbook step.
 - **A wrapper over `cloudflare.AccountToken`.** Each token is a plain resource. The one helper allowed is the permission-group lookup two or more tokens share.
 - **An edit to a token's permissions in the Cloudflare dashboard.** A permission lives in code, where the preview shows it; a dashboard edit is invisible to review and the next apply reverts it.
