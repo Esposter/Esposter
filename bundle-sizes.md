@@ -41,7 +41,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | survey-expression          | **/*.d.ts                 |   32318 |   31.6 |
 | @esposter/shared           | index.d.ts                |   28452 |   27.8 |
 | vue-phaserjs               | index.d.ts                |   27273 |   26.6 |
-| @esposter/configuration    | **/*.js                   |   25156 |   24.6 |
+| @esposter/configuration    | **/*.js                   |   25572 |   25.0 |
 | vue-survey-engine-headless | index.d.ts                |   25061 |   24.5 |
 | vue-grid-layout-headless   | **/*.js                   |   23626 |   23.1 |
 | @esposter/shared           | index.js                  |   23015 |   22.5 |
@@ -85,7 +85,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | hosted-assets              | index.d.ts                |    3747 |    3.7 |
 | grid-engine-headless       | **/*.d.ts                 |    3743 |    3.7 |
 | pitch-transcription        | index.js                  |    3722 |    3.6 |
-| @esposter/configuration    | index.js                  |    3602 |    3.5 |
+| @esposter/configuration    | index.js                  |    3692 |    3.6 |
 | vue-pdfjs-headless         | index.d.ts                |    3577 |    3.5 |
 | vue-editor-layout-headless | index.d.ts                |    3477 |    3.4 |
 | trpc-msw                   | createTRPCMsw.js          |    3303 |    3.2 |
@@ -102,7 +102,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | index.js                  |    2328 |    2.3 |
 | vue-pdfjs-headless         | index.js                  |    2284 |    2.2 |
 | parse-tmx                  | index.d.ts                |    1993 |    1.9 |
-| @esposter/configuration    | constants.js              |    1819 |    1.8 |
+| @esposter/configuration    | constants.js              |    1905 |    1.9 |
 | @esposter/db-mock          | workers.js                |    1770 |    1.7 |
 | pitch-transcription        | notes.d.ts                |    1749 |    1.7 |
 | genshin-text               | index.d.ts                |    1699 |    1.7 |
@@ -174,4 +174,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 169 files, 13099827 bytes, 12792.8 KiB, 12.49 MiB
+**Total:** 169 files, 13100419 bytes, 12793.4 KiB, 12.49 MiB
