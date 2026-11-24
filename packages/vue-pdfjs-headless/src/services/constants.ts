@@ -20,8 +20,8 @@ export const PDF_FREE_TEXT_COLOR: number[] = [0, 0, 0];
 export const PDF_WATERMARK_FONT_SIZE = 48;
 export const PDF_WATERMARK_COLOR: number[] = [128, 128, 128];
 // Each sheet holds one page at its own margin, and nothing else of the page prints beside it.
-// The template literal holds a substitution the declaration emitter cannot type, so its annotation stays
-// The declaration
+// The template literal holds a substitution the declaration emitter cannot type.
+// So its annotation stays on the declaration.
 // oxlint-disable-next-line typescript/no-inferrable-types -- emitter needs the annotation the linter calls redundant
 export const PDF_PRINT_STYLE: string = `@page { margin: 3mm } .${PDF_PRINT_CLASS} { display: none } .${PDF_PRINT_CLASS} img { display: block; page-break-after: always; width: 100% } @media print { .${PDF_PRINT_CLASS} { display: block } body > :not(.${PDF_PRINT_CLASS}) { display: none !important } }`;
 // The wheel's Ctrl zoom grows the scale by e to the power of the wheel's distance over this divisor

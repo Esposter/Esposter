@@ -129,9 +129,9 @@ describe(usePdfViewer, () => {
   const createFindController = ({ eventBus }: { eventBus: EventBusStub }) => {
     eventBus.on("find", (event: unknown) => {
       stubs.findEvents.push(event);
-      // The renderer finds nothing for an empty query, so a cleared search has no matches
-      // A fake event's
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- query, built by the test rather than typed
+      // The renderer finds nothing for an empty query, so a cleared search has no matches.
+      // A fake event's query is built by the test rather than typed.
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the test builds the event's query, not typed
       const total = (event as { query: string }).query === "" ? 0 : matches;
       const matchesCount = { current: total > 0 ? 1 : 0, total };
       eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: total > 0 ? 0 : FIND_STATE_NOT_FOUND });

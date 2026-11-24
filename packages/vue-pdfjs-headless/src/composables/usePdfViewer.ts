@@ -221,9 +221,9 @@ export const usePdfViewer = ({
       type,
     });
   };
-  // Registered before the viewer is created, since a document loaded during setup bumps the generation this watches A
-  // Search runs again when its query or options change, and when a document loads, which searches the terms it opens
-  // With
+  // Registered before the viewer is created, since a document loaded during setup bumps the generation this watches.
+  // A search runs again when its query or options change, and when a document loads.
+  // The load searches the terms the document opens with.
   watch([searchQuery, isMatchCase, isWholeWord, documentGeneration], () => {
     if (toValue(pdfDocument)) findText({ query: searchQuery.value });
   });
