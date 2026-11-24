@@ -11,6 +11,6 @@ export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
 }));
 
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-// The relation names
-// oxlint-disable-next-line selector-ban/no-restricted-syntax -- a query's `with` takes, keyed as drizzle keys them
+// The relation names a query's `with` takes, keyed as drizzle keys them
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- drizzle keys a `with` by its relation names
 export const WebhookInMessageRelations = { creator: { columns: PublicUserColumns }, room: true } as const;
