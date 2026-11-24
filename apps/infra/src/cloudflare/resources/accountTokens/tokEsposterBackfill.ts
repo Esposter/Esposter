@@ -4,12 +4,13 @@ import { getAccountWideResources } from "#src/cloudflare/services/getAccountWide
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareAssetType, getCloudflareAccountResourceName } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const tokenName = getCloudflareAccountResourceName(CloudflareAssetType.Token, "backfill");
 // The backfill consumer's token: the D1 reads and writes of a backfill run, through the D1 HTTP API, and no other group
 export const tokEsposterBackfill: cloudflare.AccountToken = new cloudflare.AccountToken(
-  getCloudflareAccountResourceName(CloudflareAssetType.Token, "backfill"),
+  tokenName,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    name: getCloudflareAccountResourceName(CloudflareAssetType.Token, "backfill"),
+    name: tokenName,
     policies: [
       {
         effect: "allow",

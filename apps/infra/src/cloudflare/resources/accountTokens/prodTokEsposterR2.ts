@@ -9,12 +9,13 @@ import {
 } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const tokenName = getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.Token, "r2");
 // The prod R2 publishers' token: every bucket of the prod environment, and nothing in the other one
 export const prodTokEsposterR2: cloudflare.AccountToken = new cloudflare.AccountToken(
-  getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.Token, "r2"),
+  tokenName,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    name: getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.Token, "r2"),
+    name: tokenName,
     policies: [
       {
         effect: "allow",

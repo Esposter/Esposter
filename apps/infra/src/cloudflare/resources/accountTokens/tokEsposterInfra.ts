@@ -4,14 +4,15 @@ import { getAccountWideResources } from "#src/cloudflare/services/getAccountWide
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareAssetType, getCloudflareAccountResourceName } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const tokenName = getCloudflareAccountResourceName(CloudflareAssetType.Token, "infra");
 // The infra provider's token: every kind of resource the program declares, and no more.
 // A policy's resources name one scope, so the account's groups and the zones' groups are two policies. An account-owned
 // Token reaches zones only nested under its account, so the zone policy names every zone of the account
 export const tokEsposterInfra: cloudflare.AccountToken = new cloudflare.AccountToken(
-  getCloudflareAccountResourceName(CloudflareAssetType.Token, "infra"),
+  tokenName,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    name: getCloudflareAccountResourceName(CloudflareAssetType.Token, "infra"),
+    name: tokenName,
     policies: [
       {
         effect: "allow",

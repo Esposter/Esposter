@@ -9,13 +9,14 @@ import {
 } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const tokenName = getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.Token, "realtimekit");
 // The prod RealtimeKit token, for the realtime Worker's calls and for `realtimekit:provision`.
 // Both make Realtime Admin calls, so one token serves both.
 export const prodTokEsposterRealtimekit: cloudflare.AccountToken = new cloudflare.AccountToken(
-  getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.Token, "realtimekit"),
+  tokenName,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    name: getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.Token, "realtimekit"),
+    name: tokenName,
     policies: [
       {
         effect: "allow",
