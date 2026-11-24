@@ -12,10 +12,11 @@ import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValue
 import { getSurveyVisiblePageIndexesFromValues } from "#src/services/runner/getSurveyVisiblePageIndexesFromValues";
 import { toSurveyAnswerValue } from "#src/services/runner/toSurveyAnswerValue";
 
-// Completes the survey once every visible page is valid. The first page with errors is returned and the state moves to
-// It, unfinished A completed survey keeps the answers of visible questions It holds the values the result includes:
-// Each visible calculated-value question and each calculated value flagged for the result The values are computed over
-// The kept answers, so a result never reads one it dropped
+// Completes the survey once every visible page is valid.
+// The first page with errors is returned, and the state moves to it, unfinished.
+// A completed survey keeps the answers of visible questions.
+// Its values hold each visible calculated-value question, and each calculated value flagged for the result.
+// The values are computed over the kept answers, so a result never reads one it dropped.
 export const completeSurvey = (
   document: SurveyDocument,
   state: SurveyRunnerState,
