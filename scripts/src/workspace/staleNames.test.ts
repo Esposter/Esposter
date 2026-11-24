@@ -3,7 +3,7 @@ import { readSourceComments } from "#src/services/citations/readSourceComments";
 import { getStaleNames } from "#src/services/sweeps/staleNames/getStaleNames";
 import { readDependencyNames } from "#src/services/sweeps/staleNames/readDependencyNames";
 import { readSourceNames } from "#src/services/sweeps/staleNames/readSourceNames";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 /**
  * A spec, skill, ledger or README cites a code name in backticks, and nothing resolves it: `ai:citations:sync`
@@ -18,32 +18,24 @@ import { describe, expect, test } from "vitest";
 describe("staleNames", () => {
   // A cold read of the store's declarations, before its cache under `node_modules/.cache` exists
   const STORE_READ_TIMEOUT_MS = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
+  // Both tests judge their citations against the same names, so the tree and the store are read once for the file
+  let heldNames: Set<string>;
 
-  test(
-    "every cited code name is one the tree or an installed package holds",
-    { timeout: STORE_READ_TIMEOUT_MS },
-    () => {
-      expect.hasAssertions();
+  beforeAll(() => {
+    heldNames = readSourceNames().union(readDependencyNames());
+  }, STORE_READ_TIMEOUT_MS);
 
-      expect(
-        getStaleNames(readCitingPages(), readSourceNames().union(readDependencyNames())).map(
-          ({ name, path }) => `${path} → ${name}`,
-        ),
-      ).toStrictEqual([]);
-    },
-  );
+  test("every cited code name is one the tree or an installed package holds", () => {
+    expect.hasAssertions();
 
-  test(
-    "every name a source comment cites is one the code or an installed package holds",
-    { timeout: STORE_READ_TIMEOUT_MS },
-    () => {
-      expect.hasAssertions();
+    expect(getStaleNames(readCitingPages(), heldNames).map(({ name, path }) => `${path} → ${name}`)).toStrictEqual([]);
+  });
 
-      expect(
-        getStaleNames(readSourceComments(), readSourceNames().union(readDependencyNames())).map(
-          ({ name, path }) => `${path} → ${name}`,
-        ),
-      ).toStrictEqual([]);
-    },
-  );
+  test("every name a source comment cites is one the code or an installed package holds", () => {
+    expect.hasAssertions();
+
+    expect(getStaleNames(readSourceComments(), heldNames).map(({ name, path }) => `${path} → ${name}`)).toStrictEqual(
+      [],
+    );
+  });
 });
