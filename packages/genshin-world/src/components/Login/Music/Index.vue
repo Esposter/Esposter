@@ -36,6 +36,7 @@ const { gameDataBaseUrl, isDoorOpened, music, sounds } = defineProps<Props>();
 // Screen keeps it
 let close: (() => Promise<void>) | undefined;
 let playDoorSound: (() => void) | undefined;
+let doorEnded: Promise<void> | undefined;
 onMounted(() => {
   const context = new AudioContext();
   let isClosed = false;
@@ -60,6 +61,9 @@ onMounted(() => {
     const source = new AudioBufferSourceNode(context, { buffer: doorSound });
     source.connect(sfxBus);
     source.start(context.currentTime + LOGIN_DOOR_SOUND_DELAY_MS / 1000);
+    doorEnded = new Promise<void>((resolve) => {
+      source.addEventListener("ended", () => resolve(), { once: true });
+    });
   };
   if (context.state === "suspended")
     for (const type of ["pointerdown", "keydown"] as const)
@@ -74,6 +78,8 @@ onMounted(() => {
   close = async () => {
     isClosed = true;
     player?.stop();
+    // The door's sound outlasts the hand-off to the loading screen, so the context closes once it has ended
+    await doorEnded;
     await context.close();
   };
 });

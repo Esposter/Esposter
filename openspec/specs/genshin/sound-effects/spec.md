@@ -31,6 +31,16 @@ The login's door sound SHALL start a fixed delay after the click that opens the 
 - **THEN** the door sound starts after its fixed delay (`LOGIN_DOOR_SOUND_DELAY_MS`)
 - **AND** the rush of sound follows the click shortly after (the rush 75 milliseconds after the rumble)
 
+### Requirement: The door sound plays out past the login screen's hand-off
+
+The login's audio context SHALL stay open until the door sound has ended, so the screen's hand-off to the loading screen does not cut the sound short.
+
+#### Scenario: The hand-off waits for the door sound
+
+- **GIVEN** the door sound has started
+- **WHEN** the login screen hands on to the loading screen
+- **THEN** the audio context closes only once the door sound has ended
+
 ### Requirement: The door plays at the game's mix and is limited so it does not clip
 
 The door sound SHALL play with its rumble louder than its rush, and SHALL be limited so that its peaks do not clip (`LOGIN_MASTER_LIMITER_OPTIONS`).
