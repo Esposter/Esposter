@@ -35,12 +35,17 @@ A successful preload evicts the pack entries under the packs' folder that the in
 
 ## The launch bar shows the download
 
-The game's first bar is the plain bar on its login screen, which follows the title's click: the English recording's status reads "Checking for updates...", then "Loading game..." at 0.00%, then "Preparing to load data" over the bar, which fills to full before the door rises (`{data-root}/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`). The elemental loading screen is the scene's own load after the door, and the game's shows no download on it. So the character packs and the game data lock's objects and indexes download from the opening's mount, under the splashes and the title, and the launch bar reports their share once the game starts preparing, with the door waiting on the bar's full share as the game's does. A failed file puts the game's failure line and a retry on that bar, in the words' and the share's places. The elemental screen takes the world's steps alone.
+The game's first bar is the plain bar on its login screen, which follows the title's click. The download starts on that click: the title is where the player begins the login, and the game's own download begins there too. Its foot then reads "Preparing to download resources" and "Checking for updates...", and once bytes are fetched "Downloading resources..." (`GameTextKey.LoginDownloading`, text id 1323480176) over the bar's share, which the English recording and the owner's capture of the Japanese client both show as a percent to two places (`{data-root}/genshin-parity/captures/session-2.mp4` from 17 seconds, `{data-root}/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`). The words go once the share is whole, and "Preparing to load data" follows. The screen's `LoginStatusStep` holds the step, the timers of `LOGIN_STATUS_STEPS` give the checks their time and a download with nothing to fetch leaves the game's own steps to show, so a warm visit shows what the game shows with nothing to download: "Preparing to download resources", "Checking for updates...", "Loading game..." at 0.00%, then "Preparing to load data" over a full bar (`packages/genshin-world/src/components/Login/Screen/Index.vue`).
+
+The composable's `isDownloading` is true only while a planned file is still being fetched, so a set with nothing pending never shows the line (`packages/hosted-assets/src/composables/useHostedAssetsPreload.ts`).
+
+The elemental loading screen is the scene's own load after the door, and the game's shows no download on it. So the character packs and the game data lock's objects and indexes download from the title's click, the launch bar reports their share, and the door waits on the bar's full share as the game's does. A failed file puts the game's failure line and a retry on that bar, in the words' and the share's places. The elemental screen takes the world's steps alone.
 
 ## Not built
 
 - An upload does not compare content first, so an unchanged file uploads again on a rerun.
 - A file a pack drops is not unpublished: a rerun replaces only the names the packs still hold.
+- The download's total size is not shown. The text map holds `Downloaded: {0:F2}GB/{1:F2}GB` (text id 2598187350), but no captured frame of the login's download shows it, so the bar shows the share alone. A capture showing the total on the login would add it beside the line.
 
 ## Rejected
 
@@ -61,9 +66,10 @@ The game's first bar is the plain bar on its login screen, which follows the tit
 | `packages/genshin-world/src/services/character/createCharacterPackReader.ts`   | A pack's model, terms and textures, each found by the pack's own names                     |
 | `scripts/src/models/genshinAssets/characterPacks/CharacterPackFile.ts`         | One file read from disk, with its object key and size                                      |
 | `scripts/src/services/hostedAssets/createHostedAssetBucketClientMap.ts`        | The bucket client each environment is published through, shared with the game data publish |
-| `packages/genshin-text/src/models/GameTextKey.ts`                              | The launch loading bar's failure line and retry, by their text ids                         |
+| `packages/genshin-text/src/models/GameTextKey.ts`                              | The launch loading bar's download line, failure line and retry, by their text ids          |
 
 ## Sources
 
 - The owner's statement that HoYoverse permits redistributing the packs. No written grant is in the repository.
+- The download line and its order: the owner's capture of the Japanese client, `{data-root}/genshin-parity/captures/session-2.mp4` from 17 to 28 seconds (the current build), and the English recording `yt-rBnfA4pXw6U.mp4`, both read frame by frame.
 - The bundled terms, read from each release's own file: `{data-root}/character-packs/extracted/10000006/丽莎/使用规则.txt`, which names miHoYo as copyright holder, and `{data-root}/character-packs/extracted/10000030/readme【一定要看】.txt`, which names miHoYo as provider.
