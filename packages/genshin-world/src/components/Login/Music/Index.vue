@@ -34,6 +34,11 @@ interface Props {
 }
 
 const { doorFormingLeftMs, gameDataBaseUrl, isDoorOpened, music, sounds } = defineProps<Props>();
+// The promise a started source resolves when it has ended, which the context waits on before it closes
+const getSourceEnded = (source: AudioBufferSourceNode): Promise<void> =>
+  new Promise<void>((resolve) => {
+    source.addEventListener("ended", () => resolve(), { once: true });
+  });
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
 // Screen shows. The door's layer plays as the door forms, and its sound once the door opens, through the effects bus's
 // Compressor and the master's limiter as the game's mix passes them, all through one context. The browser's autoplay
@@ -88,17 +93,13 @@ onMounted(() => {
       .linearRampToValueAtTime(0, end);
     source.start(now);
     source.stop(end);
-    formingEnded = new Promise<void>((resolve) => {
-      source.addEventListener("ended", () => resolve(), { once: true });
-    });
+    formingEnded = getSourceEnded(source);
   };
   playDoorSound = () => {
     const source = new AudioBufferSourceNode(context, { buffer: doorSound });
     source.connect(sfxBus);
     source.start(context.currentTime + LOGIN_DOOR_SOUND_DELAY_MS / 1000);
-    doorEnded = new Promise<void>((resolve) => {
-      source.addEventListener("ended", () => resolve(), { once: true });
-    });
+    doorEnded = getSourceEnded(source);
   };
   if (context.state === "suspended")
     for (const type of ["pointerdown", "keydown"] as const)
