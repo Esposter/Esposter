@@ -110,9 +110,9 @@ export const useGenshinSave = async () => {
     return promise;
   };
   // Every attempt sends the page's one session id, so an attempt whose write landed and whose response was lost is
-  // Retried As the same start, which the server answers without taking the lease again
-  // Between them is its backoff
-  // oxlint-disable no-await-in-loop -- Retry: each attempt runs only because the one before it failed, and the wait
+  // Retried as the same start, which the server answers without taking the lease again.
+  // The wait between attempts is its backoff
+  // oxlint-disable no-await-in-loop -- Retry: each attempt runs only because the one before it failed
   const startUntilStarted = async (startSessionId: string, signal: AbortSignal) => {
     for (let attempt = 0; ; attempt++) {
       if (signal.aborted) return undefined;

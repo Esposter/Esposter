@@ -56,8 +56,8 @@ const selection = computed(() => {
   else if (to.value) return { end: to.value.toString(), start: from.value.toString() };
   else return { start: from.value.toString() };
 });
-// One grid per month the calendar can show, all made up front so a second month appears without a grid being made
-// `mid-press`. Each draws its month's six weeks, Monday first, and reads the selection the models hold
+// One grid per month the calendar can show, all made up front so a second month appears without a grid being
+// Made mid-press. Each draws its month's six weeks, Monday first, and reads the selection the models hold
 const grids = Array.from({ length: maxMonthCount }, (_grid, index) =>
   createCalendar({
     disabled: checkIsOutOfBounds,

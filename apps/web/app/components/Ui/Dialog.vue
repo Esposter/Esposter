@@ -53,8 +53,8 @@ const isExpandable = computed(() => !isSizeFixed && isStandingInPage(placement))
 const displayPlacement = computed(() =>
   isExpandable.value && isExpanded.value ? UiDialogPlacement.FullScreen : placement,
 );
-// The dialog is its subtree's
-// oxlint-disable-next-line no-restricted-globals -- context, which its commands read wherever a body draws them
+// The dialog is its subtree's context, which its commands read wherever a body draws them
+// oxlint-disable-next-line no-restricted-globals -- the dialog's context is the subtree's, read by its commands
 provide(UI_DIALOG_INJECTION_KEY, { isExpandable, isExpanded, isOpen });
 // A tall frame takes its placement's fixed height, and otherwise keeps the height its placement gives it
 const frameClass = computed(() => {

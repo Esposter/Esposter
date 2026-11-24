@@ -42,8 +42,8 @@ const time = computed({
     choose(zonedDateTime.value.withPlainTime(Temporal.PlainTime.from(value)));
   },
 });
-// A picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined
-// Too when it is clearable, which the compiler cannot relate to TModel
+// A picked moment is a Date, and clearing writes undefined, so the caller's generic model must hold a Date, or
+// Undefined when it is clearable, which the compiler cannot relate to TModel
 const writeModelValue = (value: Date | undefined) => {
   modelValue.value = value as TModel;
 };

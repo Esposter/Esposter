@@ -7,8 +7,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The dialog's own commands — full screen where the dialog can take the page, and close — for the dialog this stands
 // In. The title bar draws them, and a body that draws its own header in place of the title bar draws them there, so
 // Every Dialog offers the same commands from one place
-// The dialog
-// oxlint-disable-next-line no-restricted-globals -- a component stands in is its subtree's context, as a theme scope is
+// oxlint-disable-next-line no-restricted-globals -- the dialog a component stands in is its subtree's context
 const dialog = inject(UI_DIALOG_INJECTION_KEY);
 if (!dialog) throw new InvalidOperationError(Operation.Read, "UiDialogCommands", "it stands only inside a UiDialog");
 const { isExpandable, isExpanded, isOpen } = dialog;

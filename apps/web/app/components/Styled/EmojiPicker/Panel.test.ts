@@ -150,8 +150,7 @@ describe("styledEmojiPickerPanel", () => {
     expect(getGridEmojis(component)).toStrictEqual(getCategoryCharacters(EmojiGroup.AnimalsAndNature));
   });
 
-  // The grid is one stop in the tab order, so Tab crosses it once rather than once per emoji, and the arrows walk from
-  // It
+  // The grid is one tab stop, so Tab crosses it once rather than once per emoji, and the arrows walk from it
   test("#258 the grid has one tab stop, on its first emoji", async () => {
     expect.hasAssertions();
 

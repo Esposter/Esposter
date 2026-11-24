@@ -70,9 +70,9 @@ const onGridKeydown = useGridKeyboard({
 </script>
 
 <template>
-  <!-- One category at a time, so the largest list is under four hundred buttons and needs no virtualisation. Each
-    is The library's quiet button drawn by its rule rather than its component, which would mount a primitive per
-    cell. The grid has one tab stop and its arrows walk it, the rows and cells being roles alone so the columns lay
+  <!-- One category at a time, so the largest list is under four hundred buttons and needs no virtualisation. Each cell
+    is the library's quiet button drawn by its rule rather than its component, which would mount a primitive per cell.
+    The grid has one tab stop and its arrows walk it, the rows and cells being roles alone so the columns lay
     out flat -->
   <div
     ref="grid"

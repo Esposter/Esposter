@@ -24,8 +24,7 @@ export const useMessageEvents = () => {
           // Each message is its own unit: one whose Create hooks reject stays out of the list and is logged, and the
           // Rest of the batch still lands behind it
           for (const newMessage of data)
-            // They were sent
-            // oxlint-disable-next-line no-await-in-loop -- Order is the contract: messages enter the list in the order
+            // oxlint-disable-next-line no-await-in-loop -- Order is the contract: messages enter the list in order
             await getResultAsync(() => storeCreateMessage({ ...newMessage, roomId })).match(noop, console.error);
         }).match(noop, console.error),
       ),
