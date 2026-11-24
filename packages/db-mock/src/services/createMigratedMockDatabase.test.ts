@@ -1,10 +1,8 @@
 import type { MockDatabase } from "#src/models/MockDatabase";
 
 import { createMigratedMockDatabase } from "#src/services/createMigratedMockDatabase";
-import { DATABASE_MIGRATIONS_DIRECTORY } from "@esposter/configuration/constants";
+import { getMigrationsDirectory } from "#src/services/getMigrationsDirectory";
 import { usersInAuth } from "@esposter/db-schema";
-import { findRepositoryRoot } from "@esposter/shared-node/find-repository-root";
-import { join } from "node:path";
 import { v7 } from "uuid";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
@@ -14,7 +12,7 @@ describe(createMigratedMockDatabase, () => {
 
   // Building the template is the first copy's cost, which a test's own timeout would count
   beforeAll(async () => {
-    const coreMigrationsDirectory = join(findRepositoryRoot(process.cwd()), DATABASE_MIGRATIONS_DIRECTORY, "core");
+    const coreMigrationsDirectory = getMigrationsDirectory("core");
     firstDatabase = await createMigratedMockDatabase(coreMigrationsDirectory);
     secondDatabase = await createMigratedMockDatabase(coreMigrationsDirectory);
   });
