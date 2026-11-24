@@ -13,16 +13,20 @@ import { getPath } from "#src/services/sweeps/duplicateCode/getPath";
 import { getRecordRowLines } from "#src/services/sweeps/duplicateCode/getRecordRowLines";
 import { memoize } from "#src/services/sweeps/duplicateCode/memoize";
 
-// Each reader gives the data lines of a file: one kind of non-logic read as data, a declaration or wiring, the rows of
-// An Enum-keyed record, or the numeric and colour rows of a table. A clone free of code under any reader is a copy of
-// That Non-logic alone, where a file's code under a reader is every line that is neither an import nor one of its data
-// Lines
+/**
+ * Each reader gives the data lines of a file: one kind of non-logic read as data, a declaration or wiring, the rows of
+ * an Enum-keyed record, or the numeric and colour rows of a table. A clone free of code under any reader is a copy of
+ * that non-logic alone, where a file's code under a reader is every line that is neither an import nor one of its data
+ * lines.
+ */
 const DATA_LINE_READERS: ((text: string) => Set<number>)[] = [getDeclarationLines, getRecordRowLines, getDataRowLines];
 
-// Every clone jscpd found, as a finding, except the ones that are non-logic in both files, and the ones a Claude plugin
-// Cannot share: a clone across two plugins, since each installs standalone, and a clone of two register files, since
-// The Engine keeps each `$` call in the file that makes it. `readSource` and `readPluginRoot` are passed in so the
-// Filter Reads the same text the clone was found in, and a test can supply both.
+/**
+ * Every clone jscpd found, as a finding, except the ones that are non-logic in both files, and the ones a Claude plugin
+ * cannot share: a clone across two plugins, since each installs standalone, and a clone of two register files, since
+ * the Engine keeps each `$` call in the file that makes it. `readSource` and `readPluginRoot` are passed in so the
+ * filter reads the same text the clone was found in, and a test can supply both.
+ */
 export const getDuplicateCodeFindings = (
   clones: DuplicateCodeClone[],
   readSource: (sourceId: string) => string,
@@ -59,8 +63,9 @@ export const getDuplicateCodeFindings = (
     const fragments = [readCloneLines(duplicationA), readCloneLines(duplicationB)] as const;
     const checkIsEveryRangeFree = (readLines: (sourceId: string) => Set<number>) =>
       fragments.every(({ endLine, sourceId, startLine }) => checkIsRangeFree(startLine, endLine, readLines(sourceId)));
-    // Two files sharing an import block run from it into their bodies, so a clone reaching a leading import line is a
-    // Shared block rather than a copied body, and no clone can include an import line.
+    // Two files sharing an import block run from it into their bodies.
+    // So a clone reaching a leading import line is a shared block, not a copied body.
+    // No clone can include an import line.
     if (
       !checkIsEveryRangeFree(readLeadingImportLines) ||
       readCodeLinesReaders.some((readLines) => checkIsEveryRangeFree(readLines))

@@ -33,6 +33,8 @@ export const FIXER_RESULT_FILE_EXTENSION = ".result.jsonl";
 // The most files one area unit holds, and the most lines of code, so one pass reads it in full in one sitting
 export const UNIT_FILE_CAP = 40;
 export const UNIT_LINE_CAP = 3000;
-// The files whose lines count against the line cap: the code a pass reads in full. Prose, data and snapshots add files
-// Only
+/**
+ * The files whose lines count against the line cap: the code a pass reads in full. Prose, data and snapshots add files
+ * only to the file cap.
+ */
 export const UNIT_CODE_FILE_REGEX = /\.(?:[cm]?[jt]sx?|vue|css)$/u;

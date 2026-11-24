@@ -10,11 +10,13 @@ import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, rename, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 
-// Fetched and unpacked into a partial folder of the attempt's own renamed onto the tool's, so a write or an unpack cut
-// Short is never found as the tool and no other attempt's files are ever removed. The rename is refused while the
-// Tool's Folder holds anything, so one another process has published is never removed but kept; one without the
-// Executable Holds only a stale attempt, and is moved aside under a name of its own and removed before the rename is
-// Made again
+/**
+ * Fetched and unpacked into a partial folder of the attempt's own, renamed onto the tool's, so a write or an unpack cut
+ * short is never found as the tool and no other attempt's files are ever removed. The rename is refused while the
+ * tool's folder holds anything, so one another process has published is never removed but kept; one without the
+ * executable holds only a stale attempt, and is moved aside under a name of its own and removed before the rename is
+ * made again.
+ */
 export const installPinnedTool = async ({
   archiveSha256,
   archiveUrl,
@@ -32,8 +34,8 @@ export const installPinnedTool = async ({
   if (isArchive) {
     const archivePath = join(partialDirectory, "archive");
     await writeFile(archivePath, archive);
-    // The system's tar reads a zip or a tar.xz by its contents on Windows and macOS, so the file's name says nothing to
-    // It
+    // The system's tar reads a zip or a tar.xz by its contents on Windows and macOS.
+    // So the file's name says nothing to it.
     execFileSync(getSystemTarPath(), ["-xf", archivePath, "-C", partialDirectory]);
     await rm(archivePath);
   } else await writeFile(join(partialDirectory, executablePattern), archive);

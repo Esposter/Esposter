@@ -5,10 +5,12 @@ import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, rename, rm } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 
-// Runs `run` on a staged copy of each folder: an empty sibling made beside it with `mkdtemp`, so the rename that swaps
-// It in stays on one volume. A copy replaces its folder only once `run` has finished, and the folder it replaces is set
-// Aside until the copy is in place, so a swap that fails puts it back (or logs where it remains, when that put-back
-// Fails Too) and a run that fails leaves every folder as it was. A copy is removed on success and on failure alike
+/**
+ * Runs `run` on a staged copy of each folder: an empty sibling made beside it with `mkdtemp`, so the rename that swaps
+ * it in stays on one volume. A copy replaces its folder only once `run` has finished, and the folder it replaces is set
+ * aside until the copy is in place, so a swap that fails puts it back (or logs where it remains, when that put-back
+ * fails too) and a run that fails leaves every folder as it was. A copy is removed on success and on failure alike.
+ */
 export const withStagedFolders = <K extends string, R>(
   folders: Record<K, string>,
   run: (staged: Record<K, string>) => Promise<R>,
@@ -17,8 +19,8 @@ export const withStagedFolders = <K extends string, R>(
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- own K, which the compiler cannot relate to its type
   const keys = Object.keys(folders) as K[];
   const staged = new Map<K, string>();
-  // Made at once, and the finalizer waits for every one to settle, so a copy still being made when another fails is
-  // Removed too
+  // Copies are made at once, and the finalizer waits for every one to settle.
+  // So a copy still being made when another fails is removed too.
   const copies = keys.map(async (key) => {
     const parent = dirname(folders[key]);
     await mkdir(parent, { recursive: true });

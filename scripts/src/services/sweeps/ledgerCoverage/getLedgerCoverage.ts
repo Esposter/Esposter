@@ -7,13 +7,15 @@ import { UnitState } from "#src/models/sweeps/ledgerCoverage/UnitState";
 import { getUnitPaths } from "#src/services/sweeps/ledgerCoverage/getUnitPaths";
 import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
 
-// Each unit's state from the ledger's events, taken in the order their dates fall rather than the order the log lists
-// Them, so a carried date sits where its pass happened. A sweep raises a unit to its date and model and never lowers
-// One; a reopen clears it when it is not older than the sweep, so a sweep landing after a same-day reopen dates the
-// Unit Again. A unit no sweep dates is sampled while the ledger's latest sample found no defect and neither a reopen
-// Nor a Commit touching a path the unit names came after it; a unit naming no path cannot be told changed, so it stays
-// Sampled. A reopen naming a whole area reopens only the units in that area; one naming a whole question reopens them
-// All.
+/**
+ * Each unit's state from the ledger's events, taken in the order their dates fall rather than the order the log lists
+ * them, so a carried date sits where its pass happened. A sweep raises a unit to its date and model and never lowers
+ * one; a reopen clears it when it is not older than the sweep, so a sweep landing after a same-day reopen dates the
+ * unit again. A unit no sweep dates is sampled while the ledger's latest sample found no defect and neither a reopen
+ * nor a commit touching a path the unit names came after it; a unit naming no path cannot be told changed, so it stays
+ * sampled. A reopen naming a whole area reopens only the units in that area; one naming a whole question reopens them
+ * all.
+ */
 export const getLedgerCoverage = (
   ledger: string,
   units: readonly string[],
