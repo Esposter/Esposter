@@ -21,14 +21,14 @@ flowchart LR
 
 `createMockDb()` in `packages/db-mock/src/createMockDb.ts` returns one `MockDatabase` per test file, backed by one Miniflare instance:
 
-1. Starts Miniflare with a `CORE` D1 database, one R2 bucket per storage bucket and one Queue per job.
-2. Applies the core migration folder through drizzle's D1 migrator, the same SQL production runs.
+1. Opens a copy of the migrated core database: the first file applies the core migration folder through drizzle's D1 migrator, the same SQL production runs, into a template folder under the OS temporary directory, named by a hash of the lockfile, the migrations and the code that opens the database. Each file then copies that template into its own persistence root, where the migrator finds every migration applied. Applying the migrations once per file was most of a file's fixed cost, since each statement crosses Miniflare's binding one call at a time.
+2. Starts Miniflare on that copy, with one R2 bucket per storage bucket and one Queue per job.
 3. Copies the instance's bindings into `env`, the `cloudflare:workers` stand-in that app code reads.
-4. Returns `db` (the core database as `Database`), `getBucket`, `getQueue`, `reset` and `dispose`.
+4. Returns `db` (the core database as `Database`), `getBucket`, `getQueue`, `reset` and `dispose`. `dispose` removes the file's copy, and a copy whose process has exited is removed by the next process that makes one.
 
 The Workers test doubles (the object stubs, the bucket and queue doubles, `createUser` and the wrangler reader) are the `@esposter/db-mock/workers` entry, which only `apps/jobs` and `apps/realtime` import. Their types are the Workers globals, which `apps/web`'s browser and shared programs never load, so they live on their own entry.
 
-**Why Miniflare instead of an in-process database?** It is the runtime's own D1, R2 and Queues, so a test exercises the SQL and bindings production runs, and nothing outlives the test file that started it.
+**Why Miniflare instead of an in-process database?** It is the runtime's own D1, R2 and Queues, so a test exercises the SQL and bindings production runs. No file's state reaches another, since each opens its own copy of the template; only the template outlives the run, and it is keyed by everything it is built from, so a change to the migrations, the lockfile or the opener builds a new one.
 
 **Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only the Miniflare boot + the auth `vi.mock` (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable neither `context.test.ts` nor `shared/test/setup.ts` mocks, and such a router declares `// @vitest-environment nuxt` and pays the Nuxt environment build.
 
@@ -89,10 +89,11 @@ All cleanup — the database and its buckets — lives in `afterEach`, never `be
 
 ## Key files
 
-| File                                   | Role                                         |
-| -------------------------------------- | -------------------------------------------- |
-| `packages/db-mock/src/createMockDb.ts` | Miniflare setup, migrations and bindings     |
-| `apps/web/server/trpc/context.test.ts` | `createMockContext` and the identity helpers |
+| File                                                          | Role                                             |
+| ------------------------------------------------------------- | ------------------------------------------------ |
+| `packages/db-mock/src/createMockDb.ts`                        | Miniflare setup, migrations and bindings         |
+| `packages/db-mock/src/services/createMigratedMockDatabase.ts` | The migrated template and each file's copy of it |
+| `apps/web/server/trpc/context.test.ts`                        | `createMockContext` and the identity helpers     |
 
 ## Adding a new router test
 

@@ -1,6 +1,6 @@
 import type { MockDatabase } from "#src/models/MockDatabase";
 
-import { createMockDatabase } from "#src/services/createMockDatabase";
+import { createMigratedMockDatabase } from "#src/services/createMigratedMockDatabase";
 import { DATABASE_MIGRATIONS_DIRECTORY } from "@esposter/configuration/constants";
 import { findRepositoryRoot } from "@esposter/shared-node/find-repository-root";
 import { join } from "node:path";
@@ -14,6 +14,6 @@ const getMigrationsDirectory = (databaseName: string) =>
 // A test file gets one database, shared by every call in it, so a `beforeAll` and a helper can both ask for it
 let mockDatabase: Promise<MockDatabase> | undefined;
 export const createMockDb = async (): Promise<MockDatabase> => {
-  mockDatabase ??= createMockDatabase(getMigrationsDirectory("core"));
+  mockDatabase ??= createMigratedMockDatabase(getMigrationsDirectory("core"));
   return mockDatabase;
 };

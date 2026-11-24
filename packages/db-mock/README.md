@@ -18,7 +18,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 | Export         | Kind     | Purpose                                                                                                                                          |
 | -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `createMockDb` | function | Starts the file's Miniflare instance, applies the database's migrations and returns a `MockDatabase`. Calls in one file share the instance       |
+| `createMockDb` | function | Returns the file's `MockDatabase`, opened on its own copy of the database the migrations build. Calls in one file share the instance             |
 | `env`          | const    | The `cloudflare:workers` stand-in. `createMockDb` copies the instance's bindings into it, so code reached through a test reads the same bindings |
 
 The in-memory Cache Storage is the `@esposter/db-mock/cache` entry, not the main one, since the main entry's `createMockDb` loads Miniflare into any suite that imports it:
