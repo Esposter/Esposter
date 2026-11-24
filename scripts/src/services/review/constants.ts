@@ -63,6 +63,8 @@ export const SETTLER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 120 
 export const REVIEW_HEARTBEAT_INTERVAL_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const REVIEW_HEARTBEAT_PROCESS_COUNT = 3;
 export const REVIEW_HEARTBEAT_COMMAND_CHARACTER_LIMIT = 100;
+// The end of an answer with no JSON object, kept in its error, as the session's output is kept nowhere else
+export const REVIEW_ANSWER_TAIL_CHARACTER_LIMIT = 300;
 // The windows one run reviews at least, stretched through the first window `main` may move to (`getRunWindowCount`):
 // The rest stay owed and the run dispatches the next once. A run that cannot read its windows then spends on this many,
 // Or up to the first window `main` may move to, and not on the whole backlog, before the next run can show why.

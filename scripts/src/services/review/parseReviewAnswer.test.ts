@@ -80,7 +80,7 @@ describe(parseReviewAnswer, () => {
     expect.hasAssertions();
 
     expect(() => parseReviewAnswer("no answer", reviewFindingsAnswerSchema)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: review answer, it holds no JSON object]`,
+      `[InvalidOperationError: Invalid operation: Read, name: review answer, it holds no JSON object, and its text ends: "no answer"]`,
     );
   });
 });

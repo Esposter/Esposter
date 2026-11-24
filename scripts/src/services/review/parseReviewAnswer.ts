@@ -1,6 +1,7 @@
 import type { z } from "zod";
 
 import { claudeOutputSchema } from "#src/models/review/ClaudeOutput";
+import { REVIEW_ANSWER_TAIL_CHARACTER_LIMIT } from "#src/services/review/constants";
 import { getLastJsonObject } from "#src/services/review/getLastJsonObject";
 import { getResult, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
@@ -13,7 +14,12 @@ export const parseReviewAnswer = <T>(output: string, schema: z.ZodType<T>): T =>
     () => output,
   );
   const answer = getLastJsonObject(text);
-  if (answer === undefined) throw new InvalidOperationError(Operation.Read, "review answer", "it holds no JSON object");
+  if (answer === undefined)
+    throw new InvalidOperationError(
+      Operation.Read,
+      "review answer",
+      `it holds no JSON object, and its text ends: ${JSON.stringify(text.slice(-REVIEW_ANSWER_TAIL_CHARACTER_LIMIT))}`,
+    );
 
   return getResult(() => schema.parse(jsonDateParse(answer))).match(
     (value) => value,
