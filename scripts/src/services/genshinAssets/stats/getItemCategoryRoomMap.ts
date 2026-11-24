@@ -8,7 +8,7 @@ import {
 } from "#src/services/genshinAssets/stats/constants";
 import { takeOne } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface/save";
-import { itemCategoryRoomMapSchema } from "genshin-world";
+import { itemCategoryRoomMapSchema } from "genshin-world/definitions";
 
 // The rooms of the three tabs the bag counts on their own, each the first value of its game constant: the room the bag
 // Shows. The record is checked against the World's schema as it is built

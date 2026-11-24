@@ -14,7 +14,7 @@ import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap
 import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset, OfferingKind } from "genshin-world";
+import { GameDataset, OfferingKind } from "genshin-world/definitions";
 
 // Every offering's levels are published as one record per offering under its kind.
 // Each row's items and reward are joined from the level table and the reward table.

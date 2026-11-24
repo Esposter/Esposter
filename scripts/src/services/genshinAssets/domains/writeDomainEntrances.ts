@@ -15,7 +15,7 @@ import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffse
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
-import { LandmarkKind } from "genshin-world";
+import { LandmarkKind } from "genshin-world/definitions";
 
 // Each challenge domain's entrance of the open world written into the region its place is in, as a landmark of its own
 // Kind. Each entry is placed from its scene point round the Windrise origin, and filed under the catalogue area of the

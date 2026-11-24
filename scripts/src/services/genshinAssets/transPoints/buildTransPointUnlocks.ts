@@ -2,7 +2,7 @@ import type { ExcelTransPointUnlockRow } from "#src/models/genshinAssets/transPo
 
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The open world's transport points the game's unlock table lists.
 // They are published as one record of the transport points dataset, beside the rewards, sorted by point id.

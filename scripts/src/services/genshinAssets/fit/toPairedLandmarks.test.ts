@@ -8,7 +8,7 @@ import {
   INTERACTIVE_MAP_STATUE_LABEL_ID,
   INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
 } from "#src/services/genshinAssets/points/constants";
-import { LandmarkKind } from "genshin-world";
+import { LandmarkKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const createMapPoint = (overrides: Partial<InteractiveMapPoint>): InteractiveMapPoint => ({

@@ -6,7 +6,7 @@ import { buildOfferingLevels } from "#src/services/genshinAssets/offerings/build
 import { buildOfferingPlaces } from "#src/services/genshinAssets/offerings/buildOfferingPlaces";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const offeringsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

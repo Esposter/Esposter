@@ -13,7 +13,7 @@ import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRe
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const leyLineCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

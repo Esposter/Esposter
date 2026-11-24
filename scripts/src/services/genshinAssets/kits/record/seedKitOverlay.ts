@@ -1,6 +1,6 @@
 import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
-import { expandKitOverlay } from "genshin-world";
+import { expandKitOverlay } from "genshin-world/definitions";
 
 // The overlay a seeding write saves: the committed overlay in its own form, its range keys kept, with each seeded entry
 // The committed overlay does not cover added under its own path. A seeded entry is read per hit, so its index is set to

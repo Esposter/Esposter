@@ -4,7 +4,7 @@ import type { FishingPropPlace } from "genshin-world";
 import { FISHING_PROP_COMPONENTS } from "#src/services/genshinAssets/fishing/constants";
 import { toFishingProps } from "#src/services/genshinAssets/fishing/toFishingProps";
 import { readWitnessPlacements } from "#src/services/genshinAssets/fit/readWitnessPlacements";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The fishing-area props each region's witness layout places, as the Fishing dataset's records keyed by region. The
 // Notes print each region's count, then each prop's name, place, turn and scale

@@ -4,7 +4,7 @@ import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHit
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
-import { SKILL_TARGETING_AREA } from "genshin-world";
+import { SKILL_TARGETING_AREA } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const targetCircle = (hitbox: Partial<GcsimHitbox>): GcsimHitbox => ({

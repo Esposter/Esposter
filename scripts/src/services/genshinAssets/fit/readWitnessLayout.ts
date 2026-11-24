@@ -5,7 +5,7 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readGameVersion } from "#src/services/genshinAssets/shared/readGameVersion";
 import { readVouchedFileProvenance } from "#src/services/provenance/readVouchedFileProvenance";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { sceneLayoutSchema } from "genshin-world";
+import { sceneLayoutSchema } from "genshin-world/definitions";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

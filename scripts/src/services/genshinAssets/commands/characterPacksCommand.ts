@@ -9,7 +9,7 @@ import { readCharacterPackFiles } from "#src/services/genshinAssets/characterPac
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The index is the dataset's one record, under the key the world reads it by
 const CHARACTER_PACK_INDEX_KEY = `${GameDataset.CharacterPackIndex}/index`;

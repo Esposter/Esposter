@@ -1,4 +1,4 @@
-import { CraftingRecipeKind } from "genshin-world";
+import { CraftingRecipeKind } from "genshin-world/definitions";
 
 // The game's combine and material tables in the dump, read by their names
 export const COMBINE_TABLE_NAME = "CombineExcelConfigData";

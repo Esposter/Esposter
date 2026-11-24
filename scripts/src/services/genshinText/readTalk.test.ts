@@ -1,7 +1,7 @@
 import type { DumpedDialog } from "#src/models/genshinText/DumpedDialog";
 
 import { readTalk } from "#src/services/genshinText/readTalk";
-import { choiceTalkLineSchema, TalkLineKind } from "genshin-world";
+import { choiceTalkLineSchema, TalkLineKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(readTalk, () => {

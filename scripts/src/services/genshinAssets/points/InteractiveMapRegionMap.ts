@@ -1,6 +1,6 @@
 import type { InteractiveMapRegion } from "#src/models/genshinAssets/points/InteractiveMapRegion";
 
-import { OculusKind } from "genshin-world";
+import { OculusKind } from "genshin-world/definitions";
 
 // Each region's place on the official map: the map's area it lies in and its Oculi by label, with the wiki's count.
 // Area 1 holds Mondstadt's sixty-six Anemoculi, and the other areas are named by the element they hold.

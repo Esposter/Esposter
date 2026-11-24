@@ -19,7 +19,7 @@ import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodC
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Paimon's Bargains' rotation as one record of the shops dataset: the pairs of characters, each pair the avatars that
 // The two character rotations give at the same order, read through their cards' item use, and the Royal and Blackcliff

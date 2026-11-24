@@ -1,4 +1,4 @@
-import { OfferingKind } from "genshin-world";
+import { OfferingKind } from "genshin-world/definitions";
 
 // The kind of each offering id the dump's level-up table names, by the id its open state gives it.
 // Each id's levels are published under its kind, and an id this map does not hold is an error.

@@ -1,7 +1,7 @@
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
 
 import { toSeeliePlace } from "#src/services/genshinAssets/puzzles/toSeeliePlace";
-import { PuzzleKind } from "genshin-world";
+import { PuzzleKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toSeeliePlace, () => {

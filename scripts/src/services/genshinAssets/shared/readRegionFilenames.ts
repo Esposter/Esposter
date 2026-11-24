@@ -1,5 +1,5 @@
 import { PROVENANCE_SIDECAR_SUFFIX } from "#src/services/provenance/constants";
-import { REGION_LANDMARKS_SUFFIX } from "genshin-world";
+import { REGION_LANDMARKS_SUFFIX } from "genshin-world/definitions";
 import { readdir } from "node:fs/promises";
 
 // The filenames of the region files in a regions folder, with each provenance sidecar and each landmarks file left out:

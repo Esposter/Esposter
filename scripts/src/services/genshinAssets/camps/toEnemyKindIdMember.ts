@@ -1,4 +1,4 @@
-import { EnemyKindId } from "genshin-world";
+import { EnemyKindId } from "genshin-world/definitions";
 
 // The member of EnemyKindId a kind is written as, the name the object gives its id
 export const toEnemyKindIdMember = (kindId: EnemyKindId): string => {

@@ -1,4 +1,4 @@
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 
 const ELEMENT_WORDS: ReadonlySet<string> = new Set(Object.keys(Element));
 // A name with its element words dropped, so that Fatui Pyro Agent is a Fatui Agent

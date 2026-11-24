@@ -1,4 +1,4 @@
-import { ChestKind } from "genshin-world";
+import { ChestKind } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/points/readFittedMapPoints"), () => ({

@@ -1,4 +1,4 @@
-import { ArchiveSection } from "genshin-world";
+import { ArchiveSection } from "genshin-world/definitions";
 
 // The game's tables the Archive's sections are read from, in the dump beside its text maps, read by their names
 export const WEAPON_CODEX_TABLE_NAME = "WeaponCodexExcelConfigData";

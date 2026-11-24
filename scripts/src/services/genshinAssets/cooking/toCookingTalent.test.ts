@@ -1,7 +1,7 @@
 import type { CookProudSkillRow } from "#src/models/genshinAssets/cooking/CookProudSkillRow";
 
 import { toCookingTalent } from "#src/services/genshinAssets/cooking/toCookingTalent";
-import { CookingFoodType, CookingTalentEffect } from "genshin-world";
+import { CookingFoodType, CookingTalentEffect } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toCookingTalent, () => {

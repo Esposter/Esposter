@@ -4,7 +4,7 @@ import type { GcgCost } from "genshin-world";
 import { GCG_COST_TYPE_INVALID } from "#src/services/genshinAssets/gcg/constants";
 import { invalidRead } from "#src/services/genshinAssets/gcg/invalidRead";
 import { toElement } from "#src/services/genshinAssets/gcg/toElement";
-import { GcgCostKind } from "genshin-world";
+import { GcgCostKind } from "genshin-world/definitions";
 
 // The dump's cost lines: an element's die, Matching dice (the character's own element), Unaligned dice of any face, or
 // Energy. The dump's empty slots, which hold the invalid cost at its default, are left out

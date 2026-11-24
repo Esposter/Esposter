@@ -5,7 +5,7 @@ import {
   SCENE_POINT_CATEGORY,
   SCENE_POINT_FILE,
 } from "#src/services/genshinAssets/shared/constants";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The open world's scene group record, which `genshin:assets scene-groups` publishes and the residents are read from.
 // `isolatedDeclarations` demands the annotation this template literal would otherwise infer.

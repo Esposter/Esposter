@@ -1,7 +1,7 @@
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { readNameTextIds } from "#src/services/genshinText/readNameTextIds";
 import { GameLanguages } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Every name the world's data cites by text id is published into the world's own chunk per language. The ids are every
 // `nameTextId` in the published records and the data files, found by `readNameTextIds`, so a new source needs no entry

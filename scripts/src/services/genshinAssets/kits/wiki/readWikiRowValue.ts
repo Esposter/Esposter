@@ -1,7 +1,7 @@
 import type { WikiAdvancedProperty } from "#src/models/genshinAssets/kits/wiki/WikiAdvancedProperty";
 
 import { WikiInternalCooldownTagMap } from "#src/services/genshinAssets/kits/wiki/WikiInternalCooldownTagMap";
-import { InternalCooldownTag } from "genshin-world";
+import { InternalCooldownTag } from "genshin-world/definitions";
 import { z } from "zod";
 
 const WIKI_NO_INTERNAL_COOLDOWN_TAG = "none";

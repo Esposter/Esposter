@@ -20,7 +20,7 @@ import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionD
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { catalogueSchema, LandmarkKind } from "genshin-world";
+import { catalogueSchema, LandmarkKind } from "genshin-world/definitions";
 import { readFile } from "node:fs/promises";
 
 // The kinds the official map's labels pair, each with the label it is read from and the word its id carries. A Statue

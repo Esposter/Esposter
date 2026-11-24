@@ -11,7 +11,7 @@ import {
 import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
 import { addGcsimChargedAttackVariantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
-import { CombatTalent, WeaponType } from "genshin-world";
+import { CombatTalent, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(addGcsimChargedAttackCandidates, () => {

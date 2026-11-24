@@ -4,7 +4,7 @@ import type { ExcelGcgDeckRow } from "#src/models/genshinAssets/gcg/ExcelGcgDeck
 import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
 
 import { toGcgDeck } from "#src/services/genshinAssets/gcg/toGcgDeck";
-import { Element, GcgCardKind, GcgSkillKind } from "genshin-world";
+import { Element, GcgCardKind, GcgSkillKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toGcgDeck, () => {

@@ -1,7 +1,7 @@
 import type { AbyssTowerBuff } from "#src/models/genshinAssets/spiralAbyss/AbyssTowerBuff";
 
 import { toAbyssBenedictionChoices } from "#src/services/genshinAssets/spiralAbyss/toAbyssBenedictionChoices";
-import { AbyssBenedictionIcon, AbyssBenedictionScope } from "genshin-world";
+import { AbyssBenedictionIcon, AbyssBenedictionScope } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toAbyssBenedictionChoices, () => {

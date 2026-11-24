@@ -6,7 +6,7 @@ import {
 } from "#src/services/genshinAssets/enemies/constants";
 import { AVATAR_OF_LAVA_DROPS_ENTRY, DROPS_TEMPLATE_PAGE } from "#src/services/genshinAssets/enemies/constants.test";
 import { writeWikiPage } from "#src/services/genshinAssets/enemies/writeWikiPage.test";
-import { EnemyKindId, EnemyType } from "genshin-world";
+import { EnemyKindId, EnemyType } from "genshin-world/definitions";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

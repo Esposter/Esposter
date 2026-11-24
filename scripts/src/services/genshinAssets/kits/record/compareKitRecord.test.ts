@@ -6,7 +6,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { HIT_RECORD, RECORD, SOURCE_CANDIDATE_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
-import { KitPlunge } from "genshin-world";
+import { KitPlunge } from "genshin-world/definitions";
 import { assert, describe, expect, test } from "vitest";
 
 describe(compareKitRecord, () => {

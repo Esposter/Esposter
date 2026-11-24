@@ -4,7 +4,7 @@ import { traceWeaponIcon } from "#src/services/genshinAssets/fit/traceWeaponIcon
 import { readPngNames } from "#src/services/genshinAssets/shared/readPngNames";
 import { WEAPON_ICON_DIRECTORY } from "#src/services/genshinAssets/weapons/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { join } from "node:path";
 
 // Every exported weapon icon as the loops round where it is painted, in the icon's own unit square, published as

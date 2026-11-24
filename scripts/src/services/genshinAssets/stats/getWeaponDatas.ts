@@ -14,7 +14,7 @@ import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeL
 import { toWeaponPassive } from "#src/services/genshinAssets/stats/toWeaponPassive";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
-import { weaponDataSchema } from "genshin-world";
+import { weaponDataSchema } from "genshin-world/definitions";
 
 // Every weapon with ascension phases as the game's tables hold it: its name by text id, its base ATK and secondary
 // Attribute growing along their curves, its phases from its promotion table with what entering each costs, its fodder

@@ -8,7 +8,7 @@ import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addG
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
-import { STRIKE_TARGETING_AREA } from "genshin-world";
+import { STRIKE_TARGETING_AREA } from "genshin-world/definitions";
 
 // Each Loop Shot's animation, the frames its cancel slice is read at on its action's line (attack.go lines 57 and 65),
 // Which gcsim gives as the literal 53 inside a call rather than as a constant

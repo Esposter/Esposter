@@ -5,7 +5,7 @@ import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/Exc
 
 import { AREA_UNLOCK_CONDITION_TYPE, PLAYER_LEVEL_CONDITION_TYPE } from "#src/services/genshinAssets/leyLine/constants";
 import { toLeyLineRegions } from "#src/services/genshinAssets/leyLine/toLeyLineRegions";
-import { OutcropKind } from "genshin-world";
+import { OutcropKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toLeyLineRegions, () => {

@@ -3,7 +3,7 @@ import type { ExcelHomeWorldPlantRow } from "#src/models/genshinAssets/home/Exce
 
 import { FARM_FIELD_TABLE_NAME, PLANT_TABLE_NAME } from "#src/services/genshinAssets/home/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The garden's fields and the seeds each plant, from the game's tables, as one record of the home dataset: each field
 // By its furnishing's item id, each plant by its seed's, and each record sorted by that id

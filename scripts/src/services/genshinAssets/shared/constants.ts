@@ -29,7 +29,7 @@ import {
 import { MEBIBYTE, PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { CACHE_ROOT, WINDOWS_ANIMESTUDIO_DIRECTORY } from "@esposter/shared-node/cache";
 import { MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { dirname, join } from "node:path";
 
 // What the game's own files are exported into: scratch like every other, kept outside the repository and never

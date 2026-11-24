@@ -1,6 +1,6 @@
 /* oxlint-disable typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this regex would
    otherwise infer */
-import { KitPlunge } from "genshin-world";
+import { KitPlunge } from "genshin-world/definitions";
 
 export const FLOW_START_REGEX: RegExp = /^[[{]/u;
 

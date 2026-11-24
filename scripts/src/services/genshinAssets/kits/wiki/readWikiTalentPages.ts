@@ -6,7 +6,7 @@ import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { WIKI_API_MAX_BYTES } from "genshin-persona/src/services/constants.ts";
-import { CombatTalent } from "genshin-world";
+import { CombatTalent } from "genshin-world/definitions";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";

@@ -1,7 +1,7 @@
 import type { ExcelForgeRow } from "#src/models/genshinAssets/forging/ExcelForgeRow";
 
 import { toForgeRecipe } from "#src/services/genshinAssets/forging/toForgeRecipe";
-import { ForgeRecipeKind } from "genshin-world";
+import { ForgeRecipeKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toForgeRecipe, () => {

@@ -1,7 +1,7 @@
 import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
 import type { ReliquaryPieceData } from "genshin-world";
 
-import { ArtifactSlot } from "genshin-world";
+import { ArtifactSlot } from "genshin-world/definitions";
 import { z } from "zod";
 
 // The piece a reliquary row is: its item id, the text id of its name, its rank, rarity and slot, and how many minor

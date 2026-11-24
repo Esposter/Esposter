@@ -8,7 +8,7 @@ import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalen
 import { GCSIM_CONFIG_FILE, GCSIM_NO_INTERNAL_COOLDOWN_TAG } from "#src/services/genshinAssets/kits/constants";
 import { addGcsimMoondewCleanseCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
-import { CombatTalent, Element, LunarReactionType, WeaponType } from "genshin-world";
+import { CombatTalent, Element, LunarReactionType, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 // Columbina's charge.go: the Moondew Cleanse's three hitmarks, its frames, and its Lunar-Bloom attack, whose hitbox the

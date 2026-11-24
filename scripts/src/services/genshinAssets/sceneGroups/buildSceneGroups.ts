@@ -12,7 +12,12 @@ import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constant
 import { TRIGGER_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
-import { SceneGroupMemberKind, SceneGroupSource, sceneGroupsSchema, sceneNpcBornSchema } from "genshin-world";
+import {
+  SceneGroupMemberKind,
+  SceneGroupSource,
+  sceneGroupsSchema,
+  sceneNpcBornSchema,
+} from "genshin-world/definitions";
 import { z } from "zod";
 
 // The open world's scene group record, each field filled from the best source that holds it today: the NPCs and their

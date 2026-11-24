@@ -1,5 +1,5 @@
 import { readReputationRequestQuest } from "#src/services/genshinText/readReputationRequestQuest";
-import { QuestKind, QuestObjectiveKind } from "genshin-world";
+import { QuestKind, QuestObjectiveKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(readReputationRequestQuest, () => {

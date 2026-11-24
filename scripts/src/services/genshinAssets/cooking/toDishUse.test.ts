@@ -8,7 +8,7 @@ import {
   REVIVE_BUFF_ABILITY_NAME,
 } from "#src/services/genshinAssets/cooking/constants";
 import { toDishUse } from "#src/services/genshinAssets/cooking/toDishUse";
-import { Attribute, DishTarget } from "genshin-world";
+import { Attribute, DishTarget } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toDishUse, () => {

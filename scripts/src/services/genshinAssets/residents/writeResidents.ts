@@ -29,7 +29,7 @@ import { NPC_TABLE_NAME } from "#src/services/genshinText/constants";
 import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
-import { residentSchema, SceneGroupMemberKind } from "genshin-world";
+import { residentSchema, SceneGroupMemberKind } from "genshin-world/definitions";
 
 // Every NPC the scene group record places, in its groups' order, joined to the game's name and talk and written into
 // The residents of each region the official map fitted to the scene. A region the fit matched no statue or waypoint in

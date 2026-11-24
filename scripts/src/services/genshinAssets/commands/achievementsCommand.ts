@@ -5,7 +5,7 @@ import { buildAchievements } from "#src/services/genshinAssets/achievements/buil
 import { buildAchievementText } from "#src/services/genshinAssets/achievements/buildAchievementText";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const achievementsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

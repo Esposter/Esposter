@@ -1,5 +1,5 @@
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
-import { CombatTalent } from "genshin-world";
+import { CombatTalent } from "genshin-world/definitions";
 
 // The combat talent each gcsim talent type's multipliers belong to, and so the proud skill group its table holds them
 // In

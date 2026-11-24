@@ -10,7 +10,7 @@ import { toCommissionTask } from "#src/services/genshinAssets/commissions/toComm
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "genshin-world";
+import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "genshin-world/definitions";
 
 // Every region's daily tasks from the dump: each task, every reward tier's items by Adventure Rank band, and the items
 // Of Katheryne's bonus by band, which each region's record shares. Every preview is read through the reward table, and

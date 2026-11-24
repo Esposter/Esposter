@@ -6,7 +6,7 @@ import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitOverlay";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
-import { expandKitOverlay } from "genshin-world";
+import { expandKitOverlay } from "genshin-world/definitions";
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

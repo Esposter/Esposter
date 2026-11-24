@@ -6,7 +6,7 @@ import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGc
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
-import { STRIKE_TARGETING_AREA } from "genshin-world";
+import { STRIKE_TARGETING_AREA } from "genshin-world/definitions";
 
 const MOONDEW_CLEANSE_TALENT_VARIABLE = "chargeLB";
 

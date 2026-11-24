@@ -25,7 +25,12 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
-import { GameDataset, WindrisePartFamily, WindrisePartFamilyMeshRegexMap, windriseSurfacesSchema } from "genshin-world";
+import {
+  GameDataset,
+  WindrisePartFamily,
+  WindrisePartFamilyMeshRegexMap,
+  windriseSurfacesSchema,
+} from "genshin-world/definitions";
 
 // Windrise's parts fitted as our own generators' parameters, each a record under `windrise/`: its ground as hills, its
 // Oak's canopy as clusters and its trunk's taper read off the export, its statue as stacks fitted piece by piece to its

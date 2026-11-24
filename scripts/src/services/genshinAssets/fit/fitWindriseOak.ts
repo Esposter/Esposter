@@ -32,7 +32,7 @@ import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshP
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { join } from "node:path";
 
 // The great oak's canopy, trunk, limbs and surface roots read off its export's Lod1 meshes, in three's axes round its

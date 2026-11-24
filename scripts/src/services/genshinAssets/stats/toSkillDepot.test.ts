@@ -2,7 +2,7 @@ import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSk
 import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRow";
 
 import { toSkillDepot } from "#src/services/genshinAssets/stats/toSkillDepot";
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toSkillDepot, () => {

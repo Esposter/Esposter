@@ -4,7 +4,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { COOK_BONUS_REPLACE_TYPE } from "#src/services/genshinAssets/cooking/constants";
 import { toCookingRecipe } from "#src/services/genshinAssets/cooking/toCookingRecipe";
-import { CookingFoodType, CookingQuality } from "genshin-world";
+import { CookingFoodType, CookingQuality } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const createMaterial = (id: number, foodQuality: string): MaterialRow => ({

@@ -2,7 +2,7 @@ import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { MINING_OUTCROP_LABEL_ID } from "#src/services/genshinAssets/miningOutcrops/constants";
 import { buildFittedMapPointSlices } from "#src/services/genshinAssets/points/buildFittedMapPointSlices";
-import { GameDataset, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "genshin-world";
+import { GameDataset, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "genshin-world/definitions";
 
 // Each region's mining outcrop places as one slice of the mining outcrops dataset: each Magical Crystal Chunk point the
 // Official map marks, carried into the scene by the fit, its kind the Chunk's item id. The notes count each region's

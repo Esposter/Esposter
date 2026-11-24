@@ -13,7 +13,7 @@ import {
 import { toCraftingStrongboxes } from "#src/services/genshinAssets/crafting/toCraftingStrongboxes";
 import { REWARD_PREVIEW_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The Mystic Offering's strongboxes from the game's decompose, reward preview, display item, offer and reliquary
 // Tables, published under the crafting dataset beside the recipes

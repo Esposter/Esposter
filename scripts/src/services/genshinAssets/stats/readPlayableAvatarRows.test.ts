@@ -3,7 +3,7 @@ import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatar
 import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
 import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { WeaponType } from "genshin-world";
+import { WeaponType } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>() }));

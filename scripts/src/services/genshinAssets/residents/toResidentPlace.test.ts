@@ -1,5 +1,5 @@
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
-import { SceneGroupSource } from "genshin-world";
+import { SceneGroupSource } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toResidentPlace, () => {

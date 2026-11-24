@@ -1,5 +1,5 @@
 import { checkIsOpeningElementsMatched } from "#src/services/genshinAssets/imaginarium/checkIsOpeningElementsMatched";
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsOpeningElementsMatched, () => {

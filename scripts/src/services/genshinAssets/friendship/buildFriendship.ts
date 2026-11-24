@@ -8,7 +8,7 @@ import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { FETTER_CHARACTER_CARD_TABLE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The friendship record from the dump, the levels from its AvatarFettersLevel table and the namecards from its
 // FetterCharacterCard table, published as one record of the friendship dataset

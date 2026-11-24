@@ -9,7 +9,7 @@ import { toCookingTalentOwnerMap } from "#src/services/genshinAssets/cooking/toC
 import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCharacterTalentKits";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The cooking talents of the playable characters, read off the proud skill table: each row whose effect is a cooking
 // One, keyed by the character whose passives open its proud skill group. A talent no character's passives open is an

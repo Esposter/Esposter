@@ -14,7 +14,7 @@ import { toArchiveEntries } from "#src/services/genshinAssets/archive/toArchiveE
 import { toViewpointEntries } from "#src/services/genshinAssets/archive/toViewpointEntries";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
-import { ArchiveSection, GameDataset } from "genshin-world";
+import { ArchiveSection, GameDataset } from "genshin-world/definitions";
 
 // Every section of the Archive from the dump's codex tables, each entry named by the game's English text and checked
 // Against the world's own schema for it, published as one record per section. Returns the id of each Volume's body,

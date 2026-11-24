@@ -1,6 +1,6 @@
 import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
 
-import { getGroundPieceKey, getGroundPieceQuarter } from "genshin-world";
+import { getGroundPieceKey, getGroundPieceQuarter } from "genshin-world/definitions";
 
 // A piece's four quarters, each a piece of its own over its quarter of the square: half the side, and its samples those
 // Of its quarter inside the piece's own. A sample on a shared edge belongs to the quarter east or north of it, so no

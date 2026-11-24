@@ -5,7 +5,7 @@ import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/Exc
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/expeditions/constants";
 import { toExpeditionPlaceRow } from "#src/services/genshinAssets/expeditions/toExpeditionPlaceRow";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { ExpeditionRegion } from "genshin-world";
+import { ExpeditionRegion } from "genshin-world/definitions";
 
 // Mondstadt's expedition places, each read from the game's expedition table and its reward previews in the text dump.
 // Each is placed in Mondstadt's region.

@@ -1,7 +1,7 @@
 import type { ReactionPoise } from "genshin-world";
 import type { Except } from "type-fest";
 
-import { TransformativeReactionType } from "genshin-world";
+import { TransformativeReactionType } from "genshin-world/definitions";
 
 // The poise each transformative reaction deals, as the wiki's Interruption Resistance page gives it under Elemental
 // Reactions (`{cache-root}/genshin-wiki/Page_Interruption_Resistance%2FData.json`): poiseDamage on the enemy a

@@ -1,7 +1,7 @@
 import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
 import { getOutlineTileNames } from "#src/services/genshinAssets/world/getOutlineTileNames";
-import { WorldLayer } from "genshin-world";
+import { WorldLayer } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(getOutlineTileNames, () => {

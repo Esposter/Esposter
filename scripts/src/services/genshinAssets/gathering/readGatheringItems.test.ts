@@ -10,7 +10,7 @@ import {
 import { readGatheringItems } from "#src/services/genshinAssets/gathering/readGatheringItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { GatheringRespawn, MaterialType } from "genshin-world";
+import { GatheringRespawn, MaterialType } from "genshin-world/definitions";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({

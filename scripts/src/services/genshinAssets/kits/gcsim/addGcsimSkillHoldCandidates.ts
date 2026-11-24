@@ -15,7 +15,7 @@ import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/find
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
-import { SKILL_TARGETING_AREA } from "genshin-world";
+import { SKILL_TARGETING_AREA } from "genshin-world/definitions";
 
 // The skill's holds: one for each of the short hold and the hold gcsim gives frames or hitmarks for, the shorter first,
 // Or one for each level its `<hold>Hitmarks` lists, each with its frames from `<hold>Frames`, its hit from

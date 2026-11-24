@@ -3,7 +3,7 @@ import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import { LabelIdOfferingKindMap } from "#src/services/genshinAssets/offerings/LabelIdOfferingKindMap";
 import { buildMapPointSlices } from "#src/services/genshinAssets/points/buildMapPointSlices";
 import { placeFittedMapPoints } from "#src/services/genshinAssets/points/placeFittedMapPoints";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Each region's offering places, beside the Frostbearing Tree's, are one slice per region.
 // Each place carries its offering's kind, the key its levels are published under.

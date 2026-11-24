@@ -1,7 +1,7 @@
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
 
 import { SEELIE_WIKI_COUNTS } from "#src/services/genshinAssets/puzzles/constants";
-import { PuzzleKind } from "genshin-world";
+import { PuzzleKind } from "genshin-world/definitions";
 
 // Each region's Seelie count set against the wiki's, so a region the map and the wiki count apart shows in the dry run
 export const computeSeelieCountNotes = (places: Readonly<Record<string, MapPointPlace<PuzzleKind>[]>>): string[] =>

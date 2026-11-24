@@ -19,7 +19,7 @@ import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Mondstadt's Reputation from the dump: its levels with each level's reward, the requests of the groups its levels
 // Name, its exploration thresholds, its weekly bounties with each difficulty's possible targets and the regions they

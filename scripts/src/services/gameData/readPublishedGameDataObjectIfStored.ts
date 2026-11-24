@@ -4,7 +4,7 @@ import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { HOSTED_ASSETS_MIRROR_DIRECTORY, readContentAddressedObject } from "@esposter/shared-node/cache";
-import { getGameDataObjectName } from "genshin-world";
+import { getGameDataObjectName } from "genshin-world/definitions";
 import { getHostedAssetUrl } from "hosted-assets";
 import { existsSync } from "node:fs";
 import { join } from "node:path";

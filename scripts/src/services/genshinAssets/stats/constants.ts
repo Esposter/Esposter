@@ -2,7 +2,7 @@ import { AssociationRegionId } from "#src/models/genshinAssets/stats/Association
 import { QualityTypeRarity } from "#src/models/genshinAssets/stats/QualityTypeRarity";
 import { AVATAR_TALENT_DIRECTORY, GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { DestroyRule, Element, GameDataset, WeaponType } from "genshin-world";
+import { DestroyRule, Element, GameDataset, WeaponType } from "genshin-world/definitions";
 import { join } from "node:path";
 
 // The world package's generated folder, which holds the committed loader maps

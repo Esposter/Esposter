@@ -12,7 +12,7 @@ import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWo
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameTextKey } from "genshin-text";
-import { DomainKind, LandmarkKind } from "genshin-world";
+import { DomainKind, LandmarkKind } from "genshin-world/definitions";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/shared/readCatalogueAreaPlaceMap"));

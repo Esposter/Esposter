@@ -3,7 +3,7 @@ import type { Constellation } from "genshin-world";
 import { PROUD_SKILL_SLOT_MODULUS } from "#src/services/genshinAssets/stats/constants";
 import { toSkillAction } from "#src/services/genshinAssets/stats/toSkillAction";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CombatTalent } from "genshin-world";
+import { CombatTalent } from "genshin-world/definitions";
 
 // The talent a constellation's skill action raises, from its actions in the dump: the one skill action, its levels and
 // The combat talent whose proud skill group ends in its slot. The skill the description names must be that talent's

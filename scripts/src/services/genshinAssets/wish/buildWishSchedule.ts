@@ -5,7 +5,7 @@ import { readWishNameItemIdsMap } from "#src/services/genshinAssets/wish/readWis
 import { readWishPageTitles } from "#src/services/genshinAssets/wish/readWishPageTitles";
 import { readWishScheduleEvents } from "#src/services/genshinAssets/wish/readWishScheduleEvents";
 import { chunk } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The event banners of the wiki's wish category, each page read into its kind, its window and its featured items and
 // Joined to the ids its names are, as the record the schedule publishes under its own dataset

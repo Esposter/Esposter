@@ -6,7 +6,7 @@ import {
   ArchiveSection,
   archiveViewpointSchema,
   travelLogEntrySchema,
-} from "genshin-world";
+} from "genshin-world/definitions";
 
 // Each section's entries checked against the world's schema for it, which keeps the fields its own entries carry
 export const parseSectionEntries = (section: ArchiveSection, entries: readonly ArchiveEntry[]): ArchiveEntry[] => {

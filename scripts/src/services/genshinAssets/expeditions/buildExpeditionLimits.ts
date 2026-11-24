@@ -1,7 +1,7 @@
 import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/shared/ExcelPlayerLevelRow";
 
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The Adventure Ranks that raise how many expeditions may be out at once, each with its raise, as one record of the
 // Expeditions dataset

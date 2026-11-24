@@ -10,7 +10,7 @@ import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { defineCommand } from "citty";
 import { parsePmx } from "genshin-engine";
-import { avatarManifestSchema, TRAVELER_CHARACTER_ID } from "genshin-world";
+import { avatarManifestSchema, TRAVELER_CHARACTER_ID } from "genshin-world/definitions";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

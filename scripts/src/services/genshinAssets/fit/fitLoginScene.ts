@@ -27,7 +27,7 @@ import { readComponentClips } from "#src/services/genshinAssets/shared/readCompo
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 

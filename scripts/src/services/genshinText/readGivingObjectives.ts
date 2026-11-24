@@ -2,7 +2,7 @@ import type { DumpedGiving } from "#src/models/genshinText/DumpedGiving";
 import type { QuestObjective } from "genshin-world";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { QuestObjectiveKind } from "genshin-world";
+import { QuestObjectiveKind } from "genshin-world/definitions";
 
 // A giving's objectives: each exact item collected its count, or, for a giving by group, any one of the group's items
 // Collected its count, with every one of the group's items named as its targets. A zero count is an exact giving's,

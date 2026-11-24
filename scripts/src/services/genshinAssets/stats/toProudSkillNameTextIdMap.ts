@@ -1,6 +1,6 @@
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 
-import { TALENT_START_LEVEL } from "genshin-world";
+import { TALENT_START_LEVEL } from "genshin-world/definitions";
 
 // Each proud skill group's name by its text id, read off the group's first level's row, the one a passive's name is
 // Held by, as a skill's own name is held by its hash, none where the hash is zero. A group with no first-level row, or

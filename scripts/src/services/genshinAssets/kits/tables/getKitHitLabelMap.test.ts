@@ -6,7 +6,7 @@ import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
-import { CombatTalent, WeaponType } from "genshin-world";
+import { CombatTalent, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(getKitHitLabelMap, () => {

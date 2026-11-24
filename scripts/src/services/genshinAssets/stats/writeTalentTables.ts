@@ -3,7 +3,7 @@ import type { HostedAssetPublication } from "#src/models/hostedAssets/HostedAsse
 
 import { TALENT_MULTIPLIER_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
 import { getTalentMultiplierLoaderMapSource } from "#src/services/genshinAssets/stats/getTalentMultiplierLoaderMapSource";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 

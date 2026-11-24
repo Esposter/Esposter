@@ -5,7 +5,7 @@ import { ExploreAreaCatalogueIdMap } from "#src/services/genshinAssets/explorati
 import { toExplorationDoing } from "#src/services/genshinAssets/exploration/toExplorationDoing";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Mondstadt's exploration areas, each with its total, its reputation ratio and the doings its progress counts,
 // Published as one record of the exploration dataset. An area the table gives no total is an error, since its progress

@@ -11,7 +11,7 @@ import { toForgeRecipe } from "#src/services/genshinAssets/forging/toForgeRecipe
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The blacksmith's recipes from the game's forge table, each with the diagrams that open it, sorted by id as the
 // Recipes record of the forging dataset. A row the blacksmith does not forge is left out

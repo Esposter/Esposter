@@ -8,7 +8,7 @@ import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGround
 import { readGroundSource } from "#src/services/genshinAssets/fit/readGroundSource";
 import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";
 import { readWorldBaseGrounds } from "#src/services/genshinAssets/shared/readWorldBaseGrounds";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Windrise's base as the lock holds it, which a region's composed bars are read over
 const readBaseGrounds = async () => readWorldBaseGrounds(Object.keys((await readGameDataLock()).objects));

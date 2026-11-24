@@ -4,7 +4,7 @@ import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/Trial
 import type { TrialReliquary } from "genshin-world";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { Attribute, attributeLineSchema } from "genshin-world";
+import { Attribute, attributeLineSchema } from "genshin-world/definitions";
 import { z } from "zod";
 
 // One trial reliquary as the artifact it is worn as: its level counted from zero, the main stat the game gives it and

@@ -2,7 +2,7 @@ import type { ExcelHomeWorldAreaComfortRow } from "#src/models/genshinAssets/hom
 
 import { AREA_COMFORT_TABLE_NAME } from "#src/services/genshinAssets/home/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The load each realm area holds at most, whether it is an exterior area and the loads its meter turns orange and red
 // At, from the game's area table, as one record of the home dataset: each area by its scene and its id within the

@@ -7,7 +7,7 @@ import { checkIsHeldWeaponMesh } from "#src/services/genshinAssets/weapons/check
 import { getWeaponMeshMap } from "#src/services/genshinAssets/weapons/getWeaponMeshMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Which held mesh each weapon row pairs with, from the weapon table and the held meshes the asset index names,
 // Published as one record by the row's id. The rows with none are counted in the notes

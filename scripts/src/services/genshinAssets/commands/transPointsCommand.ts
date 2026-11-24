@@ -5,7 +5,7 @@ import { buildTransPointRewards } from "#src/services/genshinAssets/transPoints/
 import { buildTransPointUnlocks } from "#src/services/genshinAssets/transPoints/buildTransPointUnlocks";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const transPointsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

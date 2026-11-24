@@ -6,7 +6,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { CharacterIdSlotHitLabelsMap } from "#src/services/genshinAssets/kits/tables/CharacterIdSlotHitLabelsMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CombatTalent, KitPlunge } from "genshin-world";
+import { CombatTalent, KitPlunge } from "genshin-world/definitions";
 
 const STRIKE_LABEL_REGEX = /^(?<strike>\d+)-Hit DMG$/u;
 const SKILL_COOLDOWN_LABELS: ReadonlySet<string> = new Set(["CD", "Press CD", "Skill CD"]);

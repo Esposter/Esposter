@@ -23,7 +23,7 @@ import { toAbyssPeriod } from "#src/services/genshinAssets/spiralAbyss/toAbyssPe
 import { toAbyssTowerBuffs } from "#src/services/genshinAssets/spiralAbyss/toAbyssTowerBuffs";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The Spiral Abyss's floors with their chambers, its rewards, the Moon Spire's periods and the Benedictions each
 // Chamber offers, each published as a record of the Spiral Abyss dataset. The floors record is every floor the tower

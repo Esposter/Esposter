@@ -15,7 +15,7 @@ import { toTargets } from "#src/services/genshinParity/passes/toTargets";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { WindrisePartFamily } from "genshin-world";
+import { WindrisePartFamily } from "genshin-world/definitions";
 import { WitnessTarget } from "genshin-world/sceneExport";
 
 const TARGET_NAMES: WitnessTarget[] = [WitnessTarget.Part, WitnessTarget.Depth, WitnessTarget.GeometryNormal];

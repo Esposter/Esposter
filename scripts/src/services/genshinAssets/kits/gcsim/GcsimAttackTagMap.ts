@@ -1,5 +1,5 @@
 import { GCSIM_CHARGED_ATTACK_TAG } from "#src/services/genshinAssets/kits/constants";
-import { AttackTag } from "genshin-world";
+import { AttackTag } from "genshin-world/definitions";
 
 // The attack tags gcsim names in an `AttackInfo` literal whose meaning a kit attack tag holds: a normal attack, a
 // Charged attack, a plunge, an elemental skill with its hold, and an elemental burst. The Lunar tags are

@@ -13,7 +13,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
-import { characterConstellationKitSchema, CombatTalent, CONSTELLATION_COUNT } from "genshin-world";
+import { characterConstellationKitSchema, CombatTalent, CONSTELLATION_COUNT } from "genshin-world/definitions";
 
 // The positions, in a skill set's list of six, of the constellations that raise a talent: the third and the fifth
 const RAISING_POSITIONS: ReadonlySet<number> = new Set([2, 4]);

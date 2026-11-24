@@ -3,7 +3,7 @@ import type { SceneBuildingPoint } from "genshin-world";
 import { SCENE_BUILDING_NAME_FIELD, SCENE_BUILDING_POINT } from "#src/services/genshinAssets/sceneGroups/constants";
 import { readScenePointsOfKind } from "#src/services/genshinAssets/world/readScenePointsOfKind";
 import { toDumpedVector } from "#src/services/genshinAssets/world/toDumpedVector";
-import { SceneGroupSource } from "genshin-world";
+import { SceneGroupSource } from "genshin-world/definitions";
 
 // Every building point of the scene by its point id, the service it marks and its place as the scene's points give
 // Them. A point naming no service or holding no place is left out

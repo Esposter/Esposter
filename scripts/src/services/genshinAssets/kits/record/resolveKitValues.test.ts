@@ -8,7 +8,7 @@ import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
-import { CombatTalent, Element } from "genshin-world";
+import { CombatTalent, Element } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 // A call the fiery rain arrows' talent variable makes, landing at the delay and giving it as its hitmark

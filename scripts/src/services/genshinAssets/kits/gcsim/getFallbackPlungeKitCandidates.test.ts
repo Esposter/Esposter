@@ -10,7 +10,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { GCSIM_CHARACTERS_PATH } from "#src/services/genshinAssets/kits/constants";
 import { getFallbackPlungeKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates";
-import { CombatTalent, WeaponType } from "genshin-world";
+import { CombatTalent, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const plungeConstant = (value: GoValue, line: number) => ({ elementLines: {}, file: "plunge.go", line, value });

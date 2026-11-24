@@ -1,5 +1,5 @@
 import { buildMapPointSlices } from "#src/services/genshinAssets/points/buildMapPointSlices";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(buildMapPointSlices, () => {

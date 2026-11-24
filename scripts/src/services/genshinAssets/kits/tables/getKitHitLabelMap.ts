@@ -6,7 +6,7 @@ import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { checkIsTitleSlotPath } from "#src/services/genshinAssets/kits/wiki/checkIsTitleSlotPath";
-import { kitParameterSchema } from "genshin-world";
+import { kitParameterSchema } from "genshin-world/definitions";
 
 // A hit's path split into its list and its index, `burst.hits` and `5` for `burst.hits.5`
 const HIT_LIST_INDEX_REGEX = /^(?<list>.+)\.(?<index>\d+)$/u;

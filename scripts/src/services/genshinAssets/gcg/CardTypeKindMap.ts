@@ -1,4 +1,4 @@
-import { GcgCardKind } from "genshin-world";
+import { GcgCardKind } from "genshin-world/definitions";
 
 export const CardTypeKindMap: Map<string, GcgCardKind> = new Map<string, GcgCardKind>([
   ["GCG_CARD_ASSIST", GcgCardKind.Support],

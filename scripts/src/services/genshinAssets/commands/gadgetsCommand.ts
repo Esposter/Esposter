@@ -5,7 +5,7 @@ import { buildGadgetRows } from "#src/services/genshinAssets/gadgets/buildGadget
 import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRegionMap";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const gadgetsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

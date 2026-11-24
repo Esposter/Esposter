@@ -1,7 +1,7 @@
 import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/stats/ExcelEquipAffixRow";
 
 import { toWeaponPassive } from "#src/services/genshinAssets/stats/toWeaponPassive";
-import { Attribute } from "genshin-world";
+import { Attribute } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toWeaponPassive, () => {

@@ -26,7 +26,7 @@ import { getWikiKitCandidates } from "#src/services/genshinAssets/kits/wiki/getW
 import { readWikiCitedCandidates } from "#src/services/genshinAssets/kits/wiki/readWikiCitedCandidates";
 import { readWikiTalentPages } from "#src/services/genshinAssets/kits/wiki/readWikiTalentPages";
 import { InvalidOperationError, Operation, toKebabCase } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The values gcsim is expected to give every kit, each by the constant that gives it, so a kit missing one names what
 // The reader could not read

@@ -3,7 +3,7 @@ import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
-import { QuestIds, ReputationRequestQuestIds } from "genshin-world";
+import { QuestIds, ReputationRequestQuestIds } from "genshin-world/definitions";
 
 // Each carried quest's reward items by its id, from its world quest's reward rows. A Reputation request's world quest
 // Is its sub quest's main quest, the one its title is read from, so both the quest and the items the builders publish

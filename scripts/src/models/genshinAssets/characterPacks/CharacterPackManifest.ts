@@ -1,5 +1,5 @@
 import { createUniqueArraySchema } from "@esposter/shared";
-import { characterPackFileSchema } from "genshin-world";
+import { characterPackFileSchema } from "genshin-world/definitions";
 import { z } from "zod";
 
 // A pack's manifest.json as the owner's extraction writes it: the avatar's id, its name where the extraction found one

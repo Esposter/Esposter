@@ -3,7 +3,7 @@ import { CHARACTER_PACKS_PREFIX } from "#src/services/genshinAssets/characterPac
 import { DAY_MS } from "#src/services/hostedAssets/constants";
 import { pruneHostedAssets } from "#src/services/hostedAssets/pruneHostedAssets";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { getHostedAssetPath } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

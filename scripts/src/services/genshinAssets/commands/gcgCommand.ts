@@ -8,7 +8,7 @@ import { buildGcgStandardRule } from "#src/services/genshinAssets/gcg/buildGcgSt
 import { GcgDeckIdCreatedCardIdsMap } from "#src/services/genshinAssets/gcg/constants";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const gcgCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

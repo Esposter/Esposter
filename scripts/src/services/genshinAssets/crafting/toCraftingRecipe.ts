@@ -9,7 +9,7 @@ import {
 } from "#src/services/genshinAssets/crafting/constants";
 import { toRecipeKind } from "#src/services/genshinAssets/crafting/toRecipeKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CraftingRecipeKind, ORIGINAL_RESIN_ITEM_ID } from "genshin-world";
+import { CraftingRecipeKind, ORIGINAL_RESIN_ITEM_ID } from "genshin-world/definitions";
 
 // One bench recipe from its combine row and the instruction items that open it, or undefined for a row the bench does
 // Not hold. A tier takes exactly three of one material for one of the next, Condensed Resin exactly its crystal core

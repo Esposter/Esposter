@@ -1,5 +1,5 @@
 import { RESIDENT_DUEL_GAME_ID_MAP, RESIDENT_WEEK_GAME_MAP } from "#src/services/genshinAssets/residents/constants";
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 
 // The rule the duels against the game's own residents run. Its clocks are all zero, since a duel against a resident
 // Has no round to run out; its reactions and hand limit are the matchmaking rule's

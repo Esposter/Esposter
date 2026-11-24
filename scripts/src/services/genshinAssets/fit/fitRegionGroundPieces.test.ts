@@ -5,7 +5,7 @@ import type { GroundPoint } from "genshin-engine";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ORIGIN } from "#src/services/genshinAssets/fit/constants";
 import { fitRegionGroundPieces } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
-import { WorldLayer } from "genshin-world";
+import { WorldLayer } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 // A square outline of the given side in metres, centred on the origin

@@ -5,7 +5,7 @@ import { readReward } from "#src/services/genshinAssets/rewards/readReward";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { toTransPointRewardRow } from "#src/services/genshinAssets/transPoints/toTransPointRewardRow";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The open world's transport point rewards, each point's Adventure EXP and Primogems joined from its reward row.
 // They are published as one record of the transport points dataset, keyed by its scene.

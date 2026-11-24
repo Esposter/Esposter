@@ -3,7 +3,7 @@ import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/Exc
 
 import { toExpeditionPlaceRow } from "#src/services/genshinAssets/expeditions/toExpeditionPlaceRow";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
-import { ExpeditionRegion } from "genshin-world";
+import { ExpeditionRegion } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toExpeditionPlaceRow, () => {

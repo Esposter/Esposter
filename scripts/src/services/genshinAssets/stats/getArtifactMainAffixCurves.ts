@@ -5,7 +5,7 @@ import { RELIQUARY_LEVEL_TABLE_NAME } from "#src/services/genshinAssets/archive/
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
-import { artifactMainAffixCurveSchema } from "genshin-world";
+import { artifactMainAffixCurveSchema } from "genshin-world/definitions";
 
 // What every main affix gives at each rarity, by enhancement level from +0, as the game's level table holds it
 export const getArtifactMainAffixCurves = (notes: string[]): ArtifactMainAffixCurve[] => {

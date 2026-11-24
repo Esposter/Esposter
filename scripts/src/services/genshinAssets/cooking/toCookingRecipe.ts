@@ -6,7 +6,7 @@ import type { CookingRecipe, CookingSpecialty } from "genshin-world";
 import { COOK_BONUS_REPLACE_TYPE } from "#src/services/genshinAssets/cooking/constants";
 import { toResultQuality } from "#src/services/genshinAssets/cooking/toResultQuality";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { cookingFoodTypeSchema, CookingQuality } from "genshin-world";
+import { cookingFoodTypeSchema, CookingQuality } from "genshin-world/definitions";
 
 // One dish from its cook recipe row: its ingredients, the item each quality of its result is, its proficiency, its zone
 // Parameters, its rarity, its specialties, and the instructions that teach it. The results' qualities come from their

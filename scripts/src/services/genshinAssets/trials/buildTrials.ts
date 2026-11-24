@@ -5,7 +5,7 @@ import { toTrialReliquary } from "#src/services/genshinAssets/trials/toTrialReli
 import { toTrialStage } from "#src/services/genshinAssets/trials/toTrialStage";
 import { toTrialTemplate } from "#src/services/genshinAssets/trials/toTrialTemplate";
 import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The character trials' records, each published under the dataset's key.
 // They are the stages by id, the trial avatars by id, the reliquaries by id, and the templates by level.

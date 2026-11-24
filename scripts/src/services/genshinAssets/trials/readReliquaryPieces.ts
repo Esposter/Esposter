@@ -3,7 +3,7 @@ import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/Trial
 
 import { RELIQUARY_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { ArtifactSlot } from "genshin-world";
+import { ArtifactSlot } from "genshin-world/definitions";
 import { z } from "zod";
 
 // Every reliquary of the game's reliquary table by its id, each with its set and the slot its equip type names. The 7.1

@@ -1,6 +1,6 @@
 import type { SelectRetiredGroundKeysOptions } from "#src/models/genshinAssets/fit/SelectRetiredGroundKeysOptions";
 
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The plateau a publish retires from the lock: its region's `ground/<region>`, once the publish stores a piece of the
 // Region and the lock then holds a piece of every outlined surface area. An area's piece is its key or a key under it,

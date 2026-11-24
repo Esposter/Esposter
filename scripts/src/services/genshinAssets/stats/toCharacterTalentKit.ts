@@ -2,7 +2,7 @@ import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSk
 import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRow";
 import type { CharacterTalentKit } from "genshin-world";
 
-import { characterTalentKitSchema, CombatTalent } from "genshin-world";
+import { characterTalentKitSchema, CombatTalent } from "genshin-world/definitions";
 
 // A character's talents from the first of its skill sets that names a proud skill group for each of its three combat
 // Talents, the sets given in the order they are read (`getCharacterSkillDepotRows`). Each combat talent is named by its

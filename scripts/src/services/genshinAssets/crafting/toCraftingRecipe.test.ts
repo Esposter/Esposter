@@ -7,7 +7,7 @@ import {
   CONVERT_RECIPE_TYPE,
 } from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingRecipe } from "#src/services/genshinAssets/crafting/toCraftingRecipe";
-import { CraftingRecipeKind } from "genshin-world";
+import { CraftingRecipeKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toCraftingRecipe, () => {

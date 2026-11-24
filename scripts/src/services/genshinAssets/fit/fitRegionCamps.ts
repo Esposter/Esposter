@@ -13,7 +13,7 @@ import { readFittedRegions } from "#src/services/genshinAssets/residents/readFit
 import { CATALOGUE_PATH } from "#src/services/genshinAssets/shared/constants";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { catalogueSchema, findAreaAt } from "genshin-world";
+import { catalogueSchema, findAreaAt } from "genshin-world/definitions";
 import { readFile } from "node:fs/promises";
 
 // Each fitted region's enemy camps, clustered from the official map's enemy marks of the families the camp map names,

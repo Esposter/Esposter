@@ -6,7 +6,7 @@ import { findCraftingBenchMember } from "#src/services/genshinAssets/crafting/fi
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
 import { REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The crafting bench's place in its region's axes, carried as a resident's is: the NPC member the scene group record
 // Places in the bench's group, classified into the fitted region it stands in, with its turn. The runtime cannot carry

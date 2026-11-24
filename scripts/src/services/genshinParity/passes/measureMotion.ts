@@ -24,7 +24,7 @@ import { interpolatePose } from "#src/services/genshinParity/passes/interpolateP
 import { PARITY_FRAME_MS } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
-import { LoginStage } from "genshin-world";
+import { LoginStage } from "genshin-world/definitions";
 import { join } from "node:path";
 import { Box3, Matrix4, Vector3 } from "three";
 

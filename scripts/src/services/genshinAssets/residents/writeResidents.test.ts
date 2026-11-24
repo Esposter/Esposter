@@ -12,7 +12,7 @@ import { readCatalogueRegions } from "#src/services/genshinAssets/shared/readCat
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
-import { SceneGroupSource } from "genshin-world";
+import { SceneGroupSource } from "genshin-world/definitions";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"));

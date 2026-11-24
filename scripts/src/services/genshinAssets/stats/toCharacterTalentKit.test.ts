@@ -2,7 +2,7 @@ import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSk
 import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRow";
 
 import { toCharacterTalentKit } from "#src/services/genshinAssets/stats/toCharacterTalentKit";
-import { CombatTalent } from "genshin-world";
+import { CombatTalent } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toCharacterTalentKit, () => {

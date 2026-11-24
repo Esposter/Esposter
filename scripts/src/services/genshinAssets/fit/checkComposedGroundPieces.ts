@@ -3,7 +3,7 @@ import type { RegionGround } from "genshin-world";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
-import { createWorldHeight, toLaidGround } from "genshin-world";
+import { createWorldHeight, toLaidGround } from "genshin-world/definitions";
 
 export interface ComposedGroundPieceCheck {
   bar: number;

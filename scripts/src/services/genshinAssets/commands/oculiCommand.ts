@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildOculusPlaces } from "#src/services/genshinAssets/oculi/buildOculusPlaces";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const oculiCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

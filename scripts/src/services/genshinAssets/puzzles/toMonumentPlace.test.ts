@@ -5,7 +5,7 @@ import {
   PROVISIONAL_MONUMENT_IS_TIMED,
 } from "#src/services/genshinAssets/puzzles/constants";
 import { toMonumentPlace } from "#src/services/genshinAssets/puzzles/toMonumentPlace";
-import { Element, PuzzleKind } from "genshin-world";
+import { Element, PuzzleKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toMonumentPlace, () => {

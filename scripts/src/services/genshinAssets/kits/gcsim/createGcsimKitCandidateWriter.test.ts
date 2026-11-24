@@ -4,7 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { GCSIM_CONFIG_FILE, GCSIM_NO_INTERNAL_COOLDOWN_TAG } from "#src/services/genshinAssets/kits/constants";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
-import { CombatTalent, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
+import { CombatTalent, SKILL_TARGETING_AREA, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(createGcsimKitCandidateWriter, () => {

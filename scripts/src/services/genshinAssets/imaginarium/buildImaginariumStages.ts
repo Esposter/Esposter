@@ -19,7 +19,7 @@ import { toImaginariumStageEnemy } from "#src/services/genshinAssets/imaginarium
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The Easy stages of every season the wiki has written up, joined to the season the schedule begins on the page's day,
 // And each stage's enemy names resolved to the monster their codex entry names, with its stats at the stage's level,

@@ -15,7 +15,7 @@ import { findGcsimVariableHitbox } from "#src/services/genshinAssets/kits/gcsim/
 import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { takeOne } from "@esposter/shared";
-import { SKILL_TARGETING_AREA } from "genshin-world";
+import { SKILL_TARGETING_AREA } from "genshin-world/definitions";
 
 // The skill and burst: their hitmarks from `<slot>Hitmark` or `<slot>Hitmarks`, or the skill's press's or tap's, Their
 // Frames from `<slot>Frames` or the press's or tap's, and each hit by its place among the slot's talent Multipliers and

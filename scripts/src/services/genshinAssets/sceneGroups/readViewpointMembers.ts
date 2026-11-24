@@ -12,7 +12,7 @@ import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constant
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
-import { SceneGroupMemberKind, SceneGroupSource } from "genshin-world";
+import { SceneGroupMemberKind, SceneGroupSource } from "genshin-world/definitions";
 
 // Each viewpoint the codex lists in the open world, as a gadget of the group its row names, by group id. Its place is
 // The official map's viewpoint point its English name is matched to, carried into the game's axes by the map's fit. A

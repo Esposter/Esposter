@@ -5,7 +5,7 @@ import type { ProvenanceSource } from "#src/models/provenance/Provenance";
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { MEBIBYTE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GameLanguage, GameLanguageTagMap } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { dirname, join } from "node:path";
 
 // The game's text kept outside the repository like every other scratch file and never shipped: `ExcelBinOutput/` as the

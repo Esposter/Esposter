@@ -2,7 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { fitRegionHulls } from "#src/services/genshinAssets/fit/fitRegionHulls";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // A region's hulls fit for one kind of object, published as the region's own record, `regions/<region>/<kind>`, which
 // Names the kind in its note too

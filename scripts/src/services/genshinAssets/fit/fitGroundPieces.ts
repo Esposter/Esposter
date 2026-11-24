@@ -13,7 +13,7 @@ import { joinGroundPieces } from "#src/services/genshinAssets/fit/joinGroundPiec
 import { splitGroundPiece } from "#src/services/genshinAssets/fit/splitGroundPiece";
 import { GROUND_GATE_SAMPLES } from "#src/services/genshinAssets/shared/constants";
 import { takeOne } from "@esposter/shared";
-import { getGroundPieceKey } from "genshin-world";
+import { getGroundPieceKey } from "genshin-world/definitions";
 
 // Each of a split's four quarters fitted with the piece it fits, one fit at a time
 const fitQuarters = async (

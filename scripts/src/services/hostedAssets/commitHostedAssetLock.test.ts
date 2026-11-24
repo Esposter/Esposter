@@ -6,7 +6,7 @@ import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetL
 import { writeHostedAssetLock } from "#src/services/hostedAssets/writeHostedAssetLock";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { StorageBucket } from "@esposter/db-schema";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";

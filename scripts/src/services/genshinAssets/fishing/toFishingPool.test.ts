@@ -3,7 +3,7 @@ import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelF
 
 import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
 import { toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPoolFishIds";
-import { FishingStockType } from "genshin-world";
+import { FishingStockType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toFishingPool, () => {

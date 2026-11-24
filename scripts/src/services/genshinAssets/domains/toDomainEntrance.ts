@@ -11,7 +11,7 @@ import { getDomainEntryKind } from "#src/services/genshinAssets/domains/getDomai
 import { toRegionAxesPlace } from "#src/services/genshinAssets/shared/toRegionAxesPlace";
 import { toDumpedVector } from "#src/services/genshinAssets/world/toDumpedVector";
 import { GameTextKey } from "genshin-text";
-import { LandmarkKind } from "genshin-world";
+import { LandmarkKind } from "genshin-world/definitions";
 import { z } from "zod";
 
 // A domain entrance's place in its region's axes round the Windrise origin, as the region's landmarks are: the

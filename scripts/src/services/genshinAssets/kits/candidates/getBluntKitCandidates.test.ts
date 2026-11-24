@@ -3,7 +3,7 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getBluntKitCandidates } from "#src/services/genshinAssets/kits/candidates/getBluntKitCandidates";
-import { Element, WeaponType } from "genshin-world";
+import { Element, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const getValues = (candidateMap: Map<string, KitCandidate[]>, path: string) =>

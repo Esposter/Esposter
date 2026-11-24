@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildSpiralAbyss } from "#src/services/genshinAssets/spiralAbyss/buildSpiralAbyss";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const spiralAbyssCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

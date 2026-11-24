@@ -6,7 +6,7 @@ import { readBookBody } from "#src/services/genshinAssets/archive/readBookBody";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguages } from "genshin-text";
-import { bookBodySchema, GameDataset } from "genshin-world";
+import { bookBodySchema, GameDataset } from "genshin-world/definitions";
 
 // Every language's text of each book's body, read from the readable file its localization row names in that language,
 // And published as one index a language, each body keyed by its id once `bookBodySchema` parses it.

@@ -1,7 +1,7 @@
 import { FORGE_DAILY_POINT_CAP_CONST_NAME } from "#src/services/genshinAssets/forging/constants";
 import { readConstValue } from "#src/services/genshinAssets/shared/readConstValue";
 import { takeOne } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { z } from "zod";
 
 // The most forge points a game day holds, the game's own constant of that name, under the forging dataset's

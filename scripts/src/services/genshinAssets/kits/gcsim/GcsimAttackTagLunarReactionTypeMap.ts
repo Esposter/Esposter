@@ -1,4 +1,4 @@
-import { LunarReactionType } from "genshin-world";
+import { LunarReactionType } from "genshin-world/definitions";
 
 // The direct Lunar tags gcsim names in an `AttackInfo` literal, each the Lunar reaction its damage is dealt as. A hit
 // Without one of these tags is none of the three, so it has no Lunar reaction

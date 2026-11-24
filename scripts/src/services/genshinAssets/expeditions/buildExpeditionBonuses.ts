@@ -1,7 +1,7 @@
 import type { ExcelExpeditionBonusRow } from "#src/models/genshinAssets/expeditions/ExcelExpeditionBonusRow";
 
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The chance of an expedition bonus by the level of the character sent, as one record of the Expeditions dataset
 export const buildExpeditionBonuses = (): Record<string, unknown> => {

@@ -2,7 +2,7 @@ import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { buildFittedMapPointSlices } from "#src/services/genshinAssets/points/buildFittedMapPointSlices";
 import { WildlifeKindLabelIdMap } from "#src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap";
-import { GameDataset, WildlifeKinds } from "genshin-world";
+import { GameDataset, WildlifeKinds } from "genshin-world/definitions";
 
 // Each region's animals of the kinds the map marks as birds and beasts, as one slice of the wildlife dataset, from the
 // Official map's points and the fit. The notes count each region's animals and what was left out

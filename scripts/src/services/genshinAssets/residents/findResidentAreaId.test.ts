@@ -1,7 +1,7 @@
 import type { Catalogue } from "genshin-world";
 
 import { findResidentAreaId } from "#src/services/genshinAssets/residents/findResidentAreaId";
-import { WorldLayer } from "genshin-world";
+import { WorldLayer } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 // An area whose outline is the square between the two x values and z from 0 to 100

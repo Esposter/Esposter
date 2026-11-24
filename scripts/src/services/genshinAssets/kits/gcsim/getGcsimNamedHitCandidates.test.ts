@@ -10,7 +10,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
-import { CombatTalent, Element, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
+import { CombatTalent, Element, SKILL_TARGETING_AREA, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const multiplierMap = (proudSkillGroupId: number) =>

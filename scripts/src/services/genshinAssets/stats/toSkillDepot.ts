@@ -3,7 +3,7 @@ import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRo
 import type { SkillDepot } from "genshin-world";
 
 import { ElementNameSet } from "#src/services/genshinAssets/stats/constants";
-import { skillDepotSchema } from "genshin-world";
+import { skillDepotSchema } from "genshin-world/definitions";
 
 // One skill set as the game's tables hold it: its skill, the second of its slots, and its burst, its energy skill. Each
 // Is read from the skill table by its id, a zero id leaving it out. A burst's element is its energy's, where

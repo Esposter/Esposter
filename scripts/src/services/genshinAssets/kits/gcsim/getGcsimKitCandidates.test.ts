@@ -18,7 +18,7 @@ import {
 } from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
-import { CombatTalent, Element, InternalCooldownTag, WeaponType } from "genshin-world";
+import { CombatTalent, Element, InternalCooldownTag, WeaponType } from "genshin-world/definitions";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";

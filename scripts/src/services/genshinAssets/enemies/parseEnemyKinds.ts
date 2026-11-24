@@ -1,7 +1,7 @@
 import type { EnemyKind } from "genshin-world";
 import type { Except } from "type-fest";
 
-import { enemyKindSchema, GameDataset } from "genshin-world";
+import { enemyKindSchema, GameDataset } from "genshin-world/definitions";
 import { z } from "zod";
 
 // The kinds an enemies build holds before each one's drop source is joined to it, read back through the kind schema the

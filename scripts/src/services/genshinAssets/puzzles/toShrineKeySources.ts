@@ -5,7 +5,7 @@ import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { ShrineKeySource } from "genshin-world";
 
 import { SHRINE_KEY_NAME_REGEX, SHRINE_KEY_REGIONS } from "#src/services/genshinAssets/puzzles/constants";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Each Shrine of Depths key a quest's reward names, as its own source filed under the key's region. A key is found by
 // Its English name, and a key naming a region the map does not know is left out and noted

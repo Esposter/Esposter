@@ -7,7 +7,7 @@ import { GCSIM_PLUNGE_LANDINGS } from "#src/services/genshinAssets/kits/gcsim/co
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { readHitmarkSpread } from "#src/services/genshinAssets/kits/gcsim/readHitmarkSpread";
-import { STRIKE_TARGETING_AREA } from "genshin-world";
+import { STRIKE_TARGETING_AREA } from "genshin-world/definitions";
 
 // The plunges and collision of a character with no plunge file of its own, which stand in for the fallback character's,
 // Bennett's: each landing's frames and hit, and the collision's, each cited at the fallback's file and line as

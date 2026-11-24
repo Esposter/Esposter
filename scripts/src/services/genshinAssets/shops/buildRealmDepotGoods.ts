@@ -4,7 +4,7 @@ import { REALM_DEPOT_SHOP_TYPE, REALM_DEPOT_TABS } from "#src/services/genshinAs
 import { toShopGoodSlice } from "#src/services/genshinAssets/shops/toShopGoodSlice";
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The Realm Depot's goods, one record of the shops dataset for each of its tabs. Each good carries the sub tab the
 // Table files it under, which is the tab the screen shows it on

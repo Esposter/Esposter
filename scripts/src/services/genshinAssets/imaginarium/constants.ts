@@ -1,4 +1,4 @@
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 
 // The Imaginarium Theater's three tables in the dump, read by their names
 export const ROLE_COMBAT_SCHEDULE_TABLE_NAME = "RoleCombatScheduleExcelConfigData";

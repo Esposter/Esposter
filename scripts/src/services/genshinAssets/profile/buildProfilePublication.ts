@@ -17,7 +17,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
-import { characterDataSchema, GameDataset, profileTextSchema } from "genshin-world";
+import { characterDataSchema, GameDataset, profileTextSchema } from "genshin-world/definitions";
 import { z } from "zod";
 
 // Every playable character's profile, its stories by fetter and its namecard, one entry a character in each language's

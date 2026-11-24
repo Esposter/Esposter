@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildProfilePublication } from "#src/services/genshinAssets/profile/buildProfilePublication";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const profileCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

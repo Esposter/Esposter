@@ -16,7 +16,7 @@ import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { getContentAddress } from "@esposter/shared-node/cache";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { getHostedAssetPath, HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

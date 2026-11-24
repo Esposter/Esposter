@@ -1,7 +1,7 @@
 import type { TalkTables } from "#src/models/genshinText/TalkTables";
 import type { Talk } from "genshin-world";
 
-import { choiceTalkLineSchema, TalkLineKind } from "genshin-world";
+import { choiceTalkLineSchema, TalkLineKind } from "genshin-world/definitions";
 
 // The Traveler's own lines, which the game offers as replies rather than speaking them
 const PLAYER_TALK_ROLE = "TALK_ROLE_PLAYER";

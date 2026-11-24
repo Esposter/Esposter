@@ -13,7 +13,7 @@ import { resolveWikiFiles } from "#src/services/genshinParity/shared/resolveWiki
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { settleAll } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
-import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world";
+import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world/definitions";
 
 // The talents traced at once: each trace holds a whole enlarged icon while it runs, so the pool bounds how many are
 // Held

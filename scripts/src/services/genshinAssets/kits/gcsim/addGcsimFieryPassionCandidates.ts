@@ -6,7 +6,7 @@ import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGc
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { readAnimationFrames } from "#src/services/genshinAssets/kits/gcsim/readAnimationFrames";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
-import { SKILL_TARGETING_AREA } from "genshin-world";
+import { SKILL_TARGETING_AREA } from "genshin-world/definitions";
 
 // Varesa's Fiery Passion: the stance's skill is the rush at the skill's frames and hitmark, its multiplier the Fiery
 // Passion rush's, and the burst variant is the flying kick at the burst's frames and hitmark, its multiplier the Fiery

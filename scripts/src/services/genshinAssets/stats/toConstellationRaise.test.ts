@@ -1,5 +1,5 @@
 import { toConstellationRaise } from "#src/services/genshinAssets/stats/toConstellationRaise";
-import { CombatTalent } from "genshin-world";
+import { CombatTalent } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toConstellationRaise, () => {

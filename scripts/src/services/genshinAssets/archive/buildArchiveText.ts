@@ -2,7 +2,7 @@ import type { ArchiveEntry } from "genshin-world";
 
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { GameLanguages } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The name and the description of every entry the Archive's built sections cite, in every language, published into the
 // World's own chunk per language by the same text ids, as `genshin:assets achievements` publishes its titles

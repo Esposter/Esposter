@@ -11,7 +11,7 @@ import {
 import { ArtifactRarityAffixDepotMap } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
-import { artifactRarityDataSchema } from "genshin-world";
+import { artifactRarityDataSchema } from "genshin-world/definitions";
 
 // Every rarity's artifact table, from the standard pieces of that rarity: the levels it reaches above +0, the EXP each
 // One costs to leave, the base EXP a fodder gives, the levels a minor affix is due at, and every minor affix its depot

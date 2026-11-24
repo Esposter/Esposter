@@ -9,7 +9,7 @@ import { readFamilyTexels } from "#src/services/genshinAssets/palette/readFamily
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { BYTE } from "#src/services/shared/constants";
 import { toSrgb } from "#src/services/shared/toSrgb";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 

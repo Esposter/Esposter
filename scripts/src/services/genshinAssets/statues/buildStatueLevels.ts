@@ -5,7 +5,7 @@ import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap
 import { LIYUE_CITY_ID, MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { toStatueLevelRow } from "#src/services/genshinAssets/statues/toStatueLevelRow";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Mondstadt's and Liyue's Statue of The Seven levels, each row's reward joined from the reward table, published as one
 // Record of the Statue levels dataset a region. An unlisted reward is an error, since a level without its reward would

@@ -5,7 +5,7 @@ import { ACHIEVEMENT_GOAL_TABLE_NAME } from "#src/services/genshinAssets/achieve
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameLanguages } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Every title and description of the achievements built, and every category's name, in every language, published into
 // The world's own chunk per language by the same text ids. A language lacking a text takes English's and says so

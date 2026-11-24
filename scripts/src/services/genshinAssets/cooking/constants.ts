@@ -1,6 +1,6 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would
    otherwise infer */
-import { Attribute, CookingQuality, DishTarget } from "genshin-world";
+import { Attribute, CookingQuality, DishTarget } from "genshin-world/definitions";
 
 // The game's cook recipe, cook bonus and compound tables in the dump, read by their names. The material table is the
 // Crafting's, read by the same name

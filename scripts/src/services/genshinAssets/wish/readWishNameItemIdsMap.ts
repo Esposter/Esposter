@@ -3,7 +3,7 @@ import { checkHasKit } from "#src/services/genshinAssets/wish/checkHasKit";
 import { keepKitRecords } from "#src/services/genshinAssets/wish/keepKitRecords";
 import { getOrCreate } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
-import { characterDataSchema, GameDataKeys, GameDataset, weaponDataSchema } from "genshin-world";
+import { characterDataSchema, GameDataKeys, GameDataset, weaponDataSchema } from "genshin-world/definitions";
 import { z } from "zod";
 
 // Every character and weapon the stat tables hold, joined to its English name through the text id it cites in the

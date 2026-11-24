@@ -1,4 +1,4 @@
-import { GatheringRespawn } from "genshin-world";
+import { GatheringRespawn } from "genshin-world/definitions";
 
 // The game's gather table in the dump beside its material table
 export const GATHER_TABLE_NAME = "GatherExcelConfigData";

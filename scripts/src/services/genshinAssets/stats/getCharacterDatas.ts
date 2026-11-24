@@ -13,7 +13,7 @@ import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDe
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { Attribute, characterDataSchema } from "genshin-world";
+import { Attribute, characterDataSchema } from "genshin-world/definitions";
 
 // Every playable character as the roster holds it: its name by text id, its element from its burst's energy, its region
 // From its association, its growth, its ascension phases from its promotion table, and what its every level starts with

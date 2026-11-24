@@ -6,7 +6,7 @@ import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHit
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { addGcsimGravityRippleCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimGravityRippleCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
-import { CombatTalent, STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
+import { CombatTalent, STRIKE_TARGETING_AREA, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(addGcsimGravityRippleCandidates, () => {

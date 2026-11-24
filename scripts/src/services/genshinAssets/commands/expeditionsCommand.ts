@@ -7,7 +7,7 @@ import { buildExpeditionPassives } from "#src/services/genshinAssets/expeditions
 import { buildMondstadtExpeditions } from "#src/services/genshinAssets/expeditions/buildMondstadtExpeditions";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const expeditionsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

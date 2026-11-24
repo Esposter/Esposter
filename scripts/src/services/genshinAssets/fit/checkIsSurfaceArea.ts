@@ -1,6 +1,6 @@
 import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
-import { WorldLayer } from "genshin-world";
+import { WorldLayer } from "genshin-world/definitions";
 
 // Whether an area lies on the surface layer.
 // An area on another layer, such as Enkanomiya or the underground mines, carries its own terrain.

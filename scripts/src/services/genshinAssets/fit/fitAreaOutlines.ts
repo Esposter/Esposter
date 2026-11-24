@@ -21,7 +21,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameLanguage } from "genshin-text";
-import { AreaTerrainType, catalogueSchema } from "genshin-world";
+import { AreaTerrainType, catalogueSchema } from "genshin-world/definitions";
 import { readFile } from "node:fs/promises";
 
 // Each area's and subarea's outline in the catalogue, the game's own: the polygons the community's dump holds for the

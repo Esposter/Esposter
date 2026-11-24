@@ -11,7 +11,7 @@ import { toDropTable } from "#src/services/genshinAssets/enemies/toDropTable";
 import { toEnemyKindName } from "#src/services/genshinAssets/enemies/toEnemyKindName";
 import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { EnemyType } from "genshin-world";
+import { EnemyType } from "genshin-world/definitions";
 import { z } from "zod";
 
 const dropsModuleSchema = z.object({ Enemies: z.array(dropFamilyEntrySchema) });

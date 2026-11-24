@@ -12,7 +12,7 @@ import { getDonorKitCandidates } from "#src/services/genshinAssets/kits/record/g
 import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
 import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { kitRecordSchema } from "genshin-world";
+import { kitRecordSchema } from "genshin-world/definitions";
 
 // A kit's record from its sources' candidates and its overlay, with how each of its values is known, both checked
 // Against their schemas as both are published. A value no source, rule or overlay entry accounts for fails the build.

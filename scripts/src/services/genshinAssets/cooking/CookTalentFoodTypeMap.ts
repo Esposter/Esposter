@@ -1,4 +1,4 @@
-import { CookingFoodType } from "genshin-world";
+import { CookingFoodType } from "genshin-world/definitions";
 
 // The kind of dish a cooking talent's food type parameter names by its number, as the table numbers them
 export const CookTalentFoodTypeMap: Record<string, CookingFoodType> = {

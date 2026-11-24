@@ -1,4 +1,4 @@
-import { WildlifeKind } from "genshin-world";
+import { WildlifeKind } from "genshin-world/definitions";
 
 // The official map's label id of each animal kind, from its label tree as the points were read, under Animals.
 // Each label names one kind of one species as the codex does, so a place takes its kind by its label

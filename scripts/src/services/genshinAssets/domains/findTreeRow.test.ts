@@ -1,6 +1,6 @@
 import { BLESSING_TREE_ARTIFACT_ROWS, DOMAIN_TREE_COUNT_ROWS } from "#src/services/genshinAssets/domains/constants";
 import { findTreeRow } from "#src/services/genshinAssets/domains/findTreeRow";
-import { DomainKind } from "genshin-world";
+import { DomainKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(findTreeRow, () => {

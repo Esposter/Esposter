@@ -16,7 +16,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { toQuestChapter } from "#src/services/genshinText/toQuestChapter";
 import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { QuestIds } from "genshin-world";
+import { QuestIds } from "genshin-world/definitions";
 
 // Each carried series, published whole: its quests in the table's order, its region by its city's name, and the rewards
 // Its last quest's finish gives, each at its item's rarity. A quest of a carried series the world does not carry is an

@@ -3,7 +3,7 @@ import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedSce
 
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
 import { GameTextKey } from "genshin-text";
-import { DomainKind, LandmarkKind } from "genshin-world";
+import { DomainKind, LandmarkKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntryRow => ({

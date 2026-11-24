@@ -3,7 +3,7 @@ import type { CharacterScale, CharacterScaleRecord } from "genshin-world";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
-import { characterScaleRecordSchema, GameDataset } from "genshin-world";
+import { characterScaleRecordSchema, GameDataset } from "genshin-world/definitions";
 
 // The one record of the characters' measured scales, under the key the world reads it by
 const CHARACTER_SCALE_KEY = `${GameDataset.CharacterModels}/scale` as const;

@@ -8,7 +8,7 @@ import { buildFishingTables } from "#src/services/genshinAssets/fishing/buildFis
 import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRegionMap";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const fishingCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

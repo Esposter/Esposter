@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildAdventureRankTables } from "#src/services/genshinAssets/adventureRank/buildAdventureRankTables";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const rankCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

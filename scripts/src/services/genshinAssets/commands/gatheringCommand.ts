@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildGatheringPlaces } from "#src/services/genshinAssets/gathering/buildGatheringPlaces";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const gatheringCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

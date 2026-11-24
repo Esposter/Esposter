@@ -17,7 +17,7 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { skipWordlessTalkLines } from "#src/services/genshinText/skipWordlessTalkLines";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameLanguage } from "genshin-text";
-import { GameDataset, potCompanionDialogueSchema, talkSchema } from "genshin-world";
+import { GameDataset, potCompanionDialogueSchema, talkSchema } from "genshin-world/definitions";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 

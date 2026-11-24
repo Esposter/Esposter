@@ -1,6 +1,6 @@
 import type { MonumentKindTiming } from "#src/models/genshinAssets/puzzles/MonumentKindTiming";
 
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 
 // The element an Elemental Monument is lit by where the wiki gives none. Its monument page names seven element variants
 // And shows only Pyro's temporary monument, so Pyro stands in until a recording measures the place's own element

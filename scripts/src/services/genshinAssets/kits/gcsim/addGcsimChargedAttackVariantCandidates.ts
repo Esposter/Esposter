@@ -5,7 +5,7 @@ import { KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { checkIsChargedAttackVariantAttack } from "#src/services/genshinAssets/kits/gcsim/checkIsChargedAttackVariantAttack";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
-import { STRIKE_TARGETING_AREA } from "genshin-world";
+import { STRIKE_TARGETING_AREA } from "genshin-world/definitions";
 
 // A charged attack's variant: Iansan's Stormflight, the `swift` attack its queue call fires in place of the charged
 // Attack while its check holds. It joins as the variant's one hit the way a burst variant's kick does: its frames from

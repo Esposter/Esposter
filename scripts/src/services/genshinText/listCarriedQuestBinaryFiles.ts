@@ -10,7 +10,7 @@ import {
 import { readCarriedQuestBinaryPaths } from "#src/services/genshinText/readCarriedQuestBinaryPaths";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { QuestIds, ReputationRequestQuestIds } from "genshin-world";
+import { QuestIds, ReputationRequestQuestIds } from "genshin-world/definitions";
 
 // The binary each quest the reader carries reads, found in the folder's listing. The main and sub quest tables it is
 // Named by are the ones the first pass brought down, so this runs after it. A binary the folder lacks is named in

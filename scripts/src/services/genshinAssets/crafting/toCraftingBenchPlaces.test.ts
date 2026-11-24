@@ -5,7 +5,7 @@ import {
   MONDSTADT_CRAFTING_BENCH_NPC_ID,
 } from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingBenchPlaces } from "#src/services/genshinAssets/crafting/toCraftingBenchPlaces";
-import { SceneGroupMemberKind, SceneGroupSource } from "genshin-world";
+import { SceneGroupMemberKind, SceneGroupSource } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toCraftingBenchPlaces, () => {

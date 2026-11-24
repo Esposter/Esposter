@@ -1,4 +1,4 @@
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The loader map's source: each character's icons its entry of the hosted `skillGlyphs` index, so the world fetches a
 // Character's icons only once that character joins the party, and a character the index lacks has no loader

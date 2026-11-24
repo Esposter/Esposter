@@ -1,6 +1,6 @@
 import type { ExcelReliquaryAffixRow } from "#src/models/genshinAssets/stats/ExcelReliquaryAffixRow";
 
-import { Attribute } from "genshin-world";
+import { Attribute } from "genshin-world/definitions";
 import { describe } from "vitest";
 
 // The reliquary, main property and affix ids the trial suites share, and the two affix rows they name

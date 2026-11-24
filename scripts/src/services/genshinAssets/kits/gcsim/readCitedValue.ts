@@ -12,7 +12,7 @@ import { readGcsimLineValues } from "#src/services/genshinAssets/kits/gcsim/read
 import { readGcsimQueueDelay } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay";
 import { readQueuedHitmarks } from "#src/services/genshinAssets/kits/gcsim/readQueuedHitmarks";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
-import { toKitSeconds } from "genshin-world";
+import { toKitSeconds } from "genshin-world/definitions";
 
 // The record's hit field measured from the action's start, as BaseKitHitRecord's schema has it: the only field an
 // Action's hit adds a queued block's delay to. A duration, an interval or a count is cited as written, in any block

@@ -1,7 +1,7 @@
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 import type { TalentLabelMap, TalentMultiplierMap } from "genshin-world";
 
-import { talentLabelMapSchema, talentMultiplierMapSchema } from "genshin-world";
+import { talentLabelMapSchema, talentMultiplierMapSchema } from "genshin-world/definitions";
 
 // The combat talents' multipliers and their labels, each keyed by its proud skill group and each level from the first
 // Up to the last. A level's parameters end at the last one that is not zero, as the world's schema reads. The labels

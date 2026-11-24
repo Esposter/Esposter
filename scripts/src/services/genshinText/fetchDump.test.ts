@@ -16,7 +16,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { CONTENT } = vi.hoisted(() => ({ CONTENT: "a" }));
 
-vi.mock(import("genshin-world"), async (importOriginal) => {
+vi.mock(import("genshin-world/definitions"), async (importOriginal) => {
   const original = await importOriginal();
   return { ...original, QuestIds: [original.QuestId.BirdsEyeView], ReputationRequestQuestIds: [] };
 });

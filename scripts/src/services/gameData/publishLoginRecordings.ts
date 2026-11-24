@@ -3,7 +3,7 @@ import { publishGameDataPlan } from "#src/services/gameData/publishGameDataPlan"
 import { planHostedAssetFiles } from "#src/services/hostedAssets/planHostedAssetFiles";
 import { readHostedAssetSourceFolder } from "#src/services/hostedAssets/readHostedAssetSourceFolder";
 import { DATA_ROOT } from "@esposter/shared-node/cache";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The login's music recordings, published from their working folder as the game data's own scope: each file is an
 // Object named by the sha256 of its bytes, and the scope is replaced whole, so a recording the folder no longer holds

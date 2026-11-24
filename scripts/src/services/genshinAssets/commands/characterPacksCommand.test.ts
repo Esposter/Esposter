@@ -6,7 +6,7 @@ import { buildCharacterPackIndex } from "#src/services/genshinAssets/characterPa
 import { publishCharacterPacks } from "#src/services/genshinAssets/characterPacks/publishCharacterPacks";
 import { characterPacksCommand } from "#src/services/genshinAssets/commands/characterPacksCommand";
 import { defineCommand, runCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const SHA256 = "a".repeat(64);

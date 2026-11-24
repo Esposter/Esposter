@@ -1,5 +1,5 @@
 import { parseExpeditionPassive } from "#src/services/genshinAssets/expeditions/parseExpeditionPassive";
-import { ExpeditionPassiveKind, ExpeditionRegion } from "genshin-world";
+import { ExpeditionPassiveKind, ExpeditionRegion } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(parseExpeditionPassive, () => {

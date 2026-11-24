@@ -4,7 +4,7 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { GcgDeckIdCreatedCardIdsMap } from "#src/services/genshinAssets/gcg/constants";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { GameLanguages } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Every name and description the opponent decks' published slices name by text id, each character's and each action
 // Card's, published into the world's own chunk per language

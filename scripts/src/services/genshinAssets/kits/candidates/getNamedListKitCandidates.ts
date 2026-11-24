@@ -7,7 +7,7 @@ import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { checkHasOwnSlotHit } from "#src/services/genshinAssets/kits/candidates/checkHasOwnSlotHit";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
-import { CombatTalent, kitParameterSchema } from "genshin-world";
+import { CombatTalent, kitParameterSchema } from "genshin-world/definitions";
 
 // A named list's hit path, `hits.<name>.<index>`: a list a module spawns of its own, with no prefix. A slot's list,
 // `burst.hits.<index>`, or a skill hold's, `skillHolds.0.hits.<index>`, is not one

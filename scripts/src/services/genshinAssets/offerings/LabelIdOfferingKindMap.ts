@@ -1,4 +1,4 @@
-import { OfferingKind } from "genshin-world";
+import { OfferingKind } from "genshin-world/definitions";
 
 // The official map's label id of each offering that stands on it, from its label tree as the points were read.
 // Each comes with the map's name for it.

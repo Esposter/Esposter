@@ -3,7 +3,7 @@ import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetPro
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { CloudflareEnvironment, HostedAssetOriginMap, StorageBucket } from "@esposter/db-schema";
 import { DATA_ROOT } from "@esposter/shared-node/cache";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { dirname, join } from "node:path";
 
 // The lock's file name, which the keys file it renders names in its header

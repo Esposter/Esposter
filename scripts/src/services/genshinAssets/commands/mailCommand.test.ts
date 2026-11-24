@@ -1,7 +1,7 @@
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { mailCommand } from "#src/services/genshinAssets/commands/mailCommand";
 import { defineCommand, runCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/publishGameDataStep"), () => ({

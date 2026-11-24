@@ -10,7 +10,7 @@ import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionD
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { LandmarkKind } from "genshin-world";
+import { LandmarkKind } from "genshin-world/definitions";
 
 // A region data file's landmarks the world places, each stood where its prefab's first place stands and turned as it
 // Turns, round the world's origin. Its height over the ground is the export root's height less our ground's at its

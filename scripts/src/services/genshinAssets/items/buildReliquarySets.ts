@@ -10,7 +10,7 @@ import {
 import { toReliquaryPiece } from "#src/services/genshinAssets/items/toReliquaryPiece";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
-import { GameDataset, reliquarySetDataSchema } from "genshin-world";
+import { GameDataset, reliquarySetDataSchema } from "genshin-world/definitions";
 
 // Every artifact set the game's set table holds, each with the text id of its name from its equip affix, the counts its
 // Bonuses take and each piece it is made of. A piece is every row of the reliquary table that belongs to the set, one

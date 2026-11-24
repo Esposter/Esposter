@@ -1,6 +1,6 @@
 import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
-import { kitParameterSchema } from "genshin-world";
+import { kitParameterSchema } from "genshin-world/definitions";
 
 // The constellations the overlay's multipliers name, each a multiplier's `constellation`, so each of their named hits
 // Is read at that constellation's loop bounds as well as the base's

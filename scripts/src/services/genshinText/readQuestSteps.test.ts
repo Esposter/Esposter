@@ -1,5 +1,5 @@
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
-import { QuestBanType, QuestObjectiveKind } from "genshin-world";
+import { QuestBanType, QuestObjectiveKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(readQuestSteps, () => {

@@ -2,7 +2,7 @@ import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelPr
 import type { TalentUpgradeMap } from "genshin-world";
 
 import { EMPTY_ITEM_ID, MAX_MATERIAL_TALENT_LEVEL } from "#src/services/genshinAssets/stats/constants";
-import { TALENT_START_LEVEL, talentUpgradeMapSchema } from "genshin-world";
+import { TALENT_START_LEVEL, talentUpgradeMapSchema } from "genshin-world/definitions";
 
 // The upgrades of the combat talents the kits name, keyed by their proud skill group: each level from the second up to
 // The last one the materials raise, with its phase, Mora and items. A level past that is a constellation's, which no

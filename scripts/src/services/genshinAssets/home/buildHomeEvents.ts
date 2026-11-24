@@ -1,5 +1,5 @@
 import { readHomeFavourRows } from "#src/services/genshinAssets/home/readHomeFavourRows";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The companions' favoured furnishing suites, as one record of the home dataset: each favour by its companion, the
 // Suite, its one-time reward and the talk the companion speaks, sorted by suite and then by companion

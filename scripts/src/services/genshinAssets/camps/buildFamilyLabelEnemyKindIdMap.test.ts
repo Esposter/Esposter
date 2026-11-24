@@ -1,5 +1,5 @@
 import { buildFamilyLabelEnemyKindIdMap } from "#src/services/genshinAssets/camps/buildFamilyLabelEnemyKindIdMap";
-import { EnemyKindId } from "genshin-world";
+import { EnemyKindId } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(buildFamilyLabelEnemyKindIdMap, () => {

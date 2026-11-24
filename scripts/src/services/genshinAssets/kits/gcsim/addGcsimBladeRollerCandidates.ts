@@ -9,7 +9,7 @@ import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/find
 import { readElement } from "#src/services/genshinAssets/kits/gcsim/readElement";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { readPair } from "#src/services/genshinAssets/kits/gcsim/readPair";
-import { STRIKE_TARGETING_AREA } from "genshin-world";
+import { STRIKE_TARGETING_AREA } from "genshin-world/definitions";
 
 // The Blade Roller that plays Xilonen's normal attacks in her blessing: each of its four strikes is one hit at its own
 // Animation and hitmark from `rollerFrames`, its area from `rollerHitboxes` and `rollerOffsets`, its poise from

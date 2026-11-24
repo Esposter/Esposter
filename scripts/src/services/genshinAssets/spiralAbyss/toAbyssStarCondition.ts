@@ -3,7 +3,7 @@ import type { AbyssStarCondition } from "genshin-world";
 
 import { TOWER_COND_LEFT_TIME, TOWER_COND_MONOLITH_HEALTH } from "#src/services/genshinAssets/spiralAbyss/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { AbyssStarConditionKind } from "genshin-world";
+import { AbyssStarConditionKind } from "genshin-world/definitions";
 
 // One star condition of a chamber read from its level row. The time star's mark is the condition's second argument, the
 // Seconds, and the monolith's is its third, the percent. A condition of any other kind is refused rather than dropped

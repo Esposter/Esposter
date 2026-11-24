@@ -6,7 +6,7 @@ import { GCG_STANDARD_RULE_ID } from "#src/services/genshinAssets/gcg/constants"
 import { toGcgStandardRule } from "#src/services/genshinAssets/gcg/toGcgStandardRule";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset, gcgStandardRuleSchema } from "genshin-world";
+import { GameDataset, gcgStandardRuleSchema } from "genshin-world/definitions";
 
 // The standard duel rule, read from the dump's rule and reaction tables, checked against its schema and published as
 // One small record, which the world imports on demand when a duel is first set up

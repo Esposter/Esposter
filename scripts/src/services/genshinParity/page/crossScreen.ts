@@ -4,7 +4,7 @@ import type { LoadBench } from "genshin-world/parity/models/LoadBench";
 import type { Page } from "playwright";
 
 import { PARITY_READY_TIMEOUT_MS } from "#src/services/genshinParity/shared/constants";
-import { LOAD_STEP_MEASURE_PREFIX } from "genshin-world";
+import { LOAD_STEP_MEASURE_PREFIX } from "genshin-world/definitions";
 
 declare global {
   interface Window {

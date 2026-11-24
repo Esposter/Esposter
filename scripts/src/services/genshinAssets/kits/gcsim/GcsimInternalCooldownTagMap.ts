@@ -1,4 +1,4 @@
-import { InternalCooldownTag } from "genshin-world";
+import { InternalCooldownTag } from "genshin-world/definitions";
 
 // The ICD tags gcsim names in an `AttackInfo` literal, as the kit names them: each tag gcsim's enum declares has its
 // Kit tag here, and `ICDTagNone` is a hit with no tag. A tag gcsim names that is missing here is named by its gcsim

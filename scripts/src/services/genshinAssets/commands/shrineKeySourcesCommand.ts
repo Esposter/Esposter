@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildShrineKeySources } from "#src/services/genshinAssets/puzzles/buildShrineKeySources";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const shrineKeySourcesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

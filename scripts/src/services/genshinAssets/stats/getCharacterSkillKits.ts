@@ -4,7 +4,7 @@ import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPl
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toSkillDepot } from "#src/services/genshinAssets/stats/toSkillDepot";
-import { characterSkillKitSchema } from "genshin-world";
+import { characterSkillKitSchema } from "genshin-world/definitions";
 
 // Every playable character's skill sets, its own form's first and then each element form's, as the game's tables give
 // Them. A character none of whose sets holds a skill or a burst is left out

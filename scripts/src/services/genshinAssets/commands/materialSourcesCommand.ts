@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildMaterialSourcePlaces } from "#src/services/genshinAssets/materialSources/buildMaterialSourcePlaces";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const materialSourcesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

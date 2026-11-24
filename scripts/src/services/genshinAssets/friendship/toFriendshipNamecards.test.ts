@@ -4,7 +4,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { toFriendshipNamecards } from "#src/services/genshinAssets/friendship/toFriendshipNamecards";
 import { NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/shared/constants";
-import { MaterialType } from "genshin-world";
+import { MaterialType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toFriendshipNamecards, () => {

@@ -11,7 +11,7 @@ import {
   GameDataset,
   talentLabelMapSchema,
   talentMultiplierMapSchema,
-} from "genshin-world";
+} from "genshin-world/definitions";
 import { z } from "zod";
 
 // A parameter of a label's format, with the times it repeats where the format writes it, `{param4:F1P}*4` or

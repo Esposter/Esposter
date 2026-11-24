@@ -4,7 +4,7 @@ import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import type { Quest } from "genshin-world";
 
 import { readGivingObjectives } from "#src/services/genshinText/readGivingObjectives";
-import { QuestKind, questSchema } from "genshin-world";
+import { QuestKind, questSchema } from "genshin-world/definitions";
 
 // A Reputation delivery request as the dump files it: a sub quest of a world quest, whose items a giving row of its own
 // Id asks for, either exactly or by the items of the groups it names. Its one step collects them, the objective the

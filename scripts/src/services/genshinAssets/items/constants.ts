@@ -1,6 +1,6 @@
 import { RELIQUARY_TABLE_NAME, WEAPON_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { FURNITURE_TABLE_NAME } from "#src/services/genshinAssets/home/constants";
-import { MaterialType } from "genshin-world";
+import { MaterialType } from "genshin-world/definitions";
 
 // The game's material table in the dump beside its text maps
 export const MATERIAL_TABLE_NAME = "MaterialExcelConfigData";

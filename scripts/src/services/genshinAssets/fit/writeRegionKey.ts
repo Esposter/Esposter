@@ -4,7 +4,7 @@ import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { join } from "node:path";
 
 // Writes one key of a region's data file and keeps the rest of it, returning the note of the write: the file's path,

@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildStatueLevels } from "#src/services/genshinAssets/statues/buildStatueLevels";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const statuesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

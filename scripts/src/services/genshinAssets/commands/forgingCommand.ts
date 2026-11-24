@@ -5,7 +5,7 @@ import { buildForgingDailyPointCap } from "#src/services/genshinAssets/forging/b
 import { buildForgingRecipes } from "#src/services/genshinAssets/forging/buildForgingRecipes";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const forgingCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

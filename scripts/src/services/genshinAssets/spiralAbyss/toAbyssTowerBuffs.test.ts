@@ -3,7 +3,7 @@ import type { ExcelTowerBuffRow } from "#src/models/genshinAssets/spiralAbyss/Ex
 import { TowerBuffIcon } from "#src/models/genshinAssets/spiralAbyss/TowerBuffIcon";
 import { TowerBuffLastingType } from "#src/models/genshinAssets/spiralAbyss/TowerBuffLastingType";
 import { toAbyssTowerBuffs } from "#src/services/genshinAssets/spiralAbyss/toAbyssTowerBuffs";
-import { AbyssBenedictionIcon, AbyssBenedictionScope } from "genshin-world";
+import { AbyssBenedictionIcon, AbyssBenedictionScope } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toAbyssTowerBuffs, () => {

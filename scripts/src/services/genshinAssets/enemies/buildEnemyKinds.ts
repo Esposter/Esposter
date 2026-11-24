@@ -27,7 +27,7 @@ import { readAbyssFloors } from "#src/services/genshinAssets/spiralAbyss/readAby
 import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAbyssEnemyKinds";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { Element, EnemyFamily, EnemyType, GameDataset } from "genshin-world";
+import { Element, EnemyFamily, EnemyType, GameDataset } from "genshin-world/definitions";
 
 // The kinds every region's camps place and every Mondstadt bounty, weekly boss, Spiral Abyss chamber and Imaginarium
 // Stage fights, each read from the game's monster table with its family from the archive and its name's text id, and

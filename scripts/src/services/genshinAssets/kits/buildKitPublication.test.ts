@@ -11,7 +11,7 @@ import { buildKitPublication } from "#src/services/genshinAssets/kits/buildKitPu
 import { SOURCE_CANDIDATE_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
-import { CombatTalent, GameDataset, WeaponType } from "genshin-world";
+import { CombatTalent, GameDataset, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(buildKitPublication, () => {

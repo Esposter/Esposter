@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildMiningOutcropPlaces } from "#src/services/genshinAssets/miningOutcrops/buildMiningOutcropPlaces";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const miningOutcropsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

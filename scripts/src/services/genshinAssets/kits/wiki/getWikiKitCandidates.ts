@@ -12,7 +12,7 @@ import { findHitPathRowsMap } from "#src/services/genshinAssets/kits/wiki/findHi
 import { findLabelRows } from "#src/services/genshinAssets/kits/wiki/findLabelRows";
 import { getSlotPath } from "#src/services/genshinAssets/kits/wiki/getSlotPath";
 import { readWikiRowValue } from "#src/services/genshinAssets/kits/wiki/readWikiRowValue";
-import { CombatTalent, WeaponType } from "genshin-world";
+import { CombatTalent, WeaponType } from "genshin-world/definitions";
 
 // A slot row's title without its trailing bracketed part, so `Normal Attack 1-Hit (Target Within 2m)` is the first
 // Strike's row

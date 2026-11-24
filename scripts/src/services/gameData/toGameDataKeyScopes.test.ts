@@ -1,5 +1,5 @@
 import { toGameDataKeyScopes } from "#src/services/gameData/toGameDataKeyScopes";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toGameDataKeyScopes, () => {

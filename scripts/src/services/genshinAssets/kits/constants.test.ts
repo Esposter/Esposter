@@ -3,7 +3,7 @@ import type { KitActionRecord, KitHitRecord, KitRecord } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
-import { CombatTalent, KitPlunge, KitTargeting } from "genshin-world";
+import { CombatTalent, KitPlunge, KitTargeting } from "genshin-world/definitions";
 import { describe } from "vitest";
 
 // The kit record the build suites share: one hit in every action, and a record whose every value the build reads back,

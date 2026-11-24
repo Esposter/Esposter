@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildMondstadtExplorationAreas } from "#src/services/genshinAssets/exploration/buildMondstadtExplorationAreas";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const explorationCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

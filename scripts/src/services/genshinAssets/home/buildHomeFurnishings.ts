@@ -2,7 +2,7 @@ import type { ExcelHomeWorldFurnitureRow } from "#src/models/genshinAssets/home/
 
 import { FURNITURE_TABLE_NAME } from "#src/services/genshinAssets/home/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The load each furnishing takes up in its area, from the game's furnishing table, as one record of the home dataset:
 // Each furnishing by its item id, with the load of its first copy and of each further copy, sorted by that id

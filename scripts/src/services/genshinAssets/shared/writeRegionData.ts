@@ -1,7 +1,7 @@
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
-import { checkIsJumpKind, REGION_LANDMARKS_SUFFIX } from "genshin-world";
+import { checkIsJumpKind, REGION_LANDMARKS_SUFFIX } from "genshin-world/definitions";
 
 // Writes a region's data file and the landmarks file beside it, which holds the region's jump landmarks and
 // Nothing else. The world's start reads that file and no region's whole file. Every region file is written here, so the

@@ -8,7 +8,7 @@ import { buildHomeGardens } from "#src/services/genshinAssets/home/buildHomeGard
 import { buildHomeRules } from "#src/services/genshinAssets/home/buildHomeRules";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const homeCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

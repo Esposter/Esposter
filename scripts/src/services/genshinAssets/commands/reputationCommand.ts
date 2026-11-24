@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildMondstadtReputation } from "#src/services/genshinAssets/reputation/buildMondstadtReputation";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const reputationCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildPuzzlePlaces } from "#src/services/genshinAssets/puzzles/buildPuzzlePlaces";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const puzzlesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

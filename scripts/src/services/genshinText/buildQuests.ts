@@ -39,7 +39,7 @@ import {
   QuestObjectiveKind,
   questSchema,
   ReputationRequestQuestIds,
-} from "genshin-world";
+} from "genshin-world/definitions";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 

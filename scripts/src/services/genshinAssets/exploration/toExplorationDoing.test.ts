@@ -1,7 +1,7 @@
 import type { ExcelWorldAreaExploreEventRow } from "#src/models/genshinAssets/exploration/ExcelWorldAreaExploreEventRow";
 
 import { toExplorationDoing } from "#src/services/genshinAssets/exploration/toExplorationDoing";
-import { ExplorationKind } from "genshin-world";
+import { ExplorationKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toExplorationDoing, () => {

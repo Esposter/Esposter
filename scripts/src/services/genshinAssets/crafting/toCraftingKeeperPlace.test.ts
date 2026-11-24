@@ -1,6 +1,6 @@
 import { CRAFTING_KEEPER_BENCH_OFFSET_METRES } from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingKeeperPlace } from "#src/services/genshinAssets/crafting/toCraftingKeeperPlace";
-import { SceneGroupSource } from "genshin-world";
+import { SceneGroupSource } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toCraftingKeeperPlace, () => {

@@ -1,5 +1,5 @@
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
-import { OfferingKind } from "genshin-world";
+import { OfferingKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(placeMapPoints, () => {

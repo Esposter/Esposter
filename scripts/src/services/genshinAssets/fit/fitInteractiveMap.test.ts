@@ -11,7 +11,7 @@ import {
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 import { readInteractiveMapPoints } from "#src/services/genshinAssets/points/readInteractiveMapPoints";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
-import { OculusKind } from "genshin-world";
+import { OculusKind } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/points/readInteractiveMapPoints"), () => ({

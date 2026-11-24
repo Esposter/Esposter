@@ -1,6 +1,6 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation */
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { join } from "node:path";
 
 // The weapon icons exported from the installed game, each a PNG under the icon name the weapon table gives it, kept

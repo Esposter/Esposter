@@ -5,7 +5,7 @@ import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
 import { readCharacterTrialsInput } from "#src/services/genshinAssets/trials/readCharacterTrialsInput";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const characterTrialsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

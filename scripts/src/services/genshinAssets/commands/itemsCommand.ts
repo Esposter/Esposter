@@ -5,7 +5,7 @@ import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { buildReliquarySets } from "#src/services/genshinAssets/items/buildReliquarySets";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const itemsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

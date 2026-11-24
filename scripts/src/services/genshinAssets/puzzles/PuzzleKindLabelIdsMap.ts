@@ -1,4 +1,4 @@
-import { PuzzleKind } from "genshin-world";
+import { PuzzleKind } from "genshin-world/definitions";
 
 // The official map's label ids of each puzzle kind, from its label tree as the points were read. A Seelie's variants
 // And each nation's shrine carry labels of their own under the same kind, so each kind lists every label it takes.

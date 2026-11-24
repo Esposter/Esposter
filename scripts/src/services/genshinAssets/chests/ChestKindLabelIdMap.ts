@@ -1,4 +1,4 @@
-import { ChestKind } from "genshin-world";
+import { ChestKind } from "genshin-world/definitions";
 
 // The official map's label id of each chest kind, from its label tree as the points were read. A tier's label marks the
 // Chest of that tier, and Buried and Sealed mark the places a tier does not

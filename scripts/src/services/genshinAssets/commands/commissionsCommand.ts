@@ -5,7 +5,7 @@ import { buildCommissions } from "#src/services/genshinAssets/commissions/buildC
 import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRegionMap";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const commissionsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

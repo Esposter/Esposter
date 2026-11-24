@@ -5,7 +5,7 @@ import { buildSkillGlyphs } from "#src/services/genshinAssets/skillGlyphs/buildS
 import { SKILL_GLYPHS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/skillGlyphs/constants";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

@@ -3,7 +3,7 @@ import type { CompoundRow } from "#src/models/genshinAssets/cooking/CompoundRow"
 import { COMPOUND_TABLE_NAME } from "#src/services/genshinAssets/cooking/constants";
 import { toProcessingRecipe } from "#src/services/genshinAssets/cooking/toProcessingRecipe";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The processings from the game's compound table, the ingredients into one result over time, sorted by id as the
 // Processing record of the cooking dataset

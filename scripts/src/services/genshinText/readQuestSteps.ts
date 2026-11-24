@@ -5,7 +5,7 @@ import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContent
 import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
 import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";
-import { QuestBanTypes, QuestObjectiveKind } from "genshin-world";
+import { QuestBanTypes, QuestObjectiveKind } from "genshin-world/definitions";
 
 // A quest's shown steps in order, and the talks offering it, read off its file in the dump's binary output by shape,
 // Since the dump scrambles every field's name each patch. Its sub quests are the list holding the most conditioned sub

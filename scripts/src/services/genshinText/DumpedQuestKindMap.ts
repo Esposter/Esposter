@@ -1,5 +1,5 @@
 import { DumpedQuestKind } from "#src/models/genshinText/DumpedQuestKind";
-import { QuestKind } from "genshin-world";
+import { QuestKind } from "genshin-world/definitions";
 
 // Each quest type's code in the dump's quest table: Archon, legend (a story quest), world, event and the daily
 // Commissions' own

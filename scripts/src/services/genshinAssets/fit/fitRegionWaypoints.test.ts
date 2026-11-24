@@ -6,7 +6,7 @@ import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWo
 import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
-import { LandmarkKind } from "genshin-world";
+import { LandmarkKind } from "genshin-world/definitions";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";

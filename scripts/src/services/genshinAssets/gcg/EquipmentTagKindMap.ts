@@ -1,4 +1,4 @@
-import { GcgCardKind } from "genshin-world";
+import { GcgCardKind } from "genshin-world/definitions";
 
 export const EquipmentTagKindMap: [string, GcgCardKind][] = [
   ["GCG_TAG_TALENT", GcgCardKind.Talent],

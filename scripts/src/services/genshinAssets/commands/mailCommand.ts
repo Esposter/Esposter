@@ -4,7 +4,7 @@ import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep"
 import { buildMailPublication } from "#src/services/genshinAssets/mail/buildMailPublication";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const mailCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

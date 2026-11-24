@@ -2,7 +2,7 @@ import type { ExcelGcgElementReactionRow } from "#src/models/genshinAssets/gcg/E
 import type { ExcelGcgRuleRow } from "#src/models/genshinAssets/gcg/ExcelGcgRuleRow";
 
 import { toGcgStandardRule } from "#src/services/genshinAssets/gcg/toGcgStandardRule";
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toGcgStandardRule, () => {

@@ -1,4 +1,4 @@
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The loader map's source: each character's multipliers its entry of the hosted `talentMultipliers` index, so the world
 // Fetches a character's multipliers only once that character joins the party

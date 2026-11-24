@@ -19,7 +19,7 @@ import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacte
 import { TRIAL_AVATAR_TABLE_NAME } from "#src/services/genshinAssets/trials/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The Imaginarium Theater's seasons and difficulties from the role combat tables, each published as a record of the
 // Imaginarium dataset. A season names its difficulties by id, and a season whose opening characters do not hold its

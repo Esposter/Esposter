@@ -2,7 +2,7 @@ import type { ResinParam } from "genshin-world";
 
 import { readConstValue } from "#src/services/genshinAssets/shared/readConstValue";
 import { RESIN_PARAM_CONST_NAME } from "#src/services/genshinAssets/stats/constants";
-import { resinParamSchema } from "genshin-world";
+import { resinParamSchema } from "genshin-world/definitions";
 
 // The Original Resin constants the game's constant table holds in its one row, in the order the row gives them: the
 // Refill cap, the regeneration cap, the minutes a point regenerates in, the Original Resin a Primogem refill restores,

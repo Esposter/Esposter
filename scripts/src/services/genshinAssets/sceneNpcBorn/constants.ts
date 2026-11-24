@@ -4,7 +4,7 @@ import {
   SCENE_NPC_BORN_DIRECTORY,
   SCENE_NPC_BORN_FILE_NAME,
 } from "#src/services/genshinText/constants";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { join } from "node:path";
 
 // The open world's NPC birth records, every NPC the scene places and where, as the community's dump holds them

@@ -6,7 +6,7 @@ import { toCraftingRecipe } from "#src/services/genshinAssets/crafting/toCraftin
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The bench's recipes from the game's combine table, each with the instruction items that open it, sorted by id as the
 // Recipes record of the crafting dataset. A row the bench does not craft is left out

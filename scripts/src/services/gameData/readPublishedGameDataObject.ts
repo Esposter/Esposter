@@ -3,7 +3,7 @@ import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readContentAddressedObject } from "@esposter/shared-node/cache";
-import { getGameDataObjectName } from "genshin-world";
+import { getGameDataObjectName } from "genshin-world/definitions";
 import { getHostedAssetUrl } from "hosted-assets";
 
 // The JSON of one published object, by its dataset and hash, through the machine-wide content cache. The cache is keyed

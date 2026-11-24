@@ -7,7 +7,7 @@ import { toDishUse } from "#src/services/genshinAssets/cooking/toDishUse";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The use each dish gives when it is eaten, by the dish's item id, for every item a cook recipe yields that heals,
 // Revives or gives a bonus. A dish with none of these is left out, and a dish's item the material table lacks is an

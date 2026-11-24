@@ -17,7 +17,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
-import { MaterialType } from "genshin-world";
+import { MaterialType } from "genshin-world/definitions";
 
 // The plants, specialties and ores the gathering points give. An item is one when the gather table picks it off the
 // Ground, and its English name is the name of a label the official map files under a category that respawns, which is

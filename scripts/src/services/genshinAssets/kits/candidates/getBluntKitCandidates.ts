@@ -5,7 +5,7 @@ import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { CharacterIdBluntOverrideMap } from "#src/services/genshinAssets/kits/wiki/CharacterIdBluntOverrideMap";
-import { AttackTag, Element, WeaponType } from "genshin-world";
+import { AttackTag, Element, WeaponType } from "genshin-world/definitions";
 
 // The suffix every hit's hitmark is read under, which finds each hit of the record among the values
 const HITMARK_SUFFIX = ".hitmarkFrames";

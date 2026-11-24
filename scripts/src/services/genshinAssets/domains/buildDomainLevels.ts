@@ -24,7 +24,7 @@ import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Every challenge domain's kind and levels, each domain by its entrance's entry id, as the index the domain screen
 // Reads one entrance at a time from. The levels come from the dungeon table, the reward previews and the entry table,

@@ -1,6 +1,6 @@
 import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
-import { kitParameterSchema } from "genshin-world";
+import { kitParameterSchema } from "genshin-world/definitions";
 
 // The proud skill group an overlay's multiplier names, the one a named hit joins its talent by
 export const readMultiplierGroupId = (overlay: KitOverlay, key: string): number | undefined => {

@@ -1,5 +1,5 @@
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // Whether a fit has drawn a region's ground: a piece of it is in the lock, where one no fit has drawn is the plateau
 // Its authored file holds under the region's own key

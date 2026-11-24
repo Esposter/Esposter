@@ -4,7 +4,7 @@ import { OculusKindLabelIdMap } from "#src/services/genshinAssets/oculi/OculusKi
 import { buildFittedMapPointSlices } from "#src/services/genshinAssets/points/buildFittedMapPointSlices";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 import { reportKindCount } from "#src/services/genshinAssets/points/reportKindCount";
-import { GameDataset, OculusKind } from "genshin-world";
+import { GameDataset, OculusKind } from "genshin-world/definitions";
 
 // Each region's Oculi as one slice of the oculi dataset, from the official map's points and the fit. The notes count
 // Each region's Oculi and what was left out, then each region whose count differs from the wiki's; a match reports

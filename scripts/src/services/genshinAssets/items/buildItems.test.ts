@@ -18,7 +18,7 @@ import {
   GadgetKind,
   GameDataset,
   MAX_ITEM_QUANTITY,
-} from "genshin-world";
+} from "genshin-world/definitions";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({

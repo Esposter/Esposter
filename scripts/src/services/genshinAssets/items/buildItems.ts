@@ -28,7 +28,7 @@ import {
   offeringRewardSchema,
   reputationCitySchema,
   WALLET_ITEM_IDS,
-} from "genshin-world";
+} from "genshin-world/definitions";
 import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe

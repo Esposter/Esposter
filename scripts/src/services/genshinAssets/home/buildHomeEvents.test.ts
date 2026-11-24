@@ -4,7 +4,7 @@ import {
   HOME_AVATAR_SUMMON_EVENT_TYPE,
 } from "#src/services/genshinAssets/home/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));

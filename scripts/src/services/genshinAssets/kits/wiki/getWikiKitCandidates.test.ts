@@ -5,7 +5,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { WIKI_FIXTURE_DIRECTORY } from "#src/services/genshinAssets/kits/wiki/constants.test";
 import { getWikiKitCandidates } from "#src/services/genshinAssets/kits/wiki/getWikiKitCandidates";
 import { parseAdvancedProperties } from "#src/services/genshinAssets/kits/wiki/parseAdvancedProperties";
-import { CombatTalent, InternalCooldownTag, KitPlunge, WeaponType } from "genshin-world";
+import { CombatTalent, InternalCooldownTag, KitPlunge, WeaponType } from "genshin-world/definitions";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";

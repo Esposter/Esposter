@@ -2,7 +2,7 @@ import type { ExcelProperty } from "#src/models/genshinAssets/stats/ExcelPropert
 import type { AttributeLine } from "genshin-world";
 
 import { EMPTY_PROPERTY_TYPE } from "#src/services/genshinAssets/stats/constants";
-import { Attributes } from "genshin-world";
+import { Attributes } from "genshin-world/definitions";
 
 // A table's properties as attribute lines, an empty slot and a line of none left out; a property no attribute names is
 // Left out too and noted, since the run's output then lacks it

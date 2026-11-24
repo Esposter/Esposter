@@ -4,7 +4,7 @@ import type { ShopReputationDiscount } from "#src/models/genshinAssets/shops/Sho
 import { toShopGoodSlice } from "#src/services/genshinAssets/shops/toShopGoodSlice";
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The goods of the table that pass the filter, one row a good by its id, as one record of the shops dataset by stem
 // A Reputation discount, where the good's shop is one it names, is written onto each of its goods

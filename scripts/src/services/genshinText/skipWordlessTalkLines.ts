@@ -1,6 +1,6 @@
 import type { Talk } from "genshin-world";
 
-import { TalkLineKind } from "genshin-world";
+import { TalkLineKind } from "genshin-world/definitions";
 
 // A talk with its wordless lines skipped. A spoken line the check finds no words for is one the game shows nothing of,
 // A step its scene acts on, so it is taken out and each line it followed goes on to its follower instead. A talk with a

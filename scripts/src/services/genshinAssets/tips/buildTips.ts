@@ -7,7 +7,7 @@ import { PUSH_TIPS_CODEX_TABLE_NAME, PUSH_TIPS_TABLE_NAME } from "#src/services/
 import { GLOBAL_WATCHER_TABLE_NAME } from "#src/services/genshinAssets/tips/constants";
 import { toTipRecords } from "#src/services/genshinAssets/tips/toTipRecords";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { tipSchema } from "genshin-world";
+import { tipSchema } from "genshin-world/definitions";
 
 // Every tutorial tip the game's tables hold, checked against the world's schema, with a note of how many the Archive
 // Lists and how many a watcher's trigger shows

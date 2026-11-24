@@ -1,7 +1,7 @@
 import type { ChoiceTalkLine, SpokenTalkLine } from "genshin-world";
 
 import { skipWordlessTalkLines } from "#src/services/genshinText/skipWordlessTalkLines";
-import { choiceTalkLineSchema, TalkLineKind } from "genshin-world";
+import { choiceTalkLineSchema, TalkLineKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 // A spoken line with no speaker, its words the given text id

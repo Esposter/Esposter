@@ -1,4 +1,4 @@
-import { ForgeRecipeKind } from "genshin-world";
+import { ForgeRecipeKind } from "genshin-world/definitions";
 
 // The game's forge table in the dump, read by its name. The material table is the crafting's, read by the same name
 export const FORGE_TABLE_NAME = "ForgeExcelConfigData";

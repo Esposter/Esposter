@@ -8,7 +8,7 @@ import {
 } from "#src/services/genshinAssets/gcg/constants";
 import { toGcgGames } from "#src/services/genshinAssets/gcg/toGcgGames";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The duels the world's residents play and the challengers' duels beside them, read from the dump's game table into one
 // Small map by game id, which the world imports with its rule. Each names the deck its opponent plays and the player's,

@@ -4,7 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
-import { CombatTalent, WeaponType } from "genshin-world";
+import { CombatTalent, WeaponType } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const createTables = (

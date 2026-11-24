@@ -10,7 +10,7 @@ import { readNamedHitKey } from "#src/services/genshinAssets/kits/readNamedHitKe
 import { readListHitCalls } from "#src/services/genshinAssets/kits/record/readListHitCalls";
 import { readSiteCallsMap } from "#src/services/genshinAssets/kits/record/readSiteCallsMap";
 import { splitHitPath } from "#src/services/genshinAssets/kits/record/splitHitPath";
-import { kitParameterSchema } from "genshin-world";
+import { kitParameterSchema } from "genshin-world/definitions";
 
 // A hit takes its candidates from the talent variable its multiplier joins to: each hit of a
 // `hits` list, a skill hold or a stance hold, or a single hit's own in

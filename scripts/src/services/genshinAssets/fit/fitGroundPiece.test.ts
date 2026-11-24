@@ -4,7 +4,7 @@ import type { DomainEntranceLandmark } from "genshin-world";
 
 import { fitGroundPiece } from "#src/services/genshinAssets/fit/fitGroundPiece";
 import { GameTextKey } from "genshin-text";
-import { DomainKind, LandmarkKind } from "genshin-world";
+import { DomainKind, LandmarkKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const createDomainEntrance = (entryId: number, x: number): DomainEntranceLandmark => ({

@@ -3,7 +3,7 @@ import type { ExcelRoleCombatScheduleRow } from "#src/models/genshinAssets/imagi
 import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarRow";
 
 import { toImaginariumSeason } from "#src/services/genshinAssets/imaginarium/toImaginariumSeason";
-import { Element } from "genshin-world";
+import { Element } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toImaginariumSeason, () => {

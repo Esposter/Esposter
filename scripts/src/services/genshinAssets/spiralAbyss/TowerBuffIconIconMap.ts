@@ -1,7 +1,7 @@
 import type { AbyssBenedictionChoice } from "genshin-world";
 
 import { TowerBuffIcon } from "#src/models/genshinAssets/spiralAbyss/TowerBuffIcon";
-import { AbyssBenedictionIcon } from "genshin-world";
+import { AbyssBenedictionIcon } from "genshin-world/definitions";
 
 // The glyph a Benediction's card draws, by the icon its tower buff row names. The Life icon has no glyph in the
 // Published record, so it has no entry and its Benediction publishes no icon

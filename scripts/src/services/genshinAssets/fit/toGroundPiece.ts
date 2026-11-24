@@ -3,7 +3,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
-import { getGroundPieceSquare, getRegionGroundPieceKey } from "genshin-world";
+import { getGroundPieceSquare, getRegionGroundPieceKey } from "genshin-world/definitions";
 
 // An area's piece, fitted over its own outline: the square of its bounding box round the box's centre, its samples
 // Those inside the outline

@@ -18,7 +18,7 @@ import { toGcsimAttackTag } from "#src/services/genshinAssets/kits/gcsim/toGcsim
 import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
 import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
-import { Attribute } from "genshin-world";
+import { Attribute } from "genshin-world/definitions";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 

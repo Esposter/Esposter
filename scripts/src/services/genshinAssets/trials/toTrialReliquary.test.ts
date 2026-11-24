@@ -11,7 +11,7 @@ import {
   SET_RELIQUARY_ID,
 } from "#src/services/genshinAssets/trials/constants.test";
 import { toTrialReliquary } from "#src/services/genshinAssets/trials/toTrialReliquary";
-import { ArtifactSlot, Attribute } from "genshin-world";
+import { ArtifactSlot, Attribute } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe(toTrialReliquary, () => {

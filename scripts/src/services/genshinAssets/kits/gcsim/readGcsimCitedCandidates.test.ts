@@ -8,7 +8,14 @@ import { TALENT_GROUP_ID_MAP } from "#src/services/genshinAssets/kits/constants.
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
-import { AttackTag, Attribute, CombatTalent, Element, expandKitOverlay, InternalCooldownTag } from "genshin-world";
+import {
+  AttackTag,
+  Attribute,
+  CombatTalent,
+  Element,
+  expandKitOverlay,
+  InternalCooldownTag,
+} from "genshin-world/definitions";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

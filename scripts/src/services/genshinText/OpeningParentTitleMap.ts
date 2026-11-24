@@ -1,4 +1,4 @@
-import { QuestId } from "genshin-world";
+import { QuestId } from "genshin-world/definitions";
 
 // The named prerequisites of each city's opening quest, by the title the fandom wiki's Commission page gives them,
 // Under the region the page names them for. Provisional: the page names them in prose, not as data. The builder matches

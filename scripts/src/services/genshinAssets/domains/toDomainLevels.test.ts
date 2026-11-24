@@ -6,7 +6,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
 
 import { toDomainLevels } from "#src/services/genshinAssets/domains/toDomainLevels";
-import { checkIsDomainKindOpenOnDay, DomainKind, GAME_TIME_ZONE } from "genshin-world";
+import { checkIsDomainKindOpenOnDay, DomainKind, GAME_TIME_ZONE } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntryRow => ({

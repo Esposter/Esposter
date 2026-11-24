@@ -8,7 +8,7 @@ import { GATHER_TABLE_NAME } from "#src/services/genshinAssets/gathering/constan
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { readFileSync } from "node:fs";
 
 // The gadgets of the widget config, one row each by its id, and the Serenitea Pot's row built from its material row,

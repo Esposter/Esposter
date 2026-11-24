@@ -1,5 +1,5 @@
 import { DOMAIN_TREE_COUNT_ROWS } from "#src/services/genshinAssets/domains/constants";
-import { DomainKind } from "genshin-world";
+import { DomainKind } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 describe("domainTreeCountRows", () => {

@@ -7,7 +7,7 @@ import { GCSIM_CACHE_DIRECTORY, GCSIM_TAG, WIKI_CACHE_DIRECTORY } from "#src/ser
 import { readKitInputs } from "#src/services/genshinAssets/kits/readKitInputs";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const kitsCommand: SubCommandsDef[string] = defineCommand({
   args: {

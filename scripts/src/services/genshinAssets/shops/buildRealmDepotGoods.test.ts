@@ -4,7 +4,7 @@ import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 import { buildRealmDepotGoods } from "#src/services/genshinAssets/shops/buildRealmDepotGoods";
 import { MORA_ITEM_ID, REALM_DEPOT_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));

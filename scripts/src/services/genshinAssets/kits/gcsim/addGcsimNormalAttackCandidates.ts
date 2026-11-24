@@ -15,7 +15,7 @@ import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumbe
 import { readStanceHitbox } from "#src/services/genshinAssets/kits/gcsim/readStanceHitbox";
 import { readStrikeFrames } from "#src/services/genshinAssets/kits/gcsim/readStrikeFrames";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
-import { STRIKE_TARGETING_AREA } from "genshin-world";
+import { STRIKE_TARGETING_AREA } from "genshin-world/definitions";
 
 // The normal attacks: each strike's hitmarks from `attackHitmarks` or the release list `attackReleases`, its animation
 // From `attackFrames`, and its hits' areas from the `N<strike>` or `N<strike>-<hit>` hitboxes. A stance's normal

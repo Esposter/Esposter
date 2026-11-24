@@ -12,7 +12,7 @@ import { toAchievementCategory } from "#src/services/genshinAssets/achievements/
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
-import { achievementCategorySchema, achievementSchema, GameDataset } from "genshin-world";
+import { achievementCategorySchema, achievementSchema, GameDataset } from "genshin-world/definitions";
 
 // The achievements and their categories from the game's tables, each kept whole rather than split by trigger, and
 // Published as two records. A disused achievement is left out, and each row is checked against the world's own schema

@@ -11,7 +11,7 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
 import { GameLanguage } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const enemiesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

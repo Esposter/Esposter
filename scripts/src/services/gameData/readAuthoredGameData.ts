@@ -5,7 +5,7 @@ import { readRegionGroundFiles } from "#src/services/genshinAssets/shared/readRe
 import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 

@@ -4,7 +4,7 @@ import type { ExcelGcgWeekLevelRow } from "#src/models/genshinAssets/gcg/ExcelGc
 
 import { toGcgLevels } from "#src/services/genshinAssets/gcg/toGcgLevels";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The card game's levels slice, read from the dump's level, week-level and level-lock tables: each Player Level's total
 // EXP, each challenger's duels with the level that opens each, and the locks that hold the Player Level

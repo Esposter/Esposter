@@ -6,7 +6,7 @@ import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
-import { SKILL_TARGETING_AREA } from "genshin-world";
+import { SKILL_TARGETING_AREA } from "genshin-world/definitions";
 
 const CLOUD_TIMINGS = ["cloudTravelTime", "cloudFirstHit", "cloudHitInterval"];
 

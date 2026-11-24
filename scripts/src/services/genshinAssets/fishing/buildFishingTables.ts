@@ -20,7 +20,7 @@ import { toFishRod } from "#src/services/genshinAssets/fishing/toFishRod";
 import { toFishSkill } from "#src/services/genshinAssets/fishing/toFishSkill";
 import { toFishTagMap } from "#src/services/genshinAssets/fishing/toFishTagMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The fish, their rods, skills, baits, proficiency and each fish's catch reward, and each region's pools built as the
 // Fishing dataset's records, the pools filed by the region their city lies in. A pool whose city no region holds is

@@ -1,4 +1,4 @@
-import { OculusKind } from "genshin-world";
+import { OculusKind } from "genshin-world/definitions";
 
 // The official map's label id of each Oculus kind, from its label tree as the points were read.
 // Each region's Oculi carry one label between them.

@@ -1,7 +1,7 @@
 import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
 
 import { takeOne } from "@esposter/shared";
-import { ArtifactSlot } from "genshin-world";
+import { ArtifactSlot } from "genshin-world/definitions";
 
 // The depot each slot's standard pieces draw their main affix from, read from the reliquary table: the depot most of a
 // Slot's pieces draw, since the events' pieces draw others

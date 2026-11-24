@@ -1,4 +1,4 @@
-import { CookingTalentEffect } from "genshin-world";
+import { CookingTalentEffect } from "genshin-world/definitions";
 
 // The effect each cooking talent's proud skill names, as the table spells it: a perfect cook's double, and the talent
 // That adds a Suspicious dish

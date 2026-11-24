@@ -7,10 +7,10 @@ import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQu
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { GameDataset, QuestKind, QuestObjectiveKind } from "genshin-world";
+import { GameDataset, QuestKind, QuestObjectiveKind } from "genshin-world/definitions";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("genshin-world"), async (importOriginal) => {
+vi.mock(import("genshin-world/definitions"), async (importOriginal) => {
   const original = await importOriginal();
   return { ...original, QuestIds: [original.QuestId.CandidatureAnalysis], ReputationRequestQuestIds: [] };
 });

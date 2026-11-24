@@ -8,7 +8,7 @@ import { GCSIM_DURABILITY_PER_GAUGE, KIT_LENGTH_KEY } from "#src/services/genshi
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
-import { SKILL_TARGETING_AREA } from "genshin-world";
+import { SKILL_TARGETING_AREA } from "genshin-world/definitions";
 
 // The six-metre circle on the primary target that the burst's shells take their targets from, its radius as the burst's
 // Literal gives it

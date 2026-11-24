@@ -27,7 +27,7 @@ import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
 import { computeMean } from "#src/services/recreation/statistics/computeMean";
 import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
-import { regionGroundSchema } from "genshin-world";
+import { regionGroundSchema } from "genshin-world/definitions";
 
 // The distance between a piece's samples, and the distance from its centre a sample weighs half of one at the centre,
 // In metres

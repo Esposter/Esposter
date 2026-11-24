@@ -4,7 +4,7 @@ import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import { countWitnessPlantsAtPlaces } from "#src/services/genshinAssets/fit/countWitnessPlantsAtPlaces";
 import { fitRegionPlants } from "#src/services/genshinAssets/fit/fitRegionPlants";
 import { readWitnessPlacements } from "#src/services/genshinAssets/fit/readWitnessPlacements";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // A region's plants fit, published as the region's own record, `regions/<region>/plants`, with its count and the
 // Witness's agreement with it.

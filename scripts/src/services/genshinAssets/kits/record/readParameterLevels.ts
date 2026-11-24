@@ -1,6 +1,6 @@
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { kitParameterSchema } from "genshin-world";
+import { kitParameterSchema } from "genshin-world/definitions";
 
 // A table's parameter at each level its talent plays at, as the record reads it at runtime, or none where the value is
 // Not a reference or its talent has no multipliers in the tables

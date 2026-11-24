@@ -13,7 +13,7 @@ import {
   GameDataset,
   readCreateKitBehaviour,
   TALENT_START_LEVELS,
-} from "genshin-world";
+} from "genshin-world/definitions";
 
 // Every kit's record and sources from its sources and committed overlay, as the entries of the `kits` and `kitSources`
 // Indexes by avatar id, each kit built after the donors its overlay borrows from. A record must reproduce its published

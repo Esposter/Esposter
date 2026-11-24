@@ -1,6 +1,6 @@
 import type { KitSlotLabels } from "#src/models/genshinAssets/kits/tables/KitSlotLabels";
 
-import { CombatTalent } from "genshin-world";
+import { CombatTalent } from "genshin-world/definitions";
 
 const BURST = CombatTalent.ElementalBurst;
 const NORMAL_ATTACK = CombatTalent.NormalAttack;

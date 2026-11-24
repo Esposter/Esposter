@@ -38,7 +38,7 @@ import { toTalentUpgradeMap } from "#src/services/genshinAssets/stats/toTalentUp
 import { toWeaponLevelRequiredExps } from "#src/services/genshinAssets/stats/toWeaponLevelRequiredExps";
 import { writeTalentTables } from "#src/services/genshinAssets/stats/writeTalentTables";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The roster, each character's skill sets, the weapons and the artifacts' tables, read from the dump's game tables,
 // With the curves they grow along, only those any of them names. Every table is checked against the World's schema as

@@ -1,7 +1,7 @@
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readNameTextIds } from "#src/services/genshinText/readNameTextIds";
 import { GameLanguage } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 // The guard the writer's own discovery feeds: a record republished without a names republish cites a text id the

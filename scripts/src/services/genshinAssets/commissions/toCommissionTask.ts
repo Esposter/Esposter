@@ -12,7 +12,7 @@ import {
 import { DailyTaskFinishKindMap } from "#src/services/genshinAssets/commissions/DailyTaskFinishKindMap";
 import { DailyTaskTypeKindMap } from "#src/services/genshinAssets/commissions/DailyTaskTypeKindMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CommissionKind } from "genshin-world";
+import { CommissionKind } from "genshin-world/definitions";
 
 // One daily task of the dump as the world holds it, its quest as an id and none for a scene task, its title by its name
 // Text id and the region it is preferred in. A type or finish the maps do not name is an error, since the task would be

@@ -5,7 +5,7 @@ import { buildGoodHunterGoods } from "#src/services/genshinAssets/shops/buildGoo
 import { GOOD_HUNTER_SHOP_TYPE, MORA_ITEM_ID } from "#src/services/genshinAssets/shops/constants";
 import { readCityDiscountLevel } from "#src/services/genshinAssets/shops/readCityDiscountLevel";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/shops/readCityDiscountLevel"));

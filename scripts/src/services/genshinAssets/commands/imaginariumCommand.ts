@@ -5,7 +5,7 @@ import { buildImaginarium } from "#src/services/genshinAssets/imaginarium/buildI
 import { buildImaginariumStages } from "#src/services/genshinAssets/imaginarium/buildImaginariumStages";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 export const imaginariumCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },

@@ -8,7 +8,7 @@ import type { GcgDeckSlice } from "#src/models/genshinAssets/shared/GcgDeckSlice
 import { toGcgDeck } from "#src/services/genshinAssets/gcg/toGcgDeck";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset, gcgDeckSchema } from "genshin-world";
+import { GameDataset, gcgDeckSchema } from "genshin-world/definitions";
 
 // One deck's slice, read from the dump's deck, character, skill, card and cost tables, checked against its schema and
 // Published as `gcg/deck<id>`. The dump's obfuscated keys are not read: the fields are the plain names the rows carry

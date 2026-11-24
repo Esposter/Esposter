@@ -1,5 +1,5 @@
 import { buildEnemyCamps } from "#src/services/genshinAssets/camps/buildEnemyCamps";
-import { EnemyKindId } from "genshin-world";
+import { EnemyKindId } from "genshin-world/definitions";
 import { describe, expect, test } from "vitest";
 
 // A stand-in for findAreaAt: the west of x = 50 is one area, the east another, and past z = 100 no area holds the point

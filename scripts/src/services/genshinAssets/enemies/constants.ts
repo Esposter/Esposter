@@ -1,4 +1,4 @@
-import { EnemyKindId } from "genshin-world";
+import { EnemyKindId } from "genshin-world/definitions";
 
 // The game's tables the enemies' kinds are read from, in the dump beside its text maps
 export const MONSTER_TABLE_NAME = "MonsterExcelConfigData";

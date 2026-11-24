@@ -8,7 +8,7 @@ import { readConstValue } from "#src/services/genshinAssets/shared/readConstValu
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The mail table as one entry per mail, keyed by its id, with the birthday mail table kept under its own entry, and
 // Every mail's title, sender and body in every language under the mail text dataset. A mail with a key the reader

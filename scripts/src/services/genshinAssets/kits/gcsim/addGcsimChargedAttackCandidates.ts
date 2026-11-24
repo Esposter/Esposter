@@ -17,7 +17,7 @@ import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
-import { STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
+import { STRIKE_TARGETING_AREA, WeaponType } from "genshin-world/definitions";
 
 // The charged attack: its hitmarks from `chargeHitmark` or `chargeHitmarks`, its frames from `chargeFrames`, and its
 // Hits' areas from the `CA` or `CA-<hit>` hitboxes. A bow's is its aimed shot at gcsim's default charge level, which

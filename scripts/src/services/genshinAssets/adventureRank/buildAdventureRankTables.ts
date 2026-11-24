@@ -5,7 +5,7 @@ import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/shared/Excel
 import { toAdventureRankLevel } from "#src/services/genshinAssets/adventureRank/toAdventureRankLevel";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world/definitions";
 
 // The Adventure Rank tables the world reads, from the dump's player level, level lock and world level tables. The lock
 // Table's main quest is held as the game's id in a string, or "" where the World Level needs no quest, the way

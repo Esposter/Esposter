@@ -1,6 +1,6 @@
 import type { EnemyKindId } from "genshin-world";
 
-import { EnemyKindIds } from "genshin-world";
+import { EnemyKindIds } from "genshin-world/definitions";
 
 const WORLD_KIND_IDS: ReadonlySet<number> = new Set(EnemyKindIds);
 

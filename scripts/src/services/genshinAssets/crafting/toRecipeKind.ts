@@ -7,7 +7,7 @@ import {
   CONVERT_COMBINE_TYPES,
   CONVERT_RECIPE_TYPE,
 } from "#src/services/genshinAssets/crafting/constants";
-import { CraftingRecipeKind } from "genshin-world";
+import { CraftingRecipeKind } from "genshin-world/definitions";
 
 // The kind of a row the bench holds, or undefined for one it does not: a conversion of one of the combine types it
 // Lists, or a craft of a combine type the bench's table names

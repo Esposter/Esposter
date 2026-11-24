@@ -2,7 +2,7 @@ import type { ExcelReliquaryMainPropRow } from "#src/models/genshinAssets/stats/
 
 import { getArtifactMainAffixPools } from "#src/services/genshinAssets/stats/getArtifactMainAffixPools";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { ArtifactSlot, Attribute } from "genshin-world";
+import { ArtifactSlot, Attribute } from "genshin-world/definitions";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
