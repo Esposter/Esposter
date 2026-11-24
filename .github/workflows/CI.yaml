@@ -101,11 +101,7 @@ jobs:
           path: ~/.cache/workspace-data/content
           key: ${{ steps.game-data-mirror-key.outputs.key }}
           restore-keys: game-data-mirror-
-      # Vitest's persisted transforms, one copy for every shard: the shards split the files by time, so a file lands on a
-      # different shard from run to run, and a copy per shard would leave most of a shard's files cold. The merge job saves
-      # the union. An entry is keyed on what the transform read, so one from an earlier commit is reused as it stands; the
-      # lockfile in the key starts the cache over on a dependency change, which is also what keeps entries no file names
-      # any more from piling up
+      # One copy for every shard, which `coverage-merge` saves (`openspec/specs/architecture/ci-caches/design.md`)
       - name: ♻️ Restore the Vitest module cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -125,9 +121,8 @@ jobs:
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
         run: pnpm coverage --reporter=default --reporter=blob --reporter=./packages/configuration/src/services/TestTimingsReporter.ts --shard="$SHARD"
-      # Read only by this run's `coverage-merge`, which saves the union, so only the saving branches upload it and it
-      # expires after a day. Uploaded whether the suite passed or failed, since a failing test transformed its modules all
-      # the same
+      # Read only by this run's `coverage-merge`, so only the saving branches upload it, and it expires after a day. Uploaded
+      # even when the suite failed
       - name: 📤 Upload the Vitest module cache
         if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -232,28 +227,33 @@ jobs:
           path: coverage
           if-no-files-found: error
 
-      # `!cancelled()` rather than the default, so the union is saved after a failed gate too, as each shard's save was. A
-      # failed union saves nothing, so a partial copy is never saved
+      # `!cancelled()` so the union is still saved after a failed gate. The union waits on this step's outcome, so a failed
+      # download saves nothing
       - name: 📥 Download the Vitest module cache
+        id: vitest-module-cache-download
         if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: .vitest/module-cache
           pattern: vitest-module-cache-*
-      # Entries are named by a hash of what they transformed, so the same name is the same bytes on every shard and a copy
-      # over another is safe. `_metadata.json` holds the lockfile hash all shards share, and each `_manifest-*.json` lists
-      # the URLs one project's shards transformed, so those are deep-merged, as the timings are
+      # Content-named entries copy over one another, a batch of files at a time; only the `_manifest-*.json` files are
+      # merged, as the timings are
       - name: 📋 Union the Vitest module cache
         id: vitest-module-cache-union
-        if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        if: ${{ steps.vitest-module-cache-download.outcome == 'success' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
         run: |
+          # Nothing uploaded, as on a re-run after the uploads expired: the cache stays as it is
+          if [ -z "$(find .vitest/module-cache -type f 2>/dev/null)" ]; then
+            exit 0
+          fi
           mkdir -p node_modules/.vitest-cache
-          find .vitest/module-cache -type f ! -name '_manifest-*' -exec cp {} node_modules/.vitest-cache/ \;
+          find .vitest/module-cache -type f ! -name '_manifest-*' -exec sh -c 'cp "$@" node_modules/.vitest-cache/' sh {} +
           for name in $(find .vitest/module-cache -type f -name '_manifest-*' -exec basename {} \; | sort -u); do
             jq -s 'reduce .[] as $manifest ({}; . * $manifest)' $(find .vitest/module-cache -type f -name "$name") > "node_modules/.vitest-cache/$name"
           done
+          echo "unioned=true" >> "$GITHUB_OUTPUT"
       - name: 💾 Save the Vitest module cache
-        if: ${{ steps.vitest-module-cache-union.outcome == 'success' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        if: ${{ steps.vitest-module-cache-union.outputs.unioned == 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.vitest-cache
