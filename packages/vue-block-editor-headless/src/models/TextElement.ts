@@ -8,8 +8,8 @@ import { TextSize, textSizeSchema } from "#src/models/TextSize";
 import { z } from "zod";
 
 // A text box: text drawn in its colour, at its size and at the alignment it sets, which is its left edge when left out.
-// Wrapped at the width the person Set, or unwrapped in auto width, where its width is its widest line. It stores no
-// Height, since its height follows from the lines its text wraps to
+// Wrapped at the width the person set, or unwrapped in auto width, where its width is its widest line.
+// It stores no height, since its height follows from the lines its text wraps to.
 export interface TextElement extends ItemEntityType<typeof PositionedElementType.Text> {
   color: string;
   horizontalAlignment?: HorizontalAlignment | undefined;

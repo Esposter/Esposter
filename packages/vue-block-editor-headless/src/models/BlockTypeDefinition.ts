@@ -4,8 +4,8 @@ import type { OwnProps } from "#src/models/OwnProps";
 import type { SlotKeys } from "#src/models/SlotKeys";
 import type { z } from "zod";
 
-// One entry of a consumer's registry: the props a node of this type declares besides its id and slots, and for each
-// Slot the child types it allows
+// One entry of a consumer's registry: the props a node of this type declares besides its id and slots.
+// For each slot, the child types it allows
 export interface BlockTypeDefinition<TNode extends BlockNode = BlockNode> {
   propsSchema: z.ZodType<OwnProps<TNode["props"]>>;
   slots: { [K in SlotKeys<TNode["props"]>]: NodeTypeOf<TNode["props"][K]>[] };

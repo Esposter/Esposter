@@ -9,10 +9,12 @@ import type { StrokeWidth } from "#src/models/StrokeWidth";
 import type { TextSize } from "#src/models/TextSize";
 import type { VerticalAlignment } from "#src/models/VerticalAlignment";
 
-// A property of a positioned element that a command sets: a colour, a width, a dash pattern or a sketch level on an
-// Element that draws a line, a shape's Or sticky note's fill, a shape's corners, an arrow's route, or the arrowhead at
-// One of an arrow's ends, which is absent for none. A text's size and Horizontal alignment, a shape's or sticky note's
-// Vertical alignment, whether a text box wraps its text, and the alt text an image holds
+// A property of a positioned element that a command sets.
+// A colour, a width, a dash pattern or a sketch level on an element that draws a line.
+// A fill on a shape or sticky note.
+// A shape's corners, an arrow's route, or the arrowhead at one of an arrow's ends, which is absent for none.
+// A text's size and horizontal alignment, a shape's or sticky note's vertical alignment, and whether a text box wraps.
+// An image holds its alt text.
 export type PositionedElementProperty =
   | { end: ArrowEndKey; property: "arrowhead"; value?: ArrowheadKind | undefined }
   | { property: "altText"; value: string }
