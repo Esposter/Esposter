@@ -43,8 +43,8 @@ const noteRules = computed(() => [
     shareMessage.value.length <= MESSAGE_MAX_LENGTH ||
     "The note and link together exceed the message limit, so the note needs to be shorter",
 ]);
-// The message is the room's to accept, so the notice shows once the server has accepted it, and a refused share shows
-// Its error
+// The message is the room's to accept, so the notice shows once the server has accepted it.
+// A refused share shows its error.
 const share = () => {
   const room = roomItems.value.find(({ value }) => value === roomId.value);
   if (!room) return;

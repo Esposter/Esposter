@@ -81,7 +81,7 @@ const addPanel = () => {
 <template>
   <ResourceSurveyFieldShell :error :question="node.props">
     <!-- A group takes neither aria-invalid nor aria-required, so it is named by its title, which carries the
-      required word, And described by the error, the one message the shell draws for the panel, since a row's
+      required word, and described by the error, the one message the shell draws for the panel, since a row's
       controls would each repeat it -->
     <template #default="{ describedBy, labelledBy }">
       <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy" flex flex-col gap-4>

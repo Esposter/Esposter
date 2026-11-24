@@ -20,8 +20,8 @@ const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 const { updateRootProps } = useSurveyCreatorCommands();
 const calculatedValues = computed(() => surveyDocument.value.root.props.calculatedValues);
-// Drafts are held by the index of the value they were typed into, and a removal clears them, since it shifts the
-// Indices
+// Drafts are held by the index of the value they were typed into.
+// A removal clears them, since it shifts the indices.
 const nameDrafts = reactive(new Map<number, SurveyEditDraft>());
 const expressionDrafts = reactive(new Map<number, SurveyEditDraft>());
 const getText = (drafts: Map<number, SurveyEditDraft>, index: number, savedText: string): string =>

@@ -22,8 +22,8 @@ describe("resourceHomeRecentsList", () => {
     const recent = createResourceListItem();
     let isFirstRead = true;
     trpcMsw.resource.readResources.query(async () => {
-      // The first read lands at once, so the list holds its rows; the read a remount issues after the invalidation
-      // Waits
+      // The first read lands at once, so the list holds its rows.
+      // The read a remount issues after the invalidation waits on the gate.
       if (!isFirstRead) await readGate;
       isFirstRead = false;
       return { items: [{ ...recent, favorite: null }], nextCursor: "" };

@@ -177,8 +177,8 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     expect(valueField?.props("error")).toBe("Choice values must be unique");
   });
 
-  // The editor opens on a picker with no choices, adds one from a picked image and removes it, and closes: the picture
-  // Is Then deleted
+  // The editor opens on a picker with no choices, adds one from a picked image and removes it, and closes.
+  // The picture is then deleted.
   test("an image added as a choice and removed in the session is deleted when the editor closes", async () => {
     expect.hasAssertions();
     const surveyCreatorStore = useSurveyCreatorStore();

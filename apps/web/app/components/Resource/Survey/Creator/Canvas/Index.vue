@@ -8,17 +8,18 @@ import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { checkIsBlankText } from "@esposter/shared";
 import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
-// The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over
-// Its Elements, a page and every element is chosen by a click or Enter, and the chosen one takes an accent line inside
-// Its edge
+// The survey drawn as a respondent would see it, with no answers and nothing to type into.
+// Each page is a heading over its elements.
+// A page and every element is chosen by a click or Enter.
+// The chosen one takes an accent line inside its edge.
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { getSelectionBindings } = useSurveyCanvasSelection();
 const { draggedType, dragPoint, registerSlots } = useSurveyCreatorDrag();
 const { insertNodeAt, updateNodeProps } = useSurveyCreatorCommands();
 const canvas = useTemplateRef("canvas");
-// A drag reads the boxes once, as it starts, from the rendered DOM. The canvas registers the measuring while it is
-// Mounted
+// A drag reads the boxes once, as it starts, from the rendered DOM.
+// The canvas registers the measuring while it is mounted.
 registerSlots(() => getSurveyDropSlots(canvas.value ?? undefined, surveyDocument.value));
 const getPagePointer = (pageIndex: number) => `/content/${pageIndex}`;
 const getSlotPointer = (pageIndex: number) => `${getPagePointer(pageIndex)}/props/children`;

@@ -52,8 +52,8 @@ describe("resourceNoteDialogs", () => {
     expect(note.value.doc).toStrictEqual(EMPTY_NOTE_DOC);
   });
 
-  // The preview is the body, and the import's actions are the footer beneath it, so the confirm stays in view on a long
-  // Note
+  // The preview is the body, and the import's actions are the footer beneath it.
+  // The confirm stays in view on a long note.
   test("an import's preview sits in the body and its actions in the footer", async () => {
     expect.hasAssertions();
 

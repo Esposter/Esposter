@@ -48,8 +48,8 @@ const EventBus = function () {
 };
 const PDFFindController = function ({ eventBus }: { eventBus: ReturnType<typeof EventBus> }) {
   eventBus.on("find", (event: unknown) => {
-    // A fake
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- event's query, built by the test rather than typed
+    // A fake find event.
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the query is built by the test rather than typed
     const total = (event as { query: string }).query === "" ? 0 : 2;
 
     eventBus.dispatch("updatefindmatchescount", { matchesCount: { current: total > 0 ? 1 : 0, total } });

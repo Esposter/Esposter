@@ -20,8 +20,8 @@ const { uploadResourceFileMock } = vi.hoisted(() => ({
   uploadResourceFileMock: vi.fn<(file: File) => Promise<string>>(),
 }));
 
-// The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here, and the paste reaches
-// It Through the editor's own file handler
+// The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here.
+// The paste then reaches the editor's own file handler.
 vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));

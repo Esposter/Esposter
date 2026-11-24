@@ -10,8 +10,8 @@ interface Props {
 
 const { slotPointer } = defineProps<Props>();
 const { dropTarget, previewNode } = useSurveyCreatorDrag();
-// The preview stands among the elements, at the index a drop over this slot would land at. The document itself is not
-// Changed
+// The preview stands among the elements, at the index a drop over this slot would land at.
+// The document itself is not changed.
 const checkIsPreviewAt = (index: number) =>
   dropTarget.value?.slotPointer === slotPointer && dropTarget.value.index === index;
 </script>
