@@ -31,13 +31,13 @@ export const roomsInMessage = sqliteTable(
       .primaryKey()
       .$defaultFn(() => v7()),
     image: text().notNull().default(""),
-    // Closes the room to every existing invite link at once, without deleting any of them — the control for a
-    // Raid in progress, which the links have to survive.
+    // Closes the room to every existing invite link at once, without deleting any of them.
+    // It is the control for a raid in progress, which the links have to survive.
     isInvitePaused: integer({ mode: "boolean" }).notNull().default(false),
     isReadOnly: integer({ mode: "boolean" }).notNull().default(false),
-    // The time of the room's last message, which places it in the list and is the clock its unread state reads. A
-    // Room's Settings move updatedAt alone, so editing a room never makes it unread for its members. A new room starts
-    // At the Time it was created
+    // The time of the room's last message, which places it in the list and is the clock its unread state reads.
+    // Changing the room's settings moves updatedAt alone, so an edit never makes it unread for its members.
+    // A new room starts at the time it was created.
     lastMessageAt: integer({ mode: "timestamp_ms" })
       .notNull()
       .$defaultFn(() => new Date()),

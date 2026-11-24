@@ -6,8 +6,9 @@ import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
 import { z } from "zod";
 
-// One respondent's answers to a survey. A draft is kept while they are still answering and reads as submitted once
-// They submit. The answers stay one JSON document, since no query reads inside them
+// One respondent's answers to a survey.
+// A draft is kept while they are still answering, and reads as submitted once they submit.
+// The answers stay one JSON document, since no query reads inside them.
 export const surveyResponsesInResource = sqliteTable(
   "surveyResponses",
   {
@@ -18,11 +19,11 @@ export const surveyResponsesInResource = sqliteTable(
     isDraft: integer({ mode: "boolean" }).notNull().default(false),
     model: text({ mode: "json" }).notNull().default({}).$type<Record<string, unknown>>(),
     modelVersion: integer().notNull().default(0),
-    // Resume position, tracked apart from `model` so a question named "pageNo" can never collide with it. 0 means the
-    // Respondent never advanced past the first page
+    // Resume position, tracked apart from `model` so a question named "pageNo" can never collide with it.
+    // 0 means the respondent never advanced past the first page.
     pageNo: integer().notNull().default(0),
-    // The SHA-256 of the program participant token an Identified response was given under, "" in Anonymous mode. Only
-    // The Hash is kept, so a response names its participant without holding the credential that opens it
+    // The SHA-256 of the program participant token an Identified response was given under, "" in Anonymous mode.
+    // Only the hash is kept, so a response names its participant without holding the credential that opens it.
     participantTokenHash: text().notNull().default(""),
     resourceId: text()
       .notNull()

@@ -6,8 +6,9 @@ import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
 import { z } from "zod";
 
-// The bot identity a webhook message is authored by. Its name is the webhook's, which is the one row that renames it,
-// So The identity holds only what it alone owns: the image it renders with
+// The bot identity a webhook message is authored by.
+// Its name is the webhook's, which is the one row that renames it.
+// The identity holds only what it alone owns: the image it renders with
 export const appUsersInMessage = sqliteTable(
   "appUsers",
   {

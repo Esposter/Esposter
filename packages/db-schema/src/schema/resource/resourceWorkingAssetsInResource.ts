@@ -5,8 +5,8 @@ import { sqliteTable } from "#src/sqliteTable";
 import { check, primaryKey, text } from "drizzle-orm/sqlite-core";
 
 // One row per asset the resource's current working copy embeds, keyed by the resource and the asset's content hash.
-// Rows Are replaced by each content save and removed with their resource by cascade Design:
-// `openspec/specs/resource/content-addressed-assets/design.md`
+// Rows are replaced by each content save and removed with their resource by cascade.
+// Design: `openspec/specs/resource/content-addressed-assets/design.md`
 export const resourceWorkingAssetsInResource = sqliteTable(
   "resourceWorkingAssets",
   {

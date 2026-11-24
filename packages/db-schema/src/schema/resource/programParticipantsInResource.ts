@@ -8,8 +8,9 @@ import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
 import { z } from "zod";
 
-// One row per person in a program's audience. The key value is the participant's identity, so the unique constraint on
-// The program and the key is what refuses a second row for someone who already has one
+// One row per person in a program's audience.
+// The key value is the participant's identity.
+// So the unique constraint on the program and the key refuses a second row for someone who already has one.
 export const programParticipantsInResource = sqliteTable(
   "programParticipants",
   {
@@ -18,15 +19,17 @@ export const programParticipantsInResource = sqliteTable(
       .$defaultFn(() => v7()),
     // The audience key column's value for this participant. Never leaves the server or the owner's client
     keyValue: text().notNull(),
-    // A non-secret stand-in for the participant, safe to publish. The token is the bearer credential a survey write
-    // Accepts, so it can never be the identity a publishable dataset carries
+    // A non-secret stand-in for the participant, safe to publish.
+    // The token is the bearer credential a survey write accepts.
+    // So it can never be the identity a publishable dataset carries.
     publicId: text().notNull(),
     resourceId: text()
       .notNull()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),
-    // The SHA-256 of the credential in the participant's link, never the credential, which is shown once when it is
-    // Issued. A survey response names its participant by this hash, and a regeneration replaces it, so it is unique on
-    // Its own
+    // The SHA-256 of the credential in the participant's link, never the credential itself.
+    // The credential is shown once, when it is issued.
+    // A survey response names its participant by this hash.
+    // A regeneration replaces it, so the hash is unique on its own.
     tokenHash: text().notNull(),
   },
   {

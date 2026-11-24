@@ -43,8 +43,8 @@ export const userSettingsInMessage = sqliteTable(
     userId: text()
       .primaryKey()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
-    // Empty means no background, which is exactly what the picker's None entry already selects, so a value
-    // That no longer resolves - a deleted slot - degrades to the same state rather than to a broken track
+    // Empty means no background, which is exactly what the picker's None entry already selects.
+    // A value that no longer resolves - a deleted slot - degrades to the same state rather than to a broken track
     virtualBackground: text().notNull().default(""),
     voiceInputMode: createEnumColumn(VoiceInputMode).notNull().default(VoiceInputMode.VoiceActivity),
   },

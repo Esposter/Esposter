@@ -37,14 +37,16 @@ export const notificationsInNotification = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    // Every read of this table is the same shape — one user's own bell, newest first on id, which is creation order —
-    // So The index carries the order too and a page is a range scan rather than a scan plus a sort. The retention trim
-    // Is the One time-range read, so `createdAt` keeps its own index beside it. `createdAt` comes from the metadata
-    // Columns the `sqliteTable` wrapper adds, which are outside what extraConfig is handed, so it is named in SQL. The
-    // Unread total is the second read, and the composite index is the wrong shape for it: it would scan one User's
-    // Whole history to count the unread rows in it, and that history only grows — nothing purges a Notification once it
-    // Is read. The partial index is the size of the answer instead, and the answer is what a Bell shows. Its predicate
-    // Is spelled exactly as the query's, so the planner needs no implication proof
+    // Every read of this table is one user's own bell, newest first on id, which is creation order.
+    // The index carries the order too, so a page is a range scan rather than a scan plus a sort.
+    // The retention trim is the one time-range read, so `createdAt` keeps its own index beside it.
+    // `createdAt` comes from the metadata columns the `sqliteTable` wrapper adds.
+    // Those are outside what extraConfig is handed, so it is named in SQL.
+    // The unread total is the second read, and the composite index is the wrong shape for it.
+    // It would scan one user's whole history to count the unread rows in it, and that history only grows.
+    // Nothing purges a notification once it is read.
+    // The partial index is the size of the answer instead, and the answer is what a bell shows.
+    // Its predicate is spelled exactly as the query's, so the planner needs no implication proof
     extraConfig: ({ deletedAt, isRead, userId }) => [
       index("notifications_userId_id_index").on(userId, sql`"id" DESC`),
       index("notifications_userId_createdAt_index").on(userId, sql`"createdAt" DESC`),

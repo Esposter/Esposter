@@ -26,13 +26,13 @@ export const searchHistoriesInMessage = sqliteTable(
     extraConfig: ({ filters, id, query, roomId, userId }) => [
       check("searchHistories_query_length_check", createMaxLengthCheckSql(query, MESSAGE_MAX_LENGTH)),
       // A member's history in one room is read by both, and either parent's deletion cascades through it:
-      // The user-led index serves a user's reads, newest first by id, and their deletion; the room-led index the room's
-      // Deletion
+      // The user-led index serves a user's reads, newest first by id, and their deletion.
+      // The room-led index serves the room's reads and its deletion.
       index("searchHistories_userId_roomId_id_index").on(userId, roomId, id),
       index("searchHistories_roomId_index").on(roomId),
-      // A search's identity is its member, room, query and filters. Running one again is the same row, so the insert
-      // That Would repeat it meets this constraint, and the create procedure needs no read ahead of the write to avoid
-      // A copy
+      // A search's identity is its member, room, query and filters.
+      // Running one again is the same row, so the insert that would repeat it meets this constraint.
+      // The create procedure needs no read ahead of the write to avoid a copy.
       uniqueIndex("searchHistories_userId_roomId_query_filters_unique").on(userId, roomId, query, filters),
     ],
     schema: messageSchema,
