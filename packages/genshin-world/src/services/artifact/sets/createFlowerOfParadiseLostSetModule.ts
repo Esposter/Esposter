@@ -12,12 +12,14 @@ import { takeOne } from "@esposter/shared";
 
 const FLOWER_OF_PARADISE_LOST_STACKS_ID = "flowerOfParadiseLostStacks";
 
-// Flower of Paradise Lost's four-piece. Its first three params raise the DMG its wearer's own Bloom, Hyperbloom and
-// Burgeon deal, and Its eighth the DMG its own Lunar-Bloom deals. Each of those reactions the wearer triggers gains a
-// Stack, up to the fifth param, which Raises those bonuses by the sixth param of each once more a stack, for the fourth
-// Param's seconds from the last stack. A stack is Gained at most once in the seventh param's seconds, and a Bloom a
-// Gadget triggers gains none, as gcsim's noGadget takes Bloom alone; The rest count from any source, and the stacks
-// Count while the wearer is off the field, as the text says
+// Flower of Paradise Lost's four-piece.
+// Its first three params raise the DMG its wearer's own Bloom, Hyperbloom and Burgeon deal.
+// Its eighth raises the DMG its own Lunar-Bloom deals.
+// Each of those reactions the wearer triggers gains a stack, up to the fifth param.
+// Each stack raises those bonuses by the sixth param more, for the fourth param's seconds from the last stack.
+// A stack is gained at most once in the seventh param's seconds.
+// A Bloom a gadget triggers gains none, as gcsim's noGadget takes Bloom alone.
+// The rest count from any source, and the stacks count while the wearer is off the field, as the text says.
 export const createFlowerOfParadiseLostSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const reactionTypeDamageBonusMap = new Map<ReactionType, number>([
     [LunarReactionType.LunarBloom, takeOne(bonus.params, 7)],

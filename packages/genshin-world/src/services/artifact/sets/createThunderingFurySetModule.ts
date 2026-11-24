@@ -15,8 +15,8 @@ import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
 const THUNDERING_FURY_COOLDOWN_ID = "thunderingFuryCooldown";
-// The Elemental Skill cooldown a cut takes off, a second, which gcsim (MIT)
-// `internal/artifacts/thunderingfury/thunderingfury.go` Lowers by 60 frames
+// The Elemental Skill cooldown a cut takes off is a second, the amount gcsim (MIT)
+// "internal/artifacts/thunderingfury/thunderingfury.go" lowers by 60 frames.
 const SKILL_COOLDOWN_CUT_SECONDS = 1;
 // The reactions the four-piece's first param raises the wearer's own DMG of
 const TRANSFORMATIVE_REACTION_TYPES = new Set<ReactionType>([

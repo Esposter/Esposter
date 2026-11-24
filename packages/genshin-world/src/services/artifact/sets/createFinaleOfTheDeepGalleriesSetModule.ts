@@ -11,10 +11,12 @@ import { takeOne } from "@esposter/shared";
 const FINALE_NORMAL_ATTACK_PAUSE_ID = "finaleNormalAttackPause";
 const FINALE_ELEMENTAL_BURST_PAUSE_ID = "finaleElementalBurstPause";
 
-// Finale of the Deep Galleries. Its four-piece bonus raises the Normal Attack and Elemental Burst DMG of its wearer by
-// The Table's first param each while the wearer has no Elemental Energy. A Normal Attack that deals DMG stops the
-// Burst's bonus For the third param's seconds, and a burst that deals DMG stops the Normal Attack's. The second param
-// Is left unread
+// Finale of the Deep Galleries.
+// Its four-piece bonus raises the Normal Attack and Elemental Burst DMG of its wearer by the first param each.
+// It does so only while the wearer has no Elemental Energy.
+// A Normal Attack that deals DMG stops the Burst's bonus for the third param's seconds.
+// A burst that deals DMG stops the Normal Attack's bonus for the same seconds.
+// The second param is left unread.
 export const createFinaleOfTheDeepGalleriesSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const damageBonus = takeOne(bonus.params, 0);
   const seconds = takeOne(bonus.params, 2);

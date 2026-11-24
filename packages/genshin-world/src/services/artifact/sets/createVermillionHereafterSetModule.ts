@@ -30,11 +30,12 @@ const clearNascentLight = (kitEffectState: KitEffectState, characterId: number):
   );
 };
 
-// Vermillion Hereafter. Its four-piece bonus gives its wearer Nascent Light on casting an Elemental Burst, which raises
-// Its ATK by the second param for the first param's seconds. Each HP decrease of the wearer's while it stands adds the
-// Third param More, up to the fourth param of them, and no more often than the fifth param's seconds. The increases end
-// With Nascent Light, Which the wearer leaving the field dispels, and a burst cast during it dispels it and starts it
-// Again
+// Vermillion Hereafter. Its four-piece bonus gives its wearer Nascent Light on casting an Elemental Burst.
+// Nascent Light raises its ATK by the second param for the first param's seconds.
+// Each HP decrease of the wearer's while it stands adds the third param more, up to the fourth param of them.
+// They come no more often than the fifth param's seconds.
+// The increases end with Nascent Light, which the wearer leaving the field dispels.
+// A burst cast during it dispels it and starts it again.
 export const createVermillionHereafterSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(bonus.params, 0);
   const attackBonus = takeOne(bonus.params, 1);

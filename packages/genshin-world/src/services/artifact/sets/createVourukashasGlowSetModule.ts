@@ -9,11 +9,12 @@ import { takeOne } from "@esposter/shared";
 
 const VOURUKASHAS_GLOW_STACK_ID = "vourukashasGlowStack";
 
-// Vourukasha's Glow. Its four-piece bonus raises its wearer's Elemental Skill and Elemental Burst DMG by the first
-// Param, and each Enemy strike that takes HP from the wearer adds a stack, for the third param's seconds, of the first
-// Param times the second, up to The fourth param's stacks. A stack counts apart from the others, so a stack past the
-// Maximum replaces the one that runs out first. A drain the wearer's own kit made does not count, and neither does a
-// Heal
+// Vourukasha's Glow.
+// Its four-piece bonus raises its wearer's Elemental Skill and Elemental Burst DMG by the first param.
+// Each enemy strike that takes HP from the wearer adds a stack for the third param's seconds.
+// Each stack is the first param times the second, and the stacks go up to the fourth param.
+// A stack counts apart from the others, so a stack past the maximum replaces the one that runs out first.
+// A drain the wearer's own kit made does not count, and neither does a heal.
 export const createVourukashasGlowSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const damageBonus = takeOne(bonus.params, 0);
   const stackDamageBonus = damageBonus * takeOne(bonus.params, 1);

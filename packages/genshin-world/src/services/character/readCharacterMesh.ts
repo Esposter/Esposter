@@ -16,12 +16,13 @@ import {
   parsePmx,
 } from "genshin-engine";
 
-// A character's model from its pack: the PMX read, then every texture a material draws with read once: its Texture, its
-// Sphere map and its toon ramp where the file names one in the model's list, each decoded for each role it is drawn in,
-// As a colour and as a toon ramp, since a toon is read differently. A material's shared toon ramp is the world's own,
-// So No file of it is read. A texture the pack does not hold draws its material without it, logged once for the model,
-// And A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all. The model stands
-// At its Character's unit of metres, which the published measure gives its id
+// A character's model from its pack: the PMX is read, then every texture a material draws with, read once.
+// Its texture, its sphere map and its toon ramp are each read where the file names one in the model's list.
+// Each is decoded for each role it is drawn in, as a colour and as a toon ramp, since a toon is read differently.
+// A material's shared toon ramp is the world's own, so no file of it is read.
+// A texture the pack does not hold draws its material without it, logged once for the model.
+// A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all.
+// The model stands at its character's unit of metres, which the published measure gives its id.
 export const readCharacterMesh = (
   characterPackReader: CharacterPackReader,
   {

@@ -4,9 +4,9 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
-// The DMG Bonus a set's status gives the whole party once, however many of its wearers hold the status: the first
-// Deployed Member holding it gives the bonus and no other does, as the status cannot stack. A member's hook is read on
-// Its own kit, so The member is the one that gives it
+// The DMG Bonus a set's status gives the whole party once, however many of its wearers hold the status.
+// The first deployed member holding it gives the bonus and no other does, as the status cannot stack.
+// A member's hook is read on its own kit, so that member is the one that gives it.
 export const getFirstHolderDamageBonus = (
   member: Combatant,
   effectId: string,

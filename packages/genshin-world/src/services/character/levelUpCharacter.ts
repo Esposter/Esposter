@@ -24,9 +24,9 @@ const getExpMaterialPlan = (expNeeded: number, items: InventoryItem[], expMateri
   return remaining > 0 ? undefined : { exp: expNeeded - remaining, takes };
 };
 
-// A character raised one level with the Character EXP materials that level needs, the bag's items taken and the Mora
-// The EXP costs. Undefined where the level is at its cap or past the table, or the bag or the wallet cannot cover it,
-// And Then nothing is taken
+// A character raised one level takes the bag's Character EXP materials that level needs, and the Mora the EXP costs.
+// Undefined where the level is at its cap or past the table, or the bag or the wallet cannot cover it.
+// In that case nothing is taken.
 export const levelUpCharacter = (
   character: Character,
   {

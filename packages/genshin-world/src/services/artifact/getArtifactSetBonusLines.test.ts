@@ -8,8 +8,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getArtifactSetBonusLines, () => {
   const SET_ID = 1;
-  // The line's words are set here rather than read from the English chunk, so the test does not wait on the chunk's
-  // Write
+  // The line's words are set here rather than read from the English chunk, which the test would otherwise wait on
   const gameText: GameText = { ...ENGLISH_GAME_TEXT, [GameTextKey.ArtifactSetBonusLine]: "{0}-Piece Set: {1}" };
   const nameText = { "101": "Made-up effect.", "102": "Another made-up effect." };
   const createBonus = (descriptionTextHash: string, pieceCount: number): ActiveArtifactSetBonus => ({

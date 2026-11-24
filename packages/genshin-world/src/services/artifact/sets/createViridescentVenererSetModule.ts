@@ -14,12 +14,13 @@ import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 const VIRIDESCENT_VENERER_RES_ID = `viridescentVenerer${ID_SEPARATOR}res`;
 
-// Viridescent Venerer's four-piece. It raises the DMG the wearer's own Swirl reactions deal by the first param, and
-// Each Swirl The wearer triggers while it is the active character lowers the RES of the element it swirls by the second
-// Param for the Third param's seconds, as a Stellar Swirl lowers Cryo RES by the same. Each element's debuff is one,
-// Refreshed rather than Stacked, as gcsim's vvfunc keys its debuff by element. The fourth param is the Stellar Swirl's
-// Own DMG bonus, which the Stellar Swirl's party hook raises in its Glimmer term, as gcsim's wearer-only ReactBonus
-// Does for DirectStellarSwirl
+// Viridescent Venerer's four-piece. It raises the DMG the wearer's own Swirl reactions deal by the first param.
+// Each Swirl the wearer triggers while it is the active character lowers the RES of the element it swirls.
+// That reduction is the second param, for the third param's seconds, and a Stellar Swirl lowers Cryo RES by the same.
+// Each element's debuff is one, refreshed rather than stacked, as gcsim's vvfunc keys its debuff by element.
+// The fourth param is the Stellar Swirl's own DMG bonus.
+// The Stellar Swirl's party hook raises it in its Glimmer term.
+// For DirectStellarSwirl, gcsim's wearer-only ReactBonus does the same.
 export const createViridescentVenererSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const swirlDamageBonus = takeOne(bonus.params, 0);
   const resistanceReduction = takeOne(bonus.params, 1);
