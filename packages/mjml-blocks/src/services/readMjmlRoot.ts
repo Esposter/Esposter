@@ -11,8 +11,9 @@ import { readMjmlNodes } from "#src/services/readMjmlNodes";
 import { readMjmlRootProps } from "#src/services/readMjmlRootProps";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
 
-// The document's root props and body from its mjml element, the head read into the root's props and the body into its
-// Content The mjml element takes two attributes as root props, and any other is refused under its own name
+// The document's root props and body come from its mjml element.
+// The head is read into the root's props, and the body into its content.
+// The mjml element takes two attributes as root props, and any other is refused under its own name.
 export const readMjmlRoot = <TContext, TContent extends MjmlRichText>(
   mjml: HTMLElement,
   registry: MjmlRegistry<TContext>,
@@ -28,8 +29,8 @@ export const readMjmlRoot = <TContext, TContent extends MjmlRichText>(
   const readTagNames = new Set<string>();
   let content: unknown[] = [];
   for (const child of mjml.children) {
-    // A second tag of a name already read is refused under its name, as a tag the package leaves out is, rather than
-    // Merged into the first
+    // A second tag of a name already read is refused under its name, as a tag the package leaves out is.
+    // It is refused rather than merged into the first.
     if (checkIsRepeatedMjmlTag(child.rawTagName, readTagNames)) {
       entries.push([getMjmlRefusalKey(child.rawTagName), child.attributes]);
       continue;

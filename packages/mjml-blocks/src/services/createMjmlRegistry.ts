@@ -27,9 +27,10 @@ import { mjmlWrapperType } from "#src/services/components/mjWrapper";
 import { MJML_BODY_CHILDREN } from "#src/services/constants";
 import { createMjmlRootPropsSchema } from "#src/services/createMjmlRootPropsSchema";
 
-// MJML's component set as block types, with the consumer's leaf types beside them and the body's children as the root's
-// Content A column and a hero take the leaf types' names as their children beside MJML's own, so the leaves are named
-// Where the containers are built
+// MJML's component set as block types, with the consumer's leaf types beside them.
+// The body's children are the root's content.
+// A column and a hero take the leaf types' names as their children beside MJML's own.
+// So the leaves are named where the containers are built.
 export const createMjmlRegistry = <TContent extends MjmlRichText, TContext = unknown>(
   options: CreateMjmlRegistryOptions<TContent, TContext>,
 ): MjmlRegistry<TContext> => {
