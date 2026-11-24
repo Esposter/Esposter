@@ -5,9 +5,9 @@ import { sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
-// Yakan Evocation, Yae Miko's Elemental Skill, which deals no DMG: it summons a Sesshou Sakura, and when one is already
-// On Its side it raises that Sesshou's DMG by 1, once (the wiki does not name the target of the raise, so it is
-// Provisional)
+// Yakan Evocation, Yae Miko's Elemental Skill, which deals no DMG: it summons a Sesshou Sakura.
+// When one is already on its side, it raises that Sesshou's DMG by 1, once.
+// The wiki does not name the target of the raise, so it is provisional.
 export const yakanEvocation: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

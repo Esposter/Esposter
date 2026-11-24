@@ -6,8 +6,9 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import { GCG_PLAYER_EXP_ITEM_ID } from "#src/services/gcg/constants";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 
-// Pays a won game's reward once: its Player EXP into the card game's EXP, and the rest through the bag and wallet the
-// Way a Reward is granted. A game already paid, and a bag that cannot take the reward whole, leave the state as it is
+// Pays a won game's reward once: its Player EXP goes into the card game's EXP.
+// The rest is granted through the bag and wallet the way a Reward is granted.
+// A game already paid, and a bag that cannot take the reward whole, leave the state as it is.
 export const grantGcgGameReward = (
   state: GcgRewardState,
   gameId: number,

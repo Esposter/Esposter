@@ -8,11 +8,12 @@ import { applyGcgNonDamageReactionEffects } from "#src/services/gcg/effects/appl
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 
-// An element applied to a character with no damage, by a card's effect on the side at sideIndex. A character holding no
-// Aura Takes the element as its aura when an aura takes it. One holding an aura reacts with the element when the rule
-// Lists the Pair: the aura is spent and the reaction's effects that deal no DMG land, since a non-DMG application's
-// DMG-dealing effects Are ignored (the wiki's Elemental Reaction Rules). An element the aura makes no reaction with
-// Leaves the aura standing
+// An element applied to a character with no damage, by a card's effect on the side at sideIndex.
+// A character holding no aura takes the element as its aura.
+// One holding an aura reacts with the element when the rule lists the pair.
+// The aura is spent, and the reaction's effects that deal no DMG land.
+// A non-DMG application's DMG-dealing effects are ignored (the wiki's Elemental Reaction Rules).
+// An element the aura makes no reaction with leaves the aura standing.
 export const applyGcgApplication = (
   duel: GcgDuel,
   sideIndex: number,

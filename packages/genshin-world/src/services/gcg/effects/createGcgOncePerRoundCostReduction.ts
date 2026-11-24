@@ -5,8 +5,8 @@ import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { takeOne } from "@esposter/shared";
 
-// A once-per-round reduction of a cost, which the given check sets for a subject. Its card is marked as used in the
-// Round once The cost is paid, and no reduction is due from it again in that round
+// A once-per-round reduction of a cost, which the given check sets for a subject.
+// Its card is marked as used in the round once the cost is paid, and no reduction is due from it again in that round.
 export const createGcgOncePerRoundCostReduction = (
   cardId: number,
   getReduction: (context: GcgEffectContext, subject: GcgCostSubject) => GcgCostReduction | undefined,

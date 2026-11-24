@@ -6,8 +6,8 @@ import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardO
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 
-// Runs the end-phase hooks of the cards on the field, the first side first, then ages every card that lasts rounds by
-// One, And takes off the cards those hooks and the ageing spent
+// Runs the end-phase hooks of the cards on the field, the first side first.
+// Then it ages every card that lasts rounds by one, and takes off the cards those hooks and the ageing spent.
 export const runGcgEndPhase = (duel: GcgDuel): void => {
   for (const [sideIndex, side] of duel.sides.entries())
     for (const zoneCard of listGcgFieldCards(side, undefined)) {

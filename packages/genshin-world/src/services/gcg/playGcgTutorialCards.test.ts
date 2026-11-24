@@ -25,8 +25,8 @@ describe("the tutorial deck's cards and skills", () => {
   const BENNETT_INDEX = 1;
   const MONA_INDEX = 2;
 
-  // A duel of two copies of the tutorial deck, both sides prepared and rolled, with the first side acting and the given
-  // Dice On its side
+  // A duel of two copies of the tutorial deck, both sides prepared and rolled.
+  // The first side is the one acting, with the given dice on its side.
   const openTutorialDuel = async (dice: (Element | GcgDieFace)[]): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
     const deck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, TUTORIAL_DECK_ID);

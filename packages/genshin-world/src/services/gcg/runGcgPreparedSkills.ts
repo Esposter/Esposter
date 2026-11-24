@@ -7,8 +7,9 @@ import { runGcgSkillEffectAndOnUse } from "#src/services/gcg/effects/runGcgSkill
 import { takeOne } from "@esposter/shared";
 
 // Runs the skills a side prepared on an earlier turn, as its turn begins and before the cards on its field deal theirs.
-// Each Runs for the character that prepared it while that character still stands: its damage, its after-effect, then
-// The on-use Hooks of its field, as a skill's own. A skill it prepares while another runs waits for the turn after
+// Each runs for the character that prepared it while that character still stands.
+// It deals its damage, then its after-effect, then the on-use hooks of its field run, as a skill's own.
+// A skill it prepares while another runs waits for the turn after.
 export const runGcgPreparedSkills = (duel: GcgDuel, sideIndex: number): void => {
   const side = takeOne(duel.sides, sideIndex);
   const prepared = side.preparedSkills ?? [];

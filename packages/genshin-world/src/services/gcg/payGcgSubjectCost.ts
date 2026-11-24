@@ -13,9 +13,10 @@ import { surchargeGcgCosts } from "#src/services/gcg/effects/surchargeGcgCosts";
 import { payGcgCost } from "#src/services/gcg/payGcgCost";
 import { takeOne } from "@esposter/shared";
 
-// Pays the costs of a skill a character uses or a card played: the field's reductions are taken off the costs first, in
-// The order the field lists them, then the dice chosen pay what is left and the energy the skill's own costs name is
-// Spent. A refused payment leaves the dice and energy as they were, and a paid one tells each reduction that applied
+// Pays the costs of a skill a character uses or a card played: the field's reductions are taken off the costs first.
+// They are taken in the order the field lists them.
+// Then the dice chosen pay what is left, and the energy the skill's own costs name is spent.
+// A refused payment leaves the dice and energy as they were, and a paid one tells each reduction that applied.
 export const payGcgSubjectCost = (
   context: GcgEffectContext,
   characterIndex: number,

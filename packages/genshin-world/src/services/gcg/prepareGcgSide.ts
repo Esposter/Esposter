@@ -7,9 +7,10 @@ import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { shuffleWithRandom } from "#src/services/shared/shuffleWithRandom";
 import { takeOne } from "@esposter/shared";
 
-// A side's preparation: the cards it switches out of its hand go back into its draw pile, which is shuffled and drawn
-// From to refill the hand as many cards as it gave back, and the character it chooses as its active one. The first
-// Round Starts once both sides have prepared
+// A side's preparation: the cards it switches out of its hand go back into its draw pile, which is shuffled.
+// The side then draws from it to refill the hand as many cards as it gave back.
+// It then chooses the character it wants as its active one.
+// The first round starts once both sides have prepared.
 export const prepareGcgSide = (
   duel: GcgDuel,
   sideIndex: number,

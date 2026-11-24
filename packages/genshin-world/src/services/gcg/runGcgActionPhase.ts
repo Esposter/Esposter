@@ -5,10 +5,11 @@ import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
-// Runs the action-phase hooks as the action phase begins, the round's first side's cards first, then takes off the
-// Field The cards those hooks spent. Each side's Normal Attacks are Charged Attacks this round when its Elemental Dice
-// Were even in Number before the phase, which is settled before any hook runs. The cards are listed before any hook
-// Runs too, so a card A hook moves to the other side is not run again there
+// Runs the action-phase hooks as the action phase begins, the round's first side's cards first.
+// Then it takes off the field the cards those hooks spent.
+// Each side's Normal Attacks are Charged Attacks this round when its Elemental Dice were even in number.
+// That count is taken before the phase, and settled before any hook runs.
+// The cards are listed before any hook runs too, so a card a hook moves to the other side is not run again there.
 export const runGcgActionPhase = (duel: GcgDuel): void => {
   const sideIndices = [duel.firstSideIndex, 1 - duel.firstSideIndex];
   for (const sideIndex of sideIndices) {

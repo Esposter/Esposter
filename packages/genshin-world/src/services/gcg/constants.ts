@@ -75,8 +75,8 @@ export const GcgReactionPairs: [Element, Element, GcgReactionKind][] = [
   [Element.Hydro, Element.Dendro, GcgReactionKind.Bloom],
   [Element.Electro, Element.Dendro, GcgReactionKind.Quicken],
 ];
-// The element or physical damage each damage effect's name spells: Physic is Physical, and the game spells the other
-// Six Elements its own way, which the world's Element enum spells otherwise
+// The element or physical damage each damage effect's name spells: Physic is Physical.
+// The game spells the other six Elements its own way, which the world's Element enum spells otherwise.
 export const GcgEffectDamageNameMap: Map<string, Element | GcgDamageKind> = new Map<string, Element | GcgDamageKind>([
   ["Elec", Element.Electro],
   ["Electric", Element.Electro],
@@ -103,8 +103,8 @@ export const GCG_FOOD_STATUS_CARD_IDS: number[] = [333_001, 333_003, 333_004, 33
 // Toss-Up, whose play takes the dice it rerolls as its choice, and the two rerolls it makes
 export const GCG_TOSS_UP_CARD_ID = 332_003;
 export const GCG_TOSS_UP_REROLL_COUNT = 2;
-// The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its
-// Turns by
+// The side the player steers is the duel's first, and the opponent the resident's.
+// The scripted policy takes that opponent's turns.
 export const GCG_PLAYER_SIDE_INDEX = 0;
 export const GCG_OPPONENT_SIDE_INDEX = 1;
 // The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst, then

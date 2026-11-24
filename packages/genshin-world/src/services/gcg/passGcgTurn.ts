@@ -5,9 +5,9 @@ import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
 import { runGcgSideDamageHook } from "#src/services/gcg/runGcgSideDamageHook";
 import { takeOne } from "@esposter/shared";
 
-// Passes the turn after a combat action to the other side, unless it has declared its round's end: the side still
-// Acting Then acts on, with no new turn begun, so its prepared skills wait for the turn it next takes. The side that
-// Takes the turn Runs the skills prepared for it, then deals what its cards deal before its choice
+// Passes the turn after a combat action to the other side, unless it has declared its round's end.
+// The side still acting then acts on, with no new turn begun, so its prepared skills wait for the turn it next takes.
+// The side that takes the turn runs the skills prepared for it, then deals what its cards deal before its choice.
 export const passGcgTurn = (duel: GcgDuel, sideIndex: number): void => {
   const otherSideIndex = 1 - sideIndex;
   if (!takeOne(duel.sides, otherSideIndex).hasDeclaredEnd) {
