@@ -7,8 +7,8 @@ export const readStreamedBlob = async (response: Response, onChunk: (byteLength:
   while (!result.done) {
     chunks.push(result.value);
     onChunk(result.value.byteLength);
-    // Read takes the next chunk after the last one
-    // oxlint-disable-next-line no-await-in-loop -- Async iteration: the body is a stream read chunk by chunk, so each
+    // Read takes the next chunk after the last one.
+    // oxlint-disable-next-line no-await-in-loop -- Async iteration: the body is read chunk by chunk
     result = await reader.read();
   }
   return new Blob(chunks);

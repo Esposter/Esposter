@@ -1,8 +1,9 @@
 import { renderConstant } from "#src/services/renderConstant";
 
-// The nested constants a product's keys render as Each `[name, lockKey]` pair nests its name by segments and holds its
-// Lock key, which a reader looks the lock's entry up by The product's name prefixes them: `<name>Keys` and
-// `<name>IndexKeys` hold the keys `<name>Key`, `<name>IndexKey` and `<name>KeyOf` type them by the lock keys they hold
+// The nested constants a product's keys render as.
+// Each `[name, lockKey]` pair nests its name by segments and holds the lock key.
+// The product's name prefixes them: `<name>Keys` and `<name>IndexKeys` hold the keys.
+// `<name>Key`, `<name>IndexKey` and `<name>KeyOf` type them by the lock keys they hold.
 // The header names the lock file the keys were rendered from
 export const getHostedAssetKeysSource = (
   productName: string,

@@ -4,9 +4,10 @@ import { HOSTED_ASSETS_DOWNLOAD_CONCURRENCY } from "#src/services/constants";
 import { downloadHostedAssetFile } from "#src/services/downloadHostedAssetFile";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
-// The planned files fetched a few at a time into the cache, with the bytes loaded across all of them reported as each
-// Chunk lands. A file that fails its attempts is listed by its path in the error, while the rest are still fetched, so
-// A Retry plans only what is missing
+// The planned files are fetched a few at a time into the cache.
+// The bytes loaded across all of them are reported as each chunk lands.
+// A file that fails its attempts is listed by its path in the error, while the rest are still fetched.
+// A retry therefore plans only what is missing.
 export const downloadHostedAssetFiles = (
   cache: Pick<Cache, "put">,
   files: readonly HostedAssetDownloadFile[],
@@ -22,7 +23,7 @@ export const downloadHostedAssetFiles = (
     };
     const fetchFiles = async (): Promise<void> => {
       for (const file of fileIterator)
-        // Share one iterator, and each fetches one file at a time
+        // The workers share one iterator, and each fetches one file at a time.
         // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: HOSTED_ASSETS_DOWNLOAD_CONCURRENCY workers
         await downloadHostedAssetFile(cache, file, reportDeltaBytes).match(noop, () => {
           failedPaths.push(file.path);
