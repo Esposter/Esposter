@@ -22,14 +22,13 @@ export const createMockRouter = <TContext extends object>(
   router(
     Object.fromEntries(
       procedureTypes.entries().map(([path, type]) => {
-        // The real procedure's own `.input()` calls, so tRPC parses the input as the server does: a rejection is the
-        // BAD_REQUEST the server answers with, and the resolver gets what the parsers return, combined as tRPC does
+        // The real procedure's own `.input()` calls make tRPC parse the input as the server does.
+        // A rejection is the BAD_REQUEST the server answers with, and the resolver gets what the parsers return.
         const parsers: InputParser<TContext>[] = inputRouter?._def.procedures[path]?._def.inputs ?? [];
-        // Each `.input()` returns a builder typed by its parser's output, which the root procedure type the accumulator
-        // Carries does not name, so each step is cast back to it
+        // Each `.input()` returns a builder typed by its parser's output, which the root procedure type does not name.
         const procedure = parsers.reduce<TRPCMswRoot<TContext>["procedure"]>(
-          // `tRPC` types each `.input()` as a builder over the parser's output, which the accumulator's
-          // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- root procedure type does not name
+          // The `tRPC` builder is typed over the parser's output.
+          // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the root procedure type does not name it
           (builder, parser) => builder.input(parser) as TRPCMswRoot<TContext>["procedure"],
           baseProcedure,
         );
