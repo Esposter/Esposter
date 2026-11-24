@@ -1,6 +1,7 @@
 import type { TestSpecification } from "vitest/node";
 
 import { testTimingsSchema } from "#src/models/TestTimings";
+import { compareText } from "#src/services/compareText";
 import { TEST_TIMINGS_PATH } from "#src/services/constants";
 import { getTestTimingsKey } from "#src/services/getTestTimingsKey";
 import { existsSync, readFileSync } from "node:fs";
@@ -21,12 +22,6 @@ const getShardIndexes = (durations: number[], count: number): number[] => {
     loads[shardIndex] = (loads[shardIndex] ?? 0) + (durations[itemIndex] ?? 0);
   }
   return shardIndexes;
-};
-
-// Code-unit order rather than `localeCompare`, so every shard sorts the same way whatever its locale
-const compareText = (left: string, right: string): number => {
-  if (left === right) return 0;
-  return left < right ? -1 : 1;
 };
 
 // Splits the files over the shards by the durations the last run recorded rather than by count, so the slowest shard
