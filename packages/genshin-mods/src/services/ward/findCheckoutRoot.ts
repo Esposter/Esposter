@@ -8,8 +8,8 @@ import { getParentFolder } from "./getParentFolder";
 export async function findCheckoutRoot($: EngineInterface, folder: string): Promise<string | undefined> {
   let current: string | undefined = folder;
   while (current !== undefined) {
-    // Checkout, and the walk ends there
-    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: the nearest folder holding a `.git` is the
+    // Stop at the first folder holding a `.git`: that is the checkout, and the walk ends there
+    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: each probe waits on the one above
     if (await $.fs.exists(`${current}/.git`)) return current;
     current = getParentFolder(current);
   }
