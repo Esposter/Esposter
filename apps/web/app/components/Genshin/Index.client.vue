@@ -11,9 +11,8 @@ import { GameOpening } from "genshin-world";
 // Screen, whose marks follow it, shown once that screen's white gives way. The world's screen is mounted once the save
 // And the character packs are held, so its code and its tables arrive while the splashes and the login play, and its
 // Session is held back until the door, then draws no frames while the opening covers it, though its first view's ground
-// Still streams in. Its code arriving,
-// The player's save being loaded, and that ground and the regions in reach of it having arrived are the three steps
-// Loading can see, since none reports any finer progress
+// Still streams in. Its code arriving, the player's save being loaded, and that ground and the regions in reach of it
+// Having arrived are the three steps Loading can see, since none reports any finer progress
 const isLoaded = ref(false);
 const isReady = ref(false);
 const isOpeningShown = ref(true);
