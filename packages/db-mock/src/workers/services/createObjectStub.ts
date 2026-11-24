@@ -2,8 +2,9 @@ import type { ObjectCall } from "#src/workers/models/ObjectCall";
 import type { ObjectReply } from "#src/workers/models/ObjectReply";
 import type { Rpc } from "@cloudflare/workers-types";
 
-// An object as the Worker that calls it reaches it. Each RPC is recorded, and resolves to the answer scripted for its
-// Method, if any. The stub exists only inside the Worker that owns the object, so this stands in for it
+// An object as the Worker that calls it reaches it.
+// Each RPC is recorded, and resolves to the answer scripted for its method, if any.
+// The stub exists only inside the Worker that owns the object, so this stands in for it.
 export const createObjectStub = <ObjectRpc>(
   objectId: string,
   objectCalls: ObjectCall[],
