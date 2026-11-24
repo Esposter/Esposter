@@ -63,7 +63,7 @@ describe(resolveVgmstream, () => {
     vi.mocked(resolvePinnedTool).mockImplementationOnce(installPinnedTool);
 
     await expect(resolveVgmstream()).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-mac.zip, has checksum 31336d9bb85e0c667eaf14a4d15c09de4e080feae928930ec0775a3ca5e8f9ef, not the pinned one]`,
+      `[InvalidOperationError: Invalid operation: Read, name: https://github.com/vgmstream/vgmstream/releases/download/r2168/vgmstream-mac.zip, has checksum 31336d9bb85e0c667eaf14a4d15c09de4e080feae928930ec0775a3ca5e8f9ef, not the pinned one]`,
     );
   });
 });

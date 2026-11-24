@@ -317,10 +317,13 @@ export const VGMSTREAM_WINDOWS_PINNED_TOOL: PinnedTool = {
   executablePattern: "vgmstream-cli.exe",
   isArchive: true,
 };
+// The macOS archive is r2168, since r2117 links the libavformat.62 that Homebrew's FFmpeg no longer ships, so it never
+// Loads. Its folder is named for the release, as yt-dlp's is, so a bump never reuses the binary it replaces
+const VGMSTREAM_MACOS_DIRECTORY: string = join(VGMSTREAM_DIRECTORY, "r2168");
 export const VGMSTREAM_MACOS_PINNED_TOOL: PinnedTool = {
-  archiveSha256: "cdabf633231a4556feb0048a71990c768e862f3695dd9458ae28e4d94aa50a99",
-  archiveUrl: "https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-mac.zip",
-  directory: VGMSTREAM_DIRECTORY,
+  archiveSha256: "91fb9da354211acf41c3ea5626c003df1562900be90cb84ad3db278165b43dcb",
+  archiveUrl: "https://github.com/vgmstream/vgmstream/releases/download/r2168/vgmstream-mac.zip",
+  directory: VGMSTREAM_MACOS_DIRECTORY,
   downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
   executablePattern: "vgmstream-cli",
   isArchive: true,
