@@ -41,8 +41,9 @@ watch(shareImageFiles, async (files) => {
     webpageEditor.value.imageUrl = imageUrl;
   }, createErrorAlert);
 });
-// Autosave the share preview as it is edited, the same as the Sheet's Settings blade. The save writes the page
-// Builder's Document too, so an unsaved edit of the page is never written over by the share preview's older tree
+// Autosave the share preview as it is edited, the same as the Sheet's Settings blade.
+// The save writes the page builder's document too.
+// So an unsaved edit of the page is never written over by the share preview's older tree.
 watchAutosave(webpageEditor, () => saveWebpage(currentResourceId.value));
 await loadContent();
 </script>

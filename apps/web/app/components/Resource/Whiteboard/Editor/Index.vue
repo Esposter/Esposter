@@ -19,9 +19,10 @@ import { useWhiteboardDialogStore } from "#src/store/resource/whiteboard/dialog"
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
-// The whiteboard's editor, drawn by the editor shell over the whiteboard's layout and registry. The canvas is the
-// Shell's default slot. Its events and its overlay and Html slots are wired here to the gesture, keyboard and text-edit
-// Logic. The delete confirmation is the one dialog it holds
+// The whiteboard's editor, drawn by the editor shell over the whiteboard's layout and registry.
+// The canvas is the shell's default slot.
+// Its events and its overlay and Html slots are wired here to the gesture, keyboard and text-edit logic.
+// The delete confirmation is the one dialog it holds.
 const whiteboardStore = useWhiteboardStore();
 const { loadContent, saveWhiteboard } = whiteboardStore;
 const { editState, whiteboard } = storeToRefs(whiteboardStore);
@@ -65,15 +66,15 @@ const { onOpenContextMenu } = useWhiteboardContextMenu(editState, {
   pasteText: pasteClipboardText,
   selectAll,
 });
-// A key the text box takes stays in it: Escape discards the edit, and the window's shortcuts would otherwise clear the
-// Selection on that same key
+// A key the text box takes stays in it: Escape discards the edit.
+// The window's shortcuts would otherwise clear the selection on that same key.
 const onTextKeydown = (event: KeyboardEvent) => {
   onTextEditKeydown(event);
   if (event.defaultPrevented) event.stopPropagation();
 };
-// The canvas draws no text of the element being edited, since the editor over it is that text. The store outlives the
-// Editor, so an edit still open when it unmounts clears the id here, or the element's text stays hidden on the next
-// Open
+// The canvas draws no text of the element being edited, since the editor over it is that text.
+// The store outlives the editor.
+// So an edit still open when it unmounts clears the id here, or the element's text stays hidden on the next open.
 watch(
   () => textEdit.value?.elementId,
   (newElementId) => {

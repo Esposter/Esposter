@@ -26,9 +26,9 @@ const choiceValues = computed(() => node.props.choices.map(({ value }) => value)
 // A string that is no choice's value is the typed other text, which the answer holds as itself
 const checkIsOtherEntry = (entry: SurveyAnswerValue): entry is string =>
   typeof entry === "string" && !choiceValues.value.includes(entry);
-// The picks, whether other is picked and its text are held here as the reader makes them. The answer holds other text
-// As Itself, so a text equal to a choice's value cannot be read back from it: it would pick that choice and drop the
-// Field
+// The picks, whether other is picked and its text are held here as the reader makes them.
+// The answer holds other text as itself, so a text equal to a choice's value cannot be read back from it.
+// It would pick that choice and drop the field.
 const { isOtherChosen, otherText, pickedValues } = useSurveyPickedAnswer(
   answer,
   choiceValues.value,

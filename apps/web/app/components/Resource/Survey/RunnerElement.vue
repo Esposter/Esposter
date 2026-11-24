@@ -23,8 +23,8 @@ interface Props {
 
 const { view } = defineProps<Props>();
 const emit = defineEmits<{ answer: [name: string, value: SurveyAnswerValue | undefined] }>();
-// The question as its field draws it, with the required flag the runner decides, so its mark follows its requiring
-// Condition. A panel draws no field
+// The question as its field draws it, with the required flag the runner decides.
+// So its mark follows its requiring condition. A panel draws no field.
 const fieldNode = computed(() =>
   view.node.type === SurveyNodeType.Panel ? undefined : withSurveyRequired(view.node, view.isRequired),
 );

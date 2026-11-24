@@ -17,8 +17,8 @@ vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
 
-// A drop carries its files in the event's data transfer, which the event constructor does not take, so it is set on the
-// Event
+// A drop carries its files in the event's data transfer.
+// The event constructor does not take that, so it is set on the event.
 const dropFiles = (target: EventTarget, files: File[], clientX: number, clientY: number) => {
   const event = new MouseEvent("drop", { bubbles: true, cancelable: true, clientX, clientY });
   Object.defineProperty(event, "dataTransfer", { value: { files } });
@@ -30,8 +30,8 @@ describe("resourceWhiteboardEditorCanvas", () => {
     expect.hasAssertions();
     const imageFile = new File(["a"], "a.png", { type: MimeType.Png });
     const fileId = await getSha256Hex(new Uint8Array(await imageFile.arrayBuffer()));
-    // The drop hashes the file before it uploads it, so the test waits for the upload to be called rather than for a
-    // Fixed number of ticks
+    // The drop hashes the file before it uploads it.
+    // So the test waits for the upload to be called, rather than for a fixed number of ticks.
     const uploadCalled = new Promise<void>((resolve) => {
       uploadResourceFileMock.mockImplementation((_file, hash) => {
         resolve();

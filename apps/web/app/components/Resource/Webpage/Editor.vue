@@ -11,8 +11,8 @@ const { loadContent, saveWebpage } = webpageEditorStore;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getDocument } = pageBuilderDocumentStore;
 await loadContent();
-// The page builder's edits are saved through the content store's own autosave cadence, which the document's deep watch
-// Drives
+// The page builder's edits are saved through the content store's own autosave cadence.
+// The document's deep watch drives it.
 watchAutosave(
   computed(() => getDocument(currentResourceId.value)),
   () => saveWebpage(currentResourceId.value),

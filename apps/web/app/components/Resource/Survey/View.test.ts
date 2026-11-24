@@ -98,8 +98,8 @@ describe("resourceSurveyView", () => {
     expect(clearSurveyResponseIdMock).not.toHaveBeenCalled();
   });
 
-  // The author's completion markup renders in this origin for anonymous respondents, so its script never reaches the
-  // Page
+  // The author's completion markup renders in this origin for anonymous respondents.
+  // So its script never reaches the page.
   test("shows the author's completion message with its script removed", async () => {
     expect.hasAssertions();
 
