@@ -26,7 +26,6 @@ export const renderPrintSheets = async (
       { length: lastPageNumber - firstPageNumber + 1 },
       (_value, index) => firstPageNumber + index,
     );
-    // Each batch of PDF_PRINT_BATCH_SIZE pages renders together, and the next batch waits for it to land.
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each batch renders in parallel
     const images = await Promise.all(pageNumbers.map((pageNumber) => renderPrintImage(pdfDocument, pageNumber)));
     printRoot.append(...images);
