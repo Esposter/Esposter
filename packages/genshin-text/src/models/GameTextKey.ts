@@ -1,8 +1,10 @@
-// Every string of the game's a consumer shows, by the game's own text id — the name its manual text map files the
-// String under, the raw text hash where it files none, or the account kit's own key for a string the game shows before
-// It has loaded its text map. The game already holds each in all fifteen languages, so referencing a new one is a line
-// Here and a run of `pnpm -C scripts genshin:text write`, which reads this const object as its inventory; `genshin:text
-// Find` Prints the id of any English text
+// Every key is the game's own text id for a string a consumer shows.
+// That id is the name its manual text map files the string under.
+// Where the map files none, the id is the raw text hash.
+// Or it is the account kit's own key for a string the game shows before its text map has loaded.
+// The game already holds each in all fifteen languages, so a new one is a line in this object.
+// `pnpm -C scripts genshin:text write` reads this const object as its inventory.
+// `genshin:text find` prints the id of any English text.
 export const GameTextKey = {
   // The Abandon button of a challenge, named as the challenge's interrupt control names it
   AbandonChallenge: "CONTROL_CHALLENGE_INTERRUPT",
