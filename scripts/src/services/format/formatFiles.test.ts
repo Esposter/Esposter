@@ -11,7 +11,7 @@ import { setupFormatterTree } from "#src/services/format/setupFormatterTree.test
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(formatFiles, () => {
   const getRoot = setupFormatterTree();
@@ -28,6 +28,8 @@ describe(formatFiles, () => {
 
   test("rewrites the files before the one it cannot parse, then stops with the formatter's message", () => {
     expect.hasAssertions();
+    // The formatter decorates its message for a CI environment, so the run is pinned to the plain form a terminal sees
+    vi.stubEnv("CI", undefined);
 
     const root = getRoot();
     writeFileSync(join(root, UNPARSABLE_PATH), UNPARSABLE_SOURCE);

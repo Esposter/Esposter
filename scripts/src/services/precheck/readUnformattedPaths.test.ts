@@ -5,7 +5,7 @@ import { readUnformattedPaths } from "#src/services/precheck/readUnformattedPath
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(readUnformattedPaths, () => {
   const getRoot = setupFormatterTree();
@@ -23,6 +23,8 @@ describe(readUnformattedPaths, () => {
 
   test("stops with the formatter's own message for the one file it cannot parse, checked in a run with good files", () => {
     expect.hasAssertions();
+    // The formatter decorates its message for a CI environment, so the run is pinned to the plain form a terminal sees
+    vi.stubEnv("CI", undefined);
 
     const root = getRoot();
     writeFileSync(join(root, UNPARSABLE_PATH), UNPARSABLE_SOURCE);
