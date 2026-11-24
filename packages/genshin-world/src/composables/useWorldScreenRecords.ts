@@ -16,7 +16,7 @@ const holdRecord = <K extends ScreenRecordKey>(records: Partial<ScreenRecords>, 
 
 // The records a screen reads, read the first time its screen opens and held after, so the world's first frame reads
 // None of them. A record that fails to read is logged and its screen closed, since a screen left open without its
-// Record Has nothing to draw, and the next open reads it again
+// Record has nothing to draw, and the next open reads it again
 export const useWorldScreenRecords = ({ gameDataBaseUrl }: { gameDataBaseUrl: string }) => {
   const worldScreenStore = useWorldScreenStore();
   const { closeScreen } = worldScreenStore;
@@ -26,8 +26,8 @@ export const useWorldScreenRecords = ({ gameDataBaseUrl }: { gameDataBaseUrl: st
   const readRecord = (screen: ScreenKind, key: ScreenRecordKey) => {
     if (records[key] !== undefined || readingKeys.has(key)) return;
     readingKeys.add(key);
-    // `match(`) handles both branches, so the promise
-    // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
+    // `match()` handles both branches, so the promise it returns
+    // oxlint-disable-next-line typescript/no-floating-promises -- cannot reject, and nothing waits on it
     getResultAsync((): Promise<ScreenRecords[ScreenRecordKey]> => ScreenRecordLoaderMap[key](gameDataBaseUrl)).match(
       (record) => {
         holdRecord(records, key, record);

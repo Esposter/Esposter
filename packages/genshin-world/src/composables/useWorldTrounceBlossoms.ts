@@ -149,7 +149,7 @@ export const useWorldTrounceBlossoms = ({
       return;
     claimPrompt.value = undefined;
     // A weekly boss's prompt holds its one claim, so its single offer is the one paid. The reward is drawn before the
-    // Resin Is spent, so the random draws keep their order
+    // Resin is spent, so the random draws keep their order
     const { adventureExp, companionshipExp, resin, rewards } =
       trounceBlossom.kind === BlossomKind.WeeklyBoss
         ? {

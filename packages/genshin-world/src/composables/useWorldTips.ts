@@ -49,7 +49,7 @@ export const useWorldTips = ({
     if (!showingTip.value) showNextTip();
   };
   // A finished quest triggers the quest-or tips naming it, and the quest-all tips naming only it: a quest-all tip
-  // Naming Several quests never fires, since the world reads one finished quest at a time
+  // Naming several quests never fires, since the world reads one finished quest at a time
   events.on("finishQuest", ({ id: questId }) => {
     queueTips([
       ...getTipsTriggered(tips, shownTipIds.value, TipTriggerType.FinishQuestOr, (paramList) =>

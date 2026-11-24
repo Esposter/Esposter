@@ -63,8 +63,8 @@ export const useWorldCommissions = ({
       tasks: commissionSlices.value.flatMap(({ tasks }) => tasks),
     };
   });
-  // `match(`) handles both branches, so the promise
-  // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
+  // `match()` handles both branches, so the promise it returns
+  // oxlint-disable-next-line typescript/no-floating-promises -- cannot reject, and nothing waits on it
   getResultAsync(() => readCommissionSlices(worldSessionStore.gameDataBaseUrl)).match(
     (slices) => {
       commissionSlices.value = slices;

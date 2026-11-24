@@ -18,9 +18,9 @@ import { useWorldSessionStore } from "#src/store/session";
 import { useWorldStatuesStore } from "#src/store/statues";
 import { ref, shallowRef, watch } from "vue";
 
-// The wish counters and the bench's crafting the player holds, beside the bag and the wallet the session store holds
-// And The progress and defeats the achievements', the cooking's, the Archive's, the chests' and the statues' stores
-// Hold. A change to any of them is a grant the host saves: the changes made in one tick are one grant, so a pickup is
+// The wish counters and the bench's crafting the player holds, beside the bag and the wallet the session store holds,
+// And the progress and defeats the achievements', the cooking's, the Archive's, the chests' and statues' stores hold.
+// A change to any of them is a grant the host saves: the changes made in one tick are one grant, so a pickup is
 // One save, a Wish is one save with its spend and its pity, and an achievement's progress is saved with the Primogems
 // It paid
 export const useWorldSave = ({
@@ -68,7 +68,7 @@ export const useWorldSave = ({
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   // The forge's progress for the session: the recipes learned from diagrams are the save's, and the queues and forge
-  // Points Start empty on each load, as the save does not hold them
+  // Points start empty on each load, as the save does not hold them
   const forgeProgress = shallowRef<ForgeProgress>({
     ...createForgeProgress(worldSessionStore.getWorldNow()),
     learnedRecipeIds: savedState.forgeLearnedRecipeIds,

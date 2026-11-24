@@ -21,7 +21,7 @@ export const useWorldScreenBehaviour = ({ closeFishing, input }: { closeFishing:
     },
   );
   // The press that closes a screen is spent with it, so the F, Space or click that ended it never reaches the world as
-  // An Interact, a jump or an attack
+  // An interact, a jump or an attack
   watch(screenKind, (newScreenKind) => {
     if (newScreenKind !== ScreenKind.Fishing) closeFishing();
     if (newScreenKind === ScreenKind.World) input.readInput(0);

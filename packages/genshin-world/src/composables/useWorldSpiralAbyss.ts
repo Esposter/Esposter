@@ -46,9 +46,9 @@ interface AbyssPendingChoice {
 }
 
 // The Spiral Abyss on the world: its periods, floors, enemy kinds, Benedictions and rewards read once, a chamber
-// Entered in The arena beside the entrance, and the bonus lines the chamber's Benediction gives the party. The arena's
-// Camp is fought on The domain's mechanism. A clear is settled into the progress of its cycle, its rewards paid and its
-// Health and energy carried Into the next chamber, and a reaction in a Moon Spire chamber is answered by the period's
+// Entered in the arena beside the entrance, and the bonus lines the chamber's Benediction gives the party. The arena's
+// Camp is fought on the domain's mechanism. A clear is settled into the progress of its cycle, its rewards paid and its
+// Health and energy carried into the next chamber, and a reaction in a Moon Spire chamber is answered by the period's
 // Blessing
 export const useWorldSpiralAbyss = ({
   areaId,
@@ -110,8 +110,8 @@ export const useWorldSpiralAbyss = ({
     }
     if (isReadingAbyssTables) return;
     isReadingAbyssTables = true;
-    // `match(`) handles both branches, so the promise
-    // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
+    // `match()` handles both branches, so the promise it returns
+    // oxlint-disable-next-line typescript/no-floating-promises -- cannot reject, and nothing waits on it
     getResultAsync(() => readAbyssTables(worldSessionStore.gameDataBaseUrl)).match(
       (tables) => {
         abyssTables.value = tables;

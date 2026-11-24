@@ -53,7 +53,7 @@ export const useWorldTalks = ({
   const standingTalks = shallowRef<Talk[]>([]);
   const standingTalkTextMap = shallowRef<Readonly<Record<string, string>>>({});
   // The card game's levels, which open each challenger's duels by the Player Level, and the rule that opens a talk's
-  // Duel From them. Both are imported as the levels are read, so the card game's services stay out of the first
+  // Duel from them. Both are imported as the levels are read, so the card game's services stay out of the first
   // Screen's static Graph. Until they arrive, or if they cannot be read, no duel is offered
   const gcgLevels = shallowRef<GcgLevels>();
   const gcgDuelRule = shallowRef<typeof findGcgTalkDuelGameId>();

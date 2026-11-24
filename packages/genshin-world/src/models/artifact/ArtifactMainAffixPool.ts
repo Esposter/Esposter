@@ -3,7 +3,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { z } from "zod";
 
 // The attributes a piece's main affix may be: those the game's table lists for its slot that the wiki's distribution
-// Weighs, Since the table also lists attributes no piece rolls as its main affix. How often each rolls is the
+// Weighs, since the table also lists attributes no piece rolls as its main affix. How often each rolls is the
 // Distribution's too
 export interface ArtifactMainAffixPool {
   attributes: Attribute[];

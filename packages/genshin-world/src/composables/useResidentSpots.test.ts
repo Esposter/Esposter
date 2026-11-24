@@ -15,8 +15,7 @@ const { camera, onBeforeRender } = vi.hoisted(() => {
 
 // The composable reads only the camera and the loop's onBeforeRender from the TresJS context.
 // The fake stands in for those two and nothing else.
-// A partial
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- fake: the typed module returns the whole TresJS context
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- partial fake: the module returns the whole TresJS context
 vi.mock("@tresjs/core", () => ({ useLoop: () => ({ onBeforeRender }), useTres: () => ({ camera }) }));
 
 // Each frame runs the callbacks the composable registered on the loop

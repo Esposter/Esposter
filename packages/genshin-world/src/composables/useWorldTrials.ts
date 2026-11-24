@@ -81,9 +81,9 @@ export const useWorldTrials = ({
   );
 
   // A trial entered in place of the player's roster, on the first stage its trial id names, and the pose the player was
-  // At is Kept to go back to. Its party member's kit is read at The talents it plays with no constellations, since a
+  // At is kept to go back to. Its party member's kit is read at the talents it plays with no constellations, since a
   // Trial's build has none, and the kit replaces the player's kits for the Fight. A trial whose tables are not read,
-  // Whose stage is not named, whose character has no build or whose kit is not read Does not enter, and an arena
+  // Whose stage is not named, whose character has no build or whose kit is not read does not enter, and an arena
   // Already entered is not entered again. Resolves whether the trial entered
   const enterTrial = async (trial: Trial, returnPose: WorldJumpPose): Promise<boolean> => {
     const tables = trialTables.value;

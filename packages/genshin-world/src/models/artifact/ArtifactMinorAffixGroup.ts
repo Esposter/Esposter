@@ -2,7 +2,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { z } from "zod";
 
 // One minor affix an artifact of a rarity can roll, with every tier of its value the game's table holds for that
-// Rarity, Each tier as likely as the next to be the one it rolls
+// Rarity, each tier as likely as the next to be the one it rolls
 export interface ArtifactMinorAffixGroup {
   attribute: Attribute;
   values: number[];
