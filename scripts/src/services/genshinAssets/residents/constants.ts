@@ -28,7 +28,7 @@ export const RESIDENT_WEEK_GAME_MAP: ReadonlyMap<string, ResidentWeekGame> = new
 export const RESIDENT_NIGHT_SPOT_MAP: ReadonlyMap<number, ResidentSpot> = new Map<number, ResidentSpot>();
 // The Reputation keepers, each by the building point the scene names its service with, and the NPC who keeps it. A
 // Keeper has no birth in the scene, so her place is her service's point, an estimate the residents carry as
-// Provisional: Mondstadt's hertha, NPC 1663, keeps the point named Reputation
+// Provisional: Mondstadt's Hertha, NPC 1663, keeps the point named Reputation
 export const REPUTATION_KEEPER_NPC_ID_MAP: ReadonlyMap<string, number> = new Map<string, number>([
   ["Reputation", 1663],
 ]);
@@ -36,8 +36,8 @@ export const REPUTATION_KEEPER_NPC_ID_MAP: ReadonlyMap<string, number> = new Map
 // Souvenir and Blacksmith shops, the Adventurers' Guild, Good Hunter's restaurant, the Fishing Association and Angel's
 // Share's bartender. A vendor
 // Has no birth in the scene, so her place is her point, an estimate the residents carry as provisional. The
-// Adventurers' guild's NPC is the base Katheryne, 1512, which the NPC table gives the lowest id, not confirmed against
-// The scene. The knights of Favonius headquarters, 54, is Ellin's point, the wiki placing her behind it, which no
+// Adventurers' Guild's NPC is the base Katheryne, 1512, which the NPC table gives the lowest id, not confirmed against
+// The scene. The Knights of Favonius headquarters, 54, is Ellin's point, the wiki placing her behind it, which no
 // Point gives. Each other region's Fishing Association point stands for the one member the wiki lists there,
 // Provisional as Nantuck's is
 export const BUILDING_NPC_ID_MAP: ReadonlyMap<string, number> = new Map<string, number>([
