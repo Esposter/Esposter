@@ -3,7 +3,7 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 // How far, in metres, each reaction that reaches past its target reaches round it, measured to a target's edge: a
 // Burning tick 1 metre, an Overloaded's and a Superconduct's explosion 3 and a Swirl's spread 5, as gcsim's circles on
 // The target hold them, and Electro-Charged's arc 5, a Dendro Core's burst and Burgeon 5 about the core and Hyperbloom
-// 1 About the enemy it lands on, the wiki's figures
+// 1 about the enemy it lands on, the wiki's figures
 export const TransformativeReactionReachRadiusMap: Partial<Record<TransformativeReactionType, number>> = {
   [TransformativeReactionType.Bloom]: 5,
   [TransformativeReactionType.Burgeon]: 5,

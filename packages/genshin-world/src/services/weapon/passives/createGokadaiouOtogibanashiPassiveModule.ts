@@ -4,8 +4,8 @@ import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrC
 import { takeOne } from "@esposter/shared";
 
 // Redhorn Stonethresher at its rank: each Normal or Charged Attack hit its wielder deals adds the rank's share of DEF
-// As base Damage. The share is the wielder's DEF with its buffs on, as a hit reads it. The rank's DEF line is a table
-// Line the Weapon carries whatever its conditions, so this passive does not repeat it
+// As base damage. The share is the wielder's DEF with its buffs on, as a hit reads it. The rank's DEF line is a table
+// Line the weapon carries whatever its conditions, so this passive does not repeat it
 export const createGokadaiouOtogibanashiPassiveModule = (params: number[]): PassiveModule => {
   const damageShare = takeOne(params, 1);
   return {

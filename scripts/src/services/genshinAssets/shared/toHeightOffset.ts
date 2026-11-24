@@ -3,7 +3,7 @@ import type { GroundPoint } from "genshin-engine";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 
 // A landmark's height over the world's ground at its place in the region's axes: the game's height less the origin's
-// And The ground's, rounded as every fitted number is
+// And the ground's, rounded as every fitted number is
 export const toHeightOffset = (
   height: number,
   originY: number,

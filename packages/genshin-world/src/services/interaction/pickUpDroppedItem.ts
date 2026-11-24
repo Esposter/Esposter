@@ -12,10 +12,10 @@ import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItem
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 
 // What a pick up takes: a currency into the wallet by the currency its item is filed under, since the wallet has no
-// Room To run out of, and any other item into the bag as its definition has it, the bag's room deciding how much of it
-// Goes In. An artifact is taken in as the artifact it was rolled as, and what the bag has no room for is left over.
-// Only an Artifact drop needs the reliquary tables and a weapon drop the weapon table, so a caller whose items are
-// Never either Leaves them out
+// Room to run out of, and any other item into the bag as its definition has it, the bag's room deciding how much of it
+// Goes in. An artifact is taken in as the artifact it was rolled as, and what the bag has no room for is left over.
+// Only an artifact drop needs the reliquary tables and a weapon drop the weapon table, so a caller whose items are
+// Never either leaves them out
 export const pickUpDroppedItem = (
   dropped: DroppedItem,
   inventory: Inventory,

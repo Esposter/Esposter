@@ -69,10 +69,10 @@ const toLowHealthBurstHits = (hits: KitHit[]): KitHit[] => {
 };
 
 // Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the
-// Initial Hit's share of Elemental Mastery, Gyoei Narukami Kariyama Rite's hits and Breaking Free's Healing Bonus.
-// Constellations 1 and 2 are built. Constellations 4 and 6 are not, as each reads her HP Constellation 4 needs charged
-// And plunging hits as events, which only normal attacks emit Constellation 6 needs a lethal hit held at 1 HP once a
-// Minute, which damage taken does not allow
+// Initial hit's share of Elemental Mastery, Gyoei Narukami Kariyama Rite's hits and Breaking Free's Healing Bonus.
+// Constellations 1 and 2 are built. Constellations 4 and 6 are not, as each reads her HP
+// Constellation 4 needs charged and plunging hits as events, which only normal attacks emit
+// Constellation 6 needs a lethal hit held at 1 HP once a minute, which damage taken does not allow
 export const createKukiKitBehaviour = ({
   readHit,
   readHits,

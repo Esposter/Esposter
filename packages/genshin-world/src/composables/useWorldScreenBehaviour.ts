@@ -33,7 +33,7 @@ export const useWorldScreenBehaviour = ({ closeFishing, input }: { closeFishing:
     window.document.exitPointerLock();
   };
   // The browser keeps Escape for itself while the pointer is locked, letting the lock go in place of passing the key
-  // On, So a lock lost with the world in play opens the Paimon menu as Escape does, unless it was let go to show the
+  // On, so a lock lost with the world in play opens the Paimon menu as Escape does, unless it was let go to show the
   // Cursor
   useEventListener(
     () => window.document,

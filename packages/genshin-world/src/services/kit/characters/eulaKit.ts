@@ -23,21 +23,23 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) eula/eula.go and skill.go, Grimheart's ICD of 18 frames on the press's strikes, which are the
-// Only Strikes that gain a stack https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/skill.go
+// Only strikes that gain a stack
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/skill.go
 const GRIMHEART_ICD_SECONDS = 0.3;
 const GRIMHEART_STACK_IDS = ["eula-grimheart-stack-0", "eula-grimheart-stack-1"];
 const GRIMHEART_MAX_STACKS = 2;
 const GRIMHEART_ICD_ID = "eula-grimheart-icd";
 const ICEWHIRL_SHRED_ID = "eula-icewhirl-shred";
 // Measured: gcsim (MIT) eula/eula.go, Constellation 1's Physical DMG Bonus of 30% for 6 seconds per Grimheart stack
-// Plus 6 Seconds, from the hold that consumes them
+// Plus 6 seconds, from the hold that consumes them
 const CONSTELLATION_1_PHYSICAL_BONUS = 0.3;
 const CONSTELLATION_1_BASE_SECONDS = 6;
 const CONSTELLATION_1_SECONDS_PER_STACK = 6;
 const CONSTELLATION_4_DAMAGE_BONUS = 0.25;
 const CONSTELLATION_4_HEALTH_SHARE = 0.5;
 // Measured: gcsim (MIT) eula/burst.go, the Lightfall Sword gaining a stack from each of Eula's strikes every 0.1
-// Seconds, Up to 30 https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/burst.go
+// Seconds, up to 30
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/burst.go
 const LIGHTFALL_STACK_ICD_SECONDS = 0.1;
 const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;
@@ -70,11 +72,11 @@ const clearGrimheartStacks = (kitEffectState: KitEffectState, characterId: numbe
 export const EULA_CHARACTER_ID = 10_000_051;
 
 // Eula's behaviour: Icetide Vortex's press gains her a Grimheart stack, and its hold spends her stacks into one
-// Icewhirl Each, shredding the RES of the enemies they strike. Glacial Illumination lights the Lightfall Sword, which
-// Gains a stack From each of her strikes and explodes priced by them, early on a swap of characters. Her Ascension 1
-// Shattered Lightfall Sword, Ascension 4's stack, Constellation 1's Physical DMG Bonus, Constellation 4's Glacial
+// Icewhirl each, shredding the RES of the enemies they strike. Glacial Illumination lights the Lightfall Sword, which
+// Gains a stack from each of her strikes and explodes priced by them, early on a swap of characters. Her Ascension 1
+// Shattered Lightfall sword, Ascension 4's stack, Constellation 1's Physical DMG Bonus, Constellation 4's Glacial
 // Illumination bonus and Constellation 6's starting stacks and its extra stack roll are built, as is Ascension 4's
-// Reset of Icetide Vortex's Cooldown. Her Constellation 2 Hold cooldown, which the kit model cannot set per hold, is
+// Reset of Icetide Vortex's cooldown. Her Constellation 2 Hold cooldown, which the kit model cannot set per hold, is
 // Not
 export const createEulaKitBehaviour = ({
   kit,
@@ -103,14 +105,14 @@ export const createEulaKitBehaviour = ({
   const lightfallExplosionSeconds = readSeconds("lightfallExplosion");
   const lightfallTriggerDelaySeconds = readSeconds("lightfallTriggerDelay");
   // The explosion of the Lightfall Sword as the stacks it holds make it, its multiplier set by them and its hitmark at
-  // The Seconds
+  // The seconds
   const createLightfallExplosion = (stacks: number, hitmarkSeconds: number): KitHit => ({
     ...lightfallExplosionFields,
     hitmarkSeconds,
     talentMultiplier: explodeBase + explodePerStack * Math.min(stacks, LIGHTFALL_MAX_STACKS),
   });
   // Each Eula strike that lands while the Sword is lit gains it a stack, once every 0.1 seconds, and rebuilds its
-  // Explosion From the stacks it now holds, so the explosion is priced by them when it lands
+  // Explosion from the stacks it now holds, so the explosion is priced by them when it lands
   const gainLightfallStack = (kitEffectState: KitEffectState, combatant: Combatant, random: () => number): void => {
     const { characterId } = combatant;
     const summon = findStandingKitSummon(kitEffectState.effects, LIGHTFALL_SUMMON_ID, characterId);
@@ -174,7 +176,7 @@ export const createEulaKitBehaviour = ({
         : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => lightfallStackHit) })),
     // A swap of characters ends the Sword early: its explosion lands the trigger's delay on, priced by the stacks it
-    // Holds Then
+    // Holds then
     onKitEvent: (event, { kitEffectState }, { characterId }) => {
       if (event.kind !== KitEventKind.CharacterSwapped) return;
       const summon = findStandingKitSummon(kitEffectState.effects, LIGHTFALL_SUMMON_ID, characterId);

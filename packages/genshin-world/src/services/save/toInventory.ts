@@ -7,8 +7,8 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 
 // The bag read from its save, each entry's definition read by the item's id from the game's tables, which name it in
-// The Reader's language. The save never holds a name, so a bag loads in whatever language it is read in, and an entry
-// Is told Apart by the table its id is in
+// The reader's language. The save never holds a name, so a bag loads in whatever language it is read in, and an entry
+// Is told apart by the table its id is in
 export const toInventory = (
   { items, ...inventory }: InventorySave,
   names: Readonly<Record<string, string>>,

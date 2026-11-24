@@ -15,7 +15,7 @@ export const MAX_CONTENT_UPDATE_ATTEMPTS = 3;
 // Accepts from one MCP tool call by default
 export const MAX_AGENT_READ_SIZE = 40_000;
 // How long a request holds a resource's object lease before another may take it over. Long enough for one version write
-// Or Collection to finish, short enough that a request which crashed while holding it frees the resource within a
+// Or collection to finish, short enough that a request which crashed while holding it frees the resource within a
 // Minute
 export const RESOURCE_OBJECT_LEASE_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // How long a request waits for a resource's object lease before it is refused, so a save never queues behind a holder

@@ -10,7 +10,7 @@ import { reducePointerGesture } from "#src/services/whiteboard/gesture/reducePoi
 import { WHITEBOARD_DEFAULT_ARROWHEAD } from "#src/services/whiteboard/palette/constants";
 
 // An arrow previews from its start to the end the pointer is over, bound where that end lands. A release commits the
-// Arrow as one edit, But a release short of the drag start distance is a click, which draws no arrow
+// Arrow as one edit, but a release short of the drag start distance is a click, which draws no arrow
 export const reduceArrowGesture = (
   state: WhiteboardGestureState,
   gesture: GestureArrow,

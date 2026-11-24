@@ -1,7 +1,7 @@
 import { REVIEW_FINDING_BULLET } from "#src/services/review/constants";
 
 // The finding lines of an issue body, each without its bullet, in the order the body lists them. A finding's detail
-// Lines Are indented beneath its bullet, so only a bullet opening a code span is one.
+// Lines are indented beneath its bullet, so only a bullet opening a code span is one.
 export const getReviewIssueFindingLines = (body: string): string[] =>
   body
     .split("\n")

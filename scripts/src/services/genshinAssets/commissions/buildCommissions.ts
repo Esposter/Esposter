@@ -14,9 +14,9 @@ import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "
 
 // Every region's daily tasks from the dump: each task, every reward tier's items by Adventure Rank band, and the items
 // Of Katheryne's bonus by band, which each region's record shares. Every preview is read through the reward table, and
-// Each Band's items are the preview's items with a count drawn from its range, so the world's claim draws them.
-// Published as One record a region, each task filed under the region its city is named for, with the main quest its
-// City opens with When the dump names one, and a city no region is named for left out
+// Each band's items are the preview's items with a count drawn from its range, so the world's claim draws them.
+// Published as one record a region, each task filed under the region its city is named for, with the main quest its
+// City opens with when the dump names one, and a city no region is named for left out
 export const buildCommissions = (cityRegionMap: ReadonlyMap<number, string>): Record<string, unknown> => {
   const previewIdRowMap = new Map(
     readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData").map((preview) => [preview.id, preview]),

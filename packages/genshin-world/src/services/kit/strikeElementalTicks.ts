@@ -19,7 +19,7 @@ const checkIsElectroCharged = ({ reactionType }: Reaction): boolean =>
   reactionType === TransformativeReactionType.ElectroCharged;
 
 // The ticks one combatant owns on an enemy, with the reactions they triggered there, dealt from it. A Burning tick's
-// Own Damage is priced here, as the hit that lights Burning deals none of it, and the tick reaches on with the rest
+// Own damage is priced here, as the hit that lights Burning deals none of it, and the tick reaches on with the rest
 const strikeOwnedTicks = (
   enemy: Enemy,
   kind: EnemyKind,

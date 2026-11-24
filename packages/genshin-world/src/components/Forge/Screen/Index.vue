@@ -157,7 +157,7 @@ const queuesLabel = computed(() =>
   ),
 );
 // The queue the Queues tab's detail shows, the first holding an order: its units done, the words over its ring (its
-// Time Left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows
+// Time left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows
 // Full
 const queueDetail = computed(() => {
   const slot = queueSlots.value.find((queueSlot) => isQueueOccupied(queueSlot));
@@ -176,13 +176,13 @@ const queueDetail = computed(() => {
   };
 });
 // Picks a recipe and brings the amount under the most the picked recipe's queue holds, read from the pick itself: the
-// Parent's Recipe is still the old one until it re-renders
+// Parent's recipe is still the old one until it re-renders
 const pickRecipe = (id: number) => {
   recipeId.value = id;
   amount.value = Math.min(amount.value, getAmountMaximum(findRecipe(id)));
 };
 // Starts the picked order in a free queue, its materials, Mora and talents taken, and leaves the forge as it was where
-// The Forge refuses it
+// The forge refuses it
 const start = () => {
   const recipe = pickedRecipe.value;
   if (!recipe) return;

@@ -73,9 +73,9 @@ describe("packageScripts", () => {
   });
 
   // Node strips types and resolves only what a package's `imports` map and a relative path with its extension name, so
-  // A Script run as `node <entry>.ts` dies at startup on the first module it cannot strip or find — a failure no
-  // Typecheck Or lint reports, found only by running the command. Node's own stripper is the judge, over every module
-  // The entry Reaches through its package's `imports` or a relative path, and a specifier that resolves to no file
+  // A script run as `node <entry>.ts` dies at startup on the first module it cannot strip or find — a failure no
+  // Typecheck or lint reports, found only by running the command. Node's own stripper is the judge, over every module
+  // The entry reaches through its package's `imports` or a relative path, and a specifier that resolves to no file
   // Fails too
   test("run under `node` only an entry whose whole import graph node can resolve and strip", () => {
     expect.hasAssertions();

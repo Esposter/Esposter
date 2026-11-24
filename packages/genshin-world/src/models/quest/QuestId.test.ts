@@ -2,8 +2,8 @@ import { QuestId, QuestIds } from "#src/models/quest/QuestId";
 import { describe, expect, test } from "vitest";
 
 describe("questIds", () => {
-  // The main quest each city opens with, by the dump's city table: a region's commissions join the deal once it is
-  // Done. Mondstadt's is not carried: its sub quest holds no words and no objective, so there is nothing to step
+  // The main quest each city opens with, by the dump's city table: a region's commissions join the deal once it
+  // Is done. Mondstadt's is not carried: its sub quest holds no words and no objective, so there is nothing to step
   // Through
   const OPENING_QUEST_IDS = [QuestId.LiyueOpening, QuestId.InazumaOpening, QuestId.SumeruOpening];
 

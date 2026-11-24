@@ -7,8 +7,8 @@ import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityD
 import { getFodderEnhancement } from "#src/services/artifact/getFodderEnhancement";
 
 // The bag's entries Auto Add feeds an artifact: its unlocked artifacts up to the star cap, the lowest star first and
-// Then The lowest level. Each is taken while the EXP still falls short of the artifact's top level, and the last one
-// Taken may Carry the EXP past it, which enhanceArtifact then loses
+// Then the lowest level. Each is taken while the EXP still falls short of the artifact's top level, and the last one
+// Taken may carry the EXP past it, which enhanceArtifact then loses
 export const getAutoAddFodders = ({
   artifact,
   artifactRarityDataMap,

@@ -184,7 +184,7 @@ describe(writeResidents, () => {
   test("a seated challenger's week game is written with its game, the level it is offered at, and its reward", async () => {
     expect.hasAssertions();
     // Kimiya stands at Sumeru's crafting bench, building 526, and his week row names game 1103 at level 5, while his
-    // Duel sits at His seat, game 1104
+    // Duel sits at his seat, game 1104
     const CRAFTING_BENCH_BUILDING_ID = "526";
     const KIMIYA_NPC_ID = 9715;
     const KIMIYA_NAME_TEXT_HASH = 1;

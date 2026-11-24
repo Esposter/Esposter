@@ -52,8 +52,8 @@ const QUEST_SCREEN_DETAILS_PLATE = [
   { height: 64, width: 904, x: 874, y: 312 },
 ];
 // The still's own interface that the whole quest screen is scored over: the list and the details column, the band
-// Across The top, the rewards row with its caption, the rules, both buttons, the list's scroll bar and the recording's
-// UID, each Filled from the world round it, so the still's world is what the screen sits on
+// Across the top, the rewards row with its caption, the rules, both buttons, the list's scroll bar and the recording's
+// UID, each filled from the world round it, so the still's world is what the screen sits on
 const QUEST_SCREEN_CHROME_PLATE = [
   { height: 96, width: 1920, x: 0, y: 0 },
   { height: 14, width: 920, x: 877, y: 766 },
@@ -115,7 +115,7 @@ const DIALOGUE_LINE_PLATE = [
 ];
 const DIALOGUE_PAIMON_LINE_PLATE = [{ height: 24, width: 412, x: 436, y: 577 }];
 // The two reply pills, each filled from the world round its footprint, so a pill's rest tone darkens the world beside
-// It And not the pill's own text
+// It and not the pill's own text
 const DIALOGUE_CHOICES_REPLIES_PLATE = [
   { height: 37, width: 252, x: 848, y: 461 },
   { height: 37, width: 252, x: 848, y: 503 },
@@ -134,16 +134,17 @@ const WEAPON_SCREEN_TOP_PLATE = [
   { height: 66, width: 66, x: 1738, y: 16 },
   { height: 180, width: 300, x: 126, y: 136 },
 ];
-// The weapon screen's bottom band, drawn over the same place by the screen, ascend and refine entries: a rule Across
-// The foot, a box at its right end, and a line below the rule's left part that the screen and refine entries share
+// The weapon screen's bottom band, drawn over the same place by the screen, ascend and refine entries: a rule
+// Across the foot, a box at its right end, and a line below the rule's left part that the screen and refine entries
+// Share
 const WEAPON_SCREEN_BOTTOM_RULE = { height: 12, width: 738, x: 1086, y: 736 };
 const WEAPON_SCREEN_BOTTOM_BOX = { height: 72, width: 296, x: 1508, y: 768 };
 const WEAPON_SCREEN_BOTTOM_LINE = { height: 38, width: 200, x: 1100, y: 786 };
 // A forge's Queues tab in full above the recorder's UID, scored by its two Queues entries
 const FORGE_QUEUES_REGION = { height: 860, width: 1920, x: 0, y: 0 };
 // The Queues tab's pieces filled from round them, so the blurred scene behind is scored and the game's own pieces are
-// Not: the title, The foot's coins and close, the tabs, the queue rows, the ring and its item, the figure and bar, the
-// Materials box, the Obtain Button and the recorder's UID
+// Not: the title, the foot's coins and close, the tabs, the queue rows, the ring and its item, the figure and bar, the
+// Materials box, the Obtain button and the recorder's UID
 const FORGE_QUEUES_PLATE = [
   { height: 75, width: 300, x: 120, y: 10 },
   { height: 70, width: 300, x: 1495, y: 15 },
@@ -165,11 +166,11 @@ const RECORDING_NOT_ON_DISK = "its recording is not on disk";
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's Achievements screen at 1080 high from a public tutorial (yt-KoebEnOmDWI, 37 seconds in):
-  // The Marksmanship category open on its three achievements, the progress banner above them and the category list down
-  // The Left, over the blurred world behind the window, which is pillarboxed 96 pixels each side. The plates fill the
-  // Screen's Own large pieces from round them, so the world shows through them as the frame draws it. The cursor rests
-  // On the end of The progress bar, inside the banner. The recorder's UID sits bottom right, below the region. The page
-  // Draws no progress Banner, search box or completed count, which the frame shows; its rows read the table's Primogem
+  // The marksmanship category open on its three achievements, the progress banner above them and the category list down
+  // The left, over the blurred world behind the window, which is pillarboxed 96 pixels each side. The plates fill the
+  // Screen's own large pieces from round them, so the world shows through them as the frame draws it. The cursor rests
+  // On the end of the progress bar, inside the banner. The recorder's UID sits bottom right, below the region. The page
+  // Draws no progress banner, search box or completed count, which the frame shows; its rows read the table's Primogem
   // Rewards and progress
   "achievement-screen": {
     isBackdrop: true,
@@ -187,15 +188,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     windowLeft: 96,
   },
   // The English PC client's Archive on its Equipment section's Weapons grid at 1080 high, from the public recording at
-  // 19.5 seconds: the First five rows of the weapons with the first one selected and the cursor resting on the fifth of
-  // The first row, forty entries open. The page draws the header's title and counter on a dark ground of its own, each
-  // Tile over a flat colour where the game draws its Picture, and each name band, the filter bar, the selected name
-  // With its lore, the close disc, the arrows and the New badges. Scored, By the mask: the name bands, the title, the
-  // Counter, the close disc, the filter bar outside its funnel and label, and the selected name. Plated, filled from
+  // 19.5 seconds: the first five rows of the weapons with the first one selected and the cursor resting on the fifth of
+  // The first row, forty entries open. the page draws the header's title and counter on a dark ground of its own, each
+  // Tile over a flat colour where the game draws its picture, and each name band, the filter bar, the selected name
+  // With its lore, the close disc, the arrows and the New badges. Scored, by the mask: the name bands, the title, the
+  // Counter, the close disc, the filter bar outside its funnel and label, and the selected name. plated, filled from
   // The still round them: the star-field sky, the crest and the sword, which is game art, and the lore panel, since the
-  // Still's own Letters would show through the ground the page does not draw under the selected name. The page draws
-  // Its own crest over that plate, and the tab discs, the book And the description there, which the score does not see,
-  // So they are unmeasured against the still. The tiles' pictures are the game's art And stay a flat colour. The arrows
+  // Still's own letters would show through the ground the page does not draw under the selected name. The page draws
+  // Its own crest over that plate, and the tab discs, the book and the description there, which the score does not see,
+  // So they are unmeasured against the still. The tiles' pictures are the game's art and stay a flat colour. The arrows
   // And the New badges are drawn and unscored. The recorder's UID sits bottom right, below the region
   "archive-screen": {
     isBackdrop: true,
@@ -376,8 +377,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "session-2.mp4 at 156s",
   },
   // The English PC client's cooking arc at 720 high from a public recording, about 110 seconds in: the pot over its
-  // Fire, the arc With its zones and the spatula pointer, and the Stop button, over the blurred kitchen behind it. The
-  // Plate is the interface's Own pieces, filled from round them. The recorder's UID sits bottom right, outside the
+  // Fire, the arc with its zones and the spatula pointer, and the Stop button, over the blurred kitchen behind it. The
+  // Plate is the interface's own pieces, filled from round them. The recorder's UID sits bottom right, outside the
   // Region scored
   "cooking-screen": {
     isBackdrop: true,
@@ -431,7 +432,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
   // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. Each is drawn over
-  // The Frame's clean plate, its scored region filled from its surroundings (`getCleanPlatePath`)
+  // The frame's clean plate, its scored region filled from its surroundings (`getCleanPlatePath`)
   "dialogue-choices-line": {
     isBackdrop: true,
     plate: DIALOGUE_CHOICES_LINE_PLATE,
@@ -494,8 +495,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Everfrozen Earth.png",
   },
   // The quit prompt at rest at 1080 high from the public clip, 26.75 seconds in, once the dialog has opened and before
-  // The pointer Reaches a button: neither Cancel nor Confirm is lit. The same recording and scale as the hover and
-  // Pressed entries, whose panel it Shares, so the three states are scored over the one region
+  // The pointer reaches a button: neither Cancel nor Confirm is lit. The same recording and scale as the hover and
+  // Pressed entries, whose panel it shares, so the three states are scored over the one region
   "exit-prompt": {
     region: MENU_EXIT_PANEL_REGION,
     screen: "MenuExit",
@@ -504,8 +505,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The expedition screen at 1080 high from the public clip (yt-fxIjhlV3vUA), 26 seconds in: Mondstadt's map with six
   // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.
   // Scored over the whole screen above the recorder's UID, which the clip draws at its bottom right corner. No mask is
-  // Named, So every pixel counts, the plate rectangles too: each plate is the backdrop's fill under a piece the page
-  // Draws, and that Piece is scored against the reference's own pixels there. The reward panel and its action button
+  // Named, so every pixel counts, the plate rectangles too: each plate is the backdrop's fill under a piece the page
+  // Draws, and that piece is scored against the reference's own pixels there. The reward panel and its action button
   // Count the same way
   "expedition-screen": {
     isBackdrop: true,
@@ -540,7 +541,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-iKr-nF1P7xQ-fishing-reel.mkv at 52.5s",
   },
   // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the
-  // Public Recording of the forge, letterboxed to its 886 high frame: scored whole over its blurred scene, the game's
+  // Public recording of the forge, letterboxed to its 886 high frame: scored whole over its blurred scene, the game's
   // Own pieces (the tabs, the recipe list, the item and its amount, the Materials box, the foot) filled from round them
   "forge-screen": {
     isBackdrop: true,
@@ -561,7 +562,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-AVnbm8fESr0-forge-screen.mp4 at 32s",
   },
   // The forge's Queues tab from the same clip at 50.5 seconds: the order completed, Forged 5 of 5 and Obtain shown. The
-  // Recorder's UID Sits bottom right, below the region scored
+  // Recorder's UID sits bottom right, below the region scored
   "forge-screen-ores-done": {
     isBackdrop: true,
     plate: FORGE_QUEUES_PLATE,
@@ -587,7 +588,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Walkthrough, the frame at 407 seconds in the Action Phase: both sides' characters, the dice column and the hand. A
   // Video's frame, so its art is not drawn. The mask leaves out only the art inside the six characters' cards and the
   // Five hand cards, each read a pixel inside its cream frame off the reference, where the page draws a plate and not
-  // The Portrait. The HP, energy pips, aura, cost hexagons and frame strips drawn over that art are scored again. The
+  // The portrait. The HP, energy pips, aura, cost hexagons and frame strips drawn over that art are scored again. The
   // Ornament, the names, the UID, the table's texture and the rest of the frame are scored too
   "gcg-duel-board": {
     mask: [
@@ -749,9 +750,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "bili-av532052219-mainland-launch.mp4 at 9.5s",
   },
   // The English PC client's Paimon button at 1080 high, from the same public recording at 20 seconds, its emblem's
-  // Place And fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles
-  // Left of And above it are scored, and the rest of that frame's HUD is left out of the region Its plate is the
-  // Emblem's own box, so the backdrop around it is the recording's own pixels, not a fill
+  // Place and fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles
+  // Left of and above it are scored, and the rest of that frame's HUD is left out of the region
+  // Its plate is the emblem's own box, so the backdrop around it is the recording's own pixels, not a fill
   "hud-paimon-button": {
     isBackdrop: true,
     mask: [
@@ -862,10 +863,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Inazuma City.png",
   },
   // The English PC client's pickup at 1080 high over plain grass, three Jueyun Chili rows with the third selected, from
-  // A Public recording at 23 seconds, within the half second the selection rests on that row before the pickup. The
-  // Pills' Right ends fade out over the grass clear of the scene, where `interaction-prompts-pickup`'s run onto a rock.
-  // Its Plate fills the cap and each pill from the grass around it, so the grass between them stays the frame's own and
-  // Only The list's pieces can differ
+  // A public recording at 23 seconds, within the half second the selection rests on that row before the pickup. The
+  // Pills' right ends fade out over the grass clear of the scene, where `interaction-prompts-pickup`'s run onto a rock.
+  // Its plate fills the cap and each pill from the grass around it, so the grass between them stays the frame's own and
+  // Only the list's pieces can differ
   "interaction-prompts-jueyun-chili": {
     isBackdrop: true,
     plate: [
@@ -891,10 +892,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-UBNImta_dWs-prompt-scroll.mp4 at 23s",
   },
   // The English PC client's pickup at 1080 high: three drops in reach, the first row selected with its F cap, from a
-  // Public Tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds.
-  // Drawn behind the Prompt list, the plate fills the cap and the three pills, so the scene round them is the game's
-  // Own and only the list's own Pieces can differ; the recording's camera moves after the pickup, so no clean frame of
-  // The scene exists for the pills' Glass, which is scored as drawn. The streamer's camera sits outside the region
+  // Public tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds.
+  // Drawn behind the prompt list, the plate fills the cap and the three pills, so the scene round them is the game's
+  // Own and only the list's own pieces can differ; the recording's camera moves after the pickup, so no clean frame of
+  // The scene exists for the pills' glass, which is scored as drawn. The streamer's camera sits outside the region
   "interaction-prompts-pickup": {
     isBackdrop: true,
     plate: [
@@ -929,9 +930,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-_agTJviXj7s-bag.mp4 at 58s",
   },
   // The weapons' tab of the bag at 1080 high, from a public account tour's recording of the English PC client, its
-  // Frame At 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the
-  // Top left And the recording's UID at the bottom right sit outside the region. Its plate is the bag's own pieces, so
-  // The world Between them is the recording's own pixels rather than a fill of the region's border
+  // Frame at 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the
+  // Top left and the recording's UID at the bottom right sit outside the region. Its plate is the bag's own pieces, so
+  // The world between them is the recording's own pixels rather than a fill of the region's border
   "inventory-weapons": {
     isBackdrop: true,
     plate: INVENTORY_WEAPONS_PLATE,
@@ -940,8 +941,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-_agTJviXj7s-bag.mp4 at 30s",
   },
   // The wiki's 4096 by 2304 location image of Liyue Harbor, a daytime view of the harbour's stepped quay under the sea
-  // Of Clouds. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth corners
-  // Of the Arch gate over the quay and of the stone-based tower on the water to its left
+  // Of clouds. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth corners
+  // Of the arch gate over the quay and of the stone-based tower on the water to its left
   "liyue-harbor-location": {
     component: DerivedAssetComponent.Liyue,
     landmarks: {
@@ -1017,7 +1018,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Before the prompt, the camera still easing toward its rest; scored clear of the corner buttons and the build string
   "login-door-session": {
     // The camera the login's own constants draw (`LOGIN_CAMERA_*`), recorded as the start its exports solve from, so a
-    // Change to Those constants moves nothing the passes read: the glide's eye at 1 metre up, pitched 5.69 under a 45
+    // Change to those constants moves nothing the passes read: the glide's eye at 1 metre up, pitched 5.69 under a 45
     // Degree field
     cameraPose: { fov: 45, heading: 180, pitch: 5.69, position: [0, 1, -5.433] },
     component: DerivedAssetComponent.Login,
@@ -1079,14 +1080,14 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-PnqNza4qWzs.mp4 at 12s",
   },
   // The English PC client's title scene at dusk at 1080 high, 3 seconds in, settled (the same frame as the public dusk
-  // Clip at 3 Seconds). The power button, the publisher's icon and the build string sit at the corners
+  // Clip at 3 seconds). The power button, the publisher's icon and the build string sit at the corners
   "login-screen-dusk": { screen: "LoginScreen", source: "yt-mMf727q-0w0-login-dusk.mkv at 3s", variant: "dusk" },
   // The English PC client's Mailbox at 1080 high from a public tutorial (yt-sMwxCMoLYzM, 31 seconds in): the Mailbox
-  // Tab open On its first mail, pinned and starred, with two more below it and the selected mail's text and its two
-  // Items down the Right, over the blurred world behind the window, which is pillarboxed 96 pixels each side. The
-  // Plates fill the screen's Own pieces from round them. The page draws the table's three mails, so the words and the
-  // Dates differ from the frame's: The clip's mails are the 2024 build's, which the table no longer holds. The cursor
-  // Rests at the top edge, above the Header. The recorder's UID sits bottom right, below the region
+  // Tab open on its first mail, pinned and starred, with two more below it and the selected mail's text and its two
+  // Items down the right, over the blurred world behind the window, which is pillarboxed 96 pixels each side. The
+  // Plates fill the screen's own pieces from round them. The page draws the table's three mails, so the words and the
+  // Dates differ from the frame's: the clip's mails are the 2024 build's, which the table no longer holds. The cursor
+  // Rests at the top edge, above the header. The recorder's UID sits bottom right, below the region
   "mail-screen": {
     isBackdrop: true,
     plate: [
@@ -1106,11 +1107,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     windowLeft: 96,
   },
   // The English PC client's map zoomed out over Galesong Hill at 99% (yt-kgW2IgWKukg at 4.6 seconds, 1080p and 60
-  // Frames a Second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored
-  // Over the Glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map
-  // Data the Catalogue does not hold, so the camera stands where Galesong Hill's outline puts the label on the still's,
-  // And the Area holds one doing at the still's progress; the comparison reads the label's type and its line's place,
-  // Not where The map writes it
+  // Frames a second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored
+  // Over the glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map
+  // Data the catalogue does not hold, so the camera stands where Galesong Hill's outline puts the label on the still's,
+  // And the area holds one doing at the still's progress; the comparison reads the label's type and its line's place,
+  // Not where the map writes it
   "map-overlay-galesong": {
     props: {
       camera: { x: -451.1, yaw: 0, z: 634.67 },
@@ -1141,9 +1142,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-kgW2IgWKukg-exploration-steps.mp4 at 4.6s",
   },
   // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot. Scored over its
-  // Interface Layer alone, the terrain the game paints masked out: the pointer, the close button and the zoom slider
-  // Whole, and the Area names over their glyphs' silhouettes, since a name's box holds the terrain between its strokes;
-  // The region tag, The top bar and the domains toggle wait on their text ids and are left out
+  // Interface layer alone, the terrain the game paints masked out: the pointer, the close button and the zoom slider
+  // Whole, and the area names over their glyphs' silhouettes, since a name's box holds the terrain between its strokes;
+  // The region tag, the top bar and the domains toggle wait on their text ids and are left out
   "map-overlay-jueyun": {
     mask: [
       { height: 70, width: 70, x: 970, y: 555 },
@@ -1163,7 +1164,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Map Stardust in Jueyun.png",
   },
   // The quit prompt at 1080 high from the public clip, 29 seconds in: Confirm lit under the pointer, Cancel not. The
-  // Dialog's whole panel Is scored; the UID at the bottom right lies outside it
+  // Dialog's whole panel is scored; the UID at the bottom right lies outside it
   "menu-exit-hover": {
     region: MENU_EXIT_PANEL_REGION,
     screen: "MenuExit",
@@ -1171,7 +1172,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     variant: "hover",
   },
   // The same prompt 1.6 seconds later with Confirm pressed: a pale fill with a gold label, held for about 0.2 seconds
-  // Before the White fade
+  // Before the white fade
   "menu-exit-pressed": {
     region: MENU_EXIT_PANEL_REGION,
     screen: "MenuExit",
@@ -1182,10 +1183,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "menu-paimon-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "hover" },
   "menu-paimon-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "pressed" },
   // The English PC client's Time screen at 1080 high from a public recording (yt-a4_J84iMqR0), ten seconds in: the
-  // Clock At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The capture is a controller's, so
-  // The frame Shows no title, close cross or Confirm pill, and the mask leaves those three out: the screen draws them
-  // As the pointer's Controls, an input-mode deviation, so they are drawn and unscored. The dial and the column of
-  // Words are the frame's own Pieces, filled from round them, so the frame's copies never show under ours. The rest of
+  // Clock at 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The capture is a controller's, so
+  // The frame shows no title, close cross or Confirm pill, and the mask leaves those three out: the screen draws them
+  // As the pointer's controls, an input-mode deviation, so they are drawn and unscored. The dial and the column of
+  // Words are the frame's own pieces, filled from round them, so the frame's copies never show under ours. The rest of
   // The frame is scored
   "menu-time": {
     isBackdrop: true,
@@ -1225,8 +1226,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     variant: "revert",
   },
   // The English PC client's Mondstadt city from the wiki's 4K location image of 2024, in daylight (short shadows, a
-  // Clear Sky; the sun's minute waits on its shadows' edges). Its six landmarks are the corners of the two west and
-  // East towers' Parapets and the gate tower's front corners, read by eye at 4x crops of the image's pixels
+  // Clear sky; the sun's minute waits on its shadows' edges). Its six landmarks are the corners of the two west and
+  // East towers' parapets and the gate tower's front corners, read by eye at 4x crops of the image's pixels
   "mondstadt-city-location": {
     component: DerivedAssetComponent.Mondstadt,
     landmarks: {
@@ -1242,9 +1243,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Mondstadt City.png",
   },
-  // The wiki's 2560 by 1440 location image of Nasha Town, a daytime view of the capital's plaza under its central
-  // Tower. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth's front
-  // Corners, the Struts under the tower's pod ledge, and the tower's collar and column edges
+  // The wiki's 2560 by 1440 location image of Nasha Town, a daytime view of the capital's plaza under its
+  // Central tower. its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth's
+  // Front corners, the struts under the tower's pod ledge, and the tower's collar and column edges
   "nasha-town-location": {
     component: DerivedAssetComponent.NodKrai,
     landmarks: {
@@ -1262,19 +1263,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Nasha Town.png",
   },
   // The English PC client's Paimon menu on the current build, from a 2026 recording (`yt-jHr2bERjkYc`, 25 seconds in).
-  // It is cut at 1920 by 1080, with the recording's pillarbox around the game window and no screen open. The logo and
-  // The UID at the frame's bottom right lie outside the region. The panel's own UID, name and avatar lie inside it. The
-  // Account is at Adventure Rank 2, and every tile the frame draws reads open. Scored over the side bar and the panel,
-  // Their translucent feet where the world shows through included. The game window is the 1620 pixels between the
-  // Pillarbox, so the menu stands at its left edge, 150 in. The five side bar icons above Quit each have a centre's y
-  // In the frame's pixels, a unit being a pixel at 1080 high. Measured on the frame, they are Photo Mode 284, Notices
-  // 395, Mail 512, Time 627 and Settings 740. The Notices measure takes in its glyph with the ring it hangs from. The
-  // 16:9 map places them at 412, 524, 638, 754 and 868 when drawn at the menu's 0.79 reference pixel. So the 3:2 window
-  // Stands each 126 to 129 pixels higher. Quit's centre is 1024 in the frame, 55 above the bottom edge. The map has it
-  // 70 of the 1440 high still's pixels from the bottom, which is the same 55 at 0.79. So Quit anchors to the bottom
-  // While the five are not, and the menu draws Quit from the bottom edge at that distance. How the game anchors the
-  // Five is not known. The install's extraction did not find this menu's prefab, so the menu draws them where the 16:9
-  // Map has them.
+  // It is cut at 1920 by 1080, with the recording's pillarbox around the game window and no screen open.
+  // The logo and the UID at the frame's bottom right lie outside the region.
+  // The panel's own UID, name and avatar lie inside it.
+  // The account is at Adventure Rank 2, and every tile the frame draws reads open.
+  // Scored over the side bar and the panel, their translucent feet where the world shows through included.
+  // The game window is the 1620 pixels between the pillarbox, so the menu stands at its left edge, 150 in.
+  // The five side bar icons above Quit each have a centre's y in the frame's pixels, a unit being a pixel at 1080 high.
+  // Measured on the frame, they are Photo Mode 284, Notices 395, Mail 512, Time 627 and Settings 740.
+  // The Notices measure takes in its glyph with the ring it hangs from.
+  // The 16:9 map places them at 412, 524, 638, 754 and 868 when drawn at the menu's 0.79 reference pixel.
+  // So the 3:2 window stands each 126 to 129 pixels higher.
+  // Quit's centre is 1024 in the frame, 55 above the bottom edge.
+  // The map has it 70 of the 1440 high still's pixels from the bottom, which is the same 55 at 0.79.
+  // So Quit anchors to the bottom while the five are not, and the menu draws Quit from the bottom edge at
+  // That distance. how the game anchors the five is not known.
+  // The install's extraction did not find this menu's prefab, so the menu draws them where the 16:9 map has them.
   "paimon-menu": {
     region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",
@@ -1282,9 +1286,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     windowLeft: 150,
   },
   // The Paimon's Bargains shop hub from a 2021 English PC recording (yt--nip9Dz-aNM-shop-paimons-bargains.mp4, 1080
-  // High, at 1 second). It is a near Reference, since no cleaner English footage was found: the recording is an older
-  // Build, so its tabs and cards are the 2021 layout, And its caption bar lies across the second row's foot from 795 to
-  // 940 pixels, so the region stops above it. Scored over the two Rows of cards and the tabs, the Fischl card's red
+  // High, at 1 second). It is a near reference, since no cleaner English footage was found: the recording is an older
+  // Build, so its tabs and cards are the 2021 layout, and its caption bar lies across the second row's foot from 795 to
+  // 940 pixels, so the region stops above it. Scored over the two rows of cards and the tabs, the Fischl card's red
   // Label included, since the game draws it there.
   "paimons-bargains-screen": {
     region: { height: 790, width: 1720, x: 100, y: 0 },
@@ -1292,9 +1296,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt--nip9Dz-aNM-shop-paimons-bargains.mp4 at 1s",
   },
   // The English PC client's Party Setup at 1080 high from a public recording (yt-greLeGJE-Jg-party-setup.mp4), about 38
-  // Seconds In: Party 1 deployed with Venti, Xiangling, Raiden Shogun and Alhaitham, each at Lv. 90. The members stand
-  // In the game's own Scene, so the sky is the frame's and the members, their icons, the title, the step dots, the
-  // Elemental Resonance pill, the Close and the arrows are filled from round them. The subtitle band and the foot's
+  // Seconds in: Party 1 deployed with Venti, Xiangling, Raiden Shogun and Alhaitham, each at Lv. 90. The members stand
+  // In the game's own scene, so the sky is the frame's and the members, their icons, the title, the step dots, the
+  // Elemental Resonance pill, the close and the arrows are filled from round them. The subtitle band and the foot's
   // Buttons lie below the region
   "party-screen": {
     isBackdrop: true,
@@ -1335,8 +1339,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: 'File:"People of the Springs".png',
   },
   // The props fixture's box drawn from its camera. Its reference is our own render of that fixture, not a frame of the
-  // Game, So the score guards the drawing and the camera a prop is judged through; a game frame of a prop with its
-  // Camera solved Is the prop-level reference that replaces it
+  // Game, so the score guards the drawing and the camera a prop is judged through; a game frame of a prop with its
+  // Camera solved is the prop-level reference that replaces it
   "props-fixture": { ownRender: "the props fixture's box at its camera", screen: "PropsFixture" },
   "publisher-splash": { screen: "SplashPublisher", source: "session-2.mp4 at 1s" },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high. The
@@ -1366,7 +1370,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Quest Screen.png",
   },
   // The same still's list down the left, its quest rows and series panels, the translucent glass scored as drawn over
-  // The Still's own world between them, each row and panel filled from the world round it (QUEST_SCREEN_LIST_PLATE)
+  // The still's own world between them, each row and panel filled from the world round it (QUEST_SCREEN_LIST_PLATE)
   "quest-screen-list": {
     isBackdrop: true,
     plate: QUEST_SCREEN_LIST_PLATE,
@@ -1375,7 +1379,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Quest Screen.png",
   },
   // The City Reputation's reward page of Mondstadt at 1080 high from the public City Reputation Guide, 18 seconds in:
-  // The Level list down the right at level 3, the levels' rewards and each one's achieved mark, clear of the clip's own
+  // The level list down the right at level 3, the levels' rewards and each one's achieved mark, clear of the clip's own
   // Recording timer and its UID. Scored over the list's panel only, since the nation's art on the left is not drawn yet
   "reputation-screen": {
     region: { height: 872, width: 1220, x: 652, y: 145 },
@@ -1386,7 +1390,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Settings, scored whole like the Graphics tab's below. The pointer rests on Output Settings, lit under it, while
   // Dynamic Range keeps the rim of the row last pressed, which the page does not draw since its control is not backed.
   // Set against its bar by its mean difference as the Graphics tab is: with the rows' rims and shadow drawn, what FLIP
-  // Still sees is The game's typeface, which Signika stands in for along every label's edge
+  // Still sees is the game's typeface, which Signika stands in for along every label's edge
   "settings-audio-rows": {
     ...MENU_SETTINGS_REFERENCE,
     plate: [
@@ -1416,8 +1420,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     variant: "audio",
   },
   // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot of the login's,
-  // Scored Over its header band alone, whose veil is drawn over the band filled from the blurred backdrop below it; the
-  // Login's Settings list two tabs and its rows lie over a backdrop the band's fill does not reach
+  // Scored over its header band alone, whose veil is drawn over the band filled from the blurred backdrop below it; the
+  // Login's settings list two tabs and its rows lie over a backdrop the band's fill does not reach
   "settings-graphics": {
     isBackdrop: true,
     plate: [{ height: 100, width: 1680, x: 0, y: 0 }],
@@ -1459,15 +1463,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-5EmJX_RyuY8-menu-settings.mp4 at 144.5s",
   },
   // The English PC client's General Goods shop in Liyue at 1080 high, from a public clip at 34 seconds: the list from
-  // Salt with Salt Picked, its detail panel and the Mora count on the top bar, the Purchase button and the refresh
-  // Line. The whole frame above the Game's own UID line, which the page does not draw
+  // Salt with Salt picked, its detail panel and the Mora count on the top bar, the Purchase button and the
+  // Refresh line. The whole frame above the game's own UID line, which the page does not draw
   "shop-screen": {
     region: { height: 1048, width: 1920, x: 0, y: 0 },
     screen: "ShopScreen",
     source: "yt-xBCvEJLZ6Ek-zafrost-general-goods-shop.mp4 at 34s",
   },
   // The English PC client's Benediction screen at 1080 high from the public clip, 3 seconds in: Floor 1 Chamber 1 with
-  // Its hint and Three cards, the middle one lit at rest with the pointer on its last line. The game's own UID line
+  // Its hint and three cards, the middle one lit at rest with the pointer on its last line. The game's own UID line
   // Sits at the bottom right
   "spiral-abyss-benediction": {
     isBackdrop: true,
@@ -1491,13 +1495,14 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     variant: "chineseTraditional",
   },
   // The Japanese PC client's logo screen at 3440 by 1440 from a 21:9 capture of its launch, 7.5 seconds in, settled:
-  // The Japanese Logo with its Genshin line, whole on white and with no licence line
+  // The Japanese logo with its Genshin line, whole on white and with no licence line
   "splash-title-japanese": { screen: "SplashTitle", source: "session-2.mp4 at 7.5s", variant: "japanese" },
   "splash-title-korean": { pending: NO_VARIANT_SCREENSHOT, screen: "SplashTitle", variant: "korean" },
   // The Statue's Blessing screen, opened from a statue, from the WoW Quests completionist guide (yt-0z3OdjIBuo8, 2022,
   // 1080 high at 60 frames a second) at 173 seconds: the Restorative Power at 10000 of 10000, auto-recover on at 50%.
-  // Scored over the right panel only. The member cards at the left are not scored, since the world shows through them
-  // Blurred, which the component does not draw. The recording's clock and the recorder's UID lie outside the region.
+  // Scored over the right panel only.
+  // The member cards at the left are not scored, since the world shows through them blurred, which the component does
+  // Not draw. the recording's clock and the recorder's UID lie outside the region.
   "statue-blessing": {
     isBackdrop: true,
     plate: STATUE_BLESSING_PLATE,
@@ -1506,7 +1511,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-0z3OdjIBuo8-wow-completionist.mp4 at 173s",
   },
   // The Worship Statue popup of Mondstadt's statue at level 2, from the same guide at 164 seconds, with no Anemoculus
-  // Held toward it. Scored over the popup's panel, which the live world on its left does not enter. The recorder's UID
+  // Held toward it. scored over the popup's panel, which the live world on its left does not enter. The recorder's UID
   // Lies below the region.
   "statue-worship": {
     region: { height: 1040, width: 614, x: 1306, y: 0 },
@@ -1546,7 +1551,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     variant: "chineseSimplified",
   },
   // The English PC client's Weapon screen on the Enhance tab at 1920 by 864 from a recording of levelling a five-star
-  // Sword, 1.9 Seconds in: Lv. 1, nothing in the enhancement slots. The recorder's UID sits bottom right, below the
+  // Sword, 1.9 seconds in: Lv. 1, nothing in the enhancement slots. The recorder's UID sits bottom right, below the
   // Region scored
   "weapon-screen": {
     isBackdrop: true,
@@ -1576,7 +1581,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-jXrYcFHiVnI-weapon-levelling.mkv at 1.93s",
   },
   // The Ascend tab from the same recording at 12.9 seconds: Lv. 20 of 20 to 20 of 40 with the ascension materials and
-  // The button lit. The Required line shows a struck-through 5000 the recording applies, so the compare differs there
+  // The button lit. The required line shows a struck-through 5000 the recording applies, so the compare differs there
   "weapon-screen-ascend": {
     isBackdrop: true,
     plate: [
@@ -1610,7 +1615,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "weapon-screen-many-fodder": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "manyFodder" },
   "weapon-screen-rank-five": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "rankFive" },
   // The Refine tab from the same recording at 91 seconds: Rank 1 with the four refinement slots empty. The tab shows no
-  // Level, so the Fixture's level is not on the screen
+  // Level, so the fixture's level is not on the screen
   "weapon-screen-refine": {
     isBackdrop: true,
     plate: [
@@ -1640,8 +1645,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "weapon-screen-two-star": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "twoStar" },
   // The statue under the oak by day, from the 2026 recording's fixed camera east of it, whose game clock runs a minute
-  // A Real second from about six in the morning; the entry holds the clock at 720 minutes, an hour still to be read off
-  // Its Sun; its camera is solved from its landmarks and refined on the statue's outline
+  // A real second from about six in the morning; the entry holds the clock at 720 minutes, an hour still to be read off
+  // Its sun; its camera is solved from its landmarks and refined on the statue's outline
   "windrise-statue-day": {
     component: DerivedAssetComponent.Windrise,
     landmarks: {
@@ -1654,8 +1659,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       trunkAxis: [643, 580],
     },
     // Its rigid landmarks cluster at the statue, and the far pedestals cannot be named from the tile data, so no
-    // Landmark Pins the camera's far field: the pose holds at about 7 px where the camera pass keeps its 2 px gate, so
-    // Its misfit Shows there
+    // Landmark pins the camera's far field: the pose holds at about 7 px where the camera pass keeps its 2 px gate, so
+    // Its misfit shows there
     poseBar: 7.5,
     props: {
       cameraPose: { fov: 58.365, heading: 65.402, pitch: 2.856, position: [70.935, -1.584, 7.956] },
@@ -1666,7 +1671,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The English PC client's wish screen on the Character Event banner, Born of Ocean Swell open, at 78 seconds of the
   // Public 1080p recording, once its banner has settled: scored whole over its sky, the game's pieces (the tab row, the
-  // Currency, The banner card, the Shop, Details and History row and the wish buttons) filled from round them
+  // Currency, the banner card, the Shop, Details and History row and the wish buttons) filled from round them
   "wish-screen": {
     isBackdrop: true,
     plate: [

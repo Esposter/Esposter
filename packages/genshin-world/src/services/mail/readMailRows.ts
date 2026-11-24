@@ -6,7 +6,7 @@ import { readGameDataIndex } from "#src/services/data/readGameDataIndex";
 import { MAIL_INDEX_KEY } from "#src/services/mail/constants";
 
 // The rows of the held mails the mail table still names, read by id. A mail whose row is gone has no entry in the
-// Index, So it is left out of the rows rather than failing the others, and the save keeps it until its expiry can be
+// Index, so it is left out of the rows rather than failing the others, and the save keeps it until its expiry can be
 // Read
 export const readMailRows = async (gameDataBaseUrl: string, mailIds: readonly number[]): Promise<Map<number, Mail>> => {
   const index = await readGameDataIndex(gameDataBaseUrl, MAIL_INDEX_KEY);

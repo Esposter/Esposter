@@ -3,8 +3,9 @@ import type { RealtimeKitPreset } from "#src/models/realtimeKit/RealtimeKitPrese
 // RealtimeKit's publish enum for one source. A source a preset does not allow is refused outright rather than requested
 const getCanProduce = (isAllowed: boolean): string => (isAllowed ? "ALLOWED" : "NOT_ALLOWED");
 
-// The body the REST API creates a preset from. Its participant features are all off: the calls code runs its own Chat,
-// Moderation and polls, and kicks through the REST API with the server's token, so the preset grants none of them.
+// The body the REST API creates a preset from. Its participant features are all off: the calls code runs its own
+// Chat, moderation and polls, and kicks through the REST API with the server's token, so the preset grants none
+// Of them.
 // Camera is ALLOWED in every preset, since no moderation takes it away
 export const getRealtimeKitPresetBody = (preset: RealtimeKitPreset) => ({
   config: {

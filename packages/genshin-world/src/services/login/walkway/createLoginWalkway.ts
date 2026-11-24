@@ -21,8 +21,8 @@ import { BatchedMesh, Matrix4 } from "three";
 import { color } from "three/tsl";
 
 // The walkway's row drawn as one batch, every piece of every copy an instance of its own, so each rises into place on
-// Its Own in one draw, and the toon outline, which places a batch's instances before it extrudes them, follows it. The
-// Batch Itself scrolls with the row, so only a rising piece's own place changes, which `update` sets each frame
+// Its own in one draw, and the toon outline, which places a batch's instances before it extrudes them, follows it. The
+// Batch itself scrolls with the row, so only a rising piece's own place changes, which `update` sets each frame
 export const createLoginWalkway = (
   walkway: LoginWalkway,
   row: LoginScrollRow,
@@ -74,7 +74,7 @@ export const createLoginWalkway = (
         const ahead = batch.position.z + z + depth - cameraZ;
         const sink = getLoginWalkwaySink(ahead, seed);
         // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn, and once
-        // The Door is due, none past it
+        // The door is due, none past it
         batch.setVisibleAt(
           instanceId,
           sink < LOGIN_WALKWAY_RISE_DEPTH && (doorAheadOfCamera === undefined || ahead < doorAheadOfCamera),

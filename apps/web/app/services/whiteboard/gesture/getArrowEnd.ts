@@ -8,8 +8,8 @@ import { getNearestConnectionPointIndex } from "#src/services/whiteboard/gesture
 import { getBindableShape, getConnectionPoint, getElementBounds } from "vue-block-editor-headless";
 
 // The end an arrow takes where a point lands: bound to the connection point nearest the point on the shape the point
-// Hits, or free at the point. An annotation takes no connection, and the shape an arrow starts from is left free by its
-// Own end, so either leaves the end free. The end holds No arrowhead, since the caller gives each end its own
+// Hits, or free at the point. an annotation takes no connection, and the shape an arrow starts from is left free by its
+// Own end, so either leaves the end free. The end holds no arrowhead, since the caller gives each end its own
 export const getArrowEnd = (
   state: WhiteboardGestureState,
   point: Point,

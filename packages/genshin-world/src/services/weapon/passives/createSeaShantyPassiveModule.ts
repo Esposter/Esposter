@@ -14,8 +14,8 @@ const STOIC_SYMBOL_PREFIX = "stoicSymbol";
 const ENERGY_DELAY_SECONDS = 2;
 
 // Sea Shanty (The Dockhand's Assistant, Portable Power Saw) at its rank: the Roused effect its Stoic's Symbols become
-// Gives the Rank's Elemental Mastery for each Symbol for its seconds, and restores the rank's Energy for each two
-// Seconds after it occurs. The Energy waits in the status's stacks, which the status hands back as it ends
+// Gives the rank's Elemental Mastery for each Symbol for its seconds, and restores the rank's Energy for each two
+// Seconds after it occurs. the Energy waits in the status's stacks, which the status hands back as it ends
 export const createSeaShantyPassiveModule = (params: number[]): PassiveModule => {
   const energyPerSymbol = takeOne(params, 3);
   const elementalMasteryPerSymbol = takeOne(params, 4);

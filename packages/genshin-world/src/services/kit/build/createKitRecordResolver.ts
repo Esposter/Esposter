@@ -48,7 +48,7 @@ const getAdditiveScalingAttribute = ({
 // Talents plays at: a parameter read off its talent's table at that level, a count of frames divided into seconds, a
 // Targeting zone as its area, and a hit scaling with a stat other than ATK as that share of the stat, its talent
 // Multiplier nought. What a behaviour completes, a party heal's chance, an omen's id and a stacked hit's status, is
-// Left Missing for it to give
+// Left missing for it to give
 export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap, talentLevelMap: TalentLevelMap) => {
   const toParameter = (parameter: KitParameter): number => {
     if (typeof parameter === "number") return parameter;
@@ -125,7 +125,7 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     };
   };
   // A complete record maps to every field a hit holds, so the whole hit is the same mapping narrowed rather than a
-  // Second One that restates it, each value computed once
+  // Second one that restates it, each value computed once
   const toHit = (hitRecord: KitHitRecord): KitHit => {
     const fields = toHitFields(hitRecord);
     if (!checkIsKitHitShortOf(fields, []))

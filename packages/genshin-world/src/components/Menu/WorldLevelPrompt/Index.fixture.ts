@@ -2,7 +2,7 @@ import { InteractionState } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The Change World Level prompt in the English words, lowering the World Level from four to three, at rest and with
-// Both Choices hovered and pressed
+// Both choices hovered and pressed
 export const props = {
   adjustPrompt: { adjustedWorldLevel: 3, currentWorldLevel: 4, isLowering: true },
   gameText: ENGLISH_GAME_TEXT,

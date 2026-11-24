@@ -8,8 +8,8 @@ import { landKitHits } from "#src/services/kit/landKitHits";
 
 // A summon's clock run on by a step: a following summon's body stands where the body on the field stands, and a
 // Travelling summon's body moves forward over the seconds it has been travelling. Then each hit from its next to land
-// On Whose hitmark its clock has reached lands from the summon's body, as the hits of an action do, dealt as the
-// Summon's Kind of attack, pushed into the strikes given
+// On whose hitmark its clock has reached lands from the summon's body, as the hits of an action do, dealt as the
+// Summon's kind of attack, pushed into the strikes given
 export const stepKitSummon = (
   summon: KitSummon,
   stepSeconds: number,

@@ -12,7 +12,7 @@ const SENHO_TRIGGERS_PER_ROUND = 2;
 const SENHO_BONUS = 1;
 
 // Kamisato Art: Senho, Ayaka's passive: when she is switched to be the active character, she gains Cryo Elemental
-// Infusion, And her next Normal Attack this Round deals 1 more DMG. It triggers twice per Round (the wiki's Kamisato
+// Infusion, and her next Normal Attack this Round deals 1 more DMG. It triggers twice per Round (the wiki's Kamisato
 // Art: Senho)
 export const kamisatoArtSenho: GcgCardModule = {
   modifyDamageDealt: (context, damage, zoneCard) => {

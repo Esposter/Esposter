@@ -14,8 +14,8 @@ const MAX_HEALTH_MAXIMUM_STACKS = 2;
 
 // Dawn and Dusk by the Lake (Splendor of Tranquil Waters) at its rank: each change of the wielder's own current HP
 // Stacks its Elemental Skill DMG by the rank's percentage, up to three, and each change of another member's HP stacks
-// Its Max HP by the Rank's percentage, up to two. A kind's stacks share one duration of the rank's seconds, which each
-// New stack restarts (gcsim's One modifier, re-added on every stack), each waits out the rank's cooldown, and both
+// Its Max HP by the rank's percentage, up to two. A kind's stacks share one duration of the rank's seconds, which each
+// New stack restarts (gcsim's one modifier, re-added on every stack), each waits out the rank's cooldown, and both
 // Count off the field
 export const createDawnAndDuskByTheLakePassiveModule = (params: number[]): PassiveModule => {
   const skillDamagePerStack = takeOne(params, 0);

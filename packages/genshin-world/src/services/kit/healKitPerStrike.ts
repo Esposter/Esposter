@@ -6,8 +6,8 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 
 // The striker heals itself by an amount of HP each time a hit's onStrike runs, which it does once for each enemy the
-// Hit Strikes. Heals are capped at a maximum per cast: the heals a cast has given are a kit resource under the id,
-// Which the Cast's start clears with spendKitResource, so a strike past the last heal of a cast heals nothing
+// Hit strikes. Heals are capped at a maximum per cast: the heals a cast has given are a kit resource under the id,
+// Which the cast's start clears with spendKitResource, so a strike past the last heal of a cast heals nothing
 export const healKitPerStrike = (
   context: KitContext,
   { combatant }: KitStrike,

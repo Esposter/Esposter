@@ -90,7 +90,7 @@ export const useWishDraw =
         ).inventory;
       }
     // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a
-    // Copy, and Each duplicate's Stella Fortuna is added to its character as the draw lands, a new character's second
+    // Copy, and each duplicate's Stella Fortuna is added to its character as the draw lands, a new character's second
     // Copy included
     const newCharacters = getNewCharacters(characterCopyCountMap.value, wishes.heldCountMap, characterDataMap);
     characters.value = addStellaFortuna([...characters.value, ...newCharacters], wishes.stellaFortunaCountMap);

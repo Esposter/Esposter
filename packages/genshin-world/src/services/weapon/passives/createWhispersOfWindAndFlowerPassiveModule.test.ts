@@ -22,7 +22,7 @@ describe(createWhispersOfWindAndFlowerPassiveModule, () => {
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
   // Whispers of Wind and Flower at its first rank: for eight seconds after the wielder's Elemental Skill hits or its
-  // Own Reaction, 12% ATK and 48 Elemental Mastery
+  // Own reaction, 12% ATK and 48 Elemental Mastery
   const passiveModule = createWhispersOfWindAndFlowerPassiveModule([8, 0.12, 48]);
 
   test("an Elemental Skill hit the wielder deals raises its ATK and Elemental Mastery by the rank's amounts", () => {

@@ -4,7 +4,7 @@ import type { PositionedDocument } from "vue-block-editor-headless";
 import { applyPatches } from "@esposter/shared";
 
 // The operations of several items as one list. Each item's operations are read from the document the items before it
-// Leave, So an item that removes or adds an element names the indexes the earlier items have already shifted
+// Leave, so an item that removes or adds an element names the indexes the earlier items have already shifted
 export const getChainedOperations = <TItem>(
   document: PositionedDocument,
   items: TItem[],

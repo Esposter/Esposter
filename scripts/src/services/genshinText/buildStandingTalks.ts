@@ -24,7 +24,7 @@ import { join } from "node:path";
 // The residents' standing talks, published with every word they show: each resident of a region's data whose talk is
 // Their own standing talk has it read from the dialog and talk tables, its wordless lines skipped. A talk that cannot
 // Be read so is left out and counted, and its resident holds no standing talk. The companions' favour talks are read
-// The Same way, from the home event table, and published beside them with their words in the same chunks. The
+// The same way, from the home event table, and published beside them with their words in the same chunks. The
 // Companions' Serenitea Pot talks are read the same way too, each gated by the Friendship Level it opens at, and
 // Published as a record
 export const buildStandingTalks = async (): Promise<GameDataBuild> => {

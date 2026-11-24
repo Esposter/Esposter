@@ -10,10 +10,10 @@ import type { GridTransfer } from "#src/models/GridTransfer";
 // Read the next time the grid lays out
 export interface GridLayoutOptions<T extends GridItem = GridItem> {
   // Whether this grid refuses an item dragged into it, from another grid or from outside. A refused item is previewed
-  // Nowhere Over the grid and lands nothing, so the grid never lays out a landing for an item it will not take
+  // Nowhere over the grid and lands nothing, so the grid never lays out a landing for an item it will not take
   checkIsRefused?: GridRefusal | undefined;
   // Whether an item is solid, so no other item's drag displaces it: a landing that overlaps it is refused under every
-  // Collision Mode, and neither a push nor a compaction moves it. The item dragged by its own press still moves and
+  // Collision mode, and neither a push nor a compaction moves it. The item dragged by its own press still moves and
   // Pushes the others
   checkIsSolid?: ((item: T) => boolean) | undefined;
   // What a dropped item does to the items it lands on
@@ -29,7 +29,7 @@ export interface GridLayoutOptions<T extends GridItem = GridItem> {
   // Content changed
   onCommit: (commit: GridCommit) => void;
   // Receives a body drag released over another grid that takes it, once, with the cell the item lands in there. Without
-  // It a Drag stays in its own grid
+  // It a drag stays in its own grid
   onTransfer?: ((transfer: GridTransfer<T>) => void) | undefined;
   rowHeight: number;
   spacing: GridSpacing;

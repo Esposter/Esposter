@@ -12,8 +12,8 @@ const decodeStored = (bytes: Uint8Array, contentEncoding: string | undefined): B
 };
 
 // An in-memory bucket with the semantics the scripts rely on: a write stamps the instant it lands, read from the clock
-// A Test fakes, a create-only write refuses a key already taken, and a read decodes a stored `br` or `zstd` object as
-// R2 Serves it through `fetch`. It stands in for the S3 client wherever a test writes
+// A test fakes, a create-only write refuses a key already taken, and a read decodes a stored `br` or `zstd` object as
+// R2 serves it through `fetch`. It stands in for the S3 client wherever a test writes
 export const createMemoryR2BucketClient = () => {
   const store = new Map<
     string,

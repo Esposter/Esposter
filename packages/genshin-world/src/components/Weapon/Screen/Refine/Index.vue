@@ -23,7 +23,7 @@ const { gameText, nameText, refinement, weaponData } = defineProps<Props>();
 // The passive's name, and the two rows the game's panel lists: the held rank, then the one above it, named by its rank
 const passive = computed(() => getWeaponPassive(weaponData, refinement, nameText));
 // The held rank's row is the game's Current line, its label coloured in the text, and the next rank's row is labelled
-// By its rank. Each row's dot is drawn as a bullet, so the Current line's own dot is left out of its first run
+// By its rank. each row's dot is drawn as a bullet, so the Current line's own dot is left out of its first run
 const passiveRows = computed(() =>
   (passive.value?.rows ?? [])
     .slice(refinement - 1, refinement + 1)

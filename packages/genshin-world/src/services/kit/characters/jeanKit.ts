@@ -39,7 +39,7 @@ const SPIRALING_TEMPEST_CONSTELLATION = 1;
 const SPIRALING_TEMPEST_DAMAGE_BONUS = 0.4;
 // Wind Companion, from Ascension 1, gives each normal attack hit a 50% chance to heal every party member by 15% of
 // Jean's ATK, as the wiki's passive page and gcsim v2.47.2 (MIT) jean/asc.go give it
-// `https://genshin-impact.fandom.com/wiki/Wind_Companion`
+// https://genshin-impact.fandom.com/wiki/Wind_Companion
 const WIND_COMPANION_ASCENSION = 1;
 const WIND_COMPANION_CHANCE = 0.5;
 // Let the Wind Lead, from Ascension 4, regenerates 20% of Dandelion Breeze's energy as it is used, 16 of its 80, as the
@@ -48,14 +48,14 @@ const WIND_COMPANION_CHANCE = 0.5;
 const LET_THE_WIND_LEAD_ASCENSION = 4;
 const LET_THE_WIND_LEAD_ENERGY_SHARE = 0.2;
 // Constellation 2: each particle or orb Jean picks up gives every party member 15% Movement SPD and ATK SPD for 15
-// Seconds, As gcsim v2.47.2 (MIT) jean/cons.go gives it while Jean is on the field
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jean/cons.go`
+// Seconds, as gcsim v2.47.2 (MIT) jean/cons.go gives it while Jean is on the field
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jean/cons.go
 const PARTY_SPEED_CONSTELLATION = 2;
 const PARTY_SPEED_SHARE = 0.15;
 const PARTY_SPEED_SECONDS = 15;
 const PARTY_SPEED_SOURCE = "jean-constellation-2";
 // Constellation 4: each opponent within Dandelion Breeze's field has its Anemo RES cut by 40% for 1.2 seconds, which
-// Gcsim Gives at the field's start and each of its ticks, so an opponent that leaves the field keeps the cut for those
+// Gcsim gives at the field's start and each of its ticks, so an opponent that leaves the field keeps the cut for those
 // Seconds
 const ANEMO_RESISTANCE_CONSTELLATION = 4;
 const ANEMO_RESISTANCE_REDUCTION = 0.4;
@@ -67,9 +67,9 @@ const ANEMO_RESISTANCE_STATUS: EnemyStatus = {
   secondsRemaining: ANEMO_RESISTANCE_SECONDS,
 };
 // Lion's Fang, Fair Protector of Mondstadt, from six constellations, cuts the DMG the character inside Dandelion
-// Breeze's Field takes by 35%, and for 3 strikes or 10 seconds once she leaves it, as the wiki's constellation text
+// Breeze's field takes by 35%, and for 3 strikes or 10 seconds once she leaves it, as the wiki's constellation text
 // Gives it. Constellation 6 is left unimplemented in gcsim v2.47.2 (MIT) jean/cons.go, so the wiki decides
-// `https://genshin-impact.fandom.com/wiki/Jean`
+// https://genshin-impact.fandom.com/wiki/Jean
 const LIONS_FANG_CONSTELLATION = 6;
 const LIONS_FANG_DAMAGE_REDUCTION = 0.35;
 const LIONS_FANG_AFTER_SECONDS = 10;
@@ -79,9 +79,9 @@ const LIONS_FANG_AFTER_SOURCE = "jean-constellation-6-after";
 const LIONS_FANG_AFTER_STATUS_ID = "jean-constellation-6-after";
 
 // The Dandelion Field's tick, written for Jean as she cast it, with its heals in HP. Tick 0 is its activation, which
-// Heals The character on the field by the activation heal and, from Ascension 4, gives Jean back a fifth of the burst's
-// Energy. Each later tick heals the character on the field by the regeneration. From Constellation 4 each tick also
-// Cuts the Anemo RES of each opponent within the field
+// Heals the character on the field by the activation heal and, from Ascension 4, gives Jean back a fifth of the
+// Burst's energy. each later tick heals the character on the field by the regeneration. From Constellation 4 each tick
+// Also cuts the Anemo RES of each opponent within the field
 const createFieldTick =
   (owner: Combatant, field: Pick<KitField, "centre" | "radius">, activationHeal: number, regenerationHeal: number) =>
   (context: KitContext, tickIndex: number): void => {
@@ -158,10 +158,11 @@ const createLionsFangStep =
 export const JEAN_CHARACTER_ID = 10_000_003;
 
 // Jean's behaviour: each strike's hit carries Wind Companion's heal, rolling from Ascension 1. Gale Blade held a second
-// Or More plays Spiraling Tempest's from one constellation, adding its DMG bonus to her Anemo DMG Bonus for the blast's
+// Or more plays Spiraling Tempest's from one constellation, adding its DMG bonus to her Anemo DMG Bonus for the blast's
 // Animation, the hit it lands within. Dandelion Breeze casts its field where she stands, healing the character on it at
-// Its activation and each second after, and its entering and exiting damage, priced by her as she stood then From six
-// Constellations, the field cuts the incoming DMG of the character inside it by 35%, and for 3 strikes or 10 seconds
+// Its activation and each second after, and its entering and exiting damage, priced by her as she stood then
+// From six constellations, the field cuts the incoming DMG of the character inside it by 35%, and for 3 strikes or 10
+// Seconds
 // After she leaves it, as its step holds and counts it
 export const createJeanKitBehaviour = ({
   kit,

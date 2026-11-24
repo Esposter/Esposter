@@ -5,7 +5,7 @@ import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { GroundPoint } from "genshin-engine";
 
 // A chamber fought in the arena beside the Abyss's entrance: its challenge, and the camp of the half in play, which
-// Spawns Beside the entrance and is dropped once the chamber clears or fails. The defeats of that camp count toward its
+// Spawns beside the entrance and is dropped once the chamber clears or fails. The defeats of that camp count toward its
 // Half
 export interface AbyssArena {
   areaId: string;

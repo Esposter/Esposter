@@ -21,7 +21,7 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const { arrive, view, writeOptimistic } = overlayStore;
   const userToRooms = view(userToRoomTable);
   // The viewer's own memberships by room. A membership the viewer has left is a tombstone, which the view leaves out,
-  // So The room has no row here
+  // So the room has no row here
   const myMembershipMap = computed(
     () =>
       new Map(
@@ -42,8 +42,8 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   // Own: a hydration of the rooms sets the room list's, and the memberships' hydration must not bail on that flag
   const isLoaded = ref(false);
   const myUserToRooms = computed(() => [...myMembershipMap.value.values()]);
-  // The memberships are overlay rows, so the slice holds the viewer's live ones, and a restore arrives each at its
-  // Version. A reset only marks them unloaded, since the rows are the overlay's
+  // The memberships are overlay rows, so the slice holds the viewer's live ones, and a restore arrives each at
+  // Its version. A reset only marks them unloaded, since the rows are the overlay's
   const getSlice = (): CursorPaginationSlice<UserToRoomInMessage> => ({
     initializeCursorPaginationData: ({ items }) => {
       arriveUserToRooms(items);

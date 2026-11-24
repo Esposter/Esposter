@@ -14,15 +14,15 @@ const checkVisualUpdate = (updateEnvironmentVariable?: string): boolean =>
   process.argv.includes("--update");
 
 // Edge rasterizes a page on the GPU by default, and there an anti-aliased edge or a gradient's dither differs by a
-// Level Between captures of one frame, which a pixel-exact update refuses. The CPU rasterizer gives the same pixels
-// Every capture, And this flag leaves the compositor on the GPU
+// Level between captures of one frame, which a pixel-exact update refuses. The CPU rasterizer gives the same pixels
+// Every capture, and this flag leaves the compositor on the GPU
 const DISABLE_GPU_RASTERIZATION = "--disable-gpu-rasterization";
 // The browser suite's own options: the machine's Edge, headless, at the viewport its screens are drawn at, and each
 // Screenshot kept beside its component as a test is, so a member sets only what differs from one to the next. An update
 // (`-u` or `--update`, or the environment variable a suite names as `updateEnvironmentVariable`) compares every pixel
 // Exactly, so the image it writes is the render: the default comparison passes a drift below pixelmatch's threshold,
-// And An update only rewrites a comparison that fails. The same argument also gives the define that sets
-// `IS_VISUAL_UPDATE` For the suite's own tests, so the flag the options take and the one the tests read cannot come
+// And an update only rewrites a comparison that fails. The same argument also gives the define that sets
+// `IS_VISUAL_UPDATE` for the suite's own tests, so the flag the options take and the one the tests read cannot come
 // Apart
 export const getVitestBrowserConfiguration = (
   viewport: { height: number; width: number },
@@ -39,8 +39,8 @@ export const getVitestBrowserConfiguration = (
           // A screen has one approved image, so a second one, such as an earlier platform's, fails the run and names
           // The screen
           if (approvedImageNames.length > 1)
-            // This package builds before `@esposter/shared`,
-            // oxlint-disable-next-line error-handling/no-bare-error -- so it cannot import its error
+            /* oxlint-disable-next-line error-handling/no-bare-error -- this package builds before `@esposter/shared`,
+               so it cannot import its error */
             throw new Error(`${arg} has more than one approved image: ${approvedImageNames.join(", ")}`);
 
           return screenshotPath;

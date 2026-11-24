@@ -7,7 +7,7 @@ import { stepFramesUntil } from "#src/services/dev/stepFramesUntil";
 // Steps frames until `settled` reads yes, one fixed step and one real frame at a time, and fails once
 // SCRIPTED_FRAME_LIMIT frames have passed without it. The first read comes after SCRIPTED_SETTLE_MIN_FRAMES, so a view
 // Change has applied and the terrain has selected for it before anything is read. A refused read fails at once, since
-// No Number of frames would change a refusal
+// No number of frames would change a refusal
 export const settleScriptedSession = async (driver: ScriptedSessionDriver): Promise<ScriptedSessionOutcome> => {
   const outcome = await stepFramesUntil<ScriptedSessionOutcome>(
     driver.frame,

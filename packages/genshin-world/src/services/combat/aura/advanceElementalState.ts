@@ -15,11 +15,11 @@ import {
 import { decayAuras } from "#src/services/combat/aura/decayAuras";
 import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged";
 
-// A target's elements some seconds on, written in place, and the reactions those seconds bring pushed onto `reactions`,
-// So a quiet step allocates nothing. The auras decay from one tick to the next: Electro-Charged ticks each Second, and
-// Once an aura decays out from under it, a last time if half a second has passed since the one before; Burning ticks
-// Each quarter second, its Pyro applied to the target itself under Burning's internal cooldown. Electro and Hydro lying
-// Together as Lunar-Charged tick nothing here, and are Lunar-Charged no longer once either is gone
+// A target's elements some seconds on, written in place, and the reactions those seconds bring pushed onto
+// `reactions`, so a quiet step allocates nothing. The auras decay from one tick to the next: Electro-Charged ticks each
+// Second, and once an aura decays out from under it, a last time if half a second has passed since the one before;
+// Burning ticks each quarter second, its Pyro applied to the target itself under Burning's internal cooldown. Electro
+// And Hydro lying together as Lunar-Charged tick nothing here, and are Lunar-Charged no longer once either is gone
 export const advanceElementalState = (state: ElementalState, deltaSeconds: number, reactions: Reaction[]): void => {
   const { auras } = state;
   const endSeconds = state.seconds + deltaSeconds;

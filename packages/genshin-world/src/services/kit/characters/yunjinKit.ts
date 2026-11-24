@@ -74,7 +74,7 @@ const spendBannerStack = (effects: readonly KitEffect[], characterId: number): v
 };
 
 // Ascension 4's share of Yun Jin's DEF for the Elemental Types the deployed team holds, each member's element as the
-// Team Stands, read from the party and the team's built combatants by id
+// Team stands, read from the party and the team's built combatants by id
 const getAscension4DefenseShare = (
   banner: Combatant,
   party: Party,
@@ -96,19 +96,20 @@ const getBannerIncrease = (
   (BANNER_DEFENSE_SHARE + getAscension4DefenseShare(banner, party, characterIdCombatantMap)) *
   banner.attributes.defense;
 
-// Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they
-// Start. Cliffbreaker's Banner's DEF-scaled DMG Increase is party-wide, as gcsim gives it: her own normal attacks take
-// It through Her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the Elemental
-// Types on top Ascension 1's counter window is built. Constellation 1's Opening Flourish cooldown cut, Constellation
-// 2's party Normal Attack DMG Bonus from the unleashed banner and Constellation 4's DEF from her own Crystallize are
-// Built Constellation 6's party Normal ATK SPD while the banner stands is not built: gcsim gates it on each member's
-// Own banner Stacks, and the kit spends one pool of stacks for the banner, so the gate has no reading the kit can give
+// Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as
+// They start. Cliffbreaker's Banner's DEF-scaled DMG Increase is party-wide, as gcsim gives it: her own normal attacks
+// Take it through her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the
+// Elemental Types on top Ascension 1's counter window is built. Constellation 1's Opening Flourish cooldown cut,
+// Constellation 2's party Normal attack DMG Bonus from the unleashed banner and Constellation 4's DEF from her own
+// Crystallize are built
+// Constellation 6's party Normal ATK SPD while the banner stands is not built: gcsim gates it on each member's own
+// Banner stacks, and the kit spends one pool of stacks for the banner, so the gate has no reading the kit can give
 export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader): KitBehaviour => {
   const burstHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   const shieldShare = readParameter("shieldShare");
   const shieldFlat = readParameter("shieldFlatHealth");
   // Opening Flourish's shield is set as the skill starts, from Yun Jin's Max HP and the table's share and flat HP,
-  // Until its Hit lands, as gcsim expires it at that frame
+  // Until its hit lands, as gcsim expires it at that frame
   const createShieldOnStart = ({ hits }: KitAction): KitAction["onStart"] => {
     const shieldSeconds = takeOne(hits).hitmarkSeconds;
     return (context) => {

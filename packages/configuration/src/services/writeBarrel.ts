@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 // The order `sorting/sort-exports` checks the barrel in: it sorts each export by its `./`-prefixed source path,
 // Lowercased, with each run of digits read as a number. A code-unit sort would put `WaterUniforms` before
-// `WaterfallSheet`, Which the rule reports
+// `WaterfallSheet`, which the rule reports
 const compareSourcePaths = new Intl.Collator("en-US", { numeric: true }).compare;
 
 // Every line is `export *`, so two modules exporting one name are an ambiguity TypeScript reports (TS2308) in the

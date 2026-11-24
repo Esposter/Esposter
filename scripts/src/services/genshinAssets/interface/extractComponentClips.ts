@@ -30,7 +30,7 @@ const CLIP_SAMPLE_RATE = 60;
 // Blocks holding it, its curves decoded and sampled, and each binding named where its CRC32 resolves, a property
 // Against Unity's names and a path against the component's interface tree (written by `interface`, if it has run), its
 // Scene tree (dumped by `extract`, if it has run) and the rig of the model its clips bind (`clipSkeleton`). The clips
-// Are Written beside the exports
+// Are written beside the exports
 export const extractComponentClips = async (component: DerivedAssetComponent): Promise<DecodedClip[]> => {
   const { clipPattern, clipSkeleton } = DerivedAssetComponentMap[component];
   if (!clipPattern) throw new InvalidOperationError(Operation.Read, component, "names no clips");

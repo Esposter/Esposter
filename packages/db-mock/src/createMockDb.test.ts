@@ -47,7 +47,7 @@ describe(createMockDb, () => {
   });
 
   // The version is the database's count of a row's changes: an insert starts it at zero, an update raises it, and an
-  // Upsert That updates the existing row raises it too, so a write that names no version still moves it
+  // Upsert that updates the existing row raises it too, so a write that names no version still moves it
   test("raises a row's version on each update, from zero on insert and through an upsert's update branch", async () => {
     expect.hasAssertions();
 

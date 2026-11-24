@@ -15,8 +15,8 @@ import { gainDeployedCompanionshipExp } from "#src/services/reward/gainDeployedC
 import { routeRewardItems } from "#src/services/reward/routeRewardItems";
 
 // The state after a commission claim's rewards are routed: the Adventure EXP its items hold through the rank, the
-// Companionship EXP its items hold to the deployed team, and the rest of its items through the routing every claim
-// Shares. Undefined where the bag cannot take an item whole, so nothing is routed or recorded
+// Companionship EXP its items hold to the deployed team, and the rest of its items through the routing every
+// Claim shares. undefined where the bag cannot take an item whole, so nothing is routed or recorded
 export const routeCommissionClaim = (
   adventureRankTables: AdventureRankTables,
   adventureExp: number,

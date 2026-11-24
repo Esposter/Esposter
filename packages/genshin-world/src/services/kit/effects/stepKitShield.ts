@@ -5,7 +5,7 @@ import type { GroundPoint } from "genshin-engine";
 import { createKitBody } from "#src/services/kit/createKitBody";
 
 // A shield's explosion, run on by a step once its seconds have run out or its health is spent, which lands once, from
-// The Body on the field and on the ground as a bubble's burst is: the step drops the shield after it
+// The body on the field and on the ground as a bubble's burst is: the step drops the shield after it
 export const stepKitShield = (shield: KitShield, body: GroundPoint): KitStrike | undefined => {
   if (shield.secondsRemaining > 0 || !shield.explosion) return undefined;
   const { combatant, hit } = shield.explosion;

@@ -14,7 +14,7 @@ export const useReadModerationLog = (
   const moderationLogStore = useModerationLogStore();
   const { readItems, readMoreItems } = moderationLogStore;
   // The state of the latest read, held here rather than read off each call's own refs: a filter read is issued after
-  // The First one, so a list bound to the first call's refs would never see the filter read in flight or failed
+  // The first one, so a list bound to the first call's refs would never see the filter read in flight or failed
   const isError = ref(false);
   const isPending = ref(false);
   // Only the newest read commits the state, so a read a newer one overtook cannot clear the pending state or set

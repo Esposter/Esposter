@@ -13,7 +13,7 @@ describe(createOppidanAmbushPassiveModule, () => {
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
   // Oppidan Ambush at its first rank: off the field, DMG rises by 2% a second up to 20%. On the field for more than
-  // Four Seconds, it falls by 4% a second until none
+  // Four seconds, it falls by 4% a second until none
   const passiveModule = createOppidanAmbushPassiveModule([0.02, 4]);
   // The DMG Bonus the wielder's buff raises, zero while none is raised
   const readDamageBonus = (context: KitContext) =>

@@ -238,7 +238,7 @@ describe(createCandaceKitBehaviour, () => {
   });
 
   // Candace's combatant at an ascension, holding her skill for two steps with the given event heard after the first,
-  // And Released: the action the release starts, which is her charged hold when its charge is complete
+  // And released: the action the release starts, which is her charged hold when its charge is complete
   const CHARGED_ACTION = CANDACE_KIT.elementalSkillHolds?.at(-1)?.action;
   const STEP_SECONDS = 0.1;
   const IDLE_INPUT: KitInput = {

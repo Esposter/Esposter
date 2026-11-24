@@ -26,13 +26,14 @@ import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems
 import { GameDataset } from "genshin-world";
 
 // The Spiral Abyss's floors with their chambers, its rewards, the Moon Spire's periods and the Benedictions each
-// Chamber offers, Each published as a record of the Spiral Abyss dataset. The floors record is every floor the tower
-// Table holds, the Corridor's Eight and each period's four among them. The rewards record holds every floor's rewards
-// In every reward group, and the items Each reward id they name pays, keyed by the reward id, so a claim gives items
-// Without reading the reward table. A period Carries its blessing and the moment it closes, and the Benediction choices
-// Record holds the three lists of each chamber's Level row, each choice joined to its tower buff row's description,
-// Glyph and span, keyed by its level id. The enemy kinds record names, for each Monster describe a chamber lists, the
-// Base variant of it, the kind it is fought as
+// Chamber offers, each published as a record of the Spiral Abyss dataset. The floors record is every floor the tower
+// Table holds, the Corridor's eight and each period's four among them. The rewards record holds every floor's rewards
+// In every reward group, and the items each reward id they name pays, keyed by the reward id, so a claim gives items
+// Without reading the reward table. A period carries its blessing and the moment it closes, and the Benediction choices
+// Record holds the three lists of each chamber's level row, each choice joined to its tower buff row's description,
+// Glyph and span, keyed by its level id.
+// The enemy kinds record names, for each
+// Monster describe a chamber lists, the base variant of it, the kind it is fought as
 export const buildSpiralAbyss = (): Record<string, unknown> => {
   const levelRows = readExcelTable<ExcelTowerLevelRow>(TOWER_LEVEL_TABLE_NAME);
   const floors = readAbyssFloors();

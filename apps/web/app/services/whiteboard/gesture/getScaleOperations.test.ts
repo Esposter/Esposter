@@ -31,7 +31,7 @@ describe(getScaleOperations, () => {
     expect.hasAssertions();
 
     // The three shapes cover a box from (100, 100) to (350, 400), so the bottom-right corner is at (350, 400). The drag
-    // Of (250, 150) doubles The width and scales the height by one and a half, each shape about the top-left corner of
+    // Of (250, 150) doubles the width and scales the height by one and a half, each shape about the top-left corner of
     // The box
     const document: PositionedDocument = {
       elements: [

@@ -8,7 +8,7 @@ import { GameLanguages } from "genshin-text";
 import { GameDataset } from "genshin-world";
 
 // Every title and description of the achievements built, and every category's name, in every language, published into
-// The World's own chunk per language by the same text ids. A language lacking a text takes English's and says so
+// The world's own chunk per language by the same text ids. A language lacking a text takes English's and says so
 export const buildAchievementText = (
   achievements: readonly Achievement[],
 ): { notes: string[]; objects: Record<string, unknown> } => {

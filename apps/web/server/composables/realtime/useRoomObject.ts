@@ -3,5 +3,5 @@ import { getObjectStub } from "@esposter/db";
 import { env } from "cloudflare:workers";
 
 // The room's object, named by the room's id. Its stub is typed by the class the realtime Worker exports, and each RPC
-// It is Called with records the read set the room reports into the request in scope
+// It is called with records the read set the room reports into the request in scope
 export const useRoomObject = (roomId: string) => getObjectStub(env.ROOM, roomId, recordObjectReads);

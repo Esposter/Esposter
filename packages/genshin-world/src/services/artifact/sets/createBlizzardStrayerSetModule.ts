@@ -7,7 +7,7 @@ import { checkIsEnemyAffectedByElement } from "#src/services/combat/aura/checkIs
 import { takeOne } from "@esposter/shared";
 
 // Blizzard Strayer. Its four-piece bonus raises the CRIT Rate its wearer's strikes deal to an enemy under Cryo by the
-// Table's First param, and by its second more against an enemy that is Frozen, the two read as each hit is priced
+// Table's first param, and by its second more against an enemy that is Frozen, the two read as each hit is priced
 export const createBlizzardStrayerSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const cryoCriticalRateBonus = takeOne(bonus.params, 0);
   const frozenCriticalRateBonus = takeOne(bonus.params, 1);

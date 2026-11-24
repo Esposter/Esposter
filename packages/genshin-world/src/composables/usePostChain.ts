@@ -16,10 +16,10 @@ interface PostChainOptions {
 }
 
 // The post chain the scene draws its frame through. No god rays and no bloom: neither is measured off a reference of
-// Windrise, And drawn as they stand they veil the whole frame, the god rays marching hundreds of metres of lit air to
-// Their most opacity And bloom lifting the whole sky past its threshold, so the frame is drawn through the haze, the
-// Grade and the tone mapping Alone. No occlusion either, and the sky handed on with it as the login's is, which the
-// Parity page's tools read each pixel's Ray under
+// Windrise, and drawn as they stand they veil the whole frame, the god rays marching hundreds of metres of lit air to
+// Their most opacity and bloom lifting the whole sky past its threshold, so the frame is drawn through the haze, the
+// Grade and the tone mapping alone. No occlusion either, and the sky handed on with it as the login's is, which the
+// Parity page's tools read each pixel's ray under
 export const usePostChain = ({
   fogUniforms,
   getQualityTier,

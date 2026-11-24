@@ -5,7 +5,7 @@ import { checkIsNestedInteraction } from "@esposter/shared";
 
 // The selection a canvas element takes: drawn as chosen while its pointer is the selected one, and chosen by a click on
 // Itself or by Enter while it holds focus. A click from a node inside it is stopped there, and an Enter from inside it
-// Is Not its own, so a nested node chooses only itself
+// Is not its own, so a nested node chooses only itself
 export const useSurveyCanvasSelection = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
   const { selectedPointer } = storeToRefs(surveyCreatorStore);

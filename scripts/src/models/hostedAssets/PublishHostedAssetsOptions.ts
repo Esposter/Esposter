@@ -6,8 +6,8 @@ import type { HostedAssetLock } from "hosted-assets";
 
 export interface PublishHostedAssetsOptions {
   // Makes the buckets to publish to, absent for a dry run, which reads and writes no bucket and needs no credential. It
-  // Is Called only once a publication stores an object or drops a lock entry, so an empty publication that leaves the
-  // Lock as it Is makes no bucket and no credential
+  // Is called only once a publication stores an object or drops a lock entry, so an empty publication that leaves the
+  // Lock as it is makes no bucket and no credential
   createBucketClientMap?: (() => Record<CloudflareEnvironment, R2BucketClient>) | undefined;
   // The lock as the working tree has it, which the publication replaces the scopes of
   currentLock: HostedAssetLock;

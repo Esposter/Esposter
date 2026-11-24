@@ -683,8 +683,8 @@ describe("resourceRouter", () => {
   });
 
   // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises an
-  // `object-create` notification for A blob no reserve ever ledgered, so the counter would never move. The assets it
-  // Names are the working copy's own Objects, already charged when they were uploaded, so a publish adds only the
+  // Object-create notification for A blob no reserve ever ledgered, so the counter would never move. The assets it
+  // Names are the working copy's own objects, already charged when they were uploaded, so a publish adds only the
   // Snapshot
   test("charges the owner for the snapshot a publish takes, not for the assets it names", async () => {
     expect.hasAssertions();
@@ -871,7 +871,7 @@ describe("resourceRouter", () => {
   });
 
   // A row read answers each row with the viewer's own star beside it: a starred row its live star, a row never starred
-  // Null, And a removed star its tombstone, so a client applies the removal
+  // Null, and a removed star its tombstone, so a client applies the removal
   test("answers each row's star, a removed one as its tombstone", async () => {
     expect.hasAssertions();
 
@@ -924,7 +924,7 @@ describe("resourceRouter", () => {
   });
 
   // An unstar leaves its favorite as a tombstone at the version the removal left, so a read still holding the star
-  // Loses to The removal, and a star made again revives the same row at the next version
+  // Loses to the removal, and a star made again revives the same row at the next version
   test("an unstar leaves a tombstone that a re-star revives at a higher version", async () => {
     expect.hasAssertions();
 
@@ -1745,8 +1745,8 @@ describe("resourceRouter", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches that
-  // Key. The toggle writes that row both ways, so the star and the unstar are each checked
+  // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches
+  // That key. the toggle writes that row both ways, so the star and the unstar are each checked
   test.each([false, true])(
     "the toggle's entry covers the favorite row its header names when starred is %s",
     async (isStarred) => {
@@ -1845,7 +1845,7 @@ describe("resourceRouter", () => {
   });
 
   // The save's entry is the one the store issues. The save also names the owner's row, which carries the storage total
-  // It Moves, so the entry reads that row by its key beside the resource's own
+  // It moves, so the entry reads that row by its key beside the resource's own
   test("the content save entry covers every row a save names", async () => {
     expect.hasAssertions();
 

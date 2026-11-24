@@ -14,9 +14,9 @@ interface GroundSource {
 }
 
 // The world's one ground, which everything in the world stands on: Windrise's with each region's laid over it from the
-// Moment the region first comes within reach, and the realm's flat floor while the player is in the Serenitea Pot's
-// Realm. The session starts it with where the region grounds and the realm visit are read from, so the ground is built
-// Again only As a region's ground arrives, and stops it as it unmounts
+// Moment the region first comes within reach, and the realm's flat floor while the player is in the Serenitea
+// Pot's realm. the session starts it with where the region grounds and the realm visit are read from, so the ground is
+// Built again only as a region's ground arrives, and stops it as it unmounts
 export const useWorldGroundStore = defineStore("world/ground", () => {
   const source = shallowRef<GroundSource>();
   const getSource = () => {

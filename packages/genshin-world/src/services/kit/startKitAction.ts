@@ -6,8 +6,8 @@ import type { KitState } from "#src/models/kit/KitState";
 import { landKitHits } from "#src/services/kit/landKitHits";
 
 // An action begun in place at the start of its seconds, or past the given seconds of its charge when a charge skip
-// Stands, Its queued press spent and the hits its start reaches landed. A press that ends a state plays none of the
-// Action's Hits, so it starts hitless, with no hit landed now or still to land
+// Stands, its queued press spent and the hits its start reaches landed. A press that ends a state plays none of the
+// Action's hits, so it starts hitless, with no hit landed now or still to land
 export const startKitAction = (
   kitState: KitState,
   action: KitAction,

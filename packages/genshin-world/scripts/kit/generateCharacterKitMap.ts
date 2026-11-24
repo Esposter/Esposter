@@ -18,13 +18,14 @@ const readKitModule = (directory: string, file: string) => {
   return id && createName ? { createName, file, id } : undefined;
 };
 
-// Writes the kit map from every kit module in `KIT_MODULE_DIRECTORY`, each keyed by the character id it declares. So a
-// New kit is one module with no shared file edited. Each entry imports its module on demand, so a kit loads only when
-// Its character joins the party. The id is written as the module declares it rather than imported, which would load the
-// Module with the map. Called from the build's `build:prepare` hook before the barrels are written, so the barrel lists
-// The map too. The text goes through the formatter's API before it is written, the same call `formatGeneratedSource`
-// Makes in `scripts`. So the map is canonical for any number of kits. A map of one kit fits on a line the formatter
-// Collapses, which no hand-written layout would anticipate
+// Writes the kit map from every kit module in `KIT_MODULE_DIRECTORY`, each keyed by the character id it declares.
+// So a new kit is one module with no shared file edited.
+// Each entry imports its module on demand, so a kit loads only when its character joins the party.
+// The id is written as the module declares it rather than imported, which would load the module with the map.
+// Called from the build's `build:prepare` hook before the barrels are written, so the barrel lists the map too.
+// The text goes through the formatter's API before it is written, the same call `formatGeneratedSource` makes in
+// `scripts`. so the map is canonical for any number of kits.
+// A map of one kit fits on a line the formatter collapses, which no hand-written layout would anticipate
 export const generateCharacterKitMap = async (packageDirectory: string): Promise<void> => {
   const charactersDirectory = join(packageDirectory, "src", KIT_MODULE_DIRECTORY);
   const kitModules = globSync(KIT_MODULE_PATTERN, { cwd: charactersDirectory })

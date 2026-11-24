@@ -10,8 +10,8 @@ import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 // The listing is the bucket's own index, so no write puts a slot in it and none is drawn ahead of the server. Each
-// Write is An awaited call: the upload re-reads the listing once it is confirmed, and a delete leaves the listing as
-// The server holds It until the blob's topic changes, which the worker's reclaim of the blob makes happen
+// Write is an awaited call: the upload re-reads the listing once it is confirmed, and a delete leaves the listing as
+// The server holds it until the blob's topic changes, which the worker's reclaim of the blob makes happen
 export const useCallBackgroundStore = defineStore("message/user/settings/callBackground", () => {
   const { $trpc } = useNuxtApp();
   const callBackgrounds = ref<CallBackground[]>([]);
@@ -52,7 +52,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
             generateUploadFilePresignedUrlEntities: getSingleFilePresignedUrlEntities(presignedUrl),
           });
           // The upload lands without the bucket binding, so the confirm is what wakes the listing's other watchers. The
-          // Upload has Landed by now, so a confirm that fails is logged rather than reported as a failed upload
+          // Upload has landed by now, so a confirm that fails is logged rather than reported as a failed upload
           await getResultAsync(() => $trpc.user.confirmCallBackgroundUpload.mutate({ slot })).match(
             noop,
             console.error,

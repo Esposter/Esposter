@@ -19,7 +19,7 @@ interface BondOfLifeSkillPassiveOptions {
 }
 
 // A passive that, after its wielder uses its Elemental Skill, once every cooldown the rank gives, raises its skill
-// Attributes by The rank's amount for the rank's seconds and grants it a Bond of Life worth the rank's share of its Max
+// Attributes by the rank's amount for the rank's seconds and grants it a Bond of Life worth the rank's share of its Max
 // HP. When that Bond of Life is cleared, its cleared attributes rise by the amount the cleared HP is priced at, for the
 // Rank's cleared seconds
 export const createBondOfLifeSkillPassiveModule = (

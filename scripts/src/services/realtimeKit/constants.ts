@@ -13,7 +13,7 @@ export const WEB_ORIGIN_MAP: Readonly<Record<CloudflareEnvironment, string>> = {
 export const REALTIMEKIT_WEBHOOK_PATH = "/api/webhooks/realtimekit";
 // The four presets the calls code joins a participant with, named as its REALTIMEKIT_PRESET_NAME names them
 // (apps/web/server/services/realtimeKit/constants.ts). A preset is created only when it is missing, so a change to one
-// Of These is made by hand in RealtimeKit and not here
+// Of these is made by hand in RealtimeKit and not here
 export const REALTIMEKIT_PRESETS: RealtimeKitPreset[] = [
   { isMicrophoneAllowed: false, isScreenshareAllowed: false, name: `${SITE_NAME.toLowerCase()}-camera` },
   { isMicrophoneAllowed: true, isScreenshareAllowed: false, name: `${SITE_NAME.toLowerCase()}-camera-microphone` },

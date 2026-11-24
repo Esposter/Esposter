@@ -1,6 +1,6 @@
 // Records each WebGPU call that can stall a frame: pipelines, shader modules, textures, buffers and uploads. Each call
-// Keeps its Duration, the animation frame it ran in, its label and a short detail of its descriptor. A script string
-// Rather than a Function, as the stall recorder's is: the TypeScript runner rewrites an inner function with a helper
+// Keeps its duration, the animation frame it ran in, its label and a short detail of its descriptor. A script string
+// Rather than a function, as the stall recorder's is: the TypeScript runner rewrites an inner function with a helper
 // The page does not have
 export const TRACE_GPU_SCRIPT = `
   window.__traceTimes = [];

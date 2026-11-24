@@ -1,6 +1,6 @@
 // The fields read off one row of the game's compound table, the processing of ingredients over time: its id, the time
-// One Unit takes in seconds, its inputs and outputs with their counts, how many of it may be queued, its rank, its
-// Type, and Whether it is known from the start, and the text hash of its name
+// One unit takes in seconds, its inputs and outputs with their counts, how many of it may be queued, its rank, its
+// Type, and whether it is known from the start, and the text hash of its name
 export interface CompoundRow {
   costTime: number;
   id: number;

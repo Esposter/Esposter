@@ -24,7 +24,7 @@ describe("resourceShareDialog", () => {
   const resource = { id: v7(), name: "Survey", type: ResourceType.Survey } as ResourceInResource;
 
   // The Shared notice says the room has the message, so it shows once the server accepts the message rather than when
-  // The Share is sent
+  // The share is sent
   test("shows the shared notice only once the server accepts the message", async () => {
     expect.hasAssertions();
 

@@ -6,7 +6,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
 
 // The set and slot of each artifact the bag holds, one per bag entry, read from the piece each entry is. An artifact
-// Whose Piece the tables lack is an error, as a bag entry the tables cannot name is everywhere
+// Whose piece the tables lack is an error, as a bag entry the tables cannot name is everywhere
 export const getArchiveArtifacts = (
   items: readonly InventoryItem[],
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>,

@@ -6,8 +6,8 @@ import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
 
 // Kid Kujirai, a support: when the Action Phase begins it creates one Omni die, then, if the opposing Support Zone is
-// Not full, It moves to that zone. Its text, "Create 1 Omni... transfer this card to your opponent's Support Zone",
-// Reads "you" as the side Whose zone it sits in, so the die goes to the side it is on when the phase begins, and the
+// Not full, it moves to that zone. Its text, "Create 1 Omni... transfer this card to your opponent's Support Zone",
+// Reads "you" as the side whose zone it sits in, so the die goes to the side it is on when the phase begins, and the
 // Move hands that to the other side
 export const kidKujirai: GcgCardModule = {
   onActionPhase: ({ duel, sideIndex }, zoneCard) => {

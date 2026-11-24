@@ -1,7 +1,7 @@
 import { typedFromEntries } from "@esposter/shared";
 
 // Each row of one table read under the decoded names its key map gives, each field taken from the dump's own key for
-// It, So a reader names a field by what it means while the dump keeps its scrambled key. A key the map leaves out is
+// It, so a reader names a field by what it means while the dump keeps its scrambled key. A key the map leaves out is
 // Dropped
 export const renameDumpKeys = <TRow>(rows: Record<string, unknown>[], keyMap: Record<keyof TRow, string>): TRow[] =>
   rows.map((row) =>

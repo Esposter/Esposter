@@ -65,7 +65,7 @@ const writeTriangle = (indices: Uint32Array, offset: number, first: number, seco
 // Ring at the foot and the last's at the head, so the radius and the centre move between two sections as one wall
 // Rather than as a ledge, and a stack can bend as a leaf does. Both caps close it on their own copies of their rings,
 // Each about its ring's centre, so each stays flat where its wall rounds into it. Each vertex takes its section's
-// Colour At its angle, so the colour moves between two rings as the wall does
+// Colour at its angle, so the colour moves between two rings as the wall does
 export const computeStatueSurface = (sections: readonly StatueSection[]): StatueSurface => {
   const rings: Ring[] = [];
   let height = 0;

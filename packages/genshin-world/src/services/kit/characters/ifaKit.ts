@@ -31,7 +31,7 @@ const RESCUE_ESSENTIALS_CONSTELLATION_2_CAP_INCREASE = 50;
 const NIGHTSOUL_DRAIN_PER_SECOND = 8;
 
 // The Rescue Essentials the party's points give her: from Constellation 2, the points above 60 count three times over,
-// And The cap is 50 higher, as gcsim's c2BonusPoints and c2CapIncrease (cons.go, lines 29 to 45) give them
+// And the cap is 50 higher, as gcsim's c2BonusPoints and c2CapIncrease (cons.go, lines 29 to 45) give them
 const countRescueEssentials = (constellationCount: number, partyPoints: number): number => {
   if (constellationCount < 2) return Math.min(partyPoints, RESCUE_ESSENTIALS_CAP);
   const counted =
@@ -42,19 +42,19 @@ const countRescueEssentials = (constellationCount: number, partyPoints: number):
 };
 
 // Ifa's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain eight a second, or
-// Leaves It when she is in it, as gcsim's Skill does. Not built: her Tonic Shot, healing, sedation marks, A4 and
+// Leaves it when she is in it, as gcsim's Skill does. Not built: her Tonic Shot, healing, sedation marks, A4 and
 // Constellations, which wait on the Nightsoul hook and the sedation-mark hook, the cooldown her leaving sets, which the
-// Kit Does not hold, and the hold that plunges from inside the blessing. Her three normal attacks, charged attack,
-// Compound Sedation Field's hit, and her low and collision plunges are her record's alone, her high plunge's reach is
-// Too, and Its timing is unsourced, as the Page records. The low plunge, which gcsim plays only after the Nightsoul
-// Blessing Ends, is not gated Constellation 1 needs Supporting Fire, the normal attacks of Nightsoul's Blessing, which
-// The state does not give yet Constellation 2 counts her Rescue Essentials, as gcsim's cons.go gives it, and its
-// `in-game` text is not read: the wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows,
-// Keyed by obfuscated fields, were not decoded Constellation 4's wind current lasts three seconds more, which waits on
-// A restraining field the burst lacks Constellation 6 needs the Hold of Supporting Fire and its Nightsoul's Blessing
-// Turns, which the kit does not build Her A1 is the party reaction hook's, and its Rescue Essentials last only while
-// Her blessing does. The Stellar Swirl value Is not built, as the record gives it zero, and nearby is not modelled, as
-// Gcsim does not model it either
+// Kit does not hold, and the hold that plunges from inside the blessing. Her three normal attacks, charged attack,
+// Compound sedation Field's hit, and her low and collision plunges are her record's alone, her high plunge's reach is
+// Too, and its timing is unsourced, as the Page records. The low plunge, which gcsim plays only after the Nightsoul
+// Blessing ends, is not gated
+// Constellation 1 needs Supporting Fire, the normal attacks of Nightsoul's Blessing, which the state does not give yet
+// Constellation 2 counts her Rescue Essentials, as gcsim's cons.go gives it, and its in-game text is not read: the
+// Wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows, keyed by obfuscated fields, were
+// Not decoded Constellation 4's wind current lasts three seconds more, which waits on a restraining field the burst
+// Lacks Constellation 6 needs the Hold of Supporting Fire and its Nightsoul's Blessing turns, which the kit does not
+// Build her A1 is the party reaction hook's, and its Rescue Essentials last only while her blessing does. The Stellar
+// Swirl value is not built, as the record gives it zero, and nearby is not modelled, as gcsim does not model it either
 export const createIfaKitBehaviour = (): KitBehaviour => ({
   burst: {
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {

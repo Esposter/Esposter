@@ -8,9 +8,9 @@ import { ABYSS_MONOLITH_FULL_PERCENT } from "#src/services/spiralAbyss/constants
 import { getAbyssChamberSeconds } from "#src/services/spiralAbyss/getAbyssChamberSeconds";
 
 // A chamber about to be fought by its party set, one team with a character in it for each half: none of its halves
-// Defeated, Its clock at the full seconds of its floor, and its monolith at full health when one of its conditions
-// Reads one. The clock Is one for both halves, so the second half starts with what the first left. A chamber is not
-// Entered without that party Set, so a set that is not one team per half, holds a team with no character or holds one
+// Defeated, its clock at the full seconds of its floor, and its monolith at full health when one of its conditions
+// Reads one. The clock is one for both halves, so the second half starts with what the first left. A chamber is not
+// Entered without that party set, so a set that is not one team per half, holds a team with no character or holds one
 // Character twice has no challenge
 export const createAbyssChallenge = (
   floor: AbyssFloor,

@@ -5,7 +5,7 @@ import { createR2BucketClient } from "#src/services/cloudflare/createR2BucketCli
 import { CloudflareEnvironment } from "@esposter/db-schema";
 
 // The bucket a product's objects are published to, once per environment of the account. Each client is made when the
-// Map Is, so a caller makes the map only once a publish needs the bucket
+// Map is, so a caller makes the map only once a publish needs the bucket
 export const createHostedAssetBucketClientMap = (
   bucket: StorageBucket,
 ): Record<CloudflareEnvironment, R2BucketClient> => ({

@@ -3,7 +3,7 @@ import type { StorageBucket } from "@esposter/db-schema";
 
 // A product whose objects one bucket holds: the bucket they are stored in, the committed lock that names them, and the
 // Scopes its lock entries sit under, each the top-level prefix of an object's key. No two products share a scope. A
-// Records Product's objects are published by its own commands, and a files product's are the files of a repository
+// Records product's objects are published by its own commands, and a files product's are the files of a repository
 // Folder
 export interface HostedAssetProduct {
   bucket: StorageBucket;

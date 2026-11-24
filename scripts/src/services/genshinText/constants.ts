@@ -16,7 +16,7 @@ export const TEXT_MAP_DIRECTORY_NAME = "TextMap";
 export const TEXT_MAP_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, TEXT_MAP_DIRECTORY_NAME);
 export const EXCEL_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "ExcelBinOutput");
 // The readable texts the game's books and letters are read from, one folder a language named by its code, fetched into
-// The Dump from the AnimeGameData repository's `Readable/` like the tables, never committed
+// The dump from the AnimeGameData repository's `Readable/` like the tables, never committed
 export const READABLE_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "Readable");
 export const MANUAL_TEXT_MAP_TABLE_NAME = "ManualTextMapConfigData";
 export const FETTERS_TABLE_NAME = "FettersExcelConfigData";
@@ -51,7 +51,7 @@ export const TRIGGER_TABLE_NAME = "TriggerExcelConfigData";
 export const NPC_TABLE_NAME = "NpcExcelConfigData";
 export const BIN_OUTPUT_DIRECTORY = "BinOutput";
 // The quest binaries' folder under the dump, by its path from the dump's root, which the fetch lists to bring each
-// Carried Quest's binary the dump lacks
+// Carried quest's binary the dump lacks
 export const QUEST_BINARY_DIRECTORY_PATH: string = `${BIN_OUTPUT_DIRECTORY}/Quest`;
 export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, QUEST_BINARY_DIRECTORY_PATH);
 // The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
@@ -62,15 +62,15 @@ export const TextMapChunkRangeMap: Record<string, { first: number; last: number 
   TextMap_Medium: { first: 0, last: 511 },
 };
 // The bit a dialog row's text hash and the English text map's key for the same line differ in: AnimeGameData's Dialog
-// Table, Which a refetch leaves as it is (its sha is the remote's), files about half its rows' hashes with bit 9
-// Flipped (99,894 of Its 203,908 rows resolve as filed, about 100,000 only with the bit flipped, 4,031 neither way). It
-// Is the one table read So: the other tables resolve as filed once the dump is fresh, so a hash outside the Dialog
+// Table, which a refetch leaves as it is (its sha is the remote's), files about half its rows' hashes with bit 9
+// Flipped (99,894 of its 203,908 rows resolve as filed, about 100,000 only with the bit flipped, 4,031 neither way). It
+// Is the one table read so: the other tables resolve as filed once the dump is fresh, so a hash outside the Dialog
 // Table is never flipped
 export const DIALOG_TEXT_HASH_VARIANT_MASK = 512;
 // The TextMap's obfuscation as the owomocha devkit (MIT, github.com/owomocha/genshin-7.0-local-re-devkit) decodes it
 // For 7.0.0: the entry count is masked by an addend and an XOR; each entry's key and length are the low and high halves
 // Of A 64-bit mixer's output, keyed by the entry's index and by the key; and each body is the bytes of its length,
-// Padded To eight, each word added to the length's mixer output
+// Padded to eight, each word added to the length's mixer output
 export const TEXT_MAP_COUNT_ADDEND = 0x57f28181;
 export const TEXT_MAP_COUNT_XOR = 0xdf7f775a;
 export const TEXT_MAP_MAX_COUNT = 4_000_000;
@@ -171,9 +171,9 @@ export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
   [GameLanguage.ChineseTraditional]: "zh-tw",
 };
 // The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them or holds them
-// With Other content, at the one commit the install's build is read from. A branch moves with each patch, so a run
-// Names a Commit and never a branch. Its directories' trees give each file's git blob sha, which decides whether a file
-// Held is Replaced, and list every file, where the contents API stops at a thousand
+// With other content, at the one commit the install's build is read from. A branch moves with each patch, so a run
+// Names a commit and never a branch. Its directories' trees give each file's git blob sha, which decides whether a file
+// Held is replaced, and list every file, where the contents API stops at a thousand
 export const ANIME_GAME_DATA_COMMIT = "792978e5503ecfba73dcb3562ed44a0d35a2abe2";
 export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_COMMIT}`;
 export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/git/trees";
@@ -181,8 +181,8 @@ export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/Dimbreath
 // Lists
 export const GENSHIN_TEXT_SOURCE: ProvenanceSource = { commit: ANIME_GAME_DATA_COMMIT, name: "text" };
 // The code a text output depends on, whose commits its stamp lists: the text's own folders, and the AnimeStudio exports
-// And Name hashes the decode reads its chunks through. The shared utilities and the stamp writer sit beside every
-// Producer's Stamp, so no producer list names them
+// And name hashes the decode reads its chunks through. The shared utilities and the stamp writer sit beside every
+// Producer's stamp, so no producer list names them
 export const GENSHIN_TEXT_PRODUCER_PATHS: string[] = [
   "scripts/src/models/genshinAssets/shared",
   "scripts/src/models/genshinText",
@@ -198,7 +198,7 @@ export const SCENE_NPC_BORN_DIRECTORY = "BinOutput/Scene/SceneNpcBorn";
 export const SCENE_NPC_BORN_FILE_NAME = "scene3_npcborn.json";
 export const SCENE_WORLD_AREA_DIRECTORY = "BinOutput/Scene/WorldArea";
 // The dump's talent configs, one file for each group of characters, which a reader takes whole, so a fetch lists the
-// Folder Whole and a new character's file comes with the patch that adds it
+// Folder whole and a new character's file comes with the patch that adds it
 export const AVATAR_TALENT_DIRECTORY = "BinOutput/Talent/AvatarTalents";
 export const SCENE_WORLD_AREA_FILE_NAME = "scene3_worldArea.json";
 // How many files a fetch downloads at once, so the readable texts' thousands of small files do not open as many
@@ -208,12 +208,12 @@ export const DUMP_FETCH_BATCH_SIZE = 8;
 // Off before its body is read
 export const DUMP_FILE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // The most of a dump file held whole: the dump's largest table, the dialog table, is about 93 MB, so the bound sits
-// Past It
+// Past it
 export const DUMP_FILE_MAX_BYTES: number = 128 * MEBIBYTE;
 
 // The keys a published record or data file holds a name's or a description's text hash under: a `nameTextId` the item
-// And Character tables cite, the `nameTextHash` and `descriptionTextHash` the Spiral Abyss's blessings and Benedictions
-// Hold, And a weapon's passive name and each refinement rank's description, which the weapons record holds as a list
+// And character tables cite, the `nameTextHash` and `descriptionTextHash` the Spiral Abyss's blessings and Benedictions
+// Hold, and a weapon's passive name and each refinement rank's description, which the weapons record holds as a list
 export const NAME_TEXT_ID_KEYS: readonly string[] = [
   "descriptionTextHash",
   "nameTextHash",

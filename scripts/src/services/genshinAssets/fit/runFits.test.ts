@@ -70,7 +70,7 @@ describe(runFits, () => {
   });
 
   // An opt-in fit reads an export the install must make first, so a run of the component's fits leaves it out, and it
-  // Runs Only when it is named
+  // Runs only when it is named
   test("runs an opt-in fit only when it is named", async () => {
     expect.hasAssertions();
 

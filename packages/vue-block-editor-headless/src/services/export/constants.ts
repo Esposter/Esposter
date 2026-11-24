@@ -35,12 +35,12 @@ export const TEXT_LINE_HEIGHT_SHARE = 1.25;
 export const TEXT_CHARACTER_WIDTH_SHARE = 0.5;
 export const TEXT_WIDE_CHARACTER_FACTOR = 2;
 // The characters a full-width script sets: the Han ideographs, Hangul, kana, and the fullwidth forms
-// `isolatedDeclarations`
-// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
+/* oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex
+   would otherwise infer */
 export const TEXT_WIDE_CHARACTER_REGEX: RegExp =
   /\p{Ideographic}|\p{Script=Hangul}|\p{Script=Hiragana}|\p{Script=Katakana}|[\u{FF01}-\u{FF60}\u{FFE0}-\u{FFE6}]/u;
 // The length of an arrowhead along its arrow, and its half-width across it, in document units. A circle's radius is the
-// `half-width`, and a bar spans Twice the half-width across its arrow and the bar thickness along it. A circle is drawn
+// Half-width, and a bar spans twice the half-width across its arrow and the bar thickness along it. A circle is drawn
 // As a polygon of the circle corners it is given
 export const ARROWHEAD_LENGTH = 12;
 export const ARROWHEAD_HALF_WIDTH = 5;

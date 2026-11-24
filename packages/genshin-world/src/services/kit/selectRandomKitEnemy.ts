@@ -6,7 +6,7 @@ import { takeRandom } from "@esposter/shared";
 import { computeGroundDistance } from "genshin-engine";
 
 // A random living enemy whose ground position lies within a radius of a point, as gcsim's RandomEnemyWithinArea picks
-// One Of the enemies a circle reaches: each one within it is as likely as another, drawn from the world's seeded random
+// One of the enemies a circle reaches: each one within it is as likely as another, drawn from the world's seeded random
 // Source, and none is picked when no living enemy lies within it
 export const selectRandomKitEnemy = (
   centre: GroundPoint,

@@ -63,7 +63,7 @@ describe(rollStrongboxArtifact, () => {
     expect.hasAssertions();
 
     // Every draw takes 0.5, which picks the sixth of the ten pieces: the Goblet with four starting minor affixes. Its
-    // Minor Affixes are the four groups the weights favour in turn, each at its one tier
+    // Minor affixes are the four groups the weights favour in turn, each at its one tier
     const { artifact } = rollStrongboxArtifact(STRONGBOX, () => 0.5, TABLES);
 
     expect(artifact).toStrictEqual({

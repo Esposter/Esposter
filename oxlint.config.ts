@@ -31,8 +31,9 @@ import { defineConfig } from "oxlint";
 // Environment it inherits. Every `vp lint` loads this file before oxlint starts its backend, so this is the one place.
 // They are `--runExternalCode` and `--fast`, the two the typecheck scripts pass. The first runs the content mapper that
 // Nuxt's generated tsconfig and the Vue packages' `tsconfig.vue.json` name, and the second is the fast preset.
-// @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476 Vize evaluates this file through `vite.config.ts` and
-// Refuses a write over a variable already set, so each is set only when absent
+// @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
+// Vize evaluates this file through `vite.config.ts` and refuses a write over a variable already set, so each is set
+// Only when absent
 // @TODO: https://github.com/ubugeeei-prod/vize/issues/13532 — assign plainly once the recorder's Proxy takes a write
 process.env.TSRS_FAST ??= "1";
 process.env.TSRS_LINT_RUN_EXTERNAL_CODE ??= "1";
@@ -223,9 +224,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     {
       // The built source of genshin-world may not import the parity page's `#parity/*`. Its tests and fixtures are
-      // Never Built, so they keep the import. The excluded suffixes are the ones the barrel generator and the
-      // Declaration program Leave out (`NON_SOURCE_SUFFIXES` in `packages/configuration/src/services/constants.ts`),
-      // Repeated here since this Config cannot import them without a build, and pinned against it by
+      // Never built, so they keep the import. The excluded suffixes are the ones the barrel generator and the
+      // Declaration program leave out (`NON_SOURCE_SUFFIXES` in `packages/configuration/src/services/constants.ts`),
+      // Repeated here since this config cannot import them without a build, and pinned against it by
       // `scripts/src/workspace/oxlintParityExcludes.test.ts`
       excludeFiles: [
         "**/*.bench.ts",
@@ -278,8 +279,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       rules: {
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }],
         // Asking whether an async hook fits the engine's `On` overloads costs this rule tens of seconds over these
-        // Trees Alone, where tsrs checks the program in under a second. See
-        // `openspec/specs/architecture/lint-toolchain/design.md`
+        // Trees alone, where tsrs checks the program in under a second. See
+        // Openspec/specs/architecture/lint-toolchain/design.md
         "typescript/strict-void-return": "off",
       },
     },
@@ -429,9 +430,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "require-await": "off",
     "routing/no-route-literal": "error",
     // Each list under `scripts/src/services/oxlint/selectorBan/syntaxes/` states the paths it runs over, so the rule
-    // Needs No options and no override @TODO: https://github.com/oxc-project/oxc/issues/2180 — enable
-    // `typescript/naming-convention` once oxlint ships it: Variables of a primitive or array type in camelCase,
-    // PascalCase or UPPER_CASE, with a leading underscore allowed
+    // Needs no options and no override
+    // @TODO: https://github.com/oxc-project/oxc/issues/2180 — enable `typescript/naming-convention` once oxlint ships
+    // It: variables of a primitive or array type in camelCase, PascalCase or UPPER_CASE, with a leading underscore
+    // Allowed
     "selector-ban/no-restricted-syntax": "error",
     "sequential-loops/no-async-self-call": "error",
     "sequential-loops/require-loop-shape": "error",

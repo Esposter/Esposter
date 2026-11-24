@@ -24,7 +24,7 @@ export const useWeaponTabs = (
   };
   const offeredTabs = computed(() => getOfferedTabs(weapon.value));
   // The tab the body draws: the one asked for while the weapon still offers it, else the first it offers, so a weapon
-  // That Levels to its cap leaves Enhance for Ascend without the parent changing the tab
+  // That levels to its cap leaves Enhance for Ascend without the parent changing the tab
   const openTab = computed({
     get: () => (offeredTabs.value.includes(tab.value) ? tab.value : (offeredTabs.value[0] ?? WeaponMenuTab.Enhance)),
     set: (value: WeaponMenuTab) => {

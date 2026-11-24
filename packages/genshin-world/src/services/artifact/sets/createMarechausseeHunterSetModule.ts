@@ -11,8 +11,8 @@ import { takeOne } from "@esposter/shared";
 const MARECHAUSSEE_HUNTER_HOLD_ID = "marechausseeHunterCriticalRate";
 
 // Marechaussee Hunter. Its two-piece bonus raises the DMG its wearer's Normal and Charged Attacks deal by the table's
-// First Param. Its four-piece bonus adds a CRIT Rate hold of the first param's share each time its wearer's current HP
-// Changes, Each running the second param's seconds, up to the third param's count. The holds are Focus's kind, each on
+// First param. Its four-piece bonus adds a CRIT Rate hold of the first param's share each time its wearer's current HP
+// Changes, each running the second param's seconds, up to the third param's count. The holds are Focus's kind, each on
 // Its own clock
 export const createMarechausseeHunterSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;

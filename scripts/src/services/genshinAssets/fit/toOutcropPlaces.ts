@@ -8,8 +8,8 @@ import { GROUND_LAYER, INTERACTIVE_MAP_OUTCROP_LABEL_ID } from "#src/services/ge
 import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 
 // The ground Ley Line Blossom points of one map area, each carried into the game's coordinates by the fit's transform
-// And Then into its region's axes round the origin, as the region's waypoints are. A point on a layer under the ground
-// Is left Out, as the other places of the map are, and each keeps its map point's id, which its outcrop is known by
+// And then into its region's axes round the origin, as the region's waypoints are. A point on a layer under the ground
+// Is left out, as the other places of the map are, and each keeps its map point's id, which its outcrop is known by
 export const toOutcropPlaces = ({
   areaId,
   mapPoints,

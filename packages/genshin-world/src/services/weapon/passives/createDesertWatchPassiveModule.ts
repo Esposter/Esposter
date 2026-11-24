@@ -11,8 +11,8 @@ const DESERT_WATCH_SKILL_SOURCE = "desertWatchSkill";
 const DESERT_WATCH_DAMAGE_SOURCE = "desertWatchDamage";
 
 // Desert Watch at its rank: an Elemental Skill hit the wielder deals, and damage it takes, each raise its ATK by the
-// Rank's Amount for the rank's seconds, whether or not it is on the field. Its Max HP rises by the rank's last amount
-// While it is not Protected by a shield on the field
+// Rank's amount for the rank's seconds, whether or not it is on the field. Its Max HP rises by the rank's last amount
+// While it is not protected by a shield on the field
 export const createDesertWatchPassiveModule = (params: number[]): PassiveModule => {
   const skillAmount = takeOne(params, 0);
   const skillSeconds = takeOne(params, 1);

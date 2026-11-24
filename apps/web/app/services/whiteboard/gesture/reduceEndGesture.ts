@@ -9,9 +9,9 @@ import { getEndOperations } from "#src/services/whiteboard/gesture/getEndOperati
 import { reducePointerGesture } from "#src/services/whiteboard/gesture/reducePointerGesture";
 
 // A drag of a free arrow end previews the end moved to the pointer, and a release commits it as one edit. Released on a
-// Shape, the end binds to the Connection point that release lands nearest, as drawing does, and released on empty
-// Canvas it stays free where it was released. The arrow being dragged Is left out of the hit, since its own line runs
-// Under the pointer where the end is released. A press released before it has travelled the drag start Distance is a
+// Shape, the end binds to the connection point that release lands nearest, as drawing does, and released on empty
+// Canvas it stays free where it was released. The arrow being dragged is left out of the hit, since its own line runs
+// Under the pointer where the end is released. A press released before it has travelled the drag start distance is a
 // Click, which moves and binds nothing and leaves no undo step
 export const reduceEndGesture = (
   state: WhiteboardGestureState,

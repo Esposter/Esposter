@@ -46,18 +46,18 @@ export const RESTRICTED_SYNTAXES: SelectorBanList = {
     },
     {
       // A server-derived count is re-read, never moved by the client: a step (`count++`) or a compound assignment
-      // (`count += n`). Reading a count arithmetically, such as a roleless group derived from the total, is not
-      // Matched. A delta computed into a variable first (`const next = count + 1; count = next`) is not matched by any
-      // Selector. A role's `count` is matched only as an item of `countsByTopRole`, since a bare `count` is a counter
-      // Elsewhere
+      // (`count += n`). Reading a count arithmetically, such as a roleless group derived from the total, is
+      // Not matched. A delta computed into a variable first (`const next = count + 1; count = next`) is not matched by
+      // Any selector. A role's `count` is matched only as an item of `countsByTopRole`, since a bare `count` is a
+      // Counter elsewhere
       message:
         "A server-owned count is re-read, never adjusted by a delta — read it back with its batched refresh (see openspec/specs/architecture/client-data/design.md).",
       selector: `UpdateExpression[argument.property.name=${COUNT_FIELD_PATTERN}], AssignmentExpression[operator=/^[+-]=$/][left.property.name=${COUNT_FIELD_PATTERN}], UpdateExpression[argument.property.name='${SERVER_COUNT_ROLE_FIELD}'][argument.object.object.property.name='${SERVER_COUNT_ROLE_LIST}'], AssignmentExpression[operator=/^[+-]=$/][left.property.name='${SERVER_COUNT_ROLE_FIELD}'][left.object.object.property.name='${SERVER_COUNT_ROLE_LIST}']`,
     },
     {
       // The reassignment form of the same delta: a count set to a sum or difference is moved by the client, even when
-      // The Sum reads the count it replaces (`count = count + 1`). A count set from a read is an identifier or a call,
-      // Which Is not matched
+      // The sum reads the count it replaces (`count = count + 1`). A count set from a read is an identifier or a call,
+      // Which is not matched
       message:
         "A server-owned count is set from the server's read, not from a sum or difference — read it back with its batched refresh (see openspec/specs/architecture/client-data/design.md).",
       selector: `AssignmentExpression[operator='='][left.property.name=${COUNT_FIELD_PATTERN}][right.type='BinaryExpression'][right.operator=/^[+-]$/], AssignmentExpression[operator='='][left.property.name='${SERVER_COUNT_ROLE_FIELD}'][left.object.object.property.name='${SERVER_COUNT_ROLE_LIST}'][right.type='BinaryExpression'][right.operator=/^[+-]$/]`,
@@ -156,9 +156,9 @@ export const RESTRICTED_SYNTAXES: SelectorBanList = {
     {
       // An array method hands its callback the index or accumulator as well as the item, so a bare reference forwards
       // Arguments its own signature never asked for. The three native coercion functions read one argument and ignore
-      // The rest, which is why `unicorn/prefer-native-coercion-functions` requires them bare and they are excepted
-      // Here. No array method takes a third argument, so a call with one is some other object's method of the same
-      // Name.
+      // The rest, which is why `unicorn/prefer-native-coercion-functions` requires them bare and they are
+      // Excepted here. no array method takes a third argument, so a call with one is some other object's method of the
+      // Same name.
       message:
         "Wrap a function passed to an array method — `(item) => fn(item)`, or `(accumulator, item) => fn(accumulator, item)` for `reduce`. A bare reference forwards the index. See the typescript skill's callbacks reference.",
       selector:
@@ -167,7 +167,7 @@ export const RESTRICTED_SYNTAXES: SelectorBanList = {
     {
       // Focus on appearing has one route, which the library's components give a call site as `is-autofocus`: a native
       // `autofocus` is ignored for what is added after the page loaded, and does not look at who is typing. The
-      // Plugin's Own `no-autofocus` is off for this, since it sees only a DOM element's attribute and this sees a
+      // Plugin's own `no-autofocus` is off for this, since it sees only a DOM element's attribute and this sees a
       // Component's too
       message:
         "Don't write `autofocus` on an element or a component. Give a library component `is-autofocus`, which the browser runs when a dialog opens onto it and `useAutofocus` runs when it mounts into a page, leaving a reader typing elsewhere alone. See the ui-library skill's fields page.",
@@ -190,9 +190,9 @@ export const RESTRICTED_SYNTAXES: SelectorBanList = {
     },
     {
       // A computed reads its clock once, when it first runs, and not again as the clock moves: a `Date.now()` or `new
-      // Date()` In its callback holds the reading until something else recomputes it. A ticking clock is a reactive
-      // Source, such as `useNow` on a scheduler (`useCalendarClock`, `useCountdown`), which the computed reads as a
-      // Ref.
+      // Date()` in its callback holds the reading until something else recomputes it. A ticking clock is a reactive
+      // Source, such as `useNow` on a scheduler (`useCalendarClock`, `useCountdown`), which the computed reads as
+      // A ref.
       message:
         "Don't read the clock inside a `computed` — it holds the reading it took first. Read a ticking clock instead (`useNow` on a scheduler, as `useCalendarClock` does).",
       selector:
@@ -200,8 +200,8 @@ export const RESTRICTED_SYNTAXES: SelectorBanList = {
     },
     {
       // A field holding spaces is not blank, so a blank test on its raw value takes a space for text, and a `||` beside
-      // It Does the same. The test reads the trimmed value through `checkIsBlankText`, which a component may call where
-      // It may Not trim. A call is not matched, since the predicate is the trim already. Where a raw empty is the
+      // It does the same. The test reads the trimmed value through `checkIsBlankText`, which a component may call where
+      // It may not trim. A call is not matched, since the predicate is the trim already. Where a raw empty is the
       // Meaning (an id, A sentinel, an untrimmed line) the directive names that on its line
       message:
         "Test a blank text value with `checkIsBlankText(value)` from `@esposter/shared` — a field holding spaces is not blank. Where a raw empty is the meaning (an id, a sentinel, an untrimmed line), disable this on the line with that reason. See the string-utils skill.",

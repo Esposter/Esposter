@@ -8,7 +8,7 @@ import { GameDataset } from "genshin-world";
 import { join } from "node:path";
 
 // Every exported weapon icon as the loops round where it is painted, in the icon's own unit square, published as
-// Numbers Under one key by the icon's name. An icon with nothing painted is reported and left out
+// Numbers under one key by the icon's name. An icon with nothing painted is reported and left out
 export const fitWeaponIcons = async (): Promise<GameDataBuild> => {
   const names = readPngNames(WEAPON_ICON_DIRECTORY).toSorted();
   if (names.length === 0)

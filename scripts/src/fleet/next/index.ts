@@ -5,10 +5,10 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:next [--lane <lane>] [--kind <queue|unit>]` — claims the first entry this worker may take, lowest
-// Phase First, and prints its id and the worker id, or prints nothing when none is takeable, which leaves the machine
+// Phase first, and prints its id and the worker id, or prints nothing when none is takeable, which leaves the machine
 // Idle (the throughput skill, `references/fleet.md`). The worker id is FLEET_WORKER, or a new one when the environment
-// Gives none; a runner passes it To hold and release the entry. A runner names its lane, so a page runner never claims
-// A cpu item; a skipped queue line is Warned about on stderr
+// Gives none; a runner passes it to hold and release the entry. A runner names its lane, so a page runner never claims
+// A cpu item; a skipped queue line is warned about on stderr
 await runCommand(
   defineCommand({
     args: {

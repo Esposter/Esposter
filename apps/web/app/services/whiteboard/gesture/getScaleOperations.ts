@@ -30,7 +30,7 @@ const getLimitingExtent = (extents: number[], boxExtent: number): number =>
   extents.length === 0 ? boxExtent : extents.reduce((smallest, extent) => Math.min(smallest, extent));
 
 // The factor an axis scales the selection by. It stops where the smallest element reaches the minimum size, and an axis
-// Of no extent, or one no side Of the handle moves on, takes no scale
+// Of no extent, or one no side of the handle moves on, takes no scale
 const getAxisScale = (extent: number, extentChange: number, limitingExtent: number): number => {
   if (extent === 0 || extentChange === 0) return 1;
 
@@ -44,7 +44,7 @@ const getScaledValue = (value: number, anchor: number, scale: number): number =>
   scale === 1 ? value : anchor + (value - anchor) * scale;
 
 // The operations that scale one element of a selection about the anchor, by a factor on each axis. A box scales its
-// Position and its size, a stroke Scales its points, and an arrow scales each end that is free, since a bound end
+// Position and its size, a stroke scales its points, and an arrow scales each end that is free, since a bound end
 // Follows its shape through the reroute the resize makes
 const getScaleElementOperations = (
   document: PositionedDocument,
@@ -96,7 +96,7 @@ const getScaleElementOperations = (
 };
 
 // The operations that scale each element of a selection by a drag of one handle of the selection's box, in one list.
-// The side opposite the handle Holds still, so each element keeps its place relative to it. A text box stores no
+// The side opposite the handle holds still, so each element keeps its place relative to it. A text box stores no
 // Height, so only its width scales with a drag along its height
 export const getScaleOperations = (
   document: PositionedDocument,

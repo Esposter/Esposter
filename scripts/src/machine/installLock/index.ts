@@ -24,7 +24,7 @@ await runCommand(
     },
     run: async ({ args }) => {
       // Through a shell with its arguments joined unquoted, as crossOS runs the commands it holds, so `pnpm` and a
-      // `.ps1` Script resolve on Windows too. A quoted argument is not kept, so none is passed
+      // `.ps1` script resolve on Windows too. A quoted argument is not kept, so none is passed
       const { status } = await withInstallLock(() =>
         spawnSync(args._.map(String).join(" "), { cwd: REPOSITORY_ROOT, shell: true, stdio: "inherit" }),
       );

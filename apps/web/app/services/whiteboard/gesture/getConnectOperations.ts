@@ -15,9 +15,9 @@ import {
 } from "vue-block-editor-headless";
 
 // The operations a connection handle's release makes, as one list so one undo removes what they add together. A release
-// On another shape joins the Arrow alone, from the handle's connection point to the connection point of that shape
-// Nearest the release. A release on empty canvas inserts a Shape of the source's kind centred on the release, at the
-// Default size and fill a placed shape takes, and joins the arrow to the connection point Of that shape nearest the
+// On another shape joins the arrow alone, from the handle's connection point to the connection point of that shape
+// Nearest the release. A release on empty canvas inserts a shape of the source's kind centred on the release, at the
+// Default size and fill a placed shape takes, and joins the arrow to the connection point of that shape nearest the
 // Source's handle
 export const getConnectOperations = (
   document: PositionedDocument,

@@ -10,10 +10,10 @@ import { restorePanzoomStyles } from "#src/services/panzoom/restorePanzoomStyles
 import { takeOne } from "#src/util/array/takeOne";
 
 // A pointer that was down leaves the gesture. Leaving the last one ends it. A drag that passed its threshold swallows
-// The click That follows its primary button's release, and a cancelled one swallows none. The pointer left when a pinch
-// Breaks carries on As a drag from where it is, gated by the threshold from the point the pinch broke, so a tap
-// Swallows no click. The panzoomend event goes last, so a listener that destroys the panzoom has the final word on the
-// Styles
+// The click that follows its primary button's release, and a cancelled one swallows none. The pointer left when a pinch
+// Breaks carries on as a drag from where it is, gated by the threshold from the point the pinch broke, so a tap
+// Swallows no click.
+// The panzoomend event goes last, so a listener that destroys the panzoom has the final word on the styles
 export const endPanzoomGesture = (context: PanzoomContext, event: PointerEvent): void => {
   const { options, pointers, state } = context;
   if (!pointers.has(event.pointerId)) return;

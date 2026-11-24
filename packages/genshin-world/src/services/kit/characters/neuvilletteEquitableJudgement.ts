@@ -13,11 +13,11 @@ import { KIT_FRAMES_PER_SECOND } from "#src/services/shared/constants";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/charge.go, ChargeAttack and chargeJudgementTick. The charge's legal
-// Evaluation Starts three frames in and runs 209 frames less 57, 111 or 209 for the one, two or three Sourcewater
-// Droplets it picks up. The judgement then lasts 173 frames, its eight waves landing 6, 28, 53, 78, 103, 128, 153 and
-// 173 frames after it starts, Its HP drains take 8% of Max HP at 40 frames and every 30 after while HP is above half,
+// Evaluation starts three frames in and runs 209 frames less 57, 111 or 209 for the one, two or three Sourcewater
+// Droplets it picks up. the judgement then lasts 173 frames, its eight waves landing 6, 28, 53, 78, 103, 128, 153 and
+// 173 frames after it starts, its HP drains take 8% of Max HP at 40 frames and every 30 after while HP is above half,
 // And each droplet picked up heals 16% of Max HP five frames later
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/charge.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/charge.go
 const DECIDED_FRAMES = 3;
 const INITIAL_LEGAL_EVALUATION_FRAMES = 209;
 const LEGAL_EVALUATION_REDUCTION_FRAMES = [0, 57, 111, 209];
@@ -35,8 +35,8 @@ const DRAIN_HEALTH_SHARE_FLOOR = 0.5;
 type DecideLength = NonNullable<KitAction["decideLength"]>;
 
 // Decides the judgement's length as it starts, once its legal evaluation has picked up the droplets: it queues the
-// Waves, The drains and the droplets' heals from that moment, and returns the frames the charge lasts. The waves are
-// Read as the Named list of the judgement's hits, whose hitmarks run from the start of the judgement
+// Waves, the drains and the droplets' heals from that moment, and returns the frames the charge lasts. The waves are
+// Read as the named list of the judgement's hits, whose hitmarks run from the start of the judgement
 const decideEquitableJudgement = (context: KitContext, waves: KitHit[]): number => {
   const { activeCombatant, body, characterIdCombatantMap, kitEffectState, party } = context;
   const { characterId } = activeCombatant;

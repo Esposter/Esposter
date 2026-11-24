@@ -19,8 +19,8 @@ import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 // The bag and progress after one dish is cooked by hand, its indicator stopped at `stopPosition` on the recipe's zones:
 // Its ingredients taken, the dish it makes put in the bag, and a Delicious dish adding a proficiency up to the dish's
 // Maximum, and the cook's talent, where it adds one more of the dish, put in the bag too. Undefined, with nothing
-// Spent, Where the dish is not open, the character may not cook, the bag holds no ingredients, or the bag has no room
-// For the Dishes made
+// Spent, where the dish is not open, the character may not cook, the bag holds no ingredients, or the bag has no room
+// For the dishes made
 export const cookRecipeByHand = (
   recipe: CookingRecipe,
   {

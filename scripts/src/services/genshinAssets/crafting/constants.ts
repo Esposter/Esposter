@@ -14,8 +14,8 @@ export const COMBINE_RECIPE_TYPE = "RECIPE_TYPE_COMBINE";
 // The recipe type of a conversion at the bench, which turns one material into another of its family with a catalyst
 export const CONVERT_RECIPE_TYPE = "RECIPE_TYPE_CONVERT";
 // The combine types whose conversions the bench holds: five turns an elemental sliver into another element's with Dust
-// Of Azoth, nine a boss material or a billet into another with Dream Solvent. Eleven disassembles a mechanical fish
-// Into Drops rather than one item, so its rows are not recipes
+// Of azoth, nine a boss material or a billet into another with Dream Solvent. Eleven disassembles a mechanical fish
+// Into drops rather than one item, so its rows are not recipes
 export const CONVERT_COMBINE_TYPES: readonly number[] = [5, 9];
 // The use an instruction or a formula carries to open the recipe it names, its first parameter the recipe's combine id
 export const UNLOCK_COMBINE_USE_OP = "ITEM_USE_UNLOCK_COMBINE";
@@ -40,11 +40,11 @@ export const CombineTypeCraftingRecipeKindMap: Record<number, CraftingRecipeKind
   12: CraftingRecipeKind.Potion,
 };
 // The scene group holding Mondstadt's crafting bench, and the bench's NPC member in it: the birth the dump places as an
-// NPC Of its own, invisible and named Craft, so the bench is its interaction and no person
+// NPC of its own, invisible and named Craft, so the bench is its interaction and no person
 export const MONDSTADT_CRAFTING_BENCH_GROUP_ID = 133_004_082;
 export const MONDSTADT_CRAFTING_BENCH_NPC_ID = 10_256;
 // The keeper Timaeus, who stands beside Mondstadt's bench. The scene group record holds no birth of his, so his place
-// Is The bench's, moved along the game's x axis by the distance below: the wiki gives him beside the bench but no
-// Distance, So both the distance and the place it gives are provisional until a recording confirms them
+// Is the bench's, moved along the game's x axis by the distance below: the wiki gives him beside the bench but no
+// Distance, so both the distance and the place it gives are provisional until a recording confirms them
 export const MONDSTADT_CRAFTING_KEEPER_NPC_ID = 9706;
 export const CRAFTING_KEEPER_BENCH_OFFSET_METRES = 2;

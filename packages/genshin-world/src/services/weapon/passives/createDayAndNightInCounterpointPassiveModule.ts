@@ -15,9 +15,9 @@ const HARMONIC_MOVEMENT_SOURCE = "harmonicMovement";
 const CONTRAPUNTAL_SOURCE = "harmonicContrapuntal";
 
 // Day and Night in Counterpoint (Forged by the Golden Melody) at its rank: every ten seconds its wielder plays a
-// Harmonic Movement Of the next type in turn, the rank's ATK, Elemental Mastery and Stellar Glimmer DMG, each lasting
-// The rank's seconds, and the clock Runs whether or not the wielder is on the field. A Stellar Glimmer reaction the
-// Wielder triggers copies the Harmonic Movement live As a Contrapuntal of its own for the rank's seconds, once every
+// Harmonic Movement of the next type in turn, the rank's ATK, Elemental Mastery and Stellar Glimmer DMG, each lasting
+// The rank's seconds, and the clock runs whether or not the wielder is on the field. A Stellar Glimmer reaction the
+// Wielder triggers copies the Harmonic Movement live as a Contrapuntal of its own for the rank's seconds, once every
 // Cooldown the rank gives
 export const createDayAndNightInCounterpointPassiveModule = (params: number[]): PassiveModule => {
   const attackPercent = takeOne(params, 0);

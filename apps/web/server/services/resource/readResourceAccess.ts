@@ -7,9 +7,10 @@ import { resourcePublicationsInResource, resourcesInResource } from "@esposter/d
 import { and, eq, exists, isNull, sql } from "drizzle-orm";
 
 // The answers every asset of one resource shares, so a caller reads them once per resource rather than once per asset.
-// Ownership is asked first and the publication only when it is not owned, so an owner's read is one query Read per call
-// And never cached across calls: unpublish revokes anonymous access by tombstoning the publication row, and The asset
-// Is public only while the current publication's version names its hash, and only while the resource is live
+// Ownership is asked first and the publication only when it is not owned, so an owner's read is one query
+// Read per call and never cached across calls: unpublish revokes anonymous access by tombstoning the publication row,
+// And the asset is public only while the current publication's version names its hash, and only while the resource is
+// Live
 export const readResourceAccess = async (
   db: Database,
   resourceId: ResourceInResource["id"],

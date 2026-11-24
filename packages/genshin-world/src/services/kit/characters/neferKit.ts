@@ -20,13 +20,14 @@ const INITIAL_VERDANT_DEW = 2;
 // Nefer's behaviour: Senet Strategy: Dance of a Thousand Nights enters Shadow Dance for her record's seconds, with two
 // Verdant Dew held of at most her record's charges, where her Charged Attack is Phantasm Performance, a stance of its
 // Own seven hits. Each Phantasm Performance starts only with a Verdant Dew held, spends one as it starts, and the third
-// Ends the state. Her strikes, skill hits, plunges And burst's hits are her record's alone, and her frames and areas
-// Are provisional, read from Borrowed donors' gcsim Hitmarks and areas. Not built, each waiting on its own rule: the
-// Verdant Dew a Shadow Dance gains, whose Slither base amount the wiki does Not give, and the Lunar-Bloom gain of her
-// Fourth passive; the burst's use of charges, since the wiki's burst spends Veils of Falsehood, not Verdant Dew;
-// Constellation 1's Lunar-Bloom base DMG; Constellation 2 needs the Ascension talent A Wager of Moonlight's Veil of
-// Falsehood, which the kit does not build; Constellation 4 needs the Shadow Dance Charged Attack with Verdant Dew; And
-// Constellation 6 needs the Shadow Dance Charged Attack and Phantasm Performance
+// Ends the state. Her strikes, skill hits, plunges and burst's hits are her record's alone, and her frames and areas
+// Are provisional, read from Borrowed donors' gcsim hitmarks and areas.
+// Not built, each waiting on its own rule: the Verdant Dew a Shadow Dance gains, whose Slither base amount the wiki
+// Does not give, and the Lunar-Bloom gain of her fourth passive; the burst's use of charges, since the wiki's burst
+// Spends veils of Falsehood, not Verdant Dew; Constellation 1's Lunar-Bloom base DMG; Constellation 2 needs the
+// Ascension talent A Wager of Moonlight's veil of Falsehood, which the kit does not build; Constellation 4 needs the
+// Shadow Dance Charged Attack with Verdant Dew; and Constellation 6 needs the Shadow Dance Charged Attack and Phantasm
+// Performance
 export const createNeferKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {
   const shadowDanceSeconds = readParameter("shadowDanceSeconds");
   const maxVerdantDew = readParameter("phantasmPerformanceCharges");

@@ -8,8 +8,8 @@ interface Props {
 }
 
 // The stats overlay, a frame at the top left: the median frame time, and the draw calls and triangles the renderer
-// Counted For the last frame. It reads the renderer on each frame the browser draws while it is mounted, and the
-// Sampler answers Stats only on the frames it samples, so an overlay that is switched off, and so unmounted, costs no
+// Counted for the last frame. It reads the renderer on each frame the browser draws while it is mounted, and the
+// Sampler answers stats only on the frames it samples, so an overlay that is switched off, and so unmounted, costs no
 // Frame at all
 const { registry } = defineProps<Props>();
 const sampler = createFrameStatsSampler();

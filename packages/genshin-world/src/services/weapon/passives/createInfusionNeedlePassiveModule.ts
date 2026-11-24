@@ -10,7 +10,7 @@ const INFUSION_NEEDLE_STATUS_ID = "infusionNeedle";
 const INFUSION_NEEDLE_SECONDS = 5;
 
 // Infusion Needle at its rank: after its wielder picks up an elemental orb or particle, each normal or charged attack
-// It Lands deals an extra hit of the rank's share of ATK, for five seconds. Provisional: one extra hit per attack, not
+// It lands deals an extra hit of the rank's share of ATK, for five seconds. Provisional: one extra hit per attack, not
 // Per hit
 export const createInfusionNeedlePassiveModule = (params: number[]): PassiveModule => {
   const attackShare = takeOne(params, 0);

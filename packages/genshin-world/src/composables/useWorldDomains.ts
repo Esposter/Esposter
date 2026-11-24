@@ -60,7 +60,7 @@ import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The arena a domain's level is entered into: its stand-in beside the entrance, the level it runs, and the reward items
-// Its Tree grants when cleared
+// Its tree grants when cleared
 interface DomainArena {
   areaId: string;
   artifactSetIds: readonly number[];
@@ -92,8 +92,8 @@ interface DomainChallengeRun {
 }
 
 // The domain entrances the player has unlocked, the one whose screen is open, and the arena its level runs in. A
-// Level's Waves spawn one after another at the arena, the defeats of the wave in play count toward the level's target,
-// And the Challenge ends as the rule says. A clear raises the Petrified Tree the player claims before leaving the
+// Level's waves spawn one after another at the arena, the defeats of the wave in play count toward the level's target,
+// And the challenge ends as the rule says. A clear raises the Petrified Tree the player claims before leaving the
 // Domain
 export const useWorldDomains = ({
   adventureRankTables,
@@ -217,7 +217,7 @@ export const useWorldDomains = ({
   });
 
   // A disorder that triggers on the fight is answered while its challenge runs, its cooldown read off the challenge's
-  // Clock, Which pauses with the world as the challenge's own does
+  // Clock, which pauses with the world as the challenge's own does
   const triggerDisorder = (trigger: DomainDisorderTrigger) => {
     const arena = domainArena.value;
     const challenge = domainChallenge.value;
@@ -239,7 +239,7 @@ export const useWorldDomains = ({
   });
 
   // A level entered from the screen fades into its stand-in arena beside the entrance, where its first wave spawns. A
-  // Level With no challenge data or closed at the moment does not enter, and an arena already entered is not entered
+  // Level with no challenge data or closed at the moment does not enter, and an arena already entered is not entered
   // Again
   const enterDomain = (dungeonId: number) => {
     const entrance = domainEntrance.value;
@@ -341,7 +341,7 @@ export const useWorldDomains = ({
     if (outcome === DomainChallengeOutcome.Cleared) {
       domainChallenge.value = undefined;
       // A weekly boss's defeat leaves its weekly blossom where it fell, so its trounce domain raises no tree. Its
-      // Highest Tier's clear marks the boss's first clear to claim in the handbook
+      // Highest tier's clear marks the boss's first clear to claim in the handbook
       isDomainTreeRaised.value = arena.domainKind !== DomainKind.Trounce;
       if (arena.domainKind === DomainKind.Trounce && arena.isTopTier)
         clearedDomainIds.value = markWeeklyBossTopClear(clearedDomainIds.value, arena.entryId);
@@ -408,7 +408,7 @@ export const useWorldDomains = ({
     ),
   );
   // A locked weekly boss is challenged from the handbook. Its quick challenge enters the domain at the tier the rank
-  // Reaches And the world opens once that fight has started
+  // Reaches and the world opens once that fight has started
   const challengeWeeklyBoss = async (landmark: DomainEntranceLandmark) => {
     const isEntered = await quickChallengeDomain(
       landmark,
@@ -440,7 +440,7 @@ export const useWorldDomains = ({
     if (!arena || !isDomainTreeRaised.value || !friendshipLevels.value) return;
     domainClaimOffers.value = undefined;
     // Each claim draws its artifacts apart from the domain's sets before the resin is spent, so a domain with none to
-    // Draw From is refused with the resin still held
+    // Draw from is refused with the resin still held
     const artifacts = Array.from({ length: offer.claimCount }, () =>
       drawDomainArtifacts(arena.treeArtifacts, arena.artifactSetIds, worldSessionStore.reliquarySets, random, {
         artifactMainAffixPools: worldSessionStore.artifactMainAffixPools,

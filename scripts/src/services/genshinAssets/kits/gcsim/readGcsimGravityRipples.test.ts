@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 
 describe(readGcsimGravityRipples, () => {
   // Columbina's skill.go: the gravity tick's switch over the reaction that fires the ripple, each case setting its
-  // Literal's Multiplier, element and label, and the bloom case its travel, with the init naming each reaction's
+  // Literal's multiplier, element and label, and the bloom case its travel, with the init naming each reaction's
   // Hitmark constants
   const skillSource = [
     "package columbina",

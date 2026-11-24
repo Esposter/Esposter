@@ -83,7 +83,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const memberCountsByTopRole = computed(() => memberCounts.value.countsByTopRole);
   // The totals are never adjusted by a delta: a delta applied on top of a read that already counted the change counts
   // It twice, and a delta applied to a group the store never saw the member in is wrong for good. Every change marks
-  // Its Room, and the batched refresh re-reads the marked rooms one run at a time, so no two reads of a room overlap
+  // Its room, and the batched refresh re-reads the marked rooms one run at a time, so no two reads of a room overlap
   const refreshMemberCounts = createBatchedRefresh(async (roomIds: string[]) => {
     await Promise.all(
       roomIds.map(async (roomId) => {
@@ -105,7 +105,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // On Screen — a role assigned from a profile card in one room while another is open belongs to that room's totals
   memberRoleChangeHooks.register(refreshMemberCountsInBackground);
   // A page of a room's members arrives row by row, and the page's keys keep the order the server gave them, so the
-  // Cursor Advances from the place the page left and the list shows each row the overlay holds for its key
+  // Cursor advances from the place the page left and the list shows each row the overlay holds for its key
   const arriveMemberPage = ({ items: pageMembers, ...page }: Page<MemberRowInRoom>): Page<MemberKey> => {
     for (const member of pageMembers) arrive(memberTable, toMemberRow(member));
     return { ...page, items: pageMembers.map(({ roomId, userId }) => ({ roomId, userId })) };
@@ -120,13 +120,13 @@ export const useMemberStore = defineStore("message/user/member", () => {
     refreshMemberCountsInBackground(roomId);
   };
   // A member who leaves arrives as the tombstone the removal left, which the list drops once it is held. Their roles go
-  // With Them, and the role change's own hook re-reads the room's totals
+  // With them, and the role change's own hook re-reads the room's totals
   const arriveLeftMember = (leftMember: MemberRow) => {
     arrive(memberTable, toMemberRow(leftMember));
     notifyMemberRoleChange(leftMember.roomId);
   };
   // A saved display name is an optimistic write over the member's row. The entry shows the name the server will
-  // Resolve, And the answer is the row itself, which arrives at the version it names and settles the write
+  // Resolve, and the answer is the row itself, which arrives at the version it names and settles the write
   const renameMember = (roomId: string, userId: string, displayName: string) => {
     const accountName = userStore.userMap.get(userId)?.name ?? "";
     writeOptimistic(
@@ -148,7 +148,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
     );
   };
   // The offline cache keeps a room's members as the rows they are shown with, and restores them into the overlay by
-  // Their Versions, so the list's keys follow the restored rows. The rows are the ones the overlay shows for the room
+  // Their versions, so the list's keys follow the restored rows. The rows are the ones the overlay shows for the room
   const getCacheSlice = (roomId: string): CursorPaginationSlice<MemberRowInRoom> => {
     const slice = getSlice(roomId);
     return {

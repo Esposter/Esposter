@@ -3,7 +3,7 @@ import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // The empty choice a select leads with when its value may be none, so picking none is a choice of its own rather than
-// An Absent value the select shows nothing for. Its title says what none means where the list has its own word for it
+// An absent value the select shows nothing for. Its title says what none means where the list has its own word for it
 export const prependNoneSelectItem = <T extends string>(
   items: UiSelectItem<T>[],
   title = "None",

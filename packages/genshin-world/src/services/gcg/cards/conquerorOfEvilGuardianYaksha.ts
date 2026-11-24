@@ -13,8 +13,8 @@ import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCa
 import { takeOne } from "@esposter/shared";
 
 // Conqueror of Evil: Guardian Yaksha, Xiao's talent: equipped to her while she is active, it has her use Bane of All
-// Evil at Once. While she has Yaksha's Mask, her Lemniscatic Wind Cycling costs one Anemo die less, and each attachment
-// Of the mask Allows that twice (the wiki's Conqueror of Evil: Guardian Yaksha (Equipment Card))
+// Evil at once. While she has Yaksha's Mask, her Lemniscatic Wind Cycling costs one Anemo die less, and each attachment
+// Of the mask allows that twice (the wiki's Conqueror of Evil: Guardian Yaksha (Equipment Card))
 export const conquerorOfEvilGuardianYaksha: GcgCardModule = {
   ...createGcgTalentCard(XIAO_ID, BANE_OF_ALL_EVIL_ID),
   onCostPaid: ({ characterIndex, duel, sideIndex }) => {

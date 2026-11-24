@@ -13,7 +13,7 @@ const PARITY_ONLY_MODULE_REGEX = /\.(?:fixture|reference)\.ts$/u;
 // The parity page: the interface screens alone on Vite, without Nuxt, so a screen is up in about a second. Its root is
 // The package, so the page and the visual suite glob the screens from `/src` alike. Its siblings are read from their
 // Source, as the tests read them, so a change to the engine or the interface library shows without a build. A
-// Production Build of the page is what `genshin:parity load` measures: its entry is named here since the root holds no
+// Production build of the page is what `genshin:parity load` measures: its entry is named here since the root holds no
 // `index.html`
 export default defineConfig({
   build: {

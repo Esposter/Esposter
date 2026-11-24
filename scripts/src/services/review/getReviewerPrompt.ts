@@ -5,7 +5,7 @@ import { getDataBlock } from "#src/services/review/getDataBlock";
 
 // The reviewer's prompt, its text verbatim from the review spec. The diff is cut at `REVIEW_DIFF_LINE_LIMIT`, and a cut
 // One is followed by a note to read the file for the rest, since a reviewer that does not know it saw a fragment
-// Reports The fragment as the whole. The diff is fenced as data, since the code under review may quote this prompt's
+// Reports the fragment as the whole. The diff is fenced as data, since the code under review may quote this prompt's
 // Own answer.
 export const getReviewerPrompt = ({ base, diff, end, files, isDiffCut }: ReviewerPromptInput): string => {
   const cutNote = isDiffCut

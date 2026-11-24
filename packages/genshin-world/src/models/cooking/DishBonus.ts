@@ -2,8 +2,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { z } from "zod";
 
 // A dish's bonus when it is eaten, as its buff names it: the stat each clause of its description adds, a percentage
-// Kept As a fraction, and the seconds it lasts. Its source is the ability its buff names, so a dish of the same kind
-// Restarts The bonus rather than stacking it
+// Kept as a fraction, and the seconds it lasts. Its source is the ability its buff names, so a dish of the same kind
+// Restarts the bonus rather than stacking it
 export interface DishBonus {
   attributes: { amount: number; attribute: Attribute }[];
   seconds: number;

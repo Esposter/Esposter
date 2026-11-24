@@ -6,7 +6,7 @@ import { createReactionBuffPassiveModule } from "#src/services/weapon/passives/c
 import { takeOne } from "@esposter/shared";
 
 // A passive that, after its wielder triggers a Stellar Glimmer reaction whether or not the wielder is on the field,
-// Raises One of its Attributes by the rank's amount for the rank's seconds
+// Raises one of its Attributes by the rank's amount for the rank's seconds
 export const createStellarGlimmerBuffPassiveModule = (
   params: number[],
   { attribute, source }: { attribute: Attribute; source: string },

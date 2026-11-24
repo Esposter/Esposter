@@ -13,7 +13,7 @@ export const mergeObjectsStrict = <T extends object[]>(...objects: T): MergeObje
         throw new InvalidOperationError(Operation.Create, mergeObjectsStrict.name, `Duplicate key: ${key}`);
       merged[key] = value;
     }
-  // MergeObjectsStrict is the type of a merge over the objects' own keys,
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- which the runtime merge builds as a plain record
+  /* oxlint-disable-next-line typescript/no-unsafe-type-assertion -- MergeObjectsStrict is the type of a merge over the
+     objects' own keys, which the runtime merge builds as a plain record */
   return merged as MergeObjectsStrict<T>;
 };

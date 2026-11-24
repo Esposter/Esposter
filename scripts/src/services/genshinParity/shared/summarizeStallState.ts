@@ -6,7 +6,7 @@ import { roundMs } from "#src/services/genshinParity/shared/roundMs";
 
 const STALLED_FRAME_MS = 250;
 // The summary of one state from the frames drawn while it ran. A frame's time is the gap from the frame before it, so
-// The First frame only starts the count: the handler's await lands its tick after the state's own frames begin
+// The first frame only starts the count: the handler's await lands its tick after the state's own frames begin
 export const summarizeStallState = (
   name: string,
   frames: FrameSample[],

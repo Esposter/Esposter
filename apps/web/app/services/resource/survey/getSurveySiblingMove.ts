@@ -5,9 +5,9 @@ import { getSurveyNodeLocation } from "#src/services/resource/survey/getSurveyNo
 import { getSiblingMoveOperations } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "vue-survey-engine-headless";
 
-// The move of a node to the index an offset away from it in its own slot: one back for a move up, one on for a move
-// Down. The core's Command gives the operations, and none when no sibling sits there, which is refused with the reason
-// The element is first or last
+// The move of a node to the index an offset away from it in its own slot: one back for a move up, one on for a
+// Move down. The core's command gives the operations, and none when no sibling sits there, which is refused with the
+// Reason the element is first or last
 export const getSurveySiblingMove = (document: SurveyDocument, nodePointer: string, offset: number): SurveyNodeMove => {
   const operations = getSiblingMoveOperations(document, surveyRegistry, surveyNodeChildren, nodePointer, offset);
   if (operations.length > 0) return { operations, refusal: "" };

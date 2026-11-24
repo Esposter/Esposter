@@ -3,7 +3,7 @@
 // Eruptions of a volcano, which interrupt the rain. The Snowstorm is the wiki's Subzero Climate weather, which only
 // Dragonspine has (Weather, Snowstorm section); the Sheer Cold page's modifier table gives it +200% accumulation under
 // Colder environments, and the Weather page a base rate 2.5 times the snow's, which the two wiki figures disagree on,
-// So Its rate is left to the Sheer Cold change
+// So its rate is left to the Sheer Cold change
 export const WeatherKind = {
   Clear: "Clear",
   Cloudy: "Cloudy",

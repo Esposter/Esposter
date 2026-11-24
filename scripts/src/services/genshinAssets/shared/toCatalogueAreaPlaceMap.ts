@@ -3,8 +3,8 @@ import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 import { toOpenWorldLevelOneAreaIdsByName } from "#src/services/genshinAssets/shared/toOpenWorldLevelOneAreaIdsByName";
 
 // The open world's level-one areas by their id in the game's area table, each with the catalogue area of its English
-// Name And the region holding it, as `fitAreaOutlines` pairs the game's areas with the catalogue's. An area the
-// Catalogue holds No name of is left out
+// Name and the region holding it, as `fitAreaOutlines` pairs the game's areas with the catalogue's. An area the
+// Catalogue holds no name of is left out
 export const toCatalogueAreaPlaceMap = ({
   areas,
   regions,

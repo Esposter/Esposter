@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(parseControllerStates, () => {
   // A controller as AnimeStudio's JSON export writes it: two states, the first a blend tree over clip 1 and a node
-  // Naming No clip, the second over clip 0. Both path IDs are past a number's exact range, so they are kept as the text
+  // Naming no clip, the second over clip 0. Both path IDs are past a number's exact range, so they are kept as the text
   // Written
   const CONTROLLER_JSON = `{
     "m_Controller": {

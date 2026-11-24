@@ -6,7 +6,7 @@ import { createBinaryNode } from "#src/services/parser/createBinaryNode";
 import { createLogicalNode } from "#src/services/parser/createLogicalNode";
 
 // Builds the node an operator names from its two operands. A comparison extends the one before it when that is a
-// Comparison, So `a < b < c` is one node: the left operand is always one the binary loop built, never a parenthesised
+// Comparison, so `a < b < c` is one node: the left operand is always one the binary loop built, never a parenthesised
 // Group
 export const createBinaryOperation = (
   left: MathExpressionNode,

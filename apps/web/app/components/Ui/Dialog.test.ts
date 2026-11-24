@@ -87,7 +87,7 @@ describe("uiDialog", () => {
     });
 
     // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so
-    // The Class is what is checked
+    // The class is what is checked
     test.each(Object.values(UiDialogSize))("each named size draws its own width class: %s", async (size) => {
       expect.hasAssertions();
 
@@ -169,7 +169,7 @@ describe("uiDialog", () => {
     });
 
     // A tall frame stands at its placement's height rather than only being capped by it, so a two-pane body has a
-    // Height To divide and each pane scrolls on its own
+    // Height to divide and each pane scrolls on its own
     test.each([UiDialogPlacement.High, UiDialogPlacement.Middle])(
       "a tall dialog stands at a definite height: %s",
       async (placement) => {

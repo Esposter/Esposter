@@ -5,7 +5,7 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DashboardSelectionKind } from "#src/models/dashboard/DashboardSelectionKind";
 
 // What the reader is doing, as the dashboard's layout reads it: nothing selected, or the one visual selected and
-// Whether that Visual is a group. The dashboard has no mode or tool, so both are empty
+// Whether that visual is a group. The dashboard has no mode or tool, so both are empty
 export const getDashboardEditorContext = (selectedVisual: undefined | Visual): Context => {
   if (!selectedVisual) return { mode: "", selectionCount: 0, selectionKind: "", tool: "" };
 

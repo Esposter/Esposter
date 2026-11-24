@@ -11,7 +11,7 @@ import {
 import { getMathExpressionCharacter } from "#src/services/parser/token/getMathExpressionCharacter";
 
 // Reads the delimiter at the current character into the state, and yields how many characters it takes, or zero when
-// None is one. The character decides which longer delimiters are looked up, so a read slices the source only where a
+// None is one. the character decides which longer delimiters are looked up, so a read slices the source only where a
 // Longer one can start
 export const readMathExpressionDelimiter = (state: MathExpressionParserState): number => {
   const character = getMathExpressionCharacter(state, 0);

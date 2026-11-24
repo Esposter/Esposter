@@ -25,7 +25,7 @@ const contentComponent = computed(
     (activeBlade === ResourceBladeType.Editor ? ResourceEditorComponentMap[resource.type] : undefined),
 );
 // The outlet's body pads and scrolls the blade, so a blade writes its content only. The editor is a full-bleed canvas
-// That Lays out its own regions, and a blade that draws a table owns its own scroll, so each is drawn bare with its own
+// That lays out its own regions, and a blade that draws a table owns its own scroll, so each is drawn bare with its own
 // Padding
 const isBodyBare = computed(() => activeBlade === ResourceBladeType.Editor || blade.value?.isBodyBare);
 </script>

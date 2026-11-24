@@ -11,8 +11,8 @@ interface KitOverlayRangeEntry {
 }
 
 // An overlay key may name a run of consecutive hits, `hits.fatalBlossoms.0-6.hitmarkFrames`, which expands to one key
-// Per Hit. A cited entry's array gives one value per hit, so each hit takes its own element and its position in the run
-// As its Index, which the cited reader matches against the loop's element at that index; any other entry is shared by
+// Per hit. A cited entry's array gives one value per hit, so each hit takes its own element and its position in the run
+// As its index, which the cited reader matches against the loop's element at that index; any other entry is shared by
 // The run
 export const expandKitOverlay = <Entry extends KitOverlayRangeEntry>(
   overlay: Record<string, Entry>,

@@ -9,7 +9,7 @@ import { computeStoneDarkening, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT } fr
 // The scene colour a stone light casts on one sample, as `solveStoneLight` models the deferred pass: its albedo times
 // The ramp at its coordinate, the harmonics at its normal and the light fading with its height, all darkening with its
 // Height (`computeStoneDarkening`), with its glow, darkened by its occlusion, the part the haze lets through, plus the
-// Haze's colour blended toward its sunward one by its Scatter, by its opacity
+// Haze's colour blended toward its sunward one by its scatter, by its opacity
 export const computeStoneSampleColor = (
   { albedo, emission, harmonics: terms, height, occlusion, opacity, rampCoordinate, scatter }: StoneLightSample,
   { harmonics, hazeColor, hazeScatterColor, heightDarkening, heightFade, ramp }: StoneLight,

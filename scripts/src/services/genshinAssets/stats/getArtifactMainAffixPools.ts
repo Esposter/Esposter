@@ -6,7 +6,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { artifactMainAffixPoolSchema, ArtifactMainAffixWeightMap, ArtifactSlot } from "genshin-world";
 
 // Every slot's main affix pool: the attributes its depot holds that the wiki's distribution weighs for the slot. The
-// Depot Also lists flat attributes and resistances the slot never rolls as its main affix, which the distribution
+// Depot also lists flat attributes and resistances the slot never rolls as its main affix, which the distribution
 // Leaves out
 export const getArtifactMainAffixPools = (
   slotMainPropDepots: ReadonlyMap<ArtifactSlot, number>,

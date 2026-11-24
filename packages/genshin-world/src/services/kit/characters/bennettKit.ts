@@ -15,22 +15,22 @@ import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the field's ticks every second to its end, its circle of radius 6,
-// And Its heal below 70% and its ATK bonus above it, of the character's HP
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go`
+// And its heal below 70% and its ATK bonus above it, of the character's HP
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
 const BENNETT_FIELD_TICK_INTERVAL_SECONDS = 1;
 const BENNETT_FIELD_RADIUS = 6;
 const BENNETT_FIELD_HP_THRESHOLD = 0.7;
 
 // Grand Expectation at constellation 1 lifts the ATK bonus's HP threshold to any HP above zero, and adds 20% of
-// Bennett's Base ATK to it. Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the `pc += 0.2` and the threshold of 0 at
+// Bennett's base ATK to it. Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the `pc += 0.2` and the threshold of 0 at
 // Cons 1 https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
 const GRAND_EXPECTATION_CONSTELLATION = 1;
 const GRAND_EXPECTATION_BASE_ATTACK_SHARE = 0.2;
 // Fire Ventures With Me at constellation 6 gives the character on the field a 15% Pyro DMG Bonus, whatever it wields,
 // And Pyro on its weapon if it wields a sword, claymore or polearm. Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the
-// PyroP Of 0.15 outside the weapon switch and the infusion within it. The wiki's note gives the same wielders
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go`
-// `https://genshin-impact.fandom.com/wiki/Fire_Ventures_With_Me`
+// PyroP of 0.15 outside the weapon switch and the infusion within it. The wiki's note gives the same wielders
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
+// https://genshin-impact.fandom.com/wiki/Fire_Ventures_With_Me
 const FIRE_VENTURES_WITH_ME_CONSTELLATION = 6;
 const FIRE_VENTURES_PYRO_DAMAGE_BONUS = 0.15;
 
@@ -59,7 +59,7 @@ const getSkillCooldownMultiplier = (context: KitContext): number => {
 export const BENNETT_CHARACTER_ID = 10_000_032;
 
 // Impasse Conqueror at constellation 2 raises Energy Recharge by 30% while Bennett's HP is under 70% of its Max HP, and
-// Not From 70% up. As the wiki's constellation table gives it: https://genshin-impact.fandom.com/wiki/Bennett
+// Not from 70% up. As the wiki's constellation table gives it: https://genshin-impact.fandom.com/wiki/Bennett
 const IMPASSE_CONQUEROR_CONSTELLATION = 2;
 const IMPASSE_CONQUEROR_ENERGY_RECHARGE = 0.3;
 const IMPASSE_CONQUEROR_HP_THRESHOLD = 0.7;
@@ -71,13 +71,13 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
 
 // Bennett's behaviour: Fantastic Voyage casts its field where he stands, from its start to the table's seconds past its
 // First tick. Each tick, from the second, heals the character on it under 70% of its HP by the table's flat HP and
-// Share Of Bennett's Max HP, and gives one above 70% the table's share of Bennett's base ATK, which Grand Expectation
-// Lifts to Any HP above zero and adds 20% to. From Fire Ventures With Me, that bonus also gives the character on the
+// Share of Bennett's Max HP, and gives one above 70% the table's share of Bennett's base ATK, which Grand Expectation
+// Lifts to any HP above zero and adds 20% to. From Fire Ventures With Me, that bonus also gives the character on the
 // Field a 15% Pyro DMG Bonus, and Pyro on its weapon if it wields a sword, claymore or polearm. Under his own field at
-// Ascension 4, The Level 2 hold plays without the launch, and Passion Overload's cooldown is cut from Ascension 1 and
+// Ascension 4, the Level 2 hold plays without the launch, and Passion Overload's cooldown is cut from Ascension 1 and
 // Halved there Constellation 4 is not built: its extra attack is one Passion Overload's Level 1 hold adds, and the
-// Record holds no Variant of that hold for it. The hook that adds a hit, getNormalAttackExtraHit, runs only for a kit's
-// Normal attacks, So no hook reaches the hold
+// Record holds no variant of that hold for it. The hook that adds a hit, getNormalAttackExtraHit, runs only for a kit's
+// Normal attacks, so no hook reaches the hold
 export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const fieldFlatHeal = readParameter("fantasticVoyageFlatHeal");
   const fieldMaxHealthHealShare = readParameter("fantasticVoyageMaxHealthHealShare");

@@ -8,7 +8,7 @@ import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { MjmlNodeType } from "mjml-blocks";
 
 // The placeholder a freshly inserted link node points at until its author sets one. A relative target keeps an Email
-// From Requesting any origin the reader did not choose
+// From requesting any origin the reader did not choose
 const PLACEHOLDER_HREF = "#";
 
 // The node a freshly inserted node of each email type is, under the id the caller mints for it: each the smallest props

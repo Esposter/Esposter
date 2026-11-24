@@ -26,9 +26,9 @@ import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim (MIT) shenhe/burst.go, Divine Maiden's Deliverance's field centred 2 metres ahead of the body, its
-// DoT Ticking two hits each tick, the second its tick's offset on from the first, and the field's Ascension 1 Cryo DMG
-// Bonus Of 15% for an active character inside it
-// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/shenhe`
+// DoT ticking two hits each tick, the second its tick's offset on from the first, and the field's Ascension 1 Cryo DMG
+// Bonus of 15% for an active character inside it
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/shenhe
 const BURST_OFFSET_METRES = 2;
 const BURST_ASCENSION = 1;
 const BURST_CRYO_DAMAGE_BONUS = 0.15;
@@ -42,7 +42,7 @@ const CONSTELLATION_1 = 1;
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_FIELD_SECONDS = 6;
 // Constellation 4: each trigger of the Icy Quill gives Shenhe a Skyfrost Mantra stack, up to fifty, for sixty seconds,
-// And Her Spring Spirit Summoning consumes them all, each adding 5% DMG to its hits, as gcsim (MIT) shenhe's c4 does
+// And her Spring Spirit Summoning consumes them all, each adding 5% DMG to its hits, as gcsim (MIT) shenhe's c4 does
 const CONSTELLATION_4 = 4;
 const SKYFROST_MANTRA_MAXIMUM = 50;
 const SKYFROST_MANTRA_SECONDS = 60;
@@ -69,7 +69,7 @@ const checkIsIcyQuillAttack = (attackTag: AttackTag | undefined): attackTag is A
   attackTag !== undefined && ICY_QUILL_ATTACK_TAGS.has(attackTag);
 
 // Gives each party member other than the one casting the Icy Quill, restarting one it already holds, for its seconds
-// And Its triggers
+// And its triggers
 const grantIcyQuill = (
   { activeCombatant, characterIdCombatantMap, kitEffectState, party }: KitContext,
   secondsRemaining: number,
@@ -91,7 +91,7 @@ const gainSkyfrostMantra = (kitEffectState: KitEffectState, characterId: number)
 };
 
 // Consumes all of Shenhe's Skyfrost Mantra stacks as her Spring Spirit Summoning starts, into the empowerment its hits
-// Read, For the seconds the summoning plays
+// Read, for the seconds the summoning plays
 const empowerSpringSpiritSummoning = ({ activeCombatant, kitEffectState }: KitContext): void => {
   const { characterId } = activeCombatant;
   const mantra = findKitStatus(kitEffectState.effects, characterId, SKYFROST_MANTRA_STATUS_ID);
@@ -128,11 +128,11 @@ const spendIcyQuillTrigger = (kitEffectState: KitEffectState, characterId: numbe
 };
 
 // Shenhe's behaviour: Divine Maiden's Deliverance casts its field ahead of her, whose DoT ticks give the enemies within
-// It The burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her skill's Icy
-// Quill Adds Shenhe's ATK to each Cryo hit the other party members strike from an attack kind, spending one of its
-// Triggers. It Is priced by a party strike hook and spent by the hits' events. Constellation 1's charge, Constellation
-// 2's field, and Constellations 4 and 6's Skyfrost Mantra and quota are built; her other passives are not Constellation
-// 2's field runs six seconds longer, and its active character gains Cryo CRIT DMG inside it
+// It the burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her skill's Icy
+// Quill adds Shenhe's ATK to each Cryo hit the other party members strike from an attack kind, spending one of
+// Its triggers. It is priced by a party strike hook and spent by the hits' events. Constellation 1's charge,
+// Constellation 2's field, and constellations 4 and 6's Skyfrost Mantra and quota are built; her other passives are not
+// Constellation 2's field runs six seconds longer, and its active character gains Cryo CRIT DMG inside it
 export const createShenheKitBehaviour = ({
   readHitFields,
   readParameter,
@@ -174,7 +174,7 @@ export const createShenheKitBehaviour = ({
   return {
     burst: {
       // The field is cast ahead of the body, as far across as its DoT reaches, and its DoT and buff are summoned there,
-      // So It stands where gcsim places it
+      // So it stands where gcsim places it
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const centreBody = createAheadBody(body, BURST_OFFSET_METRES);
         castKitField(kitEffectState, combatant.characterId, centreBody.position, {
@@ -231,7 +231,7 @@ export const createShenheKitBehaviour = ({
           SKYFROST_MANTRA_DAMAGE_BONUS
         : 0,
     // Each Cryo hit from an attack kind a member carrying the Icy Quill lands on an enemy triggers it, spending one of
-    // Its Triggers unless Constellation 6 exempts a normal or charged attack, and gives Shenhe a Skyfrost Mantra stack
+    // Its triggers unless Constellation 6 exempts a normal or charged attack, and gives Shenhe a Skyfrost Mantra stack
     // From Constellation 4
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (

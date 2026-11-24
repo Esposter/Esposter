@@ -13,9 +13,9 @@ const throwUnlessOk = (response: Response, subject: string): void => {
 };
 
 // One bucket of the account's R2, reached through its S3 API, the one a script can use since a Worker's binding exists
-// Only Inside a Worker. The bucket is the one Pulumi created under its environment's name. Requests are signed with the
+// Only inside a Worker. The bucket is the one Pulumi created under its environment's name. Requests are signed with the
 // Account's R2 token by the shared transport, which bounds how many requests run at once. The payload is left unsigned,
-// So a file is Sent without being hashed first
+// So a file is sent without being hashed first
 export const createR2BucketClient = (
   environment: CloudflareEnvironment,
   storageBucket: StorageBucket,

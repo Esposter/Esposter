@@ -6,7 +6,7 @@ import { RGB_CHANNEL_COUNT } from "#src/services/genshinParity/probe/constants";
 import { takeOne } from "@esposter/shared";
 
 // One row for each frame of a clip read over a `width` by `height` rectangle, from the rectangle's RGB bytes as they
-// Arrive In chunks. The frame at each index is shown at the second given for that index
+// Arrive in chunks. The frame at each index is shown at the second given for that index
 export const readFrameRows = async (
   chunks: AsyncIterable<Uint8Array> | Iterable<Uint8Array>,
   width: number,

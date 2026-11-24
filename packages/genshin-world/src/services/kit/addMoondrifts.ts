@@ -16,11 +16,11 @@ import {
 } from "#src/services/party/constants";
 
 // The party's answer to each Lunar-Crystallize a combatant triggered on an enemy, written in place. It counts toward
-// The Next Moondrift Harmony, and the combatant and the sources of the Hydro it consumed join the Harmony's
-// Contributors. While fewer than three Moondrifts stand near the character on the field, it leaves as many more as make
-// Three about The enemy. With three standing and three counted, out of the Harmony's cooldown, it spends the three to
-// Resonate one: Three hits on their way to the enemy from its contributors, who are then cleared, owned by the
-// Combatant, and the Moondrifts near kept standing their full seconds again
+// The next Moondrift Harmony, and the combatant and the sources of the Hydro it consumed join the
+// Harmony's contributors. while fewer than three Moondrifts stand near the character on the field, it leaves as many
+// More as make three about the enemy. With three standing and three counted, out of the Harmony's cooldown, it spends
+// The three to resonate one: three hits on their way to the enemy from its contributors, who are then cleared, owned by
+// The combatant, and the Moondrifts near kept standing their full seconds again
 export const addMoondrifts = (
   { lunarCrystallize }: Party,
   enemy: Enemy,

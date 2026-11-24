@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
 const literal = (value: number) => ({ name: "", value });
 
 // A shader with one subshader and one pass whose first render target blends with the given factors and whose depth
-// Write Is the given value
+// Write is the given value
 const createShader = (source: number, destination: number, zWrite: number): SerializedShader => {
   const state: SerializedShaderState = {
     blend: {

@@ -19,9 +19,9 @@ const SIGIL_LOCKOUT_ID = "farewellSongLockout";
 const SIGIL_MAXIMUM = 4;
 
 // The Parting Refrain at its rank: the wielder's Elemental Mastery rises by the rank's amount. Each Elemental Skill or
-// Elemental Burst hit it deals gains a Sigil of Remembrance, once every cooldown, whether or not it is on the field. At
-// Four Sigils they are Consumed and the deployed team gains Farewell Song for the rank's seconds, with the second
-// Elemental Mastery and the second ATK Share, and no Sigil is gained for the rank's lockout seconds after it
+// Elemental burst hit it deals gains a Sigil of Remembrance, once every cooldown, whether or not it is on the field. At
+// Four Sigils they are consumed and the deployed team gains Farewell Song for the rank's seconds, with the second
+// Elemental Mastery and the second ATK share, and no Sigil is gained for the rank's lockout seconds after it
 export const createThePartingRefrainPassiveModule = (params: number[]): PassiveModule => {
   const elementalMastery = takeOne(params, 0);
   const sigilCooldownSeconds = takeOne(params, 1);

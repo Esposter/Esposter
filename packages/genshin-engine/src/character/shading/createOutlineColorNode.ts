@@ -14,7 +14,7 @@ const UNTINTED: Vector3Tuple = [1, 1, 1];
 // The game's outline colour at a pixel, the TSL form of the outline's colour on the shading page: with no later region
 // Turned on, the outline's own colour; with one, the region's tint times its outline colour, by the region the
 // Lightmap's alpha selects. Each is drawn toward a fifth of the main texture by its region's intensity, then toned as
-// The Body is
+// The body is
 export const createOutlineColorNode = (
   {
     color,

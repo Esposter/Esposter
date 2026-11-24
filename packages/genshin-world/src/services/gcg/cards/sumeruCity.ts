@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 const SUMERU_CITY_REDUCTION = 1;
 
 // Sumeru City, a Support: when its side plays a Talent card or uses a Skill, while the side does not have more
-// Elemental Dice Than cards in its hand, 1 fewer die is spent, once per Round. A Technique is no Skill of a character's
+// Elemental Dice than cards in its hand, 1 fewer die is spent, once per Round. A Technique is no Skill of a character's
 export const sumeruCity: GcgCardModule = createGcgOncePerRoundCostReduction(
   SUMERU_CITY_ID,
   ({ duel, sideIndex }, subject) => {

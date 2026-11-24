@@ -57,8 +57,8 @@ export const AMBER_CHARACTER_ID = 10_000_021;
 
 // Amber's behaviour: Explosive Puppet's Baron Bunny, which draws the enemies' strikes and explodes, and Fiery Rain's
 // Arrows, a summon's hits landing from where Amber cast it, with Ascension 1's CRIT Rate and wider arrows. The aimed
-// Shot's Unlit form, the bow's aim binding and Amber's Ascension 4 weak-point ATK bonus are not built, so the charged
-// Attack is The full shot. Constellations 1, 4 and 6 are built. Constellation 2 is not: its manual detonation needs a
+// Shot's unlit form, the bow's aim binding and Amber's Ascension 4 weak-point ATK bonus are not built, so the charged
+// Attack is the full shot. Constellations 1, 4 and 6 are built. Constellation 2 is not: its manual detonation needs a
 // Charged attack that reports the Bunny it lands on, and ChargedAttackLanded names no target, while the taunt's damage
 // Has no caller, so no shot reaches it
 export const createAmberKitBehaviour = ({

@@ -5,7 +5,7 @@ import { MINIMUM_OUTLINE_KNOT_SPAN, OUTLINE_PROJECTION_SCALE } from "#src/charac
 import { cameraProjectionMatrix, clamp, float, max, positionView, select, vec4 } from "three/tsl";
 
 // The TSL form of getOutlineDepth and getOutlineScale: the vertex's view depth, from the projection's y scale, picks
-// The Knot pair it falls between, and the width scale is interpolated across it
+// The knot pair it falls between, and the width scale is interpolated across it
 export const createOutlineScaleNode = (depths: Vector3Tuple, scales: Vector3Tuple): Node<"float"> => {
   const [nearDepth, middleDepth, farDepth] = depths;
   const [nearScale, middleScale, farScale] = scales;

@@ -44,12 +44,12 @@ import { watchImmediate } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
-// The ley line outcrops standing in the loaded regions: a daily reset draws each region's open kinds to its fitted
-// Places. A Character who stands within reach of a waiting outcrop touches it, which starts its fight and spawns its
-// Camp there, And the camp's last enemy falling reveals the blossom. Pressing F at a revealed blossom offers the claims
-// The held Resin affords, and choosing one spends its resin, grants the kind's rewards for the World Level into the bag
-// And the Wallet, gives the deployed team the claim's Companionship EXP, and moves the outcrop on within its region. A
-// Claim the Holdings or the bag cannot pay whole is refused, and the blossom stays
+// The ley line outcrops standing in the loaded regions: a daily reset draws each region's open kinds to its
+// Fitted places. A Character who stands within reach of a waiting outcrop touches it, which starts its fight and spawns
+// Its camp there, and the camp's last enemy falling reveals the blossom. Pressing F at a revealed blossom offers the
+// Claims the held Resin affords, and choosing one spends its resin, grants the kind's rewards for the World Level into
+// The bag and the wallet, gives the deployed team the claim's Companionship EXP, and moves the outcrop on within
+// Its region. A claim the holdings or the bag cannot pay whole is refused, and the blossom stays
 export const useWorldOutcrops = ({
   adventureRankTables,
   enemyMap,
@@ -85,7 +85,7 @@ export const useWorldOutcrops = ({
       ),
   );
   // Each loaded region's kinds, read by the key its publish wrote once the region is entered, never at the world's
-  // First Screen. A region no city is named for, or no publish wrote, opens no kind
+  // First screen. A region no city is named for, or no publish wrote, opens no kind
   const kindRulesMap = shallowRef<ReadonlyMap<string, OutcropKindRule[]>>(new Map());
   const requestedRegionIds = new Set<string>();
   watchImmediate(placesMap, (places) => {
@@ -122,7 +122,7 @@ export const useWorldOutcrops = ({
   // Affords none and no Fragile Resin can restore it
   const claimPrompt = shallowRef<{ placeId: number } & BlossomClaimPrompt>();
   // An event moves the one outcrop it names within its region, and the place the other kind of that region holds is
-  // Kept Out of its move
+  // Kept out of its move
   const applyEvent = (placeId: number, event: OutcropEvent) => {
     const regionId = regionIdOfPlace.value.get(placeId);
     if (regionId === undefined) return;
@@ -142,7 +142,7 @@ export const useWorldOutcrops = ({
     );
   };
   // A region's day is drawn once its kinds and places are both loaded, and drawn again at the first daily reset after
-  // Its Draw. A draw starts that region's outcrops over, and drops the fights of the camps the last day spawned in it
+  // Its draw. A draw starts that region's outcrops over, and drops the fights of the camps the last day spawned in it
   const drawnAtMap = new Map<string, Temporal.Instant>();
   const drawDayOutcrops = (now: Temporal.Instant, random: () => number) => {
     // The cities whose statues are resonated, a region holding only found Oculi not yet among them
@@ -196,7 +196,7 @@ export const useWorldOutcrops = ({
     return regionId === undefined ? undefined : kindRulesMap.value.get(regionId)?.find((rule) => rule.kind === kind);
   };
   // Pressing F at a cleared outcrop's blossom offers the claims the held resin affords, and offers none where it
-  // Affords None
+  // Affords none
   const showOutcropClaim = (placeId: number, held: Wallet, bag: Inventory, now: Temporal.Instant) => {
     const prompt = computeBlossomClaimPrompt(BlossomKind.LeyLine, 0, held, bag, now, worldSessionStore.resinParam);
     claimPrompt.value = prompt.offers.length > 0 || prompt.canRestore ? { ...prompt, placeId } : undefined;
@@ -209,7 +209,7 @@ export const useWorldOutcrops = ({
     claimPrompt.value = undefined;
   };
   // Restoring spends one Fragile Resin for the Original Resin it restores, and offers the claims again from the
-  // Holdings It leaves, as the prompt's restore row does
+  // Holdings it leaves, as the prompt's restore row does
   const restoreOutcropClaim = (now: Temporal.Instant) => {
     const prompt = claimPrompt.value;
     if (!prompt?.canRestore) return;

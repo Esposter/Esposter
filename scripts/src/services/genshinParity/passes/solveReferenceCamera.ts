@@ -14,8 +14,8 @@ const HELD_AXES = CAMERA_POSE_AXES.map((_axis, index) => index).filter((index) =
 // (`getReferenceCameraPose`) starts from it, its eye moved along the glide alone to where its landmarks stand it, since
 // How far the glide has come is the Motion pass's. One that records none is solved on all six axes from its landmarks,
 // Which needs six of them or it throws. Its pose, each landmark's distance and their root mean square in the
-// Reference's Pixels, with the landmarks the witness holds only; `waiting` names the rest. With none held a recorded
-// Camera is the Pose, and a reference with neither a recorded camera nor a landmark held to solve from throws
+// Reference's pixels, with the landmarks the witness holds only; `waiting` names the rest. With none held a recorded
+// Camera is the pose, and a reference with neither a recorded camera nor a landmark held to solve from throws
 export const solveReferenceCamera = async (
   page: Page,
   referenceId: string,

@@ -19,7 +19,7 @@ export const roomObjectFailures = new Map<string, Error>();
 export const roomObjectReplies = new Map<string, (...args: unknown[]) => unknown>();
 
 // Answers one call the way the room's `invoke` does. The double holds no state, so it reads and writes no topic: its
-// Read And write sets are empty, and the room's own topics are checked by the realtime suites
+// Read and write sets are empty, and the room's own topics are checked by the realtime suites
 const invokeRoomObject = (roomId: string, method: string, args: unknown[]): Promise<ObjectInvocation> => {
   roomObjectCalls.push({ args, method, roomId });
   const failure = roomObjectFailures.get(method);
@@ -28,7 +28,7 @@ const invokeRoomObject = (roomId: string, method: string, args: unknown[]): Prom
 };
 
 // The stub a room resolves to: `invoke` answers every RPC method, and `fetch` is the socket's upgrade, which the
-// Wrapper Forwards to the stub itself rather than through `invoke`
+// Wrapper forwards to the stub itself rather than through `invoke`
 const createRoomObjectStub = (roomId: string) =>
   new Proxy({} as ReturnType<typeof useRealRoomObject>, {
     get: (_target, member: string) => {

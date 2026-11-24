@@ -2,8 +2,8 @@ import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { MAX_SAVE_INSTANT_LENGTH } from "#src/services/save/constants";
 import { z } from "zod";
 
-// The seeds a realm's garden holds as the save holds them: each plot, its seed and the ISO string of its planting
-// Instant. A planting sits on one plot, so the placements ceiling bounds the list
+// The seeds a realm's garden holds as the save holds them: each plot, its seed and the ISO string of its
+// Planting instant. A planting sits on one plot, so the placements ceiling bounds the list
 export const homePlantingSaveSchema = z
   .array(
     z.object({

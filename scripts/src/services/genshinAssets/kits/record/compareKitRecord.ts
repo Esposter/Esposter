@@ -30,8 +30,8 @@ import { getResult } from "@esposter/shared";
 // The overlay a kit's published record needs for its sources to reproduce it, each entry classified: every value the
 // Record holds, against its sources and the rules over the record's own actions and hits. A path only the sources or
 // The rules give is an addition the publish makes, so it takes no entry. The build from the overlay is then checked
-// Value By value against the record. A cause the committed overlay holds is kept while its value stands, as
-// `keepCommittedKitCause` keeps it
+// Value by value against the record.
+// A cause the committed overlay holds is kept while its value stands, as keepCommittedKitCause keeps it
 export const compareKitRecord = (
   publishedRecord: KitRecord,
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,

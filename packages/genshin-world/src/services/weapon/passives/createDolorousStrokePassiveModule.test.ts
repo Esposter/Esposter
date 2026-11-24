@@ -27,7 +27,7 @@ describe(createDolorousStrokePassiveModule, () => {
 
   // Dolorous Stroke at its first rank: an Elemental Skill gives Path of Conflict for 17 seconds, and Unforgivable and
   // Irreparable for three, once every 18; each raises its own attacks' DMG by 40%, and a hit of the other kind extends
-  // It By a second while the Path holds, by 75% more in Hexerei: Secret Rite
+  // It by a second while the Path holds, by 75% more in Hexerei: Secret Rite
   const passiveModule = createDolorousStrokePassiveModule([17, 3, 0.4, 0.4, 1, 0.75, 18]);
   const wielder: Combatant = {
     ascension: 0,

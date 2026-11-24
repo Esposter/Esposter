@@ -6,7 +6,7 @@ import { COMMON_ENEMY_RESPAWN_DURATION } from "#src/services/enemy/constants";
 import { computeNextDailyReset } from "#src/services/time/computeNextDailyReset";
 
 // When a camp member defeated at a time comes back, by the hardest kind in its camp. A boss is back five seconds after
-// Its Blossom is claimed, and has no time while unclaimed, since `checkIsBossHeld` holds it until a teleport out of its
+// Its blossom is claimed, and has no time while unclaimed, since `checkIsBossHeld` holds it until a teleport out of its
 // Area; A camp with an elite comes back whole at the next daily reset on the server's clock; and a common enemy twelve
 // Hours on
 export const computeEnemyRespawnTime = (

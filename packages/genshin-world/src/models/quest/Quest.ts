@@ -32,7 +32,7 @@ export interface Quest {
 }
 
 // Every talk a talk-to objective or the offer names is one the quest runs, so no step waits on a talk that never
-// Happens And no offer begins one
+// Happens and no offer begins one
 export const questSchema = z
   .object({
     descriptionTextId: z.string().min(1),

@@ -13,8 +13,8 @@ import { SURVEY_BAR_HEIGHT, SURVEY_DESIGN_MODE } from "#src/services/resource/su
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The survey's editor as plain data: a bar across the top, the structure beside the canvas and the inspector beyond it.
-// Preview Removes the structure and the inspector, so the runner has the width a respondent has. On a window below the
-// Mobile breakpoint The structure and the inspector are sheets, as the page's own drawers are there
+// Preview removes the structure and the inspector, so the runner has the width a respondent has. On a window below the
+// Mobile breakpoint the structure and the inspector are sheets, as the page's own drawers are there
 export const SurveyEditorLayout: Layout = {
   canvasId: "canvas",
   panels: [

@@ -16,7 +16,7 @@ const SIGHT_RING_WIDTH = 0.6;
 // Muted
 const SIGHT_DEPTH_TOLERANCE = 0.0001;
 // The sight over the scene, a pass after the fog. Inside its reach a thing that is lit keeps the colour it is lit in
-// And Anything else is muted to a dark of its own luminance, and a white ring is drawn at the reach's edge. Outside the
+// And anything else is muted to a dark of its own luminance, and a white ring is drawn at the reach's edge. Outside the
 // Reach the scene is what it was. Its strength is 0 while the sight is off, which leaves every pixel as it was
 export const createSightNode = (
   colorNode: Node<"vec4">,

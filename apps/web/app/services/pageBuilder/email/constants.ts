@@ -6,7 +6,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { MjmlNodeType } from "mjml-blocks";
 
 // The groups the email palette lists its node types in, in the order shown. A block is inserted into the first slot
-// That Accepts it, so the groups name what a reader can add and not where it goes
+// That accepts it, so the groups name what a reader can add and not where it goes
 export const EMAIL_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<MjmlNode>[] = Object.freeze([
   Object.freeze({
     category: "Layout",

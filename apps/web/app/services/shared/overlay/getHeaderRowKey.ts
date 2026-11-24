@@ -4,7 +4,7 @@ import type { Versioned } from "#src/models/shared/overlay/Versioned";
 import type { RowVersion } from "@esposter/db-schema";
 
 // The key one table's row takes from a write's header, which the client confirms its entry by and the cross-check reads
-// The Same way. A row of another table names none
+// The same way. A row of another table names none
 export const getHeaderRowKey = (
   table: Pick<Table<Versioned>, "keyOfScope" | "name">,
   { key, table: tableName }: RowVersion,

@@ -90,7 +90,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   readonly #serialized = new Map<string, Promise<unknown>>();
 
   // Answers the knocker's row as a tombstone, at the version the removal raised it to. A knocker already let in or
-  // Dismissed Answers its tombstone and is not admitted again, and a knocker the call never held answers nothing
+  // Dismissed answers its tombstone and is not admitted again, and a knocker the call never held answers nothing
   admitKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): CallParticipantRow | null {
     return this.#answerKnockerRemoval(knockerId, (sessionId) => {
       this.db.insert(admittedSessions).values({ sessionId }).onConflictDoNothing().run();
@@ -174,7 +174,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   }): void {
     this.#purgeTombstones();
     // A session knocks under one live id however often it knocks, so the doorkeeper's lobby holds it once. A session
-    // Whose Knock was let in or dismissed gets a new id, and its row is the one its session names, revived above its
+    // Whose knock was let in or dismissed gets a new id, and its row is the one its session names, revived above its
     // Tombstone
     const id = this.#readKnockerBySession(sessionId)?.id ?? v7();
     const row = takeOne(
@@ -198,9 +198,10 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return participant ? this.#removeParticipant(callSessionId, participant) : null;
   }
 
-  // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving. The replacement
-  // Is added under the same participant, so the participant stays in the call. The kick's webhook can land After the
-  // Replacement is added, so a leave from before the current connection was added is the kicked one's too
+  // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving.
+  // The replacement is added under the same participant, so the participant stays in the call. The kick's webhook can
+  // Land after the replacement is added, so a leave from before the current connection was added is the kicked one's
+  // Too
   participantLeft({
     callSessionId,
     leftAt,
@@ -241,7 +242,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   }
 
   // The user a participant is a connection of, read for the webhook that checks its admission. Empty when the call
-  // Holds no Such participant, which is a connection the call no longer admits
+  // Holds no such participant, which is a connection the call no longer admits
   readParticipantUserId({ participantId }: { participantId: string }): string {
     return this.#readParticipant(participantId)?.userId ?? "";
   }
@@ -375,7 +376,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
 
   // Adds a connection as a participant and announces it. Returns whether it started the call. A session that left is
   // Revived under the id this join minted: its row is the one the session's unique column names, so the upsert keys on
-  // That Column and its conflict branch clears the tombstone at the version the row continues from
+  // That column and its conflict branch clears the tombstone at the version the row continues from
   #addParticipant(callSessionId: string, sessionId: string, participant: CallParticipant): boolean {
     this.#purgeTombstones();
     const joinedParticipant = { ...participant, deletedAt: null, isCameraEnabled: false, sessionId };
@@ -398,7 +399,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   }
 
   // Takes a live knocker out and hands its session to `announce`, which says what the removal sends. A knocker the call
-  // No Longer holds answers its row as it stands, and announces nothing
+  // No longer holds answers its row as it stands, and announces nothing
   #answerKnockerRemoval(knockerId: string, announce: (sessionId: string) => void): CallParticipantRow | null {
     this.#purgeTombstones();
     const removed = this.#removeKnocker(knockerId);

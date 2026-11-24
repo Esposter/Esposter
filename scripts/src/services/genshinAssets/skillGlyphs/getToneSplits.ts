@@ -12,7 +12,7 @@ import { takeOne } from "@esposter/shared";
 
 // Where an icon's mark is split from its disc and its tones from one another, as shares of white: halfway between the
 // Disc and its first tone, and, for an icon with a pale tone under its white, halfway between the two tones' peaks.
-// Each Peak is the fullest twentieth of its range in the histogram of the mark's shares
+// Each peak is the fullest twentieth of its range in the histogram of the mark's shares
 export const getToneSplits = (shares: Iterable<number>): number[] => {
   const bins = Array.from({ length: TONE_BIN_COUNT }, () => 0);
   for (const share of shares)

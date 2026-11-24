@@ -10,7 +10,7 @@ import { defineAchievementDefinitionMap } from "#shared/services/achievement/def
 import { ClickerAchievementName } from "@esposter/db-schema";
 
 // Every clicker achievement unlocks on a save of the clicker game. The save is the client's own account of how play
-// Went, So these are claims and carry no points (`ClaimedAchievementTriggerPath`)
+// Went, so these are claims and carry no points (`ClaimedAchievementTriggerPath`)
 const defineClickerAchievementDefinition = defineTriggerAchievementDefinition(
   "clicker.saveClicker",
   saveClickerInputSchema,

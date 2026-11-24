@@ -33,8 +33,9 @@ const uploadParts = async (
   return parts;
 };
 
-// Streams the archive into the object named for it. A failed part abandons the upload rather than leaving it for R2 to
-// Age out, so a truncated archive is never completed.
+// Streams the archive into the object named for it.
+// A failed part abandons the upload rather than leaving it for R2 to age out, so a truncated archive is
+// Never completed.
 export const uploadArchive = async (
   bucket: R2Bucket,
   blobName: string,

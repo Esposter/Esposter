@@ -351,7 +351,7 @@ describe(useRealtimeStore, () => {
   );
 
   // A revoke that narrows the connection kicks it, and the kick reaches the client as a leave of its meeting. That
-  // Leave Is not the call ending, so the disconnect handler stays in place for the rejoin that follows with the new
+  // Leave is not the call ending, so the disconnect handler stays in place for the rejoin that follows with the new
   // Token
   test("a kick from the meeting does not end the call, so the rejoin that follows still has it to rejoin", async () => {
     expect.hasAssertions();

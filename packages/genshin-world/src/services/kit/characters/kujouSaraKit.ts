@@ -46,14 +46,14 @@ const C2_CONSTELLATION = 2;
 const C4_CONSTELLATION = 4;
 const C6_CONSTELLATION = 6;
 // Constellation 6 marks the character the ATK Bonus reaches for six seconds, and gives its Electro DMG and its
-// Lunar-Charged Reactions 60% CRIT DMG, as gcsim v2.47.2 (MIT) sara/cons.go gives it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/cons.go`
+// Lunar-Charged reactions 60% CRIT DMG, as gcsim v2.47.2 (MIT) sara/cons.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/cons.go
 const C6_CRITICAL_DAMAGE = 0.6;
 const C6_MARK_SECONDS = 6;
 export const KUJOU_SARA_C6_MARK_ID = "sara-c6-mark";
 // Constellation 1 cuts a second off Sara's skill cooldown as a Tengu Juurai hit lands on an enemy, once every three
-// Seconds, As gcsim v2.47.2 (MIT) sara/cons.go gives it, with the burst's and the Ambush's hits calling it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/cons.go`
+// Seconds, as gcsim v2.47.2 (MIT) sara/cons.go gives it, with the burst's and the Ambush's hits calling it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/cons.go
 const C1_CONSTELLATION = 1;
 const C1_COOLDOWN_ID = "sara-constellation-1-cooldown";
 const C1_COOLDOWN_SECONDS = 3;
@@ -64,12 +64,13 @@ export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 // Kujou Sara's behaviour: Tengu Stormcall's Cover, under which a fully charged shot from Ascension 1 drops the
 // Crowfeather the Ambush strikes, and from Constellation 2 a weaker crowfeather where she stands. Subjugation: Koukou
 // Sendou's Stormclusters, four bouts or six from Constellation 4. Her fully charged shot, Titanbreaker, the Ambushes
-// And The Stormclusters give the character on the field Tengu Stormcall's ATK Bonus, a share of her base ATK, as each
-// Lands. Ascension 1's shorter charge is not built, as a charged attack has one duration. Ascension 4's Decorum
-// Restores Energy As the Ambush lands. Constellation 1's cut to her skill's cooldown is built, from each Tengu Juurai
-// Hit that strikes an Enemy, the burst's first hit and the Ambush. Constellation 6's mark gives the character it
-// Reaches 60% CRIT DMG on its Electro DMG and on its Lunar-Charged reactions, for six seconds Restores the party's
-// Energy as the Ambush's hits land, once every three seconds, from the Energy Recharge its striker has
+// And the Stormclusters give the character on the field Tengu Stormcall's ATK Bonus, a share of her base ATK, as
+// Each lands. Ascension 1's shorter charge is not built, as a charged attack has one duration. Ascension 4's Decorum
+// Restores Energy as the Ambush lands. Constellation 1's cut to her skill's cooldown is built, from each Tengu Juurai
+// Hit that strikes an enemy, the burst's first hit and the Ambush. Constellation 6's mark gives the character it
+// Reaches 60% CRIT DMG on its Electro DMG and on its Lunar-Charged reactions, for six seconds
+// Restores the party's Energy as the Ambush's hits land, once every three seconds, from the Energy Recharge its striker
+// Has
 const restoreDecorumEnergy = (
   { characterIdCombatantMap, kitEffectState, party }: KitContext,
   { combatant }: KitStrike,
@@ -175,7 +176,7 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
       criticalDamageBonus: getMarkedElectroCriticalDamage(strike, effects),
     }),
     // Constellation 6's mark gives Sara's own Electro strikes CRIT DMG while she holds it, and gives the party's
-    // Electro strikes And Lunar-Charged reactions by a marked character the same
+    // Electro strikes and Lunar-Charged reactions by a marked character the same
     getStrikeCriticalDamageBonus: (strike, _enemy, _party, effects) => getMarkedElectroCriticalDamage(strike, effects),
     skill: {
       // The Cover lasts its seconds, and from Constellation 2 a weaker crowfeather is set out where Sara stands

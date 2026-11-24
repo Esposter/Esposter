@@ -13,8 +13,9 @@ const { content, name } = await useReadPublishedResourceContent(
   () => $trpc.email.readPublishedResourceContent.query(id),
   (version) => $trpc.email.readPublishedVersionContent.query({ id, version }),
 );
-// The compiled html is captured at publish, which refuses an email the validator rejects, so the web view serves it As
-// It is. This is the unpersonalized template — merge-field tokens render as authored, which is what a browser copy is
+// The compiled html is captured at publish, which refuses an email the validator rejects, so the web view serves it
+// As it is. This is the unpersonalized template — merge-field tokens render as authored, which is what a browser copy
+// Is
 const srcdoc = content.html ?? "";
 </script>
 

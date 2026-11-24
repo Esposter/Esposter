@@ -18,8 +18,8 @@ const countWavesplitterStacks = (effects: readonly KitEffect[], characterId: num
   findKitStatus(effects, characterId, WAVESPLITTER_ID)?.stacks ?? 0;
 
 // Wavesplitter at its rank: a clock ticks every interval from the start of the battle, and on each tick its wielder is
-// On the Field, she gains a stack, up to five. Each stack raises the DMG she deals by the rank's first share and the
-// DMG she takes by Its second. A DMG taken takes one stack away. The stacks stay when she leaves the field, and a tick
+// On the field, she gains a stack, up to five. Each stack raises the DMG she deals by the rank's first share and the
+// DMG she takes by its second. A DMG taken takes one stack away. The stacks stay when she leaves the field, and a tick
 // Counts only while she is on it
 export const createWavesplitterPassiveModule = (params: number[]): PassiveModule => {
   const intervalSeconds = takeOne(params, 0);

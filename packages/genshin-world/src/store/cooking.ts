@@ -22,10 +22,10 @@ const read = <T>(readTable: () => Promise<T>, setTable: (table: T) => void) => {
   )();
 };
 
-// The cooking recipes and the stove's place in Mondstadt, each Read from the hosted game data as the world starts, with
-// The progress the save holds: the recipes learned and the Proficiency in each, and the processing jobs running. The
-// Bag's use of an instruction item and the stove's prompt read It, and the session starts it before the save watches it
-// And stops it as it unmounts
+// The cooking recipes and the stove's place in Mondstadt, each
+// Read from the hosted game data as the world starts, with the progress the save holds: the recipes learned and the
+// Proficiency in each, and the processing jobs running. The bag's use of an instruction item and the stove's prompt
+// Read it, and the session starts it before the save watches it and stops it as it unmounts
 export const useWorldCookingStore = defineStore("world/cooking", () => {
   const worldSessionStore = useWorldSessionStore();
   const cookingProgress = shallowRef<CookingProgress>(createCookingProgress());

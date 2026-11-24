@@ -73,7 +73,7 @@ export const useProgramStatus = () => {
       onError: createErrorNotification,
       onSuccess: async ({ audienceTruncation, participants }) => {
         // The mutation is the one place a new credential reaches the owner, so its answer leaves as the file of links
-        // They send. It holds only the participants this run issued, since a credential is never given twice, and no
+        // They send. it holds only the participants this run issued, since a credential is never given twice, and no
         // Link is shown again once the file is gone
         if (participants.length > 0)
           downloadFile(
@@ -101,7 +101,7 @@ export const useProgramStatus = () => {
     });
   };
   // The owner's invite export, the invites for everyone or the reminders for those still awaiting. It hands over a file
-  // Of Personalised emails and reports back as notices
+  // Of personalised emails and reports back as notices
   const exportInviteFiles = (scope: ProgramInviteScope, { emailHtml, invites, unmatchedCount }: ProgramInvites) => {
     const isReminder = scope === ProgramInviteScope.Awaiting;
     // A participant past the audience read's cap has no row to fill, so the file is never sent without them named
@@ -150,7 +150,7 @@ export const useProgramStatus = () => {
   };
 
   // A participant's link is issued by the server once, and a new one replaces it: the replacement is held here until
-  // Its Dialog closes, since the server does not answer it again
+  // Its dialog closes, since the server does not answer it again
   const issuedLink = ref("");
   const { executeMutation: executeRegenerateLinkMutation } = useMutation();
   const regenerateParticipantLink = async (keyValue: string) => {

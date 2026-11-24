@@ -25,7 +25,7 @@ export const RESTRICTED_IMPORT_SYNTAXES: SelectorBanList = {
     },
     {
       // `@tiptap/html` resolves its browser build in a Worker, whose `generateHTML` throws wherever `window` is absent,
-      // So a Render reached from the server fails in production while a Node test, which resolves the happy-dom build,
+      // So a render reached from the server fails in production while a Node test, which resolves the happy-dom build,
       // Passes
       message:
         "Render a document to HTML with `renderToHTMLString` from `@tiptap/static-renderer/pm/html-string`, never `@tiptap/html`'s `generateHTML` or `getHTMLFromFragment`, which throw in the web Worker. See the tiptap skill.",

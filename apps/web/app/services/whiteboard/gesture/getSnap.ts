@@ -11,7 +11,7 @@ const getAxisExtent = ({ height, width, x, y }: Bounds, axis: SnapAxis): { size:
   axis === SnapAxis.X ? { size: width, start: x } : { size: height, start: y };
 
 // The lines a box aligns on along one axis: its start edge, its centre and its end edge. An edge midpoint lies on two
-// Of these lines, so it snaps The same way an edge or centre does
+// Of these lines, so it snaps the same way an edge or centre does
 const getAxisLines = (bounds: Bounds, axis: SnapAxis): number[] => {
   const { size, start } = getAxisExtent(bounds, axis);
   return [start, start + size / 2, start + size];
@@ -41,7 +41,7 @@ const checkIsOnLine = (bounds: Bounds, axis: SnapAxis, position: number): boolea
   getAxisLines(bounds, axis).some((line) => Math.abs(line - position) <= ALIGNMENT_TOLERANCE);
 
 // The guides of the alignments a snapped box holds along one axis. Each position where a line of the box lies on a line
-// Of another element gets one Guide, which runs along the other axis across the box and each element that lies on the
+// Of another element gets one guide, which runs along the other axis across the box and each element that lies on the
 // Same line
 const getAxisGuides = (axis: SnapAxis, snappedBounds: Bounds, targetBounds: Bounds[]): SnapGuide[] => {
   const otherAxis = axis === SnapAxis.X ? SnapAxis.Y : SnapAxis.X;
@@ -61,8 +61,8 @@ const getAxisGuides = (axis: SnapAxis, snappedBounds: Bounds, targetBounds: Boun
 };
 
 // The offset a moved box snaps by on each axis, to the nearest edge, centre or edge midpoint of the other elements
-// Within the snap distance, with the Guides of the alignments the snapped box then holds. The snap distance is held in
-// Screen pixels, so it is divided by the scale to take document Units. The moving elements are left out of the lines
+// Within the snap distance, with the guides of the alignments the snapped box then holds. The snap distance is held in
+// Screen pixels, so it is divided by the scale to take document units. The moving elements are left out of the lines
 // The box snaps to, and an axis with nothing in range takes no offset
 export const getSnap = (
   document: PositionedDocument,

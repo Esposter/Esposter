@@ -8,11 +8,11 @@ import { spawn } from "@esposter/shared-node/child-process";
 import { constants, setPriority } from "node:os";
 import { dirname } from "node:path";
 
-// Runs AnimeStudio as `runAnimeStudio` does, with the same verdict on its run, but without blocking, so the shards of A
-// Map run as processes of their own at once. Each run's output is held until it exits, which a map's warnings keep
-// Small. A below-normal run runs at Below-normal priority (under the Utility QoS clamp on macOS, where a nice value
-// Leaves It competing with the Foreground), so a long sweep never slows the session the user works on; how many run at
-// Once is The caller's, sized to the memory by `computeMemoryBoundedShardCount`
+// Runs AnimeStudio as `runAnimeStudio` does, with the same verdict on its run, but without blocking, so the shards of
+// A map run as processes of their own at once. Each run's output is held until it exits, which a map's warnings
+// Keep small. A below-normal run runs at Below-normal priority (under the Utility QoS clamp on macOS, where a nice
+// Value leaves it competing with the Foreground), so a long sweep never slows the session the user works on; how many
+// Run at once is the caller's, sized to the memory by `computeMemoryBoundedShardCount`
 export const runAnimeStudioAsync = async (
   args: string[],
   options: AnimeStudioOptions,

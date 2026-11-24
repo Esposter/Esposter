@@ -4,9 +4,9 @@ import { Element } from "#src/models/Element";
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
 
 // The Emperor of Fire and Iron's attacks from its wiki page, in the order the page lists them. Twin Molten Horns is a
-// Shield And a phase, and Regeneration deals no damage, so neither is a move. Charging Strike to Searing Coronation are
-// Used only While the Molten Horns are intact, a phase not yet run. The Stygian Onslaught variants are not modelled.
-// Each move's windup And recovery are the common enemies' and are PROVISIONAL until measured
+// Shield and a phase, and Regeneration deals no damage, so neither is a move. Charging Strike to Searing Coronation are
+// Used only while the Molten Horns are intact, a phase not yet run. The Stygian Onslaught variants are not modelled.
+// Each move's windup and recovery are the common enemies' and are PROVISIONAL until measured
 export const EMPEROR_OF_FIRE_AND_IRON_MOVES: BossMove[] = [
   { atkPercent: 50, name: "Ambush", recoverySeconds: ENEMY_RECOVERY_SECONDS, windupSeconds: ENEMY_WINDUP_SECONDS },
   {
@@ -36,7 +36,7 @@ export const EMPEROR_OF_FIRE_AND_IRON_MOVES: BossMove[] = [
     windupSeconds: ENEMY_WINDUP_SECONDS,
   },
   // Used only while the Molten Horns are intact. The burnt ground it leaves deals 6% ATK as Pyro DMG every 0.5s, a
-  // Lingering Effect not yet run
+  // Lingering effect not yet run
   {
     atkPercent: 50,
     element: Element.Pyro,

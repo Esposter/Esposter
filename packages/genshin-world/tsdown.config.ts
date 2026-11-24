@@ -7,14 +7,17 @@ import { getTsdownConfigurationVue } from "@esposter/configuration";
 import { generateBarrels } from "@esposter/configuration/generate-barrels";
 import { mergeConfig } from "tsdown";
 
-// `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save` And
-// `sceneExport` are the app server's, which reach none of the world's components. The parity page's shapes are what The
-// Tooling in `scripts` reads back off the page, so the workspace resolves them from source under `./parity/<name>`, and
-// The published map, which ships no page, never carries the arms The `build:prepare` hook replaces the base's rather
-// Than joining it, so it hands `generateBarrels` its own folders, Which adds the subpath exclusions its manifest's arms
-// Name. It writes the kit map first, so the barrel lists the map On a fresh clone too. The barrel leaves the kit
-// Modules out, since The kit map loads each through an `import()` of its own as its character joins the party The
-// Traveler's game model is loaded on demand in development, so the barrel leaves its modules out and they stay a chunk
+// `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`
+// And `sceneExport` are the app server's, which reach none of the world's components. The parity page's shapes are what
+// The tooling in `scripts` reads back off the page, so the workspace resolves them from source under `./parity/<name>`,
+// And the published map, which ships no page, never carries the arms
+// The `build:prepare` hook replaces the base's rather than joining it, so it hands `generateBarrels` its own folders,
+// Which adds the subpath exclusions its manifest's arms name. It writes the kit map first, so the barrel lists the map
+// On a fresh clone too.
+// The barrel leaves the kit modules out, since
+// The kit map loads each through an `import()` of its own as its character joins the party
+// The Traveler's game model is loaded on demand in development, so the barrel leaves its modules out and they stay a
+// Chunk
 const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
 // The card game's service and session, which the world's session loads on a duel's opening rather than with the world
 const GCG_MODULE_DIRECTORIES = ["services/gcg", "components/Gcg"];

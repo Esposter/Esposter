@@ -14,7 +14,7 @@ export const CRYSTALLIZE_ELEMENTAL_MASTERY_CURVE: ElementalMasteryCurve = Object
 export const FORWARD_AMPLIFYING_MULTIPLIER = 2;
 export const REVERSE_AMPLIFYING_MULTIPLIER = 1.5;
 // An attacker of level A has 5A + 500 defence against which an enemy's defence is taken off, so the share of damage
-// Left Is (5A + 500) / (defence + 5A + 500) before any defence is reduced or ignored
+// Left is (5A + 500) / (defence + 5A + 500) before any defence is reduced or ignored
 export const ATTACKER_LEVEL_DEFENSE_SCALE = 5;
 export const ATTACKER_LEVEL_DEFENSE_OFFSET = 500;
 // Superconduct takes 40% off its target's Physical RES for 12 seconds
@@ -27,7 +27,7 @@ export const DAMAGE_BONUS_ATTRIBUTES: readonly Attribute[] = Object.freeze([
   Attribute.PhysicalDamageBonus,
 ]);
 // Elemental mastery raises Lunar damage by 6 × mastery / (mastery + 2000), as the Damage page of the Genshin Impact
-// Wiki And gcsim's (MIT) pkg/core/combat/reaction.go give it
+// Wiki and gcsim's (MIT) pkg/core/combat/reaction.go give it
 // Https://genshin-impact.fandom.com/wiki/Damage#Lunar_and_Stellar_Glimmer_Reactions
 export const LUNAR_ELEMENTAL_MASTERY_CURVE: ElementalMasteryCurve = Object.freeze({ offset: 2000, scale: 6 });
 // A Lunar reaction's own hit sums its contributors' damage, the largest first, each weighted by its place here, and is
@@ -36,7 +36,7 @@ export const LUNAR_ELEMENTAL_MASTERY_CURVE: ElementalMasteryCurve = Object.freez
 export const LUNAR_CONTRIBUTION_WEIGHTS: readonly number[] = [0.6, 0.3, 0.05, 0.05];
 
 // The Stellar-Conduct's Starlight Prism, from the wiki's Stellar-Conduct page: its Base Reaction Coefficient starts at
-// 1 and Rises by 40%, plus 5% for each Cryo or Electro hit recorded up to 12. Its field's Cryo and Electro DMG Bonus is
+// 1 and rises by 40%, plus 5% for each Cryo or Electro hit recorded up to 12. Its field's Cryo and Electro DMG Bonus is
 // 20%, or 28% plus 1% for each hit recorded up to 12 once one is recorded
 export const STELLAR_CONDUCT_MAX_RECORDED_HITS = 12;
 export const STELLAR_CONDUCT_RECORDED_COEFFICIENT_BONUS = 0.4;

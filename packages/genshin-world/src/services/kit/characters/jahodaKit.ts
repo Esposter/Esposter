@@ -58,8 +58,8 @@ const FLASK_ABSORBED_STATUS_PREFIX = "jahoda-flask-absorbed-";
 // The drain timer outlives its one tick, so it ticks as the pursuit runs out
 const PURSUIT_TICK_EXTRA_SECONDS = 0.1;
 // Measured: gcsim (MIT, v2.47.2) jahoda/cons.go, Constellation 6: a full flask's drain at Ascendant Gleam gives each
-// Moonsign Character 5% Crit Rate and 40% Crit DMG for 20 seconds, the buff a source names restarting only itself
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go`
+// Moonsign character 5% Crit Rate and 40% Crit DMG for 20 seconds, the buff a source names restarting only itself
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_CRITICAL_RATE = 0.05;
 const CONSTELLATION_6_CRITICAL_DAMAGE = 0.4;
@@ -177,13 +177,13 @@ export const createJahodaKitBehaviour = ({
     },
   };
   // The filled flask's hit lands sooner from a press, or the pursuit running out, than from the fill that fills it, and
-  // The Unfilled flask's hit the same from each
+  // The unfilled flask's hit the same from each
   const filledDrainHit: KitHit = { ...filledDrainHitFields, hitmarkSeconds: readSeconds("filledDrainHit") };
   const filledPressHit: KitHit = { ...filledDrainHitFields, hitmarkSeconds: readSeconds("filledPressHit") };
   const unfilledHit: KitHit = { ...unfilledDrainHitFields, hitmarkSeconds: readSeconds("unfilledHit") };
 
   // Each Meowball strikes the living enemy nearest her body, which the kit takes as the primary target, since it reads
-  // No Default target as gcsim does
+  // No default target as gcsim does
   const strikeMeowball = (context: KitContext, combatant: Combatant, element: Element): void => {
     const [primary] = getNearestLivingEnemies(context.enemyMap.values(), context.body.position, 1);
     if (primary !== undefined)
@@ -207,8 +207,8 @@ export const createJahodaKitBehaviour = ({
   };
 
   // Drains the flask as gcsim's drainFlask does: its unfilled hit, or the filled hit given, then the pursuit and its
-  // Drain Timer end, the gauge and the absorbed element with them. The hit is a summon cast where the drain is. A full
-  // Flask's Drain at Ascendant Gleam buffs each Moonsign member, as Constellation 6 gives
+  // Drain timer end, the gauge and the absorbed element with them. The hit is a summon cast where the drain is. A full
+  // Flask's drain at Ascendant Gleam buffs each Moonsign member, as Constellation 6 gives
   const drainFlask = (context: KitContext, body: KitBody, combatant: Combatant, filledHit: KitHit): void => {
     const { characterIdCombatantMap, kitEffectState, party } = context;
     const isFilled = readFlaskGauge(kitEffectState, combatant.characterId) >= FLASK_GAUGE_MAXIMUM;
@@ -376,7 +376,7 @@ export const createJahodaKitBehaviour = ({
     },
     skill: { onStart: startPursuit },
     // The second press drains the flask at once, its hit a summon cast where the body stands, since the hit depends on
-    // The Gauge
+    // The gauge
     skillChain: [
       {
         onStart: (context) => {

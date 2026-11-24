@@ -15,9 +15,9 @@ import { getSurveyQuestionErrors } from "#src/services/runner/getSurveyQuestionE
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
 
 // The issues a response's answers hold against the document: a name no question holds, an answer to a question that is
-// Not shown Each answer a shown question refuses, by the runner's own check of a question A submit also refuses a shown
-// Required question that is unanswered A draft checks only the answers it holds, since a respondent may not have
-// Reached a required question yet
+// Not shown each answer a shown question refuses, by the runner's own check of a question
+// A submit also refuses a shown required question that is unanswered
+// A draft checks only the answers it holds, since a respondent may not have reached a required question yet
 export const validateSurveyAnswers = (
   document: SurveyDocument,
   answers: SurveyAnswers,

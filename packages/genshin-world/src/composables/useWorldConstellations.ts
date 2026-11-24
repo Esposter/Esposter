@@ -12,8 +12,8 @@ import { computed, shallowRef } from "vue";
 export const useWorldConstellations = () => {
   const worldSessionStore = useWorldSessionStore();
   const constellationKits = shallowRef<CharacterConstellationKit[]>([]);
-  // `match(`) handles both branches, so the promise
-  // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
+  /* oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it
+     returns cannot reject and nothing waits on it */
   getResultAsync(() => readConstellationTables(worldSessionStore.gameDataBaseUrl)).match(
     (kits) => {
       constellationKits.value = kits;

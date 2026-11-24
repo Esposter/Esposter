@@ -4,10 +4,10 @@ import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { QualityTier } from "#src/models/renderer/QualityTier";
 
 // What each tier spends, cheapest cut first: grass blades, whose thinning the look survives best, the shadow maps,
-// Which cost every shadowed fragment, the god rays, a march per pixel at half resolution, the screen-space occlusion, A
-// March of its own per pixel, the pixel ratio, which costs every fragment, and bloom, a chain of blurs. TRAA settles
-// The thin outlines and leaf edges that SMAA leaves Shimmering, for a velocity target and a frame of history. The ramp,
-// The rim and the outlines are the style, so no Tier drops them
+// Which cost every shadowed fragment, the god rays, a march per pixel at half resolution, the screen-space occlusion,
+// A march of its own per pixel, the pixel ratio, which costs every fragment, and bloom, a chain of blurs. TRAA settles
+// The thin outlines and leaf edges that SMAA leaves shimmering, for a velocity target and a frame of history. The ramp,
+// The rim and the outlines are the style, so no tier drops them
 export const QualityTierSettingsMap: Readonly<Record<QualityTier, QualityTierSettings>> = {
   [QualityTier.High]: {
     antialiasingMode: AntialiasingMode.Traa,

@@ -9,7 +9,7 @@ import { shallowRef } from "vue";
 
 // The tips the world shows: each tip a world event triggers and the save has not shown is shown in turn, the next only
 // Once the one on screen is closed. A tip is kept in the save once it is shown, so it is shown once per save. A tip
-// Still Waiting in the queue is kept in the save too, so a reload shows it on the next event, as the save left it
+// Still waiting in the queue is kept in the save too, so a reload shows it on the next event, as the save left it
 export const useWorldTips = ({
   queuedTipIds,
   shownTipIds,
@@ -83,7 +83,7 @@ export const useWorldTips = ({
     );
   });
   // The first unlock of a domain entrance triggers the dungeon-entry tips. Their parameter names a dungeon entry whose
-  // Meaning is Not read yet, so any entry's first unlock fires them, and the save keeps each shown once
+  // Meaning is not read yet, so any entry's first unlock fires them, and the save keeps each shown once
   events.on("domainEntryUnlocked", () => {
     queueTips(getTipsTriggered(tips, shownTipIds.value, TipTriggerType.DungeonEntryToBeExplored, () => true));
   });

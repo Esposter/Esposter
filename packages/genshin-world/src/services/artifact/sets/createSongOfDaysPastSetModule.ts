@@ -35,10 +35,10 @@ const findYearning = (effects: readonly KitEffect[]): KitStatus | undefined =>
 
 // Song of Days Past. Its four-piece bonus records the HP its wearers' heals restore to the team, up to fifth param's
 // HP, in a Yearning that lasts the first param's seconds, one at a time for the team. When it runs out, the record
-// Becomes a Waves Stage that lasts the second param's seconds and holds the third param's charges: each hit the active
-// Character lands with a Normal, Charged or Plunging attack, or an elemental skill or burst, adds the fourth param of
-// The record as DMG, and spends one. The stage belongs to the wearer whose heal opened the Yearning, so its hooks read
-// It from that wearer's kit alone and the Team's hits are priced and spent once
+// Becomes a Waves stage that lasts the second param's seconds and holds the third param's charges: each hit the active
+// Character lands with a normal, Charged or Plunging attack, or an elemental skill or burst, adds the fourth param of
+// The record as DMG, and spends one. the stage belongs to the wearer whose heal opened the Yearning, so its hooks read
+// It from that wearer's kit alone and the team's hits are priced and spent once
 export const createSongOfDaysPastSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const yearningSeconds = takeOne(bonus.params, 0);
   const wavesSeconds = takeOne(bonus.params, 1);

@@ -19,7 +19,7 @@ describe(createFullCirclePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   // Full Circle at its first rank: each Elemental Reaction gains a stack of Wax and Wane, once every 0.3 seconds, up to
-  // Five, Each raising Elemental Mastery by 24 and lowering ATK by 5%. A stack goes for each six seconds without a
+  // Five, each raising Elemental Mastery by 24 and lowering ATK by 5%. A stack goes for each six seconds without a
   // Reaction
   const passiveModule = createFullCirclePassiveModule([-0.05, 24, 0.3, 6]);
   const react = (context: KitContext) =>

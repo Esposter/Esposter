@@ -21,9 +21,9 @@ export const TONE_CURVE_LIFT = 1e-4;
 // The night's pixels do in their red. Under it the program raises a negative and shows nothing
 export const TONE_CURVE_FLOOR: number = -Math.log2(1 + TONE_CURVE_LIFT) / GENSHIN_TONE_EXPOSURE;
 // The game's bloom, as the post profile's MHYBloom_Z holds it (the login's Display.reference.ts), each value read by
-// Its Field in the order the prefilter takes them: the threshold it takes off each channel of the scene colour, the
-// Scaler What is left is multiplied by, the intensity the bloom is scaled by before it is added to the scene, and the
-// Weights Its four levels are summed by. The bloom's own reading (`genshin:parity passes`' display) is the check on
+// Its field in the order the prefilter takes them: the threshold it takes off each channel of the scene colour, the
+// Scaler what is left is multiplied by, the intensity the bloom is scaled by before it is added to the scene, and the
+// Weights its four levels are summed by. The bloom's own reading (`genshin:parity passes`' display) is the check on
 // Them
 export const GENSHIN_BLOOM_THRESHOLD = 0.75;
 export const GENSHIN_BLOOM_SCALER = 2.5;

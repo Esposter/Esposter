@@ -109,8 +109,8 @@ const ELEMENT_REACTION_TYPES: [Element, LunarReactionType][] = [
 const BURST_WINDOW_ID = "columbina-burst-window";
 const BURST_WINDOW_SECONDS = 1.2;
 // Measured: gcsim (MIT) columbina/asc.go, Ascension 4's Moonridge Dew: a Lunar-Bloom in her burst's window gives one,
-// At Most three each eighteen seconds from the first, three frames apart (lines 120-145)
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/columbina/asc.go`
+// At most three each eighteen seconds from the first, three frames apart (lines 120-145)
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/columbina/asc.go
 const ASCENSION_4 = 4;
 const MOONRIDGE_DEW_ICD_ID = "columbina-moonridge-dew-icd";
 const MOONRIDGE_DEW_ICD_SECONDS = toKitSeconds(3);
@@ -119,7 +119,7 @@ const MOONRIDGE_DEW_WINDOW_SECONDS = toKitSeconds(18 * 60);
 const MOONRIDGE_DEW_GAINS_PER_WINDOW = 3;
 // Moondew Cleanse spends one Dew, the verdant first, and its Lunar-Bloom hits ignore all of each enemy's DEF, as
 // Gcsim's ChargeAttackBloom gives them (charge.go 101 and 110). It spends at the press rather than at gcsim's
-// ConsumeDew frame, which Only a Dew read by another member's press in the frames between the two tells apart
+// ConsumeDew frame, which only a Dew read by another member's press in the frames between the two tells apart
 const MOONDEW_CLEANSE_DEW_COUNT = 1;
 const MOONDEW_CLEANSE_DEFENCE_IGNORED = 1;
 // Moondew Cleanse spends no stamina, as the wiki's Normal Attack text and gcsim's columbina.go both give it
@@ -251,7 +251,7 @@ const applyConstellation1 = (context: KitContext, combatant: Combatant, reaction
 };
 
 // Constellation 2's HP for Columbina, and with the Moonsign at Ascendant Gleam, the reaction's stat on the active
-// Member alone, Which the reaction's stat replaces from the team's other members
+// Member alone, which the reaction's stat replaces from the team's other members
 const applyConstellation2 = (context: KitContext, combatant: Combatant, reactionType: LunarReactionType): void => {
   buffKitMember(context.kitEffectState, COLUMBINA_CHARACTER_ID, {
     amount: CONSTELLATION_2_HEALTH_SHARE,
@@ -281,7 +281,7 @@ const applyConstellation2 = (context: KitContext, combatant: Combatant, reaction
 };
 
 // A Gravity Ripple fires on the reaction its gravity picks, clearing the gravity if it is the one that clears it. Its
-// Hit is not Built, as the record holds none of the ripple's multipliers or hitmarks, but Ascension 1's Lunacy and the
+// Hit is not built, as the record holds none of the ripple's multipliers or hitmarks, but Ascension 1's Lunacy and the
 // Constellations' effects run on it
 const fireGravityRipple = (
   context: KitContext,
@@ -308,16 +308,19 @@ const getConstellation6CriticalDamage = (strike: KitStrike, effects: readonly Ki
 };
 
 // Columbina's behaviour: her skill's DoT, a field that follows her body and ticks its hit round its centre from the
-// Press's Hit for the table's duration, which a press while it runs restarts. Its tick reaches further while her team
+// Press's hit for the table's duration, which a press while it runs restarts. Its tick reaches further while her team
 // Is at Ascendant Gleam. Her Moonsign Benediction counts her toward that level, and its Base DMG bonus is the curve of
-// Her max HP. That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each Gravity Ripple,
-// Not each tick, And its CRIT Rate is the stacks' share. The burst's field is not built yet
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/columbina/skill.go` The Gravity Ripple's hit is
-// Not built, as the record holds none of its multipliers or hitmarks, so the ripple runs its Lunacy and constellation
-// Effects without the hit. Constellation 4 needs the ripple's hits, its energy for each and its flat DMG Constellation
-// 6's CRIT DMG on strikes is built on the burst's window, but its CRIT DMG on the Lunar reaction's own damage Needs the
-// Reaction's element, which KitReaction does not carry. The window's Lunar damage bonus itself is not built Ascension
-// 4's Moonridge Dew is built on the Lunar-Bloom reaction, while its extra hits on Lunar-Charged and Lunar-Crystallize
+// Her max HP.
+// That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each Gravity Ripple, not each tick,
+// And its CRIT Rate is the stacks' share.
+// The burst's field is not built yet
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/columbina/skill.go
+// The Gravity Ripple's hit is not built, as the record holds none of its multipliers or hitmarks, so the ripple runs
+// Its Lunacy and constellation effects without the hit. Constellation 4 needs the ripple's hits, its energy for each
+// And its flat DMG Constellation 6's CRIT DMG on strikes is built on the burst's window, but its CRIT DMG on the Lunar
+// Reaction's own damage needs the reaction's element, which KitReaction does not carry. The window's Lunar damage bonus
+// Itself is not built Ascension 4's Moonridge Dew is built on the Lunar-Bloom reaction, while its extra hits on
+// Lunar-Charged and Lunar-Crystallize
 // Need the Lunar reactions hook, as the team's Lunar reactions are not read yet
 export const createColumbinaKitBehaviour = ({
   kit,
@@ -336,9 +339,9 @@ export const createColumbinaKitBehaviour = ({
       ? { ...skillDotHit, hitArea: { ...skillDotHit.hitArea, radius: ASCENDANT_GLEAM_SKILL_DOT_RADIUS } }
       : skillDotHit;
 
-  // The DoT's field follows her body, and each tick deals its hit round the field's centre, priced by her as she cast
-  // It. The field also builds gravity from the team's Lunar reactions, which a Gravity Ripple fires once it reaches its
-  // Maximum
+  // The DoT's field follows her body, and each tick deals its hit round the field's centre, priced by her as she
+  // Cast it. the field also builds gravity from the team's Lunar reactions, which a Gravity Ripple fires once it
+  // Reaches its maximum
   const castSkillField = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): Gravity => {
     const gravity = createGravity();
     const field = castKitField(kitEffectState, combatant.characterId, body.position, {
@@ -431,7 +434,7 @@ export const createColumbinaKitBehaviour = ({
       onStart: (context) => {
         const { activeCombatant: combatant, body, kitEffectState } = context;
         // A press while the DoT runs restarts its duration and keeps its gravity, as gcsim clears gravity only when no
-        // Skill Stands, and keeps its ticks. A press with none standing starts from no gravity
+        // Skill stands, and keeps its ticks. A press with none standing starts from no gravity
         const standingField = kitEffectState.effects.find(
           (effect): effect is KitField =>
             effect.kind === "field" &&

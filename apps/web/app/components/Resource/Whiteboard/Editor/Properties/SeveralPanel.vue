@@ -6,7 +6,7 @@ import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { PositionedElementType, updatePositionedElementProperty } from "vue-block-editor-headless";
 
 // The panel a selection of several opens: the fill the shapes and sticky notes in it share, or Mixed where they differ,
-// The align, distribute and Stacking controls, and the footer. A change to the fill is one edit that writes it to each
+// The align, distribute and stacking controls, and the footer. A change to the fill is one edit that writes it to each
 // Of them, and No fill is one edit that clears the fill of each shape in it, since a sticky note keeps its fill
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations } = whiteboardStore;

@@ -1,12 +1,12 @@
 import { Element } from "#src/models/Element";
 
 // Measured: gcsim (MIT, v2.47.2) jahoda/asc.go and cons.go. Ascension 1 reads the team's most common element of the
-// Four, The first of them in gcsim's order on a tie, and its effect: Pyro scales the robots' damage, Hydro the heals,
-// Electro Adds a robot, and Cryo shortens the robots' interval. At Ascendant Gleam, Constellation 2 gives the team's
-// Second most Common element that same effect. Constellation 4 gives her 4 energy each time a robot absorbs an element,
-// And Ascension 4 Gives the active character Elemental Mastery each time she heals above 70% of her health
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/asc.go`
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go`
+// Four, the first of them in gcsim's order on a tie, and its effect: Pyro scales the robots' damage, Hydro the heals,
+// Electro adds a robot, and Cryo shortens the robots' interval. At Ascendant Gleam, Constellation 2 gives the team's
+// Second most common element that same effect. Constellation 4 gives her 4 energy each time a robot absorbs an element,
+// And Ascension 4 gives the active character Elemental Mastery each time she heals above 70% of her health
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go
 const JAHODA_ASCENSION_1 = 1;
 export const JAHODA_ASCENSION_4 = 4;
 export const JAHODA_ASCENSION_4_ELEMENTAL_MASTERY = 100;
@@ -71,7 +71,7 @@ const getMostCommonElement = (
 
 // The effects the team's elements give her robots and heals. Ascension 1 gives the most common element its effect, and
 // At Ascendant Gleam Constellation 2 gives the second most common one its effect too. The two are different elements,
-// So their Effects touch different stats and add up
+// So their effects touch different stats and add up
 export const getJahodaElementEffects = (
   ascension: number,
   constellationCount: number,

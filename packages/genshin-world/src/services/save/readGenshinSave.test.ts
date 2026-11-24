@@ -54,7 +54,7 @@ describe(readGenshinSave, () => {
   };
   const REPUTATION = { exp: 150, level: 2 };
   // The Frostbearing Tree offered to: the count held of each item toward its next level, by the item's id, and the
-  // Level It has reached
+  // Level it has reached
   const FROSTBEARING_TREE_PROGRESS = { heldCounts: { 1001: 3 }, level: 2 };
   // A region's statues offered to: the Oculi held toward its next level and the level it has reached, and one Oculus
   // Found in it

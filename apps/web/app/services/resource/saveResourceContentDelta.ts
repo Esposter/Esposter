@@ -18,8 +18,8 @@ export const saveResourceContentDelta = async (
   { contentVersion, id }: Pick<ResourceInResource, "contentVersion" | "id">,
 ): Promise<ResourceInResource | undefined> => {
   const deltaBytes = await getResultAsync(async () => {
-    // The delta worker and its wasm load on the first large save, keeping them
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- out of the eager graph (see encodeContentDelta)
+    /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- the delta worker and its wasm load on the first
+       large save, keeping them out of the eager graph (see encodeContentDelta) */
     const { encodeContentDelta } = await import("#src/services/resource/encodeContentDelta");
     return encodeContentDelta(contentBytes, contentBaseline.bytes);
   }).match(

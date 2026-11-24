@@ -6,7 +6,7 @@ import { and, eq } from "drizzle-orm";
 
 // The post a vote is read from, before its batch, so a missing post is refused before any write. The batch itself moves
 // The count by an increment rather than from this read, so two votes landing together both add their own value. A
-// Removed Post takes no new vote, but a vote already on it is still removed or changed, so only a create asks for it
+// Removed post takes no new vote, but a vote already on it is still removed or changed, so only a create asks for it
 // Live
 export const readLikedPost = async (
   db: Context["db"],

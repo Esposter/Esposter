@@ -9,8 +9,9 @@ import {
 } from "#src/services/windrise/constants";
 import { createWindUniforms } from "genshin-engine";
 
-// The meadows' wind is Mondstadt's own breeze, the one Windrise's scene is set with Starfell Valley and Windrise share
-// The region's sky, so they share its wind until the meadows' reference is fitted with a stronger one
+// The meadows' wind is Mondstadt's own breeze, the one Windrise's scene is set with
+// Starfell Valley and Windrise share the region's sky, so they share its wind until the meadows' reference is fitted
+// With a stronger one
 export const createMondstadtWindUniforms = (): WindUniforms => {
   const windUniforms = createWindUniforms();
   windUniforms.direction.value.copy(WIND_DIRECTION);

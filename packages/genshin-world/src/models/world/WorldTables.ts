@@ -40,7 +40,7 @@ export interface WorldTables {
   // The world draws each character's model from its reader, and the Character screen its terms
   characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents
-  // Tab Reads a talent's upgrades by
+  // Tab reads a talent's upgrades by
   characterTalentKits: CharacterTalentKit[];
   // The crafting bench's place in Mondstadt, in the region's axes, which its prompt stands on
   craftingBenchPlace: CraftingBenchPlace;

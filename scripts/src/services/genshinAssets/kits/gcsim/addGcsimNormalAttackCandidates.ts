@@ -19,8 +19,8 @@ import { STRIKE_TARGETING_AREA } from "genshin-world";
 
 // The normal attacks: each strike's hitmarks from `attackHitmarks` or the release list `attackReleases`, its animation
 // From `attackFrames`, and its hits' areas from the `N<strike>` or `N<strike>-<hit>` hitboxes. A stance's normal
-// Attacks Are the same strikes at the path the stance names: each strike's box is the stance's attack state, and each
-// Hit's Multiplier is the normal attack's times the stance's skill factor, written as its own leaf
+// Attacks are the same strikes at the path the stance names: each strike's box is the stance's attack state, and each
+// Hit's multiplier is the normal attack's times the stance's skill factor, written as its own leaf
 export const addGcsimNormalAttackCandidates = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
   { attacks, config, constantMap, travelMap }: GcsimCharacter,

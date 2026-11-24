@@ -42,7 +42,7 @@ import { computed, shallowRef, watch } from "vue";
 // The Trounce Blossoms the defeated normal bosses leave where they fell, keyed by the spawn each boss fell under. A
 // Blossom waits until it is claimed or its boss is released by a teleport out of its area, and a claim spends the
 // Boss's Original Resin and grants its World Level's rewards and its own drop, the claim setting the boss's respawn
-// Five seconds On. Choosing a claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it
+// Five seconds on. Choosing a claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it
 // Was
 export const useWorldTrounceBlossoms = ({
   catalogue,

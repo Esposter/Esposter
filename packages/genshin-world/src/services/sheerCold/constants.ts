@@ -21,5 +21,5 @@ export const SHEER_COLD_DAMAGE_SHARE = 0.01;
 // The flat HP lost each interval the gauge stays full on top of the share, the wiki's 150 HP
 export const SHEER_COLD_DAMAGE_FLAT = 150;
 // The seconds between two losses of HP while the gauge stays full. The wiki's loss is each second; its table's 30
-// Seconds To 6,428 HP is one second's share and flat amount over thirty seconds
+// Seconds to 6,428 HP is one second's share and flat amount over thirty seconds
 export const SHEER_COLD_DAMAGE_INTERVAL_SECONDS = 1;

@@ -10,7 +10,7 @@ export const SHOP_NEVER_REFRESHED_AT = Temporal.Instant.fromEpochMilliseconds(0)
 export const PAIMON_BARGAINS_PAIR_COUNT = 6;
 export const PAIMON_BARGAINS_PAIR_OFFSET = 2;
 // The three General Goods shops, by the ids their goods are read under: Mondstadt's grocery, which the shop table types
-// As an Activity shop (see the shops page's Open), and Liyue's and Inazuma's, which the table types as groceries
+// As an activity shop (see the shops page's Open), and Liyue's and Inazuma's, which the table types as groceries
 export const MONDSTADT_GENERAL_GOODS_SHOP_ID = 1004;
 export const LIYUE_GENERAL_GOODS_SHOP_ID = 1008;
 export const INAZUMA_GENERAL_GOODS_SHOP_ID = 1056;
@@ -26,7 +26,7 @@ export const PAIMON_BARGAINS_SHOP_ID = 1001;
 // The Lucky Coin, which the Card Shop prices its cards in and the card game's weekly rewards pay
 export const GCG_LUCKY_COIN_ITEM_ID = 107_021;
 // Paimon's Bargains' tabs in the order the screen shows them, each by its id, the currency its goods are bought with
-// And the Key of its name. The Primogem tab's Fates are the inventory's, which the slice does not hold, so that tab is
+// And the key of its name. The Primogem tab's Fates are the inventory's, which the slice does not hold, so that tab is
 // Empty for now
 export const PAIMON_BARGAINS_TABS: readonly { currency: Currency; id: number; nameKey: GameTextKey }[] = [
   { currency: Currency.MasterlessStarglitter, id: 1, nameKey: GameTextKey.StarglitterExchange },

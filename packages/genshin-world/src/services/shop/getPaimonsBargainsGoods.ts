@@ -8,8 +8,8 @@ import { getPaimonsBargainsOffer } from "#src/services/shop/getPaimonsBargainsOf
 import { takeOne } from "@esposter/shared";
 
 // The goods Paimon's Bargains offers in the game-time month `now` falls in: each character of the month's pair as the
-// Good Of its slot in the pair, and each weapon of the month's set as the good of its slot in the set, all at the price
-// Their Rotation gives
+// Good of its slot in the pair, and each weapon of the month's set as the good of its slot in the set, all at the price
+// Their rotation gives
 export const getPaimonsBargainsGoods = (
   rotation: PaimonsBargainsRotation,
   now: Temporal.Instant,

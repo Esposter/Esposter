@@ -1,5 +1,5 @@
 // What a failed comparison leaves `compare --all` to do before the next reference: a page, context or browser that
-// Closed Is relaunched for it, while any other failure is the reference's own and leaves the browser it ran in
+// Closed is relaunched for it, while any other failure is the reference's own and leaves the browser it ran in
 export const ComparisonFailureRecovery = {
   MissingInput: "missing input",
   RelaunchAndContinue: "relaunch and continue",

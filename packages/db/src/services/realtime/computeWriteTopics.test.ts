@@ -83,7 +83,7 @@ describe(computeWriteTopics, () => {
   });
 
   // The caller's RETURNING names only `userId`, which left out the room that scopes the row, so a write must name the
-  // Scope values Of the rows it returns whatever columns the caller asked for, and the caller is answered only the
+  // Scope values of the rows it returns whatever columns the caller asked for, and the caller is answered only the
   // Columns it asked for
   test("a write that returns only some of its columns still names the scope values of the rows it returns", async () => {
     expect.hasAssertions();
@@ -112,7 +112,7 @@ describe(computeWriteTopics, () => {
   });
 
   // An update names the scope values of the rows its WHERE matches, whatever its SET writes and whatever RETURNING its
-  // Caller Asked for. A caller that remembered no RETURNING must not leave a reader of one room's rows unwoken by the
+  // Caller asked for. A caller that remembered no RETURNING must not leave a reader of one room's rows unwoken by the
   // Room's update
   test("an update that asks for no RETURNING and writes no scope column names the scope values of the rows it changes", async () => {
     expect.hasAssertions();
@@ -137,7 +137,7 @@ describe(computeWriteTopics, () => {
   });
 
   // An insert that asks for no RETURNING, as a role assignment writes its membership, names the scope values of the
-  // Rows its values Hold, since those are the rows it writes. A table-wide topic alone would not wake a read that
+  // Rows its values hold, since those are the rows it writes. A table-wide topic alone would not wake a read that
   // Watches one room's rows
   test("an insert that asks for no RETURNING names the scope values of the rows it writes", async () => {
     expect.hasAssertions();
@@ -212,8 +212,8 @@ describe(computeWriteTopics, () => {
   });
 
   // A resource delete changes its own row and every row its foreign keys cascade to. RETURNING does not report the
-  // Cascaded Rows, so each child table is named table-wide, and each row a child holds is named by its scope values,
-  // Which the Walk reads before the delete. A child table with no row of the resource is named table-wide alone
+  // Cascaded rows, so each child table is named table-wide, and each row a child holds is named by its scope values,
+  // Which the walk reads before the delete. A child table with no row of the resource is named table-wide alone
   test("a delete names the scope values of the rows it deletes and of the child rows its foreign keys cascade to", async () => {
     expect.hasAssertions();
 
@@ -345,7 +345,7 @@ describe(computeWriteTopics, () => {
   });
 
   // Without RETURNING the recorder widens the update to return its scope columns (`widenUnreturnedWrite`), so the
-  // Values its rows Hold after it are known as well as the values they held before it, which are read ahead of it. A
+  // Values its rows hold after it are known as well as the values they held before it, which are read ahead of it. A
   // Reader of either is woken
   test("an update that asks for no RETURNING names the scope values its rows held before it, and the ones it sets", async () => {
     expect.hasAssertions();

@@ -75,7 +75,7 @@ export const SOURCE_DIRECTORY_NAME = "src";
 export const INTERNAL_DIRECTORY = "internal";
 export const COMPONENTS_DIRECTORY = "components";
 // The app's migrations, one folder per database under it, from the repository root. The Drizzle config writes them
-// There, And the mock database and the dev seed read them from there, so the three cannot disagree on where a migration
+// There, and the mock database and the dev seed read them from there, so the three cannot disagree on where a migration
 // Is
 export const DATABASE_MIGRATIONS_DIRECTORY = "apps/web/server/db/migrations";
 // A leading dot on a folder name in an output path, such as the `.pnpm` folder pnpm keeps its packages in

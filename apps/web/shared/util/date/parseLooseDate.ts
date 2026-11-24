@@ -15,7 +15,7 @@ const DAY_CANDIDATE_REGEX = /(?<![\d:])\d{1,2}(?![\d:])/gu;
 const ENGINE_DEFAULT_YEAR = 2001;
 
 // The engine rolls a day its named month lacks into the next month, so "30 Feb 2026" reads as 2 March. The text names
-// Its Month, so it is refused when none of its numbers that could be its day fits that month. It is never judged by the
+// Its month, so it is refused when none of its numbers that could be its day fits that month. It is never judged by the
 // Engine's own day, which a time zone or a time moves across a month's edge without the text being wrong
 const checkIsDayRolled = (value: string) => {
   const month = MONTH_NAME_REGEX.exec(value)?.groups?.month;

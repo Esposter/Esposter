@@ -1,8 +1,8 @@
 import type { ReviewCommit } from "#src/models/review/ReviewCommit";
 
 // How many of the commits owed, from the first, make the window: the longest prefix whose changed files, taken
-// Together, Stay at or under the cap. A window always holds at least one commit, even one alone over the cap, so no
-// Commit is Ever owed forever.
+// Together, stay at or under the cap. A window always holds at least one commit, even one alone over the cap, so no
+// Commit is ever owed forever.
 export const getWindowCommitCount = (commits: ReviewCommit[], fileCap: number): number => {
   const files = new Set<string>();
   let count = 0;

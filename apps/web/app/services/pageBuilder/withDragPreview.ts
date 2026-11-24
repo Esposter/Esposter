@@ -10,9 +10,9 @@ import { insertBlockNode } from "vue-block-editor-headless";
 export const DRAG_PREVIEW_NODE_ID = "drag-preview";
 
 // The document with a palette block being dragged inserted at the slot and index it would land in, as a preview only.
-// The Input is never changed and the store never holds the result. applyPatches copies just the path down to the slot
-// And shares Every other subtree, so no document is cloned per pointer move. A slot that refuses the type, or an insert
-// That cannot Apply, gives the input back unchanged
+// The input is never changed and the store never holds the result. applyPatches copies just the path down to the slot
+// And shares every other subtree, so no document is cloned per pointer move. A slot that refuses the type, or an insert
+// That cannot apply, gives the input back unchanged
 export const withDragPreview = <TDocument extends BlockDocument>(
   kind: AnyPageBuilderKind,
   document: TDocument,

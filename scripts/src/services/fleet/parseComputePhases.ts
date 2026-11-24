@@ -11,9 +11,9 @@ const ROW_REGEX =
   /^\|[^|\n]*\|\s*\[[^\]\n]*\]\((?<page>(?<folder>[^/)\n]+)\/[^)\n]*)\)\s*\|\s*(?<kind>[^|\n]*?)\s*\|\s*(?<phase>\d+)\s*\|$/gmu;
 
 // The kind and phase each compute page's folder holds, from the index's Phases table. A row whose phase is past the
-// Last Genshin phase maps to nothing, so its page has no row and its read fails rather than taking a phase off the
-// List. A Row whose kind is not a compute kind fails the read, naming its page, and two rows naming one folder fail it
-// Naming the Folder, since a folder holds one phase and one kind
+// Last genshin phase maps to nothing, so its page has no row and its read fails rather than taking a phase off
+// The list. A row whose kind is not a compute kind fails the read, naming its page, and two rows naming one folder fail
+// It naming the folder, since a folder holds one phase and one kind
 export const parseComputePhases = (index: string): Map<string, ComputePhase> => {
   const section = readMarkdownSection(index, COMPUTE_QUEUE_PHASE_HEADING);
   const rows = Array.from(section.matchAll(ROW_REGEX), ({ groups }) => ({

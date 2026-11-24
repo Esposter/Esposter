@@ -6,8 +6,8 @@ export const CAMERA_PROFILE_NAME = "CameraProfile";
 // The global config's words in order, each named by the il2cpp dummy scripts of a 2022 build
 // (github.com/fengjixuchui/WorldReverse, `MoleMole/PipelineCameraGlobalConfig.cs`), whose order the current build keeps
 // With twelve fields added: the paired values fall on their pairs and every flag on a 0 or a 1. The first five words
-// Hold The default elevations and the anchor's distance in order with one added field, whose place their values do not
-// Tell, So none of the five is named
+// Hold the default elevations and the anchor's distance in order with one added field, whose place their values do not
+// Tell, so none of the five is named
 export const CAMERA_GLOBAL_CONFIG_FIELDS: readonly CameraConfigField[] = [
   ...Array.from({ length: 5 }, () => ({ name: "" })),
   { name: "MIN_ELEVATION_ANGLE" },

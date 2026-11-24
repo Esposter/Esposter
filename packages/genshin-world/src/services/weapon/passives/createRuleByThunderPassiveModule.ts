@@ -12,8 +12,8 @@ import { takeOne } from "@esposter/shared";
 const THUNDER_EMBLEM_ID = "thunderEmblem";
 
 // Rule by Thunder at its rank: the Thunder Emblem raises its wielder's Normal Attack DMG by the rank's amount for one,
-// Two or Three stacks, read from the params after its ATK, which is a table line. A stack is held by a normal attack's
-// Hit for the Rank's fifth seconds, by an Elemental Skill the wielder uses for its sixth, and by an Energy short of
+// Two or three stacks, read from the params after its ATK, which is a table line. A stack is held by a normal attack's
+// Hit for the rank's fifth seconds, by an Elemental Skill the wielder uses for its sixth, and by an Energy short of
 // Full until it is full
 export const createRuleByThunderPassiveModule = (params: number[]): PassiveModule => {
   const normalAttackSeconds = takeOne(params, 4);

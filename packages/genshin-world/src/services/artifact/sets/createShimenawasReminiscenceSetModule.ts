@@ -11,8 +11,8 @@ import { takeOne } from "@esposter/shared";
 const SHIMENAWAS_REMINISCENCE_STATUS_ID = "shimenawasReminiscence";
 
 // Shimenawa's Reminiscence. Its four-piece bonus, when its wearer casts an Elemental Skill with the table's first param
-// Of Energy or more, spends that Energy and raises the DMG of its Normal, Charged and Plunging Attacks by the second
-// Param for The third param's seconds. It does not trigger again while those run
+// Of energy or more, spends that Energy and raises the DMG of its Normal, Charged and Plunging Attacks by the second
+// Param for the third param's seconds. It does not trigger again while those run
 export const createShimenawasReminiscenceSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const energyCost = takeOne(bonus.params, 0);
   const damageBonus = takeOne(bonus.params, 1);

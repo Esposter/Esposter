@@ -14,8 +14,8 @@ import { openAsBlob } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
 // Stores the record files named on the command line, each streamed from its own path and uploaded to the buckets that
-// Lack It, then records each in the manifest's records section under its path relative to the parity folder, which a
-// Restore Writes it back to
+// Lack it, then records each in the manifest's records section under its path relative to the parity folder, which a
+// Restore writes it back to
 export const packRecordPaths = async (
   paths: string[],
   isDryRun: boolean,

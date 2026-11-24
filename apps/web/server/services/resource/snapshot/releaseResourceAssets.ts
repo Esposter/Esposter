@@ -19,7 +19,7 @@ const checkIsWithinGrace = async (bucket: R2Bucket, blobName: string) => {
 // The one release every path takes: an eviction, an unpublish, a file delete and a content write each name the asset
 // Hashes they may have just left unreferenced. A candidate is deleted only when no version row and no working-copy row
 // Of the resource names it, and it is outside the grace window. Under the resource's object lease, so a write reserving
-// An Asset is either committed before the rows are read or not started until the release has finished
+// An asset is either committed before the rows are read or not started until the release has finished
 export const releaseResourceAssets = async (
   db: Context["db"],
   resourceId: ResourceInResource["id"],

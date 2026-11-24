@@ -3,8 +3,8 @@ import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 
 // Where each placement stands the dialog. A drawer slides in from its own side at every width, since the button that
 // Opened it is on that side, a bottom drawer rises to the height of its content up to most of the window so the page it
-// Is About stays in view above it, and any other drops from above. Every placement writes its own margins, since the
-// Reset Zeroes the auto margins the browser centres a dialog with. The height is the frame's, in UiDialogFrameClassMap
+// Is about stays in view above it, and any other drops from above. Every placement writes its own margins, since the
+// Reset zeroes the auto margins the browser centres a dialog with. The height is the frame's, in UiDialogFrameClassMap
 export const UiDialogPlacementClassMap = {
   [UiDialogPlacement.DrawerBottom]: "m-0 mt-a max-w-none w-full [--ui-dialog-from:translateY(calc(var(--ui-step)*8))]",
   [UiDialogPlacement.DrawerEnd]:

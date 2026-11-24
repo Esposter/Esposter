@@ -4,7 +4,7 @@ import { getTopicWatchPayload, TOPIC_WATCH_MAX_AGE_MS } from "@esposter/db-schem
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 // Whether a watch is one the server signed for the person it is made by: the signature covers exactly the topics it
-// Names, for That person and that read's time, and the read began within the bound. An empty or mismatched signature is
+// Names, for that person and that read's time, and the read began within the bound. An empty or mismatched signature is
 // Refused
 export const checkTopicWatchSigned = (
   userId: string,

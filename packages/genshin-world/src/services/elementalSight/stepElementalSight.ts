@@ -6,7 +6,7 @@ import { computeGroundDistanceSquared } from "genshin-engine";
 
 // The sight as the world steps it each frame: a press turns it off when it is on and on where the character stands when
 // It is off, and it stays on, spreading, while the character has walked no further than the walk limit from where it
-// Was Turned on. Standing still keeps it on
+// Was turned on. Standing still keeps it on
 export const stepElementalSight = (
   sight: ElementalSight,
   position: Vector3Like,

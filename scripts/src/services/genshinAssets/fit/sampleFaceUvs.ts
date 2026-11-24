@@ -2,7 +2,7 @@ import { computeUvTexels } from "#src/services/genshinAssets/fit/computeUvTexels
 
 // The texels a face's UV triangle covers per point it is read at: a face of a small footprint is read at its centroid,
 // And A large one (a leaf card's, its texels mostly transparent) at a lattice of points spread over it, so the opaque
-// Texels It covers all count
+// Texels it covers all count
 const SURFACE_SAMPLE_TEXELS = 64;
 // The most points a face is read at, on a lattice this many points a side
 const MAX_LATTICE_SIDE = 8;

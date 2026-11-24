@@ -33,12 +33,12 @@ const hasBareQuotedName = (text: string, name: string) =>
   new RegExp(String.raw`(?<!\.)"${RegExp.escape(name)}"`, "u").test(text);
 
 // The columns of a table that a statement's SQL names. A column is named by its quoted name after one of the table's
-// Own Qualifiers, its name or an alias the statement gives it. Drizzle leaves a column bare when a group selects from
-// One table Alone, so a bare quoted name belongs to the table its own group reads from, and to every table the
-// Statement reads when that Group reads from several or none. A raw fragment names its columns in bare text, outside
-// The quoted names, so when a bare word Is a column of any table, every column of this table is named. A table the
+// Own qualifiers, its name or an alias the statement gives it. Drizzle leaves a column bare when a group selects from
+// One table alone, so a bare quoted name belongs to the table its own group reads from, and to every table the
+// Statement reads when that group reads from several or none. A raw fragment names its columns in bare text, outside
+// The quoted names, so when a bare word is a column of any table, every column of this table is named. A table the
 // Schema does not register (a Durable Object's own SQLite, which the core schema does not hold) has no columns known
-// Here, so it is named by every column: a watch of it wakes On any update, which over-wakes and never misses one.
+// Here, so it is named by every column: a watch of it wakes on any update, which over-wakes and never misses one.
 // `undefined` is that every column
 export const getReferencedColumns = (sql: string, tableName: string, aliases: string[]): string[] | undefined => {
   const table = tableMap.get(tableName);

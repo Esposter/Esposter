@@ -1,5 +1,5 @@
 // The seconds between a node's pulses, and the gauge of its element each pulse lays on an enemy in reach: the full
-// Gauge On an enemy without the buff, and on one with it the buffed gauge more, up to the buff's most
+// Gauge on an enemy without the buff, and on one with it the buffed gauge more, up to the buff's most
 export const ELEMENTAL_NODE_PULSE_SECONDS = 15;
 export const ELEMENTAL_NODE_PULSE_GAUGE = 3.6;
 export const ELEMENTAL_NODE_BUFFED_PULSE_GAUGE = 1.2;

@@ -96,7 +96,7 @@ const regionPalettes = computed(() => {
 // Made here rather than reached through a template ref's readonly proxy
 const landmarksGroup = new Group();
 // One material for each kind of landmark, made once and shared by every landmark of it, each mesh carrying what tells
-// It From the rest: a building's or a statue's part its surface, a tree's mesh how far its impostor has faded in over
+// It from the rest: a building's or a statue's part its surface, a tree's mesh how far its impostor has faded in over
 // It
 const partMaterial = createToonMaterial({ isObjectSurface: true, lightUniforms, rampTexture });
 const treeMeshMask = createDitherFadeNode(createObjectFadeNode()).not();
@@ -131,7 +131,7 @@ const getRockGeometry = ({ boxes, hull }: RockLandmark): BufferGeometry => {
 };
 
 // Gives the collider the landmarks that arrived since the last sync, whose colliders it builds on the main thread,
-// Timed As the load step `landmark-colliders`. The build is synchronous, so the measure is written as it returns
+// Timed as the load step `landmark-colliders`. The build is synchronous, so the measure is written as it returns
 const syncLandmarkColliders = (): void => {
   const start = performance.now();
   landmarkCollider.syncLandmarks(landmarksGroup);

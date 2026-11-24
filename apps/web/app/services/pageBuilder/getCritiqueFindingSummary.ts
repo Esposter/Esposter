@@ -6,7 +6,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // What a finding says, and the meaning its row is marked with: a failed check is a warning, and a check that could not
-// Run Is information, since it is never a pass
+// Run is information, since it is never a pass
 export const getCritiqueFindingSummary = (
   finding: CritiqueFinding,
 ): { description: string; meaning: UiIconMeaning } => {

@@ -12,7 +12,7 @@ import { toWalletSave } from "#src/services/save/toWalletSave";
 import { z } from "zod";
 
 // The `give` line: an item by the name the game shows it under, and how many of it, one when the line gives no count.
-// Its Words are read item first, in the order the command's `argumentNames` lists them
+// Its words are read item first, in the order the command's `argumentNames` lists them
 export const giveItemArgs = z.object({
   count: z.coerce.number().int().min(1).max(MAX_DEV_GIVE_COUNT).default(1),
   item: z.string().min(1),
@@ -20,9 +20,9 @@ export const giveItemArgs = z.object({
 
 type GiveItemArguments = z.infer<typeof giveItemArgs>;
 
-// Gives an item the way the game's reward act gives one: a wallet currency into the wallet, any other item into the
-// Bag. The bag refuses the whole of an item when it cannot take all of it. The names are the ones the bag and its
-// Screens show
+// Gives an item the way the game's reward act gives one: a wallet currency into the wallet, any other item into
+// The bag. the bag refuses the whole of an item when it cannot take all of it.
+// The names are the ones the bag and its screens show
 export const giveItem = (
   save: GenshinSave,
   { count, item }: GiveItemArguments,

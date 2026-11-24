@@ -9,7 +9,7 @@ import { reducePointerGesture } from "#src/services/whiteboard/gesture/reducePoi
 import { takeOne } from "@esposter/shared";
 
 // A resize previews the selection stretched by the pointer's travel from the press: one element is stretched from its
-// Handle, and several are Scaled together about the side opposite the handle. A release commits that stretch as one
+// Handle, and several are scaled together about the side opposite the handle. A release commits that stretch as one
 // Edit
 export const reduceResizingGesture = (
   state: WhiteboardGestureState,

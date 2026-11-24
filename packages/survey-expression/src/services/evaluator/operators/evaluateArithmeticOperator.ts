@@ -7,8 +7,9 @@ import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 import { toSurveyLogicResult } from "#src/services/shared/toSurveyLogicResult";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// Arithmetic reads both operands as numbers, and an operand that reads as none has no result. `+` also joins two texts
-// That are not numbers, and a division or a remainder by zero, read as a number, has no result either
+// Arithmetic reads both operands as numbers, and an operand that reads as none has no result.
+// `+` also joins two texts that are not numbers, and a division or a remainder by zero, read as a number, has no result
+// Either
 export const evaluateArithmeticOperator = (
   operator:
     | typeof SurveyExpressionBinaryOperator.Add

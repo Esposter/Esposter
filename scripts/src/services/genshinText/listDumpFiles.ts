@@ -13,9 +13,9 @@ import { listHeldBinaryFiles } from "#src/services/genshinText/listHeldBinaryFil
 import { listRemoteDirectory } from "#src/services/genshinText/listRemoteDirectory";
 
 // The dump's own files a fetch may refresh: the readable texts of every language's folder, every table of
-// ExcelBinOutput Whole or in its numbered parts, every language's text maps, the scene's NPC births and area outlines,
-// Every talent Config, and each other binary the dump already holds, each at its path under the dump's folder.
-// Everything is held at the install's build, so a Reader never takes a row, a text or a step from an older patch
+// ExcelBinOutput whole or in its numbered parts, every language's text maps, the scene's NPC births and area outlines,
+// Every talent config, and each other binary the dump already holds, each at its path under the dump's folder.
+// Everything is held at the install's build, so a reader never takes a row, a text or a step from an older patch
 export const listDumpFiles = async (questListing: readonly DumpFile[]): Promise<DumpFile[]> => {
   const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) => path.endsWith(".json"));
   const textMapFiles = (await listRemoteDirectory(TEXT_MAP_DIRECTORY_NAME)).filter(({ path }) =>

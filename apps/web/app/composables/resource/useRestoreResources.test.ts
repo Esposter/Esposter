@@ -28,7 +28,7 @@ describe(useRestoreResources, () => {
   });
 
   // The blade's undo of a delete restores a row the overlay holds as a tombstone, and nothing reads it again, so the
-  // Row Comes back into the view from the restore alone: as the restore is sent, and at the version its answer names
+  // Row comes back into the view from the restore alone: as the restore is sent, and at the version its answer names
   test("shows a deleted resource in the view once it is restored, with no read", async () => {
     expect.hasAssertions();
 

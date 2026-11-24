@@ -25,7 +25,7 @@ describe(createViperBalladPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   // Viper's Ballad at its first rank: a stack of Hymn of the Pure for each Elemental Skill or Burst hit, once every
-  // 0.03 Seconds, three at most, and at three the team gets 24% Stellar Glimmer reaction DMG for twelve seconds, with
+  // 0.03 seconds, three at most, and at three the team gets 24% Stellar Glimmer reaction DMG for twelve seconds, with
   // No stacks
   const passiveModule = createViperBalladPassiveModule([0.24, 3, 0.03, 12, 12]);
   const hitWith = (context: KitContext, attackTag: AttackTag) =>

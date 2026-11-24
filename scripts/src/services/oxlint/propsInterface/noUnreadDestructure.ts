@@ -8,7 +8,7 @@ import { defineRule } from "@oxlint/plugins";
 
 // A prop the script never reads is not destructured: a template reads a prop by its bare name whether or not the script
 // Binds it, so the binding is only weight in the script. The read question is answered by the scope manager's
-// References, So the rule needs no list of names and no type information.
+// References, so the rule needs no list of names and no type information.
 export const noUnreadDestructure: Rule = defineRule({
   create(context) {
     const { sourceCode } = context;

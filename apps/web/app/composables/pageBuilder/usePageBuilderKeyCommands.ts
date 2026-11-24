@@ -17,8 +17,8 @@ const checkIsControlTarget = (target: EventTarget | null) =>
 // Not taken
 const getMoveProps = (refusal: string | undefined) => ({ description: refusal, isDisabled: refusal !== undefined });
 // The editor's keys over the selected node. Its moves, its clipboard and its delete are commands, bound for as long as
-// The editor is Mounted and unbound while a node's delete asks. Enter is listed but never bound, since a focused button
-// Or link must keep it, and The canvas's frame is a document of its own, so the keys it passes on are pressed again on
+// The editor is mounted and unbound while a node's delete asks. Enter is listed but never bound, since a focused button
+// Or link must keep it, and the canvas's frame is a document of its own, so the keys it passes on are pressed again on
 // The window where the commands are bound
 export const usePageBuilderKeyCommands = (
   kind: AnyPageBuilderKind,
@@ -65,7 +65,7 @@ export const usePageBuilderKeyCommands = (
     startTextEdit();
   };
   // The canvas takes its arrows and Escape and hands every other key here. Enter starts a text edit, and each key is
-  // Pressed again On the window, where its command is bound, so a command that takes the key prevents its default in
+  // Pressed again on the window, where its command is bound, so a command that takes the key prevents its default in
   // The frame too
   const handleCanvasKeydown = (event: KeyboardEvent) => {
     handleEnterKeydown(event);

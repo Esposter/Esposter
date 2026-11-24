@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // One item a reward gives: its id in the game's tables, and the least and most of it a claim may draw. A least of zero
 // Is A roll that may give nothing, as a reward preview's range spells it. An average, where the wiki gives one, is the
-// Count a Claim draws to on average, and an item with one is drawn to that mean (see drawRewardItems)
+// Count a claim draws to on average, and an item with one is drawn to that mean (see drawRewardItems)
 export interface RewardItem {
   averageCount?: number | undefined;
   itemId: number;

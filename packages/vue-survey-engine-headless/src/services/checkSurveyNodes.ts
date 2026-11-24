@@ -19,9 +19,9 @@ const checkSurveyVisibility = (visibleIf: string, nodePointer: string, issues: S
   );
 };
 
-// Walks a list of nodes in document order. A page's and a panel's nodes share the names of their scope A dynamic
-// Panel's template is a scope of its own, so its questions are named among themselves and may repeat a name outside the
-// Panel
+// Walks a list of nodes in document order. A page's and a panel's nodes share the names of their scope
+// A dynamic panel's template is a scope of its own, so its questions are named among themselves and may repeat a name
+// Outside the panel
 export const checkSurveyNodes = (
   nodes: readonly SurveyNode[],
   listPointer: string,

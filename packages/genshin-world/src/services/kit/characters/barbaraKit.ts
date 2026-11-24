@@ -23,12 +23,12 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // The Melody Loop's regeneration on the character on the field as it starts and every 5 seconds after, the four heals
-// The Wiki's Let the Show Begin♪ notes give, as gcsim v2.47.2 (MIT) barbara/skill.go ticks it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/skill.go`
+// The wiki's Let the Show Begin♪ notes give, as gcsim v2.47.2 (MIT) barbara/skill.go ticks it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/skill.go
 const MELODY_LOOP_TICK_INTERVAL_SECONDS = 5;
 // Encore, from Ascension 4, lengthens the Melody Loop a second for each particle the character on the field collects,
-// Up to Five seconds, as gcsim v2.47.2 (MIT) barbara/asc.go gives it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/asc.go`
+// Up to five seconds, as gcsim v2.47.2 (MIT) barbara/asc.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/asc.go
 const ASCENSION_4 = 4;
 const ENCORE_MAX_EXTENSION_SECONDS = 5;
 const ENCORE_SECONDS_PER_PARTICLE = 1;
@@ -41,27 +41,27 @@ const VITALITY_BURST_CONSTELLATION = 2;
 const VITALITY_BURST_COOLDOWN_MULTIPLIER = 0.85;
 const VITALITY_BURST_HYDRO_DAMAGE_BONUS = 0.15;
 // Dedicating Everything to You, from six constellations: a fallen member of the team, while Barbara is in the party but
-// Not on The field, is revived to all of its HP, once every fifteen minutes, as the wiki's constellation page gives it
+// Not on the field, is revived to all of its HP, once every fifteen minutes, as the wiki's constellation page gives it
 const DEDICATING_EVERYTHING_TO_YOU_CONSTELLATION = 6;
 const DEDICATING_EVERYTHING_TO_YOU_COOLDOWN_SECONDS = 15 * 60;
 const DEDICATING_EVERYTHING_TO_YOU_HEALTH_SHARE = 1;
 const DEDICATING_EVERYTHING_TO_YOU_STATUS_ID = "barbara-dedicating-everything-to-you";
 // Gleeful Songs, from Constellation 1: she regenerates 1 Energy every 10 seconds while she stands in the party. A clock
-// Of 10 seconds on her status is armed on each step she is in the team, and its expiry gives the Energy, as gcsim
-// `v2.47.2` (MIT) barbara/cons.go gives it on a task
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/cons.go`
+// Of 10 seconds on her status is armed on each step she is in the team, and its expiry gives the Energy, as
+// Gcsim v2.47.2 (MIT) barbara/cons.go gives it on a task
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/cons.go
 const GLEEFUL_SONGS_CONSTELLATION = 1;
 const GLEEFUL_SONGS_ENERGY = 1;
 const GLEEFUL_SONGS_SECONDS = 10;
 const GLEEFUL_SONGS_STATUS_ID = "barbara-gleeful-songs";
 // Attentiveness Be My Power, from Constellation 4: each opponent her charged attack strikes regenerates 1 Energy for
-// Her, Five at most per charged attack, as the wiki's constellation page gives it
+// Her, five at most per charged attack, as the wiki's constellation page gives it
 const ATTENTIVENESS_CONSTELLATION = 4;
 const ATTENTIVENESS_ENERGY = 1;
 const ATTENTIVENESS_MAX_ENERGY = 5;
 
 // The Melody Loop the striker cast that stands on the team: a field it cast that ticks on the loop's interval, which
-// Its Burst's single heal does not
+// Its burst's single heal does not
 const findLiveMelodyLoop = (striker: Combatant, effects: readonly KitEffect[]): KitField | undefined =>
   effects.find(
     (effect): effect is KitField =>
@@ -94,12 +94,12 @@ const createMelodyLoopTick =
 export const BARBARA_CHARACTER_ID = 10_000_014;
 
 // Barbara's behaviour: her strikes and her charged attack heal the party, certain while her Melody Loop stands and
-// Never Otherwise, with no shield needed. Let the Show Begin♪ casts its droplets as a summon and the Melody Loop as a
-// Field, Both where she stands and priced by her as she stood then, and Shining Miracle♪, which deals no damage, heals
-// The Character on the field at its hitmark. From two constellations, Vitality Burst cuts the skill's cooldown, and the
-// Loop's first tick gives the rest of the team its Hydro DMG Bonus, and from six constellations a fallen member is
-// Revived. Constellations 1 and 4 are built: 1's energy every ten seconds runs on a clock her kit arms on each step she
-// Is in the Team, and 4's energy per enemy her charged attack strikes is counted across the one attack
+// Never otherwise, with no shield needed. Let the Show Begin♪ casts its droplets as a summon and the Melody Loop as a
+// Field, both where she stands and priced by her as she stood then, and Shining Miracle♪, which deals no damage, heals
+// The character on the field at its hitmark. From two constellations, Vitality Burst cuts the skill's cooldown, and the
+// Loop's first tick gives the rest of the team its Hydro DMG Bonus, and from six constellations a fallen member
+// Is revived. constellations 1 and 4 are built: 1's energy every ten seconds runs on a clock her kit arms on each step
+// She is in the team, and 4's energy per enemy her charged attack strikes is counted across the one attack
 export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const regenerationHealthShare = readParameter("regenerationHealthShare");
   const regenerationFlatHeal = readParameter("regenerationFlatHeal");

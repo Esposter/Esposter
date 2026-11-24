@@ -1,5 +1,5 @@
 // Xilonen with no artifact worn, the state her record in the parity fixture holds, the first slot picked so Fast Equip
-// Is What the panel offers, which no artifact in the bag can take yet, and no set bonus active
+// Is what the panel offers, which no artifact in the bag can take yet, and no set bonus active
 export const props = {
   artifactDetailsLabel: "Artifact Details",
   enhanceLabel: "Enhance",
@@ -25,8 +25,8 @@ export const props = {
 };
 
 // Her Flower of Life worn and picked, so the details offer Unequip in place of Equip, with its stats drawn under the
-// Details Pill, and the two-piece bonus of the set that piece belongs to. The totals and the piece's values are
-// Provisional Samples, not the game's
+// Details pill, and the two-piece bonus of the set that piece belongs to. The totals and the piece's values are
+// Provisional samples, not the game's
 export const variants = {
   // The bag is full, so the Unequip the player pressed left the piece worn. The notice is a provisional sample line,
   // Not the game's card: the Character screen passes the game's own words in

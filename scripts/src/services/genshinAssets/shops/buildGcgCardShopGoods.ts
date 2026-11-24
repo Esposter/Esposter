@@ -6,7 +6,7 @@ import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodC
 import { GCG_LUCKY_COIN_ITEM_ID } from "genshin-world";
 
 // The Card Shop's goods, one record of the shops dataset: the goods filed under its shop type, numbered in its shop and
-// Priced In Lucky Coins. Of its 330 goods, 104 sell a card, and the rest sell items the card table does not hold
+// Priced in Lucky Coins. Of its 330 goods, 104 sell a card, and the rest sell items the card table does not hold
 export const buildGcgCardShopGoods = (): Record<string, unknown> =>
   buildShopGoodSlice(
     (row: ExcelShopGoodsRow) =>

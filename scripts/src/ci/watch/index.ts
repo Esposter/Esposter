@@ -3,7 +3,7 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // `pnpm ai:ci:watch` — run in the background after a push to `ai/queue`, it wakes the session with the verdict of the
-// Run Covering the tip, and each failed job's error lines (the `running-checks` skill, "Watching the push's run")
+// Run covering the tip, and each failed job's error lines (the `running-checks` skill, "Watching the push's run")
 await runCommand(
   defineCommand({
     meta: {

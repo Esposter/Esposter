@@ -10,8 +10,8 @@ import { getZoomedViewport } from "#src/services/whiteboard/viewport/getZoomedVi
 import { getExportBounds, ShapeKind } from "vue-block-editor-headless";
 
 // The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the shape a shape
-// Tool places, and the viewport. It also holds whether the tool stays in hand after a placement, the gesture in
-// Progress with the document it would leave, and the element whose text is Being edited in place. None of it is saved
+// Tool places, and the viewport. it also holds whether the tool stays in hand after a placement, the gesture in
+// Progress with the document it would leave, and the element whose text is being edited in place. None of it is saved
 export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor", () => {
   const canvasRect = ref<CanvasRect>({ height: 0, width: 0, x: 0, y: 0 });
   const gesture = shallowRef<WhiteboardGesture>();

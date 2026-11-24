@@ -34,9 +34,9 @@ const addRiseUnits = (
 };
 
 // Bygone Azure Teardrop at its rank: the wielder's Normal Attack SPD rises by the rank's first share. After her
-// Elemental Skill, Her Normal Attack DMG rises by the rank's unit a second for the rank's seconds, and each Normal
-// Attack hit she lands while it Stands adds the rank's hit units, once every cooldown. The rise's total is at most the
-// Rank's maximum units, and it ends when she Leaves the field. Another Elemental Skill restarts it
+// Elemental Skill, her Normal Attack DMG rises by the rank's unit a second for the rank's seconds, and each Normal
+// Attack hit she lands while it stands adds the rank's hit units, once every cooldown. The rise's total is at most the
+// Rank's maximum units, and it ends when she leaves the field. Another Elemental Skill restarts it
 export const createBygoneAzureTeardropPassiveModule = (params: number[]): PassiveModule => {
   const normalAttackSpeed = takeOne(params, 0);
   const damagePerUnit = takeOne(params, 1);

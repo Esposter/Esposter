@@ -7,7 +7,7 @@ import { Element } from "#src/models/Element";
 import { ELECTRO_CHARGED_TICK_GAUGE } from "#src/services/combat/aura/constants";
 
 // A tick of Electro-Charged, its gauge taken in place from the Electro and the Hydro, each that has more than it to
-// Give And is not immutable
+// Give and is not immutable
 export const tickElectroCharged = (auras: Map<AuraType, Aura>): Reaction => {
   for (const auraType of [AuraType.Electro, AuraType.Hydro]) {
     const aura = auras.get(auraType);

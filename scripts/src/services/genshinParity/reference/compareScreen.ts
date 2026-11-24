@@ -36,10 +36,10 @@ const MIN_BLUR_SIGMA = 0.3;
 // Scores are handed back for the committed report, FLIP's perceptual error among them. A scene's shot is scored again
 // Layer by layer over the families the witness's part target gives at the reference's view, over the region its row
 // Scores, so a family that moves away from the reference shows on its own row even where the frame's score barely
-// Moves, and the frame's layer is the row. With a witness, the scene draws that component's exports in place of its Own
-// Parts and its image is kept apart from the scene's own. The shot is taken on `pageRoot` when one is given, a page The
-// Caller started, and on the parity page otherwise. Every line is written to stderr, so stdout holds the command's own
-// Output
+// Moves, and the frame's layer is the row. With a witness, the scene draws that component's exports in place of its
+// Own parts and its image is kept apart from the scene's own. The shot is taken on `pageRoot` when one is given, a page
+// The caller started, and on the parity page otherwise. Every line is written to stderr, so stdout holds the command's
+// Own output
 export const compareScreen = async (
   referenceId: string,
   witness?: DerivedAssetComponent,
@@ -158,7 +158,7 @@ export const compareScreen = async (
     );
   const layerComponent = getLayerComponent(referenceId, witness);
   // A scene's layers come from a witness page of its whole component, which the machine can run out of memory under
-  // (Mondstadt's Witness draws its capital's 101,731 placements), and the OS then closes the page. The screen's score
+  // (Mondstadt's witness draws its capital's 101,731 placements), and the OS then closes the page. The screen's score
   // Is already measured, so A layer pass that cannot run leaves the layers unmeasured, their rows kept as the report
   // Last had them, rather than voiding it
   let layers: LayerScore[] | undefined;

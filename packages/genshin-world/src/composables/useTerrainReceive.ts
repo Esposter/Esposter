@@ -15,7 +15,7 @@ import {
 import { Box3, Mesh } from "three";
 
 // A tile as its worker answers it: a tile near the eye becomes a mesh of its own, compiled before it is shown, and a
-// Far one Is written into its level's ring
+// Far one is written into its level's ring
 export const useTerrainReceive = ({
   checkIsNear,
   disposeTileMesh,

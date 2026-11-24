@@ -15,7 +15,7 @@ const RELEASED_HERE_REASON = "it was released on this machine";
 
 // Holds `entry` for `holder` until its hold file is deleted here or a renewal finds the claim no longer this worker's.
 // The holds folder is watched, so a local release stops the hold the moment its file goes, and the claim is renewed
-// Each Renewal interval in between
+// Each renewal interval in between
 export const holdFleetEntry = async (entry: string, holder: ClaimHolder): Promise<void> => {
   writeHoldFile(entry, holder.worker);
   const holdFilePath = getHoldFilePath(entry, holder.worker);

@@ -78,7 +78,7 @@ const reportRefusal = (error: Error) => {
 };
 
 // The weapon screen's action on its open tab, Ascend, Enhance or Refine: each one's bag and wallet transition when it
-// Is Accepted, the Mora it spends on the Required line, and whether its button is disabled
+// Is accepted, the Mora it spends on the Required line, and whether its button is disabled
 export const useWeaponActions = ({
   clearPicks,
   enhancementOres,
@@ -107,7 +107,7 @@ export const useWeaponActions = ({
     clearPicks();
   };
   // Levels the weapon with the picked ores and fodder weapons, which leave the bag, and returns the EXP past the cap as
-  // The Ores it fills
+  // The ores it fills
   const enhanceAction = () =>
     getResult(() => {
       const fodders = pickedFodderIds.value.map((id) => {
@@ -149,7 +149,7 @@ export const useWeaponActions = ({
       };
     });
   // Refines the weapon by the rank a picked copy holds, or by one for the refinement material; the copy or the material
-  // Leaves The bag with the rank's Mora paid
+  // Leaves the bag with the rank's Mora paid
   const refineAction = () =>
     getResult(() => {
       const copyId = pickedCopyId.value;
@@ -171,7 +171,7 @@ export const useWeaponActions = ({
     else if (openTab.value === WeaponMenuTab.Refine) refineAction().match(applyActionState, reportRefusal);
   };
   // The Mora the open tab's action spends, on the Required line: an Ascend's next phase price, and for the other two
-  // The Mora Their accepted action would take, nothing where it is refused
+  // The Mora their accepted action would take, nothing where it is refused
   const pendingMora = computed(() => {
     if (openTab.value === WeaponMenuTab.Ascend) return nextPhase.value?.coinCost ?? 0;
     const action = openTab.value === WeaponMenuTab.Refine ? refineAction : enhanceAction;

@@ -15,8 +15,8 @@ export const useWorldCardGame = ({ getResidents, savedCardGameExp, savedRewarded
   const cardGameExp = ref(savedCardGameExp);
   const cardGameRewardedGameIds = ref(savedRewardedGameIds);
   // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and
-  // Wallet, The way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing. The
-  // Reward's rules are Imported as the reward is paid, so the card game stays out of the first screen's static graph
+  // Wallet, the way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing. The
+  // Reward's rules are imported as the reward is paid, so the card game stays out of the first screen's static graph
   const payCardGameReward = (gameId: number | undefined, won: boolean) => {
     const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
     if (!won || !weekGame) return;

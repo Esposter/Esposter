@@ -6,7 +6,7 @@ import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
 
 // I Haven't Lost Yet!: playable only once one of its side's characters is defeated this round, and once a round. It
-// Creates An Omni die, and the active character gains one energy
+// Creates an Omni die, and the active character gains one energy
 export const iHaventLostYet: GcgCardModule = {
   canPlay: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

@@ -1,7 +1,7 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The height of points held as a flat run of x, y and z values: the highest y less the lowest, across every array
-// Given. A set with no points has no height to read, so it is refused rather than measured as none
+// The height of points held as a flat run of x, y and z values: the highest y less the lowest, across every
+// Array given. A set with no points has no height to read, so it is refused rather than measured as none
 export const measureVerticalExtent = (pointArrays: readonly Float32Array[]): number => {
   let lowest = Infinity;
   let highest = -Infinity;

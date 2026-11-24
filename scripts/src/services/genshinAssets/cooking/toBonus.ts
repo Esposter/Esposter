@@ -5,7 +5,7 @@ import { BONUS_CLAUSE_SEPARATOR_REGEX, BONUS_FLAT_ATTRIBUTE_MAP } from "#src/ser
 import { toBonusClause } from "#src/services/genshinAssets/cooking/toBonusClause";
 
 // The bonus a bonus buff's description gives, each clause one stat, with the seconds the buff lasts. A description with
-// A Clause this does not read gives no bonus
+// A clause this does not read gives no bonus
 export const toBonus = (buff: BuffRow): DishBonus | undefined => {
   const flatAttribute = BONUS_FLAT_ATTRIBUTE_MAP[buff.abilityName];
   const attributes: DishBonus["attributes"] = [];

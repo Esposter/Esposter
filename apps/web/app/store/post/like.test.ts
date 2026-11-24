@@ -32,7 +32,7 @@ describe(useLikeStore, () => {
   });
 
   // A vote is one row the feed, the thread and the post page all read, so a vote cast on the page reaches the feed's
-  // Copy Of the post as well. The post's count is read back once the vote is kept, at the version the vote moved it to
+  // Copy of the post as well. The post's count is read back once the vote is kept, at the version the vote moved it to
   test("lands a vote on the feed's copy and the post page's copy of one post", async () => {
     expect.hasAssertions();
 

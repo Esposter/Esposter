@@ -43,7 +43,7 @@ export const computeDatasetVisualPropsData = (
     ),
   }));
   // The order ranks the aggregated values, never the rows, and its sort is stable, so categories that tie keep their
-  // `first-seen` order
+  // First-seen order
   const orderedEntries = query.order
     ? categoryEntries.toSorted(getCategoryComparator(categoryEntries, query.order))
     : categoryEntries;

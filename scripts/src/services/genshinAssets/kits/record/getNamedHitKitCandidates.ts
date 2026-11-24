@@ -13,10 +13,10 @@ import { splitHitPath } from "#src/services/genshinAssets/kits/record/splitHitPa
 import { kitParameterSchema } from "genshin-world";
 
 // The candidates a hit takes from the talent variable its multiplier joins to: each hit of a `hits` list, a skill
-// Hold's Or a stance's, or a single hit's own in `hitFields`, whose multiplier names a proud skill group and index
-// Gcsim's talent Variables give a hit for, takes that hit's fields. A hit of a list takes the calls its attack makes in
-// Turn, in the Order they land, where the list is as long as those calls, or where the calls of several keys from one
-// Attack site are, Merged in the order they land
+// Hold's or a stance's, or a single hit's own in `hitFields`, whose multiplier names a proud skill group and index
+// Gcsim's talent variables give a hit for, takes that hit's fields. A hit of a list takes the calls its attack makes in
+// Turn, in the order they land, where the list is as long as those calls, or where the calls of several keys from one
+// Attack site are, merged in the order they land
 export const getNamedHitKitCandidates = (
   valueMap: ReadonlyMap<string, unknown>,
   namedHitCandidateMap: NamedHitCandidateMap,
@@ -43,7 +43,7 @@ export const getNamedHitKitCandidates = (
     const [firstHit] = hits;
     // A named list of indexed hits whose hits all join one key is as long as the calls that key makes, as a loop of one
     // Call makes them, though the source may name only some of its hits' multipliers. A hit with no index is a hit of
-    // Its Own, not a list
+    // Its own, not a list
     const isOneKeyList =
       group.startsWith("hits.") &&
       firstHit !== undefined &&

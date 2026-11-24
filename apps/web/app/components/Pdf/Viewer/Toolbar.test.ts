@@ -43,8 +43,8 @@ const openMenu = async (component: ReturnType<typeof mountToolbar>) => {
 const getMenuItem = (component: ReturnType<typeof mountToolbar>, title: string) =>
   component.findAll('[role^="menuitem"]').find((item) => item.text() === title);
 // The picker is the input the dialog opens: its click is answered with the file the reader chose, and the types it
-// Takes Are returned, one per opening. An input already holding the file reports no change, as a browser's does for the
-// Same File chosen again
+// Takes are returned, one per opening. An input already holding the file reports no change, as a browser's does for the
+// Same file chosen again
 const choosesFile = (file: File) => {
   const accepts: string[] = [];
   vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(function (this: HTMLInputElement) {

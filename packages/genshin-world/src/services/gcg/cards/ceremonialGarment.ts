@@ -9,7 +9,7 @@ const CEREMONIAL_GARMENT_HEAL = 1;
 const CEREMONIAL_GARMENT_ROUNDS = 2;
 
 // Ceremonial Garment, a status on Kokomi for two rounds: her Normal Attacks deal 1 more DMG, and after one every
-// Character Of hers is healed 1 HP
+// Character of hers is healed 1 HP
 export const ceremonialGarment: GcgCardModule = {
   initialRounds: CEREMONIAL_GARMENT_ROUNDS,
   modifyDamageDealt: (context, damage) =>

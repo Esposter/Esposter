@@ -4,9 +4,9 @@ import { Element } from "#src/models/Element";
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
 
 // The Millennial Pearl Seahorse's attacks from its wiki page, in the order the page lists them. Xenomare Pearl is the
-// Pearl's Shield and RES, not an attack, so it is not a move. Earthshock Descent to Tail Swipe are used only while the
-// Pearl is Intact, and Single Swipe to Charge only once it is destroyed, both phases not yet run. Each move's windup
-// And recovery are The common enemies' and are PROVISIONAL until measured
+// Pearl's shield and RES, not an attack, so it is not a move. Earthshock Descent to Tail Swipe are used only while the
+// Pearl is intact, and Single Swipe to Charge only once it is destroyed, both phases not yet run. Each move's windup
+// And recovery are the common enemies' and are PROVISIONAL until measured
 export const MILLENNIAL_PEARL_SEAHORSE_MOVES: BossMove[] = [
   // Used only while the Xenomare Pearl is intact. The electrified ground it leaves deals 6% ATK as Electro DMG every
   // 0.5s, a Lingering effect not yet run
@@ -50,7 +50,7 @@ export const MILLENNIAL_PEARL_SEAHORSE_MOVES: BossMove[] = [
     windupSeconds: ENEMY_WINDUP_SECONDS,
   },
   // Used only while the Xenomare Pearl is intact, and once per fight. Its electrified ground is a lingering effect not
-  // Yet run, And the Resonant Coral Orbs it summons are objects not yet run
+  // Yet run, and the Resonant Coral Orbs it summons are objects not yet run
   {
     atkPercent: 100,
     element: Element.Electro,

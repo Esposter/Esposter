@@ -97,8 +97,8 @@ export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
 export const WIKI_VOICE_OVERS_URL: `${typeof WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=` = `${WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=`;
 // The imageinfo query, which answers a file title with the file's URL in one call
 export const WIKI_IMAGE_INFO_URL: `${typeof WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=` = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
-// The plugin ships on
-// oxlint-disable-next-line naming/no-site-name-literal -- its own, without `@esposter/shared` to read `SITE_NAME` from
+/* oxlint-disable-next-line naming/no-site-name-literal -- the plugin ships on its own, without `@esposter/shared` to
+   read `SITE_NAME` from */
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
 // A host that takes the connection and never finishes would otherwise hold the hook a reply waits behind open
 export const WIKI_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
@@ -164,7 +164,7 @@ const WINDOWS_VOICE_DEVICE_LADDER: VoiceDeviceLadder = [
   VOICE_CPU_RUNG,
 ];
 // On macOS and Linux, fastest first: the runtime offers `webgpu` on both, so the vocoder runs there too. The sound
-// Check Moves down a vocoder that returns near-silence, as it does on Windows
+// Check moves down a vocoder that returns near-silence, as it does on Windows
 const GPU_VOICE_DEVICE_LADDER: VoiceDeviceLadder = [
   {
     devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_GPU_DEVICE),
@@ -184,8 +184,8 @@ export const PLATFORM_VOICE_DEVICE_LADDER_MAP: Partial<Record<NodeJS.Platform, V
 // The runtime names the provider that raised a failure by its source path, in either separator. A failure the GPU
 // Provider raises — a device lost under load — is the rung's, and the line reads on the rung below; the CPU provider
 // Is deterministic, so a failure it raises is the line's and would recur on every rung
-// `isolatedDeclarations`
-// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
+/* oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex
+   would otherwise infer */
 export const GPU_PROVIDER_FAILURE_REGEX: RegExp = new RegExp(
   String.raw`providers[\\/](?:${VOICE_GPU_DEVICE}|${VOICE_VOCODER_GPU_DEVICE})`,
   "u",

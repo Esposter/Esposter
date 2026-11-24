@@ -4,7 +4,7 @@ import { failMathExpression } from "#src/services/parser/failMathExpression";
 import { getMathExpressionCharacter } from "#src/services/parser/token/getMathExpressionCharacter";
 
 // Reports a decimal mark where an exponent's digits must be, at the column the reported token starts at, as mathjs
-// Counts it For `2e.5` that column is char 2
+// Counts it for `2e.5` that column is char 2
 export const failExponent = (state: MathExpressionParserState, text: string): void => {
   state.token = text;
   failMathExpression(state, `Digit expected, got "${getMathExpressionCharacter(state, 0)}"`);

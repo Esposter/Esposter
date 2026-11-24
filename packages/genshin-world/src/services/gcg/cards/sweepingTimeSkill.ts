@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 const SWEEPING_TIME_DAMAGE = 4;
 
 // Sweeping Time, Noelle's elemental burst: 4 Geo DMG, and the character gains Sweeping Time. A character already
-// Holding it Has its rounds renewed rather than a second copy, so the Normal Attack bonus is not doubled (the wiki's
+// Holding it has its rounds renewed rather than a second copy, so the Normal Attack bonus is not doubled (the wiki's
 // Sweeping Time)
 export const sweepingTimeSkill: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {

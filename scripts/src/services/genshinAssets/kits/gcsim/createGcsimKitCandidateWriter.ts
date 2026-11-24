@@ -42,7 +42,7 @@ export const createGcsimKitCandidateWriter = (
   return {
     add,
     // A slot's frames are one set, or a list of them one for each of its states, a list of lists for a slot with a list
-    // Of States per level, the first state at each level being the press or the tap a slot is read by
+    // Of states per level, the first state at each level being the press or the tap a slot is read by
     addFrames: (path, ...names) => {
       const constant = findGcsimConstant(constantMap, ...names);
       const isList = Array.isArray(constant?.value);

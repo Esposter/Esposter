@@ -11,8 +11,8 @@ export const NOTIFICATION_RETENTION_MS = Temporal.Duration.from({ days: 30 }).to
 export const NOTIFICATION_PAGE_SORT = { keys: ["id"], order: SortOrder.Desc } as const satisfies PageSort<"id">;
 
 // The hosts a browser's push endpoint may be on, one entry per browser's push service. The server stores an endpoint
-// And The jobs worker POSTs to it, so an endpoint on any other host would have the worker send a request to that host.
-// An Entry with a leading dot admits every host under that name; any other entry admits only itself
+// And the jobs worker POSTs to it, so an endpoint on any other host would have the worker send a request to that host.
+// An entry with a leading dot admits every host under that name; any other entry admits only itself
 export const PUSH_SERVICE_HOSTS: readonly string[] = [
   // Chrome, Edge (Chromium), Opera and Brave
   "fcm.googleapis.com",

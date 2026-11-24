@@ -36,7 +36,7 @@ export const blockRouter = router({
       const friendshipId = getFriendshipId(userId, targetUserId);
       const deletedAt = new Date();
       // The block revives its own tombstone by the conflict branch, which clears the deletion and raises the version. A
-      // Live Block is left as it is, since the set-where names only a tombstone
+      // Live block is left as it is, since the set-where names only a tombstone
       await ctx.db.batch([
         ctx.db.update(friendRequestsInSocial).set({ deletedAt }).where(getLiveFriendRequestWhere(friendshipId)),
         ctx.db.update(friendsInSocial).set({ deletedAt }).where(getLiveFriendshipWhere(friendshipId)),

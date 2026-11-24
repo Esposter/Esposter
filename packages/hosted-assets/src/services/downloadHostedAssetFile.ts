@@ -9,8 +9,8 @@ import { storeHostedAssetFile } from "#src/services/storeHostedAssetFile";
 import { createExponentialBackoff, getResultAsync } from "@esposter/shared";
 
 // A file kept in the cache within its attempts: each attempt counts the bytes it reads and gives them back when it
-// Fails, And each attempt after the first waits longer than the one before. The result is the last attempt's, so a file
-// That Fails every attempt is the error the loading reports
+// Fails, and each attempt after the first waits longer than the one before. The result is the last attempt's, so a file
+// That fails every attempt is the error the loading reports
 export const downloadHostedAssetFile = (
   cache: Pick<Cache, "put">,
   { url }: HostedAssetDownloadFile,

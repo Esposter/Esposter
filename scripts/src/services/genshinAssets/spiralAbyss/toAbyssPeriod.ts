@@ -4,9 +4,9 @@ import type { AbyssPeriod } from "genshin-world";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One period of the Moon Spire from its schedule row: its first set of floors and the moment that set begins, which is
-// The Period's start, the moment the row closes, and its blessing. The later sets are empty in every period the dump
-// Holds, so a Period with one is refused rather than cut. An empty later set is written with no fields at this patch,
-// So an absent list Reads as empty there, while a first set missing its floors or its moment is refused, since a period
+// The period's start, the moment the row closes, and its blessing. The later sets are empty in every period the dump
+// Holds, so a period with one is refused rather than cut. An empty later set is written with no fields at this patch,
+// So an absent list reads as empty there, while a first set missing its floors or its moment is refused, since a period
 // Cannot start at no time
 export const toAbyssPeriod = (row: ExcelTowerScheduleRow): AbyssPeriod => {
   const firstSet = row.LHOGNLPBILP.at(0);

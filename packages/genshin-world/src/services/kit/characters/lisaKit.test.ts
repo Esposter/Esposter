@@ -170,7 +170,7 @@ describe("lisa kit", () => {
       locomotionState: LocomotionState.Idle,
     };
     // A quarter second a step keeps the held seconds exact, so the skill reaches its 4 seconds after 16 steps, and is
-    // Held Past them until the step 28 lets it go
+    // Held past them until the step 28 lets it go
     const startedSteps: number[] = [];
     for (let step = 0; step < 40; step++) {
       const action = stepKit(

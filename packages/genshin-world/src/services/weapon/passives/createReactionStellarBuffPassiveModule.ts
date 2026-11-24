@@ -5,8 +5,8 @@ import { createReactionBuffPassiveModule } from "#src/services/weapon/passives/c
 import { createStellarGlimmerBuffPassiveModule } from "#src/services/weapon/passives/createStellarGlimmerBuffPassiveModule";
 
 // A passive with a reaction clause and a Stellar Glimmer clause, each raising one attribute by its amount for its
-// Seconds: the Reaction one after its wielder causes an Elemental Reaction, the Stellar Glimmer one after a Stellar
-// Glimmer reaction it Triggers, whether or not the wielder is on the field. Neither clause takes an Ascendant Gleam
+// Seconds: the reaction one after its wielder causes an Elemental Reaction, the Stellar Glimmer one after a Stellar
+// Glimmer reaction it triggers, whether or not the wielder is on the field. Neither clause takes an Ascendant Gleam
 // Amount
 export const createReactionStellarBuffPassiveModule = ({
   reactionAmount,

@@ -21,7 +21,7 @@ const SNAP_RADIUS = 6;
 // A reference's landmarks, all of them or the ones named, matched to the witness's own parts on its open page: each
 // One's place in the world, and the pixel the reference names for it, snapped to the nearest corner unless it stands on
 // A silhouette or inside a face, where it is read as given. A landmark the witness holds no mesh for yet is waiting:
-// The Reference names its pixel, but it stays out of the solve, and is named in `waiting`, until its mesh is named. The
+// The reference names its pixel, but it stays out of the solve, and is named in `waiting`, until its mesh is named. The
 // Caller fetches the references first
 export const readReferenceLandmarks = async (
   page: Page,

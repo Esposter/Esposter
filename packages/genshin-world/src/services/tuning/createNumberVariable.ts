@@ -3,7 +3,7 @@ import type { DevVariable } from "#src/models/dev/DevVariable";
 import { DevVariableKind } from "#src/models/dev/DevVariableKind";
 
 // A number an owner holds under a key, exposed as a variable that reads and writes that key, so the owner's own state
-// Is The only copy. A write runs `onChange` after it lands, for the texture an owner draws from the number
+// Is the only copy. A write runs `onChange` after it lands, for the texture an owner draws from the number
 export const createNumberVariable = <TKey extends string>(
   owner: Record<TKey, number>,
   key: TKey,

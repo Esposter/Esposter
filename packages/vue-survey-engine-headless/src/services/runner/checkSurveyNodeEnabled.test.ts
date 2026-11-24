@@ -3,8 +3,8 @@ import { checkSurveyNodeEnabled } from "#src/services/runner/checkSurveyNodeEnab
 import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
 import { describe, expect, test } from "vitest";
 
-// The condition's own matrix, faults included, lives in checkSurveyExpressionHolds.test.ts, so here only the node's
-// `enableIf` is read
+// The condition's own matrix, faults included, lives in checkSurveyExpressionHolds.test.ts, so here only the
+// Node's enableIf is read
 describe(checkSurveyNodeEnabled, () => {
   const now = new Date(0);
 

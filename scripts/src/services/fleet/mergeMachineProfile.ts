@@ -2,9 +2,9 @@ import type { MachineProfile } from "#src/models/fleet/MachineProfile";
 
 import { ALL_AREAS, DETECTED_CAPABILITIES } from "#src/services/fleet/constants";
 
-// The profile a run writes. The id and areas the user set are kept, and a new profile takes the hostname and every
-// Area. Detected capabilities are replaced by this run's reading, while a capability outside that list was set by the
-// User
+// The profile a run writes. The id and areas the user set are kept, and a new profile takes the hostname and
+// Every area. detected capabilities are replaced by this run's reading, while a capability outside that list was set by
+// The user
 export const mergeMachineProfile = (
   savedProfile: MachineProfile | undefined,
   detectedCapabilities: readonly string[],

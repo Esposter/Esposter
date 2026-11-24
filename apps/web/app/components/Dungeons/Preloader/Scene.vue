@@ -28,7 +28,7 @@ const loadingAssetText = ref("");
 let preloadScene: SceneWithPlugins | undefined;
 
 // The bar follows the download of every file the cache lacks. Once each one is held, the Phaser pass loads them from
-// The Cache, so it only decodes them, and the game starts on its `complete`
+// The cache, so it only decodes them, and the game starts on its `complete`
 const {
   downloadProgress,
   preload: downloadFiles,

@@ -69,7 +69,7 @@ interface Props {
   // The point the enemies target, the character's feet, which none is given while no character stands in the world
   target?: GroundPoint | undefined;
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of
-  // Its Area comes
+  // Its area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The World Level the camps spawn at, which a change of it spawns every camp anew at
   worldLevel: number;

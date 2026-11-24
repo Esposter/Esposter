@@ -15,7 +15,7 @@ describe(getSearchExpression, () => {
   });
 
   // Each attack is one crafted query: a boolean operator, a proximity operator, a wildcard, a column filter, and a
-  // Quote Its quote would close the term early. Each must come out as a quoted literal, so the expression carries no
+  // Quote its quote would close the term early. Each must come out as a quoted literal, so the expression carries no
   // Operator of its own
   test.each([
     ["OR", `"OR"*`],

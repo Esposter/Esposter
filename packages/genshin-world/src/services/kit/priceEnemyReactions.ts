@@ -24,7 +24,7 @@ import { priceTransformativeReaction } from "#src/services/kit/priceTransformati
 // In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them,
 // And Aggravate and Spread add to its base, each raised by the deployed team's party reaction DMG Bonus inside its
 // Elemental Mastery term, as gcsim (MIT) pkg/enemy/damage.go and pkg/core/combat/reaction.go read it. Each
-// Transformative reaction That lands adds its own hit's poise, as the published reaction table gives it
+// Transformative reaction that lands adds its own hit's poise, as the published reaction table gives it
 export const priceEnemyReactions = (
   kind: EnemyKind,
   enemy: Enemy,

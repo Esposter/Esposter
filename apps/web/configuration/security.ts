@@ -65,7 +65,7 @@ export const security: NonNullable<NuxtConfig["security"]> = {
       ],
       "script-src-elem": [
         // Nuxt data hydration, and the inline scripts a published page's sandboxed srcdoc iframe carries, which
-        // Inherits This policy and has no nonce of the response to carry
+        // Inherits this policy and has no nonce of the response to carry
         "'unsafe-inline'",
         // Nuxt vite client
         "'self'",

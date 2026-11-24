@@ -25,8 +25,8 @@ import { defineStore } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The landmarks the world holds and the ones the player has unlocked, the first unlock of each paid, and the pose a
-// Jump Lands at. A landmark is unlocked by resonating with it, and each is paid once. The session starts it after the
-// Quests And the adventure rank and stops it as it unmounts
+// Jump lands at. A landmark is unlocked by resonating with it, and each is paid once. The session starts it after the
+// Quests and the adventure rank and stops it as it unmounts
 export const useWorldMapStore = defineStore("world/map", () => {
   const worldSessionStore = useWorldSessionStore();
   const worldQuestsStore = useWorldQuestsStore();
@@ -34,9 +34,9 @@ export const useWorldMapStore = defineStore("world/map", () => {
   const { events, setWallet } = worldSessionStore;
   // Every landmark a jump lands at across the whole catalogue rather than the regions in reach, since the map shows the
   // Whole continent: each region's landmarks file is read once, and a region that fails is logged and left off. The
-  // List is Complete once every region has settled, read or failed, so isJumpLandmarksLoaded is the point a landmark
-  // Can be Counted in full. A domain entrance is a jump landmark like a statue or a waypoint, listed once the player
-  // Has Unlocked it. The map, the minimap, the jump list and a revive offer only the unlocked ones
+  // List is complete once every region has settled, read or failed, so isJumpLandmarksLoaded is the point a landmark
+  // Can be counted in full. A domain entrance is a jump landmark like a statue or a waypoint, listed once the player
+  // Has unlocked it. The map, the minimap, the jump list and a revive offer only the unlocked ones
   const jumpLandmarks = shallowRef<PlaceLandmark[]>([]);
   const unsettledRegionCount = shallowRef<number>();
   const isJumpLandmarksLoaded = computed(() => unsettledRegionCount.value === 0);
@@ -60,9 +60,9 @@ export const useWorldMapStore = defineStore("world/map", () => {
       worldAdventureRankStore.completedMainQuestIds,
     ),
   );
-  // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points
-  // To. A domain entrance is one of them, as a statue or a waypoint is. A waypoint the game hides until its step is
-  // Left out Of them
+  // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD
+  // Points to. A domain entrance is one of them, as a statue or a waypoint is. A waypoint the game hides until its step
+  // Is left out of them
   const lockedJumpLandmarks = computed(() =>
     jumpLandmarks.value.filter((landmark) => {
       // A weekly boss's entrance opens by its quests, so there is nothing to resonate with
@@ -72,11 +72,11 @@ export const useWorldMapStore = defineStore("world/map", () => {
     }),
   );
   // A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the
-  // Character Is placed and the pose let go, so the screen fades back in
+  // Character is placed and the pose let go, so the screen fades back in
   const jumpPose = shallowRef<WorldJumpPose>();
 
   // Each start and stop begins a new generation, so a read the last session began settles into nothing once the world
-  // Has Stopped or restarted, rather than into the session that replaced it
+  // Has stopped or restarted, rather than into the session that replaced it
   let generation = 0;
   const start = (catalogue: Catalogue, regionDataBaseUrl: string, savedUnlockedLandmarkIds: ReadonlySet<string>) => {
     const startedGeneration = ++generation;
@@ -130,7 +130,7 @@ export const useWorldMapStore = defineStore("world/map", () => {
     jumpPose.value = undefined;
   };
   // The Primogems and Adventure EXP a statue or a waypoint pays on its first unlock, from the open world's transport
-  // Points By its scene point. A domain entrance has no point, so pays nothing
+  // Points by its scene point. A domain entrance has no point, so pays nothing
   const payFirstUnlockReward = getSynchronizedFunction(async (landmarkId: string) => {
     const pointId = computeLandmarkPointId(landmarkId);
     if (pointId === undefined) return;
@@ -150,7 +150,7 @@ export const useWorldMapStore = defineStore("world/map", () => {
     );
   });
   // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with, by
-  // Its Id and by its scene point, which the quest step that names a waypoint by its point finishes on
+  // Its id and by its scene point, which the quest step that names a waypoint by its point finishes on
   const activateLandmark = (landmarkId: string) => {
     const isFirstUnlock = !unlockedLandmarkIds.value.has(landmarkId);
     unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);

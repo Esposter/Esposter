@@ -6,7 +6,7 @@ import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded"
 import { settleAll } from "@esposter/shared";
 
 // The visual hull of each mesh, fitted off its own export in three's axes as boxes at `HULL_CELL_SIZE`, keyed by the
-// Name Its mesh is given in the map
+// Name its mesh is given in the map
 export const fitMeshHulls = async (meshPaths: ReadonlyMap<string, string>): Promise<Record<string, number[][]>> =>
   Object.fromEntries(
     await settleAll(

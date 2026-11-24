@@ -3,9 +3,9 @@ import type { AttributeLine } from "#src/models/character/AttributeLine";
 import { Attribute } from "#src/models/character/Attribute";
 
 // The constant stats of the Benedictions the tower buff table gives, keyed by the buff's id, each read off its
-// Description in The game's text: the stat to every character of the party for the chamber, at the amount the
-// Description gives. PROVISIONAL, On the roadmap's References sought list: the published choices carry no modifier, so
-// This table is the only source of the stat. A Benediction it does not hold gives No line, and the ones it leaves
+// Description in the game's text: the stat to every character of the party for the chamber, at the amount the
+// Description gives. PROVISIONAL, on the roadmap's References sought list: the published choices carry no modifier, so
+// This table is the only source of the stat. A Benediction it does not hold gives no line, and the ones it leaves
 // Unbuilt are named in the change's design
 const TowerBuffIdAttributeLinesMap: Readonly<Record<number, AttributeLine[]>> = {
   1: [{ attribute: Attribute.AttackPercent, value: 0.2 }],

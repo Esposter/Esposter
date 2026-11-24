@@ -28,7 +28,7 @@ export const BURNING_ASSAULT_SKILL: GcgSkill = {
 };
 
 // Burning Assault: its damage is read before it is dealt, and the Scorpocalypse's mark is cleared then, so only a
-// Defeat this Use makes is heard after it
+// Defeat this use makes is heard after it
 export const burningAssault: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
@@ -48,7 +48,7 @@ export const burningAssault: GcgSkillModule = {
 };
 
 // Spirit of Omen: Pyro Scorpion, an equipment giving its character the Technique: while she is active and holds energy,
-// A DMG she Takes is 1 less for 1 Energy, and a stack of Scorpion Blessing is generated. Its one usage is spent on that
+// A DMG she takes is 1 less for 1 Energy, and a stack of Scorpion Blessing is generated. Its one usage is spent on that
 export const pyroScorpion: GcgCardModule = {
   initialUsages: 1,
   modifyDamageReceived: ({ duel, sideIndex }, value, zoneCard) => {

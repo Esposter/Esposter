@@ -4,9 +4,9 @@ import type { Stamina } from "#src/models/locomotion/Stamina";
 import type { Vector3 } from "three";
 
 // The ground and the landmarks a body moves against, read in one frame of coordinates, and where its feet start in it.
-// Its Stamina is one of two: the party's pool, which the pool's owner builds with the maximum and the consumption
-// Multiplier It holds and which a kit restores to too, or a pool of the body's own, built full at a maximum with the
-// Multiplier. The Two never mix, so the pool a body spends from is never given a multiplier it ignores
+// Its stamina is one of two: the party's pool, which the pool's owner builds with the maximum and the consumption
+// Multiplier it holds and which a kit restores to too, or a pool of the body's own, built full at a maximum with
+// The multiplier. The two never mix, so the pool a body spends from is never given a multiplier it ignores
 export type CharacterControllerOptions = (
   | {
       // The factor every stamina spend is multiplied by, read at each spend, and 1 when none is given

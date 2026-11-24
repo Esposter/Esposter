@@ -12,7 +12,7 @@ export const KEY_CODE_DOWN = "ShiftLeft";
 // So a screen's controls work from the keyboard
 export const FOCUS_KEY_CODES: readonly string[] = ["Enter", "Space", "Tab"];
 // What a key is typed into, whose keys are its own and reach no binding: an input that takes text, not one a click
-// Sets, Such as a colour swatch the developer panel leaves focused, which types nothing and so leaves the Traveler's
+// Sets, such as a colour swatch the developer panel leaves focused, which types nothing and so leaves the Traveler's
 // Keys alone
 export const FIELD_SELECTOR =
   'input:not([type="button"], [type="checkbox"], [type="color"], [type="file"], [type="image"], [type="radio"], [type="range"], [type="reset"], [type="submit"]), select, textarea, [contenteditable="true"]';

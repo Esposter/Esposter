@@ -21,7 +21,7 @@ describe(createWayOfSunfirePassiveModule, () => {
   const wielder = createWielderCombatant();
   const party = createParty([TRAVELER_CHARACTER_ID]);
   // The Way of Sunfire at its first rank: a Charged Attack hit queues a Sunfire Arrow at 60% ATK on the enemy it
-  // Struck, once Every 10 seconds, which gives that enemy Heartsearer for 10 seconds, and Charged Attacks deal 28% more
+  // Struck, once every 10 seconds, which gives that enemy Heartsearer for 10 seconds, and Charged Attacks deal 28% more
   // DMG to it while it lasts
   const passiveModule = createWayOfSunfirePassiveModule([10, 0.6, 10, 0.28]);
 

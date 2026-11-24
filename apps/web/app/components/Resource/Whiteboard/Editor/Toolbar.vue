@@ -15,9 +15,9 @@ import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardT
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 
 // Every tool a whiteboard is drawn with, in one toolbar: the select and hand tools, the shape slot, the drawing tools
-// And the image picker. The lock that keeps a tool in hand sits here too. The toolbar holds one value for the tool in
-// Hand, and a shape tool's value is the kind it places. The slot draws that kind, and a choice in it or by a key sets
-// Both
+// And the image picker. the lock that keeps a tool in hand sits here too.
+// The toolbar holds one value for the tool in hand, and a shape tool's value is the kind it places.
+// The slot draws that kind, and a choice in it or by a key sets both
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { isToolLocked, shapeKind, tool } = storeToRefs(whiteboardEditorStore);
 const { chooseShape, toggleToolLock } = whiteboardEditorStore;

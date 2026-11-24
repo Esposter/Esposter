@@ -15,8 +15,8 @@ const plugin: Plugin = definePlugin({
       readdirSync(RULES_DIRECTORY)
         .filter((fileName) => fileName.endsWith(".ts") && !fileName.endsWith(".test.ts"))
         .map(async (fileName): Promise<[string, Rule]> => {
-          // The rules are discovered from their folder at load, so each is imported where
-          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- its file name is read, not by a static list
+          /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- the rules are discovered from their folder at
+             load, so each is imported where its file name is read, not by a static list */
           const { default: rule } = await import(new URL(fileName, RULES_DIRECTORY).href);
           return [fileName.slice(0, -".ts".length).replaceAll(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`), rule];
         }),

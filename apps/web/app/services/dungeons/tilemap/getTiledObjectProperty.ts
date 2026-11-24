@@ -5,8 +5,8 @@ import { NotFoundError } from "@esposter/shared";
 // Phaser types a Tiled layer's properties as `object[]` because Tiled writes them untyped; this is the one
 // Place that gives them the shape Tiled actually emits
 export const getTiledObjectProperty = <TValue = never>(properties: object[], name: string) => {
-  // Phaser's object[] is Tiled's untyped JSON, and TValue is the value type the caller states for
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the property, which no check reads from the file
+  /* oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Phaser's object[] is Tiled's untyped JSON, and
+     TValue is the value type the caller states for the property, which no check reads from the file */
   const property = (properties as TiledObjectProperty<TValue>[]).find(
     (tiledObjectProperty) => tiledObjectProperty.name === name,
   );

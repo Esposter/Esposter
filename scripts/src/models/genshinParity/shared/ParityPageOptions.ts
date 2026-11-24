@@ -8,7 +8,7 @@ export interface ParityPageOptions {
   backdropPath?: string | undefined;
   height: number;
   // Whether the backdrop is the reference's own frame, which holds the game's blur and wash of the world already, so
-  // The Screen's own world blur and wash are not drawn over it a second time
+  // The screen's own world blur and wash are not drawn over it a second time
   isBackdropBlurred?: boolean;
   // Whether the page's clock is faked, moved on only by the caller, and its timers and frames with it
   isClockFaked?: boolean;

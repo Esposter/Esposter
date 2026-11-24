@@ -97,7 +97,7 @@ const recipeId = ref(0);
 const tabId = ref(0);
 const openRecipes = computed(() => recipes.filter((recipe) => checkIsRecipeOpen(recipe, progress, adventureRank)));
 // One tab per bench tab the open recipes fall under, in order and named by the game's own text for the combine type
-// Each Files under: a conversion's tab is apart from the craft tab of the same combine type
+// Each files under: a conversion's tab is apart from the craft tab of the same combine type
 const recipeTabCells = computed(() =>
   [...new Map(openRecipes.value.map((recipe): [number, number] => [getCraftingTabId(recipe), recipe.combineType]))]
     .toSorted(([firstTabId], [secondTabId]) => firstTabId - secondTabId)

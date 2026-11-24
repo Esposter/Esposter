@@ -24,8 +24,8 @@ describe(removeWorktree, () => {
     rmSync(repositoryRoot, { force: true, recursive: true });
   });
 
-  // Git keeps a record of a worktree whose folder has gone until it is pruned, and the removal refuses a missing
-  // Folder. The record must be pruned on that refusal too, or the listing keeps a worktree nothing holds.
+  // Git keeps a record of a worktree whose folder has gone until it is pruned, and the removal refuses a
+  // Missing folder. the record must be pruned on that refusal too, or the listing keeps a worktree nothing holds.
   test("prunes the record of a worktree whose folder is already gone, before it names the missing folder", () => {
     expect.hasAssertions();
 
@@ -46,7 +46,7 @@ describe(removeWorktree, () => {
   });
 
   // The main checkout is not a linked worktree, and its installs are the ones every other checkout's point into. The
-  // Refusal Comes before any install is touched, on every platform, so the installs are still there after it
+  // Refusal comes before any install is touched, on every platform, so the installs are still there after it
   test("refuses the main checkout before any install is removed", () => {
     expect.hasAssertions();
 
@@ -65,7 +65,7 @@ describe(removeWorktree, () => {
   });
 
   // Git refuses a linked worktree with uncommitted changes only after its installs are gone on Windows, so the refusal
-  // Is made First, and the installs of the worktree are still there after it
+  // Is made first, and the installs of the worktree are still there after it
   test("refuses a linked worktree with uncommitted changes before any install is removed", () => {
     expect.hasAssertions();
 

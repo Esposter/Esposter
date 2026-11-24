@@ -179,7 +179,7 @@ describe("inferTopicsMiddleware", () => {
   });
 
   // A write names its rows in the header only while they fit it: one that changed more rows than the header's budget
-  // Names none, So the header never grows with the write. Its entry drops on the answer, and its rows come back through
+  // Names none, so the header never grows with the write. Its entry drops on the answer, and its rows come back through
   // The topic refetch
   test("names none of a mutation's rows once it changed more than the header can name", async () => {
     expect.hasAssertions();
@@ -228,7 +228,7 @@ describe("inferTopicsMiddleware", () => {
   });
 
   // A read's topics are watched only by the person who read them, so the header signs them for that person: the
-  // Realtime Object takes a watch for them only when the signature covers the topics, the read's time and the person it
+  // Realtime object takes a watch for them only when the signature covers the topics, the read's time and the person it
   // Names
   test("a signed-in query's topics are signed for the person who read them", async () => {
     expect.hasAssertions();
@@ -316,7 +316,7 @@ describe("inferTopicsMiddleware", () => {
   });
 
   // A list past the budget names no row of its own: its table's row topics collapse to the table-wide topic, which
-  // Every write To the table publishes, so the read is still woken by a write to any of its rows
+  // Every write to the table publishes, so the read is still woken by a write to any of its rows
   test("collapses a table a list names past the header's budget to its table-wide topic", async () => {
     expect.hasAssertions();
 
@@ -349,7 +349,7 @@ describe("inferTopicsMiddleware", () => {
   });
 
   // A join returns a row per membership, and each row names the room its membership is in. A join past the budget's
-  // Rows Collapses the table it reads, which is the table holding the most row topics
+  // Rows collapses the table it reads, which is the table holding the most row topics
   test("collapses a table a join returns more rows of than the header's budget", async () => {
     expect.hasAssertions();
 
@@ -376,7 +376,7 @@ describe("inferTopicsMiddleware", () => {
   });
 
   // A read names one topic per room it reads, each the room's own messages. Past the header's budget those collapse to
-  // The room Kind's table topic, which every room's write publishes, so the read still fits and is woken by a write in
+  // The room kind's table topic, which every room's write publishes, so the read still fits and is woken by a write in
   // Any room
   test("collapses a read over more rooms than the header's budget to the room kind's table topic", async () => {
     expect.hasAssertions();
@@ -411,7 +411,7 @@ describe("inferTopicsMiddleware", () => {
   });
 
   // A read names one blob topic per key it reads. Past the header's budget its keys collapse to their bucket's root,
-  // Which every Write to the bucket publishes, as a table's rows collapse to its table-wide topic
+  // Which every write to the bucket publishes, as a table's rows collapse to its table-wide topic
   test("collapses a bucket a read names past the header's budget to the bucket's root topic", async () => {
     expect.hasAssertions();
 
@@ -437,7 +437,7 @@ describe("inferTopicsMiddleware", () => {
   });
 
   // A presigned upload lands in R2 without its bucket binding, so the PUT itself publishes nothing. The confirm that
-  // Records the key Publishes its write as a put's topics do, so a read of the key wakes once the upload is confirmed
+  // Records the key publishes its write as a put's topics do, so a read of the key wakes once the upload is confirmed
   test("wakes a read of a key once a confirm records the presigned upload that landed there", async () => {
     expect.hasAssertions();
 

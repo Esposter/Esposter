@@ -4,7 +4,7 @@ import type { LoadBudget } from "#src/models/genshinParity/LoadBudget";
 const MEASURED_MACHINE = "DESKTOP-B9KPH2V";
 
 // Each screen's load budget, written at its measured figures plus a tenth on the machine named, so `load` fails a
-// Screen That grows past what it loaded when its budget was written, and its crossing's the same way
+// Screen that grows past what it loaded when its budget was written, and its crossing's the same way
 export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
   GameOpening: {
     gameDataBytes: 2559181,

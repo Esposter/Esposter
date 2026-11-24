@@ -6,7 +6,7 @@ import { getDuplicateElement } from "#src/services/whiteboard/edit/getDuplicateE
 import { insertPositionedElement, PositionedElementType } from "vue-block-editor-headless";
 
 // The operations that insert a copy of each original on top of the element list, as one list, each copy under the id
-// Its original maps to and moved By the offset. The shape copies are inserted before the arrow copies, so an arrow copy
+// Its original maps to and moved by the offset. The shape copies are inserted before the arrow copies, so an arrow copy
 // Finds the shape copy its binding names
 export const getCopyOperations = (
   document: PositionedDocument,

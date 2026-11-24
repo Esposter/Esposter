@@ -1,5 +1,5 @@
 // One level of a region's statues as the world reads it: the Oculi it takes and their item, the rewards it pays, and
-// The Stamina it adds to the maximum. A statue level takes one item, so it keeps its own flat shape rather than an
+// The stamina it adds to the maximum. A statue level takes one item, so it keeps its own flat shape rather than an
 // Offering's list
 export interface StatueLevelRow {
   itemCount: number;

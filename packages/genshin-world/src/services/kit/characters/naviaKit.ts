@@ -43,22 +43,22 @@ const BURST_SHRAPNEL_ICD_STATUS_ID = "navia-burst-shrapnel-icd";
 const ARKHE_ICD_STATUS_ID = "navia-arkhe-icd";
 
 // Measured: gcsim v2.47.2 (MIT) navia/cons.go, Constellation 4's Geo RES cut of 20% for eight seconds on each enemy a
-// Burst Hit strikes, the blast and the cannon's shots alike
+// Burst hit strikes, the blast and the cannon's shots alike
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_GEO_RESISTANCE_REDUCTION = 0.2;
 const CONSTELLATION_4_SECONDS = 8;
 const CONSTELLATION_4_STATUS_ID = "navia-c4-shred";
 
 // Measured: gcsim v2.47.2 (MIT) navia/cons.go, each Shrapnel a shot spends gives Navia 3 Energy and cuts her burst's
-// Cooldown By one second, up to three of them
+// Cooldown by one second, up to three of them
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_MAXIMUM_SHRAPNEL = 3;
 const CONSTELLATION_1_ENERGY_PER_SHRAPNEL = 3;
 const CONSTELLATION_1_BURST_SECONDS_PER_SHRAPNEL = 1;
 
 // Measured: gcsim v2.47.2 (MIT) navia/cons.go, Constellation 2's CRIT Rate of 12% for each shrapnel the press consumes,
-// Three at Most, and one Cannon Fire Support shot 30 frames after the blade strikes an enemy, three metres round the
-// Point of its hit. Gcsim draws that point uniformly over the disk of 1.2 metres about the enemy, from its random
+// Three at most, and one Cannon Fire Support shot 30 frames after the blade strikes an enemy, three metres round the
+// Point of its hit. gcsim draws that point uniformly over the disk of 1.2 metres about the enemy, from its random
 // Source
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_CRITICAL_RATE_PER_SHRAPNEL = 0.12;
@@ -68,9 +68,9 @@ const CONSTELLATION_2_CANNON_RADIUS_METRES = 3;
 const CONSTELLATION_2_CANNON_HITMARK_FRAMES = 30;
 
 // Undisclosed Distribution Channels, as the dump's Navia_PermanentSkill_1 row and gcsim v2.47.2 (MIT) navia/asc.go give
-// It: From Ascension 1, for 4 seconds after a shot fires, her normal attacks, charged attack and plunges deal Geo DMG
-// And 40% More of it. gcsim adds only the DMG Bonus, as her attacks are Geo there already
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/navia/asc.go`
+// It: from Ascension 1, for 4 seconds after a shot fires, her normal attacks, charged attack and plunges deal Geo DMG
+// And 40% more of it. gcsim adds only the DMG Bonus, as her attacks are Geo there already
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/navia/asc.go
 const UNDISCLOSED_DISTRIBUTION_CHANNELS_ASCENSION = 1;
 const UNDISCLOSED_DISTRIBUTION_CHANNELS_DAMAGE_BONUS = 0.4;
 const UNDISCLOSED_DISTRIBUTION_CHANNELS_SECONDS = 4;
@@ -95,7 +95,7 @@ export const NAVIA_CHARACTER_ID = 10_000_091;
 // Cooldown, and As the Sunlit Sky's Singing Salute casts Cannon Fire Support, the blast and the cannon's hits gaining
 // Crystal Shrapnel. From Ascension 1 a shot infuses her attacks with Geo and raises their DMG. From Ascension 4 each
 // Pyro, Electro, Cryo and Hydro party member adds 20% ATK, two at most. Not built: the Shrapnel gained from party
-// Crystallize Shards, and the pellets past three stacks of a shot, as no step gives a shard's reach to a hit.
+// Crystallize shards, and the pellets past three stacks of a shot, as no step gives a shard's reach to a hit.
 // Constellations 1, 2, 4 and 6 are built, Constellation 6 keeping its excess Shrapnel, and the rest of her
 // Constellations are not built: Constellation 6's CRIT DMG per Shrapnel past three needs a strike CRIT DMG hook, which
 // The kit cannot apply
@@ -127,7 +127,7 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
     hitmarkSeconds: toKitSeconds(CONSTELLATION_2_CANNON_HITMARK_FRAMES),
   };
   // Constellation 2 on a press or hold's blade: its CRIT Rate for the shrapnel the shot consumed, and one cannon shot
-  // At the First enemy the blade strikes, which the shot's own flag allows once
+  // At the first enemy the blade strikes, which the shot's own flag allows once
   const addConstellation2 = (surgingBladeHit: KitHit, consumedShrapnel: number): KitHit => {
     let isCannonShotFired = false;
     return {
@@ -159,7 +159,7 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
   };
 
   // A shot fired spends the team's Crystal Shrapnel, keeping the excess past three for Constellation 6 as gcsim's shot
-  // Does, And fires the Surging Blade, unless its ICD still holds, which the kit sets on the shot and never clears
+  // Does, and fires the Surging Blade, unless its ICD still holds, which the kit sets on the shot and never clears
   // Early
   const castShot =
     (surgingBladeHit: KitHit) =>

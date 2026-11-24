@@ -5,7 +5,7 @@ import { createRecordSchema, createUniquePrimitiveArraySchema } from "@esposter/
 import { z } from "zod";
 
 // The cooking as the save holds it: the ids of the dishes learned from instructions, each unique, each dish's
-// Proficiency By its id, and each processing's queue by its id
+// Proficiency by its id, and each processing's queue by its id
 export const cookingSaveSchema = z.object({
   learnedRecipeIds: createUniquePrimitiveArraySchema(z.int().positive()).max(MAX_COOKING_RECIPE_COUNT),
   processingJobs: createRecordSchema(numericSaveIdSchema, processingJobSaveSchema, MAX_COOKING_RECIPE_COUNT),

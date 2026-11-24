@@ -16,9 +16,9 @@ import {
 import { getProposalId } from "#src/services/proposals/getProposalId";
 
 // Every open proposal's change, cheapest first, read once from the change files given. A change is open while its
-// Folder Sits directly under the changes root, and a unit to build when it has a design; a program is the umbrella over
-// The changes Sharing its prefix, so it is an id a change may wait on but never a unit itself. Its metadata is parsed
-// Here, once, and its Tasks are read against that metadata's phase, so the phase it is picked at is the lowest among
+// Folder sits directly under the changes root, and a unit to build when it has a design; a program is the umbrella over
+// The changes sharing its prefix, so it is an id a change may wait on but never a unit itself. Its metadata is parsed
+// Here, once, and its tasks are read against that metadata's phase, so the phase it is picked at is the lowest among
 // Its open tasks
 export const readProposalChanges = (files: readonly QueueFile[]): ProposalChange[] => {
   const openFiles = files.filter(({ path }) => getProposalId(path) !== ARCHIVE_FOLDER);

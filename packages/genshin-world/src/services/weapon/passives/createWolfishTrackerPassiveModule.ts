@@ -11,10 +11,10 @@ const WOLFISH_TRACKER_COOLDOWN_SECONDS = 30;
 const WOLFISH_TRACKER_HEALTH_SHARE = 0.3;
 const WOLFISH_TRACKER_SECONDS = 12;
 
-// Wolf's Gravestone's Wolfish Tracker at its rank: its wielder's ATK is raised by the rank's percentage. A hit the
-// Wielder deals on an enemy under thirty per cent of its HP raises the deployed team's ATK by the rank's second
-// Percentage for twelve seconds, once every thirty seconds. The seconds and the thirty per cent are the text's, not the
-// Parameter list's
+// Wolf's Gravestone's Wolfish Tracker at its rank: its wielder's ATK is raised by the rank's percentage.
+// A hit the wielder deals on an enemy under thirty per cent of its HP raises the deployed team's ATK by the rank's
+// Second percentage for twelve seconds, once every thirty seconds. The seconds and the thirty per cent are the text's,
+// Not the parameter list's
 export const createWolfishTrackerPassiveModule = (params: number[]): PassiveModule => {
   const attackPercent = takeOne(params, 0);
   const teamAttackPercent = takeOne(params, 1);

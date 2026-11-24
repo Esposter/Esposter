@@ -21,7 +21,7 @@ export const useWorldQuestTargets = ({ mapCamera, windrise }: WorldQuestTargetsO
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
   // A quest's go-to step is reached once the character steps into its place's radius, so each place it steps into is a
-  // `go-to`
+  // Go-to
   watch(mapCamera, (newCamera, oldCamera) => {
     if (!windrise.value) return;
     for (const questEvent of getEnteredGoToEvents([...windrise.value.regionDataMap.values()], oldCamera, newCamera))
@@ -42,8 +42,8 @@ export const useWorldQuestTargets = ({ mapCamera, windrise }: WorldQuestTargetsO
     return distanceMap;
   });
   // Where the navigated objective stands from the character, which the tracker's line under its title reads: its
-  // Distance Across the ground, as the quest screen lists it, and its ground's height over the character's ground
-  // Point, both read Off the world's one ground. None while no quest is navigated to or no region in reach places its
+  // Distance across the ground, as the quest screen lists it, and its ground's height over the character's ground
+  // Point, both read off the world's one ground. None while no quest is navigated to or no region in reach places its
   // Objective
   const questMark = computed<QuestMark | undefined>(() => {
     if (!windrise.value || !questTargetId.value) return undefined;

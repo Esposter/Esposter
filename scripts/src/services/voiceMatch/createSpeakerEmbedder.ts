@@ -13,8 +13,8 @@ export const createSpeakerEmbedder = async (): Promise<SpeakerEmbedder> => {
   return async (samples) => {
     const inputs = await processor(samples);
     const { embeddings } = await model(inputs);
-    // The model's output is typed any by the library, and
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- its data is the Float32Array the model returns
+    /* oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the model's output is typed any by the library,
+       and its data is the Float32Array the model returns */
     const vector = new Float32Array(embeddings.data as Float32Array);
     const norm = Math.hypot(...vector);
     return vector.map((value) => value / norm);

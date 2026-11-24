@@ -60,8 +60,8 @@ let impostorMesh: Mesh | undefined;
 const treePosition = new Vector3();
 // The species' impostor is baked from the tree's own mesh on the first frame the renderer can draw, unless a tree of it
 // Already has, then each frame the tree is the mesh near the eye and its impostor far from it, crossing over by a
-// Dither Across a band round the switch, which stands a number of the tree's heights out so a larger tree keeps its
-// Mesh Further. The fade is each mesh's own, which the shared materials read as it is drawn
+// Dither across a band round the switch, which stands a number of the tree's heights out so a larger tree keeps its
+// Mesh further. The fade is each mesh's own, which the shared materials read as it is drawn
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera || !isWebGPURenderer(renderer)) return;

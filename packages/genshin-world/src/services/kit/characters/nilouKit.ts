@@ -77,8 +77,8 @@ const GOLDEN_CHALICE_BOUNTY_SECONDS = 30;
 const GOLDEN_CHALICE_ELEMENTAL_MASTERY = 100;
 
 // Measured: gcsim (MIT) nilou/cons.go, Constellation 2 lowers the Hydro RES of an enemy that a member under Golden
-// Chalice's Bounty hits with Hydro, and the Dendro RES of an enemy that a Bloom or Lunar-Bloom reaction triggers on, by
-// 35% for 10 seconds. In gcsim the Dendro half is also gated on the Bounty, which the talent's text does not do, so the
+// Chalice's bounty hits with Hydro, and the Dendro RES of an enemy that a Bloom or Lunar-Bloom reaction triggers on, by
+// 35% for 10 seconds. in gcsim the Dendro half is also gated on the Bounty, which the talent's text does not do, so the
 // Text stands https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_RES_REDUCTION = 0.35;
@@ -97,8 +97,8 @@ const createConstellation2Status = (id: string, element: Element): EnemyStatus =
 const GOLDEN_CHALICE_ELEMENTAL_MASTERY_SECONDS = 10;
 
 // Measured: gcsim (MIT) nilou/cons.go, Constellation 4 gives 15 Elemental Energy when the third step of Pirouette
-// Strikes an Enemy, and raises Dance of Abzendegi's DMG by 50% for 8 seconds
-// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou`
+// Strikes an enemy, and raises Dance of Abzendegi's DMG by 50% for 8 seconds
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_ENERGY = 15;
 const CONSTELLATION_4_BURST_DAMAGE_BONUS = 0.5;
@@ -120,8 +120,8 @@ const checkIsDendroHydroTeam = (members: DeployedCombatant[]): boolean =>
   members.every(({ element }) => element === Element.Dendro || element === Element.Hydro);
 
 // Constellation 4 gives Nilou 15 energy and a burst bonus once per attack, on the first enemy its strike lands on. It
-// Is set On the Pirouette third step's copy of the illusion's hit alone: gcsim checks the stance as the step starts,
-// And the step's Hit lands after Lunar Prayer has taken the stance, so the copy's placement stands in for that check
+// Is set on the Pirouette third step's copy of the illusion's hit alone: gcsim checks the stance as the step starts,
+// And the step's hit lands after Lunar Prayer has taken the stance, so the copy's placement stands in for that check
 const constellation4Strike = (
   { kitEffectState, party }: KitContext,
   { combatant, isFirstEnemyStruck }: KitStrike,
@@ -136,10 +136,10 @@ const constellation4Strike = (
 
 // Nilou's behaviour: Dance of Haftkarsvar enters Pirouette, whose normal attacks are the sword dance and whose skill is
 // The first Whirling Steps, and the sword dance's third step sets off Lunar Prayer, which plays the sword dance again
-// With The dance as its skill. Constellations 1, 2, 4 and 6 and Ascensions 1 and 4 are built, and Golden Chalice's
-// Bounty is Set as the third step lands. The Pirouette's later steps are not built, nor is Dance of Abzendegi's
-// Lingering Aeon, as it Lands on the enemy the first hit struck, and no hook hands that enemy on. Constellations 3 and
-// 5 raise talent levels, Which no kit reads yet
+// With the dance as its skill. Constellations 1, 2, 4 and 6 and Ascensions 1 and 4 are built, and Golden Chalice's
+// Bounty is set as the third step lands. The Pirouette's later steps are not built, nor is Dance of Abzendegi's
+// Lingering Aeon, as it lands on the enemy the first hit struck, and no hook hands that enemy on. Constellations 3 and
+// 5 raise talent levels, which no kit reads yet
 export const createNilouKitBehaviour = ({
   kit,
   readAction,
@@ -151,8 +151,8 @@ export const createNilouKitBehaviour = ({
   // Count gcsim keeps across its dance and its steps
   const whirlingSteps = readAction("whirlingSteps");
   // The sword dance's three steps, whose hits both stances share so Constellation 1 finds the Luminous Illusion among
-  // The Strikes. They play as a stance's normal attacks but are Elemental Skill DMG, as the Whirling Steps the stance's
-  // Skill Plays are, gcsim's AttackTagElementalArt in nilou/skill.go's SwordDance and WhirlingSteps
+  // The strikes. They play as a stance's normal attacks but are Elemental Skill DMG, as the Whirling Steps the stance's
+  // Skill plays are, gcsim's AttackTagElementalArt in nilou/skill.go's SwordDance and WhirlingSteps
   const swordDance = readActions("swordDance");
   const luminousIllusion = takeOne(swordDance, LUMINOUS_ILLUSION_STEP);
   const luminousIllusionHit = takeOne(luminousIllusion.hits);
@@ -280,7 +280,7 @@ export const createNilouKitBehaviour = ({
         if (effect.kind === "field" && effect.id === PIROUETTE_END_TASK_ID) effect.secondsRemaining = 0;
     },
     // Pirouette replaces the string with the sword dance and the skill with the first Whirling Steps. A press of the
-    // Skill Within it is blocked by the cooldown the cast set, as a stance's skill press is not exempted from one, so
+    // Skill within it is blocked by the cooldown the cast set, as a stance's skill press is not exempted from one, so
     // The Whirling Steps are reachable only once it has run out
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {

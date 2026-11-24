@@ -12,8 +12,8 @@ import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Places image files on a whiteboard, pasted, picked or dropped. Each file is uploaded as a file asset of the
-// Whiteboard, and the element it places Holds the file's id and none of its bytes, centred on the point a drop lands
-// On, or where the canvas is centred when no point is given. A file that is Not an image is left out, and an upload the
+// Whiteboard, and the element it places holds the file's id and none of its bytes, centred on the point a drop lands
+// On, or where the canvas is centred when no point is given. A file that is not an image is left out, and an upload the
 // Server refuses alerts and places nothing, and the other images still go in
 export const useInsertWhiteboardImages = () => {
   const resourceStore = useResourceStore();
@@ -28,8 +28,8 @@ export const useInsertWhiteboardImages = () => {
   return async (files: File[], point?: Point) => {
     const imageFiles = files.filter((file) => IMAGE_UPLOAD_MIME_TYPES.includes(file.type));
     // The board the images were picked for. An upload names the board open when it is made, so it is made only while
-    // That Board is still open, and an image whose board closed while it uploaded is placed on none: the open board is
-    // Not the one It was picked for, so the upload is deleted from the board it went to
+    // That board is still open, and an image whose board closed while it uploaded is placed on none: the open board is
+    // Not the one it was picked for, so the upload is deleted from the board it went to
     const isStillOpen = captureOpeningCheck();
     const resourceId = currentResourceId.value;
     const uploadResults = await Promise.all(

@@ -7,7 +7,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { takeOne } from "@esposter/shared";
 
 // Dodoco Tales at its rank: a normal attack hit its wielder deals raises its charged attack DMG by the rank's amount
-// For the Rank's seconds, and a charged attack hit raises its ATK by the rank's second amount for the rank's second
+// For the rank's seconds, and a charged attack hit raises its ATK by the rank's second amount for the rank's second
 // Seconds
 export const createDodocoTalesPassiveModule = (params: number[]): PassiveModule => {
   const chargedAttackDamageBonus = takeOne(params, 0);

@@ -21,8 +21,8 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) diona/burst.go, Signature Mix's field healing within a circle of radius 7 round it
-// Every Two seconds from two seconds after the initial hit
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diona/burst.go`
+// Every two seconds from two seconds after the initial hit
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diona/burst.go
 const SIGNATURE_MIX_FIELD_RADIUS = 7;
 const SIGNATURE_MIX_TICK_SECONDS = 2;
 // Provisional: gcsim's field lasts 750 frames, half a second past the table's 12 seconds, which this adds to it
@@ -30,7 +30,7 @@ const SIGNATURE_MIX_FIELD_MARGIN_SECONDS = 0.5;
 const SIGNATURE_MIX_FIELD_ID = "diona-signature-mix-field";
 
 // Measured: gcsim v2.47.2 (MIT) diona/skill.go, Icy Paws' shield at 1.15 times its strength from two constellations,
-// Which Is gcsim's C2. Diona's hold shield is the table's bonus times the tap's shield
+// Which is gcsim's C2. Diona's hold shield is the table's bonus times the tap's shield
 const SHIELD_CONSTELLATION = 2;
 const SHIELD_CONSTELLATION_MULTIPLIER = 1.15;
 // Measured: gcsim v2.47.2 (MIT) diona/cons.go, the first constellation's 15 energy returned as Signature Mix's field
@@ -39,8 +39,8 @@ const SIGNATURE_MIX_CONSTELLATION = 1;
 const SIGNATURE_MIX_CONSTELLATION_ENERGY = 15;
 
 // From the wiki's Signature Mix page, its sixth constellation, Cat's Tail Closing Time: each character within the
-// Field's Radius gains 200 Elemental Mastery above half its HP, or 30% Incoming Healing Bonus at or below it. The field
-// Ticks each Half-second, and a tick's buffs last until the next, so they fade within half a second of the body leaving
+// Field's radius gains 200 Elemental Mastery above half its HP, or 30% Incoming Healing Bonus at or below it. The field
+// Ticks each half-second, and a tick's buffs last until the next, so they fade within half a second of the body leaving
 // The field https://genshin-impact.fandom.com/wiki/Signature_Mix
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_HEALTH_SHARE = 0.5;
@@ -51,8 +51,8 @@ const CONSTELLATION_6_FIELD_ID = "diona-constellation-6-field";
 const CONSTELLATION_6_SOURCE = "diona-constellation-6";
 
 // Drunkards' Farce, as the dump's Diona_PermanentSkill_2 row (promote 4, params -0.1 and 15) gives it: from Ascension
-// 4, Enemies Signature Mix reaches lose 10% of their ATK for 15 seconds. gcsim leaves it unbuilt, so each enemy the
-// Burst's Initial hit or a tick strikes is the one that entered its AoE
+// 4, enemies Signature Mix reaches lose 10% of their ATK for 15 seconds. gcsim leaves it unbuilt, so each enemy the
+// Burst's initial hit or a tick strikes is the one that entered its AoE
 const DRUNKARDS_FARCE_ASCENSION = 4;
 const DRUNKARDS_FARCE_STATUS: EnemyStatus = {
   attackReduction: 0.1,
@@ -64,7 +64,7 @@ const getDrunkardsFarceStatus = ({ ascension }: Combatant): EnemyStatus | undefi
   ascension >= DRUNKARDS_FARCE_ASCENSION ? DRUNKARDS_FARCE_STATUS : undefined;
 
 // The buffs Cat's Tail Closing Time gives each deployed member on a tick, each lasting to the next: Elemental Mastery
-// Above Half its HP, and Incoming Healing Bonus at or below it
+// Above half its HP, and Incoming Healing Bonus at or below it
 const addConstellation6Buffs = ({ kitEffectState, party }: KitContext): void => {
   for (const characterId of getDeployedCharacterIds(party)) {
     const { healthShare } = getPartyMember(party, characterId);
@@ -90,8 +90,8 @@ export const DIONA_CHARACTER_ID = 10_000_039;
 // Diona's behaviour: Icy Paws' tap casts her shield as it starts, and its hold the shield times the hold's bonus, which
 // Constellation 2 raises. Signature Mix casts its field, healing the character on the field, and its ticks, a summon at
 // The cast's body; from Constellation 1 she regains energy as the field ends, from Constellation 6 a second field of
-// The Same circle buffs the team on each half-second tick, and from Ascension 4 the burst's hits cut the ATK of the
-// Enemies They strike. Her Ascension 1 passive and Constellation 4 are not built, as the kit events do not reach them
+// The same circle buffs the team on each half-second tick, and from Ascension 4 the burst's hits cut the ATK of the
+// Enemies they strike. Her Ascension 1 passive and Constellation 4 are not built, as the kit events do not reach them
 // Constellation 4 needs the aimed shot's charge time read within Signature Mix's radius, not read by the charged attack
 export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shieldMaxHealthShare = readParameter("shieldMaxHealthShare");

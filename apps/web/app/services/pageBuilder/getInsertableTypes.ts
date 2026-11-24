@@ -4,7 +4,7 @@ import { getInsertTarget } from "#src/services/pageBuilder/getInsertTarget";
 import { getAcceptedTypes } from "vue-block-editor-headless";
 
 // The types, of those given, an insert at the insertion point lands. Each type resolves its target the way an insert
-// Does, And a type is kept only when the slot it lands in accepts it, so an insertion menu offers nothing an insert
+// Does, and a type is kept only when the slot it lands in accepts it, so an insertion menu offers nothing an insert
 // Would refuse
 export const getInsertableTypes: PageBuilderHelper<
   string[],

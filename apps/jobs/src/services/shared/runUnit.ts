@@ -6,8 +6,8 @@ import { computeWriteTopics, recordStatements, runRecordedWrites } from "@espost
 import { env } from "cloudflare:workers";
 
 // Runs one unit of work, a queue message or the nightly purge, with its writes and its blob writes recorded. The topics
-// Those Writes name are published best-effort once it settles, whether it succeeded or not: a write that landed before
-// A failure Still changed rows
+// Those writes name are published best-effort once it settles, whether it succeeded or not: a write that landed before
+// A failure still changed rows
 export const runUnit = <T>(run: () => Promise<T>): Promise<T> => {
   const unit: RecordedUnit = { ...recordStatements(getCoreDatabase()), blobs: { reads: [], writes: [] } };
   return runRecordedWrites(unitStorage, unit, run, {

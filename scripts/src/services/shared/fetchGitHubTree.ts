@@ -7,7 +7,7 @@ import { readGitHubHeaders } from "#src/services/shared/readGitHubHeaders";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A tree from the GitHub Git Trees API, authorized by GITHUB_TOKEN when one is set, since the API's anonymous limit is
-// 60 Requests an hour. A tree the API cut short throws, so a listing is never silently missing files
+// 60 requests an hour. A tree the API cut short throws, so a listing is never silently missing files
 export const fetchGitHubTree = async (url: string, name: string): Promise<TreeEntry[]> => {
   const { tree, truncated } = await fetchJson<Tree>(
     url,

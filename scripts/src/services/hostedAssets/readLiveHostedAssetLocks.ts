@@ -9,8 +9,8 @@ import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
 // Every lock a stored object may still be reached by: the working tree's, HEAD's, each remote branch's head, every
-// Version Origin/main committed within the retention window, and the one in force when the window opened. The git
-// History is the one Place a revert's lock is still written, so a revert within the window still resolves
+// Version origin/main committed within the retention window, and the one in force when the window opened. The git
+// History is the one place a revert's lock is still written, so a revert within the window still resolves
 export const readLiveHostedAssetLocks = (
   product: HostedAssetProduct,
   workingTreeLock: HostedAssetLock,

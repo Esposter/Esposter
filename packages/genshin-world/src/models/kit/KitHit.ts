@@ -18,7 +18,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 // Its poise damage and the talent's multiplier
 export interface KitHit {
   // The kind of attack the action the hit sits in deals, set as its kit or its stance is built, which an infusion and
-  // An Ore follow whatever kind the hit is dealt as. None for a hit no action holds
+  // An ore follow whatever kind the hit is dealt as. None for a hit no action holds
   actionAttackTag?: AttackTag | undefined;
   // The flat damage the hit adds to its base damage, given its striker, if a passive adds one from the striker's stats
   additiveBaseDamageBonus?: ((combatant: Combatant) => number) | undefined;
@@ -71,7 +71,7 @@ export interface KitHit {
   // Level gates. A hit with none always lands
   landsWhen?: ((context: KitContext) => boolean) | undefined;
   // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather
-  // Than As a talent's hit
+  // Than as a talent's hit
   lunarHit?: KitLunarHit;
   // Run for each enemy the hit strikes, given the strike with the body it lands from and its striker, and the enemy it
   // Strikes, for a hit that gives its striker something back as it lands

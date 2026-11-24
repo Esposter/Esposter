@@ -29,8 +29,8 @@ export type SentMessageInUser = typeof sentMessagesInUser.$inferSelect;
 // What a write names of a sent message: every column but its version, which the database raises
 export type SentMessageInUserInput = Except<SentMessageInUser, "version">;
 
-// The RPC surface of a User object, the one contract its class in the realtime Worker and the web Worker's callers
-// Share. A personal event is sent by the write that raised it, and reaches every tab the person has open
+// The RPC surface of a User object, the one contract its class in the realtime Worker and the web Worker's
+// Callers share. A personal event is sent by the write that raised it, and reaches every tab the person has open
 export interface UserObjectRpc {
   addJoinedCall: (callSessionId: string) => Promise<void>;
   addReminder: (reminder: ScheduledReminderInput) => Promise<void>;

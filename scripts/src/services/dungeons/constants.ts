@@ -6,12 +6,12 @@ import { StorageBucket } from "@esposter/db-schema";
 import { join } from "node:path";
 
 // The dungeons game's lock, the one committed file that names each object the game reads, from the repository root as
-// Git Names it. It sits beside the folder of the game's generated key map, which is gitignored
+// Git names it. It sits beside the folder of the game's generated key map, which is gitignored
 export const DUNGEONS_LOCK_REPOSITORY_PATH = "apps/web/shared/generated/hostedAssets/dungeonsLock.json";
 export const DUNGEONS_LOCK_PATH: string = join(REPOSITORY_ROOT, DUNGEONS_LOCK_REPOSITORY_PATH);
-// The dungeons game's files as one product: its asset folder's files, stored under its scope in the shared hosted
-// Bucket. The Tiled authoring files and the code beside them are unhosted, since the bundle or Tiled reads them, never
-// The game
+// The dungeons game's files as one product: its asset folder's files, stored under its scope in the shared
+// Hosted bucket. the Tiled authoring files and the code beside them are unhosted, since the bundle or Tiled reads them,
+// Never the game
 export const DUNGEONS_PRODUCT: HostedAssetProduct = {
   bucket: StorageBucket.PublicHostedAssets,
   lockPath: DUNGEONS_LOCK_PATH,

@@ -1,6 +1,6 @@
 // The last top-level JSON object in a text, found by its braces with strings skipped inside it. A session may print
-// Prose Before its answer, and the answer is the object it was asked to end on. Quotes outside an object are prose, so
-// They Are not read.
+// Prose before its answer, and the answer is the object it was asked to end on. Quotes outside an object are prose, so
+// They are not read.
 export const getLastJsonObject = (text: string): string | undefined => {
   let depth = 0;
   let start = 0;

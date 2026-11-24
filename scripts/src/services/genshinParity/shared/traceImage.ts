@@ -9,8 +9,8 @@ import { basename, extname, join } from "node:path";
 import sharp from "sharp";
 
 // The ink of a region as its paths, traced at the scale the region is enlarged to. Traced at the source's full
-// Resolution, Never reduced; a small mark is smoothly enlarged first, so its antialiased edge becomes a curve rather
-// Than a staircase of Its pixels. The paths are in the enlarged pixels, which the caller divides by the scale for the
+// Resolution, never reduced; a small mark is smoothly enlarged first, so its antialiased edge becomes a curve rather
+// Than a staircase of its pixels. The paths are in the enlarged pixels, which the caller divides by the scale for the
 // Reference's own
 export const traceInk = async (
   region: Sharp,

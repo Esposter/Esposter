@@ -4,7 +4,7 @@ import { InputAction } from "genshin-engine";
 import { GameTextKey } from "genshin-text";
 
 // The team the world starts deployed with, the Traveler alone as a new player's, whose kits the world's gate reads
-// Before It opens
+// Before it opens
 export const STARTING_TEAM_CHARACTER_IDS: readonly number[] = [TRAVELER_CHARACTER_ID];
 // The most characters a team holds
 export const PARTY_TEAM_SIZE = 4;
@@ -12,7 +12,7 @@ export const PARTY_TEAM_SIZE = 4;
 export const PARTY_SWITCH_COOLDOWN_SECONDS = 1;
 // The seconds the member on the field plays its fall for, before the player is asked for the next member and may switch
 // Provisional: the wiki gives no length for a fall, which the game plays as the fallen animation and voice-over;
-// Estimated Until a recording of a fall is measured
+// Estimated until a recording of a fall is measured
 export const PARTY_FALL_SECONDS = 2;
 // The teams every player starts with, Party 1 to 4, which can be renamed but never disbanded
 export const DEFAULT_PARTY_TEAM_COUNT = 4;
@@ -120,10 +120,10 @@ export const MOONDRIFT_OFFSETS = [
 ];
 
 // The share of its time a member's affliction lasts under the Resonance that shortens it: 40% less, as the Team Bonus
-// Page Gives Fervent Flames, Soothing Water, High Voltage and Shattering Ice
+// Page gives Fervent Flames, Soothing Water, High Voltage and Shattering Ice
 export const RESONANCE_AFFLICTION_TIME_SHARE = 0.6;
 // The reactions High Voltage drops an Electro particle for, each once its cooldown has passed, as the Team Bonus page
-// Lists Them. Stellar-Conduct is not a reaction type the engine has yet, so it is not listed
+// Lists them. Stellar-Conduct is not a reaction type the engine has yet, so it is not listed
 export const HIGH_VOLTAGE_REACTION_TYPES: readonly ReactionType[] = [
   ReactionType.Aggravate,
   ReactionType.ElectroCharged,

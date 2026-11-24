@@ -169,8 +169,8 @@ describe(CallObject, () => {
   });
 
   // Two joins by one session that overlap on RealtimeKit's answers both read the session before either records it, so
-  // Each Would mint its own participant id and the second record would clash with the first on the session. The session
-  // Has One participant, so both joins name it and neither fails
+  // Each would mint its own participant id and the second record would clash with the first on the session. The session
+  // Has one participant, so both joins name it and neither fails
   test("two overlapping joins by one session name it one participant", async () => {
     expect.hasAssertions();
 
@@ -521,7 +521,7 @@ describe(CallObject, () => {
   });
 
   // The admission answers the knocker's row as a tombstone at the version its removal raised it to, so a lobby applies
-  // The Removal by version. A second admission of the same knocker answers the same tombstone and admits nothing more
+  // The removal by version. A second admission of the same knocker answers the same tombstone and admits nothing more
   test("an admission answers the knocker's tombstone, and a second admission answers it without admitting again", async () => {
     expect.hasAssertions();
 

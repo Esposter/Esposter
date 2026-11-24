@@ -6,7 +6,7 @@ import { getMoveOperations } from "#src/services/whiteboard/gesture/getMoveOpera
 import { applyPatches } from "@esposter/shared";
 
 // The operations of an Alt drag: the copies of the selection inserted at their originals, then each copy moved by the
-// Pointer's delta. The copies And their move are one list, so a release commits them as one edit that one undo removes
+// Pointer's delta. The copies and their move are one list, so a release commits them as one edit that one undo removes
 export const getCopyMoveOperations = (
   document: PositionedDocument,
   originalIdCopyIdMap: Record<string, string>,

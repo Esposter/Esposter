@@ -33,7 +33,7 @@ const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
 
 // The banner the screen is on, the banners on offer and the open banner's pool: the banners the world offers now, their
 // Pools read from the stat tables and named in the reader's language, the Permanent ones and each event banner the
-// Schedule Has open at the game's time
+// Schedule has open at the game's time
 export const useWishBanners = ({
   getGameText,
   getNameText,
@@ -46,8 +46,8 @@ export const useWishBanners = ({
     createBanners(getStatTables(), getNameText(), getOpenEventBanners(getWishSchedule(), getNow().epochMilliseconds)),
   );
   // The banners on offer in the game's order, each kind's in the order the schedule gives them, the beginners' wish
-  // Gone Once its wishes are made. Each is named in the runs of colour the game words its kind in, and a second banner
-  // Of a kind Carries its number after the name
+  // Gone once its wishes are made. Each is named in the runs of colour the game words its kind in, and a second banner
+  // Of a kind carries its number after the name
   const bannerOffers = computed(() =>
     BannerKinds.flatMap((kind) =>
       kind === BannerKind.Beginners && pityMap.value[kind].wishCount >= BEGINNERS_WISH_LIMIT

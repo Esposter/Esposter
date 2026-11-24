@@ -16,8 +16,8 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 export const DURIN_CHARACTER_ID = 10_000_123;
 
 // Measured: gcsim (MIT) durin/skill.go, the recasts' Denial and Confirmation both last 30 seconds, and the black one
-// Sets the Burst to As the Stars Smolder until a white recast ends it. A recast also gives the skill's energy, once
-// Every six seconds Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin
+// Sets the burst to As the Stars Smolder until a white recast ends it. A recast also gives the skill's energy, once
+// Every six seconds https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin
 const BLACK_STATUS_SECONDS = 30;
 const BLACK_STATUS_ID = "denial-of-darkness";
 const SKILL_ENERGY_ICD_SECONDS = 6;
@@ -26,8 +26,8 @@ const SKILL_ENERGY_ICD_STATUS_ID = "durin-skill-energy-icd";
 const DRAGON_SUMMON_ID = "durin-dragon";
 
 // A burst's Dragon, cast on its target, ends the one of the same character, and its DoT ticks on its schedule. The
-// Record Holds gcsim's (MIT) durin/burst.go ticks: the white burst's 20 on the primary target and the black's 16, each
-// 1U of Pyro With no poise, each rounded up to a whole frame with its travel after it
+// Record holds gcsim's (MIT) durin/burst.go ticks: the white burst's 20 on the primary target and the black's 16, each
+// 1U of Pyro with no poise, each rounded up to a whole frame with its travel after it
 // Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin
 const createDragonOnStart =
   (hits: KitHit[]): KitAction["onStart"] =>
@@ -52,11 +52,11 @@ const endWindow = ({ activeCombatant: combatant, kitEffectState }: KitContext): 
 };
 
 // Durin's behaviour: Tap E opens the window's stance, whose normal attack is Denial of Darkness, the black recast, and
-// Whose Skill press is the chain's Confirmation of Purity, the white recast, each recast ending the window and giving
-// The skill's Energy. Denial of Darkness sets the burst to its black variant, As the Stars Smolder, until Confirmation
-// Of Purity ends It, and each burst casts its Dragon on its target. Not built yet: his passives and constellations,
-// Which read the burst's State and the Burning and Pyro reactions the framework does not price for a passive yet, and
-// The Pyro particles of his Recasts, which need a particle a hit drops with its own delay and internal cooldown, which
+// Whose skill press is the chain's Confirmation of Purity, the white recast, each recast ending the window and giving
+// The skill's energy. Denial of Darkness sets the burst to its black variant, As the Stars Smolder, until Confirmation
+// Of Purity ends it, and each burst casts its Dragon on its target. Not built yet: his passives and constellations,
+// Which read the burst's state and the Burning and Pyro reactions the framework does not price for a passive yet, and
+// The Pyro particles of his recasts, which need a particle a hit drops with its own delay and internal cooldown, which
 // No hook gives a kit yet Constellation 1 needs the burst's Principle of Purity and As the Stars Smolder states to
 // Change what the burst does Constellation 2 needs the Vaporize, Melt, Burning and Pyro reactions of nearby members,
 // Which the kit does not price Constellation 4 needs the Cycle of Enlightenment's consuming effects and the burst's 40%

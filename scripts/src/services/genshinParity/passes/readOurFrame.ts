@@ -7,9 +7,9 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Our frame of a reference's screen at the display width, drawn with the reference's props and the ones given over
-// Them, Its parts our own (no export drawn in place of one, as `readSky` shoots its frame), read as raw RGB. The page
-// Is drawn At `pageWidth`, which is the display width unless a caller draws it larger and resizes it down, and `image`
-// Is the Reference at that width, so the caller resizes both sides the same way
+// Them, its parts our own (no export drawn in place of one, as `readSky` shoots its frame), read as raw RGB. The page
+// Is drawn at `pageWidth`, which is the display width unless a caller draws it larger and resizes it down, and `image`
+// Is the reference at that width, so the caller resizes both sides the same way
 export const readOurFrame = async (
   referenceId: string,
   component: DerivedAssetComponent,

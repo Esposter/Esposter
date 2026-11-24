@@ -22,14 +22,15 @@ import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMu
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 
 // The Autumn Whirlwind's absorb check takes the first aura of Pyro, Hydro, Electro or Cryo an enemy within its reach
-// Carries, and each tick after it lands its elemental tick in that element just ahead of its Anemo tick, as gcsim
-// `v2.47.2` (MIT) kazuha/burst.go gives it. The check's field lives a tenth of a second past its last check, so the
-// Step That runs It still has it https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/burst.go
+// Carries, and each tick after it lands its elemental tick in that element just ahead of its Anemo tick, as
+// Gcsim v2.47.2 (MIT) kazuha/burst.go gives it. The check's field lives a tenth of a second past its last check, so the
+// Step that runs it still has it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/burst.go
 const ABSORB_FIELD_LINGER_SECONDS = 0.1;
 
 // Measured: gcsim (MIT) kazuha/cons.go, Chihayaburu's and Kazuha Slash's cooldowns each drop by a tenth from
-// Constellation 1, Which the table's 360 and 540 frames become 324 and 486 with
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/cons.go`
+// Constellation 1, which the table's 360 and 540 frames become 324 and 486 with
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/cons.go
 const PRESS_AND_HOLD_CONSTELLATION = 1;
 const COOLDOWN_CONSTELLATION_MULTIPLIER = 0.9;
 // Measured: gcsim (MIT) kazuha/cons.go, from Constellation 6 each Chihayaburu or Kazuha Slash gives Kazuha an Anemo
@@ -37,9 +38,9 @@ const COOLDOWN_CONSTELLATION_MULTIPLIER = 0.9;
 const INFUSION_CONSTELLATION = 6;
 const INFUSION_SECONDS = 5;
 // Measured: gcsim (MIT) kazuha/cons.go, from Constellation 2 the Autumn Whirlwind's field, 9 metres round where he cast
-// It, Checks every half second: the active member within it gains 200 Elemental Mastery for a second, and Kazuha too
-// When he is Off the field. Its effects do not stack, so each check restarts the one before it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/cons.go`
+// It, checks every half second: the active member within it gains 200 Elemental Mastery for a second, and Kazuha too
+// When he is off the field. Its effects do not stack, so each check restarts the one before it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_RADIUS = 9;
 const CONSTELLATION_2_CHECK_SECONDS = 0.5;
@@ -91,10 +92,10 @@ const castConstellation2Field = (kitEffectState: KitEffectState, characterId: nu
 export const KAZUHA_CHARACTER_ID = 10_000_047;
 
 // Kazuha's behaviour: Chihayaburu's press and hold and Kazuha Slash each give him Constellation 6's infusion, and
-// Kazuha Slash casts its Autumn Whirlwind with its absorb check. Constellation 1 shortens his skill cooldowns, and
-// Constellation 2's Field gives Elemental Mastery within the Autumn Whirlwind. Poetics of Fuubutsu is built from
-// Ascension 4. The absorption of the Chihayaburu from Ascension 1 is not built. Constellation 4 needs his Energy under
-// 45 effects, which the kit does not read, not built
+// Kazuha slash casts its Autumn Whirlwind with its absorb check. Constellation 1 shortens his skill cooldowns, and
+// Constellation 2's field gives Elemental Mastery within the Autumn Whirlwind.
+// Poetics of Fuubutsu is built from Ascension 4. The absorption of the Chihayaburu from Ascension 1 is not built.
+// Constellation 4 needs his Energy under 45 effects, which the kit does not read, not built
 export const createKazuhaKitBehaviour = ({
   readArea,
   readHits,

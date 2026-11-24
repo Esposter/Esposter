@@ -68,7 +68,7 @@ describe("emojiRouter", () => {
   });
 
   // The answer is the reaction as the room now holds it, with the caller taken off: when the caller was its last
-  // Reactor, The row is answered with no reactor, at the version the removal raised
+  // Reactor, the row is answered with no reactor, at the version the removal raised
   test("removes the caller from the reactors and returns the reaction the room holds", async () => {
     expect.hasAssertions();
 

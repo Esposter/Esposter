@@ -6,8 +6,8 @@ import { rethrowGcgDice } from "#src/services/gcg/effects/rethrowGcgDice";
 import { takeOne } from "@esposter/shared";
 
 // Toss-Up: select any Elemental Dice to reroll, and it can reroll two times. Its choice gives each reroll the dice it
-// Throws Again, in turn, from the duel's random source. A selection naming a die the side does not have is passed over
-// And does not Count toward the two
+// Throws again, in turn, from the duel's random source. A selection naming a die the side does not have is passed over
+// And does not count toward the two
 export const tossUp: GcgCardModule = {
   play: ({ duel, sideIndex }, _targetIndex, choice) => {
     const side = takeOne(duel.sides, sideIndex);

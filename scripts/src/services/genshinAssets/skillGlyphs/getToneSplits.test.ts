@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getToneSplits, () => {
   // A ramp of a few pixels in every twentieth from the pale tone's range up to the white, as an icon's antialiased
-  // Edges And gradients spread them
+  // Edges and gradients spread them
   const ramp = Array.from({ length: 12 }, (_value, index) =>
     Array.from({ length: 30 }, () => 0.275 + index * 0.05),
   ).flat();

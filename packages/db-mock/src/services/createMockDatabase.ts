@@ -14,7 +14,7 @@ import { Miniflare } from "miniflare";
 const MOCK_WORKER_MODULE = "export default {};";
 
 // One Miniflare instance per call. The migrations are applied from their folder, the same SQL production runs. A
-// Persisted Root keeps the database on disk under its `d1` folder, so the dev seed writes the file a dev server opens
+// Persisted root keeps the database on disk under its `d1` folder, so the dev seed writes the file a dev server opens
 export const createMockDatabase = async (
   coreMigrationsDirectory: string,
   persistRoot?: string,
@@ -24,9 +24,9 @@ export const createMockDatabase = async (
     workers: [
       {
         config: {
-          // The Worker is a stand-in with no code of its own, so the date only has to be one the installed workerd
-          // Accepts. Miniflare refuses a date later than the machine's clock, so a date long past, the one its own
-          // Fallback uses, Is the one every clock accepts
+          // The Worker is a stand-in with no code of its own, so the date only has to be one the installed
+          // Workerd accepts. Miniflare refuses a date later than the machine's clock, so a date long past, the one its
+          // Own fallback uses, is the one every clock accepts
           compatibilityDate: "2000-01-01",
           env: getMockBindings(),
           manifest: { mainModule: "index.js", modules: { "index.js": { contents: MOCK_WORKER_MODULE, type: "esm" } } },

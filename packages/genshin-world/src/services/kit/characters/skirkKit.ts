@@ -7,15 +7,15 @@ import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 export const SKIRK_CHARACTER_ID = 10_000_114;
 
 // Skirk's behaviour: Seven-Phase Flash's press lands no hit, and a task enters its stance once the press's delay has
-// Run, Ending as she leaves the field. The stance plays its own Cryo strikes and charged attack, which deal Normal and
-// Charged Attack DMG as gcsim's AttackTag of each hit reads, and Havoc: Extinction in place of Havoc: Ruin, while a
-// Press of its Skill is blocked by the cooldown the press set. Havoc: Extinction's normal attacks' bonus and the void
-// Rifts' absorption Are not built, nor is Serpent's Subtlety, which gates her burst in place of Energy. An early end of
-// The stance, by a Swap, is not counted toward the skill's cooldown, as the cooldown is set at the press Constellation
-// 1 needs the Ascension talent Reason Beyond Reason's enhancement, which the kit does not build Constellation 2 needs
-// The Serpent's Subtlety gained after Havoc: Warp, which the kit does not build Constellation 4 needs the Ascension
-// Talent Return to Oblivion's enhancement, which the kit does not build Constellation 6 needs the Void Rifts absorbed
-// Through Reason Beyond Reason, which the kit does not build
+// Run, ending as she leaves the field. The stance plays its own Cryo strikes and charged attack, which deal Normal and
+// Charged attack DMG as gcsim's AttackTag of each hit reads, and Havoc: Extinction in place of Havoc: Ruin, while a
+// Press of its skill is blocked by the cooldown the press set. Havoc: Extinction's normal attacks' bonus and the void
+// Rifts' absorption are not built, nor is Serpent's Subtlety, which gates her burst in place of Energy. An early end of
+// The stance, by a swap, is not counted toward the skill's cooldown, as the cooldown is set at the press
+// Constellation 1 needs the Ascension talent Reason Beyond Reason's enhancement, which the kit does not build
+// Constellation 2 needs the Serpent's Subtlety gained after Havoc: Warp, which the kit does not build
+// Constellation 4 needs the Ascension talent Return to Oblivion's enhancement, which the kit does not build
+// Constellation 6 needs the Void Rifts absorbed through Reason Beyond Reason, which the kit does not build
 export const createSkirkKitBehaviour = ({ readSeconds, readStance }: KitRecordReader): KitBehaviour => {
   const sevenPhaseFlashSeconds = readSeconds("sevenPhaseFlash");
   const skillDelaySeconds = readSeconds("sevenPhaseFlashDelay");

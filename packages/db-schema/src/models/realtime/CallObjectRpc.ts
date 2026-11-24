@@ -7,7 +7,7 @@ import type { PublishSource } from "#src/models/message/call/PublishSource";
 
 // The RPC surface of a CallObject, the one contract its class in the realtime Worker and the web Worker's stubs share.
 // Every method trusts the actor it names: the caller authorises against D1 first, and a method that checks the call's
-// Own State (admission, joined, knocking) says so by its return value rather than throwing
+// Own state (admission, joined, knocking) says so by its return value rather than throwing
 export interface CallObjectRpc {
   // The knocker's row as a tombstone at the version the removal left it, or the tombstone it already had.
   // Null when the call never held the knocker

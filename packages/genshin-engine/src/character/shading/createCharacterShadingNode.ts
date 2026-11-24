@@ -42,7 +42,7 @@ import {
 const toVec3 = ([red, green, blue]: Vector3Tuple): Node<"vec3"> => vec3(red, green, blue);
 
 // The diffuse with a PMX sphere laid over it as MMD lays it, multiplied or added, read through the normal's view-space
-// X And negated y, the file's top the surface that faces up
+// X and negated y, the file's top the surface that faces up
 const laySphere = (diffuse: Node<"vec3">, sphere: NonNullable<CharacterShadingInputs["sphere"]>): Node<"vec3"> => {
   const sample = texture(sphere.texture, vec2(normalView.x, normalView.y.negate()).mul(0.5).add(0.5)).rgb;
   return sphere.mode === PmxSphereMode.Add ? diffuse.add(sample) : diffuse.mul(sample);
@@ -63,7 +63,7 @@ const createShadowMultiplyNode = (region: Node<"float">, inputs: CharacterShadin
 // The character's colour as the game's shader draws it, the TSL form of the shading page: the region's tint on the main
 // Texture, lit on the shadow ramp row of its region, its emission lerped in by the main texture's alpha, its specular
 // Step, the metal matcap where the lightmap's red passes the gate, and the output tone. A face is shaded by its face
-// Map In place of the ramp, and a hair takes the body's path without the metal branch
+// Map in place of the ramp, and a hair takes the body's path without the metal branch
 export const createCharacterShadingNode = (
   inputs: CharacterShadingInputs,
   { lightColor, sunDirection }: Pick<LightUniforms, "lightColor" | "sunDirection">,
@@ -99,7 +99,7 @@ export const createCharacterShadingNode = (
       createRampUvNode(inputs.rampLayout, column, float(rowBase).add(region.sub(1).mul(RAMP_ROW_STEP))),
     ).rgb;
   // A face keeps its shadow colour where its face map has it lit, so it is never black: the shadow colour is mixed
-  // Toward White by the face map's lit fraction. A body's shade is its ramp's colour, read down the row its region
+  // Toward white by the face map's lit fraction. A body's shade is its ramp's colour, read down the row its region
   // Takes
   const shade =
     kind === CharacterMaterialKind.Face
@@ -112,7 +112,7 @@ export const createCharacterShadingNode = (
         ? mix(sampleRamp(RAMP_ROW_BASE), sampleRamp(COOL_RAMP_ROW_BASE), inputs.coolShadowTone)
         : sampleRamp(RAMP_ROW_BASE);
   // The lit colour and the specular carry the hour's light colour, as the game's carry its main light's, and the
-  // Emission Does not
+  // Emission does not
   const lit = materialColour.mul(shade).mul(brightness).mul(lightColor);
   const emitted = materialColour.mul(toVec3(emissionColor)).mul(emissionScaler);
   // The emission's factor is the main texture's alpha, past its floor, where the material draws its emission from it

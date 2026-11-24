@@ -11,7 +11,7 @@ import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The state after a dealt commission is claimed: its reward drawn for the rank it was dealt at. Undefined where the
-// Day's Four are claimed already
+// Day's four are claimed already
 export const takeCommissionClaim = (
   day: CommissionDay,
   encounterPoints: number,

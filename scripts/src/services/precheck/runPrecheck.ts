@@ -22,7 +22,7 @@ export const runPrecheck = async (fix: boolean): Promise<PrecheckReport> => {
   const barrelPackages = readBarrelPackages(changedFiles);
   const barrelChecks = barrelPackages.map((packageDirectory) => checkBarrel(packageDirectory, fix));
   // The graph's edges come from the committed lockfile, which every checkout holds the same way, so a manifest change
-  // In a Linked worktree is checked like one in the main checkout
+  // In a linked worktree is checked like one in the main checkout
   const graphChecks = checkHasGraphInput(changedFiles) ? [await checkGraph(fix)] : [];
   const checks = [...barrelChecks, ...graphChecks];
   return {

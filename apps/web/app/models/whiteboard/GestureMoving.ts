@@ -3,7 +3,7 @@ import type { SnapGuide } from "#src/models/whiteboard/SnapGuide";
 import type { Point } from "vue-block-editor-headless";
 
 // A drag that moves the selection: each selected element moves by how far the pointer has travelled from the origin. An
-// Alt drag moves copies of The selection instead, each copy under the id its original maps to, and the originals stay
+// Alt drag moves copies of the selection instead, each copy under the id its original maps to, and the originals stay
 // Where they are
 export interface GestureMoving {
   // The guides of the alignments the last move snapped to, drawn over the elements while the drag runs and cleared with

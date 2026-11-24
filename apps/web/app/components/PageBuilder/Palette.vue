@@ -44,7 +44,7 @@ const startColumnDrag = (columnName: string, event: PointerEvent) => {
     startMergeFieldDrag(columnName, event, getFrameGeometry);
 };
 // A type with no icon or no title is left out, rather than drawn with one the kind does not give it. A type no slot at
-// The Selection takes is left out the same way, and a group left with nothing in it is not drawn
+// The selection takes is left out the same way, and a group left with nothing in it is not drawn
 const groups = computed<PaletteGroup[]>(() => {
   const categoryGroups = kind.paletteCategories
     .map(({ category, types }) => ({

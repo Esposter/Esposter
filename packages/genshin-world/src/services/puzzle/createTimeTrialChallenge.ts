@@ -4,7 +4,7 @@ import { TimeTrialChallengeState } from "#src/models/puzzle/TimeTrialChallengeSt
 import { TIME_TRIAL_CHALLENGE_LIMIT_SECONDS, TIME_TRIAL_CHALLENGE_TARGET_COUNT } from "#src/services/puzzle/constants";
 
 // A Time Trial Challenge waiting at its marker, its limit and targets as the constants give them until a recording
-// Measures each. Its clock does not run until the challenge is started
+// Measures each. its clock does not run until the challenge is started
 export const createTimeTrialChallenge = (): TimeTrialChallenge => ({
   limitSeconds: TIME_TRIAL_CHALLENGE_LIMIT_SECONDS,
   remainingSeconds: 0,

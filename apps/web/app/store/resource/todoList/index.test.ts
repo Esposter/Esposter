@@ -188,7 +188,7 @@ describe(useTodoListStore, () => {
   });
 
   // A row written with no dialog is refused the same way while the list reloads, and the reloaded value is what stands
-  // — This write never reached it, so there is nothing of it to put back
+  // — this write never reached it, so there is nothing of it to put back
   test("keeps a reloaded todo's completion when its row write is refused", async () => {
     expect.hasAssertions();
 

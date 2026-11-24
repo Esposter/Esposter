@@ -109,7 +109,7 @@ import { createVourukashasGlowSetModule } from "#src/services/artifact/sets/crea
 import { createWanderersTroupeSetModule } from "#src/services/artifact/sets/createWanderersTroupeSetModule";
 
 // Each set whose bonus waits on combat, by the set table's id, and how that bonus is built as a module from its row. A
-// Set The world carries with no module here gives only its attributes
+// Set the world carries with no module here gives only its attributes
 export const ArtifactSetIdCreateModuleMap: Readonly<
   Partial<Record<number, (bonus: ArtifactSetBonus) => PassiveModule>>
 > = {

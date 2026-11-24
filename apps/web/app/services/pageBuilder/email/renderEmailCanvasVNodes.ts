@@ -10,7 +10,7 @@ import { cloneVNode } from "vue";
 import { renderBlockNodes } from "vue-block-editor-headless";
 
 // The CSS property each MJML attribute the canvas draws is written as. An attribute its node's component does not take
-// Is Not drawn, so a link's href or an image's source never reaches the style
+// Is not drawn, so a link's href or an image's source never reaches the style
 const CANVAS_STYLE_PROPERTY_MAP: Readonly<Record<string, string>> = Object.freeze({
   align: "textAlign",
   "background-color": "backgroundColor",

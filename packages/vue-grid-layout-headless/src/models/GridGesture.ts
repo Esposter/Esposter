@@ -19,6 +19,6 @@ export interface GridGesture<T extends GridBlock = GridBlock> {
   pointerId: number;
   start: GridPoint;
   // The other grid the pointer is over, which a body drag previews on and hands its release to. Undefined over its own
-  // Grid Or over no grid
+  // Grid or over no grid
   transfer?: MountedGrid | undefined;
 }

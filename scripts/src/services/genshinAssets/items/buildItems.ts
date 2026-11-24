@@ -33,16 +33,17 @@ import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
 // Takes or yields, every dish a cook recipe yields and every instruction that teaches it, every gadget of the gadgets
-// Slice, every offering the Frostbearing Tree's levels take or pay, every item a Reputation level pays, every item the
-// Mondstadt grocery and the Good Hunter sell, each Fishing Association's goods and their fish, and every item a Carried
+// Slice, every offering the Frostbearing tree's levels take or pay, every item a Reputation level pays, every item the
+// Mondstadt grocery and the Good Hunter sell, each Fishing Association's goods and their fish, and every item a carried
 // Quest's finish pays, each read from the game's material table with its name's text id, which `genshin:text names`
-// Writes into the name-text chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the
-// Wallet, and Adventure EXP is taken By the Adventure Rank, and Character EXP, which no grant pays yet, is no item
-// Either, so none is written. A weapon a Recipe yields is no item either, it is in the weapon table. The Recipes and
-// The levels are the records their steps published, read from the dev account. An item no table holds is An error, and
-// So is an item the table gives no type: the publish names every such item at once, so a typeless item a Source adds
-// Fails the publish rather than showing in no tab. So is an item whose stack limit is past the save's Ceiling, since a
-// Save holding it would be refused. Returns the record the materials publish under
+// Writes into the name-text chunks.
+// The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken
+// By the Adventure Rank, and Character EXP, which no grant pays yet, is no item either, so none is written. A weapon a
+// Recipe yields is no item either, it is in the weapon table. The
+// Recipes and the levels are the records their steps published, read from the dev account. An item no table holds is
+// An error, and so is an item the table gives no type: the publish names every such item at once, so a typeless item a
+// Source adds fails the publish rather than showing in no tab. So is an item whose stack limit is past the save's
+// Ceiling, since a save holding it would be refused. Returns the record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),

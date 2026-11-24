@@ -11,7 +11,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // A component's interface as the rects its markup nests, fitted from the tree `genshin:assets interface` exported for
-// It, As the record `<component>/interfaceRects`
+// It, as the record `<component>/interfaceRects`
 export const createInterfaceRectsEntry = (component: DerivedAssetComponent): RunFitEntry => [
   "interfaceRects",
   async () => {

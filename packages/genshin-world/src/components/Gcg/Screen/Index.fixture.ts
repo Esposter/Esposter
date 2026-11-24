@@ -16,7 +16,7 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 // The duel board in the English PC client at 1080 high (`tvboQ_ZWO_I` at 407 seconds, a Maguu Kenki tavern challenge in
 // The Action Phase, the player's turn). Its decks are the game's own slices, the tutorial deck as the opponent's and
 // Deck 3 as the player's placeholder, and each character's HP, the dice and the turn are set to the frame's: the
-// Frame's Characters are not these decks' characters, so only their HP, dice, phase and turn are read off it
+// Frame's characters are not these decks' characters, so only their HP, dice, phase and turn are read off it
 const [rule, playerDeck, opponentDeck, englishGcgText] = await Promise.all([
   readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL),
   readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 3),

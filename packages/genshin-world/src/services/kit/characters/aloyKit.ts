@@ -23,16 +23,16 @@ const COIL_RESOURCE_ID = "aloy-coil";
 const CHILLWATER_BOMBLET_COUNT = 6;
 const RUSHING_ICE_STATUS_ID = "aloy-rushing-ice";
 // Measured: gcsim v2.47.2 (MIT) aloy/asc.go, Ascension 1: while Rushing Ice holds, Aloy's ATK rises by 16% and each
-// Nearby Party member's by 8%, for its seconds
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go`
+// Nearby party member's by 8%, for its seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go
 const ASCENSION_1 = 1;
 const ASCENSION_1_ATTACK_SHARE = 0.08;
 const ASCENSION_1_SELF_ATTACK_SHARE = 0.08;
 const ASCENSION_1_SOURCE = "aloy-ascension-1";
 const ASCENSION_1_SELF_SOURCE = "aloy-ascension-1-self";
 // Measured: gcsim v2.47.2 (MIT) aloy/asc.go, Ascension 4: while Rushing Ice holds, Aloy's Cryo DMG Bonus rises by 3.5%
-// Each Second, up to 35% at the tenth, as gcsim's stacks do
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go`
+// Each second, up to 35% at the tenth, as gcsim's stacks do
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aloy/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_CRYO_SHARE_PER_STACK = 0.035;
 const ASCENSION_4_MAX_STACKS = 10;
@@ -58,17 +58,17 @@ const addCryoStacks = (
 
 // Aloy's behaviour: each of Freeze Bomb's six Chillwater Bomblets adds a coil stack as it strikes, and four coil stacks
 // Give Cryo infusion for the table's seconds of Rushing Ice. From Ascension 1, Rushing Ice raises the ATK of the
-// Deployed Team, and Aloy's own by 8% more, and from Ascension 4 it raises her Cryo DMG Bonus a step each second. Her
+// Deployed team, and Aloy's own by 8% more, and from Ascension 4 it raises her Cryo DMG Bonus a step each second. Her
 // Coil and Rushing Ice normal attack bonuses are not built, as no kit step reads a normal attack's DMG bonus from the
-// Team's effects. Her Constellations are not built, as the game cannot activate them
+// Team's effects. Her constellations are not built, as the game cannot activate them
 export const createAloyKitBehaviour = ({ readSeconds }: KitRecordReader): KitBehaviour => {
   const rushingIceSeconds = readSeconds("rushingIceDuration");
   // The bomblets' landings that have counted their coil stack. A landing runs its onStrike once for each enemy it
-  // Strikes, And gcsim's coil callback is held back by its 6-frame internal cooldown for every enemy after the first at
+  // Strikes, and gcsim's coil callback is held back by its 6-frame internal cooldown for every enemy after the first at
   // That frame
   const countedCoilStrikes = new WeakSet<KitStrike>();
   // Each Chillwater Bomblet that lands counts a coil stack, and the fourth gives Rushing Ice, which holds off any more
-  // Coils Until it ends
+  // Coils until it ends
   const addCoilStack = ({ kitEffectState, party }: KitContext, strike: KitStrike): void => {
     if (countedCoilStrikes.has(strike)) return;
     countedCoilStrikes.add(strike);

@@ -5,8 +5,8 @@ import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 
 // Each file written to its path as the wiki's file host serves it, with at most WIKI_FILE_CONCURRENCY reads in flight,
-// So Every caller shares that bound. A path already on disk is kept as it is. Answered in the order the files are
-// Given: true Where the path now holds its file, false for a file the host does not serve, which is not written
+// So every caller shares that bound. A path already on disk is kept as it is. Answered in the order the files are
+// Given: true where the path now holds its file, false for a file the host does not serve, which is not written
 export const writeWikiFiles = async (files: readonly { path: string; url: string }[]): Promise<boolean[]> => {
   const held = files.map(() => false);
   await forEachConcurrently(files.entries(), WIKI_FILE_CONCURRENCY, async ([index, { path, url }]) => {

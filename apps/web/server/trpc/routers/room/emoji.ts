@@ -87,7 +87,7 @@ export const emojiRouter = router({
     return getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, newRoomEmoji);
   }),
   // A removal keeps the emoji as a tombstone, so its version rises and a read that answers before the removal cannot
-  // Put it Back. Its name is freed by the partial unique index, which only a live emoji holds
+  // Put it back. Its name is freed by the partial unique index, which only a live emoji holds
   deleteRoomEmoji: getPermissionsProcedure(
     RoomPermission.ManageEmojis,
     deleteRoomEmojiInputSchema,

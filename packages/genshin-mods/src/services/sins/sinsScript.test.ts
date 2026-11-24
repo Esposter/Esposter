@@ -3,8 +3,8 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
 
-// A mod has no shared-node dependency, so this test's
-// oxlint-disable-next-line no-restricted-imports -- own spawn passes windowsHide, as the other plugins' helpers do
+/* oxlint-disable-next-line no-restricted-imports -- A mod has no shared-node dependency, so this test's own spawn
+   passes windowsHide, as the other plugins' helpers do */
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync } from "node:fs";
 import { createServer } from "node:http";

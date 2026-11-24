@@ -11,9 +11,9 @@ const GOLDEN_BLOOD_TIDE_ID = "goldenBloodTide";
 const GOLDEN_BLOOD_TIDE_MAXIMUM_STACKS = 3;
 
 // Golden Blood-Tide (Cashflow Supervision) at its rank: its ATK is static, and each stack of its wielder's own HP
-// Change, once Every cooldown the rank gives, raises its Normal Attack DMG, Charged Attack DMG and Stellar-Conduct DMG
-// For the rank's seconds, Up to three stacks, and with three of them its ATK SPD rises as well. The rank's first number
-// Is both its ATK and its Normal Attack DMG per stack, as the text gives both at 16%
+// Change, once every cooldown the rank gives, raises its Normal Attack DMG, Charged Attack DMG and Stellar-Conduct DMG
+// For the rank's seconds, up to three stacks, and with three of them its ATK SPD rises as well. The rank's first number
+// Is both its ATK and its Normal attack DMG per stack, as the text gives both at 16%
 export const createGoldenBloodTidePassiveModule = (params: number[]): PassiveModule => {
   const attackPercent = takeOne(params, 2);
   const seconds = takeOne(params, 0);

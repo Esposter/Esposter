@@ -1,7 +1,7 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 
 // Whether two edits set the same paths, with none of them under another: a path under another exists only once the
-// Write above it Has landed, so the later edit's operations cannot replay over the document an interaction began from
+// Write above it has landed, so the later edit's operations cannot replay over the document an interaction began from
 // When one takes the other's place
 export const checkIsSameDisjointPaths = (operations: JsonPatchOperation[], otherOperations: JsonPatchOperation[]) => {
   const paths = new Set(operations.map(({ path }) => path));

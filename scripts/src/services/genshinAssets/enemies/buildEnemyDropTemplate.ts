@@ -13,7 +13,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
 // The drops module's Enemies table: each entry's members, the names a Drops template gives one of, and its material
-// Sets by Tier. A set beside a named condition is a conditional set, which a template does not model
+// Sets by tier. A set beside a named condition is a conditional set, which a template does not model
 const dropsDataSchema = z.object({
   Enemies: z.array(
     z.object({

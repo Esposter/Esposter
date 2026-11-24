@@ -11,8 +11,8 @@ import {
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Each weekly boss's trounce domain by its entry id: its levels are the dungeons the entry names, each a boss dungeon
-// With the Enemies' level and recommended rank it is set at. An entry missing from the dump, or a named dungeon that is
-// Not a boss Dungeon, is refused rather than skipped
+// With the enemies' level and recommended rank it is set at. An entry missing from the dump, or a named dungeon that is
+// Not a boss dungeon, is refused rather than skipped
 export const toWeeklyBossDomains = (
   entries: ExcelDungeonEntryRow[],
   dungeons: ExcelDungeonRow[],

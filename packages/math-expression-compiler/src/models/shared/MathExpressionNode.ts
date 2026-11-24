@@ -2,7 +2,7 @@ import type { MathExpressionLogicalOperator } from "#src/models/shared/MathExpre
 import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 
 // A formula's parsed tree. A `name` on a unary, binary or call node, and each of a comparison's `names`, is a key of
-// The Function table, so the evaluator computes each operator and each function the same way.
+// The function table, so the evaluator computes each operator and each function the same way.
 export type MathExpressionNode =
   | { arguments: MathExpressionNode[]; name: string; type: typeof MathExpressionNodeType.Call }
   | {

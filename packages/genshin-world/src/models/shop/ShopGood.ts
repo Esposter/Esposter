@@ -5,9 +5,9 @@ import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { z } from "zod";
 
 // One good of a shop as the generated slice holds it: the item it gives and how many, the items it is bought with and
-// How Many of each, its buy limit where zero is no limit, when that limit comes back, the Adventure Rank it shows from,
-// And the Game-time moments it sells between, as ISO strings with the game's offset, and the Reputation level its Mora
-// Cost is Discounted at, where its city's shops give one
+// How many of each, its buy limit where zero is no limit, when that limit comes back, the Adventure Rank it shows from,
+// And the game-time moments it sells between, as ISO strings with the game's offset, and the Reputation level its Mora
+// Cost is discounted at, where its city's shops give one
 export interface ShopGood {
   beginTime: string;
   buyLimit: number;
@@ -24,7 +24,7 @@ export interface ShopGood {
 }
 
 // What a good's limit is counted from: its id, its buy limit and the refresh the limit comes back on. A good with no
-// Sale Dates, such as a Paimon's Bargains rotation's, is counted from these alone
+// Sale dates, such as a Paimon's Bargains rotation's, is counted from these alone
 export type ShopGoodLimit = Pick<ShopGood, "buyLimit" | "goodsId" | "refresh">;
 
 export const shopGoodSchema = z.object({

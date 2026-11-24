@@ -4,8 +4,8 @@ import { checkIsPlainObject } from "@esposter/shared";
 
 // Counts each leaf where `before` and `after` differ into `countMap`, keyed by its path and kind with every array index
 // Written as [] and every numeric key as #, so a field a source stopped writing reads as one line with the count of
-// Rows It left rather than a line a row. Rows that carry ids are matched by id. A subtree present on one side only
-// Counts Once, at its root
+// Rows it left rather than a line a row. Rows that carry ids are matched by id. A subtree present on one side only
+// Counts once, at its root
 export const countGameDataPathChanges = (
   countMap: Map<string, number>,
   path: string,

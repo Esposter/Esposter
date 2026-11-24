@@ -6,7 +6,7 @@ import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 
 // The Teleport Waypoint standing nearest a point among the unlocked landmarks, where a fallen team revives, or none
-// When no Waypoint is unlocked. A statue may stand nearer, but it is not a waypoint and takes no revive
+// When no waypoint is unlocked. A statue may stand nearer, but it is not a waypoint and takes no revive
 export const findNearestTeleportWaypoint = (
   landmarks: readonly PlaceLandmark[],
   point: GroundPoint,

@@ -94,7 +94,7 @@ describe(useWorldOutcrops, () => {
   const FIRST_RESONANCE = { claimedLevel: 0, heldCount: 0, level: 1 };
 
   // A region's outcrops over the world's stores, with a held wallet of resin and the setters writing back. The camps
-  // The Outcrops fight spawn into the enemy map the way the world spawns them, at WORLD_LEVEL
+  // The outcrops fight spawn into the enemy map the way the world spawns them, at WORLD_LEVEL
   const startOutcrops = (resin: number, placesMap: Ref<Map<string, OutcropPlacement[]>>) => {
     const worldSessionStore = startTestWorldSession(
       { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL },

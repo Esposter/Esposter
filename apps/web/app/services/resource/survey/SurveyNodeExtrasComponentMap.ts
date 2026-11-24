@@ -6,7 +6,7 @@ import ResourceSurveyCreatorMultipleTextItemsEditor from "#src/components/Resour
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The editors a kind's settings take beside its form, each for a list the form leaves out and the editor draws under
-// The Props key it is held at. The image kinds' editors are not lists, so they are in SurveyImageExtras
+// The props key it is held at. The image kinds' editors are not lists, so they are in SurveyImageExtras
 const choicesEditor: SurveyNodeExtraEditor = {
   component: ResourceSurveyCreatorChoiceListEditor,
   key: "choices",

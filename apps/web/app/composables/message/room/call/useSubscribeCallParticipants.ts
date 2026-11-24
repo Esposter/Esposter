@@ -4,9 +4,9 @@ import { useRealtimeStore } from "#src/store/message/room/realtime";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
 // The five participant frames the call socket carries, and the read of the session's participants. Each frame carries
-// The Row the call object holds, so it arrives at its version, and each is registered before the session is read, so a
-// Change The read's answer leaves out is one a frame delivers. The join frame also carries the rejoin a revoke hands
-// Its own user, Which only the tab holding the meeting acts on
+// The row the call object holds, so it arrives at its version, and each is registered before the session is read, so a
+// Change the read's answer leaves out is one a frame delivers. The join frame also carries the rejoin a revoke hands
+// Its own user, which only the tab holding the meeting acts on
 export const useSubscribeCallParticipants = () => {
   const { $trpc } = useNuxtApp();
   const mediaStore = useMediaStore();

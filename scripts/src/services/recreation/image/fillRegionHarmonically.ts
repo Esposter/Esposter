@@ -7,7 +7,7 @@ import { solveLevel } from "#src/services/recreation/image/solveLevel";
 // The region's pixels replaced by the harmonic fill of their surroundings, per colour channel: the solution of
 // Laplace's equation inside the region, with the pixels just outside it as its boundary. A linear gradient around the
 // Region is therefore the gradient inside it, and a flat border fills flat. Alpha and every pixel outside the region
-// Are Kept as they are. The region must have a pixel outside it to fill from, which the caller checks
+// Are kept as they are. The region must have a pixel outside it to fill from, which the caller checks
 export const fillRegionHarmonically = (pixels: Uint8Array, width: number, height: number, region: ImageRegion) => {
   const filled = Uint8Array.from(pixels);
   const finest = getFinestLevel(pixels, width, height, region);

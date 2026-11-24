@@ -13,8 +13,8 @@ import { runGit } from "#src/services/shared/runGit";
 
 // Every file the checkout changes against the queue's merge base, committed or not: the tracked ones with their status,
 // And the untracked ones, each an addition. The queue is fetched first, so the base is its current tip; a stale one
-// Would List other sessions' commits as this checkout's changes. The fetch is the one call here that reaches the
-// Network, so It is bounded; the local reads after it cannot wait on anything outside the checkout
+// Would list other sessions' commits as this checkout's changes. The fetch is the one call here that reaches the
+// Network, so it is bounded; the local reads after it cannot wait on anything outside the checkout
 export const readChangedFiles = (): ChangedFile[] => {
   runGit(["fetch", "--quiet", REMOTE_NAME, QUEUE_BRANCH], REPOSITORY_ROOT, undefined, CHILD_PROCESS_TIMEOUT_MS);
   const mergeBase = runGit(["merge-base", "HEAD", REMOTE_QUEUE_REF]).trim();

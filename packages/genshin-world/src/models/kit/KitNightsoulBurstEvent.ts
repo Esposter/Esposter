@@ -3,7 +3,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEventKind } from "#src/models/kit/KitEventKind";
 
 // A Nightsoul burst went off on an enemy, set off by a party member's elemental hit on it while a Natlan character is
-// In the Party and the interval since the last burst has run out, with the combatant whose hit set it off
+// In the party and the interval since the last burst has run out, with the combatant whose hit set it off
 export interface KitNightsoulBurstEvent {
   enemy: Enemy;
   kind: typeof KitEventKind.NightsoulBurst;

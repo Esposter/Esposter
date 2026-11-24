@@ -13,9 +13,9 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // Writes the record of this checkout's commit when the committed one is stale, as the one writer of it. The record is
-// Pushed As a plain push onto that commit, so it lands only while the queue's tip is still that commit: a landing that
-// Moved the Tip leaves the record to the next run. The dist read here is the build of the commit the workflow named, so
-// A checkout Moved since then is refused rather than recorded.
+// Pushed as a plain push onto that commit, so it lands only while the queue's tip is still that commit: a landing that
+// Moved the tip leaves the record to the next run. The dist read here is the build of the commit the workflow named, so
+// A checkout moved since then is refused rather than recorded.
 export const recordBundleSizes = (): BundleSizeRecordOutcome => {
   const builtCommit = process.env.REVIEW_BUILT_COMMIT ?? "";
   const head = runGit(["rev-parse", "HEAD"]).trim();

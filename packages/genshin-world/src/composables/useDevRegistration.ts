@@ -5,8 +5,8 @@ import type { Promisable } from "type-fest";
 import { onMounted, onUnmounted } from "vue";
 
 // Registers the handle `createHandle` builds with the development registry while its owner is mounted, and removes it
-// When The owner unmounts. The handle is taken through a promise, so one built over a wait on the world and one built
-// At once Share this path, and a handle still being built when the owner unmounts is never registered
+// When the owner unmounts. The handle is taken through a promise, so one built over a wait on the world and one built
+// At once share this path, and a handle still being built when the owner unmounts is never registered
 export const useDevRegistration = ({
   createHandle,
   devRegistry,

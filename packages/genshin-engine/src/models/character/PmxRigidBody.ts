@@ -3,7 +3,7 @@ import type { PmxRigidBodyShape } from "#src/models/character/PmxRigidBodyShape"
 import type { Vector3Tuple } from "three";
 
 // A PMX rigid body, which MMD's physics swings hair and cloth with: the bone it follows or moves, the group it is in
-// And The groups it passes through as a mask of bits, its shape's size, place and turn, and the physics' readings for
+// And the groups it passes through as a mask of bits, its shape's size, place and turn, and the physics' readings for
 // It
 export interface PmxRigidBody {
   angularDamping: number;

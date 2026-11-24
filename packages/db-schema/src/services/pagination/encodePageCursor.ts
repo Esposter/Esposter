@@ -1,7 +1,7 @@
 import type { PageCursor } from "#src/models/pagination/PageCursor";
 
 // The cursor on the wire: base64url of the JSON pair, opaque to the client. The start of a list is the empty string,
-// The App's absent string, so a read that answers its last page answers ""
+// The app's absent string, so a read that answers its last page answers ""
 export const encodePageCursor = ({ isBackward, values }: PageCursor): string =>
   values.length === 0
     ? ""

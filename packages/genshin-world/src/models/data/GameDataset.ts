@@ -1,5 +1,5 @@
 // The datasets of the hosted game data, one per scope a step publishes: the generated folders and the fitted or
-// Authored Data files the package no longer imports. The lock keeps only the keys of a dataset still listed here
+// Authored data files the package no longer imports. The lock keeps only the keys of a dataset still listed here
 export const GameDataset = {
   Achievements: "achievements",
   AchievementText: "achievementText",

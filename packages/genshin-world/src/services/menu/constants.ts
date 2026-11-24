@@ -69,10 +69,10 @@ export const PAIMON_MENU_SIDE_BAR: readonly PaimonMenuScreenEntry<MenuFrameIcon>
 ];
 // The Paimon menu's transition, read off the English PC client's menu recording (`yt-IegFADn-Lmk-menu-paimon`, 60
 // Frames A second): the opening from 35.0 seconds and the closing from 109.0, each frame's side bar and panel alpha
-// Taken Against the world and the menu's own stills. The side bar's fade is the one that fits a smoothstep (its RMS
+// Taken against the world and the menu's own stills. The side bar's fade is the one that fits a smoothstep (its RMS
 // Error 0.011 opening, 0.006 closing), starting at 35.75 and ending at 35.91, and at 109.98 and 110.15 closing. The
-// Panel Fades in across its width together, half way at about 35.95 and done by 36.02, and as the menu closes it goes
-// First, Half way at 109.90 and gone by 110.02. The HUD vanishes in about 0.05 seconds at 35.43, and returns over
+// Panel fades in across its width together, half way at about 35.95 and done by 36.02, and as the menu closes it goes
+// First, half way at 109.90 and gone by 110.02. The HUD vanishes in about 0.05 seconds at 35.43, and returns over
 // 110.07 to 110.48, a third of the way at 110.07 and half at 110.32
 export const PAIMON_MENU_FADE_MS = 160;
 export const PAIMON_MENU_PANEL_DELAY_MS = 100;
@@ -104,7 +104,7 @@ export const VOLUME_LEVEL_MAXIMUM = 10;
 // The track each volume slider moves across, from its first level to its last
 export const VOLUME_RANGE: SettingRange = { max: VOLUME_LEVEL_MAXIMUM, min: VOLUME_LEVEL_MINIMUM, step: 1 };
 // The camera's ranges on the wiki's Settings page: the sensitivities from 1 to 5 and the default distance from 4.5 to
-// 6.0. The distance's step is provisional until a recording shows the slider's notches
+// 6.0. the distance's step is provisional until a recording shows the slider's notches
 export const CAMERA_SENSITIVITY_RANGE: SettingRange = { max: 5, min: 1, step: 1 };
 export const CAMERA_DISTANCE_RANGE: SettingRange = { max: 6, min: 4.5, step: 0.1 };
 // The key the settings are kept under on this device, as the game keeps its settings per device

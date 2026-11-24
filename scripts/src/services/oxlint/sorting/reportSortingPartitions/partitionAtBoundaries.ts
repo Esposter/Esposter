@@ -1,7 +1,7 @@
 import type { SortingNode } from "#src/models/oxlint/sorting/SortingNode";
 
 // The items cut into partitions: an item the check rejects is a boundary, which ends the partition it is in and starts
-// A New one, and each item the check passes becomes a sorting node in the partition it lands in. The first partition is
+// A new one, and each item the check passes becomes a sorting node in the partition it lands in. The first partition is
 // There even when no item precedes a boundary
 export const partitionAtBoundaries = <T, TItem extends T>(
   items: readonly T[],

@@ -7,8 +7,8 @@ import { checkIsCharacterOnField } from "#src/services/party/checkIsCharacterOnF
 import { takeOne } from "@esposter/shared";
 
 // Seasoned Symphony at its rank: the wielder's ATK rises by the rank's percentage, and by the second percentage more
-// While It is off-field. A heal the wielder initiates gives the wielder and the character it healed Sweet Echoes, the
-// Third Percentage of ATK for the rank's seconds, which a heal triggers whether or not the wielder is on the field
+// While it is off-field. A heal the wielder initiates gives the wielder and the character it healed Sweet Echoes, the
+// Third percentage of ATK for the rank's seconds, which a heal triggers whether or not the wielder is on the field
 export const createSeasonedSymphonyPassiveModule = (params: number[]): PassiveModule => {
   const attackPercent = takeOne(params, 0);
   const offFieldAttackPercent = takeOne(params, 1);

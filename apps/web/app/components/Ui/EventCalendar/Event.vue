@@ -20,10 +20,10 @@ interface Props {
 const { event, isBlock, now } = defineProps<Props>();
 const emit = defineEmits<{ dragStart: []; nudge: [duration: Temporal.Duration]; open: [] }>();
 // Faded once it has started, as Outlook fades what is behind the current time. The calendar renders only in the
-// Browser, So the fade never has to agree with a server render, and it follows the clock as time passes
+// Browser, so the fade never has to agree with a server render, and it follows the clock as time passes
 const isPast = computed(() => event.start.getTime() < now.epochMilliseconds);
 // The description is rich text from whichever caller passes it, so it is sanitized where it is drawn rather than
-// Trusted To have been sanitized at its source
+// Trusted to have been sanitized at its source
 const hasDescription = computed(() => Boolean(event.description && !EMPTY_TEXT_REGEX.test(event.description)));
 const descriptionHtml = computed(() => sanitizeTextHtml(event.description ?? ""));
 // Alt and an arrow move the event a day across, and down or up a slot of the hours or a week of the month

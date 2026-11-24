@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const tipIdsSchema = createUniquePrimitiveArraySchema(z.int().positive()).max(MAX_SHOWN_TIP_COUNT);
 // The tips the world has shown, each once by its id, so a tip is shown once per save. The tips it has triggered and not
-// Yet Shown wait in the order they are to be shown, so a reload shows them as the save left them
+// Yet shown wait in the order they are to be shown, so a reload shows them as the save left them
 export const tipSaveSchema = z.object({ queued: tipIdsSchema, shown: tipIdsSchema });
 
 export type TipSave = z.infer<typeof tipSaveSchema>;

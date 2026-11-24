@@ -126,7 +126,7 @@ describe(createSayuKitBehaviour, () => {
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
     // Ascension 1: a Swirl Sayu triggers while on the field heals the active character by 300 and 1.2 Elemental
-    // Mastery, Once every 2 seconds, and Ascension 4's Daruma ticks strike within 3.5 metres
+    // Mastery, once every 2 seconds, and Ascension 4's Daruma ticks strike within 3.5 metres
     const combatant = createSayuCombatant(1);
     const context = createKitTestContext(combatant);
     getPartyMember(context.party, SAYU_CHARACTER_ID).healthShare = 0.5;

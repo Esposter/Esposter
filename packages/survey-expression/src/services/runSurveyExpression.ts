@@ -6,8 +6,8 @@ import type { Result } from "neverthrow";
 import { evaluateSurveyExpression } from "#src/services/evaluateSurveyExpression";
 import { parseSurveyExpression } from "#src/services/parseSurveyExpression";
 
-// Parses the source and evaluates the tree over a context that is already read as answers, or returns the parse's
-// Fault. A call to a name with no function is empty here, since refusing it is the check's job
+// Parses the source and evaluates the tree over a context that is already read as answers, or returns the
+// Parse's fault. A call to a name with no function is empty here, since refusing it is the check's job
 export const runSurveyExpression = (
   source: string,
   context: SurveyLogicContext,

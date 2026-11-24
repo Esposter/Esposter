@@ -35,7 +35,7 @@ interface Props {
   adventureExpProgress: number;
   adventureRank: number;
   // The icons that carry a red dot, the news the player has not seen, among the entries, the links, the side bar and
-  // The Profile's pencil; none is []
+  // The profile's pencil; none is []
   alertedIcons: (MenuEntryIcon | MenuFrameIcon)[];
   // Whether a screen is built, which its entry opens; an unbuilt one's entry is drawn disabled
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;

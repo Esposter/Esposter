@@ -13,7 +13,7 @@ export const readLastPush = (repositoryRoot: string = REPOSITORY_ROOT): LastPush
     const name = runGit(["config", "user.name"], repositoryRoot).trim();
     const email = runGit(["config", "user.email"], repositoryRoot).trim();
     // `--author` is a substring match on the author line, so it only narrows the commits; the name and the email are
-    // Then Compared whole, newest first
+    // Then compared whole, newest first
     const commits = getNonEmptyLines(
       runGit(
         ["log", "--fixed-strings", `--author=${name}`, "--format=%H%x1f%aI%x1f%an%x1f%ae", REMOTE_QUEUE_REF],

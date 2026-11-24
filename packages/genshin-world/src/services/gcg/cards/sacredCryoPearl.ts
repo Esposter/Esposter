@@ -6,7 +6,7 @@ const SACRED_CRYO_PEARL_DAMAGE = 1;
 const SACRED_CRYO_PEARL_PIERCING_DAMAGE = 1;
 
 // Sacred Cryo Pearl, a summon: at the end phase, 1 Piercing DMG to each opposing character on standby, and 1 Cryo DMG
-// To The opposing active character, for two usages
+// To the opposing active character, for two usages
 export const sacredCryoPearl: GcgCardModule = {
   endPhaseStandbyPiercing: SACRED_CRYO_PEARL_PIERCING_DAMAGE,
   initialUsages: 2,

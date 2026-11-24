@@ -13,7 +13,7 @@ export const BASE_ATTACK_PROPERTY = "FIGHT_PROP_BASE_ATTACK";
 export const BASE_DEFENSE_PROPERTY = "FIGHT_PROP_BASE_DEFENSE";
 export const REGIONS_DIRECTORY = "regions";
 // The weekly bosses' kinds, which no camp places and which the enemies dataset publishes ahead of the weekly claim that
-// Reads Them: Stormterror
+// Reads them: Stormterror
 export const WEEKLY_BOSS_KIND_IDS: EnemyKindId[] = [EnemyKindId.StormterrorDvalin];
 // The bosses whose moves genshin-world's boss table gives, which the monsters subcommand names beside the placed kinds
 export const BOSS_KIND_IDS: EnemyKindId[] = [
@@ -24,14 +24,14 @@ export const BOSS_KIND_IDS: EnemyKindId[] = [
 // The wiki module whose Enemies table gives each drop family's Mora and materials, by the members a Drops Table names
 export const DROPS_TABLE_WIKI_MODULE_TITLE = "Module:Drops Table/data";
 // The wiki page a Drops template is written as, which invokes the drops module, and the module's data, the Enemies
-// Table a Template's materials are read from by the one entry that names it
+// Table a template's materials are read from by the one entry that names it
 export const DROPS_TEMPLATE_WIKI_TITLE = "Template:Drops";
 export const DROPS_DATA_WIKI_TITLE = "Module:Drops/data";
 // The call a Drops template makes to the drops module, which the template's page must invoke to give its materials
 export const DROPS_MODULE_INVOCATION = "{{#invoke:Drops|main}}";
 // The block each monster's Animator controller is exported from, by the controller's name. A controller's block is
-// Found Once, by scanning the monster-named blocks, and recorded here, so a run reads the record rather than scanning
-// Again. The Asset index names no AnimatorController, so no index row finds it
+// Found once, by scanning the monster-named blocks, and recorded here, so a run reads the record rather than
+// Scanning again. The asset index names no AnimatorController, so no index row finds it
 export const MONSTER_CONTROLLER_BLOCK_MAP: Readonly<Record<string, string>> = {
   Monster_Hili_None_01: "00/11877482.blk",
 };

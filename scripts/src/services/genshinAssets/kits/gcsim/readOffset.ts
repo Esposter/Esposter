@@ -9,7 +9,7 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 import { readArgumentText } from "#src/services/genshinAssets/kits/gcsim/readArgumentText";
 
 // The offset a `info.Point{X: x, Y: y}` literal gives, forward as its Y, or none for a nil argument. A bare name is
-// Read At the literal its dominating assignment gives. Undefined where the argument is any other form
+// Read at the literal its dominating assignment gives. Undefined where the argument is any other form
 export const readOffset = (
   tokens: readonly GoToken[],
   start: number,

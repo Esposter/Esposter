@@ -71,7 +71,7 @@ export const genshinSaveSchema = z
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
     // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its
-    // Blossom's Claim or a teleport out of its area after the defeat, so a reload keeps it down. Absent until a boss is
+    // Blossom's claim or a teleport out of its area after the defeat, so a reload keeps it down. Absent until a boss is
     // Defeated
     bossDefeats: bossDefeatSaveSchema.optional(),
     cardGameExp: cardGameExpSaveSchema,
@@ -96,7 +96,7 @@ export const genshinSaveSchema = z
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,
     // The fish caught from each stock that are not yet back, by the stock's key, each held until its seventy-two hours
-    // Have Run. Absent while no fish is caught from any stock
+    // Have run. Absent while no fish is caught from any stock
     fishingCatchAts: fishingCatchesSaveSchema.optional(),
     // The forge's learned recipe ids, absent until a recipe is learned from a diagram
     forging: forgingSaveSchema.optional(),
@@ -111,8 +111,8 @@ export const genshinSaveSchema = z
     // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
     // (empty before the day's first investigation)
     investigationDay: investigationDaySaveSchema,
-    // The last teleport into each area, which holds a boss down until a teleport lands outside its area after its
-    // Defeat. Absent before the player's first teleport
+    // The last teleport into each area, which holds a boss down until a teleport lands outside its area after
+    // Its defeat. absent before the player's first teleport
     lastTeleportAts: lastTeleportsSaveSchema.optional(),
     // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves
     // On

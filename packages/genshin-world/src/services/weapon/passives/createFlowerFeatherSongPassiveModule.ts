@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 const MEMBERS_FOR_ELEMENTAL_MASTERY = 3;
 
 // Flower-Feather Song at its rank: the wielder's ATK rises by the rank's percentage for each other party member from
-// Natlan Or of another Elemental Type, and with no fewer than three of them its Elemental Mastery rises by the rank's
+// Natlan or of another Elemental Type, and with no fewer than three of them its Elemental Mastery rises by the rank's
 // Amount
 export const createFlowerFeatherSongPassiveModule = (params: number[]): PassiveModule => {
   const attackPercentPerMember = takeOne(params, 0);

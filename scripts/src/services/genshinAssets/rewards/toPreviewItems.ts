@@ -5,7 +5,7 @@ import { parseRewardCount } from "#src/services/genshinAssets/expeditions/parseR
 import { REWARD_COUNT_DEFAULT } from "#src/services/genshinAssets/rewards/constants";
 
 // A reward preview's items as the world reads them, each with the least and most of it a claim may draw. An empty slot
-// Is Left out, and so is an item whose count is zero, since it can never pay
+// Is left out, and so is an item whose count is zero, since it can never pay
 export const toPreviewItems = ({ previewItems }: ExcelRewardPreviewRow): RewardItem[] =>
   previewItems
     .filter(({ id }) => id !== 0)

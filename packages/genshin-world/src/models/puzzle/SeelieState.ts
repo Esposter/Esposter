@@ -1,4 +1,4 @@
 // A Seelie's place in its puzzle: resting where it was found until it is followed, led along its route toward its
-// Court, Or settled in the court, where its chest spawns
+// Court, or settled in the court, where its chest spawns
 export const SeelieState = { Led: "Led", Resting: "Resting", Settled: "Settled" } as const;
 export type SeelieState = (typeof SeelieState)[keyof typeof SeelieState];

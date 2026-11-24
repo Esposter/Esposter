@@ -1,6 +1,6 @@
 // What a settings row holds on its right: a choice from a list its caret opens, an action opening a page of its own,
 // The Graphics quality and the game language, each a list of the world's own, a Range or the Volume of a setting the
-// World Keeps, a slider the world does not back, drawn at the level the game's recording shows, or a Toggle the world
+// World keeps, a slider the world does not back, drawn at the level the game's recording shows, or a Toggle the world
 // Flips
 export const SettingsRowKind = {
   Action: "Action",

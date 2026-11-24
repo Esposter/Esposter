@@ -46,8 +46,8 @@ import { describe, expect, test, vi } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
-// Gcsim gives the Traveler's skill hit the Wind element; these reaction tests need the element-less hit the record held
-// Before.
+// Gcsim gives the Traveler's skill hit the Wind element; these reaction tests need the element-less hit the record
+// Held before.
 const elementlessSkillHit = (): KitHit => ({ ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: undefined });
 const NEVER_CRITICAL = (): number => 1;
 

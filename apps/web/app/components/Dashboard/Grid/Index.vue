@@ -33,7 +33,7 @@ const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, ti
   // The cap
   checkIsRefused: (item, target) => checkIsMoveRefused(dashboardVisuals.value, item.id, target.dataset.groupId),
   // A group is solid in the grid it sits in, so no other visual's drag pushes it: a landing over it is refused, and a
-  // Visual Joins the group by its body alone
+  // Visual joins the group by its body alone
   checkIsSolid: (visual) => visual.type === VisualType.Group,
   collision,
   columnNumber,

@@ -52,8 +52,8 @@ const checkIsSilentArm = (arm: ESTree.Node, sourceCode: SourceCode): boolean => 
 };
 
 // Reports a Result whose failure becomes nothing: `.unwrapOr(undefined)`, or a `.match` whose err arm returns a
-// Sentinel Without a log. A reader cannot tell that failure from an empty answer, so a comment beside it must name why
-// The failure Is expected, or the failure is logged. See the error-handling skill.
+// Sentinel without a log. A reader cannot tell that failure from an empty answer, so a comment beside it must name why
+// The failure is expected, or the failure is logged. See the error-handling skill.
 export const noUncommentedFallback: Rule = defineRule({
   create(context) {
     const { sourceCode } = context;

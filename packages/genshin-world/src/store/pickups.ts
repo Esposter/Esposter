@@ -35,8 +35,8 @@ import { defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
 // The drops lying in the world and the gathering points, each drawn as a row the character can pick up. A drop or a
-// Point Taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is
-// Saved at once. The session starts it with the tables a drop is named from, and stops it as it unmounts
+// Point taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is
+// Saved at once. the session starts it with the tables a drop is named from, and stops it as it unmounts
 export const useWorldPickupsStore = defineStore("world/pickups", () => {
   const worldArchiveStore = useWorldArchiveStore();
   const worldGroundStore = useWorldGroundStore();
@@ -47,8 +47,8 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
   const worldDrops = shallowRef<WorldDrop[]>([]);
   let placedDropCount = 0;
   // Mondstadt's gathering points and the items they give, read as the world opens. A point picked is kept with the
-  // Instant It was picked, and stands again once its respawn has come, read each time the clock is looked at. A load
-  // That fails is Logged and left off, so no point is offered rather than a wrong one
+  // Instant it was picked, and stands again once its respawn has come, read each time the clock is looked at. A load
+  // That fails is logged and left off, so no point is offered rather than a wrong one
   const gatheringItems = shallowRef<GatheringItem[]>([]);
   const gatheringPlaces = shallowRef<GatheringPlace[]>([]);
   const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
@@ -58,7 +58,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
   // The broken share of each ore struck and not yet broken, by its point, which the ore breaking takes out
   const oreIdBrokenShareMap = shallowRef<ReadonlyMap<string, number>>(new Map());
   // Each drop, named by its item, and each gathering point that stands now, named by its item, each standing on the
-  // Ground Beneath its point
+  // Ground beneath its point
   const pickUpInteractables = computed<Interactable[]>(() => {
     const drops = worldDrops.value.map(({ id, itemId, position: { x, z } }) => ({
       id,
@@ -159,7 +159,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
     }
   };
   // A material source is picked into the bag as its item and taken out of the world, which keeps it where it lies when
-  // The bag Has no room for it
+  // The bag has no room for it
   const pickUpMaterialSourcePlace = (placeId: string) => {
     const pickUp = pickUpMaterialSource(
       materialSources.value,
@@ -186,7 +186,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
     ]);
   };
   // The ores a character's hit reaches are struck: each standing ore in the hit's area takes the hit's share, and one
-  // That Breaks drops its pieces where it lies and is kept as picked at the instant it broke
+  // That breaks drops its pieces where it lies and is kept as picked at the instant it broke
   const strikeGatheringOres = (body: KitBody, hit: OreHit, random: () => number) => {
     const now = getWorldNow();
     for (const { id, kind, position } of gatheringPlaces.value) {

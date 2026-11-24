@@ -4,8 +4,8 @@ import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 
 // The obtain doings a bag write makes: one for each item the bag holds more of after the write, by how many more, and
-// None For an item it takes away. The bag changes only through that write, so an item counts from any source, a quest's
-// Reward Or a craft's product alike, and each stack or weapon entry counts toward its item's id
+// None for an item it takes away. The bag changes only through that write, so an item counts from any source, a quest's
+// Reward or a craft's product alike, and each stack or weapon entry counts toward its item's id
 const countItems = (items: readonly InventoryItem[]): Map<number, number> => {
   const counts = new Map<number, number>();
   for (const { definition, quantity } of items) counts.set(definition.id, (counts.get(definition.id) ?? 0) + quantity);

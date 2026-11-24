@@ -111,11 +111,12 @@ export const useFileStore = defineStore("message/file", () => {
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!checkIsServer())
     useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_PRESIGNED_URL_REFRESH_INTERVAL_MS);
-  // The gallery the viewer walks: everything that has something to look at and a url to look at it through. A PDF Opens
-  // Its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two Dialogs
-  // Racing for one click. Named by the room the viewed file's message is in, which the thread pane can hold Beside
-  // Another room Whether one file is in the gallery, read from its own url and mimetype, so a tile asks of its own file
-  // And never walks the room
+  // The gallery the viewer walks: everything that has something to look at and a url to look at it through. A PDF
+  // Opens its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two
+  // Dialogs racing for one click. Named by the room the viewed file's message is in, which the thread pane can hold
+  // Beside another room
+  // Whether one file is in the gallery, read from its own url and mimetype, so a tile asks of its own file and never
+  // Walks the room
   const checkIsViewableFile = (roomId: RoomInMessage["id"], { id, mimetype }: Pick<FileEntity, "id" | "mimetype">) => {
     const inferredMimetype = getInferredMimetype(mimetype);
     return Boolean(getData(roomId)?.has(id)) && ["image", "video"].includes(inferredMimetype);

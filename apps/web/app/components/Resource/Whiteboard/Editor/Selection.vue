@@ -15,9 +15,9 @@ import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { getElementBounds } from "vue-block-editor-headless";
 
 // A solid frame in the accent around the box of each selected element, standing off it by a fixed number of screen
-// Pixels at any zoom, so it never Reads as a second outline on the element's own. Over the frames, each handle the
-// Selection takes is drawn as a small square centred on its point On the selection's box, so the reader sees where to
-// Grab it. The overlay is drawn over the elements as the canvas draws them, so a gesture in Progress frames and handles
+// Pixels at any zoom, so it never reads as a second outline on the element's own. Over the frames, each handle the
+// Selection takes is drawn as a small square centred on its point on the selection's box, so the reader sees where to
+// Grab it. The overlay is drawn over the elements as the canvas draws them, so a gesture in progress frames and handles
 // Its preview
 const whiteboardStore = useWhiteboardStore();
 const { displayedDocument } = storeToRefs(whiteboardStore);

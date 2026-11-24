@@ -22,11 +22,11 @@ import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/ge
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Riptide on an enemy, and the strikes it sets off: Riptide Flash, a fully charged aimed shot's three hits round an
-// Enemy Holding it, at most once in its interval on each enemy; Riptide Slash, a Melee Stance Normal or Charged
-// Attack's hit Round it, at most once in its own; Riptide Blast, Light of Obliteration's hit round it, which clears it;
-// And Riptide Burst, round an enemy defeated holding it, which gives Riptide to the enemies it hits, as gcsim v2.47.2
-// (MIT) Tartaglia/riptide.go sets them off
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/tartaglia/riptide.go`
+// Enemy holding it, at most once in its interval on each enemy; Riptide Slash, a Melee Stance Normal or Charged
+// Attack's hit round it, at most once in its own; Riptide Blast, Light of Obliteration's hit round it, which clears it;
+// And Riptide burst, round an enemy defeated holding it, which gives Riptide to the enemies it hits, as gcsim v2.47.2
+// (MIT) tartaglia/riptide.go sets them off
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/tartaglia/riptide.go
 const RIPTIDE_STATUS_ID = "tartaglia-riptide";
 const RIPTIDE_FLASH_COOLDOWN_STATUS_ID = "tartaglia-riptide-flash-cooldown";
 const RIPTIDE_SLASH_COOLDOWN_STATUS_ID = "tartaglia-riptide-slash-cooldown";
@@ -68,10 +68,10 @@ const strikeRiptide = (
 export const TARTAGLIA_CHARACTER_ID = 10_000_033;
 
 // Tartaglia's behaviour: Foul Legacy: Raging Tide's change into the Melee Stance, ending on a press back, at its
-// Longest Or as he leaves the field, its cooldown following the seconds it held, and Havoc: Obliteration's Flash of
+// Longest or as he leaves the field, its cooldown following the seconds it held, and Havoc: Obliteration's Flash of
 // Havoc in the Ranged Stance, landing on the enemy he turned to and giving energy back, or Light of Obliteration in the
 // Melee Stance. Riptide, its strikes, the passives and the constellations answer the kit's events. Master of Weaponry
-// Is not built, as No kit reads a talent level, and the Melee Stance's plunges are not refused
+// Is not built, as no kit reads a talent level, and the Melee Stance's plunges are not refused
 export const createTartagliaKitBehaviour = ({
   readHit,
   readHits,
@@ -150,7 +150,7 @@ export const createTartagliaKitBehaviour = ({
     // The end of the Melee Stance, which leaving the field brings, sets the skill's cooldown by the whole seconds it
     // Held, or its longest cooldown once it held its longest, cut from one constellation, or ends the cooldown from six
     // Once the burst was cast in it. Hydrospout's tick sets off a Slash in the Melee Stance or a Flash out of it,
-    // Outside Their intervals, and each hit Tartaglia lands gives and sets off Riptide
+    // Outside their intervals, and each hit Tartaglia lands gives and sets off Riptide
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       const meleeStance = findKitStance(kitEffectState.effects, characterId);

@@ -1,8 +1,9 @@
 import { MAXIMUM_DIGITS } from "#src/services/function/constants";
 import { shiftDecimalPlaces } from "#src/services/function/shiftDecimalPlaces";
 
-// Rounds a value to a count of decimal places by the rounder, moving the decimal point through the shortest decimal
-// Form. An integer is already rounded, and every integer past the shift's range is one, so it is returned as it is
+// Rounds a value to a count of decimal places by the rounder, moving the decimal point through the shortest
+// Decimal form. an integer is already rounded, and every integer past the shift's range is one, so it is returned as it
+// Is
 export const roundToDigits = (rounder: (value: number) => number, value: number, digits: number): null | number => {
   if (!Number.isInteger(digits) || digits < 0 || digits > MAXIMUM_DIGITS) return null;
   if (!Number.isFinite(value)) return value;

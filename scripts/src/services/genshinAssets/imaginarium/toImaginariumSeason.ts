@@ -8,9 +8,9 @@ import { toImaginariumOpeningTrials } from "#src/services/genshinAssets/imaginar
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One season from its schedule row and the avatar config row it joins by: its id, the wall-clock moments it begins and
-// Ends In the game's time zone, the reward Group its Stellas draw from, the difficulties it runs by id, its three
-// Elements, the Avatar ids of its opening characters and special guests, and the trial avatars its openers play as,
-// Read from the trial Table. A code the element map lacks is refused, and the trailing 0, which names no element, is
+// Ends in the game's time zone, the reward Group its Stellas draw from, the difficulties it runs by id, its three
+// Elements, the avatar ids of its opening characters and special guests, and the trial avatars its openers play as,
+// Read from the trial table. A code the element map lacks is refused, and the trailing 0, which names no element, is
 // Dropped
 export const toImaginariumSeason = (
   row: ExcelRoleCombatScheduleRow,

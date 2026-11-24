@@ -7,7 +7,7 @@ import { getConstellationTalentAdditions } from "#src/services/character/getCons
 
 // The level each combat talent plays at: the level the character holds for it plus the levels its active constellations
 // Add to it, which is the level a kit reads the talent at. Materials never pay for the added levels, so a level past
-// Ten Is a constellation's alone
+// Ten is a constellation's alone
 export const getPlayedTalentLevels = (
   { constellationCount, talentLevels }: Pick<Character, "constellationCount" | "talentLevels">,
   constellations: readonly Constellation[],

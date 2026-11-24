@@ -104,7 +104,7 @@ describe(useCallStore, () => {
   });
 
   // A toggle the server refuses is revoked: its entry drops, and the row shows what the server last held. The server's
-  // Own Arrival of the row at a newer version is what the screen shows then, and an older arrival of it does not
+  // Own arrival of the row at a newer version is what the screen shows then, and an older arrival of it does not
   test("a revoked toggle's arrival wins over the toggle, and an older arrival does not", async () => {
     expect.hasAssertions();
 

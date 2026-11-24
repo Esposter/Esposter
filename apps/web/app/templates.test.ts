@@ -52,12 +52,13 @@ const getMatchingLines = (checkIsMatch: (line: string) => boolean, checkIsKept: 
   return matchingLines;
 };
 
-// An attributify attribute that matches no rule is silent: nothing is generated, nothing warns, and the page Renders
-// Without the style it was meant to carry. The generator itself answers whether a token is a utility — The token has to
-// Be looked for in `matched` rather than counted there, because the set's size says nothing about this token: the
-// Generator emits nothing for a Non-utility and the token's own rule for a utility. Only a native element is asked,
-// Because on a Component an attribute is as likely to be a prop as a utility, and only a valueless one, because a
-// Valued Attribute on a native element is HTML's own
+// An attributify attribute that matches no rule is silent: nothing is generated, nothing warns, and the page
+// Renders without the style it was meant to carry. The generator itself answers whether a token is a utility —
+// The token has to be looked for in `matched` rather than counted there, because the set's size says nothing about this
+// Token: the generator emits nothing for a non-utility and the token's own rule for a utility. Only a native element is
+// Asked, because on a
+// Component an attribute is as likely to be a prop as a utility, and only a valueless one, because a valued
+// Attribute on a native element is HTML's own
 describe("attributify", () => {
   // Built-in elements that are spelt like a native tag but resolve to a component, so an attribute on one is
   // That component's prop — vue's own, plus TresJS's `primitive`, whose `dispose` is a prop

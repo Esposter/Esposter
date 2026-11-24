@@ -19,7 +19,7 @@ describe(createAshenSunsShadowPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   // Ashen Sun's Shadow at its first rank: a Charged Attack hit grants a Bond of Life of 25% Max HP, once every 14
-  // Seconds, and While the wielder has one it deals 12% more DMG, and 24% more at a Bond of 30% Max HP or more
+  // Seconds, and while the wielder has one it deals 12% more DMG, and 24% more at a Bond of 30% Max HP or more
   const passiveModule = createAshenSunsShadowPassiveModule([0.25, 14, 0.12, 0.3, 0.24]);
 
   test("a Charged Attack hit grants the wielder a Bond of Life of the rank's share, which raises its DMG", () => {

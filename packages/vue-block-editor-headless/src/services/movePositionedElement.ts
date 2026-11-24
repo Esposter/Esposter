@@ -12,7 +12,7 @@ import { getRerouteOperations } from "#src/services/getRerouteOperations";
 import { exhaustiveGuard, JsonPatchOperationType } from "@esposter/shared";
 
 // Moves the element at an index by the offset from its bounds' start to a point. A shape moves to the point and
-// Reroutes each arrow bound To it in the same edit. A stroke moves every point. An arrow moves each free end, since a
+// Reroutes each arrow bound to it in the same edit. A stroke moves every point. An arrow moves each free end, since a
 // Bound end follows its shape, so an arrow bound at both ends is refused
 export const movePositionedElement = (
   document: PositionedDocument,

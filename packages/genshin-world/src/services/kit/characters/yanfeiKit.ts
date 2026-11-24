@@ -29,11 +29,13 @@ const CHARGED_ATTACK_STAMINA_REDUCTION = 0.15;
 const CHARGED_ATTACK_STAMINA_CONSTELLATION = 1;
 const CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION = 0.25;
 // Done Deal adds a Scarlet Seal each second for its 15 seconds, and its Pyro DMG bonus to Charged Attacks, as gcsim
-// (MIT) Yanfei/burst.go gives it https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/burst.go
+// (MIT) Yanfei/burst.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/burst.go
 const BURST_SECONDS = 15;
 // Supreme Amnesty, from four constellations, has Done Deal create a Pyro shield absorbing up to 45% of Yanfei's Max HP
 // For 15 seconds, which absorbs Pyro DMG 250% more effectively, as the wiki's constellation page gives it. That is the
-// Combat Shield's 250% for its own element https://genshin-impact.fandom.com/wiki/Yanfei
+// Combat shield's 250% for its own element
+// https://genshin-impact.fandom.com/wiki/Yanfei
 const SUPREME_AMNESTY_CONSTELLATION = 4;
 const SUPREME_AMNESTY_HEALTH_SHARE = 0.45;
 const SUPREME_AMNESTY_SECONDS = 15;
@@ -55,9 +57,9 @@ const SEAL_PYRO_BONUS_PER_SEAL = 0.05;
 const SEAL_PYRO_BONUS_SECONDS = 6;
 // Blazing Eye, as the dump's Feiyan_PermanentSkill_2 row (promote 4, param 0.8) and gcsim v2.47.2 (MIT) yanfei/asc.go
 // Give it: from Ascension 4, the first CRIT hit a charged attack of hers lands while she is on the field sets off 80%
-// Of Her ATK as 1U of Pyro, Charged Attack DMG, in a circle of radius 3.5 round the enemy struck, 10 frames on, which
-// The Record's frames give. gcsim gives it no poise
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/asc.go`
+// Of her ATK as 1U of Pyro, Charged Attack DMG, in a circle of radius 3.5 round the enemy struck, 10 frames on, which
+// The record's frames give. gcsim gives it no poise
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/asc.go
 const BLAZING_EYE_ASCENSION = 4;
 const BLAZING_EYE_HIT: Except<KitHit, "hitmarkSeconds"> = {
   attackTag: AttackTag.ChargedAttack,
@@ -100,12 +102,12 @@ const CONSTELLATION_2_CRIT_RATE_BONUS = 0.2;
 const CONSTELLATION_2_HEALTH_SHARE = 0.5;
 
 // Yanfei's behaviour: her strikes each gain a Scarlet Seal on each enemy they strike, and Signed Edict's and Done
-// Deal's Hits give her the full seals, three, four from Constellation 6. Her charged attack spends the seals as it
-// Starts, its Hit a summon cast at the body, whose multiplier and radius the seals spent pick, with Done Deal's Pyro
-// DMG bonus while It is up, and Ascension 1's bonus set from them; each seal cuts its stamina, more from Constellation
-// 1. Done Deal adds a Seal each second while it stands. From Ascension 4 the first CRIT hit of each charged attack sets
-// Off Blazing Eye round The enemy struck. Her Constellation 2 CRIT Rate reads the enemy's health. From Constellation 4,
-// Done Deal also casts a Pyro Shield, whose Pyro absorption is the combat shield's own 250%
+// Deal's hits give her the full seals, three, four from Constellation 6. Her charged attack spends the seals as it
+// Starts, its hit a summon cast at the body, whose multiplier and radius the seals spent pick, with Done Deal's Pyro
+// DMG bonus while it is up, and Ascension 1's bonus set from them; each seal cuts its stamina, more from Constellation
+// 1. Done Deal adds a seal each second while it stands. From Ascension 4 the first CRIT hit of each charged attack sets
+// Off Blazing Eye round the enemy struck. Her Constellation 2 CRIT Rate reads the enemy's health. From Constellation 4,
+// Done Deal also casts a Pyro shield, whose Pyro absorption is the combat shield's own 250%
 export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const blazingEyeHit: KitHit = { ...BLAZING_EYE_HIT, hitmarkSeconds: readSeconds("blazingEyeHitmark") };
   const doneDealDamageBonus = readParameter("doneDealChargedAttackDamageBonus");

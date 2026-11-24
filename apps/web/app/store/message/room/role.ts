@@ -219,7 +219,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     );
   };
   // The role is drawn under the id the client gives it, at a placeholder with no version. The server's row arrives in
-  // Its Answer, and the header confirms the placeholder at the version it names. The role is selected at once
+  // Its answer, and the header confirms the placeholder at the version it names. The role is selected at once
   const createRole = (input: Except<CreateRoleInput, "id">) => {
     const now = new Date();
     const roomRole: RoomRoleInMessage = {

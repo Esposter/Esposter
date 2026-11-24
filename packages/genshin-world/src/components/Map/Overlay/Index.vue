@@ -56,7 +56,7 @@ interface Props {
 }
 
 // The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset
-// The Map is dragged to from the player
+// The map is dragged to from the player
 const metres = defineModel<number>("metres", { required: true });
 const { camera, catalogue, explorationAreas, gameText, landmarks, nameText, recordedDoingIds, subareaLabels } =
   defineProps<Props>();

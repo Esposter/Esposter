@@ -3,7 +3,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 // Drops every effect on the team a check picks at once, writing a new list so a walk over the old one runs on as it
 // Stood. A dropped effect never runs out, so the step sends no EffectExpired for it, and a summon among them lands
-// Nothing More
+// Nothing more
 export const removeKitEffects = (
   kitEffectState: KitEffectState,
   checkIsRemoved: (effect: KitEffect) => boolean,

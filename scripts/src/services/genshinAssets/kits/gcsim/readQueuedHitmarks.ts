@@ -2,7 +2,7 @@ import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/Gcs
 
 // The hitmarks readGcsimQueuedAttacks reads for a file's queue calls with the cited line among their lines, each the
 // Delay its call is queued at with the tasks around it, as the mechanical path writes it. Where the cited hit has a
-// Loop Index, only the call of the iteration that index names is one of them
+// Loop index, only the call of the iteration that index names is one of them
 export const readQueuedHitmarks = (
   queuedAttacks: readonly GcsimQueuedAttack[],
   fileName: string,

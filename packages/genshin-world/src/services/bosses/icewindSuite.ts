@@ -5,9 +5,9 @@ import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enem
 
 // The Icewind Suite's attacks from its wiki page, in the order the page lists them. The page gives two challenges,
 // Dirge of Coppelia and Nemesis of Coppelius, chosen in dialogue with Maillardet, and lists each one's attacks in turn,
-// So both sets Sit here until a fight is given its challenge. Double Spin is the same in both and is listed once. Each
-// Climax is a phase, Not an attack: its sequences are unnamed, its Whirlwinds of Dirge wait on the scene export's wind
-// Current, and its Retributive Frosthearts are summons not yet run. Each move's windup and recovery are the common
+// So both sets sit here until a fight is given its challenge. Double Spin is the same in both and is listed once. Each
+// Climax is a phase, not an attack: its sequences are unnamed, its Whirlwinds of Dirge wait on the scene export's wind
+// Current, and its retributive Frosthearts are summons not yet run. Each move's windup and recovery are the common
 // Enemies' and are PROVISIONAL until measured
 export const ICEWIND_SUITE_MOVES: BossMove[] = [
   // Both challenges use it, dealing 60% ATK as Anemo DMG and Cryo DMG. A move carries one element, so Anemo is set

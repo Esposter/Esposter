@@ -11,7 +11,7 @@ describe(useReadPosts, () => {
   const { trpcMsw } = setupMswTrpc();
 
   // The list's sort change refreshes its first page, so the refresh must ask for the sort the list names now, not the
-  // One The first page was read with
+  // One the first page was read with
   test("a refresh after a sort change reads the sort the list names now", async () => {
     expect.hasAssertions();
 

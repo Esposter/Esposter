@@ -36,8 +36,9 @@ describe(useCallBackgroundStore, () => {
     await expect(readVirtualBackgroundImagePath(getCallBackgroundSelection(callBackground))).resolves.toBe("");
   });
 
-  // The listing the picker renders from is cached for the session, so resolving through it would hand the Processor a
-  // Url for a blob another device deleted — and a presigned read url that expires while the session stays open
+  // The listing the picker renders from is cached for the session, so resolving through it would hand the
+  // Processor a url for a blob another device deleted — and a presigned read url that expires while the session stays
+  // Open
   test("re-reads the listing rather than resolving a slot from a warm cache", async () => {
     expect.hasAssertions();
 

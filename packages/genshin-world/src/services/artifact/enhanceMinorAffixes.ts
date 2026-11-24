@@ -8,7 +8,7 @@ import { InvalidOperationError, Operation, takeRandom } from "@esposter/shared";
 
 // The minor affixes after a level an affix is due at: while the artifact holds fewer than four, a new one drawn by the
 // Wiki's weights from those it does not hold yet, valued by one of its tiers; at four, one of them raised by a tier of
-// Its Value, chosen evenly
+// Its value, chosen evenly
 export const enhanceMinorAffixes = ({
   mainAffix,
   minorAffixes,

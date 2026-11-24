@@ -14,15 +14,15 @@ import { defineStore } from "pinia";
 import { shallowRef, watch } from "vue";
 
 // Mondstadt's Reputation: the level and EXP the player holds, the city's levels, bounties and requests read as the
-// World Opens, and the request claims the week holds. A reward pays its EXP at the city's levels and its items into the
-// Wallet, And a finished quest pays the Reputation request or Reputation quest it is, once. The session starts it after
-// The Session store and stops it as it unmounts
+// World opens, and the request claims the week holds. A reward pays its EXP at the city's levels and its items into the
+// Wallet, and a finished quest pays the Reputation request or Reputation quest it is, once. The session starts it after
+// The session store and stops it as it unmounts
 export const useWorldReputationStore = defineStore("world/reputation", () => {
   const worldSessionStore = useWorldSessionStore();
   const { events, getWorldNow, setWallet } = worldSessionStore;
   const reputation = shallowRef<ReputationProgress>({ exp: 0, level: 1 });
   // Mondstadt's Reputation, read as the world opens: its levels, bounties and requests, and the exploration thresholds
-  // A Statue's unlock can pass
+  // A statue's unlock can pass
   const reputationCity = shallowRef<ReputationCity>();
   // The request claims the week holds, the newest the limit's size: the keeper offers no request past the limit, and a
   // Request taken before it still pays when it finishes

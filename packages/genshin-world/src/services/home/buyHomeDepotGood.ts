@@ -8,8 +8,8 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import { buyShopGood } from "#src/services/shop/buyShopGood";
 
 // The bag, wallet and purchases after one of the Realm Depot's goods is bought at `now`: its price taken from the
-// Wallet and Its item given, a currency to the wallet and anything else into the bag as `itemDefinition` takes it.
-// Undefined where the Shop refuses the good, or the bag has no room for its item, so nothing is spent
+// Wallet and its item given, a currency to the wallet and anything else into the bag as `itemDefinition` takes it.
+// Undefined where the shop refuses the good, or the bag has no room for its item, so nothing is spent
 export const buyHomeDepotGood = (
   good: ShopGood,
   {

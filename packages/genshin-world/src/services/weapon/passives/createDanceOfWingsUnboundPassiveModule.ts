@@ -20,8 +20,8 @@ const WINDS_OF_DEVOTION_SOURCE = "windsOfDevotion";
 const EFFECT_COUNT = 3;
 
 // Dance of Wings Unbound (Beyond the Chrysalis) at its rank: each Elemental Skill or Burst its wielder uses gives it
-// One of three Effects in turn, the Winds of Devotion's CRIT DMG, the Winds of Defiance's Stellar Swirl DMG and the
-// Winds of Plenty's Energy, Which holds off the next Energy for the rank's cooldown. Its effects end and its sequence
+// One of three effects in turn, the Winds of Devotion's CRIT DMG, the Winds of Defiance's Stellar Swirl DMG and the
+// Winds of Plenty's Energy, which holds off the next Energy for the rank's cooldown. Its effects end and its sequence
 // Resets as the wielder leaves the field
 export const createDanceOfWingsUnboundPassiveModule = (params: number[]): PassiveModule => {
   const criticalDamage = takeOne(params, 0);

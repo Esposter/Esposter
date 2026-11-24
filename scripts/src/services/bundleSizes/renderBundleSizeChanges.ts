@@ -11,7 +11,7 @@ interface RowMove {
 const formatDelta = (delta: number): string => (delta > 0 ? `+${delta}` : `${delta}`);
 
 // One row's move, or nothing when its bytes did not change. A row only in `next` was added, and one only in `previous`
-// Was Removed, and both are marked to be read, as is a growth of at least `BUNDLE_SIZE_READ_BYTES`
+// Was removed, and both are marked to be read, as is a growth of at least `BUNDLE_SIZE_READ_BYTES`
 const getRowMove = (previousRow: BundleSize | undefined, nextRow: BundleSize | undefined): RowMove | undefined => {
   if (previousRow && nextRow) {
     const delta = nextRow.bytes - previousRow.bytes;

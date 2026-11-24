@@ -5,7 +5,7 @@ import { TOP_BUNDLE_COUNT } from "#src/services/dependencies/score/constants";
 import { formatBytes } from "#src/services/dependencies/score/formatBytes";
 
 // The packages adding the most gzipped bytes to the app's client bundle, largest first, each with its ledger verdict
-// And The share of it in the entry chunk, which every page loads, where a later load would take it off every page
+// And the share of it in the entry chunk, which every page loads, where a later load would take it off every page
 export const printTopBundles = (scores: DependencyScore[], color: ColorPalette): void => {
   const topScores = scores
     .filter(({ bundleBytes }) => bundleBytes > 0)

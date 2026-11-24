@@ -19,7 +19,7 @@ import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 const checkIsLaterInstant = (instant: string, than: string): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(instant), Temporal.Instant.from(than)) > 0;
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first
-// Finished Is the earlier of the two, since a finished achievement stays finished
+// Finished is the earlier of the two, since a finished achievement stays finished
 const mergeAchievementProgress = (
   account: AchievementProgressSave[string],
   guest: AchievementProgressSave[string],
@@ -41,7 +41,7 @@ const checkIsFurtherByLevel = <T extends { level: number }>(
 const checkIsFurtherReputation = (reputation: ReputationProgress, than: ReputationProgress): boolean =>
   checkIsFurtherByLevel(reputation, than, ({ exp }) => exp);
 // A character is the copy further on by its level and then its constellations, kept whole so its weapon and artifacts
-// Stay One copy's. A tie on both keeps the account's
+// Stay one copy's. A tie on both keeps the account's
 const checkIsFurtherCharacter = (character: CharacterSave, than: CharacterSave): boolean =>
   checkIsFurtherByLevel(character, than, ({ constellationCount }) => constellationCount);
 // The characters both copies hold merge to the copy further on, with the larger copy count, and a character only the
@@ -97,7 +97,7 @@ const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPoin
   return order > 0 ? account : guest;
 };
 // The later major version's Long-Term Encounter Points are held, and within one major version the larger count, as the
-// Daily Points of one day are
+// Daily points of one day are
 const mergeLongTermEncounterPoints = (
   account: LongTermEncounterPointsSave,
   guest: LongTermEncounterPointsSave,
@@ -252,7 +252,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
 };
 
 // The Abyss's progress is the union of both copies' cycles: a chamber is cleared if either copy cleared it, with the
-// Most stars Either copy holds, and the rewards a cycle claimed are the account's copy
+// Most stars either copy holds, and the rewards a cycle claimed are the account's copy
 const mergeSpiralAbyssCycle = (account: SpiralAbyssCycleSave, guest: SpiralAbyssCycleSave): SpiralAbyssCycleSave => {
   const chambers = { ...guest.chambers };
   for (const [chamberId, { isCleared, stars }] of Object.entries(account.chambers)) {

@@ -10,7 +10,7 @@ import { takeOne } from "@esposter/shared";
 const JUUGA_FORWARD_UNTO_VICTORY_DAMAGE = 2;
 
 // Juuga: Forward Unto Victory, Gorou's Elemental Burst: 2 Geo DMG, a General's War Banner on her side, and General's
-// Glory Summoned beside it
+// Glory summoned beside it
 export const juugaForwardUntoVictory: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

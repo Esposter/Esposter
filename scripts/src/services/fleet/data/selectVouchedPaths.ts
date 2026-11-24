@@ -5,7 +5,7 @@ import { PROVENANCE_NAME, PROVENANCE_SIDECAR_SUFFIX } from "#src/services/proven
 import { posix } from "node:path";
 
 // Whether the stamp at a path refuses a path: a folder's stamp refuses every path under its folder, and a file's
-// Sidecar Refuses the file it sits beside and the sidecar itself
+// Sidecar refuses the file it sits beside and the sidecar itself
 const checkIsRefusedBy = (path: string, stampPath: string): boolean => {
   if (posix.basename(stampPath) === PROVENANCE_NAME) {
     const directory = posix.dirname(stampPath);
@@ -15,7 +15,7 @@ const checkIsRefusedBy = (path: string, stampPath: string): boolean => {
 };
 
 // The paths a copy may move and the ones it refuses, given the stamps that name another game version than the
-// Install's. With no install there is no version to disagree with, so nothing is refused
+// Install's. with no install there is no version to disagree with, so nothing is refused
 export const selectVouchedPaths = (
   paths: string[],
   stamps: StampEntry[],

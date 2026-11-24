@@ -21,9 +21,9 @@ const schemaValues = computed<unknown[]>(() => {
 // A select picks by its text, so a text that names a schema value is written back as that value, and any other text as
 // Itself
 const getPickedValue = (text: string): unknown => schemaValues.value.find((value) => String(value) === text) ?? text;
-// The items a field names from its dialog's context, or else its schema's own options: an enum's values, or the Titled
-// Constants of an enum written as one of several literals. An option the schema names carries no mark of its own, So
-// Each takes the one mark an option does
+// The items a field names from its dialog's context, or else its schema's own options: an enum's values, or the
+// Titled constants of an enum written as one of several literals. An option the schema names carries no mark of its
+// Own, so each takes the one mark an option does
 const items = computed<UiSelectItem<string>[]>(() => {
   // A context is the dialog's own interface, whose keys the schema names as strings
   if (layout.value.itemsKey)

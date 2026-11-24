@@ -12,8 +12,8 @@ import { describe, test } from "vitest";
 const FRAME_SECONDS = 1 / 60;
 // A run of the recorded walk: how many frames it lasts, what its first frame presses, what it holds through its frames,
 // And the move and menu axes it holds. Each walk step is a player's gesture in the world, from standing still to
-// Opening The Paimon menu, and the walk returns to the world with every toggle and the party back where it started, so
-// Each Iteration plays the same branches
+// Opening the Paimon menu, and the walk returns to the world with every toggle and the party back where it started, so
+// Each iteration plays the same branches
 interface WalkStep {
   frames: number;
   held?: readonly InputAction[];

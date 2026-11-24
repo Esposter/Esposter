@@ -6,7 +6,7 @@ import { HEX_COLOUR_REGEX } from "#src/services/dev/constants";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // Reads a console's text as the variable's kind, refuses a value outside it and leaves the variable as it was, and
-// Writes An accepted value through the variable's own set, so the owner's state is the only copy
+// Writes an accepted value through the variable's own set, so the owner's state is the only copy
 export const setDevVariable = (variable: DevVariable, text: string): DevOutcome => {
   switch (variable.kind) {
     case DevVariableKind.Boolean: {

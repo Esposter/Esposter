@@ -4,8 +4,8 @@ import { JsonArrayParam } from "#src/models/shared/JsonArrayParam";
 import { sql } from "drizzle-orm";
 
 // `column in (values)` with the whole list bound as one JSON array rather than a parameter per value. D1 caps a
-// Statement At 100 bound parameters, so an IN list over a caller's list fails once the list passes that. `json_each`
-// Reads the array Back as rows, and the subquery probes the column's index the way an IN list does. An empty list
+// Statement at 100 bound parameters, so an IN list over a caller's list fails once the list passes that. `json_each`
+// Reads the array back as rows, and the subquery probes the column's index the way an IN list does. An empty list
 // Matches nothing
 export const inJsonArray = (column: SQLWrapper, values: readonly string[]) =>
   sql`${column} in (select value from json_each(${new JsonArrayParam(values)}))`;

@@ -79,9 +79,9 @@ export const useMiningOutcrops = ({
     }
   };
   // Read each frame, so a place drawn at a draw or come back from its respawn shows at once. A draw reaches the
-  // Standing Places only through its day's draw, which replaces the draws, and a respawn comes between draws, so they
-  // Are worked Out again when the places, the draws or the mined map is replaced or the next respawn has come, and the
-  // List is Replaced only when its places change
+  // Standing places only through its day's draw, which replaces the draws, and a respawn comes between draws, so they
+  // Are worked out again when the places, the draws or the mined map is replaced or the next respawn has come, and the
+  // List is replaced only when its places change
   let standingInputs: readonly unknown[] | undefined;
   let nextRespawnAt: Temporal.Instant | undefined;
   const refreshMiningOutcrops = (now: Temporal.Instant, random: () => number) => {

@@ -4,7 +4,7 @@ import { exportTerrainTiles } from "#src/services/genshinAssets/world/exportTerr
 import { exportWorldStreams } from "#src/services/genshinAssets/world/exportWorldStreams";
 
 // A set world's own exports into its world folder: each StreamGen blob and index raw, and each terrain tile's
-// TerrainData From the blocks its map names. A derived world is exported by its derivation, which reads its placements
+// TerrainData from the blocks its map names. A derived world is exported by its derivation, which reads its placements
 // From them
 export const exportWorld = async (world: WorldOptions, directory: string): Promise<void> => {
   exportWorldStreams(world.streams, directory);

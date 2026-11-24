@@ -25,7 +25,7 @@ const NIGHTSOUL_SPRINT_DRAIN = 13.3;
 const RADIANT_ELEMENTS = new Set<Element>([Element.Cryo, Element.Electro, Element.Hydro, Element.Pyro]);
 
 // The team's Radiant shells in the order the world's random source deals them: each Pyro, Hydro, Electro or Cryo
-// Member's Element twice over, as galesplitting's bullets are (burst.go:69-74), shuffled by that source as gcsim
+// Member's element twice over, as galesplitting's bullets are (burst.go:69-74), shuffled by that source as gcsim
 // Shuffles them
 const readRadiantElements = ({ activeCombatant, random }: KitContext): Element[] => {
   const elements = (activeCombatant.deployedElements ?? []).flatMap((element) =>

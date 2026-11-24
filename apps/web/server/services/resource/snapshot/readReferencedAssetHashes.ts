@@ -5,7 +5,7 @@ import { resourceVersionAssetsInResource, resourceWorkingAssetsInResource } from
 import { eq } from "drizzle-orm";
 
 // Every asset a row of this resource names, in a stored version or in the working copy. A row keeps its asset, so a
-// Write That names one has no grace window to restart for it, and a write is only owed a touch for the rest.
+// Write that names one has no grace window to restart for it, and a write is only owed a touch for the rest.
 export const readReferencedAssetHashes = async (
   db: Context["db"],
   resourceId: ResourceInResource["id"],

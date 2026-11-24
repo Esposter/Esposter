@@ -16,14 +16,14 @@ import { checkWakes, topicSchema } from "@esposter/db-schema";
 import { DurableObject } from "cloudflare:workers";
 
 // One Topic object per topic, named for it: the users watching it with the columns each one reads, each held as a
-// Storage Key, and the time it was last published. A publish arms the alarm unless one is already set, so every write
-// In the window Reaches each subscriber whose columns it changed once. A subscription whose read began before the last
-// Publish is told at Once (openspec/specs/architecture/cloudflare-services/design.md)
+// Storage key, and the time it was last published. A publish arms the alarm unless one is already set, so every write
+// In the window reaches each subscriber whose columns it changed once. A subscription whose read began before the last
+// Publish is told at once (openspec/specs/architecture/cloudflare-services/design.md)
 export class TopicObject extends DurableObject implements TopicObjectRpc {
   readonly #topic: Topic = topicSchema.parse(getObjectName(this.ctx, "TopicObject"));
 
   // The subscribers whose columns a publish since the last alarm changed are told. The publishes are cleared before
-  // They are Told, so a publish that lands while the alarm runs is told by the next one
+  // They are told, so a publish that lands while the alarm runs is told by the next one
   override async alarm(): Promise<void> {
     const pendingColumns = getColumns(await this.ctx.storage.get<StoredColumns>(TOPIC_PENDING_COLUMNS_KEY));
     await this.ctx.storage.delete(TOPIC_PENDING_COLUMNS_KEY);

@@ -18,19 +18,19 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Windmuster Iris, as gcsim v2.47.2 (MIT) heizou/burst.go gives it: the burst checks the auras of the first 4 enemies
-// It Strikes before its Anemo lands, and on each holding Pyro, Hydro, Electro or Cryo, the first of them in that order,
+// It strikes before its Anemo lands, and on each holding Pyro, Hydro, Electro or Cryo, the first of them in that order,
 // An Iris explodes in that element round the enemy as the check found it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/heizou/burst.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/heizou/burst.go
 const IRIS_TAG_STATUS_ID = "heizou-windmuster-iris-tags";
 const IRIS_MAX_TAGS = 4;
 // Penetrative Reasoning, as gcsim v2.47.2 (MIT) heizou/asc.go gives it: from Ascension 4, each Heartstopper Strike hit
-// Gives Every other member of the deployed team 80 Elemental Mastery for 10 seconds
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/heizou/asc.go`
+// Gives every other member of the deployed team 80 Elemental Mastery for 10 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/heizou/asc.go
 const ASCENSION_4 = 4;
 const PENETRATIVE_REASONING_ELEMENTAL_MASTERY = 80;
 const PENETRATIVE_REASONING_SECONDS = 10;
 // Measured: gcsim v2.47.2 (MIT) heizou/cons.go, Constellation 4 regenerates 9 Energy for the first enemy a Windmuster
-// Kick's Aura check tags, and 1.5 for each of the three after it, as gcsim's burst counts the tags its check makes
+// Kick's aura check tags, and 1.5 for each of the three after it, as gcsim's burst counts the tags its check makes
 // (burst.go line 39) https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/heizou/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_FIRST_TAG_ENERGY = 9;
@@ -55,7 +55,7 @@ const addPenetrativeReasoning = ({ kitEffectState, party }: KitContext, { combat
 // Heizou's behaviour: Fudou Style Vacuum Slugger counts the enemies its aura check tags afresh each cast, and each it
 // Tags, up to 4 a cast, that holds an aura Windmuster Iris takes has an Iris cast where it stands, in the first of the
 // Four elements it holds. Penetrative Reasoning from Ascension 4 and Constellation 4's Energy are built. His Ascension
-// 1 is Not, and neither are Constellations 1 and 6, which need the Declension stacks his press does not read
+// 1 is not, and neither are Constellations 1 and 6, which need the Declension stacks his press does not read
 // Constellation 2 needs Windmuster Kick's Arresting Windtunnel, whose pull and duration the kit does not build
 export const createHeizouKitBehaviour = ({ kit, readHit }: KitRecordReader): KitBehaviour => {
   const [irisCheckHit] = kit.elementalBurst.hits;

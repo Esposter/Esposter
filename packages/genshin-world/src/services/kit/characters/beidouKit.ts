@@ -28,8 +28,8 @@ const DISCHARGE_INTERVAL_SECONDS = 1;
 const BANE_OF_EVIL_CONSTELLATION = 6;
 // Stunning Revenge, from Constellation 4: a hit Beidou takes while she is on the field gives her normal attacks an
 // Extra Electro hit of 20% of her ATK after each hit they land, for 10 seconds. gcsim v2.47.2 (MIT) beidou/cons.go
-// Gives the Status, its 10 seconds and the 20%, and its hit one per attack, and the table's 30 poise and 1U of Electro
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/beidou/cons.go`
+// Gives the status, its 10 seconds and the 20%, and its hit one per attack, and the table's 30 poise and 1U of Electro
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/beidou/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_STATUS_ID = "beidou-constellation-4";
 const CONSTELLATION_4_SECONDS = 10;
@@ -48,13 +48,13 @@ export const BEIDOU_CHARACTER_ID = 10_000_024;
 
 // Beidou's behaviour: Tidecaller's press sets her Electro shield until its hit, and Stormbreaker casts the
 // Thunderbeast's Targe, a summon that follows the body on the field for its seconds, landing Bane of Evil's cut from
-// Six Constellations. While the Targe stands, her strikes and charged attack cast its lightning discharge beside each
+// Six constellations. While the Targe stands, her strikes and charged attack cast its lightning discharge beside each
 // Strike that hits Constellation 1 needs a shield that absorbs Electro damage 250% more, which the shield's absorb does
 // Not scale Constellation 2 needs Stormbreaker's arc lightning to jump to two more targets, which the burst's hit does
 // Not chain Constellation 4 is built for a hit she takes on the field, an enemy's strike, a drown or a wildlife's
-// Charge: its extra Electro hit lands where her normal attack's hit reaches, where gcsim hits the enemy it struck
-// Alone. The wiki says it Also applies to her charged attack, which is not built: gcsim leaves it out, and the hook is
-// Handed only normal attacks
+// Charge: its extra Electro hit lands where her normal attack's hit reaches, where gcsim hits the enemy it
+// Struck alone. The wiki says it also applies to her charged attack, which is not built: gcsim leaves it out, and the
+// Hook is handed only normal attacks
 export const createBeidouKitBehaviour = ({
   kit,
   readHitFields,
@@ -75,12 +75,12 @@ export const createBeidouKitBehaviour = ({
   const baneOfEvilTicks = readHits("baneOfEvilTicks", { enemyStatus: () => baneOfEvilStatus });
   // The Targe's lightning discharge beside each strike of hers that connects, landing its delay past the strike. Gcsim
   // Chains it from the enemy struck to a random other within 8 metres, which an area cannot pick, so it reaches what
-  // Its Strike reaches, and the record's fields hold the rest of it
+  // Its strike reaches, and the record's fields hold the rest of it
   const lightningDischargeFields = readHitFields("lightningDischarge", ["hitArea"]);
   const dischargeHits = new WeakSet<KitHit>();
   // Casts a discharge where Beidou stands beside a strike that hits an enemy, while her Targe still stands, unless an
   // Earlier discharge's second runs on. Each is a summon standing a second from the strike, so it marks that second as
-  // It Stands
+  // It stands
   const castDischarge = (
     { kitEffectState }: KitContext,
     { body: { facing, height, position }, combatant, hit }: KitStrike,
@@ -133,7 +133,7 @@ export const createBeidouKitBehaviour = ({
         : undefined,
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => ({ onStrike: castDischarge })) })),
     // Stunning Revenge: a hit she takes while she is on the field starts its status, and each hit a normal attack of
-    // Hers Lands while it runs is followed by the extra Electro hit
+    // Hers lands while it runs is followed by the extra Electro hit
     onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.HealthChanged || combatant.constellationCount < CONSTELLATION_4) return;
       const { characterId } = combatant;

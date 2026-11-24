@@ -13,8 +13,9 @@ import { and, eq, lt } from "drizzle-orm";
 import { v7 } from "uuid";
 
 // Takes the lease that one request holds over a resource's stored objects while it writes or collects them. The lease
-// Is A row, replaced only once it has expired, so a holder that never releases frees the resource when its lease runs
-// Out. The release names the holder, so a request never releases a lease that expired and was taken over by another
+// Is A row, replaced only once it has expired, so a holder that never releases frees the resource when its lease
+// Runs out. the release names the holder, so a request never releases a lease that expired and was taken over by
+// Another
 export const tryAcquireResourceObjectLock = async (
   db: Context["db"],
   resourceId: ResourceInResource["id"],
@@ -46,8 +47,8 @@ export const releaseResourceObjectLock = async (
 };
 
 // Runs `run` holding the resource's lease. A holder is waited for up to a bounded time, then the request is refused, so
-// A Save never queues behind a holder for longer than a user will wait. The lease is released whatever `run` does, and
-// A Release that fails is left to expire rather than failing the write it guarded
+// A save never queues behind a holder for longer than a user will wait. The lease is released whatever `run` does, and
+// A release that fails is left to expire rather than failing the write it guarded
 export const withResourceObjectLock = async <T>(
   db: Context["db"],
   resourceId: ResourceInResource["id"],

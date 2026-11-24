@@ -206,5 +206,5 @@ export const MJML_HEAD_TEXT_TAGS: string[] = ["mj-preview", "mj-style", "mj-titl
 // It
 export const STRAY_TEXT_TYPE = "#text";
 // The key an imported id attribute is kept under: no body component takes one, and a node's own id is the core's, so
-// The Strict props schema refuses it by this name rather than the import taking it as the node's id
+// The strict props schema refuses it by this name rather than the import taking it as the node's id
 export const STRAY_ID_ATTRIBUTE_KEY = "#id";

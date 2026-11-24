@@ -13,7 +13,7 @@ interface Props {
   seed: string;
 }
 // The answer is one list: the values of the choices picked, none's own value on its own, and the typed other text,
-// Which Is the one entry that is neither a choice's value nor none, so other needs no second key
+// Which is the one entry that is neither a choice's value nor none, so other needs no second key
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { node, seed } = defineProps<Props>();
 // The options in the order the reader sees them, which the list draws and a pick is read against

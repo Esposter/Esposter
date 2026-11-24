@@ -8,7 +8,7 @@ const LOOP_HEADER_REGEX = /^\s*for\s/u;
 // That is still open at the use, and each expression a plain `=` before the use writes to it. None where the name is
 // Bound any other way, as its value is then not known from the text, and none to replace where no function binds it or
 // A `for` loop declares it, which the loop's turns give a value. A bare declaration, `var name float64`, is no value of
-// Its Own: the zero it holds before a write is not an expression any path writes, so the alternatives are the writes
+// Its own: the zero it holds before a write is not an expression any path writes, so the alternatives are the writes
 // Alone
 export const readLocalValues = (
   name: string,

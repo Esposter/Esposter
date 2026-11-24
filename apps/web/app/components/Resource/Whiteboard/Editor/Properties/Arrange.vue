@@ -7,7 +7,7 @@ import { getAlignOperations } from "#src/services/whiteboard/arrange/getAlignOpe
 import { getDistributeOperations } from "#src/services/whiteboard/arrange/getDistributeOperations";
 
 // The align and distribute controls of a selection. Each is one commit, so one undo step, and each is disabled when it
-// Would move nothing: below its Minimum number of boxes, since an arrow and a stroke are not moved by either, or when
+// Would move nothing: below its minimum number of boxes, since an arrow and a stroke are not moved by either, or when
 // The boxes already lie as it would put them
 const { checkIsDisabled: checkIsAlignDisabled, commit: align } = useWhiteboardSelectionOperations(getAlignOperations);
 const { checkIsDisabled: checkIsDistributeDisabled, commit: distribute } =

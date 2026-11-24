@@ -2,8 +2,8 @@ import type { BossMove } from "#src/models/bosses/BossMove";
 
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
 
-// The Perpetual Mechanical Array's attacks from its wiki page, in the order the page lists them. Defensive Mode is Not
-// An attack: it summons four Ruin Sentinels, and `stepPerpetualMechanicalArrayFight` steps it. The wiki's range and
+// The Perpetual Mechanical Array's attacks from its wiki page, in the order the page lists them. Defensive Mode is
+// Not an attack: it summons four Ruin Sentinels, and `stepPerpetualMechanicalArrayFight` steps it. The wiki's range and
 // Priority rules are not yet run, so the moves go in turn. Each move's windup and recovery are the common enemies'
 // Until measured
 export const PERPETUAL_MECHANICAL_ARRAY_MOVES: BossMove[] = [

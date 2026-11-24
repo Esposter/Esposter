@@ -6,8 +6,8 @@ import type { ColumnTopic } from "@esposter/db-schema";
 const NON_RPC_MEMBERS = new Set(["fetch", "then"]);
 
 // The stub of a Durable Object, each RPC method of which runs through the object's `invoke`. The object publishes the
-// Write Set itself, so the stub only unwraps the result, and hands the read set to `onReadSet` where a caller watches
-// Its reads. The stub keeps its own type, so a caller types the object's methods as before
+// Write set itself, so the stub only unwraps the result, and hands the read set to `onReadSet` where a caller watches
+// Its reads. the stub keeps its own type, so a caller types the object's methods as before
 export const createObjectStub = <T extends object>(stub: T, onReadSet?: (readSet: ColumnTopic[]) => void): T =>
   new Proxy(stub, {
     get: (_target, member) => {
@@ -17,11 +17,11 @@ export const createObjectStub = <T extends object>(stub: T, onReadSet?: (readSet
       }
       return async (...args: unknown[]) => {
         // The forced conversion: the stub's invoke is generic over the method's name, which only the type system can
-        // Give, so the Name a call is made by at run time is passed as the string the object's invoke takes
-        // A dispatch by a name taken at
-        // oxlint-disable typescript/no-unsafe-type-assertion -- run time, which the stub's generic invoke cannot type
-        // A dispatch by a name taken at run time,
-        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- which the stub's generic invoke cannot type
+        // Give, so the name a call is made by at run time is passed as the string the object's invoke takes
+        /* oxlint-disable typescript/no-unsafe-type-assertion -- a dispatch by a name taken at run time, which the
+           stub's generic invoke cannot type */
+        /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- a dispatch by a name taken at run time, which
+           the stub's generic invoke cannot type */
         const { readSet, result } = await (stub as unknown as ObjectInvoker).invoke(member, args);
         // oxlint-enable typescript/no-unsafe-type-assertion
         onReadSet?.(readSet);

@@ -25,7 +25,7 @@ useAdoptResourceContent(ResourceType.Survey, () => {
 });
 // Deletion waits for the close: until then a removal can still be undone, so an unreferenced file must not go sooner.
 // It runs before the unmount rather than after it, so a blade swapped for another survey's sweeps its own document
-// Before the Next one loads into the same stores
+// Before the next one loads into the same stores
 onBeforeUnmount(() => {
   sweep(editedDocument.value);
 });
@@ -33,7 +33,7 @@ await loadContent();
 load(storedDocument.value);
 track(storedDocument.value);
 // A document the survey check refuses is not written: its first issue is shown, the editor reads not saved while the
-// Refusal Stands, and the save reports the refusal
+// Refusal stands, and the save reports the refusal
 const saveEditedDocument = (newDocument: SurveyDocument) => {
   const [issue] = checkSurveyDocument(newDocument);
   if (issue) {

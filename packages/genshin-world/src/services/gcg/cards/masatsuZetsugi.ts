@@ -10,7 +10,7 @@ import { takeOne } from "@esposter/shared";
 const MASATSU_ZETSUGI_DAMAGE = 1;
 
 // Masatsu Zetsugi: Akaushi Burst!, Arataki Itto's Elemental Skill: 1 Geo DMG, Ushi is summoned, and her active
-// Character Gains Superlative Superstrength once the damage is dealt
+// Character gains Superlative Superstrength once the damage is dealt
 export const masatsuZetsugi: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

@@ -4,7 +4,7 @@ import type { TalentLevels } from "#src/models/character/TalentLevels";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 
 // The levels each combat talent gains from a character's active constellations, each raise of an active one added to
-// The Talent it names. A kit reads a talent at its own level plus these, which the materials never pay for
+// The talent it names. A kit reads a talent at its own level plus these, which the materials never pay for
 export const getConstellationTalentAdditions = (
   constellations: readonly Constellation[],
   constellationCount: number,

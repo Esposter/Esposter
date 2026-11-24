@@ -6,7 +6,7 @@ import { componentNames } from "virtual:parity-screen-names";
 // Every component that has a fixture, found at any depth, so a screen is on the parity page and in the visual suite by
 // Having one: each component is a folder, its `Index.vue` beside the `Index.fixture.ts` whose `props` it renders with.
 // A screen is named the way the components barrel names every component, from its path (`screenNamesPlugin`), and not
-// Read Off the barrel, which leaves out a lazy or unreferenced directory. The component is imported only when its
+// Read off the barrel, which leaves out a lazy or unreferenced directory. The component is imported only when its
 // Screen is asked for
 const componentLoaders = import.meta.glob<Component>("/src/components/**/Index.vue", { import: "default" });
 // A fixture is imported only when its screen is asked for: its top-level awaits read the game data its screen draws

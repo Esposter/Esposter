@@ -12,7 +12,7 @@ import { escapeAttribute, escapeText, exhaustiveGuard, InvalidOperationError, Op
 import { getBlockPropValue } from "vue-block-editor-headless";
 
 // A built-in component's render: its set attributes, the alternative text its flag writes, its children or its content,
-// Each escaped once Each prop is unknown until its guard or parse narrows it, so the render reads the node as the core
+// Each escaped once each prop is unknown until its guard or parse narrows it, so the render reads the node as the core
 // Holds it and never as a typed props object
 export const renderMjmlNode = <TContent extends MjmlRichText>(
   specification: MjmlRenderSpecification,

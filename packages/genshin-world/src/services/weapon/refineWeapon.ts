@@ -9,7 +9,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A weapon refined by the ranks it gains from a copy or a refinement material, each rank gained costing the Mora its
 // Rank asks, as the game charges it. Ranks past the fifth are lost, which the result counts. A weapon with no
-// Refinement Costs of its own, a weapon of one or two stars, cannot be refined at all
+// Refinement costs of its own, a weapon of one or two stars, cannot be refined at all
 export const refineWeapon = (
   weapon: Weapon,
   weaponData: WeaponData,

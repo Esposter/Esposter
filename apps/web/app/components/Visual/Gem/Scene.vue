@@ -8,7 +8,7 @@ import { Vector3 } from "three/webgpu";
 const { state: gltf } = useGLTF(gemGltfUrl);
 const { state: roughnessMap } = useTexture(roughnessUrl);
 // The gem is the scene's first child, a mesh whose material the asset was authored with. The glTF loader types the
-// Scene As a plain Object3D tree, so the compiler cannot see the mesh or the material it carries
+// Scene as a plain Object3D tree, so the compiler cannot see the mesh or the material it carries
 const gem = computed(
   () => gltf.value?.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined,
 );

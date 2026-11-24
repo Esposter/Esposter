@@ -8,7 +8,7 @@ import { constrainPanzoomScale } from "#src/services/panzoom/constrainPanzoomSca
 import { getPanzoomFocalPan } from "#src/services/panzoom/getPanzoomFocalPan";
 
 // The state a zoom lands on. The scale is clamped first, so the focal pan is taken at the scale the zoom reaches.
-// Without a Focal point the pan stays where it is, contained at the new scale. The pan is forced and absolute, as a
+// Without a focal point the pan stays where it is, contained at the new scale. The pan is forced and absolute, as a
 // Zoom never pans
 export const getPanzoomZoomedState = (
   state: PanzoomState,

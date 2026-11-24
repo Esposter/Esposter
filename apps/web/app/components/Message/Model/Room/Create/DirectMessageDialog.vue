@@ -8,7 +8,7 @@ const { createDirectMessage } = directMessageStore;
 const friendPicker = useTemplateRef("friendPicker");
 const selectedUserIds = ref<string[]>([]);
 // The conversation is the server's to name, so the dialog waits for it, and the picker clears once it is kept. A
-// Refused Create leaves the dialog open on the friends picked, to try again
+// Refused create leaves the dialog open on the friends picked, to try again
 const createSelectedDirectMessage = async () => {
   const isCreated = await createDirectMessage(selectedUserIds.value);
   if (isCreated) {

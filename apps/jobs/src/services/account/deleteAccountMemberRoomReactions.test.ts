@@ -71,7 +71,7 @@ describe(deleteAccountMemberRoomReactions, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     // The tags are padded so their order is the order the room keys them in. The room answers each page as the
-    // Reactions After the key it is sent, up to the limit
+    // Reactions after the key it is sent, up to the limit
     const reactions: RoomReaction[] = Array.from({ length: OBJECT_READ_PAGE_LIMIT + 1 }, (_value, index) => ({
       emojiTag: `${emojiTag}${String(index).padStart(3, "0")}`,
       messageId: 1,

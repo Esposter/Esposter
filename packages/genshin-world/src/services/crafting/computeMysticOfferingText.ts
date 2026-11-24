@@ -6,7 +6,7 @@ import { fillGameTextValues } from "genshin-text";
 const STRONGBOX_COUNT_PER_OFFERING = 1;
 
 // A Mystic Offering word with the picked strongbox filled in: its artifacts' count and star rank, the count it makes
-// And its Name in the reader's language. With no strongbox picked, the artifact counts are zero and the name is empty
+// And its name in the reader's language. With no strongbox picked, the artifact counts are zero and the name is empty
 export const computeMysticOfferingText = (
   text: string,
   strongbox: CraftingStrongboxData | undefined,

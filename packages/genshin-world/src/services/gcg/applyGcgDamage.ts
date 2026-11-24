@@ -33,10 +33,10 @@ import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDama
 import { takeOne } from "@esposter/shared";
 
 // One damage from the side at sourceSideIndex to the opposing active character. Its side's field bears on it first,
-// Every Damage it deals alike, then the element applies its aura or reacts with the aura there, a reaction's damage and
-// Effects Settle with it, and a defeated character is cleared, with a side that has none standing losing the duel, and
-// A side whose Active fell with one standing owing a replacement. It returns each hit it landed on a standing
-// Character, with the Reaction that hit triggered
+// Every damage it deals alike, then the element applies its aura or reacts with the aura there, a reaction's damage and
+// Effects settle with it, and a defeated character is cleared, with a side that has none standing losing the duel, and
+// A side whose active fell with one standing owing a replacement. It returns each hit it landed on a standing
+// Character, with the reaction that hit triggered
 export const applyGcgDamage = (
   duel: GcgDuel,
   sourceSideIndex: number,
@@ -89,7 +89,7 @@ const hitGcgCharacter = (
 };
 
 // A character that took DMG and is still standing: its equipments and statuses hear it first, then its passive skills,
-// Each Told which character it is on
+// Each told which character it is on
 const notifyGcgDamageTaken = (
   duel: GcgDuel,
   sideIndex: number,
@@ -106,7 +106,7 @@ const notifyGcgDamageTaken = (
 
 // An elemental hit: its Frozen bonus, then the reaction its aura makes with the element if the rule lists one, which
 // Consumes the aura, adds its damage and leaves its effects. Otherwise the element applies its aura, when it is one
-// That Applies
+// That applies
 const applyGcgElementalDamage = (
   duel: GcgDuel,
   sourceSideIndex: number,
@@ -134,7 +134,7 @@ const applyGcgElementalDamage = (
 };
 
 // The effects a reaction leaves after its hit: the piercing and the spread it sends to the other opposing characters,
-// And, Through the effects that deal no DMG, the rest of what it leaves
+// And, through the effects that deal no DMG, the rest of what it leaves
 const applyGcgReactionEffects = (
   duel: GcgDuel,
   sourceSideIndex: number,
@@ -149,7 +149,7 @@ const applyGcgReactionEffects = (
   const otherTargets = targetSide.characters.filter((character) => character !== hit && character.hp > 0);
   // The piercing or spread the reaction sends to the other opposing characters is one damage its side deals, so the
   // Modifiers bear on it once however many characters it reaches. It carries the skill, but not the Plunging Attack
-  // Bonus, Which is the skill's own hit's
+  // Bonus, which is the skill's own hit's
   const eventContext: GcgEffectContext = { duel, sideIndex: sourceSideIndex, skill: context.skill };
   if (reaction === GcgReactionKind.Superconduct || reaction === GcgReactionKind.ElectroCharged) {
     if (otherTargets.length > 0) {
@@ -199,7 +199,7 @@ const takeGcgFrozenBonus = (character: GcgCharacterState, damageType: Element | 
 };
 
 // A hit takes its shield's points off first, unless it is piercing, and a character at no HP takes nothing more. A
-// Character Still standing that lost HP or shield to it hears that it took the DMG, from the side it is on
+// Character still standing that lost HP or shield to it hears that it took the DMG, from the side it is on
 const hurtGcgCharacter = (
   duel: GcgDuel,
   sideIndex: number,
@@ -222,7 +222,7 @@ const hurtGcgCharacter = (
 };
 
 // Discards what each character at no HP held, asks a side for a replacement when its active fell and another stands,
-// And Ends the duel for the other side once a side has none standing
+// And ends the duel for the other side once a side has none standing
 const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
   const defeatedSideIndices: number[] = [];
   for (const [sideIndex, side] of duel.sides.entries()) {
@@ -255,7 +255,7 @@ const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
 };
 
 // Tells the cards attached to a character whose shield a hit has just depleted. Each may answer with piercing DMG,
-// Which every Opposing character takes, the active one and those on standby alike, from the side the character is on
+// Which every opposing character takes, the active one and those on standby alike, from the side the character is on
 const notifyGcgShieldDepleted = (
   duel: GcgDuel,
   sideIndex: number,
@@ -273,8 +273,8 @@ const notifyGcgShieldDepleted = (
   }
 };
 
-// A card attached to a character that would be defeated may answer it, restoring the character to the HP the card
-// Names. Only the first card to answer takes it, and the cards then attached to the character hear the replacement
+// A card attached to a character that would be defeated may answer it, restoring the character to the HP the
+// Card names. only the first card to answer takes it, and the cards then attached to the character hear the replacement
 const replaceGcgDefeat = (duel: GcgDuel, sideIndex: number, characterIndex: number): boolean => {
   const character = takeOne(takeOne(duel.sides, sideIndex).characters, characterIndex);
   const context: GcgEffectContext = { characterIndex, duel, sideIndex };
@@ -303,8 +303,8 @@ const notifyGcgOpposingDefeat = (duel: GcgDuel, sideIndex: number): void => {
 };
 
 // A piercing hit on each opposing character on standby, which no shield stops, as a skill's after-effect or an End
-// Phase Deals it past its target. Its side's field bears on it once, carrying the skill but not the Plunging Attack
-// Bonus. A Defeated character is cleared, as an active one's would be
+// Phase deals it past its target. Its side's field bears on it once, carrying the skill but not the Plunging
+// Attack bonus. A defeated character is cleared, as an active one's would be
 export const applyGcgStandbyPiercing = (
   duel: GcgDuel,
   sourceSideIndex: number,

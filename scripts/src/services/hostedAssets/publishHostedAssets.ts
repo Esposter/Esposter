@@ -15,9 +15,9 @@ import { getOrCreate, InvalidOperationError, Operation } from "@esposter/shared"
 import { getHostedAssetPath } from "hosted-assets";
 
 // Stores what a plan names in every environment's bucket, and returns the entries it planned for the caller to merge
-// Into the Lock and commit. The caller commits only once this resolves: a failure in either bucket throws before then,
-// So the committed Lock never names data a reader cannot fetch, and a rerun converges on the same objects. A records
-// Product's objects are Stored zstd-compressed, and a files product's as their extension's table names
+// Into the lock and commit. The caller commits only once this resolves: a failure in either bucket throws before then,
+// So the committed lock never names data a reader cannot fetch, and a rerun converges on the same objects. A records
+// Product's objects are stored zstd-compressed, and a files product's as their extension's table names
 export const publishHostedAssets = async ({
   createBucketClientMap,
   currentLock,

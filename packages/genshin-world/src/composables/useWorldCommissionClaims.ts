@@ -83,7 +83,7 @@ export const useWorldCommissionClaims = ({
     writeRouting(outcome.routing);
   };
   // Katheryne's bonus, given once the day's four commissions are claimed: its items are routed as a claim's are, and
-  // The day Records it, so a second talk gives nothing
+  // The day records it, so a second talk gives nothing
   const claimKatheryneBonus = () => {
     const slice = commissionSlice.value;
     if (!slice || !friendshipLevels.value) return;

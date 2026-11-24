@@ -38,9 +38,10 @@ type MoveKind<
 > = PageBuilderKind<TNode, TRoot, TDefinition, TDocument>;
 // The keyboard and command moves of the selected node in one open resource's webpage: Alt with an arrow moves it among
 // Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete
-// Removes It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each
-// Landed edit is Announced once through `announce`. The kind's signature, which each composable lists as its own
-// Inputs, so the duplicate-code gate skips it `jscpd:ignore-start`
+// Removes it. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each
+// Landed edit is announced once through `announce`.
+// The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
+// `jscpd:ignore-start`
 export const usePageBuilderMoves = <
   TNode extends BlockNode,
   TRoot extends object,
@@ -151,7 +152,7 @@ export const usePageBuilderMoves = <
     title: "Move to",
   };
   // The reason the selected node cannot take a move, from the same function that gives the move its operations, or none
-  // When It can or nothing is selected. A move the selection cannot take is shown unavailable with this reason, never
+  // When it can or nothing is selected. A move the selection cannot take is shown unavailable with this reason, never
   // Hidden
   const getSelectedRefusal = (
     getRefusal: (
@@ -200,7 +201,7 @@ export const usePageBuilderMoves = <
     }, console.error);
   };
   // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer
-  // Clears the selection. Returns whether the removal landed, so a caller announcing the delete knows a node was
+  // Clears the selection. returns whether the removal landed, so a caller announcing the delete knows a node was
   // Actually removed
   const deleteNode = (nodeId: string) => {
     const resourceIdValue = toValue(resourceId);

@@ -37,7 +37,7 @@ describe(recordBucket, () => {
   });
 
   // A write publishes its key, every directory above it and the bucket's root, so a listing of any of them is woken,
-  // And a Delete publishes the same
+  // And a delete publishes the same
   test("a put publishes its key, each directory above it and the bucket's root, and a delete the same", async () => {
     expect.hasAssertions();
 
@@ -51,8 +51,8 @@ describe(recordBucket, () => {
     expect(blobs.writes).toStrictEqual([...published, ...published]);
   });
 
-  // The bucket's root is the topic with an empty key, so every name a write publishes must be one the topic schema
-  // Accepts. A name it rejects fails only its own object's publish, and the rest of the write still publishes
+  // The bucket's root is the topic with an empty key, so every name a write publishes must be one the topic
+  // Schema accepts. A name it rejects fails only its own object's publish, and the rest of the write still publishes
   test("every topic a write publishes is one the topic schema accepts, the bucket's root included", async () => {
     expect.hasAssertions();
 
@@ -65,7 +65,7 @@ describe(recordBucket, () => {
   });
 
   // A blob's key is named whole in its topic, and a file's key runs to the longest name a file takes, so a key of that
-  // Length Still publishes a topic the schema accepts
+  // Length still publishes a topic the schema accepts
   test("a key as long as a file's name publishes a topic the schema accepts", async () => {
     expect.hasAssertions();
 

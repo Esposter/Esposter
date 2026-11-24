@@ -37,8 +37,8 @@ const toBanner = (
 });
 // The banners the world offers, each item's rarity read from the stat tables and its name from the names they cite in
 // The reader's language: the beginners' wish, with Noelle featured for its eighth wish, the standard wish, and each
-// Event Banner the schedule has open. An event banner's pool is the standard wish's, derived once and shared by every
-// Event Banner, and only its featured items are its own, read from the schedule
+// Event banner the schedule has open. An event banner's pool is the standard wish's, derived once and shared by every
+// Event banner, and only its featured items are its own, read from the schedule
 export const createBanners = (
   {
     characterDataMap,

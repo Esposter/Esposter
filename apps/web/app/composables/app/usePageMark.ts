@@ -5,8 +5,8 @@ import { usePageMarkStore } from "#src/store/pageMark";
 // Declares what the calling page is for as long as it is mounted, at whatever path it is at now — a resource page
 // Keeps its mark across its blades' paths — so the dock can draw the page's mark rather than its title's letter
 export const usePageMark = (pageMark: MaybeRefOrGetter<PageMark | undefined>) => {
-  // The frozen page route is the point: a page being swapped out keeps its own path, so its mark never lands
-  // oxlint-disable-next-line no-restricted-globals -- on the next page's, and the registration leaves with the page
+  /* oxlint-disable-next-line no-restricted-globals -- the frozen page route is the point: a page being swapped out
+     keeps its own path, so its mark never lands on the next page's, and the registration leaves with the page */
   const route = useRoute();
   const pageMarkStore = usePageMarkStore();
   const { registerPageMark } = pageMarkStore;

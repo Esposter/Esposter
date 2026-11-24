@@ -8,8 +8,8 @@ import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 // What a screen's load cost from a moment on, read once: each load step's measure and the tiles it rebuilt, the
 // Requests and bytes of the game data fetched under its base and of every request, the time the page's long frames held
 // The main thread, and the scene's renderer and visible objects as the scene bench counts them. From the page's start
-// It Is the load to ready; from a crossing's move, what the crossing cost. A screen with no scene draws none, so its
-// Counts Are zero. What started inside `excluded` is left out: a download the app runs before the screen, which is not
+// It is the load to ready; from a crossing's move, what the crossing cost. A screen with no scene draws none, so its
+// Counts are zero. What started inside `excluded` is left out: a download the app runs before the screen, which is not
 // Its load
 export const benchLoad = (
   context: SceneContext | undefined,

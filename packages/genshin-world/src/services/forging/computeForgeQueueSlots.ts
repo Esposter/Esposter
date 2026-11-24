@@ -5,8 +5,8 @@ import { computeForgeOrderDoneCount } from "#src/services/forging/computeForgeOr
 import { ForgeQueueState } from "genshin-interface";
 
 // The queues at the blacksmith at `now`, one for each rank that opens one, each holding the order whose `queueId` names
-// It: Forging while units are left, complete once every unit is done and waits to be obtained, idle while no order is
-// In it, And locked until the Adventure Rank that opens it, the ranks being those of `forgeQueuePlayerLevels`
+// It: forging while units are left, complete once every unit is done and waits to be obtained, idle while no order is
+// In it, and locked until the Adventure Rank that opens it, the ranks being those of `forgeQueuePlayerLevels`
 export const computeForgeQueueSlots = (
   orders: ForgeOrder[],
   adventureRank: number,

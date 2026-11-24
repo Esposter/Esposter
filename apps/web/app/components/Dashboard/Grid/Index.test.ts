@@ -249,7 +249,7 @@ describe("dashboardGrid", () => {
   );
 
   // The group at the depth cap holds one visual, which the drop lands on. The dragged group holds a group of its own,
-  // So a move Into the cap group would nest it past the cap, and the grid it is dropped on refuses it before that
+  // So a move into the cap group would nest it past the cap, and the grid it is dropped on refuses it before that
   // Visual is pushed aside
   test("a body drag into a group its move would nest past the depth cap changes no visual's cell", async () => {
     expect.hasAssertions();

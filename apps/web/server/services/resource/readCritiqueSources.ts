@@ -9,9 +9,9 @@ import { resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 // What the critique reads from the server, which has no browser to read a colour in, so every colour is unchecked. A
-// Survey Is published when the owner has it published. Only a page holding an invite asks for a survey's state, so the
-// Owner's Surveys are read for that page alone. A lookup that fails answers unreadable for every survey, so each invite
-// Is Reported unchecked rather than dropped, and the failure is logged
+// Survey is published when the owner has it published. Only a page holding an invite asks for a survey's state, so the
+// Owner's surveys are read for that page alone. A lookup that fails answers unreadable for every survey, so each invite
+// Is reported unchecked rather than dropped, and the failure is logged
 export const readCritiqueSources = async (
   db: Context["db"],
   userId: string,

@@ -13,7 +13,7 @@ export interface KitStrike {
   combatant: Combatant;
   hit: KitHit;
   // The reach the hit's target gives it, when it reaches the enemies about its target in a hitbox rather than alone or
-  // By the Body's area
+  // By the body's area
   hitbox?: KitHitbox;
   // Whether the hit is an aimed shot's, which takes an enemy's weak point when the enemy has one
   isAimed?: true;

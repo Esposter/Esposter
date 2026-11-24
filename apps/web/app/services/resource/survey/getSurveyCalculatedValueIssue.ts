@@ -4,7 +4,7 @@ import { SURVEY_CALCULATED_VALUES_POINTER } from "#src/services/resource/survey/
 import { checkSurveyDocument } from "vue-survey-engine-headless";
 
 // The message the survey check gives the calculated value at an index, checked on the document as it would be with
-// These Values in place of its own. A value's issue is named at its pointer or beneath it
+// These values in place of its own. A value's issue is named at its pointer or beneath it
 export const getSurveyCalculatedValueIssue = (
   document: SurveyDocument,
   calculatedValues: SurveyCalculatedValue[],

@@ -41,7 +41,7 @@ export const readNpcs = () => {
     const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.Id);
     const { frame, id, ...rest } = getNpc(idTiledObjectProperty.value);
     // The sheet has one side pose, facing right, and no left-facing set, so left walks the same frames and the
-    // Character Component flips them for it
+    // Character component flips them for it
     const sideWalkingAnimation = { leftFoot: frame + 8, rightFoot: frame + 9, standing: frame + 2 };
     npcs.push(
       new Npc({

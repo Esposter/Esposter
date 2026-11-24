@@ -6,7 +6,7 @@ import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { takeOne } from "@esposter/shared";
 
 // A passive that raises the DMG of two reactions its party makes: the first by the rank's first amount, and the second
-// By the Rank's second amount, plus the rank's third amount under Ascendant Gleam. Swift and Sure and Token of Covenant
+// By the rank's second amount, plus the rank's third amount under Ascendant Gleam. Swift and Sure and Token of Covenant
 // Share it
 export const createReactionDamageBonusPassiveModule = (
   params: number[],

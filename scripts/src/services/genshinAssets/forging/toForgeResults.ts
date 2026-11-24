@@ -6,7 +6,7 @@ import { DropIdForgeRandomIdMap } from "#src/services/genshinAssets/forging/cons
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The results one unit of a forge row yields: its fixed result, or for a row with none, the items of the random table
-// Its Drop id names, each with its count and weight. A drop id naming no table the dump holds is an error, not a result
+// Its drop id names, each with its count and weight. A drop id naming no table the dump holds is an error, not a result
 // Left out
 export const toForgeResults = (row: ExcelForgeRow, randomRows: ExcelForgeRandomRow[]): ForgeResult[] => {
   if (row.resultItemId !== 0) return [{ count: row.resultItemCount, itemId: row.resultItemId, weight: 1 }];

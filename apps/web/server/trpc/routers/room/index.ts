@@ -139,7 +139,7 @@ export const baseRoomRouter = router({
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
     // The room is read once, to name it in the errors and to pick the membership the batch writes. Every refusal of the
-    // Link Itself, an unknown, expired or used-up link, a paused room or a banned user, is decided by the batch below
+    // Link itself, an unknown, expired or used-up link, a paused room or a banned user, is decided by the batch below
     const invite = await ctx.db.query.invitesInMessage.findFirst({
       columns: { roomId: true },
       where: { id: { eq: input }, RAW: getLiveRowWhere },
@@ -148,9 +148,9 @@ export const baseRoomRouter = router({
 
     const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId });
     // Two statements in one batch, in order. The first counts the link's use only while the link admits the caller and
-    // The Caller holds no live membership there, so a second join at once finds the membership the first one wrote and
-    // Counts Nothing. The second writes the membership from the link, reviving a tombstone a removal left, and writes
-    // Only when Changes() reports that the first counted: changes() is the row count of the statement before it
+    // The caller holds no live membership there, so a second join at once finds the membership the first one wrote and
+    // Counts nothing. The second writes the membership from the link, reviving a tombstone a removal left, and writes
+    // Only when changes() reports that the first counted: changes() is the row count of the statement before it
     const [, joinedRows] = await ctx.db.batch([
       ctx.db
         .update(invitesInMessage)
@@ -172,7 +172,7 @@ export const baseRoomRouter = router({
         .returning(),
     ]);
     // Nothing returned means the link refused the caller, or the caller already held the membership. A live membership
-    // Is The member's own answer, and anything else is the refusal an unknown link gives
+    // Is the member's own answer, and anything else is the refusal an unknown link gives
     if (!joinedRows[0]) {
       const liveMembership = await ctx.db.query.usersToRoomsInMessage.findFirst({
         columns: { userId: true },
@@ -432,7 +432,7 @@ export const baseRoomRouter = router({
   readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
     ({ ctx, input: { roomId, userIds } }) => {
       // An empty list names no one, so it answers with none and issues no query. The membership check ahead of this
-      // Handler Still runs, and its statement is what the answer's topic is taken from
+      // Handler still runs, and its statement is what the answer's topic is taken from
       if (userIds.length === 0) return [];
 
       return ctx.db
@@ -452,7 +452,7 @@ export const baseRoomRouter = router({
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
     const { image } = rest;
     // A save naming one of this room's own uploads checks the bytes it holds, since the presigned PUT bounds none of
-    // Them: an Object over the cap is deleted and the save refused, ahead of the update, so the row never names an
+    // Them: an object over the cap is deleted and the save refused, ahead of the update, so the row never names an
     // Oversized image
     const uploadedImageBlobName = image === undefined ? undefined : getRoomProfileImageBlobNameFromUrl(id, image);
     if (

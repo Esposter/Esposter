@@ -14,8 +14,8 @@ const CHORD_HARMONIC_SECONDS = 30;
 const CHORD_HARMONIC_COOLDOWN_SECONDS = 0.5;
 
 // The Flute's Chord at its rank: a normal or charged attack hit gains a harmonic, a maximum of one every half second,
-// And Five harmonics, which last thirty seconds from the last gained, deal the rank's multiplier of ATK to the
-// Surrounding Enemies and clear the count. The area is provisional, the text naming only the surrounding opponents
+// And five harmonics, which last thirty seconds from the last gained, deal the rank's multiplier of ATK to the
+// Surrounding enemies and clear the count. The area is provisional, the text naming only the surrounding opponents
 export const createChordPassiveModule = (params: number[]): PassiveModule => {
   // The rank's first value is not read, since a hit always adds one harmonic and the module takes no count of its own
   const talentMultiplier = takeOne(params, 1);

@@ -7,8 +7,8 @@ import { constrainPanzoomAxis } from "#src/services/panzoom/constrainPanzoomAxis
 import { getPanzoomStartScale } from "#src/services/panzoom/getPanzoomStartScale";
 
 // The pan a call lands on: the requested point, relative to the current pan when asked, with a disabled axis held, then
-// Rounded to whole pixels, then contained at the scale the call moves to, so a rounded pan never sits outside its
-// Bounds. A disabled pan holds the current pan unless the call forces it
+// Rounded to whole pixels, then contained at the scale the call moves to, so a rounded pan never sits outside
+// Its bounds. A disabled pan holds the current pan unless the call forces it
 export const constrainPanzoomPan = (
   current: PanzoomState,
   requested: PanzoomPoint,

@@ -2,7 +2,7 @@ import type { KitSlotHitLabels } from "#src/models/genshinAssets/kits/tables/Kit
 import type { KitSlotValueLabel } from "#src/models/genshinAssets/kits/tables/KitSlotValueLabel";
 
 // The labels of a folder-less character's record reads from its tables, by each slot's path in the record: the hit
-// Slots And the other values, such as a stance's stamina or a duration
+// Slots and the other values, such as a stance's stamina or a duration
 export interface KitSlotLabels {
   hits?: Record<string, KitSlotHitLabels>;
   values?: Record<string, KitSlotValueLabel>;

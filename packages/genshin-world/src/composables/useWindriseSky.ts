@@ -41,8 +41,8 @@ interface WindriseSkyOptions {
 }
 
 // Windrise's sky and the game's clock running under it, which the sun's shadow follows: the clock starts at its held
-// Minute Or the region's start, and a minute held anew is set on it. The clock is handed back for the tuning panel and
-// The clock Control to set
+// Minute or the region's start, and a minute held anew is set on it. The clock is handed back for the tuning panel and
+// The clock control to set
 export const useWindriseSky = ({
   checkIsHeld,
   enemyMap,

@@ -6,7 +6,7 @@ import { describe } from "vitest";
 
 // Every variable the schema requires, so a test runs against an environment the start-up check would accept and a
 // Variable added to the interface fails here until it is given a value. The optional RealtimeKit ones are left out,
-// Which Is a deployment without RealtimeKit
+// Which is a deployment without RealtimeKit
 export const MOCK_ENVIRONMENT_VARIABLES = {
   APP_ENV: Environment.Test,
   BASE_URL: TEST_ORIGIN,

@@ -267,7 +267,7 @@ describe("moderationRouter", () => {
   });
 
   // A purged message's mention counts are taken back with it, as a delete takes them back, so the member it named is
-  // Not left Holding a badge for a message that no longer reads
+  // Not left holding a badge for a message that no longer reads
   test(`executeAdminAction ${AdminActionType.SoftBan} takes back the mention counts its purged messages made`, async () => {
     expect.hasAssertions();
 
@@ -404,7 +404,7 @@ describe("moderationRouter", () => {
   });
 
   // An unban is a tombstone at a higher version, so the ban list reads it back as a removal and a read that lands after
-  // The Unban cannot list the ban again
+  // The unban cannot list the ban again
   test("deleteBan leaves the ban as a tombstone at a higher version, which the ban list reads back", async () => {
     expect.hasAssertions();
 

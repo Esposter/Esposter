@@ -34,7 +34,7 @@ const aimCode = getActionKeyCode(InputAction.Aim);
 const jumpCode = getActionKeyCode(InputAction.Jump);
 const sprintCode = getActionKeyCode(InputAction.Sprint);
 // Each button in the order a reader tabs through them: the key it holds, its glyph's layers, its name in the game's
-// Words And the class that places it
+// Words and the class that places it
 const buttons = computed<{ code: string; glyphLayers: readonly GlyphLayer[]; label: string; name: string }[]>(() => [
   {
     code: attackCode,

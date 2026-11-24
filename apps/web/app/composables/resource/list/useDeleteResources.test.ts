@@ -129,7 +129,7 @@ describe(useDeleteResources, () => {
   });
 
   // A chunk the server answers lands as it is answered, so a later chunk the server refuses leaves the earlier chunk's
-  // Rows Deleted on screen as they are on the server, rather than holding them live behind the refused write
+  // Rows deleted on screen as they are on the server, rather than holding them live behind the refused write
   test("keeps the rows an earlier chunk deleted removed when a later chunk is refused", async () => {
     expect.hasAssertions();
 

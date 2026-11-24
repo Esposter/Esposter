@@ -3,16 +3,16 @@
 import { ReviewSessionRole } from "#src/models/review/ReviewSessionRole";
 
 // The label of the issues the review opens for the findings it owes. It is the review's own, outside the triage roles,
-// So No session or triage pass takes one: the settle job closes it.
+// So no session or triage pass takes one: the settle job closes it.
 export const REVIEW_ISSUE_LABEL = "review";
 // The most findings one issue holds, so its body stays far under GitHub's 65,536-character body limit. A window with
-// More Is split over several issues, each its own part.
+// More is split over several issues, each its own part.
 export const REVIEW_ISSUE_FINDING_CAP = 25;
 // The bullet a finding's line opens with in an issue body. The settle job reads a bullet over a code span back as a
-// Finding, So the body's writer and that reader both take the bullet from here.
+// Finding, so the body's writer and that reader both take the bullet from here.
 export const REVIEW_FINDING_BULLET = "- ";
-// GitHub's limit on the jobs one matrix runs. The issues past it are not lost: they stay open, and the settle job takes
-// Them.
+// GitHub's limit on the jobs one matrix runs. The issues past it are not lost: they stay open, and the settle job
+// Takes them.
 export const REVIEW_FIX_MATRIX_CAP = 256;
 // How many times a push of the fixer's commits is attempted before the run gives up on them, since another session
 // Can land on `ai/queue` between the pull and the push
@@ -28,7 +28,7 @@ export const REVIEW_BATCH_LINE_CAP = 1200;
 // The characters one batch's diffs hold. Lines do not bound a prompt: a generated file can be a megabyte on one line.
 export const REVIEW_BATCH_CHARACTER_CAP = 120000;
 // The longest line a reviewer can read as text. A file with a longer changed line is minified or embedded data, which
-// Is Excluded from review rather than cut, since a cut of it is still megabytes of noise.
+// Is excluded from review rather than cut, since a cut of it is still megabytes of noise.
 export const REVIEW_LINE_CHARACTER_LIMIT = 2000;
 // Where one oversized file's diff is cut in the prompt, with a note to read the file for the rest
 export const REVIEW_DIFF_LINE_LIMIT = 3000;
@@ -36,19 +36,19 @@ export const REVIEW_DIFF_LINE_LIMIT = 3000;
 export const REVIEW_DIFF_CHARACTER_LIMIT = 40000;
 // The `claude` sessions one runner holds at once, across every batch of every window in a run. It is how many sessions
 // A runner's memory holds, not a spend limit: `ubuntu-latest` for this public repository has 16 GB and four cores, and
-// A Session's node process is a few hundred megabytes. A starting value, to be measured against a real run.
+// A session's node process is a few hundred megabytes. A starting value, to be measured against a real run.
 export const REVIEW_RUNNER_SESSION_CAP = 24;
 // The model each role's session runs. Every role is haiku: the settler differs from the fixer in its mandate, which is
-// To Settle every finding rather than defer it, not in its model.
+// To settle every finding rather than defer it, not in its model.
 export const ReviewSessionRoleModelMap: Record<ReviewSessionRole, string> = {
   [ReviewSessionRole.Fixer]: "haiku",
   [ReviewSessionRole.Reviewer]: "haiku",
   [ReviewSessionRole.Settler]: "haiku",
 };
 // The checks a fixer or a settler runs before it commits, since its commit lands on `ai/queue` with nothing else to
-// Stop a Red: a fix that keeps a test green can still break a type or a spec rule. The suites that read the whole tree
-// Run once Before the first edit as well, since other work may already have left the tip red, and a session told only
-// To keep a Red suite green has no failure it can tell apart as its own.
+// Stop a red: a fix that keeps a test green can still break a type or a spec rule. The suites that read the whole tree
+// Run once before the first edit as well, since other work may already have left the tip red, and a session told only
+// To keep a red suite green has no failure it can tell apart as its own.
 export const REVIEW_SESSION_CHECKS =
   "Before your first edit, run the workspace rules (`pnpm test src/workspace --run` from `scripts`), and note what fails: other work may already have left them red. The one workspace test that is not a session's is `src/workspace/bundleSizes.test.ts`, since the review writes `bundle-sizes.md` after a landing that moves a bundle, so a failure in it is never yours to fix. Before each commit, run them again, with the tests of the files you touched (`pnpm test <paths> --run` from the package that owns them), `pnpm typecheck` in each package you touched that defines one, `vp run lint` from the repository root (the only lint), `pnpm exec vp lint --disable-nested-config <paths>` from the repository root over the files you touched, the build gate that `build`'s `references/dist-size.md` names (load the `build` skill and read it for the commands), and every check a skill you loaded names for a change to those files, such as a run over a reader's real inputs. Run the checks one at a time, never in parallel or in the background: the runner holds 16 GB, and `pnpm typecheck` in `apps/web` alone takes most of it. A failure the first run did not list is yours: fix it before committing, or leave that fix unmade. A failure it did list is not yours to fix.";
 // The commit a fixer or a settler makes for each fix, with the trailer that names the session that made it
@@ -59,16 +59,16 @@ export const REVIEWER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 20 
 export const FIXER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 90 }).total("milliseconds");
 export const SETTLER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 120 }).total("milliseconds");
 // How often the fix and settle jobs log what their runner has left, and how many of the processes holding the most
-// Memory That line names, each cut to a command's first characters
+// Memory that line names, each cut to a command's first characters
 export const REVIEW_HEARTBEAT_INTERVAL_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const REVIEW_HEARTBEAT_PROCESS_COUNT = 3;
 export const REVIEW_HEARTBEAT_COMMAND_CHARACTER_LIMIT = 100;
 // The windows one run reviews at least, stretched through the first window `main` may move to (`getRunWindowCount`):
-// The Rest stay owed and the run dispatches the next once. A run that cannot read its windows then spends on this many,
-// Or up To the first window `main` may move to, and not on the whole backlog, before the next run can show why.
+// The rest stay owed and the run dispatches the next once. A run that cannot read its windows then spends on this many,
+// Or up to the first window `main` may move to, and not on the whole backlog, before the next run can show why.
 export const REVIEW_RUN_WINDOW_CAP = 2;
 // The wall clock of one run, from its start: once it has passed, no further batch starts, and the batches already
-// Started Finish. The review job's timeout is GitHub's hosted maximum, 360 minutes, above it.
+// Started finish. The review job's timeout is GitHub's hosted maximum, 360 minutes, above it.
 export const REVIEW_RUN_DEADLINE: Temporal.Duration = Temporal.Duration.from({ minutes: 300 });
 // The wall clock of the settle job's loop, from its start: once it has passed, no further settler starts. The job's own
 // Timeout, 360 minutes, is above it by one settler's wall clock and the job's setup.
@@ -83,9 +83,9 @@ export const CLAUDE_EXEMPT_VARIABLE = "CLAUDE_CODE_OAUTH_TOKEN";
 // Every other variable whose name reads as a secret is dropped from a session's environment, since a session's prompt
 // Can carry text a reviewer read from the repository
 export const SECRET_VARIABLE_REGEX: RegExp = /credential|key|password|secret|token/iu;
-// Tools a reviewer may use, all read-only. Print mode denies every tool not listed, so Edit, Write and the rest are
-// Denied. No git grant: a `Bash(git <verb>:*)` grant also allows `--output=<file>`, which git writes to any path, and
-// The batch's Diff is already in the reviewer's prompt.
+// Tools a reviewer may use, all read-only. Print mode denies every tool not listed, so Edit, Write and the rest
+// Are denied. no git grant: a `Bash(git <verb>:*)` grant also allows `--output=<file>`, which git writes to any path,
+// And the batch's diff is already in the reviewer's prompt.
 export const REVIEWER_TOOLS: readonly string[] = ["Read", "Grep", "Glob", "Skill"];
 
 // Claude Code refusing to start prints its own sentence and exits non-zero. The phrase is bounded to its own line, so a

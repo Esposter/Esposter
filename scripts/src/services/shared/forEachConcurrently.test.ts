@@ -30,8 +30,8 @@ describe(forEachConcurrently, () => {
     const started: string[] = [];
 
     await forEachConcurrently(
-      // An AsyncIterable is what forEachConcurrently
-      // oxlint-disable-next-line typescript/require-await -- reads, and only an async generator yields one
+      /* oxlint-disable-next-line typescript/require-await -- An AsyncIterable is what forEachConcurrently reads, and
+         only an async generator yields one */
       (async function* () {
         for (const item of items) yield item;
       })(),

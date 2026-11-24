@@ -9,7 +9,7 @@ import { readMailText } from "#src/services/mail/readMailText";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 // Three of the table's mails: the first, pinned, with one item to claim, then one more with an item, then a summary
-// With None. The clip's own mails are the 2024 build's, which the table no longer holds, so the words are the table's
+// With none. The clip's own mails are the 2024 build's, which the table no longer holds, so the words are the table's
 // Own
 const MAIL_IDS = [14, 15, 1];
 const now = Temporal.Instant.from("2026-10-30T00:00:00Z");

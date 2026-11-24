@@ -5,8 +5,8 @@ import { applyGcgCrowfeatherCover } from "#src/services/gcg/cards/crowfeatherCov
 import { createGcgEndPhaseDamageSummon } from "#src/services/gcg/effects/createGcgEndPhaseDamageSummon";
 import { takeOne } from "@esposter/shared";
 
-// A Tengu Juurai summon of Kujou Sara's: End Phase DMG of Electro, and Crowfeather Cover to her side's active
-// Character. It is Spent after its usages
+// A Tengu Juurai summon of Kujou Sara's: End Phase DMG of Electro, and Crowfeather Cover to her side's
+// Active character. It is spent after its usages
 export const createGcgTenguJuuraiSummon = ({ damage, usages }: { damage: number; usages: number }): GcgCardModule =>
   createGcgEndPhaseDamageSummon({
     damage,

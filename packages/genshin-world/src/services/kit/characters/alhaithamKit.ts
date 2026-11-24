@@ -31,11 +31,11 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim (MIT) alhaitham/asc.go and cons.go, Ascension 1 makes a Mirror from a charged attack's or a plunge's
-// Hit On an enemy once every 12 seconds, and Ascension 4 raises a Projection Attack's and the burst's DMG by 0.1% per
+// Hit on an enemy once every 12 seconds, and Ascension 4 raises a Projection Attack's and the burst's DMG by 0.1% per
 // Elemental Mastery, to 100%. Constellation 2 gives 50 Elemental Mastery for 8 seconds for each Mirror made, up to
 // Four, Constellation 4 gives the team 30 Elemental Mastery per Mirror the burst consumed for 15 seconds and Alhaitham
-// 10% Dendro DMG per Mirror Made for as long, and Constellation 6 gives 10% CRIT Rate and 70% CRIT DMG for 6 seconds on
-// Each Mirror past three, which Each further one extends by 6 seconds
+// 10% Dendro DMG per Mirror made for as long, and Constellation 6 gives 10% CRIT Rate and 70% CRIT DMG for 6 seconds on
+// Each Mirror past three, which each further one extends by 6 seconds
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 const CONSTELLATION_1 = 1;
@@ -78,7 +78,7 @@ const getMirrorCount = (effects: readonly KitEffect[], characterId: number): num
   findKitStatus(effects, characterId, MIRROR_STATUS_ID)?.stacks ?? 0;
 
 // Sets the Mirrors a character holds, with the Dendro infusion of its normal attacks, charged attack and plunges while
-// It holds Any. Zero ends the Mirrors, their decay and that infusion, as a swap or the burst's consumption does
+// It holds any. Zero ends the Mirrors, their decay and that infusion, as a swap or the burst's consumption does
 const setMirrorCount = (kitEffectState: KitEffectState, characterId: number, mirrors: number): void => {
   if (mirrors <= 0) {
     const status = findKitStatus(kitEffectState.effects, characterId, MIRROR_STATUS_ID);
@@ -178,10 +178,10 @@ const getSkillMirrorGain = (effects: readonly KitEffect[], characterId: number):
 export const ALHAITHAM_CHARACTER_ID = 10_000_078;
 
 // Alhaitham's behaviour: Universality: An Elaboration on Form's tap and hold and Particular Field: Fetters of Phenomena
-// Make The Mirrors, which infuse his attacks with Dendro and decay one at a time, and while he holds any, a hit of his
-// Normal Attacks, charged attack or plunges sets off a Projection Attack. The burst consumes them for its extra hits.
-// Ascension 1 And 4 and Constellations 1, 2, 4 and 6 are built, Constellation 1's cut of Universality's running
-// Cooldown on a Projection Attack's hit among them, and the low plunge after the hold is not, as a plunge has no
+// Make the Mirrors, which infuse his attacks with Dendro and decay one at a time, and while he holds any, a hit of his
+// Normal attacks, charged attack or plunges sets off a Projection Attack. The burst consumes them for its extra hits.
+// Ascension 1 and 4 and Constellations 1, 2, 4 and 6 are built, Constellation 1's cut of Universality's running
+// Cooldown on a Projection attack's hit among them, and the low plunge after the hold is not, as a plunge has no
 // Variant the skill's hold can set
 export const createAlhaithamKitBehaviour = ({
   kit,
@@ -249,7 +249,7 @@ export const createAlhaithamKitBehaviour = ({
   });
 
   // Starts the decay of the Mirrors, one each decay's seconds, or restarts it if one is running, which is gcsim's
-  // Chain: a New chain supersedes the one before it, so the one field is moved to its first tick rather than a second
+  // Chain: a new chain supersedes the one before it, so the one field is moved to its first tick rather than a second
   // Added
   const startMirrorDecay = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): void => {
     const { characterId } = combatant;
@@ -272,7 +272,7 @@ export const createAlhaithamKitBehaviour = ({
   };
 
   // Makes Mirrors as gcsim's mirror gain does: a run's first Mirror, or one that overflows past three, starts the
-  // Decay, And Constellation 2 and 6 answer each one made
+  // Decay, and Constellation 2 and 6 answer each one made
   const gainMirrors = (
     kitEffectState: KitEffectState,
     body: KitBody,
@@ -293,8 +293,8 @@ export const createAlhaithamKitBehaviour = ({
   };
 
   // A Projection Attack triggers on a normal attack, charged attack or plunge that strikes an enemy. An Ascension 1
-  // Charged Attack or plunge makes a Mirror first, so the projection counts it, and Projection Attack's own cooldown
-  // Holds it to once Each 1.6 seconds, as gcsim's projection does
+  // Charged attack or plunge makes a Mirror first, so the projection counts it, and Projection Attack's own cooldown
+  // Holds it to once each 1.6 seconds, as gcsim's projection does
   const triggerProjection = (
     { kitEffectState }: KitContext,
     { body, combatant }: KitStrike,

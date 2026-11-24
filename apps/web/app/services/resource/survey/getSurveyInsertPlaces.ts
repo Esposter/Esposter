@@ -7,8 +7,8 @@ import { getBlockNode, getBlockPropPointer } from "vue-block-editor-headless";
 import { surveyNodeChildren } from "vue-survey-engine-headless";
 
 // The places an insertion at a selection tries, in order: straight after the selected element in its own slot, then the
-// End of each slot The selected element holds, so a selected page takes an element at its end. With nothing selected,
-// The end of the first page, then the end Of the survey, where a page goes
+// End of each slot the selected element holds, so a selected page takes an element at its end. With nothing selected,
+// The end of the first page, then the end of the survey, where a page goes
 export const getSurveyInsertPlaces = (document: SurveyDocument, selectedPointer: string): DropTarget[] => {
   // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a pointer the editor builds, never typed
   if (selectedPointer === "") {

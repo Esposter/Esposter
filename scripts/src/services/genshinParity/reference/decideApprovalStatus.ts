@@ -5,8 +5,8 @@ import { ApprovalStatus } from "#src/models/genshinParity/reference/ApprovalStat
 import { getApprovalValue } from "#src/services/genshinParity/reference/getApprovalValue";
 
 // A compare's status against its bar. Only a compare against a reference on disk that judges the whole screen has a
-// Score To set against the bar, on the measure the screen records; a missing reference and a failed compare have none,
-// And a Reference judging a region or another state judges less than the whole screen. A score at the bar is not under
+// Score to set against the bar, on the measure the screen records; a missing reference and a failed compare have none,
+// And a reference judging a region or another state judges less than the whole screen. A score at the bar is not under
 // It
 export const decideApprovalStatus = (
   hasReference: boolean,

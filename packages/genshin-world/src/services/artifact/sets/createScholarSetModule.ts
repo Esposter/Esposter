@@ -14,7 +14,7 @@ const SCHOLAR_COOLDOWN_ID = "scholarCooldown";
 const SCHOLAR_COOLDOWN_SECONDS = 3;
 
 // Scholar. Its four-piece bonus, when gathered particles or orbs reach the party, gives the table's first param of
-// Energy to Each standing member wielding a bow or a catalyst. It triggers once every 3 seconds
+// Energy to each standing member wielding a bow or a catalyst. It triggers once every 3 seconds
 export const createScholarSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const energy = takeOne(bonus.params, 0);
   return {

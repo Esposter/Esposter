@@ -10,7 +10,7 @@ export const GENSHIN_ROADMAP_FILE = "openspec/changes/genshin-roadmap/tasks.md";
 // The quest a roadmap item or a script names, in the form `quest <id>`, with the id as its one capture
 export const QUEST_ID_PATTERN: string = String.raw`quest (?<id>\d+)`;
 // The folder of the scripted sessions, one file per session, which the report reads for the quests each one names.
-// Until The first session is written the folder is absent, and the report names no quest
+// Until the first session is written the folder is absent, and the report names no quest
 export const GENSHIN_SESSIONS_DIRECTORY = "packages/genshin-world/src/services/dev/sessions";
 // The order the report's rows read in: the compute kinds, then the change, the roadmap item and the quest
 export const GENSHIN_ROW_KINDS: readonly (ComputeKind | GenshinProgressKind)[] = [
@@ -40,7 +40,7 @@ export const GENSHIN_OPTIONAL_PASSES: readonly ParityPass[] = [ParityPass.Motion
 // The note a check that no command reads prints beneath its name
 export const GENSHIN_NO_COMMAND_NOTE = "no command reads it yet";
 // The clauses of each phase's exit gate, one to a check, in the words of the phases table in the `genshin-phases`
-// Change's Design, "The phases". No command reads one yet, so each prints as not measurable
+// Change's design, "The phases". No command reads one yet, so each prints as not measurable
 export const GENSHIN_PHASE_GATES: readonly { gate: string; phase: number }[] = [
   { gate: "A fresh PC and Mac pair reproduces every published dataset and fit from the install", phase: 0 },
   { gate: "every asset family has a spec and a recipe", phase: 0 },

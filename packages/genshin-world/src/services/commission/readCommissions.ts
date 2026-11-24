@@ -5,8 +5,8 @@ import { commissionSliceSchema } from "#src/models/commission/CommissionSlice";
 import { readGameData } from "#src/services/data/readGameData";
 
 // The daily tasks of one region `pnpm -C scripts genshin:assets commissions` publishes, fetched by its key from the
-// Hosted Game data and checked against its shape as it arrives. The key is typed off the lock, so a region no publish
-// Wrote fails Typecheck
+// Hosted game data and checked against its shape as it arrives. The key is typed off the lock, so a region no publish
+// Wrote fails typecheck
 export const readCommissions = (
   gameDataBaseUrl: string,
   key: Extract<GameDataKey, `commissions/${string}`>,

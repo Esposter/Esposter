@@ -46,7 +46,7 @@ describe("live topic wake check", () => {
     const missedRouter = router({
       readUser: probeRouter.readUser,
       // The write to the other user is recorded and publishes that user's row, which the read does not watch. The write
-      // To The read's own user goes through the unrecorded database, so nothing publishes it and the read changes
+      // To the read's own user goes through the unrecorded database, so nothing publishes it and the read changes
       // Unwoken
       renameBothUsers: publicProcedure
         .input(z.object({ id: z.string(), name: z.string(), otherId: z.string() }))

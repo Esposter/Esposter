@@ -5,9 +5,9 @@ import { clampIndex } from "#src/services/ui/clampIndex";
 import { DATA_TABLE_PAGE_KEY_ROW_COUNT } from "#src/services/ui/constants";
 
 // Where a key moves a grid's active cell, as the WAI-ARIA grid pattern walks one: an arrow a cell at a time and never
-// Past the edge, Home and End to the ends of the row, or of the grid with Ctrl, and Page Up and Page Down a run of
-// Rows. Undefined for any other key, and for a key held with a modifier the grid does not read, which it leaves to
-// Whatever Command binds that chord
+// Past the edge, Home and End to the ends of the row, or of the grid with Ctrl, and Page Up and Page Down a run
+// Of rows. undefined for any other key, and for a key held with a modifier the grid does not read, which it leaves to
+// Whatever command binds that chord
 export const getNextGridCellPosition = (
   event: KeyboardEvent,
   { columnIndex, rowIndex }: UiGridPosition,

@@ -16,9 +16,9 @@ const HYMN_OF_THE_PURE_COOLDOWN_ID = "hymnOfThePureCooldown";
 const THUS_LIED_THE_VIPER_ID = "thusLiedTheViper";
 
 // Viper's Ballad at its rank: an Elemental Skill or Burst hit its wielder deals adds a stack of Hymn of the Pure, once
-// Every Cooldown, up to the rank's stacks. The stack that makes the last one clears them and gives Thus Lied the Viper
-// Instead, which Raises every deployed member's Stellar Glimmer reaction DMG by the rank's amount for the rank's
-// Seconds, and holds back Any stack for those seconds. The rank's second twelve, the stacks' hold, is the same seconds,
+// Every cooldown, up to the rank's stacks. The stack that makes the last one clears them and gives Thus Lied the Viper
+// Instead, which raises every deployed member's Stellar Glimmer reaction DMG by the rank's amount for the rank's
+// Seconds, and holds back any stack for those seconds. The rank's second twelve, the stacks' hold, is the same seconds,
 // So it is not read apart
 export const createViperBalladPassiveModule = (params: number[]): PassiveModule => {
   const stellarGlimmerDamageBonus = takeOne(params, 0);

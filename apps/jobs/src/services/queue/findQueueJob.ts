@@ -2,9 +2,9 @@ import type { CloudflareAssetType, CloudflareEnvironment, QueueJob } from "@espo
 
 import { getCloudflareResourceName, QueueJobs } from "@esposter/db-schema";
 
-// The job whose queue, or whose dead-letter queue, this environment names as `queueName`. Each name is built by the
-// Same function Pulumi creates the queue by and is compared with, never parsed back into a job. A name that only
-// Resembles one is not mistaken for it.
+// The job whose queue, or whose dead-letter queue, this environment names as `queueName`.
+// Each name is built by the same function Pulumi creates the queue by and is compared with, never parsed back into
+// A job. A name that only resembles one is not mistaken for it.
 export const findQueueJob = (
   environment: CloudflareEnvironment,
   assetType: CloudflareAssetType,

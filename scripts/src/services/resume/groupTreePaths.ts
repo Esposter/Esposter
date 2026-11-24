@@ -9,8 +9,8 @@ const MANIFEST_REGEX = /(?:^|\/)(?:package\.json|pnpm-workspace\.yaml)$/u;
 // New path
 export const groupTreePaths = (porcelainLines: readonly string[]): ResumeItem[] => {
   const paths = porcelainLines.map((line) => line.slice(3).split(" -> ").at(-1) ?? "");
-  // Lockfile drift with no manifest is autoDedupe and pnpm's install-before-run re-resolving nightly ranges, never
-  // Committed.
+  // Lockfile drift with no manifest is autoDedupe and pnpm's install-before-run re-resolving nightly ranges,
+  // Never committed.
   const isLockfileDrift = !paths.some((path) => MANIFEST_REGEX.test(path));
   const countMap = new Map<string, number>();
   for (const path of paths) {

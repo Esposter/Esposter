@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 const CROWFEATHER_COVER_DAMAGE_BONUS = 1;
 
 // Crowfeather Cover, a state its character gains: the character deals 1 more Elemental Skill and Elemental Burst DMG,
-// And each Such use spends one of its two usages (the wiki's Crowfeather Cover). A normal attack is neither boosted nor
+// And each such use spends one of its two usages (the wiki's Crowfeather Cover). A normal attack is neither boosted nor
 // Spends one
 export const crowfeatherCover: GcgCardModule = {
   initialUsages: 2,

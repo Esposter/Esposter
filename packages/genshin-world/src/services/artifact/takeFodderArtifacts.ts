@@ -4,7 +4,7 @@ import { takeInventoryEntry } from "#src/services/inventory/takeInventoryEntry";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The artifacts picked as fodder, taken out of the bag. An entry that is not an artifact, or an artifact that is
-// Locked, Is refused, since a locked artifact is never fodder
+// Locked, is refused, since a locked artifact is never fodder
 export const takeFodderArtifacts = (inventory: Inventory, entryIds: number[]): Inventory => {
   for (const entryId of entryIds) {
     const artifact = inventory.items.find(({ id }) => id === entryId)?.artifact;

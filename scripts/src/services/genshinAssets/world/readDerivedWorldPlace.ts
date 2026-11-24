@@ -8,7 +8,7 @@ import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapital
 
 // A derived world's place in the game's axes: a capital's landmark (`readCapitalWorldPlace`), or for a sub-area the
 // Centre of its outline's box, set round the origin the same way a capital's landmark is. The `subarea` is the
-// Catalogue Area the component names, read once by the caller
+// Catalogue area the component names, read once by the caller
 export const readDerivedWorldPlace = async (
   component: DerivedAssetComponent,
   subarea: GroundPieceArea | undefined,

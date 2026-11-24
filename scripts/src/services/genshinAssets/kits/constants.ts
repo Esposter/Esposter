@@ -97,7 +97,7 @@ export const GCSIM_PLUNGE_COLLISION_HITBOX_NAME = "Plunge";
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES: readonly number[] = [30, 60];
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES = 72;
 // The normal attacks a character's stance gives, by the character's folder: Wriothesley's Chilling Penalty, whose
-// Enhanced Normal attacks gcsim reads at attack state 1 and multiplies by the Enhanced Repelling Fist table
+// Enhanced normal attacks gcsim reads at attack state 1 and multiplies by the Enhanced Repelling Fist table
 export const GCSIM_STANCE_NORMAL_ATTACKS: Partial<Record<string, GcsimStanceNormalAttack>> = {
   wriothesley: { factorLabel: "Enhanced Repelling Fist DMG", path: "stances.chillingPenalty.normalAttacks", state: 1 },
 };

@@ -31,7 +31,7 @@ const PARITY_SCORES_NAME = "ParityReferenceMap";
 // The committed report of every reference's last scores, beside the map naming them
 export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, `${PARITY_SCORES_NAME}.snapshot.md`);
 // The report is formatted under the markdown name the formatter does not skip, since a snapshot is written verbatim.
-// The Path is repository-relative, as the formatter reads its ignores from it, and a worktree's own path sits under
+// The path is repository-relative, as the formatter reads its ignores from it, and a worktree's own path sits under
 // `.agents/worktrees`, which the config ignores
 export const PARITY_SCORES_FORMAT_PATH: string = relative(
   REPOSITORY_ROOT,
@@ -48,7 +48,7 @@ export const RECORDING_FRAME_FILTER =
 export const VERIFY_TOLERANCE_PERCENT = 1;
 
 // The lossless WebP a reference is packed as, at the highest effort sharp offers. Its pixels decode back exactly, so
-// Every Score reads the same as it did from the screenshot
+// Every score reads the same as it did from the screenshot
 export const REFERENCE_WEBP_OPTIONS = { effort: 6, lossless: true } as const;
 
 // How many files `references pack` writes and `references restore` moves at once.

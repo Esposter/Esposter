@@ -30,7 +30,7 @@ const getScoredMask = (
 // A reference's brightness bands with the bloom drawn off: our frame of its screen at the reference's own size, as
 // `compare` shoots it (its props, variant and window), with `isBloomed` forced off, against the reference, both resized
 // Down to the display width by the same kernel, so neither side is read sharper. Its bands are read over the
-// Reference's Scored region
+// Reference's scored region
 export const readBrightnessBands = async (referenceId: string, pageRoot?: string): Promise<BrightnessBandReading[]> => {
   await fetchReferences();
   const reference = ParityReferenceMap[referenceId];
@@ -49,7 +49,7 @@ export const readBrightnessBands = async (referenceId: string, pageRoot?: string
   });
   const displayHeight = Math.round((DISPLAY_WIDTH * height) / width);
   // The reference is read at its own size first, as `openWitnessPage` reads it, and the one resize below takes both
-  // Sides Down
+  // Sides down
   const image = await readReferenceImage(referencePath, width, height);
   const [referenceRgb, oursRgb] = await Promise.all([
     readRawRgb(image, DISPLAY_WIDTH, displayHeight),

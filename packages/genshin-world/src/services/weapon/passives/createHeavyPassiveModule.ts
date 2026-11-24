@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 const HEAVY_COOLDOWN_ID = "heavyCooldown";
 
 // Heavy at its rank: each normal attack its wielder lands while active deals an extra hit at the rank's multiplier of
-// ATK on The attack's area, once per the rank's cooldown in seconds
+// ATK on the attack's area, once per the rank's cooldown in seconds
 export const createHeavyPassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 1);

@@ -5,7 +5,7 @@ import type { OreHit } from "#src/models/gathering/OreHit";
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
 
 // The hit an ore takes from a reaction that lands: a blunt one of the poise its reach deals, over the whole circle
-// About Where it landed at any height, as its reach finds an enemy. A reaction whose hit is not blunt strikes no ore
+// About where it landed at any height, as its reach finds an enemy. A reaction whose hit is not blunt strikes no ore
 export const readReactionOreHit = (
   reactionPoiseMap: ReadonlyMap<TransformativeReactionType, ReactionPoise>,
   reactionType: TransformativeReactionType,

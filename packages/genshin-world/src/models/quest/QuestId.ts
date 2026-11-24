@@ -1,6 +1,6 @@
 // Every quest the world carries, by the game's own id: the inventory `pnpm -C scripts genshin:text quests` reads,
-// Writing Each one's steps and talks and the words they show, so carrying a quest is a line here, its place in
-// `QuestIds` and a Run of it
+// Writing each one's steps and talks and the words they show, so carrying a quest is a line here, its place in
+// `QuestIds` and a run of it
 export const QuestId = {
   BirdsEyeView: "352",
   CandidatureAnalysis: "11019",
@@ -52,9 +52,9 @@ export const QuestId = {
 export type QuestId = (typeof QuestId)[keyof typeof QuestId];
 
 // The parent quest of each Mondstadt Reputation quest the city pays for, in the order the city reads them. Each is
-// Carried Whole, and a finish of it pays the reward its Reputation quest row names. Parents 311, 418, 70061, 70078 and
-// 76096 Are not carried: 311 and 418 finish on the game's script notices, the other three on scripted talks with no
-// Lines. The reader takes no steps from any of them, so they have nothing to carry
+// Carried whole, and a finish of it pays the reward its Reputation quest row names. Parents 311, 418, 70061, 70078 and
+// 76096 are not carried: 311 and 418 finish on the game's script notices, the other three on scripted talks with
+// No lines. the reader takes no steps from any of them, so they have nothing to carry
 const ReputationParentQuestIds: readonly QuestId[] = [
   QuestId.ReputationParent70123,
   QuestId.ReputationParent70121,
@@ -99,7 +99,7 @@ export const ReputationRequestQuestIds: readonly QuestId[] = [
 ];
 
 // The carried quests in the order the world reads them. The prologue begins the game, so its first quests come first,
-// In The order the Archon quests run, which the enum's members, sorted by name, do not keep, then the world quests a
+// In the order the Archon quests run, which the enum's members, sorted by name, do not keep, then the world quests a
 // Talk offers, the series the world carries whole, each quest in the order its series runs, then each city's opening
 // Quest, which its region's commissions join the deal behind, then the Reputation quests' parents, then the Reputation
 // Requests the keeper offers

@@ -12,8 +12,8 @@ export const readKitTablesWithDonors = async (characterIds: readonly number[]): 
   const tablesMap = new Map<number, KitTables>();
   let pending = [...new Set(characterIds)];
   while (pending.length > 0) {
-    // Before its overlays named, so a round's pending set is what the one before it left
-    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each round reads the donors the round
+    /* oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each round reads the donors the round
+       before its overlays named, so a round's pending set is what the one before it left */
     const readMap = await readKitTables(pending);
     for (const [characterId, tables] of readMap) tablesMap.set(characterId, tables);
     pending = [

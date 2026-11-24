@@ -46,7 +46,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
         writeAwaited(
           async () => {
             // The link is the server's to mint, so it is shown once the server issues it. The link it replaced is
-            // Answered As a tombstone, so the link the reader held before is removed on the same answer
+            // Answered as a tombstone, so the link the reader held before is removed on the same answer
             const { invite, replacedInvites } = await $trpc.invite.createInvite.mutate(input);
             storeUsers([invite.user]);
             await inviteCreateHooks.run(input.roomId, invite);
@@ -61,7 +61,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   };
   // The link the reader holds is read from the server, since a live link may already be in someone's inbox and a create
   // Would replace it. The read's answer arrives like any other, so a stored link that has lapsed or been revoked since
-  // Is Replaced by the tombstone the server returns
+  // Is replaced by the tombstone the server returns
   const readStoredInvite = async (roomId: RoomInMessage["id"]) => {
     const readInvite = await $trpc.invite.readMyInvite.query({ roomId });
     if (readInvite) arrive(inviteTable, readInvite);

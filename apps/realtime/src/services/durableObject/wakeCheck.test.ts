@@ -5,7 +5,7 @@ import { getWokenTopics } from "@esposter/db";
 import { describe, expect } from "vitest";
 
 // The contract an observed object answers: each method answers a promise of its result, as the object's RPC stub does.
-// The Entry is the check's own channel, so it keeps the type the object gives it
+// The entry is the check's own channel, so it keeps the type the object gives it
 export type ObservedContract<T> = {
   [K in keyof T]: K extends "invoke"
     ? T[K]
@@ -45,7 +45,7 @@ export const verifyWakes = (): void => {
 };
 
 // The methods an object's class adds to the base it extends, so each is one of its RPC methods. The base's own methods
-// Are Left out, as is the entry the check goes through
+// Are left out, as is the entry the check goes through
 const getRpcMethods = (object: object): string[] => {
   const names = new Set<string>();
   for (
@@ -58,10 +58,10 @@ const getRpcMethods = (object: object): string[] => {
   return [...names];
 };
 
-// Observes an object's RPC methods: each call runs through its entry, and a call whose write set is non-empty is a
-// Write. After A write, every read answered before it that recorded a read set is asked again, and an answer that
-// Changed must be one a topic The write published wakes, by the read set the read reported. A call that recorded no
-// Read set reads no rows, so no write Changes its answer through them, and it is not asked again, which keeps a call
+// Observes an object's RPC methods: each call runs through its entry, and a call whose write set is non-empty is
+// A write. After A write, every read answered before it that recorded a read set is asked again, and an answer that
+// Changed must be one a topic the write published wakes, by the read set the read reported. A call that recorded no
+// Read set reads no rows, so no write changes its answer through them, and it is not asked again, which keeps a call
 // With a side effect from running twice
 export const observeWakes = <T extends object>(object: T): ObservedContract<T> => {
   // The forced conversion: the object's entry is typed by its class, and the check reaches it by the name each call has
@@ -84,8 +84,8 @@ export const observeWakes = <T extends object>(object: T): ObservedContract<T> =
           return result;
         }
         for (const read of reads.values()) {
-          // The rows the last one left
-          // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each read is asked in turn, against
+          /* oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each read is asked in turn, against
+             the rows the last one left */
           const { result: answered } = await invoker.invoke(read.member, read.args);
           const answer = JSON.stringify(answered);
           if (answer !== read.answer && getWokenTopics(read.readSet, writeSet).length === 0)

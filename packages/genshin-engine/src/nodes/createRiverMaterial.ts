@@ -9,7 +9,7 @@ import { createWaterFlowUniforms } from "#src/water/createWaterFlowUniforms";
 import { attribute } from "three/tsl";
 
 // A river's ribbon in the water material, which reads the bend foam `createRiverGeometry` writes per vertex. A river
-// Has No flow yet: its direction and speed are read off the game's water material or a recording, so it draws still
+// Has no flow yet: its direction and speed are read off the game's water material or a recording, so it draws still
 // Until then
 export const createRiverMaterial = (
   lightUniforms: LightUniforms,

@@ -14,8 +14,8 @@ import { GameDataset, reliquarySetDataSchema } from "genshin-world";
 
 // Every artifact set the game's set table holds, each with the text id of its name from its equip affix, the counts its
 // Bonuses take and each piece it is made of. A piece is every row of the reliquary table that belongs to the set, one
-// Per Slot, rank, rarity and starting minor affix count, so a piece is what a rolled artifact of the set is named by. A
-// Set Whose equip affix names no text is left out. Returns the record the sets publish under
+// Per slot, rank, rarity and starting minor affix count, so a piece is what a rolled artifact of the set is named by. A
+// Set whose equip affix names no text is left out. Returns the record the sets publish under
 export const buildReliquarySets = (): Record<string, unknown> => {
   const equipAffixNameTextMapHashMap = new Map(
     readExcelTable<ExcelEquipAffixRow>(EQUIP_AFFIX_TABLE_NAME).map(({ id, nameTextMapHash }) => [id, nameTextMapHash]),

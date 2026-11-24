@@ -10,7 +10,7 @@ import { takeOne } from "@esposter/shared";
 const HEAL_VALUE = 1;
 
 // Mushroom Pizza, a food: the target character heals 1 HP, holds the food as a status until the Round ends, so it eats
-// No other Food this Round, and holds the In Effect status, which heals it at each of the next End Phases
+// No other food this Round, and holds the In Effect status, which heals it at each of the next End Phases
 export const mushroomPizza: GcgCardModule = {
   canPlay: ({ duel, sideIndex }, targetIndex) => checkIsGcgFoodEatable(duel, sideIndex, targetIndex),
   initialRounds: 1,

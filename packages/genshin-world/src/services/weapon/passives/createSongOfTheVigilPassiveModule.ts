@@ -11,8 +11,8 @@ const SONG_OF_THE_VIGIL_COOLDOWN_ID = "songOfTheVigilCooldown";
 const SONG_OF_THE_VIGIL_SOURCE = "songOfTheVigil";
 
 // Song of the Vigil at its rank: after its wielder triggers an Elemental Reaction, it regenerates the rank's Energy to
-// The Wielder, at most once every cooldown the rank gives in seconds, and a Stellar Glimmer reaction it triggers raises
-// The Wielder's ATK by the rank's percentage for the rank's seconds. The effects count whether or not the wielder is on
+// The wielder, at most once every cooldown the rank gives in seconds, and a Stellar Glimmer reaction it triggers raises
+// The wielder's ATK by the rank's percentage for the rank's seconds. The effects count whether or not the wielder is on
 // The field
 export const createSongOfTheVigilPassiveModule = (params: number[]): PassiveModule => {
   const energy = takeOne(params, 0);

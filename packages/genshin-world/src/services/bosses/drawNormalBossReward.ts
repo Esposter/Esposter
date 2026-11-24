@@ -5,7 +5,7 @@ import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // What a normal boss's Trounce Blossom pays at a World Level: its Mora, and its own drop as its guaranteed count plus
-// One More where `random` falls under its chance. A World Level with no row is refused rather than paid a neighbour's
+// One more where `random` falls under its chance. A World Level with no row is refused rather than paid a neighbour's
 export const drawNormalBossReward = (worldLevel: number, uniqueDropId: number, random: () => number): ItemCount[] => {
   if (worldLevel < 0 || worldLevel >= NORMAL_BOSS_MORA.length)
     throw new InvalidOperationError(Operation.Read, String(worldLevel), "has no normal boss reward row");

@@ -16,8 +16,8 @@ import { reputationRequestSchema } from "#src/models/reputation/ReputationReques
 import { z } from "zod";
 
 // One nation's Reputation as its slice holds it: its levels, the requests its keeper offers from each level's group,
-// The Quests that pay it once they finish, its weekly bounties with the kinds each difficulty's target may be, the
-// Hunting Regions they spawn in, and the exploration thresholds that pay it
+// The quests that pay it once they finish, its weekly bounties with the kinds each difficulty's target may be, the
+// Hunting regions they spawn in, and the exploration thresholds that pay it
 export interface ReputationCity {
   bounties: ReputationBounty[];
   bountyTargets: ReputationBountyTarget[];

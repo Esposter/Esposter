@@ -18,9 +18,9 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { takeOne } from "@esposter/shared";
 
-// Dawn's infusion lasts 8 seconds, and A4 extends it by 4 seconds and gives a 20% Pyro damage bonus for as long Wiki:
-// The Dawn infusion's duration and A4's extension and damage bonus, as gcsim v2.47.2 (MIT) diluc/burst.go gives them
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/burst.go`
+// Dawn's infusion lasts 8 seconds, and A4 extends it by 4 seconds and gives a 20% Pyro damage bonus for as long
+// Wiki: the Dawn infusion's duration and A4's extension and damage bonus, as gcsim v2.47.2 (MIT) diluc/burst.go gives
+// Them https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/burst.go
 const DILUC_INFUSION_SECONDS = 8;
 const DILUC_A4_EXTRA_INFUSION_SECONDS = 4;
 const DILUC_A4_PYRO_DAMAGE_BONUS = 0.2;
@@ -28,25 +28,25 @@ const DILUC_RELENTLESS_ASCENSION = 1;
 const DILUC_RELENTLESS_STAMINA_MULTIPLIER = 0.5;
 
 // Measured: gcsim v2.47.2 (MIT) diluc/burst.go, the phoenix spawns a metre ahead of the body and moves 14 metres a
-// Second, Striking eight times from its launch, and exploding 1.7 seconds after its launch, 24.8 metres on
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/burst.go`
+// Second, striking eight times from its launch, and exploding 1.7 seconds after its launch, 24.8 metres on
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/burst.go
 const DAWN_SPAWN_METRES = 1;
 const DAWN_METRES_PER_SECOND = 14;
 const DAWN_TICK_COUNT = 8;
 const DAWN_EXPLOSION_SECONDS = 1.7;
 
 // Constellation 4, Flowing Flame: 2s after a Searing Onslaught press, the next press in the combo deals 40% more DMG,
-// For 2s. Wiki: the Flowing Flame constellation's text, as gcsim v2.47.2 (MIT) diluc/cons.go models it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go`
+// For 2s. wiki: the Flowing Flame constellation's text, as gcsim v2.47.2 (MIT) diluc/cons.go models it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_DAMAGE_BONUS = 0.4;
 const CONSTELLATION_4_SECONDS = 2;
 const CONSTELLATION_4_STATUS_ID = "diluc-constellation-4-press";
 
 // Constellation 6, Flaming Sword, Nemesis of the Dark: after a Searing Onslaught press, the next two normal attacks
-// Within Six seconds deal 30% more DMG and attack 30% faster. Wiki: the constellation's text, as gcsim v2.47.2 (MIT)
-// `diluc/cons.go` Models it, its counter reset by each press and its buffs ending after six seconds
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go`
+// Within six seconds deal 30% more DMG and attack 30% faster. Wiki: the constellation's text, as gcsim v2.47.2 (MIT)
+// Diluc/cons.go models it, its counter reset by each press and its buffs ending after six seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_BONUS = 0.3;
 const CONSTELLATION_6_SECONDS = 6;
@@ -63,9 +63,9 @@ const CONSTELLATION_1_DAMAGE_BONUS = 0.15;
 const CONSTELLATION_1_HEALTH_SHARE = 0.5;
 
 // Searing Ember, from Constellation 2: each damage Diluc takes raises his ATK by 10% and his ATK SPD by 5% for 10
-// Seconds, Up to three stacks, and one stack at most every 1.5 seconds. gcsim v2.47.2 (MIT) diluc/cons.go gives the
+// Seconds, up to three stacks, and one stack at most every 1.5 seconds. gcsim v2.47.2 (MIT) diluc/cons.go gives the
 // Stacks and the 10 seconds, and the 1.5 seconds is the wiki's, gcsim's interval never being set
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_ATTACK_BONUS_PER_STACK = 0.1;
 const CONSTELLATION_2_ATTACK_SPEED_BONUS_PER_STACK = 0.05;
@@ -103,13 +103,14 @@ const addSearingEmberStack = (kitEffectState: KitEffectState, characterId: numbe
 };
 
 // Diluc's behaviour: Dawn infuses his attacks with Pyro, lengthened and joined by a Pyro DMG Bonus from Ascension 4,
-// And Launches its phoenix at the slash, a summon a metre ahead of him that travels forward, strikes on each of its
-// Ticks and Explodes at the end of its path Constellation 2 is built for a hit on Diluc that costs him HP, an enemy's
-// Strike, a drown or a wildlife's charge, and for An enemy's strike on him that a shield takes, whoever owns the
-// Shield, as gcsim's OnPlayerHit fires on a shielded hit. The Damageless hits of his teammates are not built
+// And launches its phoenix at the slash, a summon a metre ahead of him that travels forward, strikes on each of its
+// Ticks and explodes at the end of its path
+// Constellation 2 is built for a hit on Diluc that costs him HP, an enemy's strike, a drown or a wildlife's charge, and
+// For an enemy's strike on him that a shield takes, whoever owns the shield, as gcsim's OnPlayerHit fires on a
+// Shielded hit. The damageless hits of his teammates are not built
 // Constellation 4 reads each press against the one before it. The status a press leaves runs two seconds, so a press
-// That Finds it running came within two seconds of the last one. A follow-up that does not is the one the bonus lands
-// On, and Its status carries the bonus for the same two seconds. Constellation 6 arms the next two normal attacks on
+// That finds it running came within two seconds of the last one. A follow-up that does not is the one the bonus lands
+// On, and its status carries the bonus for the same two seconds. Constellation 6 arms the next two normal attacks on
 // Each press
 const createSearingOnslaughtPress =
   (isFollowUp: boolean) =>
@@ -132,7 +133,7 @@ const createSearingOnslaughtPress =
   };
 
 // Constellation 6: each normal attack of the combo takes one of the armed attacks while any remain, and its own status
-// Runs For the attack's seconds, which the damage hook and the speed bonus read. An attack the armed ones do not reach
+// Runs for the attack's seconds, which the damage hook and the speed bonus read. An attack the armed ones do not reach
 // Clears it
 const createNormalAttackStart =
   (seconds: number) =>
@@ -257,8 +258,8 @@ export const createDilucKitBehaviour = ({
       (action === kit.elementalSkill || kit.elementalSkillChain?.followUps.includes(action) === true),
     normalAttacks: kit.normalAttacks.map((action) => ({ onStart: createNormalAttackStart(action.seconds) })),
     // Searing Ember: a hit on Diluc takes a stack once the interval after the last one has run out. A hit is one that
-    // Costs Him HP, or that a shield takes whole or in part, which names him as the member struck. A kit of the team
-    // That names Its source for the HP loss, such as Furina's skill, is not a hit
+    // Costs him HP, or that a shield takes whole or in part, which names him as the member struck. A kit of the team
+    // That names its source for the HP loss, such as Furina's skill, is not a hit
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (combatant.constellationCount < CONSTELLATION_2) return;
       const { characterId } = combatant;

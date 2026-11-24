@@ -10,7 +10,7 @@ import { takeInventoryEntry } from "#src/services/inventory/takeInventoryEntry";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A character wears the bag's artifact the player chose, by its entry. The piece it wore goes back to the bag as an
-// Entry Of its own. Taking the chosen entry out frees the room that piece needs, so it always fits
+// Entry of its own. Taking the chosen entry out frees the room that piece needs, so it always fits
 export const equipBagArtifact = (
   inventory: Inventory,
   character: Character,

@@ -10,7 +10,7 @@ const createFaceUv = (flip: Node<"float">): Node<"vec2"> =>
   vec2(select(flip.greaterThan(0.5), float(1).sub(uv().x), uv().x), uv().y);
 
 // The face's shade: the face map's texel against a window of the softness around the draw's threshold, smoothed, so a
-// Face Map reading at or past the window's top lights the face, and a face with no map is lit
+// Face map reading at or past the window's top lights the face, and a face with no map is lit
 export const createFaceShadeNode = (
   faceMap: Texture | undefined,
   softness: number,

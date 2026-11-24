@@ -3,8 +3,8 @@ import type { NuxtConfig } from "nuxt/schema";
 
 export const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
 // A file of the build folder, which carries the robots header and the lifetime its rule gives it. The embedder policy
-// Is the Page's own: a dedicated worker's script is refused unless its response carries it, and the Worker's assets
-// Binding serves These files without its request hook, so the policy is a header rule here
+// Is the page's own: a dedicated worker's script is refused unless its response carries it, and the Worker's assets
+// Binding serves these files without its request hook, so the policy is a header rule here
 const buildFileRule = (cacheControl: string) => ({
   headers: {
     "cache-control": cacheControl,
@@ -18,8 +18,8 @@ const buildFileRule = (cacheControl: string) => ({
 // Reliably applied, leaving "window is not defined" SSR crashes.
 export const routeRules: NonNullable<NuxtConfig["routeRules"]> = {
   // Nitro stamps the build folder `/**` immutable, and Cloudflare joins every `_headers` rule a path matches, so the
-  // Build List would carry that year beside its own lifetime. The folder's rules name its files instead: a placeholder
-  // Matches One path segment, so `builds/:file` is the list alone and the hashed files are the rules beside it
+  // Build list would carry that year beside its own lifetime. The folder's rules name its files instead: a placeholder
+  // Matches one path segment, so `builds/:file` is the list alone and the hashed files are the rules beside it
   "/_nuxt/:file": buildFileRule(IMMUTABLE_CACHE_CONTROL),
   "/_nuxt/**": { headers: false },
   "/_nuxt/builds/:file": buildFileRule("public, max-age=0, must-revalidate"),
@@ -36,7 +36,7 @@ export const routeRules: NonNullable<NuxtConfig["routeRules"]> = {
   },
   "/calls/**": { robots: false, ssr: false },
   // The page imports `phaser` (`pages/dungeons.vue`), and phaser's module evaluation reads `window`: its device
-  // Detection Runs in `init()` and reads `window.cordova`, so under Node SSR the import throws `window is not defined`
+  // Detection runs in `init()` and reads `window.cordova`, so under Node SSR the import throws `window is not defined`
   // And the page stays client-only
   "/dungeons": { robots: false, ssr: false },
   // A WebGPU canvas with nothing to render before it runs, and three.js is client-only, so the page is built for the

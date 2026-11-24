@@ -17,14 +17,14 @@ const attachSuperlativeToItto = (duel: GcgDuel, sideIndex: number): void => {
 };
 
 // Ushi, a summon that lasts the round: while its usage is unspent, the active character takes 1 less DMG. The first DMG
-// That Reduction applies to attaches Superlative Superstrength to Arataki Itto, once while Ushi is present. At the End
-// Phase it Deals 1 Geo DMG, attaches Superlative Superstrength to Itto, and is discarded. The trigger rides the
-// Reduction, so it does not Hear standby piercing
+// That reduction applies to attaches Superlative Superstrength to Arataki Itto, once while Ushi is present. At the End
+// Phase it deals 1 Geo DMG, attaches Superlative Superstrength to Itto, and is discarded. The trigger rides the
+// Reduction, so it does not hear standby piercing
 export const ushi: GcgCardModule = {
   initialCounter: 1,
   initialRounds: 1,
   // Its usage is counted into usages, which a refresh resets, so a Ushi placed again reduces once more. Its
-  // `once-while-present` Trigger is counter, which a refresh leaves alone, so the Superlative attach does not arm again
+  // Once-while-present trigger is counter, which a refresh leaves alone, so the Superlative attach does not arm again
   modifyDamageReceived: ({ duel, sideIndex }, value, zoneCard) => {
     if (value <= 0 || zoneCard.usages >= USHI_USAGES) return value;
     zoneCard.usages += 1;

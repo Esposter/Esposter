@@ -4,9 +4,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// Every token's name is built by a naming helper from its responsibility, so it reads as the convention says. A literal
-// Name is the one way a token falls outside the convention, and this test fails on any token whose name no helper
-// Builds.
+// Every token's name is built by a naming helper from its responsibility, so it reads as the convention says.
+// A literal name is the one way a token falls outside the convention, and this test fails on any token whose name no
+// Helper builds.
 describe("cloudflareTokenNames", () => {
   // An environment's token passes its environment before its asset type, and an account's token starts with its asset
   // Type

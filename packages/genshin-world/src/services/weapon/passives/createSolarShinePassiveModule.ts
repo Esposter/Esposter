@@ -9,7 +9,7 @@ const SOLAR_SHINE_NORMAL_ATTACK_SOURCE = "solarShineNormalAttack";
 const SOLAR_SHINE_SECONDS = 6;
 
 // Solar Shine at its rank: a normal attack hit its wielder deals raises its Elemental Skill and Elemental Burst DMG by
-// The Rank's amount for six seconds, and an Elemental Skill or Elemental Burst hit raises its Normal Attack DMG by the
+// The rank's amount for six seconds, and an Elemental Skill or Elemental Burst hit raises its Normal Attack DMG by the
 // Same
 export const createSolarShinePassiveModule = (params: number[]): PassiveModule => {
   const amount = takeOne(params, 0);

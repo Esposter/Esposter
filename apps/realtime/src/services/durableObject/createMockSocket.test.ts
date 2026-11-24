@@ -3,7 +3,7 @@ import { getUtf8ByteLength, jsonDateParse } from "@esposter/shared";
 import { describe, vi } from "vitest";
 
 // A socket the runtime accepted: the close and send calls the object makes are the ones a test reads, and its
-// Attachment is Held as the runtime holds it across hibernation. A close reports to the state that holds the socket, so
+// Attachment is held as the runtime holds it across hibernation. A close reports to the state that holds the socket, so
 // The registry drops it
 export const createSocket = () => {
   // The largest attachment the runtime keeps, which it measures serialized: 16 KiB in the workerd build the tests run

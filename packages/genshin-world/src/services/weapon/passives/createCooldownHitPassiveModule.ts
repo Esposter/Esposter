@@ -8,8 +8,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
 
 // The core of the cooldown hit passives: a passive whose wielder's own hits, the ones its predicate names, each roll
-// The rank's Chance of an extra hit built from the hit that landed. A roll that passes queues it once the cooldown has
-// Run out, so a roll Inside the cooldown queues nothing. The extra hit lands on the enemy getTarget names, or on the
+// The rank's chance of an extra hit built from the hit that landed. A roll that passes queues it once the cooldown has
+// Run out, so a roll inside the cooldown queues nothing. The extra hit lands on the enemy getTarget names, or on the
 // Default target without one
 export const createCooldownHitPassiveModule = ({
   buildHit,

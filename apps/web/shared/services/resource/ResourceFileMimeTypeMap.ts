@@ -3,7 +3,7 @@ import { WEBPAGE_VIDEO_MIME_TYPES } from "#shared/services/pageBuilder/constants
 import { ResourceType } from "@esposter/db-schema";
 
 // The files each type's upload takes, which are the files its picker offers, so the one list decides both. A type with
-// No File assets takes none. A webpage takes its videos beside its images, since its media field offers both
+// No file assets takes none. A webpage takes its videos beside its images, since its media field offers both
 export const ResourceFileMimeTypeMap = {
   [ResourceType.Blueprint]: [],
   [ResourceType.Dashboard]: [],

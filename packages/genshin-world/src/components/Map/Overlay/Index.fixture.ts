@@ -9,7 +9,7 @@ import { readRegionLandmarks } from "#src/services/world/readRegionLandmarks";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 // The map on M over the English PC client's Jueyun Karst, the pointer where the subarea labels the reference draws
-// Stand Round it at the zoom the reference's slider stands at, scored against the wiki's full-screen 1080p screenshot
+// Stand round it at the zoom the reference's slider stands at, scored against the wiki's full-screen 1080p screenshot
 // Of it
 const catalogue = await readCatalogue(GAME_DATA_LOCAL_BASE_URL);
 // Every region's landmarks, read from the region data the parity page serves as the world's start reads them. The map

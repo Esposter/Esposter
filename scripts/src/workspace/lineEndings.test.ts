@@ -14,8 +14,8 @@ describe("lineEndings", () => {
     expect(readCrlfStoredPaths()).toStrictEqual([]);
   });
 
-  // The probe is a fixture's own repository, so the check is shown to fail on a carriage return without staging one
-  // Here. The clone keeps its carriage return only with `core.autocrlf` off, which a machine's global setting would
+  // The probe is a fixture's own repository, so the check is shown to fail on a carriage return without staging
+  // One here. the clone keeps its carriage return only with `core.autocrlf` off, which a machine's global setting would
   // Undo
   test("flags a text file stored with a carriage return", () => {
     expect.hasAssertions();

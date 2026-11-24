@@ -5,7 +5,7 @@ import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 export const useEditorReaderStateStore = defineStore("editor/readerState", () => {
   // Every editor type's reader state, kept with the browser so an editor reopens with the sizes and open regions the
-  // Reader Left. A stored value that is not a record reads as an empty one, and each entry is read back through the
+  // Reader left. A stored value that is not a record reads as an empty one, and each entry is read back through the
   // Layout's parse
   const readerStateMap = useLocalStorage<Partial<Record<EditorType, ReaderState>>>(
     LocalStorageKey.EditorReaderStates,

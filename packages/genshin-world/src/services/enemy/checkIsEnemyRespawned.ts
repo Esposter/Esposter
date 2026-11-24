@@ -4,9 +4,9 @@ import type { EnemyType } from "#src/models/enemy/EnemyType";
 import { checkIsBossHeld } from "#src/services/bosses/checkIsBossHeld";
 import { computeEnemyRespawnTime } from "#src/services/enemy/computeEnemyRespawnTime";
 
-// Whether a camp member defeated at a moment is back by another moment, on the respawn time computeEnemyRespawnTime
-// Gives. A boss with no respawn time is back once a teleport out of its camp's area after its defeat has released it,
-// And is Still down until then.
+// Whether a camp member defeated at a moment is back by another moment, on the respawn
+// Time computeEnemyRespawnTime gives. A boss with no respawn time is back once a teleport out of its camp's area after
+// Its defeat has released it, and is still down until then.
 export const checkIsEnemyRespawned = (
   campEnemyTypes: EnemyType[],
   defeatedAt: Temporal.Instant,

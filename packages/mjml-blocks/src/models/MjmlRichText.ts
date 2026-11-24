@@ -1,7 +1,7 @@
 import type { MjmlRichTextAttributeValue } from "#src/models/MjmlRichTextAttributeValue";
 
 // The structural shape of a rich text document as MJML's text components read it: a tree of typed nodes, each with
-// Attributes, marks and text. Its optional keys match tiptap's `JSONContent` key for key, so a note document is one and
+// Attributes, marks and text. its optional keys match tiptap's `JSONContent` key for key, so a note document is one and
 // One is a note document
 export interface MjmlRichText {
   attrs?: Record<string, MjmlRichTextAttributeValue> | undefined;

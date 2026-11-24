@@ -4,7 +4,7 @@ import type { MathTransformation } from "#shared/models/resource/sheet/column/tr
 import { compileMathExpression, parseMathExpression } from "math-expression-compiler";
 
 // The expression is parsed and compiled once here rather than per cell, so a row runs only its arithmetic. A formula
-// The Parser refuses reads empty, as does any answer that is not a finite number
+// The parser refuses reads empty, as does any answer that is not a finite number
 export const compileMathTransformation: ColumnTransformationCompiler<MathTransformation> = (transformation) =>
   parseMathExpression(transformation.expression).match(
     (node) => {

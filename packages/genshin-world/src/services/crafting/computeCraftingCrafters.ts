@@ -1,7 +1,7 @@
 import type { CraftingCell } from "genshin-interface";
 
 // The party's characters who can craft, each named by the game's own text, and the crafter picked as the bench opens:
-// The Character on the field, whose talent may pass a craft's extra on to the bag
+// The character on the field, whose talent may pass a craft's extra on to the bag
 export const computeCraftingCrafters = (
   characterIds: readonly number[],
   activeCharacterId: number,

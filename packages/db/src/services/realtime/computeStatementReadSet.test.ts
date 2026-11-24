@@ -48,8 +48,8 @@ describe(computeStatementReadSet, () => {
   });
 
   // A level a statement opens with nothing in it still has its number: an occurrence's level is its position in
-  // `levels`, so The level an occurrence is read in is found there even when an empty level comes before it. The
-  // Statement is built, not Run, since the walk reads the builder
+  // `levels`, so the level an occurrence is read in is found there even when an empty level comes before it. The
+  // Statement is built, not run, since the walk reads the builder
   test("an occurrence's level is its position in the levels, after an empty level", async () => {
     expect.hasAssertions();
 
@@ -70,7 +70,7 @@ describe(computeStatementReadSet, () => {
   });
 
   // An IN list over a scope column is a scope per value, but a JSON array list was read as a filter, so its table was
-  // Read Whole and a write to any row of it woke the read. The list is read as the IN list it stands for
+  // Read whole and a write to any row of it woke the read. The list is read as the IN list it stands for
   test("a JSON array list on a scope column names a scope per value, as an IN list does", async () => {
     expect.hasAssertions();
 
@@ -128,7 +128,7 @@ describe(computeStatementReadSet, () => {
   });
 
   // A list negated by `not` removes the rows it holds, so it filters its table, and `notInJsonArray` is that negation.
-  // Neither Names a value the read holds
+  // Neither names a value the read holds
   test.each<[string, (column: SQLWrapper, values: string[]) => SQL | undefined]>([
     ["notInJsonArray", notInJsonArray],
     ["not(inJsonArray)", (column, values) => not(inJsonArray(column, values))],
@@ -156,7 +156,7 @@ describe(computeStatementReadSet, () => {
   });
 
   // A list longer than a header's budget still names a scope per value: the walker does not cut it short, since the
-  // Budget Collapses a read that names too many topics once every read's topics are merged
+  // Budget collapses a read that names too many topics once every read's topics are merged
   test.each<[string, (column: SQLWrapper, values: string[]) => SQL]>([
     ["an IN list", inArrayList],
     ["a JSON array list", inJsonArray],

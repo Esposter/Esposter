@@ -24,8 +24,8 @@ describe(getDistributeOperations, () => {
   test("distributing horizontally makes every gap equal", () => {
     expect.hasAssertions();
 
-    // The three shapes span from 0 to 580 and their widths total 230, so the two gaps share the 350 left over, 175
-    // Each. The first and last hold still
+    // The three shapes span from 0 to 580 and their widths total 230, so the two gaps share the 350 left over,
+    // 175 each. The first and last hold still
     const document: PositionedDocument = {
       elements: [
         createShape(THIRD_ID, 500, 0, 80, 100),
@@ -75,7 +75,7 @@ describe(getDistributeOperations, () => {
     expect.hasAssertions();
 
     // The first box starts first but ends at 120, before the last box ends at 500, and the last box ends last but
-    // Starts at 400, after the first. The three widths total 420 of the 500 span, so the gaps share the other 80, 40
+    // Starts at 400, after the first. the three widths total 420 of the 500 span, so the gaps share the other 80, 40
     // Each, and the middle box moves from 150 to 160
     const document: PositionedDocument = {
       elements: [

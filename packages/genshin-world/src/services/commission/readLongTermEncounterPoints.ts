@@ -1,7 +1,7 @@
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 
 // The Long-Term Encounter Points held in `majorVersion`: those earned in an earlier major version are reset with it, so
-// None Are held
+// None are held
 export const readLongTermEncounterPoints = (
   points: LongTermEncounterPoints,
   majorVersion: number,

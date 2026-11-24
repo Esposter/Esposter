@@ -25,7 +25,7 @@ const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined }
 const { getRowViews, isDisabled, node } = defineProps<Props>();
 const panels = computed(() => getSurveyAnswerRows(answer.value, node.props.panelCount));
 // A panel's key names its row for as long as the row stands, so a row that stays keeps the state its fields hold while
-// The Rows before it are removed. An answer has no id to read a key from, so each is minted here
+// The rows before it are removed. An answer has no id to read a key from, so each is minted here
 let lastPanelKey = 0;
 const createPanelKeys = (count: number) =>
   Array.from({ length: count }, () => {

@@ -5,7 +5,7 @@ import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { getMailExpiresAt } from "#src/services/mail/getMailExpiresAt";
 
 // The held mails still within their expiry, a mail past it deleted from the mailbox, except a mail in the Gift Mail
-// Box, Which keeps it. A mail with no row in the table is kept, since its expiry is unread
+// Box, which keeps it. A mail with no row in the table is kept, since its expiry is unread
 export const removeExpiredMails = (
   mails: readonly MailSave[],
   mailRows: ReadonlyMap<number, Mail>,

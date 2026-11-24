@@ -2,7 +2,7 @@ import type { SurveyConditionOperator } from "#src/models/resource/survey/Survey
 import type { SurveyConditionValue } from "#src/models/resource/survey/SurveyConditionValue";
 
 // One comparison of a condition: the answer it reads, the operator and the value it compares with. An empty test takes
-// No Value, so its value is the empty string
+// No value, so its value is the empty string
 export interface SurveyConditionRow {
   operator: SurveyConditionOperator;
   questionName: string;

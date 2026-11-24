@@ -58,7 +58,7 @@ export const useRoomStore = defineStore("message/room", () => {
     for (const room of newRooms) arrive(roomTable, room);
   };
   // The offline cache persists and restores the rows the list shows, so its slice holds rows: a cached page arrives
-  // Each Row at its version, and the page's ids follow them, since the cursor keeps only the ids of its pages
+  // Each row at its version, and the page's ids follow them, since the cursor keeps only the ids of its pages
   const getSlice = (): CursorPaginationSlice<RoomInMessage> => {
     const { initializeCursorPaginationData, isLoaded, resetCursorPaginationData } = getPageSlice();
     return {

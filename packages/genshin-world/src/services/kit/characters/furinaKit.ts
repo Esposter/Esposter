@@ -53,8 +53,8 @@ const SALON_MEMBER_FIELD_ID_PREFIX = "furina-salon-member-";
 const SALON_ATTACK_SUMMON_ID = "furina-salon-attack";
 const SINGER_FIELD_ID = "furina-singer";
 // As gcsim (MIT) furina/skill.go gives it, as a Salon member attacks it drains every member above half HP by its share
-// Of That member's Max HP, each one drained adding a tenth to the attack's damage
-// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina`
+// Of that member's Max HP, each one drained adding a tenth to the attack's damage
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const SALON_DRAINED_HEALTH_SHARE_MIN = 0.5;
 const SALON_DAMAGE_BONUS_PER_DRAINED_MEMBER = 0.1;
 
@@ -63,10 +63,10 @@ const FANFARE_DEBOUNCE_STATUS_ID = "furina-fanfare-debounce";
 const FANFARE_BUFF_SOURCE = "furina-fanfare";
 
 // Measured: gcsim (MIT) furina/asc.go. Ascension 1's Endless Waltz: a heal past full HP by another character's kit, on
-// The Character on the field, starts a regeneration of 2% of each member's Max HP every two seconds, which runs on
-// While the Last such heal is under four seconds old. Ascension 4 raises the Salon members' DMG by 0.7% for each 1,000
-// Of her Max HP, Up to 28%, and cuts the Singer's interval by 0.4% for each 1,000, up to 16%
-// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina`
+// The character on the field, starts a regeneration of 2% of each member's Max HP every two seconds, which runs on
+// While the last such heal is under four seconds old. Ascension 4 raises the Salon members' DMG by 0.7% for each 1,000
+// Of her Max HP, up to 28%, and cuts the Singer's interval by 0.4% for each 1,000, up to 16%
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 const ENDLESS_WALTZ_STATUS_ID = "furina-endless-waltz";
@@ -83,7 +83,7 @@ const ASCENSION_4_INTERVAL_CUT_MAX = 0.16;
 // Measured: gcsim (MIT) furina/cons.go. Constellation 1 starts the Fanfare at 150 and raises its most by 100,
 // Constellation 2 gives 250% more Fanfare from each change, and Constellation 4 gives her 4 energy as a Salon member's
 // Hit lands or the Singer heals, once each five seconds
-// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina`
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_4 = 4;
@@ -127,7 +127,7 @@ const gainConstellation4Energy = ({ kitEffectState, party }: KitContext, combata
 };
 
 // Endless Waltz's regeneration, cast to heal each member of the deployed team every two seconds until the status it
-// Runs On has run out
+// Runs on has run out
 const castEndlessWaltz = (kitEffectState: KitEffectState, combatant: Combatant, { x, z }: GroundPoint): void => {
   const { characterId } = combatant;
   const field = castKitField(
@@ -224,11 +224,11 @@ const castFollowingField = (
 };
 
 // Furina's behaviour: her strikes open Spiritbreath Thorn or Surging Blade, and her charged attack turns her Arkhe a
-// Frame After its hit. Salon Solitaire takes the Arkhe she holds: Ousia's bubble and Salon members, which drain the
-// Team as they Attack, or Pneuma's Singer of Many Waters, which heals the character on the field. Let the People
+// Frame after its hit. Salon Solitaire takes the Arkhe she holds: Ousia's bubble and Salon members, which drain the
+// Team as they attack, or Pneuma's Singer of Many Waters, which heals the character on the field. Let the People
 // Rejoice starts its Fanfare, which each change to a member's HP feeds. Ascensions 1 and 4 and Constellations 1, 2's
-// Fanfare and 4 are built; Constellation 2's Max HP, 3, 5 and 6 are not Constellation 6 needs Center of Attention's 10
-// Seconds and an infusion that outranks others, neither built
+// Fanfare and 4 are built; Constellation 2's Max HP, 3, 5 and 6 are not
+// Constellation 6 needs Center of Attention's 10 seconds and an infusion that outranks others, neither built
 export const createFurinaKitBehaviour = ({
   kit,
   readFrames,
@@ -287,8 +287,8 @@ export const createFurinaKitBehaviour = ({
   };
 
   // A Salon member's attack on the enemy nearest its centre: it drains every member above half HP, then strikes the
-  // Circle Round that enemy once its attack has travelled, a tenth harder for each member it drained. With no enemy in
-  // Reach it Neither drains nor strikes
+  // Circle round that enemy once its attack has travelled, a tenth harder for each member it drained. With no enemy in
+  // Reach it neither drains nor strikes
   const attackWithSalonMember = (
     tick: KitContext,
     combatant: Combatant,
@@ -391,7 +391,7 @@ export const createFurinaKitBehaviour = ({
   };
 
   // Brings out the summons of the Arkhe she holds after the delay, for the seconds Salon Solitaire has left, in place
-  // Of The ones out
+  // Of the ones out
   const summonSalon = (
     context: KitContext,
     combatant: Combatant,
@@ -449,7 +449,7 @@ export const createFurinaKitBehaviour = ({
         });
   };
   // A change to a member's HP while the Fanfare lasts gives Fanfare by the share changed, after the debounce's delay:
-  // The First a moment on, opening the debounce's window a frame on, and those within the window as it closes, as gcsim
+  // The first a moment on, opening the debounce's window a frame on, and those within the window as it closes, as gcsim
   // Estimates the game's debounce
   const gainFanfare = ({ kitEffectState }: KitContext, combatant: Combatant, healthShare: number): void => {
     const { characterId, constellationCount } = combatant;
@@ -477,7 +477,7 @@ export const createFurinaKitBehaviour = ({
   const strike = { hits: [{ onStrike: openArkheHit }] };
   return {
     // The burst ends the Fanfare of the one before it as it is cast, and its own starts before its hit lands, so the
-    // Hit Takes Constellation 1's
+    // Hit takes Constellation 1's
     burst: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const { characterId, constellationCount } = combatant;
@@ -507,7 +507,7 @@ export const createFurinaKitBehaviour = ({
       },
     },
     // The charged attack turns her Arkhe a frame after its hit, and while Salon Solitaire lasts the other Arkhe's
-    // Summons Take over from the ones out
+    // Summons take over from the ones out
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         scheduleKitTask(kitEffectState, combatant.characterId, arkheSwitchSeconds, (tick) => {
@@ -523,7 +523,7 @@ export const createFurinaKitBehaviour = ({
       startEndlessWaltz(context, combatant, event);
     },
     // Salon Solitaire takes the Arkhe she holds as it starts: in Ousia its bubble and the Salon members, who come out
-    // As The bubble strikes, and in Pneuma the Singer of Many Waters, after its delay. It lasts the Salon's seconds
+    // As the bubble strikes, and in Pneuma the Singer of Many Waters, after its delay. It lasts the Salon's seconds
     // From then
     skill: {
       onStart: (context) => {

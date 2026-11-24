@@ -136,7 +136,7 @@ describe(computeReadTopics, () => {
   });
 
   // A JSON array list names each value it lists, as the IN list does, so a write to a room the list does not name wakes
-  // No Read of it, even one that reads the column the write changes. A write to a listed room wakes the read through
+  // No read of it, even one that reads the column the write changes. A write to a listed room wakes the read through
   // Its topic
   test("a write to a room a JSON array list does not name wakes no read of it", async () => {
     expect.hasAssertions();
@@ -178,7 +178,7 @@ describe(computeReadTopics, () => {
   });
 
   // Under an `or` a list is a condition like any other, so a branch that names no scope of its own leaves its table
-  // `table-wide`
+  // Table-wide
   test("a JSON array list under an or with a branch that names no scope leaves its table table-wide", async () => {
     expect.hasAssertions();
 
@@ -194,8 +194,8 @@ describe(computeReadTopics, () => {
   });
 
   // A table a read joins is named table-wide, whatever the read selects of it. The join's rows would be a narrower
-  // Name, But a row a WHERE clause removes from the join is not among them, and a change that restores that row would
-  // Not Reach the read. The bookmark dock's resources are the case: a resource in the recycle bin leaves its bookmark
+  // Name, but a row a WHERE clause removes from the join is not among them, and a change that restores that row would
+  // Not reach the read. The bookmark dock's resources are the case: a resource in the recycle bin leaves its bookmark
   // Out
   test("a table a read joins is named table-wide, whichever of its join keys the read selects", async () => {
     expect.hasAssertions();
@@ -218,8 +218,8 @@ describe(computeReadTopics, () => {
   });
 
   // A subquery's equality names the rows of its own table that it selects, and no more. The read it sits in still
-  // Depends On every membership of the table it selects from, where no equality of its own names the table, so the
-  // Table is named Table-wide there as well as by the subquery's equality
+  // Depends on every membership of the table it selects from, where no equality of its own names the table, so the
+  // Table is named table-wide there as well as by the subquery's equality
   test("a table a read selects from is named table-wide when only a subquery of it names a scope equality", async () => {
     expect.hasAssertions();
 
@@ -247,7 +247,7 @@ describe(computeReadTopics, () => {
   });
 
   // A read that filters a derived table's column narrows the derived table's rows, which the subquery's own level
-  // Names, But the read's own reference to the same table is still read whole, so the filter does not name that table
+  // Names, but the read's own reference to the same table is still read whole, so the filter does not name that table
   // Here
   test("a filter on a derived table's column does not name the outer read's own reference to the same table", async () => {
     expect.hasAssertions();
@@ -290,7 +290,7 @@ describe(computeReadTopics, () => {
   });
 
   // A table a read joins on a scope column is named by the values its join key takes in the rows the read returns, when
-  // The Read selects that key. A row of another value is not in the read, so a write to it does not wake the read
+  // The read selects that key. A row of another value is not in the read, so a write to it does not wake the read
   test("a table a read joins is named by the join key values its rows return", async () => {
     expect.hasAssertions();
 
@@ -335,8 +335,8 @@ describe(computeReadTopics, () => {
   });
 
   // A left join keeps the partner's rows whatever its joined table's own condition in the ON clause removes, so the
-  // Condition Does not stop the joined table being named by the join key values the rows return. The viewer's own
-  // Membership is left Out of the join by its condition, yet its room is still returned, and each returned room names
+  // Condition does not stop the joined table being named by the join key values the rows return. The viewer's own
+  // Membership is left out of the join by its condition, yet its room is still returned, and each returned room names
   // Its memberships
   test("a table a left join's ON clause filters is named by the join key values its rows return", async () => {
     expect.hasAssertions();
@@ -366,7 +366,7 @@ describe(computeReadTopics, () => {
   });
 
   // A left join on an aliased table is read as the join it is. The alias is written as the joined table itself, not as
-  // A name, So the join's kind and its relation are read from that table, as they are for an unaliased one
+  // A name, so the join's kind and its relation are read from that table, as they are for an unaliased one
   test("a table a left join reaches under an alias is named by the join key values its rows return", async () => {
     expect.hasAssertions();
 
@@ -386,7 +386,7 @@ describe(computeReadTopics, () => {
   });
 
   // A join's condition compares the joined table's key on either side, and the other join's condition that compares it
-  // On its Right side is no filter of the table. The memberships are named by their room, though a second left join
+  // On its right side is no filter of the table. The memberships are named by their room, though a second left join
   // Reads them too
   test("a table another left join compares its key against on the right is named by the join key values its rows return", async () => {
     expect.hasAssertions();
@@ -414,8 +414,8 @@ describe(computeReadTopics, () => {
   });
 
   // A filter names an occurrence of a table, not the table. The viewer's own membership is filtered by `isHidden`, and
-  // Scoped by Its user. The other memberships of each room are read through a subquery whose left join null-fills them.
-  // The chain that Would name them by the room the outer rows return runs through that null-filled join, so they are
+  // Scoped by its user. The other memberships of each room are read through a subquery whose left join null-fills them.
+  // The chain that would name them by the room the outer rows return runs through that null-filled join, so they are
   // Read table-wide
   test("a filter on one occurrence of a table leaves another occurrence of it table-wide when only a null-filled chain names it", async () => {
     expect.hasAssertions();
@@ -466,9 +466,9 @@ describe(computeReadTopics, () => {
     );
   });
 
-  // An inner join whose condition references a table occurrence drops the rows of that occurrence that no match
-  // Reaches. A left Join names the occurrence by the rows that do not reach it, so the inner join makes the occurrence
-  // `table-wide`
+  // An inner join whose condition references a table occurrence drops the rows of that occurrence that no
+  // Match reaches. A left join names the occurrence by the rows that do not reach it, so the inner join makes the
+  // Occurrence table-wide
   test("a table an inner join after a left join references is named table-wide, though the left join names it", async () => {
     expect.hasAssertions();
 
@@ -492,7 +492,7 @@ describe(computeReadTopics, () => {
   });
 
   // An inner join whose condition references only other occurrences drops no row of the table a left join names, so the
-  // Table Is still named by the rows that join returns
+  // Table is still named by the rows that join returns
   test("a table a left join names stays named by its rows when an inner join references only other occurrences", async () => {
     expect.hasAssertions();
 
@@ -517,8 +517,8 @@ describe(computeReadTopics, () => {
   });
 
   // A table is named by its rows only where each occurrence of it is. A second occurrence of the same table that a left
-  // Join Names by no value the read selects is unnamed, so the table stays table-wide, though the first occurrence is
-  // `row-named`
+  // Join names by no value the read selects is unnamed, so the table stays table-wide, though the first occurrence is
+  // Row-named
   test("a table with one row-named occurrence and one unnamed occurrence keeps its table-wide topic", async () => {
     expect.hasAssertions();
 
@@ -539,7 +539,7 @@ describe(computeReadTopics, () => {
   });
 
   // The equality is on the table a left join keeps, so the join returns that table's rows of every value, and a write
-  // Of another Value brings a row no scope topic reaches. The table is read whole, not by the scope the ON clause tests
+  // Of another value brings a row no scope topic reaches. The table is read whole, not by the scope the ON clause tests
   test("an equality on the preserved side of a left join's ON clause names no scope", async () => {
     expect.hasAssertions();
 
@@ -583,7 +583,7 @@ describe(computeReadTopics, () => {
   });
 
   // An equality under an or names no scope: a row the other branch holds is not its value's, so the rows the read
-  // Returns are Not all of the scope's, and the table is named table-wide
+  // Returns are not all of the scope's, and the table is named table-wide
   test("an equality under an or names no scope, whichever branch the other one is", async () => {
     expect.hasAssertions();
 
@@ -600,7 +600,7 @@ describe(computeReadTopics, () => {
   });
 
   // A column a read selects or groups by removes no row, so selecting the joined table's key does not filter it. The
-  // Table Is still named by the join key values its rows return, which is the room each returned membership belongs to
+  // Table is still named by the join key values its rows return, which is the room each returned membership belongs to
   test("a column a read selects from a left-joined table does not filter it out of the join's rows", async () => {
     expect.hasAssertions();
 
@@ -620,7 +620,7 @@ describe(computeReadTopics, () => {
   });
 
   // A condition on the table a left join brings, in its WHERE clause, removes the rows the join keeps, which turns the
-  // Join Inner. A write that makes a removed row pass brings back a row no returned row carries, so the table is read
+  // Join inner. A write that makes a removed row pass brings back a row no returned row carries, so the table is read
   // Whole
   test("a table a left join's WHERE clause filters is named table-wide", async () => {
     expect.hasAssertions();
@@ -641,7 +641,7 @@ describe(computeReadTopics, () => {
   });
 
   // An `in` over the table itself keeps the rows its subquery names, since each of the subquery's values is held by a
-  // Row the Read returns. So each returned row names the value it holds, and the subquery's own equality names the
+  // Row the read returns. So each returned row names the value it holds, and the subquery's own equality names the
   // Viewer's rows
   test("a table an in over itself tests is named by each value its subquery's rows hold", async () => {
     expect.hasAssertions();
@@ -681,7 +681,7 @@ describe(computeReadTopics, () => {
   });
 
   // A table an `in` over another table tests stays table-wide, though its returned rows carry the column. A room the
-  // Viewer is In may hold no emoji yet, and the first emoji it gets carries a value no returned row names, so the outer
+  // Viewer is in may hold no emoji yet, and the first emoji it gets carries a value no returned row names, so the outer
   // Table is read whole
   test("a table an in over another table tests stays table-wide, though its returned rows carry the column", async () => {
     expect.hasAssertions();
@@ -709,9 +709,9 @@ describe(computeReadTopics, () => {
   });
 
   // A left join's key borrows the value a read selects only from an occurrence the join equates it to. The wanderer's
-  // Room is Cross-joined and no equality ties it to the neighbour's room, so the neighbour's memberships are not named
-  // By the wanderer's Rooms. A newcomer who takes a membership in the viewer's room changes what the read returns, so
-  // The neighbour's table is read Whole, and the write wakes the read
+  // Room is cross-joined and no equality ties it to the neighbour's room, so the neighbour's memberships are not named
+  // By the wanderer's rooms. A newcomer who takes a membership in the viewer's room changes what the read returns, so
+  // The neighbour's table is read whole, and the write wakes the read
   test("a left join's key borrows no selected value from an occurrence it is not equated to", async () => {
     expect.hasAssertions();
 
@@ -754,8 +754,8 @@ describe(computeReadTopics, () => {
   });
 
   // A chain of equalities reaches the candidate through an intermediate that a left join null-fills, so the partner's
-  // Room is Only equated to the candidate's room in the rows the intermediate matches. In the row for another partner
-  // Room the Intermediate is null and the partner's room is not the candidate's, so the membership of that room is
+  // Room is only equated to the candidate's room in the rows the intermediate matches. In the row for another partner
+  // Room the intermediate is null and the partner's room is not the candidate's, so the membership of that room is
   // Named by the wrong room
   test("a left join's key borrows no selected value through a chain that a left join null-fills", async () => {
     expect.hasAssertions();
@@ -795,9 +795,9 @@ describe(computeReadTopics, () => {
   });
 
   // A self-join's partner is named by the partner key the read selects for it. Here the select returns only the
-  // Partner's own Room, which is the named side's value, not the viewer's: a room the viewer is alone in has no
-  // Partner, so its partner row Carries a null room and names nothing. The partner's table is then read whole, since no
-  // Returned row names the rows a new Partner would bring
+  // Partner's own room, which is the named side's value, not the viewer's: a room the viewer is alone in has no
+  // Partner, so its partner row carries a null room and names nothing. The partner's table is then read whole, since no
+  // Returned row names the rows a new partner would bring
   test("a self-join's partner is named table-wide when the select returns only the partner's own room", async () => {
     expect.hasAssertions();
 
@@ -825,9 +825,9 @@ describe(computeReadTopics, () => {
     );
   });
 
-  // The same self-join, where the select also returns the viewer's own room under a name the partner's room does not
-  // Take. The Viewer's room is the partner's key, every viewer row returns it, and so the partner is named by each room
-  // The viewer holds
+  // The same self-join, where the select also returns the viewer's own room under a name the partner's room does
+  // Not take. The viewer's room is the partner's key, every viewer row returns it, and so the partner is named by each
+  // Room the viewer holds
   test("a self-join's partner is named by the viewer's rooms when the select returns them too", async () => {
     expect.hasAssertions();
 
@@ -857,7 +857,7 @@ describe(computeReadTopics, () => {
   });
 
   // A table-wide read names the table's rows, which an insert or a delete changes, and each column it reads, which an
-  // Update Of that column changes. An update names the columns it sets, not the rows, so a read of other columns is not
+  // Update of that column changes. An update names the columns it sets, not the rows, so a read of other columns is not
   // Woken by it
   const tableName = getTableName(usersToRoomsInMessage);
 
@@ -932,7 +932,7 @@ describe(computeReadTopics, () => {
   });
 
   // A category's deletion sets each member's category to null, which changes a column a member's scope does not name. A
-  // Read Scoped by that member and selecting the category is woken through the member's scope topic, which the delete
+  // Read scoped by that member and selecting the category is woken through the member's scope topic, which the delete
   // Names
   test("a delete that sets a member's category to null wakes a read scoped by that member that selects the category", async () => {
     expect.hasAssertions();

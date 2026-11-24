@@ -34,7 +34,7 @@ export const useUserSettingsStore = defineStore("message/user/settings", () => {
 
     writeOptimistic(
       // The row the write answers with is the one row it changed, and settings are untracked by the header, so the
-      // Answer Confirms the entry by the table's own key
+      // Answer confirms the entry by the table's own key
       async () => createRowResponse(userSettingsTable, await $trpc.user.upsertUserSettings.mutate(input)),
       { entry: getUpdateUserSettingsEntry(userId.value, input), onError: createErrorAlert },
     );

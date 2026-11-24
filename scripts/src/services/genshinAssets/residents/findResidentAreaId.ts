@@ -5,9 +5,9 @@ import { findNearest } from "#src/services/genshinAssets/shared/findNearest";
 import { checkIsOutlineInReach, findAreaAt, findLandmarkArea } from "genshin-world";
 
 // The catalogue area a resident belongs to: the area whose outline holds its place, since the game's records give a
-// Place And no area. A place no outline holds belongs to the area of its nearest landmark only when that area's outline
-// Is in Reach of the place, the distance the world loads an area at, and to none otherwise. A resident no area is in
-// Reach of is Left out, rather than filed under a guess
+// Place and no area. A place no outline holds belongs to the area of its nearest landmark only when that area's outline
+// Is in reach of the place, the distance the world loads an area at, and to none otherwise. A resident no area is in
+// Reach of is left out, rather than filed under a guess
 export const findResidentAreaId = (
   catalogue: Catalogue,
   landmarks: readonly { areaId: string; position: GroundPoint }[],

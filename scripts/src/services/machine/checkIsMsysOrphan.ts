@@ -5,8 +5,8 @@ import type { MsysProcess } from "#src/models/machine/MsysProcess";
 const MSYS_INIT_PROCESS_ID = 1;
 
 // An MSYS process is judged by its MSYS parent, since its Win32 parent may be a short-lived intermediate that has
-// Exited While the MSYS parent, the bash running the pipeline, still lives. It is an orphan when that MSYS parent is
-// Gone or is Init, and its Win32 parent is no live process outside MSYS
+// Exited while the MSYS parent, the bash running the pipeline, still lives. It is an orphan when that MSYS parent is
+// Gone or is init, and its Win32 parent is no live process outside MSYS
 export const checkIsMsysOrphan = (
   { parentProcessId }: MachineProcess,
   { parentProcessId: msysParentProcessId }: MsysProcess,

@@ -8,7 +8,7 @@ import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 // Kurage's Oath, Kokomi's Elemental Skill, which deals no DMG: her active character gains Hydro Application, and a
-// Bake-Kurage Is summoned
+// Bake-Kurage is summoned
 export const kurageOath: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

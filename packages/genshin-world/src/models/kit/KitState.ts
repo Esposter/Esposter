@@ -28,7 +28,7 @@ export interface KitState {
   skillChainCount: number;
   skillChainSeconds: number;
   // The seconds the skill has been held, zero once let go and capped at its maximum, and the seconds it was held when
-  // It was Let go this step, or when it reached its maximum
+  // It was let go this step, or when it reached its maximum
   skillHeldSeconds: number;
   skillReleasedSeconds: number;
   // The seconds the body has sprinted without pause, which a passive spends as it goes on

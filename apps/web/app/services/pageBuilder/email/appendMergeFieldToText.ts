@@ -3,7 +3,7 @@ import type { JSONContent } from "@tiptap/core";
 import { toMergeField } from "#src/services/emailEditor/toMergeField";
 
 // A text's rich text with a merge field's token after its last words, in the last paragraph, set off by a space when
-// The Words do not already end in one. A text with no paragraph gets one holding the token, so a drop always lands in
+// The words do not already end in one. A text with no paragraph gets one holding the token, so a drop always lands in
 // The text it was dropped on
 export const appendMergeFieldToText = (text: JSONContent, columnName: string): JSONContent => {
   const paragraphs = text.content ?? [];

@@ -5,7 +5,7 @@ import { RESIN_PARAM_CONST_NAME } from "#src/services/genshinAssets/stats/consta
 import { resinParamSchema } from "genshin-world";
 
 // The Original Resin constants the game's constant table holds in its one row, in the order the row gives them: the
-// Refill Cap, the regeneration cap, the minutes a point regenerates in, the Original Resin a Primogem refill restores,
+// Refill cap, the regeneration cap, the minutes a point regenerates in, the Original Resin a Primogem refill restores,
 // And the Primogems each refill of a day costs. The record is checked against the World's schema as it is built
 export const getResinParam = (): ResinParam => {
   const [refillCap, regenerationCap, regenerationMinutes, primogemRestore, refillPrices] =

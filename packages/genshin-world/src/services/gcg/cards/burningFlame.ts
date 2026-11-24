@@ -6,7 +6,7 @@ import { GCG_BURNING_FLAME_MAX_USAGES } from "#src/services/gcg/constants";
 const BURNING_FLAME_DAMAGE = 1;
 
 // Burning Flame: at the end phase it deals one Pyro DMG to the opposing active character and spends a usage, for one
-// Usage Each further Burning reaction adds a usage, up to two
+// Usage each further Burning reaction adds a usage, up to two
 export const burningFlame: GcgCardModule = {
   initialUsages: 1,
   maxUsages: GCG_BURNING_FLAME_MAX_USAGES,

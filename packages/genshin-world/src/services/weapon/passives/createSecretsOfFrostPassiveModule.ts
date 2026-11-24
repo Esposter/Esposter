@@ -11,7 +11,7 @@ const RADIANCE_MAXIMUM_MEMBERS = 4;
 
 // Secrets of Frost (Winter's Heavy Heart) at its rank: each Cryo member of the party, the wielder counted, adds the
 // Rank's Elemental Mastery and each Electro member the rank's ATK percentage. In Radiance, read as the status the
-// Polestar Field gives its members, Each Cryo or Electro member adds the Radiance Elemental Mastery and Stellar Glimmer
+// Polestar Field gives its members, each Cryo or Electro member adds the Radiance Elemental Mastery and Stellar Glimmer
 // DMG instead, with no ATK, up to four of them
 export const createSecretsOfFrostPassiveModule = (params: number[]): PassiveModule => {
   const elementalMasteryPerCryo = takeOne(params, 0);

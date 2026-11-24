@@ -12,15 +12,16 @@ import { readVoiceDevice } from "genshin-persona/src/services/readVoiceDevice.ts
 import { readVoiceRuntime } from "genshin-persona/src/services/readVoiceRuntime.ts";
 import { assert, beforeAll, describe, test } from "vitest";
 
-// The plugin's synthesizer timed through the runner's own copy of the engine's runtime, which is why the bench Lives
-// Here rather than beside the unit: the plugin never declares the runtime, for the reason the reference Selection lives
-// In `scripts` (openspec/specs/infra/claude-interface/reference-selection/design.md). What it measures is the host —
+// The plugin's synthesizer timed through the runner's own copy of the engine's runtime, which is why the bench
+// Lives here rather than beside the unit: the plugin never declares the runtime, for the reason the reference
+// Selection lives in `scripts` (openspec/specs/infra/claude-interface/reference-selection/design.md). What it measures
+// Is the host —
 // The GPU's driver and the CPU's cores — over the engine's weights, so it is off once its numbers are committed and
 // Flipped on when the engine, its variants or the device ladder change: set `IS_ENABLED`, point
 // "VOICE_MATCH_MODELS_DIRECTORY" at weights already fetched, run `pnpm bench` in this package, commit the artifact,
 // Flip it back — with no resident synthesizer speaking, since the two share the GPU and every core and a reply read
-// Under a run spreads its samples wider than any regression. A CI runner has neither the weights nor a GPU, so it Skips
-// There whatever the switch says
+// Under a run spreads its samples wider than any regression. A CI runner has neither the weights nor a GPU, so it
+// Skips there whatever the switch says
 const IS_CI = Boolean(process.env.CI);
 const IS_ENABLED = false;
 const isBenchable = IS_ENABLED && !IS_CI;

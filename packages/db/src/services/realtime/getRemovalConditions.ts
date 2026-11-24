@@ -21,8 +21,8 @@ type RemovalCondition = SQL | undefined;
 // Conditions. A child's rows are those whose key holds a referenced value of a removed parent row, so a condition reads
 // Only its parents' conditions, and no value an earlier statement returned: the reads can sit in one batch before the
 // Delete they precede. A self-reference (a reply's parent is a post) is the one cycle, and its rows are the closure of
-// The Rows the other keys remove, which a recursive subquery reads. A cycle through other tables is not walked, so its
-// Tables Have no condition and are not read
+// The rows the other keys remove, which a recursive subquery reads. A cycle through other tables is not walked, so its
+// Tables have no condition and are not read
 export const getRemovalConditions = (database: Database, table: Table, where: SQL | undefined) => {
   const rootName = getTableName(table);
   const { removedTables } = walkCascade(table);

@@ -188,7 +188,7 @@ export const DerivedAssetComponentArrangementMap: Record<DerivedAssetComponent, 
   [DerivedAssetComponent.Weapons]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.WindrestPeak]: EMPTY_ARRANGEMENT,
   // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold. Its
-  // Plants Are the families it fits, the grass and the trees, each beside the game's placements of it
+  // Plants are the families it fits, the grass and the trees, each beside the game's placements of it
   [DerivedAssetComponent.Windrise]: { explainedOffsets: {}, families: WindrisePlantArrangementFamilies, ratios: {} },
   [DerivedAssetComponent.WindwailHighland]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.YashioriIsland]: EMPTY_ARRANGEMENT,

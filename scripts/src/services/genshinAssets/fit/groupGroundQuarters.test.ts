@@ -38,7 +38,7 @@ describe(groupGroundQuarters, () => {
     expect.hasAssertions();
 
     // Quarter 2, the fewer-sampled of quarter 3's siblings, holds alone, and its pair with 3 misses. The pair of 1 and
-    // 3 Holds, so 1 joins 3 and quarter 2 keeps its own result
+    // 3 holds, so 1 joins 3 and quarter 2 keeps its own result
     const fits = [createFit(1500, true), createFit(5000, true), createFit(2000, true), createFit(432, false)];
     const pairFit = createFit(5432, true);
     const groups = await groupGroundQuarters(fits, 1024, (indices) =>

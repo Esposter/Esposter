@@ -13,8 +13,8 @@ const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as c
 const AGE_FORMATTER = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 // Before the edit: the question, when another session's record calls for one. After it: the edit recorded
-// A declaration, not an arrow: the hooks module's bundle
-// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
+/* oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported
+   helper that takes `$` only into a function declaration */
 export async function ward(
   $: EngineInterface,
   path: string,

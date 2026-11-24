@@ -23,7 +23,7 @@ describe("messageModelMessageForwardSendButton", () => {
   const destinationRoomId = v7();
 
   // The forward is out until the server answers it, and the dialog that sent it can close meanwhile. A dialog opened
-  // Again Over the same panel must not send the forward a second time while the first is still out
+  // Again over the same panel must not send the forward a second time while the first is still out
   test("a Send pressed in a reopened dialog does not send a forward the server has yet to answer", async () => {
     expect.hasAssertions();
 

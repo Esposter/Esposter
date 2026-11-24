@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // The game a resident's week offers in the weekly guest challenge, the Genius Invokation level it is offered at, and
-// The Lucky Coins and Player EXP the week's reward gives at that level
+// The Lucky coins and Player EXP the week's reward gives at that level
 export interface ResidentWeekGame {
   gameId: number;
   gcgLevel: number;

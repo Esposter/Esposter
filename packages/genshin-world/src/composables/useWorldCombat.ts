@@ -44,9 +44,9 @@ import { createSeededRandom, createStamina, LocomotionState } from "genshin-engi
 import { storeToRefs } from "pinia";
 import { computed, shallowReactive, watch } from "vue";
 
-// The combat of the party the player fields, and the world's combat state the kit on the Field steps in, with the
-// Enemies the world holds and the kit's effects on the team. A defeat places its drops and is a Doing the quests count,
-// And a team that falls opens the game over screen, whose revive the host places
+// The combat of the party the player fields, and the world's combat state the kit on the
+// Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is
+// A doing the quests count, and a team that falls opens the game over screen, whose revive the host places
 export const useWorldCombat = ({
   enemyTables,
   onPartyDown,
@@ -83,11 +83,11 @@ export const useWorldCombat = ({
   // How the character on the field moves, its body type's
   const locomotion = computed(() => getCharacterLocomotion(activeCharacterId.value, statTables.characterDataMap));
   // Each character's combat once its kit is built, a character whose kit has not arrived having none yet. The character
-  // On The field's combat and its party member are what the HUD's Health and skills read
+  // On the field's combat and its party member are what the HUD's Health and skills read
   const characterIdCombatantMap = computed(() => {
     const combatantMap = new Map<number, Combatant>();
     // The deployed team's elements, read off its members' records and the Traveler's element, which the resonances and
-    // Each Member's combat read, and the resonances hold on every member
+    // Each member's combat read, and the resonances hold on every member
     const { characterDataMap } = statTables;
     const deployedElements = getDeployedElements(deployedCharacterIds.value, characterDataMap, travelerElement.value);
     const elementalResonances = getElementalResonances(
@@ -129,8 +129,8 @@ export const useWorldCombat = ({
     if (isFull) stamina.refill();
   });
   // The world's combat state, which the character on the field steps into: it starts with the active character standing
-  // At The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's
-  // One Seeded source, so a session's rolls repeat
+  // At the origin, its enemies are written in as their Camps load and as they die, and its random source is the world's
+  // One seeded source, so a session's rolls repeat
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -196,7 +196,7 @@ export const useWorldCombat = ({
     kitContext.kitEffectState.effects = [];
   };
   // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them, and the defeat is a
-  // Doing The quests in progress count
+  // Doing the quests in progress count
   const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
     placeWorldDrops(
       { id: getSpawnKey(enemy.campId, enemy.id), position: enemy.position },
@@ -213,13 +213,13 @@ export const useWorldCombat = ({
     if (checkIsPartyDown(party)) onPartyDown();
   };
   // The game over screen's revive: the team comes back at the share the game brings it back with, and is jumped to
-  // Where The host places it
+  // Where the host places it
   const reviveFallenParty = () => {
     reviveParty(party);
     onPartyRevived();
   };
   // An enemy's strike lands on the taunt it struck, or on the character on the field through the team's shields, and a
-  // Team It fells respawns
+  // Team it fells respawns
   const strikeParty = (enemy: Enemy, taunt?: KitTaunt) => {
     const combatant = activeCombatant.value;
     if (!combatant) return;
@@ -256,7 +256,7 @@ export const useWorldCombat = ({
     respawnParty();
   };
   // The sheer cold's damage lands on the character on the field the way a boar's charge does, through the team's
-  // Shields, And a team it fells respawns
+  // Shields, and a team it fells respawns
   const coldDamageParty = (damage: number) => {
     const combatant = activeCombatant.value;
     if (!combatant) return;

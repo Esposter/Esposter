@@ -4,7 +4,7 @@ import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 
 // Gives `exp` Companionship EXP whole to each of the characters named but the Traveler, a fallen one included. The
-// Total Never passes the top Friendship Level's EXP, so a character already there gains nothing
+// Total never passes the top Friendship Level's EXP, so a character already there gains nothing
 export const gainCompanionshipExp = (
   characters: readonly Character[],
   characterIds: readonly number[],

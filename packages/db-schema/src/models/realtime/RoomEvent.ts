@@ -29,7 +29,7 @@ const updateMessageEventSchema = z.object({
   type: z.literal(RealtimeEventType.UpdateMessage),
 });
 // A reaction is one row, and its update carries the whole row with its version, so a client replaces the reaction it
-// Holds By its key, and a removal is an update too: the row is sent with no reactor
+// Holds by its key, and a removal is an update too: the row is sent with no reactor
 const createEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.CreateEmoji) });
 const updateEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.UpdateEmoji) });
 const adminActionEventSchema = z.object({

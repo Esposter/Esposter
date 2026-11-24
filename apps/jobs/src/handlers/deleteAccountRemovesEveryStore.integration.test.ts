@@ -140,7 +140,7 @@ describe(deleteAccountHandler, () => {
     const ownedProgramId = v7();
     const otherResourceId = v7();
     // The owned room's attachment is charged to the account. The member room holds the account's attachment, and the
-    // Other Account's attachment beside it
+    // Other account's attachment beside it
     const ownedRoomAttachmentBlobName = `${ownedRoomId}/${v7()}`;
     const memberRoomAttachmentBlobName = `${memberRoomId}/${v7()}`;
     const otherMemberRoomAttachmentBlobName = `${memberRoomId}/${v7()}`;
@@ -151,8 +151,8 @@ describe(deleteAccountHandler, () => {
     const genshinAssetsBucket = getBucket(StorageBucket.GenshinAssets);
 
     // The rows go in one batch, which runs them in order, so each foreign key is written before the row that names it.
-    // The Objects are written beside it: the version's row is written after its object, since the row records the size
-    // That Object was stored at
+    // The objects are written beside it: the version's row is written after its object, since the row records the size
+    // That object was stored at
     const [, contentSize, versionSize] = await Promise.all([
       mockDb.batch([
         mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]),
@@ -170,14 +170,14 @@ describe(deleteAccountHandler, () => {
           { roomId: memberRoomId, userId: otherUserId },
         ]),
         // The moderation record names the account in a room the account does not own. Its target is a foreign key with
-        // A Cascade, so it goes with the account's row. The account's own action against the other account, in the same
-        // Room, Is kept with its author blanked
+        // A cascade, so it goes with the account's row. The account's own action against the other account, in the same
+        // Room, is kept with its author blanked
         mockDb.insert(moderationLogsInMessage).values([
           { actorUserId: otherUserId, roomId: memberRoomId, targetUserId: userId, type: AdminActionType.Warn },
           { actorUserId: userId, roomId: memberRoomId, targetUserId: otherUserId, type: AdminActionType.Warn },
         ]),
         // The owned resource with its working copy and activity trail, the owned survey and program with a row each
-        // That Belongs to it, and a resource the account does not own with the account's own activity on it, which is
+        // That belongs to it, and a resource the account does not own with the account's own activity on it, which is
         // Kept
         mockDb.insert(resourcesInResource).values([
           { id: ownedResourceId, name, type: ResourceType.Note, userId },
@@ -311,9 +311,9 @@ describe(deleteAccountHandler, () => {
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
 
-    // The rooms are asked in the order the sweep runs. The owned room is emptied, and sends no notice of its own. The
-    // Member room drops the account's messages and reactions, then the account, and tells its online members The
-    // Leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins
+    // The rooms are asked in the order the sweep runs. The owned room is emptied, and sends no notice of its own.
+    // The member room drops the account's messages and reactions, then the account, and tells its online members
+    // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins
     // Exactly
     const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([

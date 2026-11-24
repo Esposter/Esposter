@@ -8,8 +8,8 @@ import { QuestKind, questSchema } from "genshin-world";
 
 // A Reputation delivery request as the dump files it: a sub quest of a world quest, whose items a giving row of its own
 // Id asks for, either exactly or by the items of the groups it names. Its one step collects them, the objective the
-// Dump's Obtain-item condition maps to, and no talk offers it, since the keeper's request board does. Its rewards are
-// Its world Quest's, which the Reputation levels pay
+// Dump's obtain-item condition maps to, and no talk offers it, since the keeper's request board does. Its rewards are
+// Its world quest's, which the Reputation levels pay
 export const readReputationRequestQuest = ({
   giving,
   groupItemIds,

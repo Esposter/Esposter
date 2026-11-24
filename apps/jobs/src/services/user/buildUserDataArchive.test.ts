@@ -198,7 +198,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // The room the person is in is asked for their reactions, then for their messages twice: once to write them, and
-    // Once More to write their attachments. The room they left is never asked
+    // Once more to write their attachments. The room they left is never asked
     expect(roomObjectCalls).toStrictEqual([
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
@@ -342,7 +342,7 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(likesInPost).values({ postId: post.id, userId: otherUserId, value: -1 });
 
     // The person's reaction in a room they are a member of is the room's row for that emoji on that message, which
-    // Another Member shares as a reactor
+    // Another member shares as a reactor
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await joinRoom(room.id, userId, otherUserId);
     roomObjectReplies.set("exportUserReactions", () => [{ emojiTag, messageId, userIds: [userId, otherUserId] }]);
@@ -482,7 +482,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the
-    // Time It was last published, all as the row stores them
+    // Time it was last published, all as the row stores them
     expect(getEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
       createdAt: resourcePublication.createdAt,
       publishedAt: resourcePublication.publishedAt,
@@ -779,7 +779,7 @@ describe(buildUserDataArchive, () => {
     await joinRoom(room.id, userId, otherUserId);
     const pagedMessages = Array.from({ length: OBJECT_READ_PAGE_LIMIT + 1 }, (_value, index) => `${message}${index}`);
     // The room's ids run from one, so a page's last id is its size. The room answers each page as the ids after the
-    // Cursor It is sent, up to the limit
+    // Cursor it is sent, up to the limit
     const pagedRoomMessages = pagedMessages.map((pagedMessage, index) =>
       createRoomMessage({ id: index + 1, message: pagedMessage, userId }),
     );
@@ -794,7 +794,7 @@ describe(buildUserDataArchive, () => {
     const messages = jsonDateParse<RoomMessage[]>(messagesText);
 
     // The reactions are asked first, then the messages are read in two pages, the first from no cursor and the second
-    // From the Last id of the first, and the attachments are read through the same two pages again
+    // From the last id of the first, and the attachments are read through the same two pages again
     expect(roomObjectCalls).toStrictEqual([
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],

@@ -9,8 +9,8 @@ export const useCursorPaginationData = <TItem>(): ReturnType<typeof useCursorPag
 } => {
   // Vue's UnwrapRef over the generic item type is not provably the item type the ref holds, so the deep ref's type is
   // Named here
-  // UnwrapRef<Page<TItem>> over a generic TItem is deferred, so the compiler cannot
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- prove it equal to the Page<TItem> the ref holds
+  /* oxlint-disable-next-line typescript/no-unsafe-type-assertion -- UnwrapRef<Page<TItem>> over a generic TItem is
+     deferred, so the compiler cannot prove it equal to the Page<TItem> the ref holds */
   const cursorPaginationData = ref(createEmptyPage<TItem>()) as Ref<Page<TItem>>;
   const isLoaded = ref(false);
   // One slice, so binding is the identity — the key that could drift does not exist here. It still hands one out

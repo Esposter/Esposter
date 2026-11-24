@@ -79,7 +79,7 @@ import { and, eq } from "drizzle-orm";
 
 export const userRouter = router({
   // The upload lands in R2 without the bucket binding, so the listing it changes is woken by this confirm, which the
-  // Client sends Once the upload has landed. The cap is still checked by the listing, as it was before
+  // Client sends once the upload has landed. The cap is still checked by the listing, as it was before
   confirmCallBackgroundUpload: standardAuthedProcedure
     .input(callBackgroundSlotSchema)
     .mutation<void>(({ ctx, input: { slot } }) => {
@@ -110,7 +110,7 @@ export const userRouter = router({
       await ctx.db.update(usersInAuth).set({ deletionRequestedAt: new Date() }).where(eq(usersInAuth.id, userId));
       const data: DeleteAccountQueueMessage = { userId };
       // Fatal, unlike the best-effort publishes after a write: this message is the only thing that starts the sweep, so
-      // A Send that only logged its failure would leave a marked account that nothing sweeps
+      // A send that only logged its failure would leave a marked account that nothing sweeps
       await getResultAsync(() => getJobQueue(QueueJob.DeleteAccount).send(data)).match(noop, (error) => {
         throw error;
       });
@@ -309,7 +309,7 @@ export const userRouter = router({
   // Itself
   updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<UserInAuth>(async ({ ctx, input }) => {
     // A save naming the profile image checks the bytes it holds, since the presigned PUT bounds none of them: an object
-    // Over the Cap is deleted and the save refused, so the row never names an image the cap does not allow
+    // Over the cap is deleted and the save refused, so the row never names an image the cap does not allow
     const profileImageBlobName = getUserProfileImageBlobName(ctx.user.id);
     if (
       input.image === getPublicAssetUrl(StorageBucket.PublicUserAssets, profileImageBlobName) &&

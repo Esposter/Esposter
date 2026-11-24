@@ -55,9 +55,9 @@ import { createPinia } from "pinia";
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
 // Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
 // `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks. A tool sets the screen's
-// Props As it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on, and
-// Renders a Segment of the Login's music to score it. `&windowLeft=<px>` mounts the screen's box that many pixels from
-// The left edge, As a frame that pillarboxes the game window draws it, 1920 pixels wide
+// Props as it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on, and
+// Renders a segment of the Login's music to score it. `&windowLeft=<px>` mounts the screen's box that many pixels from
+// The left edge, as a frame that pillarboxes the game window draws it, 1920 pixels wide
 window.addEventListener("error", ({ error }) => {
   recordError(error);
 });
@@ -80,7 +80,7 @@ const screen = await loadScreen(name);
 const root = window.document.querySelector("#app");
 const sceneContext = shallowRef<SceneContext>();
 // The window the character packs download in, which the app runs in the opening before the world loads, so the load
-// Bench Leaves it out of the world's requests
+// Bench leaves it out of the world's requests
 let packWindow: { from: number; to: number } | undefined;
 // A world screen draws its characters from the packs the cache holds, so the page fills the cache before the screen
 // Mounts. A download that fails throws, so the page records it and the screen never mounts with no character in it
@@ -107,7 +107,7 @@ if (screen && root) {
   if ("gameText" in props && typeof language === "string" && checkIsGameLanguage(language))
     props.gameText = await GameLanguageGameTextLoaderMap[language]();
   // A frame that pillarboxes the game window draws the screen from that window's left edge: its usual 1920 by 1080
-  // Canvas, At a unit of one, as the game draws its interface at the window's height. The frame clips what overflows
+  // Canvas, at a unit of one, as the game draws its interface at the window's height. The frame clips what overflows
   // Its right
   const windowLeft = searchParameters.get("windowLeft");
   const backdrop = searchParameters.get("backdrop");
@@ -118,7 +118,7 @@ if (screen && root) {
       imageRendering: "pixelated",
     });
     // A backdrop that is the reference's own frame is the world as the game shows it behind the screen, its blur and
-    // Wash Already in it, so a screen's own world blur and wash are not drawn over it a second time
+    // Wash already in it, so a screen's own world blur and wash are not drawn over it a second time
     if (searchParameters.has("backdropBlurred"))
       window.document.head.append(
         Object.assign(window.document.createElement("style"), { textContent: ".world-backdrop { display: none; }" }),

@@ -51,7 +51,7 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
 
       const manifest = parseBlueprintManifest(await file.text());
       // A file read after the owner moved to another resource, or reopened this one, is an import for the opening it
-      // Was Picked under, and must not fill the one open now
+      // Was picked under, and must not fill the one open now
       if (!isStillOpen()) return;
       // The safety net an import takes before it replaces the draft, so the saved manifest it replaces stays in version
       // History whenever the owner saves the import. A failed revision leaves the Editor's text as it was

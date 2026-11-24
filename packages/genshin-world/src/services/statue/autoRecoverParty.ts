@@ -7,7 +7,7 @@ import { reviveParty } from "#src/services/party/reviveParty";
 
 // Auto-recover near a statue: the deployed team's fallen revive at the share the game revives them with, for nothing,
 // And then every member under the threshold is healed up to it from the pool, the first slots first, so a pool that
-// Runs Short leaves the last slots where they stand. Returns the pool as it is after
+// Runs short leaves the last slots where they stand. Returns the pool as it is after
 export const autoRecoverParty = (
   party: Party,
   power: RestorativePower,

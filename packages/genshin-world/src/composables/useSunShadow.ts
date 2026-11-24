@@ -8,9 +8,9 @@ import { checkSunTurned, FOLLOW_CAMERA_PIVOT_SHARE } from "genshin-engine";
 import { Matrix4, Vector3 } from "three";
 
 // The sun's cascades are drawn only when something they show has turned: the sun, the character's body or an enemy.
-// They Are centred on the camera's pivot above the body, not the view, so an orbit draws nothing, and a walk draws the
-// Nearest Two once the body has moved, and each once its anchor has moved a step of its map. Each frame that decides
-// It, after the Sky has turned the sun and the origin has shifted
+// They are centred on the camera's pivot above the body, not the view, so an orbit draws nothing, and a walk draws the
+// Nearest two once the body has moved, and each once its anchor has moved a step of its map. Each frame that decides
+// It, after the sky has turned the sun and the origin has shifted
 export const useSunShadow = ({
   enemyMap,
   getCharacterBody,
@@ -38,9 +38,10 @@ export const useSunShadow = ({
       checkSunTurned(drawnSunDirection, sunDirection) || checkEnemiesMoved(enemyMap, drawnEnemyPoses);
     const isMoved = isSunOrEnemyMoved || isBodyMoved;
     // Set on the frame the cascades are drawn and cleared on every other: three leaves a shadow's flag standing after
-    // It Draws whenever its depth map's version has moved meanwhile, so a flag left to the shadow would draw it every
-    // Frame. The cascades' node sets their flag again when its anchor has moved a texel, after this and before the
-    // Frame draws. The body casts only into the nearest cascades, the others' slices lying past the reach of its shadow
+    // It draws whenever its depth map's version has moved meanwhile, so a flag left to the shadow would draw it
+    // Every frame. the cascades' node sets their flag again when its anchor has moved a texel, after this and before
+    // The frame draws. the body casts only into the nearest cascades, the others' slices lying past the reach of its
+    // Shadow
     light.shadow.needsUpdate = isMoved;
     for (const [index, { shadow }] of cascadedShadowNode.lights.entries())
       if (shadow) shadow.needsUpdate = isSunOrEnemyMoved || (isBodyMoved && index < BODY_SHADOW_CASCADES);

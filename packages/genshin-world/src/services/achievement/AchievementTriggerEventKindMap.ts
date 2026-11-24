@@ -4,9 +4,9 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { AchievementTriggerEventKind } from "#src/models/achievement/AchievementTriggerEventKind";
 
 // The game's trigger types the world watches, each with the kind of doing it counts, the parameter slot its target id
-// Or Ids sit in, and whether its event advances the count by the event's quantity. An AND trigger names one id or a
-// List, Every one of which must be counted, and an OR trigger a list; either counts each named id's doing once more. A
-// Trigger Type not listed here is not watched yet, so its achievements never move
+// Or ids sit in, and whether its event advances the count by the event's quantity. An AND trigger names one id or a
+// List, every one of which must be counted, and an OR trigger a list; either counts each named id's doing once more. A
+// Trigger type not listed here is not watched yet, so its achievements never move
 export const AchievementTriggerEventKindMap: Readonly<Record<string, AchievementTriggerWatch>> = {
   [AchievementTriggerEventKind.TriggerBattleForMonsterDieAnd]: {
     countsQuantity: false,

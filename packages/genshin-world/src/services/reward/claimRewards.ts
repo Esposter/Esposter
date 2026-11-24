@@ -9,8 +9,8 @@ import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The bag and the wallet after the items of the given rewards are claimed, each item given as a pick up gives it:
-// Wallet Currencies into the wallet and the rest into the bag. Undefined where an item has no room left in the bag,
-// Since a claim Is refused whole and neither the bag nor the wallet changes
+// Wallet currencies into the wallet and the rest into the bag. Undefined where an item has no room left in the bag,
+// Since a claim is refused whole and neither the bag nor the wallet changes
 export const claimRewards = (
   givenRewardIds: readonly number[],
   rewardItems: Readonly<Record<string, DroppedItem[]>>,

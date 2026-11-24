@@ -4,7 +4,7 @@ import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // The Frostbearing Tree's place in a region, as the fit writes it into the region's slice: an id the map's point gives
-// It, And the ground point it stands at
+// It, and the ground point it stands at
 export interface FrostbearingTreePlace {
   id: string;
   position: GroundPoint;

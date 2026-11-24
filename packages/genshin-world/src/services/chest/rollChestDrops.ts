@@ -14,8 +14,8 @@ import { drawRangeCount } from "#src/services/reward/drawRangeCount";
 import { takeRandom } from "@esposter/shared";
 
 // One artifact of the sets a pool names, rolled as the game drops one. Its set is drawn evenly among those the
-// Reliquary Tables hold, its slot evenly among the five and its stars evenly among those its set gives, and the
-// Artifact is rolled At them (see drawArtifactPiece). The wiki gives no chance of the set, the slot or the stars, so
+// Reliquary tables hold, its slot evenly among the five and its stars evenly among those its set gives, and the
+// Artifact is rolled at them (see drawArtifactPiece). The wiki gives no chance of the set, the slot or the stars, so
 // Those draws are provisional
 const rollArtifactDrop = (
   artifactSets: readonly ReliquarySetData[],
@@ -32,7 +32,7 @@ const rollArtifactDrop = (
 };
 
 // What one opening of a chest of a kind pours out: one weapon picked from its pool when the pool names any, one
-// Artifact Of the sets its pool names, and each material's count rolled within its range, a material that rolls none
+// Artifact of the sets its pool names, and each material's count rolled within its range, a material that rolls none
 // Left out
 export const rollChestDrops = (
   kind: ChestKind,

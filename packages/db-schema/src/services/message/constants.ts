@@ -3,9 +3,9 @@ import type { PageSort } from "#src/models/pagination/PageSort";
 import { SortOrder } from "#src/models/pagination/SortOrder";
 import { ZERO_UUID } from "@esposter/shared";
 
-// Reserved user id used as the actor for automatic moderation actions (word-filter Warn/Timeout). It is the all-zero v7
-// UUID, which passes user-id validation as a v7 and is given to no real user, since a user's id is Minted at random,
-// And it lets the audit log render "AutoMod" instead of resolving a member display name.
+// Reserved user id used as the actor for automatic moderation actions (word-filter Warn/Timeout).
+// It is the all-zero v7 UUID, which passes user-id validation as a v7 and is given to no real user, since a user's id
+// Is minted at random, and it lets the audit log render "AutoMod" instead of resolving a member display name.
 export const AUTOMOD_USER_ID = ZERO_UUID;
 // Caps the follow list read so resolving thread roots reads at most this many messages for a single request.
 export const MAX_FOLLOWED_THREADS = 50;
@@ -27,7 +27,7 @@ export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;
 // The order a room's message list reads in, newest first by the room's own sequence id, which is unique within the room
 export const ROOM_MESSAGE_PAGE_SORT = { keys: ["id"], order: SortOrder.Desc } as const satisfies PageSort<"id">;
 // A room's search with text, in the order its rank puts its matches: each room's rank turn about, then the room, then
-// The Message id. The rank is the position a room's own bm25 order gives the match, since scores are not comparable
+// The message id. The rank is the position a room's own bm25 order gives the match, since scores are not comparable
 // Across rooms
 export const ROOM_SEARCH_RANK_PAGE_SORT = {
   keys: ["rank", "roomId", "id"],

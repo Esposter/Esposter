@@ -6,7 +6,7 @@ const GENDER_READ_REGEX = /\b(?<name>[A-Za-z]\w*)\[c\.gender\]/gu;
 
 // The constants of a gcsim package as its form reads them, where the package is the Traveler's element files a form
 // Builds with its gender: each constant read at `[c.gender]` keeps a value for each gender, so it is taken at the
-// Form's, On the line that gender's value is set. A package no form builds this way keeps its constants as they are
+// Form's, on the line that gender's value is set. A package no form builds this way keeps its constants as they are
 export const selectGcsimGenderConstants = (
   goSources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,

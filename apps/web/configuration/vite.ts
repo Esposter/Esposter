@@ -35,7 +35,7 @@ export const vite: NonNullable<NuxtConfig["vite"]> = {
       "three/examples/jsm/inspector/Inspector.js",
     ],
     // JSON Forms' Ajv is CommonJS and the schema forms only load in a dialog, so it is named through its importer,
-    // Whose Own copy it is
+    // Whose own copy it is
     include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats"],
   },
 };

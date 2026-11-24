@@ -7,7 +7,7 @@ import { toTriggerParameters } from "#src/services/genshinAssets/achievements/to
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One achievement from its row and the reward row it pays, or undefined for an achievement the game no longer offers.
-// The Reward's Primogems are the only item an achievement pays, so a row whose reward is missing from the table is
+// The reward's Primogems are the only item an achievement pays, so a row whose reward is missing from the table is
 // Refused
 export const toAchievement = (
   row: ExcelAchievementRow,

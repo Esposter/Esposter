@@ -13,7 +13,7 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 
 // Measured: gcsim v2.47.2 (MIT) lisa/skill.go, each press applies a stack of Conductive to the enemy it hits, up to 3,
 // And the stacks have no duration in gcsim. Lisa's charged attacks apply one too from her A1 (lisa/asc.go), and the
-// Hold Consumes the stacks.
+// Hold consumes the stacks.
 const CONDUCTIVE_STATUS_ID = "conductive";
 const CONDUCTIVE_STACK: EnemyStatus = {
   damageTakenBonus: 0,
@@ -24,15 +24,15 @@ const CONDUCTIVE_STACK: EnemyStatus = {
 };
 
 // Measured: gcsim v2.47.2 (MIT) lisa/asc.go, from Ascension 4 each opponent Lightning Rose hits has its DEF decreased
-// By Its record's defense reduction for the record's seconds, as the dump's Lisa passive text gives them. Each
-// Discharge Refreshes the status rather than stacking it
+// By its record's defense reduction for the record's seconds, as the dump's Lisa passive text gives them. Each
+// Discharge refreshes the status rather than stacking it
 const LIGHTNING_ROSE_ASCENSION = 4;
 
 export const LISA_CHARACTER_ID = 10_000_006;
 
 // Measured: gcsim v2.47.2 (MIT) lisa/cons.go. Constellation 6: when Lisa takes the field, each opponent within 5 metres
-// Of Her gains three stacks of Conductive, once every 5 seconds
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/cons.go`
+// Of her gains three stacks of Conductive, once every 5 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/cons.go
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_COOLDOWN_ID = "lisa-constellation-6-cooldown";
 const CONSTELLATION_6_COOLDOWN_SECONDS = 5;
@@ -47,11 +47,11 @@ const CONSTELLATION_1_MAX_ENERGY = 10;
 
 // Lisa's behaviour: Violet Arc's press gives each enemy it strikes a stack of Conductive, as her charged attack does
 // From Ascension 1, and its hold strikes each enemy at the multiplier and poise of its stacks, consuming them.
-// Lightning Rose Is a summon whose discharges land from her body, and from Ascension 4 each discharge lowers the DEF of
-// The enemy it hits. Constellations 1 and 6 are built. Constellation 2 needs a DEF buff for as long as the hold lasts,
-// Which the skill holds do Not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning
-// Rose, which the kit does not read Measured: gcsim v2.47.2 (MIT) lisa/burst.go lines 60 to 62: the discharges are
-// Queued from the cast, the first at 119 Frames and one every 30 frames after it, thirty in all. The record's discharge
+// Lightning Rose is a summon whose discharges land from her body, and from Ascension 4 each discharge lowers the DEF of
+// The enemy it hits. constellations 1 and 6 are built. Constellation 2 needs a DEF buff for as long as the hold lasts,
+// Which the skill holds do not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning
+// Rose, which the kit does not read measured: gcsim v2.47.2 (MIT) lisa/burst.go lines 60 to 62: the discharges are
+// Queued from the cast, the first at 119 frames and one every 30 frames after it, thirty in all. The record's discharge
 // Hitmarks are that schedule
 export const createLisaKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const lightningRoseDefenseStatus: EnemyStatus = {

@@ -206,7 +206,7 @@ interface Props {
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of
-  // Its Area comes
+  // Its area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The animals in the world, each stood at its place or fallen, which the session holds
   wildlifeList: Wildlife[];
@@ -264,8 +264,8 @@ const emit = defineEmits<{
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
 // Within reach of the origin
-// The parity page reaches
-// oxlint-disable-next-line no-restricted-globals -- a published scene's own parts with no prop for a host to see
+/* oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop
+   for a host to see */
 const witness = inject(SceneWitnessKey, null);
 const checkIsWitnessed = (family: WindrisePartFamily): boolean => witness?.families.value.includes(family) ?? false;
 const hiddenLandmarkKinds = computed(() => [
@@ -281,7 +281,7 @@ const drawnCharacterAvatar = useCharacterAvatar(sceneExportBaseUrl, () => active
 });
 const { baseGrounds, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
 // The ground's quadtree, which the terrain streams and the grass reads, bounded by the heights Windrise's ground and
-// Each Region's ground laid over it stand between, and the records each terrain worker computes its tiles over
+// Each region's ground laid over it stand between, and the records each terrain worker computes its tiles over
 const terrainOptions = reactive(createWindriseTerrainOptions(baseGrounds, []));
 const terrainWorkerGround: TerrainWorkerGround = { baseGrounds, groundLayers, surfaces, waterLevel: water.level };
 // The trees the landmarks grow and the plants' impostor is baked from
@@ -316,7 +316,7 @@ const { isRegionDataSettled, regionChestMap, regionDataMap, regionGroundMap } = 
   catalogue,
 );
 // The game's own exports of Windrise and of each region in reach, where the host serves them, lit as our stand-ins are
-// And Drawn in their place: the leaf cards in the wind as our crowns are, and every other part in the toon material
+// And drawn in their place: the leaf cards in the wind as our crowns are, and every other part in the toon material
 const sceneExportMap = useSceneExports(
   sceneExportBaseUrl,
   () => [WINDRISE_SCENE_EXPORT_COMPONENT, ...regionDataMap.keys()],
@@ -342,9 +342,9 @@ fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
 // The sight's mask: the drops, the residents and the enemies, drawn in the colours the sight lights them, which the
-// Post Chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is
-// Drawn While no screen gives one. Its stand-ins are placed in the world's own coordinates, so the scene is offset by
-// The floating Origin as the world's group is, and the reach's origin is read against the camera the same way
+// Post chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is
+// Drawn while no screen gives one. Its stand-ins are placed in the world's own coordinates, so the scene is offset by
+// The floating origin as the world's group is, and the reach's origin is read against the camera the same way
 const sightScene = new Scene();
 const sightUniforms = createSightUniforms();
 const { onBeforeRender } = useLoop();
@@ -396,7 +396,7 @@ const sightTrailEnds = useSightTrailEnds({
 // The characters whose model has failed to read, which the field draws from the Traveler's pack in their place
 const unreadableCharacterIds = shallowRef<ReadonlySet<number>>(new Set());
 // The reader of the pack that draws the character on the field: the Traveler's for a character the index lists no pack
-// For Or whose model has failed to read
+// For or whose model has failed to read
 const characterPackReader = computed(() =>
   getCharacterPackReader(characterPackReaders, activeCharacterId, unreadableCharacterIds.value),
 );

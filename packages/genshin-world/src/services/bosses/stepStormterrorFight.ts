@@ -7,7 +7,7 @@ import { STORMTERROR_PHASES } from "#src/services/bosses/constants";
 export const STORMTERROR_FIGHT_START: StormterrorFight = { phase: 1, phaseElapsedSeconds: 0, totalShieldBreaks: 0 };
 
 // Steps the fight by the time that passed and the shield breaks since, moving it on from each phase that is over. Each
-// Phase it Leaves names the transition attack Dvalin performs as it ends, in the order they happen
+// Phase it leaves names the transition attack Dvalin performs as it ends, in the order they happen
 export const stepStormterrorFight = (
   fight: StormterrorFight,
   elapsedSeconds: number,

@@ -3,8 +3,8 @@ import type { PanzoomElement } from "#src/models/panzoom/PanzoomElement";
 
 import { getOrCreate } from "#src/util/map/getOrCreate";
 
-// Writes one property of an element's inline style. The value the property held before its first write is recorded, So
-// `restorePanzoomStyles` can put it back, and a later write does not replace that record. A destroyed panzoom writes
+// Writes one property of an element's inline style. The value the property held before its first write is recorded,
+// So restorePanzoomStyles can put it back, and a later write does not replace that record. A destroyed panzoom writes
 // Nothing
 export const writePanzoomStyle = (
   { isDestroyed, styles }: PanzoomContext,

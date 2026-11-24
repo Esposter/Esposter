@@ -3,7 +3,7 @@ import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEnc
 import type { Wallet } from "#src/models/inventory/Wallet";
 
 // What a conversion of a Long-Term Encounter Point leaves: the daily points with the point added, the long-term points
-// With It taken out, and the wallet with the Original Resin spent
+// With it taken out, and the wallet with the Original Resin spent
 export interface LongTermEncounterPointConversion {
   encounterPoints: EncounterPoints;
   longTermEncounterPoints: LongTermEncounterPoints;

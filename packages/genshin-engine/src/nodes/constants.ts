@@ -22,15 +22,15 @@ export const WET_DARKENING = 0.35;
 export const WET_SHEEN_POWER = 32;
 export const WET_SHEEN_STRENGTH = 0.25;
 // The Gaussian blur sigmas, in texels, that a surface detail is split into octave bands by: each band is the energy of
-// The Difference between two neighbouring blurs, from the texel itself up to the coarsest sigma
+// The difference between two neighbouring blurs, from the texel itself up to the coarsest sigma
 export const SURFACE_DETAIL_BAND_SIGMAS: number[] = [1, 2, 4, 8];
 // The texel frequencies the surface detail octaves are drawn at, a cycle per this many texels: one a factor of three
 // Coarser than the next, which spreads the octaves across the bands and the variance so their responses are independent
 export const SURFACE_OCTAVE_TEXEL_FREQUENCIES: number[] = [0.9, 0.3, 0.1, 0.033, 0.011];
 // The statistics one unit amplitude of each octave's noise draws, as the detail's own statistics read them: the four
 // Bands finest first, then the variance, per octave in `SURFACE_OCTAVE_TEXEL_FREQUENCIES`' order. Measured by sampling
-// The Engine's `mx_noise_float` at each frequency (`computeMxPerlinNoise`), so the amplitudes solve against the energy
-// The Render draws rather than a sinusoid's
+// The engine's `mx_noise_float` at each frequency (`computeMxPerlinNoise`), so the amplitudes solve against the energy
+// The render draws rather than a sinusoid's
 export const SURFACE_OCTAVE_RESPONSES: number[][] = [
   [0.0529, 0.00115, 0.00013, 0.0000385, 0.0618],
   [0.0162, 0.00896, 0.00235, 0.000251, 0.0605],
@@ -39,11 +39,11 @@ export const SURFACE_OCTAVE_RESPONSES: number[][] = [
   [0.000000419, 0.00000155, 0.0000169, 0.000188, 0.0379],
 ];
 // The user data keys a mesh carries its own surface and fade under, which a material shared by many meshes reads as
-// Each is Drawn (`setObjectSurface`, `setObjectFade`)
+// Each is drawn (`setObjectSurface`, `setObjectFade`)
 export const OBJECT_SURFACE_KEY = "surface";
 export const OBJECT_FADE_KEY = "fade";
 // How wide a leaf card's pointed oval is at its middle, a share of the card's half-width (`createLeafShapeNode`), and
-// So The share of its card the oval keeps: its half-width falls as one less the square of the height along the card,
-// Which Keeps two thirds of the width's share
+// So the share of its card the oval keeps: its half-width falls as one less the square of the height along the card,
+// Which keeps two thirds of the width's share
 export const LEAF_SHAPE_WIDTH = 0.8;
 export const LEAF_SHAPE_KEPT_SHARE: number = (LEAF_SHAPE_WIDTH * 2) / 3;

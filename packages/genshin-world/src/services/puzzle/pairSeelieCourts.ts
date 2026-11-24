@@ -6,7 +6,7 @@ import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { computeGroundDistance } from "genshin-engine";
 
 // Each court led by one Seelie, the closest pairs first and no court or Seelie taken twice. The candidate pairs are
-// Taken In order of their distance, so a Seelie with no court left, or a court with no Seelie left, is left unpaired
+// Taken in order of their distance, so a Seelie with no court left, or a court with no Seelie left, is left unpaired
 export const pairSeelieCourts = (seelies: readonly PuzzlePlace[], courts: readonly GroundPoint[]): Seelie[] => {
   const candidates = courts
     .flatMap((court, courtIndex) =>

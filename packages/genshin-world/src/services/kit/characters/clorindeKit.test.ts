@@ -39,7 +39,7 @@ const createClorindeParty = (bondOfLifeShare: number, healthShare = 1): Party =>
 };
 
 // Hunter's Vigil's press starts Night Vigil, with the given effects beside it, then the stance action that `pickAction`
-// Gives Is started in `party`, and the Summons that action cast are returned
+// Gives is started in `party`, and the Summons that action cast are returned
 const castNightVigilAction = (
   party: Party,
   pickAction: (stance: Combatant) => KitAction | undefined,

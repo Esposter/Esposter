@@ -16,7 +16,7 @@ import { computed } from "vue";
 
 // The goods a shop screen draws, each with the name it is drawn under, its costs named by the currency or item they are
 // Paid in, the count the player holds of its item, and the limit it has left and the refresh it reads from the moment
-// The Clock gives
+// The clock gives
 export const useShopGoodCells = ({
   getCostName,
   getGameText,

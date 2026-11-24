@@ -4,9 +4,9 @@ import { Element } from "#src/models/Element";
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
 
 // The Experimental Field Generator's attacks from its wiki page, in the order the page lists them. The Gravity
-// Reduction Field is not given a move, as it covers the arena in a gravity field that waits on the scene export.
-// Gravity Ripple and The three Enhanced Attacks are used only while that field is active, a phase not yet run. The
-// Stygian Onslaught variants Are not modelled. Each move's windup and recovery are the common enemies' and are
+// Reduction field is not given a move, as it covers the arena in a gravity field that waits on the scene export.
+// Gravity Ripple and the three Enhanced Attacks are used only while that field is active, a phase not yet run. The
+// Stygian Onslaught variants are not modelled. Each move's windup and recovery are the common enemies' and are
 // PROVISIONAL until measured
 export const EXPERIMENTAL_FIELD_GENERATOR_MOVES: BossMove[] = [
   { atkPercent: 50, name: "Laser Sweep", recoverySeconds: ENEMY_RECOVERY_SECONDS, windupSeconds: ENEMY_WINDUP_SECONDS },

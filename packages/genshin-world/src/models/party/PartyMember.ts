@@ -6,10 +6,10 @@ import type { ElementalState } from "#src/models/combat/ElementalState";
 // Again
 export interface PartyMember {
   // The share of its Max HP the Bond of Life it carries has cleared since a grant last landed on an empty one, which
-  // The Passives that a clear raises read, none when none has cleared
+  // The passives that a clear raises read, none when none has cleared
   bondOfLifeClearedShare: number;
-  // The Bond of Life it carries, as a share of its Max HP, which a heal takes down before it restores the HP, none when
-  // None. Runtime-only, so a reloaded team carries none
+  // The Bond of Life it carries, as a share of its Max HP, which a heal takes down before it restores the HP, none
+  // When none. runtime-only, so a reloaded team carries none
   bondOfLifeShare: number;
   burstCooldownSeconds: number;
   // Its elements on it, moved on each step and never saved, so a team reloaded holds none

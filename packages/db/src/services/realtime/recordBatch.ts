@@ -9,8 +9,8 @@ import { answerReturned, widenUnreturnedWrite } from "#src/services/realtime/wid
 import { noop } from "@esposter/shared";
 
 // `batch` runs the statements it is handed without awaiting them, so each one is recorded when the batch is made. A
-// Write That needs reads before it runs has them placed ahead of it in the same batch, and each statement's rows and
-// Its reads' Rows are handed to its record once the batch resolves. The batch resolves to the results of its own
+// Write that needs reads before it runs has them placed ahead of it in the same batch, and each statement's rows and
+// Its reads' rows are handed to its record once the batch resolves. The batch resolves to the results of its own
 // Statements alone
 export const recordBatch =
   (recorder: Recorder) =>

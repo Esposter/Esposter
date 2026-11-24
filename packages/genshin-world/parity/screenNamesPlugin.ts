@@ -5,9 +5,9 @@ import { existsSync, readdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 
 // The screens on the parity page are named in Node, where the configuration package's root loads, and handed to the
-// Page as a Virtual module: the page itself cannot import that root, which reaches Node's file system. A screen is the
-// `Index.vue` beside Each `Index.fixture.ts`, keyed by its path under `/src/components` and named the way the
-// Components barrel names every Component (`getComponentName`), so a lazy or unreferenced directory is named too
+// Page as a virtual module: the page itself cannot import that root, which reaches Node's file system. A screen is the
+// `Index.vue` beside each `Index.fixture.ts`, keyed by its path under `/src/components` and named the way the
+// Components barrel names every component (`getComponentName`), so a lazy or unreferenced directory is named too
 const VIRTUAL_ID = "virtual:parity-screen-names";
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
 const COMPONENT_FILE_NAME = "Index.vue";

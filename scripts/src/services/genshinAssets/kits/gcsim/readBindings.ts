@@ -7,7 +7,7 @@ const COMPOUND_OPERATOR_PATTERN = GO_COMPOUND_ASSIGNMENT_OPERATORS.map((operator
 
 // The bindings and assignments of a name in a function's lines: each `name := expr`, `var name = expr` or `name =
 // Expr`, A `var name type` that gives it no expression, and each other place a name is bound, such as a range or a
-// Second Declaration, which gives no expression
+// Second declaration, which gives no expression
 export const readBindings = (lines: readonly string[], [start, end]: [number, number], name: string): GoBinding[] => {
   const bindings: GoBinding[] = [];
   const assignmentRegex = new RegExp(

@@ -10,7 +10,7 @@ import { readIndexedAssets } from "#src/services/recreation/animeStudio/readInde
 import { GameDataset } from "genshin-world";
 
 // Which held mesh each weapon row pairs with, from the weapon table and the held meshes the asset index names,
-// Published As one record by the row's id. The rows with none are counted in the notes
+// Published as one record by the row's id. The rows with none are counted in the notes
 export const fitWeaponMeshMap = async (): Promise<GameDataBuild> => {
   const assets = await readIndexedAssets(checkIsHeldWeaponMesh, GENSHIN_ANIMESTUDIO_OPTIONS);
   const meshNames = new Set(assets.map(({ name }) => name));

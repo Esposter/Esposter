@@ -15,9 +15,9 @@ const VALLEY_RITE_ODDS_ID = "echoesOfAnOfferingValleyRiteOdds";
 const VALLEY_RITE_COOLDOWN_ID = "echoesOfAnOfferingValleyRiteCooldown";
 
 // Echoes of an Offering. Its four-piece bonus gives a Normal Attack that lands a chance (the first param) to raise its
-// Own DMG By the second param of its wearer's ATK. Each check that fails while the wearer is on the field raises the
-// Next chance by the Fourth param. The Valley Rite clears the third param's seconds after it lands, and a check is made
-// At most once every fifth Param's seconds. The sixth param is unread
+// Own DMG by the second param of its wearer's ATK. Each check that fails while the wearer is on the field raises the
+// Next chance by the fourth param. The Valley Rite clears the third param's seconds after it lands, and a check is made
+// At most once every fifth param's seconds. The sixth param is unread
 export const createEchoesOfAnOfferingSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const chance = takeOne(bonus.params, 0);
   const attackShare = takeOne(bonus.params, 1);

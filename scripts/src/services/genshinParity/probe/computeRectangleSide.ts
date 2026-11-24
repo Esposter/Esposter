@@ -10,7 +10,7 @@ import { getMeanColour } from "#src/services/genshinParity/probe/getMeanColour";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
 
 // A rectangle's read from its RGB pixels, row by row: the mean colour and the ink of each row and column in whole
-// Units, The ink cut to samples, and the first strong step from each side to two decimals, none for a side with no step
+// Units, the ink cut to samples, and the first strong step from each side to two decimals, none for a side with no step
 export const computeRectangleSide = (pixels: Uint8Array, width: number, height: number): RectangleSide => {
   const luminance = getLuminanceGrid(pixels, width, height);
   const { columnInk, rowInk } = getInkProfiles(luminance, width, height);

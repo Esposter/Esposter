@@ -16,7 +16,7 @@ const formatReading = (value: number): string => (Number.isFinite(value) ? value
 const checkIsHeld = (values: number[]): boolean => values.every((value) => value < BLOOM_READING_GATE);
 
 // The ablation as a Markdown table: one row a structure at a measurement, its reading over each reference in ΔE and
-// Their Mean, and whether it holds the bloom's gate (`BLOOM_READING_GATE`)
+// Their mean, and whether it holds the bloom's gate (`BLOOM_READING_GATE`)
 export const buildBloomAblationTable = (rows: BloomAblationRow[]): string => {
   const referenceIds = [...new Set(rows.flatMap(({ readings }) => Object.keys(readings)))];
   const header = ["Prefilter", "Tap offset", "Blur", "Measured at", ...referenceIds, "Mean", "Holds"];

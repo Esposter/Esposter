@@ -7,7 +7,7 @@ import { InteractionKind } from "genshin-interface";
 
 // The offered viewpoints as activations on the ground beneath their places, each named by its own name in the reader's
 // Language. A viewpoint with no place in the map has no prompt. Provisional: the prompt is named by the viewpoint
-// Itself, Until the game's own prompt text for a viewpoint is read
+// Itself, until the game's own prompt text for a viewpoint is read
 export const computeViewpointInteractables = (
   viewpoints: readonly ArchiveViewpoint[],
   placeMap: ReadonlyMap<number, SceneGroupPlace>,

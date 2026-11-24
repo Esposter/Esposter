@@ -11,7 +11,7 @@ interface Props {
   // Why the confirm waits for the server, from the closed set; without one the dialog closes as its write is sent
   awaitedBecause?: AwaitedReason | undefined;
   // What confirming does, closing the dialog as it is called unless it names a reason to wait (useDialogAnswer). A
-  // Dialog Whose confirm submits a form leaves it to the form's own submit
+  // Dialog whose confirm submits a form leaves it to the form's own submit
   confirm?: (() => Promisable<unknown>) | undefined;
   // What confirming does, in the confirm variant: "Save". Absent when the dialog has nothing to confirm — a reference
   // Sheet. The whole actions row goes with it, cancel included: there is no pending change for cancel to abandon, and

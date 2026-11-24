@@ -3,8 +3,8 @@ import { AbyssBenedictionScope } from "#src/models/spiralAbyss/AbyssBenedictionS
 import { z } from "zod";
 
 // One Benediction a chamber's list offers: its id in the game's tower buff table, the weight the list draws it by, and
-// The Text hash of its description, which the game's name text holds. Its glyph and the span it lasts are absent where
-// The Published record does not carry them yet
+// The text hash of its description, which the game's name text holds. Its glyph and the span it lasts are absent where
+// The published record does not carry them yet
 export interface AbyssBenedictionChoice {
   descriptionTextHash: number;
   // The glyph its card draws in the diamond

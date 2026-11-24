@@ -5,7 +5,7 @@ import type { MjmlNode } from "mjml-blocks";
 import { getBlockPropValue } from "vue-block-editor-headless";
 
 // The background a block is drawn on: the background attribute it sets, read through the caller's reader, or else the
-// One it Inherits. A set attribute the reader cannot read is no background at all, so a text on it is unchecked rather
+// One it inherits. A set attribute the reader cannot read is no background at all, so a text on it is unchecked rather
 // Than checked
 export const getEmailBackground = (
   node: MjmlNode,

@@ -4,8 +4,8 @@ import type { WeaponData } from "genshin-world";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 
 // A weapon's passive from its skill affix's rows: its name by the first rank's text id, each refinement rank's
-// Description By text id and its numbers padded to the widest rank's last used place so every rank reads one width, and
-// The stats each Rank adds, which a wielder carries whatever its passive's conditions
+// Description by text id and its numbers padded to the widest rank's last used place so every rank reads one width, and
+// The stats each rank adds, which a wielder carries whatever its passive's conditions
 export const toWeaponPassive = (
   affixRows: ExcelEquipAffixRow[],
   notes: string[],

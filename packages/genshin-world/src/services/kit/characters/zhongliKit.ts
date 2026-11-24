@@ -25,14 +25,14 @@ import { takeOne } from "@esposter/shared";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/zhongli/stele.go
 const STELE_OFFSET = 3;
 // One Stone Stele stands at a time, as the wiki's Dominus Lapidis and gcsim v2.47.2 (MIT) zhongli/zhongli.go give it,
-// And Rock, the Backbone of Earth, from one constellation, lets 2 stand
-// `https://genshin-impact.fandom.com/wiki/Rock,_the_Backbone_of_Earth`
+// And rock, the Backbone of Earth, from one constellation, lets 2 stand
+// https://genshin-impact.fandom.com/wiki/Rock,_the_Backbone_of_Earth
 const STELE_COUNT = 1;
 const ROCK_THE_BACKBONE_OF_EARTH_CONSTELLATION = 1;
 const ROCK_THE_BACKBONE_OF_EARTH_STELE_COUNT = 2;
 // The Jade Shield cuts every Elemental RES and the Physical RES of the enemies it reaches by 20%, for 60 frames from
-// Each Cut, as gcsim v2.47.2 (MIT) zhongli/shield.go gives it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/zhongli/shield.go`
+// Each cut, as gcsim v2.47.2 (MIT) zhongli/shield.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/zhongli/shield.go
 const JADE_SHIELD_RESISTANCE_REDUCTION = 0.2;
 const JADE_SHIELD_STATUS: EnemyStatus = {
   damageTakenBonus: 0,
@@ -45,9 +45,9 @@ const JADE_SHIELD_STATUS: EnemyStatus = {
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/zhongli/burst.go
 const METEOR_OFFSET = 5;
 // Dominance of Earth, from Ascension 4, adds 1.39% of Zhongli's Max HP to the damage of his normal, charged and
-// Plunging Attacks, 1.9% to a Stone Stele's, its resonance's and the hold's, and 33% to Planet Befall's, as Additive
-// Base DMG Bonus, as the wiki's passive page and gcsim v2.47.2 (MIT) zhongli/asc.go give it
-// `https://genshin-impact.fandom.com/wiki/Dominance_of_Earth`
+// Plunging attacks, 1.9% to a Stone Stele's, its resonance's and the hold's, and 33% to Planet Befall's, as Additive
+// Base DMG bonus, as the wiki's passive page and gcsim v2.47.2 (MIT) zhongli/asc.go give it
+// https://genshin-impact.fandom.com/wiki/Dominance_of_Earth
 const DOMINANCE_OF_EARTH_ASCENSION = 4;
 const DOMINANCE_OF_EARTH_ATTACK_SHARE = 0.0139;
 const DOMINANCE_OF_EARTH_SKILL_SHARE = 0.019;
@@ -75,9 +75,9 @@ export const ZHONGLI_CHARACTER_ID = 10_000_030;
 
 // Zhongli's behaviour: Dominance of Earth's share of his Max HP on his attacks, steles, hold and meteor from Ascension
 // 4. Dominus Lapidis' press casts a Stone Stele ahead of him, replacing the newest once the most stand, and its hold
-// Casts One unless the most stand and its Jade Shield at its hitmark. Planet Befall casts its meteor ahead of him,
-// Wider from Four constellations, and from two a Jade Shield Constellation 6 needs the Jade Shield's damage converted
-// To HP for the current character, not built
+// Casts one unless the most stand and its Jade Shield at its hitmark. Planet Befall casts its meteor ahead of him,
+// Wider from four constellations, and from two a Jade Shield
+// Constellation 6 needs the Jade Shield's damage converted to HP for the current character, not built
 export const createZhongliKitBehaviour = ({
   kit,
   readHit,
@@ -107,8 +107,8 @@ export const createZhongliKitBehaviour = ({
     effect.combatant.characterId === characterId &&
     (effect.hits === pressSteleHits || effect.hits === holdSteleHits);
   // The Jade Shield: a Geo shield on the team of the table's flat health and share of Zhongli's Max HP, for its
-  // Seconds, And its RES cut, landing from a summon that follows the body on the field. A field ticking every step ends
-  // The summon Once the shield is spent or recast over
+  // Seconds, and its RES cut, landing from a summon that follows the body on the field. A field ticking every step ends
+  // The summon once the shield is spent or recast over
   const castJadeShield = (context: KitContext, body: KitBody, combatant: Combatant): void => {
     const { characterIdCombatantMap, kitEffectState, party } = context;
     const { characterId } = combatant;

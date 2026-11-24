@@ -9,7 +9,7 @@ export const MONDSTADT_GENERAL_GOODS_SHOP_TYPE = 1004;
 // The table
 export const GOOD_HUNTER_SHOP_TYPE = 1005;
 // The Fishing Associations' shops, one in each region, by the shop's number in the goods table and the stem of the
-// Dataset Its goods are published under. Each member's stock is matched to its shop by the names of its goods, from the
+// Dataset its goods are published under. Each member's stock is matched to its shop by the names of its goods, from the
 // Wiki's page
 export const FISHING_ASSOCIATION_SHOPS: readonly { shopType: number; stem: string }[] = [
   { shopType: 1064, stem: "mondstadtFishing" },
@@ -22,7 +22,7 @@ export const FISHING_ASSOCIATION_SHOPS: readonly { shopType: number; stem: strin
   { shopType: 1156, stem: "snezhnayaFishing" },
 ];
 // The seven Mondstadt vendors' shops, by the shop's number in the goods table and the stem of the dataset each vendor's
-// Goods Are published under. Each vendor's stock is matched to its shop by the names of its goods, read from the wiki's
+// Goods are published under. Each vendor's stock is matched to its shop by the names of its goods, read from the wiki's
 // Vendor pages
 export const MONDSTADT_VENDOR_SHOPS: readonly { shopType: number; stem: string }[] = [
   { shopType: 1011, stem: "mondstadtFlora" },
@@ -89,6 +89,6 @@ export const SOUVENIR_SIGIL_ITEM_IDS = {
   sumeru: 303,
 } as const;
 // The Card Shop, shop 217 in the shop table: its goods are filed under shop type 2000 and numbered from 217000, and
-// Every one Is priced in Lucky Coins, the card game's currency, which the bag holds as a material
+// Every one is priced in Lucky Coins, the card game's currency, which the bag holds as a material
 export const GCG_CARD_SHOP_TYPE = 2000;
 export const GCG_CARD_SHOP_ID = 217;

@@ -6,10 +6,10 @@ import { computeMedian } from "#src/services/recreation/statistics/computeMedian
 
 // A mesh's silhouette as a radial profile: its outermost radius about its vertical axis in each band of height and at
 // Each of `angleCount` sectors about it, which is what its outline against the sky shows, then runs of bands whose
-// Radii Hold within a share of themselves at every sector merged into one section. The axis is the median of its bands'
+// Radii hold within a share of themselves at every sector merged into one section. The axis is the median of its bands'
 // Footprints' middles, so a tower whose pivot sits off its middle keeps its own axis, and one whose brackets stand out
 // To one side at a few heights is not drawn toward them. A band with no vertex lies along a straight run, so it keeps
-// The Band below it
+// The band below it
 export const fitRadialProfile = (
   vertices: readonly (readonly [number, number, number])[],
   { angleCount, bandHeight, tolerance }: { angleCount: number; bandHeight: number; tolerance: number },

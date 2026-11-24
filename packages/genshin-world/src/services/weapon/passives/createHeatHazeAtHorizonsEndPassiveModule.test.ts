@@ -16,7 +16,7 @@ describe(createHeatHazeAtHorizonsEndPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant([{ attribute: Attribute.ElementalMastery, value: 100 }]);
   // Heat Haze at Horizon's End at its first rank: 52% of the wielder's Elemental Mastery as bonus ATK, and each
-  // Elemental Skill hit Adds 28% of it more for 10 seconds, up to three stacks
+  // Elemental Skill hit adds 28% of it more for 10 seconds, up to three stacks
   const passiveModule = createHeatHazeAtHorizonsEndPassiveModule([0.52, 0.28, 10, 0.3, 3]);
   const readAttackBonus = (effects: Parameters<NonNullable<typeof passiveModule.getPassiveBonuses>>[3]) =>
     passiveModule.getPassiveBonuses?.(wielder, 1, [], effects).find(({ attribute }) => attribute === Attribute.Attack)

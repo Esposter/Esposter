@@ -3,7 +3,7 @@ import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 
 // Whether `main` is an ancestor of `commit`, so a fast-forward of `main` to it can land. A window's end holds `main`
-// Only Once the queue's line has reached the commit that merged `main` in, so each window's end is asked, not the
+// Only once the queue's line has reached the commit that merged `main` in, so each window's end is asked, not the
 // Queue's tip
 export const checkIsMainAncestor = (commit: string, cwd?: string): boolean =>
   getResult(() => runGit(["merge-base", "--is-ancestor", REMOTE_MAIN_REF, commit], cwd)).match(

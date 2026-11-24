@@ -85,10 +85,10 @@ const readFamilyTriangles = async (
 };
 // The dominant wavelength of a family's normal detail read off its exported normal map, in metres, for a family whose
 // Frame resolves no lobe. The map's tilt angles are read over the texels the family's UV triangles cover, a lobe is
-// Found Through each high-pass box (`computeSurfaceLag`) and the one that holds across most boxes is kept
+// Found through each high-pass box (`computeSurfaceLag`) and the one that holds across most boxes is kept
 // (`chooseHeldLobe`), and A texel spans the family's metres per UV unit over the map's width (`computeMetresPerUv`). A
-// Family's map is the one its Materials reference most, since a triangle does not name the material it is drawn with.
-// None where the family's meshes Or map are not exported
+// Family's map is the one its materials reference most, since a triangle does not name the material it is drawn with.
+// None where the family's meshes or map are not exported
 export const readTextureWavelength = async ({
   assets,
   checkIsFamilyMesh,

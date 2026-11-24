@@ -6,12 +6,12 @@ import { movePanzoomGesture } from "#src/services/panzoom/movePanzoomGesture";
 import { startPanzoomGesture } from "#src/services/panzoom/startPanzoomGesture";
 
 // The target is an HTMLElement or an SVGElement, a union with no typed pointerdown overload, so its listener is handed
-// A plain Event. A pointer down is a PointerEvent, which the check names
+// A plain event. A pointer down is a PointerEvent, which the check names
 const checkIsPointerEvent = (event: Event): event is PointerEvent => "pointerId" in event;
 
-// Listens on the target for pointer downs and clicks, and on the element's document for the moves and the ends of its
-// Pointers. Every listener is held by one signal, so aborting it removes them all. The click after a drag is swallowed
-// At the target
+// Listens on the target for pointer downs and clicks, and on the element's document for the moves and the ends of
+// Its pointers. every listener is held by one signal, so aborting it removes them all. The click after a drag is
+// Swallowed at the target
 export const bindPanzoom = (context: PanzoomContext, signal: AbortSignal): void => {
   const target = getPanzoomTarget(context);
   const { ownerDocument } = context.element;

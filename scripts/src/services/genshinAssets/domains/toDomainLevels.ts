@@ -25,8 +25,8 @@ import { ALL_DAYS_OF_WEEK, DomainKind } from "genshin-world";
 // A Domain of Blessing's levels are its entrance point's dungeons, which are open every day. A Domain of Forgery's or
 // Mastery's level is a daily fight whose reward preview names its entry's materials: the day list holding one names the
 // Pair of days it is set for, and the entry is the one that holds it. A daily fight naming two entries is refused
-// Rather Than guessed, and a daily fight no entry names is not a domain's. Each level also carries the resin its tree
-// Costs to Claim, the tree's whole rewards, and its books or artifacts at the counts the wiki gives its Adventure Rank
+// Rather than guessed, and a daily fight no entry names is not a domain's. Each level also carries the resin its tree
+// Costs to claim, the tree's whole rewards, and its books or artifacts at the counts the wiki gives its Adventure Rank
 export const toDomainLevels = (
   entries: ExcelDungeonEntryRow[],
   dungeons: ExcelDungeonRow[],
@@ -92,9 +92,9 @@ export const toDomainLevels = (
     if (matches.some((other) => other.entry.id !== match.entry.id))
       throw new InvalidOperationError(Operation.Read, DUNGEON_TABLE_NAME, `names level ${dungeon.id} in two domains`);
     // A level naming one pair's material is open on that pair's days and pays that pair's books. One naming several
-    // Pairs' Materials is a Sunday, which every stage is open on, and pays its weekday counterpart's books: the same
-    // Tier's level on The first of its pairs' days, since the counterparts' books differ only by pair (PROVISIONAL: the
-    // Dump does not say which Of them a Sunday claim gives)
+    // Pairs' materials is a Sunday, which every stage is open on, and pays its weekday counterpart's books: the same
+    // Tier's level on the first of its pairs' days, since the counterparts' books differ only by pair (PROVISIONAL: the
+    // Dump does not say which of them a Sunday claim gives)
     const isOnePair = matches.every((other) => other.pair === match.pair);
     const counterpartPair = Math.min(...matches.map(({ pair }) => pair));
     const scheduledDaysOfWeek = isOnePair ? (DOMAIN_DAY_PAIRS[match.pair] ?? []) : SUNDAY_DAYS_OF_WEEK;

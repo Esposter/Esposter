@@ -22,9 +22,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // Mondstadt's Reputation from the dump: its levels with each level's reward, the requests of the groups its levels
-// Name, Its exploration thresholds, its weekly bounties with each difficulty's possible targets and the regions they
-// Spawn in, Its Reputation quests, and each reward split into the Reputation EXP and the items it also gives. Published
-// As one record of the reputation dataset, keyed by Mondstadt
+// Name, its exploration thresholds, its weekly bounties with each difficulty's possible targets and the regions they
+// Spawn in, its Reputation quests, and each reward split into the Reputation EXP and the items it also gives.
+// Published as one record of the reputation dataset, keyed by Mondstadt
 export const buildMondstadtReputation = (): Record<string, unknown> => {
   const city = readExcelTable<ExcelReputationCityRow>("ReputationCityExcelConfigData").find(
     ({ cityId }) => cityId === MONDSTADT_CITY_ID,
@@ -77,7 +77,7 @@ export const buildMondstadtReputation = (): Record<string, unknown> => {
       ),
     }));
   // Each difficulty's possible targets, the wiki's names resolved to monsters, and the hunting regions the bounties
-  // Name, Kept only where the dump places one, since a region it leaves unplaced spawns no target
+  // Name, kept only where the dump places one, since a region it leaves unplaced spawns no target
   const monsterNames = readMonsterNames();
   const bountyTargets = Object.entries(MONDSTADT_BOUNTY_TARGET_NAMES).map(([difficulty, names]) => ({
     difficulty,

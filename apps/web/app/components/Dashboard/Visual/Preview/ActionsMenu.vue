@@ -35,7 +35,7 @@ const [editVisualItem, deleteVisualItem] = getEditDeleteItems({
   },
 });
 // The visual's occasional actions, each a row the menu lists. Fit height is offered for a table, whose rows set its
-// Height, And for a group, whose height is the rows its grid takes. Move to is offered only where the visual has
+// Height, and for a group, whose height is the rows its grid takes. Move to is offered only where the visual has
 // Somewhere to go
 const items = computed<Item[]>(() => [
   editVisualItem,

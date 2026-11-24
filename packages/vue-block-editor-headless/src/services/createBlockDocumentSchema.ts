@@ -10,9 +10,10 @@ import { z } from "zod";
 
 // The document's content as the consumer's root content schema, which takes only the types the root accepts, so an
 // Agent's JSON Schema and the check agree. The root's props parse by the consumer's typed root schema, then one
-// Refinement runs over The parsed tree: ids unique across every slot, and the node count staying within the limit the
-// Consumer passes The refinement runs only on a parse that raised no issue, so the tree it walks is the schema's typed
-// Output and not a partial one
+// Refinement runs over the parsed tree: ids unique across every slot, and the node count staying within the limit the
+// Consumer passes
+// The refinement runs only on a parse that raised no issue, so the tree it walks is the schema's typed output and not a
+// Partial one
 export const createBlockDocumentSchema = <
   TNode extends BlockNode,
   TRootProps extends object,

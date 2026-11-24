@@ -2,7 +2,7 @@ import type { PageSort } from "@esposter/db-schema";
 import type { SQLWrapper } from "drizzle-orm";
 
 // A sort bound to the columns it compares: a table's own, or a subquery's for an order that is computed. The keys are
-// The Row's own property names, so the cursor is read off the row a query answers
+// The row's own property names, so the cursor is read off the row a query answers
 export interface BoundPageSort<TKey extends string = string> extends PageSort<TKey> {
   columns: Record<TKey, SQLWrapper>;
 }

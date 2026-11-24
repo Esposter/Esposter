@@ -11,7 +11,7 @@ interface Props {
   // The name the region is announced by: its landmark's label, or a sheet's title
   name: string;
   // The space the open overlay bars take at the top and bottom of the canvas. An overlay column starts below the top
-  // Bars And ends above the bottom ones, so it never claims a corner a bar claims. Any other region takes no inset
+  // Bars and ends above the bottom ones, so it never claims a corner a bar claims. Any other region takes no inset
   overlayInset?: { bottom: number; top: number } | undefined;
   // The name of each panel, keyed by panel id, which the tabs of a region holding several panels are titled by
   panelNameMap: Record<string, string>;
@@ -21,11 +21,11 @@ interface Props {
 
 const { overlayInset, region } = defineProps<Props>();
 // A docked region reports the size its handle asks for, a sheet asks to be opened or closed, and a tabbed region
-// Reports the Panel its reader picked, which the shell answers
+// Reports the panel its reader picked, which the shell answers
 const emit = defineEmits<{ resize: [size: number]; selectPanel: [panelId: string]; toggle: [] }>();
 const sizeClass = useEditorSizeClass();
 // A compact window is a phone, whose drawer would cover the whole canvas, so its sheet rises from the bottom and leaves
-// The Canvas in view above it. A wider window's sheet stands at its region's own edge
+// The canvas in view above it. A wider window's sheet stands at its region's own edge
 const sheetPlacement = computed(() =>
   sizeClass.value === SizeClass.Compact ? UiDialogPlacement.DrawerBottom : RegionEdgeDialogPlacementMap[region.edge],
 );
@@ -38,7 +38,7 @@ const isResizable = computed(
   () => region.presentation === RegionPresentation.Docked && region.minimumSize < region.maximumSize,
 );
 // A region tabbed by its panels scrolls inside the panel it shows, so its wrapper only clips. Any other region's
-// Wrapper is Its body, full-bleed in every orientation: each panel pads what it draws, so the body that holds it adds
+// Wrapper is its body, full-bleed in every orientation: each panel pads what it draws, so the body that holds it adds
 // No padding
 const regionBodyClass = computed(() => (region.panels.length > 1 ? "of-hidden" : "ui-region-body"));
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));

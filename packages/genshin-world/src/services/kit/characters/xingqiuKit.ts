@@ -22,17 +22,18 @@ import { takeOne } from "@esposter/shared";
 
 // Raincutter's sword rain falls at most one wave a second, as the wiki's Raincutter gives it, and its waves run 2, 3,
 // 2, 3 swords, as gcsim v2.47.2 (MIT) xingqiu/burst.go casts them
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/burst.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/burst.go
 const SWORD_RAIN_INTERVAL_SECONDS = 1;
 const SWORD_RAIN_WAVE_SIZES = [2, 3];
 const RAINCUTTER_ID = "xingqiu-raincutter";
 // The first strike of a string casts its wave 7 frames on from its start, as gcsim v2.47.2 (MIT) xingqiu/xingqiu.go
-// Delays Its animation, and a later strike's wave is cast as it starts
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/xingqiu.go`
+// Delays its animation, and a later strike's wave is cast as it starts
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/xingqiu.go
 const RAINCUTTER_FIRST_STRIKE_DELAY_SECONDS = toKitSeconds(7);
 // Hydropathic, from Ascension 1, heals the character on the field by 6% of Xingqiu's Max HP as each Rain Sword shatters
 // Or its seconds end, as the wiki's passive page gives it. The Rain Swords number 3, and 4 from The Scent Remained at
-// One Constellation https://genshin-impact.fandom.com/wiki/Hydropathic
+// One Constellation
+// https://genshin-impact.fandom.com/wiki/Hydropathic
 const HYDROPATHIC_ASCENSION = 1;
 const HYDROPATHIC_MAX_HEALTH_SHARE = 0.06;
 const RAIN_SWORD_COUNT = 3;
@@ -43,8 +44,9 @@ const THE_SCENT_REMAINED_CONSTELLATION = 1;
 const BLADES_AMIDST_RAINDROPS_ASCENSION = 4;
 const BLADES_AMIDST_RAINDROPS_HYDRO_DAMAGE_BONUS = 0.2;
 // Rainbow Upon the Azure Sky, from two constellations, lengthens Raincutter by 3 seconds and takes 15% off the Hydro
-// RES of Each enemy a sword strikes for 4 seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT)
-// `xingqiu/burst.go` Give it https://genshin-impact.fandom.com/wiki/Rainbow_Upon_the_Azure_Sky
+// RES of each enemy a sword strikes for 4 seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT)
+// Xingqiu/burst.go give it
+// https://genshin-impact.fandom.com/wiki/Rainbow_Upon_the_Azure_Sky
 const RAINBOW_UPON_THE_AZURE_SKY_CONSTELLATION = 2;
 const RAINBOW_UPON_THE_AZURE_SKY_SECONDS = 3;
 const RAINBOW_UPON_THE_AZURE_SKY_STATUS: EnemyStatus = {
@@ -121,7 +123,7 @@ export const createXingqiuKitBehaviour = ({
   // Stands a character's Rain Swords round the body on the field for the given seconds, or keeps those already standing
   // If they stand longer: a recast lengthens them, their ticks keeping the schedule they started on, and does not end
   // Them. From Ascension 1, a task runs as their new seconds end, and unless they were lengthened since, each sword
-  // Heals The character on the field by Hydropathic's share of Xingqiu's Max HP then, since no strike here shatters one
+  // Heals the character on the field by Hydropathic's share of Xingqiu's Max HP then, since no strike here shatters one
   const standRainSwords = (
     context: KitContext,
     { facing, height, position }: KitBody,

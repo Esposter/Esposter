@@ -6,8 +6,8 @@ import { presignStorageUrl } from "#src/services/storage/presignStorageUrl";
 import { WRITE_PRESIGNED_URL_DURATION_MS } from "@esposter/db-schema";
 
 // The url a client PUTs one object to. A given content type is part of the signature, so the upload has to send the
-// Type it Was signed with. Without one, the signature leaves the type open, for a caller that only learns the file's
-// Type from the Upload itself. An empty type is no type: a browser reports "" for a file it cannot name, and a signed
+// Type it was signed with. Without one, the signature leaves the type open, for a caller that only learns the file's
+// Type from the upload itself. An empty type is no type: a browser reports "" for a file it cannot name, and a signed
 // Empty header is one A request may not send at all. Either way the url carries no length bound: R2 does not enforce
 // One on a presigned PUT
 export const createPresignedPutUrl = (

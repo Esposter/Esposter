@@ -4,7 +4,7 @@ import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
 
 // The top level beside the one mjml, refused by name: text outside it by the stray text type, a tag before it under its
-// Own name, And a second element by #document. A source of one mjml and nothing else reads no refusal here
+// Own name, and a second element by #document. A source of one mjml and nothing else reads no refusal here
 export const readMjmlTopLevel = (root: HTMLElement): [string, unknown][] => {
   const [mjml, ...others] = root.children;
   const strayText: [string, unknown][] = Object.entries(readMjmlStrayText(root));

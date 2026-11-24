@@ -43,12 +43,13 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // Is applied at the gauge its internal cooldown leaves of it. The hit's damage takes its own additive base DMG Bonus
 // And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it with
 // Its reactions' own poise through the one damage point, against the enemy's RES as its statuses leave it, and a
-// Launching hit that staggers it leaves it launched unless its kind is immune to Air staggers. Its element reacts as
-// The party's Moonsign turns its reactions Lunar, and a direct Lunar hit is priced by the Lunar formula from the
-// Moonsign's bonuses instead, as a direct Stellar Hit is by the Glimmer formula. Where it struck, it leaves a spark and
-// The number of the damage it dealt in the context's world effects. It returns the Energy the hit dropped, whether it
-// Was a CRIT hit, the reactions it Triggered and those of them that landed and reach round the enemy, and the element
-// It applied at a gauge its cooldown Let through
+// Launching hit that staggers it leaves it launched unless its kind is immune to Air staggers.
+// Its element reacts as the party's Moonsign turns its reactions Lunar, and a direct Lunar hit is priced by the
+// Lunar formula from the Moonsign's bonuses instead, as a direct Stellar Hit is by the Glimmer formula.
+// Where it struck, it leaves a spark and the number of the damage it dealt in the context's world effects. It returns
+// The energy the hit dropped, whether it was a CRIT hit, the reactions it
+// Triggered and those of them that landed and reach round the enemy, and the element it applied at a gauge its cooldown
+// Let through
 export const strikeEnemy = (
   enemy: Enemy,
   kitHit: KitHit,
@@ -159,7 +160,7 @@ export const strikeEnemy = (
             criticalDamage: attributeTotalMap[Attribute.CriticalDamage] + (kitHit.criticalDamageBonus ?? 0),
             // The element's or the physical DMG Bonus, the all-damage bonus, the normal or charged attack bonus of the
             // Attack's tag, the plunging attack bonus on a plunge, and a hit's own and an enemy's statuses' DMG taken
-            // Add To the bonus each hit on it reads
+            // Add to the bonus each hit on it reads
             damageBonus:
               attributeTotalMap[
                 element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]

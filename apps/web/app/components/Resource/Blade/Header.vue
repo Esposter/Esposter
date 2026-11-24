@@ -30,8 +30,9 @@ const isDeleteOpen = ref(false);
 const isAskClaudeOpen = ref(false);
 // What the delete confirmation asks about, for the warning of what it leaves dangling
 const ids = computed(() => [resource.id]);
-// The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with No editor
-// At all — the header is the one surface every type has. See openspec/specs/resource/resource-snapshots/design.md
+// The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
+// No editor at all — the header is the one surface every type has. See
+// Openspec/specs/resource/resource-snapshots/design.md
 const { openVersionHistory } = useVersionHistoryRoute();
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
 // Ask Claude is every type's, registered here because every type has this header: a line to a Claude Code session

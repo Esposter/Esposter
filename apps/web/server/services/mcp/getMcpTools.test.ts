@@ -127,7 +127,7 @@ describe(getMcpTools, () => {
   });
 
   // A type's own procedure decides what a key may do: a description serves it to the Agent, and a human-only reason
-  // Keeps It from every key. Every procedure the trpc router holds today declares one
+  // Keeps it from every key. Every procedure the trpc router holds today declares one
   test("every type-specific procedure declares its key access", () => {
     expect.hasAssertions();
 

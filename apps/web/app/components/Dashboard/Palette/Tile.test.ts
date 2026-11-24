@@ -190,7 +190,7 @@ describe("dashboardPaletteTile", () => {
   });
 
   // A group added to the group at the depth cap would sit one level past it, so the drop is refused before the visual
-  // The Release lands on is pushed aside, and nothing is added
+  // The release lands on is pushed aside, and nothing is added
   test("a group tile dropped on a group at the depth cap adds nothing and pushes nothing", async () => {
     expect.hasAssertions();
 

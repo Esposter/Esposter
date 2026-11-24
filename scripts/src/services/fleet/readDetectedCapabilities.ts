@@ -5,7 +5,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 // The capabilities this machine holds, read off the machine: its OS, the game's install and the exports the parity
-// Tools Read, and a media engine. macOS always has one, and Windows has one when FFmpeg lists the Direct3D acceleration
+// Tools read, and a media engine. macOS always has one, and Windows has one when FFmpeg lists the Direct3D acceleration
 export const readDetectedCapabilities = async (): Promise<string[]> => {
   const capabilities: string[] = [];
   const operatingSystem = getOperatingSystemCapability(process.platform);

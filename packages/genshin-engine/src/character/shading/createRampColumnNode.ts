@@ -3,7 +3,7 @@ import type { Node } from "three/webgpu";
 import { clamp, float } from "three/tsl";
 
 // The TSL form of getRampColumn: how far the threshold falls short of the light area, in band widths, clamped to the
-// Ramp And mirrored, so a lit pixel reads the ramp's right end
+// Ramp and mirrored, so a lit pixel reads the ramp's right end
 export const createRampColumnNode = (
   threshold: Node<"float">,
   lightArea: number,

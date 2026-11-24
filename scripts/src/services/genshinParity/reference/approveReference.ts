@@ -24,10 +24,10 @@ const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
 // How many separate runs of the suite an image must come out of identically before it is written
 const APPROVE_RUN_COUNT = 3;
 
-// Writes a screen's image as a snapshot of its current render, and prints its compare's status against the bar beside
-// It. No status stops the image: a missing reference, a failed compare or a reference judging less than the whole
-// Screen is Printed as such, and the score is recorded wherever a whole-screen compare ran. The compare judges the
-// State the map Records for the reference, so a variant's score is only ever its own reference's
+// Writes a screen's image as a snapshot of its current render, and prints its compare's status against the bar
+// Beside it. no status stops the image: a missing reference, a failed compare or a reference judging less than the
+// Whole screen is printed as such, and the score is recorded wherever a whole-screen compare ran. The compare judges
+// The state the map records for the reference, so a variant's score is only ever its own reference's
 export const approveReference = async (referenceId: string, variant?: string): Promise<void> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
@@ -39,7 +39,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
   await fetchReferences();
   const hasReference = (await readReferenceManifest()).some(({ id }) => id === referenceId);
   // A reference the manifest holds is read from its committed file, and a missing one stops the approve. It names the
-  // Path To add, so no image is written against a reference it cannot read
+  // Path to add, so no image is written against a reference it cannot read
   if (hasReference) await getReferencePath(referenceId);
   // A region compare judges only the region it names. The compare also judges the props and variant the map records, so
   // A base image over a reference in other props, or a variant the map does not record, is judged by no compare at all
@@ -72,7 +72,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
   const imagePath = join(COMPONENTS_DIRECTORY, row.directory, `${getFixtureImageName(row.variant)}.png`);
   const previousImage = existsSync(imagePath) ? readFileSync(imagePath) : undefined;
   // Each run is its own process, and the suite takes the image as the first frame it settles on, so a render that is
-  // Not Settled across runs writes a different image each time: the image is written only when every run wrote the same
+  // Not settled across runs writes a different image each time: the image is written only when every run wrote the same
   // Bytes
   const renders: Buffer[] = [];
   // The reason a run refused the approve, once one has: a refusal from any run, including one after an earlier run has

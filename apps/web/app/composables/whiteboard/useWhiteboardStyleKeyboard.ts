@@ -14,7 +14,7 @@ import { getWhiteboardStyleOperations } from "#src/services/whiteboard/style/get
 import { useWhiteboardStyleClipboardStore } from "#src/store/resource/whiteboard/styleClipboard";
 
 // The keys that copy the look of the one selected element and paste the copied look onto the selection. Copy is bound
-// Only while exactly one element Is selected, paste while any is, and neither while the delete confirmation asks, so
+// Only while exactly one element is selected, paste while any is, and neither while the delete confirmation asks, so
 // Their keys never reach the canvas
 export const useWhiteboardStyleKeyboard = (
   editState: Ref<WhiteboardEditState>,

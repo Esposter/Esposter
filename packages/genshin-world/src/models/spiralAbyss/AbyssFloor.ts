@@ -4,7 +4,7 @@ import { abyssChamberSchema } from "#src/models/spiralAbyss/AbyssChamber";
 import { z } from "zod";
 
 // A floor of the Spiral Abyss: its place in the twelve, its three chambers, the teams each chamber takes (one, or two
-// For The two halves of a chamber, which share one clock), and the stars its three chambers must hold for the floor
+// For the two halves of a chamber, which share one clock), and the stars its three chambers must hold for the floor
 // Above
 export interface AbyssFloor {
   chambers: AbyssChamber[];

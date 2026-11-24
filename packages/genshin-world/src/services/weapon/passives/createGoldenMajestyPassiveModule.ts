@@ -17,8 +17,8 @@ const GOLDEN_MAJESTY_MAXIMUM_STACKS = 5;
 const PROTECTED_MULTIPLIER = 2;
 
 // Golden Majesty at its rank: the wielder's Shield Strength rises by the rank's percentage. Each hit it scores adds a
-// Stack of The rank's ATK, up to five and once every 0.3 seconds, each stack running the rank's seconds. While the
-// Wielder is on the Field and protected by a shield, the stacks' ATK is doubled
+// Stack of the rank's ATK, up to five and once every 0.3 seconds, each stack running the rank's seconds. While the
+// Wielder is on the field and protected by a shield, the stacks' ATK is doubled
 export const createGoldenMajestyPassiveModule = (params: number[]): PassiveModule => {
   const shieldStrength = takeOne(params, 0);
   const attackPerStack = takeOne(params, 1);

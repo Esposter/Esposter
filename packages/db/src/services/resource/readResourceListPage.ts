@@ -26,7 +26,7 @@ interface ReadResourceListPageOptions {
 // One page of the owner's resources in the order the sort declares, with the cursor for the next. The read without a
 // Cursor is the first page, and it also answers how many rows the where matches. A search's relevance keys are read off
 // Each row so the cursor can continue from the last one, and they are left out of the page. Each row carries the
-// Viewer's Own star beside it, so a list shows every row's star from the page alone
+// Viewer's own star beside it, so a list shows every row's star from the page alone
 export const readResourceListPage = async (
   db: Database,
   { cursor, limit, search, sort, userId, where }: ReadResourceListPageOptions,

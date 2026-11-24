@@ -20,7 +20,7 @@ interface Props {
 }
 
 // The colour, width and dash pattern of one element, each one commit. A text box takes a colour alone, a freehand
-// Stroke a colour and a width, And a shape, a sticky note or an arrow all three. The clear control returns the colour
+// Stroke a colour and a width, and a shape, a sticky note or an arrow all three. The clear control returns the colour
 // To the page's text colour
 defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();

@@ -15,7 +15,7 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 // The one write path for a vote, over every copy of its post on screen: the feed, a thread and the post page read the
 // Vote from the overlay, so a vote is drawn once and reaches each of them. A vote's count is the server's, and it is
-// Read Back once the vote is kept
+// Read back once the vote is kept
 export const useLikeStore = defineStore("post/like", () => {
   const { $trpc } = useNuxtApp();
   const userId = useSessionUserId();

@@ -79,9 +79,9 @@ export class StoneLightingModel extends LightingModel {
       .add(harmonics.element(8).mul(y.mul(y).mul(3).sub(1)))
       .add(heightFade.mul(positionWorld.y.mul(-STONE_HEIGHT_FALLOFF).exp()));
     // Three types the builder's context as `unknown`, so it is the one cast left here: the lighting context it holds
-    // Has The reflected light, and three's typings offer no narrower type to check it against
-    // @types/three declares the builder's `context` as `unknown`, so the lighting context it holds
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- is asserted to the reflected light it carries
+    // Has the reflected light, and three's typings offer no narrower type to check it against
+    /* oxlint-disable-next-line typescript/no-unsafe-type-assertion -- @types/three declares the builder's `context` as
+       `unknown`, so the lighting context it holds is asserted to the reflected light it carries */
     const { reflectedLight } = builder.context as { reflectedLight: LightingModelReflectedLight };
     readVec3Node(reflectedLight.indirectDiffuse, builder).addAssign(
       ambient.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),

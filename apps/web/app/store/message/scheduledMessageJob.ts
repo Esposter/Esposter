@@ -20,7 +20,7 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   const reminders = view(reminderTable);
   const scheduledMessages = view(scheduledMessageTable);
   // The page names the jobs in the order the server gives them. Each job's row arrives at the version its page read it
-  // At, So a read that lands after a cancel cannot list the job again
+  // At, so a read that lands after a cancel cannot list the job again
   const {
     items: pageItems,
     readItems: readPageItems,
@@ -64,8 +64,8 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
       return page;
     }, onComplete);
   // A cancel is drawn at once. The tombstone its answer names confirms the entry, and a refused cancel drops the entry,
-  // So The job is listed again with nothing restored. `onCancelled` runs once the server has answered, so a caller's
-  // Own Follow-up never runs for a cancel that was refused
+  // So the job is listed again with nothing restored. `onCancelled` runs once the server has answered, so a caller's
+  // Own follow-up never runs for a cancel that was refused
   const cancelScheduledMessageJob = (job: ScheduledMessageJobWithRoom, onCancelled?: () => void) => {
     const deletedAt = new Date();
     writeOptimistic(

@@ -11,8 +11,8 @@ const REBELLIOUS_GUARDIAN_COOLDOWN_ID = "rebelliousGuardianCooldown";
 const REBELLIOUS_GUARDIAN_SECONDS = 10;
 
 // The Bell's Rebellious Guardian at its rank: an enemy's strike that takes the wielder's HP generates a shield of the
-// Rank's Share of its Max HP for ten seconds, and the wielder gains the rank's DMG Bonus. A shield holds off the next
-// For the Rank's cooldown in seconds. The bonus lasts the shield's ten seconds, not ending when the shield breaks
+// Rank's share of its Max HP for ten seconds, and the wielder gains the rank's DMG Bonus. A shield holds off the next
+// For the rank's cooldown in seconds. The bonus lasts the shield's ten seconds, not ending when the shield breaks
 export const createRebelliousGuardianPassiveModule = (params: number[]): PassiveModule => {
   const shareOfMaxHealth = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 1);

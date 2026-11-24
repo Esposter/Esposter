@@ -7,8 +7,8 @@ import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAch
 
 // What a doing does to the achievements: each one whose watched trigger takes this kind of event and names its target
 // In the slot that trigger watches counts it, by one or by the event's quantity, up to its count, once the tier before
-// It Is done. An achievement already finished never moves. The Primogems of those finished now are returned to be paid,
-// And The progress is held as a new map
+// It is done. An achievement already finished never moves. The Primogems of those finished now are returned to be paid,
+// And the progress is held as a new map
 export const advanceAchievements = (
   achievements: readonly Achievement[],
   progressMap: ReadonlyMap<number, AchievementProgress>,

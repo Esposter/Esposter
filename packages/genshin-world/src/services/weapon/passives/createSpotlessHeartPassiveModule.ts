@@ -11,8 +11,8 @@ const SPOTLESS_HEART_COOLDOWN_ID = "spotlessHeartCooldown";
 const SPOTLESS_HEART_ID = "spotlessHeart";
 
 // Spotless Heart at its rank: an Elemental Skill its wielder deals has its base damage raised by the rank's share of
-// DEF, The raise stands while the effect does. A use of the skill triggers the effect at most once in the cooldown. It
-// Stands until the rank's clear seconds after the skill's last hit. The rank's second value is not described by the
+// DEF, the raise stands while the effect does. A use of the skill triggers the effect at most once in the cooldown.
+// It stands until the rank's clear seconds after the skill's last hit. The rank's second value is not described by the
 // Text and is not read
 export const createSpotlessHeartPassiveModule = (params: number[]): PassiveModule => {
   const defenseShare = takeOne(params, 0);

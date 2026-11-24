@@ -5,7 +5,7 @@ import type { HomePlacement } from "#src/models/home/HomePlacement";
 import { placeHomeFurnishing } from "#src/services/home/placeHomeFurnishing";
 
 // The realm's placements with a whole furnishing set added: each of the set's furnishings is placed in turn, so the set
-// Is Placed whole or not at all. Undefined as soon as one of them would not be placed, and nothing is placed then
+// Is placed whole or not at all. Undefined as soon as one of them would not be placed, and nothing is placed then
 export const placeHomeFurnishingSet = (
   placements: HomePlacement[],
   set: HomePlacement[],

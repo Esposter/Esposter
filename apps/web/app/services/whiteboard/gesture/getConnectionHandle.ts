@@ -11,7 +11,7 @@ export interface ConnectionHandle {
 }
 
 // The connection handle of the one selected shape a point lands on, or undefined when it lands on none. Only a single
-// Selected shape shows them, and An annotation takes no connection, so it shows none. The tolerance is in document
+// Selected shape shows them, and an annotation takes no connection, so it shows none. The tolerance is in document
 // Units, and the scale is the zoom the handles are drawn at
 export const getConnectionHandle = (
   document: PositionedDocument,

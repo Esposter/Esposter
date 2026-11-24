@@ -9,7 +9,7 @@ const { mockedExecFileSync } = vi.hoisted(() => ({
 }));
 
 // The shared wrapper is typed as node's overloaded function, which a single signature cannot satisfy, so the mock is
-// Cast Through unknown as the other suites that mock it are
+// Cast through unknown as the other suites that mock it are
 vi.mock(import("@esposter/shared-node/child-process"), () => ({
   execFileSync: mockedExecFileSync as unknown as typeof execFileSync,
 }));

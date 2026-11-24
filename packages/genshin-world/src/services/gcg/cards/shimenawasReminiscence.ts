@@ -11,7 +11,7 @@ const SHIMENAWAS_REMINISCENCE_ENERGY = 2;
 const SHIMENAWAS_REMINISCENCE_DAMAGE_BONUS = 1;
 
 // Shimenawa's Reminiscence, an artifact: once per round, a Talent card played or an Elemental Skill used spends one
-// Elemental Die Less. While its character has at least 2 Energy, her Normal Attacks and Elemental Skills deal 1 more
+// Elemental Die less. While its character has at least 2 Energy, her Normal Attacks and Elemental Skills deal 1 more
 // DMG (the wiki's)
 export const shimenawasReminiscence: GcgCardModule = {
   ...createGcgOncePerRoundCostReduction(SHIMENAWAS_REMINISCENCE_ID, (_context, subject) =>

@@ -8,10 +8,10 @@ import { traceMask } from "#src/services/genshinParity/shared/traceMask";
 import sharp from "sharp";
 
 // An icon as the layers a HUD button draws it in, on its 128 unit square: its mark read as each pixel's share of white
-// Over Its disc (`readWhiteShares`), its tones split where `getToneSplits` finds them, and the mark traced at each
-// Split, enlarged First by the scale. An icon with a pale tone under its white is two layers, the pale shape and the
-// White one over it, Drawn so the two stack to the button's shares; an icon of one tone is its white alone. A pale tone
-// Is faint, so the Source's grain on it is as strong as its edge, and its split is taken over the shares smoothed by a
+// Over its disc (`readWhiteShares`), its tones split where `getToneSplits` finds them, and the mark traced at each
+// Split, enlarged first by the scale. An icon with a pale tone under its white is two layers, the pale shape and the
+// White one over it, drawn so the two stack to the button's shares; an icon of one tone is its white alone. A pale tone
+// Is faint, so the source's grain on it is as strong as its edge, and its split is taken over the shares smoothed by a
 // Pixel of the source
 export const traceToneLayers = async (
   path: string,

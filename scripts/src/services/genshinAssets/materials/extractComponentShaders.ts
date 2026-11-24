@@ -58,8 +58,8 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
       continue;
     }
     for (const file of readdirSync(shaderDirectory))
-      // Megabytes, is read at a time
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one shader's export, up to hundreds of
+      /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one shader's export, up to hundreds of
+         megabytes, is read at a time */
       summary.push(await extractShader(directory, blockName, shaderDirectory, file));
   }
   await writeProvenance(directory, {

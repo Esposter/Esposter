@@ -11,7 +11,7 @@ import type { Tip } from "#src/models/tip/Tip";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
 // Every reaction one world system has to another, by its name, with the payload its listeners are handed. A system
-// Emits What it did, and each system that reads it listens, so none calls another's state directly
+// Emits what it did, and each system that reads it listens, so none calls another's state directly
 export interface WorldEventMap {
   achievementEvents: [AchievementEvent[]];
   bagChange: [Inventory];

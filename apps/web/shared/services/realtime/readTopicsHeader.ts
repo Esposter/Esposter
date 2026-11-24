@@ -13,14 +13,14 @@ import { z } from "zod";
 const readAtSchema = z.coerce.number().pipe(z.int().nonnegative());
 
 // Reads one topic entry back: its topic, then the columns it names when the entry carries a separator after the topic.
-// A Column list that names none is an empty list, and an entry with no separator names every column. A text that does
-// Not Decode is no topic, as the schema would refuse it
+// A column list that names none is an empty list, and an entry with no separator names every column. A text that does
+// Not decode is no topic, as the schema would refuse it
 const readColumnTopic = (text: string) => {
   const [topicText = "", ...columnTexts] = text.split(TOPICS_HEADER_COLUMNS_SEPARATOR);
   const topic = getDecodedUriComponent(topicText, undefined);
   const columns = columnTexts
-    // An encoded header
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- segment, empty only when the column has no name
+    /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- an encoded header segment, empty only when the
+       column has no name */
     .filter((columnText) => columnText !== "")
     .map((columnText) => getDecodedUriComponent(columnText, undefined));
   if (topic === undefined || columns.includes(undefined)) return undefined;
@@ -32,7 +32,7 @@ const readColumnTopic = (text: string) => {
 };
 
 // The reads one procedure path's answers made, out of a batch's topics header: each entry's topics, watched from its
-// Time with The signature the server made over them. An empty signature is a read the server signed nothing for, which
+// Time with the signature the server made over them. An empty signature is a read the server signed nothing for, which
 // Reads back empty
 export const readTopicsHeader = (headers: Headers, path: string): TopicRead[] =>
   (headers.get(TOPICS_HEADER) ?? "")

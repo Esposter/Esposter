@@ -13,7 +13,7 @@ import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 const checkIsElement = (target: EventTarget | null): target is Element => target !== null && "closest" in target;
 
 // A pointer that the exclusions and the filter let through joins the gesture. One pointer starts a drag, and a second
-// Turns The gesture into a pinch. A pointer past the second is not tracked. Every press clears the click suppression a
+// Turns the gesture into a pinch. A pointer past the second is not tracked. Every press clears the click suppression a
 // Drag left armed
 export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent): void => {
   const { element, options, pointers, state } = context;

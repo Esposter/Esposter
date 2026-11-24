@@ -3,8 +3,8 @@ import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterC
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every curve's multiplier at each level, read once off the game's monster curve table and keyed by the curve's name.
-// The Caller sorts the rows by level, so a level's multiplier sits at its index, and a build reads each curve from this
-// Index Rather than scanning the table for every enemy
+// The caller sorts the rows by level, so a level's multiplier sits at its index, and a build reads each curve from this
+// Index rather than scanning the table for every enemy
 export const toLevelCurves = (monsterCurveRows: readonly MonsterCurveRow[]): Map<string, number[]> => {
   const curves = new Set(monsterCurveRows.flatMap(({ curveInfos }) => curveInfos.map(({ type }) => type)));
   return new Map(

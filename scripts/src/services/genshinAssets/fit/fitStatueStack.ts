@@ -34,7 +34,7 @@ export const fitStatueStack = (
   const { axes, centroid } = computePrincipalAxes(points);
   const along = axis ? new Vector3(...axis).normalize() : (axes[0] ?? new Vector3(0, 1, 0));
   // The greatest spread not along the axis, made square to it and turned so its greatest component is positive, since
-  // An Eigenvector's sign is arbitrary and the same points should always give the same turn
+  // An eigenvector's sign is arbitrary and the same points should always give the same turn
   const crossing = axes.find((candidate) => Math.abs(candidate.dot(along)) < CROSSING_COSINE) ?? new Vector3(1, 0, 0);
   const across = crossing.clone().addScaledVector(along, -crossing.dot(along)).normalize();
   const greatest = across.toArray().reduce((first, second) => (Math.abs(second) > Math.abs(first) ? second : first));

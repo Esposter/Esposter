@@ -4,8 +4,8 @@ import { NAVIGATION_MARK_INSET_SHARE } from "#src/services/map/constants";
 
 // Where the pointed landmark's mark stands on the screen, from its projection in normalised device coordinates, x and y
 // Each from -1 to 1 with y up. Behind the camera a projection is mirrored through the centre, so its direction is
-// Turned Round. Out of view, the mark is held where its line from the centre leaves the screen, inset from the edge,
-// And its arrow Turns along that line
+// Turned round. Out of view, the mark is held where its line from the centre leaves the screen, inset from the edge,
+// And its arrow turns along that line
 export const computeNavigationMark = (
   { x, y }: { x: number; y: number },
   isBehind: boolean,

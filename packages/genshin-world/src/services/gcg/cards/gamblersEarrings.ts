@@ -8,8 +8,8 @@ const GAMBLERS_EARRINGS_OMNI_COUNT = 2;
 const GAMBLERS_EARRINGS_LIMIT = 3;
 
 // Gambler's Earrings, an artifact on a character: after an opposing character is defeated, if the character it is
-// Equipped To is the active one, two Omni dice are created, three times in a match. The card's counter keeps the count,
-// So the count Lasts as long as the card is equipped
+// Equipped to is the active one, two Omni dice are created, three times in a match. The card's counter keeps the count,
+// So the count lasts as long as the card is equipped
 export const gamblersEarrings: GcgCardModule = {
   onOpposingDefeated: ({ characterIndex, duel, sideIndex }, zoneCard) => {
     const side = takeOne(duel.sides, sideIndex);

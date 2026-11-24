@@ -16,7 +16,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The realm's rules from the game's tables, each published as a record of the home dataset: the furnishings Tubby
-// Makes, With the diagrams that open each, and the Trust and Adeptal Energy ranks. Each record is sorted by its id or
+// Makes, with the diagrams that open each, and the Trust and Adeptal Energy ranks. Each record is sorted by its id or
 // Rank
 export const buildHomeRules = (): Record<string, unknown> => {
   const unlockItemIdMap = readUnlockItemIdMap(

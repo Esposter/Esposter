@@ -36,10 +36,10 @@ const LAYER_HEADER = [
 const LAYER_SEPARATOR = "/";
 
 // The report merged from its lines as they were and the given scores, the one merge both writers (`compare` and
-// `approve`) Use. A scored reference's row and layers are rewritten, a full run writes a pending screen's row with its
-// Reason and no Layers, and every other row is kept as it was. A subset run lists the rows in the report's own order, a
-// New reference placed in the References' order; a full run lists every reference in the references' order and drops
-// The rows of a reference the map No longer holds
+// `approve`) use. A scored reference's row and layers are rewritten, a full run writes a pending screen's row with its
+// Reason and no layers, and every other row is kept as it was. A subset run lists the rows in the report's own order, a
+// New reference placed in the references' order; a full run lists every reference in the references' order and drops
+// The rows of a reference the map no longer holds
 export const mergeParityScores = (
   lines: readonly string[],
   scores: Readonly<Record<string, ParityScore>>,
@@ -76,7 +76,7 @@ export const mergeParityScores = (
     return row ? [row] : [];
   });
   // A reference scored again replaces every layer row it had, so a family it no longer draws leaves none behind, and a
-  // Scene Whose layers were not measured keeps the rows it had
+  // Scene whose layers were not measured keeps the rows it had
   const layerRows = order.flatMap((referenceId) => {
     const layers = scores[referenceId]?.layers;
     if (layers) return layers.map((layer) => toLayerRow(`${referenceId}${LAYER_SEPARATOR}${layer.name}`, layer));

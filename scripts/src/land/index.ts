@@ -3,7 +3,7 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // `pnpm ai:land` — pulls this checkout's commits onto ai/queue, runs the precheck on the pulled tree, then pushes,
-// Retrying a Push the queue moved past. A rebase conflict stops it with the rebase in progress, for the author to
+// Retrying a push the queue moved past. A rebase conflict stops it with the rebase in progress, for the author to
 // Settle (the `review-queue` skill)
 await runCommand(
   defineCommand({

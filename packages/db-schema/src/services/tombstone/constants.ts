@@ -20,14 +20,14 @@ import { friendRequestsInSocial } from "#src/schema/social/friendRequestsInSocia
 import { friendsInSocial } from "#src/schema/social/friendsInSocial";
 
 // How long a soft delete's tombstone is kept. The nightly purge removes it past this age, and a client forgets its own
-// Copy At the same age, so a key the purge removed starts again at version zero on the client too (the overlay design's
+// Copy at the same age, so a key the purge removed starts again at version zero on the client too (the overlay design's
 // Tombstones decision)
 export const TOMBSTONE_RETENTION_MS = Temporal.Duration.from({ days: 7 }).total("milliseconds");
 
 // The tables whose soft deletes the overlay reads back as tombstones, so the purge removes their tombstones. Every D1
-// Table Carries a deletedAt column from the metadata, so the column alone cannot tell these apart from the rest. The
-// Recycle bin's Table is soft-deleted too, but its own purge destroys it on its own retention, so it is not listed
-// Here. The registry test Fails when a server statement soft-deletes a table this list does not name
+// Table carries a deletedAt column from the metadata, so the column alone cannot tell these apart from the rest. The
+// Recycle bin's table is soft-deleted too, but its own purge destroys it on its own retention, so it is not
+// Listed here. The registry test fails when a server statement soft-deletes a table this list does not name
 export const OVERLAY_TOMBSTONE_TABLES = [
   appUsersInMessage,
   bansInMessage,

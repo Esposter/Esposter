@@ -11,7 +11,7 @@ import { getQuestChecks } from "#src/services/genshinProgress/getQuestChecks";
 import { getRoadmapUnit } from "#src/services/genshinProgress/getRoadmapUnit";
 
 // Every phase from 0 to the last Genshin phase, with its units by kind and state for this machine's capabilities, and
-// Its Exit checks, each quest's line among them. A unit that holds no phase is counted apart, so none drops out of the
+// Its exit checks, each quest's line among them. A unit that holds no phase is counted apart, so none drops out of the
 // Report
 export const buildGenshinProgress = (units: GenshinUnits, capabilities: readonly string[]): GenshinProgress => {
   const counted: GenshinUnit[] = [

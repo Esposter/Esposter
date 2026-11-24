@@ -6,8 +6,8 @@ import type { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import type { GameLanguage, GameText, GameTextKey } from "genshin-text";
 
 // A settings row, its label on the left and what its kind holds on the right: a choice's words in the reader's
-// Language, An action's words, a list of the world's own (the quality or the game language), a range or a volume the
-// World sets Across its track, a slider the world does not back, drawn at its value on that track, or a toggle the
+// Language, an action's words, a list of the world's own (the quality or the game language), a range or a volume the
+// World sets across its track, a slider the world does not back, drawn at its value on that track, or a toggle the
 // World flips
 export type SettingsRow = (
   | { getValue: (gameText: GameText, language: GameLanguage) => string; kind: typeof SettingsRowKind.Choice }

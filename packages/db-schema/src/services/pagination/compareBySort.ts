@@ -4,7 +4,7 @@ import { SortOrder } from "#src/models/pagination/SortOrder";
 import { toPageCursorValue } from "#src/services/pagination/toPageCursorValue";
 
 // The list's order in JavaScript, for a page merged from several sources: each answers its rows after the cursor, and
-// The Union is ordered by this before toPage keeps the first of them. Values compare as SQLite compares them
+// The union is ordered by this before toPage keeps the first of them. Values compare as SQLite compares them
 export const compareBySort =
   <TKey extends string>({ keys, order }: PageSort<TKey>) =>
   (left: Record<TKey, unknown>, right: Record<TKey, unknown>): number => {

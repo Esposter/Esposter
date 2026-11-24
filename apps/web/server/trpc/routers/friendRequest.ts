@@ -36,7 +36,7 @@ export const friendRequestRouter = router({
       const [senderUser] = await readUserPair(ctx.db, senderId, userId);
       // The friendship is selected from the request row itself, so it exists only while that request stands for this
       // Receiver, and the request is tombstoned in the same batch: an accept lands whole or not at all. A friendship
-      // That was Removed is revived by the conflict branch, which clears its deletion and takes the request's direction
+      // That was removed is revived by the conflict branch, which clears its deletion and takes the request's direction
       const [insertedFriends] = await ctx.db.batch([
         ctx.db
           .insert(friendsInSocial)
@@ -98,7 +98,7 @@ export const friendRequestRouter = router({
       const [, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
       // The request is only inserted while no live block or friendship stands between the two users, so the check and
-      // The Insert are one statement. A live request for the pair is the conflict left alone, and a removed one is
+      // The insert are one statement. A live request for the pair is the conflict left alone, and a removed one is
       // Revived by it
       const [newFriendRequest] = await ctx.db
         .insert(friendRequestsInSocial)

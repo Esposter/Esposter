@@ -157,7 +157,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
             },
           );
           // A frame that stands off names the pass its report holds red, as the passes last recorded it: the first one
-          // Outside Its gate is the one reopened. The passes are not run here, so a compare costs its own frame alone
+          // Outside its gate is the one reopened. The passes are not run here, so a compare costs its own frame alone
           const comparedScore = scores[referenceId];
           const component = getLayerComponent(referenceId, args.witness);
           // At the bar is over it, as the approval's own status counts it, and the measure is the one the approval

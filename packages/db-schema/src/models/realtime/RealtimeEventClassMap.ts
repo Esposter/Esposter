@@ -6,7 +6,7 @@ import { EventClass } from "#src/models/realtime/EventClass";
 import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 
 // The class of every event type a realtime object sends. `invalidate` has none, so it is left out of the keys on
-// Purpose: It is the topic watch's own frame
+// Purpose: it is the topic watch's own frame
 export const RealtimeEventClassMap = {
   [RealtimeEventType.AdminAction]: EventClass.Command,
   [RealtimeEventType.CreateEmoji]: EventClass.MessageStream,

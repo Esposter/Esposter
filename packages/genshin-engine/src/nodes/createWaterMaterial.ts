@@ -36,8 +36,9 @@ const REFLECTION_STRENGTH = 0.55;
 // Genshin's water as one unlit material over the scene behind it. How much water lies between the surface and the
 // Floor, read from the scene's depth along the view ray, grades its colour from the shallow tint to the deep one and
 // Lets the floor show through the shallows, bent by the ripples. Where that depth is small, at every shore, rock or
-// Pillar, animated foam lines gather with no mesh authored. The sun breaks on the ripples into hard glints stepped Out
-// Of a narrow highlight, and the sky's colours are reflected toward the horizon. A flow carries the ripples and foam
+// Pillar, animated foam lines gather with no mesh authored. The sun breaks on the ripples into hard glints stepped
+// Out of a narrow highlight, and the sky's colours are reflected toward the horizon. A flow carries the ripples and
+// Foam
 // Downstream, so a river's surface reads as moving, and a river's ribbon passes its bend foam (`createRiverGeometry`),
 // Which gathers foam along a bend's outer bank as a shore does; still water gathers none there
 export const createWaterMaterial = (

@@ -8,7 +8,7 @@ import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { getAdjacentBlockNodePointer, getBlockLayerRows } from "vue-block-editor-headless";
 
 // The selection the canvas's keys move through one open resource's webpage: the adjacent node in document order and the
-// Parent The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
+// Parent the kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
 // `jscpd:ignore-start`
 export const usePageBuilderSelection = <
   TNode extends BlockNode,

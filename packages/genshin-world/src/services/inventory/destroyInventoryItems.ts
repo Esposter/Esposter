@@ -9,9 +9,9 @@ import { getDestroyableItem } from "#src/services/inventory/getDestroyableItem";
 import { getDestroyReturns } from "#src/services/inventory/getDestroyReturns";
 
 // The bag and the wallet after every chosen entry is destroyed: each entry must be one the bag may destroy, or the
-// Whole Destruction is refused, and what the destroyed entries return is taken into the wallet or the bag. Undefined
-// Where the Bag cannot take every returned material whole, which refuses the destruction as a whole, nothing destroyed.
-// An id chosen Twice is destroyed once, so its return is taken in once
+// Whole destruction is refused, and what the destroyed entries return is taken into the wallet or the bag. Undefined
+// Where the bag cannot take every returned material whole, which refuses the destruction as a whole, nothing destroyed.
+// An id chosen twice is destroyed once, so its return is taken in once
 export const destroyInventoryItems = (
   inventory: Inventory,
   wallet: Wallet,

@@ -10,8 +10,8 @@ import { z } from "zod";
 const teleportArgs = z.object({ depth: z.string().optional(), height: z.string().optional(), place: z.string() });
 
 // `teleport <place>` jumps to the landmark the place is named after, at the pose the map's own jump lands at. A place
-// Of Several words is quoted, as in `teleport "Liyue Harbor"`, and `teleport <x> <height> <depth>` jumps to the
-// Coordinates Given, the place being x
+// Of several words is quoted, as in `teleport "Liyue Harbor"`, and `teleport <x> <height> <depth>` jumps to the
+// Coordinates given, the place being x
 export const createTeleportCommand = ({
   catalogue,
   getLandmarks,

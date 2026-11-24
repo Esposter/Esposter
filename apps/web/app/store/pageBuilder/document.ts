@@ -46,7 +46,7 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     documentMap.value.set(resourceId, { document, kind: markRaw(kind), type: ResourceType.Email });
   };
   // The merge fields an email offers, which are the columns of the dataset it is bound to. Its blade holds them under
-  // Its Resource while mounted and clears them on unmount, so an email with no dataset bound offers none
+  // Its resource while mounted and clears them on unmount, so an email with no dataset bound offers none
   const mergeFieldColumnsMap = ref(new Map<string, string[]>());
   const getMergeFieldColumnsRef = (resourceId: MaybeRefOrGetter<string>) =>
     computed({

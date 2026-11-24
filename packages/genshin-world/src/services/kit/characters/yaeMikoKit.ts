@@ -21,14 +21,14 @@ const MAXIMUM_TOTEMS = 3;
 // The Shrine's Sacred Shade, as the dump's Yae_PermanentSkill_1 row and gcsim v2.47.2 (MIT) yaemiko/asc.go give it:
 // From Ascension 1, each totem the burst destroys resets the cooldown of one of Sesshou Sakura's charges, as kitsune.go
 // Calls A1 once for each totem it pops
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaemiko/asc.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaemiko/asc.go
 const THE_SHRINES_SACRED_SHADE_ASCENSION = 1;
 // Enlightened Blessing, as the dump's Yae_PermanentSkill_2 row and gcsim's asc.go give it: from Ascension 4, each point
-// Of Her Elemental Mastery raises the totems' DMG by 0.15%
+// Of her Elemental Mastery raises the totems' DMG by 0.15%
 const ENLIGHTENED_BLESSING_ASCENSION = 4;
 const ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY = 0.0015;
 // Measured: gcsim (MIT) yaemiko/kitsune.go and cons.go, Constellation 6's DEF ignored on each Sesshou Sakura strike,
-// Which its Its c6DefIgnore gives 0.6, where the comment there says 45%, and the kit reads the code's value
+// Which its its c6DefIgnore gives 0.6, where the comment there says 45%, and the kit reads the code's value
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DEFENCE_IGNORED = 0.6;
 // Constellation 4, as gcsim (MIT) yaemiko/cons.go gives it: her Elemental Burst DMG rises 100%, and each lightning a
@@ -66,12 +66,12 @@ const giveTeamElectroDamageBonus = ({ kitEffectState, party }: KitContext, { com
 
 // Yae Miko's behaviour: Sesshou Sakura's totems, which strike on their own schedule at a level by how many stand, and
 // Great Secret Art: Tenko Kenshin, which destroys the totems for a Tenko Thunderbolt each. From Ascension 1 each totem
-// The Burst destroys gives back a charge of the skill, and from Ascension 4 her Elemental Mastery raises the totems'
+// The burst destroys gives back a charge of the skill, and from Ascension 4 her Elemental Mastery raises the totems'
 // DMG. From Constellation 4 her Elemental Burst DMG rises 100%, and each lightning a totem strikes gives the team
-// Electro DMG Bonus. Constellation 4's 8 Energy per 5 seconds is not built, as the kit grants no energy a hit gives at
-// Once. Constellation 1 Needs the Superconduct and Stellar-Conduct DMG Bonus the team takes from her, which the kit's
-// Stellar-Conduct revelation Does not build, and Constellation 2 needs Sesshou Sakura's starting level, max level and
-// Range, none built Constellation 6's CRIT DMG needs the Stellar-Conduct hits her Radiance gives, read from the
+// Electro DMG Bonus. Constellation 4's 8 Energy per 5 seconds is not built, as the kit grants no energy a hit gives
+// At once. Constellation 1 needs the Superconduct and Stellar-Conduct DMG Bonus the team takes from her, which the
+// Kit's Stellar-Conduct revelation does not build, and Constellation 2 needs Sesshou Sakura's starting level, max level
+// And range, none built Constellation 6's CRIT DMG needs the Stellar-Conduct hits her Radiance gives, read from the
 // Polestar Field's RADIANCE_STELLAR_CONDUCT_STATUS_ID, which the kit does not deal, so only its DEF ignored is built
 export const createYaeMikoKitBehaviour = ({
   kit,

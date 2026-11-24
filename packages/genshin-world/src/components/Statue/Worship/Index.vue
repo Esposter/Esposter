@@ -22,7 +22,7 @@ const { getItemName, levels, progress } = defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 
 // The level the screen shows: the lowest one whose rewards are not yet claimed, or the last once all are. Its Oculus is
-// The First item it takes, and its state is the one a claim reads, a claim taking one level at a time
+// The first item it takes, and its state is the one a claim reads, a claim taking one level at a time
 const shownLevel = computed(() => {
   const statueLevel = levels.find(({ level }) => level > progress.claimedLevel) ?? levels.at(-1);
   if (!statueLevel) return undefined;

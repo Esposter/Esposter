@@ -7,8 +7,8 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { takeOne } from "@esposter/shared";
 
 // A passive that restores the rank's Energy to its wielder for each heal its predicate counts, at most once every
-// Cooldown the Rank gives in seconds, whether or not the wielder is on the field. A heal is a gain of HP with a share,
-// And the predicate Names which heals count, the wielder's own healed or the heals the wielder performs
+// Cooldown the rank gives in seconds, whether or not the wielder is on the field. A heal is a gain of HP with a share,
+// And the predicate names which heals count, the wielder's own healed or the heals the wielder performs
 export const createHealEnergyPassiveModule = (
   params: number[],
   {

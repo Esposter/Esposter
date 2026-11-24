@@ -18,7 +18,7 @@ export const SUBMESH_INDEX_REGEX = /_(?<index>\d+)$/u;
 // Path ID). Its `_Cutoff` clips the card's texture alpha; no other shader in the exports reads it
 export const LEAF_SHADER = "Shader #9134712319877186229";
 // The layout `genshin:assets witness` writes beside a component's exports, which the parity page's witness and the
-// World Under `nuxt dev` both draw them by
+// World under `nuxt dev` both draw them by
 export const WITNESS_LAYOUT_FILE_NAME = "witness.json";
 // The game's own character model `genshin:assets avatar` writes beside a component's exports: its manifest, and the
 // Binary of its meshes' typed arrays the manifest's views lie in
@@ -31,15 +31,15 @@ export const SCENE_EXPORT_ROOT_FILE_NAMES = [
   AVATAR_BINARY_FILE_NAME,
 ];
 // The families whose parts a scene moves one by one, so the witness keeps a group per part of each: the login's
-// Walkway, Whose pieces rise as the camera nears them, and its door, which rises in the pieces its bones carry. Every
-// Other Family's parts stand still and are drawn as instances
+// Walkway, whose pieces rise as the camera nears them, and its door, which rises in the pieces its bones carry. Every
+// Other family's parts stand still and are drawn as instances
 export const MOVING_PART_FAMILIES: ReadonlySet<string> = new Set<string>([
   LoginPartFamily.Door,
   LoginPartFamily.Walkway,
 ]);
 // The moving families whose meshes are skinned rigidly, each part split into a group per piece its bones carry, named
-// By The bone, for its scene to carry along the clip the game moves them by: the login's door. The mesh's skin is read
-// From The JSON its export writes beside it
+// By the bone, for its scene to carry along the clip the game moves them by: the login's door. The mesh's skin is read
+// From the JSON its export writes beside it
 export const RIGID_PIECE_FAMILIES: ReadonlySet<string> = new Set<string>([LoginPartFamily.Door]);
 // The listing of the components a host serves the exports of, beside their folders
 export const SCENE_EXPORT_INDEX_PATH = "index.json";

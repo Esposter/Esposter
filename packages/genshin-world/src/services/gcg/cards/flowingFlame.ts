@@ -7,7 +7,7 @@ import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCa
 import { takeOne } from "@esposter/shared";
 
 // Flowing Flame, Diluc's talent: equipped to Diluc while she is active, it has her Searing Onslaught used at once, and
-// Her Second and third uses each round spend one Pyro die less
+// Her second and third uses each round spend one Pyro die less
 export const flowingFlame: GcgCardModule = {
   ...createGcgTalentCard(FLOWING_FLAME_CHARACTER_ID, SEARING_ONSLAUGHT_ID),
   reduceCost: ({ duel, sideIndex }, subject) => {

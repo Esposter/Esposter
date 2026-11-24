@@ -1,7 +1,7 @@
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 // Whether a pixel of a target `targetWidth` pixels wide stands inside a reference's scored region, the region scaled
-// From The reference's width to the target's, so a tool reads nothing a recording masks
+// From the reference's width to the target's, so a tool reads nothing a recording masks
 export const checkIsScoredPixel = (
   region: ImageRegion,
   referenceWidth: number,

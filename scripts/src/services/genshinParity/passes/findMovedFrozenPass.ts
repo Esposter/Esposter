@@ -5,7 +5,7 @@ import { checkIsRecordedDifferently } from "#src/services/genshinParity/passes/c
 
 // A pass held on every reference is frozen, and a later pass run cannot move it: when the run re-measures one before it
 // And the rows differ from the report's, that pass is named, so the run is refused and the earlier pass is reopened by
-// Its Own run rather than compensated for here. The pass the run takes up is never compared with its own rows
+// Its own run rather than compensated for here. The pass the run takes up is never compared with its own rows
 export const findMovedFrozenPass = ({
   passAlone,
   recordedRows,

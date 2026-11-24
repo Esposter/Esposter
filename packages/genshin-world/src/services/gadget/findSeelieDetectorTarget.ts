@@ -5,7 +5,7 @@ import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { findNearestPlace } from "#src/services/gadget/findNearestPlace";
 
 // The Seelie a Seelie detector points to: the nearest Seelie of the region the player stands in that is not settled
-// Yet, Measured from the player's position on the ground. None when every Seelie there is settled
+// Yet, measured from the player's position on the ground. None when every Seelie there is settled
 export const findSeelieDetectorTarget = (
   regionPuzzlePlaces: readonly PuzzlePlace[],
   settledSeelieIds: ReadonlySet<string>,

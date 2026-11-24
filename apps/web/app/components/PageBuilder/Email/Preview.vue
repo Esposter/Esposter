@@ -28,7 +28,7 @@ const { data, error, refresh } = useQuery(() => $trpc.email.compile.mutate(email
 });
 const isRefused = computed(() => Boolean(data.value && "messages" in data.value));
 // A refused compile's findings are its validator messages, or the refusal itself when the validator names none, since a
-// Refused Email is an error either way. Exposed for the email's problems surface, which lists them in Design and in
+// Refused email is an error either way. Exposed for the email's problems surface, which lists them in Design and in
 // Preview alike
 const findings = computed<EditorFinding[]>(() => {
   const result = data.value;

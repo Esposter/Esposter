@@ -9,7 +9,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // A state a fixture forces on Confirm, the choice the game's pointer rests on in its shots; a reader's pointer lights
-  // A Choice itself
+  // A choice itself
   interactionState?: InteractionState | undefined;
 }
 

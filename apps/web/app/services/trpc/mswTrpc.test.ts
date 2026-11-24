@@ -45,7 +45,7 @@ export const setupMswTrpc = () => {
   beforeAll(() => {
     // @TODO: https://github.com/nuxt/test-utils/issues/1891 — the Nuxt test environment's `fetch` hands a happy-dom
     // `Request` to Node's `fetch` as is, which reads it as `[object Request]`, and msw 3 sends every request as one.
-    // Its Parts are sent instead, before msw patches `fetch`
+    // Its parts are sent instead, before msw patches `fetch`
     vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) =>
       input instanceof Request
         ? nuxtFetch(input.url, {
@@ -60,9 +60,9 @@ export const setupMswTrpc = () => {
 
   // A request sent after the test ended comes from a handler the test never awaited, and left alone it lands after msw
   // Closes, where what it logs races the worker's teardown into an error pinned on whichever file was running. A
-  // Request Already out when the test ended — one it held and released — is answered here while msw still listens.
-  // Waiting for It is bounded by one timer boundary: a request still open after it is held by a resolver the test never
-  // Released, So it fails this test by name and is dropped, rather than the hook waiting on a response that will never
+  // Request already out when the test ended — one it held and released — is answered here while msw still listens.
+  // Waiting for it is bounded by one timer boundary: a request still open after it is held by a resolver the test never
+  // Released, so it fails this test by name and is dropped, rather than the hook waiting on a response that will never
   // Come
   afterEach(async () => {
     const lateRequestUrls: string[] = [];

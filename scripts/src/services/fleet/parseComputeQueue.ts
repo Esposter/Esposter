@@ -7,7 +7,7 @@ import { readMarkdownSection } from "#src/services/fleet/readMarkdownSection";
 
 // Every open item of one compute page: those under its queue heading are runnable, those under its waiting heading wait
 // On an input, each carrying the blocker its line names. An open line with no id is skipped and counted, in either
-// List, So a missing id is visible rather than lost
+// List, so a missing id is visible rather than lost
 export const parseComputeQueue = (page: string): ComputeQueueReading => {
   const runnableItems = parseOpenLines(readMarkdownSection(page, COMPUTE_QUEUE_HEADING));
   const waitingItems = parseOpenLines(readMarkdownSection(page, COMPUTE_QUEUE_WAITING_HEADING));

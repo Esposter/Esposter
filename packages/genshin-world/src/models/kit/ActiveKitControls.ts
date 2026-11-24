@@ -9,7 +9,7 @@ import type { CharacterController } from "genshin-engine";
 
 // What the step of the kit on the field reads of the character it moves, beyond the combat state: the controller whose
 // Body it acts from and turns, the camera's aim, the buffer its landed hits are written into, and where the ores its
-// Hits And reactions strike are sent
+// Hits and reactions strike are sent
 export interface ActiveKitControls {
   // The yaw the camera aims along, which an aimed shot turns the body to while the aim is held
   aimYaw: number;

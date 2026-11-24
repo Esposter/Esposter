@@ -4,7 +4,7 @@ import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // The crafting bench's place in a region, in the region's own axes as the scripts publish it: the ground point it
-// Stands At and its turn in radians
+// Stands at and its turn in radians
 export interface CraftingBenchPlace {
   position: GroundPoint;
   rotation: number;

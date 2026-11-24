@@ -7,7 +7,7 @@ import { hitPartyMember } from "#src/services/kit/hitPartyMember";
 import { WILDLIFE_CHARGE_DAMAGE } from "#src/services/wildlife/constants";
 
 // A boar's charge on the member on the field: its share of the member's Max HP is first taken by the team's shields,
-// And What none of them absorbs is taken from the member as the share of its Max HP it is
+// And what none of them absorbs is taken from the member as the share of its Max HP it is
 export const chargePartyMember = (
   party: Party,
   combatant: Combatant,

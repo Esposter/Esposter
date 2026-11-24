@@ -7,7 +7,7 @@ import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveChara
 import { takeOne } from "@esposter/shared";
 
 // Transcendent Automaton: Maguu Kenki, while active, equips it, and Blustering Blade is used at once. Her Blustering
-// Blade Switches to the next standing character, and her Frosty Assault to the previous one
+// Blade switches to the next standing character, and her Frosty Assault to the previous one
 export const transcendentAutomaton: GcgCardModule = {
   ...createGcgTalentCard(MAGUU_KENKI_ID, BLUSTERING_BLADE_ID),
   onSkillUsed: ({ duel, sideIndex }, skill) => {

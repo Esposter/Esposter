@@ -6,7 +6,7 @@ import { SAMPLED_INSTRUMENTS } from "#src/services/genshinAssets/shared/constant
 import { posix } from "node:path";
 
 // Every instrument a voice may be played by, its mapping fetched with every file it includes and read into the regions
-// A Note plays
+// A note plays
 export const readSampleCatalogue = (): Promise<CataloguedInstrument[]> =>
   Promise.all(
     SAMPLED_INSTRUMENTS.map(async ({ library, mapping }) => {

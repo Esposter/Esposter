@@ -13,7 +13,7 @@ export const DropIdForgeRandomIdMap: Record<number, number> = { 208_001_500: 20_
 // Recipe
 export const UNLOCK_FORGE_USE_OP = "ITEM_USE_UNLOCK_FORGE";
 // The forge type of each kind of recipe the blacksmith forges. Type eight holds the gadgets' widgets, which the gadgets
-// Page Owns, so it is left out here
+// Page owns, so it is left out here
 export const ForgeTypeRecipeKindMap: Record<number, ForgeRecipeKind> = {
   1: ForgeRecipeKind.Enhancement,
   3: ForgeRecipeKind.Weapon,

@@ -19,7 +19,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
 // The blacksmith's recipes, which the screen records hold as the forge opens, and its place in Mondstadt as the world
-// Starts, Read from the hosted game data, and the recipe each diagram opens, by the diagram's item id
+// Starts, read from the hosted game data, and the recipe each diagram opens, by the diagram's item id
 export const useWorldForging = ({
   forgeRecipeRecord,
 }: {
@@ -40,7 +40,7 @@ export const useWorldForging = ({
     },
   );
   // The forge's state for this session: the save holds the recipes learned, not the queues, so a reload empties them,
-  // And its Clock is read again each Interval while the forge screen is open so its queues' time left moves
+  // And its clock is read again each Interval while the forge screen is open so its queues' time left moves
   const forgeAmount = ref(1);
   const forgeDefinitions = computed(() =>
     computeForgeDefinitions(forgeRecipes.value, worldSessionStore.materialDataMap, worldSessionStore.nameText),

@@ -1,5 +1,5 @@
 // A mesh as its JSON dump holds it, in the game's own left-handed axes: its vertex attributes flat, its index buffer,
-// Its Submeshes' index counts, its skin per vertex, and the bind pose of each of its joints
+// Its submeshes' index counts, its skin per vertex, and the bind pose of each of its joints
 export interface DumpedMesh {
   m_BindPose: Record<string, number>[];
   m_Colors: number[];

@@ -8,13 +8,13 @@ import type { KitHit } from "#src/models/kit/KitHit";
 // Given the enemy the body turned to, if it turned to one
 export interface KitAction {
   // Whether the action may start as it is pressed, read from the state the team holds then: a cost it holds short of
-  // Its Amount refuses the start, which starts nothing and spends nothing
+  // Its amount refuses the start, which starts nothing and spends nothing
   canStart?: ((context: KitContext) => boolean) | undefined;
   // The seconds of its charge a charge skip takes off its start, if it has a charge to skip: the action starts that far
   // In, so its hitmarks and its end come that much sooner
   chargeSeconds?: number;
   // Asked as a press of the action starts, whether that press ends the state the kit holds. Such a press plays none of
-  // The Action's hits and sets no cooldown, as gcsim's press that leaves a state does
+  // The action's hits and sets no cooldown, as gcsim's press that leaves a state does
   checkIsStateEndingPress?: ((context: KitContext) => boolean) | undefined;
   // The length the action plays, if it is decided as it runs: once its seconds reach `atSeconds`, `decide` returns the
   // Seconds it plays from then on, from the state the team holds then, such as the Sourcewater Droplets a charge

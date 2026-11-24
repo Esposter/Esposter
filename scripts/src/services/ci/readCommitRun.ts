@@ -8,7 +8,7 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { setTimeout as sleep } from "node:timers/promises";
 
 // Found by its commit, never by `--branch` with `--workflow`: GitHub's per-workflow branch filter answers with
-// `weeks-old` Runs for `ai/queue` (the `running-checks` skill, "Watching the push's run")
+// Weeks-old runs for `ai/queue` (the `running-checks` skill, "Watching the push's run")
 export const readCommitRun = async (sha: string): Promise<CiRun | undefined> => {
   for (let attempt = 0; attempt < RUN_CREATION_ATTEMPTS; attempt++) {
     const [run] = parseMachineJson<CiRun[]>(

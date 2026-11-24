@@ -54,7 +54,7 @@ const addUniqueName = (base: string, names: Set<string>) => {
   return name;
 };
 // The commands the creator's panes and shortcuts run over its document. Each gesture is one of the core's commands,
-// Applied Through the survey's document schema as one history entry. A command the core or the schema refuses changes
+// Applied through the survey's document schema as one history entry. A command the core or the schema refuses changes
 // Nothing and returns false
 export const useSurveyCreatorCommands = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
@@ -110,7 +110,7 @@ export const useSurveyCreatorCommands = () => {
   };
   const moveElement = (operations: JsonPatchOperation[]) => applyEdit(operations, "Move element");
   // The move a node takes from its place. A move the selection cannot take has no operations, so it changes nothing,
-  // And the menu that Offers the move reads the same refusal from getSurveyNodeMove
+  // And the menu that offers the move reads the same refusal from getSurveyNodeMove
   const moveNode = (nodePointer: string, moveType: SurveyNodeMoveType) => {
     const { operations } = getSurveyNodeMove(document.value, nodePointer, moveType);
     return moveElement(operations);
@@ -191,7 +191,7 @@ export const useSurveyCreatorCommands = () => {
       `props:${nodePointer}:${Object.keys(props).toSorted().join(",")}`,
     );
   // The core's node-props command takes a node's id as one of its props, which the root does not hold, so the root's
-  // Props are Written at the root's own pointer
+  // Props are written at the root's own pointer
   const updateRootProps = (props: Partial<SurveyRootProps>) =>
     applyEdit(
       Object.entries<unknown>(props).map(([key, value]) => ({

@@ -54,8 +54,8 @@ const fixedStepLoop = createFixedStepLoop(WILDLIFE_STEP_SECONDS, () => {
 });
 const material = createToonMaterial({ color: WILDLIFE_COLOR, lightUniforms, rampTexture });
 // Every animal without a silhouette is one capsule of one instanced draw, and each kind with one is an instanced draw
-// Of Its silhouette. Each is stood on the ground and turned to its heading, as a stand-in until its model lands. The
-// Animals Move, so each mesh's bounds, measured once, would cull them where they once stood
+// Of its silhouette. Each is stood on the ground and turned to its heading, as a stand-in until its model lands. The
+// Animals move, so each mesh's bounds, measured once, would cull them where they once stood
 const capsuleMesh = createInstancedMesh(
   new CapsuleGeometry(WILDLIFE_CAPSULE_RADIUS, WILDLIFE_CAPSULE_HEIGHT - WILDLIFE_CAPSULE_RADIUS * 2),
   material,

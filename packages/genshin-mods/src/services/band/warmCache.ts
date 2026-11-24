@@ -12,8 +12,8 @@ const lastCacheRequestAtAtom = atom(
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 // A fork re-sends the conversation's prefix, which renews the cache from the moment it is sent, and adds no row to the
 // Transcript
-// A declaration, not an arrow: the hooks module's bundle
-// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
+/* oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported
+   helper that takes `$` only into a function declaration */
 export async function warmCache($: EngineInterface): Promise<void> {
   const requestedAt = await $.clock.now();
   const answer = await $.model.fork({ prompt: WARM_QUESTION });

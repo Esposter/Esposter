@@ -90,8 +90,9 @@ const exportBlockSprites = async (block: string, sprites: readonly IndexedAsset[
   }
 };
 
-// Exports every name the index holds into its folder as a PNG under its name: a texture whole, a sprite cut from its
-// Atlas. A run that writes a name's PNG nowhere fails, and the names the index does not hold are reported, not failed
+// Exports every name the index holds into its folder as a PNG under its name: a texture whole, a sprite cut from
+// Its atlas. A run that writes a name's PNG nowhere fails, and the names the index does not hold are reported, not
+// Failed
 export const exportSpritesByName = async (names: readonly string[], block?: string): Promise<string> => {
   const { assets, missing } = await findSpriteAssets(names, block);
   rmSync(SPRITE_WORK_DIRECTORY, { force: true, recursive: true });

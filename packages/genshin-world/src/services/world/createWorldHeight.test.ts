@@ -119,7 +119,7 @@ describe(createWorldHeight, () => {
 
     const getGroundHeight = createWorldHeight(quarters, []);
     // A millimetre either side of each seam: the ground's slope moves a height by a few millimetres over that, so a
-    // Step Across the seam would show at the second decimal place
+    // Step across the seam would show at the second decimal place
     const step = 0.001;
 
     for (const z of [-600, -200, 200, 600]) expect(getGroundHeight(-step, z)).toBeCloseTo(getGroundHeight(step, z), 2);

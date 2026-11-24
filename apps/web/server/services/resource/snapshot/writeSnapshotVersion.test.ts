@@ -88,7 +88,7 @@ describe(writeSnapshotVersion, () => {
 
   // A touch restarts the grace window of an asset nothing references, which rewrites the stored object with the time it
   // Was touched. The digests are what a document of pasted hashes holds: each stored one is touched the first time a
-  // Row Names it, and none a row already names is touched again, so the clock moved between the writes shows which
+  // Row names it, and none a row already names is touched again, so the clock moved between the writes shows which
   // Happened
   test("touches an asset no row names once, and none a row already names", async () => {
     expect.hasAssertions();
@@ -147,7 +147,7 @@ describe(writeSnapshotVersion, () => {
   });
 
   // Only a url of this resource's own file is held to the refusal. A bare id can be a digest in text rather than a
-  // File, And another resource's url names a file this one never serves, so neither is refused, though both still keep
+  // File, and another resource's url names a file this one never serves, so neither is refused, though both still keep
   // The row
   test.each([
     ["a bare file id that no file backs", JSON.stringify({ fileId: missingAssetHash })],

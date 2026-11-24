@@ -10,8 +10,8 @@ import { z } from "zod";
 
 // A dynamic panel's answer: a list of panels within the bounds its owner set, each one answering the template's
 // Questions A template question a row hides or disables is skipped for that row: it is neither required nor checked, as
-// A top-level one is not The row's own answers are the panel scope its condition reads, beside the survey's values The
-// Template's questions are checked by the schema the caller passes in, since this module cannot import the function
+// A top-level one is not the row's own answers are the panel scope its condition reads, beside the survey's values
+// The template's questions are checked by the schema the caller passes in, since this module cannot import the function
 // That imports it
 export const createSurveyPanelDynamicAnswerSchema = (
   node: SurveyPanelDynamicNode,

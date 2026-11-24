@@ -8,7 +8,7 @@ import { settleAll } from "@esposter/shared";
 // Every object the locks reach: each index they name, then each object they name and each entry an index names. An
 // Index's entries are stored under that index's own scope and extension. `readIndex` reads an index's body however its
 // Store serves it, so each caller brings its own, and an index named by two locks is read once. `concurrency` bounds
-// The Index reads in flight, and a caller that passes none reads them all at once
+// The index reads in flight, and a caller that passes none reads them all at once
 export const getLockRefs = async (
   locks: HostedAssetLock[],
   readIndex: (index: HostedAssetName) => Promise<unknown>,

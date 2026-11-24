@@ -15,7 +15,7 @@ const checkIsKingsSquireCost = (subject: GcgCostSubject): boolean =>
   subject.card?.kind === GcgCardKind.Talent || subject.skill?.kind === GcgSkillKind.ElementalSkill;
 
 // King's Squire, a Bow: its character deals +1 DMG, and when it is played, the next Talent card or Elemental Skill of
-// The Round Spends 2 fewer Elemental Dice
+// The Round spends 2 fewer Elemental Dice
 export const kingsSquire: GcgCardModule = {
   ...createGcgWeaponCard("BOW"),
   play: ({ duel, sideIndex }) => {

@@ -1,7 +1,7 @@
 import type { ReviewWindow } from "#src/models/review/ReviewWindow";
 
 // One window as the run logs it and the dry run prints it: its index, its base and end, its commits and its batches
-// With Their file and line counts.
+// With their file and line counts.
 export const formatReviewWindow = ({ base, batches, commitShas, end }: ReviewWindow, index: number): string => {
   const fileCount = batches.reduce((total, batch) => total + batch.length, 0);
   const lines = [

@@ -27,7 +27,7 @@ export const openDatabase = <TSchema extends DatabaseSchema = DatabaseSchema>(
       if (!transaction) return;
 
       // An upgrade that throws would otherwise leave the version applied with half its stores, so the failure aborts
-      // The Transaction and the open request rejects with the abort
+      // The transaction and the open request rejects with the abort
       getResult(() =>
         options.upgrade?.(
           wrapUpgradeDatabase<TSchema>(request.result),

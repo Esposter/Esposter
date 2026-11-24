@@ -1,5 +1,5 @@
 // The main quest the Archive opens after, the Archon Quest Unexpected Power, as the game opens the Paimon menu's
-// Archive Entry once it is done
+// Archive entry once it is done
 export const ARCHIVE_UNLOCK_QUEST_ID = 353;
 // A name longer than this many characters sets in two smaller lines on its tile, as the game fits a long name to its
 // Band

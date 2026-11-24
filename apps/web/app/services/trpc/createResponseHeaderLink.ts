@@ -3,8 +3,9 @@ import type { Operation, TRPCLink } from "@trpc/client";
 
 import { observable } from "@trpc/server/observable";
 
-// A link that hands what one kind of call's answer names in a response header to the collector active as the call
-// Starts. The collector is only set while a call is being made, so the link takes it then, before the answer arrives
+// A link that hands what one kind of call's answer names in a response header to the collector active as the
+// Call starts. the collector is only set while a call is being made, so the link takes it then, before the answer
+// Arrives
 export const createResponseHeaderLink =
   <T>(
     type: Operation["type"],

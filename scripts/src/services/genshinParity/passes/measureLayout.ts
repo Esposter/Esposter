@@ -26,8 +26,8 @@ import sharp from "sharp";
 // Then at each current build's reference, each fitted part and the export it stands for carried as the scene carries
 // Their family in the reference's state, at every copy of a row it repeats the family along, and projected from the
 // Reference's own camera there (`solveReferenceCamera`), and the furthest apart they stand in the reference's own
-// Pixels, Which `computeLayoutFrameMeasure` reads. The camera is solved from the reference alone, never the scene's, so
-// A change to Our camera cannot move a placement's gate
+// Pixels, which `computeLayoutFrameMeasure` reads. The camera is solved from the reference alone, never the scene's, so
+// A change to our camera cannot move a placement's gate
 export const measureLayout = async (
   component: DerivedAssetComponent,
   pageRoot?: string,

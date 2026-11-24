@@ -39,7 +39,7 @@ export interface BaseKitHitRecord {
   lunarReactionType?: LunarReactionType | undefined;
   multiplier: KitParameter;
   // A second table the multiplier is multiplied by, read at the level of the talent its proud skill group belongs to,
-  // As an Enhanced normal attack is its normal attack's multiplier times its skill's
+  // As an enhanced normal attack is its normal attack's multiplier times its skill's
   multiplierFactor?: KitParameter | undefined;
   poiseDamage: number;
   // The stat the multiplier is a share of, where it is not ATK

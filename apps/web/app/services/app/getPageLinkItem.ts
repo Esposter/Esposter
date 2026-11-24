@@ -5,7 +5,7 @@ import { SecondaryPageLinkItems } from "#src/services/app/SecondaryPageLinkItems
 import { UserSettingsPageLinkItem } from "#src/services/app/UserSettingsPageLinkItem";
 
 // The product, secondary or settings page at exactly this path, whose icon and name stand for it; any other page, a
-// Room or a Resource, has none, and the dock draws its title's first letter instead
+// Room or a resource, has none, and the dock draws its title's first letter instead
 export const getPageLinkItem = (path: string) =>
   [
     ...ProductGroups.flatMap(({ items }): readonly ListLinkItem[] => items),

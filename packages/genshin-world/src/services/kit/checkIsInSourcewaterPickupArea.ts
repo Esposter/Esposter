@@ -4,9 +4,9 @@ import type { GroundPoint } from "genshin-engine";
 import { computeFacingAngle } from "#src/services/kit/computeFacingAngle";
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/charge.go, getSourcewaterDroplets: a box seven metres behind the body to
-// Eleven Ahead and four metres to either side, or a fan of fourteen metres spanning eighty degrees ahead. A droplet is
-// A point, So the box and the fan are tested on its centre alone
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/charge.go`
+// Eleven ahead and four metres to either side, or a fan of fourteen metres spanning eighty degrees ahead. A droplet is
+// A point, so the box and the fan are tested on its centre alone
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/charge.go
 const BOX_BEHIND_METRES = 7;
 const BOX_AHEAD_METRES = 11;
 const BOX_HALF_WIDTH_METRES = 4;

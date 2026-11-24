@@ -6,7 +6,7 @@ import { omitUndefined } from "@esposter/shared";
 // Rewritten under its own name, which is what stamps the new upload time. Answers whether there was a blob to move: a
 // Blob already gone answers false, so a caller can tell it from a touch that landed, and any other failure rethrows. A
 // Content type, when one is given, replaces the stored one, so a re-upload's declared type is the one the blob lists;
-// An Empty one keeps the stored type, as a presigned PUT with no declared type would
+// An empty one keeps the stored type, as a presigned PUT with no declared type would
 export const touchResourceAssetBlob = async (
   bucket: R2Bucket,
   blobName: string,

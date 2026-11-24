@@ -78,7 +78,7 @@ const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitE
   );
 
 // The kit's steps as the world runs them: the team's effects step, their expiries are heard, then each deployed
-// Member's Kit steps on the step
+// Member's kit steps on the step
 const stepBarbaraSeconds = (context: KitContext, seconds: number): void => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
     stepKitSecondsSendingExpiries(context, FIXED_STEP_SECONDS);

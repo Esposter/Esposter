@@ -6,7 +6,7 @@ import { fightImaginariumStage } from "#src/services/imaginarium/fightImaginariu
 import { rewindImaginariumRun } from "#src/services/imaginarium/rewindImaginariumRun";
 
 // A stage a run starts: fought when its Principal Cast is ready, and otherwise the run rewinds to its last boss stage,
-// Which Spends one of its rewinds, or stays as it was when it holds none
+// Which spends one of its rewinds, or stays as it was when it holds none
 export const startImaginariumStage = (
   run: ImaginariumRun,
   progress: DomainChallengeProgress,

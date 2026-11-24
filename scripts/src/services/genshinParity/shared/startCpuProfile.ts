@@ -6,7 +6,7 @@ import { MICROSECONDS_PER_MS } from "#src/services/genshinParity/shared/constant
 
 const CPU_SAMPLE_MICROSECONDS = 200;
 // The page's main-thread samples over the run, which a slow frame with no GPU call in it is named by. The profile's
-// Clock is Read against the page's own clock at the start, so each sample's time is the frame times' time
+// Clock is read against the page's own clock at the start, so each sample's time is the frame times' time
 export const startCpuProfile = async (context: BrowserContext, page: Page): Promise<CpuProfiler> => {
   const session = await context.newCDPSession(page);
   await session.send("Profiler.enable");

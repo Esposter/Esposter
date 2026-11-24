@@ -34,7 +34,7 @@ const nameTags = shallowRef<SightNameTag[]>([]);
 const point = new Vector3();
 // Each living enemy within the sight's reach that has a name is projected through the camera where it stands, its head
 // Lifted by its capsule, and the tags are handed on only when there are some or there were, so a sight that is off
-// `re-renders` nothing
+// Re-renders nothing
 useRafFn(() => {
   const camera = getCamera();
   if (!camera || !elementalSight.isOn) {

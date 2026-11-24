@@ -23,8 +23,8 @@ export const useForwardStore = defineStore("message/input/forward", () => {
   const { data: roomIds, getDataRef: getRoomIdsRef } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
   const { data: messageInput, getDataRef: getMessageInputRef } = useDataMap(() => roomStore.currentRoomId, "");
   // Empties the panel of the room the forward was composed in, once the server has answered the send. The room is named
-  // By The caller, since the route may have moved on by the time the answer lands. Each field empties only while it
-  // Still Holds what the forward sent, so a text or room pick the reader changed while the server had it stays in the
+  // By the caller, since the route may have moved on by the time the answer lands. Each field empties only while it
+  // Still holds what the forward sent, so a text or room pick the reader changed while the server had it stays in the
   // Panel
   const clearForward = (roomId: string, sent: ForwardDraft) => {
     getForwardMessageIdRef(roomId).value = 0;

@@ -130,7 +130,7 @@ describe(useReadSearchedMessages, () => {
   });
 
   // An empty read raises no flag of its own, and the search it supersedes skips clearing the one it raised once
-  // Aborted, So the empty read is what clears it — or the room would render as searching for good
+  // Aborted, so the empty read is what clears it — or the room would render as searching for good
   test("clears the pending flag of a search that an empty read supersedes", async () => {
     expect.hasAssertions();
 

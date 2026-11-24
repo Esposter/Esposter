@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(createMockObjectState, () => {
   // The runtime rolls a synchronous transaction back when its closure throws, so a write the closure made before it
-  // Threw Lands nowhere, and the next statement reads the rows as they were before the transaction
+  // Threw lands nowhere, and the next statement reads the rows as they were before the transaction
   test("transactionSync rolls back the writes of a closure that throws", () => {
     expect.hasAssertions();
 

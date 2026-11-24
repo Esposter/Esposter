@@ -1,5 +1,5 @@
 // One WebGPU call the parity page made: its name, when it began and how long it held the frame, the animation frame it
-// Ran in, And a label and detail read off its descriptor. A call that returns a promise also keeps when that promise
+// Ran in, and a label and detail read off its descriptor. A call that returns a promise also keeps when that promise
 // Settled
 export interface GpuCall {
   detail: string;

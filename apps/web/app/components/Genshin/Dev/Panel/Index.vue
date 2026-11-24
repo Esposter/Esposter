@@ -13,7 +13,7 @@ interface Props {
 
 // The development panel, a drawer on the right: the registry's variables as controls, one tab per name a group starts
 // With and one frame per group in it, and its scenarios as buttons in the last tab. It reads the registry again
-// Whenever The registry changes, and it never takes the keyboard, so the game keeps running under it
+// Whenever the registry changes, and it never takes the keyboard, so the game keeps running under it
 const isOpen = defineModel<boolean>({ required: true });
 const { registry } = defineProps<Props>();
 const readings = shallowRef<DevReading[]>([]);

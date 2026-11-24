@@ -27,9 +27,9 @@ const fitQuarters = async (
 };
 
 // A piece fitted, and where its bar misses its gate, its four quarters fitted the same way, until each holds its gate
-// Or Reads on fewer samples than a gate needs. The quarters reading under that minimum are grouped by
-// `groupGroundQuarters`, Each group fitted as one piece and kept only where it holds its gate, so a quarter no group
-// Holds is refused. A piece Reading on fewer samples than the minimum is refused in place. Every quarter is fitted
+// Or reads on fewer samples than a gate needs. The quarters reading under that minimum are grouped by
+// `groupGroundQuarters`, each group fitted as one piece and kept only where it holds its gate, so a quarter no group
+// Holds is refused. A piece reading on fewer samples than the minimum is refused in place. Every quarter is fitted
 // Before the groups are chosen, since A quarter's sample count is its own fit's, so a quarter's fit is discarded for
 // The group it joins
 export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource): Promise<GroundPiecesFit> => {

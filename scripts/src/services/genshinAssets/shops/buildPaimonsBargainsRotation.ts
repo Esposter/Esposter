@@ -22,9 +22,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // Paimon's Bargains' rotation as one record of the shops dataset: the pairs of characters, each pair the avatars that
-// The Two character rotations give at the same order, read through their cards' item use, and the Royal and Blackcliff
-// Weapon Sets, which the weapon rotations give at the Royal order and the Blackcliff order, and the price and monthly
-// Limit each Set's goods give, read from the goods of its rotation, with the good each rotation's slot is bought as, by
+// The two character rotations give at the same order, read through their cards' item use, and the Royal and Blackcliff
+// Weapon sets, which the weapon rotations give at the Royal order and the Blackcliff order, and the price and monthly
+// Limit each set's goods give, read from the goods of its rotation, with the good each rotation's slot is bought as, by
 // Its goods id. A missing order or a rotation priced two ways is an error
 export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
   const rotationRows = readExcelTable<ExcelShopRotateRow>("ShopRotateExcelConfigData");
@@ -45,7 +45,7 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
     return row;
   };
   // The price and monthly limit of a rotation's goods, the same for every rotation of a set, which the table gives on
-  // Each Good of the rotation by its rotate id
+  // Each good of the rotation by its rotate id
   const priceOfRotations = (rotateIds: readonly number[]): PaimonsBargainsPrice => {
     const prices = rotateIds.map((rotateId) => {
       const row = goodOfRotation(rotateId);

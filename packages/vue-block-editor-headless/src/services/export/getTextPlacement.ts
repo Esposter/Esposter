@@ -65,7 +65,7 @@ const getBoxTextPlacement = (
 
 // Where an element's text is drawn, for the export and the editor alike. An arrow's label sits at its route's midpoint,
 // Centred, and wraps at a constant width A shape's or a sticky note's sits in its box by its alignments, centred until
-// One is set, and a text box's sits in its box by its alignments, from its left edge Until one is set. Undefined for an
+// One is set, and a text box's sits in its box by its alignments, from its left edge until one is set. Undefined for an
 // Image or a stroke, which hold no text
 export const getTextPlacement = (element: PositionedElement): TextPlacement | undefined => {
   switch (element.type) {

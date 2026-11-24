@@ -21,9 +21,10 @@ describe("staticAssets", () => {
   const SIZE_LIMIT_BYTES = 2 * MEBIBYTE;
 
   const ENGINE_LOADER_PATHSPECS = ["apps/web/app/services/dungeons/loader"];
-  // A loader names a file in a static import, a dynamic import or an import.meta.glob. A glob names its files in one
-  // String or in an array of them, so every string in its argument is read An array's strings are read whole, so a
-  // Bracket inside one (a character class such as `[a-c]`) does not end the array
+  // A loader names a file in a static import, a dynamic import or an import.meta.glob.
+  // A glob names its files in one string or in an array of them, so every string in its argument is read
+  // An array's strings are read whole, so a bracket inside one (a character class such as `[a-c]`) does not end the
+  // Array
   const LOADED_SPECIFIER_REGEX =
     /(?:\bfrom |\bimport\(\s*)"(?<specifier>[^"]+)"|\bimport\.meta\.glob\(\s*(?<argument>\[(?:[^"\]]|"[^"]*")*\]|"[^"]+")/gu;
   const QUOTED_REGEX = /"(?<quoted>[^"]+)"/gu;

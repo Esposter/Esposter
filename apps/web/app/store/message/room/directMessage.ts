@@ -38,8 +38,9 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // The list's cursor keeps the ids of its pages, for paging. The rows are the overlay's, read into it as each page
   // Answers
   const { items: _pageDirectMessageIds, ...restData } = useCursorPaginationData<Pick<RoomInMessage, "id">>();
-  // A direct message the viewer holds a live, unhidden membership of, newest first. A hidden or left one has no such
-  // Membership in the view, so it leaves the list with the write or the event that took it off.
+  // A direct message the viewer holds a live, unhidden membership of, newest first.
+  // A hidden or left one has no such membership in the view, so it leaves the list with the write or the event that
+  // Took it off.
   const directMessages = computed(() =>
     roomRows.value
       .flatMap((room) => {
@@ -87,7 +88,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
   // A conversation the reader is on leaves the list when its membership is removed or hidden, by whichever write or
-  // Event took it off. The reader is then taken to the first conversation left, or to the messages index when none is.
+  // Event took it off. the reader is then taken to the first conversation left, or to the messages index when none is.
   watch(directMessages, async (nextDirectMessages, previousDirectMessages) => {
     const roomId = currentDirectMessageId.value;
     const wasListed = previousDirectMessages.some(({ id }) => id === roomId);
@@ -105,8 +106,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // Each is held here while it is out, which is the one pending state they show.
   const creatingFriendIds = ref(new Set<PublicUser["id"]>());
   const invitingDirectMessageIds = ref(new Set<RoomInMessage["id"]>());
-  // The room the server answers with is drawn once it arrives, with the viewer's membership of it, which the list
-  // Needs. Its id is returned, or nothing when the server refused
+  // The room the server answers with is drawn once it arrives, with the viewer's membership of it, which the
+  // List needs. its id is returned, or nothing when the server refused
   const createDirectMessageRoom = async (userIds: string[]) => {
     let createdRoomId = "";
     await writeAwaited(
@@ -129,7 +130,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     return true;
   };
   // The link goes into a conversation the reader is already in, so unlike inviteFriend there is no direct message to
-  // Create first. The message is the reader's own.
+  // Create first. the message is the reader's own.
   const inviteDirectMessage = async (roomId: string, inviteLink: string) => {
     invitingDirectMessageIds.value.add(roomId);
     await getResultAsync(() =>
@@ -138,25 +139,25 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     invitingDirectMessageIds.value.delete(roomId);
   };
   // The invite a friend is sent creates the direct message where none exists, and the reader stays on the screen they
-  // Are on. So unlike createDirectMessage this does not navigate, and the message is the reader's own.
+  // Are on. so unlike createDirectMessage this does not navigate, and the message is the reader's own.
   const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
     creatingFriendIds.value.add(friendId);
     const roomId = await createDirectMessageRoom([friendId]);
     creatingFriendIds.value.delete(friendId);
     if (roomId) await inviteDirectMessage(roomId, inviteLink);
   };
-  // Hiding is an entry over the viewer's own membership: the conversation leaves the list while the write is out. The
-  // Membership the server answers arrives at the version it names, and a refusal drops the entry, so the conversation
-  // Stays.
+  // Hiding is an entry over the viewer's own membership: the conversation leaves the list while the write is out.
+  // The membership the server answers arrives at the version it names, and a refusal drops the entry, so the
+  // Conversation stays.
   const hideDirectMessage = (input: HideDirectMessageInput) => {
     writeOptimistic(
       async () => createRowResponse(userToRoomTable, await $trpc.room.directMessage.hideDirectMessage.mutate(input)),
       { entry: getUserToRoomPatchEntry(userId.value, input, { isHidden: true }), onError: createErrorAlert },
     );
   };
-  // A participant's removal is awaited, and the membership the server tombstoned arrives, which takes them off the
-  // List. A leave is the same removal of the viewer, so a reader who leaves is taken off the conversation by the same
-  // Arrival.
+  // A participant's removal is awaited, and the membership the server tombstoned arrives, which takes them off
+  // The list. A leave is the same removal of the viewer, so a reader who leaves is taken off the conversation by the
+  // Same arrival.
   const deleteDirectMessageParticipant = (roomId: string, participantId: PublicUser["id"]) =>
     writeAwaited(
       async () => [

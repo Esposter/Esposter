@@ -6,7 +6,7 @@ import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { join } from "node:path";
 
 // The stamps among the paths this machine holds, read from its own files before any file they cover is chosen, a
-// Bounded Number at a time
+// Bounded number at a time
 export const readLocalStamps = async (localDirectory: string, paths: string[]): Promise<StampEntry[]> => {
   const stamps: StampEntry[] = [];
   await forEachConcurrently(paths, STAMP_CONCURRENCY, async (path) => {

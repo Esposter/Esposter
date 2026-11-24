@@ -8,8 +8,8 @@ import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 
 // Measured: gcsim v2.47.2 (MIT) tighnari/asc.go, A4: his charged attacks and Fashioner's Tanglevine Shaft gain 0.06%
-// DMG For each point of Elemental Mastery, to 60%
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/tighnari/asc.go`
+// DMG for each point of Elemental Mastery, to 60%
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/tighnari/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_DAMAGE_PER_ELEMENTAL_MASTERY = 0.0006;
 const ASCENSION_4_DAMAGE_MAX = 0.6;
@@ -18,7 +18,7 @@ const CONSTELLATION_1_CRIT_RATE_BONUS = 0.15;
 // Measured: gcsim v2.47.2 (MIT) tighnari/cons.go, Constellation 4: as his burst is cast, every member gains 60
 // Elemental Mastery for 8 seconds, raised to 120 for 8 seconds, refreshing the buff, when the burst triggers a Burning,
 // Bloom, Lunar-Bloom, Quicken or Spread reaction
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/tighnari/cons.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/tighnari/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_ELEMENTAL_MASTERY_BONUS = 60;
 const CONSTELLATION_4_RAISED_ELEMENTAL_MASTERY_BONUS = 120;
@@ -35,13 +35,13 @@ const CONSTELLATION_4_RAISING_REACTIONS: ReadonlySet<ReactionType> = new Set([
 export const TIGHNARI_CHARACTER_ID = 10_000_069;
 
 // Tighnari's behaviour: his strikes, charged attack, plunges, Vijnana-Phala Mine and Fashioner's Tanglevine Shaft with
-// Its Secondary Tanglevine Shaft are his record's alone. From Ascension 4 his charged attack and his burst deal more
+// Its secondary Tanglevine Shaft are his record's alone. From Ascension 4 his charged attack and his burst deal more
 // DMG as his Elemental Mastery rises. A1's Elemental Mastery on each Wreath Arrow waits on Vijnana Suffusion's Wreath
-// Arrow, which Turns the charged shot into a shot of its own and is not built, as the kit offers no charged variant
-// Yet. His Constellation 1's charged CRIT Rate and Constellation 4's team Elemental Mastery, raised by his burst's
-// Reactions, are built; His other Constellations are not Constellation 2 needs the Vijnana-Phala Mine's field, centred
-// On the primary target, which the kit context does not name Constellation 6 needs the Wreath Arrow's shorter charge
-// And its Clusterbloom Arrow, which the kit does not build
+// Arrow, which turns the charged shot into a shot of its own and is not built, as the kit offers no charged
+// Variant yet. His Constellation 1's charged CRIT Rate and Constellation 4's team Elemental Mastery, raised by his
+// Burst's reactions, are built; his other Constellations are not
+// Constellation 2 needs the Vijnana-Phala Mine's field, centred on the primary target, which the kit context does not
+// Name Constellation 6 needs the Wreath Arrow's shorter charge and its Clusterbloom Arrow, which the kit does not build
 export const createTighnariKitBehaviour = (): KitBehaviour => ({
   // Constellation 4: as the burst is cast, every member gains Elemental Mastery for 8 seconds
   burst: {

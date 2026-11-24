@@ -17,7 +17,7 @@ export const useWorldExpeditionRoster = ({ characterTalentKits, getCharacterName
   // Whom no expedition is sent with
   const expeditionCharacters = computed(() => characters.value.map(({ id }) => ({ id, name: getCharacterName(id) })));
   // Each character's passives it has unlocked at its ascension, by their proud skill groups, which the expedition
-  // Talents are Read from. A character with no talent kit has none
+  // Talents are read from. A character with no talent kit has none
   const characterPassiveGroupIdMap = computed(
     () =>
       new Map(

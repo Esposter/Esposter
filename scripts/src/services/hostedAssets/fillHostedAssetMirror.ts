@@ -8,8 +8,8 @@ import { settleAll } from "@esposter/shared";
 import { HOSTED_ASSETS_MIRROR_DIRECTORY } from "@esposter/shared-node/cache";
 
 // Every object a lock reaches, read into the mirror: each index, then the lock's own objects and the entries those
-// Indexes Name, so a mirror saved after it holds every record a suite can read. Each object is checked against its name
-// As it is Read, so a mirror holding one altered object fails the fill. Resolves to how many distinct objects the lock
+// Indexes name, so a mirror saved after it holds every record a suite can read. Each object is checked against its name
+// As it is read, so a mirror holding one altered object fails the fill. Resolves to how many distinct objects the lock
 // Names
 export const fillHostedAssetMirror = async (
   baseUrl: string,

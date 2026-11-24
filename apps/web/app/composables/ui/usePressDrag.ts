@@ -10,8 +10,8 @@ interface Point {
 }
 
 // What a press tracked to its end hands its editor: where the drag starts, each move of it, what a release lands and
-// The end Of the press however it came. The editor keeps what differs between editors, which is what a move draws and
-// What a Release lands
+// The end of the press however it came. The editor keeps what differs between editors, which is what a move draws and
+// What a release lands
 interface PressHandlers {
   // The press ended, by a release, a cancel, Escape or the returned cancel, whether or not it had become a drag
   onEnd?: () => void;
@@ -24,11 +24,11 @@ interface PressHandlers {
 }
 
 // The one tracker of a drag's press, shared by every editor's drag, and the drag's state they would each hold: whether
-// The press Has become a drag, and where its pointer is. A press is a click until a mouse or a pen moves the drag start
-// Distance, or Until a finger rests the touch delay, and a finger that drifts first is scrolling, so its press ends
-// There. A started drag Ends at its release, a pointer cancel or Escape, which goes no further, and the click a release
-// Over the control it began On would raise is swallowed, moved or not, since a finger that rested has started a drag
-// Too. A press still held when the Scope ends is cancelled
+// The press has become a drag, and where its pointer is. A press is a click until a mouse or a pen moves the drag start
+// Distance, or until a finger rests the touch delay, and a finger that drifts first is scrolling, so its press
+// Ends there. A started drag ends at its release, a pointer cancel or Escape, which goes no further, and the click a
+// Release over the control it began on would raise is swallowed, moved or not, since a finger that rested has started a
+// Drag too. A press still held when the scope ends is cancelled
 export const usePressDrag = () => {
   const isDragging = ref(false);
   const point = shallowRef<Point>();

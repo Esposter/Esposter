@@ -9,8 +9,8 @@ import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
 
 // The Traveler's game model, read from the developer's exports in development when the export index holds it, and drawn
-// In Place of the pack's while the Traveler is the character on the field. Read once, on the first time the Traveler
-// Is, and Released with the scene. With no host, or an index without it, nothing is read and the pack draws the
+// In place of the pack's while the Traveler is the character on the field. Read once, on the first time the Traveler
+// Is, and released with the scene. With no host, or an index without it, nothing is read and the pack draws the
 // Character
 export const useCharacterAvatar = (
   sceneExportBaseUrl: string,
@@ -28,8 +28,8 @@ export const useCharacterAvatar = (
       async (components) => {
         if (!components.includes(AVATAR_COMPONENT)) return;
         await getResultAsync(async () =>
-          // The avatar builder loads on the first traveler avatar request,
-          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- keeping it out of the world's eager graph
+          /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- the avatar builder loads on the first
+             traveler avatar request, keeping it out of the world's eager graph */
           (await import("#src/services/character/avatar/readCharacterAvatar")).readCharacterAvatar(
             `${sceneExportBaseUrl}/${AVATAR_COMPONENT}`,
             options,

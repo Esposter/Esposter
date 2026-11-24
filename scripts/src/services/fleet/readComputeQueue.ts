@@ -6,7 +6,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every open runnable item of every area's design in the compute folder, each taking the phase its area holds, with the
 // Lines skipped for having no id. An id two designs share is an error, since a claim is keyed by its id and two items
-// Under One would take each other's claim
+// Under one would take each other's claim
 export const readComputeQueue = (files: readonly QueueFile[]): FleetEntryReading => {
   const areas = readComputeAreas(files);
   const entries = areas.flatMap(({ queue }) => queue);

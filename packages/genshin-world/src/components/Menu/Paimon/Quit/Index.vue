@@ -12,7 +12,7 @@ interface Props {
 defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
 // Quit is anchored from the bottom edge, as the frame anchors it: its box stands 36 of the 1440 high still's pixels
-// Above That still's bottom, each still pixel drawn at `--reference-pixel`, which puts its centre 55 units above the
+// Above that still's bottom, each still pixel drawn at `--reference-pixel`, which puts its centre 55 units above the
 // Frame's bottom
 const quitMark = getMenuFrameMark(MenuFrameIcon.Quit);
 const quitStyle = { ...quitMark.style, bottom: "calc(var(--reference-pixel) * 36)", top: "auto" };

@@ -99,7 +99,7 @@ export const usePageBuilderContent = <
     if (!targetValue || checkIsDeepEqual(value, savedValue.value)) return;
 
     // The form edits a part of the props, so the props it edits with its change are the ones checked, and the props
-    // That are Written keep the id and the slots
+    // That are written keep the id and the slots
     if (!targetValue.propsSchema.safeParse({ ...targetValue.ownProps, ...value }).success) return;
 
     const props = { ...targetValue.props, ...value };

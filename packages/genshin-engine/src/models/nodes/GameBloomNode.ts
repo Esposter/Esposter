@@ -81,10 +81,10 @@ interface GameBloomLevel {
 }
 
 // The game's bloom over a scene colour, drawn as the game's own programs draw it (`Login/Scene/Display.reference.ts`):
-// The Prefilter takes max(0, colour - threshold) times the scaler of each channel, or of the mean of four taps for the
-// `four-tap` Form, the chain box-downsamples the prefiltered frame by four taps a level and blurs each level, and the
-// Compose sums the Four levels by their weights and scales the sum by the intensity. The output is the bloom alone,
-// Added onto the scene by The caller as three's BloomNode's is. The structure's choices are the game's own shapes,
+// The prefilter takes max(0, colour - threshold) times the scaler of each channel, or of the mean of four taps for the
+// Four-tap form, the chain box-downsamples the prefiltered frame by four taps a level and blurs each level, and the
+// Compose sums the four levels by their weights and scales the sum by the intensity. The output is the bloom alone,
+// Added onto the scene by the caller as three's BloomNode's is. The structure's choices are the game's own shapes,
 // GENSHIN_BLOOM_STRUCTURE the default
 export class GameBloomNode extends Node<"vec4"> {
   readonly #blurPasses: GameBloomBlurPass[];

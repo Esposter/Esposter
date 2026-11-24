@@ -10,7 +10,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // The use each dish gives when it is eaten, by the dish's item id, for every item a cook recipe yields that heals,
-// Revives Or gives a bonus. A dish with none of these is left out, and a dish's item the material table lacks is an
+// Revives or gives a bonus. A dish with none of these is left out, and a dish's item the material table lacks is an
 // Error
 export const buildDishes = (recipes: CookingRecipe[]): Record<string, unknown> => {
   const materialMap = new Map(readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME).map((row) => [row.id, row]));

@@ -9,7 +9,7 @@ import { mirrorAvatarRotation } from "#src/services/genshinAssets/avatar/mirrorA
 import { getFilename, InvalidOperationError, Operation } from "@esposter/shared";
 
 // The rig's nodes, then every bone a mesh names that the rig lacks, parents first, each in three's axes. A bone's path
-// Is Its parent's path and its own name, so its parent is found by the path it is cut from
+// Is its parent's path and its own name, so its parent is found by the path it is cut from
 export const buildSkeleton = (
   rigNodes: readonly AvatarRigNode[],
   bones: readonly RendererBone[],

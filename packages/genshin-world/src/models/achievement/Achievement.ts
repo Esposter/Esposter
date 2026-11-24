@@ -4,8 +4,8 @@ import { achievementTriggerSchema } from "#src/models/achievement/AchievementTri
 import { z } from "zod";
 
 // One achievement as the game's table holds it: the category it is listed under, its order there, the trigger that
-// Counts It and the count that finishes it, the tier before it that must be done first (zero for none), the Primogems
-// It pays, Its title and description by text id, and whether it is hidden until it is done
+// Counts it and the count that finishes it, the tier before it that must be done first (zero for none), the Primogems
+// It pays, its title and description by text id, and whether it is hidden until it is done
 export interface Achievement {
   categoryId: number;
   descriptionTextId: string;

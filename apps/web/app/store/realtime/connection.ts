@@ -12,9 +12,9 @@ type EventData<TEvent extends { data: unknown; type: string }, TType extends TEv
 >["data"];
 
 // The handlers a scope's frames reach, keyed by the frame's type. A frame is parsed by its scope's schema before any
-// Handler Sees it, and a frame that fails the schema is logged and dropped. Handlers are held outside reactive state,
-// Since none is read. The context is what the socket that carried the frame was opened for: a room's socket names its
-// Room, since a message is Named by its room and its integer id, and a frame carries neither
+// Handler sees it, and a frame that fails the schema is logged and dropped. Handlers are held outside reactive state,
+// Since none is read. the context is what the socket that carried the frame was opened for: a room's socket names its
+// Room, since a message is named by its room and its integer id, and a frame carries neither
 const createEventHub = <TEvent extends { data: unknown; type: string }, TContext = undefined>(
   schema: z.ZodType<TEvent>,
 ) => {
@@ -34,8 +34,8 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
   const dispatch = (text: string, context: TContext) => {
     const frame = schema.safeParse(jsonDateParse(text));
     if (frame.success)
-      // Handlers are held by the frame's runtime type, so a handler takes the union of the frames' data it is handed,
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- which no one handler's data type accepts
+      /* oxlint-disable-next-line typescript/no-unsafe-type-assertion -- handlers are held by the frame's runtime type,
+         so a handler takes the union of the frames' data it is handed, which no one handler's data type accepts */
       for (const handler of handlers.get(frame.data.type) ?? []) handler(frame.data.data as never, context);
     else console.error(frame.error);
   };
@@ -130,11 +130,11 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     return promise;
   };
   // The reads the mounted queries watch, each as the server signed it for the person, with the refetch of the query
-  // That Made it. A read is watched up the user socket as its first query mounts and unwatched as its last unmounts,
-  // And a frame Carries one read's topics as that read signed them, never merged with another read's. The socket is
-  // Sent a read only when The read adds to what it holds: a topic it does not watch, a column it does not yet name, or
-  // A time before the one the Topic is watched from. A reconnect sends every read again, since a new socket holds
-  // Nothing, and refetches each query, Since an invalidation sent while the socket was closed never arrived
+  // That made it. A read is watched up the user socket as its first query mounts and unwatched as its last unmounts,
+  // And a frame carries one read's topics as that read signed them, never merged with another read's. The socket is
+  // Sent a read only when the read adds to what it holds: a topic it does not watch, a column it does not yet name, or
+  // A time before the one the topic is watched from. A reconnect sends every read again, since a new socket holds
+  // Nothing, and refetches each query, since an invalidation sent while the socket was closed never arrived
   const watchedReads = new Set<{ read: TopicRead; refetch: () => void }>();
   // What the socket holds of each topic: the columns the reads sent name together, and the earliest time it is watched
   // From
@@ -143,7 +143,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     sendUserSocketFrame?.(JSON.stringify(frame));
   };
   // Whether a read adds to what the socket holds: a topic it does not hold, a time before the one it holds it from, or
-  // A Column the held one does not name
+  // A column the held one does not name
   const checkAddsToHeld = ({ readAt, topics }: TopicRead) =>
     topics.some(({ columns, topic }) => {
       const heldTopic = heldTopics.get(topic);

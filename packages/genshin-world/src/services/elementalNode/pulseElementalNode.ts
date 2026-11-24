@@ -15,10 +15,10 @@ import { createElementalNodeStatus } from "#src/services/elementalNode/createEle
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 
 // A node's pulse on an enemy in its reach, written in place, and the reactions it triggers. An enemy cooling down from
-// A Depleted buff spends the pulse on that cooldown. Otherwise the element is laid at the gauge the buff allows: the
-// Full Gauge on an enemy without the buff, and on one with it the buffed gauge more, up to the buff's most. applyAura
-// Keeps the Larger gauge over an aura the enemy holds, so the gauge laid is the aura's total, and the aura's rate is
-// Zero, so the Buff does not decay with time. The enemy takes the node's resistance reduction for as long as the buff
+// A depleted buff spends the pulse on that cooldown. Otherwise the element is laid at the gauge the buff allows: the
+// Full gauge on an enemy without the buff, and on one with it the buffed gauge more, up to the buff's most. applyAura
+// Keeps the larger gauge over an aura the enemy holds, so the gauge laid is the aura's total, and the aura's rate is
+// Zero, so the buff does not decay with time. The enemy takes the node's resistance reduction for as long as the buff
 // Lasts
 export const pulseElementalNode = (enemy: Enemy, element: Element): Reaction[] => {
   if (enemy.elementalNodePulsesLeft > 0) {

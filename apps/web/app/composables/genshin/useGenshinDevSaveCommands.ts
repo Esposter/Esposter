@@ -14,9 +14,9 @@ import {
   unlockLandmarkArgumentsSchema,
 } from "genshin-world";
 
-// The developer's save commands, `give`, `level`, `ar` and `unlock`, registered once the game's names and rules are
-// Read. Each reads the save the world last wrote, and writes the save field the game's own act writes. The new save is
-// Handed to the page, which applies it. A refused line writes nothing
+// The developer's save commands, `give`, `level`, `ar` and `unlock`, registered once the game's names and rules
+// Are read. each reads the save the world last wrote, and writes the save field the game's own act writes.
+// The new save is handed to the page, which applies it. A refused line writes nothing
 export const useGenshinDevSaveCommands = ({
   applySave,
   devRegistry,

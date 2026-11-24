@@ -26,7 +26,7 @@ export const MIN_DUPLICATE_LINES = 5;
 // Tests repeat literals on purpose (the `test-values` skill), and a generated file or a declaration is the output of
 // Another tool, so no copy in any of them is one a reader could fix. An asset is drawn content, an SVG's paths rather
 // Than logic, and each cloud resource declaration is its provider's own exported shape, which the `pulumi-infra`
-// Skill's Settled list keeps one per file rather than behind a factory that would copy the SDK's argument type
+// Skill's settled list keeps one per file rather than behind a factory that would copy the SDK's argument type
 export const DUPLICATE_CODE_IGNORED_GLOBS: string[] = [
   "**/*.test.ts",
   "**/*.test-d.ts",

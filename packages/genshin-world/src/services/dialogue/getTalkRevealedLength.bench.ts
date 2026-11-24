@@ -4,7 +4,7 @@ import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
 // The reveal runs every frame of a talk, so it is measured at a dialogue line and at a long one. The whole line is
-// Revealed, So each run walks it to the last character
+// Revealed, so each run walks it to the last character
 describe(getTalkRevealedLength, () => {
   test.for([
     { line: "ab ".repeat(10), scale: "a short line" },

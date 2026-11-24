@@ -15,10 +15,10 @@ import { LandmarkKind } from "genshin-world";
 import { z } from "zod";
 
 // A domain entrance's place in its region's axes round the Windrise origin, as the region's landmarks are: the
-// Transport Point's place and turn, carried by `toRegionAxesPlace`. Its height is the transport point's own, its game
-// Area is the Level-one area the point stands in, 0 where the point holds none, and its name is the title text id the
-// Point holds, Which a title naming no game text key is refused rather than guessed. An entry naming no domain, or
-// Whose point is Missing or holds no transport position, gives none
+// Transport point's place and turn, carried by `toRegionAxesPlace`. Its height is the transport point's own, its game
+// Area is the level-one area the point stands in, 0 where the point holds none, and its name is the title text id the
+// Point holds, which a title naming no game text key is refused rather than guessed. An entry naming no domain, or
+// Whose point is missing or holds no transport position, gives none
 export const toDomainEntrance = (
   entry: ExcelDungeonEntryRow,
   point: DumpedScenePoint | undefined,

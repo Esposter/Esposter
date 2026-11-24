@@ -10,9 +10,9 @@ import { checkIsRecord } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 
 // One row a write returned, named by its primary key's fields, the fields the overlay holds the row by, and at the
-// Version the Write left it. Each key value is named as the row holds it, a string or a number, so the header's key is
-// The entry's key. A Table no topic names is untracked, a row with a key value missing names no row, and one with no
-// Version was not widened, so None of them is named. A key a credential is part of names no row either, since the
+// Version the write left it. Each key value is named as the row holds it, a string or a number, so the header's key is
+// The entry's key. A table no topic names is untracked, a row with a key value missing names no row, and one with no
+// Version was not widened, so none of them is named. A key a credential is part of names no row either, since the
 // Header never carries one
 const getRowVersion = (table: SQLiteTable, row: Record<string, unknown>): RowVersion | undefined => {
   const tableName = getTableName(table);
@@ -39,7 +39,7 @@ const getRowVersion = (table: SQLiteTable, row: Record<string, unknown>): RowVer
 };
 
 // The rows a request's writes changed, each at the version it now holds. A write names the rows it returned, so a
-// Statement That is not a write, or that returned none, names none
+// Statement that is not a write, or that returned none, names none
 export const getWriteRowVersions = (statements: RecordedStatement[]): RowVersion[] =>
   statements.flatMap(({ rows, statement }) => {
     const table = getWriteTable(statement);

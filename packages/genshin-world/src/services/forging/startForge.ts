@@ -21,10 +21,10 @@ import { spendOriginalResin } from "#src/services/originalResin/spendOriginalRes
 import { computeGameDay } from "#src/services/time/computeGameDay";
 
 // The bag, wallet and progress after `count` units of a recipe are started in a free queue at `now`: their materials
-// Taken From the bag and their Mora paid, their forge points counted toward the game day's cap, and any forging talent
-// The party's Characters give this recipe's forge type applied, its seconds saved and its ores refunded. Undefined,
-// With nothing spent, Where the recipe is not open, the count is more than one queue holds, every queue the rank opens
-// Is busy, the materials, The Original Resin or the Mora fall short, the day's cap would be passed, or the Serenitea
+// Taken from the bag and their Mora paid, their forge points counted toward the game day's cap, and any forging talent
+// The party's characters give this recipe's forge type applied, its seconds saved and its ores refunded. Undefined,
+// With nothing spent, where the recipe is not open, the count is more than one queue holds, every queue the rank opens
+// Is busy, the materials, the Original Resin or the Mora fall short, the day's cap would be passed, or the Serenitea
 // Pot refuses the recipe. The Original Resin is paid from the wallet, as crafting pays it, and the other materials are
 // Taken from the bag
 export const startForge = (

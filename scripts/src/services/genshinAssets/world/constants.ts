@@ -26,13 +26,13 @@ export const ARCHITECTURE_VIEW_METRES = 600;
 // The file a derived world block is written beside its exports, which every reader of the world reads back
 export const WORLD_JSON_NAME = "world.json";
 // The game's table of every LOD-grouped prefab, a MonoBehaviour keyed by the prefab's world id, whose placements carry
-// No Path hash of their own (`parseLodInfoMap`)
+// No path hash of their own (`parseLodInfoMap`)
 export const LOD_INFO_MAP_NAME = "LODFinInfoMap";
 // The community's asset index (the one published per version up to 2.6, radioegor146/gi-asset-indexes, its mapped file
-// For 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the prefab's
-// Name. Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`). It is fetched
-// At the One commit that last changed the file, never at the branch, and the SHA-256 of the file at that commit is the
-// One the Derived names are recorded with
+// For 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the
+// Prefab's name. read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`). It is
+// Fetched at the one commit that last changed the file, never at the branch, and the SHA-256 of the file at that commit
+// Is the one the derived names are recorded with
 export const ASSET_PATH_INDEX_COMMIT = "3192b1759a6d1f6879cc348ad92e078092c1fb9f";
 export const ASSET_PATH_INDEX_SHA256 = "108ea704b12389a76f547e459dfdfb1c938c111d99ad62524a80f3e02eb198c4";
 export const ASSET_PATH_INDEX_URL: string = `https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/${ASSET_PATH_INDEX_COMMIT}/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json`;

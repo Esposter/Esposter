@@ -11,7 +11,7 @@ import { loadTilesets } from "#src/services/dungeons/loader/loadTilesets";
 import { SoundFileKeys } from "#src/services/dungeons/loader/SoundFileKeys";
 
 // Every file the game draws or plays, each by its hosted url. The loader's crossOrigin is anonymous before the first
-// File Because the hosted origin is another one, and a texture WebGL reads needs the CORS response
+// File because the hosted origin is another one, and a texture WebGL reads needs the CORS response
 export const loadDungeonsFiles = (scene: SceneWithPlugins, origin: string) => {
   scene.load.setCORS("anonymous");
   const fontKey = DungeonsKeys.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow;

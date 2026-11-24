@@ -1,5 +1,5 @@
 // One row of the game's reliquary decompose table, the Mystic Offering's recipe: how many artifacts of which star rank
-// It Takes and the reward preview its strongbox is shown by. The row names no set, its reward preview's display item
+// It takes and the reward preview its strongbox is shown by. The row names no set, its reward preview's display item
 // Does
 export interface ExcelReliquaryDecomposeRow {
   id: number;

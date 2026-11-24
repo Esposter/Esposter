@@ -7,7 +7,7 @@ import { TransformativeReactionInternalCooldownGroupMap } from "#src/services/co
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // A transformative reaction's damage on a target from one source, counted in place into the internal cooldown the
-// Target Keeps for the source, reaction and element, so Swirls of each element count apart, and the share of it dealt
+// Target keeps for the source, reaction and element, so Swirls of each element count apart, and the share of it dealt
 export const applyReactionInternalCooldown = (
   internalCooldownMap: Map<string, InternalCooldown>,
   sourceId: number,

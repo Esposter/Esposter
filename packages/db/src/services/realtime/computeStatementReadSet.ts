@@ -48,13 +48,13 @@ interface Declaration {
   table: string;
 }
 // A column a subquery selects, by the name the outer read references it by, and the key of the source column it holds,
-// Read in The subquery's own level
+// Read in the subquery's own level
 interface DerivedSource {
   key: ReadSetKey;
   name: string;
 }
 // A subquery the statement joins: its alias, the fields it selects, the table its SQL reads first, and the source each
-// Selected Column holds
+// Selected column holds
 interface DerivedSubquery {
   alias: string;
   base?: Table;
@@ -69,9 +69,9 @@ interface JoinContext {
   relation: string;
 }
 // A base table's column by the key its table definition gives it, which is the key a scope declaration names.
-// `relation` is The name the reference reads the column through, which is the name a join's ON condition gives the
+// `relation` is the name the reference reads the column through, which is the name a join's ON condition gives the
 // Relation it joins. `occurrence` is the table occurrence the column is read from: the alias or name the statement
-// Gives that table, or the base Occurrence a derived table reads the column from
+// Gives that table, or the base occurrence a derived table reads the column from
 interface ReadColumn {
   key: string;
   occurrence: string;
@@ -88,7 +88,7 @@ interface ReadContext {
   // Whether the chunks walked are a WHERE or HAVING condition, which removes the rows it does not hold
   isCondition: boolean;
   // Whether the chunks walked are a branch of an `or`. A row another branch holds is not this branch's value, so a
-  // Condition In it filters its table, as one under a `not` does
+  // Condition in it filters its table, as one under a `not` does
   isInOr: boolean;
   // Whether the chunks walked sit under a `not`, so a condition in them removes the rows it holds, and filters its
   // Table
@@ -102,7 +102,7 @@ interface ReadContext {
 }
 
 // A pair of keys the walk finds equal in every row both sit in: the two sides of a join, an `in` subquery's selected
-// Column, and a Reference to a derived table's column with the source column it selects
+// Column, and a reference to a derived table's column with the source column it selects
 interface ReadEquality {
   left: ReadSetKey;
   right: ReadSetKey;
@@ -114,7 +114,7 @@ interface ReadReference {
   length: number;
 }
 // A column the read's own select returns, under the name it returns it by. A select is read in the statement's top
-// Level only, so Its level is that level, SELECT_LEVEL, and is not stored
+// Level only, so its level is that level, SELECT_LEVEL, and is not stored
 interface ReadSelection extends Pick<ReadSetKey, "column" | "occurrence" | "table"> {
   selectedAs: string;
 }
@@ -207,7 +207,7 @@ const toKey = ({ key, occurrence, owner }: ReadColumn, level: number) => ({
   table: getTableName(owner),
 });
 // The source of each column a subquery selects, read in the subquery's own level. A source names its table occurrence
-// Only when The level declares one occurrence of its table: the selected column's own alias is lost once the subquery
+// Only when the level declares one occurrence of its table: the selected column's own alias is lost once the subquery
 // Is aliased
 const getDerivedSources = (subquery: DerivedSubquery, inner: ReadContext): DerivedSource[] => {
   const level = getLevelIndex(inner);
@@ -226,7 +226,7 @@ const getDerivedSources = (subquery: DerivedSubquery, inner: ReadContext): Deriv
   });
 };
 // A reference to a subquery's column is equal to the source that column holds, in every row the reference is in, so the
-// Two Are a pair the walk records. A name two selected columns share names neither of them, so it records no pair
+// Two are a pair the walk records. A name two selected columns share names neither of them, so it records no pair
 const addDerivedEqualities = (chunk: Column, columns: ReadColumn[], context: ReadContext) => {
   const sources = context.derived.get(getTableName(getColumnTable(chunk)))?.sources ?? [];
   const matches = sources.filter(({ name }) => name === chunk.name);
@@ -236,9 +236,9 @@ const addDerivedEqualities = (chunk: Column, columns: ReadColumn[], context: Rea
     context.equalities.push({ left: toKey(column, getLevelIndex(context)), right: match.key });
 };
 // An equality names the rows its value selects. Through a derived table it narrows the subquery's rows, so it names
-// Them Without naming the table at this level, which the subquery's own level does A left join keeps the rows of the
-// Table it does not null-fill, whatever its ON clause tests, so a condition on that table Removes none of its rows and
-// Is a filter on it, not a scope
+// Them without naming the table at this level, which the subquery's own level does
+// A left join keeps the rows of the table it does not null-fill, whatever its ON clause tests, so a condition on that
+// Table removes none of its rows and is a filter on it, not a scope
 const checkIsKeptByLeftJoin = (readColumn: ReadColumn, join: JoinContext | undefined) =>
   join?.isLeft === true && readColumn.relation !== join.relation;
 
@@ -264,7 +264,7 @@ const addScopeList = (reference: ReadReference, values: readonly unknown[], cont
 };
 
 // A left join null-fills the side that reads its joined relation, when only that side does. Neither side, or both, is
-// No Left join's null-filled side, so the join is read as an inner one
+// No left join's null-filled side, so the join is read as an inner one
 const getNullFilled = (left: ReadColumn, right: ReadColumn, relation: string): JoinSide | undefined => {
   const isLeftJoined = left.relation === relation;
   if (isLeftJoined === (right.relation === relation)) return undefined;
@@ -279,7 +279,7 @@ const toJoin = (
 ): ReadSetJoin => {
   const leftKey = toKey(left, getLevelIndex(context));
   // A subquery's selected column is read in the subquery's own level, which the walk has not opened yet: -1 is the
-  // Level no Declared occurrence holds, so that side is never named by its rows
+  // Level no declared occurrence holds, so that side is never named by its rows
   if (isSubquery) return { kind: JoinKind.Subquery, left: leftKey, right: toKey(right, -1) };
   const rightKey = toKey(right, getLevelIndex(context));
   const nullFilled = context.join?.isLeft ? getNullFilled(left, right, context.join.relation) : undefined;
@@ -288,7 +288,7 @@ const toJoin = (
     : { kind: JoinKind.Left, left: leftKey, nullFilled, right: rightKey };
 };
 // A left join null-fills the rows of its occurrence. A derived table's column names its base table, not an occurrence
-// The statement Declares, so it records nothing: its key would be the key of an outer occurrence of the same table
+// The statement declares, so it records nothing: its key would be the key of an outer occurrence of the same table
 const addNullFilled = (readColumn: ReadColumn, context: ReadContext) => {
   if (readColumn.relation !== readColumn.occurrence) return;
   context.nullFilledKeys.add(
@@ -325,14 +325,14 @@ const addJoins = (
     }
 };
 // The clause a condition on a column sits in: the ON clause of a left join on the table that join brings, another ON
-// Clause, Or the WHERE clause, where no join context is set
+// Clause, or the WHERE clause, where no join context is set
 const getFilterSite = (readColumn: ReadColumn, join: JoinContext | undefined): FilterSite => {
   if (!join) return FilterSite.Where;
   return join.isLeft && readColumn.relation === join.relation ? FilterSite.LeftJoinOn : FilterSite.JoinOn;
 };
 // A column a condition tests, other than by a scope equality or a join, filters its table, so a row the condition
-// Removes Is one the table's topics must still reach A column in the select list or a group or order clause is no
-// Condition, so it removes no row and filters nothing
+// Removes is one the table's topics must still reach
+// A column in the select list or a group or order clause is no condition, so it removes no row and filters nothing
 const addFilters = (columns: ReadColumn[], context: ReadContext) => {
   const { isCondition, join, readSet } = context;
   if (!isCondition && !join) return;
@@ -438,8 +438,8 @@ const readReferenceAt = (chunks: unknown[], index: number, declarations: AliasDe
 const getFirstSelectedColumn = (statement: SQLWrapper) =>
   Object.values(getSelectedFields(statement)).find((field): field is Column => is(field, Column));
 // A condition is a scope equality, a join or a filter. A `not in` over a subquery removes its rows, so it is a filter,
-// And so Is any other operator the walker has no fact for. Returns the chunks after the operator that the condition
-// Read as its Other operand, which the walker does not read again as a column of its own
+// And so is any other operator the walker has no fact for. Returns the chunks after the operator that the condition
+// Read as its other operand, which the walker does not read again as a column of its own
 const readCondition = (
   chunks: unknown[],
   operatorIndex: number,
@@ -448,7 +448,7 @@ const readCondition = (
   context: ReadContext,
 ) => {
   // A condition under a `not`, or in a branch of an `or`, does not hold the rows its value selects alone, so every
-  // Column it Names filters its table
+  // Column it names filters its table
   if (context.isNegated || context.isInOr) {
     addFilters(reference.columns, context);
     return 0;
@@ -457,7 +457,7 @@ const readCondition = (
   const operator = getOperatorText(chunks[operatorIndex]);
   const operand = chunks[operatorIndex + 1];
   // A list bound as one JSON array is the IN list over the values it holds, so each value is a scope of the column.
-  // Only an IN Reads it so: a `not in` over the same list removes the rows it holds, so it filters its table
+  // Only an IN reads it so: a `not in` over the same list removes the rows it holds, so it filters its table
   const isInList = operator !== undefined && /^in\b/u.test(operator);
   if (is(operand, JsonArrayParam) && isInList) addScopeList(reference, operand.values, context);
   else if (operator === "=" && is(operand, Param))
@@ -487,7 +487,7 @@ const readCondition = (
 
 const JOIN_KINDS = new Set(["cross", "full", "inner", "left", "right"]);
 // The relation a join names: a table, a subquery, or a table under an alias, which the statement writes as the aliased
-// Table Itself. An unaliased table is written as its name, so its relation is that name
+// Table itself. An unaliased table is written as its name, so its relation is that name
 const getJoinRelation = (chunk: unknown) => {
   if (is(chunk, Table)) return getTableName(chunk);
   if (is(chunk, Subquery)) return chunk._.alias;
@@ -513,17 +513,17 @@ const computeJoinContexts = (chunks: unknown[]): Map<number, JoinContext> =>
     }),
   );
 // Whether a clause keyword's text opens a condition, or a clause that only shapes the rows a statement returns. Text
-// That Opens neither leaves the clause in force as it was
+// That opens neither leaves the clause in force as it was
 const getClauseCondition = (text: string) => {
   if (/\b(?:where|having)\b/iu.test(text)) return true;
   if (/\b(?:select|from|group\s+by|order\s+by|limit|offset)\b/iu.test(text)) return false;
   return undefined;
 };
 // The conditions of one flat chunk array are read against the aliases it declares, by region. A clause keyword in the
-// Array Sets whether the chunks after it are conditions, so a WHERE's references filter their table and a select list's
-// Do not Which chunks a `not` negates. Drizzle writes `not (condition)` for a condition, so the chunks inside the
-// Parentheses that follow `not (` are negated, and `not column` for a column, so the chunk after a bare `not` is
-// Negated.
+// Array sets whether the chunks after it are conditions, so a WHERE's references filter their table and a select list's
+// Do not which chunks a `not` negates. Drizzle writes `not (condition)` for a condition, so the chunks inside the
+// Parentheses that follow `not (` are negated, and `not column` for a column, so the chunk after a bare `not`
+// Is negated.
 const computeNegatedAt = (chunks: unknown[], depths: number[]) => {
   const groupDepths: number[] = [];
   let negatesNext = false;
@@ -586,14 +586,14 @@ const declareOccurrence = (context: ReadContext, occurrence: string, table: stri
   context.declared.push({ level: context.level, occurrence, table });
 };
 // A statement nested in another is a level of its own, whose tables and equalities are read apart from the statement
-// That Holds it, so an equality in the nested statement does not name its table for the outer one
+// That holds it, so an equality in the nested statement does not name its table for the outer one
 const enterLevel = (context: ReadContext): ReadContext => {
   const level: ReadSetLevel = { tables: [] };
   context.readSet.levels.push(level);
   return { ...context, isCondition: false, join: undefined, level };
 };
 // A relational query's nested relation is a parenthesised select written into the query's own text, not a builder, so
-// It Is recognised by the select it opens with
+// It is recognised by the select it opens with
 const checkIsNestedSelect = (chunk: SQL) => {
   const [first] = chunk.queryChunks;
   return is(first, StringChunk) && /^\s*\(\s*select\b/iu.test(first.value);
@@ -650,7 +650,7 @@ const getRootAlias = ({ declarations, depths }: ChunkScan, table: Table) => {
   )?.alias;
 };
 // A relational query selects its root table's columns, or the ones its config names. They are read through the root's
-// Alias, So a statement that does not declare one names no key
+// Alias, so a statement that does not declare one names no key
 const getRelationalSelections = (statement: SQLWrapper, table: Table, scan: ChunkScan): ReadSelection[] => {
   const occurrence = getRootAlias(scan, table);
   if (occurrence === undefined) return [];
@@ -683,8 +683,8 @@ const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]) =>
 const getKeyId = ({ column, level, occurrence, table }: ReadSetKey) =>
   JSON.stringify([table, column, occurrence, level]);
 // The keys an equality chain connects to a key, by identity: the key's equalities, and theirs in turn. The chain stops
-// At a Null-filled occurrence, since its equalities hold only in the rows it is matched in, so a key past it is not
-// Equal to the Key in every row. The key itself may be null-filled: its equalities hold wherever it has a value, which
+// At a null-filled occurrence, since its equalities hold only in the rows it is matched in, so a key past it is not
+// Equal to the key in every row. The key itself may be null-filled: its equalities hold wherever it has a value, which
 // Is all a name needs
 const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[], nullFilledKeys: Set<string>) => {
   const equatedIds = new Set([getKeyId(key)]);
@@ -704,9 +704,9 @@ const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[], nullFille
   return equatedIds;
 };
 // The same column of another top-level occurrence, which names the side when an equality chain pairs the two and no
-// Left join Null-fills that occurrence: its value is then in every row the read returns, where the side's own value is
-// Absent for the Rows its left join leaves unmatched. An occurrence no equality chain reaches holds a value of its own,
-// So it names nothing. The chain may not run through a null-filled occurrence either, so a candidate is equal to the
+// Left join null-fills that occurrence: its value is then in every row the read returns, where the side's own value is
+// Absent for the rows its left join leaves unmatched. An occurrence no equality chain reaches holds a value of its own,
+// So it names nothing. the chain may not run through a null-filled occurrence either, so a candidate is equal to the
 // Side in every row
 const findBorrowedSelection = (
   key: ReadSetKey,
@@ -724,7 +724,7 @@ const findBorrowedSelection = (
   );
 };
 // A nested statement's key on an occurrence only the top level declares is a correlated reference: the outer row's
-// Value of that Occurrence, so the key is equal to the top level's key of it
+// Value of that occurrence, so the key is equal to the top level's key of it
 const getCorrelatedEqualities = (keys: ReadSetKey[], declared: Declaration[], topLevel: ReadSetLevel): ReadEquality[] =>
   keys.flatMap((key) => {
     const declarations = declared.filter(
@@ -746,7 +746,7 @@ const toSelectedKey = (
   return selection ? { ...key, selectedAs: selection.selectedAs } : key;
 };
 // A subquery's selected column holds the outer column's value in every row the outer read returns, since the two are
-// Compared For equality, so it takes the name of the outer column's own selection, and no borrowed one
+// Compared for equality, so it takes the name of the outer column's own selection, and no borrowed one
 const toSelectedJoin = (
   join: ReadSetJoin,
   selections: ReadSelection[],
@@ -770,9 +770,9 @@ export const computeStatementReadSet = (statement: SQLWrapper): ReadSet => {
   const declared: Declaration[] = [];
   const scopedKeys: ScopedKey[] = [];
   const nullFilledKeys = new Set<string>();
-  // The statement's SQL is built and its top level scanned once, for the walk and for a relational query's root alias
-  // Alike. The walk enters the top level as walkChunk enters any SQL, so a select that opens with a parenthesis opens a
-  // Level
+  // The statement's SQL is built and its top level scanned once, for the walk and for a relational query's root
+  // Alias alike. the walk enters the top level as walkChunk enters any SQL, so a select that opens with a parenthesis
+  // Opens a level
   const sql = statement.getSQL();
   const scan = scanChunks(sql.queryChunks);
   const context: ReadContext = {

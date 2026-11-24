@@ -4,8 +4,8 @@ import { checkIsDeepEqual } from "@esposter/shared";
 // Value until the reader edits it, so a change another client made reaches a form the reader has not touched. An edit
 // Stays the reader's until the stored value has caught up with it: a save that landed leaves the two equal, while a
 // Refused save rolls the stored value back, so the entered value stands for the retry. `normalize` gives the form a
-// Value Is saved in, which is compared in place of the value when the server saves something other than what was typed,
-// So an Entry that saves to the stored value is no edit
+// Value is saved in, which is compared in place of the value when the server saves something other than what was typed,
+// So an entry that saves to the stored value is no edit
 export const useStoredDraft = <T>(stored: () => T, normalize: (value: T) => unknown = (value) => value) => {
   const edited = ref<T>();
   const draft = computed<T>({

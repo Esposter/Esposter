@@ -7,10 +7,10 @@ import { cameraViewMatrix, mx_noise_float, normalWorld, positionWorld, vec3 } fr
 const GRADIENT_STEP = 0.01;
 
 // A procedural normal detail: the engine's noise as a height a `wavelength` metres across, `amplitude` metres high,
-// Whose Gradient over the surface leans the normal the material draws. The gradient is three finite differences of the
-// Noise, Scaled to metres by the frequency, and only its part across the normal leans it. The leaned normal is in world
-// Space, Taken to view space by the camera's view matrix alone, since the object's own transform is already in it, and
-// A Material's normal node reads view space, so the witness's normal target and the lighting both see the detail
+// Whose gradient over the surface leans the normal the material draws. The gradient is three finite differences of the
+// Noise, scaled to metres by the frequency, and only its part across the normal leans it. The leaned normal is in world
+// Space, taken to view space by the camera's view matrix alone, since the object's own transform is already in it, and
+// A material's normal node reads view space, so the witness's normal target and the lighting both see the detail
 export const createNormalDetailNode = (wavelength: number, amplitude: number): Node<"vec3"> => {
   const frequency = 1 / wavelength;
   const lattice = positionWorld.mul(frequency);

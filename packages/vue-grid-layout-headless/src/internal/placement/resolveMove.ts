@@ -5,11 +5,12 @@ import { checkIsSameCell } from "#src/internal/placement/checkIsSameCell";
 import { moveItem } from "#src/internal/placement/moveItem";
 import { CollisionMode } from "#src/models/CollisionMode";
 
-// The layout with the target moved onto its new cell, as the collision mode says. Push moves the items it lands on
-// Down. Swap trades places with the one item a move lands on, and pushes when it lands on several, when the item
-// Resizes, Or when either item would stick out past the last column once they trade. Prevent refuses a landing on any
-// Other item, So there is no layout to return and the result is undefined. A solid item is never displaced, so a
-// Landing over one, or A push or swap that moves one, is refused under every mode, as prevent refuses one
+// The layout with the target moved onto its new cell, as the collision mode says. Push moves the items it lands
+// On down. swap trades places with the one item a move lands on, and pushes when it lands on several, when the item
+// Resizes,
+// Or when either item would stick out past the last column once they trade. Prevent refuses a landing on any other
+// Item, so there is no layout to return and the result is undefined. A solid item is never displaced, so a landing over
+// One, or A push or swap that moves one, is refused under every mode, as prevent refuses one
 export const resolveMove = <T extends GridBlock>(
   layout: T[],
   target: GridBlock,

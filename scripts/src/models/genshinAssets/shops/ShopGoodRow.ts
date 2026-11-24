@@ -1,8 +1,8 @@
 import type { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 
 // One good as the world reads it: the item it gives and how many, the items it is bought with and how many of each, its
-// Buy Limit (zero for none), when that limit comes back, the Adventure Rank it shows from, and the game-time moments it
-// Sells Between, as ISO strings with the game's offset
+// Buy limit (zero for none), when that limit comes back, the Adventure Rank it shows from, and the game-time moments it
+// Sells between, as ISO strings with the game's offset
 export interface ShopGoodRow {
   beginTime: string;
   buyLimit: number;

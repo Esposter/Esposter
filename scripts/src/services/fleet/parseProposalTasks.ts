@@ -7,7 +7,7 @@ import { MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 const TASK_REGEX = /^- \[(?<mark>[ x])\] (?<number>\d+(?:\.\d+)+)(?: \[phase (?<phase>\d)\])?(?!\S)/gmu;
 
 // A change's tasks from its tasks.md text, each holding its marker's phase or else the change's x-phase, and the
-// Change's Pick phase: the lowest among its open tasks. A done task's marker is read but never counts for the pick
+// Change's pick phase: the lowest among its open tasks. A done task's marker is read but never counts for the pick
 export const parseProposalTasks = (text: string, changePhase: number | undefined): ProposalTaskReading => {
   const tasks = Array.from(text.matchAll(TASK_REGEX), ({ groups }) => ({
     isDone: groups?.mark === "x",

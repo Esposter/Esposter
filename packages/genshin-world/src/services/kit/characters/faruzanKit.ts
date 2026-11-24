@@ -22,7 +22,7 @@ const WHIRLWIND_GADGET_OFFSETS: readonly { forward: number; lateral: number }[] 
 ];
 
 // Measured: gcsim v2.47.2 (MIT) faruzan/burst.go, Prayerful Wind's Gift's Anemo DMG Bonus, refreshed by each Pulse and
-// Given At the cast too
+// Given at the cast too
 const PRAYERFUL_WIND_SOURCE = "faruzan-prayerful-wind";
 
 // The Wind's Secret Ways' Perfidious Wind's Ruin, which the initial hit and each Whirlwind Pulse give the enemies they
@@ -35,7 +35,7 @@ const CONSTELLATION_2_EXTRA_POLYHEDRON_SECONDS = 6;
 export const FARUZAN_CHARACTER_ID = 10_000_076;
 
 // A body the given metres ahead of another at its facing, and the given metres across it, as gcsim's offsets place a
-// Point: Forward runs along the facing's bearing, and across it lies the bearing a quarter turn to the right of that
+// Point: forward runs along the facing's bearing, and across it lies the bearing a quarter turn to the right of that
 const createOffsetBody = (
   { facing, height, position }: KitBody,
   { forward, lateral }: { forward: number; lateral: number },
@@ -50,11 +50,11 @@ const createOffsetBody = (
 
 // Faruzan's behaviour: The Wind's Secret Ways' initial hit shreds the enemies it reaches, and its cast places the
 // Dazzling Polyhedron, whose Whirlwind Pulses shred each enemy they reach and give the party Prayerful Wind's Anemo DMG
-// Bonus. The Manifest Gale and Pressurized Collapse, her partial aimed shot, her particles, her passive, and
-// Constellations 1, 4 and 6 are not built. Constellation 2's longer polyhedron is built. Constellation 1 needs the
-// Manifest Gale's Hurricane Arrows and Pressurized Collapse, which are not built Constellation 4 needs Pressurized
-// Collapse's vortex, which restores energy by the opponents it hits, not built Constellation 6 needs Pressurized
-// Collapse and the Prayerful Wind's Benefit CRIT DMG, which are not built
+// Bonus. The manifest Gale and Pressurized Collapse, her partial aimed shot, her particles, her passive, and
+// Constellations 1, 4 and 6 are not built. Constellation 2's longer polyhedron is built.
+// Constellation 1 needs the Manifest Gale's Hurricane Arrows and Pressurized Collapse, which are not built
+// Constellation 4 needs Pressurized Collapse's vortex, which restores energy by the opponents it hits, not built
+// Constellation 6 needs Pressurized Collapse and the Prayerful Wind's Benefit CRIT DMG, which are not built
 export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const perfidiousWindRuinResistanceReduction = readParameter("perfidiousWindRuinResistanceReduction");
   const perfidiousWindRuinSeconds = readParameter("perfidiousWindRuinSeconds");
@@ -81,9 +81,9 @@ export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds 
     source: PRAYERFUL_WIND_SOURCE,
   };
 
-  // The Dazzling Polyhedron's field is placed where the burst is cast, and its gadgets are placed from that cast's
-  // Body. Its Ticks are the Whirlwind Pulses, each cast from the gadget its count cycles to, and it lingers past its
-  // Seconds
+  // The Dazzling Polyhedron's field is placed where the burst is cast, and its gadgets are placed from that
+  // Cast's body. Its ticks are the Whirlwind Pulses, each cast from the gadget its count cycles to, and it lingers past
+  // Its seconds
   const castDazzlingPolyhedron = (kitEffectState: KitEffectState, castBody: KitBody, combatant: Combatant): void => {
     castKitField(kitEffectState, combatant.characterId, castBody.position, {
       nextTickSeconds: firstWhirlwindPulseSeconds,

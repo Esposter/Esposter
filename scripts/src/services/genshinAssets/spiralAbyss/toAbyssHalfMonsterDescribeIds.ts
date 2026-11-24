@@ -3,7 +3,7 @@ import type { ExcelTowerLevelRow } from "#src/models/genshinAssets/spiralAbyss/E
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The monsters of each half of a chamber by their describe ids, from the lists its level row holds. A chamber the dump
-// Lists no Monsters for has no halves, as the Moon Spire's do, and one that lists monsters holds one list for each of
+// Lists no monsters for has no halves, as the Moon Spire's do, and one that lists monsters holds one list for each of
 // Its floor's teams
 export const toAbyssHalfMonsterDescribeIds = (levelRow: ExcelTowerLevelRow, teamCount: number): number[][] => {
   const halves = [levelRow.firstMonsterList, levelRow.secondMonsterList].filter(

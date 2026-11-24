@@ -17,7 +17,7 @@ const getRestoreStatement = (table: string) => `INSERT INTO \`${table}\` SELECT 
 const getDropStatement = (table: string) => `DROP TABLE \`${table}\``;
 
 // Every table with a foreign key to `parent` whose delete action is `onDelete`, then, for a cascade, the tables
-// Cascading From those in turn
+// Cascading from those in turn
 const collectChildren = (
   foreignKeys: SnapshotForeignKey[],
   parent: string,

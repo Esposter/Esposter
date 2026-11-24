@@ -22,7 +22,7 @@ interface SheerColdGaugeOptions {
 }
 
 // The Sheer Cold gauge of the character on the field, which the HUD reads from the value emitted each change. No
-// Campfire Is placed in the world yet, so no heat source drains it
+// Campfire is placed in the world yet, so no heat source drains it
 export const useSheerColdGauge = ({
   catalogue,
   getAntiColdRatio,

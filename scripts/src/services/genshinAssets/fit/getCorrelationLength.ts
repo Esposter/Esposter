@@ -7,7 +7,7 @@ import { getStandardDeviation } from "#src/services/genshinAssets/fit/getStandar
 const MAX_CORRELATION_LENGTH = 400;
 
 // The distance at which a grid's values stop being correlated, the first lag their autocorrelation about their mean
-// Falls To 1/e
+// Falls to 1/e
 export const getCorrelationLength = ({ size, step, values }: TerrainResidualGrid): number => {
   const maxLag = Math.floor(MAX_CORRELATION_LENGTH / step);
   const variance = getStandardDeviation(values) ** 2;

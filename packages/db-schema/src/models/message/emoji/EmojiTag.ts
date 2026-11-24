@@ -3,8 +3,8 @@ import { EN_US_GRAPHEME_SEGMENTER } from "@esposter/shared";
 import { z } from "zod";
 
 // The two vocabularies a reaction can name, and one reaction is one emoji. `z.emoji()` on its own accepts a run of
-// Them, So the grapheme count beside it is what bounds a tag to a single cluster — toned characters, flags and ZWJ
-// Sequences All being one. See openspec/specs/esbabbler/emoji/design.md
+// Them, so the grapheme count beside it is what bounds a tag to a single cluster — toned characters, flags and ZWJ
+// Sequences all being one. See openspec/specs/esbabbler/emoji/design.md
 export const emojiTagSchema = z.union([
   z
     .emoji()

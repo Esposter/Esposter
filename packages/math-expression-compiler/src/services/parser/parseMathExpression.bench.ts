@@ -22,7 +22,7 @@ const DIVISION_40_FORMULA = `${"1/(".repeat(40)}1${")".repeat(40)}`;
 const PERCENT_40_FORMULA = `${"8%+(".repeat(40)}1${")".repeat(40)}`;
 
 // Parsing is linear in the formula's length, so each group holds one scale and its second task holds the same operands
-// In another shape The chain is not the same length: it joins with " + " where the sum joins with ", " and wraps them
+// In another shape the chain is not the same length: it joins with " + " where the sum joins with ", " and wraps them
 // In "sum(" and ")"
 describe(parseMathExpression, () => {
   test("the column formula", async ({ bench }) => {

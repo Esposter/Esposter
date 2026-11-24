@@ -10,8 +10,8 @@ import { getTalentUpgrade } from "#src/services/character/getTalentUpgrade";
 import { getTalentUpgradeRefusal } from "#src/services/character/getTalentUpgradeRefusal";
 
 // Each combat talent's row on the Talents tab, in the order the tab lists them: the upgrades of each talent are read
-// From The talent upgrade map by the proud skill group its character's kit names for it, and a group with none is at
-// Its last Level
+// From the talent upgrade map by the proud skill group its character's kit names for it, and a group with none is at
+// Its last level
 export const getTalentRows = (
   character: Character,
   talentGroupIds: Record<CombatTalent, number>,

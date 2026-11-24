@@ -34,8 +34,8 @@ import { InteractionKind } from "genshin-interface";
 import { storeToRefs } from "pinia";
 
 // What using the interactable the player is prompted on does: the open world's pickups, chests, claims and landmarks
-// Run Their feature's action, and a stove, a forge, a domain, the Abyss, a shop, a fishing point or a talk opens its
-// Screen. The branches are tried in order, so a kind's more specific cases come before its general one
+// Run their feature's action, and a stove, a forge, a domain, the Abyss, a shop, a fishing point or a talk opens
+// Its screen. the branches are tried in order, so a kind's more specific cases come before its general one
 export const useWorldInteractionDispatch = ({
   characterBody,
   checkIsFishingPoint,
@@ -96,7 +96,7 @@ export const useWorldInteractionDispatch = ({
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   // A talk opens the screen its resident's talk is, and Katheryne's opens the expedition screen in place of the talk
-  // Once She stands in the world
+  // Once she stands in the world
   const openTalk = (talkId: string) => {
     talk.value = talkMap.value.get(talkId);
     talkDuelGameId.value = getTalkDuelGameId(talkId);
@@ -108,7 +108,7 @@ export const useWorldInteractionDispatch = ({
     }
     shopId.value = getTalkVendorShopId(talkId, getResidents()) ?? 0;
     // A Souvenir Shop stays closed until its region's offering is at its last level, a day vendor's outside their
-    // Hours, And no shop opens before the world's clock is read, so its talk is a dialogue until then
+    // Hours, and no shop opens before the world's clock is read, so its talk is a dialogue until then
     const gameClockMinutes = getGameClockMinutes();
     if (
       screenKind.value === ScreenKind.Shop &&

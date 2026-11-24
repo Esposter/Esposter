@@ -45,7 +45,7 @@ describe(useThreadStore, () => {
     id: roomReplyId,
   });
   // The read is held in flight until the test resolves it. `readStarted` resolves once the handler has the request, so
-  // A Test that acts on the read acts while it is genuinely out rather than before the request has reached the handler
+  // A test that acts on the read acts while it is genuinely out rather than before the request has reached the handler
   const holdThreadRead = () => {
     const read = Promise.withResolvers<ClientMessage[]>();
     const readStarted = Promise.withResolvers<void>();

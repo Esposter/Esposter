@@ -6,8 +6,8 @@ import { join } from "node:path";
 import { backup, DatabaseSync } from "node:sqlite";
 
 // Copies a sibling's task cache into a fresh one. The database goes first: each archive it names was written before the
-// Row That names it, so every archive copied after the snapshot is on disk. A copy whose database still names an
-// Archive the Source lacks would fail that run's restore, so it is refused, and the caller removes it
+// Row that names it, so every archive copied after the snapshot is on disk. A copy whose database still names an
+// Archive the source lacks would fail that run's restore, so it is refused, and the caller removes it
 export const copyTaskCache = async (sourceCachePath: string, destinationCachePath: string): Promise<void> => {
   const source = new DatabaseSync(join(sourceCachePath, TASK_CACHE_DATABASE_NAME), { readOnly: true });
   await withFinalizerAsync(

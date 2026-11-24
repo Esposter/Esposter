@@ -192,7 +192,7 @@ describe(eraseAccountMessages, () => {
     const roomId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     // The account is not a member of the room its scheduled messages were set in, and the index still names them. The
-    // Index Answers each page as the rows after the key it is sent, up to the limit, soonest first
+    // Index answers each page as the rows after the key it is sent, up to the limit, soonest first
     const scheduledMessages = Array.from({ length: OBJECT_READ_PAGE_LIMIT + 1 }, (_value, index) => ({
       id: v7(),
       roomId,

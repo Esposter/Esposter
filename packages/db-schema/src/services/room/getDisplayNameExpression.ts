@@ -2,8 +2,8 @@ import type { SQLWrapper } from "drizzle-orm";
 
 import { sql } from "drizzle-orm";
 
-// An empty display name is "none" rather than null (see the display names doc), so nullif turns it into the account
-// Name. The client's getRoomMemberName falls back to the account name for a user with no row in the room, so the two
-// Agree
+// An empty display name is "none" rather than null (see the display names doc), so nullif turns it into the
+// Account name. the client's getRoomMemberName falls back to the account name for a user with no row in the room, so
+// The two agree
 export const getDisplayNameExpression = (membership: { displayName: SQLWrapper }, user: { name: SQLWrapper }) =>
   sql<string>`coalesce(nullif(${membership.displayName}, ''), ${user.name})`;

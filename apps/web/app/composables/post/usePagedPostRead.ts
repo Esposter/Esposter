@@ -19,7 +19,7 @@ export const usePagedPostRead = ({
 }: PostPagingOperations & { readPage: (page: Page<PostInPostWithRelations>) => Page<PostKey> }) => {
   const { $trpc } = useNuxtApp();
   // The first page's query is read each time the page is read, not once: a refresh after a sort change asks for the
-  // Sort The list names now, where a query captured at the first read would send the sort it started with
+  // Sort the list names now, where a query captured at the first read would send the sort it started with
   const readFirstPage = (getQuery: () => ReadPostsQuery, key: string) =>
     readItems(async () => readPage(await $trpc.post.readPosts.query(getQuery())), { key });
   const readMorePages = (query: ReadPostsQuery, onComplete: () => void) =>

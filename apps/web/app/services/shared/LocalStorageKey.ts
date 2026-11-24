@@ -18,7 +18,7 @@ export const LocalStorageKey = {
   // The developer panel's open tab, kept with the browser
   GenshinDevPanelTab: "genshin-dev-panel-tab",
   // The Genshin save an account has not had acknowledged, kept per account with the session that held it, until it is,
-  // So a Page left mid-save leaves it for the next start to adopt
+  // So a page left mid-save leaves it for the next start to adopt
   GenshinPending: (userId: string) => `genshin-pending${LOCAL_STORAGE_KEY_SEPARATOR}${userId}`,
   // The Genshin save a signed-out player plays, kept with the browser until a sign-in uploads or merges it into the
   // Account

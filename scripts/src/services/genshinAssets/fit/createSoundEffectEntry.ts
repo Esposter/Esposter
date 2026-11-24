@@ -7,7 +7,7 @@ import { DerivedAssetSoundEffectMap } from "#src/services/genshinAssets/sound/De
 
 // A component's sound effects, each fitted from the game's sounds matched for it, as its record `<component>/sounds`. A
 // Component with none mapped is opt-in, so an ordinary run leaves its empty record out and a run that names it
-// Publishes The record its map holds
+// Publishes the record its map holds
 export const createSoundEffectEntry = (component: DerivedAssetComponent): RunFitEntry => {
   const effects = DerivedAssetSoundEffectMap[component];
   return [

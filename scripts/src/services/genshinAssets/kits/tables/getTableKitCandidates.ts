@@ -24,7 +24,7 @@ const FULLY_CHARGED_AIMED_SHOT_LABELS: ReadonlySet<string> = new Set([
   "Fully-Charged Aimed Shot",
 ]);
 // The hit paths a skill's labelled multipliers give their values to, by each value's position in its label: a named
-// List Of the hits a module spawns, or a hit of the skill, or of its chain's follow-up
+// List of the hits a module spawns, or a hit of the skill, or of its chain's follow-up
 const ETCHED_INTO_BONE_AND_SOUL_HIT_PATHS = [0, 1, 2, 3].map((position) => `hits.etchedIntoBoneAndSoul.${position}`);
 const SKILL_HIT_PATHS: ReadonlyMap<string, readonly string[]> = new Map([
   ["Etched Into Bone and Soul DMG", ETCHED_INTO_BONE_AND_SOUL_HIT_PATHS],

@@ -8,7 +8,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 
 // The wallet and bag after a good's item is given: into the wallet when the item is a currency this rule trades in,
-// Otherwise Into the bag as `getGoodItemDefinition` defines it, which the bag must hold whole. Undefined where the bag
+// Otherwise into the bag as `getGoodItemDefinition` defines it, which the bag must hold whole. Undefined where the bag
 // Cannot take it whole
 export const giveShopGood = (
   wallet: Wallet,

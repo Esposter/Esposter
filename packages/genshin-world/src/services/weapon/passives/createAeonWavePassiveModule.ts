@@ -14,8 +14,8 @@ const AEON_WAVE_MAXIMUM_STACKS = 3;
 
 // Tome of the Eternal Flow at its rank: each change in the wielder's current HP adds a stack of the rank's Charged
 // Attack DMG, up to three, once every cooldown and each stack running its seconds. A third stack, or a refresh of it,
-// Restores the Rank's energy to the wielder once every twelve seconds. The rank's HP line is a table line the weapon
-// Carries whatever its Conditions, so this passive does not repeat it
+// Restores the rank's energy to the wielder once every twelve seconds. The rank's HP line is a table line the weapon
+// Carries whatever its conditions, so this passive does not repeat it
 export const createAeonWavePassiveModule = (params: number[]): PassiveModule => {
   const stackSeconds = takeOne(params, 0);
   const stackCooldownSeconds = takeOne(params, 1);

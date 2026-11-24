@@ -1,6 +1,6 @@
 // One of a gcsim character's gravity ripples, the hit a reaction fires as its gravity clears: the reaction its switch
-// Case Names, the label its literal gives, the element and talent variable the case sets, the constant its hitmarks are
-// Named by In `init`, and the constant its travel is named by where the case sets one. Its hitbox is the config's, by
+// Case names, the label its literal gives, the element and talent variable the case sets, the constant its hitmarks are
+// Named by in `init`, and the constant its travel is named by where the case sets one. Its hitbox is the config's, by
 // The reaction
 export interface GcsimGravityRipple {
   abil: string;

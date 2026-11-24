@@ -9,7 +9,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset, gcgStandardRuleSchema } from "genshin-world";
 
 // The standard duel rule, read from the dump's rule and reaction tables, checked against its schema and published as
-// One Small record, which the world imports on demand when a duel is first set up
+// One small record, which the world imports on demand when a duel is first set up
 export const buildGcgStandardRule = (): Record<string, GcgStandardRule> => {
   const ruleRow = readExcelTable<ExcelGcgRuleRow>("GCGRuleExcelConfigData").find(
     ({ id }) => id === GCG_STANDARD_RULE_ID,

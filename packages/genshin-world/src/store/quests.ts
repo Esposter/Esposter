@@ -32,9 +32,9 @@ const readQuestChaptersOrEmpty = (gameDataBaseUrl: string) =>
   );
 
 // The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a
-// Finished One stays in the progress map at its last step, so the quests in progress are those started and not yet
-// Finished. Each Quest event the world records is handed to every quest in progress, the steps and quests it finishes
-// Reach the Achievements and the Travel Log, and a talk that ends starts each quest it offers
+// Finished one stays in the progress map at its last step, so the quests in progress are those started and not
+// Yet finished. Each quest event the world records is handed to every quest in progress, the steps and quests it
+// Finishes reach the achievements and the Travel Log, and a talk that ends starts each quest it offers
 export const useWorldQuestsStore = defineStore("world/quests", () => {
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
@@ -70,7 +70,7 @@ export const useWorldQuestsStore = defineStore("world/quests", () => {
   );
   const trackedQuestId = ref("");
   // The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and
-  // The Navigated one's objective, which its beam rises over
+  // The navigated one's objective, which its beam rises over
   const trackerQuest = computed(
     () => questsInProgress.value.find(({ id }) => id === trackedQuestId.value) ?? questsInProgress.value[0],
   );

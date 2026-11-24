@@ -39,9 +39,10 @@ const BACKUP_PLAN_ASCENSION = 1;
 const PIERCING_FRAGMENTS_CONSTELLATION = 1;
 // Exquisite be the Jade, Outshining All Beneath, from four constellations, raises the Elemental RES of nearby
 // Characters by 10%, as the wiki's constellation page gives it. No source measures the screen's box, so the active
-// Member stands for "nearby" while a screen stands, as Starshatter reads it: off-field members take no enemy strikes
-// Here. Each step Restarts the buffs for two steps, so they lapse within two steps of the screen's end or shatter
-// `https://genshin-impact.fandom.com/wiki/Exquisite_be_the_Jade,_Outshining_All_Beneath`
+// Member stands for "nearby" while a screen stands, as Starshatter reads it: off-field members take no enemy
+// Strikes here. Each step restarts the buffs for two steps, so they lapse within two steps of the screen's end or
+// Shatter
+// https://genshin-impact.fandom.com/wiki/Exquisite_be_the_Jade,_Outshining_All_Beneath
 const EXQUISITE_CONSTELLATION = 4;
 const EXQUISITE_ELEMENTAL_RES_SHARE = 0.1;
 const EXQUISITE_SOURCE = "ningguang-constellation-4";
@@ -52,7 +53,7 @@ const SHOCK_EFFECT_CONSTELLATION = 2;
 const SHOCK_EFFECT_SECONDS = 6;
 // Grandeur Be the Seven Stars, from six constellations, gives Ningguang 7 Star Jades as Starshatter is cast, as the
 // Wiki's Constellation page and gcsim v2.47.2 (MIT) ningguang/burst.go give it
-// `https://genshin-impact.fandom.com/wiki/Grandeur_Be_the_Seven_Stars`
+// https://genshin-impact.fandom.com/wiki/Grandeur_Be_the_Seven_Stars
 const GRANDEUR_CONSTELLATION = 6;
 const GRANDEUR_STAR_JADE_COUNT = 7;
 
@@ -96,11 +97,12 @@ export const NINGGUANG_CHARACTER_ID = 10_000_027;
 
 // Ningguang's behaviour: each strike's two gems land from a summon cast where she stands, widened by Piercing Fragments
 // From one constellation, and the first of them to strike an enemy gives her a Star Jade up to 3, as gcsim's one
-// Guarded Callback over both gems does. A charged attack fires its gem and a shot for each Star Jade she holds,
-// Spending them, And spends no stamina from Ascension 1 while she holds one. Jade Screen stands ahead of her, and a
-// Recast or Starshatter Shatters it, setting Shock Effect going from two constellations. Starshatter's gems land from a
-// Summon where she Stands, a standing screen adding its own, and from six constellations she holds 7 Star Jades From
-// Four constellations, the active member holds Elemental RES while a screen stands, as Exquisite be the Jade gives it
+// Guarded callback over both gems does. A charged attack fires its gem and a shot for each Star Jade she holds,
+// Spending them, and spends no stamina from Ascension 1 while she holds one. Jade Screen stands ahead of her, and a
+// Recast or Starshatter shatters it, setting Shock Effect going from two constellations. Starshatter's gems land from a
+// Summon where she stands, a standing screen adding its own, and from six constellations she holds 7 Star Jades
+// From four constellations, the active member holds Elemental RES while a screen stands, as Exquisite be the Jade gives
+// It
 export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const gems = readHits("strikeGem");
   const piercingFragmentsGems = readHits("piercingFragmentsStrikeGem");
@@ -212,8 +214,8 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
           source: EXQUISITE_SOURCE,
         });
     },
-    // Jade Screen is a summon standing 3 metres ahead of Ningguang for its seconds, which lands the skill's hit round
-    // It. Only one stands, so a recast shatters the one before
+    // Jade Screen is a summon standing 3 metres ahead of Ningguang for its seconds, which lands the skill's hit
+    // Round it. only one stands, so a recast shatters the one before
     skill: {
       onStart: (context) => {
         shatterJadeScreen(context);

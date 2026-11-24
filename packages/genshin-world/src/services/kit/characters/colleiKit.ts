@@ -13,7 +13,7 @@ import { takeOne } from "@esposter/shared";
 export const COLLEI_CHARACTER_ID = 10_000_067;
 
 // Constellation 4, Gift of the Woods: Trump-Card Kitty raises the Elemental Mastery of each other deployed member by 60
-// For 12 Seconds, as the wiki's constellation page gives it
+// For 12 seconds, as the wiki's constellation page gives it
 const CONSTELLATION_4 = 4;
 // Constellation 1: off the field, Collei gains 20% Energy Recharge, as gcsim (MIT) collei/cons.go's c1 gives it
 const CONSTELLATION_1 = 1;

@@ -19,7 +19,7 @@ const SAMPLER_BYTES = 8;
 const MAX_GPU_PROGRAM_TYPE = 32;
 
 // Reads one program variant's record: its blob index, the keywords that select it, and the GPU program type it is
-// Compiled For. Its legacy parameter lists are all empty in the game's shaders and read past
+// Compiled for. Its legacy parameter lists are all empty in the game's shaders and read past
 export const readSerializedSubProgram = (cursor: BinaryCursor): SerializedSubProgramRecord => {
   const blobIndex = cursor.uint32();
   cursor.bool();

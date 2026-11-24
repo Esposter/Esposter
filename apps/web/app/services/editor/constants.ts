@@ -8,7 +8,7 @@ export const DOCKED_REGION_PRESENTATION_MAP = {
   [SizeClass.Medium]: RegionPresentation.Docked,
 } as const satisfies Record<SizeClass, RegionPresentation>;
 // A side region is a column beside the canvas while the window has room for it, and a sheet from its edge otherwise.
-// The medium Class is the one the page's drawers are sheets in, where two columns would leave the canvas too little
+// The medium class is the one the page's drawers are sheets in, where two columns would leave the canvas too little
 // Width to edit in
 export const SIDE_REGION_PRESENTATION_MAP = {
   [SizeClass.Compact]: RegionPresentation.Sheet,

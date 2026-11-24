@@ -85,13 +85,13 @@ export const measureMotion = async (
         requestAnimationFrame(window.recordFrame);
       });
       // The clock moves a fixed step each sample, and the frame read is the one the page drew by then with its pieces,
-      // So The frames sampled are the clock's, whatever the page's speed (`createLiftFrameSampler`)
+      // So the frames sampled are the clock's, whatever the page's speed (`createLiftFrameSampler`)
       const sampleFrame = createLiftFrameSampler(
         {
           advance: (ms) => page.clock.runFor(ms),
           // The page draws its frames on its own schedule, so a read waits until the frame at the clock's tick is
-          // Drawn: the Last one the faked clock has passed, a multiple of the page's frame. Read as it stood, a sample
-          // Could take the Frame a tick earlier, and the moments the pace is fitted over moved by a tick between runs
+          // Drawn: the last one the faked clock has passed, a multiple of the page's frame. Read as it stood, a sample
+          // Could take the frame a tick earlier, and the moments the pace is fitted over moved by a tick between runs
           readFrame: async (): Promise<LiftFrame> => {
             await page.waitForFunction(
               (frameMs) => (window.frameTimes.at(-1) ?? -1) >= Math.floor(performance.now() / frameMs) * frameMs,
@@ -106,8 +106,8 @@ export const measureMotion = async (
         PARITY_FRAME_MS,
       );
       // The page's loading steps the clock a frame at a time, a count that varies with the machine's speed, so the
-      // Clock would Stand at a different phase of the page's 16 ms frames each run and every sample would read a frame
-      // A tick off. It is Moved to the next frame boundary first, so the moments the samples read are the same whatever
+      // Clock would stand at a different phase of the page's 16 ms frames each run and every sample would read a frame
+      // A tick off. It is moved to the next frame boundary first, so the moments the samples read are the same whatever
       // The loading took
       const elapsedMs = await page.evaluate(() => performance.now());
       const toBoundaryMs = (PAGE_FRAME_MS - (elapsedMs % PAGE_FRAME_MS)) % PAGE_FRAME_MS;

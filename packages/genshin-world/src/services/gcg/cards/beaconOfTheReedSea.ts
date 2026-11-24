@@ -9,7 +9,7 @@ const BEACON_DAMAGE = 1;
 // The two effects the card names, each once per Round, keyed by the id of the skill that gives each
 
 // Beacon of the Reed Sea, a Claymore: its character deals +1 DMG. After she uses an Elemental Skill, or takes DMG, the
-// Next DMG She deals is +1 more, each trigger once per Round. The pending bonus is the card's counter
+// Next DMG she deals is +1 more, each trigger once per Round. The pending bonus is the card's counter
 const beaconWeapon = createGcgWeaponCard("CLAYMORE");
 export const beaconOfTheReedSea: GcgCardModule = {
   ...beaconWeapon,

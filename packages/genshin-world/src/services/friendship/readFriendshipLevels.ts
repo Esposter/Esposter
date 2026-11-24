@@ -5,7 +5,7 @@ import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
 // The friendship levels, read from the friendship slice `pnpm -C scripts genshin:assets friendship` writes, fetched by
-// Its Key from the hosted game data and checked against their shape as they arrive
+// Its key from the hosted game data and checked against their shape as they arrive
 export const readFriendshipLevels = async (gameDataBaseUrl: string): Promise<FriendshipLevels> => {
   const friendship = await readGameData(
     gameDataBaseUrl,

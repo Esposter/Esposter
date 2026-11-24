@@ -19,8 +19,8 @@ export const addProfanityFilterMiddleware = <
   procedure.use(({ input, next }) => {
     for (const key of keys) {
       const value = input[key];
-      // An empty value has no words to
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- check, and a parsed input is already normalised
+      /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- an empty value has no words to check, and a
+         parsed input is already normalised */
       if (value === null || value === undefined || value === "") continue;
       else if (typeof value !== "string")
         throw new TRPCError({ code: "BAD_REQUEST", message: `${key} must be a string.` });

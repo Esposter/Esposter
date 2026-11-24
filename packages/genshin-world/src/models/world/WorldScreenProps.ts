@@ -35,7 +35,7 @@ export interface WorldScreenProps {
   save?: GenshinSave | undefined;
   // Where the host serves the developer's own exports of the game's scenes: the index of the components it holds, and
   // Under each its witness layout and the meshes and textures the layout names. Without it every scene is drawn from
-  // Our Own stand-ins alone, as everywhere but the development server
+  // Our own stand-ins alone, as everywhere but the development server
   sceneExportBaseUrl: string;
   // The server's clock minus this machine's, which every saved timer is read against
   serverClockOffsetMs: number;

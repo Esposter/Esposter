@@ -7,8 +7,8 @@ const REQUIREMENT_REGEX = /^###\s+Requirement:\s*(?<title>.*)$/u;
 const SOURCE_PATH_REGEX = /`[^`\s]*(?:\/[^`\s]*|\.(?:cs|go|js|json|md|png|snap|ts|txt|vue))`/u;
 
 // Returns one finding per requirement-body line that cites a source, formatted `path:line: message`. A requirement's
-// Body Ends at the next heading of any level, so a scenario's own citations and the design's Sources are never read as
-// Body.
+// Body ends at the next heading of any level, so a scenario's own citations and the design's Sources are never read
+// As body.
 export const lintRequirementSources = (path: string, markdown: string): string[] => {
   const findings: string[] = [];
   let requirement: string | undefined;

@@ -88,7 +88,7 @@ const stopCooking = () => {
   emit("close");
 };
 // Auto Cook makes a whole batch of Delicious dishes from the bag, once the dish's proficiency is full, and the screen
-// Closes As Stop does, whether or not a batch was made
+// Closes as Stop does, whether or not a batch was made
 const autoCook = () => {
   const made = autoCookRecipe(recipe.value, {
     avatarId,

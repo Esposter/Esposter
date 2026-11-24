@@ -6,9 +6,9 @@ import { GameTextKey } from "genshin-text";
 import { z } from "zod";
 
 // A place an expedition is sent to, as the generated slice holds it: its id in the game's tables, the keys of its name
-// And Its description in the game text, the Adventure Rank it opens at, the scene point of the Statue that must be
-// Resonated with (zero for None), the quest that must be finished (empty for none), the region it is In, and each
-// Duration it offers
+// And its description in the game text, the Adventure Rank it opens at, the scene point of the
+// Statue that must be resonated with (zero for None), the quest that must be finished (empty for none), the region it
+// Is in, and each duration it offers
 export interface ExpeditionPlace {
   descriptionTextId: GameTextKey;
   durations: ExpeditionDuration[];

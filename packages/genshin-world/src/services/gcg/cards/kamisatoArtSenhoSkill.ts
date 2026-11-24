@@ -5,7 +5,7 @@ import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 
 // Kamisato Art: Senho, held from the battle's start. Its second entry, 11055, repeats its text and is left
-// Unregistered, so The passive is held once
+// Unregistered, so the passive is held once
 export const kamisatoArtSenhoSkill: GcgSkillModule = {
   getStartingStatuses: () => [createGcgZoneCard(SENHO_STATUS_ID, kamisatoArtSenho)],
 };

@@ -26,7 +26,7 @@ const getEnergyRecharge = (combatant: Combatant, effects: readonly KitEffect[]):
 };
 
 // Timeless Dream: Eternal Stove at its rank: the wielder's ATK rises by the rank's percentage for each point of Energy
-// Recharge Over its base, up to the rank's maximum, and an Elemental Burst gives it the rank's Energy Recharge for the
+// Recharge over its base, up to the rank's maximum, and an Elemental Burst gives it the rank's Energy Recharge for the
 // Rank's seconds
 export const createTimelessDreamEternalStovePassiveModule = (params: number[]): PassiveModule => {
   const attackPerEnergyRecharge = takeOne(params, 0);

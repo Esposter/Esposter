@@ -35,7 +35,7 @@ describe(traceTubeCentrelines, () => {
     expect.hasAssertions();
 
     // A square trunk standing on its capped foot, a metre's radius two metres up and closed on a tip four metres up,
-    // One Side of its lower storey left open as a hole
+    // One side of its lower storey left open as a hole
     const vertices: [number, number, number][] = [
       [1, 0, 0],
       [0, 0, 1],

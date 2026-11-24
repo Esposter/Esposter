@@ -4,8 +4,8 @@ import { createSeededRandom } from "genshin-engine";
 import { vi } from "vitest";
 
 // Fakes the frame clock, its timers, its performance clock and `Temporal.Now`, and seeds `Math.random`, so a scripted
-// Run Reads the same instants and draws the same values each time it runs. The clock moves only when a frame steps it,
-// By one Fixed step, and `dispose` puts back every one it replaced
+// Run reads the same instants and draws the same values each time it runs. The clock moves only when a frame steps it,
+// By one fixed step, and `dispose` puts back every one it replaced
 export const createScriptedClock = () => {
   vi.useFakeTimers({
     // Node has no frame clock, so there its timers and clocks alone are faked; a browser's frame clock is faked with

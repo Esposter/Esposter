@@ -11,9 +11,9 @@ const EAGLE_SPEAR_MAXIMUM_STACKS = 7;
 const EAGLE_SPEAR_SECONDS = 6;
 
 // Eagle Spear of Justice at its rank: each hit its wielder deals raises its ATK by the rank's percentage per stack, up
-// To seven Stacks, which last six seconds from the last gained, a stack at most once every 0.3 seconds. While the
-// Wielder holds the Maximum, its DMG dealt is raised by the rank's second number, a buff the stacks carry. Provisional:
-// Every hit counts, a Passive's own queued hit too, since the text says only "on hit"
+// To seven stacks, which last six seconds from the last gained, a stack at most once every 0.3 seconds. While the
+// Wielder holds the maximum, its DMG dealt is raised by the rank's second number, a buff the stacks carry. Provisional:
+// Every hit counts, a passive's own queued hit too, since the text says only "on hit"
 export const createEagleSpearOfJusticePassiveModule = (params: number[]): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   const maximumDamageBonus = takeOne(params, 1);

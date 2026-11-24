@@ -6,6 +6,6 @@ export interface GroundPiecesFit {
   // The fits whose records publish: the piece itself, or the quarters and joined groups that hold
   held: GroundPieceFit[];
   // Whether some part of the piece is left unfitted: the piece itself when it cannot split, or a quarter that no group
-  // It Can join holds, refused in turn
+  // It can join holds, refused in turn
   isRefused: boolean;
 }

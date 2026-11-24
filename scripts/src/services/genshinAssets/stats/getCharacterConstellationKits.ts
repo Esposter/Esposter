@@ -21,7 +21,7 @@ const RAISING_POSITIONS: ReadonlySet<number> = new Set([2, 4]);
 // Every playable character's constellations, one depot for each skill set that holds any. The six of a set are read in
 // The order its list gives them, which is the order the game activates them. A set is left out, with a note, where a
 // Constellation names no config in the dump, as Aloy's and a few newer characters' do, since its raise is unknown.
-// Every Set's six spend one Stella Fortuna of one item, and only the third and fifth raise a talent
+// Every set's six spend one Stella Fortuna of one item, and only the third and fifth raise a talent
 export const getCharacterConstellationKits = (notes: string[]): CharacterConstellationKit[] => {
   const talentMap = new Map(
     readExcelTable<ExcelAvatarTalentRow>("AvatarTalentExcelConfigData").map((row) => [row.talentId, row]),

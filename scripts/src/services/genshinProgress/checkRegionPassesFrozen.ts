@@ -12,9 +12,9 @@ const PASS_ROW_REGEX = new RegExp(
 );
 
 // A region's passes are frozen when every pass in the run's order holds on every reading. A pass with a reading that
-// Does Not hold fails, as does one with no row unless its scene may not owe it. A missing optional pass leaves the
-// Check not Measurable, since the report does not say whether it was owed. A region with no passes component
-// (undefined) is not Measurable either, as nothing was ever run for it
+// Does not hold fails, as does one with no row unless its scene may not owe it. A missing optional pass leaves the
+// Check not measurable, since the report does not say whether it was owed. A region with no passes component
+// (undefined) is not measurable either, as nothing was ever run for it
 export const checkRegionPassesFrozen = (folder: string, report: string | undefined): GenshinExitCheck => {
   const name = `region ${folder}: passes frozen`;
   if (report === undefined)

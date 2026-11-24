@@ -13,7 +13,7 @@ import { and, eq } from "drizzle-orm";
 // Messages the index names there, and the page keeps the index's order: a message its room no longer holds is dropped
 // From the page, and no other message takes its place. The cursor continues from the index's last entry, whether or not
 // Its message survived, so the next page starts after everything this one read. A room the caller has left is dropped
-// Too, Since its name and the messages they sent there are no longer theirs to see
+// Too, since its name and the messages they sent there are no longer theirs to see
 export const readMySentMessages = async (
   { cursor, limit }: ReadMySentMessagesInput,
   db: Context["db"],

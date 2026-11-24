@@ -7,8 +7,8 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // One stack of a passive's bonuses on its wielder: the stacks it holds counted up to its maximum, each bonus raised by
-// Its Per-stack amount, and every stack restarting the passive's seconds. Once the stacks reach their maximum, its
-// Maximum Bonuses land too, restarting with them. A passive still on its cooldown adds none. Returns whether a stack
+// Its per-stack amount, and every stack restarting the passive's seconds. Once the stacks reach their maximum, its
+// Maximum bonuses land too, restarting with them. A passive still on its cooldown adds none. Returns whether a stack
 // Was added
 export const addPassiveStack = (
   kitEffectState: KitEffectState,

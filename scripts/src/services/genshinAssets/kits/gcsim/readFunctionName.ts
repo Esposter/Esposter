@@ -4,8 +4,8 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 
-// The name of the nearest function before the position, `a1AttackInfo` in `func (c *char) a1AttackInfo()
-// `info.AttackInfo` {`
+// The name of the nearest function before the position: `a1AttackInfo` in
+// `func (c *char) a1AttackInfo() info.AttackInfo {`
 export const readFunctionName = (tokens: readonly GoToken[], position: number): string | undefined => {
   let start = position;
   while (start >= 0 && tokens[start]?.text !== "func") start--;

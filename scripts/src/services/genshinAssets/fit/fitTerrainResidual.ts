@@ -16,7 +16,7 @@ const SCALE_CANDIDATES = [8, 16, 32, 64, 128, 256];
 // Weighted noise's standard deviation over the same samples the weighted residual's, so the noise matches the ground it
 // Is drawn on. Both are judged by the residual's statistics about its mean, never by its heights point for point. Where
 // Every sample weighs none, as where the ground above holds within its gate everywhere, nothing of the residual is
-// Drawn, So the weighted noise has no deviation to scale and the amplitude is none
+// Drawn, so the weighted noise has no deviation to scale and the amplitude is none
 export const fitTerrainResidual = (
   grid: TerrainResidualGrid,
   getWeight: (x: number, z: number) => number,

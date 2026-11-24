@@ -34,8 +34,9 @@ export const useCreator = (message: MaybeRefOrGetter<ClientMessage | undefined>)
     if (!userId) return undefined;
 
     const user = userMap.value.get(userId);
-    // The creator is named on every message it wrote, so it takes the room display name its member row carries, Exactly
-    // Like the member sidebar and the settings Members panel — otherwise a renamed member is two people in one room
+    // The creator is named on every message it wrote, so it takes the room display name its member row carries,
+    // Exactly like the member sidebar and the settings Members panel — otherwise a renamed member is two people in one
+    // Room
     if (user) return { ...user, name: getRoomMemberName(messageValue.roomId, user.id) };
     // An author nobody can resolve is drawn under the placeholder, so a message is never dropped for want of its author
     else return { ...UNKNOWN_CREATOR, id: userId };

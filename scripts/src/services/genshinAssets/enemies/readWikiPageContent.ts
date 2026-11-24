@@ -7,7 +7,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 
 // The main slot's text of a wiki page the cache holds. A page the cache lacks is an error rather than an empty page,
-// Since Reading an empty page would drop whatever the wiki gives it
+// Since reading an empty page would drop whatever the wiki gives it
 export const readWikiPageContent = (title: string, cacheDirectory: string = WIKI_CACHE_DIRECTORY): string => {
   const cachePath = toWikiPageCachePath(cacheDirectory, title);
   if (!checkWikiPageCached(cacheDirectory, title))

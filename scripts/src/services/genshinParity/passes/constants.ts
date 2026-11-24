@@ -22,19 +22,19 @@ export const PARITY_PASS_ORDER: readonly ParityPass[] = [
 // Fitted data is written to
 export const PART_GATE_METRES = 0.02;
 // The login's families whose surface wavelength the Shape pass reads from their normal angles in the frame, the
-// Families a Normal detail would lean their normals by
+// Families a normal detail would lean their normals by
 export const SURFACE_WAVELENGTH_FAMILIES: readonly string[] = ["Bridges", "Door", "Towers"];
-// The high-pass box the surface wavelength reads its normal angles through, in pixels: a variation longer than it is
-// Shape. On the reference's own angles the towers' lobe holds for boxes of 4 to 32 pixels and the bridges' for 16 to
-// 128, so 16, So where both hold, 16 is used for both families
+// The high-pass box the surface wavelength reads its normal angles through, in pixels: a variation longer than it
+// Is shape. on the reference's own angles the towers' lobe holds for boxes of 4 to 32 pixels and the bridges' for 16 to
+// 128, so 16, so where both hold, 16 is used for both families
 export const SURFACE_HIGH_PASS_RADIUS_PIXELS = 16;
-// The longest lag a surface wavelength reads, as a share of its family's width: a lobe past it is the object's own
-// Size. The bridges' 47 metre repeat is about a quarter of their width and falls outside it. Their 22 metre lobe, about
-// A ninth, Falls inside it, and is the bridges' detail wavelength (design.md, Decisions). The cap is set before the
-// Bridges were Read, and is not tuned past that reading
+// The longest lag a surface wavelength reads, as a share of its family's width: a lobe past it is the object's
+// Own size. the bridges' 47 metre repeat is about a quarter of their width and falls outside it. Their 22 metre lobe,
+// About a ninth, falls inside it, and is the bridges' detail wavelength (design.md, Decisions). The cap is set before
+// The bridges were read, and is not tuned past that reading
 export const SURFACE_LAG_CAP_SHARE = 1 / 8;
 // The high-pass boxes a normal map's wavelength is read through, in texels: its lobe shifts with the box, and the one
-// That Holds across most of these boxes is the map's (`chooseHeldLobe`). On the door's map 13 texels hold at boxes of
+// That holds across most of these boxes is the map's (`chooseHeldLobe`). On the door's map 13 texels hold at boxes of
 // 4, 8 and 32, and 39, 96 and 123 at 16, 64 and 128 each
 export const TEXTURE_HIGH_PASS_RADII_TEXELS: readonly number[] = [4, 8, 16, 32, 64, 128];
 // The gate a landmark's root is held to, the scene's where it stands against its export's, both in metres: a fifth of
@@ -59,11 +59,11 @@ export const SHAPE_NORMAL_GATE_DEGREES = 10;
 // Radians
 export const SHAPE_NORMAL_RESOLUTION_DEGREES: number = (Math.sqrt(2 * 2 ** -24) * 180) / Math.PI;
 // The square of a block a family's pixels are split into two halves by, as a chequerboard, so each half spreads over
-// The Whole surface: the two halves read against each other are the floor a statistic matched in distribution is gated
+// The whole surface: the two halves read against each other are the floor a statistic matched in distribution is gated
 // At
 export const SPLIT_BLOCK_PIXELS = 32;
 // The gate a mean colour is held to, a surface's unlit or glow or the clear sky's: within the CIELab distance two
-// Colours Side by side are just told apart at
+// Colours side by side are just told apart at
 export const COLOUR_GATE = 2.3;
 // The structure lost, one less its term, is drawn at full red at half a term, and past it a pixel whitens until its two
 // Images are nothing alike. A plan's cell is drawn at the average loss of the pixels it gathers, on the same scale
@@ -73,7 +73,7 @@ export const LOST_FULL = 0.5;
 // More, and its next value, 0.75, about seven tenths
 export const DISPLAY_WIDTH = 640;
 // The bloom's frames, ours and the reference, are drawn at the reference's own width and resized down to the display
-// Width by The same kernel, so neither side is read sharper: `genshin:parity bloom` reads every structure of the bloom
+// Width by the same kernel, so neither side is read sharper: `genshin:parity bloom` reads every structure of the bloom
 // Chain lower by 0.29 to 0.64 ΔE that way, more than any one structure choice moves it
 export const BLOOM_RESIZE = BloomResize.Source;
 export const DISPLAY_CONTRAST_GATE = 0.1;
@@ -135,7 +135,7 @@ export const NO_DETAIL_LOBE_REASON = "no detail lobe resolved";
 // Each reference's shape pass drawn where its readings lie, ours beside the exports
 export const SHAPES_DIRECTORY: string = join(PARITY_DIRECTORY, "shapes");
 // The grain fit's solve (`fitSurfaceGrain`): every structure term within this relative error of its exports', which
-// Holds The structure's root mean square under the walkway's gate of 0.0268 with room to spare, and the steps it may
+// Holds the structure's root mean square under the walkway's gate of 0.0268 with room to spare, and the steps it may
 // Take
 export const GRAIN_TOLERANCE = 0.01;
 export const GRAIN_MAX_ITERATIONS = 12;

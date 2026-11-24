@@ -9,10 +9,10 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
-// Found by the lockfile, whose paths the caller lists, rather than by the workspace list, because one of them is not A
-// Member: the plugin's runtime manifest sits under the plugin, where no workspace glob reaches, and is installed Only
-// By its `voice` verb. The manifest name is what the report attributes the entries to, since these declare their own
-// Ranges Rather than pointing at a workspace section.
+// Found by the lockfile, whose paths the caller lists, rather than by the workspace list, because one of them is not
+// A member: the plugin's runtime manifest sits under the plugin, where no workspace glob reaches, and is installed
+// Only by its `voice` verb. The manifest name is what the report attributes the entries to, since these declare their
+// Own ranges rather than pointing at a workspace section.
 export const readNpmProjects = (root: string, lockfilePaths: string[]): NpmProject[] =>
   lockfilePaths.map((lockfilePath) => {
     const manifestPath = resolve(root, dirname(lockfilePath), PACKAGE_JSON_FILENAME);

@@ -1,7 +1,7 @@
 import { UiCalendarView } from "#src/models/ui/UiCalendarView";
 
 // How far each view steps, which its buttons, its shortcuts and Page Up and Page Down step it: a day, a month, or a
-// Week For either week
+// Week for either week
 export const UiCalendarViewStepMap = {
   [UiCalendarView.Day]: { days: 1 },
   [UiCalendarView.Month]: { months: 1 },

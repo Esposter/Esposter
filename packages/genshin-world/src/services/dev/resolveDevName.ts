@@ -4,7 +4,7 @@ import { MAX_DEV_NAME_SUGGESTION_COUNT } from "#src/services/dev/constants";
 import { takeOne } from "@esposter/shared";
 
 // The entry a line's name names: the one whose name is the name, ignoring case, else the only one whose name holds it.
-// A Name several entries hold is refused with the nearest names, and one none holds as unknown
+// A name several entries hold is refused with the nearest names, and one none holds as unknown
 export const resolveDevName = <TEntry>(
   entries: readonly TEntry[],
   getName: (entry: TEntry) => string,

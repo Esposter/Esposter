@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { v7 } from "uuid";
 
 // One `gh` call that takes a markdown body, passed through a file so `gh` reads it without a length limit on the
-// Command line. Returns what `gh` prints.
+// Command line. returns what `gh` prints.
 export const runGhWithBody = (args: string[], body: string): string => {
   const bodyPath = join(tmpdir(), `review-body-${v7()}.md`);
   writeFileSync(bodyPath, body);

@@ -5,7 +5,7 @@ import { publicationTable } from "#src/services/resource/overlay/constants";
 import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 
 // An entry that sets the named fields of a resource's publication the overlay holds. A publication it does not hold is
-// Left As it is, so the write it belongs to changes nothing on screen
+// Left as it is, so the write it belongs to changes nothing on screen
 export const getPublicationPatchEntry = (
   resourceId: ResourcePublicationInResource["resourceId"],
   patch: Partial<ResourcePublicationInResource>,

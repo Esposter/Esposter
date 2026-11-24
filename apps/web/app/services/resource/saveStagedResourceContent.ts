@@ -6,9 +6,9 @@ import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleF
 import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 
-// A document too large for one request body goes to R2 first and is committed by reference: gzipped, Hashed so the
-// Commit can tell its own upload from another device's, PUT through a presigned write url the server holds Against the
-// Owner's quota, and named by that hash to the server, which reads, verifies and saves it
+// A document too large for one request body goes to R2 first and is committed by reference: gzipped,
+// Hashed so the commit can tell its own upload from another device's, PUT through a presigned write url the server
+// Holds against the owner's quota, and named by that hash to the server, which reads, verifies and saves it
 export const saveStagedResourceContent = async (
   resourceRouter: ResourceRouter<ResourceType>,
   contentBytes: Uint8Array<ArrayBuffer>,

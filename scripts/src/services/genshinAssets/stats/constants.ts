@@ -51,7 +51,7 @@ export const MAX_MATERIAL_TALENT_LEVEL = 10;
 // From
 export const ElementNameSet: ReadonlySet<string> = new Set<string>(Object.values(Element));
 // The five kinds of weapon the open world gives a character, as the game's tables spell them. The tables hold a sixth,
-// The Crossbow, wielded only by the Traveler's discarded shooter forms, so a character or weapon of it is no one's to
+// The crossbow, wielded only by the Traveler's discarded shooter forms, so a character or weapon of it is no one's to
 // Play
 export const WeaponTypeNameSet: ReadonlySet<string> = new Set<string>(Object.values(WeaponType));
 // The depot each rarity's standard pieces draw their minor affixes from, the others being the events' and bosses' own

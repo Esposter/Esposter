@@ -20,7 +20,7 @@ describe(checkIsMainAncestor, () => {
   });
 
   // `main` was released past the queue's base and then merged into the queue, so only the merge commit holds it: a
-  // Queue Commit before the merge does not, and a window ending there cannot move `main`
+  // Queue commit before the merge does not, and a window ending there cannot move `main`
   test("holds main only from the queue commit that merged it in", () => {
     expect.hasAssertions();
 

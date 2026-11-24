@@ -4,7 +4,7 @@ import type { KitCandidateSources } from "#src/models/genshinAssets/kits/KitCand
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 
 // The one order a path's default is chosen in: the named lists' hits, then the sources' values, the named hits' fields
-// And The rules. Each caller computes its maps at the point of its run it needs, so the order is the only thing shared
+// And the rules. Each caller computes its maps at the point of its run it needs, so the order is the only thing shared
 export const mergeKitCandidateSources = ({
   namedHitCandidateMap,
   namedListCandidateMap,

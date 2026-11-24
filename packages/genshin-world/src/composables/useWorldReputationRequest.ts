@@ -24,7 +24,7 @@ export const useWorldReputationRequest = ({
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has
-  // Not Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly
+  // Not started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly
   // Refresh is read
   const reputationOffer = shallowRef<ReputationRequest>();
   // The request waits while a taken bounty hunts, and is offered once the bounty is claimed
@@ -52,7 +52,7 @@ export const useWorldReputationRequest = ({
     reputationOffer.value = undefined;
   };
   // Accepting the offer claims the bounty hunted, takes the bounty offered, or starts the request, whose quest the
-  // World then Runs as any other
+  // World then runs as any other
   const acceptReputationOffer = () => {
     if (reputationBountyOffer.value === ReputationBountyOffer.Claim) claimBounty();
     else if (reputationBountyOffer.value === ReputationBountyOffer.Offer) takeBounty();

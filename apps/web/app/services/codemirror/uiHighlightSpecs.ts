@@ -4,9 +4,9 @@ import { UiToken } from "#src/models/ui/UiToken";
 import { tags } from "@lezer/highlight";
 
 // The code viewer's highlighting, mapped the way the docs' shiki theme maps its scopes: keywords and tags in the
-// Accent, Strings and insertions in success, names in info, constants in warning, deletions in error and comments
-// Muted. Every Colour is the token's custom property, so the highlighting follows the style and the mode as the rest of
-// The app does
+// Accent, strings and insertions in success, names in info, constants in warning, deletions in error and
+// Comments muted. Every colour is the token's custom property, so the highlighting follows the style and the mode as
+// The rest of the app does
 export const uiHighlightSpecs: readonly TagStyle[] = [
   { color: `var(--ui-${UiToken.Muted})`, tag: tags.comment },
   { color: `var(--ui-${UiToken.Accent})`, tag: [tags.keyword, tags.heading, tags.tagName] },

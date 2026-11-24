@@ -38,7 +38,7 @@ const createPuzzles = (overrides: Partial<Parameters<ReturnType<typeof useWorldP
   const { stepWorldPuzzles, strikeWorldPuzzles } = worldPuzzlesStore;
   const { puzzleChestPlaces, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
   // The markers are the store's reactive arrays, which stay the same ones until it starts again, and the sets read off
-  // Them Are refs, since each read is a new set
+  // Them are refs, since each read is a new set
   return {
     monumentMarkers: worldPuzzlesStore.monumentMarkers,
     puzzleChestPlaces,

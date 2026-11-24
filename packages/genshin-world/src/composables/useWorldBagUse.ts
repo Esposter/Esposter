@@ -9,7 +9,7 @@ import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 
 // Using an entry of the bag: the entry's use is read off the bag, the dishes, the recipes and the blueprints, and what
-// It gives Back is written into the bag, the wallet and the progress the use changed. A use the entry has none of
+// It gives back is written into the bag, the wallet and the progress the use changed. A use the entry has none of
 // Changes nothing
 export const useWorldBagUse = ({
   blueprintMap,

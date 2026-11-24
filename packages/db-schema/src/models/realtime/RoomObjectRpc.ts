@@ -98,7 +98,7 @@ export interface RoomObjectRpc {
   notifyOnlineMembers: (event: UserEvent) => Promise<void>;
   pinMessage: (id: number, actor: RoomActor) => null | RoomMessage;
   // The live messages after a page cursor in the room's message order, at most `limit` of them. A backward cursor reads
-  // The Messages newer than its row, oldest first, which the caller turns back into the list's order
+  // The messages newer than its row, oldest first, which the caller turns back into the list's order
   readMessages: (input: { cursor: PageCursor; isPinned?: boolean | undefined; limit: number }) => RoomMessage[];
   readMessagesByIds: (ids: number[]) => RoomMessage[];
   readReactions: (messageIds: number[]) => RoomReaction[];
@@ -109,10 +109,10 @@ export interface RoomObjectRpc {
   // The live roots among the named ids, in the order named, each with its live replies counted
   readThreads: (threadRootIds: number[]) => RoomThread[];
   // A member who is no longer in the room is dropped from its online set and sockets, and their scheduled messages in
-  // It are Removed, with their object told to drop what it holds for the room
+  // It are removed, with their object told to drop what it holds for the room
   removeMember: (userId: string) => Promise<void>;
   // Takes the actor off the emoji's reactors and answers the reaction as it now stands, with no reactor when the actor
-  // Was Its only one. Null when the actor was not a reactor
+  // Was its only one. Null when the actor was not a reactor
   removeReaction: (input: { emojiTag: string; messageId: number }, actor: RoomActor) => null | RoomReaction;
   // The matches after a page cursor, in the order getRoomSearchPageSort gives the query
   searchMessages: (input: RoomSearchInput) => RoomSearchResult;

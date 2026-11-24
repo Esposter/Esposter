@@ -13,8 +13,8 @@ import { takeOne } from "@esposter/shared";
 const TENKO_KENSHIN_DAMAGE = 4;
 
 // Great Secret Art: Tenko Kenshin, Yae Miko's Elemental Burst: 4 Electro DMG, and with a Sesshou Sakura on her side, it
-// Is Destroyed and Tenko Thunderbolts is created. When Yae Miko has The Shrine's Sacred Shade equipped, that talent's
-// Counter is Set to the round, so the next Yakan Evocation this round costs less
+// Is destroyed and Tenko Thunderbolts is created. When Yae Miko has The Shrine's Sacred Shade equipped, that talent's
+// Counter is set to the round, so the next Yakan Evocation this round costs less
 export const tenkoKenshin: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

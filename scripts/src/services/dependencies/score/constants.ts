@@ -58,7 +58,7 @@ export const TYPES_SCOPE = "@types/";
 export const NODE_MODULES_DIRECTORY = "node_modules";
 
 // One `git grep` finds every import of a package in the tracked source, matching `from "<name>"`, `import("<name>"` and
-// A Side-effect `import "<name>"` opening its line
+// A side-effect `import "<name>"` opening its line
 export const IMPORT_GREP_PATTERN: string = String.raw`(from|import\(|^\s*import)\s*"[^"]+"`;
 export const IMPORT_GREP_PATHSPECS: string[] = ["*.ts", "*.vue", "*.mjs", "*.js"];
 

@@ -16,8 +16,8 @@ const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as c
 // A whole-index git command is refused while the ward's records show another session editing the checkout it runs in,
 // The session's folder moved by a `cd` before it and by its `-C`. With the Ward off nothing is recorded, so there is no
 // Peer to see and the command runs
-// A declaration, not an arrow: the hooks module's bundle
-// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
+/* oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported
+   helper that takes `$` only into a function declaration */
 export async function wholeIndex(
   $: EngineInterface,
   command: string,

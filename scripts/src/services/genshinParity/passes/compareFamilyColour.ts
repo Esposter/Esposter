@@ -11,11 +11,11 @@ import { toXyz } from "#src/services/shared/toXyz";
 
 // Each family's colour in one of the witness's colour targets (its unlit albedo, its glow), ours against the exports',
 // From the part target and that colour target the witness drew of each at one view, four floats a pixel, over the
-// Pixels both draw it: the CIELab distance between their mean colours, and how Unlike their lightness is in structure
-// (`scoreSimilarity`, 0 alike and 1 nothing alike), which a painted detail Off its place or missing reads where a mean
-// Does not. A family the exports draw nowhere is left out, and one ours Draws nowhere they do has no colour to read, so
-// It stands at Infinity. The structure's terms come back pixel by Pixel too, scale by scale, for where on the frame it
-// Is lost
+// Pixels both draw it: the CIELab distance between their mean colours, and how unlike their lightness is in structure
+// (`scoreSimilarity`, 0 alike and 1 nothing alike), which a painted detail
+// Off its place or missing reads where a mean does not. A family the exports draw nowhere is left out, and one ours
+// Draws nowhere they do has no colour to read, so it stands at Infinity. The structure's terms come back pixel by
+// Pixel too, scale by scale, for where on the frame it is lost
 export const compareFamilyColour = async (
   exportsTargets: { colour: Float32Array; part: Float32Array },
   oursTargets: { colour: Float32Array; part: Float32Array },

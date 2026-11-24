@@ -95,7 +95,7 @@ export const useMutation = () => {
   const watchTopics = useWatchTopics();
   // Reads are ordered by the run scope the caller holds: a newer read of the key aborts the one before it, and only the
   // Read the scope holds current commits its answer and its topic watch, so an older answer that lands last replaces
-  // Neither The read is handed its run's signal, so a request it makes is aborted by the newer read that supersedes it
+  // Neither the read is handed its run's signal, so a request it makes is aborted by the newer read that supersedes it
   const executeQuery = <TResult>(
     query: (signal: AbortSignal) => Promise<TResult>,
     options: QueryOptions<TResult>,
@@ -141,8 +141,8 @@ export const useMutation = () => {
     );
     // The compiler cannot state that a target's entry carries the result type its registrant read — the map is
     // Heterogeneous by key, which is the contract every caller sharing one key already lives under
-    // The shared query map is keyed by target and holds each caller's
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- result type, which no single map type states
+    /* oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The shared query map is keyed by target and holds
+       each caller's result type, which no single map type states */
     if (isExclusive) keySharedQueryMap.set(key, outcome as Promise<MutationOutcome<never>>);
     return outcome;
   };

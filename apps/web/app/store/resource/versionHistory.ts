@@ -124,7 +124,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
 
     let isSaved = false;
     // The revision's answer is a version number, which no row holds, so the write arrives nothing and the history is
-    // `re-read`
+    // Re-read
     await writeAwaited(
       async () => {
         await $trpc.resource.saveResourceRevision.mutate({ id: resource.id });

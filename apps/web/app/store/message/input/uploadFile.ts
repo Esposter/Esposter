@@ -59,12 +59,13 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     const key = getComposerKey(target);
     setUploadingCount(key, Math.max((getUploadingCount(key) ?? 0) - 1, 0));
   };
-  // Every composer write is keyed by the composer the files were attached TO, never through a ref that resolves To
-  // Whichever composer is CURRENT the moment it is read: an upload awaits a presigned url round trip and the blob PUTs
+  // Every composer write is keyed by the composer the files were attached TO, never through a ref that resolves
+  // To whichever composer is CURRENT the moment it is read: an upload awaits a presigned url round trip and the blob
+  // PUTs
   // First. A user who switches rooms — or opens another thread — during that await would seed one composer's
-  // Attachments into another's — sending there produces a message whose blobs live under the room they left, so Every
-  // Attachment renders permanently broken — and the matching revert would find nothing to take back out, Stranding the
-  // Composer it exists to clean up.
+  // Attachments into another's — sending there produces a message whose blobs live under the room they left, so
+  // Every attachment renders permanently broken — and the matching revert would find nothing to take back out,
+  // Stranding the composer it exists to clean up.
   const storeUploadFiles = (target: ComposerTarget, uploadFiles: { file: File; id: string; token: string }[]) => {
     const key = getComposerKey(target);
     const composerFiles = getFiles(key) ?? [];

@@ -1,7 +1,7 @@
 import { clamp } from "#src/services/genshinParity/shared/clamp";
 
 // One pass of the blur: each of `lineCount` lines of `length` samples, `lineStride` apart, is blurred along itself by
-// The Weights, its taps clamped at its ends, with `sampleStride` the step from one of its samples to the next
+// The weights, its taps clamped at its ends, with `sampleStride` the step from one of its samples to the next
 export const blurLines = (
   values: Float32Array,
   lineCount: number,

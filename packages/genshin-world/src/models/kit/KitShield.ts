@@ -4,10 +4,10 @@ import type { KitHit } from "#src/models/kit/KitHit";
 
 // A shield a character casts onto the team, which absorbs the damage the character on the field takes, whoever cast it,
 // For the seconds left of it, until its health is spent. It is a combat shield, so its element and its health are
-// Absorbed By the combat rules
+// Absorbed by the combat rules
 export interface KitShield extends Shield {
   // The character that cast it, which a recast over it and Breastplate's heal are keyed on, or that crystallized the
-  // Shard It came from
+  // Shard it came from
   characterId: number;
   // The explosion it goes off into as it ends, if it has one: its hit, and its caster as the caster stood when it was
   // Cast

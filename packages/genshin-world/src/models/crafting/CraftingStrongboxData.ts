@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 // One Artifact Strongbox the Mystic Offering makes, by the artifact set it holds: the set's id, the text id of its
-// Display Name ("Artifact Strongbox: <set>"), how many artifacts an offering gives up for one and their star rank, and
-// The set's Pieces it can hold by item id, one of which it rolls at random
+// Display name ("Artifact Strongbox: <set>"), how many artifacts an offering gives up for one and their star rank, and
+// The set's pieces it can hold by item id, one of which it rolls at random
 export interface CraftingStrongboxData {
   id: number;
   nameTextId: string;

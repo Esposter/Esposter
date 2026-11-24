@@ -8,8 +8,9 @@ export interface ProducerVersion {
   producerPaths: string[];
 }
 
-// The provenance stamp an output carries beside it: the game version of the install it was read from, The command that
-// Wrote it, the operating system, the producer's commit and the pinned tools it ran. It holds no absolute path
+// The provenance stamp an output carries beside it: the game version of the install it was read from,
+// The command that wrote it, the operating system, the producer's commit and the pinned tools it ran. It holds no
+// Absolute path
 export interface Provenance {
   command: string;
   gameVersion: string;

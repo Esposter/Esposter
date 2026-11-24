@@ -7,10 +7,10 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 
-// The bag and progress after `order`, a furnishing queued in `progress`, is taken into the bag once its seconds have
-// Passed. Its first making gives the Trust EXP its blueprint names. A furnishing the bag has no room for waits in its
-// Queue, and an Order not yet done is left as it is. The order is found by its identity in `progress.orders`, and one
-// Not queued there, Such as an order already collected, gives nothing
+// The bag and progress after `order`, a furnishing queued in `progress`, is taken into the bag once its seconds
+// Have passed. its first making gives the Trust EXP its blueprint names. A furnishing the bag has no room for waits in
+// Its queue, and an order not yet done is left as it is. The order is found by its identity in `progress.orders`, and
+// One not queued there, such as an order already collected, gives nothing
 export const collectHomeOrder = (
   order: HomeOrder,
   blueprint: HomeBlueprint,

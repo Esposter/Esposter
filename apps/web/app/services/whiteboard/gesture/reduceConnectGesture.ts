@@ -13,8 +13,8 @@ import { reducePointerGesture } from "#src/services/whiteboard/gesture/reducePoi
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // A drag from a connection handle previews the arrow it would draw, and a release commits it as one edit. A release on
-// Another shape joins that shape Alone, and a release on empty canvas adds a shape of the source's kind there, joined
-// By the arrow. A press released before it has travelled the drag Start distance is a click, which adds nothing
+// Another shape joins that shape alone, and a release on empty canvas adds a shape of the source's kind there, joined
+// By the arrow. A press released before it has travelled the drag start distance is a click, which adds nothing
 export const reduceConnectGesture = (
   state: WhiteboardGestureState,
   gesture: GestureConnecting,

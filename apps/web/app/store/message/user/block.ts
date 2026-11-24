@@ -19,7 +19,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const { storeUser } = userStore;
   const blocks = view(blockTable);
   // A block names the user it blocks, whose row the block's answer or the read stored, so a block whose user is not
-  // Held Yet shows nothing
+  // Held yet shows nothing
   const blockedUsers = computed(() =>
     blocks.value.flatMap(({ blockedId, blockerId }) => {
       const blockedUser = blockerId === userId.value ? userStore.userMap.get(blockedId) : undefined;

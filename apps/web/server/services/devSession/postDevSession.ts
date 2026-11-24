@@ -4,7 +4,7 @@ import { createError, defineEventHandler, setCookie, setResponseStatus } from "n
 
 // A refused request answers not found, which is the answer a server without the route gives, so a refusal reveals no
 // More about the server than a missing route does. The cookie's value is passed raw: `setCookie` URI-encodes it, the
-// Way Better-auth's own signed cookies are encoded, and a pre-encoded value would be encoded twice
+// Way better-auth's own signed cookies are encoded, and a pre-encoded value would be encoded twice
 export default defineEventHandler(async (event) => {
   const devSessionCookie = await openDevSession(await auth.$context);
   if (!devSessionCookie) throw createError({ statusCode: 404 });

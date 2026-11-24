@@ -11,10 +11,10 @@ const PATH_DECIMALS = 2;
 const toReferencePath = (path: string, scale: number): string =>
   path.replaceAll(NUMBER_REGEX, (value) => String(Number((Number(value) / scale).toFixed(PATH_DECIMALS))));
 // Writes a traced path into the keyed record its map source declares, as the entry under `key`, divided by its scale
-// Into The reference's pixels (`toReferencePath`). The key is written as the source's own text, such as
-// `InterfaceIcon.Exit`. The record's entries are read in whatever layout the formatter last gave it and written back in
+// Into the reference's pixels (`toReferencePath`). The key is written as the source's own text, such as
+// `InterfaceIcon.Exit`. the record's entries are read in whatever layout the formatter last gave it and written back in
 // Order through it, since A short record is laid out on one line. An entry the record holds under the key is replaced
-// Where it stands, and a new One is added last
+// Where it stands, and a new one is added last
 export const writeTracedPath = async (mapPath: string, key: string, path: string, scale: number): Promise<void> => {
   const source = await readFile(mapPath, "utf8");
   const open = source.search(/[=] \{/u);

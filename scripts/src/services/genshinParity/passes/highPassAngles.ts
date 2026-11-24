@@ -1,6 +1,6 @@
 // The high-pass of a family's normal angles: each pixel's angle less the mean of the family's angles within a box of
 // `radius` pixels round it, so a variation longer than the box is taken as shape and removed, and a shorter one stays.
-// A Pixel outside the family is NaN, and it counts toward no mean. Summed-area tables make the box mean cost one lookup
+// A pixel outside the family is NaN, and it counts toward no mean. Summed-area tables make the box mean cost one lookup
 export const highPassAngles = (angles: Float64Array, width: number, radius: number): Float64Array => {
   const height = angles.length / width;
   const stride = width + 1;

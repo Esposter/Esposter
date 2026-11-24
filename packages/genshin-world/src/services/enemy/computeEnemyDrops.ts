@@ -15,9 +15,10 @@ import {
 import { takeOne } from "@esposter/shared";
 
 // What a defeated enemy drops at its level, by its level band: Character EXP, its drop table's Mora scaled by the band,
-// A random amount within the band's range for a common enemy, and each material's count, its whole part always and Its
-// Fraction as the chance of one more. Character EXP is the band's for any common or elite enemy, with or without a Drop
-// Table, which gives the Mora and materials alone. A boss drops nothing, its reward claimed from its blossom instead
+// A random amount within the band's range for a common enemy, and each material's count, its whole part always and
+// Its fraction as the chance of one more. Character EXP is the band's for any common or elite enemy, with or without a
+// Drop table, which gives the Mora and materials alone. A boss drops nothing, its reward claimed from its blossom
+// Instead
 export const computeEnemyDrops = (
   { enemyType }: EnemyKind,
   dropTable: EnemyDropTable | undefined,

@@ -6,9 +6,9 @@ import { getResourceFileBlobName } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// Each image of a whiteboard as a data url, keyed by its file id, and the file ids of the images that could not be
-// Read. An export Is a file that stands alone, so its images are embedded rather than linked: a picture drawn from a
-// Link cannot load one in an Image the browser rasterises. One image that cannot be read leaves the others to load
+// Each image of a whiteboard as a data url, keyed by its file id, and the file ids of the images that could not
+// Be read. An export is a file that stands alone, so its images are embedded rather than linked: a picture drawn from a
+// Link cannot load one in an image the browser rasterises. One image that cannot be read leaves the others to load
 export const getWhiteboardImageUrls = async (
   document: PositionedDocument,
   resourceId: ResourceInResource["id"],

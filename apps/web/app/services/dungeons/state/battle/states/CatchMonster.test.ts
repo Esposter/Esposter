@@ -37,8 +37,8 @@ vi.mock(import("#src/services/dungeons/item/createCaptureResult"), () => ({
 }));
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment
-// A partial fake:
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
+/* oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its
+   full store type */
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe("catchMonster", () => {

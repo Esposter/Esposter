@@ -106,7 +106,7 @@ describe("security", () => {
   });
 
   // The page blocks an inline handler its policy does not list, so the one NuxtImg renders is allowed by the hash of
-  // Its Exact text and nothing else
+  // Its exact text and nothing else
   test("allows the image error handler by its hash and no other inline handler", async () => {
     expect.hasAssertions();
 

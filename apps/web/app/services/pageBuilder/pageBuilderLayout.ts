@@ -8,7 +8,7 @@ import {
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The parts the page builder's layout is built from: a bar over the page, the blocks at the start, the settings at the
-// End and The canvas in the rest. The webpage's layout adds its settings tabs to these
+// End and the canvas in the rest. The webpage's layout adds its settings tabs to these
 export const PAGE_BUILDER_CANVAS_ID = "canvas";
 export const PAGE_BUILDER_REGION_ID_MAP = { Bar: "bar", Blocks: "blocks", Inspector: "inspector" } as const;
 export const PAGE_BUILDER_PANEL_ID_MAP = {

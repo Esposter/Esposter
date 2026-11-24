@@ -1,7 +1,7 @@
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
 // The enemy kind each monster describe a chamber lists is fought as: its base variant, the monster of that describe
-// With the Lowest id. A describe with no monster row is left out, as the world has no kind to fight it as
+// With the lowest id. A describe with no monster row is left out, as the world has no kind to fight it as
 export const toAbyssEnemyKinds = (
   describeIds: readonly number[],
   monsterRows: readonly Pick<MonsterRow, "describeId" | "id">[],

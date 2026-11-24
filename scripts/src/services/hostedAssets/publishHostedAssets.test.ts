@@ -126,7 +126,7 @@ describe(publishHostedAssets, () => {
   });
 
   // A publish that changes the lock stores again a record one environment lost although the lock names it. A publish
-  // That Leaves the lock as it is makes no request, so the added object is the change that lists the buckets
+  // That leaves the lock as it is makes no request, so the added object is the change that lists the buckets
   test.each([
     ["an object", false],
     ["an index", true],
@@ -159,7 +159,7 @@ describe(publishHostedAssets, () => {
   });
 
   // The lock keeps the entries of the scopes a publish does not replace, so a bucket that lost one of their indexes
-  // Fails the Publish that replaces the others, rather than committing a lock that names a missing index
+  // Fails the publish that replaces the others, rather than committing a lock that names a missing index
   test("a publish of one scope aborts when a bucket lost an index of another scope", async () => {
     expect.hasAssertions();
 

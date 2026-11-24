@@ -6,7 +6,7 @@ import { takeOne } from "@esposter/shared";
 
 // Lightning Stiletto, Keqing's talent: Keqing is switched in for free, through the switch path, and she uses Stellar
 // Restoration once in its talent variant, which grants her Electro Infusion and creates no other Lightning Stiletto.
-// The Game's text marks it a combat action, so the Duel passes the turn after it, as `playGcgCard` reads
+// The game's text marks it a combat action, so the Duel passes the turn after it, as `playGcgCard` reads
 // `isCombatAction`
 export const lightningStiletto: GcgCardModule = {
   canPlay: ({ duel, sideIndex }) =>

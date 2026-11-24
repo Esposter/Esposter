@@ -4,8 +4,8 @@ import { checkIsPrivateKind } from "#src/services/package/new/checkIsPrivateKind
 import { SPECS_URL } from "#src/services/package/new/constants";
 import { getPackageName } from "#src/services/package/new/getPackageName";
 
-// The README skeleton readme-standards describes: badges and Getting Started only where the package is published or
-// Installed. A plugin is installed by Claude Code, not npm, so it has no install step
+// The README skeleton readme-standards describes: badges and Getting Started only where the package is published
+// Or installed. A plugin is installed by Claude Code, not npm, so it has no install step
 export const getReadme = (options: CreatePackageOptions): string => {
   const { description, kind } = options;
   const packageName = getPackageName(options);

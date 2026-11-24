@@ -75,7 +75,7 @@ export const fitWindriseOak = async (): Promise<GameDataBuild> => {
   });
   const clusters = clusterCardCentres(cards, OAK_CLUSTER_COUNT, OAK_CLUSTER_SEED);
   // The leaves' normals, averaged on a grid: the game's is a smooth field over the crown, where the cards point out
-  // From Each cluster's centre instead
+  // From each cluster's centre instead
   const normalField = computeNormalField(
     leaf.vertices.flatMap((position, index) => {
       const normal = leaf.normals[index];

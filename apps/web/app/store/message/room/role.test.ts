@@ -88,7 +88,7 @@ describe(useRoleStore, () => {
   });
 
   // A member's roles are written through per-role targets, so an assignment and a revocation for the same member run
-  // Side by Side, and each one's rejection leaves only the role it wrote to as the server holds it
+  // Side by side, and each one's rejection leaves only the role it wrote to as the server holds it
   test("keeps the member's role whose revocation was rejected, and drops the one revoked", async () => {
     expect.hasAssertions();
 
@@ -191,7 +191,7 @@ describe(useRoleStore, () => {
   });
 
   // Two members' roles read on one surface, issued together, both mark their members read: a read keyed by the table
-  // Would Let the second read supersede the first
+  // Would let the second read supersede the first
   test("a read of one member's roles does not supersede a read of another member's", async () => {
     expect.hasAssertions();
 

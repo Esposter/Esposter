@@ -42,7 +42,7 @@ const XILONEN_ASCENSION = 6;
 // All six of Xilonen's constellations activated, as the recording's Constellation tab shows them lit
 const XILONEN_CONSTELLATION_COUNT = 6;
 // The Scroll of the Hero of Cinder City, whose two- and four-piece bonuses the recording shows lit, worn as five
-// `five-star` Pieces. Each main and roll is read off the game's tables at the level given: Sands and Goblet hold their
+// Five-star pieces. Each main and roll is read off the game's tables at the level given: Sands and Goblet hold their
 // Defense main at +17 and +19, which with the Defense rolls on Plume and Circlet sum Xilonen's Defense to the
 // Recording's +1,398 from them
 const SCROLL_SET_ID = 15037;
@@ -125,7 +125,7 @@ const asPieceOfSet = (artifact: Artifact, setId: number): Artifact => ({
   setId,
 });
 // Xilonen's Flower of Life and Plume of Death from the Scroll and her Sands and Goblet from Gilded Dreams, two pieces
-// Each Of two sets, with the Circlet of Logos unworn, so both sets reach their two-piece bonus
+// Each of two sets, with the Circlet of Logos unworn, so both sets reach their two-piece bonus
 const TWO_SETS_ARTIFACTS: Artifact[] = [
   ...XILONEN_ARTIFACTS.slice(0, 2),
   ...XILONEN_ARTIFACTS.slice(2, 4).map((artifact) => asPieceOfSet(artifact, GILDED_DREAMS_SET_ID)),

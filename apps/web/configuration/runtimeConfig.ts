@@ -6,7 +6,7 @@ import { HostedAssetOriginMap } from "../../../packages/db-schema/src/services/s
 
 // Only what the browser needs — everything under `public` is serialised into the client payload. Server code reads its
 // Secrets straight off the environment under their own names, checked at startup by the environment plugin. These
-// Values Are read at build time, since a Worker's runtime config is the one its build wrote, so the deploy sets them in
+// Values are read at build time, since a Worker's runtime config is the one its build wrote, so the deploy sets them in
 // The build
 export const runtimeConfig: NonNullable<NuxtConfig["runtimeConfig"]> = {
   public: {

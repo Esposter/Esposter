@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 const ECHOING_BALLAD_COOLDOWN_ID = "echoingBallad";
 
 // Skyward Harp's Echoing Ballad at its rank: its wielder's CRIT DMG is raised by the rank's percentage. A hit of the
-// Wielder's Own attack has the rank's chance to queue a Physical small AoE at the rank's multiplier of ATK, once every
+// Wielder's own attack has the rank's chance to queue a Physical small AoE at the rank's multiplier of ATK, once every
 // Rank's cooldown in seconds. A passive's own queued hit has no attack tag, so it queues nothing
 export const createEchoingBalladPassiveModule = (params: number[]): PassiveModule => ({
   getPassiveBonuses: () => [{ amount: takeOne(params, 0), attribute: Attribute.CriticalDamage }],

@@ -13,7 +13,8 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 export const NEUVILLETTE_CHARACTER_ID = 10_000_087;
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/asc.go, Ascension 4 gives a Hydro DMG Bonus of 0.6 for each unit of HP
-// Share Above 30%, at most 30% https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/asc.go
+// Share above 30%, at most 30%
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_HEALTH_SHARE_FLOOR = 0.3;
 const ASCENSION_4_HYDRO_DAMAGE_BONUS_PER_HEALTH_SHARE = 0.6;
@@ -72,7 +73,7 @@ const DROPLET_TICKS: { offsets: { forward: number; right: number }[]; range: [nu
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/cons.go, Constellation 4 spawns a Sourcewater Droplet 8 metres ahead of
 // Him, at 1.3 to 3 metres from that point, each time he is healed on the field, once every 4 seconds
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/cons.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_DROPLET_FORWARD = 8;
 const CONSTELLATION_4_DROPLET_RANGE: [number, number] = [1.3, 3];

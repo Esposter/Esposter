@@ -77,8 +77,8 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
   onMounted(async () => {
     const containerValue = toValue(container);
     if (!containerValue) return;
-    // The Inspector is the renderer's debug overlay, loaded only once the simulator mounts
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- so it stays out of the server and eager graphs
+    /* oxlint-disable-next-line selector-ban/no-restricted-syntax -- the Inspector is the renderer's debug overlay,
+       loaded only once the simulator mounts so it stays out of the server and eager graphs */
     const { Inspector } = await import("three/examples/jsm/inspector/Inspector.js");
     // An unmount during the import found no resources to release, so nothing is built after it
     if (isUnmounted) return;
@@ -191,8 +191,8 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     };
     await renderer.init();
     // Attached only once the renderer is up: the inspector's own init awaits the renderer's, and attached before a
-    // Refused Init, that await's rejection would go unhandled. Attached before the unmount check, so a renderer the
-    // Unmount Released disposes the inspector it holds
+    // Refused init, that await's rejection would go unhandled. Attached before the unmount check, so a renderer the
+    // Unmount released disposes the inspector it holds
     renderer.inspector = inspector;
     // The unmount has already released what exists, and waited for this init to settle, so nothing more is set up
     if (isUnmounted) return;

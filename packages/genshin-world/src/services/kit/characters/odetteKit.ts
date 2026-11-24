@@ -29,9 +29,9 @@ const checkIsStellarVortex = (effect: KitEffect): effect is KitSummon =>
 
 // Odette's behaviour: her Dance Double, which her skill and her burst each summon, alternating Plume and Wing on the
 // Intervals gcsim gives them. A Stellar Swirl leaves a Stellar Vortex, one at a time. Her Polestar Field on a
-// Stellar-Conduct is Not kept here: the reaction path places it for any enabler's Stellar-Conduct (`addPolestarField`).
-// This places the Vortex on the next step, where gcsim v2.47.2 creates it inside the reaction
-// (pkg/reactable/stellarswirl_gadget.go) Each further Stellar Swirl adds a stack, and the sixth explodes it at once,
+// Stellar-Conduct is not kept here: the reaction path places it for any enabler's Stellar-Conduct (`addPolestarField`).
+// This places the vortex on the next step, where gcsim v2.47.2 creates it inside the reaction
+// (pkg/reactable/stellarswirl_gadget.go) each further Stellar Swirl adds a stack, and the sixth explodes it at once,
 // While one that runs out explodes as it stands https://genshin-impact.fandom.com/wiki/Odette
 export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecordReader): KitBehaviour => {
   const danceDoubleDurationSeconds = readSeconds("danceDoubleDuration");

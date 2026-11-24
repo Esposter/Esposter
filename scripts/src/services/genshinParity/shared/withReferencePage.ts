@@ -4,7 +4,7 @@ import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessP
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Runs a read over one reference's witness page at the width given, or the structure's, and closes the page once the
-// Read Settles. The caller fetches the references first. A `pageRoot` is the parity page a run shot its screen on
+// Read settles. The caller fetches the references first. A `pageRoot` is the parity page a run shot its screen on
 export const withReferencePage = async <T>(
   referenceId: string,
   witness: DerivedAssetComponent,

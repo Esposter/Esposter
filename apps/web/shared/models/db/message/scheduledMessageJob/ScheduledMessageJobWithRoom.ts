@@ -13,7 +13,7 @@ export interface ScheduledMessageJobWithRoom {
 }
 
 // What a scheduled item does, and the fields that kind carries: a reminder's text, or a scheduled message's body and
-// The Message it replies to. Discriminated by `type`
+// The message it replies to. Discriminated by `type`
 type ScheduledMessageJobPayload =
   | { message: string; replyToId: null | number; type: typeof ScheduledMessageJobType.ScheduledMessage }
   | { text: string; type: typeof ScheduledMessageJobType.Reminder };

@@ -3,8 +3,8 @@ import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { z } from "zod";
 
 // One daily task of the game's table: where it is set, the radius it begins and ends in, what finishes it and how far,
-// The Groups a scene task swaps, the quest a quest task is, the reward tier it pays from, the region it is preferred in
-// And the Name text id of its title
+// The groups a scene task swaps, the quest a quest task is, the reward tier it pays from, the region it is preferred in
+// And the name text id of its title
 export interface Commission {
   // A quest task the dump gives no place has the empty one
   centerPosition: string;

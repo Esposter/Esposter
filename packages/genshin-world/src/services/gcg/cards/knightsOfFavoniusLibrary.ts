@@ -5,7 +5,7 @@ import { rethrowGcgDice } from "#src/services/gcg/effects/rethrowGcgDice";
 import { takeOne } from "@esposter/shared";
 
 // Knights of Favonius Library, a location support: when played, the first valid selection of dice is rerolled once, and
-// In Each roll phase while it stands its side gains another chance to reroll
+// In each roll phase while it stands its side gains another chance to reroll
 export const knightsOfFavoniusLibrary: GcgCardModule = {
   onRollPhase: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);

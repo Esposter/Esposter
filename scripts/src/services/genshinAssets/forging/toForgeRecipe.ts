@@ -8,7 +8,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One forge recipe from its forge row, the diagrams that open it and the random tables its results may draw from, or
 // Undefined for a row the blacksmith does not forge, whose results are never read. A recipe hidden until a diagram
-// Opens It must name one, or the world would never offer it
+// Opens it must name one, or the world would never offer it
 export const toForgeRecipe = (
   row: ExcelForgeRow,
   unlockItemIds: number[],

@@ -12,8 +12,8 @@ import { readdir } from "node:fs/promises";
 import { join, parse } from "node:path";
 
 // Each portrait the component exported, as the colour its disc takes in place of the picture: the mean of the texture
-// The Export holds, as the record `<component>/pictureColours`. It is opt-in, since it reads textures the install must
-// Export First: a named run on a component that exported no portrait fails, rather than writing an empty record over a
+// The export holds, as the record `<component>/pictureColours`. It is opt-in, since it reads textures the install must
+// Export first: a named run on a component that exported no portrait fails, rather than writing an empty record over a
 // Published one
 export const createPictureColoursEntry = (component: DerivedAssetComponent): RunFitEntry => [
   "pictureColours",

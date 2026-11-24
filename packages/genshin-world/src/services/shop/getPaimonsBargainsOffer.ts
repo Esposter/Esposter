@@ -5,7 +5,7 @@ import { computeGameDay } from "#src/services/time/computeGameDay";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The two characters and the five weapons Paimon's Bargains offers in the game-time month `now` falls in, the month
-// Counted From the game's daily hour. The pairs come round every six months, January being the fourth pair, and the
+// Counted from the game's daily hour. The pairs come round every six months, January being the fourth pair, and the
 // Weapon set is Blackcliff in the odd months and Royal in the even ones
 export const getPaimonsBargainsOffer = (
   rotation: PaimonsBargainsRotation,

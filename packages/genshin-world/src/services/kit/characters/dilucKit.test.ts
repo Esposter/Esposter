@@ -33,7 +33,7 @@ const DILUC_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DILUC_CHARACT
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 // A party member losing a tenth of its Max HP, as an enemy's strike, a drown or a wildlife's charge takes it, or as a
-// Kit Of the team takes it when it names its own source
+// Kit of the team takes it when it names its own source
 const createHealthLossEvent = (characterId: number, sourceCharacterId?: number): KitHealthChangedEvent => ({
   bondOfLifeShare: 0,
   characterId,

@@ -19,8 +19,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { QuestIds } from "genshin-world";
 
 // Each carried series, published whole: its quests in the table's order, its region by its city's name, and the rewards
-// Its Last quest's finish gives, each at its item's rarity. A quest of a carried series the world does not carry is an
-// Error, Since the series would list a quest the world never offers
+// Its last quest's finish gives, each at its item's rarity. A quest of a carried series the world does not carry is an
+// Error, since the series would list a quest the world never offers
 export const buildQuestChapters = (): QuestChapter[] => {
   const chapterMap = new Map(
     readExcelTable<DumpedChapter>(CHAPTER_TABLE_NAME).map((chapter) => [chapter.id, chapter] as const),

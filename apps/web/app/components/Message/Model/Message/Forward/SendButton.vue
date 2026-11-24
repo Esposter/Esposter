@@ -24,7 +24,7 @@ const navigateToDestination = getSynchronizedFunction(async (roomId: string) => 
   await navigateTo(RoutePath.Messages(roomId));
 });
 // The panel keeps the forward while the server has it. An answered forward empties the panel of the room it was
-// Composed In, then opens the single destination; a refused one leaves the draft where it was, under the alert
+// Composed in, then opens the single destination; a refused one leaves the draft where it was, under the alert
 const send = async () => {
   const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
   const isSent = await sendForward(currentRoomId.value, forward, {

@@ -4,9 +4,9 @@ import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 import { checkIsInsideBox } from "#src/services/pageBuilder/checkIsInsideBox";
 
 // The frame's node boxes as they stood when a drag began, before the drag's own preview moved any of them. The preview
-// Is Drawn in the frame and pushes the nodes after it along, and whatever the pointer then resolves reads those pushed
+// Is drawn in the frame and pushes the nodes after it along, and whatever the pointer then resolves reads those pushed
 // Boxes, so A pointer held still would flip between two slots with every redraw. A frozen frame answers every move from
-// The boxes that Stood before the preview, moved by what the frame has scrolled since, and finds the node under a point
+// The boxes that stood before the preview, moved by what the frame has scrolled since, and finds the node under a point
 // From those boxes
 export const freezeFrameGeometry = (geometry: FrameGeometry, nodeIds: readonly string[]): FrameGeometry => {
   const startScrollTop = geometry.getScrollTop?.() ?? 0;

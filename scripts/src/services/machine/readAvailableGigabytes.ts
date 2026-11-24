@@ -6,8 +6,8 @@ import { getResultAsync } from "@esposter/shared";
 import { freemem } from "node:os";
 
 // Available memory in gigabytes. Windows reports its free physical memory directly. macOS's free figure leaves out what
-// The System hands back on demand, so its available memory is the kernel's pressure figure, with `vm_stat` as the
-// Fallback, And a failed fallback is none rather than guessed
+// The system hands back on demand, so its available memory is the kernel's pressure figure, with `vm_stat` as the
+// Fallback, and a failed fallback is none rather than guessed
 export const readAvailableGigabytes = async (): Promise<number | undefined> => {
   if (process.platform !== "darwin") return freemem() / GIBIBYTE;
   const memoryStatusGigabytes = await readMemoryStatusGigabytes();

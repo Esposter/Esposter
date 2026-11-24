@@ -9,7 +9,7 @@ import { getResultAsync } from "@esposter/shared";
 import { opendir } from "node:fs/promises";
 
 // A directory's direct files with size and mtime, and its child directories' names. Entries stream in and their stats
-// Run In batches of STAT_CONCURRENCY, so a directory of any size never holds more than one batch of promises. A missing
+// Run in batches of STAT_CONCURRENCY, so a directory of any size never holds more than one batch of promises. A missing
 // Directory, including one removed after the check, lists as empty
 export const readDirectory = async (absoluteDirectory: string): Promise<DirectoryContents> => {
   const contents: DirectoryContents = { directories: [], files: [] };

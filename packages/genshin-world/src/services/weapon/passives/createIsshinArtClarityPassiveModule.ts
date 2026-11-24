@@ -9,9 +9,9 @@ import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit
 import { takeOne } from "@esposter/shared";
 
 // Isshin Art Clarity at its rank: a normal, charged or plunging attack its wielder lands on an opponent whips up a
-// Hewing Gale, Which deals an extra hit at the rank's multiplier of ATK and raises the wielder's ATK by the rank's
-// Percentage for the Rank's seconds, once every rank's cooldown in seconds. The Gale's area is not named by the text,
-// So it is the small AoE, Provisionally, and its hit names no element, as Falcon's Defiance's does not
+// Hewing Gale, which deals an extra hit at the rank's multiplier of ATK and raises the wielder's ATK by the rank's
+// Percentage for the rank's seconds, once every rank's cooldown in seconds. The Gale's area is not named by the text,
+// So it is the small AoE, provisionally, and its hit names no element, as Falcon's Defiance's does not
 export const createIsshinArtClarityPassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);
   const attackPercent = takeOne(params, 1);

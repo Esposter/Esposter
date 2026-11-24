@@ -7,13 +7,17 @@ import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneInd
 import { sql } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-// One row is one message in the room. Its id is the room's sequence: `autoIncrement` keeps it from being handed out
-// Again after the newest row is removed. So it only grows, and a page is `id < ?`. Every field a query filters on is a
-// Column. `files`, `mentions` and the link preview are nested shapes read whole, so they stay JSON. `filenames` is the
-// `space-joined` file names the search index reads, written with the row. So the index's triggers stay plain SQL. A
-// Reply's root is `replyToId`, and a deleted root leaves its replies standing as plain messages. A webhook message has
-// No `userId`; its `appUserId` names the webhook identity that sent it. `updatedAt` moves on every change to the row,
-// And `editedAt` is the time of the last edit, null for a message never edited
+// One row is one message in the room.
+// Its id is the room's sequence: `autoIncrement` keeps it from being handed out again after the newest row is removed.
+// So it only grows, and a page is `id < ?`.
+// Every field a query filters on is a column.
+// `files`, `mentions` and the link preview are nested shapes read whole, so they stay JSON.
+// `filenames` is the space-joined file names the search index reads, written with the row.
+// So the index's triggers stay plain SQL.
+// A reply's root is `replyToId`, and a deleted root leaves its replies standing as plain messages.
+// A webhook message has no `userId`; its `appUserId` names the webhook identity that sent it.
+// `updatedAt` moves on every change to the row, and `editedAt` is the time of the last edit, null for a message never
+// Edited
 export const messagesInRoom = sqliteTable(
   "messages",
   {
@@ -57,8 +61,8 @@ export const messagesInRoom = sqliteTable(
 );
 
 // One row is one reaction on one message: the members who chose one emoji. A reaction nobody chooses keeps its row with
-// No Reactor, at the version its removal raised, so a copy from before the removal cannot put it back. A deleted
-// Message Takes its reactions with it
+// No reactor, at the version its removal raised, so a copy from before the removal cannot put it back. A deleted
+// Message takes its reactions with it
 export const messageEmojisInRoom = sqliteTable(
   "messageEmojis",
   {
@@ -77,9 +81,9 @@ export const onlineMembersInRoom = sqliteTable("onlineMembers", {
   ...createVersionSchema(),
 });
 
-// The room's own state that is not a message, in one row. It holds the room-activity fan-out still owed. A message
-// Schedules the fan-out for two seconds on, and every message in That window is one wave. The wave's time is the newest
-// Message's, which the messages already hold
+// The room's own state that is not a message, in one row.
+// It holds the room-activity fan-out still owed. A message schedules the fan-out for two seconds on, and every message
+// In that window is one wave. The wave's time is the newest message's, which the messages already hold
 export const roomState = sqliteTable("roomState", {
   // The time the fan-out is due, or null when none is owed
   bumpDueAt: integer({ mode: "timestamp_ms" }),
@@ -88,7 +92,7 @@ export const roomState = sqliteTable("roomState", {
 });
 
 // A sent message whose sender's index does not yet hold it. The object retries each one from its alarm until the index
-// Takes It, so a failed index write is repaired rather than leaving the message out of the sender's sent list
+// Takes it, so a failed index write is repaired rather than leaving the message out of the sender's sent list
 export const unindexedMessagesInRoom = sqliteTable("unindexedMessages", {
   createdAt: integer({ mode: "timestamp_ms" }).notNull(),
   messageId: integer().primaryKey(),

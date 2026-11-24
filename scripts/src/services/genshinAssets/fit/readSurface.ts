@@ -9,10 +9,10 @@ import { readFaceSamples } from "#src/services/genshinAssets/fit/readFaceSamples
 import { sumWeights } from "#src/services/genshinAssets/fit/sumWeights";
 
 // A mesh read through its submeshes' textures: its samples, and its detail as the mean of every texture its covered
-// Faces Drew, each weighted by the area read through it, so a texture no covered face draws counts for nothing. Each
-// Texture's Detail is drawn at the metres a texel spans on the faces read through it, their world area over the texels
-// Their UVs Cover: a terrain tile's base map 2 metres on the flat, its 512 texels over the tile's 1,024, more where the
-// Ground Slopes, and a mesh's texture its own
+// Faces drew, each weighted by the area read through it, so a texture no covered face draws counts for nothing. Each
+// Texture's detail is drawn at the metres a texel spans on the faces read through it, their world area over the texels
+// Their UVs cover: a terrain tile's base map 2 metres on the flat, its 512 texels over the tile's 1,024, more where the
+// Ground slopes, and a mesh's texture its own
 export const readSurface = (
   mesh: ObjMesh,
   world: Vector[],

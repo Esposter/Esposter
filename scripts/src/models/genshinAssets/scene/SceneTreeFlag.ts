@@ -9,7 +9,7 @@ export const SceneTreeFlag = {
   // A mesh laid out under several roots: only some of those arrangements are the scene's
   SharedMesh: "mesh under several roots",
   // An unturned top (a root, or an object whose father no dump holds) whose whole subtree stands at the origin: a
-  // Prefab That no placement reached and no dump places, so it sits where something spawns it
+  // Prefab that no placement reached and no dump places, so it sits where something spawns it
   TopAtOrigin: "top at the origin",
 } as const;
 export type SceneTreeFlag = (typeof SceneTreeFlag)[keyof typeof SceneTreeFlag];

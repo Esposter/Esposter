@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // One item a unit of a recipe yields, its count and its weight among the recipe's results. A recipe with one result
-// Yields It every unit; one with several draws one of them for each unit, each in proportion to its weight
+// Yields it every unit; one with several draws one of them for each unit, each in proportion to its weight
 export interface ForgeResult {
   count: number;
   itemId: number;

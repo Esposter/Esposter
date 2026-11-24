@@ -5,7 +5,7 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Heals every deployed member but the healer by the HP given, as a bubble's bounce heals the team. Unlike a hit's party
-// Heal, It takes no chance roll and no shield gate, and it leaves the healer out
+// Heal, it takes no chance roll and no shield gate, and it leaves the healer out
 export const healKitOtherMembers = (context: KitContext, healer: Combatant, healedHp: number): void => {
   for (const characterId of getDeployedCharacterIds(context.party))
     if (characterId !== healer.characterId) changeKitMemberHealth(context, healer, characterId, healedHp);

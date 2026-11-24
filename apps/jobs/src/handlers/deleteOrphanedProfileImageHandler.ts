@@ -4,8 +4,9 @@ import { deleteBlobs } from "@esposter/db";
 import { getUserProfileImageBlobName, r2ObjectCreatedQueueMessageSchema, StorageBucket } from "@esposter/db-schema";
 
 // A profile image's presigned write url outlives the request that minted it, so its blob can land after the account has
-// Been Swept. Nothing lists it at that point, so the landing deletes itself. A landing for an account still in use is
-// Kept. The message is R2's object-create notification for the public user assets bucket, so the key is the blob's name
+// Been swept. Nothing lists it at that point, so the landing deletes itself. A landing for an account still in use
+// Is kept. the message is R2's object-create notification for the public user assets bucket, so the key is the blob's
+// Name
 export const deleteOrphanedProfileImageHandler = async (body: unknown): Promise<void> => {
   const { bucket: bucketName, object } = r2ObjectCreatedQueueMessageSchema.parse(body);
   if (bucketName !== StorageBucket.PublicUserAssets) return;

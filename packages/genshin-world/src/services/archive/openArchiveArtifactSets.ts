@@ -7,9 +7,9 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
 
 // The progress with the Equipment entry of every set opened once the artifacts held cover as many distinct slots as the
-// Set has slots. A set holds a piece for each slot at each rarity and starting count, so its slots are counted once
-// Each. A set with no Equipment entry, which is not among the ids given, opens nothing, and the progress it is left as
-// It was When no set opens
+// Set has slots. A set holds a piece for each slot at each rarity and starting count, so its slots are counted
+// Once each. A set with no Equipment entry, which is not among the ids given, opens nothing, and the progress it is
+// Left as it was when no set opens
 export const openArchiveArtifactSets = (
   progress: ArchiveProgress,
   artifacts: readonly Pick<Artifact, "setId" | "slot">[],

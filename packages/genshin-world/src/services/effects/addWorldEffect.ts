@@ -2,7 +2,7 @@ import type { BaseWorldEffect } from "#src/models/effects/BaseWorldEffect";
 import type { WorldEffect } from "#src/models/effects/WorldEffect";
 
 // Shows a world effect at the point it is given for its whole life. The points are copied, since the body a cast or a
-// Hit Reads them from moves on each step while the effect runs
+// Hit reads them from moves on each step while the effect runs
 export const addWorldEffect = (effects: WorldEffect[], effect: BaseWorldEffect): void => {
   effects.push({
     ...effect,

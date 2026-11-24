@@ -8,7 +8,7 @@ const INSPIRATION_FIELD_BONUS = 2;
 const INSPIRATION_FIELD_HEAL = 2;
 
 // Inspiration Field: when its side's character uses a skill, a character at seven HP or more deals two more DMG, and
-// One At six HP or fewer is healed for two once the skill's DMG is done, for two rounds
+// One at six HP or fewer is healed for two once the skill's DMG is done, for two rounds
 export const inspirationField: GcgCardModule = {
   initialRounds: 2,
   modifyDamageDealt: ({ duel, sideIndex }, damage) => {

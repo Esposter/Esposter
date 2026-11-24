@@ -9,9 +9,9 @@ import { and, getTableName } from "drizzle-orm";
 
 // The tombstones a delete owes its cascade: one statement per overlay table the cascade reaches, on the rows it would
 // Remove that are still live. The registry names the tables and the foreign keys name the reach, so a table the
-// Registry Adds is tombstoned by a delete that names no table of its own. `table` is the delete's, `batched` lists the
-// Tables the Caller writes itself, and CASCADE_LEFT_TO_PURGE stays live. With no `where` there are no rows to name, so
-// No statement. The registry is a parameter only so a suite can name a table the registry does not hold yet; every
+// Registry adds is tombstoned by a delete that names no table of its own. `table` is the delete's, `batched` lists the
+// Tables the caller writes itself, and CASCADE_LEFT_TO_PURGE stays live. With no `where` there are no rows to name, so
+// No statement. the registry is a parameter only so a suite can name a table the registry does not hold yet; every
 // Caller leaves it out
 export const getCascadeTombstones = (
   db: Context["db"],

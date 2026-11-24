@@ -11,7 +11,7 @@ interface Props {
 
 const { variable } = defineProps<Props>();
 // One variable's control, by its kind: a switch, a slider over its range, a colour or a choice. A number without a
-// Range Has no slider, so the console sets it alone
+// Range has no slider, so the console sets it alone
 const emit = defineEmits<{ set: [value: DevValue] }>();
 const choiceItems = computed(() => (variable.choices ?? []).map((choice) => ({ title: choice, value: choice })));
 </script>

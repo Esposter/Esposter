@@ -42,7 +42,7 @@ export const TARGET_ANGLE_WEIGHT = 0.3;
 // Until a recording of an enemy's attack measures it
 export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
 // Provisional: the gauge an enemy's elemental strike applies, one of the 1, 1.5, 2 and 4 units the Elemental Gauge
-// Theory Page says most enemy attacks apply, until each attack's own gauge is authored
+// Theory page says most enemy attacks apply, until each attack's own gauge is authored
 export const ENEMY_STRIKE_GAUGE = 1;
 // A summon lives this many seconds past its last hitmark, so the step that lands its last hit still has it on the field
 // However its clock and its seconds left round
@@ -61,7 +61,7 @@ export const ELECTRO_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
   ReactionType.Superconduct,
 ]);
 // The weapons a melee infusion converts the attacks of, a sword's, a claymore's or a polearm's, while a bow or a
-// Catalyst Wielder keeps its own, as gcsim v2.47.2 (MIT) gives Fantastic Voyage's and Layered Frost's infusions
+// Catalyst wielder keeps its own, as gcsim v2.47.2 (MIT) gives Fantastic Voyage's and Layered Frost's infusions
 export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
   WeaponType.Claymore,
   WeaponType.Polearm,

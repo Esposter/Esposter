@@ -11,7 +11,7 @@ import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledO
 import { NotFoundError } from "@esposter/shared";
 
 // A door's tile, read from its tilemap's Tiled JSON as the preload cached it rather than the built tilemap, so the
-// Player Can be placed on the tilemap in the same write that switches to it, before the tilemap has been built
+// Player can be placed on the tilemap in the same write that switches to it, before the tilemap has been built
 export const getDoorPosition = (
   scene: SceneWithPlugins,
   tilemapKey: TilemapKey,

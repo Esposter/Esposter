@@ -2,11 +2,11 @@ import type { GcsimAttackBranch } from "#src/models/genshinAssets/kits/gcsim/Gcs
 import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackIteration";
 
 // One `AttackInfo` literal of a gcsim character's action files, its fields as written: the talent variable its
-// Multiplier reads, through any loop or local naming it, its attack and ICD tags and element by their gcsim Names, and
-// Its durability and poise where they evaluate to a number, else the variable the poise indexes by the Attack's place
-// In its string. The line is the literal's, and each field keeps its own. The name the literal is Assigned to with
-// `:=`, which a call passes it by. Its `Abil` is the text the literal gives it, a string or a string constant Of its
-// File, as the attack's name
+// Multiplier reads, through any loop or local naming it, its attack and ICD tags and element by their gcsim
+// Names, and its durability and poise where they evaluate to a number, else the variable the poise indexes by the
+// Attack's place in its string. The line is the literal's, and each field keeps its own. The name the literal is
+// Assigned to with `:=`, which a call passes it by. Its `Abil` is the text the literal gives it, a string or a string
+// Constant of its file, as the attack's name
 export interface GcsimAttack {
   abil?: string | undefined;
   attackTag?: string | undefined;
@@ -20,7 +20,7 @@ export interface GcsimAttack {
   internalCooldownTag?: string | undefined;
   // The loop iteration this variant applies to, where an if on a constant loop's variable sets a field on a copy, or a
   // Literal's element is a slice entry its loop variable indexes: a call takes it only in that iteration, and the
-  // Copy's Own attack, or the literal's other iterations, in the others
+  // Copy's own attack, or the literal's other iterations, in the others
   iteration?: GcsimAttackIteration;
   line: number;
   poiseDamage?: number | undefined;
@@ -29,7 +29,7 @@ export interface GcsimAttack {
   // Literal is returned directly, so a call bound to the function fires it
   returnedBy?: string;
   // The line of the declaration the attack is made from: its literal's, or a copy's own line, shared by every `Mult`
-  // Set Under it, so the calls of one declaration can be told from another's
+  // Set under it, so the calls of one declaration can be told from another's
   siteLine: number;
   talentVariable?: string | undefined;
   variableName?: string | undefined;

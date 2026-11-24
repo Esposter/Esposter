@@ -5,10 +5,10 @@ import { describe, expect, test } from "vitest";
 
 // The cases of sanitize-html's own suite (apostrophecms/sanitize-html, test/test.js) that our option surface can
 // Express: 43 rows. Each expectation is the upstream one with the rel and target every link now carries added, except
-// Three rows That differ on purpose. Line 180 (padding a character code with zeros) gives a U+FFFD in its scheme, which
-// This policy Reads as a scheme that could be javascript and drops; line 774 (a double less-than) and line 1442 (a
-// Class on a span) Are rows whose link or class the policy keeps or drops by its own rules. Line 1698, an empty
-// `non-boolean` attribute Removed by upstream, is left out: this policy keeps an empty value as written.
+// Three rows that differ on purpose. Line 180 (padding a character code with zeros) gives a U+FFFD in its scheme, which
+// This policy reads as a scheme that could be javascript and drops; line 774 (a double less-than) and line 1442 (a
+// Class on a span) are rows whose link or class the policy keeps or drops by its own rules. Line 1698, an empty
+// Non-boolean attribute removed by upstream, is left out: this policy keeps an empty value as written.
 describe(sanitizeHtml, () => {
   const cases: [string, string, SanitizeHtmlOptions | undefined, string][] = [
     [

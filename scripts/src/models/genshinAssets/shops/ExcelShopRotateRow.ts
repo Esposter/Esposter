@@ -1,5 +1,5 @@
 // One order of a rotation in the game's shop rotation table: the item the order gives, the rotation it belongs to and
-// The Place it comes in within that rotation
+// The place it comes in within that rotation
 export interface ExcelShopRotateRow {
   id: number;
   itemId: number;

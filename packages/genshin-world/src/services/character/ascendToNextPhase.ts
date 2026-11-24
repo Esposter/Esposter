@@ -10,8 +10,8 @@ import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 
 // The ascension a character or a weapon makes at its phase's cap into the next phase, as the game takes it: once the
 // Player's Adventure Rank reaches the phase's requirement, the wallet holds its Mora and the bag its items, and both
-// Are Taken. The level stays at the cap the next phase starts from. The one reason it is refused now is returned, and
-// Then Nothing is taken. A cost a table has not published refuses the ascension rather than making it free
+// Are taken. The level stays at the cap the next phase starts from. The one reason it is refused now is returned, and
+// Then nothing is taken. A cost a table has not published refuses the ascension rather than making it free
 export const ascendToNextPhase = (
   ascension: number,
   level: number,

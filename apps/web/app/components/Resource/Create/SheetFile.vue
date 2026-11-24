@@ -22,7 +22,7 @@ const dropZone = useTemplateRef("dropZone");
 const fileInput = useTemplateRef("fileInput");
 const file = ref<File>();
 // A file picked or dropped while one is still parsing waits behind it, since the picker is off until it lands, so two
-// Parses Never race for the form's sheet
+// Parses never race for the form's sheet
 const parseFile = async (newFile: File) => {
   if (isParsing.value) return;
 

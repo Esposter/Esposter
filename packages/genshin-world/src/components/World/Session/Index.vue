@@ -186,8 +186,8 @@ const {
   windriseData,
 } = defineProps<Props>();
 // Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish
-// Counters or The achievements' progress, which the host saves once per tick, and a save is every change to what the
-// World holds, Which the host saves on its own cadence
+// Counters or the achievements' progress, which the host saves once per tick, and a save is every change to what the
+// World holds, which the host saves on its own cadence
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 // The card game's session loads when a duel opens, so the world's first screen does not load the game's modules
 const GcgSession = defineAsyncComponent(() => import("#src/components/Gcg/Session/Index.vue"));
@@ -207,8 +207,8 @@ const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The bends the character leaves as it walks through the grass, written by the character and read by the grass
 const grassTrail = createGrassTrail();
 // A witness render's tools set the camera themselves, which the controls would move off the pose they set
-// The parity page reaches
-// oxlint-disable-next-line no-restricted-globals -- a published scene's own parts with no prop for a host to see
+/* oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop
+   for a host to see */
 const witness = inject(SceneWitnessKey, null);
 // The keys, pointer and gamepad, read once a frame ahead of everything the frame moves, which reads the same state
 const input = createInput(createWindowInputTarget(window));
@@ -232,7 +232,7 @@ const savedState = readGenshinSave(
 // The world's time: every saved timer is read against the server's clock, and a ref the computeds read
 const { getWorldNow, worldNow } = useWorldClock(() => serverClockOffsetMs);
 // What the systems share and none owns: the context the world starts with, the one emitter they react through, and the
-// Bag And the wallet, which the session stops as it unmounts so a second session starts from nothing
+// Bag and the wallet, which the session stops as it unmounts so a second session starts from nothing
 const worldSessionStore = useWorldSessionStore();
 const { events, setInventory, setWallet, start, stop } = worldSessionStore;
 const { inventory, wallet } = storeToRefs(worldSessionStore);
@@ -256,9 +256,9 @@ start(
   { inventory: savedState.inventory, wallet: savedState.wallet },
 );
 onUnmounted(stop);
-// Every region's chests, each unopened one a row to open beneath its point, and opened on the key with the world's
-// Random. The store reads them from the scene's region chest map as each record arrives. They start before the save
-// Watches them, so the load is not a change the save grants
+// Every region's chests, each unopened one a row to open beneath its point, and opened on the key with the
+// World's random. the store reads them from the scene's region chest map as each record arrives.
+// They start before the save watches them, so the load is not a change the save grants
 const worldChestsStore = useWorldChestsStore();
 const { start: startChests, stop: stopChests } = worldChestsStore;
 startChests({
@@ -271,7 +271,7 @@ onUnmounted(stopChests);
 // World
 const characterBody = new Group();
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats.
-// They Start before the save watches them, as the chests do
+// They start before the save watches them, as the chests do
 const worldArchiveStore = useWorldArchiveStore();
 const { start: startArchive, stop: stopArchive } = worldArchiveStore;
 startArchive({
@@ -280,8 +280,8 @@ startArchive({
   enemyKindMap: enemyTables.enemyKindMap,
 });
 onUnmounted(stopArchive);
-// The statues' Oculi and resonances, which pay their levels as the bag's offers do, with the Oculi of the region
-// Published. They start before The save watches them, as the chests do
+// The statues' Oculi and resonances, which pay their levels as the bag's offers do, with the Oculi of the
+// Region published. They start before the save watches them, as the chests do
 const worldStatuesStore = useWorldStatuesStore();
 const { start: startStatues, stop: stopStatues } = worldStatuesStore;
 startStatues({
@@ -293,18 +293,18 @@ startStatues({
 });
 onUnmounted(stopStatues);
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens. They
-// Start Before the save watches them, as the chests do
+// Start before the save watches them, as the chests do
 const worldAchievementsStore = useWorldAchievementsStore();
 const { start: startAchievements, stop: stopAchievements } = worldAchievementsStore;
 const { achievementData, achievementProgressMap } = storeToRefs(worldAchievementsStore);
 startAchievements(savedState.achievementProgressMap);
 onUnmounted(stopAchievements);
 // The cooking recipes, the processing recipes and the cooks' talents, read as the world starts, with the progress the
-// Save Holds. They start before the save watches them, as the chests do
+// Save holds. They start before the save watches them, as the chests do
 const worldCookingStore = useWorldCookingStore();
 const { start: startCooking, stop: stopCooking } = worldCookingStore;
 // The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe,
-// Which Is held here while the screen is open
+// Which is held here while the screen is open
 const { cookingProgress, cookingRecipe, instructionRecipeMap, openCookingRecipes, processingJobs } =
   storeToRefs(worldCookingStore);
 startCooking({ cookingProgress: savedState.cookingProgress, processingJobs: savedState.processingJobs });
@@ -397,7 +397,7 @@ const { start: startReputation, stop: stopReputation } = worldReputationStore;
 startReputation({ reputation: savedState.reputation, requestClaimedAts: savedState.reputationRequestClaimedAts });
 onUnmounted(stopReputation);
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and
-// Finished by The quests in progress that finish
+// Finished by the quests in progress that finish
 const {
   commissionDay,
   commissionSlice,
@@ -443,7 +443,7 @@ const landmarkCollider = createLandmarkCollider();
 // On
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
 // The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed
-// As The Mail screen claims them into the bag and wallet
+// As the Mail screen claims them into the bag and wallet
 const worldMailStore = useWorldMailStore();
 const { mailData, mails } = storeToRefs(worldMailStore);
 const { start: startMail, stop: stopMail } = worldMailStore;
@@ -456,7 +456,7 @@ const { start: startPickups, stop: stopPickups, strikeGatheringOres } = worldPic
 startPickups();
 onUnmounted(stopPickups);
 // The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit,
-// Led, Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
+// Led, started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
 const worldPuzzlesStore = useWorldPuzzlesStore();
 const { puzzleSeelies, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
 const { start: startPuzzles, stop: stopPuzzles, strikeWorldPuzzles } = worldPuzzlesStore;
@@ -548,7 +548,7 @@ const {
       return;
     }
     // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the
-    // Revive's Jump to the nearest waypoint, so the entrance is where the player lands
+    // Revive's jump to the nearest waypoint, so the entrance is where the player lands
     if (!domainArena.value) {
       screenKind.value = ScreenKind.GameOver;
       return;
@@ -677,7 +677,7 @@ const reputationLevel = shallowRef(reputation.value.level);
 // The doings the world places and the ids the save records of them as done, which each area's exploration counts
 const { placedDoings, recordedDoingIds } = useWorldDoings({ clearedCamps, monumentPlaces, timeTrialPlaces });
 // The landmarks the world holds and the ones the player has unlocked, with the first unlock of each paid and the pose a
-// Jump Lands at, and Mondstadt's Reputation with the rewards the exploration and the finished requests pay into it
+// Jump lands at, and Mondstadt's Reputation with the rewards the exploration and the finished requests pay into it
 const worldMapStore = useWorldMapStore();
 const { jumpLandmarks, jumpPose, subareaLabels, unlockedLandmarkIds, unlockedLandmarks } = storeToRefs(worldMapStore);
 const { jumpTo, start: startMap, stop: stopMap } = worldMapStore;
@@ -691,7 +691,7 @@ const { explorationAreas } = useWorldExploration({
   savedUnlockedLandmarkIds: savedState.unlockedLandmarkIds,
 });
 // The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's
-// Target is Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
+// Target is defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
 const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, reputationBountyOffer, takeBounty } =
   useWorldReputationBounty({
     random: () => kitContext.random(),
@@ -745,8 +745,8 @@ const crafting = computed(() =>
 // The regions the world has loaded, which each region's outcrops are read for as it is entered
 const loadedRegionIds = computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]);
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims
-// It With resin, and each region's day is drawn at the daily reset. The outcrop places of each region the world has
-// Loaded, By the region's id
+// It with resin, and each region's day is drawn at the daily reset. The outcrop places of each region the world has
+// Loaded, by the region's id
 const outcropPlacesMap = computed(
   () =>
     new Map(

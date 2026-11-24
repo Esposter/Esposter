@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // The blessing a period of the Moon Spire gives, as its schedule row names it: its name and its description, each as a
-// Text Hash of the game's text, and its icon
+// Text hash of the game's text, and its icon
 export interface AbyssPeriodBlessing {
   descriptionTextHash: number;
   icon: string;

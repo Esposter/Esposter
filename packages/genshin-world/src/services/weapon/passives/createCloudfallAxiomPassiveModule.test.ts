@@ -30,7 +30,7 @@ describe(createCloudfallAxiomPassiveModule, () => {
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
   // Cloudfall Axiom at its first rank: a Plunging Attack its wielder hits with raises the party's Plunging Attack DMG
-  // By 28% For 20 seconds, and a nearby member's Plunging Attack hit restores 2.5 Energy to the wielder, every 0.7
+  // By 28% for 20 seconds, and a nearby member's Plunging Attack hit restores 2.5 Energy to the wielder, every 0.7
   // Seconds
   const passiveModule = createCloudfallAxiomPassiveModule([2.5, 0.7, 0.28, 20]);
 

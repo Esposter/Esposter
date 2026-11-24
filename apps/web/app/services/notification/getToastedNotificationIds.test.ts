@@ -59,7 +59,7 @@ describe(getToastedNotificationIds, () => {
   });
 
   // A page the read grew holds rows older than the newest the tab held. They were never pushed to this tab, so they
-  // Stay Off the toast, though the tab did not hold them
+  // Stay off the toast, though the tab did not hold them
   test("does not toast a row older than the newest held one, which a grown page brings", () => {
     expect.hasAssertions();
 

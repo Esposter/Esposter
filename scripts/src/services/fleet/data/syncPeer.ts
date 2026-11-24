@@ -58,7 +58,7 @@ export const syncPeer = async (
     }
 
   // The source's stamps are read before any file is chosen, so a stamped folder's files and a stamped file never reach
-  // The Copy. A machine with no install has no game version to hold them to, so it reads no stamps and takes them all
+  // The copy. A machine with no install has no game version to hold them to, so it reads no stamps and takes them all
   const candidates = checkHasGameInstall() ? getStampCandidates(changed) : [];
   let stamps: StampEntry[] = [];
   if (candidates.length > 0)

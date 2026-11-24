@@ -11,8 +11,8 @@ import { defineCommand } from "citty";
 import { join } from "node:path";
 
 // Cuts a sample into batch files, `01.txt`, `02.txt`…, each holding whole units up to the judgements it is given. A
-// Unit's Line is never split across two, so the reader that is handed a batch judges every question the unit is judged
-// For.
+// Unit's line is never split across two, so the reader that is handed a batch judges every question the unit is
+// Judged for.
 await runCommand(
   defineCommand({
     args: {

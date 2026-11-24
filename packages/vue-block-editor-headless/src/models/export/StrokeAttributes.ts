@@ -1,5 +1,5 @@
 // The attributes that draw a line in the canvas and the export alike: its colour, its width, and the dash and the cap
-// Its pattern takes. A solid Line has no dash, so it has no dash array, and a line whose pattern takes no cap keeps the
+// Its pattern takes. A solid line has no dash, so it has no dash array, and a line whose pattern takes no cap keeps the
 // Default
 export interface StrokeAttributes {
   stroke: string;

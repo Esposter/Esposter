@@ -8,7 +8,7 @@ import { involvesElement } from "#src/services/domains/involvesElement";
 // The reactions each element takes part in, by the wiki's element pairs: the Elemental Reaction table
 // (https://genshin-impact.fandom.com/wiki/Elemental_Reaction) and the Lunar Reaction list
 // (https://genshin-impact.fandom.com/wiki/Lunar_Reaction). A reaction is related to each element in its pair, and
-// Shattered is both Hydro's and Cryo's, as its Frozen target is. The item Descriptions that use the phrase read the
+// Shattered is both Hydro's and Cryo's, as its Frozen target is. The item descriptions that use the phrase read the
 // Same way: Frostbreath's Cryo or Hydro-related reaction, Molten Iron Fortress's Dendro-related one
 const HYDRO_REACTIONS: ReadonlySet<ReactionType> = new Set([
   ReactionType.Bloom,

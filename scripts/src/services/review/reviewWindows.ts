@@ -12,12 +12,13 @@ import { join } from "node:path";
 import { v7 } from "uuid";
 
 // Every batch of every window in one pool, at most `REVIEW_RUNNER_SESSION_CAP` sessions at once, taken in window order
-// So The earliest windows finish first. A batch not started by `deadline` (epoch milliseconds) is unreached rather than
-// Read, And so is every batch not started once one has errored: the batches still waiting belong to that window or a
-// Later one, Whose findings no run can open past a window that did not pass, so reading them would only spend a failing
-// Account's Sessions again. Each batch's outcome lands in its window's list at its batch index, and a batch's error is
-// Its outcome, so the others Still finish. `onWindowSettled` runs as each window's last batch lands, so the run acts on
-// A window while the pool goes on.
+// So the earliest windows finish first. A batch not started by `deadline` (epoch milliseconds) is unreached rather than
+// Read, and so is every batch not started once one has errored: the batches still waiting belong to that window or a
+// Later one, whose findings no run can open past a window that did not pass, so reading them would only spend a failing
+// Account's sessions again.
+// Each batch's outcome lands in its window's list at its batch index, and a batch's error is its outcome, so the others
+// Still finish. `onWindowSettled` runs as each window's last batch lands, so the run acts on a window while the pool
+// Goes on.
 export const reviewWindows = async (
   windows: ReviewWindow[],
   deadline: number,
@@ -32,7 +33,7 @@ export const reviewWindows = async (
     window.batches.map((files, batchIndex) => ({ batchIndex, files, windowIndex })),
   );
   // A window's worktree is made once, detached at its end, when its first batch starts, and every reviewer of the
-  // Window Reads from it. The finalizer removes each one, whichever way the pool ends.
+  // Window reads from it. The finalizer removes each one, whichever way the pool ends.
   let isStopped = false;
   const directories = new Map<number, string>();
   const getDirectory = (windowIndex: number, end: string): string => {
@@ -63,7 +64,7 @@ export const reviewWindows = async (
     if (pending === 0) onWindowSettled(windowIndex, takeOne(outcomesByWindow, windowIndex));
   };
   // The first batch runs alone, so a failure every batch would share, such as a credential that no longer works, costs
-  // One Batch and its retry rather than a whole pool of them
+  // One batch and its retry rather than a whole pool of them
   const [firstJob, ...otherJobs] = jobs;
 
   await withFinalizerAsync(

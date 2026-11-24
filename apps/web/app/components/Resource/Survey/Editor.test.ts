@@ -93,7 +93,7 @@ describe("resourceSurveyEditor", () => {
     const { alerts } = storeToRefs(alertStore);
     creatorDocument.value = duplicateDocument;
     // The autosave debounce runs on the real clock, so the wait is for the alert that the refusal raises. The alert
-    // Store Pushes into its list, so the wait reads the length, which a push changes, rather than watching the ref
+    // Store pushes into its list, so the wait reads the length, which a push changes, rather than watching the ref
     await until(() => alerts.value.length > 0).toBe(true);
 
     expect(alerts.value.map(({ text }) => text)).toStrictEqual([`${firstIssue?.pointer}: ${firstIssue?.message}`]);

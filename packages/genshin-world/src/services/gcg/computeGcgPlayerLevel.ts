@@ -4,8 +4,8 @@ import type { GcgPlayerLevel } from "#src/models/gcg/GcgPlayerLevel";
 import { computeLevelReached } from "#src/services/shared/computeLevelReached";
 
 // The card game's Player Level: none, as zero, until the tutorial quest is finished, then the level the EXP reaches
-// Over the Game's table, by the one rule the Friendship Level reads too. A lock holds it at the lock's level until the
-// Lock's main Quest is done, so the level is the lowest of the held levels the EXP reaches
+// Over the game's table, by the one rule the Friendship Level reads too. A lock holds it at the lock's level until the
+// Lock's main quest is done, so the level is the lowest of the held levels the EXP reaches
 export const computeGcgPlayerLevel = (
   exp: number,
   playerLevels: readonly GcgPlayerLevel[],

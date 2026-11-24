@@ -14,9 +14,9 @@ import { takeOne } from "@esposter/shared";
 import { artifactRarityDataSchema } from "genshin-world";
 
 // Every rarity's artifact table, from the standard pieces of that rarity: the levels it reaches above +0, the EXP each
-// One Costs to leave, the base EXP a fodder gives, the levels a minor affix is due at, and every minor affix its depot
-// Holds With each tier of its value. The reliquary table counts levels from one, so its highest level less one is the
-// Highest a Piece reaches, and a level's cost is the level table's row for it
+// One costs to leave, the base EXP a fodder gives, the levels a minor affix is due at, and every minor affix its depot
+// Holds with each tier of its value. The reliquary table counts levels from one, so its highest level less one is the
+// Highest a piece reaches, and a level's cost is the level table's row for it
 export const getArtifactRarityDatas = (): ArtifactRarityData[] => {
   const reliquaryRows = readExcelTable<ExcelReliquaryRow>(RELIQUARY_TABLE_NAME);
   const levelRows = readExcelTable<ExcelReliquaryLevelRow>(RELIQUARY_LEVEL_TABLE_NAME);

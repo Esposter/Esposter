@@ -21,13 +21,13 @@ const { currentTargetUserId, hasMore, items } = storeToRefs(moderationNoteStore)
 const note = ref("");
 const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.safeParse(note.value).success);
 // Points the store's paginated slice at this target before loading. Only one of these is ever mounted: the list mounts
-// It Only while one is open, and the row that opened it sets its target, so whichever dialog is open owns the ref. It
-// Is Deliberately not cleared on unmount: a dialog for another member can mount before this one tears down, and a
-// Teardown That blanked the ref would blank the list the new dialog has already claimed
+// It only while one is open, and the row that opened it sets its target, so whichever dialog is open owns the ref. It
+// Is deliberately not cleared on unmount: a dialog for another member can mount before this one tears down, and a
+// Teardown that blanked the ref would blank the list the new dialog has already claimed
 currentTargetUserId.value = user.id;
 const { error, isPending, refresh } = useQuery(readModerationNotes);
 // The field keeps the note until the server has it, so a refused note stays in place to be sent again. A note the
-// Reader has Typed since is left alone when the sent one is kept
+// Reader has typed since is left alone when the sent one is kept
 const sendNote = async () => {
   const sentNote = note.value;
   if (await createModerationNote(sentNote)) applyIfUnchanged(note, sentNote, "");

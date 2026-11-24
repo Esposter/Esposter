@@ -6,7 +6,7 @@ import { parseArrayIndex, parseJsonPointer } from "@esposter/shared";
 import { moveOutAfterParent } from "vue-block-editor-headless";
 
 // Why a node cannot move out after its parent, or none when it can. The same operations decide it: a node in the page's
-// Own Content has no parent to move out of, and otherwise the slot that holds the parent takes no node of the node's
+// Own content has no parent to move out of, and otherwise the slot that holds the parent takes no node of the node's
 // Type
 export const getMoveOutRefusal: PageBuilderHelper<string | undefined, [nodePointer: string]> = (
   kind,

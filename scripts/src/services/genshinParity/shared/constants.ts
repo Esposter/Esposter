@@ -37,7 +37,7 @@ export const WHOLE_SCREEN_MIN_WIDTH = 1280;
 export const WHOLE_SCREEN_MIN_ASPECT_RATIO = 1.6;
 export const WHOLE_SCREEN_MAX_ASPECT_RATIO = 1.9;
 // The world package's parity page, which renders a screen without Nuxt. The shared checkout serves it on 3011, and a
-// Busy Port is taken by the next one up, so a command finds the page by probing from its first port
+// Busy port is taken by the next one up, so a command finds the page by probing from its first port
 // (`resolveParityPageRoot`). `GENSHIN_PARITY_PORT` names a different first port, as a runner's worktree does for its
 // Own page
 export const PARITY_DEFAULT_PORT = 3011;
@@ -63,10 +63,10 @@ export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";
 // The config the build and its preview read, relative to the package
 export const PARITY_CONFIG_PATH = "parity/vite.config.ts";
 // Vite's own entry, run by node from the world package's install, so neither a shell nor a package manager stands
-// Between The tool and the build
+// Between the tool and the build
 export const VITE_BIN_PATH: string = join(GENSHIN_WORLD_DIRECTORY, "node_modules", "vite", "bin", "vite.js");
 // The browser keeps this many resource timings, so a page with more requests than that drops the rest from its load
-// Bench; the Parity page raises it before its first request
+// Bench; the parity page raises it before its first request
 export const RESOURCE_TIMING_BUFFER_SIZE = 4096;
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";

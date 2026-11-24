@@ -3,7 +3,7 @@ import type { Resident } from "#src/models/world/Resident";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 
 // The shop a talk's resident sells from, when the resident is a city vendor the map names, else undefined. The talk
-// Opens That shop in place of the dialogue
+// Opens that shop in place of the dialogue
 export const getTalkVendorShopId = (
   talkId: string,
   residents: readonly Resident[],

@@ -11,7 +11,7 @@ import { getFrameScale } from "vue-canvas-frame-headless";
 const getFrameScaleOf = (frameElement: HTMLIFrameElement) =>
   getFrameScale(frameElement.parentElement?.clientWidth ?? 0, frameElement.offsetWidth);
 // The canvas's frame as the page builder reads it: a node's element in the frame, the frame's geometry for a palette
-// Drag, and Where the selection's toolbar sits in the app's viewport. The frame is the document the content root is
+// Drag, and where the selection's toolbar sits in the app's viewport. The frame is the document the content root is
 // Drawn in
 export const usePageBuilderFrame = (
   contentRoot: Readonly<ShallowRef<HTMLElement | null>>,
@@ -26,7 +26,7 @@ export const usePageBuilderFrame = (
   // Whether a slot's owner lays its children out in a row, read from the owner's element in the frame
   const checkIsHorizontalOwner = (ownerId: string) => checkIsHorizontalFlow(getElement(ownerId));
   // The frame moves in the app's viewport when the app scrolls or its pane resizes, and neither changes the selection
-  // Box, so Its placement is read again on each. The toolbar sits in the app's document and is placed from that
+  // Box, so its placement is read again on each. The toolbar sits in the app's document and is placed from that
   // Placement
   const framePlacement = shallowRef<FramePlacement>();
   const refreshFramePlacement = () => {

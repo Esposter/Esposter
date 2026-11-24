@@ -12,7 +12,7 @@ import { usePdfAnnotations, usePdfViewer } from "vue-pdfjs-headless";
 interface Props {
   filename: string;
   // The terms highlighted in the document when it loads, searched as one phrase with the terms joined by a space. A
-  // Caller Opening the viewer from a search passes the terms it searched for
+  // Caller opening the viewer from a search passes the terms it searched for
   highlightTerms?: string[] | undefined;
   isFailed: boolean;
   isPasswordRequested: boolean;

@@ -583,7 +583,7 @@ describe(reduceWhiteboardGesture, () => {
     expect.hasAssertions();
 
     // The two shapes cover (100, 100) to (300, 150), so the bottom-right handle is at (300, 150). A drag of (100, 50)
-    // Scales the width by one and a Half and the height by two, each shape about the top-left corner
+    // Scales the width by one and a half and the height by two, each shape about the top-left corner
     const firstShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const secondShape = createProcess(SECOND_PROCESS_ID, { height: 50, width: 50, x: 250, y: 100 });
     const state = createState(

@@ -6,7 +6,7 @@ import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneC
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 
 // Jueyun Guoba: the target character's next Normal Attack this round deals one DMG more, and a character eats one food
-// A Round
+// A round
 export const jueyunGuoba: GcgCardModule = {
   canPlay: ({ duel, sideIndex }, targetIndex) => checkIsGcgFoodEatable(duel, sideIndex, targetIndex),
   initialRounds: 1,

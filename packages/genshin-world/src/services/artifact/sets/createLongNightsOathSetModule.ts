@@ -17,10 +17,10 @@ const getTriggerCooldownId = (attackTag: AttackTag): string =>
   `longNightsOathTriggerCooldown${ID_SEPARATOR}${attackTag}`;
 
 // Long Night's Oath. Its two-piece bonus raises the DMG of its wearer's Plunging Attacks by the table's first param.
-// Its Four-piece bonus gives the wearer, while it stands on the field, stacks of Radiance Everlasting after each hit of
+// Its four-piece bonus gives the wearer, while it stands on the field, stacks of Radiance Everlasting after each hit of
 // An enemy by its Plunging Attack, Charged Attack or Elemental Skill, one, two and two, and each attack type triggers
 // Once every sixth-param seconds. A stack raises its Plunging Attacks' DMG by the fourth param for the fifth param's
-// Seconds, counted on its own, up to the seventh Param, and a stack past that replaces the one that runs out first
+// Seconds, counted on its own, up to the seventh param, and a stack past that replaces the one that runs out first
 export const createLongNightsOathSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;
   if (bonus.pieceCount === 2)

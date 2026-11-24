@@ -18,9 +18,9 @@ import { join } from "node:path";
 
 // Every notes table against the tree in this checkout, read as the working tree holds them: a derived ledger's against
 // Its listing, and a question's own file and each of its `<question>/<area>.md` files against the question's cells.
-// Each Area unit is held to the tracked files too, so a path a rename or a removal left behind is named as it stands,
-// And every Unit of the partition, the derived openspec folders included, to the cap a pass reads it in full under, and
-// No tracked File is left without a unit that holds it
+// Each area unit is held to the tracked files too, so a path a rename or a removal left behind is named as it stands,
+// And every unit of the partition, the derived openspec folders included, to the cap a pass reads it in full under, and
+// No tracked file is left without a unit that holds it
 export const checkLedgerUnits = (): string[] => {
   const areas = readLedgerAreas();
   const unitsByArea = Object.fromEntries(areas.map((area) => [area, readAreaFileUnits(area)]));

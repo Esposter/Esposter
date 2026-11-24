@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // The enemy kinds a bounty of one difficulty may hunt, each the monster the wiki's list names, and the difficulty by
-// The Dump's own name for it. Provisional: a name the wiki names as a family resolves to one of its variants
+// The dump's own name for it. Provisional: a name the wiki names as a family resolves to one of its variants
 export interface ReputationBountyTarget {
   difficulty: string;
   enemyKindIds: number[];

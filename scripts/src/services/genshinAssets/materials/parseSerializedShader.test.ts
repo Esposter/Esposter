@@ -19,7 +19,7 @@ const uint16List = (values: number[]): Buffer => {
 };
 const uint8List = (bytes: Buffer): Buffer => alignBytes(Buffer.concat([createInt32(bytes.length), bytes]));
 // A program's container is its magic and some bytes of the game's own, and a blob chunk is its entry count, each
-// Entry's Offset and length, then each program's header and container
+// Entry's offset and length, then each program's header and container
 const payload = (text: string): Buffer => Buffer.concat([Buffer.from("DXBC"), Buffer.from(text)]);
 const blobChunk = (programs: { code: Buffer; gpuProgramType: number }[]): Buffer => {
   const bodies = programs.map(({ code, gpuProgramType }) =>
@@ -44,7 +44,7 @@ const blobChunk = (programs: { code: Buffer; gpuProgramType: number }[]): Buffer
 
 describe(parseSerializedShader, () => {
   // A render state is its name and then 708 bytes of zeroes: every float value is a zero float with an empty name, and
-  // Every Other name is empty
+  // Every other name is empty
   const RENDER_STATE_BYTES = 712;
   const EMPTY_PARAMETER_LISTS_BYTES = 32;
   const TRAILER_BYTES = 24;

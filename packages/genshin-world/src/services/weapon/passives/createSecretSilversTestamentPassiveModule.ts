@@ -8,7 +8,7 @@ const SECOND_AMOUNT_MAXIMUM_ENERGY_COST = 60;
 const THIRD_AMOUNT_MAXIMUM_ENERGY_COST = 40;
 
 // Secret Silver's Testament at its rank: a static Elemental Burst DMG, raised by the rank's second amount while the
-// Wielder's Burst costs no more than 60 Energy, and by its third amount while the burst costs no more than 40
+// Wielder's burst costs no more than 60 Energy, and by its third amount while the burst costs no more than 40
 export const createSecretSilversTestamentPassiveModule = (params: number[]): PassiveModule => {
   const staticDamageBonus = takeOne(params, 0);
   return {

@@ -6,7 +6,7 @@ import { getResult } from "@esposter/shared";
 
 // A shader's compiled programs, each named by the pass and stage it is compiled for and its keyword set, read from its
 // Serialized form. The game's other shaders do not all follow that form yet, so one that fails to read keeps its
-// Programs Carved by their magic and unnamed, so its disassembly still exists, and reports that it is unnamed
+// Programs carved by their magic and unnamed, so its disassembly still exists, and reports that it is unnamed
 export const readShaderPrograms = (data: Buffer): { named: boolean; programs: ShaderProgram[] } =>
   getResult(() => parseSerializedShader(data)).match(
     (shader) => ({

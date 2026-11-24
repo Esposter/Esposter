@@ -65,7 +65,7 @@ const readEnergyAfterReactions = (constellationCount: number, reactions: Reactio
 };
 
 // Steps Ineffa's kit for the frames given, emitting each enemy hit at its frame, and returns each frame on which a
-// Lunar Hit is queued, once for each hit queued on it
+// Lunar hit is queued, once for each hit queued on it
 const readLunarHitFrames = (
   combatant: Combatant,
   enemies: Enemy[],

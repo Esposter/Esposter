@@ -15,9 +15,9 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
   defineHandler(async (event) => {
     // The two casts below are scoped to this call: h3 types its request as its own `TypedServerRequest`, which
     // Fetchdts's `Request` does not accept without an assertion, and the options are checked against the router at the
-    // Call site Since TRouter's conditional context requirement never resolves inside this generic handler
-    // H3's request and the options are typed as the handler's own, which fetchdts
-    // oxlint-disable typescript/no-unsafe-type-assertion -- and TRouter's open conditional context do not accept
+    // Call site since TRouter's conditional context requirement never resolves inside this generic handler
+    /* oxlint-disable typescript/no-unsafe-type-assertion -- h3's request and the options are typed as the handler's
+       own, which fetchdts and TRouter's open conditional context do not accept */
     const response = await fetchRequestHandler({
       ...options,
       createContext:

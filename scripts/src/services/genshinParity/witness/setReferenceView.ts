@@ -8,7 +8,7 @@ import { readReferenceLandmarks } from "#src/services/genshinParity/witness/read
 import { solveCameraPose } from "#src/services/genshinParity/witness/solveCameraPose";
 
 // A current build's reference is seen from the scene's own camera, which the camera pass holds; an older build's from
-// Its Own, solved on its landmarks
+// Its own, solved on its landmarks
 export const setReferenceView = async (
   page: Page,
   referenceId: string,

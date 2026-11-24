@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe(signSessionToken, () => {
   // The expected value is HMAC-SHA256 of the token under the secret, computed once with node:crypto, so the test holds
-  // The Signing to the algorithm the session reader verifies rather than to this function's own output
+  // The signing to the algorithm the session reader verifies rather than to this function's own output
   test("signs the token as the value followed by its HMAC-SHA256 signature in base64", async () => {
     expect.hasAssertions();
 

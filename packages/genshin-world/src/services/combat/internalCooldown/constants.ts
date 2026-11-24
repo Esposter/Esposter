@@ -10,8 +10,8 @@ export const DEFAULT_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.fre
 });
 // Measured: gcsim (MIT) pkg/core/attacks/icd_groups.dm.go, Salon Solitaire's group, which Surintendante Chevalmarin's
 // And Gentilhomme Usher's tags each count under: restarted by a hit 30 seconds after it last started, and between
-// Restarts Every second hit applying, for the 24 hits its sequence holds
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/attacks/icd_groups.dm.go`
+// Restarts every second hit applying, for the 24 hits its sequence holds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/attacks/icd_groups.dm.go
 export const FURINA_SALON_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
   resetIntervalSeconds: 30,
   sequence: Object.freeze(Array.from({ length: 24 }, (_value, index) => (index % 2 === 0 ? 1 : 0))),
@@ -28,17 +28,17 @@ export const BURNING_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.fre
   sequence: Object.freeze([1, 0]),
 });
 // Citlali's Frostfall Storm, as gcsim (MIT) pkg/core/attacks/icd_groups.dm.go has it: restarted by a hit 1.5 seconds
-// After It last started (line 95), and its Cryo applying on the first of every two hits (line 162). Its damage lands on
-// Every hit, As its damage sequence holds one (line 229)
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/attacks/icd_groups.dm.go`
+// After it last started (line 95), and its Cryo applying on the first of every two hits (line 162). Its damage lands on
+// Every hit, as its damage sequence holds one (line 229)
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/attacks/icd_groups.dm.go
 export const CITLALI_FROSTFALL_STORM_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
   resetIntervalSeconds: 1.5,
   sequence: Object.freeze([1, 0]),
 });
 // Kinich's Loop Shot, as gcsim (MIT) pkg/core/attacks/icd_groups.dm.go has it: restarted by a hit 2 seconds after it
-// Last Started (line 112), and its gauge applying on the first of every four hits (line 179). Its damage lands on every
-// Hit, As its damage sequence holds ones (line 246)
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/attacks/icd_groups.dm.go`
+// Last started (line 112), and its gauge applying on the first of every four hits (line 179). Its damage lands on every
+// Hit, as its damage sequence holds ones (line 246)
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/attacks/icd_groups.dm.go
 export const KINICH_LOOP_SHOT_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
   resetIntervalSeconds: 2,
   sequence: Object.freeze([1, 0, 0, 0]),

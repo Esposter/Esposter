@@ -11,8 +11,8 @@ import { takeOne } from "@esposter/shared";
 const SWIRL_REACTIONS = [{ reactionType: ReactionType.Swirl }, { reactionType: ReactionType.StellarSwirl }];
 
 // Bathhouses, Hawks, and Narukami at its rank: Elemental Mastery rises by the rank's amount for its seconds after its
-// Wielder Triggers a Swirl or a Stellar Swirl, by the second amount for the second seconds after its Elemental Skill
-// Hits an opponent, And by the third amount for the third seconds after its Elemental Burst hits one
+// Wielder triggers a Swirl or a Stellar Swirl, by the second amount for the second seconds after its Elemental Skill
+// Hits an opponent, and by the third amount for the third seconds after its Elemental Burst hits one
 export const createBathhousesHawksAndNarukamiPassiveModule = (params: number[]): PassiveModule => {
   const swirlMastery = takeOne(params, 0);
   const skillMastery = takeOne(params, 1);

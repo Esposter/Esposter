@@ -4,7 +4,7 @@ import type { CSSProperties } from "vue";
 export const SCREEN_BOX_WIDTH = 1920;
 
 // The style of the box a screen is mounted in `left` pixels from the window's left edge, the parity page's and the
-// Visual Suite's alike: a unit is the window's pixel, as the game draws its interface at the window's height
+// Visual suite's alike: a unit is the window's pixel, as the game draws its interface at the window's height
 export const getScreenBoxStyle = (left: number): CSSProperties => ({
   height: "100%",
   left: `${left}px`,

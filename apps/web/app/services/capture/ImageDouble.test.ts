@@ -1,7 +1,7 @@
 import { describe } from "vitest";
 
 // The browser's image element stands in for the node environment's missing one: its source is set, and its load fires
-// On The next tick, so a test drives a rasterization without a browser
+// On the next tick, so a test drives a rasterization without a browser
 export class ImageDouble {
   onload?: () => void;
   get src() {

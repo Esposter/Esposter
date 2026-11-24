@@ -795,7 +795,7 @@ describe("roomRouter", () => {
   });
 
   // Two joins at once by a stranger through a link with uses to spare count one use, since the second finds the
-  // Membership The first wrote, and the link's count is taken only once
+  // Membership the first wrote, and the link's count is taken only once
   test("two joins at once through a link with uses to spare count one use, and the second is refused as the member", async () => {
     expect.hasAssertions();
 
@@ -1374,7 +1374,7 @@ describe("roomRouter", () => {
   });
 
   // A room with no one to read still answers its refresh: an empty list reads no user, and the membership check ahead
-  // Of it Is what the answer's topic is taken from
+  // Of it is what the answer's topic is taken from
   test("answers an empty list of user ids with no users", async () => {
     expect.hasAssertions();
 

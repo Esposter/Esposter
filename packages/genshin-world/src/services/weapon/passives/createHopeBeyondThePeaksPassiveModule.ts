@@ -9,8 +9,8 @@ import { takeOne } from "@esposter/shared";
 const HOPE_BEYOND_THE_PEAKS_ID = "hopeBeyondThePeaks";
 
 // Hope Beyond the Peaks at its rank: its wielder's Elemental Skill DMG is raised by the rank's amount, and by the
-// Rank's Second amount more for its seconds after another member of the deployed team uses an Elemental Skill. Its
-// Climbing Stamina Line, the first param, is not read
+// Rank's second amount more for its seconds after another member of the deployed team uses an Elemental Skill. Its
+// Climbing Stamina line, the first param, is not read
 export const createHopeBeyondThePeaksPassiveModule = (params: number[]): PassiveModule => {
   const skillDamageBonus = takeOne(params, 1);
   const otherMemberSkillDamageBonus = takeOne(params, 2);

@@ -75,7 +75,7 @@ describe("menuSettings", () => {
   });
 
   // The Default Camera Distance row is one the world backs: an arrow key steps it by its range's step, and the row
-  // Reads the New distance to one decimal place, from the default distance the follow camera starts at
+  // Reads the new distance to one decimal place, from the default distance the follow camera starts at
   test("the default camera distance steps from the keyboard", async () => {
     expect.hasAssertions();
 

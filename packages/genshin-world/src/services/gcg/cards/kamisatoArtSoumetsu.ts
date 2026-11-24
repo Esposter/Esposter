@@ -8,7 +8,7 @@ import { createGcgSummonAfterDamage } from "#src/services/gcg/effects/createGcgS
 const SOUMETSU_DAMAGE = 4;
 
 // Kamisato Art: Soumetsu, Ayaka's burst: 4 Cryo DMG, and a Frostflake Seki no To is summoned once the damage is dealt
-// (the Wiki's Kamisato Art: Soumetsu (Character Card Skill))
+// (the wiki's Kamisato Art: Soumetsu (Character Card Skill))
 export const kamisatoArtSoumetsu: GcgSkillModule = {
   afterDamage: createGcgSummonAfterDamage(FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo),
   getDamage: () => ({ damageType: Element.Cryo, value: SOUMETSU_DAMAGE }),

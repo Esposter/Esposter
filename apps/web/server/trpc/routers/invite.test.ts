@@ -173,7 +173,7 @@ describe("inviteRouter", () => {
   });
 
   // The read that finds a lapsed link tombstones it, so the room's invite list, which reads every invite of the room,
-  // Shows The link as deleted once that read has tombstoned it
+  // Shows the link as deleted once that read has tombstoned it
   test("reading my expired invite wakes the room's invite list", async () => {
     expect.hasAssertions();
 

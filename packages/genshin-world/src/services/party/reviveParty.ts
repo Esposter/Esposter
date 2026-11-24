@@ -5,7 +5,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Revives every member of the deployed team who is down at a share of its Max HP, by default the share the game revives
-// A Fallen team with
+// A fallen team with
 export const reviveParty = (party: Party, healthShare = REVIVE_HEALTH_SHARE): void => {
   party.fallSecondsRemaining = 0;
   for (const characterId of getDeployedCharacterIds(party)) {

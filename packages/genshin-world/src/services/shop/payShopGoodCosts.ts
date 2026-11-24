@@ -10,8 +10,8 @@ import { recordShopPurchase } from "#src/services/shop/recordShopPurchase";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 
 // The wallet, bag and purchases after every cost of a good is paid at `now`: each taken out of the currency it is in or
-// Out Of the bag, and the purchase recorded once. Undefined where the good is sold out this refresh or the player holds
-// Too few of Any one of its costs, so a good is paid for whole or not at all
+// Out of the bag, and the purchase recorded once. Undefined where the good is sold out this refresh or the player holds
+// Too few of any one of its costs, so a good is paid for whole or not at all
 export const payShopGoodCosts = (
   wallet: Wallet,
   inventory: Inventory,

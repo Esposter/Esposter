@@ -3,7 +3,7 @@ import type { ReferenceTopic } from "genshin-interface";
 import { InvestigationOutcome } from "genshin-interface";
 
 // The board's layout, its words and its state as the frame shows them. The frame is the video's at 1920 by 1080, read
-// At Its own resolution: the characters' art is not drawn, so the board draws each card's frame and tint, and a card's
+// At its own resolution: the characters' art is not drawn, so the board draws each card's frame and tint, and a card's
 // Name only as its label
 export const boardTopic: ReferenceTopic = {
   investigations: [

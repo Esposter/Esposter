@@ -8,8 +8,8 @@ import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetF
 
 // The dominant wavelength of one family's normal angles in the exports' frame and in ours, over the pixels both draw as
 // The family, each side's normal against its own geometry (`computeNormalAngle`). Both read at the family's median
-// Depth And the frame's field of view. The lag is capped at a share of the family's own width in pixels, so a variation
-// The Size of the object is shape and never a detail. The metres a pixel spans at that depth come back with them, as
+// Depth and the frame's field of view. The lag is capped at a share of the family's own width in pixels, so a variation
+// The size of the object is shape and never a detail. The metres a pixel spans at that depth come back with them, as
 // The gate
 export const readSurfaceWavelengths = ({
   depth,

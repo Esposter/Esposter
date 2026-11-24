@@ -4,7 +4,7 @@ import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMinin
 import { computeLastMiningOutcropDraw } from "#src/services/leyLine/computeLastMiningOutcropDraw";
 
 // The mining outcrop places standing at `now`: a region's day's draw, made at its 06:00, holds its places until the
-// Next Draw, and a place mined since stands again only from its respawn. A draw from before the last 06:00 stands
+// Next draw, and a place mined since stands again only from its respawn. A draw from before the last 06:00 stands
 // Nowhere
 export const computeStandingMiningOutcrops = (
   places: readonly GatheringPlace[],

@@ -11,8 +11,8 @@ import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 // What the character can act on at each chest's place, beneath its point: a buried chest not yet dug offers Dig, and
-// Any Other chest offers to open once it is rewarded or dug, named by its kind's text. An opened chest, and a sealed
-// One, Are not offered
+// Any other chest offers to open once it is rewarded or dug, named by its kind's text. An opened chest, and a sealed
+// One, are not offered
 export const computeChestInteractables = (
   chestPlaces: ChestPlace[],
   openedChestIds: ReadonlySet<string>,

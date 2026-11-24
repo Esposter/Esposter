@@ -38,7 +38,7 @@ describe(useRoomInviteStore, () => {
   const otherMembersInvite = createRoomInvite("c", otherUser);
 
   // A page's rows arrive on the overlay, and the list shows the live usable ones: a tombstone the page returns and a
-  // Link That has lapsed stay held, and are left out
+  // Link that has lapsed stay held, and are left out
   test("lists a page's live usable invites, and leaves out a tombstone and a lapsed link", async () => {
     expect.hasAssertions();
 

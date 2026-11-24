@@ -5,7 +5,7 @@ import { takeOne } from "@esposter/shared";
 import { getBoundsCorners, getElementBounds, getPointsBounds } from "vue-block-editor-headless";
 
 // The box that covers the bounds of every selected element, or undefined when no selected element is in the document.
-// An arrow's bounds are its Route and a stroke's are its points, so each takes its own box as it draws
+// An arrow's bounds are its route and a stroke's are its points, so each takes its own box as it draws
 export const getSelectionBounds = (document: PositionedDocument, elementIds: string[]): Bounds | undefined => {
   const elementBounds = elementIds.flatMap((elementId) => {
     const index = getElementIndexById(document, elementId);

@@ -14,8 +14,8 @@ import { checkIsBlankText } from "@esposter/shared";
 import { toSurveyLogicAnswer } from "survey-expression";
 
 // The errors one element holds: a required question left empty, an answer its schema refuses, then each validator that
-// Does not hold Only an enabled question is checked, since a disabled one takes no answer The predicate narrows the
-// Node to an answering question, which holds a validator list
+// Does not hold only an enabled question is checked, since a disabled one takes no answer
+// The predicate narrows the node to an answering question, which holds a validator list
 export const getSurveyQuestionErrors = (
   view: SurveyElementView,
   answers: SurveyAnswers,

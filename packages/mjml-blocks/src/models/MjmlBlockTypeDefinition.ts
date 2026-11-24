@@ -4,7 +4,7 @@ import type { BlockNode, BlockTypeDefinition, OwnProps } from "vue-block-editor-
 import type { z } from "zod";
 
 // A registry entry for an MJML block type: its attributes and defaults in MJML's grammar, and how it renders to MJML's
-// JSON form Its render receives the node as the core holds it, and reads each prop it needs with getBlockPropValue and
+// JSON form its render receives the node as the core holds it, and reads each prop it needs with getBlockPropValue and
 // A per-field parse
 export type MjmlBlockTypeDefinition<TNode extends BlockNode = BlockNode, TContext = unknown> = MjmlBlockTypeFields<
   TNode,

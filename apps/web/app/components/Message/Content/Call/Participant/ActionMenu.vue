@@ -9,8 +9,8 @@ interface Props {
   participant: CallParticipant;
 }
 // A panel rather than a menu, since it holds the participant's volume, which stays open while it is dragged. What a
-// Call Site passes goes to the trigger, and the trigger's content is the call site's own where it is more than a mark:
-// The Participant's avatar on the call strip
+// Call site passes goes to the trigger, and the trigger's content is the call site's own where it is more than a mark:
+// The participant's avatar on the call strip
 defineSlots<{ trigger?: () => VNode }>();
 const { participant } = defineProps<Props>();
 const callStore = useCallStore();

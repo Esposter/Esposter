@@ -23,9 +23,9 @@ export const LOGIN_FACADE_CUT_ATTRIBUTE = "facadeCut";
 export const LOGIN_TOWER_NORMAL_DETAIL_WAVELENGTH = 2.5648;
 export const LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE = 0.1619;
 // The towers' grain over the facade's shades: their exports' structure less the facade's own over their pixels (the
-// Surface Pass's terms, variance then bands finest first), each divided by their mean lightness of 0.6187 squared, and
-// By the Share of a target the first fit's reading realised (0.22, the bridges' 0.185 to 0.264). At a pixel's 0.0712
-// Metres at the Towers' depth. The octave amplitudes that reproduce these are solved by `computeSurfaceOctaves`
+// Surface pass's terms, variance then bands finest first), each divided by their mean lightness of 0.6187 squared, and
+// By the share of a target the first fit's reading realised (0.22, the bridges' 0.185 to 0.264). At a pixel's 0.0712
+// Metres at the towers' depth. The octave amplitudes that reproduce these are solved by `computeSurfaceOctaves`
 export const LOGIN_TOWER_SURFACE_DETAIL: SurfaceDetail = {
   bands: [0.00071959, 0.00028423, 0.00023539, 0.00009561],
   metresPerTexel: 0.0712,

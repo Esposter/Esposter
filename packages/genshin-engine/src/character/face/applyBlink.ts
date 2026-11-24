@@ -3,7 +3,7 @@ import type { Mesh } from "three";
 import { FACE_BLINK_MORPH_NAME, FACE_BLINK_PERIOD_SECONDS, FACE_BLINK_SECONDS } from "#src/character/face/constants";
 
 // Sets the blink morph's influence at a time. The eyes close over the first half of each blink and open over the
-// Second, And a mesh whose pack named no blink morph has no influence to set, so its face stays still
+// Second, and a mesh whose pack named no blink morph has no influence to set, so its face stays still
 export const applyBlink = (mesh: Mesh, elapsed: number): void => {
   const index = mesh.morphTargetDictionary?.[FACE_BLINK_MORPH_NAME];
   if (index === undefined || !mesh.morphTargetInfluences) return;

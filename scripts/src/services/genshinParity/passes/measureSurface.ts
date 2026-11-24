@@ -31,8 +31,8 @@ const NO_GATE_REASON = "no gate: the family lies within one half";
 // Textures are never shipped, so a pixel-aligned structure cannot be met, and a surface is matched in distribution. Its
 // Gate is the sampling floor: the exports' own family split into two halves of blocks, each measured against the other,
 // So a surface of the same distribution reads at the least a finite patch can. The pixel-aligned structure of each
-// Family stays in the notes, scale by scale, as a diagnostic of where Its detail lies. A glow the materials add over
-// Their lit colour is lit, not unlit, so it is scored by the light pass Against the game's frame (`measureGlow`)
+// Family stays in the notes, scale by scale, as a diagnostic of where its detail lies. A glow the materials add over
+// Their lit colour is lit, not unlit, so it is scored by the light pass against the game's frame (`measureGlow`)
 export const measureSurface = (component: DerivedAssetComponent, pageRoot?: string): Promise<ParityPassMeasure> =>
   measureFamilyTargets(
     component,

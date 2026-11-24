@@ -20,7 +20,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   const { arrive, view, writeAwaited } = overlayStore;
   const searchHistories = view(searchHistoryTable);
   // The cursor carries the paging and the loading state of the room's history. The rows are the overlay's, so a search
-  // The Server answered is drawn at once, with no page to place it on
+  // The server answered is drawn at once, with no page to place it on
   const cursor = useCursorPaginationDataMap<SearchHistoryKey>(() => roomStore.currentRoomId);
   // The reader's searches in the room they are on, newest first on the id, which is creation order
   const items = computed(() =>

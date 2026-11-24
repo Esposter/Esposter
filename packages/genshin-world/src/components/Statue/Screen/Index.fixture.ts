@@ -23,7 +23,7 @@ const characterNameMap = new Map(
 const NOW = Temporal.Instant.fromEpochMilliseconds(0);
 
 // The party of the completionist guide's Statue's Blessing at 173 seconds: four deployed Characters, and three
-// Preparing in Another team, all at full health
+// Preparing in another team, all at full health
 const party = createParty([DILUC_CHARACTER_ID, VENTI_CHARACTER_ID, XIANGLING_CHARACTER_ID, NOELLE_CHARACTER_ID]);
 setPartyTeamCharacters(party, 1, [SUCROSE_CHARACTER_ID, KAEYA_CHARACTER_ID, SHENHE_CHARACTER_ID]);
 // Each character's level as the clip shows it: the deployed team's at five and two, the other team's at one
@@ -38,7 +38,7 @@ const characterLevelMap = new Map([
 ]);
 
 // The Statue's Blessing of two statues, its pool full at 10000 of 10000 with auto-recover on at half, as the
-// Completionist Guide shows it at 173 seconds
+// Completionist guide shows it at 173 seconds
 export const props = {
   autoRecover: { isOn: true, thresholdPercent: 50 },
   gameText: ENGLISH_GAME_TEXT,

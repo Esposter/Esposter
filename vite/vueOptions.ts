@@ -56,8 +56,8 @@ export const VUE_OPTIONS: VueOptions = {
     // `no-static-element-interactions` want a keyboard pattern per widget (a list of clickable cells takes one roving
     // Tabindex, not a tab stop each), `mouse-events-have-key-events` wants hover reveals to reveal on focus too, and
     // `media-has-caption` wants authored media, since every `<audio>` and `<video>` here plays an upload with no
-    // Caption Track. `no-autofocus` sees only an element's own attribute, so `restrictedSyntaxes.js` bans `autofocus`
-    // On any Element, component or option instead. A rule is promoted with the work that earns it
+    // Caption track. `no-autofocus` sees only an element's own attribute, so `restrictedSyntaxes.js` bans `autofocus`
+    // On any element, component or option instead. A rule is promoted with the work that earns it
     rules: {
       "a11y/alt-text": "error",
       "a11y/anchor-has-content": "error",

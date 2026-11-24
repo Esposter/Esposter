@@ -6,8 +6,8 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // The built combatant of each deployed member, in the team's order, so a passive or an action reads the team's
-// Elements, Regions and counts, each with the Energy it holds and flagged with whether it is the character on the
-// Field. A member With no built combatant is left out
+// Elements, regions and counts, each with the Energy it holds and flagged with whether it is the character on
+// The field. A member with no built combatant is left out
 export const getDeployedCombatants = (
   party: Party,
   characterIdCombatantMap: ReadonlyMap<number, Combatant>,

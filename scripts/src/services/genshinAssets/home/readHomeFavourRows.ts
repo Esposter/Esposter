@@ -4,7 +4,7 @@ import { HOME_AVATAR_REWARD_EVENT_TYPE, HOME_EVENT_TABLE_NAME } from "#src/servi
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The reward events of the home event table, each a companion's favoured furnishing suite with its one-time reward,
-// Read From the dump: the rows the home dataset and the favour talks are both built from
+// Read from the dump: the rows the home dataset and the favour talks are both built from
 export const readHomeFavourRows = (): ExcelHomeWorldEventRow[] =>
   readExcelTable<ExcelHomeWorldEventRow>(HOME_EVENT_TABLE_NAME).filter(
     ({ eventType }) => eventType === HOME_AVATAR_REWARD_EVENT_TYPE,

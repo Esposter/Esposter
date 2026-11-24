@@ -10,7 +10,7 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { setKitNightingaleCount } from "#src/services/kit/effects/setKitNightingaleCount";
 
 // Consumes a stack of Nightingale's Song for each opponent a Geo hit of the party strikes, up to what the character
-// Holds, And returns how many it consumed. Spending the last stack ends Haunted Night with its stacks and its cap
+// Holds, and returns how many it consumed. Spending the last stack ends Haunted Night with its stacks and its cap
 export const consumeKitNightingaleStacks = (
   kitEffectState: KitEffectState,
   characterId: number,

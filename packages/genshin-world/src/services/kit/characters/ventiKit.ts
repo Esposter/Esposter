@@ -16,12 +16,12 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/venti/burst.go
 const STORMEYE_OFFSET = 5;
 // Splitting Gales, from one constellation, looses two more arrows with each aimed shot, as the wiki's constellation
-// Page Gives it. gcsim v2.47.2 (MIT) venti/cons.go lands them with the shot
-// `https://genshin-impact.fandom.com/wiki/Splitting_Gales`
+// Page gives it. gcsim v2.47.2 (MIT) venti/cons.go lands them with the shot
+// https://genshin-impact.fandom.com/wiki/Splitting_Gales
 const SPLITTING_GALES_CONSTELLATION = 1;
 // Breeze of Reminiscence, from two constellations, takes 12% off the Anemo and Physical RES of each enemy Skyward
-// Sonnet Strikes for 10 seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT) venti/cons.go give it
-// `https://genshin-impact.fandom.com/wiki/Breeze_of_Reminiscence`
+// Sonnet strikes for 10 seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT) venti/cons.go give it
+// Https://genshin-impact.fandom.com/wiki/Breeze_of_Reminiscence
 const BREEZE_OF_REMINISCENCE_CONSTELLATION = 2;
 const BREEZE_OF_REMINISCENCE_STATUS: EnemyStatus = {
   damageTakenBonus: 0,
@@ -31,8 +31,8 @@ const BREEZE_OF_REMINISCENCE_STATUS: EnemyStatus = {
   secondsRemaining: 10,
 };
 // Stormeye, from Ascension 4, regenerates 15 energy for Venti once the Stormeye's seconds end, as the wiki's passive
-// Page And gcsim v2.47.2 (MIT) venti/asc.go give it, which gcsim's burst.go queues 480 frames past the Stormeye's start
-// `https://genshin-impact.fandom.com/wiki/Stormeye`
+// Page and gcsim v2.47.2 (MIT) venti/asc.go give it, which gcsim's burst.go queues 480 frames past the Stormeye's start
+// Https://genshin-impact.fandom.com/wiki/Stormeye
 const STORMEYE_PASSIVE_ASCENSION = 4;
 const STORMEYE_PASSIVE_ENERGY = 15;
 // Storm of Defiance, from six constellations, takes 20% off the Anemo RES of each enemy the Stormeye strikes, for gcsim
@@ -47,7 +47,7 @@ const STORM_OF_DEFIANCE_STATUS: EnemyStatus = {
 };
 // Hurricane of Freedom, from four constellations, gives Venti a 25% Anemo DMG Bonus for 10 seconds each time he picks
 // Up an Elemental Orb or Particle while he is on the field, as gcsim v2.47.2 (MIT) venti/cons.go gives it
-// `https://genshin-impact.fandom.com/wiki/Hurricane_of_Freedom`
+// Https://genshin-impact.fandom.com/wiki/Hurricane_of_Freedom
 const HURRICANE_OF_FREEDOM_CONSTELLATION = 4;
 const HURRICANE_OF_FREEDOM_DAMAGE_BONUS = 0.25;
 const HURRICANE_OF_FREEDOM_SECONDS = 10;
@@ -56,11 +56,11 @@ const HURRICANE_OF_FREEDOM_SOURCE = "Hurricane of Freedom";
 export const VENTI_CHARACTER_ID = 10_000_022;
 
 // Venti's behaviour: from one constellation, the aimed shot casts Splitting Gales' arrows, and from two Skyward
-// Sonnet's Press and hold take Breeze of Reminiscence's Anemo RES. Wind's Grand Ode casts the Stormeye ahead of him,
-// Its ticks Taking Storm of Defiance's Anemo RES from six constellations, and from Ascension 4 a task as its seconds
-// End gives him Its energy. From four constellations, a particle he picks up raises his Anemo DMG Bonus Constellation
-// 2's airborne extra needs a launched state, which is not built Constellation 6's RES cut on an absorbed element, which
-// The kit does not build
+// Sonnet's press and hold take Breeze of Reminiscence's Anemo RES. Wind's Grand Ode casts the Stormeye ahead of him,
+// Its ticks taking Storm of Defiance's Anemo RES from six constellations, and from Ascension 4 a task as its seconds
+// End gives him its energy. From four constellations, a particle he picks up raises his Anemo DMG Bonus
+// Constellation 2's airborne extra needs a launched state, which is not built
+// Constellation 6's RES cut on an absorbed element, which the kit does not build
 export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const splittingGalesHits = readHits("splittingGalesArrows");
   const stormeyeHits = readHits("stormeyeTicks", {
@@ -75,7 +75,7 @@ export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }
   };
   return {
     // The Stormeye is a summon cast ahead of where Venti faces, landing its ticks from there. From Ascension 4, a task
-    // Runs As the Stormeye's seconds end, giving Venti his energy up to what his burst costs
+    // Runs as the Stormeye's seconds end, giving Venti his energy up to what his burst costs
     burst: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         // Ahead of a body at its facing lies the bearing -sin and -cos of that facing, as computeFacingAngle reads it

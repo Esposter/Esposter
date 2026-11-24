@@ -13,7 +13,7 @@ import { getAttributeLabel } from "#src/services/character/getAttributeLabel";
 const getAffixValue = (attribute: Attribute, value: number): string => `+${formatAttributeValue(attribute, value)}`;
 
 // An artifact's stats for its panel: its main stat's name with its value at its level's curve, and each minor affix in
-// The Game's words and form
+// The game's words and form
 export const getArtifactDetailStats = (
   artifact: Artifact,
   gameText: GameText,

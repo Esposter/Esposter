@@ -21,9 +21,9 @@ interface DragSource {
   slotPointer: string;
 }
 // The drag a palette kind or a canvas node starts, shared by every pane through the store, so the canvas draws what the
-// Palette Starts. A press is a click until it moves the drag distance, or, for a finger, until it rests the touch
-// Delay; a finger that Moves first is scrolling, so its press ends there. A release over a slot lands the drag as one
-// Command, and a release over No slot, Escape or a cancel changes nothing
+// Palette starts. A press is a click until it moves the drag distance, or, for a finger, until it rests the touch
+// Delay; a finger that moves first is scrolling, so its press ends there. A release over a slot lands the drag as one
+// Command, and a release over no slot, Escape or a cancel changes nothing
 export const useSurveyCreatorDrag = () => {
   const surveyCreatorDragStore = useSurveyCreatorDragStore();
   const { draggedNodeId, draggedType, dragPoint, dropTarget } = storeToRefs(surveyCreatorDragStore);
@@ -32,9 +32,9 @@ export const useSurveyCreatorDrag = () => {
   const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
   const { insertNodeAt, moveNodeTo } = useSurveyCreatorCommands();
   const { startPress } = usePressDrag();
-  // The slots a drag lands in, read off the canvas as the drag starts, so the preview it draws moves no box a move
-  // Reads. A node Cannot land inside itself, and its own slot loses the node's box, so the index a drop resolves is the
-  // One the core takes once The node is removed
+  // The slots a drag lands in, read off the canvas as the drag starts, so the preview it draws moves no box a
+  // Move reads. A node cannot land inside itself, and its own slot loses the node's box, so the index a drop resolves
+  // Is the one the core takes once the node is removed
   const getDropSlots = (source?: DragSource): SurveyDropSlot[] => {
     const slots = measureSlots();
     if (source === undefined) return slots;

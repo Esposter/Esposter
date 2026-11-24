@@ -6,8 +6,8 @@ import { SceneTreeFlag } from "#src/models/genshinAssets/scene/SceneTreeFlag";
 import { composeSceneTree } from "#src/services/genshinAssets/scene/composeSceneTree";
 
 // The objects without the unplaced spawns: each top (a root, or an object whose father no dump holds) whose whole
-// Subtree Stands at the origin is a prefab a script spawns at run time, with no static placement to set it down by, so
-// It is Dropped rather than drawn piled at the origin. The spawns `DerivedAssetComponentMap` attaches are placed before
+// Subtree stands at the origin is a prefab a script spawns at run time, with no static placement to set it down by, so
+// It is dropped rather than drawn piled at the origin. The spawns `DerivedAssetComponentMap` attaches are placed before
 // This runs
 export const dropUnplacedSpawns = (
   objects: readonly SceneObject[],

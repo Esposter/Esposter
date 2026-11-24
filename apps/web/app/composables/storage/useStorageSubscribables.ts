@@ -10,7 +10,7 @@ export const useStorageSubscribables = () => {
   const connectionStore = useConnectionStore();
   const { onUserEvent } = connectionStore;
   // Every change to the counter, whichever process made it, arrives as the owner's user row at the version it was
-  // Written At, so the meter moves without a re-read and a row that lands out of order loses to the newer one already
+  // Written at, so the meter moves without a re-read and a row that lands out of order loses to the newer one already
   // Held
   const unregister = onUserEvent("updateUsage", (user) => {
     storeUpdateStorageUsage(user);

@@ -5,15 +5,15 @@ import { getTableName } from "drizzle-orm";
 
 export interface CascadeWalk {
   // The tables a delete changes beyond its own rows, each once: a cascade removes rows from its child, and a key that
-  // Sets the Child's value to null or to its default changes the child, so the deleted table is left out of this list
+  // Sets the child's value to null or to its default changes the child, so the deleted table is left out of this list
   changedTables: Table[];
   // The tables a delete removes rows from, the deleted table included
   removedTables: Table[];
 }
 
 // The tables a delete of a table's rows reaches through the foreign-key graph. A cascading key removes the child rows
-// It Holds, so the child is removed too and its own children are walked in turn. A key that sets the child's value to
-// Null or To its default changes those rows without removing them, so the child is changed and nothing beneath it is
+// It holds, so the child is removed too and its own children are walked in turn. A key that sets the child's value to
+// Null or to its default changes those rows without removing them, so the child is changed and nothing beneath it is
 export const walkCascade = (table: Table): CascadeWalk => {
   const tableName = getTableName(table);
   const removedTables: Table[] = [table];

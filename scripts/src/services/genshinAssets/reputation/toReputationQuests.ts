@@ -6,7 +6,7 @@ import { toReputationReward } from "#src/services/genshinAssets/reputation/toRep
 import { readReward } from "#src/services/genshinAssets/rewards/readReward";
 
 // A nation's Reputation quests, each bound to the quest its parent names and paying its reward once that quest
-// Finishes, In the order the game lists them
+// Finishes, in the order the game lists them
 export const toReputationQuests = (
   rows: readonly ExcelReputationQuestRow[],
   rewardMap: Map<number, ExcelRewardRow>,

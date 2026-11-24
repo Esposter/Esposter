@@ -4,7 +4,7 @@ import { getResistanceMultiplier } from "#src/services/combat/damage/getResistan
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 
 // A transformative reaction's damage with its creator's party reaction bonuses: the DMG Bonus inside its multiplier,
-// And the Flat base added before the enemy's RES, as strikeReactionDamage takes it
+// And the flat base added before the enemy's RES, as strikeReactionDamage takes it
 export const getPartyTransformativeDamage = (
   reactionType: TransformativeReactionType,
   level: number,

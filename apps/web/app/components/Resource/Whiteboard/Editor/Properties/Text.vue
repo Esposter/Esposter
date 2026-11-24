@@ -15,7 +15,7 @@ interface Props {
 }
 
 // The text controls of one element: its size, which every text takes, and for a shape, a sticky note or a text box its
-// Horizontal alignment, a shape's Or sticky note's vertical alignment, and a text box's auto width. An arrow's label
+// Horizontal alignment, a shape's or sticky note's vertical alignment, and a text box's auto width. An arrow's label
 // Takes its size alone. Each one commit
 defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();

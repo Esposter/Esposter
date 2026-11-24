@@ -6,7 +6,7 @@ import { takeOne } from "@esposter/shared";
 
 // The day's commissions dealt from the reached areas' tasks, none before commissions open at their rank. A task whose
 // Place A quest in progress holds is never dealt, and the rest are shuffled by `random` and the first of them taken,
-// Each kept at The rank it was dealt at
+// Each kept at the rank it was dealt at
 export const dealCommissions = (
   commissions: readonly Commission[],
   heldPlaces: ReadonlySet<string>,

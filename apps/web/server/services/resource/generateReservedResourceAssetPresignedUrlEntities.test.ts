@@ -89,7 +89,7 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   });
 
   // The grace window the collection honours is measured from the last write, so re-uploading held bytes is what keeps
-  // An Object a save is about to reference from being collected
+  // An object a save is about to reference from being collected
   test("a held object is touched without a new reservation", async () => {
     expect.hasAssertions();
 
@@ -143,7 +143,7 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   });
 
   // A held name is trusted on existence alone only if nothing checked what it holds: bytes other than the file's under
-  // The Same address must not skip the PUT, and must be removed so the file's own bytes can take the name
+  // The same address must not skip the PUT, and must be removed so the file's own bytes can take the name
   test("a held address whose stored bytes do not hash to it is removed and uploaded again", async () => {
     expect.hasAssertions();
 

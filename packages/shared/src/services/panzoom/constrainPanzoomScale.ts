@@ -7,9 +7,9 @@ import { PANZOOM_DEFAULT_MAX_SCALE, PANZOOM_DEFAULT_MIN_SCALE } from "#src/servi
 import { getPanzoomCoverScale } from "#src/services/panzoom/getPanzoomCoverScale";
 import { getPanzoomFitScale } from "#src/services/panzoom/getPanzoomFitScale";
 
-// Containment is measured against the unscaled size, and an element a pixel or less on a side has none, as upstream's
-// Does. A parent with no containable side has none either. Inside caps the scale at the fit but not below the minimum,
-// Outside Floors it at the cover, and automatic floors it at the fit
+// Containment is measured against the unscaled size, and an element a pixel or less on a side has none, as
+// Upstream's does. A parent with no containable side has none either. Inside caps the scale at the fit but not below
+// The minimum, outside floors it at the cover, and automatic floors it at the fit
 export const constrainPanzoomScale = (
   scale: number,
   measure: PanzoomMeasure,

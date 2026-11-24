@@ -91,7 +91,7 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
       readHit: (hitIndex, hitmark) => {
         const queuedHit = readQueuedHit(hitmark);
         // A hit whose leaves are joined by place takes the slot's attack, unless its queue call fires an iteration's
-        // Own Attack, whose element is that iteration's
+        // Own attack, whose element is that iteration's
         const queuedAttack = isLeafJoined && queuedHit?.attack.iteration === undefined ? undefined : queuedHit?.attack;
         const queuedLeaves = config.talentVariables.find(({ name }) => name === queuedAttack?.talentVariable)?.leaves;
         const talentLeaf = isLeafJoined

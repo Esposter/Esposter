@@ -22,10 +22,10 @@ import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // Measured: gcsim v2.47.2 (MIT) thoma/burst.go, thoma.go and shield.go, Fiery Collapse: for the burst's seconds, a
-// Normal Attack the character on the field starts sets one off from its body, at most once in the table's seconds. The
-// First Enemy it strikes gives the team Thoma's shield, its share of his Max HP and its flat HP added to his shield
-// Already Standing, up to the most Blazing Blessing's shield may hold, for the table's seconds
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go`
+// Normal attack the character on the field starts sets one off from its body, at most once in the table's seconds. The
+// First enemy it strikes gives the team Thoma's shield, its share of his Max HP and its flat HP added to his shield
+// Already standing, up to the most Blazing Blessing's shield may hold, for the table's seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go
 const FIERY_COLLAPSE_COOLDOWN_STATUS_ID = "thoma-fiery-collapse-cooldown";
 // Flaming Assault, as the dump's Tohma_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT) thoma/asc.go give it: a
 // Fiery Collapse deals 2.2% of Thoma's Max HP more DMG. gcsim gates it at Ascension 1, but the talent table names
@@ -71,9 +71,9 @@ const getConstellation6DamageBonus = (
 
 // Thoma's behaviour: Blazing Blessing sets its shield as it starts and infuses his own attacks with Pyro, and Crimson
 // Ooyoroi stands for its seconds, setting off a Fiery Collapse from each normal attack the character on the field
-// Starts, At most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing
-// Blessing's may Hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive
-// Is not built yet. Constellations 2, 4 and 6 are built, as the burst's seconds, its energy and the Blazing Barrier's
+// Starts, at most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing
+// Blessing's may hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive
+// Is not built yet. constellations 2, 4 and 6 are built, as the burst's seconds, its energy and the Blazing Barrier's
 // Party DMG Bonus Constellation 1 needs the Blazing Barrier's protected-ally attacks and the cooldown cuts they give,
 // Not built
 export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {

@@ -9,8 +9,8 @@ import { GameLanguages } from "genshin-text";
 import { bookBodySchema, GameDataset } from "genshin-world";
 
 // Every language's text of each book's body, read from the readable file its localization row names in that language,
-// And Published as one index a language, each body keyed by its id once `bookBodySchema` parses it. Returns the
-// Publication and a note of the count
+// And published as one index a language, each body keyed by its id once `bookBodySchema` parses it.
+// Returns the publication and a note of the count
 export const buildBookBodyPublication = (
   bodyIds: readonly number[],
 ): { note: string; publication: HostedAssetPublication } => {

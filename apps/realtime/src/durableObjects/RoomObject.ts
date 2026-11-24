@@ -99,7 +99,7 @@ const REACTION_PAGE_SORT = { keys: ["messageId", "emojiTag"], order: SortOrder.A
   "emojiTag" | "messageId"
 >;
 // A scheduled message that is cancelled, sent or dropped is a tombstone with its text cleared, so nothing it said is
-// Kept Past the send. Each such write sets it the same way
+// Kept past the send. Each such write sets it the same way
 const getScheduledTombstone = (deletedAt: Date) => ({ deletedAt, message: "", replyToId: null });
 // One Room object per room. Its SQLite holds the room's messages, their reactions and their search index.
 // It also holds the scheduled messages still to send and the members online. Its sockets are the room's viewers.
@@ -154,7 +154,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // A live send and a forward both come through here, so each owes the same post-write work: its sender's index, and
-  // The Mention counts its text owes
+  // The mention counts its text owes
   async createMessage(input: CreateRoomMessageInput, actor: RoomActor): Promise<RoomMessage> {
     const now = new Date();
     const message = this.#insertMessage(
@@ -198,7 +198,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   async createWebhookMessage(input: CreateWebhookRoomMessageInput): Promise<RoomMessage> {
     const now = new Date();
     // The message keeps the avatar its push names, or else the image its webhook identity has now, so every reader
-    // Names The sender without the app user's row
+    // Names the sender without the app user's row
     const appUserImage = input.appUserImage || (await this.#readAppUserImage(input.appUserId));
     const insertedMessage: RoomMessage | undefined = this.db
       .insert(messagesInRoom)
@@ -218,11 +218,11 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // Each member drops the room's reminders and pending scheduled messages from their index, and each sender drops the
-  // Room's Sent messages from theirs, since the rows that name them go with the room. A pending message's sender is a
-  // Member, since a Departure removes that sender's pending messages here, so the member removals reach every one of
-  // Them. The room's storage Goes only once every index has taken its removal, so a failed one leaves the room whole
-  // And the teardown is asked again. The members learn of the deletion from the membership tombstones deleteRoom sends
-  // Them, so nothing is sent from here. Each sender's index publishes its own removal through its invoke, so the
+  // Room's sent messages from theirs, since the rows that name them go with the room. A pending message's sender is a
+  // Member, since a departure removes that sender's pending messages here, so the member removals reach every one
+  // Of them. The room's storage goes only once every index has taken its removal, so a failed one leaves the room whole
+  // And the teardown is asked again. the members learn of the deletion from the membership tombstones deleteRoom sends
+  // Them, so nothing is sent from here. each sender's index publishes its own removal through its invoke, so the
   // Readers of those lists are told by it
   async deleteAll(memberIds: string[]): Promise<void> {
     const senderIds = this.db
@@ -369,7 +369,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // The live messages after the page cursor in the room's message order, at most `limit` of them. A backward cursor
-  // Reads The messages newer than its row, oldest first, which the caller turns back into the list's order
+  // Reads the messages newer than its row, oldest first, which the caller turns back into the list's order
   readMessages({
     cursor,
     isPinned,
@@ -482,9 +482,9 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // A member who is no longer in the room is no longer online in it, their sockets here are dropped, and what they
-  // Scheduled Here is removed. Their object drops what it holds for the room too, best-effort and not thrown: every
-  // Caller has deleted the Membership before it calls, so a throw would fail a leave that landed and nothing could
-  // Retry it. A reminder whose drop Failed is held back at its send, which reads the membership (`apps/jobs`
+  // Scheduled here is removed. Their object drops what it holds for the room too, best-effort and not thrown: every
+  // Caller has deleted the membership before it calls, so a throw would fail a leave that landed and nothing could
+  // Retry it. A reminder whose drop failed is held back at its send, which reads the membership (`apps/jobs`
   // `resolveNotification`)
   async removeMember(userId: string): Promise<void> {
     this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
@@ -724,7 +724,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // The rules a live send is held to, decided from D1 now on the sender's slowmode clock, which the send claims in the
-  // Same Guarded write a live send takes. A rule that rejects, and a read or claim that faults, both drop the scheduled
+  // Same guarded write a live send takes. A rule that rejects, and a read or claim that faults, both drop the scheduled
   // Message. A fault is logged, and a message is never sent on a decision that did not pass
   async #claimSendSlot(userId: string, message: string, now: Date): Promise<boolean> {
     const claim = await getResultAsync(() => claimMessageSendSlot(this.#core, userId, this.#roomId, message, now));
@@ -739,7 +739,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
 
   // The mention counts a message owes its members, written after the message is and sent to each member they reach
   // Through that member's own object, so the count shows with no new subscription. A failed count loses badges, never
-  // The Message. Only a text message counts, as only a text message names members (getMessageMentions): a poll's body
+  // The message. Only a text message counts, as only a text message names members (getMessageMentions): a poll's body
   // Is its JSON
   async #countMentions(message: RoomMessage, userId: string): Promise<void> {
     if (message.type !== MessageType.Message) return;
@@ -765,7 +765,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // The sender's index takes each message it sent. A write that fails is kept as an unindexed message, which the alarm
-  // Asks For again, so the sender's sent list is repaired rather than left without the message
+  // Asks for again, so the sender's sent list is repaired rather than left without the message
   async #indexSentMessage(sentMessage: { createdAt: Date; messageId: number; userId: string }): Promise<void> {
     if (await this.#addSentMessage(sentMessage)) return;
 
@@ -828,8 +828,8 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes a scheduled
-  // Message's Tombstone once the retention has passed, the age a client forgets its own copy at. A tombstone is hidden
-  // From every read, So its removal changes no view and wakes no read
+  // Message's tombstone once the retention has passed, the age a client forgets its own copy at. A tombstone is hidden
+  // From every read, so its removal changes no view and wakes no read
   #purgeExpiredTombstones(now: Date): void {
     const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
     this.db.delete(scheduledMessagesInRoom).where(lte(scheduledMessagesInRoom.deletedAt, cutoff)).run();
@@ -855,7 +855,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // The room's last message is the newest row's time. Rows leave only with the whole room, so the newest row is the
-  // Last Message sent, and the index on the time serves its maximum
+  // Last message sent, and the index on the time serves its maximum
   #readLastMessageAt(): Date | null {
     const [lastMessage] = this.db
       .select({ createdAt: max(messagesInRoom.createdAt) })
@@ -963,7 +963,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // The sent messages whose sender's index has not taken them are asked again once their retry is due. An index that
-  // Takes The message clears its retry, and one that refuses it again is asked again later
+  // Takes the message clears its retry, and one that refuses it again is asked again later
   async #retryUnindexedMessages(now: Date): Promise<void> {
     const dueMessages = this.db
       .select()
@@ -992,10 +992,11 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     await this.#armAlarm();
   }
 
-  // The room-activity wave runs once per window: the room's lastMessageAt is written in D1. Every member online hears
-  // Of it, each through its own user object. The wave is taken before its write awaits, so a message sent meanwhile
-  // Marks the room active again and owes its own Wave. A failed write is due again after a delay, unless that later
-  // Wave already is; a failed member is logged, never A reason to hold the others
+  // The room-activity wave runs once per window: the room's lastMessageAt is written in D1.
+  // Every member online hears of it, each through its own user object.
+  // The wave is taken before its write awaits, so a message sent meanwhile marks the room active again and owes its
+  // Own wave. A failed write is due again after a delay, unless that later wave already is; a failed member is logged,
+  // Never A reason to hold the others
   async #sendDueActivity(now: Date): Promise<void> {
     const state = this.#readRoomState();
     if (!state?.bumpDueAt || state.bumpDueAt.getTime() > now.getTime()) return;
@@ -1029,8 +1030,8 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     for (const result of results) if (result.status === "rejected") console.error(result.reason);
   }
 
-  // Each due row is tombstoned in the same transaction that writes its message, so it is sent once or dropped once. The
-  // Send is held to the rules a live send is, as its sender stands now, and it claims the sender's slowmode clock
+  // Each due row is tombstoned in the same transaction that writes its message, so it is sent once or dropped once.
+  // The send is held to the rules a live send is, as its sender stands now, and it claims the sender's slowmode clock
   // Before its message is written, as a live send does. A row whose sender may no longer send, or whose claim faults,
   // Is dropped
   async #sendDueScheduledMessages(now: Date): Promise<void> {
@@ -1141,9 +1142,9 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     );
   }
 
-  // Every change to one live message goes through here, and each moves its updatedAt, as a tombstone's bulk update
-  // Does. A reconnect finds the changes it missed by that token, so a change that leaves it where it was is one it
-  // Never sees
+  // Every change to one live message goes through here, and each moves its updatedAt, as a tombstone's bulk
+  // Update does. A reconnect finds the changes it missed by that token, so a change that leaves it where it was is one
+  // It never sees
   #updateLiveMessage(id: number, values: MessageUpdate, now: Date): RoomMessage | undefined {
     return this.db
       .update(messagesInRoom)

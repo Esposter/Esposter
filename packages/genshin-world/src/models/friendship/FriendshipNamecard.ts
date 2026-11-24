@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // A character's namecard as the world reads it: the character it belongs to, the item the namecard is, and the text id
-// Of That item's name
+// Of that item's name
 export interface FriendshipNamecard {
   characterId: number;
   itemId: number;

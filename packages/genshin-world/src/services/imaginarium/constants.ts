@@ -28,7 +28,7 @@ export const IMAGINARIUM_BATTLE_FLOWERS = 90;
 // The Alternate Cast members a Battle Event offers to join the Principal Cast, one of them chosen
 export const IMAGINARIUM_BATTLE_CHOICE_COUNT = 2;
 // The Fantasia Flowers a Companion: Select or Companion: Random event costs. The installed dump holds no Imaginarium
-// Table, So Select's 80 is not read from it, and Random's is the wiki's
+// Table, so Select's 80 is not read from it, and Random's is the wiki's
 export const IMAGINARIUM_COMPANION_FLOWER_PRICE = 80;
 // The Invite event: six characters of any element, offered for 100 Fantasia Flowers
 export const IMAGINARIUM_INVITE_COMPANION_EVENT: ImaginariumCompanionEvent = {
@@ -36,9 +36,9 @@ export const IMAGINARIUM_INVITE_COMPANION_EVENT: ImaginariumCompanionEvent = {
   pool: { offerCount: 6 },
 };
 // The chances to reroll the events a Mystery Cache's Surprise: Reroll! option gives, and the rerolls one reroll spends.
-// The Wiki gives no base count of rerolls and no price of one, so both are provisional
+// The wiki gives no base count of rerolls and no price of one, so both are provisional
 export const IMAGINARIUM_REROLL_CHANCES = 2;
 export const IMAGINARIUM_REROLL_COST = 1;
 // The rewinds one rewind spends. The wiki gives no count of the rewinds a run holds, only that they are limited, so the
-// Run States its count and one rewind costs one
+// Run states its count and one rewind costs one
 export const IMAGINARIUM_REWIND_COST = 1;

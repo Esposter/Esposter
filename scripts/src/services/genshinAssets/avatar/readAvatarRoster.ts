@@ -8,9 +8,9 @@ import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 const LOD_SUFFIX_REGEX = /_LOD\d+$/u;
 
 // The meshes a model draws: the LOD0 renderers under its root, in name order. A renderer whose own dump switches it off
-// Is Left out; a dump that says nothing of the switch leaves the renderer on, as Unity's default does. A renderer is
-// Also left Out when any material it lists has no main texture: such a material is the effect system's shell, and an
-// Effect fills it. The textured materials are keyed by file and path ID, as the renderers' materials resolve
+// Is left out; a dump that says nothing of the switch leaves the renderer on, as Unity's default does. A renderer is
+// Also left out when any material it lists has no main texture: such a material is the effect system's shell, and an
+// Effect fills it. the textured materials are keyed by file and path ID, as the renderers' materials resolve
 export const readAvatarRoster = (
   renderers: readonly RosterRenderer[],
   rootKey: string,

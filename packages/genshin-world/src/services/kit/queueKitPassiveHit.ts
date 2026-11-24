@@ -6,7 +6,7 @@ import type { KitHitbox } from "#src/models/kit/KitHitbox";
 
 // A hit a passive owns, dealt by its wielder from the body it stands on: queued to strike in the step it is raised in,
 // With no attack tag, so it counts as no normal or charged attack for energy or speed. Given an enemy, it lands on that
-// One, Or on the enemies its hitbox reaches about it, if it is given one
+// One, or on the enemies its hitbox reaches about it, if it is given one
 export const queueKitPassiveHit = (
   context: KitContext,
   combatant: Combatant,

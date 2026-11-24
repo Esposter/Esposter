@@ -5,7 +5,7 @@ import { checkIsGadgetReady } from "#src/services/gadget/checkIsGadgetReady";
 import { startGadgetCooldown } from "#src/services/gadget/startGadgetCooldown";
 
 // The cooldowns after Z uses the equipped gadget at `now`: a gadget whose group is ready is used and its group's
-// Cooldown Starts, and the cooldowns are returned as they become. One still cooling down is not used, so none is
+// Cooldown starts, and the cooldowns are returned as they become. One still cooling down is not used, so none is
 // Returned
 export const quickUseGadget = (
   cooldownGroupReadyAtMap: CooldownGroupReadyAtMap,

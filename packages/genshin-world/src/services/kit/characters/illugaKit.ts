@@ -65,7 +65,7 @@ const SOLARHUNTING_WOLF_SOURCE = "illuga-solarhunting-wolf";
 const LIGHTKEEPERS_OATH_MOONSIGN_SOURCE = "illuga-lightkeepers-oath-moonsign";
 
 // The Aedon hit Constellation 2 summons, priced from Illuga's Elemental Mastery and DEF. Its area is the burst's first
-// Hit's, And its hitmark and poise are taken as none, since the talent's text gives no area or hitmark of its own
+// Hit's, and its hitmark and poise are taken as none, since the talent's text gives no area or hitmark of its own
 const createAedonHit = (combatant: Combatant): KitHit => ({
   additiveBaseDamageBonus: (striker) =>
     elementalMasteryMultiplier(striker, AEDON_ELEMENTAL_MASTERY_SHARE) +
@@ -92,15 +92,16 @@ const giveLightkeepersOath = ({ activeCombatant, kitEffectState, party }: KitCon
 };
 
 // Illuga's behaviour: Shadowless Reflection lights the lamp and starts Haunted Night's Oriole-Song. Each Geo hit a
-// Nearby Active party member lands on an enemy spends a stack of Nightingale's Song, Illuga's own hits aside, and adds
-// The Geo DMG Bonus its stack gives, 33.6% of Illuga's Elemental Mastery, read from the burst's proud group. Her
-// Strikes, charged Attack, plunges, skill and burst's hits are her record's alone, and her frames and areas are
-// Provisional, read from Borrowed donors' gcsim hitmarks and areas. Torchforger's Covenant gives each other member
-// Lightkeeper's Oath after her skill or burst, and Constellation 6 Enhances that Oath. Constellation 2 summons Aedon's
-// Hit for every 7 stacks consumed, and Constellation 4 gives the active Party member 200 DEF while Haunted Night holds.
-// Nearby and active are read as the deployed team and the member on the field. Not built: the stacks from Geo
-// Constructs; the Lunar-Crystallize enhancement Constellation 1 needs, which the kit does not Read; Vigilant Sentinel,
-// The passive that restores 12 Elemental Energy after a Geo-related Reaction on the field
+// Nearby active party member lands on an enemy spends a stack of Nightingale's Song, Illuga's own hits aside, and adds
+// The Geo DMG bonus its stack gives, 33.6% of Illuga's Elemental Mastery, read from the burst's proud group. Her
+// Strikes, charged attack, plunges, skill and burst's hits are her record's alone, and her frames and areas are
+// Provisional, read from borrowed donors' gcsim hitmarks and areas.
+// Torchforger's Covenant gives each other member Lightkeeper's Oath after her skill or burst, and Constellation 6
+// Enhances that Oath. Constellation 2 summons Aedon's hit for every 7 stacks consumed, and Constellation 4 gives the
+// Active party member 200 DEF while Haunted Night holds. Nearby and active are read as the deployed team and the member
+// On the field. not built: the stacks from Geo Constructs; the Lunar-Crystallize enhancement Constellation 1 needs,
+// Which the kit does not read; Vigilant Sentinel, the passive that restores 12 Elemental Energy after a Geo-related
+// Reaction on the field
 export const createIllugaKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
   const nightingaleSongGeoDamageBonus = readParameter("nightingaleSongGeoDamageBonus");
   return {

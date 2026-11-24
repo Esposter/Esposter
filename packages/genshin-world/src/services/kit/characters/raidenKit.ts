@@ -38,7 +38,7 @@ const COORDINATED_ATTACK_ICD_ID = "raiden-eye-icd";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/burst.go
 const RESOLVE_RESOURCE_ID = "raiden-resolve";
 // Measured: gcsim (MIT) raiden/burst.go, Constellation 1 raising the Resolve another member's burst gives her by 80%
-// For An Electro member's burst and 20% for any other's, and Resolve's cap of 60 stacks
+// For an Electro member's burst and 20% for any other's, and Resolve's cap of 60 stacks
 const RESOLVE_MAX_STACKS = 60;
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_ELECTRO_RESOLVE_MULTIPLIER = 1.8;
@@ -49,19 +49,19 @@ const RESTORE_COUNT_ID = "raiden-restore-count";
 const RESTORE_MAX_COUNT = 5;
 
 // Measured: gcsim (MIT) raiden/asc.go, Ascension 1's 2 Resolve stacks as the party gains particles or orbs, once every
-// 3 Seconds
+// 3 seconds
 const ASCENSION_1 = 1;
 const ASCENSION_1_RESOLVE_STACKS = 2;
 const ASCENSION_1_ICD_SECONDS = 3;
 const ASCENSION_1_ICD_ID = "raiden-a1-icd";
 // Measured: gcsim (MIT) raiden/asc.go, Ascension 4's 0.6% more energy restored by Musou Isshin for each whole 1% of
 // Energy Recharge past 100%, and its 0.4% Electro DMG Bonus for each 1% of it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/asc.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_RESTORE_BONUS_PER_PERCENT = 0.006;
 const ASCENSION_4_ELECTRO_BONUS_PER_SHARE = 0.4;
 // Measured: gcsim (MIT) raiden/cons.go, Constellation 2's 60% DEF ignored on her hits while her burst's state stands,
-// Which Here is the Musou Isshin stance from the burst's cast until its seconds past the Musou no Hitotachi hit
+// Which here is the Musou Isshin stance from the burst's cast until its seconds past the Musou no Hitotachi hit
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_DEFENCE_IGNORED = 0.6;
 // Measured: gcsim (MIT) raiden/cons.go, Constellation 4's 30% ATK for 10 seconds to the team but Raiden as Musou Isshin
@@ -103,12 +103,12 @@ const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: A
 export const RAIDEN_CHARACTER_ID = 10_000_052;
 
 // The Raiden Shogun's behaviour: Eye of Stormy Judgment's hit lands from a summon, and the Eye it gives the team sets
-// Off Its coordinated attacks. Another member's burst gives her Resolve by its energy cost, and Musou Shinsetsu spends
-// Her Resolve stacks into Musou no Hitotachi and every attack of the Musou Isshin stance it takes, whose strikes
-// Restore the Team's energy. The Eye's Elemental Burst DMG Bonus raises her own burst hits, read as the burst is cast.
-// Ascension 1's Resolve from particles, Ascension 4 and Constellations 1, 2, 4 and 6 are built. The Eye's bonus to
-// Another member's Burst, the Musou Isshin plunges and the skill's particles are not, as no kit reaches Another kit's
-// Pricing, a stance's plunges or a particle a skill makes
+// Off its coordinated attacks. Another member's burst gives her Resolve by its energy cost, and Musou Shinsetsu spends
+// Her resolve stacks into Musou no Hitotachi and every attack of the Musou Isshin stance it takes, whose strikes
+// Restore the team's energy. The Eye's Elemental Burst DMG Bonus raises her own burst hits, read as the burst is cast.
+// Ascension 1's resolve from particles, Ascension 4 and Constellations 1, 2, 4 and 6 are built. The Eye's bonus to
+// Another member's burst, the Musou Isshin plunges and the skill's particles are not, as no kit reaches
+// Another kit's pricing, a stance's plunges or a particle a skill makes
 export const createRaidenKitBehaviour = ({
   kit,
   readHit,
@@ -133,7 +133,7 @@ export const createRaidenKitBehaviour = ({
   // `raiden/attack.go`'s swordAttack and `raiden/charge.go`'s swordCharge
   const musouIsshin = readStance("musouIsshin");
   // A Musou Isshin attack with each multiplier raised by the Resolve stacks the burst spent and each DMG Bonus the
-  // Eye's, If she held it as she cast
+  // Eye's, if she held it as she cast
   const raiseMusouIsshinAction = (action: KitAction, stacks: number, damageBonus: number): KitAction => ({
     ...action,
     hits: action.hits.map((hit) => ({
@@ -144,8 +144,8 @@ export const createRaidenKitBehaviour = ({
   });
   return {
     // The burst spends Resolve's stacks as it is cast, where gcsim spends them at the hit 98 frames on, Musou no
-    // Hitotachi Landing from a summon at the body, and takes the Musou Isshin stance from the cast until its seconds
-    // Past that Hit, whose skill and burst stay the kit's own
+    // Hitotachi landing from a summon at the body, and takes the Musou Isshin stance from the cast until its seconds
+    // Past that hit, whose skill and burst stay the kit's own
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;
@@ -303,7 +303,7 @@ export const createRaidenKitBehaviour = ({
       });
     },
     // The skill's hit lands from a summon at the body, and the Eye reaches every member of the deployed team from a
-    // Task That gives it as it runs
+    // Task that gives it as it runs
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, [skillHit], { attackTag: AttackTag.ElementalSkill });

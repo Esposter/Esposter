@@ -7,7 +7,7 @@ import { getBlockNode, useEditSession } from "vue-block-editor-headless";
 import { createSurveyDocument, surveyNodeChildren } from "vue-survey-engine-headless";
 
 // The creator's document, its selection and its undo history. The selection is the session's, held by the selected
-// Node's id Rather than its pointer, so an edit or an undo that moves the node keeps it selected
+// Node's id rather than its pointer, so an edit or an undo that moves the node keeps it selected
 export const useSurveyCreatorStore = defineStore("survey/creator", () => {
   const document = ref<SurveyDocument>(createSurveyDocument());
   const { commit, history, load, selectedPointer } = useEditSession<SurveyDocument, PageBuilderHistoryEntry>(

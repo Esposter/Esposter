@@ -23,12 +23,12 @@ import {
 import { noop, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
-// A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the batch
-// Names. The membership a member held is tombstoned with it, and so is every child the room's cascade would remove: its
-// Roles, Each member's role links and overrides, its invites, webhooks, the app users its webhooks post as, its emoji
-// And its Bans, so no live child outlives its room and a link, a webhook or a ban of a deleted room refuses. A client
-// Holding one Drops it on the answer. The member's own tabs are told their membership's tombstone, and the caller's row
-// Is the answer
+// A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the
+// Batch names. the membership a member held is tombstoned with it, and so is every child the room's cascade would
+// Remove: its roles, each member's role links and overrides, its invites, webhooks, the app users its webhooks post as,
+// Its emoji and its bans, so no live child outlives its room and a link, a webhook or a ban of a deleted room refuses.
+// A client holding one drops it on the answer. The member's own tabs are told their membership's tombstone, and the
+// Caller's row is the answer
 export const deleteRoom = async (
   { db, user }: Pick<AuthedContext, "db" | "user">,
   id: string,
@@ -40,7 +40,7 @@ export const deleteRoom = async (
   requireMutation(ownedRooms[0], Operation.Delete, DatabaseEntityType.Room, id);
   // The object is emptied before the row is tombstoned, and so is each member's object of what it holds for the room. A
   // Sender's or a member's index that refuses its removal fails the delete with the row still standing, so the owner's
-  // Retry Finds the room and empties it again, rather than leaving its messages in the object
+  // Retry finds the room and empties it again, rather than leaving its messages in the object
   await useRoomObject(id).deleteAll(await getRoomMemberIds(db, id));
   const [deletedRoomRows, removedMemberships] = await db.batch([
     db
@@ -56,8 +56,8 @@ export const deleteRoom = async (
       .where(and(eq(usersToRoomsInMessage.roomId, id), getLiveRowWhere(usersToRoomsInMessage)))
       .returning(),
     // A webhook's app user is not the room's cascade's to reach: the foreign key runs from the webhook to its app user,
-    // So the Cascade walks down to the webhook and never up to the app user. The live webhooks name them, so this runs
-    // First, while the Webhook is still live, in the order deleteWebhook keeps
+    // So the cascade walks down to the webhook and never up to the app user. The live webhooks name them, so this runs
+    // First, while the webhook is still live, in the order deleteWebhook keeps
     getWebhookAppUserTombstone(db, eq(webhooksInMessage.roomId, id)),
     ...getCascadeTombstones(db, roomsInMessage, eq(roomsInMessage.id, id), [usersToRoomsInMessage]),
   ] as const);

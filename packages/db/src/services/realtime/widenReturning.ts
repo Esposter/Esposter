@@ -13,9 +13,9 @@ import { getTableColumns } from "drizzle-orm";
 export const statementAnswerMap = new WeakMap<object, (result: unknown) => unknown>();
 
 // A write's RETURNING names the scope values of the rows it returns, and its topics are keyed by them, and its row
-// Versions carry The version it left each row at. So the projection is widened with those columns the caller did not
-// Ask for, here rather than In each caller, which would have to remember to ask for them. The caller is answered only
-// The columns it asked for, and a Projection that already holds every widened column is left as it is
+// Versions carry the version it left each row at. So the projection is widened with those columns the caller did not
+// Ask for, here rather than in each caller, which would have to remember to ask for them. The caller is answered only
+// The columns it asked for, and a projection that already holds every widened column is left as it is
 export const widenReturning = (
   table: SQLiteTable,
   fields: Record<string, unknown>,
@@ -32,8 +32,8 @@ export const widenReturning = (
 };
 
 // A write that asks for no RETURNING runs as one that returns its table's widened columns, so the rows it changes are
-// Named by the Values they hold after it, whatever its WHERE matched. Its caller asked for no rows, so it is answered
-// None. A statement that is Not a write, or a table with no scope column, runs as it is
+// Named by the values they hold after it, whatever its WHERE matched. Its caller asked for no rows, so it is
+// Answered none. A statement that is not a write, or a table with no scope column, runs as it is
 export const widenUnreturnedWrite = (
   statement: PromiseLike<unknown> & SQLWrapper,
 ): { answer?: (result: unknown) => unknown; statement: PromiseLike<unknown> & SQLWrapper } => {

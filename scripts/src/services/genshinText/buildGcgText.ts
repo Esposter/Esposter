@@ -7,7 +7,7 @@ import { GameLanguages } from "genshin-text";
 import { GameDataset } from "genshin-world";
 
 // Every name and description the opponent decks' published slices name by text id, each character's and each action
-// Card's, Published into the world's own chunk per language
+// Card's, published into the world's own chunk per language
 export const buildGcgText = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const slices = await Promise.all(
     Array.from(GcgDeckIdCreatedCardIdsMap.keys(), (deckId) =>

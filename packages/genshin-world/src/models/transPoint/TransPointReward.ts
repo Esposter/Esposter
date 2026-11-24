@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // What a transport point's first unlock pays, from the open world's transport point table: its Adventure EXP and
-// Primogems, Keyed by the point's id, which the statues and the waypoints name in the open world's scene
+// Primogems, keyed by the point's id, which the statues and the waypoints name in the open world's scene
 export interface TransPointReward {
   adventureExp: number;
   pointId: number;

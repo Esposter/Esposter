@@ -4,7 +4,7 @@ import type { Box3 } from "three";
 import { BufferAttribute, BufferGeometry, Sphere } from "three";
 
 // A tile's arrays wrapped for the GPU over the index every tile shares, bounded for frustum culling by the box given
-// And The sphere round it, so the frame that first culls it never computes the bounds over its vertices
+// And the sphere round it, so the frame that first culls it never computes the bounds over its vertices
 export const createTerrainTileGeometry = (
   { coarseColors, coarseNormals, coarsePositions, colors, normals, positions }: TerrainTileArrays,
   index: BufferAttribute,

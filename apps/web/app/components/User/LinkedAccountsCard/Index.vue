@@ -34,8 +34,8 @@ const { item: unlinkingAccount } = useSingletonDialog(unlinkingProvider, () =>
 // Keys on the identity the provider issued and `allowDifferentEmails` is off, so a second account of the same provider
 // Would have to carry the same verified address as the first — which no provider issues twice
 const linkedProviders = computed(() => new Set(accounts.value?.map(({ providerId }) => providerId)));
-// Read as the confirm is answered rather than as the button was pressed, so the account it unlinks is the one listed
-// Then. The account stays listed until the server has unlinked it, and a refused unlink leaves it listed
+// Read as the confirm is answered rather than as the button was pressed, so the account it unlinks is the one
+// Listed then. the account stays listed until the server has unlinked it, and a refused unlink leaves it listed
 const unlinkSelectedAccount = async () => {
   const account = unlinkingAccount.value;
   if (!account) return false;

@@ -10,7 +10,7 @@ const UNITY_SYMBOL_PREFIX = "unitySymbol";
 const STRUGGLE_SOURCE = "struggle";
 
 // Masons' Ditty (Prospector's Drill, Range Gauge) at its rank: the Struggle effect its Unity's Symbols become gives the
-// Rank's ATK And All Elemental DMG Bonus for each Symbol, for its seconds
+// Rank's ATK and All Elemental DMG Bonus for each Symbol, for its seconds
 export const createMasonsDittyPassiveModule = (params: number[]): PassiveModule => {
   const attackPercentPerSymbol = takeOne(params, 3);
   const elementalDamageBonusPerSymbol = takeOne(params, 4);

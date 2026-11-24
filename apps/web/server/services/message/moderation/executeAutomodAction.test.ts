@@ -88,7 +88,7 @@ describe(executeAutomodAction, () => {
   });
 
   // The action writes the room's moderation log, which the moderators' log reads. The write runs through the handle it
-  // Is Given, so the log it writes is named by its room, and that is the topic an open log watches
+  // Is given, so the log it writes is named by its room, and that is the topic an open log watches
   test("names the moderation log it writes by its room, through the handle it runs through", async () => {
     expect.hasAssertions();
 

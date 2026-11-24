@@ -9,8 +9,8 @@ import { takeOne } from "@esposter/shared";
 import { getElementBounds, resizePositionedElement, resizePositionedElementBounds } from "vue-block-editor-headless";
 
 // The operations that resize an element by a delta from the handle a press grabbed, down to the least size. A side the
-// Handle moves follows the Delta, and a side it does not move holds still. A handle that moves the start of the box
-// Also moves its position. Each arrow bound to a resized Shape is rerouted in the same edit
+// Handle moves follows the delta, and a side it does not move holds still. A handle that moves the start of the box
+// Also moves its position. Each arrow bound to a resized shape is rerouted in the same edit
 export const getResizeOperations = (
   document: PositionedDocument,
   elementId: string,

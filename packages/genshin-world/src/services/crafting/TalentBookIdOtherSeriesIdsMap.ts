@@ -1,6 +1,6 @@
 // The regional talent material a talent book's craft can add, by the first material the craft takes: the same tier of
-// The Other two talent book series in its region, as the wiki's Character Talent Material page groups the series.
-// Snezhnaya's Books take no craft at the bench, so none of them is listed
+// The other two talent book series in its region, as the wiki's Character Talent Material page groups the series.
+// Snezhnaya's books take no craft at the bench, so none of them is listed
 export const TalentBookIdOtherSeriesIdsMap: Record<number, number[]> = {
   104_301: [104_304, 104_307],
   104_302: [104_305, 104_308],

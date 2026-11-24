@@ -10,8 +10,8 @@ import { rollStrongboxArtifact } from "#src/services/crafting/rollStrongboxArtif
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 
 // The bag and wallet after the Mystic Offering makes a strongbox: the chosen artifacts are given up, which must be
-// Exactly The strongbox's count of different unlocked artifacts of its star rank, and the artifact it holds is taken in
-// As a drop. Undefined for any other choice, which gives up nothing
+// Exactly the strongbox's count of different unlocked artifacts of its star rank, and the artifact it holds is taken in
+// As a drop. undefined for any other choice, which gives up nothing
 export const craftStrongbox = (
   inventory: Inventory,
   wallet: Wallet,

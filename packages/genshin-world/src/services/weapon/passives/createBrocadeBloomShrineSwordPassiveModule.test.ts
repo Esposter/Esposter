@@ -22,7 +22,7 @@ describe(createBrocadeBloomShrineSwordPassiveModule, () => {
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
   // Brocade Bloom, Shrine Sword at its first rank: Normal Attack DMG 16% and Elemental Skill DMG 24%, both doubled for
-  // 15 seconds After a nearby active character deals Geo DMG, and 20% DEF as a static line
+  // 15 seconds after a nearby active character deals Geo DMG, and 20% DEF as a static line
   const passiveModule = createBrocadeBloomShrineSwordPassiveModule([0.2, 0.16, 0.24, 1, 15]);
 
   test("the wielder's Normal Attack and Elemental Skill DMG are raised by the rank's amounts", () => {

@@ -31,7 +31,7 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
     },
   ],
   // Bennett. Fantastic Voyage's healing reads its burst's Continuous Regeneration label, the share of Max HP and the
-  // Flat Amount at its positions, and its ATK share, field seconds read its ATK Bonus Ratio and Duration labels
+  // Flat amount at its positions, and its ATK share, field seconds read its ATK Bonus Ratio and Duration labels
   [
     10_000_032,
     {
@@ -63,7 +63,7 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
     },
   ],
   // Xinyan. Each of her three shields reads its level's DMG Absorption label, the Defense share at the first position
-  // And The flat amount at the second
+  // And the flat amount at the second
   [
     10_000_044,
     {
@@ -103,7 +103,7 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
   // Yoimiya. Niwabi Fire Dance's seconds read its skill's Duration label
   [10_000_049, { values: { "parameters.niwabiFireDanceSeconds": { combatTalent: SKILL, label: "Duration" } } }],
   // Shenhe's avatar id, as her kit module names it. Her Icy Quill's ATK ratio, press and hold durations and trigger
-  // Quotas Read from her skill's labels, the ratio's ATK label first and the durations and quotas by their press and
+  // Quotas read from her skill's labels, the ratio's ATK label first and the durations and quotas by their press and
   // Hold positions
   [
     10_000_063,
@@ -182,7 +182,7 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
     },
   ],
   // Flins's avatar id, as his kit module names it. Cometh the Night's initial, middle and final hits read their
-  // Multipliers From its skill labels, the middle label once for each of its four hits
+  // Multipliers from its skill labels, the middle label once for each of its four hits
   [
     10_000_120,
     {
@@ -197,7 +197,7 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
     },
   ],
   // Aino. Her Water Ball reads its multiplier from her burst's label, which gcsim's join does not reach, since her
-  // Burst's Cooldown tag is a tuple return the reader does not resolve, so the attack carries its multiplier here and
+  // Burst's cooldown tag is a tuple return the reader does not resolve, so the attack carries its multiplier here and
   // No cooldown tag
   [10_000_121, { values: { "hits.waterBall.multiplier": { combatTalent: BURST, label: "Water Ball DMG" } } }],
   // Nefer

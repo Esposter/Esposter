@@ -31,7 +31,7 @@ const getReferencingColumns = (
   });
 
 // Every foreign key of the schema, keyed by the table it references. Read off each table's declaration, so a key a
-// Table Declares is in the graph with nothing to register
+// Table declares is in the graph with nothing to register
 export const getReferencingKeysByParentName = (): Map<string, ReferencingKey[]> => {
   const tableNameReferencingKeysMap = new Map<string, ReferencingKey[]>();
   for (const table of getSchemaTables())

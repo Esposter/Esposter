@@ -15,9 +15,9 @@ import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { achievementCategorySchema, achievementSchema, GameDataset } from "genshin-world";
 
 // The achievements and their categories from the game's tables, each kept whole rather than split by trigger, and
-// Published As two records. A disused achievement is left out, and each row is checked against the world's own schema
-// Before it is Published. The count of the achievements kept is still written into the world's data, since the save's
-// Achievement slice Is bounded by a count the bundle holds
+// Published as two records. A disused achievement is left out, and each row is checked against the world's own schema
+// Before it is published. The count of the achievements kept is still written into the world's data, since the save's
+// Achievement slice is bounded by a count the bundle holds
 export const buildAchievements = (): { achievements: Achievement[]; objects: Record<string, unknown> } => {
   const rewardMap = readRewardMap();
   const achievements = readExcelTable<ExcelAchievementRow>(ACHIEVEMENT_TABLE_NAME)

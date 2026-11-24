@@ -3,7 +3,7 @@ import type { Point } from "#src/models/Point";
 import { takeOne } from "@esposter/shared";
 
 // The path data of a freehand stroke as a smooth curve through its points: each point but the first and the last
-// Controls a quadratic curve that ends Halfway to the next point, so a turn bends instead of drawing a corner, and the
+// Controls a quadratic curve that ends halfway to the next point, so a turn bends instead of drawing a corner, and the
 // Last point is a line from the final curve
 export const toSmoothedPathData = (points: Point[]): string => {
   const firstPoint = takeOne(points);

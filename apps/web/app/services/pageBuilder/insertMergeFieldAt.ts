@@ -10,7 +10,7 @@ import { JsonPatchOperationType } from "@esposter/shared";
 import { getBlockNode, getBlockPropValue } from "vue-block-editor-headless";
 
 // Appends a merge field to the text under a point of the frame, as one edit, and reports whether the edit applied. A
-// Point Over no text, or a text whose content does not parse, applies nothing, as a drop anywhere else does
+// Point over no text, or a text whose content does not parse, applies nothing, as a drop anywhere else does
 export const insertMergeFieldAt: PageBuilderHelper<
   boolean,
   [

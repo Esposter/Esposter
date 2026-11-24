@@ -5,8 +5,8 @@ import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { takeOne } from "@esposter/shared";
 
 // A damage its side's field bears on before it lands: every additive bonus and conversion first, then every doubling,
-// So a Doubling takes in all the bonuses. Every damage its side deals goes through it, a skill's hit, a Swirl's spread,
-// A Piercing and an End Phase DMG alike
+// So a doubling takes in all the bonuses. Every damage its side deals goes through it, a skill's hit, a Swirl's spread,
+// A piercing and an End Phase DMG alike
 export const modifyGcgDamageDealt = (context: GcgEffectContext, damage: GcgDamage): GcgDamage => {
   const { duel, sideIndex } = context;
   const side = takeOne(duel.sides, sideIndex);

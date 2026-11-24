@@ -1,6 +1,6 @@
 // The fields read off one row of the game's tower schedule: a period's id, the reward group its floors draw from, its
-// Sets of Floors each with the moment it begins, the moment it closes, and the blessing it gives by its name, its
-// Description and its Icon. A period has one set, the first, and the rest are empty
+// Sets of floors each with the moment it begins, the moment it closes, and the blessing it gives by its name, its
+// Description and its icon. A period has one set, the first, and the rest are empty
 export interface ExcelTowerScheduleRow {
   buffnameTextMapHash: number;
   closeTime: string;

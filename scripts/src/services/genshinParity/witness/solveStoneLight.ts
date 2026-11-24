@@ -32,21 +32,21 @@ const BEND_STENCIL = [
 // Its normal and the light fading with its height, all darkening with its height at the rate given
 // (`computeStoneDarkening`), which the solve holds rather than solves, with its glow, darkened by its occlusion, the
 // Part the haze lets through, plus the haze's colour blended toward its sunward one by its scatter, by its opacity,
-// Which is linear in Both. Every unknown is a light none of which is negative, solved by non-negative least squares
+// Which is linear in both. Every unknown is a light none of which is negative, solved by non-negative least squares
 // (`solveNonNegativeSystem`): the ramp rises from none at its dark end by steps none of which falls, the sky is a sum
 // Of lights from directions all round (`computeSkyLobeHarmonics`), the light fading with height adds, and the haze's
 // Two colours are colours. Solved free, one light could cancel another, and a light could fall below none under a sky
 // Redder than the frame, so none of them may be negative. Each part's pixels are binned apart from the others', each
-// Bin Weighed by its pixels, so one part filling the frame's foot cannot outweigh the far towers. The haze over the
-// Stone is Its own, drawn apart from the cloud sea's (`createHeightFogNode`'s stone mask), because a light that cannot
-// Fall below None cannot darken a stone a shared haze holds too bright. Bins average the pixels whose texels do not
-// Line up with the Reference's, so their shading is read rather than their texels. A bin's colour is its pixels' mean
-// As the screen shows Them, taken back through the tone curve once (`groupStoneBins`) rather than pixel by pixel, since
-// The brightest pixels Would then set the mean, and not weighed by the curve's slope, which rises far more steeply at
-// Black than in the middle. It is then taken back through the white balance the frame passes through before the curve,
-// So the light solved is the One under it: a balance can take the stone's red under the curve's black, which no light
-// That cannot fall below none Reaches on its own. Returns the light, the pixels its bins kept, and the residual over
-// The bins beside their spread about Their mean, the share the light leaves unexplained
+// Bin weighed by its pixels, so one part filling the frame's foot cannot outweigh the far towers. The haze over the
+// Stone is its own, drawn apart from the cloud sea's (`createHeightFogNode`'s stone mask), because a light that cannot
+// Fall below none cannot darken a stone a shared haze holds too bright. Bins average the pixels whose texels do not
+// Line up with the reference's, so their shading is read rather than their texels. A bin's colour is its pixels' mean
+// As the screen shows them, taken back through the tone curve once (`groupStoneBins`) rather than pixel by pixel, since
+// The brightest pixels would then set the mean, and not weighed by the curve's slope, which rises far more steeply at
+// Black than in the middle. it is then taken back through the white balance the frame passes through before the curve,
+// So the light solved is the one under it: a balance can take the stone's red under the curve's black, which no light
+// That cannot fall below none reaches on its own. Returns the light, the pixels its bins kept, and the residual over
+// The bins beside their spread about their mean, the share the light leaves unexplained
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
   whiteBalance: Matrix3 = new Matrix3(),

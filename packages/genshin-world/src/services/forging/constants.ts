@@ -15,7 +15,7 @@ export const MAGICAL_CRYSTAL_CHUNK_ITEM_ID = 101_004;
 export const ADVENTURE_EXP_ITEM_ID = 102;
 // The forging talent each character's passive gives, by the character's id, from the game's proud skill and skill depot
 // Tables. Each talent's ratio is the game's own: the extra result's chance of 2000 in 10000, the ore share of 0.15 and
-// The Seconds of 0.2 saved
+// The seconds of 0.2 saved
 export const AvatarIdForgeTalentMap: Record<number, ForgeTalent> = {
   10_000_016: { forgeType: 5, kind: ForgeTalentKind.RefundOre, ratio: 0.15 },
   10_000_022: { forgeType: FORGE_ENHANCEMENT_TYPE, kind: ForgeTalentKind.ReduceTime, ratio: 0.2 },
@@ -24,7 +24,7 @@ export const AvatarIdForgeTalentMap: Record<number, ForgeTalent> = {
   10_000_037: { forgeType: 4, kind: ForgeTalentKind.RefundOre, ratio: 0.15 },
 };
 // The scene's building point of Mondstadt's blacksmith, by its point id: the `Blacksmith` the scene marks its forge
-// With, Beside the restaurant's point, which the scene group record holds among its buildings
+// With, beside the restaurant's point, which the scene group record holds among its buildings
 export const MONDSTADT_BLACKSMITH_POINT_ID = "65";
 // The blacksmith's interactable id, the row the forge screen opens from beside its place
 export const FORGE_INTERACTABLE_ID = "blacksmith";

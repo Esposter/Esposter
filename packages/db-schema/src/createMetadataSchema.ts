@@ -12,7 +12,7 @@ export const createVersionSchema = () => ({
 });
 
 // The version of a row the server does not hold yet: a default answered for an absent row, or a placeholder a client
-// Creates Before the server answers. Stored versions are never negative, so this is below every one, and the row's
+// Creates before the server answers. Stored versions are never negative, so this is below every one, and the row's
 // First arrival applies
 export const NO_ROW_VERSION = -1;
 

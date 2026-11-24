@@ -11,9 +11,9 @@ import { readRegionData } from "#src/services/genshinAssets/shared/readRegionDat
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 
 // The regions the fit placed, each with its data file's path under the world package's data and the file as it holds
-// It, And the official map's ground points in those regions carried into the game's axes, which the places filed into a
-// Region Are classified against. The origin is the one the places are carried round, and the points and transform are
-// The fit's Own, which the outcrops and waypoints are placed from
+// It, and the official map's ground points in those regions carried into the game's axes, which the places filed into a
+// Region are classified against. The origin is the one the places are carried round, and the points and transform are
+// The fit's own, which the outcrops and waypoints are placed from
 export const readFittedRegions = async (): Promise<{
   origin: [number, number, number];
   points: InteractiveMapPoint[];

@@ -31,7 +31,7 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
   const overlayStore = useOverlayStore();
   const { writeOptimistic } = overlayStore;
   // Which write to send is resolved when it is sent rather than when it was issued: a save that queued behind the
-  // Create Must update the row that create produced, not write a second response
+  // Create must update the row that create produced, not write a second response
   const sendSurveyResponse = ({
     answers,
     isSubmitting,
@@ -68,8 +68,8 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
       });
   };
   // Server-generated response row (modelVersion) — awaited, since whether the answers were taken is the server's
-  // Decision, And the next page or the thank-you page waits on it. Resolves to whether the answers are persisted, so a
-  // Caller can never Show a thank-you page for a response the server never took. Only the save that completes the
+  // Decision, and the next page or the thank-you page waits on it. Resolves to whether the answers are persisted, so a
+  // Caller can never show a thank-you page for a response the server never took. Only the save that completes the
   // Runner carries isSubmitting
   const saveSurveyResponse = ({ answers, isSubmitting, pageIndex }: SaveSurveyResponseInput) => {
     const { promise: isPersisted, resolve } = Promise.withResolvers<boolean>();

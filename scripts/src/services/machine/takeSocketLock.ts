@@ -10,7 +10,7 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 // Takes the lock at `path`, waiting while a live holder has it, and resolves to the release that gives it back. The
 // Wait ends on A holder's close, so no timer is set. A dead holder's socket is removed only while the takeover socket
-// Is held, and a live Holder found bound under it is waited on rather than removed
+// Is held, and a live holder found bound under it is waited on rather than removed
 export const takeSocketLock = async (
   path: string,
   takeoverPath: string,

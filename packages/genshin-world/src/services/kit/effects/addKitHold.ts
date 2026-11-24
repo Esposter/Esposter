@@ -7,9 +7,9 @@ import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 // Adds a hold of a passive's id to a character, in the first place of its id that is free. Each hold runs its own
-// Seconds, so One added later outlives an earlier one that runs out first, and the holds of an id stop at its maximum,
-// Adding none past it, Unless it replaces the one that runs out first, as gcsim's refreshing stack pool does. A hold
-// Given Infinity seconds stands Until it is released
+// Seconds, so one added later outlives an earlier one that runs out first, and the holds of an id stop at its maximum,
+// Adding none past it, unless it replaces the one that runs out first, as gcsim's refreshing stack pool does. A hold
+// Given Infinity seconds stands until it is released
 export const addKitHold = (
   kitEffectState: KitEffectState,
   characterId: number,

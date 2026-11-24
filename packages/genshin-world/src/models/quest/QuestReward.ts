@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // One item finishing a quest series gives: its id in the game's tables, how many, and its rarity in stars, which
-// Colours Its tile
+// Colours its tile
 export interface QuestReward {
   count: number;
   itemId: number;

@@ -14,7 +14,7 @@ import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 
 // Each kit field's colour sampled from the diffuse textures of the families that feed it, the region's palette as one
-// Record Under its own key. Each colour is printed with its families, texel count and spread, the evidence it is kept
+// Record under its own key. Each colour is printed with its families, texel count and spread, the evidence it is kept
 // On
 export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDataBuild> => {
   const textureDirectory = join(EXTRACTED_DIRECTORY, region, "assets", "Texture2D");
@@ -29,8 +29,8 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
       notes.push(`${region} ${field}: no diffuse texture of its families in the extraction, left provisional`);
       continue;
     }
-    // At a time
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one field's decoded texels are held in memory
+    /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one field's decoded texels are held in memory
+       at a time */
     const texels = await readFamilyTexels(texturePaths);
     // Where every texel is transparent the field has no colour to read, so it is left provisional as one with no
     // Texture is

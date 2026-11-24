@@ -48,7 +48,7 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
     // The publish replaces the whole `kits` index, so it builds every published kit and the named ones, a named kit yet
-    // To Be published among them, and only the named ones may change
+    // To be published among them, and only the named ones may change
     const inputs = await readKitInputs({
       characterIds,
       gcsimDirectory: args.gcsim,

@@ -17,8 +17,9 @@ const Slot = { Count: 0, Sum: 1, FirstBand: 2 } as const;
 type Slot = (typeof Slot)[keyof typeof Slot];
 
 // A surface's statistics over the pixels its mask holds, computed on the GPU: the variance of its luminance, then the
-// Mean square of each octave band's detail, finest first, each band the difference between a level and the next Coarser
-// One. The same definition as the CPU reference (`computeStatisticalStructure`), with the mask as a 0 or 1 a pixel
+// Mean square of each octave band's detail, finest first, each band the difference between a level and the next
+// Coarser one. The same definition as the CPU reference (`computeStatisticalStructure`), with the mask as a 0 or 1 a
+// Pixel
 export const computeSurfaceStatistics = async ({
   height,
   mask,

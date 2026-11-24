@@ -3,8 +3,8 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { blocksInSocial, getLiveRowWhere } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
-// A block runs from its blocker to the user it blocks, and a removal keeps it as a tombstone, so only a live one
-// Matches. Either side may be left out to match every live block a user is on that side of
+// A block runs from its blocker to the user it blocks, and a removal keeps it as a tombstone, so only a live
+// One matches. either side may be left out to match every live block a user is on that side of
 export const getLiveBlockWhere = ({
   blockedId,
   blockerId,

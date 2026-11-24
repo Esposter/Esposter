@@ -5,8 +5,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 
 // Builds each directory's distribution with the task the build runs, through `vp run`, so the cache and the tasks it
-// Depends On come with it. The builds run in the order given, since each reads the dist its dependencies wrote. A
-// Failed build's Output is the one the command in the message reproduces
+// Depends on come with it. The builds run in the order given, since each reads the dist its dependencies wrote. A
+// Failed build's output is the one the command in the message reproduces
 export const buildDistributions = (worktreePath: string, directories: string[]): void => {
   for (const directory of directories) {
     const { status } = timePhase(`build ${directory}`, () =>

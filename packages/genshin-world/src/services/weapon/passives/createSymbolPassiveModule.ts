@@ -14,9 +14,9 @@ const SYMBOL_MAXIMUM = 3;
 
 // Symbols a weapon's passive gathers from heals and consumes into its Roused effect: a heal the wielder receives or
 // Performs gains A Symbol for the rank's seconds, up to three, whether or not the wielder is on the field. The
-// Wielder's skill or burst then consumes Every Symbol it holds, and `onRoused` gives the effect they become, once the
-// Rank's cooldown has run out, so a skill or burst Inside the cooldown consumes none. A skill or burst holding no
-// Symbol gives no effect. Each Symbol is its own status, so the Symbols' seconds run on their own
+// Wielder's skill or burst then consumes every Symbol it holds, and `onRoused` gives the effect they become, once the
+// Rank's cooldown has run out, so a skill or burst inside the cooldown consumes none. A skill or burst holding no
+// Symbol gives no effect. Each Symbol is its own status, so the symbols' seconds run on their own
 export const createSymbolPassiveModule = (
   params: number[],
   {

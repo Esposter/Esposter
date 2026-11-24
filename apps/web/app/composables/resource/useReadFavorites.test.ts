@@ -17,7 +17,7 @@ describe(useReadFavorites, () => {
   setupSession(appUserId);
 
   // The favorites list pages like any other: the first page, then the page after the last one shown. Each read's
-  // Cursor, As the server parsed it, is kept in the order the reads came
+  // Cursor, as the server parsed it, is kept in the order the reads came
   test("pages the favorites list, each page after the last one shown", async () => {
     expect.hasAssertions();
 

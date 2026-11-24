@@ -26,7 +26,7 @@ const selectedIndex = computed(() =>
   windowInteractables.value.findIndex(({ id }) => id === interactionPrompts.selectedId),
 );
 // The gold arc from the marker down to the selected row's bottom, in the marker's own units, drawn only while that row
-// Is Below the window's middle: the pickup's first row shows none and its third row shows the arc, the two measured
+// Is below the window's middle: the pickup's first row shows none and its third row shows the arc, the two measured
 // Selections. The rows are 72 units apart, and the middle row's centre is 24 units below the marker's top
 const arcPath = computed(() => {
   if (selectedIndex.value <= (windowInteractables.value.length - 1) / 2) return undefined;

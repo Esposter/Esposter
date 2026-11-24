@@ -9,7 +9,7 @@ import { toRoundedPathData } from "#src/services/export/toRoundedPathData";
 import { getShapeOutline } from "#src/services/getShapeOutline";
 
 // A shape's outline as the export and the editor both draw it: sketched at its level, then, when its corners are round,
-// Curved at each corner. The Ellipse has no corners, so it is never curved, and a round corner's radius is a share of
+// Curved at each corner. The ellipse has no corners, so it is never curved, and a round corner's radius is a share of
 // The shorter side of the shape's box, up to a limit
 export const toShapeOutlinePathData = (shape: ShapeElement): string => {
   const points = getShapeOutline(shape);

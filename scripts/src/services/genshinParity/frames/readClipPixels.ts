@@ -8,7 +8,7 @@ import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // Each frame of a clip over a rectangle, as its RGB bytes and the second it is shown at, one at a time as FFmpeg
-// Decodes Them, so a clip is never held in memory whole
+// Decodes them, so a clip is never held in memory whole
 export const readClipPixels = async function* (
   clipPath: string,
   rect: ImageRegion,

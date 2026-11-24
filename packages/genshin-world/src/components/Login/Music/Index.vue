@@ -29,10 +29,11 @@ interface Props {
 const { gameDataBaseUrl, isDoorOpened, music, sounds } = defineProps<Props>();
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
 // Screen shows, and the door's sound once the door opens through the effects bus's compressor and the master's limiter
-// As the game's mix passes it, both through one context. The browser's autoplay policy may Start the context suspended,
-// And then the music waits for the first pointer or key press anywhere on the window, and Starts there from its
-// Beginning. The music starts once its recordings are decoded, or without them where they cannot Be fetched, unless the
-// Screen has gone by then. Each channel passes the gain its stored volume sets, as the Settings screen keeps it
+// As the game's mix passes it, both through one context. The browser's autoplay policy may
+// Start the context suspended, and then the music waits for the first pointer or key press anywhere on the window, and
+// Starts there from its beginning. The music starts once its recordings are decoded, or without them where they cannot
+// Be fetched, unless the screen has gone by then. Each channel passes the gain its stored volume sets, as the Settings
+// Screen keeps it
 let close: (() => Promise<void>) | undefined;
 let playDoorSound: (() => void) | undefined;
 onMounted(() => {

@@ -29,10 +29,10 @@ const FIVE_FORTUNES_FOREVER_ASCENSION = 1;
 const FIVE_FORTUNES_FOREVER_HEALTH_SHARE = 0.5;
 const FIVE_FORTUNES_FOREVER_DENDRO_DAMAGE_BONUS = 0.25;
 // Gossamer Sprite: Splice, from Constellation 2: each hit an enemy takes from Baizhu's active member, or from Baizhu
-// Himself While he is on the field, sends a Splice of 250% of his ATK as Dendro DMG at the enemy it strikes, dealt as
-// Elemental Skill DMG, once every five seconds, as gcsim v2.47.2 (MIT) baizhu/cons.go's c2 gives them, and as the
+// Himself while he is on the field, sends a Splice of 250% of his ATK as Dendro DMG at the enemy it strikes, dealt as
+// Elemental skill DMG, once every five seconds, as gcsim v2.47.2 (MIT) baizhu/cons.go's c2 gives them, and as the
 // Dump's Constellation 2 row gives the multiplier and the cooldown. Its heal is not built
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/baizhu/cons.go`
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/baizhu/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_COOLDOWN_SECONDS = 5;
 const CONSTELLATION_2_COOLDOWN_STATUS_ID = "baizhu-constellation-2-cooldown";
@@ -43,15 +43,15 @@ const CONSTELLATION_2_RADIUS = 0.6;
 export const BAIZHU_CHARACTER_ID = 10_000_082;
 
 // Constellation 1 gives Universal Diagnosis a charge, and Constellation 4 raises the team's Elemental Mastery by 80 for
-// 15 Seconds after Holistic Revivification, as the wiki's constellation table gives them
+// 15 seconds after Holistic Revivification, as the wiki's constellation table gives them
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_ELEMENTAL_MASTERY = 80;
 const CONSTELLATION_4_SECONDS = 15;
 const CONSTELLATION_4_SOURCE = "baizhu-ancient-art-of-perception";
 // Constellation 6, Elimination of Malicious Qi: each Spiritvein deals 8% of Baizhu's Max HP more, and a Splice that
-// Strikes an Enemy makes a Seamless Shield, as the dump's Constellation 6 paramList (0.08) and the game's text give.
-// Its 100% chance is Always taken. The Sprite's own hits making one are not built, as its bounces are not
+// Strikes an enemy makes a Seamless Shield, as the dump's Constellation 6 paramList (0.08) and the game's text give.
+// Its 100% chance is always taken. The Sprite's own hits making one are not built, as its bounces are not
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_SPIRITVEIN_MAX_HEALTH_SHARE = 0.08;
 
@@ -62,12 +62,12 @@ const CONSTELLATION_6_SPIRITVEIN_MAX_HEALTH_SHARE = 0.08;
 // From Ascension 1 his Dendro hits deal more DMG while the character on the field is at half their HP or more. Not
 // Built yet: Constellation 2's heal, 20% of the Gossamer Sprite's normal healing, which the kit does not price; the
 // Seamless Shield a Gossamer Sprite's own hit makes under Constellation 6, which waits on the Sprite's bounces;
-// Gossamer Sprite's bounces and Healing; the Seamless Shield's heals and its removal's heal; Ascension 1's Healing
-// Bonus, which no heal of his reads yet, and Which a passive bonus cannot price from the field's HP, since a passive is
-// Given only its wearer's HP share; and Ascension 4, Which rides the Seamless Shield's heals
-// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/baizhu` The Splice is queued at the enemy it
-// Strikes, so it lands in the step it is raised: gcsim gives it the skill's first Hitmark as a placeholder, a TODO in
-// Its source, which a passive's hit does not price
+// Gossamer Sprite's bounces and healing; the Seamless Shield's heals and its removal's heal; Ascension 1's Healing
+// Bonus, which no heal of his reads yet, and which a passive bonus cannot price from the field's HP, since a passive is
+// Given only its wearer's HP share; and Ascension 4, which rides the Seamless Shield's heals
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/baizhu
+// The Splice is queued at the enemy it strikes, so it lands in the step it is raised: gcsim gives it the skill's first
+// Hitmark as a placeholder, a TODO in its source, which a passive's hit does not price
 const gossamerSpliceHit: KitHit = {
   attackTag: AttackTag.ElementalSkill,
   element: Element.Dendro,

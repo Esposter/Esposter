@@ -4,7 +4,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 // The sibling worktrees under the main checkout's worktrees folder whose task cache holds a database, which is every
-// One a Run has recorded into
+// One a run has recorded into
 export const listSiblingCachePaths = (mainCheckoutRoot: string, worktreePath: string): string[] => {
   const worktreesDirectory = join(mainCheckoutRoot, AGENT_WORKTREES_DIRECTORY);
   if (!existsSync(worktreesDirectory)) return [];

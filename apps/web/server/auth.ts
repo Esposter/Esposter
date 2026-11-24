@@ -54,8 +54,8 @@ export const auth = betterAuth({
   },
   database: drizzleAdapter(requestDatabase, drizzleAdapterConfiguration),
   // Every removal of a session row ends its sockets here, whichever path removed it: a sign-out, a revoke, a bulk
-  // Revoke, And an expired row better-auth deletes when it next reads that row. The row is already gone when this runs,
-  // And a Failed close is logged rather than thrown, since the removal it follows has already landed
+  // Revoke, and an expired row better-auth deletes when it next reads that row. The row is already gone when this runs,
+  // And a failed close is logged rather than thrown, since the removal it follows has already landed
   databaseHooks: {
     session: {
       delete: {
@@ -71,7 +71,7 @@ export const auth = betterAuth({
   // Back encrypted; production itself skips it
   plugins: [apiKeyPlugin, oAuthProxy({ productionURL: PRODUCTION_BASE_URL })],
   // Off: better-auth's limiter keeps its counts in each isolate's memory. The auth route budgets these endpoints
-  // Through a binding Instead (`server/api/auth/[...].ts`)
+  // Through a binding instead (`server/api/auth/[...].ts`)
   rateLimit: { enabled: false },
   // Keyed by the shared provider list the login screen reads too, so a provider added to that list has to be configured
   // Here

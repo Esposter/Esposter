@@ -8,8 +8,8 @@ import { getNormalFromDepth, sample, uniform } from "three/tsl";
 // As a nearer surface standing in front with a gap behind it
 const OCCLUSION_THICKNESS_SHARE = 4;
 // The scene's screen-space occlusion over its depth, reaching the radius in metres round each pixel, its normals
-// Rebuilt From that depth as the node rebuilds them when it is handed none. The scene's pipeline and the witness's
-// Occlusion Target both draw it here, so the light solved through the target is the light the scene draws
+// Rebuilt from that depth as the node rebuilds them when it is handed none. The scene's pipeline and the witness's
+// Occlusion target both draw it here, so the light solved through the target is the light the scene draws
 export const createOcclusionNode = (depthNode: TextureNode, camera: Camera, radius: number): GTAONode => {
   const cameraProjectionMatrixInverse = uniform(camera.projectionMatrixInverse);
   const normalNode = sample((uv) => getNormalFromDepth(uv, depthNode, cameraProjectionMatrixInverse));

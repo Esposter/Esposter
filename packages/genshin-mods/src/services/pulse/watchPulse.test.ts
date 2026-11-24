@@ -6,8 +6,8 @@ import { MACHINE_WATCHER_RETRY_MILLISECONDS } from "../constants";
 import { watchPulse } from "./watchPulse";
 
 vi.mock(import("claude-code"), () => ({
-  // The engine's atom is a generic overload that
-  // oxlint-disable-next-line typescript/no-explicit-any -- no typed mock satisfies, and this stub's atom is never read
+  /* oxlint-disable-next-line typescript/no-explicit-any -- The engine's atom is a generic overload that no typed mock
+     satisfies, and this stub's atom is never read */
   atom: vi.fn<(...args: any[]) => any>(),
   read: vi.fn<() => Promise<{ pulse: boolean }>>(() => Promise.resolve({ pulse: true })),
 }));

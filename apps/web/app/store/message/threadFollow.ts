@@ -57,7 +57,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
       );
   });
   // The drawer's list: the live follows of the room on screen, newest root first, each drawn by its root. A follow
-  // Whose Root is not held yet is not listed, and a failed follow leaves no row, so it leaves the list with no rollback
+  // Whose root is not held yet is not listed, and a failed follow leaves no row, so it leaves the list with no rollback
   const followedThreads = computed(() => {
     const roomId = roomStore.currentRoomId;
     const roots = followedRoots.value;
@@ -69,9 +69,9 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
         return root ? [root] : [];
       });
   });
-  // Cached per room rather than per session — the key is the roomId, and one response holds the room's follows and
-  // Roots. Every follow button in the room joins that one read rather than each issuing its own, so a caller handed
-  // Nothing Renders an unfollowed star for a thread the user follows. Untagged: nothing a resource write does changes
+  // Cached per room rather than per session — the key is the roomId, and one response holds the room's follows
+  // And roots. every follow button in the room joins that one read rather than each issuing its own, so a caller handed
+  // Nothing renders an unfollowed star for a thread the user follows. Untagged: nothing a resource write does changes
   // Who follows
   const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(
     async (roomId) => {

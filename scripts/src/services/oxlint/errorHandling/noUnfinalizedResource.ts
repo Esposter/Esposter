@@ -49,7 +49,7 @@ const getAwaitedDeclarator = (
 };
 
 // A binding gathered by `Promise.all` is open the moment its sibling rejects, so a rejection of any one of them leaves
-// It Open too: the finalizer is never reached
+// It open too: the finalizer is never reached
 const checkIsGathered = (declarator: ESTree.VariableDeclarator): boolean => {
   if (declarator.init?.type !== "AwaitExpression") return false;
   const { argument } = declarator.init;
@@ -64,7 +64,7 @@ const checkIsGathered = (declarator: ESTree.VariableDeclarator): boolean => {
 };
 
 // The awaited bindings a finalizer releases: the function it is handed whole, each function it calls, and each object
-// It Calls a release method on
+// It calls a release method on
 const getReleasedDeclarators = (finalizer: ESTree.Node, sourceCode: SourceCode): ESTree.VariableDeclarator[] => {
   const released = collectNodes(finalizer).flatMap((node): (ESTree.Node | undefined)[] => {
     if (node.type !== "CallExpression") return [];

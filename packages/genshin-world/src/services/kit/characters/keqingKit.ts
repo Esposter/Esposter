@@ -23,13 +23,14 @@ import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Thundering Penance, as the dump's Keqing_PermanentSkill_1 row (promote 1, param 5.0) and gcsim v2.47.2 (MIT)
-// Keqing/asc.go give it: from Ascension 1, the Lightning Stiletto's recast infuses her attacks with Electro for 5
-// Seconds. Gcsim holds it 20 frames longer than the table's seconds, which stand
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/asc.go`
+// Keqing/asc.go give it: from Ascension 1, the Lightning Stiletto's recast infuses her attacks with Electro for
+// 5 seconds. gcsim holds it 20 frames longer than the table's seconds, which stand
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/asc.go
 const THUNDERING_PENANCE_ASCENSION = 1;
 const THUNDERING_PENANCE_SECONDS = 5;
 // Measured: gcsim v2.47.2 (MIT) keqing/asc.go, A4: Starward Sword gives Keqing 15% CRIT Rate and 15% Energy Recharge
-// For 8 seconds https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/asc.go
+// For 8 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/asc.go
 const STARWARD_SWORD_ASCENSION = 4;
 const STARWARD_SWORD_CRITICAL_RATE = 0.15;
 const STARWARD_SWORD_ENERGY_RECHARGE = 0.15;
@@ -53,8 +54,9 @@ const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_ELECTRO_DAMAGE_BONUS = 0.06;
 const CONSTELLATION_6_SECONDS = 8;
 // Constellation 2: a normal or charged attack's hit on an enemy under Electro gives a 50% chance of an Electro
-// Particle, at Most once every 5 seconds, which lands 100 frames later at the default ParticleDelay, as gcsim v2.47.2
-// (MIT) keqing/cons.go Gives it https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/cons.go
+// Particle, at most once every 5 seconds, which lands 100 frames later at the default ParticleDelay, as gcsim v2.47.2
+// (MIT) keqing/cons.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_CHANCE = 0.5;
 const CONSTELLATION_2_COOLDOWN_ID = "keqing-constellation-2-cooldown";
@@ -63,7 +65,7 @@ const CONSTELLATION_2_PARTICLE_DELAY_ID = "keqing-constellation-2-particle-delay
 const CONSTELLATION_2_PARTICLE_DELAY_SECONDS = toKitSeconds(100);
 
 // The reactions Constellation 4 counts, as gcsim subscribes to them: the Electro ones, and Hyperbloom, which gcsim
-// Counts Whatever its element. Swirl and Crystallize count only when they are Electro
+// Counts whatever its element. Swirl and Crystallize count only when they are Electro
 const CONSTELLATION_4_REACTIONS: ReadonlySet<ReactionType> = new Set([
   ReactionType.Aggravate,
   ReactionType.ElectroCharged,
@@ -117,7 +119,7 @@ const addConstellation1Hits = (
 };
 
 // Constellation 2's particle from a normal or charged attack's hit, read once the hit has landed as gcsim's attack
-// Callback Reads it: the enemy must be under Electro, the cooldown must have run out, and then the roll must pass
+// Callback reads it: the enemy must be under Electro, the cooldown must have run out, and then the roll must pass
 const addConstellation2Particle = (
   { kitEffectState, random }: KitContext,
   { combatant: { characterId, constellationCount } }: KitStrike,
@@ -146,7 +148,7 @@ export const KEQING_CHARACTER_ID = 10_000_042;
 // Keqing's behaviour: the Lightning Stiletto's recast, a second press of Stellar Restoration within its window, infuses
 // Her attacks with Electro for the infusion's seconds as it starts, and adds Constellation 1's two Electro hits. From
 // Ascension 4 Starward Sword gives her CRIT Rate and Energy Recharge. Constellations 1, 2, 4 and 6 are built, and her
-// Other Passives are not, as no kit event reaches a value the fetched sources give
+// Other passives are not, as no kit event reaches a value the fetched sources give
 export const createKeqingKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour => {
   const [recastHit] = kit.elementalSkillChain?.followUps[0]?.hits ?? [];
   return {

@@ -18,7 +18,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   // A message's reactions, filed under the room they belong to and then under the message. A reaction with no reactor
-  // Is Held too, since its removal's version is what an older copy of it loses to
+  // Is held too, since its removal's version is what an older copy of it loses to
   const emojiMap: Ref<Map<string, Map<number, RoomReaction[]>>> = ref(new Map());
   const getHeldEmojis = (roomId: string, messageId: number) => emojiMap.value.get(roomId)?.get(messageId) ?? [];
   const setHeldEmojis = (roomId: string, messageId: number, emojis: RoomReaction[]) => {
@@ -75,7 +75,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     else await createEmoji({ emojiTag, messageId, roomId });
   };
   // A deleted message's reactions go with it, and the room sends no removal for them, so each one is emptied at the
-  // Version It holds: a read answered before the delete is at that version or older, and the gate refuses it
+  // Version it holds: a read answered before the delete is at that version or older, and the gate refuses it
   MessageHookMap[Operation.Delete].register(({ id, roomId }) => {
     const emojis = getHeldEmojis(roomId, id);
     if (emojis.length > 0)

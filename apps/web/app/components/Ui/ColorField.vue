@@ -41,7 +41,7 @@ const pickerValue = computed({
   },
 });
 // The check mark is drawn over a swatch's fill, so it takes whichever of black and white contrasts with that fill.
-// Before Mount the browser has read no fill, so it is taken as the picker's default
+// Before mount the browser has read no fill, so it is taken as the picker's default
 const getCheckColor = (fill: string) => getContrastingColor(readHexColor(fill) ?? DEFAULT_PICKER_COLOR);
 </script>
 

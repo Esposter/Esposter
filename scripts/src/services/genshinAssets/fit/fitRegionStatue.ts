@@ -26,14 +26,14 @@ import { Vector3 } from "three";
 
 // The Statue of The Seven of a component's exports as the statue kit's stacks in its frame, its root at the origin and
 // Unturned, so the Landmark's Place and turn set it down. Every statue mesh is taken into that frame by its placement
-// And Split into the pieces its triangles join into, and each piece is fitted as one upright stack or as blades along
-// Their Own lengths, whichever lies nearer its surface (`fitMeshPieces`); each stack is named for the export mesh it
-// Came From, so the surface pass draws each part of the statue in its own detail. Each stack's vertices carry the
-// Colour its Piece's export texture paints, tinted by the export material's colour as the game's G-buffer holds it,
-// Where the vertex Stands: the mean of the piece's fitted points nearest it (`createFaceColourReader`), so the stacks'
-// Colour follows The export's surface over the piece rather than one colour a mesh, whose mean is read over faces no
-// View shows. Returns the record `<component>/statue` with its report. A component whose layout places no Goddess stone
-// Mesh has no Statue, so it returns its note and no record
+// And split into the pieces its triangles join into, and each piece is fitted as one upright stack or as blades along
+// Their own lengths, whichever lies nearer its surface (`fitMeshPieces`); each stack is named for the export mesh it
+// Came from, so the surface pass draws each part of the statue in its own detail. Each stack's vertices carry the
+// Colour its piece's export texture paints, tinted by the export material's colour as the game's G-buffer holds it,
+// Where the vertex stands: the mean of the piece's fitted points nearest it (`createFaceColourReader`), so the stacks'
+// Colour follows the export's surface over the piece rather than one colour a mesh, whose mean is read over faces no
+// View shows. returns the record `<component>/statue` with its report. A component whose layout places no Goddess stone
+// Mesh has no statue, so it returns its note and no record
 export const fitRegionStatue = async (component: DerivedAssetComponent): Promise<GameDataBuild> => {
   const { assets } = getComponentDirectory(component);
   const meshDirectory = join(assets, AssetType.Mesh);

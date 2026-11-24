@@ -6,7 +6,7 @@ import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/merg
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 
 // Each reference's measure taken on its own witness page, closed once its measure settles, and the notes and readings
-// Of Every measure gathered in order. The caller fetches the references first
+// Of every measure gathered in order. The caller fetches the references first
 export const measureEachReference = async (
   component: DerivedAssetComponent,
   referenceIds: readonly string[],

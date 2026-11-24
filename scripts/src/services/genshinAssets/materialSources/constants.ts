@@ -5,7 +5,7 @@ export const ENV_ANIMAL_GATHER_TABLE_NAME = "EnvAnimalGatherExcelConfigData";
 export const CHEST_MATERIAL_TYPE = "MATERIAL_CHEST";
 // The official map's labels, under Animals, of the critters picked up whole as the item their gather row gives: the
 // Crystalflies and each other critter group that has a gather row. Their points are material sources and not the
-// Fleeing Animals the wildlife dataset holds. Butterflies with no gather row stay out, and so does every label none
+// Fleeing animals the wildlife dataset holds. Butterflies with no gather row stay out, and so does every label none
 // Joins
 export const MATERIAL_SOURCE_LABEL_IDS: readonly number[] = [
   // Crystalflies

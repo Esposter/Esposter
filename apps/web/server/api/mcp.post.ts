@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // A key matching no row has no budget of its own, and checking one costs a lookup, so every request spends its
-  // Address First: the address is the one key a caller cannot choose
+  // Address first: the address is the one key a caller cannot choose
   if (!(await consumeRequestAddressRateLimit(event))) {
     event.res.status = 429;
     return { message: "Rate limit exceeded." };

@@ -30,7 +30,7 @@ import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResid
 import { regionGroundSchema } from "genshin-world";
 
 // The distance between a piece's samples, and the distance from its centre a sample weighs half of one at the centre,
-// In Metres
+// In metres
 const GROUND_STEP = 6;
 const GROUND_FALLOFF = 200;
 // The hills' widths, widest first, down to the knolls round the oak and the statue
@@ -44,17 +44,17 @@ const GROUND_ERROR_BANDS = [GROUND_BAR_RADIUS, 150, 300, 700];
 const GROUND_FADE_CELL_SIZE = 64;
 
 // A piece of a region's ground as our Gaussian hills over its terrain tiles' heightfields, in the world's axes round
-// The Oak's foot, which every region shares: Three's, x as the game's and z its mirror, every height over the foot's.
-// Fitted Over the samples of its square inside `checkIsInside`, so no piece runs Into another's outline. The piece's
-// Own ground is its gate's and its bar's: the gate is the RMS of its detail finer Than the fit's step over the samples
-// The bar is read on, the roughness no hill of the fit's widths follows, and the Bar is the RMS of its hills and
-// Features, without the residual, over the same samples. A capital's city is no piece's Own ground: inside it the fit
-// Takes the land the city stands on, its tiles smoothed at the narrowest hills' width, and Its buildings and plazas own
-// The tiers and walls over it. Returns the piece's hills, the plateaus, cliffs and ridges The hills leave, the
-// Residual's noise faded out where they hold against the gate and the heights they stand between, As the record of the
-// Piece under its key, with a report holding the gate, the bar against it and the composed ground's Error with and
-// Without the residual, and a piece whose bar misses its gate, or reads on too few samples, is refused: it Returns no
-// Record, and its report names it
+// The oak's foot, which every region shares: Three's, x as the game's and z its mirror, every height over the foot's.
+// Fitted over the samples of its square inside `checkIsInside`, so no piece runs
+// Into another's outline. The piece's own ground is its gate's and its bar's: the gate is the RMS of its detail finer
+// Than the fit's step over the samples the bar is read on, the roughness no hill of the fit's widths follows, and the
+// Bar is the RMS of its hills and features, without the residual, over the same samples. A capital's city is no piece's
+// Own ground: inside it the fit takes the land the city stands on, its tiles smoothed at the narrowest hills' width,
+// And its buildings and plazas own the tiers and walls over it. Returns the piece's hills, the plateaus, cliffs and
+// Ridges the hills leave, the residual's noise faded out where they hold against the gate and the heights they stand
+// Between, as the record of the piece under its key, with a report holding the gate, the bar against it and the
+// Composed ground's error with and without the residual, and a piece whose bar misses its gate, or reads on too few
+// Samples, is refused: it returns no record, and its report names it
 export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): Promise<GroundPieceFit> => {
   const { getGameHeight, origin } = source;
   const [originX, originY, originZ] = origin;
@@ -80,7 +80,7 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
   );
   const cityDistances = mapTerrainResidualGrid(tileGrid, getCityDistance).values;
   // The piece's own ground, NaN inside a city, and the land a city stands on: its tiles smoothed at the narrowest
-  // Hills' Width, which holds none of its tiers and walls
+  // Hills' width, which holds none of its tiers and walls
   const naturalGrid = {
     ...tileGrid,
     values: tileGrid.values.map((height, index) => (cityDistances[index] === 0 ? Number.NaN : height)),
@@ -167,7 +167,7 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
     }).join(", ");
   const ground: RegionGround = { ...hills, features, ...computeGroundBounds(heightGrid.values), residual };
   // The reader parses the ground against its schema, which refuses a value JSON cannot hold, such as a NaN written out
-  // As Null, so a ground the reader would refuse throws here, before anything is published
+  // As null, so a ground the reader would refuse throws here, before anything is published
   regionGroundSchema.parse(ground);
   const getShareReport = (checkIsCounted: (weight: number) => boolean): string =>
     `${roundFitted((100 * fade.weights.filter((weight) => checkIsCounted(weight)).length) / fade.weights.length)}%`;

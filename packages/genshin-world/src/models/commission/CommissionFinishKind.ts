@@ -1,5 +1,5 @@
 // What finishes a commission and counts toward it: enemies defeated, gadgets used, a challenge cleared, or nothing of
-// Its Own, as a quest task is finished by its quest
+// Its own, as a quest task is finished by its quest
 export const CommissionFinishKind = {
   Challenge: "Challenge",
   Gadget: "Gadget",

@@ -4,8 +4,8 @@ import { questRewardSchema } from "#src/models/quest/QuestReward";
 import { z } from "zod";
 
 // A series of quests the quest screen lists under one row: its title, number and region by text id, the journal
-// Finishing It unlocks, its quests by id in the order they are done, and the items finishing it gives. A series with no
-// Number has An empty number id
+// Finishing it unlocks, its quests by id in the order they are done, and the items finishing it gives. A series with no
+// Number has an empty number id
 export interface QuestChapter {
   id: string;
   journalTextId: string;

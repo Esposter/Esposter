@@ -5,7 +5,7 @@ import type { BossMove } from "#src/models/bosses/BossMove";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 
 // Each boss kind's moves, loaded by the camp that spawns it: a boss's module is a chunk of its own, so the world's
-// First Screen loads none it does not spawn. A kind with no entry is a common enemy that makes its basic attack
+// First screen loads none it does not spawn. A kind with no entry is a common enemy that makes its basic attack
 export const EnemyKindMovesLoaderMap: Partial<Record<EnemyKindId, () => Promise<readonly BossMove[]>>> = {
   [EnemyKindId.AeonblightDrake]: async () =>
     (await import("#src/services/bosses/aeonblightDrake")).AEONBLIGHT_DRAKE_MOVES,

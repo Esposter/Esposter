@@ -34,7 +34,7 @@ export const DATA_FETCH_TIMEOUT_MS = 10_000;
 // A failed read the world repeats on its own, since nothing the player does repeats it, is read again this long after
 export const DATA_FETCH_RETRY_MS = 5000;
 // The game clock's speed in game minutes a real second, from standing still to the fastest it runs: the look's clock
-// And the Console's timescale both hold to this range
+// And the console's timescale both hold to this range
 export const GAME_MINUTES_PER_SECOND_RANGE = { max: 60, min: 0 };
 // How far the tuning panel moves a grade's tint each way, and a tint's channels by the tuple key it writes through
 export const TUNING_TINT_RANGE = 0.1;
@@ -44,10 +44,10 @@ export const TUNING_TINT_CHANNELS = [
   { key: "2", name: "blue" },
 ] as const;
 // The character's body and the free camera move in fixed steps of a sixtieth of a second, so a motion is the same at
-// Any Frame rate
+// Any frame rate
 export const FIXED_STEP_SECONDS = 1 / 60;
 // The seed of the world's one seeded random source, which every roll the combat and the kit make draws on, so a
-// Session's Rolls repeat
+// Session's rolls repeat
 export const WORLD_RANDOM_SEED = 1;
 // The frame priority what moves the camera runs at, ahead of the floating origin's shift at TresJS's default of none,
 // Whatever order it mounts in, so the shift reads where the camera now stands
@@ -56,14 +56,14 @@ export const CAMERA_FRAME_PRIORITY = -1;
 // And the camera and the floating origin have moved, so the decision reads where each now stands
 export const SHADOW_FRAME_PRIORITY = 1;
 // The nearest cascades, the only ones the character's body casts into: the cascades past them are split from ground
-// That a Body's shadow, a few metres long at this sun, never reaches, so a walk leaves them drawn
+// That a body's shadow, a few metres long at this sun, never reaches, so a walk leaves them drawn
 export const BODY_SHADOW_CASCADES = 2;
 // The numbers an enemy's pose is kept as, its position's x and z and its heading, for the sun's shadows to tell an
 // Enemy has moved since they were drawn
 export const ENEMY_POSE_LENGTH = 3;
 // How far an enemy must walk, in metres, or turn, in radians, from where its shadow was last drawn before the shadow is
-// Drawn Again: a quarter of a metre is about as far as a shadow's edge can stand out from the body that casts it, and
-// An enemy Stepping less than that is a moving edge the eye does not follow
+// Drawn again: a quarter of a metre is about as far as a shadow's edge can stand out from the body that casts it, and
+// An enemy stepping less than that is a moving edge the eye does not follow
 export const CASTER_REDRAW_DISTANCE = 0.25;
 export const CASTER_REDRAW_ANGLE = 0.1;
 // The game's effect meshes and stage planes, which the undrawn maps of every city's region share under any region's

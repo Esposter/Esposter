@@ -13,7 +13,7 @@ const getPointAlong = (start: Point, end: Point, distance: number): Point => {
 };
 
 // The path data of a closed outline with each corner curved by a quadratic curve whose control is the corner. A
-// Corner's radius is the one given, cut to Half of either side it joins, so two curves never overlap on a short side
+// Corner's radius is the one given, cut to half of either side it joins, so two curves never overlap on a short side
 export const toRoundedPathData = (points: Point[], radius: number): string => {
   const curves = points.map((corner, index) => {
     const previous = takeOne(points, (index + points.length - 1) % points.length);

@@ -14,7 +14,7 @@ import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The room's object is programmable: each RPC the router reaches is a typed fake a test sets, so the router's checks
-// Are Made through them rather than through a Durable Object that does not run here
+// Are made through them rather than through a Durable Object that does not run here
 const { roomObject, useRoomObjectMock } = vi.hoisted(() => {
   const roomFake = {
     createMessage: vi.fn<RoomObjectRpc["createMessage"]>(),
@@ -27,7 +27,7 @@ const { roomObject, useRoomObjectMock } = vi.hoisted(() => {
 });
 
 // The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the
-// Stub It stands in for
+// Stub it stands in for
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: (roomId: string) => useRoomObjectMock(roomId) as unknown as ReturnType<typeof useRoomObject>,
 }));
@@ -125,7 +125,7 @@ describe("scheduledMessageRouter", () => {
   });
 
   // The claim is the tombstone the room leaves, and the send answers with it, so the client confirms the entry it drew
-  // At the Version the claim named, and the message it sent arrives on the room's own event
+  // At the version the claim named, and the message it sent arrives on the room's own event
   test("sends a scheduled message now, and answers with the tombstone its claim left", async () => {
     expect.hasAssertions();
 

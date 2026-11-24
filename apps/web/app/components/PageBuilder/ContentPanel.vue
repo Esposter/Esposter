@@ -44,7 +44,7 @@ const mediaCategory = computed(() => {
   return undefined;
 });
 // The address a file sets is written to the node it was picked for, which the selection may have left by the time an
-// Upload Lands. An edit records its history against that node's content, as a form edit does
+// Upload lands. An edit records its history against that node's content, as a form edit does
 const setSource = (nodeId: string, src: string) => {
   const document = getHeldDocument(resourceId)?.document;
   const pointer = document && getNodePointer(kind, document, nodeId);

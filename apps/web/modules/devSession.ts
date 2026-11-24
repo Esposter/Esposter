@@ -2,8 +2,9 @@ import { DEV_SESSION_ROUTE } from "#server/services/devSession/constants";
 import { join } from "node:path";
 import { addServerHandler, defineNuxtModule } from "nuxt/kit";
 
-// The session route a driven browser posts to. It is registered only under `nuxt dev`, so a production build bundles No
-// Handler and holds no route; under `nuxt dev` the handler's runtime gate still refuses every request it does not open
+// The session route a driven browser posts to. It is registered only under `nuxt dev`, so a production build bundles
+// No handler and holds no route; under `nuxt dev` the handler's runtime gate still refuses every request it does not
+// Open
 export default defineNuxtModule({
   meta: { name: "dev-session" },
   setup: (_options, nuxt) => {

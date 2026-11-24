@@ -52,7 +52,7 @@ export class AnchoredCascadeShadowNode extends CSMShadowNode {
       const radius = reach / (1 - ANCHOR_STEP_TEXELS / shadow.mapSize.width);
       const step = (ANCHOR_STEP_TEXELS * 2 * radius) / shadow.mapSize.width;
       // The origin snaps to a step of the map's texels, and the depth is pushed past the sphere by the light margin, so
-      // A Move within a step leaves the map's contents, and so the map, as they were
+      // A move within a step leaves the map's contents, and so the map, as they were
       this.#center.set(
         Math.round(this.#anchorLight.x / step) * step,
         Math.round(this.#anchorLight.y / step) * step,

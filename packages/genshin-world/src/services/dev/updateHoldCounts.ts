@@ -1,6 +1,6 @@
 // Counts the holds on each code up as a hold presses it and down as a hold lets it go, and answers the codes whose
-// Count Crosses zero: a code is pressed when its first hold starts and let go when its last one ends, so a hold that
-// Overlaps Another never lets go of a code the other still holds
+// Count crosses zero: a code is pressed when its first hold starts and let go when its last one ends, so a hold that
+// Overlaps another never lets go of a code the other still holds
 export const updateHoldCounts = (
   codeHoldCountMap: Map<string, number>,
   { codes, isPressed }: { codes: readonly string[]; isPressed: boolean },

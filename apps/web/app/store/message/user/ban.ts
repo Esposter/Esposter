@@ -19,7 +19,7 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const { arrive, view, writeOptimistic } = overlayStore;
   const bans = view(banTable);
   // Keyed by room, like the member and invite lists: the Bans panel reads one room's bans, and an unban that is
-  // Answered Or refused lands on the room it lifted the ban from, whichever room has been loaded since
+  // Answered or refused lands on the room it lifted the ban from, whichever room has been loaded since
   const { getSliceOperationData, items: listedBanKeys } = useCursorPaginationDataMap<BanKey>(
     () => roomStore.scopedRoomId,
   );
@@ -44,8 +44,8 @@ export const useBanStore = defineStore("message/user/ban", () => {
     writeOptimistic(
       async () => {
         const { rowVersions } = await collectRowVersions(() => $trpc.message.moderation.deleteBan.mutate(input));
-        // The header names the ban row it removed at the version it left it, so the entry is confirmed by its own
-        // Write. The List's own read brings the tombstone to the rows it holds
+        // The header names the ban row it removed at the version it left it, so the entry is confirmed by its
+        // Own write. The list's own read brings the tombstone to the rows it holds
         return { arrivals: [], confirmed: createHeaderConfirmations([banTable], rowVersions) };
       },
       { entry: getDeleteBanEntry(input.roomId, input.userId, new Date()), onError: createErrorAlert },

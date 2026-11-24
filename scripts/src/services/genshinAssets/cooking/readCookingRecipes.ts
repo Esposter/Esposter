@@ -14,7 +14,7 @@ import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnloc
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The dishes from the game's cook recipe table, each with its specialties and the instruction items that teach it,
-// Sorted By id
+// Sorted by id
 export const readCookingRecipes = (): CookingRecipe[] => {
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const materialMap = new Map(materialRows.map((row) => [row.id, row]));

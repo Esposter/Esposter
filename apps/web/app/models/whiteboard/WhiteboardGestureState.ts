@@ -4,7 +4,7 @@ import type { WhiteboardGesture } from "#src/models/whiteboard/WhiteboardGesture
 import type { PositionedDocument, ShapeKind } from "vue-block-editor-headless";
 
 // Everything a whiteboard's pointer gestures read and write: the committed document, the document as a gesture would
-// Leave it, The selection, the tool, the viewport, and the gesture in progress. The gesture is absent when no press is
+// Leave it, the selection, the tool, the viewport, and the gesture in progress. The gesture is absent when no press is
 // Held
 export interface WhiteboardGestureState {
   // Makes the id of a stroke at its press, so the reducer stays pure and a test can fix the id

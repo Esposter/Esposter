@@ -6,7 +6,7 @@ import { mergeProps } from "vue";
 
 interface Props {
   // Why the button is unavailable now. It is drawn disabled but stays focusable and hoverable, so its tooltip can say
-  // The Reason after its label; a click is still delivered, so the action it runs refuses it
+  // The reason after its label; a click is still delivered, so the action it runs refuses it
   disabledReason?: string | undefined;
   isPending?: boolean | undefined;
   // Its accessible name and its tooltip at once, so an icon button is never left unnamed

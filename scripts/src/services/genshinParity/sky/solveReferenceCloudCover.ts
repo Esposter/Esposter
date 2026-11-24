@@ -37,10 +37,10 @@ const HEIGHT_ITERATION_COUNT = 60;
 // The share of each band's clouds the scene should draw at each reference's hour, by the sky's cover band by band of
 // Its height over the horizon: our sky drawn at each guess and its clouds read where it draws them against the same sky
 // With none (`readCloudSky`), the reference's at its own split between cloud and clear sky, the shares solved by the
-// Simplex in their logits so each Stays between none and all. A cloud standing elsewhere than the reference's costs
-// Nothing here, where a score Comparing pixels charges it twice, so the cover is matched in kind rather than in place.
-// The heights each band's Clouds stand between are one scene's for every hour, so with `isHeightSolved` they are solved
-// On every reference at Once, each hour's shares held, and the shares solved again under them, by turns
+// Simplex in their logits so each stays between none and all. A cloud standing elsewhere than the reference's costs
+// Nothing here, where a score comparing pixels charges it twice, so the cover is matched in kind rather than in place.
+// The heights each band's clouds stand between are one scene's for every hour, so with `isHeightSolved` they are solved
+// On every reference at once, each hour's shares held, and the shares solved again under them, by turns
 export const solveReferenceCloudCover = async (
   referenceIds: readonly string[],
   witness: DerivedAssetComponent,

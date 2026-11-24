@@ -97,7 +97,7 @@ export const useWorldFishing = ({
     ),
   )();
   // The Serenitea Pot is held in the bag, and the quest that unlocks fishing is finished once it is carried. A quest
-  // Not Carried leaves the gate to the Pot alone
+  // Not carried leaves the gate to the Pot alone
   const isFishingOpen = computed(() => {
     const quest = quests.value.find(({ id }) => id === SERENITEA_POT_QUEST_ID);
     return checkIsFishingOpen({
@@ -110,7 +110,7 @@ export const useWorldFishing = ({
   const getStandingStocks = (region: string, now: Temporal.Instant) =>
     computeStandingFishingStocks(pools.value, region, computeGameHour(now), caughtAtMap.value, now);
   // A point draws from every pool of its region, so its points are in reach only while their region has a stock
-  // Standing at The hour, the ripple the wiki's Fishing page puts on the spot as the fish are caught
+  // Standing at the hour, the ripple the wiki's Fishing page puts on the spot as the fish are caught
   const fishingPointPlaces = computed(() => {
     const now = worldNow.value;
     return computeFishingPointPlaces(
@@ -159,7 +159,7 @@ export const useWorldFishing = ({
   };
   // The cast steps while the fishing screen is open: a press at aim casts, and a press while the cast is out strikes it
   // And a hold reels it. A caught fish goes into the bag and is held against its stock, and a cast that is scared off,
-  // Or Lost, returns to aiming
+  // Or lost, returns to aiming
   const stepFishing = ({
     isReeling,
     isStruck,

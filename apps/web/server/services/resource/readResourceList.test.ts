@@ -17,7 +17,7 @@ describe(readResourceList, () => {
   let mockDatabase: MockDatabase;
 
   // Reads a page of the owner's list the way the procedure does: the input parsed for the filter, and its sort and
-  // Cursor Taken from it
+  // Cursor taken from it
   const readPage = (filter: ResourceFilterInput, cursor: string, listLimit: number) => {
     const input = readResourceListInputSchema.parse({ ...filter, cursor, limit: listLimit });
     return readResourceList(mockDatabase.db, userId, input, input.sort, input.cursor, listLimit);

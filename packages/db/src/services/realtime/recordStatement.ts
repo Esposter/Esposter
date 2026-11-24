@@ -16,9 +16,9 @@ import {
 } from "#src/services/realtime/widenReturning";
 import { checkIsRecord, getResultAsync } from "@esposter/shared";
 
-// A write that asks for no RETURNING is widened to name its rows, and it runs through `run`, the method its caller
-// Awaited. Whatever holds that method holds the write too. D1's `run` answers the rows a RETURNING statement names as
-// `results`
+// A write that asks for no RETURNING is widened to name its rows, and it runs through `run`, the method its
+// Caller awaited. whatever holds that method holds the write too. D1's `run` answers the rows a RETURNING statement
+// Names as `results`
 const runWidenedWrite = async (statement: PromiseLike<unknown> & SQLWrapper): Promise<unknown> => {
   const run: unknown = await Reflect.apply(Reflect.get(statement, "run", statement), statement, []);
   return checkIsRecord(run) ? run.results : undefined;
@@ -44,9 +44,9 @@ const runStatement = async (
 const SYNC_EXECUTE_METHODS = new Set(["all", "get", "run"]);
 
 // A query that records itself when it is awaited. `then` is where a query runs from, so the record is made there, and
-// The Rows it resolves to are handed to the record before the awaiting caller sees them. A write that needs reads
-// Before it runs Runs them in the same batch, ahead of it, so they see the rows as the write does. The query's other
-// Methods run on the Query they came from, and a query one of them returns is recorded in turn, so a chain is recorded
+// The rows it resolves to are handed to the record before the awaiting caller sees them. A write that needs reads
+// Before it runs runs them in the same batch, ahead of it, so they see the rows as the write does. The query's other
+// Methods run on the query they came from, and a query one of them returns is recorded in turn, so a chain is recorded
 // Once, at its end. `catch` and `finally` run with the recorded query as `this`, so the `then` they call is the
 // Recorded one
 export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(statement: T, recorder: Recorder): T => {
@@ -87,7 +87,7 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
           return returned;
         };
       // A synchronous execution, as a Durable Object's SQLite runs its statements: the statement runs when it is
-      // Called, so it Is recorded there, with the rows it returned. A write answers its run result, which names no row
+      // Called, so it is recorded there, with the rows it returned. A write answers its run result, which names no row
       if (typeof property === "string" && SYNC_EXECUTE_METHODS.has(property))
         return (...args: unknown[]) => {
           // A write `run()` executes asks for no rows, so it runs as the rows it changes and answers none

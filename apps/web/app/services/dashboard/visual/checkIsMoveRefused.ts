@@ -5,9 +5,9 @@ import { checkIsMoveTooDeep } from "#src/services/dashboard/visual/checkIsMoveTo
 import { findVisual } from "#src/services/dashboard/visual/findVisual";
 
 // Whether a visual, with the visuals it holds, cannot move into a group, or onto the dashboard when there is no group:
-// Into Itself or a group it holds, into a visual that is not a group, or past the depth cap. The store refuses such a
-// Move, the Menu offers no such group and a grid refuses the drop before it lands, so all three read this one rule. A
-// Visual the tree Does not hold is not refused, since there is nothing to move
+// Into itself or a group it holds, into a visual that is not a group, or past the depth cap. The store refuses such a
+// Move, the menu offers no such group and a grid refuses the drop before it lands, so all three read this one rule. A
+// Visual the tree does not hold is not refused, since there is nothing to move
 export const checkIsMoveRefused = (visuals: Visual[], id: Visual["id"], targetGroupId: undefined | Visual["id"]) => {
   const visual = findVisual(visuals, { id });
   if (!visual) return false;

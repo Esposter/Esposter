@@ -5,6 +5,6 @@ export const TOWER_LEVEL_TABLE_NAME = "TowerLevelExcelConfigData";
 export const TOWER_REWARD_TABLE_NAME = "TowerRewardExcelConfigData";
 export const TOWER_SCHEDULE_TABLE_NAME = "TowerScheduleExcelConfigData";
 // The condition a chamber's time star reads, its second argument the seconds, and the one its monolith's health star
-// Reads, Its third argument the percent
+// Reads, its third argument the percent
 export const TOWER_COND_LEFT_TIME = "TOWER_COND_CHALLENGE_LEFT_TIME_MORE_THAN";
 export const TOWER_COND_MONOLITH_HEALTH = "TOWER_COND_LEFT_HP_GREATER_THAN";

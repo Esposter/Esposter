@@ -8,7 +8,7 @@ import { takeBandItems } from "#src/services/commission/takeBandItems";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 
 // The state after Katheryne gives the day's bonus: the day marked as its bonus claimed, and the bonus drawn from the
-// Score Preview of the band the rank held now falls in. Undefined where the day's four are not all claimed, or the
+// Score preview of the band the rank held now falls in. Undefined where the day's four are not all claimed, or the
 // Bonus is claimed
 export const takeKatheryneBonus = (
   day: CommissionDay,

@@ -8,7 +8,7 @@ import { putHostedAsset } from "#src/services/hostedAssets/putHostedAsset";
 import { readHostedAssetBytes } from "#src/services/hostedAssets/readHostedAssetBytes";
 
 // Copies one object or index from the bucket that holds it into the one that lacks it. The source is read and checked
-// Against Its name and its lock length, stored in the destination the way the publish stores it, and read back from the
+// Against its name and its lock length, stored in the destination the way the publish stores it, and read back from the
 // Destination
 export const copyHostedAsset = async (
   product: HostedAssetProduct,

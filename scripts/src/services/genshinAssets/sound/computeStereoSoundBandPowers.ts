@@ -7,7 +7,7 @@ import { getSoundEffectBandBins, SOUND_EFFECT_FRAME_LENGTH } from "genshin-engin
 // A Hann window's power over its samples, three eighths, and a real signal's spectrum mirrored
 const POWER_SCALE = 2 / (SOUND_EFFECT_FRAME_LENGTH * SOUND_EFFECT_FRAME_LENGTH * (3 / 8));
 // Two channels' powers in each band of `SOUND_EFFECT_BAND_EDGES` every `hopLength` samples, a Hann window's band of
-// Bins Over the window's own power so a power is its noise's variance, split as the engine plays them
+// Bins over the window's own power so a power is its noise's variance, split as the engine plays them
 // (`computeSoundEffectSamples`): the channels' cross power is what they share, no less than none and no more than
 // Either channel holds, and each channel's own is the rest of its power. So each channel's power and how alike the two
 // Are both survive, which one channel's average of the two keeps neither of

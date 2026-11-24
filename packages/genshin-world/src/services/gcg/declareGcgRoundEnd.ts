@@ -11,7 +11,7 @@ import { takeOne } from "@esposter/shared";
 
 // A combat action: the acting side declares its round over, after what its cards deal on the declaration. The side that
 // Declares first goes first next round, and once both have declared the end phase closes the round. Until then the
-// Other side Keeps taking its turns, each beginning with what its cards deal before the choice
+// Other side keeps taking its turns, each beginning with what its cards deal before the choice
 export const declareGcgRoundEnd = (duel: GcgDuel, sideIndex: number, rule: GcgRule): GcgActionResult => {
   const refusal = checkGcgActingSide(duel, sideIndex);
   if (refusal !== undefined) return refusal;

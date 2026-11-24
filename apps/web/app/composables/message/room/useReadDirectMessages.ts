@@ -9,8 +9,8 @@ export const useReadDirectMessages = () => {
   const directMessageStore = useDirectMessageStore();
   const { arriveDirectMessageParticipants, arriveDirectMessages, readItems, readMoreItems } = directMessageStore;
   const readMyUsersToRooms = useReadMyUsersToRooms();
-  // A page's rows and their participants arrive as the overlay's rows, and the page keeps only the ids its cursor pages
-  // By. The viewer's own membership of each row is read too, since a list shows a conversation only while that
+  // A page's rows and their participants arrive as the overlay's rows, and the page keeps only the ids its cursor
+  // Pages by. the viewer's own membership of each row is read too, since a list shows a conversation only while that
   // Membership is held
   const readDirectMessagePage = async (
     readPage: () => Promise<{ participants: DirectMessageParticipants[] } & Page<RoomInMessage>>,

@@ -93,8 +93,8 @@ export const useEnemySimulation = ({
         checkIsEnemyKindId(enemy.enemyKindId) ? enemyKindMovesMap.value[enemy.enemyKindId] : undefined,
       );
       // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step
-      // Sees Broken that it did not see broken before is a break. It is read after the step, where a shield stands
-      // Again, so a Break after that stand is seen as a new one
+      // Sees broken that it did not see broken before is a break. It is read after the step, where a shield stands
+      // Again, so a break after that stand is seen as a new one
       if (!checkIsEnemyShieldBroken(enemy)) brokenShieldEnemies.delete(enemy);
       else if (!brokenShieldEnemies.has(enemy)) {
         brokenShieldEnemies.add(enemy);

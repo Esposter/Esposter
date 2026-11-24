@@ -5,7 +5,7 @@ export const HOME_MINIMUM_RANK = 1;
 // The Adventure Rank the Serenitea Pot opens the realm at, and below which it does not
 export const HOME_REALM_UNLOCK_RANK = 28;
 // Provisional: a Realm Currency or Realm Bounty rate counts per real hour, which a recording of a realm's store across
-// One Hour settles, on the roadmap's References sought list
+// One hour settles, on the roadmap's References sought list
 export const HOME_RATE_PERIOD_SECONDS = 3600;
 // The bound's counts: eight realms, each with four exterior areas and seven interior ones, and the furnishings an area
 // Holds at most as the wiki's Load page gives them, 449 an exterior area and 149 a room. A save's placements are
@@ -22,12 +22,12 @@ export const MAX_HOME_PLACEMENT_COUNT =
   (HOME_EXTERIOR_AREA_COUNT * HOME_EXTERIOR_FURNISHING_LIMIT +
     HOME_INTERIOR_AREA_COUNT * HOME_INTERIOR_FURNISHING_LIMIT);
 // The most of each list a realm's progress holds in a stored save: the app's own storage ceilings, which the save
-// Schema Bounds a realm's lists by, so a crafted save cannot grow the blob without limit. Each is set above the count
-// The dump Holds, so every save the game allows is stored, and none is a copy of a game count: the companions a realm
-// Deploys (8 Of the dump's `HomeworldLevelExcelConfigData` rows at the top Trust Rank), the queues a Trust Rank opens
-// (10 levels), The furnishing blueprints (1,405 rows of `FurnitureMakeExcelConfigData`, one per configID) and the
-// Companions' one-time Rewards (233 distinct `rewardID`s of the `HOME_AVATAR_REWARD_EVENT` rows of
-// `HomeWorldEventExcelConfigData`). Each Ceiling is the next power of two above the count
+// Schema bounds a realm's lists by, so a crafted save cannot grow the blob without limit. Each is set above the count
+// The dump holds, so every save the game allows is stored, and none is a copy of a game count: the companions a realm
+// Deploys (8 of the dump's `HomeworldLevelExcelConfigData` rows at the top Trust Rank), the queues a Trust Rank opens
+// (10 levels), the furnishing blueprints (1,405 rows of `FurnitureMakeExcelConfigData`, one per configID) and the
+// Companions' one-time rewards (233 distinct `rewardID`s of the `HOME_AVATAR_REWARD_EVENT` rows of
+// `HomeWorldEventExcelConfigData`). Each ceiling is the next power of two above the count
 export const MAX_STORED_HOME_COMPANION_COUNT = 16;
 export const MAX_STORED_HOME_ORDER_COUNT = 16;
 export const MAX_STORED_HOME_BLUEPRINT_COUNT = 2048;
@@ -39,7 +39,7 @@ export const HOME_POT_GADGET_ID = 220026;
 // Shop 1048, which `VendorShopTypeMap` keys by him
 export const HOME_TUBBY_NPC_ID = 13276;
 // Provisional, made up until the PC exports the realm layout: the region a pot set down in the open world is in, which
-// The Realm returns the player to, the island's ground and radius, the spawn the player lands at, and the two standing
+// The realm returns the player to, the island's ground and radius, the spawn the player lands at, and the two standing
 // Points
 export const HOME_STAND_IN_POT_REGION_ID = "mondstadt";
 export const HOME_REALM_GROUND_HEIGHT = 0;

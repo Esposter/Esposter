@@ -13,7 +13,7 @@ import {
 import * as cloudflare from "@pulumi/cloudflare";
 
 // A job's queue consumer, which delivers its queue to the jobs Worker and sends a batch that exhausts its retries to
-// The Dead-letter queue
+// The dead-letter queue
 export const createQueueConsumer = (
   environment: CloudflareEnvironment,
   queueJob: QueueJob,

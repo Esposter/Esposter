@@ -5,7 +5,7 @@ import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { checkIsBlankText, JsonPatchOperationType, noop, normalizeString } from "@esposter/shared";
 
 // The page's colour and font-stack tokens, edited through the page builder's history. A new token takes the next free
-// Name Of its kind, and no token can be deleted here, so a name is never given to two tokens
+// Name of its kind, and no token can be deleted here, so a name is never given to two tokens
 export const usePageBuilderTheme = (resourceId: MaybeRefOrGetter<string>) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;

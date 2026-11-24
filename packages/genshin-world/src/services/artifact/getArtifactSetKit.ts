@@ -9,8 +9,8 @@ import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArt
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 
 // A character's kit with the sets its artifacts make pricing and answering the events of combat after it: each bonus
-// Its Worn pieces reach that the set table gives numbers to, built as its set's module where the set has one. A
-// Character Whose sets build none keeps its kit as it is
+// Its worn pieces reach that the set table gives numbers to, built as its set's module where the set has one. A
+// Character whose sets build none keeps its kit as it is
 export const getArtifactSetKit = (
   kit: Kit,
   artifacts: readonly Artifact[],

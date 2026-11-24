@@ -15,7 +15,7 @@ import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferen
 
 // The Display pass's bloom reading over every structure of the bloom chain at each measurement, on the references the
 // Pass reads it over (`getBloomReferenceIds`). A measurement's baseline is drawn once, and each structure's bloomed
-// Frame Is read against it, so a structure costs one frame a reference and a measurement one more
+// Frame is read against it, so a structure costs one frame a reference and a measurement one more
 export const readBloomAblation = async (
   component: DerivedAssetComponent,
   pageRoot?: string,

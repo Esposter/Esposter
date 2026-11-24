@@ -24,7 +24,7 @@ import { catalogueSchema, LandmarkKind } from "genshin-world";
 import { readFile } from "node:fs/promises";
 
 // The kinds the official map's labels pair, each with the label it is read from and the word its id carries. A Statue
-// Of The Seven's label holds the Statues of the New Moon of Nod-Krai's map area, as the map files them
+// Of the Seven's label holds the Statues of the New Moon of Nod-Krai's map area, as the map files them
 const WAYPOINT_PAIRING = {
   idWord: "waypoint",
   kind: LandmarkKind.TeleportWaypoint,
@@ -38,8 +38,8 @@ const NEW_MOON_STATUE_PAIRING = {
 const PAIRED_LANDMARK_KINDS = new Set<string | undefined>([NEW_MOON_STATUE_PAIRING.kind, WAYPOINT_PAIRING.kind]);
 
 // The Teleport Waypoints of each region in WAYPOINT_REGIONS and the Statues of the New Moon of each in
-// NEW_MOON_STATUE_REGIONS, Written into its region's data as landmarks of their own kinds, replacing the ones an
-// Earlier run wrote. Each is paired With the scene's transport point it stands at, and only the official map points of
+// NEW_MOON_STATUE_REGIONS, written into its region's data as landmarks of their own kinds, replacing the ones an
+// Earlier run wrote. Each is paired with the scene's transport point it stands at, and only the official map points of
 // The region's own map area are paired. A dry run counts them and writes nothing
 export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const [{ origin, points, regionFits, transform }, getWorldHeight, transportPoints] = await Promise.all([
@@ -50,7 +50,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
   const catalogue = catalogueSchema.parse(parseMachineJson(await readFile(CATALOGUE_PATH, "utf8")));
   // A region whose map fit is over its bar writes no waypoints, so the ones an earlier run wrote are replaced by none.
   // Every region of the two lists is read, not only those the fit placed, since a region it matched nothing in still
-  // Holds The earlier run's waypoints
+  // Holds the earlier run's waypoints
   const fittedWaypointRegions = selectFittedRegions(regionFits, WAYPOINT_REGIONS);
   const reports = await Promise.all(
     [...WAYPOINT_REGIONS, ...NEW_MOON_STATUE_REGIONS].map(async (region) => {

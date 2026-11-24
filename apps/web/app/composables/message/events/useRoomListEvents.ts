@@ -3,7 +3,7 @@ import { useMemberStore } from "#src/store/message/user/member";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
 // The rooms a person is in change on the person's own socket: every room event that concerns the list reaches each of
-// The Person's tabs, and the row it names is the one written to. A direct message is a room too, so its list reads the
+// The person's tabs, and the row it names is the one written to. A direct message is a room too, so its list reads the
 // Same rows
 export const useRoomListEvents = () => {
   const roomStore = useRoomStore();

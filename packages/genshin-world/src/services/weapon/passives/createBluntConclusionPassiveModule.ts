@@ -12,7 +12,7 @@ const BLUNT_CONCLUSION_STATUS_ID = "bluntConclusion";
 const BLUNT_CONCLUSION_COOLDOWN_ID = "bluntConclusionCooldown";
 
 // Blunt Conclusion at its rank: after its wielder uses an elemental skill, each normal or charged attack hit it deals
-// Adds An extra hit at the rank's multiplier of ATK on a small area, for the rank's seconds, once per the rank's
+// Adds an extra hit at the rank's multiplier of ATK on a small area, for the rank's seconds, once per the rank's
 // Cooldown
 export const createBluntConclusionPassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);

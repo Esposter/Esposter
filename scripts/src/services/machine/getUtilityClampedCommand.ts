@@ -2,7 +2,7 @@
 const TASKPOLICY_PATH = "/usr/sbin/taskpolicy";
 
 // A batch program and its arguments as they are spawned: on macOS under the utility QoS clamp, so the scheduler keeps
-// It Behind the user's foreground apps, and elsewhere as given
+// It behind the user's foreground apps, and elsewhere as given
 export const getUtilityClampedCommand = (
   command: string,
   args: readonly string[],

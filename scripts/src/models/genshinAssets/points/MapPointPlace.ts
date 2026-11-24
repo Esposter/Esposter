@@ -1,5 +1,5 @@
 // A point of the official map carried into the game's coordinates: its id under the kind's prefix, its kind and the
-// Ground Point it stands at, as the fit places it
+// Ground point it stands at, as the fit places it
 export interface MapPointPlace<Kind> {
   id: string;
   kind: Kind;

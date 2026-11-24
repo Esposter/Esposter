@@ -28,7 +28,7 @@ const recordCall = (method: string | symbol, args: unknown[], bucket: string, bl
 };
 
 // A multipart upload writes its object when it completes, so the completion is recorded as the write of the key the
-// Upload Was created for, as a put is. Its other methods add parts to an object that does not exist yet, so they record
+// Upload was created for, as a put is. Its other methods add parts to an object that does not exist yet, so they record
 // Nothing
 const recordUpload = (
   upload: R2MultipartUpload,

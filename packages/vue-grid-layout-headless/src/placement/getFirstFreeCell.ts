@@ -5,7 +5,7 @@ import { checkIsColliding } from "#src/internal/placement/checkIsColliding";
 import { clampCell } from "#src/internal/placement/clampCell";
 
 // The first cell a new item of the given span fits in, scanning rows from the top and columns from the left, so a new
-// Item Lands beside the items already in a row before it lands below them
+// Item lands beside the items already in a row before it lands below them
 export const getFirstFreeCell = (
   layout: GridBlock[],
   columnNumber: number,

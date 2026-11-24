@@ -102,8 +102,8 @@ export const usePostStore = defineStore("post", () => {
     );
   };
   // The answer names each post the removal took, the post and every reply beneath it, and no entry can name the replies
-  // A Removal takes, so the post stays on the feed until the server answers and leaves it then. A refused delete alerts
-  // And Resolves false, which keeps the dialog asking open
+  // A removal takes, so the post stays on the feed until the server answers and leaves it then. A refused delete alerts
+  // And resolves false, which keeps the dialog asking open
   const deletePost = async (input: DeletePostInput) =>
     writeAwaited(
       async () => {

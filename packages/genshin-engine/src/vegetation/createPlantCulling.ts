@@ -8,8 +8,8 @@ import { createInstanceMatrixNode } from "#src/culling/createInstanceMatrixNode"
 import { distance, max, step, vec4 } from "three/tsl";
 
 // The cull of one kind of plant, the grass cull's own pass over each place's matrix: a place is drawn when its base
-// Stands Within the draw distance of the eye and a point of its box stands in the view. The base and top of the box's
-// Centre line And its four sides at mid height are each tested, since a card or a dome in view by any of them is kept
+// Stands within the draw distance of the eye and a point of its box stands in the view. The base and top of the box's
+// Centre line and its four sides at mid height are each tested, since a card or a dome in view by any of them is kept
 export const createPlantCulling = ({
   attribute,
   bounds: { bottom, halfWidth, height },

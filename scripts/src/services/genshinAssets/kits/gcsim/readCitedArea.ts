@@ -9,10 +9,10 @@ import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/s
 
 // The areas a cited constructor may give, read across its lines, each with its line: the row of the table whose cell is
 // The constructor's size where the constructor reads a table, else the first table cell it reads, else the
-// Constructor's own Line. A local bound more than once, or a table indexed by the index of the loop the constructor
-// Sits in, gives an area For each value it may hold, in the order they are written, so the overlay picks the one it
-// Cites. A table index that is Not evaluable gives no area. A size named by a package constant that is a number reads
-// As that number
+// Constructor's own line. A local bound more than once, or a table indexed by the index of the loop the constructor
+// Sits in, gives an area for each value it may hold, in the order they are written, so the overlay picks the one
+// It cites. A table index that is not evaluable gives no area. A size named by a package constant that is a number
+// Reads as that number
 export const readCitedArea = (
   lines: readonly string[],
   lineIndex: number,

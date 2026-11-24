@@ -7,7 +7,7 @@ import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodE
 const DAMAGE_REDUCTION = 3;
 
 // Lotus Flower Crisp, a food: the target character takes 3 less DMG the next time, and the food is held as a status
-// Until the Round ends, so the character eats no other food this round
+// Until the round ends, so the character eats no other food this round
 export const lotusFlowerCrisp: GcgCardModule = {
   canPlay: ({ duel, sideIndex }, targetIndex) => checkIsGcgFoodEatable(duel, sideIndex, targetIndex),
   initialRounds: 1,

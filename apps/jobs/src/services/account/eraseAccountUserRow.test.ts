@@ -74,7 +74,7 @@ describe(eraseAccountUserRow, () => {
   });
 
   // A post at count 1 from the erased person's like. The erasure reads it at 0 once that like is set aside, and a +1
-  // Vote By another person lands after the read. The post ends at the count the erasure leaves, with that count's
+  // Vote by another person lands after the read. The post ends at the count the erasure leaves, with that count's
   // Ranking
   test("ends a post's ranking at the count the erasure leaves when a vote lands after the erasure reads the count", async () => {
     expect.hasAssertions();

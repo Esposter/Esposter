@@ -12,7 +12,7 @@ import { downloadFile, getResultAsync, noop } from "@esposter/shared";
 import { getExportBounds, PositionedElementType, toPositionedSvg } from "vue-block-editor-headless";
 
 // The whiteboard as the editor holds it, downloaded as an SVG or a PNG drawn from the same SVG. Both come from the
-// Model, so the File matches what the canvas shows, and nothing is captured from the page
+// Model, so the file matches what the canvas shows, and nothing is captured from the page
 export const exportWhiteboard = async (format: WhiteboardExportFormat) => {
   const resourceStore = useResourceStore();
   const { resource } = storeToRefs(resourceStore);

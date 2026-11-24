@@ -5,7 +5,7 @@ export const TYPES_NODE_CATALOG_REGEX: RegExp = /(?<lead>"@types\/node":\s*)(?<v
 // Manager bumps it
 export const NODE_VERSION_FILENAME = ".node-version";
 // A manifest's `engines.node` value, wherever `node` sits among the flat `engines` object's keys, in a package.json or
-// A Lockfile root entry
+// A lockfile root entry
 export const ENGINES_NODE_REGEX: RegExp = /(?<lead>"engines":\s*\{[^{}]*?"node":\s*")[^"]*/u;
 // The `devEngines` key, after which only that field's runtime entries are edited
 export const DEV_ENGINES_KEY = '"devEngines"';

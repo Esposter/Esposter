@@ -72,7 +72,7 @@ export const moderationRouter = router({
     );
   }),
   // The unban is a tombstone at a higher version, so the ban list reads the removal back. The update's own returning()
-  // Reports Whether a live ban existed, so there is no separate existence read to race against a concurrent unban
+  // Reports whether a live ban existed, so there is no separate existence read to race against a concurrent unban
   deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation<BanInMessage>(
     async ({ ctx, input: { roomId, userId } }) =>
       requireMutation(
@@ -128,8 +128,8 @@ export const moderationRouter = router({
           if (deletedMember)
             await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, RoomMemberRemovalAction.Banned);
           // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect
-          // That Must not be lost. The purge is the member's messages in the room, tombstoned a page at a time, and the
-          // Blobs Those messages named are queued for deletion behind it, while each one's mention counts are taken
+          // That must not be lost. The purge is the member's messages in the room, tombstoned a page at a time, and the
+          // Blobs those messages named are queued for deletion behind it, while each one's mention counts are taken
           // Back
           if (input.type === AdminActionType.SoftBan)
             await getResultAsync(async () => {
@@ -145,7 +145,7 @@ export const moderationRouter = router({
           break;
         }
         // Enforced at RealtimeKit, since the targeted client applying the action to itself is only a courtesy — one
-        // That Ignored it would keep talking or presenting
+        // That ignored it would keep talking or presenting
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
         case AdminActionType.StopScreenShare: {

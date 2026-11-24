@@ -2,7 +2,7 @@ import type { OfferingProgress } from "#src/models/offering/OfferingProgress";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 
 // One claim takes the level after the last one claimed, and only once the region has reached it, so a level's rewards
-// Are Paid once and one level at a time. The level taken is returned for its rewards to be paid
+// Are paid once and one level at a time. The level taken is returned for its rewards to be paid
 export const claimStatueLevel = (
   progress: OfferingProgress<StatueLevel>,
   claimedLevel: number,

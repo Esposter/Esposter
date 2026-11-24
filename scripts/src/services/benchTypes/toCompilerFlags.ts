@@ -3,9 +3,9 @@ import type { TypeBenchCompilerOptions } from "#src/models/benchTypes/TypeBenchC
 import { EMPTY_TYPE_ROOTS_DIRECTORY } from "#src/services/benchTypes/constants";
 
 // Options that name an output the check never writes, that a file-mode run cannot take, or whose diagnostics one
-// Program Cannot satisfy: `composite` and `isolatedDeclarations` demand every imported file be listed, `incremental`
-// Writes a Build-info file, and `noUnusedLocals` fails the header every case shares, since the baseline reads none of
-// Its Imports and each case reads only some of them
+// Program cannot satisfy: `composite` and `isolatedDeclarations` demand every imported file be listed, `incremental`
+// Writes a build-info file, and `noUnusedLocals` fails the header every case shares, since the baseline reads none of
+// Its imports and each case reads only some of them
 const UNCOUNTED_OPTIONS = new Set([
   "composite",
   "declaration",

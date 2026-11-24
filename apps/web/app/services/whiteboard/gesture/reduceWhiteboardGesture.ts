@@ -17,7 +17,7 @@ import { startWhiteboardGesture } from "#src/services/whiteboard/gesture/startWh
 import { exhaustiveGuard } from "@esposter/shared";
 
 // The one reducer every pointer event of a whiteboard goes through. With no gesture in progress a press starts one, and
-// Any other Event changes nothing. With one, the event goes to the phase the gesture is in, and an event from another
+// Any other event changes nothing. With one, the event goes to the phase the gesture is in, and an event from another
 // Pointer changes nothing
 export const reduceWhiteboardGesture = (
   state: WhiteboardGestureState,

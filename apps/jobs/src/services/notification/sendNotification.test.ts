@@ -150,7 +150,7 @@ describe(sendNotification, () => {
   });
 
   // A dismissal is a tombstone the purge removes on its own retention. The trim takes only live rows, so a dismissal
-  // Past the Notification retention is left to the purge rather than removed here as well
+  // Past the notification retention is left to the purge rather than removed here as well
   test("leaves a dismissed notification to the purge, though its dismissal is past the notification retention", async () => {
     expect.hasAssertions();
 
@@ -208,7 +208,7 @@ describe(sendNotification, () => {
   });
 
   // The bell reads the rows of its recipient through the reader the web's notification list reads them with, so the
-  // Bell row a Unit writes is what wakes it
+  // Bell row a unit writes is what wakes it
   test("a bell row wakes its recipient's bell, which reads the rows of that recipient", async () => {
     expect.hasAssertions();
 

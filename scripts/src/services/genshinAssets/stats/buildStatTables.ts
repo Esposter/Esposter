@@ -41,9 +41,9 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The roster, each character's skill sets, the weapons and the artifacts' tables, read from the dump's game tables,
-// With The curves they grow along, only those any of them names. Every table is checked against the World's schema as
-// It is Built, and each character's talent tables become entries of the talent indexes. What the run noted, a property
-// No Attribute names among it, is returned once each
+// With the curves they grow along, only those any of them names. Every table is checked against the World's schema as
+// It is built, and each character's talent tables become entries of the talent indexes. What the run noted, a property
+// No attribute names among it, is returned once each
 export const buildStatTables = (): { notes: string[]; publication: HostedAssetPublication } => {
   const notes: string[] = [];
   const characterDatas = getCharacterDatas(notes);

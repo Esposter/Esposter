@@ -6,9 +6,9 @@ import { moduleOptionsSchema } from "#src/schemas/moduleOptionsSchema";
 import { formatZodIssues } from "#src/services/formatZodIssues";
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
 
-// Each route rule's `security` key, validated, keyed by the route pattern it belongs to. It is checked as the module's
-// Options with that route's overrides laid over them, so a route cannot set an option the module would refuse. A route
-// Rule with no `security` key is left out, so it adds no entry to the route table
+// Each route rule's `security` key, validated, keyed by the route pattern it belongs to.
+// It is checked as the module's options with that route's overrides laid over them, so a route cannot set an option the
+// Module would refuse. A route rule with no `security` key is left out, so it adds no entry to the route table
 export const getRouteSecurityRules = (
   routeRules: Record<string, Pick<RouteRuleConfig, "security">>,
   options: ModuleOptions,

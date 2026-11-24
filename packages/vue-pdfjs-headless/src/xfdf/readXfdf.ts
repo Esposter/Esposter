@@ -30,7 +30,7 @@ const readFreeText = (element: Element, index: number, usedIds: Set<string>): Re
 
 // Reads the free-text annotations of an XFDF file. The ids already held in the document are passed in, so a free text
 // Named as one of them takes an id of its own. A file that cannot be read is an error naming the problem, and it gives
-// No Annotations, so a caller that stops on the error changes nothing
+// No annotations, so a caller that stops on the error changes nothing
 export const readXfdf = (xfdf: string, takenIds: ReadonlySet<string>): Result<PdfFreeText[], string> => {
   const xfdfDocument = new DOMParser().parseFromString(xfdf, "application/xml");
   if (xfdfDocument.querySelector("parsererror")) return err("The XFDF is not well-formed XML");

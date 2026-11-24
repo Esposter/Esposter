@@ -21,8 +21,9 @@ const checkIsStackingHit = (attackTag: AttackTag | undefined): boolean =>
   attackTag !== undefined && STACKING_ATTACK_TAGS.has(attackTag);
 
 // Daylight's Augury at its rank: its wielder's Elemental Skill and Burst DMG rise by the rank's percentage, and each
-// Normal, Charged, Elemental Skill or Elemental Burst hit it deals gains a stack of Ashen Nightstar for the rank's
-// Seconds. Each stack Runs its own seconds, and its ATK rises by the rank's share on the ladder of one to four stacks
+// Normal, charged, Elemental Skill or Elemental Burst hit it deals gains a stack of Ashen Nightstar for the
+// Rank's seconds. Each stack runs its own seconds, and its ATK rises by the rank's share on the ladder of one to four
+// Stacks
 export const createDaylightsAuguryPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const stackSeconds = takeOne(params, 1);

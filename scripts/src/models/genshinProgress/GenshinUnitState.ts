@@ -1,6 +1,6 @@
-// Where a unit stands for this machine: done, runnable here, waiting on a named blocker, or blocked on the other
-// Machine. A quest is scripted when a session script names it, and not measurable when none does, until its checkbox is
-// Ticked
+// Where a unit stands for this machine: done, runnable here, waiting on a named blocker, or blocked on the
+// Other machine. A quest is scripted when a session script names it, and not measurable when none does, until its
+// Checkbox is ticked
 export const GenshinUnitState = {
   Blocked: "Blocked",
   Done: "Done",

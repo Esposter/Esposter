@@ -4,9 +4,9 @@ import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants";
 
 // The hunt a player takes a nation's bounty into at a level: its target is drawn from the kinds its difficulty may hunt
-// By The roll, spawned at the centre of the region the bounty names, and not yet defeated. Undefined below the level
-// Bounties Unlock at, for a bounty the nation does not offer, or for one whose difficulty has no target or whose region
-// The dump Does not place
+// By the roll, spawned at the centre of the region the bounty names, and not yet defeated. Undefined below the level
+// Bounties unlock at, for a bounty the nation does not offer, or for one whose difficulty has no target or whose region
+// The dump does not place
 export const takeReputationBounty = (
   city: ReputationCity,
   level: number,

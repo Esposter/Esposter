@@ -12,6 +12,6 @@ export interface ElementApplication {
   selfAuraSeconds?: number;
   sourceId?: number;
   // The Stellar reactions the applying party's Stellar Jubilee passives enable, which a Cryo Swirl and a Superconduct
-  // Take The form of
+  // Take the form of
   stellarReactionTypes?: readonly StellarReactionType[];
 }

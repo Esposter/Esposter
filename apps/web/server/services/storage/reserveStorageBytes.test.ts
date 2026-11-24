@@ -99,8 +99,9 @@ describe(reserveStorageBytes, () => {
   });
 
   // The hold stops counting the instant its presigned write url dies, but the row itself stays: an object-create
-  // Notification for a blob That did land can still be inside the queue's retry window, and a reconcile that finds no
-  // Row charges Nothing and reports nothing — the bytes would be stored and counted against no one, forever
+  // Notification for a blob that did land can still be inside the queue's retry window, and a reconcile that finds no
+  // Row charges
+  // Nothing and reports nothing — the bytes would be stored and counted against no one, forever
   test("stops counting a hold whose presigned write url has expired while an object-create notification for it can still arrive", async () => {
     expect.hasAssertions();
 

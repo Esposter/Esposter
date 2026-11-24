@@ -68,9 +68,9 @@ describe(useReadClicker, () => {
     expect(clicker.value.pointCount).toBe(42);
   });
 
-  // An absence is paid out as production, and the dialog reports what it was paid. The clock is pinned to the hour The
-  // Save was stamped at the epoch, so the absence is exactly that hour: one cursor's tenth of a point a second, at the
-  // Offline rate
+  // An absence is paid out as production, and the dialog reports what it was paid. The clock is pinned to the hour
+  // The save was stamped at the epoch, so the absence is exactly that hour: one cursor's tenth of a point a second, at
+  // The offline rate
   test("awards the production an absence earned while the page was closed", async () => {
     expect.hasAssertions();
 
@@ -124,7 +124,7 @@ describe(useReadClicker, () => {
   });
 
   // A guest reads its save first, then signs in and the server's read fails: the flag is cleared before that read
-  // Starts, So a change made in its place is not saved over the copy the read could not reach
+  // Starts, so a change made in its place is not saved over the copy the read could not reach
   test("does not save a change made after a signed-in read fails following a guest's read", async () => {
     expect.hasAssertions();
 
@@ -158,7 +158,7 @@ describe(useReadClicker, () => {
   });
 
   // A guest's save lives only in this browser, so one that cannot be read is reported and replaced by a new game, so
-  // The Page still opens
+  // The page still opens
   test("starts a new clicker when the save in this browser cannot be read", async () => {
     expect.hasAssertions();
 

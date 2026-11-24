@@ -9,9 +9,9 @@ import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { v7 } from "uuid";
 
 // Each pointer event is read by the gesture reducer over the stores' own document, selection, tool and viewport, and
-// What it leaves is Written back to the stores: the gesture and its preview, the tool, the selection and the viewport.
-// A release's operations are one edit, So they are committed together, as one undo step. A commit the document refuses
-// Leaves the selection where it was. A wheel turn is not a Gesture, so it only moves the viewport
+// What it leaves is written back to the stores: the gesture and its preview, the tool, the selection and the viewport.
+// A release's operations are one edit, so they are committed together, as one undo step. A commit the document refuses
+// Leaves the selection where it was. A wheel turn is not a gesture, so it only moves the viewport
 export const useWhiteboardGesture = () => {
   const whiteboardStore = useWhiteboardStore();
   const { commitOperations } = whiteboardStore;

@@ -1,7 +1,7 @@
 import { DRAG_AUTOSCROLL_EDGE, DRAG_AUTOSCROLL_SPEED } from "#src/services/ui/constants";
 
 // How fast a drag scrolls its frame, in viewport pixels a millisecond, from how deep the pointer is in the band at
-// Either End of the frame: negative toward its top, positive toward its bottom, and zero between them. Past an end,
+// Either end of the frame: negative toward its top, positive toward its bottom, and zero between them. Past an end,
 // Full speed
 export const getEdgeScrollVelocity = (pointerY: number, frameRect: { height: number; top: number }) => {
   const upDepth = frameRect.top + DRAG_AUTOSCROLL_EDGE - pointerY;

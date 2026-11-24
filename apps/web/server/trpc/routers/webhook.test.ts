@@ -166,7 +166,7 @@ describe("webhookRouter", () => {
   });
 
   // The webhook and the app user it posts as are kept as tombstones, so a read that answers before the delete cannot
-  // Bring The webhook back over its answer, and the room's read names the webhook as deleted
+  // Bring the webhook back over its answer, and the room's read names the webhook as deleted
   test("deletes, keeping the webhook and its app user as tombstones", async () => {
     expect.hasAssertions();
 

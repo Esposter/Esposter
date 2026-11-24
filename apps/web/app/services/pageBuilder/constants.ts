@@ -54,7 +54,7 @@ export const WEBPAGE_NODE_TYPE_ICON_MAP: Readonly<Record<WebpageNodeType, UiIcon
 // The thickness of the line a drop indicator draws between two children
 export const LINE_THICKNESS = 2;
 // The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are
-// Listed Too, though only a Columns or a Tabs slot takes them, so the palette offers each one only where its container
+// Listed too, though only a Columns or a Tabs slot takes them, so the palette offers each one only where its container
 // Is the place
 export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<WebpageNode>[] = Object.freeze([
   Object.freeze({
@@ -219,5 +219,5 @@ export const OVERLAY_SELECTION_STYLE = {
   position: "absolute",
 } as const;
 // The prefix a palette item's kind carries when it names a merge field's column rather than a block type, so a click or
-// A Drag tells the two apart
+// A drag tells the two apart
 export const MERGE_FIELD_KIND_PREFIX = "merge-field:";

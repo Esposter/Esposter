@@ -8,7 +8,7 @@ import { advanceOutcrop } from "#src/services/leyLine/advanceOutcrop";
 import { computeOutcropCampId } from "#src/services/leyLine/computeOutcropCampId";
 
 // The outcrop after an enemy is defeated: once every enemy of its place's camp is down, the fight is won and the
-// Blossom Reveals. Enemies of other camps are not its fight, and a camp with one still standing, or none in view,
+// Blossom reveals. Enemies of other camps are not its fight, and a camp with one still standing, or none in view,
 // Changes nothing
 export const advanceOutcropFight = (
   placements: OutcropPlacement[],

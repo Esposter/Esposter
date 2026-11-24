@@ -6,7 +6,7 @@ import { Matrix4, Quaternion, Vector3 } from "three";
 import { onUnmounted } from "vue";
 
 // Writes one instance of a stand-in mesh at each of its places, each stood on the ground beneath it and lifted by the
-// Given Height, and disposes the mesh with the component that draws it
+// Given height, and disposes the mesh with the component that draws it
 export const useStandInInstances = (
   mesh: InstancedMesh<BufferGeometry, Material>,
   places: () => readonly { position: GroundPoint }[],

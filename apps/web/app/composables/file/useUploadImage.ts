@@ -3,7 +3,7 @@ import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPres
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Mints a presigned url for the single file, puts it there, and hands back the public url — returned rather than
-// Written, Because each caller owns a different model. `isLoading` clears on a failed upload as well as a successful
+// Written, because each caller owns a different model. `isLoading` clears on a failed upload as well as a successful
 // One
 export const useUploadImage = (
   generateUploadUrl: (file: File) => Promise<{ presignedUrl: string; publicUrl: string }>,

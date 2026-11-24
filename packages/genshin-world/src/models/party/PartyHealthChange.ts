@@ -2,9 +2,10 @@ import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { Element } from "#src/models/Element";
 
 // A change to a party member's HP as it took effect: the member, the share of its Max HP it gained, or lost as a
-// Negative Share, never past all of it or below none, the share of a heal that went past all of it, the character whose
-// Kit Made the change, none for an enemy's strike, a drown or a heal that names no healer, and the member's share of
-// Its Max HP before the change, which with the change's share gives the share after it
+// Negative share, never past all of it or below none, the share of a heal that went past all of it, the character whose
+// Kit
+// Made the change, none for an enemy's strike, a drown or a heal that names no healer, and the member's share of its
+// Max HP before the change, which with the change's share gives the share after it
 export interface PartyHealthChange {
   // The attack tag of the attack whose party heal made the change, none for a heal a kit makes outside an attack
   attackTag?: AttackTag;

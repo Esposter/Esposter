@@ -30,8 +30,8 @@ export class DurationSequencer extends BaseSequencer {
     const { root, shard } = this.ctx.config;
     const timingsPath = resolve(root, TEST_TIMINGS_PATH);
     if (!shard || !existsSync(timingsPath)) return super.shard(files);
-    // The timings carry no dates, and configuration builds
-    // oxlint-disable-next-line no-restricted-properties -- before @esposter/shared so it cannot import jsonDateParse
+    /* oxlint-disable-next-line no-restricted-properties -- the timings carry no dates, and configuration builds before
+       @esposter/shared so it cannot import jsonDateParse */
     const { projects } = testTimingsSchema.parse(JSON.parse(readFileSync(timingsPath, "utf8")));
     // By path, so the order the files were found in cannot tell one shard's split from another's
     const sortedFiles = files.toSorted((left, right) => (left.moduleId < right.moduleId ? -1 : 1));

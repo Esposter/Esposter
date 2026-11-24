@@ -5,7 +5,7 @@ import { fitWeaponMeshMap } from "#src/services/genshinAssets/fit/fitWeaponMeshM
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 
 // The weapons' fit: the outlines of their icons and the pairing of each weapon row with its held mesh, and the fits
-// That Follow them, each by the record it publishes
+// That follow them, each by the record it publishes
 export const fitWeaponShapes: DerivedAssetFit = (only, options) =>
   runFits(
     [

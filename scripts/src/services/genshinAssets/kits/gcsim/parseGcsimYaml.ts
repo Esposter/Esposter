@@ -26,7 +26,7 @@ export const parseGcsimYaml = (yaml: string): unknown => {
   }
   let index = 0;
   // A value's continuation lines are the lines after it more indented than the line it starts on and neither a key nor
-  // A Sequence item; YAML folds them into the value with one space, or with a newline for each blank line between them,
+  // A sequence item; YAML folds them into the value with one space, or with a newline for each blank line between them,
   // So A plain scalar wrapped over lines reads as one
   const readValue = (text: string, lineIndent: number): unknown => {
     let folded = text;

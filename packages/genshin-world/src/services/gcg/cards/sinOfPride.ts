@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 const SIN_OF_PRIDE_DAMAGE_BONUS = 1;
 
 // Sin of Pride, Kujou Sara's talent: it is equipped to her while she is active and uses her Tengu Stormcall at once.
-// While she is Active with it, her Elemental Skill and Burst deal 1 more DMG when she has Crowfeather Cover, on top of
-// The Cover's own 1 (the Wiki's Sin of Pride)
+// While she is active with it, her Elemental Skill and Burst deal 1 more DMG when she has Crowfeather Cover, on top of
+// The Cover's own 1 (the wiki's Sin of Pride)
 export const sinOfPride: GcgCardModule = {
   ...createGcgTalentCard(KUJOU_SARA_ID, TENGU_STORMCALL_SKILL_ID),
   modifyDamageDealt: ({ duel, sideIndex, skill }, damage) => {

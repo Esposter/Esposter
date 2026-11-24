@@ -12,8 +12,8 @@ import { cameraViewMatrix, cos, mix, positionGeometry, sin, varying, vec2, vec3,
 // A grass ring's blades, generated in the vertex stage so no blade is stored. A blade's cell is its instance's cell as
 // The culling pass kept it, and the cell itself gives the blade its place, jitter, turn, size and whether it grows at
 // All (`createGrassCell`). The wind and the grass trail bend its points (`createGrassBladePoint`). It takes the
-// Ground's Upward normal, so a meadow toon-shades as one surface with light rolling across it, darker at the root. A
-// Wet meadow Darkens and takes the sun's glint as the ground does, and no rim
+// Ground's upward normal, so a meadow toon-shades as one surface with light rolling across it, darker at the root. A
+// Wet meadow darkens and takes the sun's glint as the ground does, and no rim
 export const createGrassMaterial = ({
   bladeHeight,
   bladeWidth,

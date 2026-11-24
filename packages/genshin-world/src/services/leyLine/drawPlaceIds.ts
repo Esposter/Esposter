@@ -2,7 +2,7 @@ import { takeRandom } from "@esposter/shared";
 
 // Draws `count` place ids at random, each taken out of the free ones before the next is drawn, so none repeats. A count
 // Above the number of free ids draws every one of them, and the draws come in order, so one random sequence always
-// Gives The same places
+// Gives the same places
 export const drawPlaceIds = <T>(placeIds: readonly T[], count: number, random: () => number): T[] => {
   const drawnIds: T[] = [];
   let freeIds = placeIds;

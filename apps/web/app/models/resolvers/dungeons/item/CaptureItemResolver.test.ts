@@ -30,7 +30,7 @@ vi.mock("#src/store/dungeons/player", async () => {
 // With it Phaser, is faked out
 vi.mock("#src/store/dungeons/monsterParty/infoPanel", () => ({ useMonsterPartyInfoPanelStore: () => ({}) }));
 // The battle and its event emitter load Phaser, which cannot initialise under the test environment. A capture reaches
-// Them Only once it goes ahead, so these fakes stand in for them
+// Them only once it goes ahead, so these fakes stand in for them
 vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: {} }));
 vi.mock("#src/services/phaser/phaserEventEmitter", () => ({
   phaserEventEmitter: { emit: vi.fn<TypedEventEmitter<PhaserEvents>["emit"]>() },

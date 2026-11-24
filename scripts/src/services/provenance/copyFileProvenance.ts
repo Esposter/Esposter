@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 import { copyFile } from "node:fs/promises";
 
 // Carries a file output's sidecar along with the copy of its bytes, so the copy vouches for what it holds. A source
-// With No sidecar leaves the target with none, rather than the stamp its earlier bytes had
+// With no sidecar leaves the target with none, rather than the stamp its earlier bytes had
 export const copyFileProvenance = async (source: string, target: string): Promise<void> => {
   if (!existsSync(getSidecarPath(source))) {
     await removeFileProvenance([target]);

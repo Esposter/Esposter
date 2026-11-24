@@ -1,6 +1,6 @@
 // The file types the precache lists: the app's code and styles, and the images and fonts its bundle and public folder
-// Serve, So an installed app draws them offline. A file a game engine loads is kept out by the app's `globIgnores`,
-// Since the Engine asks for it by its own URL
+// Serve, so an installed app draws them offline. A file a game engine loads is kept out by the app's `globIgnores`,
+// Since the engine asks for it by its own URL
 export const PRECACHE_EXTENSIONS: string[] = [
   "avif",
   "css",

@@ -80,9 +80,9 @@ export const LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH = 21.8913;
 export const LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE = 0.8388;
 // The bridges' grain: their exports' structure over their pixels (the surface pass's terms, variance then bands finest
 // First), each divided by their mean lightness of 0.6256 squared as the textures' statistics are relative, and scaled
-// By The ratio the surface pass read our grain's terms at against the exports' (0.20 to 0.26), since a colour's
-// Multiplier Moves its lightness at a fraction of its own share. At a pixel's 0.2280 metres at the bridges' depth, the
-// Octave Amplitudes that reproduce these are solved by `computeSurfaceOctaves`
+// By the ratio the surface pass read our grain's terms at against the exports' (0.20 to 0.26), since a colour's
+// Multiplier moves its lightness at a fraction of its own share. At a pixel's 0.2280 metres at the bridges' depth, the
+// Octave amplitudes that reproduce these are solved by `computeSurfaceOctaves`
 export const LOGIN_BRIDGE_SURFACE_DETAIL: SurfaceDetail = {
   bands: [0.00083468, 0.00017876, 0.00009911, 0.000058],
   metresPerTexel: 0.228,

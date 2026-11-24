@@ -57,7 +57,7 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     commit();
   };
   // The add field's text is held here, and a parse of it names one row, several or none. Text naming none adds nothing
-  // And Stays as typed, and the field clears once its rows land
+  // And stays as typed, and the field clears once its rows land
   const addText = ref("");
   const addFromText = (parse: (text: string) => T | T[] | undefined) => {
     const items = [parse(addText.value)].flat().filter((item): item is T => item !== undefined);

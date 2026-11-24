@@ -50,7 +50,7 @@ const burstCode = getActionKeyCode(InputAction.ElementalBurst);
 const gadgetCode = getActionKeyCode(InputAction.QuickUseGadget);
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than
-// The Kit's own, as a stance's end sets
+// The kit's own, as a stance's end sets
 const getCooldownShare = (secondsLeft: number, seconds: number) =>
   seconds > 0 ? Math.min(1, secondsLeft / seconds) : 0;
 // Hidden with the HUD, the buttons let go of the keys they hold

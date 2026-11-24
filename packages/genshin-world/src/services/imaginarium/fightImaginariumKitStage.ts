@@ -9,7 +9,7 @@ import { fightImaginariumStage } from "#src/services/imaginarium/fightImaginariu
 import { runImaginariumKitFight } from "#src/services/imaginarium/runImaginariumKitFight";
 
 // A stage fought by its performers' kits: a cast that cannot perform is refused as the stage's fight refuses it, and
-// One that Can fights its enemies on the kits' fight, whose defeats, elapsed time and fall the stage's outcome is
+// One that can fights its enemies on the kits' fight, whose defeats, elapsed time and fall the stage's outcome is
 // Decided by
 export const fightImaginariumKitStage = (
   principalCast: ImaginariumMember[],

@@ -12,7 +12,7 @@ import { z } from "zod";
 
 // The General Goods list of the public clip at 34 seconds, a Liyue shop: its first eight goods are the published
 // Mondstadt General Goods, in the same order and at the same Mora prices, so they are the real data drawn. The clip's
-// List goes on Beyond those eight to four more goods (Shrimp Meat, Almond, Rice, Tofu) whose stock no published dataset
+// List goes on beyond those eight to four more goods (Shrimp Meat, Almond, Rice, Tofu) whose stock no published dataset
 // Holds yet
 const goods = await readGameData(GAME_DATA_LOCAL_BASE_URL, "shops/mondstadtGeneralGoods", z.array(shopGoodSchema));
 // The clock's, at which its refresh line reads nine hours and three minutes to go, inside the goods' sale dates

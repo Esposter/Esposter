@@ -7,8 +7,8 @@ import { relay } from "./relay";
 
 const isHandingOffAtom = atom({ key: "isHandingOff", plugin: "genshin-mods" } as const, InitialState.isHandingOff);
 // The relay is settled rather than awaited, so a clear or submit that rejects still brings the buttons back
-// A declaration, not an arrow: the hooks module's bundle
-// oxlint-disable-next-line func-style -- follows an imported helper that takes `$` only into a function declaration
+/* oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported
+   helper that takes `$` only into a function declaration */
 export async function handOff($: EngineInterface): Promise<void> {
   await update($, isHandingOffAtom, () => true);
   const [outcome] = await Promise.allSettled([relay($)]);

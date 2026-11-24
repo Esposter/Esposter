@@ -5,7 +5,7 @@ import { bansInMessage, getLiveRowWhere, invitesInMessage, roomsInMessage } from
 import { and, eq, exists, notExists, sql } from "drizzle-orm";
 
 // The row of a link while its room is open to invites and holds no active ban for the user. A link's own expiry and
-// Uses Are decided where it is read: a reader by checkIsInviteUsable, and the join in the statement that consumes a use
+// Uses are decided where it is read: a reader by checkIsInviteUsable, and the join in the statement that consumes a use
 export const getAdmittedInviteWhere = (db: Context["db"], code: string, userId: string): SQL | undefined =>
   and(
     eq(invitesInMessage.id, code),

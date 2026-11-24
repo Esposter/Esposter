@@ -24,8 +24,8 @@ const SELF_INFUSION_SECONDS = 0.1;
 const CARDAMOM_COUNT = 6;
 
 // Pupillary Variance, Kirara's Ascension 4 passive: every 1,000 of her Max HP adds 0.4% DMG to her skill's hits and
-// 0.3% To her burst's, as gcsim v2.47.2 (MIT) kirara/asc.go gives it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kirara/asc.go`
+// 0.3% to her burst's, as gcsim v2.47.2 (MIT) kirara/asc.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kirara/asc.go
 const ASCENSION_4 = 4;
 const PUPILLARY_VARIANCE_SKILL_DAMAGE_BONUS = 0.004;
 const PUPILLARY_VARIANCE_BURST_DAMAGE_BONUS = 0.003;
@@ -61,10 +61,10 @@ const buffTeamElementalDamage = (kitEffectState: KitEffectState, party: Party, c
 // Kirara's behaviour: Tail-Flicking Flying Kick, its press and each hold, cast her shield and the 0.1 second Dendro
 // Self-infusion as they start, and Secret Art: Surprise Dispatch sets its Cat Grass Cardamoms, the detonated ones first
 // And the rest at expiry. From Ascension 4 her skill's and burst's hits gain DMG by her Max HP. Her Ascension 1
-// Passive, Reinforced Packaging and her other passives are not built Constellation 1 needs an extra Cat Grass Cardamom
-// Scaled by her Max HP, which the summon's count does not read Constellation 2 needs the Critical Transport Shields her
-// Crashes give members, which the kit does not build Constellation 4 needs the shield-protected members' hits and the
-// Energy or shield they give, not built
+// Passive, reinforced Packaging and her other passives are not built
+// Constellation 1 needs an extra Cat Grass Cardamom scaled by her Max HP, which the summon's count does not read
+// Constellation 2 needs the Critical Transport Shields her crashes give members, which the kit does not build
+// Constellation 4 needs the shield-protected members' hits and the energy or shield they give, not built
 export const createKiraraKitBehaviour = ({
   kit,
   readHits,

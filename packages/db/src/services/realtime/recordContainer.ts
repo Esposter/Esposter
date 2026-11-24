@@ -8,7 +8,7 @@ import { SQLiteAsyncTransaction } from "drizzle-orm/sqlite-core";
 
 // An object that hands out queries, such as the database or its relational `query` tables. A method that returns a
 // Query returns it recorded, and an object it holds is one too, so `db.query.rooms.findFirst()` is recorded. A callback
-// A Method is given has the handles it is called with recorded in turn, so a `transaction` callback's transaction is
+// A method is given has the handles it is called with recorded in turn, so a `transaction` callback's transaction is
 // Too
 export const recordContainer = <T extends object>(container: T, recorder: Recorder): T =>
   new Proxy(container, {
@@ -31,7 +31,7 @@ export const recordContainer = <T extends object>(container: T, recorder: Record
   });
 
 // The callback is called as it was, with its transaction recorded. A transaction is a handle of the database it came
-// From, So a statement run on it is recorded as one the database ran
+// From, so a statement run on it is recorded as one the database ran
 const recordCallback = (callback: (...args: unknown[]) => unknown, recorder: Recorder) =>
   function (this: unknown, ...args: unknown[]): unknown {
     return Reflect.apply(

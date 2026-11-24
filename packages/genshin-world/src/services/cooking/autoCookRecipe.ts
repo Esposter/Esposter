@@ -16,8 +16,8 @@ import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 
 // The bag after Auto Cook makes as many dishes as its ingredients allow, up to the batch limit, every one Delicious. It
 // Needs the dish's proficiency full, and once begun it is made whole, so it is refused where the bag has no room for
-// Every Dish. Each dish rolls its character's special dish once, and its cook's talent once, from `random`, the
-// Talent's extra Dish counted in the room the batch needs
+// Every dish. Each dish rolls its character's special dish once, and its cook's talent once, from `random`, the
+// Talent's extra dish counted in the room the batch needs
 export const autoCookRecipe = (
   recipe: CookingRecipe,
   {

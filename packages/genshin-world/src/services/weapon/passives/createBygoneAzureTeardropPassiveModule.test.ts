@@ -20,7 +20,7 @@ describe(createBygoneAzureTeardropPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   // Bygone Azure Teardrop at its first rank: Normal Attack SPD 10%. After an Elemental Skill, Normal Attack DMG rises
-  // By 4.8% Each second for fourteen seconds, and by 9.6% for each normal attack hit, once every 0.3 seconds, up to 48%
+  // By 4.8% each second for fourteen seconds, and by 9.6% for each normal attack hit, once every 0.3 seconds, up to 48%
   // In all
   const passiveModule = createBygoneAzureTeardropPassiveModule([0.1, 0.048, 14, 1, 2, 0.3, 10]);
   const useSkill = (context: KitContext) =>

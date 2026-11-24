@@ -6,8 +6,8 @@ import { getLiveRowWhere, invitesInMessage } from "@esposter/db-schema";
 import { and, asc, desc, eq } from "drizzle-orm";
 
 // The member's own link in the room: a live one before any tombstone, and the newest of those. A lapsed link is
-// Tombstoned Here, since this read is where it is found, so the answer names its removal at a version. A tombstone is
-// Answered as it Stands, so a reader holding the link it replaced drops it
+// Tombstoned here, since this read is where it is found, so the answer names its removal at a version. A tombstone is
+// Answered as it stands, so a reader holding the link it replaced drops it
 export const readMyInvite = async (
   db: Context["db"],
   userId: string,

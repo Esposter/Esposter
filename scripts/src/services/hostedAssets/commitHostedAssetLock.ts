@@ -6,8 +6,8 @@ import { readPublishedHostedAssetLock } from "#src/services/hostedAssets/readPub
 import { writeHostedAssetLock } from "#src/services/hostedAssets/writeHostedAssetLock";
 
 // Merges a publication's planned entries onto the lock as it stands now, not as it stood when the publication began:
-// The Upload in between can take minutes, and a publication of another scope may have committed in that time. Resolves
-// To the Lock it committed
+// The upload in between can take minutes, and a publication of another scope may have committed in that time. Resolves
+// To the lock it committed
 export const commitHostedAssetLock = async (
   product: HostedAssetProduct,
   scopes: string[],

@@ -2,8 +2,8 @@ import { Element } from "#src/models/Element";
 import { z } from "zod";
 
 // One of a character's skill sets by the game's own id: its skill's cooldown and charges, and its burst's cooldown,
-// Energy Cost and the element it deals, each left out where the set has no such skill or burst. A burst that costs no
-// Element Has no element
+// Energy cost and the element it deals, each left out where the set has no such skill or burst. A burst that costs no
+// Element has no element
 export interface SkillDepot {
   burst?: { cooldownSeconds: number; element?: Element | undefined; energyCost: number } | undefined;
   depotId: number;

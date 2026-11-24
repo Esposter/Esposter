@@ -8,7 +8,7 @@ import { characterTalentKitSchema, CombatTalent } from "genshin-world";
 // Talents, the sets given in the order they are read (`getCharacterSkillDepotRows`). Each combat talent is named by its
 // Skill, and each passive by its proud skill group's name in `proudSkillNameTextIdMap`. Its passives are the ones that
 // Same set opens. A set naming none for one of them is passed over, as the Traveler's own form is, whose Elemental
-// Skill And Burst its element forms hold
+// Skill and Burst its element forms hold
 export const toCharacterTalentKit = (
   characterId: number,
   depotRows: readonly ExcelSkillDepotRow[],

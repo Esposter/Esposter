@@ -10,8 +10,8 @@ import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { takeOne } from "@esposter/shared";
 
 // The end phase once both sides have declared their round's end: a Frozen status and a switch-in lapse, each side draws
-// Its cards from The first side on, and the next round begins with its roll, the side that declared first going first.
-// A duel whose next Round is the limit concedes to both sides before that round's roll, as the Round Limit gives it
+// Its cards from the first side on, and the next round begins with its roll, the side that declared first going first.
+// A duel whose next round is the limit concedes to both sides before that round's roll, as the Round Limit gives it
 export const endGcgRound = (duel: GcgDuel, rule: GcgRule): void => {
   runGcgEndPhase(duel);
   if (duel.phase === GcgPhase.Ended) return;

@@ -6,9 +6,9 @@ import {
 } from "#src/services/character/constants";
 import { GameTextKey } from "genshin-text";
 
-// The game's name for each attribute a list labels: the Details list's rows, a weapon's secondary and an artifact's
-// Affixes. A percentage goes by its flat attribute's name, as the game's artifact lists give it, so Defense % is
-// Labelled DEF. That is Provisional until the game's own names for the percentages are keyed
+// The game's name for each attribute a list labels: the Details list's rows, a weapon's secondary and an
+// Artifact's affixes. A percentage goes by its flat attribute's name, as the game's artifact lists give it, so Defense
+// % is labelled DEF. That is provisional until the game's own names for the percentages are keyed
 export const AttributeLabelGameTextKeyMap: ReadonlyMap<Attribute, GameTextKey> = new Map<Attribute, GameTextKey>([
   ...BASE_ATTRIBUTE_GAME_TEXT_KEYS,
   ...ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS,

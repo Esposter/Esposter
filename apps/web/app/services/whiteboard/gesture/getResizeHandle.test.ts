@@ -121,7 +121,7 @@ describe(getResizeHandle, () => {
     expect.hasAssertions();
 
     // Two free arrows lie on the line y = 100, so the selection's box has no height: its right handle is at (400, 100),
-    // And its top and Bottom handles, which sit at (250, 100), are left out
+    // And its top and bottom handles, which sit at (250, 100), are left out
     const leftArrow: ArrowElement = {
       ...WHITEBOARD_ARROW,
       end: { arrowhead: ArrowheadKind.Triangle, point: { x: 200, y: 100 } },

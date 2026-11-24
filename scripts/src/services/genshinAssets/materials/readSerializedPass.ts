@@ -35,7 +35,7 @@ export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord =
   skipTagMap(cursor);
   // A pass's trailer is one zero word, or two when the second is zero too. Past the trailer come the subshader's tag
   // Count and LOD, and a subshader with no tags has a zero LOD in the game's shaders, so a nonzero word after a zero
-  // Tag Count is the next name and the trailer is one word
+  // Tag count is the next name and the trailer is one word
   cursor.skip(4);
   if (cursor.int32() === 0) {
     const subShaderTagCount = cursor.int32();

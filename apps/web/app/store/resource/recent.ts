@@ -23,7 +23,7 @@ export const useRecentStore = defineStore("resource/recent", () => {
   const arriveResourceListItems = useArriveResourceListItems();
   const recentIds = ref<string[]>([]);
   // The last access each read joined, by resource id, which each read replaces. It is the access row's, not the
-  // Resource's, so It is held beside the resource rows rather than on them
+  // Resource's, so it is held beside the resource rows rather than on them
   const lastAccessedAts = ref(new Map<string, ResourceListItem["lastAccessedAt"]>());
   // A deleted resource's row is held as a tombstone, so it drops out of the list here without a re-read
   const recents = computed(() =>

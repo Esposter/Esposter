@@ -3,8 +3,8 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { z } from "zod";
 
 // One piece of an artifact set as the game's reliquary table holds it: its item id, the text id of its name, its rank
-// In Its tab, its rarity in stars, the slot it is worn in and how many minor affixes an artifact of it starts with. A
-// Set has One piece per slot, rarity and starting count, so the piece an artifact is named by is the one that matches
+// In its tab, its rarity in stars, the slot it is worn in and how many minor affixes an artifact of it starts with. A
+// Set has one piece per slot, rarity and starting count, so the piece an artifact is named by is the one that matches
 // All of them
 export interface ReliquaryPieceData {
   itemId: number;

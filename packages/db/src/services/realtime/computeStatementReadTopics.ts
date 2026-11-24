@@ -14,8 +14,8 @@ import { getColumnTopic, getTableTopic } from "@esposter/db-schema";
 import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 
 // The table occurrences a left join may name by the rows it returns. An occurrence is named by no equality of its own,
-// And is Neither tested by a filter nor referenced by an inner join's condition: an inner join drops the rows no match
-// Reaches, and a Filter removes rows
+// And is neither tested by a filter nor referenced by an inner join's condition: an inner join drops the rows no match
+// Reaches, and a filter removes rows
 const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
   const keys = readSet.occurrences.map((occurrence) => getOccurrenceKey(occurrence));
   const scopedKeys = new Set(
@@ -32,10 +32,10 @@ const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
 
 // The topics one statement a read awaited watches, each with the columns the statement references of its table. A scope
 // Equality names the rows it selects by its value. An unscoped table occurrence is named by the rows a left join
-// Returns, when The join keeps its rows and returns the partner key: each returned row names the value the join matches
-// On, so a row of Another value does not wake the read. An unscoped occurrence no returned row names leaves its table
-// `table-wide`, and a Table-wide table's row topics are dropped, since its table-wide topic covers every row. An empty
-// Read names what it named Before, table-wide
+// Returns, when the join keeps its rows and returns the partner key: each returned row names the value the join matches
+// On, so a row of another value does not wake the read. An unscoped occurrence no returned row names leaves its table
+// Table-wide, and a table-wide table's row topics are dropped, since its table-wide topic covers every row. An empty
+// Read names what it named before, table-wide
 export const computeStatementReadTopics = async ({ rows, statement }: RecordedStatement): Promise<ColumnTopic[]> => {
   const readSet = computeStatementReadSet(statement);
   const { sql } = new SQLiteDialect().sqlToQuery(statement.getSQL());

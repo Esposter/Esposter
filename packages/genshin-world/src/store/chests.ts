@@ -72,8 +72,8 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
   };
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { gainWorldAdventureExp } = worldAdventureRankStore;
-  // The chest a row names is opened once: its wallet is paid, its drops are poured out or bagged, and it is kept as
-  // Opened. Drops that fall away go straight into the bag, and what the bag has no room for is poured out where the
+  // The chest a row names is opened once: its wallet is paid, its drops are poured out or bagged, and it is kept
+  // As opened. drops that fall away go straight into the bag, and what the bag has no room for is poured out where the
   // Chest stands
   const openChestById = (chestId: string, random: () => number) => {
     const chestPlace = worldChestPlaces.value.find(({ id }) => id === chestId);
@@ -115,7 +115,7 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
     setInventory(nextInventory);
     placeWorldDrops(chestPlace, [...opening.drops, ...overflowDrops]);
     // A chest left as it was, opened already or of a kind with no reward, is no opening: it counts toward no
-    // Achievement And reaches no combat
+    // Achievement and reaches no combat
     if (opening.openedChestIds.has(chestId) && !previousOpenedChestIds.has(chestId)) {
       events.emit("achievementEvents", [{ kind: AchievementEventKind.ChestOpened, quantity: 1, targetId: chestId }]);
       events.emit("chestOpened");

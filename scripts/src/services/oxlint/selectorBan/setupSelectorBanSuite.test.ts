@@ -38,9 +38,9 @@ const VIZE_BIN = join(REPOSITORY_ROOT, "node_modules", "vize", "bin", "vize");
 
 // Every ban sits in a list that states the paths it runs over, so a fixture is linted through the plugin, which reads
 // Every list, rather than the entry alone: that proves the selector runs and that its list's scope reaches the file
-// Kind And path it names. A script is oxlint's and a template is vize's, Run from the repository root so it reads the
-// Root `vite.config.ts`, so a component fixture goes through both. Each Runs once per suite, and only the entries under
-// Test are counted, so a fixture may break any other ban freely
+// Kind and path it names. A script is oxlint's and a template is vize's,
+// Run from the repository root so it reads the root `vite.config.ts`, so a component fixture goes through both. Each
+// Runs once per suite, and only the entries under test are counted, so a fixture may break any other ban freely
 export const setupSelectorBanSuite = ({ entries, fixtures }: SetupSelectorBanSuiteOptions): void => {
   const messages = new Set(entries.map(({ message }) => message));
   // A vize finding prefixes the entry's message with its rule, so an entry matches by its end

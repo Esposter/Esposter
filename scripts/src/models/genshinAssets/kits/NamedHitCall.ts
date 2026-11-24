@@ -1,7 +1,7 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
 // One queue call of a named hit's attack: the declaration it is made from, its damage delay and the candidates its
-// Hitbox And delay give
+// Hitbox and delay give
 export interface NamedHitCall {
   delay?: number | undefined;
   fieldMap: Map<string, KitCandidate[]>;

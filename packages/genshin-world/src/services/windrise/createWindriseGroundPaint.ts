@@ -6,8 +6,8 @@ import { Color } from "three";
 
 // Windrise's ground as its terrain paints it: each layer lies where the tiles' cells are painted in it, the roads its
 // Path, as fitted into the ground layers' field of their shares, never by a slope or a height, and each layer paints
-// The Mean of the base-map texels on its cells, as fitted into the ground surface's layers (a layer no texel stands on
-// Takes The ground's mean). Its layers' weights also place the flowers
+// The mean of the base-map texels on its cells, as fitted into the ground surface's layers (a layer no texel stands on
+// Takes the ground's mean). Its layers' weights also place the flowers
 export const createWindriseGroundPaint = (groundLayers: GroundLayerField, surfaces: WindriseSurfaces): GroundPaint => {
   const { color: groundColor, layers } = surfaces.Ground;
   const getGroundLayerColors = (layer: GroundLayer) => {

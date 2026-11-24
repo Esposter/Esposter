@@ -5,8 +5,8 @@ import { QueueJob, StorageBucket } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 // A resource asset is addressed by the hash of its bytes, and the client computes that hash and uploads directly, so
-// The Bytes are read back and hashed here. A mismatch is deleted rather than kept: nothing may reference bytes under a
-// Name that Does not describe them. The delete is not best-effort — a failed delete rethrows, and the redelivery
+// The bytes are read back and hashed here. A mismatch is deleted rather than kept: nothing may reference bytes under a
+// Name that does not describe them. The delete is not best-effort — a failed delete rethrows, and the redelivery
 // Repeats the check
 export const verifyResourceAssetBlob = async (blobName: string): Promise<void> => {
   const nameMatch = RESOURCE_ASSET_BLOB_NAME_REGEX.exec(blobName);

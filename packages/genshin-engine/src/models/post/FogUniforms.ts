@@ -4,7 +4,7 @@ import type { UniformNode } from "three/webgpu";
 // The haze the far world dissolves into, written by whatever owns the sky: its colour, how thick it is at the base
 // Height, how fast it thins above it, how far from the eye it starts, the most of what lies behind it that it ever
 // Hides (all by default), and the light it scatters toward the sun: the scattered light's colour and direction, how
-// Narrowly It gathers round the sun, and how strongly (none by default)
+// Narrowly it gathers round the sun, and how strongly (none by default)
 export interface FogUniforms {
   baseHeight: UniformNode<"float", number>;
   color: UniformNode<"color", Color>;

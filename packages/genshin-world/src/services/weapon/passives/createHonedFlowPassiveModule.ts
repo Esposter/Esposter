@@ -15,8 +15,8 @@ const WAVESPIKE_COOLDOWN_ID = "wavespikeCooldown";
 const RIPPLING_UPHEAVAL_ID = "ripplingUpheaval";
 
 // Honed Flow at its rank: its All Elemental DMG Bonus is a passive bonus on each element. Each Elemental Skill another
-// Member Uses adds a stack of Wavespike, up to the rank's count, once every cooldown. The wielder's Elemental Skill
-// Consumes them All, each raising its Normal Attack DMG by the rank's amount for the rank's seconds, as Rippling
+// Member uses adds a stack of Wavespike, up to the rank's count, once every cooldown. The wielder's Elemental Skill
+// Consumes them all, each raising its Normal Attack DMG by the rank's amount for the rank's seconds, as Rippling
 // Upheaval
 export const createHonedFlowPassiveModule = (params: number[]): PassiveModule => {
   const elementalDamageBonus = takeOne(params, 0);

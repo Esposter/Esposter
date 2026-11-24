@@ -36,7 +36,7 @@ import { takeOne } from "@esposter/shared";
 export const INEFFA_CHARACTER_ID = 10_000_116;
 
 // Constellation 1's Carrier Flow Composite, as gcsim v2.47.2 (MIT) ineffa/cons.go gives it: each shield she casts
-// Starts 20 Seconds of a Lunar-Charged DMG Bonus for the party, of 2.5% per 100 of her ATK at most 50%, read from her
+// Starts 20 seconds of a Lunar-Charged DMG Bonus for the party, of 2.5% per 100 of her ATK at most 50%, read from her
 // Total ATK
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_DAMAGE_BONUS_CAP = 0.5;
@@ -46,9 +46,9 @@ const CONSTELLATION_1_STATUS_ID = "ineffa-constellation-1";
 
 const CONSTELLATION_2 = 2;
 // Constellation 2, as gcsim v2.47.2 (MIT) ineffa/cons.go gives it: her burst's shield is placed 37 frames in (line 65).
-// The First enemy her burst hits is marked for a Punishment Edit, a Lunar-Charged hit of 3 times her ATK in a radius of
-// 6 Metres, which fires on the marked enemy's next hit or 60 frames on, whichever comes first (lines 97, 107, 111)
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/cons.go`
+// The first enemy her burst hits is marked for a Punishment Edit, a Lunar-Charged hit of 3 times her ATK in a radius of
+// 6 metres, which fires on the marked enemy's next hit or 60 frames on, whichever comes first (lines 97, 107, 111)
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/cons.go
 const CONSTELLATION_2_SHIELD_SECONDS = toKitSeconds(37);
 const PUNISHMENT_EDIT_DELAY_SECONDS = toKitSeconds(60);
 const PUNISHMENT_EDIT_MULTIPLIER = 3;
@@ -80,9 +80,9 @@ const BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK = 0.007 / 100;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
 // Panoramic Permutation Protocol, Ineffa's Ascension 4 passive: Supreme Instruction: Cyclonic Exterminator gives Ineffa
-// And The active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim v2.47.2 (MIT) ineffa/asc.go
-// Gives it. The amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go`
+// And the active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim v2.47.2 (MIT) ineffa/asc.go
+// Gives it. the amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
 const ASCENSION_4 = 4;
 const PERMUTATION_ELEMENTAL_MASTERY_SHARE = 0.06;
 const PERMUTATION_SECONDS = 20;
@@ -143,12 +143,13 @@ const movePermutation = (event: KitEvent, kitEffectState: KitEffectState, combat
 
 // Ineffa's behaviour: Cleaning Mode places its shield by a task and summons Birgitta after its hit, and Cyclonic
 // Exterminator summons her again at its hit, ending the one on the field. Her Moonsign Benediction adds its Base DMG
-// Bonus by her ATK, and from Ascension 4 her burst gives her and the active member Elemental Mastery by her ATK. Her
-// Constellation 4 energy is built, from any Lunar-Charged reaction of her party once every 4 seconds, as gcsim V2.47.2
-// (MIT) ineffa/cons.go gives it Constellation 1's Carrier Flow Composite is built: each shield she casts gives the
-// Party a Lunar-Charged DMG Bonus, as the Constellation file of gcsim gives it Constellation 2 places its shield and
-// Marks the first enemy the burst hits for its Punishment Edit, as built above Constellation 6 needs the Lunar-Charged
-// Reaction's own attack, which the kit does not hear, not built
+// Bonus by her ATK, and from Ascension 4 her burst gives her and the active member Elemental Mastery by her ATK.
+// Her Constellation 4 energy is built, from any Lunar-Charged reaction of her party once every 4 seconds, as gcsim
+// V2.47.2 (MIT) ineffa/cons.go gives it
+// Constellation 1's Carrier Flow Composite is built: each shield she casts gives the party a Lunar-Charged DMG Bonus,
+// As the Constellation file of gcsim gives it
+// Constellation 2 places its shield and marks the first enemy the burst hits for its Punishment Edit, as built above
+// Constellation 6 needs the Lunar-Charged reaction's own attack, which the kit does not hear, not built
 export const createIneffaKitBehaviour = ({
   kit,
   readArea,
@@ -275,7 +276,7 @@ export const createIneffaKitBehaviour = ({
           context,
         );
       // Constellation 2 marks the first enemy the burst hits, and the mark's next hit, or 60 frames on, takes its
-      // Punishment Edit. The mark is set after the hit's own event is read, so that hit does not take it
+      // Punishment edit. The mark is set after the hit's own event is read, so that hit does not take it
       if (event.kind === KitEventKind.EnemyHit && combatant.constellationCount >= CONSTELLATION_2)
         if (checkHasPunishmentEdit(event.enemy)) firePunishmentEdit(context, combatant, event.enemy, punishmentEditHit);
         else if (
@@ -304,7 +305,7 @@ export const createIneffaKitBehaviour = ({
     },
     skill: {
       // The shield is placed by a task, and reads her ATK with the buffs on her as they stand then. Its element is
-      // Electro, And it lasts the seconds gcsim gives it from its placement
+      // Electro, and it lasts the seconds gcsim gives it from its placement
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         scheduleShield(kitEffectState, combatant, shieldStartSeconds);
         summonBirgitta(kitEffectState, body, combatant, skillBirgittaSpawnSeconds, skillBirgittaDischarges);

@@ -16,8 +16,8 @@ const publishedStatueLevelSchema = z.object({
 });
 
 // A region's statue levels `pnpm -C scripts genshin:assets statues` publishes, fetched by its key from the hosted game
-// Data and checked against its shape as it arrives, then read as the rule's levels: a level takes its one Oculus, or
-// None. The key is typed off the lock, so a region no publish wrote fails typecheck
+// Data and checked against its shape as it arrives, then read as the rule's levels: a level takes its one Oculus,
+// Or none. the key is typed off the lock, so a region no publish wrote fails typecheck
 export const readStatueLevels = async (
   gameDataBaseUrl: string,
   key: Extract<GameDataKey, `statueLevels/${string}`>,

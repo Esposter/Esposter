@@ -6,8 +6,8 @@ import { takeOne } from "@esposter/shared";
 const BOLT_COOLDOWN_ID = "boltOfPerceptionCooldown";
 
 // Echo at its rank: a normal or charged attack its wielder lands has the rank's chance of a Bolt of Perception, an
-// Extra hit at The rank's multiplier of ATK on the enemy it struck, once every the rank's cooldown in seconds. The
-// Bolt's bounces, which the Text gives as a maximum of four, are not modelled, so the bolt is a single hit
+// Extra hit at the rank's multiplier of ATK on the enemy it struck, once every the rank's cooldown in seconds. The
+// Bolt's bounces, which the text gives as a maximum of four, are not modelled, so the bolt is a single hit
 // Provisionally
 export const createBoltOfPerceptionPassiveModule = (params: number[]): PassiveModule => {
   const chance = takeOne(params, 0);

@@ -10,9 +10,9 @@ import { readIndexedAssets } from "#src/services/recreation/animeStudio/readInde
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { join } from "node:path";
 
-// The resolved objects of the given types, named through the asset index by their block and path ID, each exported From
-// Its block by its exact name, converted or as the export type given. The index holds no file, so a block and path ID
-// It names more than once, or that Several files of the block resolve to, is as unresolved as one it does not name
+// The resolved objects of the given types, named through the asset index by their block and path ID, each exported
+// From its block by its exact name, converted or as the export type given. The index holds no file, so a block and path
+// ID it names more than once, or that several files of the block resolve to, is as unresolved as one it does not name
 export const exportResolvedAssets = async (
   resolvedObjects: readonly ResolvedObject[],
   types: readonly AssetType[],

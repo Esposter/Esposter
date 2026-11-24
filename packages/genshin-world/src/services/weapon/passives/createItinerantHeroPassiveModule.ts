@@ -10,8 +10,8 @@ const ITINERANT_HERO_SECONDS = 5;
 const ITINERANT_HERO_SOURCE = "itinerantHero";
 
 // Itinerant Hero at its rank: the DMG its wielder deals is raised by the rank's percentage, which taking DMG disables
-// For five Seconds. The bonus is priced as a passive, so the disabling takes off as much as it gives for those seconds,
-// Once however Much DMG the wielder takes in them
+// For five seconds. The bonus is priced as a passive, so the disabling takes off as much as it gives for those seconds,
+// Once however much DMG the wielder takes in them
 export const createItinerantHeroPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   return {

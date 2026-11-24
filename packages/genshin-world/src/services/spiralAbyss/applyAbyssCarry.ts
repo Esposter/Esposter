@@ -4,7 +4,7 @@ import type { AbyssCarryMember } from "#src/models/spiralAbyss/AbyssCarryMember"
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The party's members with each carried character's health and energy put back as the carry took them, the rest left as
-// They Stand, so a chamber starts from its clear's record rather than the party's state after it
+// They stand, so a chamber starts from its clear's record rather than the party's state after it
 export const applyAbyssCarry = (
   characterIdMemberMap: ReadonlyMap<number, PartyMember>,
   carry: readonly AbyssCarryMember[],

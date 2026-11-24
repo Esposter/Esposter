@@ -9,8 +9,8 @@ import { copyFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { dirname } from "node:path";
 
 // The one-time move of a CAB map from AnimeStudio's Maps folder into the parity folder, for a machine that mapped
-// Before The map lived there. It moves only when the parity folder has none, and only a map whose stamp beside it names
-// The Install's game version and the tool's binary, so a map no stamp vouches for is mapped again rather than adopted.
+// Before the map lived there. It moves only when the parity folder has none, and only a map whose stamp beside it names
+// The install's game version and the tool's binary, so a map no stamp vouches for is mapped again rather than adopted.
 // It reports whether it moved one. It copies and then removes the old file, since a rename fails across volumes
 export const adoptCabMap = async (
   legacyPath: string,

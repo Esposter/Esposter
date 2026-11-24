@@ -41,8 +41,8 @@ const CONSTELLATION_6 = 6;
 const HELD_UNTIL_SWAP_SECONDS = Number.POSITIVE_INFINITY;
 const NAMISEN_STATUS_ID = "ayato-namisen";
 // Kamisato Art: Michiyuku Hagetsu, from Ascension 4, gives Ayato 2 Energy each second he is off the field while his
-// Energy is Under 40, as gcsim v2.47.2 (MIT) ayato/asc.go gives it
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayato/asc.go`
+// Energy is under 40, as gcsim v2.47.2 (MIT) ayato/asc.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayato/asc.go
 const ASCENSION_4 = 4;
 const MICHIYUKU_HAGETSU_ENERGY = 2;
 const MICHIYUKU_HAGETSU_ENERGY_CEILING = 40;
@@ -78,9 +78,9 @@ const castMichiyukuHagetsu = (kitEffectState: KitEffectState, combatant: Combata
 
 // Ayato's behaviour: Kamisato Art: Kyouka enters Soukai Kanka, whose three Shunsuiken strikes take the Namisen stacks,
 // And Kamisato Art: Suiyuu casts its garden, which follows the body and rains its blades on its ticks. Ascension 1,
-// Ascension 4's Energy off the field and Constellations 1, 2 and 6 are built. Constellation 4's team attack Speed and
+// Ascension 4's energy off the field and Constellations 1, 2 and 6 are built. Constellation 4's team attack Speed and
 // The Max HP that Constellation 2 gives at three stacks are not, as the kit has no attack speed to price them, and a
-// Passive reads the combatant alone; the normal attack DMG bonus of Suiyuu is not either, as no kit step Reads a normal
+// Passive reads the combatant alone; the normal attack DMG bonus of Suiyuu is not either, as no kit step reads a normal
 // Attack's DMG Bonus from the team's effects
 export const createAyatoKitBehaviour = ({
   kit,
@@ -105,7 +105,7 @@ export const createAyatoKitBehaviour = ({
   const shunsuiken = readHitFields("shunsuiken", ["talentMultiplier"]);
   const shunsuikenMultipliers = readParameters("shunsuikenMultipliers");
   // Constellation 6's strikes land their hitmarks from the attack's start, so from the strike that sets them off they
-  // Land Its hitmark sooner
+  // Land its hitmark sooner
   const constellation6Hits = Array.from(readSecondsList("boundlessOriginHitmarks"), (hitmarkSeconds): KitHit => ({
     ...shunsuiken,
     hitmarkSeconds: hitmarkSeconds - shunsuiken.hitmarkSeconds,
@@ -174,7 +174,7 @@ export const createAyatoKitBehaviour = ({
         ? CONSTELLATION_1_DAMAGE_BONUS
         : 0,
     // Leaving the field clears the Namisen stacks as it ends Soukai Kanka, as gcsim's swap does, and from Ascension 4
-    // Starts Michiyuku Hagetsu's energy, which coming back on the field ends
+    // Starts michiyuku Hagetsu's energy, which coming back on the field ends
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped) return;
       if (event.characterId === combatant.characterId)

@@ -8,8 +8,8 @@ import { endKitStatus } from "#src/services/kit/effects/endKitStatus";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Holds an Emblem's stack for as long as its wielder's Energy is short of its burst's cost, and ends it once the Energy
-// Is Full, run on each step as the Emblem's stacks are counted. The stack is a status of the id's energy, not a hold,
-// So it Has no seconds of its own
+// Is full, run on each step as the Emblem's stacks are counted. The stack is a status of the id's energy, not a hold,
+// So it has no seconds of its own
 export const syncEmblemEnergyStack = (
   kitEffectState: KitEffectState,
   party: Party,

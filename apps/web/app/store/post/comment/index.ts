@@ -38,7 +38,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   // Held here rather than in each card, so a card a re-read remounts comes back open
   const expandedCommentIds = ref(new Set<string>());
   // Keyed by the post whose replies the partition holds, the route's own post included. A partition holds the ids of
-  // Its Replies in the order its pages named them, and the rows are the overlay's
+  // Its replies in the order its pages named them, and the rows are the overlay's
   const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostKey>();
   const toBranchPosts = (branchKeys: PostKey[]) =>
     branchKeys.flatMap(({ id }) => {
@@ -83,7 +83,7 @@ export const useCommentStore = defineStore("post/comment", () => {
       for (const { id } of branchItems.value) deleteLoadedBranch(id);
       branchItems.value = [];
       // Emptied rather than kept: a branch that still says it is loaded is one a re-expansion will not read again, and
-      // The Removal that calls this has taken the replies it held
+      // The removal that calls this has taken the replies it held
       isLoaded.value = false;
     };
     deleteLoadedBranch(parentId);
@@ -101,8 +101,8 @@ export const useCommentStore = defineStore("post/comment", () => {
   };
 
   // The comment is drawn as it is sent: the reader is its author, it inherits its parent's chain, and a new reply has
-  // No Votes or replies of its own. The counts it moves on the posts above it are the server's, so they are read back
-  // Once It lands. `onRefused` hands the composer its text back
+  // No votes or replies of its own. The counts it moves on the posts above it are the server's, so they are read back
+  // Once it lands. `onRefused` hands the composer its text back
   const createComment = (input: Except<CreateCommentInput, "id">, onRefused?: () => void) => {
     if (EMPTY_TEXT_REGEX.test(input.description)) return;
 
@@ -173,8 +173,8 @@ export const useCommentStore = defineStore("post/comment", () => {
       },
     );
   // The answer names each reply a removal takes as well as the comment and the posts above it, and no entry can name
-  // The Replies, so the removal waits for the answer. The branch beneath the comment is emptied only once the server
-  // Keeps the Removal, and the counters above it are read back then
+  // The replies, so the removal waits for the answer. The branch beneath the comment is emptied only once the server
+  // Keeps the removal, and the counters above it are read back then
   const deleteComment = async (input: DeleteCommentInput) =>
     writeAwaited(
       async () => {

@@ -11,7 +11,7 @@ const HIT_WORD_REGEX = /(?:Hitmarks|Hitmark|Hits|Hit)$/u;
 
 // A frame list the kit holds with no named constant of its name takes the delays of the queue calls whose attack an
 // `Abil` names by the list's name without its hit word, as many calls as the list has hits, in the order they land.
-// Where The calls do not number as the hits, or do not land in a known order, the list has none
+// Where the calls do not number as the hits, or do not land in a known order, the list has none
 export const addGcsimFrameListCandidates = (
   { add, toFile }: GcsimKitCandidateWriter,
   { attacks, queuedAttacks }: GcsimCharacter,

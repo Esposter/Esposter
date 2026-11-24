@@ -6,12 +6,12 @@ export const MINING_OUTCROP_ADVENTURE_RANK = 30;
 // Id
 export const OUTCROP_CAMP_ID_PREFIX = "outcrop";
 // The members a fight's camp places at an outcrop, the radius in metres they stand within of its place, and the level
-// They Spawn at before the World Level raises them. Provisional until the wiki's enemies per place are paired with
+// They spawn at before the World Level raises them. Provisional until the wiki's enemies per place are paired with
 // Kinds
 export const OUTCROP_CAMP_SIZE = 3;
 export const OUTCROP_FIGHT_RADIUS = 6;
 // The radius in metres the character must stand within of an outcrop's place to touch it, which starts its fight.
-// Provisional Until the game's touch range is measured
+// Provisional until the game's touch range is measured
 export const OUTCROP_TOUCH_RADIUS = 4;
 export const OUTCROP_CAMP_LEVEL = 1;
 // The kinds a fight's members are drawn from: every kind the world places

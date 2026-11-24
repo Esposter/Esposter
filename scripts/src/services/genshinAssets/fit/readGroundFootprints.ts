@@ -12,11 +12,11 @@ import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapital
 import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
 
 // Every place a region file stands a landmark on inside a square round the centre, each a disc on its point: a
-// Capital's Radius the farthest corner of its city area's placements from its place, since the city's whole
-// Architecture stands On it, another building's the half diagonal of the footprint its kit's options give, and any
-// Other the bar's radius. Beside them, each capital's city, whose buildings and plazas own the ground's height inside
-// It: the city areas its Place stands in and every one within the bar's radius of those, since a capital is laid out
-// Across several (Inazuma City's lower town, upper town and keep). The city areas are read only when a capital needs
+// Capital's radius the farthest corner of its city area's placements from its place, since the city's whole
+// Architecture stands on it, another building's the half diagonal of the footprint its kit's options give, and any
+// Other the bar's radius. beside them, each capital's city, whose buildings and plazas own the ground's height inside
+// It: the city areas its place stands in and every one within the bar's radius of those, since a capital is laid out
+// Across several (Inazuma city's lower town, upper town and keep). The city areas are read only when a capital needs
 // Them, once for the region
 export const readGroundFootprints = async (
   { landmarks, origin, readCityAreas }: GroundSource,

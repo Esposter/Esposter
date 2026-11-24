@@ -8,7 +8,7 @@ import {
 } from "#src/services/genshinAssets/cooking/constants";
 
 // The stat one clause of a bonus description gives: a flat amount of the attribute its ability names, or a percentage
-// Of The attribute its name gives, kept as a fraction. A clause this does not read gives none
+// Of the attribute its name gives, kept as a fraction. A clause this does not read gives none
 export const toBonusClause = (
   clause: string,
   flatAttribute: Attribute | undefined,

@@ -16,9 +16,9 @@ import {
 import { NodeMaterial } from "three/webgpu";
 
 // An outline's material: the mesh pushed out along its normal by the thickness, in screen space so its width holds, and
-// Drawn from behind in the colour given. Three builds the same material per toon material, which the outline pass
-// Shares. A placed copy's outline is pushed out from the place its matrix gives the vertex, along the normal that
-// Matrix's Normal matrix turns, as its fill turns it, so a non-uniform scale does not tilt the outline off the surface
+// Drawn from behind in the colour given. Three builds the same material per toon material, which the outline
+// Pass shares. A placed copy's outline is pushed out from the place its matrix gives the vertex, along the normal that
+// Matrix's normal matrix turns, as its fill turns it, so a non-uniform scale does not tilt the outline off the surface
 export const createOutlineMaterial = (
   colorNode: Node<"vec4">,
   thicknessNode: Node<"float">,
@@ -43,11 +43,11 @@ export const createOutlineMaterial = (
 };
 
 // The game's outline material, moved as its vertex program moves a vertex, in view space before the projection: the
-// Vertex Goes along its ray from the eye by the offset, then its xy along the view tangent's screen direction by the
+// Vertex goes along its ray from the eye by the offset, then its xy along the view tangent's screen direction by the
 // Width (Exact on both forms, as the program's operators read them). The game keeps a vertex's outline normal in its
-// Tangent, and The tangent is carried to view space by the model view matrix itself, since three's view normal and
-// Tangent turn Inward on a back side, which would push the outline into the body. The width is the program's own, so it
-// Is not scaled By the scene's thickness
+// Tangent, and the tangent is carried to view space by the model view matrix itself, since three's view normal and
+// Tangent turn inward on a back side, which would push the outline into the body. The width is the program's own, so it
+// Is not scaled by the scene's thickness
 export const createGameOutlineMaterial = (
   colorNode: Node<"vec4">,
   widthNode: Node<"float">,

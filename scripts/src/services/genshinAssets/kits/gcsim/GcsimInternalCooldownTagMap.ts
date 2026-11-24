@@ -1,7 +1,7 @@
 import { InternalCooldownTag } from "genshin-world";
 
 // The ICD tags gcsim names in an `AttackInfo` literal, as the kit names them: each tag gcsim's enum declares has its
-// Kit Tag here, and `ICDTagNone` is a hit with no tag. A tag gcsim names that is missing here is named by its gcsim
+// Kit tag here, and `ICDTagNone` is a hit with no tag. A tag gcsim names that is missing here is named by its gcsim
 // Literal, which the kit's schema refuses, so GcsimInternalCooldownTagMap.test.ts holds the map to gcsim's enum
 export const GcsimInternalCooldownTagMap: Partial<Record<string, InternalCooldownTag>> = {
   "attacks.ICDTagAinoBurstMoonHit": InternalCooldownTag.AinoBurstMoonHit,

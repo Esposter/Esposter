@@ -11,7 +11,7 @@ import { takeOne } from "@esposter/shared";
 const ROCK_PAPER_SCISSORS_COMBO_DAMAGE = 2;
 
 // Rock-Paper-Scissors Combo, Electro Hypostasis' elemental skill: 2 Electro DMG, then Scissors and Paper are prepared
-// For the Side's next turn (the wiki's Rock-Paper-Scissors Combo)
+// For the side's next turn (the wiki's Rock-Paper-Scissors Combo)
 export const rockPaperScissorsCombo: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const characterIndex = takeOne(duel.sides, sideIndex).activeIndex;

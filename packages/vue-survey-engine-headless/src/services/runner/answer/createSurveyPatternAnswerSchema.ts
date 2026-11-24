@@ -5,7 +5,7 @@ import { getResult } from "@esposter/shared";
 import { RE2JS } from "re2js";
 
 // A text answer must match its question's pattern. The pattern runs on RE2, whose matching takes time linear in the
-// Answer So no pattern stalls the check. A pattern RE2 cannot compile is ignored, since it would fail every answer
+// Answer so no pattern stalls the check. A pattern RE2 cannot compile is ignored, since it would fail every answer
 // Rather than one
 export const createSurveyPatternAnswerSchema = (schema: z.ZodType<string>, pattern: string): z.ZodType<string> =>
   getResult(() => RE2JS.compile(pattern, RE2JS.LOOKBEHINDS))

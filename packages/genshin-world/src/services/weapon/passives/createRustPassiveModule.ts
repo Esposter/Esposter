@@ -4,7 +4,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { takeOne } from "@esposter/shared";
 
 // Rust at its rank: a normal attack its wielder deals is raised by the rank's percentage of DMG, and a charged attack
-// Is Lowered by the rank's second percentage
+// Is lowered by the rank's second percentage
 export const createRustPassiveModule = (params: number[]): PassiveModule => {
   const normalAttackBonus = takeOne(params, 0);
   const chargedAttackPenalty = takeOne(params, 1);

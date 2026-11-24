@@ -3,8 +3,8 @@ import type { Context } from "#server/trpc/context";
 import { getLiveMembershipRelationalWhere } from "@esposter/db-schema";
 
 // Whether a connection RealtimeKit reports may stay in its call. A token outlives the membership it was minted for, so
-// A Room call asks the room's door again on every connection it reports, rather than trusting the token it was given. A
-// Member timed out of the room is kept out of its calls until the timeout ends, as a removed one is for good. A
+// A room call asks the room's door again on every connection it reports, rather than trusting the token it was given.
+// A member timed out of the room is kept out of its calls until the timeout ends, as a removed one is for good. A
 // Standalone call has no room and was admitted when its token was minted; a session with no row is a call that no
 // Longer exists
 export const checkIsCallConnectionAdmitted = async (

@@ -4,7 +4,7 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 
 // The names a parameter list declares, `(a, b int, c string)` giving `a`, `b` and `c`: a name with no type of its own
-// Takes The type of the group after it
+// Takes the type of the group after it
 export const readParameterNames = (
   tokens: readonly GoToken[],
   openingPosition: number,

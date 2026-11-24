@@ -9,26 +9,26 @@ const COORDINATE_COUNT = 3;
 const INDEX_COUNT = 6;
 
 // Makes a corner, a point round the tower's axis at a turn from +z toward +x, as three's lathe turns: a radius out and
-// A Height up
+// A height up
 const writeCorner = (turn: number, radius: number, y: number) =>
   new Vector3(radius * Math.sin(turn * 2 * Math.PI), y, radius * Math.cos(turn * 2 * Math.PI));
 // A slab of a tower's wall as its buffers, over the turns its span covers round a tower of that breadth and up its
-// Height, Each face flat-shaded so its edges stand sharp as carved stone's do. One standing out, a rib or a pilaster,
+// Height, each face flat-shaded so its edges stand sharp as carved stone's do. One standing out, a rib or a pilaster,
 // Is a curved Prism from a little inside the wall out to its depth, its inside within the wall and never drawn; one
-// Sunk in, a window Or a bay, is the box behind the lathe's opening, its back turned out and its sides turned into it.
-// Each face is four Corners of its own and two triangles, indexed as the lathe it is merged with is
+// Sunk in, a window or a bay, is the box behind the lathe's opening, its back turned out and its sides turned into it.
+// Each face is four corners of its own and two triangles, indexed as the lathe it is merged with is
 export const computeLoginTowerSlabGeometry = (
   [radius = 0, depth = 0, roundFrom = 0, roundTo = 0, bottom = 0, top = 0]: TowerSlab,
   breadth: number,
   { isSunk = false }: { isSunk?: boolean } = {},
 ) => {
   // The fit rounds a span to its facade's cells, so one ending at the seam can run on past a whole turn: it stops at
-  // The Seam, where its last corners stand a hair short of it as the lathe's do and read its tile's far edge
+  // The seam, where its last corners stand a hair short of it as the lathe's do and read its tile's far edge
   const [startTurn, endTurn] = [roundFrom / breadth, Math.min(roundTo / breadth, 1)];
   const segmentCount = Math.max(1, Math.ceil((endTurn - startTurn) * LOGIN_TOWER_RADIAL_SEGMENTS));
   const getTurn = (index: number) => startTurn + ((endTurn - startTurn) * index) / segmentCount;
   // A slab standing out runs from inside the wall to its face; one sunk in from its back to the wall, where the lathe
-  // Is Cut open over it
+  // Is cut open over it
   const [innerRadius, outerRadius] = isSunk
     ? [radius - depth, radius]
     : [radius - LOGIN_TOWER_COLUMN_EMBED, radius + depth];

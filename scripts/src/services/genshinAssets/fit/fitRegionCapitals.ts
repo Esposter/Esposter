@@ -62,7 +62,7 @@ export const fitRegionCapitals = async ({ isDryRun }: DryRunOptions): Promise<Ga
           return writeRegionData(regionFile, { ...regionData, landmarks }, { isDryRun });
         };
         // A capital the dump holds no areas for stands at the place its entry sets, so only its landmark is written:
-        // Its Plateau's height is the region's own ground fit's, which no waypoint gives it
+        // Its plateau's height is the region's own ground fit's, which no waypoint gives it
         if ("position" in capital) return { notes: [await writeLandmark(capital.position)], objects: {} };
         const { areaNames } = capital;
         const capitalAreaNames = new Set(areaNames);

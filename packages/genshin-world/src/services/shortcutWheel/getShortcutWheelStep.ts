@@ -5,7 +5,7 @@ import { getShortcutWheelDirectionIndex } from "#src/services/shortcutWheel/getS
 import { ShortcutWheelDirectionCountScreenKindsMap } from "#src/services/shortcutWheel/ShortcutWheelDirectionCountScreenKindsMap";
 
 // The wheel for this frame: open while its key is held, its pick the entry the move points at. The frame the key lets
-// Go, The wheel closes and opens the entry its last held move pointed at, if that move pointed at one
+// Go, the wheel closes and opens the entry its last held move pointed at, if that move pointed at one
 export const getShortcutWheelStep = (
   previous: ShortcutWheelStep,
   isHeld: boolean,

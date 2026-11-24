@@ -7,7 +7,7 @@ import { surveyNodeTypeDefinitionMap } from "#src/services/surveyNodeTypeDefinit
 import { checkIsDeepEqual } from "@esposter/shared";
 
 // The props a kind change carries whichever kinds it joins: the id, the name, the texts, the required flag and the
-// Visibility condition. The choices join them only when both kinds hold choices. Every other prop takes the new kind's
+// Visibility condition. the choices join them only when both kinds hold choices. Every other prop takes the new kind's
 // Default
 const KEPT_PROP_NAMES = new Set(["description", "id", "isRequired", "name", "title", "visibleIf"]);
 

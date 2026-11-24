@@ -3,8 +3,8 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 import type { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 
 // Particles or orbs reached the party: the member on the field who collected them, how many of them and which of the
-// Two They were, and their element, none for a clear one. Every standing member has already taken their energy, the one
-// On The field in full and the others a share by the party's size
+// Two they were, and their element, none for a clear one. Every standing member has already taken their energy, the one
+// On the field in full and the others a share by the party's size
 export interface KitEnergyParticleCollectedEvent {
   characterId: number;
   count: number;

@@ -6,9 +6,9 @@ import type { GridRefusal } from "#src/models/GridRefusal";
 import { findGridAt } from "#src/internal/services/findGridAt";
 
 // An item from outside every grid, such as a palette entry, is dragged by its element: the grid under the pointer
-// Previews the Cell the item would land on, and the release drops it there, or nowhere when no grid takes it. The drop
-// Receives the grid's Root too, so a consumer reads its own data attribute from it to know which group the item landed
-// In. A grid that the Consumer's checkIsRefused refuses for the item previews nothing over it and takes no drop
+// Previews the cell the item would land on, and the release drops it there, or nowhere when no grid takes it. The drop
+// Receives the grid's root too, so a consumer reads its own data attribute from it to know which group the item
+// Landed in. A grid that the consumer's checkIsRefused refuses for the item previews nothing over it and takes no drop
 export const startExternalDrag = (
   event: PointerEvent,
   item: GridItem,

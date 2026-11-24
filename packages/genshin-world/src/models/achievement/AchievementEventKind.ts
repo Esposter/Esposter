@@ -1,8 +1,8 @@
 // The kinds of doing an achievement watches for: a chest opened by its id, a material gained by its item's id, a
 // Frostbearing Tree's level reached by its number, a monster defeated by its kind's id, an item crafted by its combine
-// Type, an item the bag takes in by its id, a quest's own id finished, a parent quest's, the main quest that holds Its
-// `sub-quests`, finished once its last sub-quest is, a statue's level reached by its city, a transport point unlocked
-// By Its id, a waypoint, and A weapon forged by its rarity in stars
+// Type, an item the bag takes in by its id, a quest's own id finished, a parent quest's, the main quest that holds
+// Its sub-quests, finished once its last sub-quest is, a statue's level reached by its city, a transport point unlocked
+// By its id, a waypoint, and A weapon forged by its rarity in stars
 export const AchievementEventKind = {
   ChestOpened: "ChestOpened",
   ItemCrafted: "ItemCrafted",

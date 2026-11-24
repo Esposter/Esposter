@@ -9,7 +9,7 @@ import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
 
 // The character this session already has wins outright — recorded against the session id, so a compact or a resume
 // Under the same id keeps the character the conversation started with after midnight, and a `use` or `pin` made inside
-// It Holds — then the pin decides what a new session is given, then a fresh pick; whichever it is, the session records
+// It holds — then the pin decides what a new session is given, then a fresh pick; whichever it is, the session records
 // It. No session id means no session: what a session starting now would be given, recorded nowhere
 export const resolveSessionCharacter = async (
   roster: Character[],

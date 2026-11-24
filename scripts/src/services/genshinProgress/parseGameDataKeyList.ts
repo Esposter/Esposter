@@ -7,7 +7,7 @@ import { renderConstantOpening, RENDERED_CONSTANT_CLOSING } from "hosted-assets"
 const KEY_REGEX = /: "(?<key>[^"]+)"/gu;
 
 // The body of one key constant, the text between the line that opens it and the line that closes it, as
-// `renderConstant` Writes them
+// `renderConstant` writes them
 const readLeaves = (text: string, name: string): string[] => {
   const escapedOpening = RegExp.escape(renderConstantOpening(name));
   const escapedClosing = RegExp.escape(RENDERED_CONSTANT_CLOSING);

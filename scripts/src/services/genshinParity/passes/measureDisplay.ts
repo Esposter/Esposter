@@ -22,11 +22,11 @@ const MIN_DISPLAY = 0.01;
 const MIN_SAMPLE_COUNT = 3;
 // The display pass: at each current build's reference's camera, every interior pixel of the exports' parts
 // (`readDisplaySamples`), and the tone curve's contrast its light lies flattest under (`solveToneContrast`). Its
-// Reading Is how much more the shipped contrast leaves than that one, gated where the profile's other values stand well
-// Apart, And a reference with too few pixels to read fails it. The curve's exposure only scales the light the light
-// Pass Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over the brightest
-// Pixels of each Reference whose screen draws the bloom (`getBloomReferenceIds`), our frame drawn with the game's bloom
-// Less ours drawn Without it, held only strictly below zero, where the drawn bloom closes
+// Reading is how much more the shipped contrast leaves than that one, gated where the profile's other values stand well
+// Apart, and a reference with too few pixels to read fails it. The curve's exposure only scales the light the light
+// Pass solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over the brightest
+// Pixels of each reference whose screen draws the bloom (`getBloomReferenceIds`), our frame drawn with the game's bloom
+// Less ours drawn without it, held only strictly below zero, where the drawn bloom closes
 export const measureDisplay = async (
   component: DerivedAssetComponent,
   pageRoot?: string,

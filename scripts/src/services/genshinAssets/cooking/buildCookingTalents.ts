@@ -12,7 +12,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // The cooking talents of the playable characters, read off the proud skill table: each row whose effect is a cooking
-// One, Keyed by the character whose passives open its proud skill group. A talent no character's passives open is an
+// One, keyed by the character whose passives open its proud skill group. A talent no character's passives open is an
 // Error
 export const buildCookingTalents = (): Record<string, unknown> => {
   const proudSkillRows = readExcelTable<CookProudSkillRow & ExcelProudSkillRow>(PROUD_SKILL_TABLE_NAME);

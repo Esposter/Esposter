@@ -13,14 +13,14 @@ export const LOGIN_DOOR_PANEL_STRENGTH = 0.6;
 // The game's material for the door's panel, which lights as ours does where the exports draw the door
 export const LOGIN_DOOR_PANEL_MATERIAL = "LoginScene_Door02";
 // The procedural normal detail the door's frame and panel lean their normals by: a cell as wide as the lobe its
-// Exported Normal map holds across the most high-pass boxes (`readTextureWavelength`, 13 texels, 0.0354 metres), and
-// The amplitude That brings our mean lean to the exports' bend of 4.7203 degrees, solved at that wavelength
+// Exported normal map holds across the most high-pass boxes (`readTextureWavelength`, 13 texels, 0.0354 metres), and
+// The amplitude that brings our mean lean to the exports' bend of 4.7203 degrees, solved at that wavelength
 // (openspec/changes/genshin-recreation-passes/design.md)
 export const LOGIN_DOOR_NORMAL_DETAIL_WAVELENGTH = 0.0354;
 export const LOGIN_DOOR_NORMAL_DETAIL_AMPLITUDE = 0.00321;
 // The door's grain over its relief: the targets `genshin:parity grain login --family Door` settles, a damped Newton
-// Over the Structure terms the door's own render reads (`fitSurfaceGrain`, `solveResidualsByNewton`), from the first
-// Fit's targets. At a pixel's 0.0199 metres at the door's depth. The octave amplitudes that reproduce these are solved
+// Over the structure terms the door's own render reads (`fitSurfaceGrain`, `solveResidualsByNewton`), from the first
+// Fit's targets. at a pixel's 0.0199 metres at the door's depth. The octave amplitudes that reproduce these are solved
 // By `computeSurfaceOctaves`
 export const LOGIN_DOOR_SURFACE_DETAIL: SurfaceDetail = {
   bands: [0.0023766767, 0.00029254949, 0.0012959495, 0.000083161192],

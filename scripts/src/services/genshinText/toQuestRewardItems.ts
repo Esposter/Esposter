@@ -4,7 +4,7 @@ import { toRewardIdItems } from "#src/services/genshinAssets/rewards/toRewardIdI
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The items a quest's reward rows pay, in the rows' order, each as its item and how many of it. A row the reward table
-// Lacks Is an error, since the quest would pay less than the game does
+// Lacks is an error, since the quest would pay less than the game does
 export const toQuestRewardItems = (
   rewardIdList: number[],
   rewardMap: ReadonlyMap<number, ExcelRewardRow>,

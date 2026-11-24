@@ -2,8 +2,8 @@ import type { SurveyAnswerValue, SurveyChoice } from "vue-survey-engine-headless
 
 // The picks a multiple-pick question starts from, read back from its answer: the answer list itself, the choice values
 // It holds, and the other entry, the one that is neither a choice's value nor a special answer, which says whether
-// Other Starts chosen and what its text starts as. The predicate is the question's own, since what counts as an other
-// Entry Differs between questions
+// Other starts chosen and what its text starts as. The predicate is the question's own, since what counts as an other
+// Entry differs between questions
 export const useSurveyPickedAnswer = (
   answer: Ref<SurveyAnswerValue | undefined>,
   choiceValues: SurveyChoice["value"][],

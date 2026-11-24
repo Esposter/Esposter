@@ -1,7 +1,7 @@
 // One good of the game's shop table: the shop it belongs to, the item it gives and how many, what it costs in each kind
-// Of Currency (an item slot names its id and count, an unused slot is zero), its buy limit, its refresh, the Adventure
-// Rank It shows from, its rotation's id, its sub tab, and the game-time dates it sells between. A refresh the table
-// Leaves out Is the table's zero, none
+// Of currency (an item slot names its id and count, an unused slot is zero), its buy limit, its refresh, the Adventure
+// Rank it shows from, its rotation's id, its sub tab, and the game-time dates it sells between. A refresh the table
+// Leaves out is the table's zero, none
 export interface ExcelShopGoodsRow {
   beginTime: string;
   buyLimit: number;

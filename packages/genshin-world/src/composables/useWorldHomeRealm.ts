@@ -12,10 +12,10 @@ import { shallowRef } from "vue";
 // The Serenitea Pot on the open world and the realm the player goes into from it
 export const useWorldHomeRealm = () => {
   // The realm the player is in, once they have gone into it from the pot: the place they went in from. While it is set
-  // The realm's Island is shown in place of the world, and the world's ground gives way to the realm's flat ground
+  // The realm's island is shown in place of the world, and the world's ground gives way to the realm's flat ground
   const homeRealmVisit = shallowRef<HomeRealmVisit>();
   // The point the Serenitea Pot is set down at in the open world, from the gadget slot at the player's feet. The save
-  // Does Not hold it yet, so it lasts for the session
+  // Does not hold it yet, so it lasts for the session
   const homePotPoint = shallowRef<{ x: number; z: number }>();
   // The pot used from the gadget slot is set down at the player's feet, unless the open world already holds one
   const placeUsedGadget = (usedGadget: GadgetRow | undefined, feet: { x: number; z: number }) => {
@@ -23,7 +23,7 @@ export const useWorldHomeRealm = () => {
       homePotPoint.value = placeHomePot(usedGadget, homePotPoint.value, feet);
   };
   // The realm is left to the place the player went in from, by the gadget or a teleport, so a teleport's own
-  // Destination Never takes them elsewhere
+  // Destination never takes them elsewhere
   const leaveRealm = (visit: HomeRealmVisit, jumpTo: (pose: WorldJumpPose) => void) => {
     jumpTo(leaveHomeRealm(visit).pose);
     homeRealmVisit.value = undefined;

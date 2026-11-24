@@ -18,9 +18,9 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
 // Conqueror of Evil: Tamer of Demons, from Ascension 1, raises all of Xiao's DMG by 5% while Bane of All Evil stands,
-// And By 5% more every 3 seconds it stands, up to 25% at 12, as the wiki's passive page and gcsim v2.47.2 (MIT)
-// `xiao/asc.go` Give it. All his damage is Anemo under the burst, so the bonus is to his Anemo DMG Bonus
-// `https://genshin-impact.fandom.com/wiki/Conqueror_of_Evil:_Tamer_of_Demons`
+// And by 5% more every 3 seconds it stands, up to 25% at 12, as the wiki's passive page and gcsim v2.47.2 (MIT)
+// Xiao/asc.go give it. All his damage is Anemo under the burst, so the bonus is to his Anemo DMG Bonus
+// https://genshin-impact.fandom.com/wiki/Conqueror_of_Evil:_Tamer_of_Demons
 const TAMER_OF_DEMONS_ASCENSION = 1;
 const TAMER_OF_DEMONS_DAMAGE_BONUS = 0.05;
 const TAMER_OF_DEMONS_INTERVAL_SECONDS = 3;
@@ -64,7 +64,7 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
     effect.combatant.characterId === characterId &&
     effect.hits.some((hit) => dashHits.includes(hit));
   // The dash lands from a summon cast where Xiao stands, so its start can choose its bonus. From Ascension 4 that
-  // Summon Stands as long as its Heaven Fall stack, so a dash reads its stacks off those standing and restarts them
+  // Summon stands as long as its Heaven Fall stack, so a dash reads its stacks off those standing and restarts them
   const castDash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     if (combatant.ascension < HEAVEN_FALL_ASCENSION) {
       castKitSummon(kitEffectState, body, combatant, [dashHit], { attackTag: AttackTag.ElementalSkill });
@@ -127,8 +127,9 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
   return {
     burst: { onStart: castBaneOfAllEvil },
     // Dissolution Eon: Destroyer of Worlds, from Constellation 1: Lemniscatic Wind Cycling gains one more charge
-    // Constellation 2's Energy Recharge reads whether Xiao is on the field from the deployed team's flags Transcension:
-    // Extinction of Suffering, from Constellation 4: while his HP is under half, he gains a 100% DEF Bonus
+    // Constellation 2's Energy Recharge reads whether Xiao is on the field from the deployed team's flags
+    // Transcension: Extinction of Suffering, from Constellation 4: while his HP is under half, he gains a 100% DEF
+    // Bonus
     getPassiveBonuses: (combatant, healthShare, deployedCombatants) => {
       const self = deployedCombatants.find(({ characterId }) => characterId === combatant.characterId);
       const bonuses: { amount: number; attribute: Attribute }[] = [];

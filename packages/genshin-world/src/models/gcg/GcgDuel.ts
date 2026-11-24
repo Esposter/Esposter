@@ -7,7 +7,7 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 // A duel between two sides: its phase and round, the side that goes first this round and the one whose turn it is, the
 // Side that declared its round's end first and so goes first next round, the rule it runs, and how it ended, with the
-// Winner Once one won
+// Winner once one won
 export interface GcgDuel {
   actingSideIndex: number;
   // The card and skill modules the duel's hooks run, held here so the damage pipeline reaches them without importing

@@ -8,7 +8,7 @@ import { readProposalChanges } from "#src/services/proposals/readProposalChanges
 
 // Each open proposal unit as an entry, cheapest first: its id is its change's, its area the id's first segment, and its
 // Phase the one its change is picked at. Its touch set is the paths its design's Key files table names plus the globs
-// Its Metadata adds, and its needs and waiting are the metadata's own, empty when the change names none
+// Its metadata adds, and its needs and waiting are the metadata's own, empty when the change names none
 export const readProposalEntries = (files: readonly QueueFile[]): FleetEntry[] =>
   readProposalChanges(files).map(({ design, metadata, summary: { id, phase } }) => ({
     area: getProposalArea(id),

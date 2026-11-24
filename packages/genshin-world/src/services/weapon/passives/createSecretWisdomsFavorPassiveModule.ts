@@ -7,7 +7,7 @@ import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
 // Secret Wisdom's Favor at its rank: a charged attack hit its wielder deals raises its Elemental Mastery by the rank's
-// Amount Per stack, up to the rank's maximum stacks for the rank's seconds, a stack at most once every the rank's
+// Amount per stack, up to the rank's maximum stacks for the rank's seconds, a stack at most once every the rank's
 // Cooldown in seconds
 export const createSecretWisdomsFavorPassiveModule = (params: number[]): PassiveModule => {
   const elementalMastery = takeOne(params, 0);

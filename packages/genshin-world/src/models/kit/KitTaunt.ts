@@ -4,7 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 
 // An entity placed where its character cast it that draws the enemies' strikes while it stands, with the health they
 // Take from it, and which explodes once, if it explodes, when its seconds run out or its health is gone. The explosion
-// Is Priced by the combatant that cast it, as it stood then
+// Is priced by the combatant that cast it, as it stood then
 export interface KitTaunt {
   body: KitBody;
   combatant: Combatant;

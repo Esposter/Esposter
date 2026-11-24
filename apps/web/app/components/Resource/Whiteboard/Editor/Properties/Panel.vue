@@ -3,8 +3,8 @@ import { getWhiteboardElementTitle } from "#src/services/whiteboard/getWhiteboar
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // The panel the one element selected opens, for every kind but an arrow, which has a panel of its own. A shape and a
-// Sticky note take a fill and a Sketch level, a shape also its corners, and a shape, a sticky note and a text box take
-// Their text controls. Every element but an image takes the Colour, width and dash pattern it holds, and every element
+// Sticky note take a fill and a sketch level, a shape also its corners, and a shape, a sticky note and a text box take
+// Their text controls. Every element but an image takes the colour, width and dash pattern it holds, and every element
 // Takes the stacking and the footer
 const selected = useWhiteboardSelectedElement();
 </script>

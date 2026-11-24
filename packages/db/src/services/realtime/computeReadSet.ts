@@ -39,9 +39,9 @@ const uniqueSorted = <T>(items: T[], toSerial: (item: T) => string): T[] => {
     .map(([, item]) => item);
 };
 
-// The read set of the statements a procedure awaited through its handle, merged into one set of facts Each statement
-// Numbers its levels from zero, so the merged read set moves a statement's level numbers past the levels the Statements
-// Before it opened. The -1 a subquery's selected column carries stays as it is
+// The read set of the statements a procedure awaited through its handle, merged into one set of facts
+// Each statement numbers its levels from zero, so the merged read set moves a statement's level numbers past the levels
+// The statements before it opened. The -1 a subquery's selected column carries stays as it is
 const shiftLevel = (level: number, offset: number): number => (level < 0 ? level : level + offset);
 
 const getShiftedReadSet = (readSet: ReadSet, offset: number): ReadSet => ({

@@ -13,8 +13,8 @@ export const draftsSerializer: Serializer<Map<string, Draft>> = {
   read: (raw) =>
     getResult(
       () =>
-        // `draftSchema` coerces updatedAt itself,
-        // oxlint-disable-next-line no-restricted-properties -- so a draft body that is an ISO datetime stays a string
+        /* oxlint-disable-next-line no-restricted-properties -- draftSchema coerces updatedAt itself, so a draft body
+           that is an ISO datetime stays a string */
         new Map(Object.entries(draftsSchema.parse(JSON.parse(raw)))),
     )
       .orTee(console.error)

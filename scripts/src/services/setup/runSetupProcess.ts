@@ -5,10 +5,12 @@ import { MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constant
 import { spawnSync } from "@esposter/shared-node/child-process";
 
 // A process runs from the repository root, its output read, or shown on this terminal when a person is to watch it.
-// That is how an install's progress is shown. A process that cannot start has no status, which every step reads as not
-// In place. It runs through a shell where the platform needs one. `az` and `claude` are `.cmd` shims on Windows that a
-// Spawn without one cannot find. The shell receives only the file and arguments, each quoted, which are constants and
-// The pnpm path from `npm_execpath`
+// That is how an install's progress is shown.
+// A process that cannot start has no status, which every step reads as not in place.
+// It runs through a shell where the platform needs one.
+// `az` and `claude` are `.cmd` shims on Windows that a spawn without one cannot find.
+// The shell receives only the file and arguments, each quoted, which are constants and the pnpm path from
+// `npm_execpath`
 export const runSetupProcess = (
   file: string,
   args: readonly string[],

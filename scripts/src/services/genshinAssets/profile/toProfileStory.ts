@@ -5,8 +5,8 @@ import { FETTER_LEVEL_CONDITION_TYPE, FETTER_NONE_CONDITION_TYPE } from "#src/se
 import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
 
 // A story as the Profile tab shows it in one language: its title and text by their text ids, read from the language's
-// Text Map and from English's where it lacks one, and the Friendship Level it opens at, 0 when no level does. A
-// Condition other Than a level or none keeps it locked whatever the level
+// Text map and from English's where it lacks one, and the Friendship Level it opens at, 0 when no level does. A
+// Condition other than a level or none keeps it locked whatever the level
 export const toProfileStory = (
   row: ExcelFetterStoryRow,
   textMap: ReadonlyMap<string, string>,

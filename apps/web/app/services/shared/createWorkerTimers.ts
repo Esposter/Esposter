@@ -22,8 +22,8 @@ export const createWorkerTimers = (worker: Pick<Worker, "addEventListener" | "po
   });
 
   const post = (request: TimerRequest) => {
-    // A dedicated worker's postMessage
-    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- takes a transfer list, not a target origin
+    /* oxlint-disable-next-line unicorn/require-post-message-target-origin -- a dedicated worker's postMessage takes a
+       transfer list, not a target origin */
     worker.postMessage(request);
   };
 

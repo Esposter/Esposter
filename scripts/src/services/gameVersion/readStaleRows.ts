@@ -7,7 +7,7 @@ import { getSidecarPath } from "#src/services/provenance/getSidecarPath";
 import { existsSync } from "node:fs";
 
 // The rows of the outputs under the directories, and beside the files, that are stamped with a game version other than
-// The Install's or with none readable
+// The install's or with none readable
 export const readStaleRows = async (
   gameVersion: string,
   directories: readonly string[],

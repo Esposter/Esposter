@@ -14,9 +14,9 @@ const SWAY_PER_WIND = 0.03;
 const FLUTTER = 0.06;
 // A leaf card cut to a pointed oval in the shader (`createLeafShapeNode`), and by the host's own mask where it gives
 // One (a tree's fade). The cut is a mask node, which the shadow pass cuts by too where it reads no opacity, so a card
-// Casts Its leaf rather than its quad. The card's normals are the crown's, bent outward by the generator, so the
-// Lighting Reads a soft mass rather than each card. In a wind the crown leans downwind, more the higher it is, and each
-// Patch of Cards flutters on its own phase; the lean is the position node, so the crown's shadow sways with it
+// Casts its leaf rather than its quad. The card's normals are the crown's, bent outward by the generator, so the
+// Lighting reads a soft mass rather than each card. In a wind the crown leans downwind, more the higher it is, and each
+// Patch of cards flutters on its own phase; the lean is the position node, so the crown's shadow sways with it
 export const createLeafMaterial = (
   toonMaterialOptions: ToonMaterialOptions,
   windUniforms?: WindUniforms,

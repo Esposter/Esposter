@@ -63,7 +63,7 @@ describe("blockRouter", () => {
   });
 
   // The block's entry shows the friendship, the request and the block row it writes, so the optimistic change covers
-  // Every Row the server names
+  // Every row the server names
   test("the block entry touches every row a block writes over a friendship", async () => {
     expect.hasAssertions();
 

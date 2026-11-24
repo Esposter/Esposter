@@ -9,7 +9,7 @@ export const WORKTREE_TRASH_FOLDER = "worktree-trash";
 export const LOADED_BINARY_EXTENSIONS: ReadonlySet<string> = new Set([".dll", ".exe", ".node"]);
 // Retries a deletion Windows refuses while another process still holds a file in the tree
 export const REMOVE_MAX_RETRIES = 3;
-// Unlinks every junction under the worktree without walking into it: a junction's target is the main checkout's
-// `node_modules`
+// Unlinks every junction under the worktree without walking into it: a junction's target is the main
+// Checkout's node_modules
 export const JUNCTION_UNLINK_COMMAND =
   "Get-ChildItem -LiteralPath $env:WORKTREE -Recurse -Force -Attributes ReparsePoint | Where-Object { $_.LinkType -eq 'Junction' } | ForEach-Object { [System.IO.Directory]::Delete($_.FullName) }";

@@ -52,7 +52,7 @@ describe("forgeScreen", () => {
   });
 
   // Both units of the weapon order obtained beside a weapon the bag already held: the two new weapons are counted at
-  // The Four-star rarity they forge at, and the held one is no forge doing
+  // The four-star rarity they forge at, and the held one is no forge doing
   test("obtaining a weapon order counts each forged weapon at its rarity", async () => {
     expect.hasAssertions();
 
@@ -83,7 +83,7 @@ describe("forgeScreen", () => {
   });
 
   // The four-star weapon's recipe queues one unit, under the five the amount holds: picking it asks the parent for that
-  // Recipe And for the amount brought down to the queue
+  // Recipe and for the amount brought down to the queue
   test("picking a recipe brings an amount past its queue down to the queue", async () => {
     expect.hasAssertions();
 

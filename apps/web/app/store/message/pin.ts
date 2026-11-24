@@ -18,7 +18,7 @@ export const usePinStore = defineStore("message/pin", () => {
   const dataStore = useDataStore();
   const { getSlice: getDataSlice } = dataStore;
   // The room pages its pins newest message first, by id, and a pin takes its place in that order. Editing a pin does
-  // Not Move it, since the order is the room's and not the time of the last change to the message
+  // Not move it, since the order is the room's and not the time of the last change to the message
   const placePin = (roomId: ClientMessage["roomId"], message: ClientMessage) => {
     const { items: roomItems } = getSlice(roomId);
     if (roomItems.value.some(({ id }) => id === message.id)) return;
@@ -45,7 +45,7 @@ export const usePinStore = defineStore("message/pin", () => {
 
     // The source message is read from its own room's slice: `dataStore.items` is the room on screen, so a pin toggled
     // From A search result or a thread in another room would find nothing there. The window takes this update after the
-    // Hooks, So the copy is the message with the pin applied to it, and a pin older than that copy places nothing
+    // Hooks, so the copy is the message with the pin applied to it, and a pin older than that copy places nothing
     const message = getDataSlice(input.roomId).items.value.find(
       getEntityIdEqualComparator<ClientMessage>(["id"], input),
     );

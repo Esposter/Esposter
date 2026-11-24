@@ -26,7 +26,7 @@ export const RESTRICTED_OVERLOAD_SYNTAXES: SelectorBanList = {
       // A method with no body in a class is an overload signature, since the implementation is the one with a body. A
       // Declared class is ambient, so its bodiless methods are declarations rather than overloads, as in a declared
       // Module. An abstract method is a different node, and two abstract methods of different names are not overloads
-      // Of Each other either, so no selector names an abstract overload
+      // Of each other either, so no selector names an abstract overload
       message:
         "Overloads are banned — a class method's overload signatures are one method per call shape, each with its own exact type. See the typescript skill's references/function-signatures.md.",
       selector:

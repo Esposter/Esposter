@@ -6,10 +6,10 @@ import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomM
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Every departure from a room, a leave or a removal, drops the member from the room's object (its sockets, and what
-// They Scheduled there, and their own object's reminders for it), then tells the members the room has online and the
-// Member's Own tabs. The member is dropped first, so the members the room reaches are the ones who stayed. The event
-// Carries the Tombstone the departure left, at its version, so a list holding the row drops it by the same rule as any
-// Arrival. The Leaver's own tabs also take their membership row, which their room list reads
+// They scheduled there, and their own object's reminders for it), then tells the members the room has online and the
+// Member's own tabs. The member is dropped first, so the members the room reaches are the ones who stayed. The event
+// Carries the tombstone the departure left, at its version, so a list holding the row drops it by the same rule as
+// Any arrival. The leaver's own tabs also take their membership row, which their room list reads
 export const announceRoomMemberDeparture = async (userToRoom: UserToRoomInMessage): Promise<void> => {
   const { deletedAt, displayName, roomId, userId, version } = userToRoom;
   await getResultAsync(() => useRoomObject(roomId).removeMember(userId)).match(noop, (error) => {

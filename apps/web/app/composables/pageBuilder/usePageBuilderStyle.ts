@@ -87,8 +87,8 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
 
     applyEdit(toValue(resourceId), edit.operations, edit.label, edit.interactionId).match(noop, console.error);
   };
-  // A value a drag is passing through: drawn on the canvas at once, and recorded only when the drag settles via
-  // `setField`
+  // A value a drag is passing through: drawn on the canvas at once, and recorded only when the drag settles
+  // Via setField
   const previewField = (property: StyleProperty, value: string) => {
     const edit = getFieldEdit(property, value);
     if (edit) setPreview(toValue(resourceId), edit.operations);
@@ -97,7 +97,7 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     setField(property, "");
   };
   // Copy takes the selected node's whole style, and paste replaces the selected node's style with the copied one, so
-  // The Two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
+  // The two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
   const copyStyle = () => {
     const targetValue = target.value;
     if (targetValue) setCopiedStyle(targetValue.style ?? {});

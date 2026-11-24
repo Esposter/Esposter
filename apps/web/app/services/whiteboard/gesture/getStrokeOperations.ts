@@ -5,7 +5,7 @@ import { STROKE_WIDTH } from "#src/services/whiteboard/gesture/constants";
 import { insertPositionedElement, PositionedElementType } from "vue-block-editor-headless";
 
 // The operations that add a stroke through the points at the top of the element list, drawn last so it sits above what
-// It crosses. A stroke Starts in the page's text colour
+// It crosses. A stroke starts in the page's text colour
 export const getStrokeOperations = (
   document: PositionedDocument,
   elementId: string,

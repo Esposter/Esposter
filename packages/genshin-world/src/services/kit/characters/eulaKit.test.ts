@@ -60,7 +60,7 @@ const castBurstStacks = (ascension: number, stacks: number): number => {
 };
 
 // The seconds left on Icetide Vortex's cooldown once Glacial Illumination is cast, as Eula at the ascension stood with
-// A Second of it left
+// A second of it left
 const castBurstSkillCooldown = (ascension: number): number => {
   const party = createParty([EULA_CHARACTER_ID]);
   getPartyMember(party, EULA_CHARACTER_ID).skillCooldownSeconds = 1;

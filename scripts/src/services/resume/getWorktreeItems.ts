@@ -8,8 +8,8 @@ const HEAD_PREFIX = "HEAD ";
 const HEAD_LENGTH = 10;
 
 // The linked worktrees of `git worktree list --porcelain`, and every folder in the main checkout's worktrees folder
-// That None of them is: a removal that stopped part way leaves one git no longer lists. Its first block is the main
-// Checkout, Which is not a leftover
+// That none of them is: a removal that stopped part way leaves one git no longer lists. Its first block is the main
+// Checkout, which is not a leftover
 export const getWorktreeItems = (porcelain: string, readFolderNames: (directory: string) => string[]): ResumeItem[] => {
   const worktrees = porcelain.split("\n\n").flatMap((block) => {
     const lines = block.split("\n");

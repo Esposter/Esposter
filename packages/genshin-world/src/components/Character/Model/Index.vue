@@ -24,7 +24,7 @@ const { gameDataBaseUrl } = storeToRefs(worldSessionStore);
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
 // The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted with its
-// Character, So the field draws another model in its place, and a model arriving after its character has gone is
+// Character, so the field draws another model in its place, and a model arriving after its character has gone is
 // Released at once
 readCharacterMesh(characterPackReader, {
   characterId,

@@ -136,7 +136,7 @@ describe("bookmarkRouter", () => {
   });
 
   // A removal leaves the row as a tombstone the read returns, so a read that lands later cannot restore the bookmark,
-  // And a Bookmark made again revives that row at a higher version
+  // And a bookmark made again revives that row at a higher version
   test("keeps a removed bookmark as a tombstone the read returns, and revives it at a higher version", async () => {
     expect.hasAssertions();
 

@@ -11,9 +11,9 @@ interface StyledApexOptionsInput {
   type?: ApexChart["type"];
 }
 // The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
-// Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.css). Each series takes its own Marker
-// Shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a Size
-// There for the shapes to be seen; every other type keeps its own. A legend entry, a tooltip's title and a tooltip
+// Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.css). Each series takes its own
+// Marker shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a
+// Size there for the shapes to be seen; every other type keeps its own. A legend entry, a tooltip's title and a tooltip
 // Row's name are written with innerHTML, and a single-series chart's entries are its category values — on a dashboard,
 // A survey respondent's own answers, read by anyone once it is published — so each is escaped here, after the caller's
 // Own formatter, where no caller's options can hand it raw text. The series is set over the merge rather than inside

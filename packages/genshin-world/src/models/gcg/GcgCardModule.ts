@@ -11,13 +11,13 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 // A card's behaviour, every hook optional. Each hook that acts on a card on the field receives that card's zone entry,
-// Which It reads and changes: a usage or round spent, a counter kept. A card with a usage limit or a duration is taken
-// Off the Field once its usages or rounds run out, so its hooks set those, and do not remove it. The damage a skill
-// Deals passes The additive hooks, then the multiplying ones, so a doubling is taken after every bonus
+// Which it reads and changes: a usage or round spent, a counter kept. A card with a usage limit or a duration is taken
+// Off the field once its usages or rounds run out, so its hooks set those, and do not remove it. The damage a skill
+// Deals passes the additive hooks, then the multiplying ones, so a doubling is taken after every bonus
 export interface GcgCardModule {
   canPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => boolean;
   // Whether a card on a side's field is spent by what the side holds now, for a card that lasts while another card or a
-  // Shield Does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and
+  // Shield does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and
   // Rounds
   checkIsSpent?: (side: GcgSideState, zoneCard: GcgZoneCard) => boolean;
   checkIsSwitchFast?: (context: GcgEffectContext) => boolean;
@@ -59,18 +59,18 @@ export interface GcgCardModule {
   // If any
   onBeforeAction?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   // A card is played by this card's side, for a card on that side's field: the played card is on the field and its own
-  // Play has Resolved, so a card that draws on the play reads the field as it now stands
+  // Play has resolved, so a card that draws on the play reads the field as it now stands
   onCardPlayed?: (context: GcgEffectContext, playedCard: GcgCard, zoneCard: GcgZoneCard) => void;
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
   // A character's own cards hear it take DMG and survive it, once the damage has landed: its equipments, then its
   // Statuses
   onDamageTaken?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   // A card attached to a character that has just been restored by a card's defeat replacement hears it, for the cards
-  // Whose Own state the replacement settles
+  // Whose own state the replacement settles
   onDefeatReplaced?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
   // A character of the opposing side is defeated, for a card on this side's field: the context names the character the
-  // Card is Attached to, for the hooks that act on it
+  // Card is attached to, for the hooks that act on it
   onOpposingDefeated?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   // A side declares its round's end, for a card on its field, before the declaration counts: the damage the card deals,
@@ -107,6 +107,6 @@ export interface GcgCardModule {
   // The dice an opposing card adds to a cost the other side pays (its context is the card's own side), or none
   surchargeCost?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => number | undefined;
   // The index of the character a card switches in when it is played, through the switch path (no die, no turn, the
-  // Field's Switch hooks), which the duel does after play and before the card's skill; undefined for no switch
+  // Field's switch hooks), which the duel does after play and before the card's skill; undefined for no switch
   switchOnPlay?: (context: GcgEffectContext) => number | undefined;
 }

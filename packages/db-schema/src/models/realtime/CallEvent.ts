@@ -6,7 +6,7 @@ import { z } from "zod";
 
 // The events a call's socket carries, one frame each. No frame names an auth session: a connection is named by its
 // Participant or knocker id alone. A participant's frame carries the row the call object holds, at the version it left
-// It, So a member's view applies it through the same arrival gate as a read and a leave is a tombstone, not a removal
+// It, so a member's view applies it through the same arrival gate as a read and a leave is a tombstone, not a removal
 const callSessionId = callSessionIdSchema.shape.callSessionId;
 
 const joinCallPayloadSchema = z.union([

@@ -1,6 +1,6 @@
 // One widget of the game's widget config as the dump gives it: its kind by its type name, whether it can be equipped on
-// Z, Its cooldown and its cooldown on a failed use in seconds, and its cooldown group. The config omits what a kind
-// Does not Use, so each of those fields is absent for some kinds. A gather point finder names the gather point type it
+// Z, its cooldown and its cooldown on a failed use in seconds, and its cooldown group. The config omits what a kind
+// Does not use, so each of those fields is absent for some kinds. A gather point finder names the gather point type it
 // Finds, and a Treasure compass the city it works in
 export interface ConfigWidgetRow {
   $type: string;

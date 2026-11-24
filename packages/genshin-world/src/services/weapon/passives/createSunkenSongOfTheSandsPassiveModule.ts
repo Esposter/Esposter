@@ -17,9 +17,10 @@ const GRAND_HYMN_MAXIMUM_STACKS = 3;
 const GRAND_HYMN_SOURCE = "sunkenSongOfTheSands";
 
 // Key of Khaj-Nisut at its rank: its HP line is the table's. Each Elemental Skill hit adds a stack of the rank's share
-// Of the Wielder's Max HP as Elemental Mastery, up to three and once every cooldown, each stack running the rank's
-// Seconds. Whenever The stacks stand at three after a trigger, each other member of the deployed team gains the rank's
-// Share of the wielder's Max HP as Elemental Mastery for the rank's seconds, and a trigger at three restarts that buff
+// Of the wielder's Max HP as Elemental Mastery, up to three and once every cooldown, each stack running the
+// Rank's seconds. Whenever the stacks stand at three after a trigger, each other member of the deployed team gains the
+// Rank's share of the wielder's Max HP as Elemental Mastery for the rank's seconds, and a trigger at three restarts
+// That buff
 export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): PassiveModule => {
   const stackShare = takeOne(params, 1);
   const stackSeconds = takeOne(params, 2);
@@ -28,7 +29,7 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
   const teamSeconds = takeOne(params, 5);
   return {
     // The stack reads the Max HP the Wielder's own lines give, not the buffed one: getBuffedCombatant prices the
-    // Passive's Bonuses, so a buffed Max HP read here would call back into this function without end
+    // Passive's bonuses, so a buffed Max HP read here would call back into this function without end
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
       {
         amount:

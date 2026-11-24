@@ -13,7 +13,7 @@ const SOLVE_ITERATIONS = 300;
 // Where the amplitudes start, a little above zero, since a multiplicative update cannot leave zero
 const SOLVE_START_ENERGY = 1e-6;
 // Each octave's response in every band of the detail and in its variance, the measured rows of
-// `SURFACE_OCTAVE_RESPONSES`, Relative to the target a row holds, so a band of little energy weighs as much as the
+// `SURFACE_OCTAVE_RESPONSES`, relative to the target a row holds, so a band of little energy weighs as much as the
 // Variance
 const computeResponses = (targets: number[]): number[][] =>
   SURFACE_OCTAVE_RESPONSES.map((responses) =>

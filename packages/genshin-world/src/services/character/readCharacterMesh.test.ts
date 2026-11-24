@@ -51,7 +51,7 @@ describe(readCharacterMesh, () => {
     expect.hasAssertions();
 
     // Node has no ImageBitmap, which the reader names when it checks a decoded image for transparent texels, so a
-    // `stand-in` Class is given it, and no mocked texture carries an image to be an instance of it
+    // Stand-in class is given it, and no mocked texture carries an image to be an instance of it
     vi.stubGlobal("ImageBitmap", Blob);
     const colourTexture = new Texture();
     const toonTexture = new Texture();

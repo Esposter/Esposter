@@ -6,7 +6,7 @@ import { createCooldownHitPassiveModule } from "#src/services/weapon/passives/cr
 
 // A passive whose wielder's own hits, the ones its predicate names, each roll the rank's chance of an extra hit on the
 // Small AoE at the rank's multiplier of ATK. A roll that passes queues the hit once the cooldown has run out, so a roll
-// Inside the Cooldown queues nothing
+// Inside the cooldown queues nothing
 export const createChanceProcPassiveModule = ({
   chance,
   checkIsProcAttack,

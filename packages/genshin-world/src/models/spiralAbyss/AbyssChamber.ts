@@ -5,7 +5,7 @@ import { z } from "zod";
 
 // One of a floor's three chambers, by its id in the game's tables and its place on the floor, with the star conditions
 // Its clear is judged by, and the monsters of each of its halves by their describe ids. A chamber the dump lists no
-// Monsters For has no halves, its enemies waiting on the game's scene export
+// Monsters for has no halves, its enemies waiting on the game's scene export
 export interface AbyssChamber {
   conditions: AbyssStarCondition[];
   halfMonsterDescribeIds: number[][];

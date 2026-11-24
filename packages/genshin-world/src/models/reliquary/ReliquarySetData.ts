@@ -4,7 +4,7 @@ import { reliquaryPieceDataSchema } from "#src/models/reliquary/ReliquaryPieceDa
 import { z } from "zod";
 
 // One artifact set as the game's reliquary set table holds it: its id, the text id of its name, the counts of pieces
-// Its Bonuses take, the two-piece and the four-piece bonus, in the table's order, and each piece it is made of with its
+// Its bonuses take, the two-piece and the four-piece bonus, in the table's order, and each piece it is made of with its
 // Slot
 export interface ReliquarySetData {
   id: number;

@@ -19,12 +19,12 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { openCall } = connectionStore;
   const knockingCallSessionId = ref("");
   // The calls a knock is out for, until the server answers it. A page that leaves cancels them, so the answer finds no
-  // Knock To take and shows no waiting screen for it
+  // Knock to take and shows no waiting screen for it
   const pendingKnockCallSessionIds = ref(new Set<string>());
   const joinCallOptions = ref<JoinCallOptions>(getDefaultJoinCallOptions());
   // The call whose lobby is shown, and the knockers the lobby was told of. The overlay keeps every knocker row it was
-  // Sent, So a lobby begun again shows only the knockers it was told of since it began, and not those the call let go
-  // When its Last participant left while the doorkeeper was away
+  // Sent, so a lobby begun again shows only the knockers it was told of since it began, and not those the call let go
+  // When its last participant left while the doorkeeper was away
   const lobbyCallSessionId = ref("");
   const lobbyKnockerIds = ref(new Set<string>());
   const lobbyKnockers = view(knockerTable);

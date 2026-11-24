@@ -3,8 +3,8 @@ import type { HomeTrustLevel } from "#src/models/home/HomeTrustLevel";
 import { HOME_MINIMUM_RANK } from "#src/services/home/constants";
 
 // The Trust Rank a total of Trust EXP reaches. Each rank is passed once the EXP of every rank before it is held, so a
-// Rank's Threshold is the sum of the EXP of the ranks below it, and the rank is the last whose threshold the total
-// Passes. The Levels are read in their order, lowest first
+// Rank's threshold is the sum of the EXP of the ranks below it, and the rank is the last whose threshold the
+// Total passes. The levels are read in their order, lowest first
 export const computeHomeTrustRank = (trustExp: number, levels: HomeTrustLevel[]): number => {
   let rank = HOME_MINIMUM_RANK;
   let threshold = 0;

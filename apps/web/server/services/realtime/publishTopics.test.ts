@@ -5,7 +5,7 @@ import { getColumnTopic, topicSchema } from "@esposter/db-schema";
 import { describe } from "vitest";
 
 // Every topic a mutation published, with the columns each publish named, in publish order. Stands in for the Topic
-// Objects, Which only exist inside the Workers runtime, so a test reads what a write told its readers
+// Objects, which only exist inside the Workers runtime, so a test reads what a write told its readers
 export const MockPublishedTopics: ColumnTopic[] = [];
 
 // The names of the topics published, for a test that asks only which topics a write reached

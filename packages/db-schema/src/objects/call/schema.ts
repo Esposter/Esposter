@@ -26,7 +26,7 @@ const createCallParticipantColumns = () => ({
 export const participants = sqliteTable("participants", createCallParticipantColumns());
 
 // Each connection waiting for a doorkeeper to let it in, named and held the way a participant is. A let-in or a
-// Dismissal Sets deletedAt rather than deleting the row, so the doorkeeper's lobby applies the removal by version, as
+// Dismissal sets deletedAt rather than deleting the row, so the doorkeeper's lobby applies the removal by version, as
 // It does a leave
 export const knockers = sqliteTable("knockers", createCallParticipantColumns());
 

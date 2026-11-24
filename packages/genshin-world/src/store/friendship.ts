@@ -9,11 +9,11 @@ import { defineStore } from "pinia";
 import { shallowRef } from "vue";
 
 // The Friendship levels and the namecards each character's Friendship opens, read from the hosted game data as the
-// World Starts. A load that fails is logged and left off. The session starts it and stops it as it unmounts
+// World starts. A load that fails is logged and left off. The session starts it and stops it as it unmounts
 export const useWorldFriendshipStore = defineStore("world/friendship", () => {
   const worldSessionStore = useWorldSessionStore();
   // The Friendship Levels a claim's Companionship EXP is kept under, read from the friendship record. A claim waits
-  // While They are unread, since the EXP has no top to stop at without them
+  // While they are unread, since the EXP has no top to stop at without them
   const friendshipLevels = shallowRef<FriendshipLevels>();
   const friendshipNamecards = shallowRef<FriendshipNamecard[]>([]);
   const start = () => {

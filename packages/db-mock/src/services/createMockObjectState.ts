@@ -12,10 +12,10 @@ const createCursor = (rows: unknown[]): MockObjectCursor => {
 };
 
 // The state a Durable Object runs on, for a test in any suite. The SQLite is a real in-memory database, behind the
-// SqlStorage Shape the runtime gives an object. The socket registry answers getWebSockets and getTags as the runtime
-// Does. So a second Object over the same state reads back the first's writes. A closed socket leaves the registry, so a
-// Close handler sees Only the sockets still open. The alarm and the key-value storage are held as the runtime holds
-// Them, and deleteAll starts Both again empty
+// SqlStorage shape the runtime gives an object. The socket registry answers getWebSockets and getTags as the
+// Runtime does. So a second object over the same state reads back the first's writes. A closed socket leaves the
+// Registry, so a close handler sees only the sockets still open. The alarm and the key-value storage are held as the
+// Runtime holds them, and deleteAll starts both again empty
 export const createMockObjectState = (name: string): MockObjectState => {
   let database = new DatabaseSync(":memory:");
   const keyValues = new Map<string, unknown>();

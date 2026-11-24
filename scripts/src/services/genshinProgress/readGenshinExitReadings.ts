@@ -17,7 +17,7 @@ import { readFile } from "node:fs/promises";
 const readReport = (path: string): Promise<string> => (existsSync(path) ? readFile(path, "utf8") : Promise.resolve(""));
 
 // Every reading the exit checks take, each read once off the working tree: the committed scores, every reference's bar,
-// The Passes report of each region whose folder names a component, and the lock beside the key list the world reads
+// The passes report of each region whose folder names a component, and the lock beside the key list the world reads
 export const readGenshinExitReadings = async (areas: readonly GenshinArea[]): Promise<GenshinExitReadings> => {
   const [lock, scoresReport, keyList] = await Promise.all([
     readGameDataLock(),

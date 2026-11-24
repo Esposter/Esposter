@@ -126,7 +126,7 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
 });
 
 // The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the
-// Stub It stands in for. Only the calls a test makes are checked, through the typed fake above
+// Stub it stands in for. Only the calls a test makes are checked, through the typed fake above
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: (roomId: string) => useRoomObjectMock(roomId) as unknown as ReturnType<typeof useRoomObject>,
 }));
@@ -225,7 +225,7 @@ describe("messageRouter", () => {
   });
 
   // The sanitizer would rewrite a poll's JSON, turning an ampersand into an entity, so the room would hold a question
-  // Its Sender never wrote
+  // Its sender never wrote
   test("creates a poll with its question as its sender wrote it", async () => {
     expect.hasAssertions();
 
@@ -296,7 +296,7 @@ describe("messageRouter", () => {
   });
 
   // A count a message made stands only for a member who was in the room when the message was sent. A member joins at
-  // The Epoch the message is dated at unless a test dates the join
+  // The epoch the message is dated at unless a test dates the join
   const getMentionCount = async (memberId: string) =>
     (
       await mockContext.db
@@ -401,7 +401,7 @@ describe("messageRouter", () => {
   });
 
   // The edit counts the mention of a member who joined after the message was sent, so a delete takes that count back
-  // Only By reading the edit's time, which is the time the count was made, rather than the send's
+  // Only by reading the edit's time, which is the time the count was made, rather than the send's
   test("takes back the mention count an edit made for a member who joined after the message was sent, when it is deleted", async () => {
     expect.hasAssertions();
 
@@ -671,7 +671,7 @@ describe("messageRouter", () => {
     const newerRoot = { ...createRoomMessage({ id: messageId + 1 }), replyCount: 0 };
     roomObject.readThreads.mockReturnValue([newerRoot]);
     // Followed newer first, so a read that returns the follows latest-first hands the room the older root ahead of the
-    // Newer One, and only the router's own sort puts the newer root first
+    // Newer one, and only the router's own sort puts the newer root first
     await messageCaller.followThread({ roomId, threadRootId: newerRoot.id });
     await messageCaller.followThread({ roomId, threadRootId: messageId });
 
@@ -702,7 +702,7 @@ describe("messageRouter", () => {
   });
 
   // A room opened at one of its messages reads the messages around it both ways: the anchor starts the older side, and
-  // The Newer side reads from the anchor backward, so each side hands its own cursor on
+  // The newer side reads from the anchor backward, so each side hands its own cursor on
   test("opens a room at a message, reading the messages on each side of it with a cursor each way", async () => {
     expect.hasAssertions();
 

@@ -17,8 +17,8 @@ import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { posix } from "node:path";
 
 // The named character folders gcsim's main branch holds at its pinned commit, each with the subfolders its files sit
-// In, Read only to classify a value a kit holds that the tag does not: the tree is listed through the API and each file
-// Read Through its raw URL into memory, never written anywhere
+// In, read only to classify a value a kit holds that the tag does not: the tree is listed through the API and each file
+// Read through its raw URL into memory, never written anywhere
 export const readGcsimMainCharacters = async (folders: readonly string[]): Promise<Map<string, GcsimCharacter>> => {
   const tree = await fetchGitHubTree(`${GCSIM_TREES_URL}/${GCSIM_MAIN_COMMIT}?recursive=1`, GCSIM_MAIN_COMMIT);
   const subfolderPaths = new Set(

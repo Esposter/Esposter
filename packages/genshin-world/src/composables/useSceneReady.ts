@@ -17,7 +17,7 @@ interface SceneReadyOptions {
 
 // The world is ready once the ground of its first view and the regions in reach of it have arrived, so what shows it
 // Never shows the bare water under a ground still streaming in. The settle function is handed back for the terrain's
-// Ready Event to call
+// Ready event to call
 export const useSceneReady = ({ getIsPaused, isRegionDataSettled, onReady, postPipeline }: SceneReadyOptions) => {
   const { advance } = useTres();
   const isTerrainSettled = ref(false);
@@ -25,13 +25,13 @@ export const useSceneReady = ({ getIsPaused, isRegionDataSettled, onReady, postP
     () => isTerrainSettled.value && isRegionDataSettled.value,
     async () => {
       // The view's pipelines, outlines included, compile before the world shows, so its first frame builds none. A
-      // Compile That fails is logged and the world shows anyway, drawn without the warm-up, rather than never being
+      // Compile that fails is logged and the world shows anyway, drawn without the warm-up, rather than never being
       // Ready
       await getResultAsync(async () => {
         if (!postPipeline.value) return;
         const compiled = postPipeline.value.compileAsync();
         // The compile waits on the next frame, and a world paused under the opening draws only the frames it is asked
-        // For, So a paused world asks for that frame; a running world draws it anyway, and its canvas refuses `advance`
+        // For, so a paused world asks for that frame; a running world draws it anyway, and its canvas refuses `advance`
         if (getIsPaused()) advance();
         await measureLoadStep("compile", compiled);
       }).match(noop, (error) => {

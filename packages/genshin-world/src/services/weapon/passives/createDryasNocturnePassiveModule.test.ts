@@ -24,7 +24,7 @@ describe(createDryasNocturnePassiveModule, () => {
   const wielder = createWielderCombatant();
   // Dryas's Nocturne at its first rank: Max HP 12%, 24% and 40% for one to three Remedy stacks, a stack for twenty-five
   // Seconds from an Elemental Skill or a Bond of Life's increase and for twenty from the wielder's healing, and at
-  // Three Stacks 28% Elemental Burst CRIT Rate, cancelled four seconds after falling under three
+  // Three stacks 28% Elemental Burst CRIT Rate, cancelled four seconds after falling under three
   const passiveModule = createDryasNocturnePassiveModule([0.12, 0.24, 0.4, 25, 25, 20, 0.28, 4]);
   const useSkill = (context: KitContext) =>
     passiveModule.onKitEvent?.({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, wielder);

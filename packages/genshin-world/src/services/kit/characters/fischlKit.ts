@@ -35,12 +35,12 @@ const GAZE_OF_THE_DEEP_CONSTELLATION = 1;
 const DEVOURER_OF_ALL_SINS_CONSTELLATION = 2;
 // Her Pilgrimage of Bleak, from four constellations: the burst deals an extra hit round her, and heals her by 20% of
 // Her Max HP a frame after Oz spawns, as gcsim v2.47.2 (MIT) fischl/burst.go gives it
-// `https://genshin-impact.fandom.com/wiki/Her_Pilgrimage_of_Bleak`
+// https://genshin-impact.fandom.com/wiki/Her_Pilgrimage_of_Bleak
 const HER_PILGRIMAGE_OF_BLEAK_CONSTELLATION = 4;
 const HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE = 0.2;
 // Evernight Raven, from six constellations: Oz stands longer, and attacks along with every normal attack of the
-// Character On the field, as Oz snapshot it, as gcsim v2.47.2 (MIT) fischl/cons.go gives it
-// `https://genshin-impact.fandom.com/wiki/Evernight_Raven`
+// Character on the field, as Oz snapshot it, as gcsim v2.47.2 (MIT) fischl/cons.go gives it
+// https://genshin-impact.fandom.com/wiki/Evernight_Raven
 const EVERNIGHT_RAVEN_CONSTELLATION = 6;
 
 const OZ_SUMMON_ID = "fischl-oz";
@@ -53,10 +53,10 @@ const checkIsElectroReaction = ({ element, reactionType }: Reaction): boolean =>
 export const FISCHL_CHARACTER_ID = 10_000_031;
 
 // Fischl's behaviour: Nightrider casts Oz, landing its summon's hit, raised from two constellations, before its
-// Attacks, And Midnight Phantasmagoria casts the full Oz, or the Oz a swap spawns early, and from four constellations
-// Its extra Hit and her heal. One Oz stands at a time, a new one ending the one standing, attacking every tick from its
-// First While it stands, longer from six constellations. Undone Be Thy Sinful Hex and the constellations answer the
-// Kit's Events. Stellar Predator and the skill's recast are not built
+// Attacks, and Midnight Phantasmagoria casts the full Oz, or the Oz a swap spawns early, and from four constellations
+// Its extra hit and her heal. One Oz stands at a time, a new one ending the one standing, attacking every tick from its
+// First while it stands, longer from six constellations. Undone Be Thy Sinful Hex and the constellations answer the
+// Kit's events. Stellar Predator and the skill's recast are not built
 export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }: KitRecordReader): KitBehaviour => {
   const ozSummon = readHit("ozSummon");
   const devourerOfAllSins = readHit("devourerOfAllSins");
@@ -77,8 +77,8 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
   const swapOzFirstTickSeconds = readSeconds("burstShortOzFirstTick");
   const herPilgrimageOfBleakHealSeconds = readSeconds("herPilgrimageOfBleakHeal");
   // Oz cast where the body stands, spawning at the seconds given and landing the hits given before its attacks, one
-  // Each Tick from its first while it stands, each its hitmark after its tick. It ends the Oz standing, and stands
-  // Longer from Six constellations
+  // Each tick from its first while it stands, each its hitmark after its tick. It ends the Oz standing, and stands
+  // Longer from six constellations
   const castOz = (
     kitEffectState: KitEffectState,
     body: KitBody,

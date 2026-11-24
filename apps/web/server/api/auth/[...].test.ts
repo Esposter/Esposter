@@ -115,7 +115,7 @@ describe("api/auth/[...]", () => {
   });
 
   // Better-auth removes an expired row when a read presents its cookie, and that removal closes the session's sockets.
-  // A Socket that stays open with no read after its expiry is not closed by this path
+  // A socket that stays open with no read after its expiry is not closed by this path
   test("reading an expired session removes its row and closes its sockets on the person's object", async () => {
     expect.hasAssertions();
 

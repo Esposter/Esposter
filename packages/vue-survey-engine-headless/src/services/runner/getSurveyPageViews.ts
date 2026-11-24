@@ -9,7 +9,7 @@ import { getSurveyElementViews } from "#src/services/runner/getSurveyElementView
 import { getBlockPropPointer } from "vue-block-editor-headless";
 
 // The views of the page at an index: none when the index names no page or the page is hidden, and otherwise the views
-// Of its elements Its elements are enabled only while the page's own enable condition holds
+// Of its elements its elements are enabled only while the page's own enable condition holds
 export const getSurveyPageViews = (
   document: SurveyDocument,
   pageIndex: number,

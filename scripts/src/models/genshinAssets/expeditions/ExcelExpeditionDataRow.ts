@@ -2,7 +2,7 @@ import type { ExcelExpeditionCondition } from "#src/models/genshinAssets/expedit
 import type { ExcelExpeditionDuration } from "#src/models/genshinAssets/expeditions/ExcelExpeditionDuration";
 
 // One place of the game's expedition table: the nation it lies in, its name's text id, the conditions it opens by, and
-// The Durations it offers with what each brings
+// The durations it offers with what each brings
 export interface ExcelExpeditionDataRow {
   cityId: number;
   descriptionTextMapHash: number;

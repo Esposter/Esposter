@@ -12,6 +12,6 @@ export interface UpgradeDatabase<TSchema extends DatabaseSchema = DatabaseSchema
   // Any string
   deleteObjectStore: (name: string) => void;
   // The stores the database holds when the upgrade opens, a snapshot, so a loop over it can delete the stores it names.
-  // An Earlier version's store is among them, and a store the new version adds is not
+  // An earlier version's store is among them, and a store the new version adds is not
   objectStoreNames: string[];
 }

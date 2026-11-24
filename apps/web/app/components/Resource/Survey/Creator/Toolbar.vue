@@ -47,8 +47,8 @@ const mode = computed({
 });
 const exportSurvey = () => exportJsonFile(resource.value?.name ?? "", surveyDocument.value);
 // The file is parsed without reviving dates, since a text that looks like an ISO date is still text to the document
-// Schema, Then checked against that schema and the survey check, and only a file passing both replaces the survey. A
-// Refusal is an Alert, since the bar has no room for a line of text
+// Schema, then checked against that schema and the survey check, and only a file passing both replaces the survey. A
+// Refusal is an alert, since the bar has no room for a line of text
 const importSurvey = () =>
   importJsonFile(async (file) => {
     await getResultAsync<unknown>(() => new Response(file).json()).match(
@@ -83,7 +83,7 @@ const getNodeTitle = (nodeId: string) => {
   return node ? getSurveyNodeLabel(node) : "The survey";
 };
 // The bar's items in the order it draws them. Undo, redo and Add page are pinned, so they stay in the bar at any width,
-// And Import, Export and Clear are always in its overflow menu
+// And import, Export and Clear are always in its overflow menu
 const groups = computed<EditorToolbarGroup[]>(() => [
   {
     items: [

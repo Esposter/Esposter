@@ -64,7 +64,7 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
       const diffPath = await writeShapeDiff(referenceId, exportsTargets, oursTargets, exportsRead);
       const familyName = (family: number): string => `${referenceId} ${exportsRead.families[family] ?? family}`;
       // A family's normals over their gate, named by the exported parts that carry most of their angle; one with no
-      // Pixel Both draw has no normals to name a part by, so its no-overlap reading alone reports it
+      // Pixel both draw has no normals to name a part by, so its no-overlap reading alone reports it
       const partNotes = comparisons
         .filter(({ normal }) => normal !== undefined && normal > SHAPE_NORMAL_GATE_DEGREES)
         .map(({ family, partNormals }) => {

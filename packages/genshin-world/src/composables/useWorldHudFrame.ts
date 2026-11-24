@@ -17,7 +17,7 @@ export const useWorldHudFrame = ({
   staminaMaximum,
 }: WorldHudFrameOptions) => {
   // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map
-  // And The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
+  // And the minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
   const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
   // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
   // Refilling, and once it is full the meter fades out where it stood

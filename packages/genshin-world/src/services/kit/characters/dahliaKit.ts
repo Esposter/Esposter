@@ -24,7 +24,7 @@ const CONSTELLATION_4 = 4;
 const FAVONIAN_FAVOR_EXTENSION_SECONDS = 3;
 // Benison: a stack comes when his active member hits opponents 4 times with normal attacks during Favonian Favor, up to
 // 4 a Favonian Favor, as the wiki's burst page gives it. A counted hit has a 3-frame cooldown before the next one
-// Counts, from Gcsim's normalAttackStackIcd, as the wiki is silent on it
+// Counts, from gcsim's normalAttackStackIcd, as the wiki is silent on it
 const BENISON_HITS_PER_STACK = 4;
 const BENISON_MAX_STACKS = 4;
 const BENISON_HIT_ICD_SECONDS = toKitSeconds(3);
@@ -35,11 +35,11 @@ const BENISON_HIT_ICD_STATUS_ID = "dahlia-benison-hit-icd";
 
 // Dahlia's behaviour: Radiant Psalter places her Hydro shield for the seconds its Favonian Favor holds. Immersive
 // Ordinance's Hydro particles, which gcsim gives on an internal cooldown, wait on the particle hook. Her Benison stacks
-// Are Counted, and a broken shield is made again from them. That regeneration is not built yet; its two delays are in
+// Are counted, and a broken shield is made again from them. That regeneration is not built yet; its two delays are in
 // The records: 26 frames after a broken shield, and 31 after a stack is gained with none up (gcsim's burst.go gives
-// Them) https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/dahlia/burst.go Constellation 2 needs the
-// 25% Shield Strength a consumed Benison stack adds, which waits on that regeneration Constellation 6 needs the ATK SPD
-// Of the active member under Favonian Favor, which no own-kit hook reads
+// Them) https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/dahlia/burst.go
+// Constellation 2 needs the 25% Shield Strength a consumed Benison stack adds, which waits on that regeneration
+// Constellation 6 needs the ATK SPD of the active member under Favonian Favor, which no own-kit hook reads
 export const createDahliaKitBehaviour = ({ readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const shieldSeconds = readSeconds("radiantPsalterShield");
   const burstShieldFlat = readParameter("radiantPsalterShieldFlatHealth");
@@ -48,8 +48,8 @@ export const createDahliaKitBehaviour = ({ readParameter, readSeconds }: KitReco
   return {
     burst: {
       // Radiant Psalter's shield comes its frames in and holds the Favonian Favor's seconds. It is a task, since a
-      // Shield Is placed when the task runs, and the shield then reads the caster's Max HP as it stands then The
-      // Favonian Favor starts with it, and its Benison stacks start from none, as gcsim starts them there
+      // Shield is placed when the task runs, and the shield then reads the caster's Max HP as it stands then
+      // The Favonian Favor starts with it, and its Benison stacks start from none, as gcsim starts them there
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         scheduleKitTask(kitEffectState, combatant.characterId, shieldSeconds, (tick) => {
           const favonianFavorDuration =

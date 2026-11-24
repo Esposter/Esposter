@@ -1,6 +1,6 @@
 // One daily task of the game's table: its city and pool, its type and finish by the dump's names, where it is set and
-// The Radius it begins and ends in, its finish count, its groups a scene task swaps, its quest, its reward tier and the
-// Text id Of its title. The dump leaves out a center position, type or finish that holds its default, which the
+// The radius it begins and ends in, its finish count, its groups a scene task swaps, its quest, its reward tier and the
+// Text id of its title. The dump leaves out a center position, type or finish that holds its default, which the
 // Commissions constants name
 export interface ExcelDailyTaskRow {
   centerPosition?: string;

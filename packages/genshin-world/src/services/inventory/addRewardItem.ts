@@ -11,8 +11,8 @@ import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The bag and the wallet after one item is taken in as the game gives it, a destroy's return or a quest's reward: a
-// Wallet Currency into the wallet, any other item into the bag through its add path. Undefined where the bag cannot
-// Take the item Whole, which refuses it
+// Wallet currency into the wallet, any other item into the bag through its add path. Undefined where the bag cannot
+// Take the item whole, which refuses it
 export const addRewardItem = (
   { inventory, wallet }: { inventory: Inventory; wallet: Wallet },
   { count, id }: ItemCount,

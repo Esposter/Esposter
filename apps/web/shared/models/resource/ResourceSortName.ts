@@ -1,5 +1,5 @@
 // A resource list's order, named by its column and its direction, or by relevance for a search. Each is one declared
-// Sort In ResourceSortNamePageSortMap, so a name is the whole of what a reader can choose
+// Sort in ResourceSortNamePageSortMap, so a name is the whole of what a reader can choose
 export const ResourceSortName = {
   CreatedAtAsc: "createdAt-asc",
   CreatedAtDesc: "createdAt-desc",

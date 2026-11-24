@@ -21,10 +21,10 @@ const TALENT_TRACE_CONCURRENCY = 4;
 
 // Every playable character's skill and burst icons as the HUD's buttons carry them, each traced from the wiki's render
 // Of its talent (`File:Talent <Name>.png`) by `traceToneLayers`, one entry a character of the hosted `skillGlyphs`
-// Index, And the loader map's source naming the characters it holds, written only once published. A talent is named in
-// English From the first of the character's skill Sets that names both (`getCharacterSkillDepotRows`), and the wiki
-// Files a Name's colons as nothing or as a dash, so both titles are asked for. A character the wiki holds either icon
-// Of under Neither is left out and noted
+// Index, and the loader map's source naming the characters it holds, written only once published. A talent is named in
+// English from the first of the character's skill Sets that names both (`getCharacterSkillDepotRows`), and the wiki
+// Files a name's colons as nothing or as a dash, so both titles are asked for. A character the wiki holds either icon
+// Of under neither is left out and noted
 export const buildSkillGlyphs = async (): Promise<{
   loaderMapSource: string;
   notes: string[];

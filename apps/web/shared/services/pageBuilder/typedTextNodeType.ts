@@ -29,8 +29,8 @@ const typedTextScript = () => {
   const HOLD_DELAY = 1500;
 
   for (const element of window.document.querySelectorAll<HTMLElement>(".typed-text > [data-texts]")) {
-    // The page script cannot import jsonDateParse,
-    // oxlint-disable-next-line no-restricted-properties -- and a typed text that is ISO-shaped must stay a string
+    /* oxlint-disable-next-line no-restricted-properties -- the page script cannot import jsonDateParse, and a typed
+       text that is ISO-shaped must stay a string */
     const texts: string[] = JSON.parse(element.dataset.texts ?? "[]");
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       element.textContent = texts.join(", ");

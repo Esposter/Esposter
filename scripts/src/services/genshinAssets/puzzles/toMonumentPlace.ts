@@ -8,7 +8,7 @@ import {
 } from "#src/services/genshinAssets/puzzles/constants";
 
 // A monument mark with its element and timing: its kind's as the wiki gives them, and provisional for whichever the
-// Wiki Does not, so the place says which of its values a recording has yet to confirm
+// Wiki does not, so the place says which of its values a recording has yet to confirm
 export const toMonumentPlace = (
   mark: MapPointPlace<PuzzleKind>,
   { element, isTimed }: MonumentKindTiming,

@@ -14,7 +14,7 @@ describe(useCancelScheduledMessageJobToDraft, () => {
   const { trpcMsw } = setupMswTrpc();
 
   // The composer takes the job's text only once the server has answered the cancel, so it is never handed text for a
-  // Job That is still scheduled
+  // Job that is still scheduled
   test("writes the job's text to its room's composer once the cancel is answered", async () => {
     expect.hasAssertions();
 
@@ -42,7 +42,7 @@ describe(useCancelScheduledMessageJobToDraft, () => {
   });
 
   // A rejected cancel leaves the job scheduled, so the composer must not take its text: a send from it would post a
-  // Second Copy beside the one the schedule still delivers
+  // Second copy beside the one the schedule still delivers
   test("leaves the composer as it was when the cancel is rejected", async () => {
     expect.hasAssertions();
 

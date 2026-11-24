@@ -24,7 +24,7 @@ describe(getTableScope, () => {
   });
 
   // A secret column is one of its scope's columns, so the columns list alone names the columns a read is scoped by, and
-  // A Secret that a read names is only ever scoped by a column the columns list holds
+  // A secret that a read names is only ever scoped by a column the columns list holds
   test("every secret column is one of its scope's columns", () => {
     expect.hasAssertions();
 

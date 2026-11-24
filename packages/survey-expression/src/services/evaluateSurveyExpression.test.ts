@@ -194,9 +194,9 @@ describe(evaluateSurveyExpression, () => {
     expect(evaluate(source, values)).toStrictEqual(expected);
   });
 
-  // Arithmetic reads each operand as a number, and an operand that reads as none has no result. A division or a
-  // Remainder by zero has no result either. The one exception is `+`, which joins two texts when both are non-empty and
-  // Neither reads as a number
+  // Arithmetic reads each operand as a number, and an operand that reads as none has no result.
+  // A division or a remainder by zero has no result either. The one exception is `+`, which joins two texts when both
+  // Are non-empty and neither reads as a number
   test.each([
     ["a sum of numbers", "1 + 2", {}, 3],
     ["a numeric text literal adds as a number", "'5' + 3", {}, 8],

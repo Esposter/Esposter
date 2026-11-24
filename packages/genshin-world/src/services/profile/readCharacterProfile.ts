@@ -10,7 +10,7 @@ import { readFriendshipNamecards } from "#src/services/friendship/readFriendship
 import { computeLevelReached } from "#src/services/shared/computeLevelReached";
 
 // A character's profile in the language, the Friendship Level its total Companionship EXP has reached, and the name
-// Text id Of its namecard, 0 until that level holds it, all read on demand: the profile's record of its own, and the
+// Text id of its namecard, 0 until that level holds it, all read on demand: the profile's record of its own, and the
 // Friendship slice
 export const readCharacterProfile = async (
   gameDataBaseUrl: string,

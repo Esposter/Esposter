@@ -3,7 +3,7 @@ import type { TreeCluster, TreeNormalField, TreeOptions, TreeTubePoint } from "g
 import { z } from "zod";
 
 // The oak as the Windrise fit traced it: the leaf clusters its cards are grown about, its trunk and limbs, the normals
-// Of Its leaves and its surface roots, which are the parts of the engine's tree options the oak takes
+// Of its leaves and its surface roots, which are the parts of the engine's tree options the oak takes
 export type WindriseOak = Pick<TreeOptions, "clusters" | "limbs" | "normalField" | "roots">;
 
 const treeTubePointSchema = z.object({

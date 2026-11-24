@@ -34,7 +34,7 @@ import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // Every prompt the world offers, joined from the sources that hold them and read beside the character's body: what is
-// In Reach is listed, selected and acted on as the key is pressed. Each prompt stands on the ground beneath its point
+// In reach is listed, selected and acted on as the key is pressed. Each prompt stands on the ground beneath its point
 export const useWorldInteractables = ({
   blacksmithPlace,
   characterBody,

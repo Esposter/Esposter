@@ -7,8 +7,8 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const storageRouter = router({
   // The owner's user row, whose total is stored and whose quota is derived from its tier on the client, so moving a
-  // User to Another tier changes what they see and what the gate enforces in the same instant. See
-  // `openspec/specs/resource/storage-quotas/design.md`
+  // User to another tier changes what they see and what the gate enforces in the same instant. See
+  // Openspec/specs/resource/storage-quotas/design.md
   readUsage: standardAuthedProcedure
     .meta({
       staticReason:

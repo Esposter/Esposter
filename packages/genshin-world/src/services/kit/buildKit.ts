@@ -11,9 +11,9 @@ import { createKitRecordResolver } from "#src/services/kit/build/createKitRecord
 import { tagKitHits } from "#src/services/kit/tagKitHits";
 
 // A character's kit, from its record and its behaviour, once as the character joins: the record's slots resolved
-// Against The character's multipliers and the level each talent plays at, its frames divided into seconds once and its
-// Talents' Parameters read off their tables at those levels, the behaviour given the record to read what else it plays
-// By name, And what it returns joined to the slots' actions and hits, each tagged with the kind of attack its action
+// Against the character's multipliers and the level each talent plays at, its frames divided into seconds once and its
+// Talents' parameters read off their tables at those levels, the behaviour given the record to read what else it plays
+// By name, and what it returns joined to the slots' actions and hits, each tagged with the kind of attack its action
 // Deals
 export const buildKit = (
   record: KitRecord,

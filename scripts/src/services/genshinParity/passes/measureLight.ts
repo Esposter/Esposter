@@ -19,12 +19,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The light pass: at each current build's reference's camera, the stone light written for its hour cast over the
 // Exports' stone and shown through the white balance and the tone curve, against the reference's stone, bin by bin
 // (`computeStoneColourDistance`). It is gated where two colours side by side are just told apart, or at what the same
-// Light Reads against our own render of the exports under it, whichever is wider, since the light's model leaves out
-// What the Render draws beside it (the normal maps, the highlight) and no light read through it comes nearer than that.
-// Then the Sun's direction, by where the exports' shadows cast from it fall on the flat receivers against the
-// Reference's shadows' Edges (`solveReferenceShadows`), gated in the reference's pixels as any place on the frame is; a
-// Reference showing no Shadow's edge on a receiver reads none. The glow the materials add over their lit colour is lit
-// Too, so the same pass Reads it against the game's frame (`measureGlow`)
+// Light reads against our own render of the exports under it, whichever is wider, since the light's model leaves out
+// What the render draws beside it (the normal maps, the highlight) and no light read through it comes nearer than that.
+// Then the sun's direction, by where the exports' shadows cast from it fall on the flat receivers against the
+// Reference's shadows' edges (`solveReferenceShadows`), gated in the reference's pixels as any place on the frame is; a
+// Reference showing no shadow's edge on a receiver reads none. The glow the materials add over their lit colour is lit
+// Too, so the same pass reads it against the game's frame (`measureGlow`)
 export const measureLight = async (component: DerivedAssetComponent, pageRoot?: string): Promise<ParityPassMeasure> => {
   const lights = await readPublishedGameData<Record<string, StoneLight>>(STONE_LIGHT_KEY);
   const measures: ParityPassMeasure[] = [];

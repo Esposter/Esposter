@@ -33,7 +33,7 @@ import { takeOne } from "@esposter/shared";
 export const NAHIDA_CHARACTER_ID = 10_000_073;
 
 // Seeds of Skandha, the status an enemy carries for the seconds left of it: All Schemes to Know marks each enemy it
-// Strikes For 25 seconds, and a new mark restarts them, as gcsim's mark does. Tri-Karma Purification strikes the
+// Strikes for 25 seconds, and a new mark restarts them, as gcsim's mark does. Tri-Karma Purification strikes the
 // Enemies that carry it
 export const SEEDS_OF_SKANDHA_STATUS_ID = "nahida-seeds-of-skandha";
 const SEEDS_OF_SKANDHA_SECONDS = 25;
@@ -52,7 +52,7 @@ const TRI_KARMA_PARTICLE_STATUS_ID = "nahida-tri-karma-particle";
 const TRI_KARMA_PARTICLE_SECONDS = 7;
 const TRI_KARMA_PARTICLE_COUNT = 3;
 // Illusory Heart's window: the second an in-field tick opens while Nahida's body stands inside, for Tri-Karma's Pyro
-// Bonus And Electro cut, as gcsim's withinBurst status does
+// Bonus and Electro cut, as gcsim's withinBurst status does
 const ILLUSORY_HEART_WINDOW_STATUS_ID = "nahida-illusory-heart-within";
 const ILLUSORY_HEART_WINDOW_SECONDS = 1;
 const ILLUSORY_HEART_OFFSET_METRES = 1;
@@ -63,7 +63,7 @@ const MAX_ELEMENT_COUNT = 2;
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_2 = 2;
 // Constellation 2's DEF reduction on a marked enemy for eight seconds from a Quicken, Aggravate or Spread on it, and
-// Its CRIT On a Lunar-Bloom hit of another member's that lands on a marked enemy, as gcsim (MIT) nahida/cons.go gives
+// Its CRIT on a Lunar-Bloom hit of another member's that lands on a marked enemy, as gcsim (MIT) nahida/cons.go gives
 // Them
 const CONSTELLATION_2_DEFENCE_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
   ReactionType.Aggravate,
@@ -76,7 +76,7 @@ const CONSTELLATION_2_DEFENCE_SECONDS = 8;
 const CONSTELLATION_2_LUNAR_BLOOM_CRITICAL_RATE_BONUS = 0.1;
 const CONSTELLATION_2_LUNAR_BLOOM_CRITICAL_DAMAGE_BONUS = 0.2;
 // Constellation 4's Elemental Mastery, from the marked enemies within 30 metres of her, as gcsim's c4 gives it: 80, and
-// 20 more For each enemy, up to four
+// 20 more for each enemy, up to four
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_AREA: AttackArea = { angle: Math.PI * 2, height: 2, radius: 30 };
 const CONSTELLATION_4_MARKED_STATUS_ID = "nahida-c4-marked-count";
@@ -84,8 +84,8 @@ const CONSTELLATION_4_MAX_ENEMIES = 4;
 const CONSTELLATION_4_BASE_ELEMENTAL_MASTERY = 80;
 const CONSTELLATION_4_ELEMENTAL_MASTERY_PER_ENEMY = 20;
 // Constellation 6's Karmic Oblivion, which each normal or charged attack's hit on a marked enemy queues on every marked
-// Enemy Once Illusory Heart is unleashed: 200% of her ATK and 400% of her Elemental Mastery, at most six times in ten
-// Seconds, and Once in 0.2 seconds, as gcsim's c6 gives them
+// Enemy once Illusory Heart is unleashed: 200% of her ATK and 400% of her Elemental Mastery, at most six times in ten
+// Seconds, and once in 0.2 seconds, as gcsim's c6 gives them
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_STATUS_ID = "nahida-c6-karmic-oblivion";
 const CONSTELLATION_6_SECONDS = 10;
@@ -142,11 +142,11 @@ const markEnemy = ({ kitEffectState }: KitContext, { combatant }: KitStrike, ene
 const markHitBehaviour: KitHitBehaviour = { onStrike: markEnemy };
 
 // Nahida's behaviour: All Schemes to Know's press and full hold mark the enemies they strike with Seeds of Skandha, up
-// To Eight a cast. A reaction on a marked enemy sets off Tri-Karma Purification, which strikes every marked enemy on
-// The Kit clock, and Illusory Heart's field, whose ticks open its window for the Pyro bonus and the Electro cut
+// To eight a cast. A reaction on a marked enemy sets off Tri-Karma Purification, which strikes every marked enemy on
+// The kit clock, and Illusory Heart's field, whose ticks open its window for the Pyro bonus and the Electro cut
 // Ascension 1 and 4 are not built: Illusory Heart's Elemental Mastery buff and Tri-Karma's Elemental Mastery bonus.
 // Constellation 2's CRIT on the reactions of a marked enemy is not built either: its CRIT Rate and CRIT DMG are fixed
-// At 20% and 100%, where The kit's hooks only add to a striker's, so a reaction's CRIT would be an approximation
+// At 20% and 100%, where the kit's hooks only add to a striker's, so a reaction's CRIT would be an approximation
 export const createNahidaKitBehaviour = ({
   kit,
   readArea,
@@ -206,8 +206,8 @@ export const createNahidaKitBehaviour = ({
         const { characterId } = activeCombatant;
         const hydroCount = countTeamElement(context, activeCombatant, Element.Hydro);
         const extensionSeconds = hydroCount > 0 ? takeOne(hydroExtensions, hydroCount - 1) : 0;
-        // Unleashing Illusory Heart starts Karmic Oblivion's ten seconds, its instances counted from zero, as gcsim's
-        // C6 does
+        // Unleashing Illusory Heart starts Karmic Oblivion's ten seconds, its instances counted from zero, as
+        // Gcsim's c6 does
         if (activeCombatant.constellationCount >= CONSTELLATION_6)
           addKitStatus(kitEffectState, characterId, {
             id: CONSTELLATION_6_STATUS_ID,

@@ -77,7 +77,7 @@ describe(useKnockerStore, () => {
   });
 
   // A refused admission answers no row, so nothing is let in and the knocker stays in the lobby where it stood. The
-  // Other Admission is the one that lands
+  // Other admission is the one that lands
   test("puts back only the knocker whose admission was refused, where they stood", async () => {
     expect.hasAssertions();
 
@@ -114,7 +114,7 @@ describe(useKnockerStore, () => {
   });
 
   // The admission answers the knocker's tombstone, at the version its removal raised it to. A knock frame that lands
-  // After It, still carrying the knocker's live row, must not bring the knocker back into the lobby
+  // After it, still carrying the knocker's live row, must not bring the knocker back into the lobby
   test("a late knock frame does not bring back an admitted knocker", async () => {
     expect.hasAssertions();
 
@@ -149,7 +149,7 @@ describe(useKnockerStore, () => {
   });
 
   // The call's last participant leaving dismisses its knockers on the server, and tells only the knockers, so the lobby
-  // The Doorkeeper left still holds the knocker. A knock on the rejoined call shows itself and not that knocker
+  // The doorkeeper left still holds the knocker. A knock on the rejoined call shows itself and not that knocker
   test("a rejoined lobby does not bring back a knocker it held before the doorkeeper left", () => {
     expect.hasAssertions();
 
@@ -164,7 +164,7 @@ describe(useKnockerStore, () => {
   });
 
   // The page that sent a knock cancels it when it leaves, and the server may answer after that. The answer finds the
-  // Knock Cancelled, so the waiting screen does not show for it
+  // Knock cancelled, so the waiting screen does not show for it
   test("a knock cancelled while the server has it does not show the waiting screen once it answers", async () => {
     expect.hasAssertions();
 

@@ -17,7 +17,7 @@ interface Props {
   // A line under the field saying how to fill it, which describes it to assistive technology and gives way to an error
   hint?: string | undefined;
   // Takes focus as it appears: the browser's own autofocus when a dialog opens onto it, and `useAutofocus` when it
-  // Mounts Into a page, which leaves a reader who is typing elsewhere alone
+  // Mounts into a page, which leaves a reader who is typing elsewhere alone
   isAutofocus?: true | undefined;
   // Shown at the disabled opacity and never focused or typed in, as a native disabled control is
   isDisabled?: true | undefined;

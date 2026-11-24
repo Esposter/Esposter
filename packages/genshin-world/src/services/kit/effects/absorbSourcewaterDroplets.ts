@@ -4,7 +4,7 @@ import type { GroundPoint } from "genshin-engine";
 import { SOURCEWATER_DROPLET_FIELD_ID } from "#src/services/kit/constants";
 
 // Ends up to `maximum` of a character's Sourcewater Droplets inside the area `checkIsInArea` takes, in the order they
-// Were Left, each once, and returns how many it ended, as a charge does when its legal evaluation picks them up
+// Were left, each once, and returns how many it ended, as a charge does when its legal evaluation picks them up
 export const absorbSourcewaterDroplets = (
   kitEffectState: KitEffectState,
   characterId: number,

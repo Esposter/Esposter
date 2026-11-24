@@ -12,8 +12,8 @@ export const ELLIPSE_OUTLINE_SEGMENT_COUNT = 32;
 // The slant of an input or output shape's sides, as a share of its width
 export const INPUT_OUTPUT_SLANT_RATIO = 0.2;
 // A fill colour written as six hex digits
-// `isolatedDeclarations`
-// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
+/* oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex
+   would otherwise infer */
 export const HEX_COLOR_REGEX: RegExp = /^#[\dA-Fa-f]{6}$/u;
 // The slots of a node that holds no children, typed with a never element so it is assignable to every node type's slots
 export const NO_BLOCK_SLOTS: Readonly<Record<string, readonly never[]>> = {};

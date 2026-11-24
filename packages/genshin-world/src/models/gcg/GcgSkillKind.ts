@@ -1,6 +1,6 @@
 // A character's skills by the tag the card gives them: the normal attack, the elemental skill and the elemental burst,
-// And The passive a character holds, which no action uses and only its skill rules read, and the Technique a card gives
-// The Character it is equipped to, a combat action of its own that no skill rule counts as a skill
+// And the passive a character holds, which no action uses and only its skill rules read, and the Technique a card gives
+// The character it is equipped to, a combat action of its own that no skill rule counts as a skill
 export const GcgSkillKind = {
   ElementalBurst: "ElementalBurst",
   ElementalSkill: "ElementalSkill",

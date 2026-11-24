@@ -53,7 +53,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
 
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from the item in
     // Hand — a separately tracked index would still hold the previous edit's row when the dialog opens straight from
-    // The Add button, routing that add into an update. A field the dialog left undefined keeps the stored value
+    // The add button, routing that add into an update. A field the dialog left undefined keeps the stored value
     if (originalItem.value) Object.assign(originalItem.value, omitUndefined(editedValue));
     else items.value.push(editedValue);
     saveTodoList();

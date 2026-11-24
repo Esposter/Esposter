@@ -5,6 +5,6 @@ import { checkIsMeleeWeapon } from "#src/services/kit/checkIsMeleeWeapon";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 
 // Whether a hit is melee: it sits in a normal or charged attack of a character wielding a melee weapon, whatever kind
-// It is Dealt as
+// It is dealt as
 export const checkIsMeleeHit = ({ weaponType }: Pick<Combatant, "weaponType">, { actionAttackTag }: KitHit): boolean =>
   checkIsMeleeWeapon(weaponType) && checkIsNormalOrChargedAttack(actionAttackTag);

@@ -28,13 +28,14 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // The Arataki Kesagiri drains no stamina, as gcsim v2.47.2 (MIT) itto/charge.go's ActionStam gives none while Itto
-// Holds Superlative Superstrength https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/charge.go
+// Holds Superlative Superstrength
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/charge.go
 const ARATAKI_KESAGIRI_STAMINA = 0;
 
 // Superlative Superstrength's cap of 5 stacks, held until a slash spends them, and the stacks a normal attack gives as
-// It Lands, as gcsim v2.47.2 (MIT) itto/itto.go and attack.go assume it hits: 1 for the second strike and 2 for the
-// Fourth, And under the burst 1 more for the first and the third
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/attack.go`
+// It lands, as gcsim v2.47.2 (MIT) itto/itto.go and attack.go assume it hits: 1 for the second strike and 2 for the
+// Fourth, and under the burst 1 more for the first and the third
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/attack.go
 const SUPERSTRENGTH_RESOURCE_ID = "itto-superlative-superstrength";
 const SUPERSTRENGTH_MAX_STACKS = 5;
 const NORMAL_ATTACK_SUPERSTRENGTH_STACKS = [0, 1, 0, 2];
@@ -49,8 +50,8 @@ const USHI_DAMAGED_COOLDOWN_STATUS_ID = "itto-ushi-damaged-cooldown";
 const USHI_DAMAGED_COOLDOWN_SECONDS = 2;
 
 // Bloodline of the Crimson Oni, as gcsim v2.47.2 (MIT) itto/asc.go gives it: from Ascension 4, each Arataki Kesagiri
-// Hit Adds 35% of Itto's DEF to its DMG
-// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/asc.go`
+// Hit adds 35% of Itto's DEF to its DMG
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/asc.go
 const ASCENSION_4 = 4;
 const BLOODLINE_DEFENSE_SHARE = 0.35;
 // Royal Descent's 0.1 Normal ATK SPD, as gcsim v2.47.2 (MIT) itto/burst.go gives it
@@ -63,7 +64,7 @@ const CONSTELLATION_1_CAST_FRAMES = 75;
 const CONSTELLATION_1_TIMER_FRAMES = [60, 90, 120];
 
 // Constellation 2's energy and cooldown cut, as gcsim v2.47.2 (MIT) itto/cons.go c2 gives them: each Geo member of the
-// Team Gives Itto 6 Energy and cuts Royal Descent's cooldown by 1.5 seconds, at most three of them, 9 frames after the
+// Team gives Itto 6 Energy and cuts Royal Descent's cooldown by 1.5 seconds, at most three of them, 9 frames after the
 // Cast https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_COOLDOWN_CUT_SECONDS = 1.5;
@@ -72,7 +73,7 @@ const CONSTELLATION_2_ENERGY = 6;
 const CONSTELLATION_2_MAXIMUM_GEO_MEMBERS = 3;
 
 // Constellation 4's buff, as gcsim v2.47.2 (MIT) itto/cons.go c4 gives it: when Royal Descent's Raging Oni King state
-// Ends, the Team gains 20% ATK and 20% DEF for 10 seconds
+// Ends, the team gains 20% ATK and 20% DEF for 10 seconds
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_PERCENT = 0.2;
 const CONSTELLATION_4_SECONDS = 10;
@@ -100,10 +101,10 @@ const checkIsRagingOniKing = (effects: readonly KitEffect[], characterId: number
 export const ITTO_CHARACTER_ID = 10_000_057;
 
 // Itto's behaviour: his normal attacks and Ushi give him Superlative Superstrength, whose stacks turn his charged
-// Attack Into the Arataki Kesagiri. Masatsu Zetsugi throws Ushi, a taunt holding a share of his Max HP, and Royal
-// Descent adds His ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field.
+// Attack into the Arataki Kesagiri. Masatsu Zetsugi throws Ushi, a taunt holding a share of his Max HP, and Royal
+// Descent adds his ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field.
 // Bloodline of the Crimson Oni and Constellations 1, 2 and 4 are built, and Constellation 6's Charged Attack CRIT DMG
-// Is too. Arataki Ichiban's ATK SPD, which no attribute holds, and Constellation 6's Arataki Kesagiri stack save are
+// Is too. Arataki ichiban's ATK SPD, which no attribute holds, and Constellation 6's Arataki Kesagiri stack save are
 // Not
 export const createIttoKitBehaviour = ({
   kit,
@@ -164,7 +165,7 @@ export const createIttoKitBehaviour = ({
   return {
     // Royal Descent deals no damage. It adds Itto's ATK per DEF to his attacks, and infuses them with Geo as they are
     // Converted, with the burst's Normal ATK SPD, for its seconds from the cast or until he leaves the field, as
-    // Gcsim's Exit deletes the burst's ATK and ATK SPD
+    // Gcsim's exit deletes the burst's ATK and ATK SPD
     burst: {
       onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         buffKitMember(kitEffectState, combatant.characterId, {

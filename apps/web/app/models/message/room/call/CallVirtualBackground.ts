@@ -1,5 +1,5 @@
 // The preset a user's virtual background setting names. The value is stored, so it is the name, never the url: the url
-// Is The bundle's, and a rebuild changes it. Each member's value is its key, and the order is the picker's
+// Is the bundle's, and a rebuild changes it. Each member's value is its key, and the order is the picker's
 /* oxlint-disable sorting/sort-objects -- The picker lists the presets in the order they are declared */
 export const CallVirtualBackground = {
   Sunrise: "Sunrise",

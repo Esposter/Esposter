@@ -9,8 +9,8 @@ let activeReads: TopicRead[] | undefined;
 export const readActiveTopicReads = () => activeReads;
 
 // Runs a read and collects the reads every tRPC call it starts synchronously answers with. Each read is kept whole,
-// Since Its signature covers only its own topics, so the reads are watched one by one rather than merged. A call
-// Started after the Read's first await is outside the collection, so a read that must be live starts its calls before
+// Since its signature covers only its own topics, so the reads are watched one by one rather than merged. A call
+// Started after the read's first await is outside the collection, so a read that must be live starts its calls before
 // Awaiting anything
 export const collectTopics = async <T>(read: () => Promise<T>): Promise<{ reads: TopicRead[]; result: T }> => {
   const reads: TopicRead[] = [];

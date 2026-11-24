@@ -33,7 +33,7 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
       joinNoticeParticipant.value = undefined;
   };
   // A join is the one event that announces a participant, so only it raises the notice, and only for a row the call did
-  // Not Already hold
+  // Not already hold
   const storeJoinedCallParticipant = (callSessionId: string, participant: CallParticipantRow) => {
     const isNewToCall = !callSessionParticipantsMap.value.get(callSessionId)?.has(participant.id);
     storeCallParticipant(callSessionId, participant);

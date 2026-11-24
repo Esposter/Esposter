@@ -62,7 +62,7 @@ export const SHARED_APP_IMPORT_PATTERN: RestrictedImportPattern = {
     "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see openspec/specs/architecture/module-boundaries/design.md. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
 };
 // The parity page's modules are dev-only: `packages/genshin-world/tsdown.config.ts` exports their subpaths only when
-// Not Publishing, so a built module that imports one ships a path into the dev tree
+// Not publishing, so a built module that imports one ships a path into the dev tree
 export const PARITY_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["#parity/**"],
   message:
@@ -112,8 +112,9 @@ export const PACKAGE_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_RELATIVE_IMPORT_PATTERN,
   SUBPATH_QUERY_IMPORT_PATTERN,
 ];
-// The Worker deploy gate reads each Worker's environment model from its app's source by path. A subpath import of the
-// Scripts package never targets an app's files, so `WORKER_SECRETS_IMPORT_PATTERNS` allows only those models.
+// The Worker deploy gate reads each Worker's environment model from its app's source by path.
+// A subpath import of the scripts package never targets an app's files, so `WORKER_SECRETS_IMPORT_PATTERNS` allows only
+// Those models.
 export const WORKER_SECRETS_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_ALIAS_IMPORT_PATTERN,
   {

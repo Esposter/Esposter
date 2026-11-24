@@ -1,7 +1,7 @@
 // The scene exports' entry for the app's server, which serves the developer's own exports of the game's scenes in the
 // Layout the world reads them by. Only the layout's own names are reached from here, so the server never loads the
 // World's components. The witness target names are a plain map with no component behind them, which the parity tooling
-// Reads At run time as well, so the model lives in `src` beside the rest of what this entry exports
+// Reads at run time as well, so the model lives in `src` beside the rest of what this entry exports
 export type { AvatarBone } from "#src/models/avatar/AvatarBone";
 export type { AvatarManifest } from "#src/models/avatar/AvatarManifest";
 export type { AvatarMaterial } from "#src/models/avatar/AvatarMaterial";

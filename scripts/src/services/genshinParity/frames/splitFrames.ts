@@ -1,7 +1,7 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The frames of a clip's bytes as they arrive in chunks that cut across them, each frame of the same length. A clip
-// That Ends partway through a frame is refused, since its last row would read another frame's bytes
+// That ends partway through a frame is refused, since its last row would read another frame's bytes
 export const splitFrames = async function* (
   chunks: AsyncIterable<Uint8Array> | Iterable<Uint8Array>,
   frameBytes: number,

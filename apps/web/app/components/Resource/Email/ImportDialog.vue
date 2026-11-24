@@ -15,7 +15,7 @@ const resourceId = currentResourceId.value;
 const { checkEmailSource, importEmailSource } = useImportEmailSource();
 const source = ref("");
 // The source is checked as it is typed, so a source the email's types refuse keeps the dialog open with its reason in
-// The Field, and the import is sent only for one they take. A blank source is the empty field the confirm already holds
+// The field, and the import is sent only for one they take. A blank source is the empty field the confirm already holds
 const sourceRules = [(value: string) => checkIsBlankText(value) || checkEmailSource(value)];
 const isOpen = computed({
   get: () => isImportOpen.value,

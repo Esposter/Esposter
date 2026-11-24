@@ -11,7 +11,7 @@ import { toProudSkillNameTextIdMap } from "#src/services/genshinAssets/stats/toP
 // Every playable character's combat talents and passives, from the first of its skill sets that names them all, as
 // `toCharacterTalentKit` reads them, a Traveler's from its Anemo set. A character none of whose sets does is left out.
 // The caller reads the proud skill table once and hands its rows in, since the passives' names come off the same rows
-// It Reads the talents' tables from
+// It reads the talents' tables from
 export const getCharacterTalentKits = (proudSkillRows: readonly ExcelProudSkillRow[]): CharacterTalentKit[] => {
   const skillDepotMap = readSkillDepotMap();
   const skillMap = readSkillMap();

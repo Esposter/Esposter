@@ -167,9 +167,9 @@ describe("typeOnlyDependencies", () => {
     },
   );
 
-  // A workspace sibling a built package loads is kept external by its runtime fields alone: tsdown bundles a
-  // `devDependency` Its source imports, which copies the sibling's modules into this package's `dist`. A published
-  // Package's declarations Name the types it imports, so its consumers resolve those names as well
+  // A workspace sibling a built package loads is kept external by its runtime fields alone: tsdown bundles
+  // A devDependency its source imports, which copies the sibling's modules into this package's `dist`. A published
+  // Package's declarations name the types it imports, so its consumers resolve those names as well
   test(
     "list each workspace sibling a built package loads in dependencies or peerDependencies",
     { timeout: TREE_READ_TIMEOUT_MS },

@@ -716,7 +716,7 @@ describe(stepKit, () => {
     expect(kitState.action).toBeUndefined();
   });
   // Bennett's kit, whose skill has holds, for a hold on it: its character, the kit's skill held for the steps given and
-  // Then Released. The kit completes its charge after the hold's step given, or before the hold begins when asked to
+  // Then released. The kit completes its charge after the hold's step given, or before the hold begins when asked to
   const BENNETT_COMBATANT: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

@@ -50,7 +50,7 @@ const getUnbackedSlider = (labelKey: GameTextKey, range: SettingRange, value: nu
 // Show in `yt-5EmJX_RyuY8-menu-settings`: the Controls tab at 13 seconds, its Key Bindings at 30, the Graphics tab at
 // 144.5 seconds and scrolled to its end at 170, the Audio tab at 178, and the Language tab at 190. The world backs the
 // Camera's sensitivities, default distance and Y-axis reset, the graphics quality, the game language and the three
-// Volume Settings the Audio tab names with the overall Volume; every other row is the clip's, drawn disabled as it
+// Volume settings the Audio tab names with the overall Volume; every other row is the clip's, drawn disabled as it
 // Stands
 export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, SettingsSection[]>>> = {
   [Tab.Audio]: [
@@ -137,8 +137,8 @@ export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, Settin
         getChoice(GameTextKey.SettingsCrowdDensity, GameTextKey.SettingsHigh),
         getChoice(GameTextKey.SettingsCoOpTeammateEffects, GameTextKey.SettingsOn),
         getChoice(GameTextKey.SettingsSubsurfaceScattering, GameTextKey.SettingsHigh),
-        // The game has no words for a filter's sample count; it writes the number with an x after it, as the clip
-        // Shows. Provisional: written alike in every language
+        // The game has no words for a filter's sample count; it writes the number with an x after it, as the
+        // Clip shows. provisional: written alike in every language
         { getValue: () => "8x", kind: SettingsRowKind.Choice, labelKey: GameTextKey.SettingsAnisotropicFiltering },
         getChoice(GameTextKey.SettingsDynamicCharacterResolution, GameTextKey.SettingsOn),
       ],

@@ -11,9 +11,9 @@ import { takeOne } from "@esposter/shared";
 const SKY_PIERCING_MIGHT_ID = "skypiercingMight";
 
 // Skyward Blade's Sky-Piercing Fang at its rank: its CRIT Rate is a static line the rank carries. A burst its wielder
-// Uses Gives the wielder Movement SPD and Normal Attack SPD by the rank's shares, and its Normal and Charged Attack
-// Hits deal the Rank's share of ATK as base damage, for the rank's seconds. The share is the wielder's ATK with its
-// Buffs on, as a hit Reads it
+// Uses gives the wielder Movement SPD and Normal Attack SPD by the rank's shares, and its Normal and Charged Attack
+// Hits deal the rank's share of ATK as base damage, for the rank's seconds. The share is the wielder's ATK with its
+// Buffs on, as a hit reads it
 export const createSkyPiercingFangPassiveModule = (params: number[]): PassiveModule => {
   const movementSpeedShare = takeOne(params, 1);
   const normalAttackSpeedShare = takeOne(params, 2);

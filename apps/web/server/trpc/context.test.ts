@@ -23,7 +23,7 @@ const defaultAuthSession: AuthSession = {
 let defaultSession: AuthSession["session"] | undefined;
 
 // A user of the test's own with a session row of their own: a second person for the test to act as or act on, or, given
-// A User it already has, a second device of theirs
+// A user it already has, a second device of theirs
 export const createMockAuthSession = async (
   db: Context["db"],
   existingUser?: AuthSession["user"],
@@ -73,7 +73,7 @@ export const createMockContext = async (authSession: AuthSession | null = defaul
 });
 
 // A router's caller acting as the given caller, as `createMockContext` reads it: the default identity when none is
-// Named, Signed out for null
+// Named, signed out for null
 export const createMockCaller = async <TRecord extends TRPCRouterRecord>(
   router: TRPCBuiltRouter<TRPCRouter["_def"]["_config"]["$types"], TRecord>,
   authSession?: AuthSession | null,

@@ -43,7 +43,7 @@ const readOutlineWidthKnots = (colors: Readonly<Record<string, Vector4Tuple>>): 
 };
 
 // An outline's offset along the view ray, "_MaxOutlineZOffset" times 0.01, with the block-B flag the vertex's blue is
-// Read Through (Exact on the form: the flag below a half takes the blue less a half, and the flag at one or above takes
+// Read through (Exact on the form: the flag below a half takes the blue less a half, and the flag at one or above takes
 // One)
 const readOutlineOffset = (
   nameFloatMap: ReadonlyMap<string, number>,
@@ -55,7 +55,7 @@ const readOutlineOffset = (
 };
 
 // A value for each region, read by the name the game gives it: the region one's by the bare name and the later regions'
-// By Its number after it
+// By its number after it
 const readRegionValues = <T>(
   name: string,
   readValue: (valueName: string) => T,

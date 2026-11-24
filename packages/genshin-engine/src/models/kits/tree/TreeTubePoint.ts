@@ -1,5 +1,5 @@
 // A point a tube of a tree's wood runs through, a surface root's or a limb's, and the tube's radius there, in metres
-// From The trunk's foot
+// From the trunk's foot
 export interface TreeTubePoint {
   radius: number;
   x: number;

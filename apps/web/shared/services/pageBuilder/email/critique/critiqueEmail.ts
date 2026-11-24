@@ -9,7 +9,7 @@ import { critiqueEmailNodes } from "#shared/services/pageBuilder/email/critique/
 import { readEmailHeadings } from "#shared/services/pageBuilder/email/critique/readEmailHeadings";
 
 // The critique of an email document: each button and navbar link, each text's contrast with the background its
-// Containers set, And each heading in document order. Every finding is a warning, since none of these checks stops a
+// Containers set, and each heading in document order. Every finding is a warning, since none of these checks stops a
 // Send
 export const critiqueEmail = (
   document: z.output<typeof emailDocumentSchema>,

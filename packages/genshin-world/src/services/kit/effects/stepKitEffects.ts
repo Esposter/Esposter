@@ -12,7 +12,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { runDownSeconds } from "#src/services/runDownSeconds";
 
 // The strike an effect lands as it ends, if it lands one: a taunt's, a bubble's or a shield's explosion, a shield's
-// From The body on the field
+// From the body on the field
 const endKitEffect = (effect: KitEffect, { body }: KitContext): KitStrike | undefined => {
   if (effect.kind === "taunt") return stepKitTaunt(effect);
   if (effect.kind === "bubble") return stepKitBubble(effect);

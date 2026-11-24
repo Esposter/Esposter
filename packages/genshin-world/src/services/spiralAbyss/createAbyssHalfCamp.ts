@@ -5,7 +5,7 @@ import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCa
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The camp a half's monsters spawn as, standing evenly round the centre, each as the kind its describe is fought as and
-// At The chamber's monster level. A describe the kinds do not hold is refused rather than spawned as nothing
+// At the chamber's monster level. A describe the kinds do not hold is refused rather than spawned as nothing
 export const createAbyssHalfCamp = (
   areaId: string,
   campId: string,

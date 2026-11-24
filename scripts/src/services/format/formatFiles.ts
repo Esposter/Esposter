@@ -8,8 +8,8 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 // Formats each given file in place and returns how many it rewrote. A file that is already as the formatter writes it
-// Is Left alone, so its mtime does not move. The formatter runs once per run of paths rather than once per file. A run
-// It Cannot finish is formatted one file at a time, writing each as it goes, so the first file that stops it is the one
+// Is left alone, so its mtime does not move. The formatter runs once per run of paths rather than once per file. A run
+// It cannot finish is formatted one file at a time, writing each as it goes, so the first file that stops it is the one
 // Named, and the files before it are rewritten as they were before runs
 export const formatFiles = (repositoryPaths: string[], repositoryRoot: string, mainCheckoutRoot: string): number => {
   let rewrittenCount = 0;

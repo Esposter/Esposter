@@ -1,5 +1,5 @@
 // The game's furnishing-making and Trust tables in the dump, read by their names. The material table is the crafting's,
-// Read By the same name, and the realm's tables are fetched into the dump from the AnimeGameData repository, never
+// Read by the same name, and the realm's tables are fetched into the dump from the AnimeGameData repository, never
 // Committed
 export const FURNITURE_MAKE_TABLE_NAME = "FurnitureMakeExcelConfigData";
 export const HOMEWORLD_LEVEL_TABLE_NAME = "HomeworldLevelExcelConfigData";
@@ -11,14 +11,14 @@ export const UNLOCK_FURNITURE_USE_OP = "ITEM_USE_UNLOCK_FURNITURE_FORMULA";
 export const FARM_FIELD_TABLE_NAME = "HomeWorldFarmFieldExcelConfigData";
 export const PLANT_TABLE_NAME = "HomeWorldPlantExcelConfigData";
 // The home event table: a reward event gives a companion a furnishing suite it favours, its one-time reward and the
-// Talk it Speaks, and a summon event the same talk as the companion's invitation. Only the reward events are published
+// Talk it speaks, and a summon event the same talk as the companion's invitation. Only the reward events are published
 export const HOME_EVENT_TABLE_NAME = "HomeWorldEventExcelConfigData";
 // The home NPC table: each companion's row, with the three talks it speaks in the realm, the second and third each
-// Gated By a Friendship Level and the first by none
+// Gated by a Friendship Level and the first by none
 export const HOME_NPC_TABLE_NAME = "HomeWorldNPCExcelConfigData";
 export const HOME_AVATAR_REWARD_EVENT_TYPE = "HOME_AVATAR_REWARD_EVENT";
 export const HOME_AVATAR_SUMMON_EVENT_TYPE = "HOME_AVATAR_SUMMON_EVENT";
 // The realm's area table, which holds the load each area holds at most, and the furnishing table, which holds the load
-// Each Furnishing takes up in its area
+// Each furnishing takes up in its area
 export const AREA_COMFORT_TABLE_NAME = "HomeWorldAreaComfortExcelConfigData";
 export const FURNITURE_TABLE_NAME = "HomeWorldFurnitureExcelConfigData";

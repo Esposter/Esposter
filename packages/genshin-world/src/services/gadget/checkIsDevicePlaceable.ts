@@ -1,7 +1,7 @@
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 
 // Whether a device can be placed: the scene holds fewer of it than its scene limit, and the player has placed fewer of
-// It Than its player limit
+// It than its player limit
 export const checkIsDevicePlaceable = (
   gadget: Pick<GadgetRow, "maxCountByPlayer" | "maxCountInScene">,
   placedInScene: number,

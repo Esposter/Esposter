@@ -7,9 +7,9 @@ import { toPercent } from "#src/services/genshinParity/reference/toPercent";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
 
 // The compared region split into a grid of cells, row by row from the top, each read over its scored pixels: the mean
-// Of The greyscale difference in percent, and the mean colour of the reference and of ours, with the whole region's
-// Mean Difference over its scored pixels. `differences` is the greyscale difference per pixel, and the two RGB buffers
-// Are Each image's pixels in the same order
+// Of the greyscale difference in percent, and the mean colour of the reference and of ours, with the whole region's
+// Mean difference over its scored pixels. `differences` is the greyscale difference per pixel, and the two RGB buffers
+// Are each image's pixels in the same order
 export const getCellReadings = ({
   differences,
   gridSize,

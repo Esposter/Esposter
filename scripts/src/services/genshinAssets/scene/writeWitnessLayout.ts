@@ -29,9 +29,9 @@ import { join } from "node:path";
 // Three's axes, with every material it draws with and each material's values and textures, all named by the files the
 // Export holds, under the component's roots or the ones given. It is written beside the exports and never enters the
 // Repository (openspec/specs/genshin/scene-derivation/design.md). Every part of the open world is set in one frame,
-// With One origin shared by all of it: the Windrise oak's foot, the place `readWorldOrigin` reads. Each part's game
-// Position is Taken less that origin, and its z mirrored as `placeMapPoints` mirrors its points, so a camera solved on
-// The witness is Our scene's camera. Its terrain tiles sit at their corners, each drawn with its base map
+// With one origin shared by all of it: the Windrise oak's foot, the place `readWorldOrigin` reads. Each part's game
+// Position is taken less that origin, and its z mirrored as `placeMapPoints` mirrors its points, so a camera solved on
+// The witness is our scene's camera. Its terrain tiles sit at their corners, each drawn with its base map
 export const writeWitnessLayout = async (
   component: DerivedAssetComponent,
   roots?: readonly string[],

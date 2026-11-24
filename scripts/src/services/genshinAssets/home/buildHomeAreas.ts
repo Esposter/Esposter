@@ -5,8 +5,8 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The load each realm area holds at most, whether it is an exterior area and the loads its meter turns orange and red
-// At, From the game's area table, as one record of the home dataset: each area by its scene and its id within the
-// Scene, sorted By both
+// At, from the game's area table, as one record of the home dataset: each area by its scene and its id within the
+// Scene, sorted by both
 export const buildHomeAreas = (): Record<string, unknown> => ({
   [`${GameDataset.Home}/areas`]: readExcelTable<ExcelHomeWorldAreaComfortRow>(AREA_COMFORT_TABLE_NAME)
     .map(({ areaID, areaType, highLoadLimit, lowLoadLimit, MMLKIBLLOGP, sceneID }) => ({

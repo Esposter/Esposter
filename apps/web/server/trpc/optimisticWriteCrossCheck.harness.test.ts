@@ -12,7 +12,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getUncoveredWrites, () => {
   // The block writes the friendship, the request and the block row of the pair. This fixture entry shows the first two
-  // And Omits the block row, which the write names in its response, so the cross-check must report that row
+  // And omits the block row, which the write names in its response, so the cross-check must report that row
   test("names the block row that a write changes and its entry omits", async () => {
     expect.hasAssertions();
 

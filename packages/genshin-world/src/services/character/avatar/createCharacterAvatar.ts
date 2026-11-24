@@ -38,7 +38,7 @@ interface AvatarMaterialRecord {
 }
 
 // One of the game's materials, shaded by the game's own inputs. Its PMX side is the plain one the shading reads for
-// What The game's values do not give: an opaque body, outlined by the world's own outline, with no sphere map or toon
+// What the game's values do not give: an opaque body, outlined by the world's own outline, with no sphere map or toon
 // Of its own
 const createAvatarMaterial = (
   materialName: string,
@@ -114,8 +114,8 @@ const createAvatarGeometry = (
 };
 
 // The game's model from its manifest and binary: each bone at its rest pose under the one skeleton the meshes share,
-// Each Mesh skinned to it and each of its materials shaded from the game's values. The humanoid bones take their MMD
-// Names, so The poser's name map finds them. The first mesh holds the bones, and the rest bind to its bind matrix
+// Each mesh skinned to it and each of its materials shaded from the game's values. The humanoid bones take their MMD
+// Names, so the poser's name map finds them. The first mesh holds the bones, and the rest bind to its bind matrix
 export const createCharacterAvatar = (
   { bones, humanoid, materials, meshes }: AvatarManifest,
   buffer: ArrayBuffer,
@@ -161,7 +161,7 @@ export const createCharacterAvatar = (
       return record;
     });
     // A face's draw is one per material, shared by every mesh that draws the material, so it is set once from the root
-    // Of The first mesh that draws it, rather than once per mesh, whose roots would each set it in turn
+    // Of the first mesh that draws it, rather than once per mesh, whose roots would each set it in turn
     const root = boneList[mesh.rootBone];
     for (const draw of new Set(records.map(({ faceDraw }) => faceDraw)))
       if (draw && root && !faces.some((face) => face.draw === draw)) faces.push({ draw, root });

@@ -7,8 +7,9 @@ import type { RealtimeKitWebhook } from "#src/models/realtimeKit/RealtimeKitWebh
 const checkIsWebhookCurrent = (webhook: RealtimeKitWebhook, events: readonly string[]): boolean =>
   webhook.enabled && webhook.events.length === events.length && events.every((event) => webhook.events.includes(event));
 
-// The changes that take an environment's RealtimeKit from what exists to what is desired, in the order they run: The
-// App first, since its presets and webhook belong to it. The app id is written last, once everything it names exists.
+// The changes that take an environment's RealtimeKit from what exists to what is desired, in the order they run:
+// The app first, since its presets and webhook belong to it. The app id is written last, once everything it
+// Names exists.
 // What is missing or stale is planned, so a second run over a provisioned environment plans nothing
 export const planRealtimeKitProvision = (
   desired: RealtimeKitDesired,

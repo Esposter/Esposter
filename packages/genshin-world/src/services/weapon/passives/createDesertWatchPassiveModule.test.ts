@@ -23,7 +23,7 @@ describe(createDesertWatchPassiveModule, () => {
   const wielder = createWielderCombatant();
   const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
   // Desert Watch at its first rank: an Elemental Skill hit or damage the wielder takes raises its ATK by 20% for 8
-  // Seconds, even Off the field, and its Max HP rises by 32% while it is not protected by a shield
+  // Seconds, even off the field, and its Max HP rises by 32% while it is not protected by a shield
   const passiveModule = createDesertWatchPassiveModule([0.2, 8, 0.2, 8, 0.32]);
 
   test("an Elemental Skill hit the wielder deals raises its ATK by the rank's amount for the rank's seconds", () => {

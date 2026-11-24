@@ -11,7 +11,7 @@ const DEEPWOOD_MEMORIES_STATUS_ID = "deepwoodMemories";
 
 // Deepwood Memories. Its four-piece bonus, when its wearer's Elemental Skill or Burst hits an opponent, lowers the
 // Opponent's Dendro RES by the first param for the second param's seconds, a later hit restarting it. It triggers
-// Whether or not its Wearer is on the field
+// Whether or not its wearer is on the field
 export const createDeepwoodMemoriesSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const resistanceReduction = takeOne(bonus.params, 0);
   const seconds = takeOne(bonus.params, 1);

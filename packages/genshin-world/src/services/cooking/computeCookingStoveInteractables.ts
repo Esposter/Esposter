@@ -5,8 +5,8 @@ import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } fro
 import { InteractionKind } from "genshin-interface";
 
 // The stove as two rows of the prompts, cooking and processing, each activated on the ground beneath its place and
-// Named By the game's own text. A city with no stove in its scene group record offers none. It takes no campfire, so it
-// Is Used whether or not a fire is lit
+// Named by the game's own text. A city with no stove in its scene group record offers none. It takes no campfire, so it
+// Is used whether or not a fire is lit
 export const computeCookingStoveInteractables = (
   place: SceneGroupPlace | undefined,
   names: { cooking: string; processing: string },

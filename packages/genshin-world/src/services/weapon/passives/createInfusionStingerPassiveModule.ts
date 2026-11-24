@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 const INFUSION_STINGER_COOLDOWN_SECONDS = 1;
 
 // Infusion Stinger at its rank: each elemental hit its wielder deals adds an All DMG Bonus stack, up to the rank's
-// Maximum Stacks for the rank's seconds, once every second
+// Maximum stacks for the rank's seconds, once every second
 export const createInfusionStingerPassiveModule = (params: number[]): PassiveModule => {
   const allDamageBonus = takeOne(params, 0);
   const maximumStacks = takeOne(params, 1);

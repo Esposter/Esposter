@@ -16,16 +16,16 @@ export const LOGIN_WALKWAY_RISE_OVERSHOOT = 0.45;
 // A rim a centimetre wide takes that many pixels to stand apart from its pocket
 export const LOGIN_PAVING_PIXELS_PER_METRE = 256;
 // The share of its rims' tilt the walkway's normals keep. Its exports' normal maps bend its normals 4.0000 degrees over
-// Its Family, and its rims drawn at their full fitted slope bend them 4.3467, so the share is the root of the bend over
-// The Share, read by the Shape pass's surface detail reading: the secant through 1.0 (4.3467) and 0.92 (4.0385) lands
+// Its family, and its rims drawn at their full fitted slope bend them 4.3467, so the share is the root of the bend over
+// The share, read by the Shape pass's surface detail reading: the secant through 1.0 (4.3467) and 0.92 (4.0385) lands
 // At 0.9100, and the pass reads 0.0006 degrees there, inside its gate of 0.0198. Detail on top would only raise the
 // Bend
 export const LOGIN_WALKWAY_RIM_TILT_SHARE = 0.91;
 // The walkway's grain over its paving: the targets `genshin:parity grain login --family Walkway` settles, a damped
-// Newton over The structure terms the walkway's own render reads (`fitSurfaceGrain`, `solveResidualsByNewton`). The
-// Paving already Overfills the band of the fourth octave past its exports, so that target stands at its floor of zero,
-// And the terms Settle at a structure root mean square of 0.0214 against the surface pass's gate of 0.0268. At a
-// Pixel's 0.0069 metres At the walkway's depth. The octave amplitudes that reproduce these are solved by
+// Newton over the structure terms the walkway's own render reads (`fitSurfaceGrain`, `solveResidualsByNewton`). The
+// Paving already overfills the band of the fourth octave past its exports, so that target stands at its floor of zero,
+// And the terms settle at a structure root mean square of 0.0214 against the surface pass's gate of 0.0268. At a
+// Pixel's 0.0069 metres at the walkway's depth. The octave amplitudes that reproduce these are solved by
 // `computeSurfaceOctaves`
 export const LOGIN_WALKWAY_SURFACE_DETAIL: SurfaceDetail = {
   bands: [0.000068039907, 0.00011268381, 0, 0.0012071159],

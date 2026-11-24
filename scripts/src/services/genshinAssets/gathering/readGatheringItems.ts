@@ -20,10 +20,11 @@ import { GameLanguage } from "genshin-text";
 import { MaterialType } from "genshin-world";
 
 // The plants, specialties and ores the gathering points give. An item is one when the gather table picks it off the
-// Ground, and Its English name is the name of a label the official map files under a category that respawns, which is
-// The label Its points are marked by. Returns the items, and each label's item by the label's id, the first item of a
-// Name taking The label where two items share one. An item no label names, or of a material type the world does not
-// Name, is Left out only when `GATHER_EXCLUDED_ITEM_IDS` lists it, and refused otherwise
+// Ground, and its English name is the name of a label the official map files under a category that respawns, which is
+// The label
+// Its points are marked by. Returns the items, and each label's item by the label's id, the first item of a name taking
+// The label where two items share one. An item no label names, or of a material type the world does not name, is
+// Left out only when `GATHER_EXCLUDED_ITEM_IDS` lists it, and refused otherwise
 export const readGatheringItems = (
   labels: InteractiveMapLabel[],
 ): { items: GatheringItem[]; labelItemIdMap: Map<number, number> } => {

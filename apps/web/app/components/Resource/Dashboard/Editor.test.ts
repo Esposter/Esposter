@@ -116,8 +116,8 @@ describe("resourceDashboardEditor", () => {
       savedVisualTypes.push(dashboard.value.visuals.map(({ type }) => type));
     });
     await mountSuspended(ResourceDashboardEditor);
-    // The autosave debounce is counted by the clock; the afterEach above restores the real
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- timers before the harness waits a turn on setTimeout
+    /* oxlint-disable-next-line testing/no-faked-set-timeout -- the autosave debounce is counted by the clock; the
+       afterEach above restores the real timers before the harness waits a turn on setTimeout */
     vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
     const visualStore = useVisualStore();
     const { createVisual } = visualStore;
@@ -195,7 +195,7 @@ describe("resourceDashboardEditor", () => {
   });
 
   // A compact window draws the palette as a sheet that stays shut until the reader opens it. The shell's button for it
-  // Is Not yet drawn, so the test opens the region through the shell's own function, the one the button will call
+  // Is not yet drawn, so the test opens the region through the shell's own function, the one the button will call
   test("the palette is a region the reader opens", async () => {
     expect.hasAssertions();
 

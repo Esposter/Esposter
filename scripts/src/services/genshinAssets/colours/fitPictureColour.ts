@@ -7,8 +7,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const OPAQUE_ALPHA = 255;
 // A picture's mean colour as its material draws it, as sRGB bytes: each visible texel's colour averaged, weighted by
-// Its Alpha, so a transparent border counts for nothing. A stand-in for the picture takes this colour, so its place
-// Reads in The picture's own tone. A picture with no visible texel has no colour to take
+// Its alpha, so a transparent border counts for nothing. A stand-in for the picture takes this colour, so its place
+// Reads in the picture's own tone. A picture with no visible texel has no colour to take
 export const fitPictureColour = (texture: Texture, material?: MaterialValues): Vector => {
   const { data, info } = tintMaterialTexture(texture, material);
   const hasAlpha = info.channels === 2 || info.channels === 4;

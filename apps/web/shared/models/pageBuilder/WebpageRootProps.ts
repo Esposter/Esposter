@@ -10,8 +10,8 @@ import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
 // The props of a webpage as a whole: the language its document declares, and its tokens, colours and font stacks. A
-// Token Is named as its custom property without the dashes, which a colour or font picked from the theme refers to, so
-// Editing It restyles every use
+// Token is named as its custom property without the dashes, which a colour or font picked from the theme refers to, so
+// Editing it restyles every use
 export interface WebpageRootProps {
   lang: string;
   tokens: Record<string, string>;

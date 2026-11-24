@@ -1,7 +1,7 @@
 // Why a value of a kit's record is not yet read from a source. `BorrowedFromDonor`, `BoxAsCircle`, `NamedHitList`,
 // `NoActionFile`, `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the
-// Builder Applies by rule. A kit's overlay names the others that are its own, and names `BorrowedFromDonor` with the
-// Donor each Borrowed path takes its value from
+// Builder applies by rule. A kit's overlay names the others that are its own, and names `BorrowedFromDonor` with the
+// Donor each borrowed path takes its value from
 export const KitProvisionalCause = {
   // A character gcsim has no folder for borrows its donors' frames, hits and areas, which its overlay names per path,
   // Until a source gives its own
@@ -11,7 +11,7 @@ export const KitProvisionalCause = {
   // A source gives another value, and the kit keeps its own until a commit settles it
   DiffersFromSource: "DiffersFromSource",
   // A talent whose hits its module spawns as a named list keeps its own hits list empty, unless one of its own hits
-  // Joins The group at an index no named list's hit does. A stance's actions keep theirs the same way in the skill's
+  // Joins the group at an index no named list's hit does. A stance's actions keep theirs the same way in the skill's
   // Group
   NamedHitList: "NamedHitList",
   // A plunge gcsim has no file for borrows Bennett's plunge frames, hits and areas, and a claymore's charged
@@ -29,7 +29,7 @@ export const KitProvisionalCause = {
   // Line
   ReadPastLicence: "ReadPastLicence",
   // A hit gcsim centres on its target reaches the circle round the body to the targeting zone's edge, and an arrow's
-  // Box On its target the circle round the body as long as the box, until an area holds a target
+  // Box on its target the circle round the body as long as the box, until an area holds a target
   TargetCentred: "TargetCentred",
   // No source gives the value, and no cause is known yet
   Unclassified: "Unclassified",

@@ -8,8 +8,8 @@ import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 
 // The committed report rewritten with the given scores (`mergeParityScores`), in the map's order. The caller names the
-// Run: Only `compare --all` visits every reference, so it is the one full run, and every other write is a subset run
-// That keeps The rows it did not score
+// Run: only `compare --all` visits every reference, so it is the one full run, and every other write is a subset run
+// That keeps the rows it did not score
 export const writeParityScores = async (
   scores: Readonly<Record<string, ParityScore>>,
   run: ParityReportRun,

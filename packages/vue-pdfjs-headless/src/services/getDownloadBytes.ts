@@ -35,7 +35,7 @@ const addWatermark = async (pdfDocument: PDFDocumentProxy, watermark: string): P
 };
 
 // The original bytes while nothing has changed and no watermark is set, otherwise the renderer's saved bytes. A
-// Watermark Is stored only for that save and removed after it, so the pages on screen never carry it
+// Watermark is stored only for that save and removed after it, so the pages on screen never carry it
 export const getDownloadBytes = async (
   pdfDocument: PDFDocumentProxy,
   watermark: string | undefined,

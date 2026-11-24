@@ -13,7 +13,7 @@ export interface MathTransformation extends ItemEntityType<typeof ColumnTransfor
 }
 
 // The stored schema reads a sheet on every open and patch, so it checks only the expression's size: a formula the
-// Parser Refuses leaves its column empty rather than stopping the sheet opening, and the edit form refuses it before a
+// Parser refuses leaves its column empty rather than stopping the sheet opening, and the edit form refuses it before a
 // Save
 export const mathTransformationSchema = z.object({
   ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Math).readonly()).shape,

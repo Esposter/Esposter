@@ -7,7 +7,7 @@ import { NOTIFICATION_PAGE_SORT, notificationsInNotification } from "@esposter/d
 import { and, eq } from "drizzle-orm";
 
 // One page of the owner's bell, newest first, with one row past the limit for the caller to read the next cursor from.
-// The Unread badge is counted apart, since the pages the bell has never read hold unread rows too
+// The unread badge is counted apart, since the pages the bell has never read hold unread rows too
 export const readNotificationRows = (
   db: Database,
   { cursor, limit, userId }: { cursor: PageCursor; limit: number; userId: string },

@@ -8,7 +8,7 @@ import { takeCommissionClaim } from "#src/services/commission/takeCommissionClai
 
 // The state after a dealt commission's reward is claimed. A finished commission is claimed free; an unfinished one is
 // Claimed for one Encounter Point, which it spends. Undefined where it is not dealt, is claimed already, or the day's
-// Four Are claimed, or where it is unfinished and no point is held
+// Four are claimed, or where it is unfinished and no point is held
 export const claimCommissionReward = (
   day: CommissionDay,
   encounterPoints: number,

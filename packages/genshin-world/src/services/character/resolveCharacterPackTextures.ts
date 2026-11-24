@@ -7,7 +7,7 @@ const getMatchKey = (path: string): string => path.normalize("NFC").toLowerCase(
 
 // The textures a model names, matched to the files below the model's own folder, since every path a model names is
 // Relative to it, `filePaths` and `modelPath` both relative to the release's folder: each is found under the model's
-// Own Spelling, which the world requests, since a folder's names may differ from it in case or Unicode form. A path
+// Own spelling, which the world requests, since a folder's names may differ from it in case or Unicode form. A path
 // Climbing out of the model's folder matches nothing, since a pack is read from that folder down
 export const resolveCharacterPackTextures = (
   texturePaths: readonly string[],

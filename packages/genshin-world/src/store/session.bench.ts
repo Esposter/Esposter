@@ -12,7 +12,7 @@ let reads = 0;
 
 // A session's frame reads the context a few times a frame, so the figure is the cost of one thousand reads of the same
 // Value held three ways: a ref, a store's getter, which sits on a computed, and a field of a store's ref, which sits
-// Behind The store's reactive proxy. A plain constant is left out, since the compiler lifts a read of one out of the
+// Behind the store's reactive proxy. A plain constant is left out, since the compiler lifts a read of one out of the
 // Loop
 describe("a read of the session's context", () => {
   test("read one thousand times", async ({ bench }) => {

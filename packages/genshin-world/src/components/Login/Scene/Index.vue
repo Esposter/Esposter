@@ -217,8 +217,8 @@ const doorLightNode = color(LOGIN_DOOR_GLOW_COLOR).mul(
 );
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
 // Them, alone when it asks
-// The parity page reaches
-// oxlint-disable-next-line no-restricted-globals -- a published scene's own parts with no prop for a host to see
+/* oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop
+   for a host to see */
 const witness = inject(SceneWitnessKey, null);
 // The login's own exports where the host serves them, lit as our stone is, by the game's deferred pass from the scene's
 // Stone light, and riding the glide as a witness render's parts do, which are drawn instead where the page provides
@@ -334,7 +334,7 @@ towersMaterial.colorNode = towerFacade.shade
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 // The towers' and bridges' procedural normal detail, at the wavelength their exports' surfaces read and the amplitude
-// That Brings their mean lean to the exports' bend (`LOGIN_TOWER_NORMAL_DETAIL_*`, `LOGIN_BRIDGE_NORMAL_DETAIL_*`)
+// That brings their mean lean to the exports' bend (`LOGIN_TOWER_NORMAL_DETAIL_*`, `LOGIN_BRIDGE_NORMAL_DETAIL_*`)
 towersMaterial.normalNode = createNormalDetailNode(
   LOGIN_TOWER_NORMAL_DETAIL_WAVELENGTH,
   LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE,
@@ -432,8 +432,8 @@ const cloudSeaPosition: [number, number, number] = [0, LOGIN_CLOUD_SEA_HEIGHT, 0
 const cloudSeaRotation: [number, number, number] = [-Math.PI / 2, 0, 0];
 const cloudSeaGeometryArgs: [number, number] = [LOGIN_CLOUD_SEA_SIZE, LOGIN_CLOUD_SEA_SIZE];
 // No grade: every colour of the login is measured off its references through the tone mapping, the sky's, the haze's
-// And The stone's light. The bloom is the game's own, lifting only what is past its threshold, and a reference that
-// Reads it Against its frame without it is opened with `isBloomed` off
+// And the stone's light. The bloom is the game's own, lifting only what is past its threshold, and a reference that
+// Reads it against its frame without it is opened with `isBloomed` off
 usePostPipeline(
   () => qualityTier,
   { bloomStructure, fogUniforms, isBloomed, postUniforms, stoneLight: loginStoneLight },

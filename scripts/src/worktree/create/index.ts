@@ -15,7 +15,7 @@ import { getResultAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 // `pnpm ai:worktree:create <name> [package...]` — a worktree on ai/queue, installed in full and built for the scripts
-// Package And the packages named. The free-memory gate is read first, so a shut gate creates nothing (the `throughput`
+// Package and the packages named. The free-memory gate is read first, so a shut gate creates nothing (the `throughput`
 // Skill, `references/machine-efficiency.md`)
 await runCommand(
   defineCommand({
@@ -53,7 +53,7 @@ await runCommand(
         }),
       );
       // After the install, so the layout the copy matches is the installed one, and before the builds, which replay
-      // From It. A seed that fails costs the builds their replays, never the create
+      // From it. A seed that fails costs the builds their replays, never the create
       const buildDirectories = getBuildDirectories(readWorkspacePackages(worktreePath), packageNames);
       (
         await timePhaseAsync("seed task cache", () =>

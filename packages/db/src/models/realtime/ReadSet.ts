@@ -40,9 +40,9 @@ export interface ReadSetJoin {
 }
 
 // One side of a join. `selectedAs` is the name the read's own select gives the column, when it selects it. `occurrence`
-// Is The table occurrence the side reads, and the statement level it is read in, so an occurrence of a table is named
-// Apart from Another occurrence of it. The level is -1 for a subquery's selected column, whose own level the walk has
-// Not opened, so no Declared occurrence holds it and the side is never named by its rows
+// Is the table occurrence the side reads, and the statement level it is read in, so an occurrence of a table is named
+// Apart from another occurrence of it. The level is -1 for a subquery's selected column, whose own level the walk has
+// Not opened, so no declared occurrence holds it and the side is never named by its rows
 export interface ReadSetKey extends ReadSetColumn {
   level: number;
   occurrence: string;
@@ -56,8 +56,8 @@ export interface ReadSetLevel {
 }
 
 // A table occurrence the statement declares: the alias or name it gives the table, the table, the statement level it is
-// Declared In, and whether an equality of its own at that level scopes it. Two occurrences of one table are named
-// Apart, so a table is Table-wide when any of its occurrences is neither scoped nor named by its rows
+// Declared in, and whether an equality of its own at that level scopes it. Two occurrences of one table are named
+// Apart, so a table is table-wide when any of its occurrences is neither scoped nor named by its rows
 export interface ReadSetOccurrence {
   isScoped: boolean;
   level: number;

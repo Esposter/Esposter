@@ -11,8 +11,8 @@ import { takeOne, takeRandom } from "@esposter/shared";
 const DEBUT_COOLDOWN_ID = "debutCooldown";
 
 // The Widsith's Debut at its rank: when its wielder takes the field, a random theme song lasts for the rank's seconds,
-// The Recitative raising ATK, the Aria all Elemental DMG and the Interlude Elemental Mastery, and the rank's cooldown
-// Holds off The next. The three themes are read from the rank's three values in turn
+// The recitative raising ATK, the Aria all Elemental DMG and the Interlude Elemental Mastery, and the rank's cooldown
+// Holds off the next. The three themes are read from the rank's three values in turn
 export const createDebutPassiveModule = (params: number[]): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   const elementalDamageBonus = takeOne(params, 1);

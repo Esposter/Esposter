@@ -14,8 +14,8 @@ const PLUNGE_DAMAGE_ATTRIBUTES = [
 ];
 
 // The Weight of Falling Branches at its rank: its Plunging Attack CRIT Rate by the rank's first amount, a static line
-// Its Plunges are priced with. A Plunging Attack its wielder hits with raises its Normal, Charged and Plunging Attack
-// DMG by the Rank's second amount for the rank's seconds
+// Its plunges are priced with. A Plunging Attack its wielder hits with raises its Normal, Charged and Plunging Attack
+// DMG by the rank's second amount for the rank's seconds
 export const createWeightOfFallingBranchesPassiveModule = (params: number[]): PassiveModule => {
   const criticalRate = takeOne(params, 0);
   const damageBonus = takeOne(params, 1);

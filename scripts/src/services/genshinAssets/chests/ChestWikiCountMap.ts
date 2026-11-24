@@ -1,6 +1,6 @@
 // The wiki's count of the chests in each region, the sum of its Chest page's route notes that name the region. Its
-// Routes Count some chests for a neighbouring region and leave others out, and Dragonspine and Enkanomiya, which no
-// Region here Names, are not compared, so a difference is the wiki's to settle as much as the fit's
+// Routes count some chests for a neighbouring region and leave others out, and Dragonspine and Enkanomiya, which no
+// Region here names, are not compared, so a difference is the wiki's to settle as much as the fit's
 export const ChestWikiCountMap: Record<string, number> = {
   fontaine: 945,
   inazuma: 730,

@@ -9,8 +9,8 @@ import { createUsedActionTeamBuffSetModule } from "#src/services/artifact/sets/c
 import { takeOne } from "@esposter/shared";
 
 // Noblesse Oblige. Its two-piece bonus raises the Elemental Burst DMG of each strike its wearer's burst lands by the
-// Table's First param, as a weapon's skill and burst passive does. Its four-piece bonus gives every deployed member the
-// ATK in the Table's first param for the seconds in its second, after its wearer uses its Elemental Burst, and a use
+// Table's first param, as a weapon's skill and burst passive does. Its four-piece bonus gives every deployed member the
+// ATK in the table's first param for the seconds in its second, after its wearer uses its Elemental Burst, and a use
 // Restarts it
 export const createNoblesseObligeSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;

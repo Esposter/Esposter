@@ -64,10 +64,10 @@ const getCrossfadeWeight = (stateSeconds: number): number => {
 
 // Drives a model's standard bones from its body's state, once per frame. The pose is written in each bone's rest frame,
 // So a model whose bones rest turned, as the game's do, holds the same pose as a PMX model whose rests are the
-// Identity, And each arm's rest is taken raised to the T, so a model resting in an A-pose holds the same pose as one in
-// The T. The name map gives each standard bone its model's own bone, and a bone the model lacks is skipped. A state's
-// Pose Cross-fades from the pose the bones held when the state began. The rotations and the targets are allocated once,
-// And The frame writes the bones in place, so no frame allocates a quaternion
+// Identity, and each arm's rest is taken raised to the T, so a model resting in an A-pose holds the same pose as one in
+// The T. the name map gives each standard bone its model's own bone, and a bone the model lacks is skipped. A state's
+// Pose cross-fades from the pose the bones held when the state began. The rotations and the targets are allocated once,
+// And the frame writes the bones in place, so no frame allocates a quaternion
 export const createCharacterPoser = (
   skinnedMesh: SkinnedMesh,
   boneNameMap: CharacterBoneNameMap = MMD_BONE_NAME_MAP,

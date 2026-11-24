@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getAttributeLabel, () => {
   // An attribute no caption is mapped to is absent, not refused: a weapon's secondary the map names nothing for leaves
-  // Its Caption undrawn
+  // Its caption undrawn
   test("an attribute the map names no caption for is captioned empty", () => {
     expect.hasAssertions();
 

@@ -7,7 +7,7 @@ import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
 
 // Sweet Madame: the target character heals for one HP, and holds the food as a status until the round ends, so it eats
-// No Other food this round
+// No other food this round
 export const sweetMadame: GcgCardModule = {
   canPlay: ({ duel, sideIndex }, targetIndex) => checkIsGcgFoodEatable(duel, sideIndex, targetIndex),
   initialRounds: 1,

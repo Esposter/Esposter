@@ -10,5 +10,5 @@ export const WHITEBOARD_MARQUEE_FILL_OPACITY = 0.1;
 // Every zoom
 export const WHITEBOARD_HANDLE_SIZE = 8;
 // How far a connection handle stands off its connection point, in screen pixels: past the hit tolerance of a resize
-// Handle on the frame, so a press Lands on one handle or the other and never on both
+// Handle on the frame, so a press lands on one handle or the other and never on both
 export const WHITEBOARD_CONNECTION_HANDLE_GAP = 16;

@@ -1,7 +1,7 @@
 import { checkIsWeeklyBossQuickChallengeable } from "#src/services/bosses/checkIsWeeklyBossQuickChallengeable";
 
 // The dungeon a weekly boss's quick challenge enters: its highest tier the Adventure Rank reaches, or its lowest when
-// The Rank reaches none. A boss the rank cannot quick challenge enters none, and neither does one with no tiers
+// The rank reaches none. A boss the rank cannot quick challenge enters none, and neither does one with no tiers
 export const computeWeeklyBossQuickChallengeDungeonId = (
   levels: readonly { dungeonId: number; recommendedRank: number }[],
   adventureRank: number,

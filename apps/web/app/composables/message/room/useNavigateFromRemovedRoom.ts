@@ -2,8 +2,8 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { RoutePath } from "@esposter/shared";
 
 // A room the reader is on leaves the list when its membership is tombstoned: a kick or a ban, a leave on another
-// Device, or The room's deletion. The page takes the reader off it once, to the messages index. A room the list never
-// Showed has no Removal to follow, so opening one is not a navigation
+// Device, or the room's deletion. The page takes the reader off it once, to the messages index. A room the list never
+// Showed has no removal to follow, so opening one is not a navigation
 export const useNavigateFromRemovedRoom = () => {
   const roomStore = useRoomStore();
   const { currentRoomId, rooms } = storeToRefs(roomStore);

@@ -3,7 +3,7 @@ import type { GenshinProgressKind } from "#src/models/genshinProgress/GenshinPro
 import type { GenshinUnitState } from "#src/models/genshinProgress/GenshinUnitState";
 
 // One counted unit: its kind, the phase it holds (absent when none), its state, the blocker it names when waiting, and
-// The Quest it names when it is a quest (absent otherwise)
+// The quest it names when it is a quest (absent otherwise)
 export interface GenshinUnit {
   blocker: string;
   kind: ComputeKind | GenshinProgressKind;

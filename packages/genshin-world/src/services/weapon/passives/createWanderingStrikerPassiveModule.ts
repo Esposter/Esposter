@@ -15,9 +15,9 @@ const checkIsWanderingStrikerAttack = (attackTag: AttackTag | undefined): boolea
   checkIsNormalOrChargedAttack(attackTag) || attackTag === AttackTag.PlungingAttack;
 
 // Wandering Striker at its rank: a Normal, Charged or Plunging Attack hit its wielder lands releases an Accursed
-// Spirit, a small AoE at the rank's multiplier of ATK on the enemy it struck, once every the rank's cooldown in
-// Seconds. The variant with a heal Restores the wielder the rank's share of its ATK as HP with each spirit released,
-// And the wielder's own DMG is decreased by The rank's last amount
+// Spirit, a small AoE at the rank's multiplier of ATK on the enemy it struck, once every the rank's cooldown
+// In seconds. The variant with a heal restores the wielder the rank's share of its ATK as HP with each spirit released,
+// And the wielder's own DMG is decreased by the rank's last amount
 export const createWanderingStrikerPassiveModule = (params: number[], { heals }: { heals: boolean }): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);
   const healShare = heals ? takeOne(params, 1) : 0;

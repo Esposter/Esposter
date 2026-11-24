@@ -57,7 +57,7 @@ export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
 // Scrolls instead. Shorter than the long press, so a finger that holds still still opens the context menu
 export const TOUCH_DRAG_DELAY_MS = 200;
 // How long after a drag's release the click it raises is still swallowed. The browser dispatches that click straight
-// After The release, so a touch drag, which raises none, does not leave the swallow armed for a click raised later
+// After the release, so a touch drag, which raises none, does not leave the swallow armed for a click raised later
 export const SWALLOW_WINDOW_MS = 250;
 // How far a mouse or pen press moves, in CSS pixels, before it is a drag rather than a click
 export const DRAG_START_DISTANCE = 4;
@@ -119,7 +119,7 @@ export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;
 // Width nudged per arrow press on a resize handle, in the px the width model is kept in
 export const RESIZE_HANDLE_KEYBOARD_STEP = 16;
 // The narrowest and widest a resizable side pane is, in CSS pixels, shared by the message layout's sidebars and the
-// Page Builder's panes
+// Page builder's panes
 export const MIN_SIDE_PANE_WIDTH = 200;
 export const MAX_SIDE_PANE_WIDTH = 480;
 // The width a resizable side pane starts at, in CSS pixels, within the bounds above

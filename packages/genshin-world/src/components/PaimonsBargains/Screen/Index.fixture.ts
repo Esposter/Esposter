@@ -27,8 +27,8 @@ const maxedCharacter = {
 };
 
 // Paimon's Bargains at the top Adventure Rank, its Fates and this month's rotation on offer, with an empty wallet and
-// No Purchase yet. The reference is the 2021 build's hub, so its rotation and Fates are not the current ones: only the
-// Frame and Its layout are comparable
+// No purchase yet. The reference is the 2021 build's hub, so its rotation and Fates are not the current ones: only the
+// Frame and its layout are comparable
 export const props = {
   adventureRank: 60,
   characterDataMap: statTables.characterDataMap,

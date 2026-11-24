@@ -4,8 +4,8 @@ import { SIGHT_REACH, SIGHT_TRAIL_STEP } from "#src/services/elementalSight/cons
 import { computeGroundDistance } from "genshin-engine";
 
 // Writes the points a sight trail runs through on the ground into `points` as x, y and z triples: one every step from
-// The Origin toward the end, and the end last. Returns how many points it wrote. The sight's reach cuts a trail short
-// Where its End lies past it, and an end where the origin stands writes none
+// The origin toward the end, and the end last. Returns how many points it wrote. The sight's reach cuts a trail short
+// Where its end lies past it, and an end where the origin stands writes none
 export const computeSightTrail = (
   origin: GroundPoint,
   end: GroundPoint,

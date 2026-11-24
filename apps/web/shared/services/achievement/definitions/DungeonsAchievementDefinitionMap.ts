@@ -8,7 +8,7 @@ import { defineAchievementDefinitionMap } from "#shared/services/achievement/def
 import { DungeonsAchievementName } from "@esposter/db-schema";
 
 // Every dungeon achievement unlocks on a save of the dungeon game. The save is the client's own account of how play
-// Went, So these are claims and carry no points (`ClaimedAchievementTriggerPath`)
+// Went, so these are claims and carry no points (`ClaimedAchievementTriggerPath`)
 const defineDungeonsAchievementDefinition = defineTriggerAchievementDefinition(
   "dungeons.saveDungeons",
   saveDungeonsInputSchema,

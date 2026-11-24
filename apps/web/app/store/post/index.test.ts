@@ -77,7 +77,7 @@ describe(usePostStore, () => {
     updatePost({ id: post.id, title: failingTitle });
 
     // The refused edit is drawn over the kept one until its refusal drops it, so the feed shows the kept title only
-    // Once Both are settled
+    // Once both are settled
     await until(() => takeOne(items.value).title).toBe(newTitle);
     expect(takeOne(items.value).version).toBe(1);
   });

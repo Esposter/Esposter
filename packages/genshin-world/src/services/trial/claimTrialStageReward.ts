@@ -8,8 +8,8 @@ import type { CharacterTrialTables } from "#src/services/trial/readCharacterTria
 import { claimRewards } from "#src/services/reward/claimRewards";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The claim of a trial stage's first clear: its reward paid into the bag and the wallet, and the stage recorded as
-// Claimed. A Later clear pays nothing and changes nothing. Undefined where the reward has no room left in the bag,
+// The claim of a trial stage's first clear: its reward paid into the bag and the wallet, and the stage recorded
+// As claimed. A later clear pays nothing and changes nothing. Undefined where the reward has no room left in the bag,
 // Since the claim is refused whole
 export const claimTrialStageReward = (
   stageId: number,

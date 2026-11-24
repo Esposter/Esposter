@@ -8,8 +8,8 @@ import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumbe
 const BAG_PATH_REGEX = /^(?:frames|parameters)\.(?<name>[^.]+)$/u;
 
 // A frames or parameters bag path the kit holds under one of its character's constants' names takes that constant,
-// Cited at The line it is declared on, or at its first state's line where it is a list. The name is the join key, as
-// Holds and presses Are read from gcsim's names. Only the paths the kit holds are read, so no path is added the module
+// Cited at the line it is declared on, or at its first state's line where it is a list. The name is the join key, as
+// Holds and presses are read from gcsim's names. Only the paths the kit holds are read, so no path is added the module
 // Does not use
 export const addGcsimNamedConstantCandidates = (
   { add, toFile }: GcsimKitCandidateWriter,

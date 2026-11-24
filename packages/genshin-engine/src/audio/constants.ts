@@ -19,9 +19,9 @@ export const A4_FREQUENCY = 440;
 export const MIDI_VELOCITY_MAX = 127;
 // A sound effect's bands, by their edges in hertz: a third of an octave each from 178 Hz to the top of hearing, and
 // Below that as wide as two bins or more of `SOUND_EFFECT_FRAME_LENGTH` at 48 kHz, since a narrower band holds no bin
-// Of Its own, its lowest band from that frame's first bin. The frame is the window a sound effect is read and played
-// In, About 43 milliseconds at 48 kHz, and its noise plays in frames a quarter of it apart, where a Hann window's
-// Overlaps Sum to a constant
+// Of its own, its lowest band from that frame's first bin. The frame is the window a sound effect is read and played
+// In, about 43 milliseconds at 48 kHz, and its noise plays in frames a quarter of it apart, where a Hann window's
+// Overlaps sum to a constant
 export const SOUND_EFFECT_BAND_EDGES: number[] = [
   12, 45, 90, 178, 224, 282, 355, 447, 562, 708, 891, 1122, 1413, 1778, 2239, 2818, 3548, 4467, 5623, 7079, 8913,
   11_220, 14_125, 17_783, 22_387,

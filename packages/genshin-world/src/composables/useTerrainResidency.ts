@@ -29,7 +29,7 @@ const disposeTileMesh = (mesh: Mesh) => {
 };
 
 // The tiles the view holds, each as a streamed tile or, past the shadows' reach, a slot in its level's ring. The
-// Streamer asks The pool for each tile the view wants and frees the one the view has moved on from
+// Streamer asks the pool for each tile the view wants and frees the one the view has moved on from
 export const useTerrainResidency = ({
   checkIsSettled,
   devRegistry,
@@ -54,8 +54,8 @@ export const useTerrainResidency = ({
 }) => {
   const { cellsPerSide, finestTileSize } = terrainOptions;
   // The rings past the shadows' reach are one mesh a level, made as the level's first tile arrives: a far tile is
-  // Written Into its level's ring as it arrives and freed from it as it leaves, so the frame never rebuilds a ring, and
-  // The Streamer holds the far tile by its key alone. Beside each ring, the tiles the view draws in it this frame
+  // Written into its level's ring as it arrives and freed from it as it leaves, so the frame never rebuilds a ring, and
+  // The streamer holds the far tile by its key alone. Beside each ring, the tiles the view draws in it this frame
   const ringMap = new Map<number, TerrainRing>();
   const ringDrawnKeysMap = new Map<number, number[]>();
   const getRing = (level: number): TerrainRing => {
@@ -96,9 +96,9 @@ export const useTerrainResidency = ({
     },
   });
   // A region's ground arrives after the tiles over it may have been built, so each worker is sent the grounds so far
-  // Ahead Of any tile asked of it after, and every tile held or generating whose heights an arriving ground reaches is
-  // Asked for Again over them, each held one drawn until its replacement arrives. A tile past every arriving ground's
-  // Reach would be Built again over the very heights it holds, so it is kept
+  // Ahead of any tile asked of it after, and every tile held or generating whose heights an arriving ground reaches is
+  // Asked for again over them, each held one drawn until its replacement arrives. A tile past every arriving ground's
+  // Reach would be built again over the very heights it holds, so it is kept
   watch(
     () => toValue(laidGrounds),
     (grounds, previousGrounds) => {

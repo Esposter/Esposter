@@ -17,7 +17,7 @@ describe(createLoginHullsGeometry, () => {
   const offsets = [-1, 0, 1];
   // The row's build and the cast down its path are each one pass over its 1.19M vertices and ~670k triangles, and the
   // Cast has no BVH to skip by, so a profile finds no waste to remove. A CI coverage shard ran this body in 3.4s when
-  // It Passed and 5.0s when it timed out at the default, and the budget is three times the slowest of those
+  // It passed and 5.0s when it timed out at the default, and the budget is three times the slowest of those
   const PATH_CHECK_TIMEOUT_MS = Temporal.Duration.from({ seconds: 15 }).total("milliseconds");
 
   test(

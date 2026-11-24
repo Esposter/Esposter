@@ -85,7 +85,7 @@ const terrainMaterial = createTerrainMaterial(
 const tileIndices = computeTerrainIndices(cellsPerSide);
 const index = new BufferAttribute(tileIndices, 1);
 // Every finest tile's flowers are one instanced draw of the one flower in the one flower material, a child of its
-// Tile's Mesh, so they show, hide and go with the tile
+// Tile's mesh, so they show, hide and go with the tile
 const flowerMaterial = createFlowerMaterial({ lightUniforms, rampTexture }, windUniforms);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into range costs a flag
 const tileGroup = new Group();

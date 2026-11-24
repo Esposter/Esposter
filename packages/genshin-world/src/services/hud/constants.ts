@@ -16,7 +16,7 @@ export const TOUCH_STICK_FADE_MS = 100;
 export const ACTION_BUTTON_BACKGROUND = "rgb(0 27 61 / 0.16)";
 // The share of the pool under which the stamina meter flashes red: on the climb `hud-stamina-climb` is taken from, its
 // Fill is still yellow at a sixth of the arc and at an eighth (the clip's 32.75 and 32.83 seconds) and red from the
-// Next Frame on, as the pool empties
+// Next frame on, as the pool empties
 export const STAMINA_METER_LOW_SHARE = 0.125;
 // The stamina each section of the meter holds, the arc cut at each multiple of it short of the pool
 export const STAMINA_METER_SECTION = 100;
@@ -39,9 +39,9 @@ export const HUD_SHORTCUTS: readonly { icon: MenuEntryIcon; inputAction: InputAc
 // (`hud-world-keys`, the 90 pixel box at 16, 2 of the 1080 high still, enlarged four times), its paths in that
 // Enlargement's pixels: a layer a tone from the bottom, each tone's pixels told apart by the nearest of the still's own
 // Colours and each layer filled with its tone as sampled there. The whole head in the navy its star and eye show
-// Through, then its white, the grey of its left lock, its crown's tan and its cape's blue Its navy is measured on
-// `hud-paimon-button`: the reference averages (47, 61, 75) under our navy's mask, where the still's #364f69 (54, 79,
-// 105) ran its blue 27 levels high
+// Through, then its white, the grey of its left lock, its crown's tan and its cape's blue
+// Its navy is measured on `hud-paimon-button`: the reference averages (47, 61, 75) under our navy's mask, where the
+// Still's #364f69 (54, 79, 105) ran its blue 27 levels high
 export const PAIMON_EMBLEM_LAYERS: readonly { color: string; path: string }[] = [
   {
     color: "#2f3d4b",

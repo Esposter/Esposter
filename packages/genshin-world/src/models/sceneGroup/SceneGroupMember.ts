@@ -10,8 +10,8 @@ import { z } from "zod";
 
 // One member of a scene group: its kind, its id in its kind's own table (the NPC's, the gadget's or the trigger's), its
 // Config id within the group, its place and the group's suites it is placed in, and the source that named it. A field
-// No Current source holds is left out rather than guessed: an NPC's config id within its group and a trigger's region
-// Are The group script's alone, and only the births name suites
+// No current source holds is left out rather than guessed: an NPC's config id within its group and a trigger's region
+// Are the group script's alone, and only the births name suites
 export interface SceneGroupMember {
   configId?: number | undefined;
   kind: SceneGroupMemberKind;

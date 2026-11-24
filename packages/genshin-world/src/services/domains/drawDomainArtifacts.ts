@@ -8,9 +8,9 @@ import { drawChancedCount } from "#src/services/reward/drawChancedCount";
 import { InvalidOperationError, Operation, takeRandom } from "@esposter/shared";
 
 // The artifacts one claim of a Domain of Blessing's tree draws: each row's count drawn by its guaranteed count and
-// Chance, And each artifact of that count rolled as a drop is, from one of the domain's sets drawn evenly, in a slot
-// Drawn evenly, At the row's rarity. Each artifact is returned apart, so each stays its own in the bag. A domain with
-// Artifact rows and no Set of its own to draw from is refused rather than paid with none
+// Chance, and each artifact of that count rolled as a drop is, from one of the domain's sets drawn evenly, in a slot
+// Drawn evenly, at the row's rarity. Each artifact is returned apart, so each stays its own in the bag. A domain with
+// Artifact rows and no set of its own to draw from is refused rather than paid with none
 export const drawDomainArtifacts = (
   treeArtifacts: readonly TreeArtifact[],
   artifactSetIds: readonly number[],

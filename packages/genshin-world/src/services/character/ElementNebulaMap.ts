@@ -1,8 +1,8 @@
 import { Element } from "#src/models/Element";
 
 // The nebula each element's character stands over, its tint at the centre and at the edge of the scene. Geo's is
-// Sampled From the Xilonen frame of session-2.mp4 at 156 seconds. The others are measured off a clip of each element,
-// At the same Centre and edge, and are provisional: no current-version PC clip of the character screen was found for
+// Sampled from the Xilonen frame of session-2.mp4 at 156 seconds. The others are measured off a clip of each element,
+// At the same centre and edge, and are provisional: no current-version PC clip of the character screen was found for
 // Any of them
 export const ElementNebulaMap: Readonly<Record<Element, { centre: string; edge: string }>> = {
   // Clip b9Zf3nWRJpI at 24 seconds

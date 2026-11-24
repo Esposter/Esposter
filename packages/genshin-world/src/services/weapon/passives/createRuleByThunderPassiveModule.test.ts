@@ -23,7 +23,7 @@ describe(createRuleByThunderPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createWielderCombatant();
   // Rule by Thunder at its first rank: the Thunder Emblem's 12%, 24% and 40% Normal Attack DMG for one to three stacks,
-  // A Stack from a normal attack for five seconds, from an Elemental Skill for ten, and one held while the Energy is
+  // A stack from a normal attack for five seconds, from an Elemental Skill for ten, and one held while the Energy is
   // Short of full
   const passiveModule = createRuleByThunderPassiveModule([0.2, 0.12, 0.24, 0.4, 5, 10]);
   const createFullEnergyContext = (): KitContext => {

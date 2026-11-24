@@ -12,7 +12,7 @@ import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 // What the realm's stand-in island holds: Tubby, talked to for the Realm Depot, and the pot, which leaves the realm on
-// The Activation key. Each stands on the realm's ground at its point
+// The activation key. Each stands on the realm's ground at its point
 export const computeHomeRealmInteractables = (gameText: GameText): Interactable[] => [
   {
     id: String(HOME_TUBBY_NPC_ID),

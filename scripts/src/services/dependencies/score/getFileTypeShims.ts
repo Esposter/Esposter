@@ -8,7 +8,7 @@ const EXPECT_ERROR = "@ts-expect-error";
 const UNKNOWN_CAST = "as unknown as";
 
 // The type workarounds a file holds, counted per package: each module declared over one, and each directive or cast
-// That Sits beside one of its imports or calls. A line counts once per package it touches.
+// That sits beside one of its imports or calls. A line counts once per package it touches.
 export const getFileTypeShims = (text: string): Map<string, number> => {
   const lines = text.split("\n");
   const importLines = readImportLines(lines);

@@ -5,7 +5,7 @@ import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgress
 import { countHeldItems } from "#src/services/offering/countHeldItems";
 
 // The Oculus a region's statues take: the one its levels name, the first of any level that takes an item, and zero for
-// A Region whose levels name none
+// A region whose levels name none
 export const findStatueItemId = (levels: StatueLevel[]): number => levels.flatMap(({ items }) => items)[0]?.itemId ?? 0;
 
 // A region's saved progress as the rule holds it: the Oculi saved are held against the one Oculus the region's levels
@@ -20,7 +20,7 @@ export const toStatueRegionProgress = (
 });
 
 // A region's progress as the save holds it: the Oculi held, whichever kind they are, the level reached, and the level
-// Its Rewards have been claimed through, which the offering does not hold and so is passed beside it
+// Its rewards have been claimed through, which the offering does not hold and so is passed beside it
 export const toStatueRegionProgressSave = (
   { heldCounts, level }: OfferingProgress<StatueLevel>,
   claimedLevel: number,

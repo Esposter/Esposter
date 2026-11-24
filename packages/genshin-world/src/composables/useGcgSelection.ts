@@ -22,7 +22,7 @@ interface GcgSelectionEvents {
 }
 
 // The player's choices on the duel board and the events each one leaves with. The duel and the side the player steers
-// Are Read where each choice is made, so they are passed as getters that follow the board's props
+// Are read where each choice is made, so they are passed as getters that follow the board's props
 export const useGcgSelection = (
   duel: MaybeRefOrGetter<GcgDuel>,
   playerSideIndex: MaybeRefOrGetter<number>,

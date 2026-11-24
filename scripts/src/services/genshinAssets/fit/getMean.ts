@@ -1,5 +1,5 @@
 // The mean of a grid's finite values, which its statistics are taken about, so an offset the residual keeps is not read
-// As Its roughness
+// As its roughness
 export const getMean = (values: Float64Array): number => {
   let sum = 0;
   let count = 0;

@@ -5,7 +5,7 @@ const visualStore = useVisualStore();
 const { applyEdit } = visualStore;
 const { editedItem } = storeToRefs(visualStore);
 // A group has no chart or dataset to edit, so its title is the one field its form edits, and each change is written
-// Onto The group as it is typed, the same way a visual's form is
+// Onto the group as it is typed, the same way a visual's form is
 watchDeep(editedItem, (newEditedItem) => {
   if (newEditedItem) applyEdit(newEditedItem);
 });

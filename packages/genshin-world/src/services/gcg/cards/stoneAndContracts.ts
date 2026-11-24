@@ -9,8 +9,8 @@ import { takeOne } from "@esposter/shared";
 
 const STONE_AND_CONTRACTS_OMNI_DICE = 3;
 
-// Stone and Contracts, an event: when the next Round's Action Phase begins, 3 Omni dice are created and a card is
-// Drawn. The Event waits on its side's onstages until then, and is spent by that Action Phase (the wiki's Stone and
+// Stone and Contracts, an event: when the next Round's Action Phase begins, 3 Omni dice are created and a card
+// Is drawn. The event waits on its side's onstages until then, and is spent by that Action Phase (the wiki's Stone and
 // Contracts)
 export const stoneAndContracts: GcgCardModule = {
   initialUsages: 1,

@@ -11,9 +11,9 @@ import { REMOTE_NAME } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
 // Deletes an entry's claim, so the entry is free for any worker, and stops the hold of `holder` at once. Only the
-// Worker That holds the claim releases it: another worker's claim, even on this machine, is refused. The delete is
-// Leased on the Claim it read, so a claim taken over in between is refused rather than deleted. A ref the remote no
-// Longer has is Released all the same
+// Worker that holds the claim releases it: another worker's claim, even on this machine, is refused. The delete is
+// Leased on the claim it read, so a claim taken over in between is refused rather than deleted. A ref the remote no
+// Longer has is released all the same
 export const releaseFleetEntry = (entry: string, holder: ClaimHolder): void => {
   const claimed = readClaimedRefs().get(entry);
   if (claimed !== undefined && !checkIsHeldBy(claimed.message, holder))

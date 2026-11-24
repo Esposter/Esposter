@@ -9,7 +9,7 @@ import type { OutlineWidthKnots } from "#src/models/nodes/OutlineWidthKnots";
 import type { Texture, Vector3Tuple } from "three";
 
 // The inputs the character shading reads, in the shape of the Inputs table on the shading page. Every one takes its
-// Default Where nothing supplies it, as the table sets out, so a material draws whatever its file holds
+// Default where nothing supplies it, as the table sets out, so a material draws whatever its file holds
 export interface CharacterShadingInputs {
   // The brightness of the main light, "_ES_CharacterMainLightBrightness"
   brightness: number;
@@ -27,7 +27,7 @@ export interface CharacterShadingInputs {
   emissionColor: Vector3Tuple;
   emissionScaler: number;
   // The face's draw, its threshold and flip set each frame from the light, and the face map, read by the face kind,
-  // With Its softness "_FaceMapSoftness"
+  // With its softness "_FaceMapSoftness"
   faceDraw: FaceDraw;
   faceMap?: Texture | undefined;
   faceSoftness: number;
@@ -47,7 +47,7 @@ export interface CharacterShadingInputs {
   // The ramp's light area and band width, "_LightArea" and "_ShadowRampWidth"
   lightArea: number;
   // The lightmap "_LightMapTex", whose red is the metal mask and the specular weight, green the shadow threshold, blue
-  // The Specular gate and alpha the region
+  // The specular gate and alpha the region
   lightMapTexture?: Texture | undefined;
   // The main texture "_MainTex"
   mainTexture?: Texture | undefined;
@@ -77,7 +77,7 @@ export interface CharacterShadingInputs {
   specularInShadow: number;
   specularMultiplier: number;
   // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It
-  // Is not The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that
+  // Is not the metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that
   // Branch
   sphere?: { mode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply; texture: Texture } | undefined;
   vertexAo: number;

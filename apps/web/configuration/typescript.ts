@@ -11,7 +11,7 @@ import type { NuxtConfig } from "nuxt/schema";
 // Vue's because the auto-import declaration is ambient
 export const typescript: NonNullable<NuxtConfig["typescript"]> = {
   // Nuxt includes each local module's whole `runtime/server` folder, tests too; a package's tests are its own
-  // Program's, Typechecked by the package against its own globals, which the Workers ones would change here
+  // Program's, typechecked by the package against its own globals, which the Workers ones would change here
   serverTsConfig: {
     compilerOptions: { types: ["@cloudflare/workers-types"] },
     exclude: ["../../../packages/*/src/runtime/**/*.test.ts", "../../../packages/*/src/runtime/**/*.test-d.ts"],
@@ -34,8 +34,9 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     vueCompilerOptions: { composables: { useTemplateRef: ["useTemplateRef"] } },
   },
 };
-// Nuxt gives the server the webworker and DOM libs, which declare the same `Headers` and `Response` as the Workers
-// Globals. `defu` concatenates a config's arrays rather than replacing them, so `serverTsConfig` cannot take them away.
+// Nuxt gives the server the webworker and DOM libs, which declare the same `Headers` and `Response` as the
+// Workers globals. `defu` concatenates a config's arrays rather than replacing them, so `serverTsConfig` cannot take
+// Them away.
 // The hook sets the server's lib once Nuxt has computed it
 export const typescriptHooks: NuxtConfig["hooks"] = {
   "prepare:types": ({ serverTsConfig }) => {

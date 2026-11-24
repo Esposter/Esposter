@@ -11,11 +11,12 @@ import { getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";
 
 // The write targets for one batch of resource files, each addressed by the hash of its bytes. A file the resource
 // Already holds under its hash, with bytes that hash to it, gets no signature and no quota hold: its blob's
-// `last-modified` Time moves instead, so the Collection's grace window restarts from this upload, its type becomes the
-// One this upload Declared, and the client skips the PUT. A held Blob that is gone by the time it is touched is no
-// Longer held, and bytes that do not hash to the name are removed rather Than held, so the file is reserved and signed
-// Like any other. Any other file is reserved Against the owner's quota and given a presigned write url for exactly its
-// Hash name. The reserve runs before the response, so a Rejection is a write target the client never receives.
+// Last-modified time moves instead, so the Collection's grace window restarts from this upload, its type becomes the
+// One this upload declared, and the client skips the PUT. A held
+// Blob that is gone by the time it is touched is no longer held, and bytes that do not hash to the name are removed
+// Rather than held, so the file is reserved and signed like any other. Any other file is reserved
+// Against the owner's quota and given a presigned write url for exactly its hash name. The reserve runs before the
+// Response, so a rejection is a write target the client never receives.
 export const generateReservedResourceAssetPresignedUrlEntities = async (
   db: Context["db"],
   userId: UserInAuth["id"],

@@ -16,9 +16,9 @@ import { render } from "vitest-browser-vue";
 import { z } from "zod";
 
 // The browser driver of a scripted session, which implements the runner's driver over one world screen and its
-// Registry: It mounts the screen, steps the frame clock, saves the world's last save through the save schema and mounts
-// A fresh Screen from the saved blob. The session's commands join the registry while a screen is mounted and leave it
-// Once the Screen unmounts
+// Registry: it mounts the screen, steps the frame clock, saves the world's last save through the save schema and mounts
+// A fresh screen from the saved blob. The session's commands join the registry while a screen is mounted and leave it
+// Once the screen unmounts
 export const createSessionDriver = (devRegistry: DevRegistry) => {
   // Taken before the clock is faked, so a real frame still comes between two scripted frames, for a worker to answer in
   const requestRealFrame = window.requestAnimationFrame.bind(window);
@@ -82,8 +82,8 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
       if (emittedSave === undefined) return { error: "the world has emitted no save", ok: false };
 
       const savedJson = JSON.stringify(emittedSave);
-      // The save schema types its
-      // oxlint-disable-next-line no-restricted-properties -- instants as strings, so a revived Date would be refused
+      /* oxlint-disable-next-line no-restricted-properties -- the save schema types its instants as strings, so a
+         revived Date would be refused */
       const parsedResult = genshinSaveSchema.safeParse(JSON.parse(savedJson));
       if (!parsedResult.success) return { error: z.prettifyError(parsedResult.error), ok: false };
 

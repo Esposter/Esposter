@@ -3,7 +3,7 @@ import type * as cloudflare from "@pulumi/cloudflare";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 
 // The origins a browser reaches a bucket's presigned urls from: the environment's own site, plus local development on
-// The Develop estate
+// The develop estate
 const R2BucketCorsOriginsMap: Record<CloudflareEnvironment, string[]> = {
   [CloudflareEnvironment.Development]: ["https://dev.esposter.com", "http://localhost:3000"],
   [CloudflareEnvironment.Production]: ["https://esposter.com"],

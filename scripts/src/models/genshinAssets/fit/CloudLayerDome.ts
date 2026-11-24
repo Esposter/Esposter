@@ -1,6 +1,6 @@
 // The dome a sky's cloud layer is drawn on, as profiles over its rings from the horizon up, each knot a ring's
-// Elevation In degrees: where the wisps' strip stands up it, how far from the middle of the density's plane each of the
-// Two Projections the layer's height blends between reads, and how far its normal tilts down from level, inward. Round
+// Elevation in degrees: where the wisps' strip stands up it, how far from the middle of the density's plane each of the
+// Two projections the layer's height blends between reads, and how far its normal tilts down from level, inward. Round
 // The dome every projection turns by the same angle from the azimuth in the game's own axes, and the wisps' strip
 // Starts its own turn from it, both in degrees
 export interface CloudLayerDome {
