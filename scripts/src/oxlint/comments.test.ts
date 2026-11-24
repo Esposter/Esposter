@@ -53,37 +53,12 @@ describe("comments/no-capitalized-identifier", () => {
       violations: 0,
     },
     { name: "namesMidLine", source: `// A ${IDENTIFIER} b\nexport const ${IDENTIFIER} = 0;`, violations: 0 },
-    // A path or URL is recognised by its shape, wherever it opens a line
-    {
-      name: "opensOnCapitalisedUrl",
-      source: `// Https://a.b/c
-export const a = 0;`,
-      violations: 1,
-    },
-    {
-      name: "opensOnCapitalisedPath",
-      source: `// Openspec/specs/a.md b
-export const a = 0;`,
-      violations: 1,
-    },
-    {
-      name: "opensOnCapitalisedFile",
-      source: `// Candace/cons.go b
-export const a = 0;`,
-      violations: 1,
-    },
-    {
-      name: "opensOnSlashedWords",
-      source: `// And/or b
-export const a = 0;`,
-      violations: 0,
-    },
-    {
-      name: "opensOnUrl",
-      source: `// https://a.b/c
-export const a = 0;`,
-      violations: 0,
-    },
+    // A path or URL is recognised by its shape, which a slash between two words lacks
+    { name: "opensOnCapitalisedUrl", source: `// A://b\nexport const a = 0;`, violations: 1 },
+    { name: "opensOnCapitalisedPath", source: `// A/b/c\nexport const a = 0;`, violations: 1 },
+    { name: "opensOnCapitalisedFile", source: `// A/b.c\nexport const a = 0;`, violations: 1 },
+    { name: "opensOnSlashedWords", source: `// A/b\nexport const a = 0;`, violations: 0 },
+    { name: "opensOnUrl", source: `// a://b\nexport const a = 0;`, violations: 0 },
     // A block comment is not capitalised, so whatever it opens on was written that way
     { name: "opensBlockOnName", source: `/* A\n ${CAPITALISED} b */\nexport const ${IDENTIFIER} = 0;`, violations: 0 },
   ];
