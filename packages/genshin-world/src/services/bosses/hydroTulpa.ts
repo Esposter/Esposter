@@ -5,7 +5,7 @@ import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enem
 
 // The Hydro Tulpa's attacks from its wiki page, in the order the page lists them, at their base forms. Absorb
 // Half-Tulpa is not an attack, so it is not a move: it sets the enhanced state that the enhanced forms of Spear Toss,
-// Hammer Whirl and sword Combo wait on, a phase not yet run. The Stygian Onslaught variants are not modelled. Each
+// Hammer Whirl and Sword Combo wait on, a phase not yet run. The Stygian Onslaught variants are not modelled. Each
 // Move's windup and recovery are the common enemies' and are PROVISIONAL until measured
 export const HYDRO_TULPA_MOVES: BossMove[] = [
   {

@@ -81,7 +81,7 @@ export const WEEKLY_BOSS_GEM_AVERAGES: number[][] = [
   [3.8343, 2.423, 0.2556, 0.025],
 ];
 // The gem of each star tier from each of the three families the wiki's page names, Varunada Lazurite, Vajrada Amethyst
-// And vayuda Turquoise, one of which a claim's gem of that tier is, provisional as the wiki gives no split between them
+// And Vayuda Turquoise, one of which a claim's gem of that tier is, provisional as the wiki gives no split between them
 export const WEEKLY_BOSS_GEM_ITEM_IDS: number[][] = [
   [104121, 104141, 104151],
   [104122, 104142, 104152],
