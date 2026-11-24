@@ -87,7 +87,7 @@ export const doorSoundTopic: ReferenceTopic = {
         "The matcher's octave bands widened to start at 31.5 hertz, one bin of a frame below the music's 63 hertz band, and tested on pure tones: a 40, 50 or 60 hertz tone puts 35.5, 10.5 and 1.2 percent of its power in the 31.5 hertz band and the rest in the 63 hertz band",
       outcome: InvestigationOutcome.Found,
       result:
-        "The 31.5 hertz band reads a frame's first bin alone, so it takes the energy below about 30 hertz. The layer's excess lies in 30 to 100 hertz, mostly 40 to 80: the 63 hertz band held most of it, but a 40 hertz part puts 35.5 percent of its power in the 31.5 hertz band, which the pre-widening matcher never read, so the widening changes what the matcher reads of the layer and the earlier matcher saw only part of it. The 63 hertz searches above and the 31.5 hertz bank search below both find no sound",
+        "The 31.5 hertz band reads a frame's first bin alone, so a tone splits between it and the 63 hertz band, evenly near 35 hertz. The layer's excess lies in 30 to 100 hertz, mostly 40 to 80: the 63 hertz band held most of it, but a 40 hertz part puts 35.5 percent of its power in the 31.5 hertz band, which the pre-widening matcher never read, so the widening changes what the matcher reads of the layer and the earlier matcher saw only part of it. The 63 hertz searches above and the 31.5 hertz bank search below both find no sound",
     },
     {
       method:
