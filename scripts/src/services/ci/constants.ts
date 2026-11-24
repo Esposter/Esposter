@@ -19,6 +19,5 @@ export const RUN_WATCH_INTERVAL_SECONDS = 30;
 export const MAX_ERROR_LINES_PER_JOB = 40;
 // The lines of a failed job's log that carry its verdict: a linter's or a compiler's error, a failed test, the runner's
 // Own error annotation
-// IsolatedDeclarations
-// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation
 export const ERROR_LINE_REGEX: RegExp = /\berror\b|\bError:|✖|×|\bFAIL\b|##\[error\]/u;
