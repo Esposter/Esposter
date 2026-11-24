@@ -87,7 +87,7 @@ export const doorSoundTopic: ReferenceTopic = {
         "The matcher's octave bands widened to start at 31.5 hertz, one bin of a frame below the music's 63 hertz band, and tested on pure tones: a 40, 50 or 60 hertz tone puts 35.5, 10.5 and 1.2 percent of its power in the 31.5 hertz band and the rest in the 63 hertz band",
       outcome: InvestigationOutcome.Found,
       result:
-        "The 31.5 hertz band reads a frame's first bin alone, so it takes the energy below about 30 hertz. The layer's excess lies in 30 to 100 hertz, mostly 40 to 80, which the 63 hertz band already held, so the matcher could see the layer before the band was widened and the widening does not make it visible",
+        "The 31.5 hertz band reads a frame's first bin alone, so it takes the energy below about 30 hertz. The layer's excess lies in 30 to 100 hertz, mostly 40 to 80: the 63 hertz band held most of it, but a 40 hertz part puts 35.5 percent of its power in the 31.5 hertz band, which the pre-widening matcher never read, so the widening changes what the matcher reads of the layer and the earlier matcher saw only part of it. The 63 hertz searches above and the 31.5 hertz bank search below both find no sound",
     },
     {
       method:
@@ -101,7 +101,7 @@ export const doorSoundTopic: ReferenceTopic = {
     "The shared mixer's low-pass of 20 and high-pass of 15 on Wwise's scale, whose cutoffs sit behind Audiokinetic's documentation's captcha, and the compressor's detector, unpublished, so the browser's own stands in: each measured from a recording whose music is the login's own, or from the cutoff table",
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",
     "Whether the door's two sounds are one event of the game's: they start 75 milliseconds apart in the match, which the bank's own events would say",
-    "The layer under the door's forming, 30 to 100 hertz from 11.0 to 13.9 seconds: no Minimum.pck or bank sound matches it, the best bank sound scoring 0.798 where the door clears 0.91, so it stays an open row under the sound-effects spec until a sound matches it; a recording-measured layer would break that rule, and the record it would ship in needs a production R2 publish",
+    "The layer under the door's forming, 30 to 100 hertz from 11.0 to 13.9 seconds: no Minimum.pck or bank sound matches it over 11.0 to 13.6 seconds, the best bank sound scoring 0.798 where the door clears 0.91, and the 13.6 to 13.9 tail is unsearched, so it stays an open row under the sound-effects spec until a sound matches it; a recording-measured layer would break that rule, and the record it would ship in needs a production R2 publish",
     "The music and streamed packages, Music0 to Music31 and Streamed0 to Streamed31, are unsearched: 15.9 GB compressed, with 20,823 sounds that no bank or Minimum.pck holds across the packages the search pattern named. Many of those sounds run for minutes, and each decodes whole to a WAV of about 20 megabytes on average, so a full search would write several hundred gigabytes; a run over 917 of them was stopped before its results were written. A layer that lives in one of those tracks would be missed until a decode that stops after the window searches them",
   ],
 };
