@@ -8,9 +8,8 @@ import { sortNodesByDependencies } from "#src/services/oxlint/sorting/sortNodesB
 const sortPartitionNodes = <T extends SortingNode>(
   nodes: T[],
   compare: (left: T, right: T) => number,
-  ignoreOxlintDisabledNodes: boolean,
+  pinnedNodes: Set<T>,
 ): T[] => {
-  const pinnedNodes = ignoreOxlintDisabledNodes ? computePinnedNodes(nodes) : new Set<T>();
   const pinnedIndexes: [number, T][] = [];
   const movableNodes: T[] = [];
   for (const [index, node] of nodes.entries())
@@ -30,10 +29,7 @@ export const sortPartitions = <T extends SortingNode>(
   ignoreOxlintDisabledNodes: boolean,
   nodesInCycles: Set<SortingNode>,
 ): T[] =>
-  partitions.flatMap((nodes) =>
-    sortNodesByDependencies(
-      sortPartitionNodes(nodes, compare, ignoreOxlintDisabledNodes),
-      ignoreOxlintDisabledNodes,
-      nodesInCycles,
-    ),
-  );
+  partitions.flatMap((nodes) => {
+    const pinnedNodes = ignoreOxlintDisabledNodes ? computePinnedNodes(nodes) : new Set<T>();
+    return sortNodesByDependencies(sortPartitionNodes(nodes, compare, pinnedNodes), pinnedNodes, nodesInCycles);
+  });

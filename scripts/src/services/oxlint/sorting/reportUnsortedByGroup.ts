@@ -18,7 +18,7 @@ export const reportUnsortedByGroup = (context: Context, items: SortingGroupItem[
   const sortedItems = splitAtImpureItems(items).flatMap((run) =>
     sortNodesByDependencies(
       run.toSorted((left, right) => left.groupIndex - right.groupIndex || compareNames(left.name, right.name)),
-      false,
+      new Set(),
       nodesInCycles,
     ),
   );

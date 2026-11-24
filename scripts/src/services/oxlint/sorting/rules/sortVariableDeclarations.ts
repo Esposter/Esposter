@@ -6,7 +6,6 @@ import { computePatternEvaluated } from "#src/services/oxlint/sorting/computePat
 import { computeSortingDependencies } from "#src/services/oxlint/sorting/computeSortingDependencies";
 import { getOxlintDisabledLines } from "#src/services/oxlint/sorting/getOxlintDisabledLines";
 import { reportUnsortedByGroup } from "#src/services/oxlint/sorting/reportUnsortedByGroup";
-import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { takeOne } from "@esposter/shared";
 import { defineRule } from "@oxlint/plugins";
 
@@ -21,7 +20,7 @@ const sortVariableDeclarations: Rule = defineRule({
         if (node.declarations.length < 2) return;
         const declarators = node.declarations.map((declaration) =>
           buildSortingNode(computeDeclarationName(declaration, context.sourceCode), declaration, {
-            ...withEvaluated(declaration.init, ...computePatternEvaluated(declaration.id)),
+            evaluated: [declaration.init, ...computePatternEvaluated(declaration.id)],
             isOxlintDisabled: oxlintDisabledLines.has(declaration.loc.start.line),
           }),
         );

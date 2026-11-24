@@ -8,7 +8,6 @@ import { computeClassMemberGroup } from "#src/services/oxlint/sorting/computeCla
 import { computeKeyNameOrSource } from "#src/services/oxlint/sorting/names/computeKeyName";
 import { populateClassMemberDependencies } from "#src/services/oxlint/sorting/populateClassMemberDependencies";
 import { reportUnsortedByGroup } from "#src/services/oxlint/sorting/reportUnsortedByGroup";
-import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { defineRule } from "@oxlint/plugins";
 
 // The members perfectionist's sort-classes reads. A class with fewer than two of them has nothing to sort
@@ -91,7 +90,7 @@ const toSortingClassMember = ({
 }): SortingClassMember => {
   const group = computeClassMemberGroup(selectors, modifiers);
   return {
-    ...buildSortingNode(name, element, { dependencyNames, ...withEvaluated(...evaluated) }),
+    ...buildSortingNode(name, element, { dependencyNames, evaluated }),
     group,
     groupIndex: CLASS_MEMBER_GROUPS.findIndex((entry) => [entry].flat().includes(group)),
     isStatic,

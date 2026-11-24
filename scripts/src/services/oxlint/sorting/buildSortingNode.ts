@@ -8,11 +8,16 @@ import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 export const buildSortingNode = (
   name: string,
   node: ESTree.Node,
-  options: { dependencyNames?: string[]; evaluated?: ESTree.Node; isOxlintDisabled?: boolean; value?: string } = {},
+  options: {
+    dependencyNames?: string[];
+    evaluated?: (ESTree.Node | null | undefined)[];
+    isOxlintDisabled?: boolean;
+    value?: string;
+  } = {},
 ): SortingNode => ({
   dependencies: [],
   dependencyNames: options.dependencyNames ?? [name],
-  ...withEvaluated(options.evaluated),
+  ...withEvaluated(...(options.evaluated ?? [])),
   isOxlintDisabled: options.isOxlintDisabled ?? false,
   name,
   node,

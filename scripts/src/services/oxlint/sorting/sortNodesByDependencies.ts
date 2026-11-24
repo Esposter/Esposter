@@ -1,18 +1,16 @@
 import type { SortingNode } from "#src/models/oxlint/sorting/SortingNode";
 
 import { checkIsNodeDependentOnOtherNode } from "#src/services/oxlint/sorting/checkIsNodeDependentOnOtherNode";
-import { computePinnedNodes } from "#src/services/oxlint/sorting/computePinnedNodes";
 
 // Orders nodes so each comes after the nodes it reads, keeping the given order wherever no dependency asks otherwise.
 // A node on a cycle keeps its order among the cycle's nodes, so each one waits for the cycle's nodes given before it.
-// A node that reads a cycle's node waits for it, and a node held for the rule (`computePinnedNodes`) is never pulled
-// Ahead of anything when `ignoreOxlintDisabledNodes` is set
+// A node that reads a cycle's node waits for it, and a node in `pinnedNodes` (`computePinnedNodes`) is never pulled
+// Ahead of anything
 export const sortNodesByDependencies = <T extends SortingNode>(
   nodes: T[],
-  ignoreOxlintDisabledNodes: boolean,
+  pinnedNodes: Set<SortingNode>,
   nodesInCycles: Set<SortingNode>,
 ): T[] => {
-  const pinnedNodes = ignoreOxlintDisabledNodes ? computePinnedNodes(nodes) : new Set<T>();
   const cyclicNodes = nodes.filter((node) => nodesInCycles.has(node));
   const sortedNodes: T[] = [];
   const visitedNodes = new Set<T>();

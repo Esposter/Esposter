@@ -15,7 +15,6 @@ import { computeSortingDependencies } from "#src/services/oxlint/sorting/compute
 import { getOxlintDisabledLines } from "#src/services/oxlint/sorting/getOxlintDisabledLines";
 import { reportSortingPartitions } from "#src/services/oxlint/sorting/reportSortingPartitions";
 import { partitionAtBoundaries } from "#src/services/oxlint/sorting/reportSortingPartitions/partitionAtBoundaries";
-import { withEvaluated } from "#src/services/oxlint/sorting/withEvaluated";
 import { defineRule } from "@oxlint/plugins";
 
 type Comparator = (left: SortingNode, right: SortingNode) => number;
@@ -38,10 +37,10 @@ const partitionProperties = (
         ...(node.type === "ObjectPattern"
           ? { dependencyNames: [...new Set(computeDependencyNames(property.value))] }
           : {}),
-        ...withEvaluated(
+        evaluated: [
           ...(property.computed ? [property.key] : []),
           ...(node.type === "ObjectPattern" ? computePatternEvaluated(property.value) : [property.value]),
-        ),
+        ],
         isOxlintDisabled: disabledLines.has(property.loc.start.line),
         value: isNumericSet ? (computeExpressionNumberValue(property.value)?.toString() ?? "") : "",
       });
