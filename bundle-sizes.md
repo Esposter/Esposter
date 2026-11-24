@@ -5,9 +5,9 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | Package                    | File                      |   Bytes |    KiB |
 | :------------------------- | :------------------------ | ------: | -----: |
 | genshin-world              | **/*.js                   | 4210435 | 4111.8 |
-| genshin-world              | **/*.d.ts                 | 2778535 | 2713.4 |
+| genshin-world              | **/*.d.ts                 | 2781276 | 2716.1 |
 | @esposter/db               | **/*.js                   |  826760 |  807.4 |
-| genshin-text               | **/*.js                   |  606565 |  592.3 |
+| genshin-text               | **/*.js                   |  625628 |  611.0 |
 | genshin-engine             | **/*.js                   |  358781 |  350.4 |
 | genshin-interface          | **/*.d.ts                 |  338916 |  331.0 |
 | genshin-world              | index.d.ts                |  283101 |  276.5 |
@@ -35,7 +35,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | math-expression-compiler   | **/*.d.ts                 |   44485 |   43.4 |
 | @esposter/db-schema        | index.js                  |   43204 |   42.2 |
 | genshin-engine             | index.js                  |   40066 |   39.1 |
-| genshin-text               | **/*.d.ts                 |   38883 |   38.0 |
+| genshin-text               | **/*.d.ts                 |   39254 |   38.3 |
 | parse-tmx                  | **/*.js                   |   38758 |   37.8 |
 | vue-pdfjs-headless         | **/*.js                   |   32365 |   31.6 |
 | survey-expression          | **/*.d.ts                 |   32318 |   31.6 |
@@ -174,4 +174,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 169 files, 13073385 bytes, 12767.0 KiB, 12.47 MiB
+**Total:** 169 files, 13095560 bytes, 12788.6 KiB, 12.49 MiB
