@@ -1,22 +1,12 @@
 import type { Vector } from "#src/models/shared/Vector";
 
+import { insertNearest } from "#src/services/genshinAssets/fit/insertNearest";
 import { toCellKey } from "#src/services/genshinAssets/fit/toCellKey";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Color } from "three";
 
 // The side of the cells the points are hashed into, five centimetres, a statue's section apart
 const CELL_METRES = 0.05;
-
-// The kept points with `point` placed among them: after every kept point no farther than it, so a tie keeps the order
-// The points were found in, and only the `count` nearest stay
-const insertNearest = (
-  kept: readonly { distance: number; index: number }[],
-  point: { distance: number; index: number },
-  count: number,
-): { distance: number; index: number }[] => {
-  const position = kept.findIndex((other) => other.distance > point.distance);
-  return kept.toSpliced(position === -1 ? kept.length : position, 0, point).slice(0, count);
-};
 
 // The colour a surface takes at any point near it, read off coloured points spread over it: the mean, in linear light,
 // Of the `nearestCount` points nearest, returned as a packed sRGB hex. The points are hashed into a grid and the cells
