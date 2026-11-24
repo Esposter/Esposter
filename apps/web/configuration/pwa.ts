@@ -21,7 +21,6 @@ export const pwa: NonNullable<NuxtConfig["pwa"]> = {
   manifest: {
     background_color: manifestPalette[UiToken.Background],
     description: SITE_DESCRIPTION,
-    display: "standalone",
     icons: [
       // The artwork is unpadded and transparent, which is how the "any" purpose wants it
       { purpose: "any", sizes: "192x192", src: `${PWA_PUBLIC_FOLDER_PATH}/manifest-icon-192.png`, type: "image/png" },
@@ -41,10 +40,8 @@ export const pwa: NonNullable<NuxtConfig["pwa"]> = {
       },
     ],
     id: "/",
-    lang: "en",
     name: SITE_NAME,
     short_name: SITE_NAME,
-    start_url: "/",
     theme_color: manifestPalette[UiToken.Panel],
   },
   // Checks for a new worker hourly, so a tab left open for days is offered the update rather than only one on
