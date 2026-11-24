@@ -12,8 +12,7 @@ import { mergeConfig } from "tsdown";
 // The module and its generated handlers name each file by its own path.
 // Unbundled, a new runtime file ships and gains its `exports` entry with nothing to add by hand.
 // A `services` file is the runtime's own: it ships, since the files beside it import it relatively.
-// It stays out of the `exports` map, so the public surface is the functions a consumer calls.
-// Those functions, and the `models` that type them, are the public surface.
+// It stays out of the `exports` map: the public surface is the functions a consumer calls and the models typing them.
 // A test, benchmark, fixture or reference beside a runtime file is no entry.
 // The same list the barrels exclude is what keeps it out.
 // A package adds the runtime files its own `exports` map leaves out.
