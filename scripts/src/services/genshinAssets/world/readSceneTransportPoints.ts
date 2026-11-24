@@ -7,9 +7,10 @@ import { readScenePointsOfKind } from "#src/services/genshinAssets/world/readSce
 import { toDumpedVector } from "#src/services/genshinAssets/world/toDumpedVector";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Every transport point of the scene, the kind Windrise's statue is: a statue and a waypoint are one kind of point in
-// The Dump, told apart by nothing but what they are placed for. The point's place and turn are the vector and the
-// Degrees its Exemplar names, a point without a place left out and a point without a turn facing zero
+// Every transport point of the scene, the kind Windrise's statue is.
+// A statue and a waypoint are one kind of point in the Dump, told apart by nothing but what they are placed for.
+// The point's place and turn are the vector and the degrees its Exemplar names.
+// A point without a place is left out, and a point without a turn faces zero.
 export const readSceneTransportPoints = async (): Promise<SceneTransportPoint[]> => {
   const statuePoint = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world?.points[0];
   if (!statuePoint) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, "has no point");

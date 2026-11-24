@@ -7,13 +7,15 @@ import { toFileKey } from "#src/services/genshinAssets/world/toFileKey";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { getOrCreate } from "@esposter/shared";
 
-// The blocks the game object of each asset's name may stand in, by that name: the block indexing the asset and, for an
-// Asset the caller follows (a Building's mesh, a held weapon's), the block of each file depending on the file holding
-// It that the asset index lists no asset in. A Building's LOD level is a prefab file of its own depending on its
-// Mesh's, In a block that need not index anything of its name. A file the index does list assets in (a MonoBehaviour,
-// An Animator) is a gadget or a scene drawing the mesh as a child, almost never the prefab, and those fill the largest
-// Blocks the game has. An asset the caller does not follow keeps its own block alone, its game object looked for in
-// Every Block dumped where they hold none (`deriveCapitalWorld`)
+// The blocks the game object of each asset's name may stand in, by that name.
+// Those are the block indexing the asset, plus, for an asset the caller follows, the blocks below.
+// A Building's mesh and a held weapon's are such assets.
+// It also takes the block of each file depending on the file holding it that the asset index lists no asset in.
+// A Building's LOD level is a prefab file of its own, depending on its mesh's, in a block that need not index it.
+// A file the index lists assets in (a MonoBehaviour, an Animator) is a gadget or a scene drawing the mesh as a child.
+// It is almost never the prefab, and those files fill the largest blocks the game has.
+// An asset the caller does not follow keeps its own block alone.
+// Its game object is looked for in every block dumped, where a block holds none (`deriveCapitalWorld`).
 export const readPrefabBlocks = async (
   assets: readonly IndexedAsset[],
   cabMap: ReadonlyMap<string, CabEntry>,

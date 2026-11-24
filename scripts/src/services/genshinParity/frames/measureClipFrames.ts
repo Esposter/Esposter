@@ -7,10 +7,11 @@ import { spawnClipRegion } from "#src/services/genshinParity/frames/spawnClipReg
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Every frame of a clip read over a rectangle. FFmpeg runs twice: first to list each frame's second, which decodes
-// Without Writing any pixels, then to decode the rectangle alone as raw RGB, streamed so only one frame is held at a
-// Time. The colour Conversion is the one a cut frame is made with, so a row's colours are the ones the probe reads from
-// That frame
+// Every frame of a clip read over a rectangle.
+// FFmpeg runs twice: first to list each frame's second, which decodes without writing any pixels.
+// Then it decodes the rectangle alone as raw RGB, streamed so only one frame is held at a time.
+// The colour conversion is the one a cut frame is made with.
+// So a row's colours are the ones the probe reads from that frame.
 export const measureClipFrames = async (clipPath: string, rect: ImageRegion): Promise<FrameRow[]> => {
   const ffmpegPath = await resolveFfmpeg();
   const seconds = listClipSeconds(clipPath, ffmpegPath);

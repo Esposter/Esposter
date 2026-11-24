@@ -1,7 +1,8 @@
 import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
-// The blocks a second pass searches for the tiles the first pass missed: each block naming a terrain asset in the
-// Index, Once and in the index's order, but none the first pass already searched
+// The blocks a second pass searches for the tiles the first pass missed.
+// Each block naming a terrain asset in the index is listed once, in the index's order.
+// A block the first pass already searched is left out.
 export const getTerrainSearchBlocks = (
   terrainAssets: readonly Pick<IndexedAsset, "block">[],
   searchedBlocks: readonly string[],

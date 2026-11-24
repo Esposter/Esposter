@@ -4,8 +4,8 @@ import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackage
 import { existsSync } from "node:fs";
 import { join, posix } from "node:path";
 
-// Each genshin package's components folder, keyed by the package's name. Read off the workspace rather than listed, so
-// A New package with a components folder is a root the day it is added
+// Each genshin package's components folder, keyed by the package's name.
+// Read off the workspace rather than listed, so a new package with a components folder is a root the day it is added.
 export const readComponentRoots = (): Map<string, string> =>
   new Map(
     readWorkspacePackages(REPOSITORY_ROOT).flatMap(({ directory, manifest, workspaceDirectory }) => {
