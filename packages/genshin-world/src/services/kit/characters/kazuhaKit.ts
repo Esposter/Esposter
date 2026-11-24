@@ -92,7 +92,7 @@ const castConstellation2Field = (kitEffectState: KitEffectState, characterId: nu
 export const KAZUHA_CHARACTER_ID = 10_000_047;
 
 // Kazuha's behaviour: Chihayaburu's press and hold and Kazuha Slash each give him Constellation 6's infusion, and
-// Kazuha slash casts its Autumn Whirlwind with its absorb check. Constellation 1 shortens his skill cooldowns, and
+// Kazuha Slash casts its Autumn Whirlwind with its absorb check. Constellation 1 shortens his skill cooldowns, and
 // Constellation 2's field gives Elemental Mastery within the Autumn Whirlwind.
 // Poetics of Fuubutsu is built from Ascension 4. The absorption of the Chihayaburu from Ascension 1 is not built.
 // Constellation 4 needs his Energy under 45 effects, which the kit does not read, not built
