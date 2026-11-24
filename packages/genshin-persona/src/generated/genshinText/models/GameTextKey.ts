@@ -1,9 +1,11 @@
 // Copied from `genshin-text` by `pnpm -C scripts genshin:text write`, never edited by hand
-// Every string of the game's a consumer shows, by the game's own text id — the name its manual text map files the
-// String under, the raw text hash where it files none, or the account kit's own key for a string the game shows before
-// It has loaded its text map. The game already holds each in all fifteen languages, so referencing a new one is a line
-// Here and a run of `pnpm -C scripts genshin:text write`, which reads this const object as its inventory; `genshin:text
-// Find` prints the id of any English text
+// Every key is the game's own text id for a string a consumer shows.
+// That id is the name its manual text map files the string under.
+// Where the map files none, the id is the raw text hash.
+// Or it is the account kit's own key for a string the game shows before its text map has loaded.
+// The game already holds each in all fifteen languages, so a new one is a line in this object.
+// `pnpm -C scripts genshin:text write` reads this const object as its inventory.
+// `genshin:text find` prints the id of any English text.
 export const GameTextKey = {
   // The Abandon button of a challenge, named as the challenge's interrupt control names it
   AbandonChallenge: "CONTROL_CHALLENGE_INTERRUPT",
@@ -319,7 +321,7 @@ export const GameTextKey = {
   // The heading over a finished order's ring
   ForgeComplete: "UI_FORGE_PAGE_FORGE_FINISH",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id
-  // Its recipe names; a recipe's own id for the same words repeats the English of these
+  // Its Recipe names; a recipe's own id for the same words repeats the English of these
   ForgeEnhancementOreRefusal: "1106263712",
   ForgeFineEnhancementOreRefusal: "1652126560",
   // The forge screen's words: a recipe's forge time, the queue button with its count, a queue's state (idle, forging,
@@ -453,7 +455,7 @@ export const GameTextKey = {
   // A level as the game writes one, its number in place of `{0}`
   LevelFormat: "UI_COMMON_LEVEL_FORMAT",
   // A level's badge word, its number set on the line beneath, as the Reputation reward page's badges show it. Two of
-  // The game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
+  // The Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
   // Narrow badge fits, where the Statue's spells "Niveau" and "Stufe" out
   LevelShort: "2960839764",
   // The button that raises a character one level with its Character EXP materials
@@ -788,7 +790,7 @@ export const GameTextKey = {
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto: "UI_PIC_MAIN_PCPS_C",
   // The Talents tab's button that raises a combat talent by one level, the phase its next level needs, and the reasons
-  // It cannot rise: at its last level, the character's Ascension Phase too low, or short of the Mora or the materials
+  // It Cannot rise: at its last level, the character's Ascension Phase too low, or short of the Mora or the materials
   TalentLevelUp: "UI_TALENT_LEVEL_UP",
   TalentMaterialsShort: "UI_TRAININGPLAN_MATERIAL_LACK",
   TalentMoraShort: "RetScoinNotEnough",
@@ -894,7 +896,7 @@ export const GameTextKey = {
   WishWeaponEvent: "UI_GACHA_TYPE_04",
   WorldLevel: "UI_WORLDLEVEL_TITLE",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips,
-  // And the restoring's tips and label
+  // And The restoring's tips and label
   WorldLevelAdjustedTo: "UI_WORLDLEVEL_ADJUST_HINT",
   WorldLevelCurrent: "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
   // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in
