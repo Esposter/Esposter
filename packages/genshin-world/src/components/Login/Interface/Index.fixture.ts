@@ -14,6 +14,7 @@ export const props = {
   interfaceClips,
   interfaceRects,
   isDoorWaiting: false,
+  isDownloadFailed: false,
   isSpinnerShown: false,
   isWelcomeShown: true,
   language: GameLanguage.English,
