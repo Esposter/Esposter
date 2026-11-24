@@ -48,7 +48,6 @@ import { rideLoginWitnessDoor } from "#src/services/login/door/rideLoginWitnessD
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { LoginPartFamilyMeshRegexMap } from "#src/services/login/LoginPartFamilyMeshRegexMap";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
-import { checkIsLoginDoorForming } from "#src/services/login/scene/checkIsLoginDoorForming";
 import { computeLoginCameraHeight } from "#src/services/login/scene/computeLoginCameraHeight";
 import { computeLoginCameraZ } from "#src/services/login/scene/computeLoginCameraZ";
 import { computeLoginGlideTitleScrolled } from "#src/services/login/scene/computeLoginGlideTitleScrolled";
@@ -79,6 +78,7 @@ import {
   LOGIN_TOWERS_ROW_OFFSET,
 } from "#src/services/login/scene/constants";
 import { getLoginCameraFov } from "#src/services/login/scene/getLoginCameraFov";
+import { getLoginDoorFormingLeftMs } from "#src/services/login/scene/getLoginDoorFormingLeftMs";
 import { LoginOcclusionRadiusMap } from "#src/services/login/scene/LoginOcclusionRadiusMap";
 import { LoginShadowBiasMap } from "#src/services/login/scene/LoginShadowBiasMap";
 import { LoginShadowIntensityMap } from "#src/services/login/scene/LoginShadowIntensityMap";
@@ -195,7 +195,7 @@ const {
   towers,
   walkway,
 } = defineProps<Props>();
-const emit = defineEmits<{ doorFormed: []; doorForming: []; ready: [] }>();
+const emit = defineEmits<{ doorFormed: []; doorForming: [leftMs: number]; ready: [] }>();
 // Where the door stands and how long it takes to rise, the camera's pose over the walkway and short of the door, and
 // The walkway's and the towers' rows the glide wraps by, each read once from the records the scene is built from
 const doorRestPosition = getLoginDoorPosition(door);
@@ -529,10 +529,12 @@ onRender(({ delta: frameDelta }) => {
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = isDoorDue && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs = isDoorRising.value ? riseMs + delta * 1000 : 0;
-  // The door begins to form a lead before it rises, once; the screen takes that as the forming's start
-  if (!isDoorForming && isDoorDue && checkIsLoginDoorForming(doorAheadOfCamera, glide.speed)) {
+  // The door begins to form a lead before it rises, once, with how much of that lead is left; the screen takes that as
+  // The forming's start, and the login's music anchors the layer's envelope to the rise from it
+  const formingLeftMs = isDoorDue ? getLoginDoorFormingLeftMs(doorAheadOfCamera, glide.speed) : undefined;
+  if (!isDoorForming && formingLeftMs !== undefined) {
     isDoorForming = true;
-    emit("doorForming");
+    emit("doorForming", formingLeftMs);
   }
   if (!isDoorFormed)
     for (let pieceIndex = 0; pieceIndex < doorPieces.length; pieceIndex++) {

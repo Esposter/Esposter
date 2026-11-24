@@ -95,13 +95,19 @@ The login's button clicks and its wind SHALL NOT play until they have been match
 
 ### Requirement: The door's forming plays a low layer that starts a lead before the door rises
 
-The login's low layer SHALL start as the door begins to form, a fixed lead before the door rises, through the same bus as the door's sound.
+The login's low layer SHALL start as the door begins to form, a fixed lead before the door rises when the glide has that long to fly, with its envelope anchored to the rise, through the same bus as the door's sound.
 
 #### Scenario: The layer starts a lead before the door rises
 
 - **GIVEN** the door is due with at least the lead of glide left before it rises
 - **WHEN** the door begins to form
 - **THEN** the low layer starts the lead before the door rises (`LOGIN_DOOR_FORMING_LEAD_MS`)
+
+#### Scenario: The layer starts partway into its envelope when less than a lead is left
+
+- **GIVEN** the door is due with less than the lead of glide left before it rises
+- **WHEN** the door begins to form
+- **THEN** the low layer starts with the due, at the point a full lead before the rise would have reached, and its hold and release land at the rise's times
 
 #### Scenario: The layer waits with the forming on the download
 

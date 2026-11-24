@@ -52,9 +52,6 @@ export const LOGIN_RECORDED_GLIDE_TO_DOOR = 51;
 export const LOGIN_DOOR_RUSH_SHARE = 0.41;
 export const LOGIN_DOOR_RUSH_MS = 333;
 export const LOGIN_DOOR_RUSH_LIMIT = 0.9;
-// The door's forming, and its low layer with it, begins this long before the door rises, measured at the glide's pace:
-// From the English recording, the layer starts at 11.0 seconds and the first piece rises at 11.75
-export const LOGIN_DOOR_FORMING_LEAD_MS = 750;
 // The cloud sea's top, where the game's own sea stands (Eff_SeaOfCloud_Login's middle emitter, Cloud_Back, at the
 // Login's CloudEffect anchor), and how far it reaches
 export const LOGIN_CLOUD_SEA_HEIGHT = -14;

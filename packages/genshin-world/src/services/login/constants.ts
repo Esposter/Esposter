@@ -55,6 +55,9 @@ export const LOGIN_DOOR_FORMING_LEVEL_DECIBELS = -27;
 export const LOGIN_DOOR_FORMING_ATTACK_MS = 1000;
 export const LOGIN_DOOR_FORMING_HOLD_MS = 1500;
 export const LOGIN_DOOR_FORMING_RELEASE_MS = 400;
+// The door's forming, and its low layer with it, begins this long before the door rises, measured at the glide's pace:
+// From the English recording, the layer starts at 11.0 seconds and the first piece rises at 11.75
+export const LOGIN_DOOR_FORMING_LEAD_MS = 750;
 // The effects bus's compressor the door's sounds pass in the game's mix, read from its banks: -9 decibels, 4 to 1, no
 // Attack, 0.15 seconds' release. The door's data already carries the master's 5 decibels down, so the threshold sits
 // 5 lower to compress the same signal; its detector is unpublished, so the browser's own stands in

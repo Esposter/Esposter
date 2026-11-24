@@ -6,6 +6,7 @@ import { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import {
   LOGIN_DOOR_FORMING_ATTACK_MS,
   LOGIN_DOOR_FORMING_HOLD_MS,
+  LOGIN_DOOR_FORMING_LEAD_MS,
   LOGIN_DOOR_FORMING_LEVEL_DECIBELS,
   LOGIN_DOOR_FORMING_RELEASE_MS,
   LOGIN_DOOR_SOUND_DELAY_MS,
@@ -19,11 +20,11 @@ import { useEventListener } from "@vueuse/core";
 import { createMusicPlayer, createNoiseBuffer, createSoundEffectBuffer } from "genshin-engine";
 
 interface Props {
+  // How much of the door's lead is left when it begins to form, which plays its low layer once, anchored to the rise
+  doorFormingLeftMs?: number | undefined;
   // Where the hosted game data is read from, whose lock names the music's recordings, which its voices play over their
   // Synthesized notes
   gameDataBaseUrl: string;
-  // The door has begun to form, which plays its low layer once
-  isDoorForming: boolean;
   // The door has been clicked open, which plays its sound once
   isDoorOpened: boolean;
   // The login's music as its fit and the parity loops solved it: its playlist, its instruments and its voices
@@ -32,7 +33,7 @@ interface Props {
   sounds: LoginSounds;
 }
 
-const { gameDataBaseUrl, isDoorForming, isDoorOpened, music, sounds } = defineProps<Props>();
+const { doorFormingLeftMs, gameDataBaseUrl, isDoorOpened, music, sounds } = defineProps<Props>();
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
 // Screen shows. The door's layer plays as the door forms, and its sound once the door opens, through the effects bus's
 // Compressor and the master's limiter as the game's mix passes them, all through one context. The browser's autoplay
@@ -41,7 +42,7 @@ const { gameDataBaseUrl, isDoorForming, isDoorOpened, music, sounds } = definePr
 // They cannot be fetched, unless the screen has gone by then. Each channel passes the gain its stored volume sets,
 // As the Settings Screen keeps it
 let close: (() => Promise<void>) | undefined;
-let playDoorForming: (() => void) | undefined;
+let playDoorForming: ((leftMs: number) => void) | undefined;
 let formingEnded: Promise<void> | undefined;
 let playDoorSound: (() => void) | undefined;
 let doorEnded: Promise<void> | undefined;
@@ -67,21 +68,25 @@ onMounted(() => {
   effectsBus.connect(new DynamicsCompressorNode(context, LOGIN_MASTER_LIMITER_OPTIONS)).connect(context.destination);
   const sfxBus = new GainNode(context, { gain: getStoredChannelGain(VolumeSetting.Sfx) });
   sfxBus.connect(effectsBus);
-  playDoorForming = () => {
+  playDoorForming = (leftMs) => {
     const source = new AudioBufferSourceNode(context, { buffer: formingNoise ?? null, loop: true });
     const envelope = new GainNode(context, { gain: 0 });
     source.connect(envelope).connect(sfxBus);
-    // Silent at its start, an attack to full, a hold, then a release to silence, all scheduled on the context's clock
-    const startedAt = context.currentTime;
+    // The envelope is an attack to full, a hold, then a release to silence, anchored to the rise: it began a full lead
+    // Before the rise, which lies `leftMs` ahead, so it is `elapsedMs` into its attack now. The lead is shorter than the
+    // Attack, and the hold and release land at the rise's times, all scheduled on the context's clock
+    const now = context.currentTime;
+    const elapsedMs = LOGIN_DOOR_FORMING_LEAD_MS - leftMs;
+    const startedAt = now - elapsedMs / 1000;
     const attackEnd = startedAt + LOGIN_DOOR_FORMING_ATTACK_MS / 1000;
     const holdEnd = attackEnd + LOGIN_DOOR_FORMING_HOLD_MS / 1000;
     const end = holdEnd + LOGIN_DOOR_FORMING_RELEASE_MS / 1000;
     envelope.gain
-      .setValueAtTime(0, startedAt)
+      .setValueAtTime(elapsedMs / LOGIN_DOOR_FORMING_ATTACK_MS, now)
       .linearRampToValueAtTime(1, attackEnd)
       .setValueAtTime(1, holdEnd)
       .linearRampToValueAtTime(0, end);
-    source.start(startedAt);
+    source.start(now);
     source.stop(end);
     formingEnded = new Promise<void>((resolve) => {
       source.addEventListener("ended", () => resolve(), { once: true });
@@ -114,9 +119,9 @@ onMounted(() => {
   };
 });
 watch(
-  () => isDoorForming,
-  (newIsDoorForming) => {
-    if (newIsDoorForming) playDoorForming?.();
+  () => doorFormingLeftMs,
+  (newDoorFormingLeftMs) => {
+    if (newDoorFormingLeftMs !== undefined) playDoorForming?.(newDoorFormingLeftMs);
   },
 );
 watch(
