@@ -53,8 +53,8 @@ vi.mock(import("#server/services/realtime/publishTopicsBestEffort"), async (impo
   return importOriginal();
 });
 // The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a
-// `vi.mock` Is hoisted only within the file that writes it, so one registered from an imported module never intercepts
-// A test File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
+// `vi.mock` is hoisted only within the file that writes it, so one registered from an imported module never intercepts
+// A test file's own direct import of the same composable. A setup file runs before the test module is imported, so
 // Registering once here covers both. The factory is lazy, so a test that touches no user object pays nothing.
 vi.mock(
   import("#server/composables/realtime/useUserObject"),
@@ -78,11 +78,11 @@ vi.mock(import("#server/auth"), () => import("#server/auth.test"));
 // Fills the binding, so it is registered over a double that reads the binding on first use
 vi.mock(import("#server/db/index"), () => import("#server/db/index.test"));
 // Every suite's caller runs through the live topic wake check, which asks each read again after a write and fails a
-// Read Whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`). The
-// Check Registers its own hooks as it loads, so only a file that builds a caller loads it and the schema it reads
+// Read whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`). The
+// Check registers its own hooks as it loads, so only a file that builds a caller loads it and the schema it reads
 vi.mock(import("#server/trpc/index"), () => import("#server/trpc/indexWithWakeCheck.test"));
-// The stubbed `useRuntimeConfig` returns a fraction of the config, which
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed `import()` form holds to the real return type
+// A stub returns a fraction of the config, which the typed `import()` form holds to the real return type
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed runtime config is a fraction of the real one
 vi.mock("nuxt/server", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   useRuntimeConfig: () => ({
@@ -103,8 +103,8 @@ vi.mock("nuxt/server", async (importOriginal) => ({
 // (`checkIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
 // Plain happy-dom files (a `window` but no Nuxt app) skip it via the env's own marker — mounting there would crash.
 let isNuxtRuntimeWarm = false;
-// A genuine top-level fork: checkIsServer() guards the read, and the marker is set only on the happy-dom environment,
-// oxlint-disable-next-line selector-ban/no-restricted-syntax -- so the read is the environment question itself
+// A genuine top-level fork: checkIsServer() guards the read, and the marker is set only on the happy-dom environment.
+// oxlint-disable-next-line selector-ban/no-restricted-syntax -- the read is the environment question itself
 if (!checkIsServer() && "__NUXT_VITEST_ENVIRONMENT__" in window && window.__NUXT_VITEST_ENVIRONMENT__)
   beforeEach(async () => {
     const [{ mountSuspended }, { useNuxtApp, useRouter }, { setActivePinia }, { defineComponent, h }] =
@@ -121,8 +121,8 @@ if (!checkIsServer() && "__NUXT_VITEST_ENVIRONMENT__" in window && window.__NUXT
     // Its store belongs to, and the app calls actions on its own stores whenever it likes (a plugin's head-render or
     // `afterEach` hook), so a suite holding a second Pinia of its own reads the app's from that moment on.
     // `@pinia/nuxt` types `$pinia` only for the app's own tsconfig, so `shared/` reads it as `unknown`
-    // The $pinia augmentation of @pinia/nuxt is in the app's tsconfig only,
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- so this tsconfig reads the app's Pinia as unknown
+    // The $pinia augmentation of @pinia/nuxt is in the app's tsconfig only
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the augmentation is missing from this tsconfig
     const $pinia = useNuxtApp().$pinia as Pinia;
     for (const store of $pinia._s.values()) store.$dispose();
     $pinia.state.value = {};
@@ -136,13 +136,13 @@ if (!checkIsServer()) {
 }
 // Stubbed before every test rather than once, since the config restores every stubbed variable after each one. A test
 // That needs a variable different, or absent, stubs it itself after this runs
-// The nuxt environment's hook above is registered
-// oxlint-disable-next-line vitest/no-duplicate-hooks -- only inside its own guard, so this one cannot join it
+// The nuxt environment's hook above is registered only inside its own guard, so this one cannot join it
+// oxlint-disable-next-line vitest/no-duplicate-hooks -- the hook above sits inside its own guard
 beforeEach(() => {
   for (const [name, value] of Object.entries(MOCK_ENVIRONMENT_VARIABLES)) vi.stubEnv(name, value);
   // A server test's clock is frozen at the instant it starts, so an answer that holds a presigned address, or any time
-  // It reads From the clock, is the same when the wake check asks it again. Only `Date` is faked, so timers run as they
-  // Do
+  // It reads from the clock, is the same when the wake check asks it again. Only `Date` is faked, so
+  // Timers run as they do
   if (checkIsServer()) vi.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
 });
 
