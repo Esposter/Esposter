@@ -1,9 +1,9 @@
 import type { HostedAssetLock, HostedAssetName } from "hosted-assets";
 
-import { hostedAssetIndexSchema } from "#src/models/hostedAssets/HostedAssetIndex";
 import { toHostedAssetNames } from "#src/services/hostedAssets/toHostedAssetNames";
 import { toUniqueHostedAssetNames } from "#src/services/hostedAssets/toUniqueHostedAssetNames";
 import { settleAll } from "@esposter/shared";
+import { getHostedAssetEntryName, hostedAssetIndexSchema } from "hosted-assets";
 
 // Every object the locks reach: each index they name, then each object they name and each entry an index names. An
 // Index's entries are stored under that index's own scope and extension. `readIndex` reads an index's body however its
@@ -19,11 +19,9 @@ export const getLockRefs = async (
     await settleAll(
       indexes.map(
         (index) => async () =>
-          Object.values(hostedAssetIndexSchema.parse(await readIndex(index))).map((sha256) => ({
-            extension: index.extension,
-            scope: index.scope,
-            sha256,
-          })),
+          Object.values(hostedAssetIndexSchema.parse(await readIndex(index))).map((sha256) =>
+            getHostedAssetEntryName(index, sha256),
+          ),
       ),
       concurrency,
     )
