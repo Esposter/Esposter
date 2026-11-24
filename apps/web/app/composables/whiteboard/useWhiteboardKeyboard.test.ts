@@ -361,8 +361,8 @@ describe(useWhiteboardKeyboard, () => {
     expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID, WHITEBOARD_ARROW_ID]);
   });
 
-  // The same key selects every element off a field, and is left to the field while one has focus, so the element
-  // Selection Stays where it was while the text is being edited
+  // The same key selects every element off a field, and is left to the field while one has focus.
+  // The element selection stays where it was while the text is being edited.
   test("select all while editing text selects the text", async () => {
     expect.hasAssertions();
 

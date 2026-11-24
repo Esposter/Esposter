@@ -14,7 +14,7 @@ describe(checkIsSafeViewPayload, () => {
     expect.hasAssertions();
 
     // The payload has no Date
-    // oxlint-disable-next-line no-restricted-properties -- to revive, and only JSON.parse makes an own __proto__ key
+    // oxlint-disable-next-line no-restricted-properties -- JSON.parse is the only way to make an own __proto__ key
     expect(checkIsSafeViewPayload(JSON.parse('{"__proto__":{"a":true}}'))).toBe(false);
     expect(checkIsSafeViewPayload({ view: { constructor: { prototype: {} } } })).toBe(false);
     expect(checkIsSafeViewPayload({ view: [{ prototype: 1 }] })).toBe(false);

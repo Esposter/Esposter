@@ -5,14 +5,15 @@ import { getSchemaFormLayout } from "#src/services/ui/schemaForm/getSchemaFormLa
 import { omitUndefined } from "@esposter/shared";
 import { mapDispatchToControlProps, mapStateToControlProps } from "@jsonforms/core";
 
-// What every field of a schema form reads beside JSON Forms' own control: its layout meta, and the schema's issue at
-// Its path once the reader has changed it, so a form opened empty does not open covered in what it still needs
+// What every field of a schema form reads beside JSON Forms' own control: its layout meta and its issue.
+// The issue is the schema's own, at the field's path, and it shows once the reader has changed the field.
+// So a form opened empty does not open covered in what it still needs.
 export const useSchemaFormControl = (props: UiSchemaFormRendererProps) => {
   const control = computed(() => ({ ...props, ...mapStateToControlProps(props.form.state, omitUndefined(props)) }));
   const { handleChange } = mapDispatchToControlProps(props.form.dispatch);
   const isChanged = ref(false);
-  // JSON Forms types the config it carries as unknown, and this is the
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- UiSchemaFormConfiguration the schema form put on it
+  // JSON Forms types the config it carries as unknown.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the config is the UiSchemaFormConfiguration it set
   const uiSchemaFormConfiguration = computed(() => control.value.config as UiSchemaFormConfiguration);
   const layout = computed(() => getSchemaFormLayout(control.value.schema) ?? {});
   const issue = computed(() =>

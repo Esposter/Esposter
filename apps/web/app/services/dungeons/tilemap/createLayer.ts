@@ -7,11 +7,9 @@ export const createLayer = (
   layerName: string,
   tileset: Tilemaps.Tileset | Tilemaps.Tileset[],
 ) => {
-  // Phaser types this as a CPU layer or a GPU layer, but a layer name the tilemap doesn't carry returns null at
-  // Runtime, And this game only ever creates CPU layers, so the one type it can return besides null is the one this
-  // Names
-  // Phaser's createLayer return type is a union with the GPU layer this game never creates, and
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- it omits the null it returns for a missing layer
+  // Phaser types this as a CPU or a GPU layer, but a name the tilemap does not carry returns null at runtime.
+  // This game only ever creates CPU layers, so the one type it can return besides null is the CPU layer.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the type omits the null a missing layer returns
   const layer = tilemap.createLayer(layerName, tileset) as null | Tilemaps.TilemapLayer;
   if (!layer) throw new InvalidOperationError(Operation.Create, createLayer.name, `id: ${layerName}`);
   return layer;

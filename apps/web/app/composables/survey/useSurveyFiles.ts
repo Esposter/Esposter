@@ -21,14 +21,16 @@ export const useSurveyFiles = () => {
   const surveyFilesStore = useSurveyFilesStore();
   const { fileUrls, isClosed } = storeToRefs(surveyFilesStore);
   const { addFileUrl, closeSession, openSession } = surveyFilesStore;
-  // The editor is gone by the time a file is deleted, so nothing can alert: each delete logs its own failure, and the
-  // Rest still go
+  // The editor is gone by the time a file is deleted, so nothing can alert.
+  // Each delete logs its own failure, and the rest still go
   const deleteUrls = (resourceId: string, urls: string[]) => {
     for (const url of urls) deleteFile(resourceId, url);
   };
-  // A file is validated before the upload, and a rejected one alerts itself, so the undefined it leaves uploads
-  // Nothing. A file belongs to the session it was uploaded in, so one that lands after that session closed, or after
-  // The open Resource became another opening, is deleted from the resource it went to and handed back to nothing
+  // A file is validated before the upload, and a rejected one alerts itself: the undefined it leaves uploads nothing.
+  // A file belongs to the session it was uploaded in.
+  // One that lands after that session closed is deleted from the resource it went to.
+  // So is one that lands after the open resource became another opening.
+  // Either way it is handed back to nothing.
   const upload = async (file: File) => {
     if (!validateFileWithAlert(file)) return undefined;
 

@@ -27,8 +27,7 @@ const { setState, showMessages } = vi.hoisted(() => ({
 vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: { setState } }));
 vi.mock("#src/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () => ({ showMessages }) }));
 
-// The dungeons store imports Phaser, which cannot initialise under the test environment
-// A partial fake:
+// The dungeons store imports Phaser, which cannot initialise under the test environment, so the fake replaces it.
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 

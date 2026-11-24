@@ -28,11 +28,14 @@ import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardT
 import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 
-// The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace
-// Do not delete at once. They name the selection in deletingIds, the target of the confirmation dialog, and
-// `confirmDelete` runs the deletion once the owner answers it. The selection's commands are bound only while there is a
-// Selection, and none is bound while that dialog asks, so its keys never reach the canvas. A tool's key chooses the
-// Tool in hand, and a shape's key chooses the shape tool with the shape it names. Each key is the one its item carries
+// The keys of a whiteboard's canvas, registered as its commands over its edit state and selection.
+// Delete and Backspace do not delete at once.
+// They name the selection in deletingIds, the target of the confirmation dialog.
+// `confirmDelete` runs the deletion once the owner answers it.
+// The selection's commands are bound only while there is a selection.
+// None is bound while that dialog asks, so its keys never reach the canvas.
+// A tool's key chooses the tool in hand, and a shape's key chooses the shape tool with the shape it names.
+// Each key is the one its item carries.
 export const useWhiteboardKeyboard = (
   editState: Ref<WhiteboardEditState>,
   selectedIds: Ref<string[]>,

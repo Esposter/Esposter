@@ -7,10 +7,10 @@ import { getStackOperations } from "#src/services/whiteboard/arrange/getStackOpe
 import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
 import { WHITEBOARD_COMMAND_GROUP } from "#src/services/whiteboard/keyboard/constants";
 
-// The keys that stack a selection. Cmd or Ctrl with the closing bracket brings it forward and with the opening bracket
-// Sends it backward, and Shift As well takes it to the front or the back, as the produced keys read it. The keys are
-// Bound only while there is a selection, and none is bound While the delete confirmation asks, so its keys never reach
-// The canvas
+// The keys that stack a selection. Cmd or Ctrl with the closing bracket brings it forward.
+// Cmd or Ctrl with the opening bracket sends it backward, and Shift as well takes it to the front or the back.
+// The keys are bound only while there is a selection, and none is bound while the delete confirmation asks.
+// So its keys never reach the canvas.
 export const useWhiteboardArrangeKeyboard = (
   editState: Ref<WhiteboardEditState>,
   selectedIds: Ref<string[]>,

@@ -7,9 +7,8 @@ import { usePlayerStore } from "#src/store/dungeons/player";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// The player store reads the dungeons store, which imports Phaser. Only its inventory is read here, so the fake holds
-// One Player for every reader
-// A partial fake:
+// The player store reads the dungeons store, which imports Phaser.
+// Only its inventory is read here, so the fake holds one Player for every reader.
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the typed module would load Phaser and its full store type
 vi.mock("#src/store/dungeons/player", async () => {
   const { reactive } = await import("vue");

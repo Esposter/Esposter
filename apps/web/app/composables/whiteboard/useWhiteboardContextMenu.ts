@@ -20,10 +20,11 @@ import { useContextMenuStore } from "#src/store/ui/contextMenu";
 import { getResultAsync } from "@esposter/shared";
 import { getPositionedElementText } from "vue-block-editor-headless";
 
-// The whiteboard's own context menu, opened on a right-click of its canvas. The element under the pointer is selected
-// First unless the selection Already holds it, and empty canvas clears the selection, so the menu is always about what
-// Is selected when it opens. Every item runs the Function its shortcut runs, handed in by the keyboard, and the
-// Stacking steps are the stacking keys' own operations, listed for a selection that they can move
+// The whiteboard's own context menu, opened on a right-click of its canvas.
+// The element under the pointer is selected first, unless the selection already holds it.
+// Empty canvas clears the selection, so the menu is always about what is selected when it opens.
+// Every item runs the function its shortcut runs, handed in by the keyboard.
+// The stacking steps are the stacking keys' own operations, listed for a selection that they can move.
 export const useWhiteboardContextMenu = (
   editState: Ref<WhiteboardEditState>,
   commands: Pick<WhiteboardContextMenuCommands, "copy" | "cut" | "deleteSelection" | "duplicate" | "selectAll"> & {
@@ -43,9 +44,9 @@ export const useWhiteboardContextMenu = (
   const { pasteText, ...selectionCommands } = commands;
   const resourceStore = useResourceStore();
   const { captureOpeningCheck } = resourceStore;
-  // The paste event cannot fire from a menu, so the clipboard is read when the item is chosen, and a read the browser
-  // Refuses is told to the owner. The clipboard is pasted onto the board chosen, so a board switched to during the read
-  // Takes none of it
+  // The paste event cannot fire from a menu, so the clipboard is read when the item is chosen.
+  // A read the browser refuses is told to the owner.
+  // The clipboard is pasted onto the board chosen, so a board switched to during the read takes none of it.
   const paste = () => {
     const isStillOpen = captureOpeningCheck();
     return getResultAsync(() => window.navigator.clipboard.readText()).match(
