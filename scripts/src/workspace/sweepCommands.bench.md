@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: a2f816423c
+- Commit: 5c7d0acc62
 - Node: v26.13.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -17,19 +17,19 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## ai:sweep commands end to end
 
-| task                                   | vs base | mean (ms)  | ±rme     | p99 (ms)    | samples |
-| -------------------------------------- | ------- | ---------- | -------- | ----------- | ------- |
-| ai:sweep:kit-design                    | 1.00×   | 340.0060   | ±24.52%  | 365.0968    | 3       |
-| ai:sweep:genshin-evidence              | 0.88×   | 388.0250   | ±38.27%  | 454.8932    | 3       |
-| ai:sweep:repeated-list-items           | 0.68×   | 498.5208   | ±49.13%  | 608.9680    | 3       |
-| ai:sweep:composable-without-reactivity | 0.38×   | 897.8451   | ±69.35%  | 1108.1168   | 3       |
-| ai:sweep:duplicate-literal             | 0.17×   | 2025.8857  | ±4.56%   | 2066.2845   | 3       |
-| ai:sweep:skill-docs                    | 0.1×    | 3312.9915  | ±122.93% | 4581.4753   | 3       |
-| ai:sweep:duplicate-code                | 0.09×   | 3771.5155  | ±44.48%  | 4527.8328   | 3       |
-| ai:sweep:duplicate-prose               | 0.074×  | 4624.9478  | ±64.54%  | 5963.4443   | 3       |
-| ai:sweep:constant-scope                | 0.048×  | 7029.1527  | ±80.63%  | 8526.8862   | 3       |
-| ai:sweep:file-organization             | 0.022×  | 15357.2336 | ±112.09% | 21003.4380  | 3       |
-| ai:sweep:shared-export-consumers       | 0.012×  | 28302.9322 | ±117.08% | 42834.6329  | 3       |
-| ai:sweep:sample                        | 0.011×  | 30167.8184 | ±81.33%  | 39962.1245  | 3       |
-| ai:sweep:unterminated-results          | 0.0066× | 51207.7599 | ±106.97% | 74506.0504  | 3       |
-| ai:sweep:status                        | 0.0043× | 78869.6712 | ±166.33% | 138025.9868 | 3       |
+| task                                   | vs base | mean (ms)  | ±rme    | p99 (ms)   | samples |
+| -------------------------------------- | ------- | ---------- | ------- | ---------- | ------- |
+| ai:sweep:kit-design                    | 1.00×   | 639.6467   | ±40.19% | 750.2039   | 3       |
+| ai:sweep:genshin-evidence              | 0.72×   | 893.6801   | ±59.82% | 1132.0868  | 3       |
+| ai:sweep:composable-without-reactivity | 0.61×   | 1040.0875  | ±43.74% | 1218.0807  | 3       |
+| ai:sweep:skill-docs                    | 0.57×   | 1128.1022  | ±65.13% | 1447.4051  | 3       |
+| ai:sweep:repeated-list-items           | 0.57×   | 1130.5862  | ±35.50% | 1311.1972  | 3       |
+| ai:sweep:duplicate-literal             | 0.44×   | 1465.9028  | ±65.32% | 1883.5209  | 3       |
+| ai:sweep:duplicate-code                | 0.18×   | 3467.7600  | ±84.14% | 4282.9610  | 3       |
+| ai:sweep:duplicate-prose               | 0.17×   | 3820.8665  | ±80.83% | 5157.2623  | 3       |
+| ai:sweep:shared-export-consumers       | 0.13×   | 5092.0981  | ±82.13% | 6369.9660  | 3       |
+| ai:sweep:constant-scope                | 0.11×   | 5937.0601  | ±64.64% | 7626.7748  | 3       |
+| ai:sweep:unterminated-results          | 0.086×  | 7455.4490  | ±50.91% | 9086.0022  | 3       |
+| ai:sweep:file-organization             | 0.049×  | 13174.7746 | ±76.65% | 17105.3674 | 3       |
+| ai:sweep:sample                        | 0.029×  | 22349.4491 | ±64.61% | 27136.4996 | 3       |
+| ai:sweep:status                        | 0.026×  | 24897.6440 | ±58.98% | 29917.1923 | 3       |
