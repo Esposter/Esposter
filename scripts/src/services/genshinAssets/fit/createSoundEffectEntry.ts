@@ -15,8 +15,8 @@ export const createSoundEffectEntry = (component: DerivedAssetComponent): RunFit
     async () => {
       const fitted: Record<string, SoundEffect> = {};
       for (const [name, { pattern, sounds }] of Object.entries(effects))
-        // Vgmstream run at a time into one shared folder, in turn
-        // oxlint-disable-next-line no-await-in-loop -- One device: each effect's sounds are decoded through one
+        /* oxlint-disable-next-line no-await-in-loop -- One device: each effect's sounds are decoded through one
+           vgmstream run at a time into one shared folder, in turn */
         fitted[name] = await fitSoundEffect(pattern, sounds);
       return { notes: [], objects: { [`${component}/sounds`]: fitted } };
     },

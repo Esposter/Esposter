@@ -18,8 +18,8 @@ export const readTowerProfiles = async (
   const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, TOWER_MESH_REGEX, meshDirectory);
   const towerProfileMap = new Map<string, LatheProfile>();
   for (const [tower, meshPath] of meshPathMap) {
-    // Read at a time, so the meshes never stack in memory
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one mesh of tens of thousands of vertices is
+    /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one mesh of tens of thousands of vertices is
+       read at a time, so the meshes never stack in memory */
     const { vertices } = await readObjMesh(meshPath);
     towerProfileMap.set(
       tower,

@@ -29,8 +29,8 @@ export const fitRegionGroundPieces = async (
   const outlinedAreas = surfaceAreas.filter((area) => checkHasOutline(area));
   const pieces: { areaId: string; build: GameDataBuild; held: GroundPieceFit[]; isRefused: boolean }[] = [];
   for (const area of outlinedAreas)
-    // Fits one at a time
-    // oxlint-disable-next-line no-await-in-loop -- One device: a piece's compute holds the thread, as runFits runs its
+    /* oxlint-disable-next-line no-await-in-loop -- One device: a piece's compute holds the thread, as runFits runs its
+       fits one at a time */
     pieces.push({ areaId: area.id, ...(await fitGroundPieces(toGroundPiece(region, area), groundSource)) });
   const held = pieces.flatMap((piece) => piece.held);
   const composed =

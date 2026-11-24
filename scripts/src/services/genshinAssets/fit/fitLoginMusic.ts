@@ -33,8 +33,8 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
     const voices: MusicSegment["voices"] = [];
     for (const { beginTrim, duration: sourceDuration, endTrim, playAt, sourceId } of clips) {
       const wavePath = join(directory, `${sourceId}.wav`);
-      // A time, so the sources' audio never stacks in memory
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one source's samples and spectrum are held at
+      /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one source's samples and spectrum are held
+         at a time, so the sources' audio never stacks in memory */
       const { notes, samples, splits, voiceFits, voiceNotesList } = await fitMusicSource(wavePath);
       report.push(`segment ${id}, source ${sourceId}: ${notes.length} notes, registers split at ${splits.join(", ")}`);
       const clipStart = beginTrim / 1000;

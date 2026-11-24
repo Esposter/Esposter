@@ -90,8 +90,8 @@ describe(createCharacterFit, () => {
     );
   });
 
-  // A texture folder that holds no portrait is refused too, rather than publishing an empty record over the published
-  // One
+  // A texture folder that holds no portrait is refused too.
+  // It is refused rather than publishing an empty record over the published one.
   test("a named run whose texture folder holds no portrait refuses to publish", async () => {
     expect.hasAssertions();
 

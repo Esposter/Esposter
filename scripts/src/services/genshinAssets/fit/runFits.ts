@@ -26,8 +26,8 @@ export const runFits = async (
     const isSelected =
       only.length > 0 ? only.some((selected) => checkIsSelectedBy(name, selected)) : fitOptions?.isOptIn !== true;
     if (!isSelected) continue;
-    // Time and a record another fit fetched meanwhile would not outwait its timeout
-    // oxlint-disable-next-line no-await-in-loop -- One device: a fit's compute holds the thread, so one fit runs at a
+    /* oxlint-disable-next-line no-await-in-loop -- One device: a fit's compute holds the thread, so one fit runs at a
+       time, and a record another fit fetched meanwhile would not outwait its timeout */
     builds.push(await fit(options));
   }
   return mergeGameDataBuilds(builds);
