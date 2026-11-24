@@ -29,8 +29,8 @@ import { computeGroundDistance } from "genshin-engine";
 // A reaction that landed on an enemy, or burst from a Dendro Core, reaching every other standing enemy within its
 // Radius of it, written into each in place and priced from the combatant that triggered it. An Overloaded's or a
 // Superconduct's explosion deals each its damage, and a Superconduct's takes each one's Physical RES down. An
-// Overloaded's is a blunt hit of its poise too, which drains a Freeze and shatters what is left. A Swirl applies its
-// Element
+// Overloaded's is a blunt hit of its poise too, which drains a Freeze and shatters what is left.
+// A Swirl applies its Element
 // To each at the gauge it spreads, and every Swirl but a Hydro one deals each its damage, which what its element
 // Triggers there amplifies or adds to, as the reactions it triggers deal their own. A Burning tick applies its Pyro to
 // Each under that enemy's own Burning internal cooldown and deals each its damage. Electro-Charged arcs to the nearest

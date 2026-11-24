@@ -101,8 +101,8 @@ export const NINGGUANG_CHARACTER_ID = 10_000_027;
 // Spending them, and spends no stamina from Ascension 1 while she holds one. Jade Screen stands ahead of her, and a
 // Recast or Starshatter shatters it, setting Shock Effect going from two constellations. Starshatter's gems land from a
 // Summon where she stands, a standing screen adding its own, and from six constellations she holds 7 Star Jades
-// From four constellations, the active member holds Elemental RES while a screen stands, as Exquisite be the Jade gives
-// It
+// From four constellations, the active member holds Elemental RES while a screen stands, as
+// Exquisite be the Jade gives it
 export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const gems = readHits("strikeGem");
   const piercingFragmentsGems = readHits("piercingFragmentsStrikeGem");

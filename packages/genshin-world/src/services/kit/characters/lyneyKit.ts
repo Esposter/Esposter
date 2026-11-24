@@ -40,8 +40,8 @@ const getAscension4DamageBonus = (
 // A Grin-Malkin Hat as they start, a summon where he stands whose Pyrotechnic Strike lands on its own clock as the hat
 // Expires. The tap-released Physical aimed shot and the Pyro shot at a partial hold, Bewildering Lights' Prop Surplus
 // Bonus, its heal and the hats it explodes, Miracle Parade's ticks, and his Ascension 1 passive and Constellations 1
-// And 6 are not built Constellation 1 needs Prop Surplus stacks, which the kit does not build, and the hat Prop Arrows
-// Add
+// And 6 are not built. Constellation 1 needs Prop Surplus stacks, which the kit does not build, and the hat Prop Arrows
+// Add to them.
 // Constellation 6 needs the Reprised Pyrotechnic Strike's own hitmark, which the kit does not read
 // Constellation 2 needs Crisp Focus's stack every 2 seconds on the field, which the kit's timers do not build
 export const createLyneyKitBehaviour = ({

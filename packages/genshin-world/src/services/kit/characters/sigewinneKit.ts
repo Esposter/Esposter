@@ -57,10 +57,9 @@ const castBubblyShield = (context: KitContext, combatant: Combatant, seconds: nu
 
 // Sigewinne's behaviour: the press casts Bolstering Bubblebalm where she stands, its bubble's bounces landing from
 // There, each a share of her Max HP as the striker's is when priced, and from Ascension 1 the press also gives her
-// The Hydro DMG Bonus of Semi-Strict Bedrest. Constellation 2's Hydro RES cut and Bubbly Shield are built on the press
-// And
-// The burst. Its healing, its hold's bubble tiers and the Fully-Charged Aimed Shot's second level, the Mini-Stration
-// Bubble, are not built
+// The Hydro DMG Bonus of Semi-Strict Bedrest. Constellation 2's Hydro RES cut and Bubbly Shield are built on
+// The press and the burst. Its healing, its hold's bubble tiers and the Fully-Charged Aimed Shot's second level, the
+// Mini-Stration Bubble, are not built
 // Ascension 1's Convalescence stacks, which add to the Elemental Skill DMG of her off-field members, need a flat bonus
 // On those members' skill hits, which no kit reaches, so they are not built
 // Ascension 4 raises the healing she performs, which the kit does not build, and a heal reads the healed

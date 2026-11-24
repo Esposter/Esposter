@@ -206,8 +206,8 @@ export const createNahidaKitBehaviour = ({
         const { characterId } = activeCombatant;
         const hydroCount = countTeamElement(context, activeCombatant, Element.Hydro);
         const extensionSeconds = hydroCount > 0 ? takeOne(hydroExtensions, hydroCount - 1) : 0;
-        // Unleashing Illusory Heart starts Karmic Oblivion's ten seconds, its instances counted from zero, as
-        // Gcsim's c6 does
+        // Unleashing Illusory Heart starts Karmic Oblivion's ten seconds, its instances counted from zero, as gcsim's
+        // `c6` does
         if (activeCombatant.constellationCount >= CONSTELLATION_6)
           addKitStatus(kitEffectState, characterId, {
             id: CONSTELLATION_6_STATUS_ID,

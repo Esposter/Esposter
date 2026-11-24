@@ -104,8 +104,8 @@ export const ITTO_CHARACTER_ID = 10_000_057;
 // Attack into the Arataki Kesagiri. Masatsu Zetsugi throws Ushi, a taunt holding a share of his Max HP, and Royal
 // Descent adds his ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field.
 // Bloodline of the Crimson Oni and Constellations 1, 2 and 4 are built, and Constellation 6's Charged Attack CRIT DMG
-// Is too. Arataki ichiban's ATK SPD, which no attribute holds, and Constellation 6's Arataki Kesagiri stack save are
-// Not
+// Is too. Arataki Ichiban's ATK SPD, which no attribute holds, and Constellation 6's Arataki Kesagiri stack save are
+// Not built
 export const createIttoKitBehaviour = ({
   kit,
   readActions,

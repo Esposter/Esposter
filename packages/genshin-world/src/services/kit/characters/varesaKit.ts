@@ -49,8 +49,7 @@ const gainNightsoulPlungePoints = (context: KitContext): void => {
 // Passion Flying Kick, which gcsim checks the Blessing for at the cast (burst.go:68). Not built: the Fiery Passion
 // Rush, which replaces Rush in the Blessing and needs a skill variant the kit lacks, and the apex state with its
 // Volcanic Kablam and the Follow-Up Strike after Rush. The points land at each action's start, where gcsim lands them
-// At
-// Their hitmarks, and her free Rush after a plunge enters the Blessing is not built, so its cooldown is not waived
+// At their hitmarks, and her free Rush after a plunge enters the Blessing is not built, so its cooldown is not waived
 // Constellation 1 needs the Ascension talent Tag-Team Triple Jump's enhancement, which the kit does not build
 // Constellation 2 needs Apex Drive after a Plunging Attack, which the kit does not build
 // Constellation 4 needs the buffs by Varesa's state on Guardian Vent, which the kit does not build
