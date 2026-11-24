@@ -813,6 +813,33 @@ describe(createResourceProcedures, () => {
     await expect(readPublishedVersion()).resolves.toStrictEqual(publishedVersion);
   });
 
+  // The unpublish removes the version rows, so the tombstoned number is free: only the live-resource read keeps the
+  // Late publish from committing its version without a publication
+  test("a publish that lands after its resource is unpublished and deleted writes no version", async () => {
+    expect.hasAssertions();
+
+    const newResource = await createSavedResource();
+    await dashboardCaller.publishResource({ id: newResource.id });
+    await dashboardCaller.saveResourceContent({
+      content: new Dashboard({ visuals: [new Visual()] }),
+      contentVersion: 1,
+      id: newResource.id,
+    });
+    await dashboardCaller.unpublishResource({ id: newResource.id });
+    interceptPut(async () => {
+      await softDeleteResources(mockContext.db, eq(resourcesInResource.id, newResource.id));
+    });
+
+    await expect(dashboardCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
+    await expect(
+      mockContext.db.query.resourceVersionsInResource.findMany({
+        where: { channel: { eq: SnapshotChannel.Published }, resourceId: { eq: newResource.id } },
+      }),
+    ).resolves.toStrictEqual([]);
+  });
+
   test("omits publish procedures for non-publishable types", () => {
     expect.hasAssertions();
 

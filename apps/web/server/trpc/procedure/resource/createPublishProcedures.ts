@@ -102,9 +102,14 @@ export const createPublishProcedures = <TType extends ResourceType>(
           // The claim and the version it names are one batch. The version reads the publication counter the claim has
           // Just Bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows
           // With it. A Version's number is claimed fresh here, so no row of the channel holds it yet, unless a publish
-          // Lands after its resource's delete: it claims nothing, so its number is the tombstoned publication's, and
-          // The insert refuses that number, so the batch fails whole
-          const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id})`;
+          // Lands after its resource's delete: the number is read only from a live resource, so that publish has none
+          // And its version's NOT NULL fails the batch whole, whether or not an unpublish removed the old version rows
+          const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id} AND ${exists(
+            ctx.db
+              .select({ one: sql`1` })
+              .from(resourcesInResource)
+              .where(getOwnedLiveResourceWhere(ctx.user.id, id)),
+          )})`;
           const [publicationRows] = await getResultAsync(() =>
             ctx.db.batch([
               // Selected from the owner's live row, so a publish that lands after a delete inserts no publication: its

@@ -11,10 +11,10 @@ import { sql } from "drizzle-orm";
 // The rows that make a prepared version visible, returned rather than run so the caller can batch them with what must
 // Commit with them: the version row, then its asset references. `version` is a number, or a subquery reading a counter
 // The same batch has just bumped. The version row is a plain insert, so a row holding its number fails the batch
-// Rather than being replaced. Every writer claims its number fresh, but a publish landing after its resource's
-// Delete reuses the number of the publication it tombstoned, and the insert refuses that number. The asset rows
-// Are one statement over a JSON array, since a bind limit of 100 parameters per statement would cap a document at
-// A few dozen assets
+// Rather than being replaced. Every writer claims its number fresh, and a publish landing after its resource's delete
+// Reads no number at all, since its subquery reads only a live resource, so the version's NOT NULL refuses it.
+// The asset rows are one statement over a JSON array, since a bind limit of 100 parameters per statement would
+// Cap a document at a few dozen assets
 export const getSnapshotVersionWrites = (
   db: Context["db"],
   resourceId: ResourceInResource["id"],
