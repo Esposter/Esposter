@@ -30,7 +30,7 @@ Every workspace package carries one clear responsibility over a sensible depende
 
 ## Code Quality & Patterns — 10 / 10
 
-Guard clauses over nested conditionals. `InvalidOperationError` for impossible states — no silent fallbacks. `try`/`catch` is banned in favour of `neverthrow` `getResult`/`getResultAsync`. `structuredClone(toRawDeep(...))` snapshot/restore for optimistic updates is consistent. Zod form schemas separated from entity schemas, so a schema form sees only the fields a reader edits. `eslint-plugin-depend` bans dependencies a native or lighter replacement covers. An `@TODO` marks only a workaround something outside the repository forces, followed by the link to what ends it or listed as awaiting an upstream issue, and a test holds every marker in the tree to that.
+Guard clauses over nested conditionals. `InvalidOperationError` for impossible states — no silent fallbacks. `try`/`catch` is banned in favour of `neverthrow` `getResult`/`getResultAsync`. `structuredClone(toRawDeep(...))` snapshot/restore for optimistic updates is consistent. Zod form schemas separated from entity schemas, so a schema form sees only the fields a reader edits. A workspace test holds the manifests to the `module-replacements` list, so a dependency a native or lighter replacement covers fails the suite. An `@TODO` marks only a workaround something outside the repository forces, followed by the link to what ends it or listed as awaiting an upstream issue, and a test holds every marker in the tree to that.
 
 ## Testing — 10 / 10
 
@@ -51,7 +51,7 @@ The upstream request-body XSS validator is out of scope, and it costs no point: 
 
 ## Dependencies — 8 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Vue, Vuetify 0, Phaser, Survey and `rolldown` are all on stable lines. `typecheck` runs the `tsrs` beta, and `typescript` is overridden to the tsgo-backed native bridge for the one classic-API reader left, ESLint's parser. Both are prerelease tooling, not production paths. Every hold on the Nuxt 5 line, a pnpm override or a patch of a module written for Nitro 2, is an `@TODO` naming the release that ends it.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Vue, Vuetify 0, Phaser, Survey and `rolldown` are all on stable lines. `typecheck` runs the `tsrs` beta, which is prerelease tooling and not a production path. `typescript` 6 is kept for `@vue/compiler-sfc`, which loads it to resolve a props type imported from another file, and nothing typechecks or lints with it. Each hold on the Nuxt 5 line is an `@TODO` naming the release that ends it, or a `pnpm-workspace.yaml` override whose comment says what ends it.
 
 These **pre-release packages sit in production paths**:
 
@@ -77,6 +77,6 @@ Security hardening throughout: every third-party action is SHA-pinned, `persist-
 
 ## Bundle & Performance — 9 / 10
 
-`nuxt analyze` available. Code splitting is handled automatically by Vite. Every file a workspace package or app builds has its exact size committed in `bundle-sizes.md`, so a dependency bump or a barrel change that moves a bundle shows its bytes in the diff, and a workspace test fails a record that is not the fresh build's.
+`nuxt analyze` available. Code splitting is handled automatically by Vite. Every file a workspace package or the infra app builds has its exact size committed in `bundle-sizes.md`, so a dependency bump or a barrel change that moves a bundle shows its bytes in the diff, and a workspace test fails a record that is not the fresh build's.
 
-**Accepted trade-off:** the app bundle has no equivalent gate. Its dependency footprint (Phaser, Survey, Three.js, PDF.js) runs to tens of megabytes, reasonable for the feature surface, and Nuxt surfaces the size on every build — but nothing fails on a regression.
+**Accepted trade-off:** the web app has no equivalent gate. Its production build is a client of about 21 MB, about 7 MB of it gzipped, and a `public` folder of about 30 MB, most of it the client's `_nuxt` folder. The games' textures, sounds and tilemaps are hosted on R2 and kept out of the build, so the client holds the code of Phaser, Survey, Three.js and PDF.js rather than their assets. Beside the client, `public` holds Genshin's region data, PDF.js's maps, fonts and decoders, the icons and the polyfills. Nuxt prints the client's size on every build, but nothing fails on a regression.
