@@ -38,8 +38,7 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     for (;;) {
       if (pendingResourceId === undefined) return;
 
-      // Is held for the next one
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: an edit typed while a write is in flight
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: an edit typed mid-write waits
       await writePending();
     }
   };

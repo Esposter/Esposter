@@ -4,8 +4,7 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
   // Would strip to plain objects); a plain value is cloned so keys never share state. `typeof` cannot narrow a generic
   // TItem out of the union, so the cast below is what names the factory
   const createDefaultValue = () =>
-    // A generic TItem may itself be a function, so typeof leaves the
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- factory's type out of what the union narrows to
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- typeof cannot narrow a generic TItem
     typeof defaultValue === "function" ? (defaultValue as () => TItem)() : structuredClone(defaultValue);
   const getData = (key: string) => dataMap.value.get(key);
   const setData = (key: string, value: TItem) => {

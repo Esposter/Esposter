@@ -64,8 +64,7 @@ export const useReadResourcesPage = <TFilterInput>({
         while (pageCursors.length <= index) {
           // Written where its page starts rather than pushed, so an overlapping read writes the same cursor in place
           const position = pageCursors.length;
-          // So the walk is serial
-          // oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor comes from the page before it,
+          // oxlint-disable-next-line no-await-in-loop -- Pagination: each cursor comes from the page before
           const walkedPage = await readPage(takeOne(pageCursors, position - 1), filterInput, options);
           // Past the last page there is nothing to walk to, so the table is shown empty beside the total
           if (!walkedPage.nextCursor) return { newCount: firstPage?.count, newItems: [] };
