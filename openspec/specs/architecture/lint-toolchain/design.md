@@ -77,6 +77,8 @@ The type-aware rules read the `.ts` files of the program and never a component's
 
 **A consequence of the content mapper: a generic component's props are typed.** The mapper types a generic `.vue` component's test-utils `props()`, so a type-aware rule can report an assertion over an optional wrapper as unnecessary. The fix narrows the wrapper first, never a disable.
 
+**The blank line between an SFC's top-level blocks waits on `vize fmt`.** `scripts/src/workspace/templateTextRules.test.ts` fails a missing one and writes none, since oxfmt keeps whatever is written and vize has no lint rule for it. `vize fmt` pads the blocks, but it cannot yet replace oxfmt: it formats one file at a time, several times slower, and has no Markdown, YAML or standalone CSS (the `@TODO` in that test names the gap). The switch, when it comes, puts vize's own options under `vue.fmt` in the unified config (`VUE_OPTIONS`, `vite/vueOptions.ts`), beside the shared `fmt` block, the two merging key by key with `vue.fmt` winning a clash, and sets `sortAttributes: false`: the sort would leave UnoCSS attributify utilities where they stand and move known attributes such as `type` ahead of `class`, which is not the template attribute order in the `vue` skill's `references/ordering.md`.
+
 ## Key files
 
 | File                                                | Role                                                                                  |
