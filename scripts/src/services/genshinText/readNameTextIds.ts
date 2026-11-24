@@ -4,10 +4,10 @@ import { collectNameTextIds } from "#src/services/genshinText/collectNameTextIds
 import { PUBLISHED_READ_BATCH_SIZE, TEXT_GAME_DATASETS } from "#src/services/genshinText/constants";
 import { toDataFileKey } from "#src/services/genshinText/toDataFileKey";
 import { walkJsonFiles } from "#src/services/genshinText/walkJsonFiles";
-import { HOSTED_RECORD_EXTENSION } from "#src/services/hostedAssets/constants";
 import { WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { chunk, takeOne } from "@esposter/shared";
+import { HOSTED_RECORD_EXTENSION } from "hosted-assets";
 import { readFileSync } from "node:fs";
 
 // The text id of every name and description the world's data cites: every published JSON record outside the text

@@ -1,8 +1,8 @@
 import type { HostedAssetProduct } from "#src/models/hostedAssets/HostedAssetProduct";
 
-import { HOSTED_RECORD_EXTENSION } from "#src/services/hostedAssets/constants";
 import { encodeHostedAssetObject } from "#src/services/hostedAssets/encodeHostedAssetObject";
 import { encodeHostedAssetRecord } from "#src/services/hostedAssets/encodeHostedAssetRecord";
+import { HOSTED_RECORD_EXTENSION } from "hosted-assets";
 
 // The stored form of one object of a product: a records product's JSON records as zstd, and every other object as its
 // Extension's table names, so a binary file a records product publishes keeps its own bytes. The publish and the repair

@@ -23,3 +23,5 @@ export const HOSTED_ASSET_CONTENT_TYPES: Readonly<Record<string, string>> = {
   ".webp": "image/webp",
   ".woff2": "font/woff2",
 };
+// The extension every record is stored under, which names its content type through HOSTED_ASSET_CONTENT_TYPES
+export const HOSTED_RECORD_EXTENSION = ".json";

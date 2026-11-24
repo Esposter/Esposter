@@ -11,8 +11,6 @@ export const UNCOMPRESSED_AUDIO_EXTENSIONS: ReadonlySet<string> = new Set([".aif
 export const HOSTED_BROTLI_EXTENSIONS: ReadonlySet<string> = new Set(
   HOSTED_TEXT_EXTENSIONS.map((extension) => `.${extension}`),
 );
-// The extension every record is stored under, which names its content type through HOSTED_ASSET_CONTENT_TYPES
-export const HOSTED_RECORD_EXTENSION = ".json";
 export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 // An object a lock no longer names is kept this long, so a revert within this window still resolves it
 export const HOSTED_ASSET_RETENTION_MS: number = 90 * DAY_MS;
