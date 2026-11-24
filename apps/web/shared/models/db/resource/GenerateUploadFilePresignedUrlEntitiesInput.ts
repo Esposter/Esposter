@@ -5,13 +5,15 @@ import { ASSET_HASH_REGEX, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export const generateUploadFilePresignedUrlEntitiesInputSchema = z.object({
-  // `size` is what the storage quota reserves against, so it is bounded at the input boundary rather than Trusted: a
-  // Negative or non-finite declaration would decrement the counter and bypass the quota entirely. It is the client's
-  // Own claim — a presigned write url carries no length constraint — so the object-create notification is what Replaces
-  // It with the stored object's real size. The array is bounded by the in-flight hold cap rather than The generic read
-  // Limit: a batch above the cap can never pass the reserve however long the client waits. `hash` is the address the
-  // File is stored under, and it is unique within the batch because two identical files Reserve one object between
-  // Them. See openspec/specs/resource/storage-quotas/design.md
+  // `size` is what the storage quota reserves against, so it is bounded at the input boundary rather than trusted.
+  // A negative or non-finite declaration would decrement the counter and bypass the quota entirely.
+  // It is the client's own claim: a presigned write url carries no length constraint.
+  // So the object-create notification is what replaces it with the stored object's real size.
+  // The array is bounded by the in-flight hold cap rather than the generic read limit.
+  // A batch above the cap can never pass the reserve however long the client waits.
+  // `hash` is the address the file is stored under, and it is unique within the batch.
+  // Two identical files reserve one object between them.
+  // See openspec/specs/resource/storage-quotas/design.md
   files: createUniqueArraySchema(
     z.object({
       ...fileEntitySchema.pick({ mimetype: true }).shape,

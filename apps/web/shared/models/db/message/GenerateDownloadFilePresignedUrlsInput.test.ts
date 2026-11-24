@@ -17,9 +17,9 @@ describe("generateDownloadFilePresignedUrlsInputSchema", () => {
     });
   });
 
-  // The batch mints one presigned read url per entry, so two entries naming one blob spend two of the read limit's
-  // Slots on The same url. Keying the uniqueness on `id` rather than on the whole entry is what catches it — the same
-  // Blob Under a second filename is still the same blob
+  // The batch mints one presigned read url per entry, so two entries naming one blob spend two read limit slots.
+  // Two slots on the same url are wasted, so the uniqueness is keyed on `id` rather than on the whole entry.
+  // The same blob under a second filename is still the same blob
   test("rejects two entries naming the same file", () => {
     expect.hasAssertions();
 

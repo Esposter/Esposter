@@ -13,8 +13,8 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Visual extends AItemEntity implements ItemEntityType<VisualType>, LayoutItem {
-  // What a screen reader reads for the visual on the published dashboard, in place of its label. Empty, the label
-  // Stands
+  // What a screen reader reads for the visual on the published dashboard, in place of its label.
+  // Empty, the label stands in
   altText = "";
   chart = new Chart();
   dataset?: undefined | VisualDatasetBinding;
@@ -43,8 +43,9 @@ export const visualSchema = z
     chart: chartSchema,
     dataset: visualDatasetBindingSchema.optional(),
     isAutoHeight: z.boolean(),
-    // A group's visuals are this schema again, so the tree nests by reference. The return type is written out because
-    // The schema's own type is what the getter is part of, so it cannot be inferred
+    // A group's visuals are this schema again, so the tree nests by reference.
+    // The return type is written out, since the schema's own type is what the getter is part of.
+    // So it cannot be inferred
     get visuals(): z.ZodOptional<z.ZodArray<z.ZodType<ToData<Visual>>>> {
       return z.array(visualSchema).max(MAX_RESOURCE_CONTENT_SIZE).optional();
     },

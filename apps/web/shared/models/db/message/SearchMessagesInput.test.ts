@@ -18,8 +18,8 @@ describe("searchMessagesInputSchema", () => {
     expect(searchMessagesInputSchema.safeParse({ filters: [filter], query: "", roomId }).success).toBe(true);
   });
 
-  // Each filter is one condition the search ANDs in, so two of a type narrow together — rejecting the second would
-  // Fail the whole search on a second `has:` chip
+  // Each filter is one condition the search ANDs in, so two of a type narrow together.
+  // Rejecting the second would fail the whole search on a second `has:` chip
   test("accepts two filters of one type", () => {
     expect.hasAssertions();
 
@@ -32,8 +32,9 @@ describe("searchMessagesInputSchema", () => {
     ).toBe(true);
   });
 
-  // A cursor holds one value per key of the order its search runs in, so one of another length is not a cursor this
-  // Search Issued, and a read that named an in: filter by a value other than a room id is not a search of rooms at all
+  // A cursor holds one value per key of the order its search runs in.
+  // So one of another length is not a cursor this search issued.
+  // A read that named an in: filter by a value other than a room id is not a search of rooms at all
   test("refuses a cursor that does not match the order of its search, and an in: filter that names no room", () => {
     expect.hasAssertions();
 

@@ -12,8 +12,8 @@ import {
 import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
-// The order a search reads in depends on its query, so its cursor is parsed for that order at the boundary: a cursor
-// The Search did not issue for it is a bad request
+// The order a search reads in depends on its query, so its cursor is parsed for that order at the boundary.
+// A cursor the search did not issue for it is a bad request
 export const searchMessagesInputSchema = z
   .object({
     cursor: encodedPageCursorSchema,
@@ -27,8 +27,8 @@ export const searchMessagesInputSchema = z
   .refine(({ filters, query }) => !checkIsSearchQueryEmpty(query, filters), {
     error: "A search needs either text or a filter",
   })
-  // An `in:` filter names a room, so its value is a room id and nothing else, or a search would read rooms it did not
-  // Name
+  // An `in:` filter names a room, so its value is a room id and nothing else.
+  // Anything else would let a search read rooms it did not name
   .refine(({ filters }) => filters.every(({ type, value }) => type !== FilterType.In || typeof value === "string"), {
     error: "An in: filter names a room",
   })

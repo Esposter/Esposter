@@ -12,18 +12,20 @@ import {
 import { createUniqueArraySchema, getResult, jsonDateParse, sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
-// A poll's body is the JSON its own schema reads, bounds included. It is never sanitized: the sanitizer would rewrite
-// That JSON (an ampersand becomes an entity and markup is stripped), so the room would hold a poll its sender did not
-// Write. It is read the way the poll's viewer reads it, by jsonDateParse, so a poll the server accepts is one the
-// Viewer renders
+// A poll's body is the JSON its own schema reads, bounds included.
+// It is never sanitized, since the sanitizer would rewrite it: an ampersand becomes an entity and markup is stripped.
+// So the room would hold a poll its sender did not write.
+// It is read the way the poll's viewer reads it, by jsonDateParse.
+// So a poll the server accepts is one the viewer renders
 const checkIsPollMessage = (message: string | undefined) =>
   message !== undefined &&
   // A body that is not JSON is no poll, which the schema refuses as undefined
   pollMessageContentSchema.safeParse(getResult((): unknown => jsonDateParse(message)).unwrapOr(undefined)).success;
 
 // A message as its sender composes it: text, attachments the uploads reserved, the message it replies to, and the type
-// A member may post. At least one of text or attachments is required. Text is sanitized on the way in, and either kind
-// Of Body is bounded by MESSAGE_MAX_LENGTH as it arrives and again as it is stored, since sanitizing can lengthen text
+// A member may post. At least one of text or attachments is required. Text is sanitized on the way in.
+// Either kind of body is bounded by MESSAGE_MAX_LENGTH as it arrives.
+// It is bounded again as it is stored, since sanitizing can lengthen text
 export const createMessageInputSchema = refineMessageSchema(
   z
     .object({
