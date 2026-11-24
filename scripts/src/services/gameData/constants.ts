@@ -37,18 +37,19 @@ export const GAME_DATA_KEYS_PATH: string = join(dirname(GAME_DATA_LOCK_PATH), GA
 // The names of the two nested constants that file exports, which its readers find them by
 export const GAME_DATA_KEYS_NAME = `${GAME_DATA_PRODUCT_NAME}Keys`;
 export const GAME_DATA_INDEX_KEYS_NAME = `${GAME_DATA_PRODUCT_NAME}IndexKeys`;
-// Where a step reads what another step published: the dev environment's hosted origin, which holds every object the
-// Lock Names as prod does
+// Where a step reads what another step published is the dev environment's hosted origin.
+// It holds every object the lock names, as prod does.
 export const GAME_DATA_DEV_BASE_URL: string = HostedAssetOriginMap[CloudflareEnvironment.Development];
-// The catalogue's record, which `genshin:data authored` publishes and `fitAreaOutlines` publishes outlined
-// `isolatedDeclarations` demands
-// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation this template literal would otherwise infer
+// The catalogue's record, which `genshin:data authored` publishes and `fitAreaOutlines` publishes outlined.
+/* oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this
+   template literal would otherwise infer */
 export const CATALOGUE_KEY: string = `${GameDataset.Catalogue}/catalogue`;
 // The login's age rating, the one authored record of a dataset a fit otherwise publishes, so it is published as its key
 export const AGE_RATING_KEY = "login/ageRating";
 // The domains' challenge levels, which `genshin:data authored` publishes from their committed file for the world's gate
 export const DOMAIN_CHALLENGE_LEVELS_KEY = "domainChallengeLevels/levels";
-// The folder the login's music recordings are written to and published from: a working copy beside the machine's other
-// Data, Since the lock names every recording once it is published, so no recording is kept in the repository
+// The folder the login's music recordings are written to and published from.
+// It is a working copy beside the machine's other data.
+// The lock names every recording once it is published, so no recording is kept in the repository.
 export const LOGIN_RECORDINGS_FOLDER = "login-recordings";
 export const LOGIN_RECORDINGS_DIRECTORY: string = join(DATA_ROOT, LOGIN_RECORDINGS_FOLDER);

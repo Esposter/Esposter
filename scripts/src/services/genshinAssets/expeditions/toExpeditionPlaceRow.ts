@@ -12,10 +12,13 @@ import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewIte
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One place as the world reads it. Its Adventure Rank is the highest rank condition it names, its statue a point of the
-// Overworld, its quest a quest id, and each duration's items are its reward preview's, with a count drawn from its
-// Range. A condition of another kind, a statue in another scene or a preview the table lacks is an error, since the
-// Rule would Otherwise open the place wrongly. The place is in the region the caller names
+// One place as the world reads it.
+// Its Adventure Rank is the highest rank condition it names.
+// Its statue is a point of the overworld, and its quest a quest id.
+// Each duration's items are its reward preview's, with a count drawn from its range.
+// A condition of another kind, a statue in another scene or a preview the table lacks is an error.
+// Otherwise the rule would open the place wrongly.
+// The place is in the region the caller names.
 export const toExpeditionPlaceRow = (
   row: ExcelExpeditionDataRow,
   rewardPreviews: ReadonlyMap<number, ExcelRewardPreviewRow>,

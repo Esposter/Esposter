@@ -5,10 +5,11 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toNodeSpan } from "#src/services/genshinAssets/fit/toNodeSpan";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Each layer's share at every node of a grid, from points of the ground each in one layer. A point counts toward Its
-// Four surrounding nodes by how near it stands to each, as a bilinear read gives it back, so a node holds the shares Of
-// The ground within a cell of it. A node no point reaches takes the shares of its nearest reached node through the Grid
-// (a breadth-first flood), and every share is kept to the decimals a fit keeps
+// Each layer's share at every node of a grid, from points of the ground each in one layer.
+// A point counts toward its four surrounding nodes by how near it stands to each, as a bilinear read gives it back.
+// So a node holds the shares of the ground within a cell of it.
+// A node no point reaches takes the shares of its nearest reached node through the grid (a breadth-first flood).
+// Every share is kept to the decimals a fit keeps.
 export const computeGroundLayerField = (
   points: readonly { layer: string; x: number; z: number }[],
   { cellSize, origin, size }: Except<GroundLayerField, "layers">,

@@ -1,8 +1,9 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A reward's count as its preview spells it: one number for a fixed count, or two joined by a semicolon for the least
-// And The most a claim may draw. A count with an empty part or more than two parts, one that is not whole, or one whose
-// Least Is above its most, is an error, since Number reads an empty part as zero
+// A reward's count as its preview spells it: one number for a fixed count.
+// Two numbers joined by a semicolon are the least and the most a claim may draw.
+// A count with an empty part is an error, since Number reads an empty part as zero.
+// So is a count with more than two parts, one that is not whole, or one whose least is above its most.
 export const parseRewardCount = (count: string): { maxCount: number; minCount: number } => {
   const parts = count.split(";");
   const [least, most = least] = parts;

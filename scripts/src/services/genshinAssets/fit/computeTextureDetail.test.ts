@@ -37,9 +37,11 @@ describe("detail closure", () => {
   // The metres a texel of a test texture spans, a base map's
   const METRES_PER_TEXEL = 2;
 
-  // The luminance the engine draws from its octaves: each a unit-amplitude mx noise at the octave's world frequency,
-  // Scaled By its amplitude, as `createSurfaceDetailNode` multiplies the colour by it. An offset moves the noise to
-  // Another Realisation of the same statistics, so an export and its reproduction share no texel
+  // The luminance the engine draws from its octaves.
+  // Each is a unit-amplitude mx noise at the octave's world frequency, scaled by its amplitude.
+  // `createSurfaceDetailNode` multiplies the colour by it.
+  // An offset moves the noise to another realisation of the same statistics.
+  // So an export and its reproduction share no texel.
   const createNoiseLuminance =
     (octaves: { amplitude: number; frequency: number }[], offset: number) =>
     (x: number, y: number): number => {

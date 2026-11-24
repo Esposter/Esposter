@@ -7,8 +7,8 @@ import { toExpeditionPlaceRow } from "#src/services/genshinAssets/expeditions/to
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { ExpeditionRegion } from "genshin-world";
 
-// Mondstadt's expedition places, each read from the game's expedition table and its reward previews in the text dump,
-// And Each placed in Mondstadt's region
+// Mondstadt's expedition places, each read from the game's expedition table and its reward previews in the text dump.
+// Each is placed in Mondstadt's region.
 export const readMondstadtExpeditionPlaces = (): ExpeditionPlaceRow[] => {
   const rewardPreviews = new Map(
     readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData").map((preview) => [preview.id, preview]),

@@ -10,17 +10,18 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
-// Every mesh's dump, read from the folder of the CAB it lies in: a block's meshes are exported folder by folder per
-// CAB, So a mesh's name names it only within its own CAB, and a mesh of another CAB with the same name is never read in
-// Its place
+// Every mesh's dump, read from the folder of the CAB it lies in.
+// A block's meshes are exported folder by folder per CAB.
+// So a mesh's name names it only within its own CAB.
+// A mesh of another CAB with the same name is never read in its place.
 export const readMeshDumps = async (
   meshes: readonly ResolvedObject[],
   names: ReadonlyMap<string, string>,
   directory: string,
 ): Promise<Map<string, DumpedMesh>> => {
   for (const block of new Set(meshes.map((mesh) => mesh.block)))
-    // Blocking run that finishes before the next block starts
-    // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio exports one block at a time, each export a
+    /* oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio exports one block at a time, each export
+       a blocking run that finishes before the next block starts */
     await exportBlockBySource(block, [AssetType.Mesh], AnimeStudioExportType.Json, directory);
   const entries = await Promise.all(
     meshes.map(async (mesh): Promise<[string, DumpedMesh]> => {

@@ -12,11 +12,13 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
-// Each ground layer's colour as a component's terrain shows it: the mean of its base maps' texels within the terrain
-// Radius of the world's origin that stand on a cell its tile paints in that layer (`readGroundLayerCells`), as hex,
-// Read a cell at a time, each cell's mean weighing its texels. A texel's column runs along the game's x and its row
-// From the Top down the game's z, as the terrain mesh's UVs lay it (`formatTerrainObj`); a tile with no base map, or a
-// Layer no Texel stands on, gives none
+// Each ground layer's colour is the mean of its base maps' texels, as a component's terrain shows it, in hex.
+// Only texels within the terrain radius of the world's origin count.
+// Those count only on a cell its tile paints in that layer (`readGroundLayerCells`).
+// Each cell is read at a time, and each cell's mean weighs its texels.
+// A texel's column runs along the game's x, and its row from the top down the game's z.
+// The terrain mesh's UVs lay it out that way (`formatTerrainObj`).
+// A tile with no base map, or a layer no texel stands on, gives none.
 export const fitGroundLayerColours = async (
   component: DerivedAssetComponent,
   tiles: GroundLayerCellTile[],
@@ -28,8 +30,8 @@ export const fitGroundLayerColours = async (
   for (const { cells, column, name, resolution, row } of tiles) {
     const baseMap = join(textureDirectory, `${name}${TERRAIN_BASE_MAP_SUFFIX}.png`);
     if (!existsSync(baseMap)) continue;
-    // Time, so the tiles' raw buffers never stack in memory
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one tile's base map is decoded and held at a
+    /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one tile's base map is decoded and
+       held at a time, so the tiles' raw buffers never stack in memory */
     const { data, info } = await sharp(baseMap).raw().toBuffer({ resolveWithObject: true });
     const cellMetres = TERRAIN_TILE_SIZE / resolution;
     const sums = new Float64Array(cells.length * 3);

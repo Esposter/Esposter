@@ -8,14 +8,16 @@ import { toHex } from "#src/services/shared/toHex";
 
 // The most tones a surface's textures are split into, each a cluster of their colours
 const SURFACE_TONE_COUNT = 3;
-// The most samples the palette's k-means reads: a clustering walks every sample at each of its steps, so a surface's
-// Samples past this many are read at an even stride, each still weighted by its own area
+// The most samples the palette's k-means reads.
+// A clustering walks every sample at each of its steps.
+// So a surface's samples past this many are read at an even stride.
+// Each is still weighted by its own area.
 const PALETTE_SAMPLE_LIMIT = 20000;
 
-// A surface's colour as the mean of its samples weighted by their area, and its palette: its samples grouped by k-means
-// Over their colours (`clusterColours`, seeded darkest first), each tone the weighted mean of its samples with the
-// Share Of the weight its palette samples hold. Samples of no weight count for nothing, and the samples must hold some
-// Weight
+// A surface's colour is the mean of its samples weighted by their area.
+// Its palette groups its samples by k-means over their colours (`clusterColours`, seeded darkest first).
+// Each tone is the weighted mean of its samples, with the share of the weight its palette samples hold.
+// Samples of no weight count for nothing, and the samples must hold some weight.
 export const computeSurfaceTones = (
   samples: readonly SurfaceSample[],
   count: number = SURFACE_TONE_COUNT,

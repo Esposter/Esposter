@@ -12,9 +12,10 @@ export interface ComposedGroundPieceCheck {
   isHeld: boolean;
 }
 
-// Each held piece of a region read through the world's own composition: the same function lays the region's pieces over
-// Windrise's base that the world lays, so a piece's composed bar is the RMS of that height less the tiles at its
-// Samples, And it holds when at or under the gate its own fit gave it
+// Each held piece of a region is read through the world's own composition.
+// The same function lays the region's pieces over Windrise's base that the world lays.
+// So a piece's composed bar is the RMS of that height less the tiles at its samples.
+// It holds when at or under the gate its own fit gave it.
 export const checkComposedGroundPieces = (
   base: [RegionGround, ...RegionGround[]],
   region: { areas: { id: string; outline: { x: number; z: number }[] }[]; id: string },

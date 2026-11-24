@@ -38,13 +38,17 @@ import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// One component's closure out of the game's blocks: the layout of each of its roots' and spawned prefabs' blocks dumped
-// Per file, then every object its roots reach down their children, the meshes and materials those draw and the textures
-// Each material samples, each pointer resolved through its own file's external references and exported from the block
-// Holding it by its exact name. Its meshes are OBJ, with every field beside each as JSON (the skin and bind poses an
-// OBJ Drops among them), its textures PNG and its materials JSON, grouped by type. Assets no pointer reaches are
-// Exported By the component's name pattern, and a part of the open world's streams and terrain beside them. What was
-// Reached is Returned as counts, with every pointer that could not be resolved
+// One component's closure out of the game's blocks.
+// The layout of each of its roots' and spawned prefabs' blocks is dumped per file.
+// Then every object its roots reach down their children.
+// Those are the meshes and materials they draw, and the textures each material samples.
+// Each pointer is resolved through its own file's external references.
+// It is exported from the block holding it, by its exact name.
+// Its meshes are OBJ, with every field beside each as JSON (the skin and bind poses an OBJ drops among them).
+// Its textures are PNG and its materials JSON, grouped by type.
+// Assets no pointer reaches are exported by the component's name pattern.
+// A part of the open world's streams and terrain is exported beside them.
+// What was reached is returned as counts, with every pointer that could not be resolved.
 export const extractComponent = async (component: DerivedAssetComponent): Promise<string> => {
   const options = DerivedAssetComponentMap[component];
   const componentRoots = await readComponentRoots(component);
@@ -58,8 +62,9 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
     .join("|");
   const directory = getComponentDirectory(component);
   const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
-  // The export's three folders are built beside their live copies and swapped in once the run has finished, so a run
-  // That Fails leaves the export it would have replaced in place
+  // The export's three folders are built beside their live copies.
+  // They are swapped in once the run has finished.
+  // So a run that fails leaves the export it would have replaced in place.
   return withStagedFolders(
     { assets: directory.assets, layout: directory.layout, world: directory.world },
     async (staged) => {
@@ -70,8 +75,8 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
         for (const block of blocks) {
           if (dumpedBlocks.has(block)) continue;
           dumpedBlocks.add(block);
-          // Blocking run that finishes before the next block starts
-          // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time, each read a
+          /* oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time, each read a
+             blocking run that finishes before the next block starts */
           await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, stagedDirectory.layout);
         }
       };
@@ -80,8 +85,8 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
           ({ block }) => block,
         ),
       );
-      // A capital's or a sub-area's open world is derived before the closure, since the prefabs it places are roots the
-      // Closure Starts from
+      // A capital's or a sub-area's open world is derived before the closure.
+      // The prefabs it places are roots the closure starts from.
       const derived = options.isCapitalWorld
         ? await deriveCapitalWorld(component, stagedDirectory, dumpLayouts, cabMap)
         : undefined;
@@ -104,8 +109,8 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
         AnimeStudioExportType.Raw,
       );
       const materialDirectory = join(stagedDirectory.assets, AssetType.Material);
-      // A material is exported under its name, so of several sharing one, which the JSON holds and which file its
-      // Texture Pointers resolve through is unknown
+      // A material is exported under its name, so of several sharing one, it is unknown which the JSON holds.
+      // It is also unknown which file its texture pointers resolve through.
       const nameMaterialsMap = Map.groupBy(
         drawn.assets.filter(({ type }) => type === AssetType.Material),
         ({ name }) => name,
@@ -145,8 +150,8 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
             ],
             GENSHIN_ANIMESTUDIO_OPTIONS,
           );
-      // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements
-      // From it
+      // A set-by-hand world is exported here.
+      // A derived one was exported by its derivation, which read the placements from it.
       if (options.world) await exportWorld(options.world, stagedDirectory.world);
       const worldLines = world ? await extractWorld(world, stagedDirectory) : [];
       // A derived world's names come from the asset-path index, so its stamp names the index's commit and SHA-256

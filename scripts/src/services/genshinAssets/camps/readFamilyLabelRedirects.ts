@@ -7,9 +7,11 @@ import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
-// The title each family label redirects to on the wiki, read from the cache file, which records every label asked about
-// So that a label added to the map later is fetched once. Labels the cache lacks are fetched in batches unless a dry
-// Run, Which fetches nothing and so maps only the labels already cached
+// The title each family label redirects to on the wiki, read from the cache file.
+// That file records every label asked about.
+// So that a label added to the map later is fetched once.
+// Labels the cache lacks are fetched in batches unless this is a dry run.
+// A dry run fetches nothing and so maps only the labels already cached.
 export const readFamilyLabelRedirects = async (
   labels: readonly string[],
   isDryRun: boolean,
@@ -21,8 +23,8 @@ export const readFamilyLabelRedirects = async (
   if (uncached.length > 0 && !isDryRun) {
     for (let start = 0; start < uncached.length; start += FAMILY_LABEL_REDIRECT_BATCH_SIZE) {
       const batch = uncached.slice(start, start + FAMILY_LABEL_REDIRECT_BATCH_SIZE);
-      // Enemy pages are
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one batch is asked for at a time, as the
+      /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one batch is asked for at a time, as the
+         enemy pages are */
       Object.assign(cached, await fetchRedirectBatch(batch));
     }
     mkdirSync(WIKI_CACHE_DIRECTORY, { recursive: true });
