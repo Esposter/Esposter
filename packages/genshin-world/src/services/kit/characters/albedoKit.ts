@@ -130,7 +130,7 @@ const consumeFatalReckoningBonus = (context: KitContext): number => {
 // The record plays that first hit, and the kit cannot change it per cast.
 // Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field.
 // Constellation 6's DMG bonus does too, read off the team's Crystallize shield and the Moondrifts the field holds.
-// The Silver Isotoma clause an earlier note named for Constellation 4 is not built.
+// The Silver Isotoma clause of Constellation 4 is not built.
 // The gcsim `v2.47.2` does not model it, and the wiki text was not checked.
 export const createAlbedoKitBehaviour = ({
   readHit,
