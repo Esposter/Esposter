@@ -17,10 +17,11 @@ const setHeldCount = (
 const holdsLevelItems = (heldCounts: Readonly<Record<string, number>>, items: OfferingLevelItem[]): boolean =>
   items.every(({ itemCount, itemId }) => (heldCounts[itemId] ?? 0) >= itemCount);
 
-// Offers items to an offering: each item offered joins the count held of it, and each next level whose every item the
-// Counts now hold is reached in turn, taking each of its items off. The levels reached are returned in order so the
-// Caller Pays each one. Past the last level the items are held with no level to reach. A level naming no item is
-// Reached at once, So offering none starts an offering at its first level
+// Offers items to an offering: each item offered joins the count held of it.
+// Each next level whose every item the counts now hold is reached in turn, taking each of its items off.
+// The levels reached are returned in order, so the caller pays each one.
+// Past the last level the items are held with no level to reach.
+// A level naming no item is reached at once, so offering none starts an offering at its first level.
 export const offerItems = <TLevel extends OfferingLevel>(
   progress: OfferingProgress<TLevel>,
   offeredItems: OfferingLevelItem[],

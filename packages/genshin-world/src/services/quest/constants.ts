@@ -17,9 +17,9 @@ export const QUEST_BEAM_RADIUS = 0.6;
 export const QUEST_BEAM_COLOR = "#ffd780";
 export const QUEST_BEAM_BOTTOM = -200;
 export const QUEST_BEAM_TOP = 1000;
-// Provisional: how far, in metres, the navigated objective's ground stands above or below the character's before the
-// Tracker names it higher or lower. No reference shows the line at a small height, so it is a climb's height rather
-// Than A step's
+// Provisional: how far, in metres, the navigated objective's ground stands above or below the character's.
+// Beyond that height the tracker names it higher or lower.
+// No reference shows the line at a small height, so it is a climb's height rather than a step's.
 export const QUEST_MARK_MIN_HEIGHT = 10;
 // The translucent white the quest screen's shared ornament dividers are filled with
 export const QUEST_DIVIDER_FILL = "rgb(255 255 255 / 0.3)";

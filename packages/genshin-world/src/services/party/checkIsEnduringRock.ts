@@ -7,10 +7,12 @@ import { Element } from "#src/models/Element";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { checkIsNearMoondrift } from "#src/services/party/checkIsNearMoondrift";
 
-// Whether Enduring Rock is in effect for a combatant: the deployed team holds Geo's resonance, and either a shield is
-// Live On the team, which protects the character on the field, or a Moondrift stands near that character, which gives
-// The team A shield's defence as the Elemental Resonance page of the Genshin Impact Wiki has it. The position is the
-// Character's On the field, and without it no Moondrift counts
+// Whether Enduring Rock is in effect for a combatant: the deployed team holds Geo's resonance.
+// Either of two things must also hold.
+// A shield live on the team protects the character on the field.
+// A Moondrift near that character gives the team a shield's defence.
+// The Elemental Resonance page of the Genshin Impact Wiki has it so.
+// The position is the character's on the field, and without it no Moondrift counts.
 export const checkIsEnduringRock = (
   combatant: Pick<Combatant, "elementalResonances">,
   effects: readonly KitEffect[],

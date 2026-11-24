@@ -17,9 +17,9 @@ const getReachedSteps = (quest: Quest, progress: QuestProgress | undefined) => {
   return quest.steps.slice(0, progress.stepIndex + 1);
 };
 
-// The Interact targets the quests name, every step's as named and those of the steps a quest has reached as reached. A
-// Step Still ahead of a quest in progress names its target without reaching it, which is how a transport point stays
-// Hidden Until its step is carried
+// The Interact targets the quests name are every step's as named, and those of the steps reached.
+// A step still ahead of a quest in progress names its target without reaching it.
+// That is how a transport point stays hidden until its step is carried.
 export const computeQuestStepTargets = (
   quests: readonly Quest[],
   questProgressMap: ReadonlyMap<string, QuestProgress>,

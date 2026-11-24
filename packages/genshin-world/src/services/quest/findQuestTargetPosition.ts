@@ -5,10 +5,10 @@ import type { GroundPoint } from "genshin-engine";
 import { checkIsPlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { findGoToPlace } from "#src/services/quest/findGoToPlace";
 
-// Where an objective's target stands among the regions in reach, for the navigation marker to point at: a go-to place
-// It Names, the resident or landmark it names, or the resident whose talk it names, at the spot they are shown at now.
-// An enemy Or an item to collect is placed by no region data yet, and neither is a target out of reach or a resident
-// Absent at this Hour, so none of them is found
+// Where an objective's target stands among the regions in reach, for the navigation marker to point at.
+// A go-to place names a resident or landmark, or the resident whose talk it names, at the spot they are shown at now.
+// An enemy or an item to collect is placed by no region data yet.
+// Neither is a target out of reach, or a resident absent at this hour, so none of them is found.
 export const findQuestTargetPosition = (
   regionDataMap: ReadonlyMap<string, RegionData>,
   residentSpots: ReadonlyMap<string, ResidentSpot>,

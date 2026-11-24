@@ -2,9 +2,9 @@ import type { MenuIconGlyph } from "#src/models/menu/MenuIconGlyph";
 
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 
-// Each list's whole mark, traced from the same box as its bright parts with the ink share lowered to 0.2, so its paler
-// Parts are kept: the Archon mark's inner diamond, the Story mark's diamond and the commission mark's points. The tab
-// Lays It under the bright parts at the paler parts' share of the bright, read off the still as 0.24 to 0.4
+// Each list's whole mark is traced from the same box as its bright parts, with the ink share lowered to 0.2.
+// Its paler parts are kept: the Archon mark's inner diamond, the Story mark's diamond and the commission mark's points.
+// The tab lies under the bright parts at the paler parts' share of the bright, read off the still as 0.24 to 0.4.
 export const QuestCategoryShadeGlyphMap: Readonly<Record<QuestCategory, MenuIconGlyph>> = {
   [QuestCategory.Archon]: {
     height: 64,
