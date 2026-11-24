@@ -21,7 +21,7 @@ export const useWorldQuestTargets = ({ mapCamera, windrise }: WorldQuestTargetsO
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
   // A quest's go-to step is reached once the character steps into its place's radius, so each place it steps into is a
-  // Go-to
+  // `go-to`
   watch(mapCamera, (newCamera, oldCamera) => {
     if (!windrise.value) return;
     for (const questEvent of getEnteredGoToEvents([...windrise.value.regionDataMap.values()], oldCamera, newCamera))
