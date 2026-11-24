@@ -18,8 +18,10 @@ import { definePlugin } from "@oxlint/plugins";
  * it is reported only on a line carrying on the sentence of the `//` line above, when its lowercase-first spelling
  * is a code-shaped identifier in the same file and its own spelling is not: a sentence start may open on a proper
  * name the file binds camel-cased (`PageBuilder`, imported as `pageBuilder`), and a single lowercase word (`result`)
- * reads the same capitalised as the prose word. A tool name or a path the file never binds stays with the comments
- * ledger's grep, since recognising one would take a roster of the repo's tools.
+ * reads the same capitalised as the prose word. A line opening on a capitalised URL or path is reported by its shape
+ * alone: a scheme (`Https://`), two slashes (`Openspec/specs/`) or a slash before a file extension (`Candace/cons.go`),
+ * which `And/or` never has. A tool name the file never binds stays with the comments ledger's grep, since recognising
+ * one would take a roster of the repo's tools.
  *
  * `require-directive-reason` enforces the oxlint skill's rule that every disable directive states its reason after
  * ` -- `. It reads the comment alone — the directive syntax both linters share — so it carries no list at all. A

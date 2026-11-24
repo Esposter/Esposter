@@ -5,6 +5,7 @@ import {
   CODE_SHAPED_REGEX,
   FUNCTION_PREFIX_REGEX,
   MESSAGE,
+  OPENING_CAPITALISED_PATH_REGEX,
   OPENING_CAPITALISED_WORD_REGEX,
 } from "#src/services/oxlint/comments/constants";
 import { defineRule } from "@oxlint/plugins";
@@ -19,8 +20,14 @@ export const noCapitalizedIdentifier: Rule = defineRule({
       "Program:exit"() {
         const comments = context.sourceCode.getAllComments();
         for (const [index, comment] of comments.entries()) {
+          if (comment.type !== "Line") continue;
+          if (OPENING_CAPITALISED_PATH_REGEX.test(comment.value)) {
+            context.report({ loc: comment.loc, message: MESSAGE });
+            continue;
+          }
+
           const word = OPENING_CAPITALISED_WORD_REGEX.exec(comment.value)?.groups?.word;
-          if (comment.type !== "Line" || word === undefined || identifierNames.has(word)) continue;
+          if (word === undefined || identifierNames.has(word)) continue;
 
           const name = `${word.charAt(0).toLowerCase()}${word.slice(1)}`;
           if (

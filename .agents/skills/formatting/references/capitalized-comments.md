@@ -8,7 +8,8 @@ Read when oxlint's `capitalized-comments` fires on a `//` line, or after rewrapp
 
 **The decidable half is `comments/no-capitalized-identifier`** (`scripts/src/oxlint/comments.ts`). It reports a
 line opening on a capitalised function or binding name wherever that name is declared (`useEditor` written with a capital), and a mid-sentence line opening on a name the same file binds
-lowercase-first. It cannot report a tool, a path, or an unprefixed name declared in another file, since
+lowercase-first, and a line opening on a capitalised URL or path, known by its shape (`Https://`, `Openspec/specs/`,
+`Candace/cons.go`). It cannot report a tool or an unprefixed name declared in another file, since
 recognising one would take a list of the repo's tools, so the grep below still owns those.
 
 **A rewrap refills one paragraph.** It reflows only the hard-wrapped paragraph that holds the long line, and never joins separate lines: a list item, a URL, a directive, or a sentence that ends its line keeps its own line. A word that loses its line start loses the capital the line start gave it, a word opening a sentence after a full stop keeps its capital wherever it lands, and a one-to-three-word line left mid-sentence goes back onto the line above when it fits there.

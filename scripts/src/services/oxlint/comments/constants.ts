@@ -3,8 +3,10 @@
 import { PRINT_WIDTH } from "@esposter/configuration/oxfmt";
 
 export const MESSAGE =
-  "A `//` line opens on a function or binding name capitalised into one that does not exist — `capitalized-comments` uppercases every line's first letter. Rewrap so the line opens on prose, or backtick the name; never lowercase it. See the formatting skill.";
+  "A `//` line opens on a function or binding name, a path or a URL capitalised into one that does not exist — `capitalized-comments` uppercases every line's first letter. Rewrap so the line opens on prose, or backtick the name or path, or lowercase the URL, which the rule exempts. See the formatting skill.";
 export const OPENING_CAPITALISED_WORD_REGEX: RegExp = /^\s*(?<word>[A-Z][\w$]*)/u;
+// A URL's scheme, a path of two slashes or a slash before a file extension, capitalised at the line front
+export const OPENING_CAPITALISED_PATH_REGEX: RegExp = /^\s*[A-Z][\w.-]*(?::\/\/|\/[\w.-]+\/|\/[\w-]+\.[a-z])/u;
 // A name no prose word can be: a capital, digit, `_` or `$` past its first character. A single lowercase word
 // (`result`, `value`) reads the same capitalised as the prose word does, so only this shape is decidable
 export const CODE_SHAPED_REGEX: RegExp = /^.[\w$]*[A-Z\d_$]/u;
