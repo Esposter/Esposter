@@ -10,9 +10,10 @@ import { getAcceptedTypes } from "#src/services/getAcceptedTypes";
 import { remintBlockNode } from "#src/services/remintBlockNode";
 import { JsonPatchOperationType } from "@esposter/shared";
 
-// Adds copies of the nodes, each with fresh ids, at an index of a slot, or none when the slot or the registry refuses
-// Them The copies are checked as the slot's children, not as the root's content; the node limit is the consumer's to
-// Check
+// Adds copies of the nodes, each with fresh ids, at an index of a slot.
+// It adds none when the slot or the registry refuses them.
+// The copies are checked as the slot's children, not as the root's content.
+// The node limit is the consumer's to check.
 export const pasteBlockNodes = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,

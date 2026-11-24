@@ -9,10 +9,10 @@ import { getBlockNode } from "#src/services/getBlockNode";
 import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 
-// Every slot in the document whose accepted types include the node's type: the root's content first, then each node's
-// Slots in layer-row order Never a slot inside the node itself, since a node cannot move into its own subtree, and none
-// For a pointer naming no node The slot keys are the registry's, since acceptance is a registry fact; the layer rows
-// Read the port's children
+// Every slot whose accepted types include the node's type: the root's content first, then each node's slots.
+// They come in layer-row order, and never include a slot inside the node itself.
+// A node cannot move into its own subtree. The slot keys are the registry's, since acceptance is a registry fact.
+// A pointer naming no node returns none.
 export const getAcceptingSlotPointers = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,

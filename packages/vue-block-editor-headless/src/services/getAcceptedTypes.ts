@@ -9,8 +9,8 @@ import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
 import { getSlotItems } from "#src/services/getSlotItems";
 import { parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
-// The types a slot accepts: the content types the registry's root declares for the root, and a node's slot the types
-// Its definition allows Or none when the pointer names no slot of a node
+// The types a slot accepts: the root types for the root content, and a node definition's types for its slot.
+// None when the pointer names no slot of a node.
 export const getAcceptedTypes = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,

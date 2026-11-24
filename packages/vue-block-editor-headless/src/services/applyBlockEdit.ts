@@ -5,9 +5,9 @@ import type { z } from "zod";
 import { applyPatches, getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { err, ok } from "neverthrow";
 
-// Applies a command's operations as one edit, then parses the patched document with the document's schema: when an
-// Operation cannot apply or the edited document is refused, the whole edit is refused and the document is unchanged The
-// Result is the schema's own type, so the patched document is typed by the parse rather than by a cast
+// Applies a command's operations as one edit, then parses the patched document with the document's schema.
+// When a patch cannot apply or the edited document is refused, the edit is refused whole and the document is unchanged.
+// The result is the schema's own type, so the patched document is typed by the parse rather than by a cast.
 export const applyBlockEdit = <TDocument>(
   schema: z.ZodType<TDocument>,
   document: TDocument,

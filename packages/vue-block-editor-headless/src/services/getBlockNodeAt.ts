@@ -4,9 +4,9 @@ import type { BlockNode } from "#src/models/BlockNode";
 import { getSlotItems } from "#src/services/getSlotItems";
 import { parseArrayIndex } from "@esposter/shared";
 
-// The node a list of segments names, read down the typed tree: an index into the list, then a slot and an index into
-// That slot's list, and so on A segment that names no node, or a prop that is not a slot the port returns, yields
-// Undefined
+// The node a list of segments names, read down the typed tree.
+// An index picks a node, and a props segment and a slot pick that node's slot list to read on.
+// A segment that names no node, or a prop that is not a slot the port returns, yields undefined.
 export const getBlockNodeAt = <TNode extends BlockNode>(
   nodes: readonly TNode[],
   segments: string[],
