@@ -118,7 +118,7 @@ jobs:
           pattern: vitest-timings
           merge-multiple: true
       # `default` beside `blob`, on purpose (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape).
-      # The timings reporter writes this shard's durations into `.vitest/timings/`, which the upload below sends on
+      # The timings reporter writes this shard's durations into `.vitest/timings/`, which the upload below sends on to `coverage-merge`, where they are merged into `.vitest/timings.json`
       - name: 🧪 Test
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
