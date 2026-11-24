@@ -22,6 +22,12 @@ const getShardIndexes = (durations: number[], count: number): number[] => {
   return shardIndexes;
 };
 
+// Code-unit order rather than `localeCompare`, so every shard sorts the same way whatever its locale
+const compareText = (left: string, right: string): number => {
+  if (left === right) return 0;
+  return left < right ? -1 : 1;
+};
+
 // Splits the files over the shards by the durations the last run recorded rather than by count, so the slowest shard
 // Is not the one that drew the heavy files. A file with no recorded duration counts as the mean of those with one, and
 // With no timings at all the hash split stands. Every shard reads the same timings, so each computes the same split
@@ -33,8 +39,10 @@ export class DurationSequencer extends BaseSequencer {
     /* oxlint-disable-next-line no-restricted-properties -- the timings carry no dates, and configuration builds before
        @esposter/shared so it cannot import jsonDateParse */
     const { projects } = testTimingsSchema.parse(JSON.parse(readFileSync(timingsPath, "utf8")));
-    // By path, so the order the files were found in cannot tell one shard's split from another's
-    const sortedFiles = files.toSorted((left, right) => (left.moduleId < right.moduleId ? -1 : 1));
+    // By path and then project, a total order: the order the files were found in cannot change a shard's split
+    const sortedFiles = files.toSorted(
+      (left, right) => compareText(left.moduleId, right.moduleId) || compareText(left.project.name, right.project.name),
+    );
     const durations = sortedFiles.map(
       ({ moduleId, project }) =>
         projects[project.name]?.files?.[relative(root, moduleId).replaceAll("\\", "/")]?.duration,
