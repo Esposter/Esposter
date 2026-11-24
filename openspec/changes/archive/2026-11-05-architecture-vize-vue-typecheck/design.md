@@ -14,6 +14,8 @@ The goal is one compiler for every check. A permanent split, with `tsrs` for Typ
 
 Rejected: switching the Vue packages to the TypeScript 7.1 beta's `tsc`. It works, but it makes the Vue checks depend on a beta classic compiler that the rest of the repo does not use, and it is the same dependency the `tsrs` path removes. `tsrs` runs the mapper on its own copy of that compiler, which the mapper's conformance tests also run against, so the Vue checks neither move the `typescript` package to the beta nor alias a second one.
 
+Rejected: `vize check`. It runs vize's own checker, which writes every file's virtual TypeScript and shards it across its own checker servers before a native checker sees any of it. The mapper hands `tsrs` one file at a time inside a program `tsrs` owns. On `genshin-world` the `typecheck` script finishes in seconds, while `vize check` held about two gigabytes in its own process for over ten minutes, never started the checker, and was stopped. It also does not find `tsrs` on its own: pnpm keeps the platform package in its global virtual store, so the run fails until `--corsa-path` names the executable. It reports nothing the mapper does not already report, its declarations are rejected below, and vize's README sends new projects to the mapper. `--show-virtual-ts` remains a debugging aid for a single file.
+
 ### What reads the classic `typescript` API
 
 The override is read by the tools below, which need the classic API. The list comes from a read of the lockfile and the tools' source, not from a run with the override removed:
