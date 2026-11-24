@@ -49,6 +49,7 @@ describe("messageModelMessageForwardSendButton", () => {
     clickSend(reopenedDialog);
     await flushPromises();
     answerForward();
+    await flushPromises();
     // The answered forward opens its destination, which must finish before the environment is torn down
     await waitForSynchronizedFunctions();
 
