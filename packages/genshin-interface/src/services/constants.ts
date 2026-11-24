@@ -123,17 +123,17 @@ export const GAME_SMOOTHSTEP_EASING = "cubic-bezier(0.333, 0, 0.667, 1)";
 // Plain button, so no recording gives a row's tint: these are the jump list's hover tint, and a press a step stronger
 export const GAME_ROW_HOVER = "rgb(255 255 255 / 0.2)";
 export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";
-// The reply kind's pill, a black of 0.26 over the scene at rest, the Wish and Talents screens' own. The dialogue sets
-// Its Own slate, `DIALOGUE_REPLY_REST`, since its reference's pill is not a black over the world. Its hover and press
-// Are provisional: no recording shows a reply under the pointer. They are the look a lit reply took before the kind, a
-// White pill with its words slate
+// The reply kind's pill, a black of 0.26 over the scene at rest, the Wish and Talents screens' own.
+// The dialogue sets its own slate, `DIALOGUE_REPLY_REST`, since its reference's pill is not a black over the world.
+// Its hover and press are provisional: no recording shows a reply under the pointer.
+// They are the look a lit reply took before the kind: a white pill with its words slate.
 export const GAME_REPLY_REST = "rgb(0 0 0 / 0.26)";
 export const GAME_REPLY_HOVER = "rgb(255 255 255 / 0.85)";
 export const GAME_REPLY_HOVER_INK = "#3b4255";
-// The dialogue's reply pill at rest: the reference's pill is a neutral slate, not the warm black a 0.26 of black keeps
-// Of The world beneath it, so the colour and alpha are the slate that matches its pill body over the world round it,
-// Swept At 0.65 and 0.8 on `dialogue-choices-replies` and scored worse. The kind's rest, GAME_REPLY_REST, stays for the
-// Others
+// The dialogue's reply pill at rest is a neutral slate, not the warm black that a 0.26 of black keeps over the world.
+// Its colour and alpha are the slate that matches its pill body over the world round it.
+// Alphas of 0.65 and 0.8 were swept on `dialogue-choices-replies` and scored worse.
+// The kind's rest, GAME_REPLY_REST, stays for the others.
 export const DIALOGUE_REPLY_REST = "rgb(32 40 57 / 0.72)";
 // The weapon screen's Ascend pill, lit gold, and its label faded over the gold, read off its reference
 // (`weapon-screen-ascend`)
@@ -149,12 +149,11 @@ export const COOKING_ARC_CENTRE_Y = 832;
 export const COOKING_ARC_RADIUS_X = 435;
 // The zones lie on a band drawn inside the bar's track, whose radius is this, in the stage's units
 export const COOKING_ZONE_RADIUS_Y = 90;
-// A mismatch over this share of an image is listed after the cases, one percent being the 99% likeness the screens are
-// Held to
+// A mismatch over this share of an image is listed after the cases.
+// One percent is the 99% likeness the screens are held to.
 export const MISMATCH_RATIO_BAR = 0.01;
 // The matcher's message for a shot that differs from its image, then the pixels that differ and their ratio
 export const MISMATCH_MESSAGE = "Screenshot does not match the stored reference.";
-// `isolatedDeclarations`
 // oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
 export const MISMATCH_DETAIL_REGEX: RegExp = /(?<pixels>\d+) pixels \(ratio (?<ratio>[\d.]+)\) differ/u;
 // The matcher's message for a shot with no image beside it

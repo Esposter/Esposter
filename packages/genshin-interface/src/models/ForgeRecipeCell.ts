@@ -1,5 +1,7 @@
-// One recipe the forge lists: the game's id for it, its name in the reader's language, its forge time in the game's
-// Words And whether the player may pick it: its Adventure Rank reached, and learned from its diagram where one opens it
+// One recipe the forge lists: the game's id for it and its name in the reader's language.
+// Its forge time is the game's words.
+// Whether the player may pick it depends on its Adventure Rank being reached.
+// Where its diagram opens it, that diagram must also be learned.
 export interface ForgeRecipeCell {
   forgeTimeLabel: string;
   id: number;

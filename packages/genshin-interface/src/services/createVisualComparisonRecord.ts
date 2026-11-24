@@ -7,9 +7,9 @@ import {
   MISSING_IMAGE_MESSAGE,
 } from "#src/services/constants";
 
-// The tally a visual suite keeps over its cases, in the one shape both suites read: a shot that differs from its image
-// Is Listed over the bar or counted within it, a missing image is counted apart, and any other failure (a render error,
-// A Timeout) is thrown
+// The tally a visual suite keeps over its cases, in the one shape both suites read.
+// A shot that differs from its image is listed over the bar or counted within it, and a missing image is counted apart.
+// Any other failure, a render error or a timeout, is thrown.
 export const createVisualComparisonRecord = (): VisualComparisonRecord => {
   // The mismatches over the bar, each with its title, and the cases counted apart from them
   const overBar: { pixels: number; ratio: number; title: string }[] = [];
