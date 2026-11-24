@@ -30,8 +30,8 @@ const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinS
 const gameDataBaseUrl = useRuntimeConfig().public.hostedAssets.baseUrl;
 // The signed-in player's picture and name, which the world's profile card shows
 const session = authClient.useSession();
-// The developer surface sits in a DevOnly block of the template, which a production build strips out, and its registry
-// Is handed up before the world mounts, so the world waits for it in development
+// The developer surface sits in a DevOnly block of the template, which a production build strips out.
+// Its registry is handed up before the world mounts, so the world waits for it in development.
 const devRegistry = shallowRef<DevRegistry>();
 const isWorldReady = computed(() => !IS_NUXT_DEVELOPMENT || devRegistry.value !== undefined);
 // The save the world last wrote, which the developer's save commands read. A change they make is handed back to the

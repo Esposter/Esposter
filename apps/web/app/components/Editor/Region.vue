@@ -37,9 +37,9 @@ const isReversed = computed(() => region.edge === RegionEdge.Bottom || region.ed
 const isResizable = computed(
   () => region.presentation === RegionPresentation.Docked && region.minimumSize < region.maximumSize,
 );
-// A region tabbed by its panels scrolls inside the panel it shows, so its wrapper only clips. Any other region's
-// Wrapper is its body, full-bleed in every orientation: each panel pads what it draws, so the body that holds it adds
-// No padding
+// A region tabbed by its panels scrolls inside the panel it shows, so its wrapper only clips.
+// Any other region's wrapper is its body, full-bleed in every orientation.
+// Each panel pads what it draws, so the body that holds it adds no padding.
 const regionBodyClass = computed(() => (region.panels.length > 1 ? "of-hidden" : "ui-region-body"));
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));
 // An inline inset beats the `inset-y-0` class the overlay map gives a column, so that map stays as it is
