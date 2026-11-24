@@ -1,8 +1,8 @@
 import type { WordFilterFormData } from "#src/models/message/moderation/WordFilterFormData";
 
 // The save of a word filter form, applied to the filter the room holds now. A field the reader did not change takes
-// What The room holds, and each word the reader added or removed is applied to that list, so an edit another moderator
-// Made Since the form read the room is kept rather than written back over
+// What the room holds, and each word the reader added or removed is applied to that list, so an edit another moderator
+// Made since the form read the room is kept rather than written back over
 export const mergeWordFilterFormData = (
   base: WordFilterFormData,
   issued: WordFilterFormData,

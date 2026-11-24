@@ -4,9 +4,8 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 import { threadFollowTable } from "#src/services/message/threadFollow/constants";
 import { getThreadFollowRowKey } from "#src/services/message/threadFollow/getThreadFollowRowKey";
 
-// The member's decision about a thread, set over the row held for it, or over a row the client creates with no version
-// Yet. A decision is one row, so an unfollow is a row change, not a delete, and the server's row names the version it
-// Holds at
+// The member's decision about a thread, set over the held row or a row the client creates with no version yet.
+// A decision is one row, so an unfollow is a row change, not a delete. The server's row names the version it holds at.
 export const getThreadFollowEntry =
   (roomId: string, threadRootId: ClientMessage["id"], userId: string, isUnfollowed: boolean, now: Date): Entry =>
   (view) => {

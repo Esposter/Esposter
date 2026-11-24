@@ -7,8 +7,7 @@ import { getRoomMemberPermissionRowKey } from "#src/services/message/role/getRoo
 import { NO_ROW_VERSION } from "@esposter/db-schema";
 
 // The override is merged onto the one the member has now, a tombstone counting as none. An override that merges to
-// Nothing Leaves the member's roles alone, so its row is tombstoned rather than kept as an empty entry, as the server
-// Does
+// Nothing leaves the member's roles alone, so its row is tombstoned, not kept as an empty entry, as the server does
 export const getUpsertMemberPermissionOverrideEntry =
   (input: UpsertMemberPermissionOverrideInput, now: Date): Entry =>
   (view) => {

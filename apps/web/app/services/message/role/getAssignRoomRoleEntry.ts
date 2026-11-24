@@ -5,7 +5,7 @@ import { getUserToRoomRoleRowKey } from "#src/services/message/role/getUserToRoo
 import { NO_ROW_VERSION } from "@esposter/db-schema";
 
 // The assignment is drawn at once, with no version until the server's row arrives, so the member shows the role the
-// Moment It is given. The role itself is drawn only where the client holds it
+// Moment it is given. The role itself is drawn only where the client holds it
 export const getAssignRoomRoleEntry =
   (roomId: string, userId: string, roleId: string, now: Date): Entry =>
   (view) => {

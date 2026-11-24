@@ -7,7 +7,6 @@ const { isSkipAnimations } = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   return { isSkipAnimations: ref(false) };
 });
-// The settings
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- store loads Phaser, which the test environment cannot start
 vi.mock("#src/store/dungeons/settings/index", () => ({ useSettingsStore: () => ({ isSkipAnimations }) }));
 

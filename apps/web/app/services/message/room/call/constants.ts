@@ -6,11 +6,11 @@ import { knockers, participants } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 // The call participants the overlay holds, one row per connection, keyed by the id its join minted. The row is the
-// Object's Projected to the wire columns, since the object's row names the auth session, which no frame carries, and it
-// Is held beside The call it is in
+// Projected to the wire columns, since the object's row names the auth session, which no frame carries. It is held
+// Beside the call it is in
 export const participantTable = createTable<typeof participants, HeldCallParticipant>(participants);
 // The knockers the overlay holds, one row per knock, keyed by the id the knock minted. A let-in or a dismissal leaves a
-// Tombstone
+// A tombstone
 export const knockerTable = createTable<typeof knockers, HeldCallKnocker>(knockers);
 // Client-only per-remote-participant volume multiplier — no stored default, dies with the call.
 export const DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE = 100;
