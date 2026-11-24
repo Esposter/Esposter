@@ -51,8 +51,8 @@ export async function scoreSins($: EngineInterface, text: string, typeSafeKey: s
     outcome.status === "fulfilled" && outcome.value.exitCode === 0
       ? parseSinsResult(outcome.value.stdout)
       : { result: SinStatusKind.Failed };
-  // A `/clear` or a resume during the run has reset the session, and a switch turned off has turned the mod off, so
-  // This Run's answers belong to nothing shown
+  // A `/clear` or a resume during the run has reset the session, and a switch turned off has turned the mod off.
+  // So this run's answers belong to nothing shown
   const sessionNow = await read($, sinSessionAtom);
   const { sins: isSinsEnabled } = await read($, enabledModsAtom);
   if (sessionNow !== session || !isSinsEnabled) return;
