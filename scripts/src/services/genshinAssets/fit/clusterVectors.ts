@@ -13,13 +13,16 @@ export const clusterVectors = (vectors: readonly Vector[], means: readonly Vecto
   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
     let isChanged = false;
     for (const [index, vector] of vectors.entries()) {
+      // Each centre's distance is taken once, and the nearest so far is kept by its distance rather than measured again
       let nearest = 0;
-      for (let cluster = 1; cluster < centres.length; cluster++)
-        if (
-          computeSquaredDistance(vector, centres[cluster] ?? vector) <
-          computeSquaredDistance(vector, centres[nearest] ?? vector)
-        )
+      let nearestSquaredDistance = computeSquaredDistance(vector, centres[0] ?? vector);
+      for (let cluster = 1; cluster < centres.length; cluster++) {
+        const squaredDistance = computeSquaredDistance(vector, centres[cluster] ?? vector);
+        if (squaredDistance < nearestSquaredDistance) {
           nearest = cluster;
+          nearestSquaredDistance = squaredDistance;
+        }
+      }
       if (clusters[index] === nearest) continue;
       clusters[index] = nearest;
       isChanged = true;
