@@ -5,8 +5,7 @@ import { NotInitializedError } from "@esposter/shared";
 
 // We need to define the return type manually so it doesn't get lost after the inject
 export const useInjectSceneKey = (): SceneWithPlugins["scene"]["key"] => {
-  // Every
-  // oxlint-disable-next-line no-restricted-globals -- game object under a Scene belongs to it, whatever lies between
+  // oxlint-disable-next-line no-restricted-globals -- a game object under a Scene belongs to it
   const sceneKey = inject(InjectionKeyMap.SceneKey);
   if (!sceneKey) throw new NotInitializedError(InjectionKeyMap.SceneKey.description ?? "");
   return sceneKey;

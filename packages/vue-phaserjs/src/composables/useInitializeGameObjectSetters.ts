@@ -70,11 +70,12 @@ export const useInitializeGameObjectSetters = <
               updater();
             }, sceneKey);
         },
-        // Deep unconditionally rather than by the initial value's type: a property that starts `undefined` and is
-        // Later given an object would otherwise be watched shallowly forever, so the game object would track the
-        // Replacement and then silently stop tracking its nested edits. Deep on a primitive traverses nothing
-        // `watchDeep` is a Nuxt auto-import of VueUse, which a published package would
-        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- have to take on as a dependency of its own
+        // Deep unconditionally rather than by the initial value's type.
+        // A property that starts `undefined` and is later given an object would otherwise be watched shallowly forever.
+        // The game object would then track the replacement and silently stop tracking its nested edits.
+        // Deep on a primitive traverses nothing.
+        // `watchDeep` is a Nuxt auto-import of VueUse.
+        // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a published package would need VueUse
         { deep: true },
       ),
     );

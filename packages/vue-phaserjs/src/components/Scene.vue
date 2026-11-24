@@ -95,8 +95,7 @@ onUnmounted(() => {
   game.scene.remove(sceneKey);
 });
 
-// Every
-// oxlint-disable-next-line no-restricted-globals -- game object under a Scene belongs to it, whatever lies between
+// oxlint-disable-next-line no-restricted-globals -- a game object under a Scene belongs to it
 provide(InjectionKeyMap.SceneKey, sceneKey);
 </script>
 

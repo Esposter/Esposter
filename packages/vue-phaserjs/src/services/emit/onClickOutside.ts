@@ -20,9 +20,10 @@ const checkIsPointerOver = (gameObject: GameObjects.GameObject, pointer: Input.P
     .getCamerasBelowPointer(pointer)
     .some((camera) => input.manager.hitTest(pointer, [gameObject], camera).length > 0);
 };
-// A click outside is a press and its release both outside an interactive game object; a press that starts on it is
-// Never one, wherever it ends. Each pointer is followed on its own, so a second finger cannot end the first one's
-// Click. Returns the function that stops listening
+// A click outside is a press and its release both outside an interactive game object.
+// A press that starts on it is never one, wherever it ends.
+// Each pointer is followed on its own, so a second finger cannot end the first one's click.
+// Returns the function that stops listening
 export const onClickOutside = (
   gameObject: GameObjects.GameObject,
   listener: (pointer: Input.Pointer) => void,
