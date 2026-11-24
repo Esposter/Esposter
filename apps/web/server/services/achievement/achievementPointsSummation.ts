@@ -2,10 +2,10 @@ import { AchievementDefinitionMap } from "#shared/services/achievement/Achieveme
 import { achievementsInAchievement } from "@esposter/db-schema";
 import { sql } from "drizzle-orm";
 
-// Points live in the definition map, not the DB, so the summation reads them from one JSON object keyed by achievement
-// Name. It is bound as a single parameter: a CASE with a branch per achievement binds two parameters for each, past the
-// Bound Parameter limit D1 holds a statement to. Keeping the aggregation in SQL bounds the result set to one row per
-// User.
+// Points live in the definition map, not the DB, so the summation reads them from one JSON object.
+// That object is keyed by achievement name and bound as a single parameter.
+// A CASE with a branch per achievement would bind two parameters for each, past the limit D1 holds a statement to.
+// Keeping the aggregation in SQL bounds the result set to one row per user.
 const achievementPoints = JSON.stringify(
   Object.fromEntries(Object.entries(AchievementDefinitionMap).map(([name, { points }]) => [name, points])),
 );

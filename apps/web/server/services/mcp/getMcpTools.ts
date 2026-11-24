@@ -7,26 +7,25 @@ import type { z } from "zod";
 
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 
-// Every query and mutation whose meta opts into MCP, as a tool named by its path. The record is flat at runtime, one
-// Procedure per dotted path, where its type nests the sub-routers; a tool name takes no dot in every client, so the
-// Dots become underscores, which no router key carries
+// Every query and mutation whose meta opts into MCP, as a tool named by its path.
+// The record is flat at runtime, with one procedure per dotted path, where its type nests the sub-routers.
+// A tool name takes no dot in every client, so the dots become underscores, which no router key carries.
 export const getMcpTools = (router: AnyRouter, mcpScopes: McpScope[]): McpTool[] =>
   Object.entries<AnyProcedure>(router._def.procedures).flatMap(([path, { _def }]) => {
     // A built procedure types its meta as unknown; the root declares it as `Meta`
-    // A built procedure types its meta as unknown, and the root's
     // oxlint-disable typescript/no-unsafe-type-assertion -- Meta is the one shape every procedure's meta is written to
     const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
     // oxlint-enable typescript/no-unsafe-type-assertion
-    // A tool outside the scopes the caller's key holds is dropped before its input schema is derived, since that
-    // Derivation is the cost
+    // A tool outside the scopes the caller's key holds is dropped before its input schema is derived.
+    // That derivation is the cost.
     if (!mcp || humanOnly || _def.type === "subscription" || !mcpScopes.includes(mcp.scope)) return [];
-    // One input whose written side is an object, defaulted, transformed or not, which `getMcpTools.test.ts` holds for
-    // Every Procedure that opts in, since a tool's input schema must be an object
+    // One input whose written side is an object, defaulted, transformed or not.
+    // `getMcpTools.test.ts` holds every procedure that opts in to that, since a tool's input schema must be an object.
     const [input] = _def.inputs;
     return [
       {
-        // A tool is treated as possibly destructive unless it says otherwise, so a query says it changes nothing and a
-        // Client can let every read through while it keeps asking about writes
+        // A tool is treated as possibly destructive unless it says otherwise, so a query says it changes nothing.
+        // A client can let every read through while it keeps asking about writes.
         annotations: { readOnlyHint: _def.type === "query" },
         description: mcp.description,
         // `tRPC` types an input as a parser union, and the MCP endpoint serves only zod inputs,

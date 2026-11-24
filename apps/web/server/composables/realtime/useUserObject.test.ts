@@ -4,8 +4,8 @@ import type { ObjectInvocation } from "@esposter/db";
 import { createObjectStub } from "@esposter/db";
 import { describe, vi } from "vitest";
 
-// Every RPC a person's object was sent, in order, with the person it was sent to. Stands in for the stub, which exists
-// Only inside the Worker, so a test asserts what was called rather than what the object then did
+// Every RPC a person's object was sent, in order, with the person it was sent to.
+// The stub exists only inside the Worker, so a test asserts what was called rather than what the object then did.
 export interface UserObjectCall {
   args: unknown[];
   method: string;
@@ -14,15 +14,15 @@ export interface UserObjectCall {
 const userObjectCallsHolder = vi.hoisted(() => ({ userObjectCalls: [] as UserObjectCall[] }));
 export const userObjectCalls = userObjectCallsHolder.userObjectCalls;
 
-// Answers one call the way the person's `invoke` does. A read answers with nothing held, since the double keeps no
-// State of Its own, so its read and write sets are empty as well
+// Answers one call the way the person's `invoke` does.
+// A read answers with nothing held: the double keeps no state, so its read and write sets are empty too.
 const invokeUserObject = (userId: string, method: string, args: unknown[]): Promise<ObjectInvocation> => {
   userObjectCalls.push({ args, method, userId });
   return Promise.resolve({ readSet: [], result: method.startsWith("read") ? [] : undefined, writeSet: [] });
 };
 
-// The stub a person resolves to: `invoke` answers every RPC method, and `fetch` is the socket's upgrade, which the
-// Wrapper Forwards to the stub itself rather than through `invoke`
+// The stub a person resolves to: `invoke` answers every RPC method.
+// `fetch` is the socket's upgrade, which the wrapper forwards to the stub itself rather than through `invoke`.
 const createUserObjectStub = (userId: string) =>
   new Proxy({} as ReturnType<typeof useRealUserObject>, {
     get: (_target, member: string) => {

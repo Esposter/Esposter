@@ -8,12 +8,13 @@ import { readBlobState } from "#server/services/blobState/readBlobState";
 import { getSaveBlobName } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 
-// A blob that no longer parses is never overwritten: the start and the save answer this error and leave the blob as it
-// Is, since the save is the player's only copy, and a fresh game written over it would be the loss
+// A blob that no longer parses is never overwritten.
+// The start and the save answer this error and leave the blob as it is, since the save is the player's only copy.
+// A fresh game written over it would be the loss.
 const parseEnvelope = (json: Buffer): GenshinSaveEnvelope =>
-  // Parsed as plain JSON, because the save holds its instants as ISO strings a date revival would turn into Dates
-  // The envelope
-  // oxlint-disable-next-line no-restricted-properties -- schema owns date coercion, so free-text ISO strings survive
+  // Parsed as plain JSON, because the save holds its instants as ISO strings a date revival would turn into Dates.
+  /* oxlint-disable-next-line no-restricted-properties -- The envelope schema owns date coercion, so free-text ISO
+     strings survive */
   getResult(() => JSON.parse(json.toString()))
     .andThen((parsedJson) => getResult(() => genshinSaveEnvelopeSchema.parse(parsedJson)))
     .orTee(console.error)

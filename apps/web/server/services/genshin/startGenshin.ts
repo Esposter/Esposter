@@ -29,10 +29,12 @@ const toStartResult = (envelope: GenshinSaveEnvelope, etag?: string): StartGensh
   sessionId: envelope.sessionId,
 });
 
-// Takes the lease for this user's game: the page's session id replaces the one the save held, and the save it returns
-// Is The one the player resumes, which the write below stores under that id. The session it replaced is told so at
-// Once. A concurrent start that wrote first makes this write a CONFLICT. A start the page retries after its write
-// Landed finds The blob already under the page's session, and answers what that write answered, without writing again
+// Takes the lease for this user's game: the page's session id replaces the one the save held.
+// The save it returns is the one the player resumes, which the write below stores under that id.
+// The session it replaced is told so at once.
+// A concurrent start that wrote first makes this write a CONFLICT.
+// A start the page retries after its write landed finds the blob already under the page's session.
+// It answers what that write answered, without writing again.
 export const startGenshin = async (userId: string, sessionId: string): Promise<StartGenshinResult> => {
   const bucket = getBucket(StorageBucket.GenshinAssets);
   const { envelope, etag } = await readGenshinSaveState(bucket, userId);

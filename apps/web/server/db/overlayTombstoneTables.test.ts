@@ -7,8 +7,9 @@ import { describe, expect, test } from "vitest";
 
 describe("overlayTombstoneTables", () => {
   const serverDirectory = resolve(import.meta.dirname, "..");
-  // A soft delete is an update whose set assigns deletedAt a value other than null. The table is the one the nearest
-  // Update Before the set names, and a set passed as a variable rather than written as an object literal is not read
+  // A soft delete is an update whose set assigns deletedAt a value other than null.
+  // The table is the one the nearest update before the set names.
+  // A set passed as a variable rather than written as an object literal is not read.
   const SOFT_DELETE_PATTERN = /\.update\((?<table>\w+)\)(?:(?!\.update\()[\s\S])*?\.set\(\{(?<assignments>[^}]*)\}/gu;
   const DELETED_AT_ASSIGNMENT = /\bdeletedAt\b(?!\s*:\s*null\b)/u;
   const identifierTableNameMap = new Map<string, string>(
@@ -30,8 +31,9 @@ describe("overlayTombstoneTables", () => {
     return [...tableNames].toSorted();
   };
 
-  // The recycle bin's table is soft-deleted as well, but its own purge destroys it on its own retention, so it is
-  // Expected Beside the registry. Any other table a server statement soft-deletes has to be registered, or this fails
+  // The recycle bin's table is soft-deleted as well, but its own purge destroys it on its own retention.
+  // So it is expected beside the registry.
+  // Any other table a server statement soft-deletes has to be registered, or this fails.
   test("names every table the server soft-deletes, and only those, beside the recycle bin's", () => {
     expect.hasAssertions();
 
@@ -42,8 +44,9 @@ describe("overlayTombstoneTables", () => {
     expect(readSoftDeletedTableNames()).toStrictEqual(expectedTableNames);
   });
 
-  // The purge reads each listed table's tombstones through the partial index on deletedAt that createTombstoneIndex
-  // Builds. A Listed table without it scans every row it holds each night, so the test names each one that lacks it
+  // The purge reads each listed table's tombstones through the partial index on deletedAt.
+  // A listed table without that index, which createTombstoneIndex builds, scans every row it holds each night.
+  // So the test names each one that lacks it.
   test("gives every table the purge lists the partial index on deletedAt it reads through", () => {
     expect.hasAssertions();
 
