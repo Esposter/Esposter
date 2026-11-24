@@ -11,7 +11,8 @@ import { defineCommand } from "citty";
 // Publishes and pulls a files product's folder
 export const hostedAssetsCommand: CommandDef = defineCommand({
   meta: {
-    description: "Fill, check, repair and publish the hosted assets every product declares",
+    description:
+      "Fill, check and repair the hosted assets every product declares, and publish and pull a files product's folder",
     name: "hosted-assets",
   },
   subCommands: {
