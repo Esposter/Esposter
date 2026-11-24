@@ -122,7 +122,6 @@ export const createNitroApp = (): {
 // A fresh request event for the page's path, the way each request arrives: its own response headers.
 // It has no rules cached yet.
 export const createPageEvent = (): H3Event =>
-  // The fakes stand in for Nitro's app and h3's event, with only the members the plugin reads.
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- its members are subsets of the full types
   ({ res: { headers: new Headers() }, url: new URL(PAGE_PATHNAME, PAGE_ORIGIN) }) as H3Event;
 
