@@ -89,7 +89,7 @@ The opening SHALL, when it mounts, plan the download from the index against the 
 
 ### Requirement: Downloads are shown on the launch loading bar
 
-The packs' download SHALL run from the moment the opening mounts, and the launch loading bar, the game's plain bar on its login screen, SHALL show the share of the download held, whole once every file is held. The bar SHALL show that share alone, as the game's bar does, and no bytes or size.
+The download of the character packs and of the game data lock's objects and indexes SHALL run from the moment the opening mounts, and the launch loading bar, the game's plain bar on its login screen, SHALL show the share of that download held, whole once every file is held. The bar SHALL show that share alone, as the game's bar does, and no bytes or size.
 
 #### Scenario: Downloads are shown on the launch loading bar
 

@@ -37,10 +37,9 @@ const { gameDataBaseUrl, language } = defineProps<Props>();
 const emit = defineEmits<{ begin: []; finish: []; held: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
-// Which loads the world and whose white the world cuts in from. The login screen's bar is the character packs'
-// Download,
-// Which the door waits on as the game's does on its bar. Each phase says when it is done, so the handoffs are the
-// Screens' own timings rather than a host's, and `begin` tells the host the door has been opened
+// Which loads the world and whose white the world cuts in from. The login screen's bar reports the game data objects
+// And the character packs, which the door waits on as the game's does on its bar. Each phase says when it is done.
+// So the handoffs are the screens' own timings rather than a host's, and `begin` tells the host the door has opened
 const phase = ref<OpeningPhase>(OpeningPhase.Splash);
 const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
 // The title logo is read before the first splash and the login screen's records while the splashes play, so on a warm

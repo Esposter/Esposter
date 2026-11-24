@@ -106,7 +106,7 @@ A product's preloader SHALL download every object its lock names that the browse
 
 ### Requirement: A successful preload evicts only its own product's stale objects
 
-A successful preload SHALL delete the cached objects under its own product's scope prefixes that its lock no longer names. Objects under another product's prefix are never deleted, and a failed preload deletes none.
+A successful preload SHALL delete the cached objects under its own product's scope prefixes that its lock no longer names, except one whose deletion fails: that one is logged and left for a later preload. Objects under another product's prefix are never deleted, and a failed preload deletes none.
 
 #### Scenario: A stale object of one product is evicted and another product's object is kept
 
