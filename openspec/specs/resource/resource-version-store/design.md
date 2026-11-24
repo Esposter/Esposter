@@ -36,7 +36,7 @@ flowchart TD
   publish --> done
 ```
 
-`writeSnapshotVersion` is the one way a version is taken, whichever channel it lands in. It reads the channel's anchor, writes the content to the store against it, and inserts the row that makes the version visible. The object is durable before the row exists, so a failure between the two leaves no version rather than a row naming nothing — the correct outcome for a version that was never stored. An orphaned object is adopted by the next write of the same content, never swept.
+Both channels take a version the same way. `prepareSnapshotVersion` reads the channel's anchor and writes the content to the store against it, and `getSnapshotVersionWrites` builds the row that makes the version visible. A revision take writes both through `writeSnapshotVersion` under the resource lock, and a publish writes them inside the batch that claims its number. The object is durable before the row exists, so a failure between the two leaves no version rather than a row naming nothing — the correct outcome for a version that was never stored. An orphaned object is adopted by the next write of the same content, never swept.
 
 **A write and a collection of the same resource never overlap.** Both hold the resource's object lease (`withResourceObjectLock`), a row that a request takes by replacing only an expired one and releases by naming its own holder, because the gap between an object landing and its row existing is one a concurrent eviction could otherwise fall into: it reads the surviving rows, finds nothing naming the hash the write is about to record, and frees the object — or the anchor it decodes against — under a row that then names something unreadable. Under the lock a collection either sees the row or runs before the write reads its anchor, in which case the write finds the anchor gone and honestly starts a new lineage. The lease is keyed on the resource id, so unrelated resources never wait on each other. A holder that never releases it, having crashed, frees the resource when the lease expires, and a request that cannot take it within a bounded wait is refused rather than queued.
 
@@ -75,7 +75,9 @@ Eviction hands the deletion path the exact set of objects nothing references, ra
 | `packages/keyframe-store/src/createKeyframeStore.ts`                       | the codec — dedupe, delta or keyframe, two-read reconstruction, collect |
 | `packages/db-schema/src/schema/resource/resourceVersionsInResource.ts`     | the version row — hash, base, both sizes, reason, summary               |
 | `apps/web/server/services/resource/snapshot/createSnapshotObjectStore.ts`  | the store's one contact with R2 — objects under `{id}/objects/`         |
-| `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`       | the one way a version is taken, in either channel                       |
+| `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`       | the revision take's write of a version, under the resource lock         |
+| `apps/web/server/services/resource/snapshot/prepareSnapshotVersion.ts`     | the store write of a version, in either channel                         |
+| `apps/web/server/services/resource/snapshot/getSnapshotVersionWrites.ts`   | the version and reference rows, written in one batch                    |
 | `apps/web/server/services/resource/snapshot/readSnapshotAnchor.ts`         | the channel's anchor, derived from its rows                             |
 | `apps/web/server/services/resource/snapshot/chargeSnapshotVersion.ts`      | the charge for the stored bytes, after the batch                        |
 | `apps/web/server/services/resource/snapshot/readSnapshotVersionContent.ts` | reconstruct and parse one version                                       |
