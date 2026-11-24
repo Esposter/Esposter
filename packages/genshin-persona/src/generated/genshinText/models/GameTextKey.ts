@@ -213,6 +213,8 @@ export const GameTextKey = {
   CraftingRequired: "UI_COMMON_ITEM_NEED",
   CraftingTitle: "UI_SYNTHESIS_RECONFIRM_PAGE_TITLE",
   CryoSigil: "821438660",
+  DadaupaGorge: "3497395845",
+  DadaupaGorgeDescription: "1005137471",
   // The blessing's threshold steps are the game's own decrease and increase buttons
   Decrease: "UI_BUTTON_REDUCE",
   DendroSigil: "2628812996",
@@ -779,6 +781,8 @@ export const GameTextKey = {
   StatueRewards: "UI_STC_GODDESS_NEXT_LEVEL_UNLOCK",
   // The title of a Statue of The Seven's Worship screen, which F on a resonated statue opens
   StatueWorship: "1652053571",
+  StormbearerMountains: "490005341",
+  StormbearerMountainsDescription: "2345799639",
   StormterrorsLair: "775762837",
   StormterrorsLairDescription: "1630221855",
   // A story the Profile tab shows before its Friendship Level is reached, with the level and the story's title
@@ -865,6 +869,8 @@ export const GameTextKey = {
   WeaponTypeClaymore: "WEAPON_CLAYMORE",
   WeaponTypePolearm: "WEAPON_POLE",
   WeaponTypeSword: "WEAPON_SWORD_ONE_HAND",
+  WhisperingWoods: "2498538485",
+  WhisperingWoodsDescription: "2883968591",
   Windrise: "3796216405",
   WindriseDescription: "144077783",
   Wish: "UI_GACHA_TITLE",
@@ -896,6 +902,8 @@ export const GameTextKey = {
   WishTimeRemainingHours: "UI_GACHA_TIME_REMAINING_FORMAT_HOUR",
   WishTimeRemainingMinutes: "UI_GACHA_TIME_REMAINING_FORMAT_MINIUT",
   WishWeaponEvent: "UI_GACHA_TYPE_04",
+  Wolvendom: "3611931325",
+  WolvendomDescription: "2913299983",
   WorldLevel: "UI_WORLDLEVEL_TITLE",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips,
   // And The restoring's tips and label
