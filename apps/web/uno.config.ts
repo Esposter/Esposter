@@ -320,8 +320,7 @@ export default defineConfig({
       "heading-color": "var(--ui-heading-color)",
     },
     // Override preset-wind4's default sans stack, which lists OS-only fonts ("Segoe UI", "Helvetica Neue", Arial) with
-    // No downloadable web source. These warn at startup because nuxt-og-image scans this token to embed fonts into OG
-    // Images and cannot resolve them. Inter is the standard style's face, which @nuxt/fonts loads globally.
+    // No downloadable web source. Inter is the standard style's face, which @nuxt/fonts loads globally.
     font: {
       sans: 'Inter, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
     },

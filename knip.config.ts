@@ -46,7 +46,6 @@ const knipConfiguration: KnipConfig = {
       ignore: ["app/assets/dungeons/tilesets/**/*.tsx", "public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",
-        "@takumi-rs/core",
         // `tresjs-nuxt` registers the components of every `@tresjs` package the app declares, so the templates name
         // Cientos's components and nothing imports the package
         "@tresjs/cientos",

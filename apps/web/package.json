@@ -158,7 +158,6 @@
     "@nuxt/test-utils": "catalog:",
     "@nuxtjs/seo": "catalog:",
     "@pinia/nuxt": "catalog:",
-    "@takumi-rs/core": "catalog:",
     "@types/mjml": "catalog:",
     "@types/three": "catalog:",
     "@types/web-push": "catalog:",
