@@ -3,8 +3,8 @@ import type { Vector } from "#src/models/shared/Vector";
 import type { WitnessTarget } from "genshin-world/sceneExport";
 import type { Page } from "playwright";
 
+import { decodeFloat32 } from "#src/services/genshinParity/shared/decodeFloat32";
 import { decodeTarget } from "#src/services/genshinParity/shared/decodeTarget";
-import { readFloat32Array } from "#src/services/shared/readFloat32Array";
 
 declare global {
   interface Window {
@@ -45,10 +45,10 @@ export const readWitnessTargetsInCall = async (
     height,
     parts,
     targets: Object.fromEntries(
-      Object.entries(targets).map(([name, base64 = ""]) => {
-        const bytes = Buffer.from(base64, "base64");
-        return [name, decodeTarget(name, readFloat32Array(bytes), positionLift)];
-      }),
+      Object.entries(targets).map(([name, base64 = ""]) => [
+        name,
+        decodeTarget(name, decodeFloat32(base64), positionLift),
+      ]),
     ),
     width,
   };

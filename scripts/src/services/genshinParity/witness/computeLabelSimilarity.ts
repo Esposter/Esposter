@@ -3,7 +3,7 @@ import type { LabelSimilarityInput } from "#src/models/genshinParity/witness/Lab
 import type { LabelSimilarityResult } from "#src/models/genshinParity/witness/LabelSimilarityResult";
 import type { Page } from "playwright";
 
-import { decodeFloat32 } from "#src/services/genshinParity/witness/decodeFloat32";
+import { decodeFloat32 } from "#src/services/genshinParity/shared/decodeFloat32";
 import { encodeFloat32 } from "#src/services/genshinParity/witness/encodeFloat32";
 
 declare global {

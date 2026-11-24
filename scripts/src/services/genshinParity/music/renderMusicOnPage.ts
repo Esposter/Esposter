@@ -2,7 +2,7 @@ import type { MusicVoice } from "genshin-engine";
 import type { Page } from "playwright";
 
 import { LISTEN_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
-import { decodeFloat32 } from "#src/services/genshinParity/witness/decodeFloat32";
+import { decodeFloat32 } from "#src/services/genshinParity/shared/decodeFloat32";
 
 declare global {
   interface Window {
