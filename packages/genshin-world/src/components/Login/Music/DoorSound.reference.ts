@@ -77,16 +77,31 @@ export const doorSoundTopic: ReferenceTopic = {
     },
     {
       method:
-        "genshin:assets sounds over the English recording's audio from 11.0 to 13.6 seconds and from 11.6 to 13.2, every sound of Minimum.pck by its bands' levels from 31 hertz and from 60 hertz up",
+        "genshin:assets sounds over the English recording's audio from 11.0 to 13.6 seconds and from 11.6 to 13.2, every sound of Minimum.pck by its octave bands from 63 hertz up. A lowest band of 31 hertz and one of 60 hertz selected the same bands then, since the matcher's bands began at the music's 63 hertz",
       outcome: InvestigationOutcome.DeadEnd,
       result:
-        "No game sound matches the layer. The best single sound scores 0.79 from 11.9 seconds, a 2.85-second sound, and the best set of five leaves 5.9 decibels unexplained, where the door's own pair leaves 3.07 under the full-band match; the click's rumble scores 0.55 there. The banks were not searched: vgmstream-cli does not load on this machine, since the libvorbisfile.3 library it links is missing from Homebrew's prefix, so the Vorbis sounds of Banks0 to Banks31 do not decode",
+        "No game sound matches the layer. The best single sound scores 0.79 from 11.9 seconds, a 2.85-second sound (0.775 over 11.0 to 13.6), and the best set of five leaves 5.9 decibels unexplained, where the door's own pair leaves 3.07 under the full-band match; the click's rumble scores 0.55 there",
+    },
+    {
+      method:
+        "The matcher's octave bands widened to start at 31.5 hertz, one bin of a frame below the music's 63 hertz band, and tested on pure tones: a 40, 50 or 60 hertz tone puts 35.5, 10.5 and 1.2 percent of its power in the 31.5 hertz band and the rest in the 63 hertz band",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The 31.5 hertz band reads a frame's first bin alone, so it takes the energy below about 30 hertz. The layer's excess lies in 30 to 100 hertz, mostly 40 to 80, which the 63 hertz band already held, so the matcher could see the layer before the band was widened and the widening does not make it visible",
+    },
+    {
+      method:
+        "genshin:assets sounds over the English recording's audio from 11.0 to 13.6 seconds and from 11.6 to 13.2, with the octave bands from 31.5 hertz up, over every sound of Banks0 to Banks31: 69,170 unique sounds, each decoded by vgmstream r2168, the macOS build of the release that loads against the FFmpeg Homebrew now ships, and scored by the repo's own matching functions over a bounded pool",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "No bank sound matches the layer, and none clears the door pair's 0.91 and 3 decibels. Over 11.0 to 13.6 seconds the best single sound scores 0.798 (379943834, from 11.200 seconds), and the best set of four leaves 6.96 decibels unexplained. Over 11.6 to 13.2 seconds the best scores 0.788 (583669560, from 11.925 seconds), and the best set of four leaves 4.95 decibels. The same top sounds came out of re-scoring only the 63-hertz searches' candidates, so the candidate rule missed none of the top",
     },
   ],
   openQuestions: [
     "The shared mixer's low-pass of 20 and high-pass of 15 on Wwise's scale, whose cutoffs sit behind Audiokinetic's documentation's captcha, and the compressor's detector, unpublished, so the browser's own stands in: each measured from a recording whose music is the login's own, or from the cutoff table",
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",
     "Whether the door's two sounds are one event of the game's: they start 75 milliseconds apart in the match, which the bank's own events would say",
-    "The layer under the door's forming, 30 to 100 hertz from 11.0 to 13.9 seconds: no Minimum.pck sound matches it, so it stays an open row under the sound-effects spec until a bank sound matches it, its banks searched once vgmstream's libvorbis loads on this machine; a recording-measured layer would break that rule, and the record it would ship in needs a production R2 publish",
+    "The layer under the door's forming, 30 to 100 hertz from 11.0 to 13.9 seconds: no Minimum.pck or bank sound matches it, the best bank sound scoring 0.798 where the door clears 0.91, so it stays an open row under the sound-effects spec until a sound matches it; a recording-measured layer would break that rule, and the record it would ship in needs a production R2 publish",
+    "The music and streamed packages, Music0 to Music31 and Streamed0 to Streamed31, are unsearched: 15.9 GB compressed, with 20,823 sounds that no bank or Minimum.pck holds across the packages the search pattern named. Many of those sounds run for minutes, and each decodes whole to a WAV of about 20 megabytes on average, so a full search would write several hundred gigabytes; a run over 917 of them was stopped before its results were written. A layer that lives in one of those tracks would be missed until a decode that stops after the window searches them",
   ],
 };
