@@ -19,7 +19,7 @@ import { gainDeployedCompanionshipExp } from "#src/services/reward/gainDeployedC
 // That is the same prompt a ley line outcrop uses. Each of the offer's claims draws the tree's items from
 // `treeRewards` by `random`, each item's count between its least and most.
 // The one Resin claim every reward goes through takes the offer's price.
-// The tree's Companionship EXP is the count its drawn items hold, given to the deployed team as a Commission's is.
+// The tree's Companionship EXP is the count its drawn items hold, given to the deployed team as a commission's is.
 export const claimPetrifiedTree = (
   adventureRankTables: AdventureRankTables,
   characters: readonly Character[],
