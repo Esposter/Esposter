@@ -20,6 +20,11 @@ const isDoorOpened = ref(false);
 // Whether every character pack the opening downloads is held, which the world waits on.
 // It draws each model from them.
 const isPacksHeld = ref(false);
+// The stall warning's wait, and the warning each stall timer logs for a step still unfinished when the wait is up
+const stallWarningMs = Temporal.Duration.from({ seconds: LOADING_STALL_WARNING_SECONDS }).total("milliseconds");
+const warnStall = (step: string): void => {
+  console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
+};
 // A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
 // So a stall says what it waits on. Started at the door, the request that releases the world's held session, so the
 // Title's wait is never named and a step still unfinished then is timed from it. The save and the world's two steps are
@@ -33,11 +38,9 @@ const { start: startStallWarning } = useTimeoutFn(
     const steps: [string, boolean][] = [["save", isSaveLoadedRef?.value ?? false]];
     if (isPacksHeld.value && isSaveLoadedRef?.value)
       steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
-    for (const [step, isStepDone] of steps)
-      if (!isStepDone)
-        console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
+    for (const [step, isStepDone] of steps) if (!isStepDone) warnStall(step);
   },
-  Temporal.Duration.from({ seconds: LOADING_STALL_WARNING_SECONDS }).total("milliseconds"),
+  stallWarningMs,
   { immediate: false },
 );
 watch(isDoorOpened, () => startStallWarning(), { once: true });
@@ -45,10 +48,9 @@ watch(isDoorOpened, () => startStallWarning(), { once: true });
 // Is never told that they stall
 const { start: startPacksStallWarning } = useTimeoutFn(
   () => {
-    if (isOpeningShown.value && !isPacksHeld.value)
-      console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on character packs`);
+    if (isOpeningShown.value && !isPacksHeld.value) warnStall("character packs");
   },
-  Temporal.Duration.from({ seconds: LOADING_STALL_WARNING_SECONDS }).total("milliseconds"),
+  stallWarningMs,
   { immediate: false },
 );
 const gameText = await useGameText();
