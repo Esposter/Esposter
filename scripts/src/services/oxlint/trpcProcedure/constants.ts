@@ -5,8 +5,8 @@ export const MISSING_RETURN_TYPE =
   "Procedure is missing its return-type generic. Write `.query<T>(...)` / `.mutation<T>(...)` — the generic pins a public API surface, so a handler that later grows a `return` is a compile error rather than a silently widened response. A procedure returning nothing writes `<void>`.";
 
 // The trpc skill's three query verbs, the convention's own vocabulary
-// `isolatedDeclarations`
-// oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this regex would otherwise infer
+/* oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex
+   would otherwise infer */
 export const QUERY_VERB_REGEX: RegExp = /^(?:generate|read|search)[A-Z]/u;
 
 export const QUERY_VERB_MESSAGE =
