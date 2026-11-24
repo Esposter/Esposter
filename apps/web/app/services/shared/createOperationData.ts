@@ -8,9 +8,9 @@ import { omitUndefined, Operation, takeOne, uncapitalize } from "@esposter/share
 
 export const createOperationData = <
   TItem extends object,
-  // The id keys are also keys of TItem, which EntityIdKeys alone does not say for a generic TItem, since it stays a
-  // Deferred conditional
-  // Inferred from `idKeys`,
+  // The id keys are also keys of TItem.
+  // The EntityIdKeys type alone does not say so for a generic TItem, since it stays a deferred conditional.
+  // `TIdKeys` is inferred from `idKeys`.
   // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- so a caller's tuple keeps its literal keys
   TIdKeys extends (keyof TItem & string)[] & EntityIdKeys<TItem>,
   TEntityTypeKey extends EntityTypeKey,
@@ -47,11 +47,9 @@ export const createOperationData = <
     const checkIsDeletedItem = getEntityIdEqualComparator<TItem, TIdKeys[number]>(idKeys, ids);
     items.value = items.value.filter((item) => !checkIsDeletedItem(item));
   };
-  // The keys are template strings the compiler reads as string, so the mapped type restates which key holds which
-  // Operation's function
-  // The object's keys are template strings over the generic entity type key, which the compiler types as string, so no
-  // `key-to-function`
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- correspondence reaches the mapped type
+  // The keys are template strings the compiler reads as string.
+  // So the mapped type restates which key holds which operation's function.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- no key reaches its function in the mapped type
   return {
     [`${uncapitalize(entityTypeKey)}s`]: items,
     [`${uncapitalize(Operation.Create)}${entityTypeKey}`]: createItem,

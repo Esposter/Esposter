@@ -1,5 +1,6 @@
-// The list with a row put in front of the first row that sorts after it, so a list the server pages in order takes the
-// Row Where that order puts it. A row that sorts after none goes at the end
+// The list with a row put in front of the first row that sorts after it.
+// So a list the server pages in order takes the row where that order puts it.
+// A row that sorts after none goes at the end.
 export const getInsertedItems = <TItem>(
   items: TItem[],
   insertedItem: TItem,

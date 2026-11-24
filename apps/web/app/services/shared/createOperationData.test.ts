@@ -57,8 +57,7 @@ describe(createOperationData, () => {
     const updatedName = "updatedName";
     createItem(newItem);
 
-    // The
-    // oxlint-disable-next-line typescript/no-misused-spread -- copy wants the instance's own fields, not its prototype
+    // oxlint-disable-next-line typescript/no-misused-spread -- a copy wants its own fields, not its prototype
     const updatedItem = { ...newItem, name: updatedName };
     updateItem(updatedItem);
 

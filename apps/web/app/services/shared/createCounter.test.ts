@@ -1,7 +1,7 @@
 import { describe } from "vitest";
 
-// A count the mocked server moves, which a test awaits up to a value — the server's own events are what it waits on,
-// Never a timer
+// A count the mocked server moves, which a test awaits up to a value.
+// The server's own events are what it waits on, never a timer.
 export const createCounter = () => {
   let value = 0;
   let changed = Promise.withResolvers<void>();
@@ -9,8 +9,8 @@ export const createCounter = () => {
     for (;;) {
       if (!(value < target)) return;
 
-      // Check after it reads the count that increment moved
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each wait ends on an increment, and the
+      // Check after it reads the count that increment moved.
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each wait ends on an increment
       await changed.promise;
     }
   };
