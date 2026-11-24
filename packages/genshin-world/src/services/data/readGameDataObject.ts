@@ -1,5 +1,5 @@
-import { createEvictingPromiseCache } from "@esposter/shared";
-import { readHostedAssetFile } from "hosted-assets";
+import { createEvictingPromiseCache, getResultAsync } from "@esposter/shared";
+import { HOSTED_ASSETS_CACHE_NAME, readHostedAssetFile } from "hosted-assets";
 
 // The parsed JSON of the object at a url, before any reader's schema has been applied to it.
 // An object is immutable under its hash, so one fetch of it serves every reader of that page's lifetime.
@@ -12,7 +12,14 @@ export const readGameDataObject: (url: string) => Promise<unknown> = createEvict
   (url: string) => url,
   async (url: string) => {
     const blob = await readHostedAssetFile(url);
-    const json: unknown = await new Response(blob).json();
-    return json;
+    return getResultAsync(() => new Response(blob).json()).match(
+      (json: unknown) => json,
+      async (error) => {
+        // The body is held under its url before it is parsed, so a body that is not JSON is dropped here,
+        // Or every later read is answered that same body from the cache without a fetch
+        await (await caches.open(HOSTED_ASSETS_CACHE_NAME)).delete(url);
+        throw error;
+      },
+    );
   },
 );

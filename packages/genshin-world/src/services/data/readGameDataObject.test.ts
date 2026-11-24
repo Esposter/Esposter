@@ -37,4 +37,22 @@ describe(readGameDataObject, () => {
     );
     await expect(readGameDataObject(url)).resolves.toStrictEqual({ id: 2 });
   });
+
+  // A host answering OK with a page that is not JSON is held in the cache before it is parsed, so the held copy is
+  // Dropped too, or the next read would fail on it without a fetch
+  test("reads an object again after a 200 body that is not JSON", async () => {
+    expect.hasAssertions();
+
+    const fetch = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response("<html></html>", { headers: { "Content-Type": "text/html" } }))
+      .mockResolvedValueOnce(Response.json({ id: 3 }));
+    const url = `${gameDataBaseUrl}/stats/weapons/not-json.json`;
+
+    await expect(readGameDataObject(url)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[SyntaxError: Unexpected token '<', "<html></html>" is not valid JSON]`,
+    );
+    await expect(readGameDataObject(url)).resolves.toStrictEqual({ id: 3 });
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
 });
