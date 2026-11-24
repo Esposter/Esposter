@@ -23,7 +23,7 @@ flowchart TD
 
 The game-data mirror is keyed on the hashes of every product's lock, and `build-packages` fills it and saves it under that key. The vp task cache is keyed per run, so it is the one cache that changes on every executed run; it is small, and its save is gated the same way as the others.
 
-Each coverage shard restores and saves Vitest's module cache, its persisted transforms, keyed on the shard, the lockfile and the commit, and restored from the newest entry under the same shard and lockfile. An entry inside it is keyed on what its transform read, so one written for an earlier commit is reused as it stands. Nuxt adds its auto-imports and components to the key, without which a moved composable left its callers importing the old file. A lockfile change starts the cache over, which is also what keeps entries no file names any more from accumulating. The save runs whether the suite passed or failed, since a failing suite transformed its modules all the same.
+The coverage shards restore one Vitest module cache, its persisted transforms. Each shard restores the newest copy under the lockfile, and the merge job saves one copy keyed on the lockfile and the commit, from the union of what the shards transformed. The copy is one for every shard rather than one per shard, because the shards split the files by their recorded time: a file lands on a different shard from run to run, so a copy per shard would find most of a shard's files cold. The union is a plain copy wherever a name is a hash of what its transform read, since the same name holds the same bytes on every shard. Two kinds of file are not named that way, so they are merged instead: `_metadata.json` holds the lockfile hash the shards share, and each `_manifest-*.json` lists the URLs one project's shards transformed, so those are deep-merged. An entry inside the cache is keyed on what its transform read, so one written for an earlier commit is reused as it stands. Nuxt adds its auto-imports and components to the key, without which a moved composable left its callers importing the old file. A lockfile change starts the cache over, which is also what keeps entries no file names any more from accumulating. The union is saved whether the suite passed or failed, since a failing suite transformed its modules all the same, and only on the default branch and `ai/queue`.
 
 ## What the regression test checks
 
@@ -31,12 +31,12 @@ Each coverage shard restores and saves Vitest's module cache, its persisted tran
 
 ## Key files
 
-| File                                          | Role                                                                                                   |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `.github/actions/run-cached-task/action.yaml` | restores and saves the vp task cache; the save is gated                                                |
-| `.github/workflows/build-packages.yaml`       | restores the game-data mirror everywhere; fills and saves it on the two                                |
-| `.github/workflows/CI.yaml`                   | the coverage shards restore the mirror and never save it, and restore and save the Vitest module cache |
-| `scripts/src/workspace/ciCaches.test.ts`      | the guard: no combined cache action, gated saves                                                       |
+| File                                          | Role                                                                                                                             |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/actions/run-cached-task/action.yaml` | restores and saves the vp task cache; the save is gated                                                                          |
+| `.github/workflows/build-packages.yaml`       | restores the game-data mirror everywhere; fills and saves it on the two                                                          |
+| `.github/workflows/CI.yaml`                   | the coverage shards restore the mirror and never save it, and restore the Vitest module cache; the merge job unions and saves it |
+| `scripts/src/workspace/ciCaches.test.ts`      | the guard: no combined cache action, gated saves                                                                                 |
 
 ## Notes
 

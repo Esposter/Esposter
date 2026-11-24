@@ -101,15 +101,17 @@ jobs:
           path: ~/.cache/workspace-data/content
           key: ${{ steps.game-data-mirror-key.outputs.key }}
           restore-keys: game-data-mirror-
-      # Vitest's persisted transforms, per shard, since a shard transforms its own files. An entry is keyed on what the
-      # transform read, so one from an earlier commit is reused as it stands; the lockfile in the key starts the cache
-      # over on a dependency change, which is also what keeps entries no file names any more from piling up
+      # Vitest's persisted transforms, one copy for every shard: the shards split the files by time, so a file lands on a
+      # different shard from run to run, and a copy per shard would leave most of a shard's files cold. The merge job saves
+      # the union. An entry is keyed on what the transform read, so one from an earlier commit is reused as it stands; the
+      # lockfile in the key starts the cache over on a dependency change, which is also what keeps entries no file names
+      # any more from piling up
       - name: ♻️ Restore the Vitest module cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.vitest-cache
-          key: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-
+          key: vitest-module-cache-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: vitest-module-cache-${{ hashFiles('pnpm-lock.yaml') }}-
       # None on a first run or after an eviction, when the shards split by hash
       - name: 📥 Download the test timings
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -123,13 +125,18 @@ jobs:
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
         run: pnpm coverage --reporter=default --reporter=blob --reporter=./packages/configuration/src/services/TestTimingsReporter.ts --shard="$SHARD"
-      # Saved whether the suite passed or failed, since a failing test transformed its modules all the same
-      - name: 💾 Save the Vitest module cache
+      # Read only by this run's `coverage-merge`, which saves the union, so only the saving branches upload it and it
+      # expires after a day. Uploaded whether the suite passed or failed, since a failing test transformed its modules all
+      # the same
+      - name: 📤 Upload the Vitest module cache
         if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          path: node_modules/.vitest-cache
-          key: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          name: vitest-module-cache-${{ matrix.shard }}
+          path: node_modules/.vitest-cache/*
+          if-no-files-found: ignore
+          include-hidden-files: true
+          retention-days: 1
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -166,15 +173,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      # `needs.*.result` covers the shard matrix as a whole — one shard that did not succeed fails the aggregate
-      - name: 🚦 Gate on the shard results
-        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
-        run: exit 1
-
+      # Ahead of the gate, so the module cache saved at the end can key on the lockfile when the gate fails the job
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      # `needs.*.result` covers the shard matrix as a whole — one shard that did not succeed fails the aggregate
+      - name: 🚦 Gate on the shard results
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
+        run: exit 1
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
@@ -223,6 +231,33 @@ jobs:
           name: coverage
           path: coverage
           if-no-files-found: error
+
+      # `!cancelled()` rather than the default, so the union is saved after a failed gate too, as each shard's save was. A
+      # failed union saves nothing, so a partial copy is never saved
+      - name: 📥 Download the Vitest module cache
+        if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: .vitest/module-cache
+          pattern: vitest-module-cache-*
+      # Entries are named by a hash of what they transformed, so the same name is the same bytes on every shard and a copy
+      # over another is safe. `_metadata.json` holds the lockfile hash all shards share, and each `_manifest-*.json` lists
+      # the URLs one project's shards transformed, so those are deep-merged, as the timings are
+      - name: 📋 Union the Vitest module cache
+        id: vitest-module-cache-union
+        if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        run: |
+          mkdir -p node_modules/.vitest-cache
+          find .vitest/module-cache -type f ! -name '_manifest-*' -exec cp {} node_modules/.vitest-cache/ \;
+          for name in $(find .vitest/module-cache -type f -name '_manifest-*' -exec basename {} \; | sort -u); do
+            jq -s 'reduce .[] as $manifest ({}; . * $manifest)' $(find .vitest/module-cache -type f -name "$name") > "node_modules/.vitest-cache/$name"
+          done
+      - name: 💾 Save the Vitest module cache
+        if: ${{ steps.vitest-module-cache-union.outcome == 'success' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.vitest-cache
+          key: vitest-module-cache-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
 
   # No `needs`: oxfmt is a standalone binary over source files, so it waits on no build
   format:
