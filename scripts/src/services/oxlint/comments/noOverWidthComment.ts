@@ -1,7 +1,7 @@
 import type { Rule } from "@oxlint/plugins";
 
 import { OVER_WIDTH_COMMENT_MESSAGE } from "#src/services/oxlint/comments/constants";
-import { PRINT_WIDTH } from "@esposter/configuration/oxfmt";
+import { findOverWidthCommentLines } from "#src/services/oxlint/comments/findOverWidthCommentLines";
 import { defineRule } from "@oxlint/plugins";
 
 // The formatter wraps code at the print width and never a comment, so a comment line keeps it here. Every physical
@@ -14,20 +14,11 @@ export const noOverWidthComment: Rule = defineRule({
         const { text } = context.sourceCode;
         for (const comment of context.sourceCode.getAllComments()) {
           const [start, end] = comment.range;
-          let lineNumber = comment.loc.start.line;
-          for (let lineStart = text.lastIndexOf("\n", start - 1) + 1; lineStart <= end; lineNumber++) {
-            const newline = text.indexOf("\n", lineStart);
-            const lineEnd = newline === -1 ? text.length : newline;
-            const line = text.slice(lineStart, lineEnd);
-            const codeBefore = lineStart < start ? text.slice(lineStart, start) : "";
-            const codeAfter = lineEnd > end ? text.slice(end, lineEnd) : "";
-            if (codeBefore.trim() === "" && codeAfter.trim() === "" && line.length > PRINT_WIDTH)
-              context.report({
-                loc: { end: { column: line.length, line: lineNumber }, start: { column: 0, line: lineNumber } },
-                message: OVER_WIDTH_COMMENT_MESSAGE,
-              });
-            lineStart = lineEnd + 1;
-          }
+          for (const { length, lineNumber } of findOverWidthCommentLines(text, start, end, comment.loc.start.line))
+            context.report({
+              loc: { end: { column: length, line: lineNumber }, start: { column: 0, line: lineNumber } },
+              message: OVER_WIDTH_COMMENT_MESSAGE,
+            });
         }
       },
     };
