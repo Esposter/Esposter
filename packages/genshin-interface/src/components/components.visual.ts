@@ -17,8 +17,8 @@ import { page } from "vitest/browser";
 // Every component folder's `Index.vue` with an `Index.fixture.ts` beside it, drawn alone at the middle of a game screen
 // On a mid grey the game's pale and dark pieces both read against, shot to its own box and held to its own image,
 // `Index.png` in the same folder, and each variant to one of its own named after it. A mismatch is listed after the
-// Cases Rather than failed, and a missing image is written by the run; a run with `-u` takes each render as its new
-// Image Set by the browser config from the run's update flag (`vitest.browser.config.ts`)
+// Cases rather than failed, and a missing image is written by the run; a run with `-u` takes each render as its new
+// Image set by the browser config from the run's update flag (`vitest.browser.config.ts`)
 declare const IS_VISUAL_UPDATE: boolean;
 const components = import.meta.glob<Component>("./**/Index.vue", { eager: true, import: "default" });
 const fixtures = import.meta.glob<ComponentFixture>("./**/Index.fixture.ts", { eager: true });
@@ -88,7 +88,7 @@ describe("genshin-interface components", () => {
       assert(element);
 
       // The package does not depend on `@esposter/shared`, so a rejection is read from `allSettled` rather than
-      // Neverthrow
+      // `neverthrow`
       const [comparison] = await Promise.allSettled([
         (async () => {
           // The update path writes what the matcher captured, so a render still changing across frames is refused

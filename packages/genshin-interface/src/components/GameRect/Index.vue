@@ -18,8 +18,8 @@ const { parent = GAME_CANVAS_RECT, rect } = defineProps<Props>();
 const canvasRect = computed(() => toCanvasRect(rect));
 // A piece of the game's interface tree, placed by its RectTransform inside its parent's box, or on the canvas when its
 // Parent is the canvas's own rect, so a screen's markup nests as the game's tree does. A nested piece takes its
-// Parent's Resolved rect through the default slot. A scaled piece scales about its pivot, as Unity scales it, so a
-// Piece pivoted At a corner keeps that corner where it stands
+// Parent's resolved rect through the default slot. A scaled piece scales about its pivot, as Unity scales it, so a
+// Piece pivoted at a corner keeps that corner where it stands
 const style = computed(() => {
   const [pivotX, pivotY] = canvasRect.value.pivot;
   return {

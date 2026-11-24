@@ -1,5 +1,5 @@
 // The Stardust Exchange tab of Paimon's Bargains, with a good picked and its count at two, the words the public clip
-// Shows Its layout is measured from that clip's frames; the detail's panel colour is an estimate, since the clip dims
+// Shows its layout is measured from that clip's frames; the detail's panel colour is an estimate, since the clip dims
 // It
 export const props = {
   balances: [

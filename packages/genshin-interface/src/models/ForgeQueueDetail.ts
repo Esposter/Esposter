@@ -1,6 +1,6 @@
 // The queue the Queues tab's detail shows, the first holding an order: its id, the words over its ring (its time left,
-// Or Complete once every unit is done), its units done in words, its share of the unit being forged, and whether a unit
-// Is Ready to obtain
+// Or complete once every unit is done), its units done in words, its share of the unit being forged, and whether a unit
+// Is ready to obtain
 export interface ForgeQueueDetail {
   forgedLabel: string;
   headingLabel: string;
