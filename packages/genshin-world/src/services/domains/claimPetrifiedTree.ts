@@ -15,11 +15,11 @@ import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { gainDeployedCompanionshipExp } from "#src/services/reward/gainDeployedCompanionshipExp";
 
-// The Petrified Tree a cleared domain raises is claimed through the offer the player chose from the claim prompt, the
-// Same prompt a ley line outcrop uses. Each of the offer's claims draws the tree's items from `treeRewards` by
-// `random`, each item's count between its least and most, and the one Resin claim every reward goes through takes the
-// Offer's price. The tree's Companionship EXP is the count its drawn items hold, given to the deployed team as a
-// Commission's is
+// The Petrified Tree a cleared domain raises is claimed through the offer the player chose from the claim prompt.
+// That is the same prompt a ley line outcrop uses. Each of the offer's claims draws the tree's items from
+// `treeRewards` by `random`, each item's count between its least and most.
+// The one Resin claim every reward goes through takes the offer's price.
+// The tree's Companionship EXP is the count its drawn items hold, given to the deployed team as a Commission's is.
 export const claimPetrifiedTree = (
   adventureRankTables: AdventureRankTables,
   characters: readonly Character[],

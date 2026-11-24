@@ -5,9 +5,10 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 
-// The bag and progress after one furnishing is started in a free queue at `now`: its materials taken from the bag
-// At once. The queues are one per Trust Rank, each holding one furnishing. Undefined, with nothing spent, where the
-// Blueprint is not open, every queue is busy, or the bag holds too few of its materials
+// One furnishing is started in a free queue at `now`, its materials taken from the bag.
+// The queues are one per Trust Rank, each holding one furnishing.
+// The result is undefined, with nothing spent, where the blueprint is not open or every queue is busy.
+// It is undefined too where the bag holds too few of its materials.
 export const startHomeMake = (
   blueprint: HomeBlueprint,
   {

@@ -6,9 +6,8 @@ import { DomainLevelState } from "#src/models/domains/DomainLevelState";
 import { checkIsDomainLevelOpen } from "#src/services/domains/checkIsDomainLevelOpen";
 import { DomainOpenRankMap } from "#src/services/domains/DomainOpenRankMap";
 
-// Each level of a domain as its entry screen lists it, with the state the player finds it in at the rank and
-// The moment. A level with no challenge data has nothing to run, so it reads as Closed rather than opening onto a
-// Silent no-op
+// Each level of a domain as its entry screen lists it, with the state the player finds it in at that rank and moment.
+// A level with no challenge data has nothing to run, so it reads as Closed rather than opening onto a silent no-op.
 export const computeDomainLevelRows = (
   { kind, levels }: DomainSchedule,
   challengeLevels: Readonly<Record<number, DomainChallengeLevel>>,

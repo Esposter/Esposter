@@ -273,8 +273,8 @@ const notifyGcgShieldDepleted = (
   }
 };
 
-// A card attached to a character that would be defeated may answer it, restoring the character to the HP the
-// Card names. Only the first card to answer takes it, and the cards then attached to the character hear the replacement
+// A card attached to a character that would be defeated may answer it, restoring the HP the card names.
+// Only the first card to answer takes it, and the cards then attached to the character hear the replacement.
 const replaceGcgDefeat = (duel: GcgDuel, sideIndex: number, characterIndex: number): boolean => {
   const character = takeOne(takeOne(duel.sides, sideIndex).characters, characterIndex);
   const context: GcgEffectContext = { characterIndex, duel, sideIndex };

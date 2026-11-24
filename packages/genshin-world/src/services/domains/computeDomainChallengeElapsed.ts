@@ -1,5 +1,5 @@
-// The time a challenge has run after a frame: the frame counts only while the world is open, so a menu open spends none
-// Of the time limit
+// The time a challenge has run after a frame: the frame counts only while the world is open.
+// A menu open spends none of the time limit.
 export const computeDomainChallengeElapsed = (
   elapsedMilliseconds: number,
   deltaMilliseconds: number,
