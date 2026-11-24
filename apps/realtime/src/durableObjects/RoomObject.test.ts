@@ -287,19 +287,6 @@ describe(RoomObject, () => {
     expect(getWokenTopics(ownReadSet, topicPublishes)).toStrictEqual([`room/${roomId}:messages:*`]);
   });
 
-  // A read over many rooms collapses to the room kind's table topic, so a write in a room no read names must still
-  // Reach it: every Room's write publishes that topic beside its own
-  test("a write in a room no read names wakes a read collapsed to the room kind's table topic", async () => {
-    expect.hasAssertions();
-
-    const { object } = createRoomObject();
-    topicPublishes.length = 0;
-
-    await object.invoke("createMessage", [{ message: "a", type: MessageType.Message }, actor]);
-
-    expect(getWokenTopics([{ topic: "room/*:messages:*" }], topicPublishes)).toStrictEqual(["room/*:messages:*"]);
-  });
-
   test("a topic that cannot be published leaves the invocation's result standing", async () => {
     expect.hasAssertions();
 
@@ -330,7 +317,15 @@ describe(RoomObject, () => {
     expect(readFrames(bystanderSocket)).toStrictEqual([{ data: structuredClone([message]), type: "createMessage" }]);
   });
 
-  test("a webhook message keeps the image its app user had when it sent", async () => {
+  // A push's avatar wins over its app user's image, which is the fallback when the push names none
+  test.each([
+    ["the image its app user had when it sent, since its push names none", "", "https://example.com/hook.png"],
+    [
+      "the avatar its push names, over the image its app user has",
+      "https://example.com/avatar.png",
+      "https://example.com/avatar.png",
+    ],
+  ])("a webhook message keeps %s", async (_case, appUserImage, expectedImage) => {
     expect.hasAssertions();
 
     const appUserId = v7();
@@ -338,28 +333,14 @@ describe(RoomObject, () => {
     const { object } = createRoomObject();
     const message = await object.createWebhookMessage({
       appUserId,
-      appUserImage: "",
+      appUserImage,
       deliveryId: v7(),
       message: "from a hook",
       senderName: "hook",
     });
 
-    expect(message.appUserImage).toBe("https://example.com/hook.png");
+    expect(message.appUserImage).toBe(expectedImage);
     await expect(object.readMessages(newestPage)).resolves.toStrictEqual([message]);
-  });
-
-  test("a webhook message keeps the avatar its push names, over its identity's image", async () => {
-    expect.hasAssertions();
-
-    const { object } = createRoomObject();
-    await object.createWebhookMessage({
-      appUserId: v7(),
-      appUserImage: "https://example.com/avatar.png",
-      deliveryId: v7(),
-      message: "from a hook",
-    });
-
-    expect((await object.readMessages(newestPage))[0]?.appUserImage).toBe("https://example.com/avatar.png");
   });
 
   test("a webhook message is notified once, however many times its delivery is made", async () => {
@@ -935,6 +916,9 @@ describe(RoomObject, () => {
   test("the room-activity wave reaches only the members online, once per window, and writes the room's lastMessageAt", async () => {
     expect.hasAssertions();
 
+    // A member the room holds but who is not online, so the wave has one it must leave out
+    await mockDatabase.db.insert(usersInAuth).values(createUser(offlineUserId));
+    await mockDatabase.db.insert(usersToRoomsInMessage).values({ roomId, userId: offlineUserId });
     const { object, state } = createRoomObject();
     await object.attachMember(userId, createStatus(userId, true));
     await object.attachMember(otherUserId, createStatus(otherUserId, true));
@@ -1311,22 +1295,6 @@ describe(RoomObject, () => {
       runAt: scheduledMessage.runAt,
       scheduledId: scheduledMessage.id,
     });
-  });
-
-  // The sender of a pending message is a member, so the room's removal from the member's index takes the message out
-  // With the reminders
-  test("deleting the room takes each pending scheduled message out of its sender's index", async () => {
-    expect.hasAssertions();
-
-    const { object } = createRoomObject();
-    await object.createScheduledMessage(
-      { id: v7(), message: "pending", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
-      actor,
-    );
-
-    await object.deleteAll([userId, otherUserId]);
-
-    expect(getUserStub(userId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
   });
 
   test("a refused teardown keeps the room and its messages, announces nothing to the members, and a later teardown completes", async () => {

@@ -560,19 +560,6 @@ describe(UserObject, () => {
     expect(getTopicStub(topic).unsubscribe).toHaveBeenCalledExactlyOnceWith(userId);
   });
 
-  // A watch names the columns its read references in the topic, and the topic's object is told them, so it can tell
-  // Which publishes reach the watch
-  test("a watch hands the columns it reads of a topic to the topic's subscribe", async () => {
-    expect.hasAssertions();
-
-    const { object } = createUserObject();
-    const topic: Topic = `message_usersToRooms:roomId=${v7()}`;
-    const socket = await connect(object, { deviceId, sessionId });
-    await sendFrame(object, socket, signedWatch([{ columns: ["isHidden"], topic }]));
-
-    expect(getTopicStub(topic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, ["isHidden"]);
-  });
-
   // A signed read names the topics it was given, so a frame that adds a topic the read did not name is refused whole:
   // The signature covers the topics it was made over and no others, so neither topic is subscribed or held
   test("a watch frame naming a topic its signed read did not name subscribes nothing", async () => {

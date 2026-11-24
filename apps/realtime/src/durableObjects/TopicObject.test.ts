@@ -46,12 +46,19 @@ describe(TopicObject, () => {
     userIdInvalidateMap.clear();
   });
 
+  // A publish that names no columns is a row-set change, which wakes every subscriber, a count among them
   test("a burst of publishes reaches each subscriber once, when the window closes", async () => {
     expect.hasAssertions();
 
     const { object, state } = createTopicObject();
     const userIds = [v7(), v7()];
-    await Promise.all(userIds.map((userId) => object.subscribe(userId, 0)));
+    const nameReader = v7();
+    const countReader = v7();
+    await Promise.all([
+      ...userIds.map((userId) => object.subscribe(userId, 0)),
+      object.subscribe(nameReader, 0, ["name"]),
+      object.subscribe(countReader, 0, []),
+    ]);
     await object.publish();
     await object.publish();
 
@@ -59,7 +66,8 @@ describe(TopicObject, () => {
 
     await object.alarm();
 
-    for (const userId of userIds) expect(getInvalidate(userId)).toHaveBeenCalledExactlyOnceWith(topic);
+    for (const userId of [...userIds, nameReader, countReader])
+      expect(getInvalidate(userId)).toHaveBeenCalledExactlyOnceWith(topic);
   });
 
   // A subscriber reads some of a table's columns, and an update names the columns it sets, so an update to a column one
@@ -80,23 +88,6 @@ describe(TopicObject, () => {
     expect(getInvalidate(nameReader)).not.toHaveBeenCalled();
     expect(getInvalidate(countReader)).not.toHaveBeenCalled();
     expect(getInvalidate(lastReadAtReader)).toHaveBeenCalledExactlyOnceWith(topic);
-  });
-
-  // An insert or a delete changes which rows a read holds, not a column of them, so it names no column and wakes every
-  // Subscriber of the topic, a count among them
-  test("a row-set change wakes every subscriber, whatever columns each reads", async () => {
-    expect.hasAssertions();
-
-    const { object } = createTopicObject();
-    const nameReader = v7();
-    const countReader = v7();
-    await object.subscribe(nameReader, 0, ["name"]);
-    await object.subscribe(countReader, 0, []);
-    await object.publish();
-    await object.alarm();
-
-    expect(getInvalidate(nameReader)).toHaveBeenCalledExactlyOnceWith(topic);
-    expect(getInvalidate(countReader)).toHaveBeenCalledExactlyOnceWith(topic);
   });
 
   // The publishes of a burst are told together: a subscriber that reads a column any of them changed hears of the burst
