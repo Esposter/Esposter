@@ -7,10 +7,10 @@ import {
   GAME_DATA_PRODUCT,
   GAME_DATA_PRODUCT_NAME,
 } from "#src/services/gameData/constants";
+import { createGameDataBucketClientMap } from "#src/services/gameData/createGameDataBucketClientMap";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
 import { commitHostedAssetLock } from "#src/services/hostedAssets/commitHostedAssetLock";
-import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
 import { formatIdleHostedAssetPublish } from "#src/services/hostedAssets/formatIdleHostedAssetPublish";
 import { publishHostedAssets } from "#src/services/hostedAssets/publishHostedAssets";
 import { readOtherHostedAssetLocks } from "#src/services/hostedAssets/readOtherHostedAssetLocks";
@@ -25,7 +25,7 @@ export const publishGameDataPlan = async ({ isDryRun, plan, scopes }: PublishGam
   const label = scopes.join(", ");
   const currentLock = await readGameDataLock();
   const result = await publishHostedAssets({
-    createBucketClientMap: isDryRun ? undefined : () => createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket),
+    createBucketClientMap: isDryRun ? undefined : createGameDataBucketClientMap,
     currentLock,
     otherLocks: await readOtherHostedAssetLocks(GAME_DATA_PRODUCT),
     plan,

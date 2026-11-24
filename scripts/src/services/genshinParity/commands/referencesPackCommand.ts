@@ -1,13 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
 import { ReferencePackKind } from "#src/models/genshinParity/reference/ReferencePackKind";
-import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
+import { createGameDataBucketClientMap } from "#src/services/gameData/createGameDataBucketClientMap";
 import { formatCollisionBlock } from "#src/services/genshinParity/reference/formatCollisionBlock";
 import { formatMebibytes } from "#src/services/genshinParity/reference/formatMebibytes";
 import { formatPackTable } from "#src/services/genshinParity/reference/formatPackTable";
 import { packRecordPaths } from "#src/services/genshinParity/reference/packRecordPaths";
 import { packReferences } from "#src/services/genshinParity/reference/packReferences";
-import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -72,7 +71,7 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
     if (paths.length === 0)
       throw new InvalidOperationError(Operation.Read, args.kind, "needs at least one path to pack");
     // A dry run stores nothing, so it makes no bucket and needs no credential
-    const bucketClients = isDryRun ? [] : Object.values(createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket));
+    const bucketClients = isDryRun ? [] : Object.values(createGameDataBucketClientMap());
     const { packed, uploads } = await packRecordPaths(paths, isDryRun, bucketClients);
     for (const { bytes, path } of packed) console.log(`${path}  ${formatMebibytes(bytes)}`);
     console.log(

@@ -1,12 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
+import { createGameDataBucketClientMap } from "#src/services/gameData/createGameDataBucketClientMap";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCharacterPackIndex } from "#src/services/genshinAssets/characterPacks/buildCharacterPackIndex";
 import { CHARACTER_PACKS_DIRECTORY } from "#src/services/genshinAssets/characterPacks/constants";
 import { publishCharacterPacks } from "#src/services/genshinAssets/characterPacks/publishCharacterPacks";
 import { readCharacterPackFiles } from "#src/services/genshinAssets/characterPacks/readCharacterPackFiles";
-import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
 import { dryRunArgs } from "#src/services/shared/dryRunArgs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -37,7 +36,7 @@ export const characterPacksCommand: SubCommandsDef[string] = defineCommand({
     const isDryRun = args["dry-run"];
     console.log(`character packs: ${index.avatars.length} avatars, ${bytes} bytes, ${indexFiles.length} files`);
     // The files upload before the index names them, so no bucket lists a file it does not hold
-    if (!isDryRun) await publishCharacterPacks(files, () => createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket));
+    if (!isDryRun) await publishCharacterPacks(files, createGameDataBucketClientMap);
     console.log(
       await publishGameDataStep({
         isDryRun,

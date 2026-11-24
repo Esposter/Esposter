@@ -4,8 +4,8 @@
 import type { SubCommandsDef } from "citty";
 
 import { GAME_DATA_PRODUCT } from "#src/services/gameData/constants";
+import { createGameDataBucketClientMap } from "#src/services/gameData/createGameDataBucketClientMap";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { createHostedAssetBucketClientMap } from "#src/services/hostedAssets/createHostedAssetBucketClientMap";
 import { pruneHostedAssets } from "#src/services/hostedAssets/pruneHostedAssets";
 import { readHostedAssetReachableObjects } from "#src/services/hostedAssets/readHostedAssetReachableObjects";
 import { readLiveHostedAssetLocks } from "#src/services/hostedAssets/readLiveHostedAssetLocks";
@@ -38,7 +38,7 @@ export const pruneCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
     const locks = readLiveHostedAssetLocks(GAME_DATA_PRODUCT, await readGameDataLock());
-    const bucketClientMap = createHostedAssetBucketClientMap(GAME_DATA_PRODUCT.bucket);
+    const bucketClientMap = createGameDataBucketClientMap();
     for (const environment of Object.values(CloudflareEnvironment)) {
       const bucketClient = bucketClientMap[environment];
       // A prune skips no missing index: each one it cannot read would take what it names
