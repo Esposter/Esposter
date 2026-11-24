@@ -173,9 +173,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     sessionId: string;
   }): void {
     this.#purgeTombstones();
-    // A session knocks under one live id however often it knocks, so the doorkeeper's lobby holds it once. A session
-    // Whose knock was let in or dismissed gets a new id, and its row is the one its session names, revived above its
-    // Tombstone
+    // A session knocks under one live id however often it knocks, so the doorkeeper's lobby holds it once.
+    // A session whose knock was let in or dismissed gets a new id.
+    // Its row is the one its session names, revived above its tombstone.
     const id = this.#readKnockerBySession(sessionId)?.id ?? v7();
     const row = takeOne(
       this.db
