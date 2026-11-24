@@ -57,7 +57,8 @@ const getDropTargetAt = <
 // A text Is appended to that text. A press that never moves past the threshold is a click that the palette's own button
 // Handles, So the drag does nothing; Escape, a cancel or a release with no target inserts nothing. A finger's drag
 // Starts once it has Rested, and a finger that moves first is scrolling. The frame scrolls while the pointer is at its
-// Edge The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
+// Edge. The kind's signature, which each composable lists as its own inputs, is duplicated on purpose, so
+// The duplicate-code gate skips it
 // `jscpd:ignore-start`
 export const usePageBuilderDrag = <
   TNode extends BlockNode,
