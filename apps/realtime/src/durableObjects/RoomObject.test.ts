@@ -1329,22 +1329,7 @@ describe(RoomObject, () => {
     expect(getUserStub(userId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
   });
 
-  test("deleting the room is kept, and asked again, while a sender's index refuses its removal", async () => {
-    expect.hasAssertions();
-
-    const { object } = createRoomObject();
-    await sendMessage(object, "hello");
-    getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
-
-    await expect(object.deleteAll([userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AggregateError: The room is kept, since 1 index or person removal(s) failed]`,
-    );
-    await expect(object.readMessages(newestPage)).resolves.toHaveLength(1);
-
-    await expect(object.deleteAll([userId, otherUserId])).resolves.toBeUndefined();
-  });
-
-  test("a refused teardown keeps the room, and the teardown announces nothing to the members", async () => {
+  test("a refused teardown keeps the room and its messages, announces nothing to the members, and a later teardown completes", async () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
@@ -1355,9 +1340,10 @@ describe(RoomObject, () => {
     await expect(object.deleteAll([userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AggregateError: The room is kept, since 1 index or person removal(s) failed]`,
     );
+    await expect(object.readMessages(newestPage)).resolves.toHaveLength(1);
     expect(getUserStub(otherUserId).broadcastEvent).not.toHaveBeenCalled();
 
-    await object.deleteAll([userId, otherUserId]);
+    await expect(object.deleteAll([userId, otherUserId])).resolves.toBeUndefined();
     expect(getUserStub(otherUserId).broadcastEvent).not.toHaveBeenCalled();
   });
 
