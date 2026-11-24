@@ -12,7 +12,7 @@ export const getPropertyValue = <TInput, TPath extends Paths<TInput> & string>(
       (object, key) => (object === undefined || object === null ? undefined : Reflect.get(new Object(object), key)),
       input,
     );
-  // The walk is by a dotted string, which the compiler cannot compute Get
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- from, so the value is the path's own type restated
+  // The walk is by a dotted string, which the compiler cannot compute `Get` from
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the value is the path's own type restated
   return value as Get<TInput, TPath>;
 };

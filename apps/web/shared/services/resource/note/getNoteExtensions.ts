@@ -7,7 +7,7 @@ import { TableKit } from "@tiptap/extension-table";
 import { StarterKit } from "@tiptap/starter-kit";
 
 // An image is read only from a resource asset url. A paste carries a web page's image with that page's own address,
-// Which The published view would drop, so the paste is refused here rather than kept as a picture the owner sees and no
+// Which the published view would drop, so the paste is refused here rather than kept as a picture the owner sees and no
 // Reader does
 const NoteImage = Image.extend({
   parseHTML: () => [

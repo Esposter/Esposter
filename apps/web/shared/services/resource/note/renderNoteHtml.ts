@@ -44,7 +44,7 @@ const renderNoteNode = renderJSONContentToString<Mark, Node>({
 
 // A note's document as the HTML a reader sees, sanitised at the render boundary. Both the note view and the page
 // Builder's text and email rich text render through it, so one writing kit and one sanitiser shape every read. It
-// Renders From the schema's own output specs with no DOM: `@tiptap/html`'s `generateHTML` throws wherever `window` is
-// Absent, Which in the web Worker is every server-side publish and export
+// Renders from the schema's own output specs with no DOM: `@tiptap/html`'s `generateHTML` throws wherever `window` is
+// Absent, which in the web Worker is every server-side publish and export
 export const renderNoteHtml = (content: JSONContent): string =>
   sanitizeTextHtml(renderNoteNode({ content: noteProseMirrorSchema.nodeFromJSON(content) }), NOTE_IMAGE_ALLOWANCE);

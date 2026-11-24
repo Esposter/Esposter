@@ -37,17 +37,16 @@ export const ASSET_GRACE_MS = Temporal.Duration.from({ hours: 1 }).total("millis
 // How far the release moves its decision time back before a replayed deletion is judged against it. The decision is
 // Stamped by this server and the blob's last-written time by storage, so a skewed clock could otherwise let a re-upload
 // That landed just after the decision read as older than it. Moving the stamp back keeps such a blob, and a later
-// Release Collects it once it is unreferenced
+// Release collects it once it is unreferenced
 export const ASSET_DECISION_CLOCK_MARGIN_MS = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
 export const RESOURCE_ASSETS_URL_PREFIX = `/api/${StorageBucket.ResourceAssets}`;
-// Emitted only by `getResourceAssetUrl`, whose per-segment encoding closes the charset by construction — The "token we
-// Control" case of openspec/specs/architecture/content-token-rewriting/design.md: prefix-anchored, positive Charset, no
+// Emitted only by `getResourceAssetUrl`, whose per-segment encoding closes the charset by construction — the "token we
+// Control" case of openspec/specs/architecture/content-token-rewriting/design.md: prefix-anchored, positive charset, no
 // Opener analysis needed. Global flag — use only via matchAll/replaceAll. The lookbehind is what makes the prefix a url
-// Rather than a substring of one: authored content can embed a Foreign absolute url whose own path carries this prefix
-// (`https://cdn.example.com/api/resource-assets/…`), and Matching its tail rewrites the foreign url into a local one on
-// Publish and splices a second url into the middle Of it on export. A url only starts where no url character precedes
-// It
+// Rather than a substring of one: authored content can embed a foreign absolute url whose own path carries this prefix
+// (`https://cdn.example.com/api/resource-assets/…`), and matching its tail rewrites the foreign url into a local one on
+// Publish and splices a second url into its middle on export. A url only starts where no url character precedes it
 export const RESOURCE_ASSET_URL_REGEX = new RegExp(
   String.raw`(?<![\w.~%/:-])${RegExp.escape(RESOURCE_ASSETS_URL_PREFIX)}/(?<encodedPath>[\w.~%-]+(?:/[\w.~%-]+)*)`,
   "gu",

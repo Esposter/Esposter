@@ -33,7 +33,7 @@ describe("customHtmlNodeType", () => {
     expect.hasAssertions();
 
     // Each vector is a script or frame with an error handler, a script URL behind a leading space or in mixed case, a
-    // Srcdoc, and an SVG link
+    // `srcdoc`, and an SVG link
     const vectors = [
       '<img src="x" onerror="alert(1)"><script>alert(1)</script><iframe src="https://example.com"></iframe>',
       '<a href=" javascript:alert(1)">x</a><a href="JaVaScRiPt:alert(1)">y</a>',
