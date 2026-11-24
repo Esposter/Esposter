@@ -3,8 +3,10 @@ import { cloudflareProvider } from "#src/cloudflare/providers/cloudflareProvider
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
-/** A null MX (RFC 7505): the domain accepts no mail, so a sender is refused at once rather than retrying. Reviving
- * inbound mail deletes it before Email Routing writes its own MX records / */
+/**
+ * A null MX (RFC 7505): the domain accepts no mail, so a sender is refused at once rather than retrying. Reviving
+ * inbound mail deletes it before Email Routing writes its own MX records.
+ */
 export const esposterComNullMx: cloudflare.DnsRecord = new cloudflare.DnsRecord(
   "esposter.com-null-mx",
   {
