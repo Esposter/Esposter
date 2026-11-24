@@ -31,8 +31,8 @@ const checkIsOppidanStatus = (effect: KitEffect, characterId: number): boolean =
   effect.characterId === characterId &&
   (effect.id === OPPIDAN_AMBUSH_HOLD_ID || effect.id === OPPIDAN_AMBUSH_DECAY_ID);
 
-// The buff's amount is set as the rise or the fall moves it, and a buff of the same attribute and source restarts in
-// Place
+// The buff's amount is set as the rise or the fall moves it.
+// A buff of the same attribute and source restarts in place
 const setOppidanBuff = (kitEffectState: KitEffectState, characterId: number, amount: number): void => {
   buffKitMember(kitEffectState, characterId, {
     amount,
@@ -42,8 +42,9 @@ const setOppidanBuff = (kitEffectState: KitEffectState, characterId: number, amo
   });
 };
 
-// Oppidan Ambush at its rank: off the field, its wielder's DMG rises by the rank's rate a second, to ten seconds'
-// Worth. On the Field, the DMG holds for the rank's seconds and then falls at twice the rate a second until none.
+// Oppidan Ambush at its rank: off the field, its wielder's DMG rises by the rank's rate a second.
+// The rise is capped at ten seconds' worth.
+// On the field, the DMG holds for the rank's seconds and then falls at twice the rate a second until none.
 // Leaving the field ends the Hold and the fall, and the rise resumes from the DMG it has
 export const createOppidanAmbushPassiveModule = (params: number[]): PassiveModule => {
   const ratePerSecond = takeOne(params, 0);

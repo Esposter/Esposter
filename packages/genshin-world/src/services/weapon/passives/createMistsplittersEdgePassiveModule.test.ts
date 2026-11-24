@@ -23,9 +23,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 describe(createMistsplittersEdgePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = { ...createWielderCombatant(), element: Element.Pyro };
-  // Mistsplitter's Edge at its first rank: 12% Elemental DMG Bonus on every element, and the Emblem's 8%, 16% and 28%
-  // On the Wielder's element for one, two and three stacks, from a normal attack's elemental hit for five seconds, a
-  // Burst for ten And the Energy short of full, which holds one until it is full
+  // Mistsplitter's Edge at its first rank: 12% Elemental DMG Bonus on every element, and the Emblem's 8%, 16% and
+  // 28% on the wielder's element for one, two and three stacks, from a normal attack's elemental hit for five seconds.
+  // A burst for ten seconds, and the Energy short of full, which holds one until it is full
   const passiveModule = createMistsplittersEdgePassiveModule([0.12, 0.08, 0.16, 0.28, 5, 10]);
   // A context whose wielder has its Energy full, so no stack is held for the Energy short of full
   const createFullEnergyContext = (): KitContext => {

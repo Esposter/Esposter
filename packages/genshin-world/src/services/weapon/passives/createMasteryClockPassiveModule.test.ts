@@ -38,9 +38,9 @@ describe(createMasteryClockPassiveModule, () => {
     }
   };
 
-  // Jinni's Whisper at its first rank: every ten seconds, 0.036% Energy Recharge for each point of Elemental Mastery
-  // For Twelve seconds, a nearby member 30% of it. The rows hold the rate as the percentage its text gives, scaled to a
-  // Fraction
+  // Jinni's Whisper at its first rank: every ten seconds, 0.036% Energy Recharge for each point of Elemental Mastery.
+  // For twelve seconds, a nearby member 30% of it.
+  // The rows hold the rate as the percentage its text gives, scaled to a fraction
   const jinnisWhisper = createMasteryClockPassiveModule([10, 0.036, 12, 0.3], {
     attribute: Attribute.EnergyRecharge,
     valueScale: 0.01,

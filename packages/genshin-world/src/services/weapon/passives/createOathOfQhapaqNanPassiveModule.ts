@@ -10,7 +10,7 @@ import { checkIsReactionNamed } from "#src/services/weapon/passives/checkIsReact
 import { takeOne } from "@esposter/shared";
 
 const OATH_ID = "oathOfQhapaqNan";
-// The reactions that involve Pyro: Vaporize, Melt, Overloaded, Burning and Burgeon name it by their reaction type, and
+// The reactions that involve Pyro: Vaporize, Melt, Overloaded, Burning and Burgeon name it by their reaction type.
 // A Swirl or a Crystallize names it by the element it spreads or shards
 const PYRO_REACTIONS = [
   { reactionType: ReactionType.Burgeon },
@@ -23,7 +23,7 @@ const PYRO_REACTIONS = [
 ];
 
 // Oath of Qhapaq Nan at its rank: after a party member triggers a Pyro-related reaction, on the field or not, the
-// Wielder's Elemental Skill DMG rises by the rank's amount for the rank's seconds
+// Elemental Skill DMG of the wielder rises by the rank's amount for the rank's seconds
 export const createOathOfQhapaqNanPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const seconds = takeOne(params, 1);

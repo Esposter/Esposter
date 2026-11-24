@@ -5,8 +5,8 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
-// A passive that restores its wielder the rank's share of Max HP for each Elemental Orb or Particle the wielder
-// Collects
+// A passive that restores its wielder the rank's share of Max HP for each Elemental Orb or
+// Particle the wielder collects
 export const createParticleHealPassiveModule = (params: number[]): PassiveModule => {
   const healthShare = takeOne(params, 0);
   return {

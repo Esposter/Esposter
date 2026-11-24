@@ -35,7 +35,7 @@ describe(createMillennialHymnPassiveModule, () => {
     striker,
   });
   // Millennial Hymn at its first rank: 60 Elemental Mastery for 4.5 seconds after an Elemental Skill of Hydro or
-  // Dendro, and For 10 seconds after a nearby member's Lunar-Bloom, both together raising the party's Bloom DMG by 120%
+  // Dendro, and for 10 seconds after a nearby member's Lunar-Bloom, both together raising the party's Bloom DMG by 120%
   const passiveModule = createMillennialHymnPassiveModule([60, 10, 60, 4.5, 1.2, 0.8, 0.4]);
 
   test("an Elemental Skill of Hydro or Dendro raises the wielder's Elemental Mastery for the rank's first seconds", () => {

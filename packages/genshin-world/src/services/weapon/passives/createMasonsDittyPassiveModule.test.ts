@@ -25,8 +25,8 @@ const createHeal = (characterId: number, sourceCharacterId: number): KitHealthCh
 describe(createMasonsDittyPassiveModule, () => {
   const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
   const wielder = createWielderCombatant();
-  // Masons' Ditty (Prospector's Drill) at its first rank: 3% ATK and 7% All Elemental DMG for each Unity's Symbol
-  // Consumed, for Ten seconds, once every fifteen
+  // Masons' Ditty (Prospector's Drill) at its first rank: 3% ATK and 7% All
+  // Elemental DMG for each Unity's Symbol consumed, for ten seconds, once every fifteen
   const passiveModule = createMasonsDittyPassiveModule([30, 10, 15, 0.03, 0.07]);
 
   test("a skill use turns the Symbols into the rank's ATK and All Elemental DMG for each, and a second use inside the cooldown consumes nothing", () => {

@@ -14,10 +14,11 @@ const FLOWRIDER_ID = "flowrider";
 const FLOWRIDER_COOLDOWN_ID = "netSnapperFlowriderCooldown";
 const FLOWRIDER_HIT_COOLDOWN_ID = "netSnapperFlowriderHitCooldown";
 
-// Net Snapper at its rank: an Elemental Skill its wielder uses gives Flowrider for the rank's seconds, once every the
-// Rank's Cooldown in seconds. An attack hit the wielder lands while it stands queues a small AoE at the rank's
-// Multiplier of ATK, at Most once every the rank's hit cooldown in seconds, and Flowrider ends after the rank's count
-// Of them
+// Net Snapper at its rank: an Elemental Skill its wielder uses gives Flowrider for the rank's seconds.
+// Flowrider can be given once every cooldown the rank gives in seconds.
+// An attack hit the wielder lands while it stands queues a small AoE at the rank's multiplier of ATK.
+// That AoE comes at most once every hit cooldown the rank gives in seconds.
+// Flowrider ends after the rank's count of those hits
 export const createNetSnapperPassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);
   const seconds = takeOne(params, 1);

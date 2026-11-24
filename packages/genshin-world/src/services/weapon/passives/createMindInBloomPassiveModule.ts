@@ -21,8 +21,8 @@ const MIND_IN_BLOOM_REACTIONS = [
 ];
 
 // Mind in Bloom at its rank: a reaction of those names that anyone in the party triggers, even off the field, restores
-// The Wielder the rank's Energy and raises its Elemental Mastery by the rank's amount for the rank's seconds, at most
-// Once every The rank's cooldown in seconds
+// Energy the rank gives its wielder, and raises its Elemental Mastery by the rank's amount for the rank's seconds.
+// At most once every cooldown the rank gives in seconds
 export const createMindInBloomPassiveModule = (params: number[]): PassiveModule => {
   const energy = takeOne(params, 0);
   const elementalMastery = takeOne(params, 1);

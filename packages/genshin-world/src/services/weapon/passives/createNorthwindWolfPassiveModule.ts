@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 const NORTHWIND_WOLF_SKILL_ID = "northwindWolfSkill";
 const NORTHWIND_WOLF_BURST_ID = "northwindWolfBurst";
 
-// Northwind Wolf at its rank: its wielder's Elemental Skill and Burst DMG rise by the rank's first amount. Each
-// Elemental Skill Hit adds a stack of CRIT Rate, and each burst hit a stack of its own, each for the rank's seconds, up
-// To the rank's stacks, And a stack at most once every cooldown
+// Northwind Wolf at its rank: its wielder's Elemental Skill and Burst DMG rise by the rank's first amount.
+// Each Elemental Skill hit adds a stack of CRIT Rate, and each burst hit a stack of its own, for the rank's seconds.
+// Each holds up to the rank's stacks, and a stack is added at most once every cooldown
 export const createNorthwindWolfPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const skillSeconds = takeOne(params, 1);

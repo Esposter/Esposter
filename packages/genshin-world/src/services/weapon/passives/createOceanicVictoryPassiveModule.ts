@@ -6,9 +6,9 @@ import { takeOne } from "@esposter/shared";
 
 const OCEANIC_VICTORY_COOLDOWN_ID = "oceanicVictoryCooldown";
 
-// Oceanic Victory at its rank: its wielder's Elemental Burst DMG is raised by the rank's percentage, and an Elemental
-// Burst Hit has the rank's chance of an extra hit at the rank's multiplier of ATK, once every the rank's cooldown in
-// Seconds
+// Oceanic Victory at its rank: its wielder's Elemental Burst DMG is raised by the rank's percentage.
+// An Elemental Burst hit has the rank's chance of an extra hit at the rank's multiplier of ATK.
+// That extra hit comes at most once every cooldown the rank gives in seconds
 export const createOceanicVictoryPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   return {

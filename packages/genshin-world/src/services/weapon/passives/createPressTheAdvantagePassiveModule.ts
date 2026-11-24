@@ -9,9 +9,9 @@ import { takeOne } from "@esposter/shared";
 const PRESS_THE_ADVANTAGE_MAXIMUM_STACKS = 3;
 const PRESS_THE_ADVANTAGE_SOURCE = "pressTheAdvantage";
 
-// Press the Advantage at its rank: defeating an opponent its wielder struck raises the wielder's ATK by the rank's
-// Percentage For the rank's seconds, up to three stacks. Each stack runs on its own timer, so each holds a source of
-// Its own, and a Defeat at the cap adds none
+// Press the Advantage at its rank: defeating an opponent its wielder struck raises the wielder's
+// ATK by the rank's percentage for the rank's seconds, up to three stacks.
+// Each stack runs on its own timer, so each holds a source of its own, and a defeat at the cap adds none
 export const createPressTheAdvantagePassiveModule = (params: number[]): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   const seconds = takeOne(params, 1);
