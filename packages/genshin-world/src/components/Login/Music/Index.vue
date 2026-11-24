@@ -72,9 +72,9 @@ onMounted(() => {
     const source = new AudioBufferSourceNode(context, { buffer: formingNoise ?? null, loop: true });
     const envelope = new GainNode(context, { gain: 0 });
     source.connect(envelope).connect(sfxBus);
-    // The envelope is an attack to full, a hold, then a release to silence, anchored to the rise: it began a full lead
-    // Before the rise, which lies `leftMs` ahead, so it is `elapsedMs` into its attack now. The lead is shorter than the
-    // Attack, and the hold and release land at the rise's times, all scheduled on the context's clock
+    // The envelope is an attack to full, a hold, then a release to silence, anchored to the rise: it began a full
+    // Lead before the rise, which lies `leftMs` ahead, so it is `elapsedMs` into its attack now. The lead is shorter
+    // Than the attack, and the hold and release land at the rise's times, all scheduled on the context's clock
     const now = context.currentTime;
     const elapsedMs = LOGIN_DOOR_FORMING_LEAD_MS - leftMs;
     const startedAt = now - elapsedMs / 1000;

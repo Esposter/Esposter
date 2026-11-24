@@ -189,7 +189,7 @@ const onClick = (event: MouseEvent): void => {
     </TresCanvas>
     <LoginMusic
       v-if="!isInterfaceHidden"
-      :door-forming-left-ms="doorFormingLeftMs"
+      :door-forming-left-ms
       :is-door-opened="stage === LoginStage.Entering"
       :music="loginData.music"
       :game-data-base-url
