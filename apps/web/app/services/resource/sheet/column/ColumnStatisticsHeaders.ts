@@ -17,8 +17,7 @@ export const ColumnStatisticsHeaders: UiDataTableColumn<ColumnStatisticsRow>[] =
       );
       return compareColumnValues(firstValue, secondValue);
     },
-    // The key is only known at runtime, so the compiler cannot correlate a statistic with its own format's input
-    // The format is picked by a runtime key, so the statistic read by that
+    // The key is only known at runtime, so the compiler cannot correlate a statistic with its own format's input.
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- key is a union no single format input accepts
     getValue: ({ column, statistics }: ColumnStatisticsRow) => format(statistics[key] as never, column),
     ...(sortable === false ? { isSortable: false as const } : {}),

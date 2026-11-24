@@ -4,8 +4,8 @@ interface DisplacedIndex {
   sourceIndex: number;
 }
 
-// The entry that landed furthest from where it was expected. A tie keeps the first, and nothing that moved answers
-// Undefined
+// The entry that landed furthest from where it was expected.
+// A tie keeps the first, and nothing that moved answers `undefined`.
 export const findLargestDisplacement = (displacedIndexes: DisplacedIndex[]) => {
   let largest: DisplacedIndex | undefined;
   let maxDisplacement = 0;

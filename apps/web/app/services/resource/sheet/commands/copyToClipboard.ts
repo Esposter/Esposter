@@ -26,8 +26,8 @@ export const copyToClipboard = async (dataSource: DataSource, options: CopyToCli
   const htmlBlob = new Blob([serializeToHtml(filteredDataSource, isIncludingHeaders, cellTextRows)], {
     type: MimeType.Html,
   });
-  // The values as they were copied, for an in-app paste: the text above is made safe for a spreadsheet, and would not
-  // Be
+  // The values as they were copied, for an in-app paste.
+  // The text above is sanitized for a spreadsheet, which an in-app paste does not need.
   const headerValues = visibleColumns.map((column) => column.name);
   const valueRows = isIncludingHeaders ? [headerValues, ...cellTextRows] : cellTextRows;
   const sheetBlob = new Blob([JSON.stringify(valueRows)], { type: SHEET_CLIPBOARD_MIME_TYPE });
