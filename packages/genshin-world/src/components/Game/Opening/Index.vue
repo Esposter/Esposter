@@ -98,7 +98,7 @@ whenever(
     :game-data-base-url
     :game-text
     :is-download-failed="status === HostedAssetPreloadStatus.Failed"
-    :is-downloading="isDownloading"
+    :is-downloading
     :is-interface-hidden="false"
     :language
     :login-data
