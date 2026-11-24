@@ -30,6 +30,7 @@ const createFieldKitContext = (): KitContext => {
     outbox: [],
     party: createParty([TRAVELER_CHARACTER_ID]),
     stamina: createStamina(STAMINA_MAX),
+    worldEffects: [],
   };
   return fieldKitContext as KitContext;
 };
