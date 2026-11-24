@@ -34,7 +34,7 @@ export const digestDirectory = async (
     const name = current.unread.shift();
     if (name !== undefined) {
       ancestors.push(current);
-      // As its walk finishes, and the manifest command prints the keys in that order
+      // A directory is recorded once its walk finishes, and the manifest command prints the keys in that order
       // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each directory is recorded in the manifest
       current = await open(posix.join(current.directory, name), name);
       continue;

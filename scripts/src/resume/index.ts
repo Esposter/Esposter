@@ -43,8 +43,7 @@ await runCommand(
         readResumeRow("watcher", readWatcherItems),
       ]);
       for (const line of formatResumeRows(rows)) console.info(line);
-      // A row's error
-      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- or action the resume reports, empty when none
+      // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a reported error or action, empty when none
       if (rows.some(({ error, items }) => error !== "" || items.some(({ action }) => action !== "")))
         process.exitCode = 1;
     },

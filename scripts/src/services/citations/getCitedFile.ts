@@ -7,8 +7,8 @@ const FILE_REGEX = new RegExp(`(?<file>${FILE_PATTERN})`, "gu");
 const FOLLOWING_FILE_REGEX = new RegExp(`^\\s*,?\\s*(?:of|in|from)\\s+\\x60?(?<file>${FILE_PATTERN})`, "u");
 
 export const getCitedFile = (line: string, start: number, end: number): string | undefined => {
-  // A sentence ends at a full stop or a semicolon followed by a space, so a file named in an earlier one is not the
-  // File
+  // A sentence ends at a full stop or a semicolon followed by a space, so a file named in an earlier one
+  // Is no candidate for this sentence's file
   const boundary = Math.max(line.lastIndexOf(". ", start), line.lastIndexOf("; ", start));
   const sentenceFiles = Array.from(
     line.slice(boundary + 1, start).matchAll(FILE_REGEX),
