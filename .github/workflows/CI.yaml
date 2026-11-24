@@ -96,7 +96,7 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/workspace-data/content
-          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
+          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json', 'apps/web/shared/generated/hostedAssets/dungeonsLock.json') }}
           restore-keys: game-data-mirror-
       # Vitest's persisted transforms, per shard, since a shard transforms its own files. An entry is keyed on what the
       # transform read, so one from an earlier commit is reused as it stands; the lockfile in the key starts the cache

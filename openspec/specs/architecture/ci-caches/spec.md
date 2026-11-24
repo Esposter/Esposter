@@ -42,7 +42,7 @@ No workflow or action SHALL restore or save the pnpm store, by the setup action'
 
 ### Requirement: The game data mirror is filled and saved only from the saving branches
 
-Every branch SHALL restore the newest game data mirror it can see. Only the default branch and ai/queue SHALL fill a missing mirror and save it under its lock's key, before the coverage shards start.
+Every branch SHALL restore the newest game data mirror it can see. Only the default branch and ai/queue SHALL fill a missing mirror and save it under the key of every product's lock, before the coverage shards start.
 
 #### Scenario: a branch that cannot save restores the newest mirror
 
@@ -53,9 +53,9 @@ Every branch SHALL restore the newest game data mirror it can see. Only the defa
 
 #### Scenario: ai/queue fills and saves a mirror its lock lacks
 
-- **GIVEN** a run on `ai/queue` whose lock's key has no saved mirror
+- **GIVEN** a run on `ai/queue` whose locks' key has no saved mirror
 - **WHEN** the build packages job runs
-- **THEN** the mirror is filled and saved under the lock's key before any coverage shard restores it
+- **THEN** the mirror is filled and saved under the locks' key before any coverage shard restores it
 
 ### Requirement: The cache rule is held by a test
 
