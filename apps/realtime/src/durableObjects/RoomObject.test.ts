@@ -98,8 +98,8 @@ const readSearchIds = async (
   let encodedCursor = "";
   do {
     const cursor = createPageInputSchema(sort).parse({ cursor: encodedCursor, limit }).cursor;
-    // The pages are read in turn
-    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page answers the cursor the one before it left, so
+    // The pages are read in turn, as each one needs the cursor the page before it left.
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page answers the cursor the one before it left
     const page = await readSearchPage(rooms, query, cursor, limit);
     matches.push(...page.items.map(({ id, roomId: matchRoomId }) => ({ id, roomId: matchRoomId })));
     encodedCursor = page.nextCursor;

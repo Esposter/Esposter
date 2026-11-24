@@ -57,20 +57,19 @@ export abstract class RealtimeObject<
     return new Response(null, { status: 101, webSocket: client });
   }
 
-  // The one entry a caller reaches the object's RPC methods through. The method runs in an invocation scope, so the
-  // Statements It awaits are recorded: its reads come back as the read set its result watches, and its writes come back
-  // As the write set They are published as, best-effort once it settles, whether it succeeded or not, since a write
-  // That landed before a failure Still changed rows
+  // The one entry a caller reaches the object's RPC methods through.
+  // The method runs in an invocation scope, so the statements it awaits are recorded.
+  // Its reads come back as the read set its result watches, and its writes come back as the write set.
+  // They are published best-effort once it settles, whether it succeeded or not.
+  // A write that landed before a failure still changed rows, so it is published too.
   async invoke<TMethod extends keyof TRpc & string>(
     method: TMethod,
     args: MethodArgs<TRpc, TMethod>,
   ): Promise<ObjectInvocation<MethodResult<TRpc, TMethod>>> {
-    // The method is named by a string at run time, so the object is read by name here, and TRpc types the arguments
-    // Each name takes
-    // A dispatch by a string name, which the type
-    // oxlint-disable typescript/no-unsafe-type-assertion -- system cannot express: TRpc types each name's arguments
-    // A dispatch by a string name, which the type system
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- cannot express: TRpc types each name's arguments
+    // The method is named by a string at run time, so the object is read by name here.
+    // The arguments each name takes are typed by TRpc.
+    // oxlint-disable typescript/no-unsafe-type-assertion -- a string-named dispatch the types cannot express
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- string-named dispatch the types cannot express
     const target = this as unknown as Record<
       TMethod,
       (...args: MethodArgs<TRpc, TMethod>) => MethodResult<TRpc, TMethod>
