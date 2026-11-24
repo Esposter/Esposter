@@ -7,8 +7,8 @@ import { serializePermissionsPolicy } from "#src/runtime/services/serializePermi
 import { serializeStrictTransportSecurity } from "#src/runtime/services/serializeStrictTransportSecurity";
 
 export const serializeValue = (key: string, value: unknown): string => {
-  // The key picks which policy the value is, and TypeScript cannot tie a value's type to a key read from a separate
-  // Parameter,
+  // The key picks which policy the value is.
+  // TypeScript cannot tie a value's type to a key read from a separate parameter.
   // oxlint-disable typescript/no-unsafe-type-assertion -- so each policy's value is asserted to the type its key names
   if (key === "contentSecurityPolicy") return serializeContentSecurityPolicy(value as ContentSecurityPolicy);
   if (key === "permissionsPolicy") return serializePermissionsPolicy(value as PermissionsPolicy);

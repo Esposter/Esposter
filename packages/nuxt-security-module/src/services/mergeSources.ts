@@ -1,7 +1,8 @@
 import { NONE_SOURCE } from "#src/services/constants";
 
-// `'none'` is the empty list and stands alone: a source added beside a default `'none'` replaces it, which a browser
-// Would Otherwise ignore with a warning, and a consumer's own `['none']` replaces the default sources
+// `'none'` is the empty list and stands alone.
+// A source added beside a default `'none'` replaces it, which a browser would ignore with a warning.
+// A consumer's own `['none']` replaces the default sources.
 export const mergeSources = (defaultSources: boolean | string[] | undefined, sources: string[]): string[] => {
   if (sources.length === 1 && sources[0] === NONE_SOURCE) return sources;
 

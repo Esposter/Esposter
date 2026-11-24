@@ -28,21 +28,20 @@ const SERVER_MIDDLEWARE: Record<(typeof SERVER_MIDDLEWARE_OPTIONS)[number], Midd
   requestSizeLimiter,
 };
 
-// The handlers module.ts registers for these options, in the order it registers them. Each sits behind the option that
-// Enables it, so a disabled feature adds nothing to the chain. Basic auth is left out: it is registered only with
-// Credentials, which neither configuration sets
+// The handlers module.ts registers for these options, in the order it registers them.
+// Each sits behind the option that enables it, so a disabled feature adds nothing to the chain.
+// Basic auth is left out: it is registered only with credentials, which neither configuration sets.
 const getServerChain = (options: ModuleOptions): Middleware[] =>
   SERVER_MIDDLEWARE_OPTIONS.filter((option) => options[option]).map((option) => SERVER_MIDDLEWARE[option]);
 
 const runServerChain = async (chain: Middleware[]): Promise<void> => {
   const event = new H3Event(new Request(REQUEST_URL));
-  // Runs
-  // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each middleware answers before the next one
+  // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each one answers before the next runs
   for (const middleware of chain) await middleware(event, () => undefined);
 };
 
-// The module's options for a consumer's overrides, with the route table the module resolves at startup, and the chain
-// Those options register
+// The module's options for a consumer's overrides, with the route table the module resolves at startup.
+// The chain is what those options register.
 const setUpServerChain = (overrides: Partial<ModuleOptions>): Middleware[] => {
   const options = parseModuleOptions(
     mergeModuleOptions(getDefaultModuleOptions(false, DEV_SERVER_URL, false), overrides),
@@ -51,8 +50,8 @@ const setUpServerChain = (overrides: Partial<ModuleOptions>): Middleware[] => {
   return getServerChain(options);
 };
 
-// One request through each configuration's chain. The native task is the event alone, so the cost of the handlers
-// Reads above it
+// One request through each configuration's chain.
+// The native task is the event alone, so the cost of the handlers reads above it.
 describe("server middleware chain", () => {
   test("the app's options", async ({ bench }) => {
     const chain = setUpServerChain(APP_SECURITY_OPTIONS);

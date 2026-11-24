@@ -8,16 +8,16 @@ import { createSubresourceIntegrityPlugin } from "#src/runtime/nitro/plugins/sub
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
-// A rendered page's markup carrying its nonce and its integrity attributes: the nonce is generated for the request,
-// Then The nonce and SRI plugins rewrite each section of the page, a fresh page and event per iteration.
+// A rendered page's markup carrying its nonce and its integrity attributes: the nonce is generated for the request.
+// The nonce and SRI plugins rewrite each section of the page, with a fresh page and event per iteration.
 describe("nonce plugin", () => {
   test("a rendered page's nonce and SRI attributes", async ({ bench }) => {
     const app = await createNoncedPageApp();
     await createSubresourceIntegrityPlugin(PAGE_SRI_HASHES)(app.nitroApp);
 
     let event = createPageEvent();
-    // Each iteration gets its own event, built outside the timing, as the page's markup is built inside it on both
-    // Sides
+    // Each iteration gets its own event, built outside the timing.
+    // The page's markup is built inside it on both sides.
     const beforeEach = () => {
       event = createPageEvent();
     };

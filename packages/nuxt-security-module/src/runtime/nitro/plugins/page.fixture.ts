@@ -112,18 +112,18 @@ export const createNitroApp = (): {
   };
 
   // A plugin is typed by Nitro's own app, which this fake stands in for: the cast is the one place that gap is closed
-  // The fakes stand in for Nitro's app and h3's event with only the
-  // oxlint-disable typescript/no-unsafe-type-assertion -- members the plugin reads, which are subsets of the full types
+  // The fakes stand in for Nitro's app, with only the members the plugin reads.
+  // oxlint-disable typescript/no-unsafe-type-assertion -- the members it reads are subsets of the full types
   const nitroApp = { hooks } as Parameters<NitroAppPlugin>[0];
   // oxlint-enable typescript/no-unsafe-type-assertion
   return { nitroApp, run };
 };
 
-// A fresh request event for the page's path, the way each request arrives: its own response headers, no rules cached
-// Yet
+// A fresh request event for the page's path, the way each request arrives: its own response headers.
+// It has no rules cached yet.
 export const createPageEvent = (): H3Event =>
-  // The fakes stand in for Nitro's app and h3's event with only the members the
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- plugin reads, which are subsets of the full types
+  // The fakes stand in for Nitro's app and h3's event, with only the members the plugin reads.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- its members are subsets of the full types
   ({ res: { headers: new Headers() }, url: new URL(PAGE_PATHNAME, PAGE_ORIGIN) }) as H3Event;
 
 // The app a page's response is built on, with its route rules applied and its request's nonce generated, for a bench to
