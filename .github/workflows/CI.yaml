@@ -117,11 +117,12 @@ jobs:
           path: .vitest
           pattern: vitest-timings
           merge-multiple: true
-      # `default` beside `blob`, on purpose (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape)
+      # `default` beside `blob`, on purpose (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape).
+      # The timings reporter writes this shard's durations into `.vitest/timings/`, which the upload below sends on
       - name: 🧪 Test
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
-        run: pnpm coverage --reporter=default --reporter=blob --shard="$SHARD"
+        run: pnpm coverage --reporter=default --reporter=blob --reporter=./packages/configuration/src/services/TestTimingsReporter.ts --shard="$SHARD"
       # Saved whether the suite passed or failed, since a failing test transformed its modules all the same
       - name: 💾 Save the Vitest module cache
         if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
@@ -147,10 +148,6 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
 
-      # The durations this shard's files took, which Vitest wrote to its cache directory
-      - name: 📋 Collect the test timings
-        if: ${{ !cancelled() }}
-        run: mkdir -p .vitest/timings && cp node_modules/.vite/vitest/*/results.json ".vitest/timings/${{ matrix.shard }}.json"
       - name: 📤 Upload the test timings
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

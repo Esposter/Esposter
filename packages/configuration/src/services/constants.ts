@@ -26,6 +26,8 @@ export const DISTRIBUTION_DIRECTORY = "dist";
 
 // Where the coverage shards find the durations the last run recorded, merged over every shard by CI
 export const TEST_TIMINGS_PATH = ".vitest/timings.json";
+// Where each shard's own record goes, under its shard number, before CI merges them into `TEST_TIMINGS_PATH`
+export const TEST_SHARD_TIMINGS_DIRECTORY = ".vitest/timings";
 
 export const KIBIBYTE: number = 2 ** 10;
 // Shared by the SFC build and the SFC test run, so a component cannot compile against one set of ambient

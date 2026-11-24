@@ -67,7 +67,7 @@ The test and coverage commands SHALL run every test file in a single run, so tha
 
 ### Requirement: Shards are balanced by recorded duration
 
-The coverage shards SHALL be given their test files by the durations the previous run recorded rather than by an equal count, so that no shard runs much longer than the rest; with no recorded durations, the files SHALL be split as before.
+The coverage shards SHALL be given their test files by the durations the previous run recorded, each the whole time its file took with its imports included, rather than by an equal count, so that no shard runs much longer than the rest; with no recorded durations, the files SHALL be split as before.
 
 #### Scenario: Recorded durations split the files
 
