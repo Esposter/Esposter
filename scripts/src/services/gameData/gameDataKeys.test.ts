@@ -4,9 +4,9 @@ import {
   GAME_DATA_LOCK_PATH,
   GAME_DATA_PRODUCT_NAME,
 } from "#src/services/gameData/constants";
-import { getHostedAssetLockKeysSource } from "#src/services/hostedAssets/getHostedAssetLockKeysSource";
 import { readHostedAssetLock } from "#src/services/hostedAssets/readHostedAssetLock";
 import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
+import { getHostedAssetLockKeysSource } from "hosted-assets";
 import { readFile } from "node:fs/promises";
 import { describe, expect, test } from "vitest";
 

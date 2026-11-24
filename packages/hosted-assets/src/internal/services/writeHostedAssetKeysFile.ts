@@ -1,6 +1,5 @@
 import { hostedAssetLockSchema } from "#src/models/HostedAssetLock";
-import { getHostedAssetKeyPairs } from "#src/services/getHostedAssetKeyPairs";
-import { getHostedAssetKeysSource } from "#src/services/getHostedAssetKeysSource";
+import { getHostedAssetLockKeysSource } from "#src/services/getHostedAssetLockKeysSource";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname } from "node:path";
 
@@ -17,13 +16,5 @@ export const writeHostedAssetKeysFile = async (
      built, so @esposter/shared's date-aware parse is not loadable, and the lock holds no dates */
   const lock = hostedAssetLockSchema.parse(JSON.parse(await readFile(lockPath, "utf8")));
   await mkdir(dirname(keysPath), { recursive: true });
-  await writeFile(
-    keysPath,
-    getHostedAssetKeysSource(
-      productName,
-      basename(lockPath),
-      getHostedAssetKeyPairs(Object.keys(lock.objects), toName),
-      getHostedAssetKeyPairs(Object.keys(lock.indexes), toName),
-    ),
-  );
+  await writeFile(keysPath, getHostedAssetLockKeysSource(productName, basename(lockPath), lock, toName));
 };
