@@ -1,7 +1,4 @@
 import { spawnFormatter } from "#src/services/format/spawnFormatter";
-import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
-import { CHILD_PROCESS_TIMEOUT_MS } from "#src/services/shared/constants";
-import { timedOutError } from "#src/services/shared/timedOutError";
 import { Operation, takeOne } from "@esposter/shared";
 import { resolve } from "node:path";
 
@@ -14,21 +11,17 @@ export const listDifferent = (
   paths: string[],
   repositoryRoot: string,
   mainCheckoutRoot: string,
-  timeout: number = CHILD_PROCESS_TIMEOUT_MS,
 ): string[] | undefined => {
-  const { error, status, stdout } = spawnFormatter(
+  const { status, stdout } = spawnFormatter(
     ["--no-error-on-unmatched-pattern", "--list-different", ...paths],
     repositoryRoot,
     mainCheckoutRoot,
-    timeout,
+    {
+      command: `oxfmt --list-different over ${paths.length} files`,
+      name: takeOne(paths, 0),
+      operation: Operation.Read,
+    },
   );
-  if (checkIsTimedOut(error))
-    throw timedOutError(
-      Operation.Read,
-      takeOne(paths, 0),
-      timeout,
-      `oxfmt --list-different over ${paths.length} files`,
-    );
   // Status 0 finds none to rewrite and status 1 names them, and any other status is a run the formatter did not finish
   if (status !== 0 && status !== 1) return undefined;
   const listed = new Set(stdout.split(/\r?\n/u).map((line) => resolve(repositoryRoot, line)));
