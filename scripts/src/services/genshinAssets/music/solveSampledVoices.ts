@@ -28,20 +28,23 @@ import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 const LEVEL_SHARES = [1, 1 / 2, 1 / 4, 1 / 8];
 
 // Each voice's recorded instrument and level layered over `base`, the synthesizer's render as it ships under its
-// `expression`, solved together against the game's sound by the listening score's own measures. Every instrument plays
-// Each voice's notes alone at level 1, through the recordings they reach and with the release and tuning the game's
-// Voice was fitted to, and only one that keeps the voice's pitch as well as its notes as pure tones do
-// (`computeVoicePitchReference`) is a candidate for it, or the one nearest that where none does: pitch is what the
-// Bands cannot hear. A candidate then plays under the same expression, as the one output gain the player scales every
-// Voice by. The game's sound is read as the base's band energies with the candidates' summed over them, frame by frame
-// Over the frames the score reads, each scaled by its power. For every combination of one candidate a voice, the powers
-// Come in closed form from least squares in each band's share of the game's energy, what the base leaves short of it
-// The target, which weighs a quiet frame as a loud one as the score's decibels do; the best combinations by that
-// Residual are refined against the score's band distance (`refineVoicePowers`), and each one's mix is scored whole once
-// Its expression is refitted to the game's (`scoreShapedMusic`), as `genshin:parity expression` refits the shipped
-// Music's, with its gaps by the time since a note began. A mix that loses the base's pitch agreement is tried again at
-// A share of its levels (`LEVEL_SHARES`) and dropped if none keeps it, since every level at none is the base itself and
-// Can only be bettered. The mixes are ranked by distance, beside the base's own score
+// `expression`, solved together against the game's sound by the listening score's own measures.
+// Every instrument plays each voice's notes alone at level 1, through the recordings they reach.
+// Its release and tuning are the ones the game's voice was fitted to.
+// A candidate for a voice is an instrument that keeps the voice's pitch as well as its notes as pure tones do
+// (`computeVoicePitchReference`), or else the nearest one, where none does: pitch is what the bands cannot hear.
+// A candidate then plays under the same expression, as the one output gain the player scales every voice by.
+// The game's sound is read as the base's band energies with the candidates' summed over them.
+// Frame by frame, over the frames the score reads, each is scaled by its power.
+// For every combination of one candidate a voice, the powers come in closed form from least squares.
+// Each band's share of the game's energy, less what the base leaves short of it, is the target.
+// The target weighs a quiet frame as a loud one, as the score's decibels do.
+// The best combinations by that residual are refined against the score's band distance (`refineVoicePowers`).
+// Each one's mix is scored whole once its expression is refitted to the game's (`scoreShapedMusic`), the way
+// `genshin:parity expression` refits the shipped music's, with its gaps by the time since a note began.
+// A mix that loses the base's pitch agreement is tried again at a share of its levels (`LEVEL_SHARES`).
+// It is dropped if none keeps it, since every level at none is the base itself and can only be bettered.
+// The mixes are ranked by distance, beside the base's own score.
 export const solveSampledVoices = async (
   catalogue: CataloguedInstrument[],
   voiceNotesList: NoteEventTime[][],

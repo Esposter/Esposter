@@ -18,8 +18,8 @@ const uint16List = (values: number[]): Buffer => {
   return alignBytes(Buffer.concat([createInt32(values.length), body]));
 };
 const uint8List = (bytes: Buffer): Buffer => alignBytes(Buffer.concat([createInt32(bytes.length), bytes]));
-// A program's container is its magic and some bytes of the game's own, and a blob chunk is its entry count, each
-// Entry's offset and length, then each program's header and container
+// A program's container is its magic and some bytes of the game's own.
+// A blob chunk is its entry count, then each entry's offset and length, then each program's header and container.
 const payload = (text: string): Buffer => Buffer.concat([Buffer.from("DXBC"), Buffer.from(text)]);
 const blobChunk = (programs: { code: Buffer; gpuProgramType: number }[]): Buffer => {
   const bodies = programs.map(({ code, gpuProgramType }) =>

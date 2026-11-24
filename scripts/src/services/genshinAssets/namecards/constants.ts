@@ -1,8 +1,8 @@
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { join } from "node:path";
 
-// The namecards' art and icons exported from the installed game as references, the art and the icons each in a folder
-// Of their own, kept outside the repository like every other export and never shipped
+// The namecards' art and icons exported from the installed game as references, each in a folder of their own.
+// They are kept outside the repository like every other export, and never shipped.
 export const NAMECARD_DIRECTORY: string = join(REFERENCE_SCRATCH_DIRECTORY, "namecards");
 export const NAMECARD_ART_DIRECTORY: string = join(NAMECARD_DIRECTORY, "cards");
 export const NAMECARD_ICON_DIRECTORY: string = join(NAMECARD_DIRECTORY, "icons");

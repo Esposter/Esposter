@@ -12,11 +12,12 @@ import { readSiteCallsMap } from "#src/services/genshinAssets/kits/record/readSi
 import { splitHitPath } from "#src/services/genshinAssets/kits/record/splitHitPath";
 import { kitParameterSchema } from "genshin-world";
 
-// The candidates a hit takes from the talent variable its multiplier joins to: each hit of a `hits` list, a skill
-// Hold's or a stance's, or a single hit's own in `hitFields`, whose multiplier names a proud skill group and index
-// Gcsim's talent variables give a hit for, takes that hit's fields. A hit of a list takes the calls its attack makes in
-// Turn, in the order they land, where the list is as long as those calls, or where the calls of several keys from one
-// Attack site are, merged in the order they land
+// A hit takes its candidates from the talent variable its multiplier joins to: each hit of a
+// `hits` list, a skill hold or a stance hold, or a single hit's own in
+// `hitFields`, whose multiplier names a proud skill group and index. Gcsim's talent variables give a hit its fields.
+// A hit of a list takes the calls its attack makes in turn, in the order they land.
+// Where the list is as long as those calls, its hits take them in that order.
+// Calls of several keys from one attack site are merged in the order they land.
 export const getNamedHitKitCandidates = (
   valueMap: ReadonlyMap<string, unknown>,
   namedHitCandidateMap: NamedHitCandidateMap,
@@ -41,9 +42,9 @@ export const getNamedHitKitCandidates = (
   for (const [group, hits] of groupHitsMap) {
     const listLength = listLengthMap.get(group) ?? 0;
     const [firstHit] = hits;
-    // A named list of indexed hits whose hits all join one key is as long as the calls that key makes, as a loop of one
-    // Call makes them, though the source may name only some of its hits' multipliers. A hit with no index is a hit of
-    // Its own, not a list
+    // A named list of indexed hits whose hits all join one key is as long as the calls that key makes.
+    // A loop of one call makes them, though the source may name only some of its hits' multipliers.
+    // A hit with no index is a hit of its own, not a list.
     const isOneKeyList =
       group.startsWith("hits.") &&
       firstHit !== undefined &&

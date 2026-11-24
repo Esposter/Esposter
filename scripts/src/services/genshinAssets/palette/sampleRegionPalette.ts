@@ -13,9 +13,9 @@ import { GameDataset } from "genshin-world";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 
-// Each kit field's colour sampled from the diffuse textures of the families that feed it, the region's palette as one
-// Record under its own key. Each colour is printed with its families, texel count and spread, the evidence it is kept
-// On
+// Each kit field's colour is sampled from the diffuse textures of the families that feed it.
+// The region's palette is one record under its own key.
+// Each colour is printed with its families, texel count and spread, the evidence it is kept on.
 export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDataBuild> => {
   const textureDirectory = join(EXTRACTED_DIRECTORY, region, "assets", "Texture2D");
   const fileNames = await readdir(textureDirectory);
@@ -32,8 +32,8 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
     /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one field's decoded texels are held in memory
        at a time */
     const texels = await readFamilyTexels(texturePaths);
-    // Where every texel is transparent the field has no colour to read, so it is left provisional as one with no
-    // Texture is
+    // Where every texel is transparent, the field has no colour to read.
+    // It is left provisional, as a field with no opaque texel is.
     if (texels.length === 0) {
       notes.push(`${region} ${field}: no opaque texel in its families' diffuse textures, left provisional`);
       continue;

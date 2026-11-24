@@ -5,8 +5,8 @@ import { readSfzMapping } from "#src/services/genshinAssets/music/readSfzMapping
 import { SAMPLED_INSTRUMENTS } from "#src/services/genshinAssets/shared/constants";
 import { posix } from "node:path";
 
-// Every instrument a voice may be played by, its mapping fetched with every file it includes and read into the regions
-// A note plays
+// Every instrument a voice may be played by, its mapping fetched with every file it includes, and read into regions.
+// A note plays from one of those regions.
 export const readSampleCatalogue = (): Promise<CataloguedInstrument[]> =>
   Promise.all(
     SAMPLED_INSTRUMENTS.map(async ({ library, mapping }) => {

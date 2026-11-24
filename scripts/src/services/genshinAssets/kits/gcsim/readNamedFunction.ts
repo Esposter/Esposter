@@ -6,8 +6,8 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { readParameterNames } from "#src/services/genshinAssets/kits/gcsim/readParameterNames";
 
-// The function a `func` token declares, `func (c *char) danceDoubleTicker(...) {` or `func name(...) {`,
-// Else undefined. A closure, `func() {`, has no name and is no function here
+// The function a `func` token declares, `func (c *char) danceDoubleTicker(...) {` or `func name(...) {`, if any.
+// A closure, `func() {`, has no name and is no function here, so it reads as undefined.
 export const readNamedFunction = (tokens: readonly GoToken[], funcPosition: number): GoNamedFunction | undefined => {
   let namePosition = funcPosition + 1;
   if (checkIsGoPunctuation(tokens[namePosition], "(")) {
