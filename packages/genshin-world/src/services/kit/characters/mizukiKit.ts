@@ -59,19 +59,25 @@ const getConstellation2DamageBonus = (
     : 0;
 };
 
-// Mizuki's behaviour: her skill's press enters the Dreamdrifter state for five seconds, and a press in it cancels the
-// State, As gcsim's Skill does. While the state lasts its clouds launch at 18 frames and every 45 frames after, as
-// Gcsim's cloudTask Queues them (skill.go:221), and each lands its Anemo hit on the primary target's area 30 frames
-// After its launch, the travel Gcsim's default press gives. A cancel, or her swap out, stops the clouds not yet
-// Launched, and the ones in flight still land, As gcsim's cancel does. While the state lasts she starts no attack,
-// Plunge or charged attack, as gcsim's ActionReady allows Only her swap, dash and burst. The press that cancels the
-// State plays none of its skill's hits and sets no cooldown, as Gcsim's does, through the skill's state-ending check.
-// Not built: the Swirl buff her state gives the party, the Yumemi Style Special Snacks her burst leaves, which are
-// `pick-ups` the kit does not leave yet, and a press's parameter sets, which the kit Holds at the default
-// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki` Constellation 1 needs the Dreamdrifter
-// State and its Twenty-Three Nights' Awaiting effect, which are not built Constellation 4 needs the Yumemi Style
-// Special Snacks from her burst, which the kit does not build Constellation 6 needs the Dreamdrifter state and a CRIT
-// Hook on the Swirl, which the kit does not build
+// Mizuki's behaviour: her skill's press enters the Dreamdrifter state for five seconds.
+// A press in it cancels the state, as gcsim's Skill does.
+// While the state lasts its clouds launch at 18 frames and every 45 frames after.
+// They are queued as gcsim's cloudTask queues them (skill.go:221).
+// Each lands its Anemo hit on the primary target's area 30 frames after its launch.
+// That is the travel gcsim's default press gives.
+// A cancel, or her swap out, stops the clouds not yet launched.
+// The ones in flight still land, as gcsim's cancel does.
+// While the state lasts she starts no attack, plunge or charged attack.
+// As gcsim's ActionReady allows, only her swap, dash and burst start.
+// The press that cancels the state plays none of its skill's hits and sets no cooldown.
+// As gcsim's does, it goes through the skill's state-ending check.
+// Not built: the Swirl buff her state gives the party.
+// The Yumemi Style Special Snacks her burst leaves are pick-ups the kit does not leave yet.
+// A press's parameter sets are held by the kit at the default.
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
+// Constellation 1 needs the Dreamdrifter state and its Twenty-Three Nights' Awaiting effect, which are not built.
+// Constellation 4 needs the Yumemi Style Special Snacks from her burst, which the kit does not build.
+// Constellation 6 needs the Dreamdrifter state and a CRIT hook on the Swirl, which the kit does not build.
 export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecordReader): KitBehaviour => {
   const cloud = readHit("cloud");
   const cloudFirstHitSeconds = readSeconds("cloudFirstHit");

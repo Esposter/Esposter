@@ -36,10 +36,10 @@ const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
   return false;
 };
 
-// Adds an effect to the field's list, the game restarting what it is given again rather than stacking it. A shield is
-// Recast over the one a character holds, which ends there, so the earlier one is dropped on the next step and Its
-// Explosion, if it has one, goes off then. A Crystallize shield overwrites the team's one Crystallize shield alone,
-// Beside every character's own
+// Adds an effect to the field's list, the game restarting what it is given again rather than stacking it.
+// A shield is recast over the one a character holds, which ends there, so the earlier one is dropped on the next step.
+// Its explosion, if it has one, goes off then.
+// A Crystallize shield overwrites the team's one Crystallize shield alone, beside every character's own.
 export const addKitEffect = (kitEffectState: KitEffectState, effect: KitEffect): void => {
   if (effect.kind === "shield")
     for (const earlier of kitEffectState.effects)

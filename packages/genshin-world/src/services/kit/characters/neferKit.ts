@@ -13,8 +13,8 @@ export const NEFER_CHARACTER_ID = 10_000_122;
 export const VERDANT_DEW_STATUS_ID = "verdant-dew";
 const PHANTASM_PERFORMANCE_STATUS_ID = "phantasm-performance";
 const PHANTASM_PERFORMANCES_PER_SHADOW_DANCE = 3;
-// The Verdant Dew a Shadow Dance starts with, the wiki's "Two initial charges"; the record's charges are the most it
-// Holds
+// The Verdant Dew a Shadow Dance starts with is the wiki's "Two initial charges".
+// The record's charges are the most it holds.
 const INITIAL_VERDANT_DEW = 2;
 
 // Nefer's behaviour: Senet Strategy: Dance of a Thousand Nights enters Shadow Dance for her record's seconds, with two

@@ -23,10 +23,10 @@ const GUOBA_OFFSET = 1.3;
 // Xiangling/asc.go give it
 // https://genshin-impact.fandom.com/wiki/Crossfire
 const CROSSFIRE_ASCENSION = 1;
-// Beware, It's Super Hot!, from Ascension 4, leaves a chili pepper where Guoba disappears for 10 seconds, and the
-// Character Who picks it up gains 10% ATK for 10 seconds, as the wiki's passive page gives it. Provisional: no source
-// Gives the Pepper's pickup reach, so the body on the field picks it up within a metre of it
-// `https://genshin-impact.fandom.com/wiki/Beware,_It%27s_Super_Hot`!
+// Beware, It's Super Hot!, from Ascension 4, leaves a chili pepper where Guoba disappears for 10 seconds.
+// The character who picks it up gains 10% ATK for 10 seconds, as the wiki's passive page gives it.
+// Provisional: no source gives the Pepper's pickup reach, so the body on the field picks it up within a metre of it.
+// https://genshin-impact.fandom.com/wiki/Beware,_It%27s_Super_Hot!
 const BEWARE_ITS_SUPER_HOT_ASCENSION = 4;
 const CHILI_PEPPER_SECONDS = 10;
 const CHILI_PEPPER_PICKUP_RADIUS = 1;

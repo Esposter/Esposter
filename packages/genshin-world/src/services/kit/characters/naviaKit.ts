@@ -137,8 +137,8 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
       onStrike: (context, strike, enemy) => {
         if (isCannonShotFired) return;
         isCannonShotFired = true;
-        // The point is drawn over the disk about the enemy, its bearing first and then its distance, from the world's
-        // Source
+        // The point is drawn over the disk about the enemy, its bearing first and then its distance.
+        // Both are drawn from the world's random source.
         const bearing = context.random() * 2 * Math.PI;
         const distance = CONSTELLATION_2_CANNON_OFFSET_METRES * Math.sqrt(context.random());
         castKitSummon(

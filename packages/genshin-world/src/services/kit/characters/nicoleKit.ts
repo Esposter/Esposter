@@ -47,8 +47,9 @@ const SKILL_BUFF_SOURCE = "grace-of-kenosis";
 
 // The burst's status lasts 20 seconds, gcsim's burstKey
 const BURST_SECONDS = 20;
-// The burst starts its status and clears its projections one frame after its hit, as gcsim's task at burstHitmark+1
-// Does, So a hit before that makes no projection
+// The burst starts its status and clears its projections one frame after its hit.
+// That is as gcsim's task at burstHitmark+1 does.
+// So a hit before that makes no projection.
 const BURST_STATUS_FRAMES = 109;
 const BURST_STATUS_ID = "nicole-burst";
 // A projection lands 30 frames after the hit that starts it, gcsim's projectionHitmark, and four come from one burst at
@@ -76,8 +77,8 @@ const createKleeOffset = ({ x, z }: { x: number; z: number }): { x: number; z: n
   return { x: x - normX * 1.5 - normZ * 0.5, z: z - normZ * 1.5 + normX * 0.5 };
 };
 
-// The hitbox a projection takes by the character it projects, as gcsim's projectionHitbox table has it, and the default
-// For a Character the table does not name
+// The hitbox a projection takes by the character it projects, as gcsim's projectionHitbox table has it.
+// The default is for a character the table does not name.
 const PROJECTION_HITBOXES = new Map<number, KitHitbox>([
   [ALBEDO_CHARACTER_ID, { offset: MELEE_OFFSET, shape: { kind: "box", length: 8, width: 3 } }],
   [KLEE_CHARACTER_ID, { offset: createKleeOffset(MELEE_OFFSET), shape: { kind: "circle", radius: PROJECTION_RADIUS } }],

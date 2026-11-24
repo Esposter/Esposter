@@ -46,8 +46,8 @@ const SEEDS_OF_SKANDHA_LIMIT = 8;
 // Whole frames, as gcsim takes the cut
 const TRI_KARMA_CLOCK_STATUS_ID = "nahida-tri-karma-clock";
 const TRI_KARMA_INTERVAL_FRAMES = 150;
-// The Dendro particles a Tri-Karma Purification strike gives, once every seven seconds, as gcsim's particle callback
-// Does
+// The Dendro particles a Tri-Karma Purification strike gives, once every seven seconds.
+// That is as gcsim's particle callback does.
 const TRI_KARMA_PARTICLE_STATUS_ID = "nahida-tri-karma-particle";
 const TRI_KARMA_PARTICLE_SECONDS = 7;
 const TRI_KARMA_PARTICLE_COUNT = 3;

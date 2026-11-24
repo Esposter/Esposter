@@ -20,8 +20,8 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 export const WRIOTHESLEY_CHARACTER_ID = 10_000_086;
 
-// Icefang Rush's ten seconds and a frame, as gcsim v2.47.2 (MIT) internal/characters/wriothesley/skill.go gives the
-// Status https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/wriothesley/skill.go
+// Icefang Rush's ten seconds and a frame, as gcsim v2.47.2 (MIT) gives the status.
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/wriothesley/skill.go
 export const ICEFANG_RUSH_ID = "wriothesley-icefang-rush";
 const ICEFANG_RUSH_SECONDS = toKitSeconds(10 * 60 + 1);
 // The enhancement holds only while his HP is above half of his Max HP, as skill.go's skillBuffActive reads it
@@ -58,8 +58,8 @@ const checkIsEnhanced = ({ kitEffectState: { effects }, party }: KitContext, cha
   checkIsKitStatusActive(effects, characterId, ICEFANG_RUSH_ID) &&
   getPartyMember(party, characterId).healthShare > ENHANCEMENT_HEALTH_SHARE;
 
-// Sets the stacks Prosecution Edict holds and the ATK share its buff gives for them, both lasting as long as the edict
-// Does
+// Sets the stacks Prosecution Edict holds and the ATK share its buff gives for them.
+// Both last as long as the edict does.
 const setProsecutionEdictStacks = (context: KitContext, characterId: number, stacks: number): void => {
   const edict = findKitStatus(context.kitEffectState.effects, characterId, PROSECUTION_EDICT_ID);
   if (!edict) return;
@@ -73,8 +73,8 @@ const setProsecutionEdictStacks = (context: KitContext, characterId: number, sta
   });
 };
 
-// Starts Icefang Rush, and from Ascension 4 starts Prosecution Edict over with no stacks, as gcsim's resetA4 does on a
-// Cast
+// Starts Icefang Rush, and from Ascension 4 starts Prosecution Edict over with no stacks.
+// As gcsim's resetA4 does on a cast.
 const startIcefangRush = (context: KitContext): void => {
   const { activeCombatant: combatant, kitEffectState } = context;
   const { characterId } = combatant;
@@ -134,13 +134,15 @@ const strikeEnhanced: NonNullable<KitHitBehaviour["onStrike"]> = (context, { com
   });
 };
 
-// Wriothesley's behaviour: Icefang Rush holds for ten seconds, and while his HP is above half each of his normal
-// Attacks' Strikes drains him by Chilling Penalty and gives a particle, and from Ascension 4 his Prosecution Edict
-// Stacks and ATK. Not built yet: the enhanced strikes' damage multiplier and larger hitboxes, which the record does not
-// Hold (gcsim's Snapshot multiplies a normal attack by the skill's own table, and skill.go's enhanced boxes differ from
-// The base ones), Darkgold Wolfbite's Surging Blade, which hits past the burst's animation with a multiplier the record
-// Does not hold, and The charged attack's Ascension 1 Gracious Rebuke, which needs a charged attack variant.
-// Constellations 1, 4 and 6 all build on that Rebuke, and wait on the same pieces
+// Wriothesley's behaviour: Icefang Rush holds for ten seconds.
+// While his HP is above half, each of his normal attacks' strikes drains him by Chilling Penalty and gives a particle.
+// From Ascension 4, his Prosecution Edict gives stacks and ATK.
+// Not built yet: the enhanced strikes' damage multiplier and larger hitboxes, which the record does not hold.
+// The gcsim Snapshot multiplies a normal attack by the skill's own table.
+// The enhanced boxes in skill.go differ from the base ones.
+// Darkgold Wolfbite's Surging Blade hits past the burst's animation with a multiplier the record does not hold.
+// The charged attack's Ascension 1 Gracious Rebuke needs a charged attack variant.
+// Constellations 1, 4 and 6 all build on that Rebuke, and wait on the same pieces.
 export const createWriothesleyKitBehaviour = (): KitBehaviour => {
   // The five normal attacks, each strike enhanced as the skill's state allows, with the fourth attack's two strikes
   const enhancedStrike = { onStrike: strikeEnhanced };

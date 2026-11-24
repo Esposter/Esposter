@@ -153,8 +153,8 @@ export const stepKit = (
         landedHits,
         context,
       );
-      // A hook may add one hit after each hit of a normal attack that lands, as a passive's or a constellation's
-      // `follow-up`
+      // A hook may add one hit after each hit of a normal attack that lands.
+      // Such a hit is a passive's or a constellation's follow-up.
       const chainIndex = kit.normalAttacks.indexOf(action);
       if (kit.getNormalAttackExtraHit && chainIndex !== -1)
         for (const hit of landedHits.slice(landedCount)) {

@@ -19,15 +19,16 @@ const checkIsAnemoTraveler = (combatant: Combatant, constellation: number): bool
   combatant.element === Element.Anemo &&
   combatant.constellationCount >= constellation;
 
-// The Traveler's behaviour: her skill's hit deals the element of the statue she resonated with last, not the Anemo her
-// Record names, and her burst's hit already deals her wielder's, since it names none. Her strikes, charged attack and
-// Plunges are her record's alone. The kit of every character without a module of its own The Anemo set's Constellation
-// 2 raises her Energy Recharge by 16%, and its Constellation 6 lowers the Anemo RES of an Enemy her burst strikes by
-// 20% for 10 seconds. Its Constellation 6 lowers the RES of the element an Elemental Absorption Took too, which is not
-// Built: a hit's status hook is given no enemy or reaction to read that element from Not built: the Anemo set's
-// Constellation 1, a pull of opponents, and its Constellation 4, the DMG she takes reduced while She casts Palm Vortex,
-// Which no hook reads. The other sets' constellations need the element-specific skills and bursts The record does not
-// Model
+// The Traveler's behaviour: her skill's hit deals the element of the statue she resonated with last.
+// It does not deal the Anemo her record names, and her burst's hit already deals her wielder's, since it names none.
+// Her strikes, charged attack and plunges are her record's alone.
+// The Anemo set's Constellation 2 raises her Energy Recharge by 16%.
+// Its Constellation 6 lowers the Anemo RES of an enemy her burst strikes by 20% for 10 seconds.
+// It also lowers the RES of the element an Elemental Absorption took, which is not built.
+// A hit's status hook is given no enemy or reaction to read that element from.
+// Not built: the Anemo set's Constellation 1, a pull of opponents, and its Constellation 4.
+// That is the DMG she takes reduced while she casts Palm Vortex, which no hook reads.
+// The other sets' constellations need the element-specific skills and bursts the record does not model.
 export const createTravelerKitBehaviour = (): KitBehaviour => ({
   burst: {
     hits: [

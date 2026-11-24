@@ -46,8 +46,7 @@ describe("travelerKit", () => {
       takeOne(TRAVELER_KIT.elementalSkill.hits).talentMultiplier,
       takeOne(TRAVELER_KIT.elementalBurst.hits).talentMultiplier,
     ];
-    // 0.434
-    // oxlint-disable-next-line oxc/approx-constant -- is the wiki's talent multiplier, not the LOG10E it approximates
+    // oxlint-disable-next-line oxc/approx-constant -- 0.434 is the wiki's talent multiplier, not LOG10E
     const expectedMultipliers = [0.445, 0.434, 0.53, 0.583, 0.708, 0.559, 0.722, 0.639, 1.28, 1.6, 1.76, 0.808];
     expect(multipliers).toHaveLength(expectedMultipliers.length);
     for (const [index, expectedMultiplier] of expectedMultipliers.entries())

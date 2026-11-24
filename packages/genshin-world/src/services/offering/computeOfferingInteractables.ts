@@ -4,9 +4,9 @@ import type { OfferingLandmark } from "#src/models/world/OfferingLandmark";
 import { OfferingKindNameKeyMap } from "#src/services/offering/OfferingKindNameKeyMap";
 import { InteractionKind } from "genshin-interface";
 
-// Each offering the loaded regions stand as an Activate interactable on the ground beneath its point, named by its
-// Kind's Text, which the prompt list keeps to those in reach. Which activation offers the bag is the interaction
-// Dispatch's
+// Each offering the loaded regions stand as an Activate interactable on the ground beneath its point.
+// It is named by its kind's text, which the prompt list keeps to those in reach.
+// Which activation offers the bag is the interaction dispatch's.
 export const computeOfferingInteractables = (
   offeringLandmarks: OfferingLandmark[],
   gameText: Readonly<Record<string, string>>,

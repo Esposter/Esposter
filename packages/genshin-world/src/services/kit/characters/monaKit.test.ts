@@ -71,8 +71,8 @@ const readElectroChargedBonus = (mona: Combatant, other: Combatant, context: Kit
     context,
   )?.damageBonus ?? 0;
 
-// Constellation 6's stacks are read at the Charged Attack's damage hook, as her sprint and her attack play out, one
-// Step at a time
+// Constellation 6's stacks are read at the Charged Attack's damage hook.
+// They build as her sprint and her attack play out, one step at a time.
 const createConstellation6Fixture = (constellationCount = 6) => {
   const combatant = { ...createMonaCombatant(), constellationCount };
   const kitEffectState: KitEffectState = { effects: [] };

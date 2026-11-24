@@ -22,8 +22,8 @@ const DECIDED_FRAMES = 3;
 const INITIAL_LEGAL_EVALUATION_FRAMES = 209;
 const LEGAL_EVALUATION_REDUCTION_FRAMES = [0, 57, 111, 209];
 const JUDGEMENT_FRAMES = 173;
-// The end lag of the action the charge is cancelled into is not known here, so the default one gcsim gives an action is
-// Used
+// The end lag of the action the charge is cancelled into is not known here.
+// So the default end lag gcsim gives an action is used.
 const END_LAG_FRAMES = 51;
 const MAX_PICKED_UP_DROPLETS = 3;
 const DROPLET_HEAL_FRAMES = 5;

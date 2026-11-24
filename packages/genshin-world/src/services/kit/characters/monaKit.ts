@@ -38,10 +38,12 @@ const ASCENSION_4 = 4;
 const A1_PHANTOM_SECONDS = 2;
 // Measured: gcsim v2.47.2 (MIT) mona/asc.go, Ascension 4 adds 20% of Mona's Energy Recharge to her Hydro DMG Bonus
 const A4_HYDRO_BONUS_OF_ENERGY_RECHARGE = 0.2;
-// Constellation 1: a party member's hit on an enemy under the Omen gives it the Hydro-related reactions' DMG bonus for
-// 8 seconds, Which is 160% of 15% when Mona is Hexerei with a second Hexerei member and the member is off the field, as
-// Gcsim v2.47.2 (MIT) Mona/cons.go gives them. A Swirl counts only for the Hydro it absorbs, as a reaction carries that
-// Element https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
+// Constellation 1: a party member's hit on an enemy under the Omen gives it the Hydro-related reactions' DMG bonus.
+// It lasts 8 seconds.
+// It is 160% of 15% when Mona is Hexerei with a second Hexerei member and the member is off the field.
+// As gcsim v2.47.2 (MIT) mona/cons.go gives them.
+// A Swirl counts only for the Hydro it absorbs, as a reaction carries that element.
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_STATUS_ID = "mona-constellation-1";
 const CONSTELLATION_1_REACTION_TYPES = new Set<ReactionType>([

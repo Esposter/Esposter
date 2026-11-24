@@ -63,8 +63,8 @@ const ICY_QUILL_ATTACK_TAGS = new Set<AttackTag>([
   AttackTag.PlungingAttack,
 ]);
 
-// Whether a hit is dealt as an attack kind the Icy Quill names, a hit with none, such as a reaction or a field's tick,
-// Not
+// Whether a hit is dealt as an attack kind the Icy Quill names.
+// A hit with none, such as a reaction or a field's tick, is not.
 const checkIsIcyQuillAttack = (attackTag: AttackTag | undefined): attackTag is AttackTag =>
   attackTag !== undefined && ICY_QUILL_ATTACK_TAGS.has(attackTag);
 
