@@ -7,7 +7,7 @@
 
 Content-addressed objects under a product's committed lock, one url builder, one cache contract and one preloader for any product that loads its files by url. Its preload holds a product's files in the browser's cache behind a loading bar, then evicts the entries under the product's scopes that its set no longer names.
 
-Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/changes/architecture-hosted-assets).
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/architecture/hosted-assets).
 
 ## Table of Contents
 

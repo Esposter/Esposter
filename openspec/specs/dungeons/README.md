@@ -17,6 +17,7 @@ Dungeons is Esposter's monster-catching RPG at `/dungeons`: walk a tile-based wo
 - [Battle](battle/design.md) — the state machine, damage/experience/capture math.
 - [Monsters and items](monsters-and-items/design.md) — content data, party management, inventory.
 - [Saves and settings](saves-and-settings/design.md) — persistence, the settings scene, achievements.
+- [Hosted assets](hosted-assets/design.md) — the game's engine files loaded from hosted objects, one loading bar for their download, and saved values that keep their textures.
 
 No open work. Decided ideas: [deferred](../../deferred/dungeons/), [rejected](../../rejected/dungeons/).
 
@@ -28,3 +29,4 @@ Chronological, one line per feature.
 - **Attack power and defense** — per-attack `power`, per-species `defense`, and a saturating damage formula, so move choice and bulk both matter.
 - **Monster roster expansion** — differentiated stat archetypes, 2–3 move kits per species, and level-scaled weighted encounters.
 - **Milestone achievements** — captures, levels, collection, and chests evaluated from the save payload on each manual save.
+- **Hosted assets** — every file the game's engine reads is a hosted object, so the app's bundle holds none of them.
