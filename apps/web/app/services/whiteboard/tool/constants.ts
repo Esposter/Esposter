@@ -5,8 +5,8 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { GestureTool } from "#src/models/whiteboard/GestureTool";
 import { WhiteboardShapeItemMap } from "#src/services/whiteboard/tool/WhiteboardShapeItemMap";
 
-// The shape tool, one slot in the toolbar whose variants are the shapes it places, so the slot draws the shape last
-// Used
+// The shape tool: one slot in the toolbar whose variants are the shapes it places.
+// The slot draws the shape last used.
 export const WHITEBOARD_SHAPE_TOOL_ITEM: EditorToolbarItem = {
   meaning: UiIconMeaning.Block,
   title: "Shape",

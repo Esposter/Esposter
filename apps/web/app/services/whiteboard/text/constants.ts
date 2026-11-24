@@ -10,8 +10,8 @@ export const WHITEBOARD_TEXT_SIZE_ITEMS: UiMenuItem<TextSize>[] = [
   { title: "L", value: TextSize.Large },
   { title: "XL", value: TextSize.ExtraLarge },
 ];
-// The horizontal alignments a shape's, a sticky note's or a text box's text takes, each named as the properties panel
-// Offers it
+// The horizontal alignments a shape's, a sticky note's or a text box's text takes.
+// Each is named as the properties panel offers it.
 export const WHITEBOARD_HORIZONTAL_ALIGNMENT_ITEMS: UiMenuItem<HorizontalAlignment>[] = [
   { title: "Left", value: HorizontalAlignment.Left },
   { title: "Centre", value: HorizontalAlignment.Center },
@@ -23,8 +23,8 @@ export const WHITEBOARD_VERTICAL_ALIGNMENT_ITEMS: UiMenuItem<VerticalAlignment>[
   { title: "Middle", value: VerticalAlignment.Middle },
   { title: "Bottom", value: VerticalAlignment.Bottom },
 ];
-// How the draft in the overlay editor lines up with the text it stands for: the CSS text alignment, and the share of
-// Its own width that its box moves by So its anchor sits on the point the text is drawn from
+// How the draft in the overlay editor lines up with the text it stands for: the CSS text alignment.
+// The share of its own width that its box moves by, so its anchor sits on the point the text is drawn from.
 export const WHITEBOARD_TEXT_EDIT_ANCHOR_MAP: Record<
   TextAnchor,
   { shift: string; textAlign: CSSProperties["textAlign"] }
@@ -33,8 +33,8 @@ export const WHITEBOARD_TEXT_EDIT_ANCHOR_MAP: Record<
   [TextAnchor.Middle]: { shift: "-50%", textAlign: "center" },
   [TextAnchor.Start]: { shift: "0", textAlign: "left" },
 };
-// The share of its own height that the overlay editor moves by, so a middle or bottom alignment sits on the point the
-// Text is drawn from
+// The share of its own height that the overlay editor moves by.
+// A middle or bottom alignment then sits on the point the text is drawn from.
 export const WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP: Record<VerticalAlignment, string> = {
   [VerticalAlignment.Bottom]: "-100%",
   [VerticalAlignment.Middle]: "-50%",

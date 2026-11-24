@@ -8,8 +8,8 @@ describe(getFitViewport, () => {
     expect.hasAssertions();
     const bounds = { height: 200, width: 800, x: 0, y: 0 };
 
-    // The width allows a scale of 0.5 and the height one of 2, so the width decides: 800 by 800 document units show,
-    // Centred on (400, 100)
+    // The width allows a scale of 0.5 and the height one of 2, so the width decides: 800 by 800 document units show.
+    // The box is centred on (400, 100).
     expect(getFitViewport(bounds, CANVAS_SIZE)).toStrictEqual({ scale: 0.5, x: 0, y: -300 });
   });
 
