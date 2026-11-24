@@ -222,7 +222,7 @@ What checks the invariant today, for Genshin's lock:
 The change makes one generic check over every product's lock, and places it in the fill, which already reads every object:
 
 - The fill verifies the sha256 of each object it reads, cached or fetched, through `assertContentAddress` (`@esposter/shared-node/cache`), and fails on a mismatch. An object the bucket lacks fails the fill too.
-- Each product's fill runs over its own lock, so a product added later is covered by its declaration with nothing else edited.
+- Each product's fill runs over its own lock, one product after another, so a product added later is covered by its declaration with nothing else edited. The fill's download bound is one wave for the whole command, so the products never fill at once.
 - The fill reads the public origins and needs no credential. A HEAD would show that a name exists without checking its bytes, so the fill's GET is the check, and no HEAD-only pass is added.
 
 **It gates the push's CI, and so the deploy.** The fill runs inside `build-packages`, which is part of CI for the commit on `main` or `ai/queue`, and the Deploy workflow runs only once CI's run on that commit succeeds (`pulumi-infra` skill, "Worker code"). A red fill therefore holds the deploy, which is the right gate: a deploy of a lock naming a missing object would ship pages that 404 on their first assets. It does not gate on every run, because a cache hit skips the fill, and a cache hit means the lock did not change. An object can go missing only by a manual delete, since `prune` keeps every object a lock names, and that delete is outside any push, so a run does not re-check it.
