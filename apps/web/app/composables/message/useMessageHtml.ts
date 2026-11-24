@@ -13,9 +13,8 @@ import { parse } from "node-html-parser";
 
 // Rendered message content, resolved against what only the reader's client knows: a mention shows the display
 // Name this room calls that member, and a custom emoji shows the image its id names. One parse and one pass per
-// Rewrite (openspec/specs/architecture/content-token-rewriting/design.md) — the tree that is queried has to be the tree
-// That is
-// Serialized, or the mutations are made to a copy nobody reads
+// Rewrite (openspec/specs/architecture/content-token-rewriting/design.md) — the queried tree is the one serialized.
+// Otherwise the mutations are made to a copy nobody reads
 export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId: MaybeRefOrGetter<string>) => {
   const userStore = useUserStore();
   const { getRoomMemberName } = userStore;
