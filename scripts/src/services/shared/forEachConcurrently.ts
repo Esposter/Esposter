@@ -3,7 +3,7 @@
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Runs `callback` over `items` with at most `concurrency` calls in flight. Each lane takes the next item from one
-// Cursor only Once its own call has settled, so the calls in flight are bounded and a listing is streamed rather than
+// Cursor only once its own call has settled, so the calls in flight are bounded and a listing is streamed rather than
 // Collected. A failure stops the items not yet started; the call rejects with the first one only once every call in
 // Flight has settled. The registry readers share this bound rather than each keeping a pool
 export const forEachConcurrently = async <T>(

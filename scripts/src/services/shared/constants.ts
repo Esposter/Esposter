@@ -67,7 +67,7 @@ export const FETCH_JSON_MAX_BYTES: number = 128 * 1024 * 1024;
 export const SECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 export const MILLISECONDS_PER_MINUTE: number = SECONDS_PER_MINUTE * 1000;
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the lockfile
-// Conflict Resolver, the outdated report parses it, its benchmark reads it — and a literal repeated per Consumer is one
+// Conflict resolver, the outdated report parses it, its benchmark reads it — and a literal repeated per consumer is one
 // Rename away from a script that reads a file that no longer exists.
 const LOCKFILE = "pnpm-lock.yaml";
 // The empty tree, the same in every repository: a commit pointing at it carries its message alone, and as an attribute
@@ -103,13 +103,12 @@ export const FIELD_SEPARATOR = "\u001F";
 // An ANSI SGR sequence — the colours a check prints to a terminal — as an escape for the same reason. Stripped
 // Wherever a script measures or quotes such output: the outdated report's column widths, a failed check's log
 // Excerpt.
-// The escape
-// oxlint-disable-next-line no-control-regex -- is the sequence's opener; `isolatedDeclarations` demands the annotation
+// The escape, which opens the sequence, is the one control character the regex matches
+// oxlint-disable-next-line no-control-regex -- the sequence's opener; `isolatedDeclarations` demands the annotation
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
 // The opener of an ANSI SGR sequence, and the sequence returning the foreground to the terminal's default
 export const ANSI_ESCAPE = "\u001B";
 
-// IsolatedDeclarations
 // oxlint-disable-next-line typescript/no-inferrable-types -- demands the annotation this value would otherwise infer
 export const ANSI_FOREGROUND_RESET: string = `${ANSI_ESCAPE}[39m`;
 // `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
