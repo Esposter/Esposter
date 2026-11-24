@@ -32,6 +32,10 @@ const enclosingScopes = function* (node: ESTree.Node): Generator<ESTree.Node> {
 
 export const noReturnGlobalProperties: Rule = defineRule({
   create(context) {
+    // A global is bound only by a call that names its callee, so a file whose text names none of them has nothing to
+    // Report, and its bindings are never tracked
+    const { text } = context.sourceCode;
+    if (![...GLOBAL_CALLEE_NAMES].some((calleeName) => text.includes(calleeName))) return {};
     // The names each scope binds, keyed by that scope, with whether the binding is a global call
     // A name bound in one scope is not a global in a sibling
     // A nested binding shadows the outer one, so a return reads the innermost binding of each name

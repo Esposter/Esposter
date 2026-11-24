@@ -392,7 +392,7 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
       message:
         "Name a comparator's pair for what it compares — `(firstRoom, secondRoom) =>` — never `(a, b)` or a bare `(first, second)`. See the naming skill.",
       selector:
-        "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments > Identifier.params[name=/^([ab]|first|second)$/]",
+        "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments:matches([params.0.name=/^([ab]|first|second)$/], [params.1.name=/^([ab]|first|second)$/])",
     },
     {
       // The `pgTable` wrapper builds through drizzle's `camelCase` casing, so a column's DB name is its property key

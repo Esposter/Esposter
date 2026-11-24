@@ -18,7 +18,7 @@ const ITERATION_SELECTORS = [
   "ForInStatement[right.name='view']",
   "SpreadElement[argument.name='view']",
   "VariableDeclarator[init.name='view'][id.type='ArrayPattern']",
-  `CallExpression[callee.object.name=/^(Object|Array)$/][callee.property.name=${VIEW_STATIC_REGEX}] > Identifier[name='view']`,
+  `CallExpression[callee.object.name=/^(Object|Array)$/][callee.property.name=${VIEW_STATIC_REGEX}]:has(> Identifier[name='view'])`,
   `CallExpression[callee.object.name='view'][callee.property.name=${VIEW_METHOD_REGEX}]`,
 ];
 const REF_SELECTORS = [

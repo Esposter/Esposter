@@ -19,6 +19,7 @@ description: Apply when fixing lint errors, editing oxlint.config.ts, configurin
 - `references/type-aware-cost.md` — when the oxlint pass slows, its memory climbs, or one type-aware rule tops the timings table.
 - `references/import-rules.md` — when an import rule reports: a duplicate import, a comment in the import block, a module cycle.
 - `references/json-linting.md` — when changing what is checked in the repo's JSON, adding a JSONC file, or adding a generated JSON tree.
+- `references/rule-cost.md` — when writing or reviewing a selector-ban entry or a JS plugin rule, or when one tops the timings table: how calls are counted, the selector shapes that run on every node, and the gates a plugin rule takes.
 - `references/stale-directives.md` — when a lint reports an unused disable directive, or a template directive may suppress nothing.
 - `references/custom-js-plugins.md` — before writing any lint rule for a repo convention: the decision tree that says whether it earns a plugin at all (twice-found, syntactic, no roster of paths or helper names, nothing stock says it), and how one is authored under `scripts/src/oxlint/`.
 - `references/rule-notes.md` — when a rule reports and the fix is not what its message says: the `require-await`, `prefer-spread` and `prefer-mock-promise-shorthand` autofixes, `no-useless-default-assignment` on an overload, the `method-signature-style` exceptions, the `expect.any` and `JSON.parse` bans and when a `JSON.parse` disable is earned, the `fetch` ban in `scripts/`, `prefer-named-capture-group`.

@@ -16,6 +16,19 @@ const checkIsOwnBinding = (definitions: Definition[], node: FunctionNode): boole
         definition.node.init === node,
   );
 
+// Whether a call by this name can reach the function itself: by its declared name, or by the variable it is assigned
+// To. A call by any other name cannot be its own, so the scope is read only for a call by one of these
+const checkIsOwnName = (node: FunctionNode, name: string): boolean => {
+  const { parent } = node;
+  return (
+    node.id?.name === name ||
+    (parent?.type === "VariableDeclarator" &&
+      parent.init === node &&
+      parent.id.type === "Identifier" &&
+      parent.id.name === name)
+  );
+};
+
 // Reports a call to an async function from its own body. A call from a callback nested inside it — a `map` over a
 // Tree's children — is the callback's, so a walk that runs its branches together is left alone
 export const noAsyncSelfCall: Rule = defineRule({
@@ -33,7 +46,7 @@ export const noAsyncSelfCall: Rule = defineRule({
       "ArrowFunctionExpression:exit": exit,
       CallExpression(node) {
         const current = functionStack.at(-1);
-        if (!current?.async || node.callee.type !== "Identifier") return;
+        if (!current?.async || node.callee.type !== "Identifier" || !checkIsOwnName(current, node.callee.name)) return;
         const reference = sourceCode.getScope(node).references.find(({ identifier }) => identifier === node.callee);
         if (reference?.resolved && checkIsOwnBinding(reference.resolved.defs, current))
           context.report({ message: ASYNC_SELF_CALL_MESSAGE, node });

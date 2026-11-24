@@ -25,6 +25,11 @@ describe("sequential-loops/no-async-self-call", () => {
       source: "export const a = async function b() {\n  await b();\n};",
       violations: 1,
     },
+    {
+      name: "namedFunctionExpressionByVariable",
+      source: "export const a = async function b() {\n  await a();\n};",
+      violations: 1,
+    },
     // A tree's branches run together from a callback, which is the callback's call rather than the function's own
     {
       name: "walksBranchesTogether",

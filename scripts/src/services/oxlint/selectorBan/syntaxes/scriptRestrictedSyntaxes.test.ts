@@ -347,13 +347,19 @@ describe("scriptRestrictedSyntaxes", () => {
         filePath: "letterComparator.ts",
         name: "letterComparator",
         source: "export const c = d.toSorted((a, b) => a - b);",
-        violations: 2,
+        violations: 1,
+      },
+      {
+        filePath: "secondLetterComparator.ts",
+        name: "secondLetterComparator",
+        source: "export const c = d.toSorted((firstRoom, b) => firstRoom - b);",
+        violations: 1,
       },
       {
         filePath: "bareOrdinalComparator.ts",
         name: "bareOrdinalComparator",
         source: "export const c = d.toSorted((first, second) => first - second);",
-        violations: 2,
+        violations: 1,
       },
       {
         filePath: "namedComparator.ts",
