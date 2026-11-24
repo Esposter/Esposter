@@ -65,6 +65,7 @@ const PARITY_EXPORT_NAMES = [
 ];
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue({ customElements: tresCustomElements }), {
   entry: {
+    definitions: "src/definitions.ts",
     index: "src/index.ts",
     save: "src/save.ts",
     sceneExport: "src/sceneExport.ts",

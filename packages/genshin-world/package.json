@@ -41,6 +41,10 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./definitions": {
+      "source": "./src/definitions.ts",
+      "default": "./dist/definitions.js"
+    },
     "./save": {
       "source": "./src/save.ts",
       "default": "./dist/save.js"
@@ -86,6 +90,7 @@
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./definitions": "./dist/definitions.js",
       "./save": "./dist/save.js",
       "./sceneExport": "./dist/sceneExport.js",
       "./terrainTileWorker": "./dist/terrainTileWorker.js",
