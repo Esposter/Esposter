@@ -7,10 +7,11 @@ import { getSurveyArrayItems } from "#src/services/shared/getSurveyArrayItems";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 import { getOwnValue } from "@esposter/shared";
 
-// Reads an array function's arguments: the array or matrix values, the field's name, and a third text that names a
-// Field to Return when it holds no condition characters. An item counts only when its field reads as a number (R4). A
-// Filter is any Argument past those the form takes, so a call that passes one has no params and no array function
-// Answers it
+// Reads an array function's arguments: the array or matrix values, and the field's name.
+// A third text that names a field to return is taken as that field when it holds no condition characters.
+// An item counts only when its field reads as a number (R4).
+// A filter is any argument past those the form takes.
+// So a call that passes one has no params, and no array function answers it.
 export const getSurveyArrayParams = (args: SurveyLogicValue[]): SurveyLogicArrayParams | undefined => {
   const [data, name, returnCandidate] = args;
   if (args.length < 2 || args.length > 4 || typeof name !== "string") return undefined;

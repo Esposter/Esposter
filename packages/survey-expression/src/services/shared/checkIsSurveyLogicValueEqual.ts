@@ -4,10 +4,13 @@ import { checkIsSurveyLogicPrimitiveEqual } from "#src/services/shared/checkIsSu
 import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { getOwnValue } from "@esposter/shared";
 
-// The equality of two values (R7). Empty values equal each other and nothing else. Two lists are equal when each item
-// Of The left pairs with a distinct equal item of the right, so their order does not matter. Two records are equal when
-// Each Field either one holds is equal in both, a field one record lacks reading as absent. Primitives compare as
-// `checkIsSurveyLogicPrimitiveEqual` compares them
+// The equality of two values (R7).
+// Empty values equal each other and nothing else.
+// Two lists are equal when each item of the left pairs with a distinct equal item of the right.
+// Their order does not matter.
+// Two records are equal when each field either one holds is equal in both.
+// A field one record lacks reads as absent.
+// Primitives compare as `checkIsSurveyLogicPrimitiveEqual` compares them.
 export const checkIsSurveyLogicValueEqual = (left: SurveyLogicValue, right: SurveyLogicValue): boolean => {
   const isLeftEmpty = checkIsSurveyLogicValueEmpty(left);
   if (isLeftEmpty || checkIsSurveyLogicValueEmpty(right)) return isLeftEmpty && checkIsSurveyLogicValueEmpty(right);

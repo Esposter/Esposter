@@ -4,8 +4,8 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 import { getSurveyExtreme } from "#src/services/shared/getSurveyExtreme";
 import { getOwnValue } from "@esposter/shared";
 
-// The extreme of an array's fields, by the numbers they read as: the item whose field the comparison prefers, then that
-// Item's field, or its returned field when the arguments name one
+// The extreme of an array's fields, by the numbers they read as: the item whose field the comparison prefers.
+// The result is that item's field, or its returned field when the arguments name one.
 export const getSurveyArrayExtreme = (
   params: SurveyLogicArrayParams,
   checkReplaces: (best: number, candidate: number) => boolean,
