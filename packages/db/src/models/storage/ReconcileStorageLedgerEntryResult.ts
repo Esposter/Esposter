@@ -8,4 +8,6 @@ export interface ReconcileStorageLedgerEntryResult {
   chargedUserId?: UserInAuth["id"];
   // Whether a ledger row existed for this container and blob name at all
   isMatched: boolean;
+  // The owner's row as the write that moved the counter left it, absent when no such write landed
+  user?: undefined | UserInAuth;
 }

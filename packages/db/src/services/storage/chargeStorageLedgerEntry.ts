@@ -28,7 +28,7 @@ export const chargeStorageLedgerEntry = async (
   storageBucket: StorageBucket,
   blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
-): Promise<void> => {
+): Promise<undefined | UserInAuth> => {
   // Nothing is charged by the insert itself — `countedBytes` starts at zero and the reconcile below moves the
   // Counter by the difference, so a rewrite of the same blob corrects rather than adds, exactly as a second
   // Object-create notification for one write target does. A concurrent charge of the same blob finds the row already
@@ -37,5 +37,7 @@ export const chargeStorageLedgerEntry = async (
     .insert(storageLedgerInStorage)
     .values({ blobName, countedBytes: 0, declaredBytes: 0, expiresAt: new Date(), storageBucket, userId })
     .onConflictDoNothing();
-  await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
+  // The owner's row the reconcile's write left, which the caller sends as the owner's usage
+  const { user } = await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
+  return user;
 };

@@ -7,9 +7,10 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Runs, so a failed read here must never turn a committed charge or release into a call that reports failure.
 // What it costs when it does fail is a meter left on its previous number until the next event or the next
 // Read — the counter itself is right either way, since this only reports it.
-export const emitStorageUsage = (db: Database, userId: UserInAuth["id"]): Promise<void> =>
+// A caller whose write has just returned the owner's row passes it, which is the row a read here would answer.
+export const emitStorageUsage = (db: Database, userId: UserInAuth["id"], writtenUser?: UserInAuth): Promise<void> =>
   getResultAsync(async () => {
-    const user = await db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
+    const user = writtenUser ?? (await db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } }));
     if (!user) return;
 
     await callUserObjects([userId], (userObject) => userObject.updateUsage(user));

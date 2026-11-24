@@ -66,10 +66,11 @@ describe(releaseStorageLedgerEntries, () => {
 
     await createStorageLedgerEntry();
 
-    await expect(reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes)).resolves.toStrictEqual({
-      chargedUserId: userId,
-      isMatched: true,
-    });
+    const reconciled = await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
+
+    expect(reconciled.chargedUserId).toBe(userId);
+    expect(reconciled.isMatched).toBe(true);
+    expect(reconciled.user?.storageBytesUsed).toBe(actualBytes);
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
 
     const reconciledStorageLedgerEntry = takeOne(await db.query.storageLedgerInStorage.findMany());

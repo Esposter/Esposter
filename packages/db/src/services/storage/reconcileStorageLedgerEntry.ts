@@ -72,8 +72,9 @@ export const reconcileStorageLedgerEntry = async (
         ? isNull(storageLedgerInStorage.sequencer)
         : eq(storageLedgerInStorage.sequencer, countedSequencer),
     );
-    const [, updatedStorageLedgerEntries] = await db.batch([
-      // The counter moves by the difference, and only while the row still holds the state it was computed from
+    const [updatedUsers, updatedStorageLedgerEntries] = await db.batch([
+      // The counter moves by the difference, and only while the row still holds the state it was computed from. The
+      // Row it leaves is returned, so the owner's usage can be sent without a read of it
       db
         .update(usersInAuth)
         .set({ storageBytesUsed: sql`MAX(0, ${usersInAuth.storageBytesUsed} + ${actualBytes - countedBytes})` })
@@ -87,7 +88,8 @@ export const reconcileStorageLedgerEntry = async (
                 .where(isReadState),
             ),
           ),
-        ),
+        )
+        .returning(),
       // A charge writes no sequencer rather than a null one, so the column keeps meaning "an event has spoken"
       db
         .update(storageLedgerInStorage)
@@ -96,8 +98,9 @@ export const reconcileStorageLedgerEntry = async (
         .returning({ userId: storageLedgerInStorage.userId }),
     ]);
     if (updatedStorageLedgerEntries.length === 0) continue;
-    if (actualBytes === countedBytes) return { isMatched: true };
+    const [user] = updatedUsers;
+    if (actualBytes === countedBytes) return { isMatched: true, user };
 
-    return { chargedUserId: userId, isMatched: true };
+    return { chargedUserId: userId, isMatched: true, user };
   }
 };

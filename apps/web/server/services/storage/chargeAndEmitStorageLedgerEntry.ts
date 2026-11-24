@@ -10,6 +10,7 @@ export const chargeAndEmitStorageLedgerEntry = async (
   blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
 ): Promise<void> => {
-  await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, actualBytes);
-  await emitStorageUsage(db, userId);
+  // The charge's own write returns the owner's row, so the usage is sent from it rather than read back
+  const user = await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, actualBytes);
+  await emitStorageUsage(db, userId, user);
 };
