@@ -171,9 +171,9 @@ describe(useGridLayout, () => {
 
     return { grid: gridLayout, onCommit, setItems, wrapper };
   };
-  // The palette sits outside every grid, so an entry is dragged in from a plain element that starts the drag on a
-  // Press. The returned dispatch fires a pointer event of the given type at that element, and onDrop is the callback
-  // The drop calls
+  // The palette sits outside every grid, so an entry is dragged from a plain element that starts a drag on a press.
+  // The returned dispatch fires a pointer event of the given type at that element.
+  // The callback the drop calls is onDrop
   const mountPalette = (item: TestItem, checkIsRefused?: GridRefusal) => {
     const palette = document.createElement("div");
     document.body.append(palette);

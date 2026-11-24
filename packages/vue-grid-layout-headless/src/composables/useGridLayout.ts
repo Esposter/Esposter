@@ -32,9 +32,10 @@ import { checkChangesHeight } from "#src/placement/checkChangesHeight";
 import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue, watch } from "vue";
 
-// The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout
-// As The pointer moves, and the release writes the cells the drag changed, once. The consumer draws the returned tiles
-// And Binds each item's press to startGesture, and the grid's element is the root the pointer is followed across
+// The gesture state of a grid. A press on an item becomes a drag past the start distance.
+// The drag previews the layout as the pointer moves, and the release writes the cells the drag changed, once.
+// The consumer draws the returned tiles and binds each item's press to startGesture.
+// The grid's element is the root the pointer is followed across
 export const useGridLayout = <T extends GridItem>(
   root: Readonly<ShallowRef<HTMLElement | null>>,
   options: MaybeRefOrGetter<GridLayoutOptions<T>>,
