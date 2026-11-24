@@ -1,5 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { parseGameDataObjectPath } from "#scripts/gameData/mirror/parseGameDataObjectPath";
+import { createMockCache } from "@esposter/db-mock/cache";
 import { HOSTED_ASSETS_LOCAL_BASE_URL } from "hosted-assets";
 import { vi } from "vitest";
 
@@ -22,3 +23,8 @@ vi.stubGlobal("fetch", async (input: Parameters<typeof fetch>[0], init?: Request
   // A Uint8Array over the bytes, which is the body type a Response takes, where a Buffer's type is not
   return new Response(new Uint8Array(bytes), { headers: { "Content-Type": gameDataObject.contentType } });
 });
+
+// The hosted cache a read of a hosted object goes through, which a node suite has no Cache Storage for. One cache
+// Serves the whole suite, so an object read once is held for the next read, as it is in a browser
+const hostedCache = createMockCache();
+vi.stubGlobal("caches", { open: () => Promise.resolve(hostedCache) });
