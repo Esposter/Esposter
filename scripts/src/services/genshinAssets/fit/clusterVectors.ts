@@ -15,10 +15,11 @@ export const clusterVectors = (vectors: readonly Vector[], means: readonly Vecto
     for (const [index, vector] of vectors.entries()) {
       // Each centre's distance is taken once, and the nearest so far is kept by its distance rather than measured again
       let nearest = 0;
-      let nearestSquaredDistance = computeSquaredDistance(vector, centres[0] ?? vector);
-      for (let cluster = 1; cluster < centres.length; cluster++) {
+      let nearestSquaredDistance = Infinity;
+      for (let cluster = 0; cluster < centres.length; cluster++) {
         const squaredDistance = computeSquaredDistance(vector, centres[cluster] ?? vector);
-        if (squaredDistance < nearestSquaredDistance) {
+        // The first centre takes the nearest whatever its distance, since no distance compares below a NaN one
+        if (cluster === 0 || squaredDistance < nearestSquaredDistance) {
           nearest = cluster;
           nearestSquaredDistance = squaredDistance;
         }
