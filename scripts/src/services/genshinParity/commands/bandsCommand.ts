@@ -25,8 +25,8 @@ export const bandsCommand: SubCommandsDef[string] = defineCommand({
     const music = await readWorldData<Music>("login/music.json");
     for (const [index, segment] of segments.entries()) {
       if (segment.clips.length === 0) continue;
-      // Time, and each is printed as it is read
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one segment's sound is held in memory at a
+      /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one segment's sound is held in memory
+         at a time, and each is printed as it is read */
       const game = await readGameMusicSegment(directory, segment, LISTEN_SAMPLE_RATE);
       const segmentNotes = music.segments[index]?.voices.flatMap(({ notes }) => notes) ?? [];
       console.log(`segment ${segment.id}: band, share of the sound, flatness, weight at attacks, share on partials`);

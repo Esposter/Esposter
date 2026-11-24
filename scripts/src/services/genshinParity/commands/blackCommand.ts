@@ -25,8 +25,8 @@ export const blackCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     await fetchReferences();
     for (const referenceId of parseNames(args.reference, "reference")) {
-      // A time, and each line is printed as its frame is read
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one frame's raw pixels are held in memory at
+      /* oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one frame's raw pixels are held in memory
+         at a time, and each line is printed as its frame is read */
       const data = await sharp(await getReferencePath(referenceId))
         .removeAlpha()
         .raw()
