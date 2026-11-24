@@ -24,6 +24,8 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
   // Replace the DOM's, so the server tsconfig names the package and the app and shared code never see it
   tsConfig: {
     compilerOptions: {
+      // The configuration folder imports its workspace siblings by their `.ts` names, which this flag allows
+      allowImportingTsExtensions: true,
       customConditions: ["source"],
       erasableSyntaxOnly: true,
       exactOptionalPropertyTypes: true,
