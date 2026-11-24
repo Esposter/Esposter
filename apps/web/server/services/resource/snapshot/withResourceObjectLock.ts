@@ -13,7 +13,7 @@ import { and, eq, lt } from "drizzle-orm";
 import { v7 } from "uuid";
 
 // Takes the lease that one request holds over a resource's stored objects while it writes or collects them. The lease
-// Is A row, replaced only once it has expired, so a holder that never releases frees the resource when its lease
+// Is a row, replaced only once it has expired, so a holder that never releases frees the resource when its lease
 // Runs out. The release names the holder, so a request never releases a lease that expired and was taken over by
 // Another
 export const tryAcquireResourceObjectLock = async (
