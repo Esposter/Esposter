@@ -52,18 +52,17 @@ describe(publishHostedAssets, () => {
     scopes,
     source: { kind: "records" },
   };
+  // The options every case publishes with, which a case overrides only where it differs
+  const basePublishOptions = { currentLock: emptyLock, otherLocks: [], product, scopes };
   // Publishes the base publication into a bucket map from no lock, and returns the lock it planned
   const publishPublication = async (
     bucketClientMap: ReturnType<typeof createMemoryR2BucketClientMap>,
   ): Promise<HostedAssetLock> =>
     getPlannedLock(
       await publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
         plan: planHostedAssetPublication(publication),
-        scopes,
       }),
     );
   const filesScope = TEST_FILENAME;
@@ -86,12 +85,9 @@ describe(publishHostedAssets, () => {
 
     const bucketClientMap = createMemoryR2BucketClientMap();
     const result = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
-      currentLock: emptyLock,
-      otherLocks: [],
-      product,
       plan: planHostedAssetPublication(publication),
-      scopes,
     });
 
     const plannedLock = getPlannedLock(result);
@@ -113,12 +109,10 @@ describe(publishHostedAssets, () => {
     const currentLock = await publishPublication(bucketClientMap);
     const createBucketClientMapSpy = vi.fn<typeof createMemoryR2BucketClientMap>(() => bucketClientMap);
     const rerun = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: createBucketClientMapSpy,
       currentLock,
-      otherLocks: [],
-      product,
       plan: planHostedAssetPublication(publication),
-      scopes,
     });
 
     expect(rerun).toStrictEqual({ outcome: HostedAssetPublishOutcome.Unchanged });
@@ -141,12 +135,10 @@ describe(publishHostedAssets, () => {
     bucketClientMap[CloudflareEnvironment.Production].store.delete(getHostedAssetPath(record));
 
     const rerun = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
       currentLock,
-      otherLocks: [],
-      product,
       plan: planHostedAssetPublication(publicationWithShields),
-      scopes,
     });
 
     expect(rerun).toStrictEqual({
@@ -170,11 +162,10 @@ describe(publishHostedAssets, () => {
 
     await expect(
       publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: () => bucketClientMap,
         currentLock,
-        otherLocks: [],
         plan: planHostedAssetPublication({ indexes: {}, objects: { [WEAPONS_KEY]: [3] } }),
-        product,
         scopes: [GameDataset.Stats],
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -193,12 +184,10 @@ describe(publishHostedAssets, () => {
       indexes: { [PROFILE_KEY]: { ...publication.indexes[PROFILE_KEY], "10000003": { name: "c" } } },
     };
     const result = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
       currentLock,
-      otherLocks: [],
-      product,
       plan: planHostedAssetPublication(changedPublication),
-      scopes,
     });
 
     expect(result).toStrictEqual({
@@ -215,21 +204,15 @@ describe(publishHostedAssets, () => {
 
     const bucketClientMap = createMemoryR2BucketClientMap();
     await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
-      currentLock: emptyLock,
-      otherLocks: [],
-      product,
       plan: planHostedAssetPublication(publication),
-      scopes,
     });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
-      currentLock: emptyLock,
-      otherLocks: [],
-      product,
       plan: planHostedAssetPublication(publication),
-      scopes,
     });
 
     expect(result).toStrictEqual({
@@ -261,22 +244,16 @@ describe(publishHostedAssets, () => {
     };
     const first = getPlannedLock(
       await publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: createMemoryR2BucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
         plan: planHostedAssetPublication(ascending),
-        scopes,
       }),
     );
     const second = getPlannedLock(
       await publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: createMemoryR2BucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
         plan: planHostedAssetPublication(descending),
-        scopes,
       }),
     );
 
@@ -287,13 +264,7 @@ describe(publishHostedAssets, () => {
   test("names what it would publish without touching a bucket", async () => {
     expect.hasAssertions();
 
-    const result = await publishHostedAssets({
-      currentLock: emptyLock,
-      otherLocks: [],
-      product,
-      plan: planHostedAssetPublication(publication),
-      scopes,
-    });
+    const result = await publishHostedAssets({ ...basePublishOptions, plan: planHostedAssetPublication(publication) });
 
     // Nothing was published before, so the lock it would leave is the plan's own
     const plan = planHostedAssetPublication(publication);
@@ -312,12 +283,10 @@ describe(publishHostedAssets, () => {
     const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = await publishPublication(bucketClientMap);
     const result = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
       currentLock,
-      otherLocks: [],
-      product,
       plan: planHostedAssetPublication({ indexes: {}, objects: {} }),
-      scopes,
     });
 
     expect(result).toStrictEqual({
@@ -337,12 +306,9 @@ describe(publishHostedAssets, () => {
 
     await expect(
       publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
         plan: planHostedAssetPublication(publication),
-        scopes,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[AggregateError: offline]`);
   });
@@ -356,18 +322,17 @@ describe(publishHostedAssets, () => {
     const bucketClientMap = createMemoryR2BucketClientMap();
     const currentLock = getPlannedLock(
       await publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
         plan: planHostedAssetFiles(filesScope, files),
         product: filesProduct,
         scopes: [filesScope],
       }),
     );
     const rerun = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
       currentLock,
-      otherLocks: [],
       plan: planHostedAssetFiles(filesScope, files),
       product: filesProduct,
       scopes: [filesScope],
@@ -384,9 +349,8 @@ describe(publishHostedAssets, () => {
     const changed = Buffer.from("");
     const currentLock = getPlannedLock(
       await publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
         plan: planHostedAssetFiles(filesScope, [
           {
             bytes: Buffer.from(TEST_FILENAME),
@@ -400,9 +364,9 @@ describe(publishHostedAssets, () => {
       }),
     );
     const result = await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
       currentLock,
-      otherLocks: [],
       plan: planHostedAssetFiles(filesScope, [
         { bytes: changed, extension: ".png", key: TEST_FILENAME, sha256: getContentAddress(changed) },
       ]),
@@ -426,9 +390,8 @@ describe(publishHostedAssets, () => {
     const bytes = Buffer.from(TEST_FILENAME);
     const sha256 = getContentAddress(bytes);
     await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
-      currentLock: emptyLock,
-      otherLocks: [],
       plan: planHostedAssetFiles(filesScope, [{ bytes, extension: ".tsx", key: "map.tsx", sha256 }]),
       product: filesProduct,
       scopes: [filesScope],
@@ -456,13 +419,11 @@ describe(publishHostedAssets, () => {
     const bytes = Buffer.from(TEST_FILENAME);
     const sha256 = getContentAddress(bytes);
     await publishHostedAssets({
+      ...basePublishOptions,
       createBucketClientMap: () => bucketClientMap,
-      currentLock: emptyLock,
-      otherLocks: [],
       plan: planHostedAssetFiles(GameDataset.LoginRecordings, [
         { bytes, extension: ".ogg", key: `${TEST_FILENAME}.ogg`, sha256 },
       ]),
-      product,
       scopes: [GameDataset.LoginRecordings],
     });
 
@@ -488,12 +449,9 @@ describe(publishHostedAssets, () => {
 
     await expect(
       publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
         plan: planHostedAssetPublication(publication),
-        scopes,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: stats/weapons/49a64717d5d4cb19952e6eac2946415cf6879adacf9908e7d872332d32c6e684.json, does not hash to its name]`,
@@ -511,12 +469,9 @@ describe(publishHostedAssets, () => {
 
     await expect(
       publishHostedAssets({
+        ...basePublishOptions,
         createBucketClientMap: () => bucketClientMap,
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
         plan: planHostedAssetPublication(publication),
-        scopes,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: stats/weapons/49a64717d5d4cb19952e6eac2946415cf6879adacf9908e7d872332d32c6e684.json, does not hash to its name]`,
@@ -540,11 +495,9 @@ describe(publishHostedAssets, () => {
 
     await expect(
       publishHostedAssets({
-        currentLock: emptyLock,
+        ...basePublishOptions,
         otherLocks: [otherLock],
-        product,
         plan: planHostedAssetPublication(publication),
-        scopes,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: stats, overlaps stats/weapons, which another product's lock declares]`,
@@ -556,9 +509,7 @@ describe(publishHostedAssets, () => {
 
     await expect(
       publishHostedAssets({
-        currentLock: emptyLock,
-        otherLocks: [],
-        product,
+        ...basePublishOptions,
         plan: planHostedAssetPublication(publication),
         scopes: [GameDataset.Profile],
       }),
