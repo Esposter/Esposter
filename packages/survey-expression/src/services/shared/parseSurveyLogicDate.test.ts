@@ -4,8 +4,9 @@ import { TEST_DAYLIGHT_GAP_DATE } from "#src/services/functions/constants.test";
 import { parseSurveyLogicDate } from "#src/services/shared/parseSurveyLogicDate";
 import { describe, expect, test } from "vitest";
 
-// The parser reads a date by its shape, so the date is the epoch's own year, and only the part under test moves from
-// It. A date with no zone is read as its wall clock, so each expected value is that clock written in UTC
+// The parser reads a date by its shape, so the date is the epoch's own year.
+// Only the part under test moves from it.
+// A date with no zone is read as its wall clock, so each expected value is that clock written in UTC.
 describe(parseSurveyLogicDate, () => {
   test.each<[string, SurveyLogicValue, string | undefined]>([
     ["a date-only string is read as its wall clock at midnight", "1970-01-02", "1970-01-02T00:00:00.000Z"],

@@ -1,8 +1,8 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-// A text is a number only when it is a plain decimal once trimmed: an optional sign, digits with an optional point and
-// Digits after it (or a point and digits alone), and an optional exponent. A hexadecimal, binary or octal text, a comma
-// Decimal and any other text stay text
+// A text is a number only when it is a plain decimal once trimmed.
+// It is an optional sign, digits with an optional point (or a leading point), and an optional exponent.
+// A hexadecimal, binary or octal text, a comma decimal and any other text stay text.
 const NUMBER_TEXT_REGEX = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/iu;
 
 // The number a value reads as, or undefined when it reads as none. A number is itself while it is finite.

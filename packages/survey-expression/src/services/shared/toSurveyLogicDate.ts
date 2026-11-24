@@ -1,6 +1,7 @@
-// A wall-clock midnight is written as its date alone, the form a date answer takes, so a result compares with an
-// Answer. Any other moment keeps its time, which parseSurveyLogicDate reads back to the same wall clock. A year past
-// The four digits a Date text holds, from zero to 9999, has no text, so a date outside them has no result
+// A wall-clock midnight is written as its date alone, the form a date answer takes.
+// That lets a result compare with an answer.
+// Any other moment keeps its time, which parseSurveyLogicDate reads back to the same wall clock.
+// A year past the four digits a Date text holds, from zero to 9999, has no text, so a date outside them has no result.
 export const toSurveyLogicDate = (wallClock: Date): string | undefined => {
   if (Number.isNaN(wallClock.getTime())) return undefined;
 
