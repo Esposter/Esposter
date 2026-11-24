@@ -10,7 +10,7 @@ import { CollisionMode } from "#src/models/CollisionMode";
 // Resizes,
 // Or when either item would stick out past the last column once they trade. Prevent refuses a landing on any other
 // Item, so there is no layout to return and the result is undefined. A solid item is never displaced, so a landing over
-// One, or A push or swap that moves one, is refused under every mode, as prevent refuses one
+// One, or a push or swap that moves one, is refused under every mode, as prevent refuses one
 export const resolveMove = <T extends GridBlock>(
   layout: T[],
   target: GridBlock,
