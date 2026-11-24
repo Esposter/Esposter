@@ -27,8 +27,7 @@ export const solveReferenceScroll = async (
     await setPageWitnessView(page, { camera });
     const { edgeDistances } = await readFamilyEdgeDistances(page, image, families, 0);
     const readings: { distance: number; offset: number }[] = [];
-    // View it drew, since the page holds one view at a time
-    // oxlint-disable no-await-in-loop -- One device: each distance is drawn on the one page in turn, and read after the
+    // oxlint-disable no-await-in-loop -- One device: the page holds one view, so each is drawn and read in turn
     for (const offset of offsets) {
       await setPageWitnessView(page, {
         camera,

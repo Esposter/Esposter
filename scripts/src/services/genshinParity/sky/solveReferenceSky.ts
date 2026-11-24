@@ -52,8 +52,7 @@ export const solveReferenceSky = async (
   await fetchReferences();
   const readings: SkyReading[] = [];
   for (const referenceId of referenceIds)
-    // Browsers run at once
-    // oxlint-disable-next-line no-await-in-loop -- One device: each page is opened and closed in turn, so no two
+    // oxlint-disable-next-line no-await-in-loop -- One device: pages open and close in turn, so none run at once
     readings.push(await readSky(referenceId, witness));
   const { gradient } = await readWorldData<{ gradient: { green: number[]; red: number[] } }>(`${witness}/sky.json`);
   const solveAt = (shape: SkyShape) =>

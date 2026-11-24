@@ -51,8 +51,7 @@ describe(writeTracedPath, () => {
     expect.hasAssertions();
 
     for (const scale of SCALES) {
-      // So the scales go in turn
-      // oxlint-disable no-await-in-loop -- Each step reads the last: each write reads the map the one before it wrote,
+      // oxlint-disable no-await-in-loop -- Each step reads the last: the map the previous scale wrote
       const region = sharp(markPath)
         .flatten({ background: "#fff" })
         .extract({ height: MARK_SIZE, left: 0, top: 0, width: MARK_SIZE });
