@@ -2,8 +2,9 @@ import type { TestTimings } from "#src/models/TestTimings";
 import type { ModuleDiagnostic, Reporter, TestModule, Vitest } from "vitest/node";
 
 import { TEST_SHARD_TIMINGS_DIRECTORY } from "#src/services/constants";
+import { getTestTimingsKey } from "#src/services/getTestTimingsKey";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { dirname, join } from "node:path";
 
 // A module's whole time: its environment, its harness, its setup files, its collect (the test file's own imports, which
 // Run before any test) and its tests. Vitest's `duration` is the last of these alone, so a file whose cost was its
@@ -39,7 +40,7 @@ export default class TestTimingsReporter implements Reporter {
       if (!["failed", "passed", "skipped"].includes(testModule.state())) continue;
       const project = (timings.projects[testModule.project.name] ??= {});
       project.files ??= {};
-      project.files[relative(root, testModule.moduleId).replaceAll("\\", "/")] = {
+      project.files[getTestTimingsKey(root, testModule.moduleId)] = {
         duration: getModuleDuration(testModule.diagnostic()),
       };
     }

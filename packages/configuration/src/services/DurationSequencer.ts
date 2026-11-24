@@ -2,8 +2,9 @@ import type { TestSpecification } from "vitest/node";
 
 import { testTimingsSchema } from "#src/models/TestTimings";
 import { TEST_TIMINGS_PATH } from "#src/services/constants";
+import { getTestTimingsKey } from "#src/services/getTestTimingsKey";
 import { existsSync, readFileSync } from "node:fs";
-import { relative, resolve } from "node:path";
+import { resolve } from "node:path";
 import { BaseSequencer } from "vitest/node";
 
 // The shard each item runs on, by Graham's longest-processing-time rule: the items are taken longest first, each going
@@ -44,8 +45,7 @@ export class DurationSequencer extends BaseSequencer {
       (left, right) => compareText(left.moduleId, right.moduleId) || compareText(left.project.name, right.project.name),
     );
     const durations = sortedFiles.map(
-      ({ moduleId, project }) =>
-        projects[project.name]?.files?.[relative(root, moduleId).replaceAll("\\", "/")]?.duration,
+      ({ moduleId, project }) => projects[project.name]?.files?.[getTestTimingsKey(root, moduleId)]?.duration,
     );
     const recorded = durations.filter((duration) => duration !== undefined);
     if (recorded.length === 0) return super.shard(files);
