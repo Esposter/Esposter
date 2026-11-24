@@ -27,7 +27,7 @@ export const SourceScoreMap: ReadonlyMap<string, number> = new Map<string, numbe
 ]);
 export const DEFAULT_SOURCE_SCORE = 30;
 // Prefer application/xml over text/xml, font/woff over application/font-woff, and video/mp4 over audio/mp4 over
-// Application/mp4
+// `application/mp4`
 export const TypeScoreMap: ReadonlyMap<string, number> = new Map<string, number>([
   ["application", 1],
   ["audio", 2],
