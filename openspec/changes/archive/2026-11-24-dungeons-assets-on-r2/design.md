@@ -1,6 +1,6 @@
 # Dungeons assets on R2
 
-This change is the first adopter of [hosted assets](../architecture-hosted-assets/design.md). The generic system owns the publish, the lock, the url builder, the cache, the preloader and the mirror. This design decides only what the dungeons game declares and what its code changes.
+This change is the first adopter of [hosted assets](../2026-11-24-architecture-hosted-assets/design.md). The generic system owns the publish, the lock, the url builder, the cache, the preloader and the mirror. This design decides only what the dungeons game declares and what its code changes.
 
 ## Which files move
 
