@@ -198,8 +198,8 @@ export const SOUND_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "sounds");
 export const SOUND_SAMPLE_RATE = 48_000;
 export const SOUND_FRAME_LENGTH = 2048;
 export const SOUND_HOP_LENGTH = 1200;
-// The octave bands a sound is matched by: the music's from 63 hertz up, and 31.5 hertz below them, the lowest band a
-// Frame's bins resolve at 23 hertz apart, where a door's rumble lies under the music's own lowest band
+// The octave bands a sound is matched by: the music's from 63 hertz up, and 31.5 hertz below them, which a frame's bins
+// 23 hertz apart read as their first bin alone
 export const SOUND_MATCH_BAND_CENTRES: number[] = [31.5, ...MUSIC_NOISE_BAND_CENTRES];
 // A music fit reads its source's spectrum in Hann windows of this many samples at the transcription's rate, a hop of
 // The transcription's own apart, so a note's frames line up with the model's: long enough that a low note's harmonics
