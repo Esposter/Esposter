@@ -77,6 +77,6 @@ Security hardening throughout: every third-party action is SHA-pinned, `persist-
 
 ## Bundle & Performance — 9 / 10
 
-`assetsInlineLimit: 0` prevents Phaser data URI breakage. `nuxt analyze` available. Code splitting is handled automatically by Vite. Every file a workspace package or app builds has its exact size committed in `bundle-sizes.md`, so a dependency bump or a barrel change that moves a bundle shows its bytes in the diff, and a workspace test fails a record that is not the fresh build's.
+`nuxt analyze` available. Code splitting is handled automatically by Vite. Every file a workspace package or app builds has its exact size committed in `bundle-sizes.md`, so a dependency bump or a barrel change that moves a bundle shows its bytes in the diff, and a workspace test fails a record that is not the fresh build's.
 
 **Accepted trade-off:** the app bundle has no equivalent gate. Its dependency footprint (Phaser, Survey, Three.js, PDF.js) runs to tens of megabytes, reasonable for the feature surface, and Nuxt surfaces the size on every build — but nothing fails on a regression.

@@ -2,13 +2,17 @@ import type { NuxtConfig } from "nuxt/schema";
 
 import { ENGINE_ASSETS_DIRECTORY } from "#configuration/constants";
 
+// The call backgrounds' folder, whose files stay urls: the call rasterises only a `.svg` url, and the picker names one
+// Unquoted inside `url()`, which an inlined data url's quotes break
+const CALL_BACKGROUNDS_REGEX = /(?:^|[/\\])message[/\\]room[/\\]call[/\\]backgrounds[/\\]/u;
+
 export const vite: NonNullable<NuxtConfig["vite"]> = {
   // A glTF model is imported for its URL like an image, which Vite knows as an asset only by this
   assetsInclude: ["**/*.gltf"],
   build: {
-    // Fix phaser "Local data URIs are not supported"
-    // https://www.andrewzigler.com/blog/using-phaser-3-with-nuxt
-    assetsInlineLimit: 0,
+    // Every other small asset is inlined as a data url. The consumers that take one are an image's `src`, a quoted CSS
+    // `url()` and the clicker's icons, while no font or sound is under the limit, which the policy would refuse as data
+    assetsInlineLimit: (filePath) => (CALL_BACKGROUNDS_REGEX.test(filePath) ? false : undefined),
     rolldownOptions: {
       // A module both lazily and statically imported stays in its static importer's chunk, so the lazy import splits
       // Nothing off: the build fails on it, as the enforcement ladder's build rung

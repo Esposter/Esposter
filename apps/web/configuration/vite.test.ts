@@ -18,6 +18,18 @@ describe("vite", () => {
 
     expect(handler).toHaveBeenCalledExactlyOnceWith(expectedLevel, log);
   });
+
+  test.each([
+    ["a call background's svg", "assets/message/room/call/backgrounds/aurora.svg", false],
+    ["an app's svg", "assets/icons/anime.svg", undefined],
+  ])("resolves the inline decision for %s to %s", (_name, path, expected) => {
+    expect.hasAssertions();
+
+    const assetsInlineLimit = vite.build?.assetsInlineLimit;
+    assert(typeof assetsInlineLimit === "function");
+
+    expect(assetsInlineLimit(path, Buffer.from(""))).toBe(expected);
+  });
 });
 
 describe("viteHooks", () => {

@@ -1,6 +1,6 @@
 # Static assets
 
-A static file lives in one of three places, and the choice is a rule. `apps/web/app/assets/` holds every file the app's code reads: the bundler gives each one a content-hashed URL, the browser caches it for good, a missing file fails the build, and a small one is inlined into the code that imports it. `apps/web/public/` holds only the files whose URL must be the same from one build to the next, because something outside the bundle names that URL. The hosted bucket holds the data a product's code reads at runtime that is too large to bundle, or that a screen fetches only when it needs it: each object is named by the sha256 of its bytes, a product's committed lock names every object it reads, and the object is served from the hosted origin under its scope, so a changed file is a new url and the older one is never read again.
+A static file lives in one of three places, and the choice is a rule. `apps/web/app/assets/` holds every file the app's code reads: the bundler gives each one a content-hashed URL, the browser caches it for good, a missing file fails the build, and a small one is inlined into the code that imports it, except a call background, whose url the call and the picker read. `apps/web/public/` holds only the files whose URL must be the same from one build to the next, because something outside the bundle names that URL. The hosted bucket holds the data a product's code reads at runtime that is too large to bundle, or that a screen fetches only when it needs it: each object is named by the sha256 of its bytes, a product's committed lock names every object it reads, and the object is served from the hosted origin under its scope, so a changed file is a new url and the older one is never read again.
 
 ## Which place
 
@@ -77,10 +77,10 @@ Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web
 | File                                                                          | Role                                                                                                   |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `apps/web/app/assets/`                                                        | Every file the app's code reads, imported where it is read                                             |
-| `apps/web/configuration/vite.ts`                                              | `viteHooks`: a client chunk's imported asset URL through the same helper as the server's               |
+| `apps/web/configuration/vite.ts`                                              | `viteHooks`: client asset URLs via the helper; `assetsInlineLimit`: call backgrounds are files         |
 | `apps/web/app/assets/dungeons/tilesets/`                                      | The Tiled tilesets, each `.tsx` beside its image, hosted by the dungeons publish and loaded by url     |
 | `apps/web/app/assets/visual/textures/`                                        | The gem model and the textures the visual scenes and the fluid simulator load                          |
-| `apps/web/app/assets/message/room/call/backgrounds/`                          | The call background images, bundled and resolved from their preset ids                                 |
+| `apps/web/app/assets/message/room/call/backgrounds/`                          | The call background images, kept as files and resolved from their preset ids                           |
 | `apps/web/app/services/dungeons/loader/loadTilesets.ts`                       | Each tileset's image or spritesheet, loaded by its hosted url from the dungeons key map                |
 | `apps/web/app/services/dungeons/loader/loadTilemaps.ts`                       | Each map's Tiled JSON and each tileset's `.tsx` definition, loaded by its hosted url                   |
 | `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`           | Reads a map's external tilesets from the URL map, never from a folder name                             |
