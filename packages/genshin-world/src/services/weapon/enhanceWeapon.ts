@@ -16,8 +16,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Recovered from a fodder costing none. Levels are gained while the EXP holds their requirement, up to the phase's cap;
 // Past it, the EXP left comes back as the Enhancement Ores it fills, largest first. What is under the smallest ore is
 // Lost: the provisional: the game's rule for that remainder is not known, a recording on the roadmap's References
-// Sought
-// List settles it
+// Sought List settles it
 export const enhanceWeapon = (
   weapon: Weapon,
   weaponData: WeaponData,

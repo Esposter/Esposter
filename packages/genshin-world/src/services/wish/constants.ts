@@ -73,8 +73,8 @@ const STANDARD_WISH_FIVE_STAR_WEAPON_IDS: readonly number[] = [
 ];
 // The standard wish's four-star and three-star weapons by the game's ids, as the wiki lists them: Dragon's Bane, Eye of
 // Perception, the five Favonius weapons, Lion's Roar, Rainslasher, Rust, the four Sacrificial weapons, The Bell, The
-// Flute, the Stringless and The Widsith at four; and Black Tassel, Bloodtainted Greatsword, Cool Steel, Debate Club,
-// Emerald Orb, ferrous Shadow, Harbinger of Dawn, Magic Guide, Raven Bow, Sharpshooter's Oath, Skyrider Sword,
+// Flute, The Stringless and The Widsith at four; and Black Tassel, Bloodtainted Greatsword, Cool Steel, Debate Club,
+// Emerald Orb, Ferrous Shadow, Harbinger of Dawn, Magic Guide, Raven Bow, Sharpshooter's Oath, Skyrider Sword,
 // Slingshot and Thrilling Tales of Dragon Slayers at three
 const STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS: readonly number[] = [
   13_401, 14_409, 14_401, 12_401, 13_407, 11_401, 15_401, 11_405, 12_405, 15_405, 15_403, 14_403, 12_403, 11_403,
