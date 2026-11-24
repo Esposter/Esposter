@@ -4,10 +4,11 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { listBlobNames } from "@esposter/db";
 import { blobDeletionQueueMessageSchema, QueueJob } from "@esposter/db-schema";
 
-// A presigned read url outlives the delete request that should have invalidated it, so a blob whose delete was dropped
-// Stays downloadable to anyone still holding one. That makes the delete an effect whose loss is unacceptable: it is
-// Sent
-// As a message and retried here until it lands, rather than logged away at the call site. A throw is that retry.
+// A presigned read url outlives the delete request that should have invalidated it.
+// So a blob whose delete was dropped stays downloadable to anyone still holding one.
+// That makes the delete an effect whose loss is unacceptable, so it is sent as a message.
+// It is retried here until it lands, rather than logged away at the call site.
+// A throw is that retry.
 export const processBlobDeletionHandler = async (body: unknown): Promise<void> => {
   const data = blobDeletionQueueMessageSchema.parse(body);
   // Log the bucket, not the payload: a deletion message can carry hundreds of blob names, so the full array would be

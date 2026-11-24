@@ -7,10 +7,11 @@ import { r2ObjectCreatedQueueMessageSchema, StorageBucket, storageBucketSchema }
 // The object-create notification is what turns a client's declared size into the truth.
 // It arrives after the PUT lands and carries the stored object's real size.
 // It reports what happened on a data path our servers are never part of.
-// The ledger row names the bucket and the blob, so each notification is matched against its own row: one from a bucket
-// Nothing reserves into finds no row. No list of buckets is kept beside the reserve writers, so none can drift
-// From them. The row names whose allowance a blob is charged to: a resource asset's owner, or a message
-// Attachment's uploader.
+// The ledger row names the bucket and the blob, so each notification is matched against its own row.
+// A notification from a bucket that nothing reserves into finds no row.
+// No list of buckets is kept beside the reserve writers, so none can drift from them.
+// The row names whose allowance a blob is charged to.
+// That is a resource asset's owner, or a message attachment's uploader.
 // See openspec/specs/resource/storage-quotas/design.md
 export const reconcileStorageLedgerEntryHandler = async (body: unknown): Promise<void> => {
   const { bucket, eventTime, object } = r2ObjectCreatedQueueMessageSchema.parse(body);
