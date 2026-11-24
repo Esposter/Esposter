@@ -19,8 +19,8 @@ import {
 } from "@esposter/db-schema";
 
 // The account's messages are erased in every room it is a member of, a page at a time. An erased message loses its
-// Text, Files and link preview, and its row stays as a tombstone, so a reply still names a root. The blobs its files
-// Named go Through the release a blob deletion runs, page by page. The scheduled messages are named by the account's
+// Text, files and link preview, and its row stays as a tombstone, so a reply still names a root. The blobs its files
+// Named go through the release a blob deletion runs, page by page. The scheduled messages are named by the account's
 // Own index, so each is reached in the room it was set in, member or not. The index is cleared after this, so this step
 // Runs before the user object is erased
 export const eraseAccountMessages = async (userId: UserInAuth["id"]): Promise<void> => {

@@ -10,8 +10,8 @@ import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-// An update returns the rows its where matches, and a unit names only the rows that changed, so a write needs a row to
-// Change
+// An update returns the rows its where matches, and a unit names only the rows that changed, so a write needs a
+// Row to change
 const insertUser = async () => {
   const userId = v7();
   await getDb().insert(usersInAuth).values(createUser(userId));

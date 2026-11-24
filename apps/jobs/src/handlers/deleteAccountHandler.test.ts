@@ -77,8 +77,8 @@ describe(deleteAccountHandler, () => {
     ]);
   });
 
-  // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first
-  // Page
+  // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends
+  // On its first page
   beforeEach(() => {
     roomObjectReplies.set("deleteUserMessages", () => []);
     roomObjectReplies.set("deleteUserReactions", () => []);
@@ -235,7 +235,7 @@ describe(deleteAccountHandler, () => {
     await expect(
       mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage).where(eq(roomsInMessage.userId, userId)),
     ).resolves.toStrictEqual([]);
-    // Only the first run sends anything: the second finds no owned room and no membership left The leave's payload is
+    // Only the first run sends anything: the second finds no owned room and no membership left. The leave's payload is
     // The tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
     const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([

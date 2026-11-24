@@ -132,7 +132,7 @@ describe(buildUserDataArchive, () => {
   });
 
   // A room the person is in is asked for their reactions and messages on every build, and a room with none answers
-  // Empty, So a test scripts only the answer it reads
+  // Empty, so a test scripts only the answer it reads
   beforeEach(() => {
     roomObjectReplies.set("exportUserMessages", () => []);
     roomObjectReplies.set("exportUserReactions", () => []);
@@ -374,13 +374,13 @@ describe(buildUserDataArchive, () => {
       title,
     });
     // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time
-    // Is The first reactor's, not the person's, and the exact shape leaves it out
+    // Is the first reactor's, not the person's, and the exact shape leaves it out
     expect(getEntryJson(entries, "likes.json")).toStrictEqual([
       { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
       { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageId },
     ]);
     // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship
-    // Is one Row for the pair, made when the receiver accepted it, so neither carries a time
+    // Is one row for the pair, made when the receiver accepted it, so neither carries a time
     expect(getEntryJson(entries, "friends.json")).toStrictEqual({
       friends: [{ id: friendUserId, name }],
       received: [{ id: receivedUserId, name }],

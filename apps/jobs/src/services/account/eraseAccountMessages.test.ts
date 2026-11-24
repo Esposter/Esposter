@@ -87,8 +87,8 @@ describe(eraseAccountMessages, () => {
     const mentionedUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(mentionedUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    // The member was in the room before the message, and has not read the room since, so the message's count stands on
-    // Them
+    // The member was in the room before the message, and has not read the room since, so the message's count
+    // Stands on them
     await mockDb.insert(usersToRoomsInMessage).values([
       { createdAt: new Date(0), mentionCount: 1, roomId: room.id, userId: mentionedUserId },
       { roomId: room.id, userId },

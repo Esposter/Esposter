@@ -9,11 +9,11 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 // The account is taken out of each room it is still a member of before its row goes. Each membership is tombstoned
-// First, so the `leaveRoom` the room sends carries the row at the version the removal left, And a list holding it drops
+// First, so the `leaveRoom` the room sends carries the row at the version the removal left, and a list holding it drops
 // The row by that version. The room drops its sockets and its online set first, then every member it still has online
 // Is sent that `leaveRoom`. So an open room hears of the erase rather than finding the account gone at its next reload.
 // The rooms it owned went first, so the memberships left are the rooms it is still in. Each room's two calls are
-// `best-effort`, as announceRoomMemberDeparture makes them: a failure is logged and the sweep goes on To the next room,
+// Best-effort, as announceRoomMemberDeparture makes them: a failure is logged and the sweep goes on to the next room,
 // So one room cannot hold the others back. A failed room is not revisited, since its membership is tombstoned
 export const removeAccountFromMemberRooms = async (userId: UserInAuth["id"]): Promise<void> => {
   const db = getDb();
