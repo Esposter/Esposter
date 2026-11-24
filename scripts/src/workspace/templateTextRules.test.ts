@@ -19,8 +19,8 @@ const getLine = (text: string, index: number): number => text.slice(0, index).sp
 
 const toFile = (template: string): VueFile => ({ path: "a.vue", text: `<template>\n  ${template}\n</template>\n` });
 
-// The template rules no tool runs for us, each read over the components' text in place of the rule, and the ones vize
-// Will take on going with the upstream marker on their constants. The tree is read once for all of them
+// The template rules no tool runs for us yet, each read over the components' text in place of the rule, and each going
+// With the upstream marker on its constants. The tree is read once for all of them
 describe("templateTextRules", () => {
   // The top-level template, from its opening tag to its closing tag, each at the start of its line
   const TEMPLATE_REGEX = /^<template\b[^>]*>[\s\S]*?^<\/template>/mu;
@@ -35,8 +35,8 @@ describe("templateTextRules", () => {
   const SAME_NAME_BIND_MESSAGE = 'Write a bind whose value is its own name as the shorthand: `:foo`, not `:foo="foo"`.';
   // A bind whose value is a bare identifier: `:` or `v-bind:`, the attribute's name, its modifiers, then the identifier
   const BIND_REGEX = /(?<=\s)(?::|v-bind:)(?<name>[A-Za-z][\w-]*)(?:\.[\w-]+)*="(?<value>[A-Za-z_$][\w$]*)"/gu;
-  // The padding check is kept for good: oxfmt keeps whatever blank lines are written between blocks, and vize leaves
-  // Block padding to `vize fmt` rather than a lint rule, so this is the one place the padding holds
+  // @TODO: no upstream issue — ubugeeei-prod/vize: `vize fmt` pads the blocks but cannot replace oxfmt until it formats
+  // In parallel and formats Markdown, YAML and CSS; drop the padding check once it does
   const UNPADDED_BLOCK_MESSAGE =
     "Put a blank line between a component's top-level blocks: this block opens straight after the previous one closes.";
   // A top-level closing tag on its own line, and the line after it starting with a tag: the lookahead leaves that tag
