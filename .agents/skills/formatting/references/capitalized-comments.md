@@ -11,6 +11,8 @@ line opening on a capitalised function or binding name wherever that name is dec
 lowercase-first. It cannot report a tool, a path, or an unprefixed name declared in another file, since
 recognising one would take a list of the repo's tools, so the grep below still owns those.
 
+**A rewrap refills one paragraph.** It reflows only the hard-wrapped paragraph that holds the long line, and never joins separate lines: a list item, a URL, a directive, or a sentence that ends its line keeps its own line. A word that loses its line start loses the capital the line start gave it.
+
 **Rewrapping a comment is what creates this**, so it is the edit to re-check rather than the original text. Changing a word early in a block reflows every line after it, and an identifier that sat mid-line lands at the front of one — the corruption is written by the pass that was fixing the previous one. After editing any comment, grep the added lines for a line-initial identifier before committing:
 
 ```bash
