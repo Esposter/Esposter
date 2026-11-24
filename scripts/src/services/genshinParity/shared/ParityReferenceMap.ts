@@ -162,6 +162,10 @@ const MENU_EXIT_PANEL_REGION = { height: 590, width: 930, x: 495, y: 245 };
 const NO_SCREEN_SCREENSHOT = "no screenshot of the screen yet";
 const NO_VARIANT_SCREENSHOT = "no screenshot of this variant yet";
 const RECORDING_NOT_ON_DISK = "its recording is not on disk";
+// The download's line is in the owner's capture of the
+// Japanese client alone, a 21:9 frame, which `compare` cannot score
+// Against a 16:9 shot: it resizes the shot to the reference's shape, so the frame's foot would be stretched
+const DOWNLOAD_FRAME_NOT_16_BY_9 = "its only frame is 21:9, which compare stretches the 16:9 shot to match";
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
@@ -1048,6 +1052,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { isWelcomeShown: false, language: "ChineseSimplified", stage: "Door" },
     screen: "LoginInterface",
     source: "bili-av532052219-mainland-launch.mp4 at 15.5s",
+  },
+  "login-interface-downloading": {
+    pending: DOWNLOAD_FRAME_NOT_16_BY_9,
+    screen: "LoginInterface",
+    variant: "downloading",
   },
   "login-interface-loading": {
     isBackdrop: true,

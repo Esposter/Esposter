@@ -60,6 +60,37 @@ describe(useHostedAssetsPreload, () => {
     expect(downloadProgress.value).toBe(1);
   });
 
+  test("is downloading only while a file the cache lacks is fetched", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("caches", { open: () => Promise.resolve(createMockCache()) });
+    const { promise: preloadSet, resolve: resolvePreloadSet } = Promise.withResolvers<HostedAssetPreloadSet>();
+    const requested = Promise.withResolvers<void>();
+    const response = Promise.withResolvers<Response>();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>(() => {
+        requested.resolve();
+        return response.promise;
+      }),
+    );
+    const { isDownloading, preload } = useHostedAssetsPreload(() => preloadSet, vi.fn<() => void>());
+    const run = preload();
+
+    // Its status is downloading while the set is still read, with nothing pending to fetch
+    expect(isDownloading.value).toBe(false);
+
+    resolvePreloadSet(set);
+    await requested.promise;
+
+    expect(isDownloading.value).toBe(true);
+
+    response.resolve(new Response(null));
+    await run;
+
+    expect(isDownloading.value).toBe(false);
+  });
+
   test("a second visit downloads nothing", async () => {
     expect.hasAssertions();
 

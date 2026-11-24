@@ -15,7 +15,6 @@ import { LOGIN_GLIDE_TITLE_SPEED } from "#src/services/login/scene/constants";
 import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitleLogoMap";
 import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
-import { HOSTED_ASSETS_CACHE_NAME } from "hosted-assets";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -87,43 +86,22 @@ describe("gameOpening", () => {
     expect(container.querySelector(".game-screen")).not.toBeNull();
   });
 
-  // The published packs download from an empty cache as the opening mounts, so the index's request is already out while
-  // The splashes play, under a base of its own that no earlier test has read
-  test("begins the character pack download when it mounts", async () => {
-    expect.hasAssertions();
-
-    await caches.delete(HOSTED_ASSETS_CACHE_NAME);
-    const { promise } = Promise.withResolvers<Response>();
-    const fetchSpy = vi.fn<typeof fetch>(() => promise);
-    vi.stubGlobal("fetch", fetchSpy);
-    await render(GameOpening, {
-      props: {
-        gameDataBaseUrl: "/preload",
-        gameText: ENGLISH_GAME_TEXT,
-        language: GameLanguage.English,
-        playerName: "",
-        progress: 1,
-        sceneExportBaseUrl: "",
-      },
-    });
-
-    const characterPackIndexKey = GameDataKeys.characterPackIndex.index;
-
-    expect(fetchSpy.mock.calls.map(([url]) => url)).toContainEqual(
-      `/preload/${characterPackIndexKey}/${getGameDataRecord(characterPackIndexKey).sha256}.json`,
-    );
-  });
-
   // The game's opening end to end with the page already loaded, the order a console that loads quickly sees it in:
   // Each splash hands on to the next, the login screen's title waits for a click, the camera flies to the door, which
   // Waits for another and fades into white, the startup screen's marks are shown rather than skipped, and the
-  // Opening finishes once they have faded and the white has held
+  // Opening finishes once they have faded and the white has held. The published packs are not requested until the
+  // Title's click begins the login, and that click's download is held before the flight runs on its share
   test(
     "plays the splashes, the login's title, flight and door, the startup marks, then finishes",
     async () => {
       expect.hasAssertions();
 
       const requestRealFrame = window.requestAnimationFrame.bind(window);
+      const realFetch = window.fetch.bind(window);
+      const fetchSpy = vi.fn<typeof fetch>((input, init) => realFetch(input, init));
+      vi.stubGlobal("fetch", fetchSpy);
+      const packIndexUrl = `${GAME_DATA_LOCAL_BASE_URL}/${GameDataKeys.characterPackIndex.index}/${getGameDataRecord(GameDataKeys.characterPackIndex.index).sha256}.json`;
+      const { promise: held, resolve: resolveHeld } = Promise.withResolvers<void>();
       // The scene steps its frames by the time performance.now reads, so that clock is faked with the frame clock: left
       // Real, a machine that draws its frames faster covers less of the faked advance and the door never forms in it
       vi.useFakeTimers({ toFake: ["setTimeout", "requestAnimationFrame", "cancelAnimationFrame", "performance"] });
@@ -134,6 +112,9 @@ describe("gameOpening", () => {
           gameText: ENGLISH_GAME_TEXT,
           language: GameLanguage.English,
           onFinish,
+          onHeld: () => {
+            resolveHeld();
+          },
           playerName: "",
           progress: 1,
           sceneExportBaseUrl: "",
@@ -156,9 +137,14 @@ describe("gameOpening", () => {
       await vi.advanceTimersByTimeAsync(LOGIN_TITLE_START_MS);
 
       expect(container.querySelector(".login-interface .title")).not.toBeNull();
+      expect(fetchSpy.mock.calls.map(([url]) => url)).not.toContain(packIndexUrl);
 
       loginScreen?.click();
       await nextTick();
+      expect(fetchSpy.mock.calls.map(([url]) => url)).toContain(packIndexUrl);
+
+      await held;
+
       const lastStep = LOGIN_STATUS_STEPS.at(-1);
       await vi.advanceTimersByTimeAsync(
         (lastStep?.ms ?? 0) + LOGIN_PROGRESS_FILL_MS + LOGIN_DOOR_AFTER_LOAD_MS + doorArrivalMs + flightFrameMs,

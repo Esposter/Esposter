@@ -7,7 +7,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { computed, ref } from "vue";
 
 // A product's preload behind its loading bar: its set is read, then each file is held in the browser's cache.
-// Its `downloadProgress` is the share of the bytes held, whole once every file is held.
+// Its `downloadProgress` is the share of the bytes held, whole once every file is held, and `isDownloading` says
+// Whether any file is still being fetched. Nothing starts until `preload` is called.
 // `onHeld` is called once every file is held. Each call plans again, so the files already held are not fetched twice.
 export const useHostedAssetsPreload = (
   readPreloadSet: () => Promise<HostedAssetPreloadSet>,
@@ -20,6 +21,8 @@ export const useHostedAssetsPreload = (
     if (status.value === HostedAssetPreloadStatus.Ready) return 1;
     return pendingBytes.value > 0 ? loadedBytes.value / pendingBytes.value : 0;
   });
+  // Whether the planned files are still being fetched, which a set with nothing pending never is
+  const isDownloading = computed(() => status.value === HostedAssetPreloadStatus.Downloading && pendingBytes.value > 0);
   const preload = async (): Promise<void> => {
     status.value = HostedAssetPreloadStatus.Downloading;
     loadedBytes.value = 0;
@@ -43,5 +46,5 @@ export const useHostedAssetsPreload = (
         status.value = HostedAssetPreloadStatus.Failed;
       });
   };
-  return { downloadProgress, preload, status };
+  return { downloadProgress, isDownloading, preload, status };
 };

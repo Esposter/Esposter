@@ -20,11 +20,12 @@ interface Props {
 
 const { gameText, isDownloadFailed, progress, step } = defineProps<Props>();
 const emit = defineEmits<{ retry: [] }>();
-// The game's status at the foot of its login screen as it prepares: a line of text, then from loading on its share
-// Done to two places, over the ornament's double diamond while the game loads and over the progress bar while data
-// Does. Once loading is done the words go, the bar folds into its diamond under the full share, and then the whole row
-// Fades, leaving the flight's last stretch bare before the door rises, as the English recording's does. A download that
-// Stopped puts its line in the words' place and its retry where the share is, and the bar stays at the share it reached
+// The game's status at the foot of its login screen as it prepares: a line of text, then from the download on its share
+// Done to two places. Over the progress bar while the download runs and while data loads, and over the ornament's
+// Double diamond while the game loads. Once loading is done the words go, the bar folds into its diamond under the full
+// Share, and then the whole row fades, leaving the flight's last stretch bare before the door rises, as the English
+// Recording's does. A download that stopped puts its line in the words' place and its retry where the share is, and
+// The bar stays at the share it reached
 const isDone = computed(() => step === LoginStatusStep.LoadingData && progress >= 1);
 const text = computed(() => {
   if (isDownloadFailed) return gameText[GameTextKey.ResourceDownloadFailed];
@@ -41,7 +42,13 @@ const percentText = computed(() =>
     <GameButton v-if="isDownloadFailed" class="retry" :kind="GameButtonKind.Pill" tip="" @click="emit('retry')">
       {{ gameText[GameTextKey.Retry] }}
     </GameButton>
-    <template v-if="step === LoginStatusStep.LoadingGame || step === LoginStatusStep.LoadingData">
+    <template
+      v-if="
+        step === LoginStatusStep.Downloading ||
+        step === LoginStatusStep.LoadingData ||
+        step === LoginStatusStep.LoadingGame
+      "
+    >
       <p v-if="!isDownloadFailed" class="percent">{{ percentText }}</p>
       <svg v-if="step === LoginStatusStep.LoadingGame" class="mark" viewBox="0 0 480 320" aria-hidden="true">
         <path :d="ORNAMENT_MIDDLE_PATH" />

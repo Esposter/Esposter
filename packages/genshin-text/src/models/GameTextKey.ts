@@ -465,6 +465,8 @@ export const GameTextKey = {
   LoginBegin: "3535917252",
   // The login screen's status lines under its progress bar, in the order it shows them
   LoginCheckingForUpdates: "1285204118",
+  // The status line over the bar while the game downloads its data, the bar's share beneath it
+  LoginDownloading: "1323480176",
   LoginLoadingData: "1128933734",
   LoginLoadingGame: "1102014722",
   // What the door's log out and the client's repair do, which a screen reader says in place of the login screen's

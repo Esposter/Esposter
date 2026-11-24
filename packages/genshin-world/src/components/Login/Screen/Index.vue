@@ -41,6 +41,9 @@ interface Props {
   isBloomed?: false | undefined;
   // Whether a pack's download stopped on a file that failed its attempts, which the bar's foot says with a retry
   isDownloadFailed: boolean;
+  // Whether bytes are being fetched for the packs and the game data, which the foot shows as the download's line over
+  // The bar's share once the checks are done; a set with nothing to fetch never is
+  isDownloading: boolean;
   // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against, and
   // Silent
   isInterfaceHidden: boolean;
@@ -65,7 +68,15 @@ interface Props {
 // Says the white is up. Both whites are the interface's, played from the game's own clips. A host pins a stage with
 // `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
-const { gameText, isBloomed = true, playerName, progress, qualityTier = QualityTier.High } = defineProps<Props>();
+const {
+  gameText,
+  isBloomed = true,
+  isDownloadFailed,
+  isDownloading,
+  playerName,
+  progress,
+  qualityTier = QualityTier.High,
+} = defineProps<Props>();
 const emit = defineEmits<{ begin: []; ready: []; retry: [] }>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
 const shownPlayerName = computed(
@@ -74,7 +85,16 @@ const shownPlayerName = computed(
 const isSpinnerShown = ref(false);
 // Whether the door has risen into place, which the door's own interface waits on
 const isDoorFormed = ref(false);
-const statusStep = ref<LoginStatusStep>(LoginStatusStep.PreparingDownload);
+// The step the timers reach from the title's click, which the foot shows unless a download takes its place
+const timedStep = ref<LoginStatusStep>(LoginStatusStep.PreparingDownload);
+// The step the foot shows. The checks run first, as the game's do; once they are done the download's line stands over
+// Its share while bytes are fetched or a file has failed. A download with nothing to fetch leaves the timers to show
+// The game's own loading steps
+const statusStep = computed(() => {
+  if (timedStep.value === LoginStatusStep.PreparingDownload || timedStep.value === LoginStatusStep.CheckingForUpdates)
+    return timedStep.value;
+  return isDownloading || isDownloadFailed ? LoginStatusStep.Downloading : timedStep.value;
+});
 // The share of loading shown, which runs toward loading's own no faster than the bar's fill
 const shownProgress = ref(0);
 // The share of the way to the door flown, from the title at 0 to the door at 1: the screen's clock for when the door is
@@ -92,14 +112,14 @@ const { start: showTitle } = useTimeoutFn(
   { immediate: false },
 );
 const statusTimeouts = LOGIN_STATUS_STEPS.map(({ ms, step }) =>
-  useTimeoutFn(() => (statusStep.value = step), ms, { immediate: false }),
+  useTimeoutFn(() => (timedStep.value = step), ms, { immediate: false }),
 );
 // How long since loading was done, and how far the flight had gone then
 let loadedMs = 0;
 let loadedFlight = 0;
 const { pause: pauseFlight, resume: flyOn } = useRafFn(
   ({ delta }) => {
-    if (statusStep.value === LoginStatusStep.LoadingData)
+    if (statusStep.value === LoginStatusStep.Downloading || statusStep.value === LoginStatusStep.LoadingData)
       shownProgress.value = Math.min(shownProgress.value + delta / LOGIN_PROGRESS_FILL_MS, Math.min(progress, 1));
     if (shownProgress.value < 1) {
       const reach = shownProgress.value * LOGIN_FLIGHT_LOADING_SHARE;

@@ -25,6 +25,13 @@ export const props = {
 export const variants = {
   arriving: { isSpinnerShown: true, isWelcomeShown: false, stage: LoginStage.Arriving },
   door: { isWelcomeShown: false, stage: LoginStage.Door },
+  // The download's line over its share, at the share the current build's download shows in its first loading frames
+  downloading: {
+    isWelcomeShown: false,
+    progress: 0.9264,
+    stage: LoginStage.Preparing,
+    statusStep: LoginStatusStep.Downloading,
+  },
   loadingData: {
     isWelcomeShown: false,
     progress: 0.2373,

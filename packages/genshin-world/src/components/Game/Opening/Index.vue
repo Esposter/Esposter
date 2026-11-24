@@ -6,6 +6,7 @@ import LoadingStartup from "#src/components/Loading/Startup/Index.vue";
 import LoginScreen from "#src/components/Login/Screen/Index.vue";
 import SplashSequence from "#src/components/Splash/Sequence/Index.vue";
 import { OpeningPhase } from "#src/models/game/OpeningPhase";
+import { LoginStage } from "#src/models/login/LoginStage";
 import { readGameDataPreloadSet } from "#src/services/data/readGameDataPreloadSet";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { getLoginTimeOfDay } from "#src/services/login/getLoginTimeOfDay";
@@ -13,6 +14,7 @@ import { readLoginData } from "#src/services/login/readLoginData";
 import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitleLogoMap";
 import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
 import { getResultAsync } from "@esposter/shared";
+import { whenever } from "@vueuse/core";
 import { GameScreen } from "genshin-interface";
 import { HostedAssetPreloadStatus, useHostedAssetsPreload } from "hosted-assets";
 
@@ -34,7 +36,7 @@ interface Props {
 }
 
 const { gameDataBaseUrl, language } = defineProps<Props>();
-const emit = defineEmits<{ begin: []; finish: []; held: [] }>();
+const emit = defineEmits<{ begin: []; download: []; finish: []; held: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
 // Which loads the world and whose white the world cuts in from. The login screen's bar reports the game data objects
@@ -65,13 +67,21 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
     console.error(error);
   },
 );
-// The game data's objects and the character packs download from the moment the opening mounts, so the splashes and the
-// Title play while the bytes arrive, and the launch loading bar reports them once the game starts preparing
-const { downloadProgress, preload, status } = useHostedAssetsPreload(
+// The login screen's stage, which the download starts on: the click that begins the login, as the game's download
+// Does, so the splashes and the title load nothing. The launch loading bar reports the download's share once it runs
+const loginStage = ref<LoginStage>(LoginStage.Arriving);
+const { downloadProgress, isDownloading, preload, status } = useHostedAssetsPreload(
   () => readGameDataPreloadSet(gameDataBaseUrl),
   () => emit("held"),
 );
-onMounted(preload);
+whenever(
+  () => loginStage.value === LoginStage.Preparing,
+  () => {
+    emit("download");
+    return preload();
+  },
+  { once: true },
+);
 </script>
 
 <template>
@@ -84,9 +94,11 @@ onMounted(preload);
   />
   <LoginScreen
     v-else-if="phase === OpeningPhase.Login && loginData"
+    v-model:stage="loginStage"
     :game-data-base-url
     :game-text
     :is-download-failed="status === HostedAssetPreloadStatus.Failed"
+    :is-downloading="isDownloading"
     :is-interface-hidden="false"
     :language
     :login-data
