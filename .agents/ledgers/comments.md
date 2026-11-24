@@ -7,7 +7,7 @@
 | `apps/realtime/src/services` — `durableObject`, `queue`, `realtime`, `realtimeKit`, `reminder`, `room`, `shared`, `storage`, `todoReminder` | plus `models`                                                                                       |
 | `apps/realtime/src/services` — `topic`, `user`                                                                                              | plus `models`                                                                                       |
 | `packages/keyframe-store`                                                                                                                   | the stored-object and delta prose                                                                   |
-| `apps/web/configuration`                                                                                                                    | CSP labels, Nuxt config prose                                                                       |
+| `apps/web/configuration` — the rest                                                                                                         | CSP labels, Nuxt config prose                                                                       |
 | `.github` — `ISSUE_TEMPLATE`, `PULL_REQUEST_TEMPLATE.md`, `actions`, `assets`, `worker-secrets.json`, `workflows`                           | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
 
 Notes on a tree several units share:
