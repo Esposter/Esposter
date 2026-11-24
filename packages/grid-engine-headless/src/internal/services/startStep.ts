@@ -9,9 +9,11 @@ import { faceCharacter } from "#src/internal/services/faceCharacter";
 import { Direction } from "#src/models/Direction";
 import { DirectionDeltaMap } from "#src/services/DirectionDeltaMap";
 
-// Starts the waiting move as a step. A move into a blocked tile turns the character without moving it, and ends the run
-// It was part of; a move with no step starts nothing. A listener that teleports the character while the step starts
-// Ends The step there, so none is returned and nothing more is raised for it
+// Starts the waiting move as a step.
+// A move into a blocked tile turns the character without moving it, and ends the run it was part of.
+// A move with no step starts nothing.
+// A listener that teleports the character while the step starts ends the step there.
+// So none is returned, and nothing more is raised for it.
 export const startStep = (state: GridEngineState, character: GridEngineCharacter): GridEngineStep | undefined => {
   const { pendingDirection } = character;
   character.pendingDirection = Direction.None;
