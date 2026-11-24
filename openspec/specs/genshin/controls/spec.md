@@ -71,7 +71,7 @@ A key typed into an editable field SHALL reach no binding and SHALL keep its def
 
 ### Requirement: Escape releases the pointer lock to the browser and a click takes it again
 
-The browser's Escape SHALL release a pointer lock taken for the camera, and a click on the world SHALL take the lock again (see the open list).
+The browser's Escape SHALL release a pointer lock taken for the camera, and a click on the world SHALL take the lock again (see the open list). A lock the browser refuses, as one asked of an unfocused page or within about a second of Escape, SHALL NOT be reported as an error: the player clicks again.
 
 #### Scenario: Escape during play opens the Paimon menu
 

@@ -18,6 +18,7 @@ import type {
 } from "genshin-engine";
 import type { Object3D, SkinnedMesh } from "three";
 
+import { useCanvasPointerLock } from "#src/composables/useCanvasPointerLock";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { createSkinnedMeshFinder } from "#src/services/character/createSkinnedMeshFinder";
@@ -38,7 +39,6 @@ import { stepPartyElementalStates } from "#src/services/party/stepPartyElemental
 import { stepPartyFall } from "#src/services/party/stepPartyFall";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
 import { useLoop, useTres } from "@tresjs/core";
-import { useEventListener } from "@vueuse/core";
 import {
   applyBlink,
   createCharacterController,
@@ -265,8 +265,7 @@ onBeforeUnmount(() => {
   emit("clearKitEffects");
   skinnedMeshFinder.dispose();
 });
-// A click on the canvas takes the pointer, which the look reads while it is locked
-useEventListener(renderer.domElement, "click", () => renderer.domElement.requestPointerLock());
+useCanvasPointerLock(renderer.domElement);
 const placedPosition = new Vector3();
 // The party's stamina is read by the HUD's meter
 defineExpose({

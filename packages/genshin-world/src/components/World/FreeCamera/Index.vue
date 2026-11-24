@@ -2,6 +2,7 @@
 import type { FreeCamera, InputState } from "genshin-engine";
 import type { Vector3 } from "three";
 
+import { useCanvasPointerLock } from "#src/composables/useCanvasPointerLock";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { useLoop, useTres } from "@tresjs/core";
 import { createFixedStepLoop, createFreeCamera, createGroundQuery } from "genshin-engine";
@@ -23,7 +24,6 @@ interface Props {
 const { getGroundHeight, inputState, isHeld, origin, waterLevel } = defineProps<Props>();
 const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
-const controller = new AbortController();
 // The ground is the terrain's own height function, read at the world coordinate the scene's origin shifts the camera to
 const ground = createGroundQuery((x, z) => getGroundHeight(x + origin.x, z + origin.z), waterLevel);
 let freeCamera: FreeCamera | undefined;
@@ -39,14 +39,7 @@ onBeforeRender(({ delta }) => {
   freeCamera.look(inputState);
   fixedStepLoop.advance(delta);
 }, CAMERA_FRAME_PRIORITY);
-// A click on the canvas takes the pointer, which the look reads while it is locked
-renderer.domElement.addEventListener("click", () => renderer.domElement.requestPointerLock(), {
-  signal: controller.signal,
-});
-
-onUnmounted(() => {
-  controller.abort();
-});
+useCanvasPointerLock(renderer.domElement);
 </script>
 
 <template />
