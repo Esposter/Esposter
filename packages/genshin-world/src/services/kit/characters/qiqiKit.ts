@@ -35,7 +35,7 @@ const TALISMAN_HEAL_COOLDOWN_STATUS_ID = "qiqi-talisman-heal-cooldown";
 const TALISMAN_HEAL_COOLDOWN_SECONDS = 1;
 // A Glimpse into Arcanum, from Ascension 4: Qiqi's Normal and Charged Attacks give the enemy they hit a Talisman of 6
 // Seconds on a 50% roll, at most once every 30 seconds, unless it holds a longer one. Measured: gcsim v2.47.2 (MIT)
-// Qiqi/burst.go. https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/burst.go
+// `qiqi/burst.go`. https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/burst.go
 const A_GLIMPSE_INTO_ARCANUM_ASCENSION = 4;
 // From Ascension 1, a reaction the character on the field triggers gives her 20% Healing Bonus for 8 seconds, unless
 // Herald of Frost stands, as gcsim v2.47.2 (MIT) qiqi/asc.go gives it

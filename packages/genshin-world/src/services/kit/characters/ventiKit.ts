@@ -21,7 +21,7 @@ const STORMEYE_OFFSET = 5;
 const SPLITTING_GALES_CONSTELLATION = 1;
 // Breeze of Reminiscence, from two constellations, takes 12% off the Anemo and Physical RES of each enemy Skyward
 // Sonnet strikes for 10 seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT) venti/cons.go give it
-// Https://genshin-impact.fandom.com/wiki/Breeze_of_Reminiscence
+// https://genshin-impact.fandom.com/wiki/Breeze_of_Reminiscence
 const BREEZE_OF_REMINISCENCE_CONSTELLATION = 2;
 const BREEZE_OF_REMINISCENCE_STATUS: EnemyStatus = {
   damageTakenBonus: 0,
@@ -32,7 +32,7 @@ const BREEZE_OF_REMINISCENCE_STATUS: EnemyStatus = {
 };
 // Stormeye, from Ascension 4, regenerates 15 energy for Venti once the Stormeye's seconds end, as the wiki's passive
 // Page and gcsim v2.47.2 (MIT) venti/asc.go give it, which gcsim's burst.go queues 480 frames past the Stormeye's start
-// Https://genshin-impact.fandom.com/wiki/Stormeye
+// https://genshin-impact.fandom.com/wiki/Stormeye
 const STORMEYE_PASSIVE_ASCENSION = 4;
 const STORMEYE_PASSIVE_ENERGY = 15;
 // Storm of Defiance, from six constellations, takes 20% off the Anemo RES of each enemy the Stormeye strikes, for gcsim
@@ -47,7 +47,7 @@ const STORM_OF_DEFIANCE_STATUS: EnemyStatus = {
 };
 // Hurricane of Freedom, from four constellations, gives Venti a 25% Anemo DMG Bonus for 10 seconds each time he picks
 // Up an Elemental Orb or Particle while he is on the field, as gcsim v2.47.2 (MIT) venti/cons.go gives it
-// Https://genshin-impact.fandom.com/wiki/Hurricane_of_Freedom
+// https://genshin-impact.fandom.com/wiki/Hurricane_of_Freedom
 const HURRICANE_OF_FREEDOM_CONSTELLATION = 4;
 const HURRICANE_OF_FREEDOM_DAMAGE_BONUS = 0.25;
 const HURRICANE_OF_FREEDOM_SECONDS = 10;

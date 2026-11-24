@@ -51,7 +51,7 @@ const MAX_SEALS_WITH_CONSTELLATION = 4;
 // A seal is a status of its own slot, as a status of one id restarts rather than stacks, so the count is the slots held
 const SEAL_STATUS_IDS = ["yanfei-seal-0", "yanfei-seal-1", "yanfei-seal-2", "yanfei-seal-3"];
 // Ascension 1 gives 5% Pyro DMG Bonus per seal consumed for 6 seconds, which a charged attack dispels, as gcsim (MIT)
-// Yanfei/asc.go gives it
+// `yanfei/asc.go` gives it
 const SEAL_PYRO_BONUS_ASCENSION = 1;
 const SEAL_PYRO_BONUS_PER_SEAL = 0.05;
 const SEAL_PYRO_BONUS_SECONDS = 6;

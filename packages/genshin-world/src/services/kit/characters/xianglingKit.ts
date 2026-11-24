@@ -20,7 +20,7 @@ import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xiangling/guoba.go
 const GUOBA_OFFSET = 1.3;
 // Crossfire, from Ascension 1, widens Guoba's flame by 20%, as the wiki's passive page and gcsim v2.47.2 (MIT)
-// Xiangling/asc.go give it
+// `xiangling/asc.go` give it
 // https://genshin-impact.fandom.com/wiki/Crossfire
 const CROSSFIRE_ASCENSION = 1;
 // Beware, It's Super Hot!, from Ascension 4, leaves a chili pepper where Guoba disappears for 10 seconds.

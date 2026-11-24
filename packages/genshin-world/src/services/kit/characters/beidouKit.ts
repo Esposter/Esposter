@@ -29,7 +29,7 @@ const BANE_OF_EVIL_CONSTELLATION = 6;
 // Stunning Revenge, from Constellation 4: a hit Beidou takes while she is on the field gives her normal attacks an
 // Extra Electro hit of 20% of her ATK after each hit they land, for 10 seconds. gcsim v2.47.2 (MIT) beidou/cons.go
 // Gives the status, its 10 seconds and the 20%, and its hit one per attack, and the table's 30 poise and 1U of Electro
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/beidou/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/beidou/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_STATUS_ID = "beidou-constellation-4";
 const CONSTELLATION_4_SECONDS = 10;

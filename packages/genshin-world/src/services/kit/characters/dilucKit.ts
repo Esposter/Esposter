@@ -45,7 +45,7 @@ const CONSTELLATION_4_STATUS_ID = "diluc-constellation-4-press";
 
 // Constellation 6, Flaming Sword, Nemesis of the Dark: after a Searing Onslaught press, the next two normal attacks
 // Within six seconds deal 30% more DMG and attack 30% faster. Wiki: the constellation's text, as gcsim v2.47.2 (MIT)
-// Diluc/cons.go models it, its counter reset by each press and its buffs ending after six seconds
+// `diluc/cons.go` models it, its counter reset by each press and its buffs ending after six seconds
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_BONUS = 0.3;

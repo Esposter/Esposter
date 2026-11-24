@@ -28,7 +28,7 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 // Circle of radius 6 whose centre lies 3 metres ahead, every tick. Its 12 seconds are Kurage's Oath's duration on the
 // Genshin Impact wiki (https://genshin-impact.fandom.com/wiki/Kurage%27s_Oath) and proud skill group 5432 index 3 of
 // The game data dump's ProudSkillExcelConfigData.json, 12.0 seconds
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/skill.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/skill.go
 const SKILL_DURATION_SECONDS = 12;
 const SKILL_CENTRE_METRES = 3;
 const SKILL_RADIUS = 6;
@@ -42,7 +42,7 @@ const CONSTELLATION_4_ENERGY = 0.8;
 const CONSTELLATION_4_ENERGY_SECONDS = 0.2;
 const CONSTELLATION_4_ENERGY_STATUS_ID = "kokomi-c4-energy";
 // Measured: gcsim (MIT) kokomi/burst.go, Ceremonial Garment lasts ten seconds
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/burst.go
 const GARMENT_SECONDS = 10;
 // Measured: gcsim (MIT) kokomi/asc.go, Song of Pearls adds 15% of her Healing Bonus, of her Max HP, to each garment
 // Normal and Charged Attack, from Ascension 4
@@ -56,7 +56,7 @@ const FLAWLESS_STRATEGY_CRITICAL_RATE = -1;
 // Constellation 6's Hydro DMG Bonus, as the wiki's text gives it: a Normal or Charged Attack's heal on a member at 80%
 // Or more HP, including one at maximum HP, gives Kokomi 40% Hydro DMG for four seconds. The wiki decides where gcsim
 // Differs, and gcsim's kokomi/cons.go starts the bonus from her burst for 480 frames, which this does not copy
-// Https://genshin-impact.fandom.com/wiki/Sangonomiya_Kokomi
+// https://genshin-impact.fandom.com/wiki/Sangonomiya_Kokomi
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_HEALTH_SHARE = 0.8;
 const CONSTELLATION_6_HYDRO_DAMAGE_BONUS = 0.4;

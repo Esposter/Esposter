@@ -34,7 +34,7 @@ const FIELD_LINGER_SECONDS = 0.1;
 // Members of the swirled element by 50 for 8 seconds on a Swirl she triggers, and A4 gives the rest of the team 20% of
 // Her Elemental Mastery for 8 seconds on each skill and burst hit. Constellation 2 lengthens the burst by 2 seconds,
 // And Constellation 6 gives the team 20% DMG Bonus of the absorbed element for 10 seconds when the field absorbs one
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/asc.go
 const SWIRL_ASCENSION = 1;
 const SWIRL_ELEMENTAL_MASTERY_BONUS = 50;
 const SWIRL_SECONDS = 8;

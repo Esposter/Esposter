@@ -28,7 +28,7 @@ const DRAGON_SUMMON_ID = "durin-dragon";
 // A burst's Dragon, cast on its target, ends the one of the same character, and its DoT ticks on its schedule. The
 // Record holds gcsim's (MIT) durin/burst.go ticks: the white burst's 20 on the primary target and the black's 16, each
 // 1U of Pyro with no poise, each rounded up to a whole frame with its travel after it
-// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin
 const createDragonOnStart =
   (hits: KitHit[]): KitAction["onStart"] =>
   ({ activeCombatant: combatant, body, kitEffectState }, target) => {

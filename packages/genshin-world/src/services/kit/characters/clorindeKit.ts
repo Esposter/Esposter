@@ -24,7 +24,7 @@ const HUNTERS_VIGIL_CRIT_SECONDS = 12;
 
 // Night Vigil's Bond of Life thresholds, as gcsim v2.47.2 (MIT) clorinde/skill.go and attack.go read her HP debt ratio:
 // A full share is 100%, and Impale the Night takes its no-share variant within gcsim's tolerance of zero
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/clorinde/skill.go
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/clorinde/skill.go`
 const BOND_OF_LIFE_FULL_SHARE = 1;
 const BOND_OF_LIFE_TOLERANCE = 0.0000001;
 

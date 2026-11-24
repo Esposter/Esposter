@@ -36,7 +36,7 @@ const CONSTELLATION_2_SOURCE = "ororon-c2";
 // Measured: gcsim v2.47.2 (MIT) ororon/asc.go, Ascension 4's energy: each normal attack, charged attack or plunge of
 // The active character that hits an enemy while the Spirit Orb's hit has set it going gives 3 energy to the active
 // Character and to Ororon, up to three times, with a second between them. The orb's hit sets it going for 15 seconds
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ororon/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_ENERGY = 3;
 const ASCENSION_4_MAXIMUM_TRIGGERS = 3;

@@ -29,7 +29,7 @@ const GRAND_EXPECTATION_BASE_ATTACK_SHARE = 0.2;
 // Fire Ventures With Me at constellation 6 gives the character on the field a 15% Pyro DMG Bonus, whatever it wields,
 // And Pyro on its weapon if it wields a sword, claymore or polearm. Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the
 // PyroP of 0.15 outside the weapon switch and the infusion within it. The wiki's note gives the same wielders
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
 // https://genshin-impact.fandom.com/wiki/Fire_Ventures_With_Me
 const FIRE_VENTURES_WITH_ME_CONSTELLATION = 6;
 const FIRE_VENTURES_PYRO_DAMAGE_BONUS = 0.15;

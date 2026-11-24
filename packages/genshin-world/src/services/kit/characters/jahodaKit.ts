@@ -59,7 +59,7 @@ const FLASK_ABSORBED_STATUS_PREFIX = "jahoda-flask-absorbed-";
 const PURSUIT_TICK_EXTRA_SECONDS = 0.1;
 // Measured: gcsim (MIT, v2.47.2) jahoda/cons.go, Constellation 6: a full flask's drain at Ascendant Gleam gives each
 // Moonsign character 5% Crit Rate and 40% Crit DMG for 20 seconds, the buff a source names restarting only itself
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_CRITICAL_RATE = 0.05;
 const CONSTELLATION_6_CRITICAL_DAMAGE = 0.4;

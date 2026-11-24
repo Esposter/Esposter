@@ -131,7 +131,7 @@ export const createHuTaoKitBehaviour = ({
   // Guide to Afterlife's Paramita Papilio: a stance on her for its seconds, playing her strikes and charged attack in
   // Its own reach, which infuses her normal attacks, charged attack and plunges with Pyro, and raises her ATK by her
   // Max HP. its strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
-  // Hutao/attack.go's ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
+  // `hutao/attack.go`'s ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
   const paramita = readStance("paramita", {
     chargedAttack: {
       hits: [{ enemyStatus: (_combatant, wielderMaxHealth) => createBloodBlossomStatus(wielderMaxHealth) }],

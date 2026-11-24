@@ -48,7 +48,7 @@ const CONSTELLATION_2 = 2;
 // Constellation 2, as gcsim v2.47.2 (MIT) ineffa/cons.go gives it: her burst's shield is placed 37 frames in (line 65).
 // The first enemy her burst hits is marked for a Punishment Edit, a Lunar-Charged hit of 3 times her ATK in a radius of
 // 6 metres, which fires on the marked enemy's next hit or 60 frames on, whichever comes first (lines 97, 107, 111)
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/cons.go
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/cons.go`
 const CONSTELLATION_2_SHIELD_SECONDS = toKitSeconds(37);
 const PUNISHMENT_EDIT_DELAY_SECONDS = toKitSeconds(60);
 const PUNISHMENT_EDIT_MULTIPLIER = 3;
@@ -82,7 +82,7 @@ const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 // Panoramic Permutation Protocol, Ineffa's Ascension 4 passive: Supreme Instruction: Cyclonic Exterminator gives Ineffa
 // And the active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim v2.47.2 (MIT) ineffa/asc.go
 // Gives it. The amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
 const ASCENSION_4 = 4;
 const PERMUTATION_ELEMENTAL_MASTERY_SHARE = 0.06;
 const PERMUTATION_SECONDS = 20;

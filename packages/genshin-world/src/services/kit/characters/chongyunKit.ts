@@ -37,7 +37,7 @@ const STEADY_BREATHING_ASCENSION = 1;
 const STEADY_BREATHING_NORMAL_ATTACK_SPEED_BONUS = 0.08;
 // Rimechaser Blade, from Ascension 4: as the field disappears a blade strikes the enemy nearest its centre within it,
 // Or its centre, for 100% of Layered Frost's damage, cutting the Cryo RES of the enemies it hits by 10% for 8 seconds
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/asc.go
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/asc.go`
 // https://genshin-impact.fandom.com/wiki/Rimechaser_Blade
 const RIMECHASER_BLADE_ASCENSION = 4;
 const RIMECHASER_BLADE_STATUS_ID = "chongyun-rimechaser-blade";
@@ -60,7 +60,7 @@ const FROZEN_SKIES_COOLDOWN_STATUS_ID = "chongyun-frozen-skies-cooldown";
 const FROZEN_SKIES_COOLDOWN_SECONDS = 2;
 // Rally of Four Blades, from six constellations: Cloud-Parting Star deals 15% more DMG to an enemy with a lower share
 // Of its Max HP left than Chongyun, and calls a fourth blade, as gcsim v2.47.2 (MIT) chongyun/burst.go gives it
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/burst.go
+// `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/burst.go`
 const RALLY_OF_FOUR_BLADES_CONSTELLATION = 6;
 const RALLY_OF_FOUR_BLADES_DAMAGE_BONUS = 0.15;
 

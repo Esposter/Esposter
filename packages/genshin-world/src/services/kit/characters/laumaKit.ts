@@ -42,12 +42,12 @@ const SHRED_STATUS_ID = "lauma-skill-shred";
 // Measured: gcsim (MIT) lauma/skill.go, Hymn of Eternal Rest's hold spends up to three Verdant Dew. The hold spends
 // Dew, Verdant first and then Moonridge, through spendDew. The Dew is spent as the hold starts, where gcsim spends it
 // At 29 frames, since the hit's multiplier is set on the cast. A hold with no Dew plays the press, as gcsim refuses it
-// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const SKILL_HOLD_MAXIMUM_DEW_COUNT = 3;
 
 // Measured: gcsim (MIT) lauma/asc.go, her Moonsign Benediction turns the party's Bloom into Lunar-Bloom and adds
 // 0.0175% Base DMG Bonus to its Lunar-Bloom for each point of her Elemental Mastery, at most 14%
-// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.000175;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 // Cleansing for the Spring, Lauma's Ascension 4 passive as its text gives it: her Elemental Skill's DMG rises by 0.04%
@@ -66,7 +66,7 @@ const PALE_HYMN_BURST_STACKS = 18;
 const PALE_HYMN_GAIN_FRAMES = 96;
 // Measured: gcsim (MIT) lauma/skill.go, each Dew Hymn of Eternal Rest spends during her burst gives the Moon Song six
 // Pale Hymn, once in each burst. A Dew spent outside it waits for the burst's gain, for 15 seconds
-// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const MOON_SONG_PALE_HYMN_PER_DEW = 6;
 
 export const LAUMA_CHARACTER_ID = 10_000_119;
@@ -77,7 +77,7 @@ const MOON_SONG_DEW_ID = "lauma-moon-song-dew";
 const MOON_SONG_ICD_ID = "lauma-moon-song-icd";
 const PALE_HYMN_GAIN_ID = "lauma-pale-hymn-gain";
 // Constellation 2 adds Elemental Mastery to each Bloom's and each Lunar-Bloom's Pale Hymn ratio, as gcsim v2.47.2 (MIT)
-// Lauma/cons.go gives it
+// `lauma/cons.go` gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go
 const C2_CONSTELLATION = 2;
 const C2_BLOOM_INCREASE = 5;

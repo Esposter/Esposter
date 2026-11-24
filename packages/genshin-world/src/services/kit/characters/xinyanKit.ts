@@ -44,7 +44,7 @@ const SHIELD_LEVEL_STATUS_ID = "xinyan-shield-level";
 const HIT_COUNT_STATUS_ID = "xinyan-sweeping-fervor-hits";
 const SHIELD_DOT_FIELD_ID = "xinyan-shield-dot";
 // "...Now That's Rock 'N' Roll!", as the dump's Xinyan_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT)
-// Xinyan/asc.go give it: from Ascension 4, characters shielded by Sweeping Fervor deal 15% more Physical DMG, for as
+// `xinyan/asc.go` give it: from Ascension 4, characters shielded by Sweeping Fervor deal 15% more Physical DMG, for as
 // Long as the shield stands
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/asc.go
 const ROCK_N_ROLL_ASCENSION = 4;

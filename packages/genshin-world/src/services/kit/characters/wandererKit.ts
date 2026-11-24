@@ -16,7 +16,7 @@ export const WANDERER_CHARACTER_ID = 10_000_075;
 export const createWandererKitBehaviour = ({ readSeconds, readStance }: KitRecordReader): KitBehaviour => {
   const windfavoredSeconds = readSeconds("windfavored");
   // The Windfavored strikes and charged attack are Normal and Charged Attack DMG, gcsim's AttackTagNormal in
-  // Wanderer/attack.go's WindfavoredAttack and AttackTagExtra in wanderer/charge.go's WindfavoredChargeAttack
+  // `wanderer/attack.go`'s WindfavoredAttack and AttackTagExtra in wanderer/charge.go's WindfavoredChargeAttack
   const windfavored = readStance("windfavored");
   return {
     skill: {

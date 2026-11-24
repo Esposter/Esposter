@@ -13,7 +13,7 @@ import { ENEMY_STRIKE_TALENT_MULTIPLIER } from "#src/services/kit/constants";
 // Kind's attack element, physical for a kind with none, through the combatant's defence and its RES to that element or
 // Its Physical RES, its DMG Bonus lowered by the combatant's DMG Reduction, which
 // Leaves it none past the whole, as the wiki's DMG Reduction has it
-// Https://genshin-impact.fandom.com/wiki/DMG_Reduction
+// https://genshin-impact.fandom.com/wiki/DMG_Reduction
 export const computeEnemyStrikeDamage = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,

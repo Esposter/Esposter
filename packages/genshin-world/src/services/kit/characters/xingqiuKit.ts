@@ -45,7 +45,7 @@ const BLADES_AMIDST_RAINDROPS_ASCENSION = 4;
 const BLADES_AMIDST_RAINDROPS_HYDRO_DAMAGE_BONUS = 0.2;
 // Rainbow Upon the Azure Sky, from two constellations, lengthens Raincutter by 3 seconds and takes 15% off the Hydro
 // RES of each enemy a sword strikes for 4 seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT)
-// Xingqiu/burst.go give it
+// `xingqiu/burst.go` give it
 // https://genshin-impact.fandom.com/wiki/Rainbow_Upon_the_Azure_Sky
 const RAINBOW_UPON_THE_AZURE_SKY_CONSTELLATION = 2;
 const RAINBOW_UPON_THE_AZURE_SKY_SECONDS = 3;
