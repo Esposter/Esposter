@@ -25,8 +25,8 @@ export const computeExpeditionRewardPercent = (
     )
     .reduce((percent, passive) => percent + passive.percent, 0);
 
-// Both effects of the character's talents on one expedition: the percent its time is shortened by and the percent its
-// Rewards Are added to
+// Both effects of the character's talents on one expedition.
+// They are the percent its time is shortened by and the percent its rewards are added to
 export const computeExpeditionPassives = (
   passives: readonly ExpeditionPassive[],
   region: ExpeditionRegion,

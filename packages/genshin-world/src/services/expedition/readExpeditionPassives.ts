@@ -4,7 +4,7 @@ import { expeditionPassiveSchema } from "#src/models/expedition/ExpeditionPassiv
 import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// The expedition talents `pnpm -C scripts genshin:assets expeditions` publishes, fetched by their key from the hosted
-// Game Data and checked against their shape as they arrive
+// The expedition talents are published by `pnpm -C scripts genshin:assets expeditions`.
+// Each is fetched by its key from the hosted game data and checked against its shape as it arrives
 export const readExpeditionPassives = (gameDataBaseUrl: string): Promise<ExpeditionPassive[]> =>
   readGameData(gameDataBaseUrl, "expeditions/passives", z.array(expeditionPassiveSchema));

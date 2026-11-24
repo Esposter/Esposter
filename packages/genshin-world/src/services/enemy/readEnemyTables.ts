@@ -8,10 +8,10 @@ import { reactionPoiseSchema } from "#src/models/enemy/ReactionPoise";
 import { readGameData } from "#src/services/data/readGameData";
 import { createUniqueArraySchema, InvalidOperationError, Operation } from "@esposter/shared";
 
-// The kinds the world places, read from the game's monster table, the drop family each kind's defeat drops from, the
-// Level Curves their stats grow along and the poise each transformative reaction deals, as `pnpm -C scripts
-// Genshin:assets enemies` Builds them, each fetched by its key from the hosted game data and checked against its schema
-// As it arrives
+// The kinds the world places, read from the game's monster table, and the drop family each kind's defeat drops from.
+// The level curves their stats grow along, and the poise each transformative reaction deals.
+// They are built by `pnpm -C scripts genshin:assets enemies`, each fetched by its key from the hosted game data.
+// Each is checked against its schema as it arrives
 export const readEnemyTables = async (gameDataBaseUrl: string): Promise<EnemyTables> => {
   const [enemyKinds, enemyDropFamilies, enemyDropFamilyKinds, enemyLevelCurves, reactionPoises] = await Promise.all([
     readGameData(gameDataBaseUrl, "enemies/kinds", createUniqueArraySchema(enemyKindSchema, "id")),
@@ -38,8 +38,8 @@ export const readEnemyTables = async (gameDataBaseUrl: string): Promise<EnemyTab
       return [enemyKindId, dropTable] as const;
     }),
   );
-  // A kind is joined to a drop family exactly when its drop source is one, so the read refuses a family kind in no
-  // Family And a family row whose kind's article gives another source
+  // A kind is joined to a drop family exactly when its drop source is one.
+  // So the read refuses a family kind in no family, and a family row whose kind's article gives another source
   for (const { dropSource, id } of enemyKinds) {
     const isFamilyKind = dropSource.type === "family";
     if (enemyDropTableMap.has(id) !== isFamilyKind)
