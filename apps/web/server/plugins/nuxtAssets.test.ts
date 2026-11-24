@@ -1,6 +1,6 @@
 import nuxtAssets from "#server/plugins/nuxtAssets";
+import { resolveRouteRules } from "#server/services/security/resolveRouteRules.test";
 import { H3Event } from "nitro/h3";
-import { createRouteRulesPlugin } from "nuxt-security-module/runtime/nitro/plugins/routeRules";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 type ResponseHook = (response: Response, event: H3Event) => void;
@@ -19,8 +19,7 @@ describe("nuxtAssets", () => {
   // The module's route rules, resolved the way its Nitro plugin resolves them on the first request. Each header is a
   // Value the module's defaults do not set, so a value the hook writes itself cannot match them by chance
   beforeEach(async () => {
-    let resolveRoutes: (() => Promise<void>) | undefined;
-    const routeRulesPlugin = createRouteRulesPlugin({
+    await resolveRouteRules({
       "/**": {
         headers: {
           contentSecurityPolicy: { "default-src": ["'self'"] },
@@ -34,15 +33,6 @@ describe("nuxtAssets", () => {
         },
       },
     });
-    await routeRulesPlugin({
-      hooks: {
-        callHook: () => Promise.resolve(),
-        hook: (_name: string, handler: () => Promise<void>) => {
-          resolveRoutes = handler;
-        },
-      },
-    } as unknown as Parameters<typeof routeRulesPlugin>[0]);
-    await resolveRoutes?.();
   });
 
   test("a missing file under the build's folder is not cached", async () => {

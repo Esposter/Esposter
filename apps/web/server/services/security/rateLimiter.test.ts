@@ -1,5 +1,5 @@
+import { resolveRouteRules } from "#server/services/security/resolveRouteRules.test";
 import { defineEventHandler, H3 } from "nitro/h3";
-import { createRouteRulesPlugin } from "nuxt-security-module/runtime/nitro/plugins/routeRules";
 import rateLimiter from "nuxt-security-module/runtime/server/middleware/rateLimiter";
 import { describe, expect, test } from "vitest";
 
@@ -22,22 +22,12 @@ describe("nuxt-security-module rateLimiter", () => {
     // The module's route rules, resolved the way its Nitro plugin resolves them on the first request. The plugin's only
     // Dependencies on the app are the request hook it registers and the routeRules hook it calls, which has no listener
     // Here
-    let resolveRoutes: (() => Promise<void>) | undefined;
-    const routeRulesPlugin = createRouteRulesPlugin({
+    await resolveRouteRules({
       "/**": {
         enabled: true,
         rateLimiter: { intervalInMilliseconds: INTERVAL_IN_MILLISECONDS, tokensPerInterval: TOKENS_PER_INTERVAL },
       },
     });
-    await routeRulesPlugin({
-      hooks: {
-        callHook: () => Promise.resolve(),
-        hook: (_name: string, handler: () => Promise<void>) => {
-          resolveRoutes = handler;
-        },
-      },
-    } as unknown as Parameters<typeof routeRulesPlugin>[0]);
-    await resolveRoutes?.();
 
     // A real h3 app serves the module's middleware, and the handler behind it answers a request that passes
     const app = new H3();
