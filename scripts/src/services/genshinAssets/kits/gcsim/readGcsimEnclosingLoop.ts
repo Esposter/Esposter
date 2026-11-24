@@ -8,10 +8,11 @@ const RANGE_HEADER_REGEX = /^\s*for\s+(?<index>\w+)\s*:=\s*range\s+(?<bound>.+?)
 const COUNTING_HEADER_REGEX =
   /^\s*for\s+(?<index>\w+)\s*:=\s*0\s*;\s*\k<index>\s*<\s*(?<bound>.+?)\s*;\s*\k<index>\s*\+\+\s*\{\s*$/u;
 
-// The `for` loop a line sits in, found by scanning up to the nearest block opener above it, where the loop's header is
-// A Range over a whole count or a counting loop from zero. A less indented line that opens no block is the start of a
-// Statement the line continues across lines, so the scan goes on from its indent. A line in no loop, or in a block that
-// Is Not one, has none
+// The `for` loop a line sits in is found by scanning up to the nearest block opener above it.
+// Its header is a range over a whole count, or a counting loop from zero.
+// A less indented line that opens no block is the start of a statement the line continues across lines.
+// So the scan goes on from its indent.
+// A line in no loop, or in a block that is not one, has none.
 export const readGcsimEnclosingLoop = (
   lines: readonly string[],
   lineIndex: number,

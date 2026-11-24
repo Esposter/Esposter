@@ -28,17 +28,18 @@ import { resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/resolveGo
 import { resolveStringConstant } from "#src/services/genshinAssets/kits/gcsim/resolveStringConstant";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-// The `AttackInfo` field a poise is set by, by its gcsim name: an if on a constant loop's variable sets it on a copy
-// For that iteration, and a literal's own poise is read from it. Other fields an if sets are not read
+// The `AttackInfo` field a poise is set by, by its gcsim name.
+// An if on a constant loop's variable sets it on a copy for that iteration, and a literal's own poise is read from it.
+// Other fields an if sets are not read.
 const POISE_FIELD = "PoiseDMG";
 
-// The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
-// Element by their gcsim names, its durability and poise evaluated through the package's constants, and The talent
-// Variable its multiplier is rooted in, followed through the locals naming a slice of it. The code reads in Source
-// Order, so an attack is the literal or copy its variable names as of the line: a `Mult` the code sets after a Literal
-// Is an attack of its own under the variable it names, and a copy `aiC2 = ai` is the source as of the copy with Its
-// Later sets, its site the copy's own line, not the literal's. A set or a literal inside an if or else is tagged with
-// The branch it sits in, which a call after the branches reads
+// The `AttackInfo` literals of a gcsim character's action files are read field by field, as written.
+// Tags and element are read by their gcsim names, and durability and poise by the package's constants.
+// The talent variable its multiplier is rooted in is followed through the locals naming a slice of it.
+// The code reads in source order, so an attack is the literal or copy its variable names as of the line.
+// A `Mult` the code sets after a literal is an attack of its own under the variable it names.
+// A copy `aiC2 = ai` is the source as of the copy, with its later sets, at the copy's own line, not the literal's.
+// A set or a literal inside an if or else is tagged with the branch it sits in, which a call after the branches reads.
 export const readGcsimAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -110,8 +111,7 @@ export const readGcsimAttacks = (
     };
     for (const [position, token] of tokens.entries())
       if (token.text === "AttackInfo" && checkIsGoPunctuation(tokens[position + 1], "{")) {
-        // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a
-        // Literal
+        // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens a body, not a literal
         const typeStart = checkIsGoPunctuation(tokens[position - 1], ".") ? position - 2 : position;
         if (checkIsGoPunctuation(tokens[typeStart - 1], ")")) continue;
         const fieldMap = new Map<string, { expression: GoExpression; line: number }>();

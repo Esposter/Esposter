@@ -5,9 +5,12 @@ const TABLE_DECLARATION_REGEX = /^\s*(?:var |const )?(?<name>[A-Za-z_]\w*)\s*(?:
 // The local a use binds to a table's cell, `x` in `x := tbl[i]` or `var x = tbl[i]`
 const BOUND_LOCAL_REGEX = /^\s*(?:var\s+)?(?<local>[A-Za-z_]\w*)\s*(?::=|=)(?!=)/u;
 
-// The constructor an area is read from, by the line it is cited at. A table's declaration line is cited by its row, so
-// The Constructor is the nearest `combat.New` line above the first use of the table below it, else the first one below
-// That Use that reads the local the use binds, while the block that binds it is open; any other line is its own
+// The constructor an area is read from, by the line it is cited at.
+// A table's declaration line is cited by its row, so the constructor is the nearest
+// `combat.New` line above the first use of the table below it.
+// Failing that, it is the first
+// `combat.New` line below the use that reads the local the use binds, while the block that binds it is open.
+// Any other line is its own.
 export const readConstructorIndex = (lines: readonly string[], lineIndex: number): number => {
   const name = TABLE_DECLARATION_REGEX.exec(lines[lineIndex] ?? "")?.groups?.name;
   if (name === undefined) return lineIndex;
