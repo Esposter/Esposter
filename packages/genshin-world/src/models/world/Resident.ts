@@ -5,11 +5,11 @@ import { residentSpotSchema } from "#src/models/world/ResidentSpot";
 import { residentWeekGameSchema } from "#src/models/world/ResidentWeekGame";
 import { z } from "zod";
 
-// One of the world's people, placed in its region's data as the game places an NPC: its id the game's own, its name By
+// One of the world's people, placed in its region's data as the game places an NPC: its id the game's own, its name by
 // Text id, the spot it keeps in the day from six to seven, the spot it keeps the rest of the night (its day spot when
 // It has none), whether it is absent the rest of the night, the catalogue area it belongs to, the talk it begins with,
-// And The game of Genius Invokation TCG it duels with when its talk offers one, the week game its weekly guest
-// Challenge offers, And whether it is a nation's Reputation keeper, whose talk opens the nation's Reputation screen in
+// And the game of Genius Invokation TCG it duels with when its talk offers one, the week game its weekly guest
+// Challenge offers, and whether it is a nation's Reputation keeper, whose talk opens the nation's Reputation screen in
 // Place of the talk
 export interface Resident {
   absentAtNight?: true | undefined;

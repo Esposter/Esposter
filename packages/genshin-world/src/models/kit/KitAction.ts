@@ -11,7 +11,7 @@ export interface KitAction {
   // Its Amount refuses the start, which starts nothing and spends nothing
   canStart?: ((context: KitContext) => boolean) | undefined;
   // The seconds of its charge a charge skip takes off its start, if it has a charge to skip: the action starts that far
-  // In, So its hitmarks and its end come that much sooner
+  // In, so its hitmarks and its end come that much sooner
   chargeSeconds?: number;
   // Asked as a press of the action starts, whether that press ends the state the kit holds. Such a press plays none of
   // The Action's hits and sets no cooldown, as gcsim's press that leaves a state does

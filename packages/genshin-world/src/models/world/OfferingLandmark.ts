@@ -6,7 +6,7 @@ import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { z } from "zod";
 
 // An offering the game places in a region, stood at its point on the ground and offered to from there. Its kind names
-// The Levels it is offered to, published under `offerings/<kind>`, and the text its prompt is named by
+// The levels it is offered to, published under `offerings/<kind>`, and the text its prompt is named by
 export interface OfferingLandmark {
   id: string;
   kind: typeof LandmarkKind.Offering;

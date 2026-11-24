@@ -2,7 +2,7 @@ import { BannerKind } from "genshin-interface";
 import { z } from "zod";
 
 // One event banner of the schedule the wiki's wish pages give: its page's title as its id, its kind, its window as
-// Epoch Milliseconds and the game's ids of its featured five-stars and four-stars. The published record holds ids and
+// Epoch milliseconds and the game's ids of its featured five-stars and four-stars. The published record holds ids and
 // Times only
 export interface WishScheduleEvent {
   endTime: number;

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // A region's rocks record as the publish writes it: the boxes of each rock hull, keyed by its mesh, and every place a
-// Rock Of that mesh stands, in the world's own coordinates
+// Rock of that mesh stands, in the world's own coordinates
 export const rockRecordSchema = z.object({
   hulls: z.record(z.string().min(1), z.array(z.array(z.number()).length(6))),
   placements: z.array(
