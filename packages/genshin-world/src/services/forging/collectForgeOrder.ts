@@ -16,13 +16,16 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The bag, the Adventure EXP and order after every unit of a queue's order done by `now` is taken in. Each done unit
-// Yields One result drawn by weight from its recipe's results, and an extra copy of it at the chance the talents of
-// This forge type Give. A material result is taken from the item definitions, and a weapon result, the weapon recipes'
-// Only kind, from the Weapons' names and rarities, each a weapon entry of its own. The units done are counted from the
-// Moment the order began At its seconds a unit, and a unit's result is taken whole, so the units done before the first
-// The bag has no room for Are taken in, and that unit waits in the queue with the units behind it. An order fully
-// Collected is no order, and its Queue is free again
+// The bag, the Adventure EXP and order after every unit of a queue's order done by `now` is taken in.
+// Each done unit yields one result, drawn by weight from its recipe's results.
+// The result is doubled at the chance the talents of this forge type give.
+// A material result is taken from the item definitions.
+// A weapon result, the weapon recipes' only kind, is taken from the weapons' names and rarities.
+// Each one is a weapon entry of its own.
+// The units done are counted from the moment the order began, at its seconds a unit.
+// A unit's result is taken whole, so the units done before the first one the bag has no room for are taken in.
+// That unit waits in the queue with the units behind it.
+// An order fully collected is no order, and its queue is free again.
 export const collectForgeOrder = (
   recipe: ForgeRecipe,
   order: ForgeOrder,
@@ -88,8 +91,9 @@ export const collectForgeOrder = (
   };
 };
 
-// A weapon is in the bag as the wish grants one: a weapon category entry of one, with no rank of its own, since its tab
-// Sorts it by level and quality. A material's definition is read from its item id
+// A weapon is in the bag as the wish grants one: a weapon category entry of one, with no rank of its own.
+// Its tab sorts it by level and quality.
+// A material's definition is read from its item id.
 const toResultDefinition = (
   recipe: ForgeRecipe,
   itemId: number,

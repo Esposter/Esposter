@@ -14,8 +14,9 @@ export interface PlacedDoing {
   position: GroundPoint;
 }
 
-// Adds each placed doing to the area its point stands in by the catalogue's outlines, weighted by its kind. A placed
-// Doing Standing in none of the areas adds to none, so the four level-one areas count only what stands in them
+// Adds each placed doing to the area its point stands in, by the catalogue's outlines, weighted by its kind.
+// A placed doing standing in none of the areas adds to none.
+// So the four level-one areas count only what stands in them.
 export const placeExplorationDoings = (
   areas: readonly ExplorationArea[],
   catalogue: Catalogue,

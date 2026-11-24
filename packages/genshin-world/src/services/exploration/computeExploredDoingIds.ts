@@ -4,9 +4,11 @@ import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 
-// The doings of an area the player has done. An area's waypoint is its statue, a Statue of The Seven or a Statue of the
-// New Moon, so it is done once that statue is unlocked; every other doing is done once the save records it, by its id:
-// A chest Opened, a camp cleared, an Oculus found or a puzzle solved
+// The doings of an area the player has done.
+// An area's waypoint is its statue, a Statue of The Seven or a Statue of the New Moon.
+// It is done once that statue is unlocked.
+// Every other doing is done once the save records it, by its id.
+// A chest opened, a camp cleared, an Oculus found or a puzzle solved.
 export const computeExploredDoingIds = (
   { areaId, doings }: ExplorationArea,
   unlockedLandmarks: readonly PlaceLandmark[],

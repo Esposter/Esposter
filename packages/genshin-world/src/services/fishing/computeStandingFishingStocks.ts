@@ -5,8 +5,9 @@ import { countFishingStock } from "#src/services/fishing/countFishingStock";
 import { getFishingStockKey } from "#src/services/fishing/getFishingStockKey";
 import { pickFishingStock } from "#src/services/fishing/pickFishingStock";
 
-// The stocks a region's pools hold at an hour that still have fish left: each pool's stock drawn at the hour, unless
-// Its Catches have emptied it. A region with none standing draws nothing, and its fishing points are withheld
+// The stocks a region's pools hold at an hour that still have fish left.
+// Each pool's stock is drawn at the hour, and a stock its catches have emptied is left out.
+// A region with none standing draws nothing, and its fishing points are withheld.
 export const computeStandingFishingStocks = (
   regionPools: Readonly<Record<string, readonly FishingPool[]>>,
   region: string,

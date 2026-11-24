@@ -7,8 +7,9 @@ import { FishingPhase } from "#src/models/fishing/FishingPhase";
 import { computeFamilyShape } from "#src/services/fishing/computeFamilyShape";
 import { FISH_STAND_IN_OPTIONS } from "#src/services/fishing/constants";
 
-// The fish hooked at the lure while the reel holds it, drawn at the point the line is out to, with its fitted body when
-// A Fit has written one and the standard stand-in until then. Nothing is drawn before the strike hooks the fish
+// The fish hooked at the lure while the reel holds it, drawn at the point the line is out to.
+// It has its fitted body once a fit has written one, and the standard stand-in until then.
+// Nothing is drawn before the strike hooks the fish.
 export const computeFishingFish = ({
   cast,
   fitted,

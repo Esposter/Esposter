@@ -5,9 +5,11 @@ import { computeFishingZone } from "#src/services/fishing/computeFishingZone";
 import { stepFishingBite } from "#src/services/fishing/stepFishingBite";
 import { stepFishingReel } from "#src/services/fishing/stepFishingReel";
 
-// The cast after `seconds`. A fish nibbles and bites until it is struck: a strike on a biting fish starts the reel, and
-// A Strike on a nibbling one, or a bite left past its timeout, ends the cast back at aiming. Once reeled, the tension
-// Is held Against the zone the travel gives at the reel's seconds, and a cast that is caught or lost ends there
+// The cast after `seconds`. A fish nibbles and bites until it is struck.
+// A strike on a biting fish starts the reel.
+// A strike on a nibbling one, or a bite left past its timeout, ends the cast back at aiming.
+// Once reeled, the tension is held against the zone the travel gives at the reel's seconds.
+// A cast that is caught or lost ends there.
 export const stepFishingCast = (
   cast: FishingCast,
   { isReeling, isStruck, seconds }: { isReeling: boolean; isStruck: boolean; seconds: number },

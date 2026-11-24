@@ -3,9 +3,10 @@ import type { StandingFishingStock } from "#src/models/fishing/StandingFishingSt
 
 import { drawFishingWeight } from "#src/services/fishing/drawFishingWeight";
 
-// The fish a fishing point draws for a roll in [0, 1): the weights of every stock standing in its region's pools are
-// Drawn As one, each tagged with the stock it is in, and only among the fish the bait names. Undefined where no
-// Standing stock Holds a fish the bait names
+// The fish a fishing point draws for a roll in [0, 1).
+// The weights of every stock standing in its region's pools are drawn as one, each tagged with the stock it is in.
+// Only the fish the bait names are drawn among.
+// Undefined where no standing stock holds a fish the bait names.
 export const drawFishingPointFish = (
   standingStocks: readonly StandingFishingStock[],
   roll: number,
