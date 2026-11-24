@@ -135,11 +135,11 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
       // Value at every call site. The annotation is what makes it decidable without types — a Function whose declared
       // Return is `boolean` or a type predicate answers with one and is `check*`, and so Is a parameter typed as one: a
       // Callback handed in is called at every site that reads it. Each shape a Named function takes is matched: a
-      // Declaration, a variable, a method, an object or class member, and a Member typed as a function (`isB?: (c) =>
-      // Boolean`), which an interface declares without a body. An Unannotated one is held too when its body is a
-      // Boolean expression (`isA = (b) => b === 1`), since that is a Boolean without the annotation; a boolean that
-      // Comes from a call or a variable needs the checker, so the review Holds it. An async one resolves to that
-      // Boolean and is still a call, so it is held the same way (`checkHasBlob`)
+      // Declaration, a variable, a method, an object or class member, and a Member typed as a function
+      // (`isB?: (c) => boolean`), which an interface declares without a body. An Unannotated one is held too
+      // When its body is a Boolean expression (`isA = (b) => b === 1`), since that is a Boolean without the
+      // Annotation. A boolean that comes from a call or a variable needs the checker, so the review holds it.
+      // An async one resolves to that boolean and is still a call, so it is held the same way (`checkHasBlob`)
       message:
         "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
       selector: [
