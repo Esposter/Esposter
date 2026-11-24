@@ -12,7 +12,6 @@ import { readOpenspecFolderUnits } from "#src/services/sweeps/ledgerCoverage/rea
 import { readAreaFileUnits } from "#src/services/sweeps/ledgerCoverage/readPartitionUnits";
 import { readQuestionUnits } from "#src/services/sweeps/ledgerCoverage/readQuestionUnits";
 import { readTrackedFiles } from "#src/services/sweeps/ledgerCoverage/readTrackedFiles";
-import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNames";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -24,8 +23,9 @@ import { join } from "node:path";
 export const checkLedgerUnits = (): string[] => {
   const areas = readLedgerAreas();
   const unitsByArea = Object.fromEntries(areas.map((area) => [area, readAreaFileUnits(area)]));
-  const partitionUnits = [...Object.values(unitsByArea).flat(), ...readOpenspecFolderUnits()];
-  const trackedFiles = readTrackedFiles(readVendoredSkillNames());
+  const openspecUnits = readOpenspecFolderUnits();
+  const partitionUnits = [...Object.values(unitsByArea).flat(), ...openspecUnits];
+  const trackedFiles = readTrackedFiles();
   const unitFiles = getUnitFiles(partitionUnits, trackedFiles);
   const questionUnitsByFile = Object.fromEntries(
     Object.entries(readQuestionUnits(trackedFiles, partitionUnits, unitFiles)).flatMap(([question, units]) =>
@@ -44,7 +44,7 @@ export const checkLedgerUnits = (): string[] => {
       { ...questionUnitsByFile, ...LedgerUnitsMap },
     ),
     ...getAreaUnitFindings(unitsByArea, trackedFiles),
-    ...getAreaUnitSizeFindings(partitionUnits, unitFiles, readFileSize),
+    ...getAreaUnitSizeFindings(unitsByArea, openspecUnits, unitFiles, readFileSize),
     ...getUnlistedFileFindings(unitFiles, trackedFiles),
   ];
 };
