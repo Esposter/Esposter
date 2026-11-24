@@ -9,7 +9,7 @@ import { getPositionedElementText } from "vue-block-editor-headless";
 
 // A text edited in place on a whiteboard: a shape's text, an arrow's label or a sticky note's text, opened by a
 // Double click. The draft is written once, on commit, which a blur or Enter makes. A commit that arrives during an
-// Input-method composition waits for the composition to end, and Escape discards the draft
+// `input-method` composition waits for the composition to end, and Escape discards the draft
 export const useWhiteboardTextEdit = (editState: Ref<WhiteboardEditState>) => {
   const textEdit = ref<WhiteboardTextEdit>();
 
