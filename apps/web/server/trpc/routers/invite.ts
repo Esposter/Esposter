@@ -67,15 +67,15 @@ export const inviteRouter = router({
 
       for (let attempt = 0; attempt < MAX_INVITE_ID_RETRIES; attempt++) {
         const id = generateSecretToken();
-        // Each attempt is one batch, so a collision refuses the whole batch and the old link comes back with it. Only a
-        // Collision is retried — anything else is the database itself, and re-rolling the id through it hides the
-        // Report
-        // Collided
-        // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one
+        // Each attempt is one batch, so a collision refuses the whole batch and the old link comes back with it.
+        // Only a collision is retried.
+        // Anything else is the database itself, and re-rolling the id through it hides the report.
+        /* oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one
+           collided */
         const invite = await getResultAsync(() =>
           ctx.db.batch([
-            // One live invite per member per room — creating with new options replaces the old link, which is
-            // Tombstoned So the answer names it at its version and no reader keeps offering it
+            // One live invite per member per room: creating with new options replaces the old link.
+            // The old link is tombstoned, so the answer names it at its version and no reader keeps offering it.
             ctx.db
               .update(invitesInMessage)
               .set({ deletedAt: new Date() })

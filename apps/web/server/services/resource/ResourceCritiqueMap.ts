@@ -9,9 +9,10 @@ import { critiqueEmail } from "#shared/services/pageBuilder/email/critique/criti
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceType } from "@esposter/db-schema";
 
-// The critique each type reads of its saved content. Each entry reads its own content through its own schema and reads
-// Its Own sources from the server, so the router dispatches on the type with a uniform call and no cast. A type with no
-// Entry Declares no critique
+// The critique each type reads of its saved content.
+// Each entry reads its own content through its own schema and reads its own sources from the server.
+// So the router dispatches on the type with a uniform call and no cast.
+// A type with no entry declares no critique.
 export const ResourceCritiqueMap: Partial<
   Record<ResourceType, (db: Context["db"], userId: string, id: ResourceInResource["id"]) => Promise<CritiqueFinding[]>>
 > = {

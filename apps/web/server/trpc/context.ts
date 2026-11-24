@@ -7,12 +7,14 @@ import { readSession } from "#server/services/auth/readSession";
 import { getIpAddress } from "#server/services/request/getIpAddress";
 import { getRequestIP } from "nuxt/server";
 
-// Widened to `Database`, which leaves out the D1 binding `drizzle` keeps as `$client`. Every procedure and service
-// Reads `Context["db"]`, so this is the one seam that lets the Miniflare handle the tests build stand in without a cast
+// Widened to `Database`, which leaves out the D1 binding `drizzle` keeps as `$client`.
+// Every procedure and service reads `Context["db"]`.
+// So this is the one seam that lets the Miniflare handle the tests build stand in without a cast.
 const database: Database = db;
-// The context of one request, a batch's calls sharing it. The caller is read here, once, from the session cookie: null
-// When signed out. Better-auth extends a session a day after its last extension and sends the extended cookie back, so
-// The read forwards that cookie on the response
+// The context of one request, a batch's calls sharing it.
+// The caller is read here, once, from the session cookie, and is null when signed out.
+// Better-auth extends a session a day after its last extension and sends the extended cookie back.
+// So the read forwards that cookie on the response.
 export const createContext = async (event: RequestEvent) => {
   const { headers } = event.req;
   const responseHeaders = event.res.headers;

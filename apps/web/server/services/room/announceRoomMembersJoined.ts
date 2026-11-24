@@ -75,7 +75,6 @@ export const announceRoomMembersJoined = async (
     if (!membership) continue;
 
     const status = statuses.find(({ userId }) => userId === user.id);
-    // After theirs
     // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: a joiner attached here hears the joins
     await announceRoomMemberJoined(membership, user, status);
   }

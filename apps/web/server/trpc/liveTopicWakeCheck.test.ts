@@ -44,9 +44,9 @@ interface Outcome {
 let failures: string[] = [];
 // The reads of the running test, each the latest answer it gave
 let reads = new Map<string, ObservedRead>();
-// The procedures this file called, as the router each was built in holds them. A suite builds its caller from its own
-// Router, So the app's path for a procedure is found from the app's router once the file's tests are done, not during
-// Them
+// The procedures this file called, as the router each was built in holds them.
+// A suite builds its caller from its own router.
+// So the app's path for a procedure is found from the app's router once the file's tests are done, not during them.
 const calledProcedures = new Set<unknown>();
 // What the wake check saw in this file, summed across the run by its teardown
 const counts = { changed: 0, reruns: 0, writes: 0 };

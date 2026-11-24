@@ -36,8 +36,8 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   const userId = v7();
   const resourceId = v7();
-  // The file's bytes and the address they hash to. A held address is trusted only as far as the bytes under it hash to
-  // It
+  // The file's bytes and the address they hash to.
+  // A held address is trusted only as far as the bytes under it hash to it.
   const bytes = new Uint8Array(1);
   const hash = createHash("sha256").update(bytes).digest("hex");
   const blobName = `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;

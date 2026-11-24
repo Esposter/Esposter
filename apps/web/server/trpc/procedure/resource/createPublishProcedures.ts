@@ -145,8 +145,9 @@ export const createPublishProcedures = <TType extends ResourceType>(
           ).match(
             (batchRows) => batchRows,
             async (error) => {
-              // The batch commits whole or not at all, so a failure claimed nothing. A resource binned after the owner
-              // Guard Fails the version's NOT NULL, so it answers the 404 that a read of a binned resource gives
+              // The batch commits whole or not at all, so a failure claimed nothing.
+              // A resource binned after the owner guard fails the version's NOT NULL.
+              // So it answers the 404 that a read of a binned resource gives.
               await requireEntity(findOwnedResource(ctx.db, ctx.user.id, id, type), DatabaseEntityType.Resource, id);
               throw error;
             },
@@ -160,9 +161,10 @@ export const createPublishProcedures = <TType extends ResourceType>(
           DatabaseEntityType.ResourcePublication,
           id,
         );
-        // A version is stored bytes the owner keeps, charged for what its object cost. After the batch, never inside:
-        // The Charge locks the ledger row and then the user's, and a batch held open across that waits on locks it is
-        // Itself holding. See openspec/specs/resource/storage-quotas/design.md
+        // A version is stored bytes the owner keeps, charged for what its object cost.
+        // It is charged after the batch, never inside: the charge locks the ledger row and then the user's.
+        // A batch held open across that would wait on locks it is itself holding.
+        // See openspec/specs/resource/storage-quotas/design.md.
         await chargeSnapshotVersion(ctx.db, ctx.resource, prepared.writtenVersion);
         // Best-effort: a failed write loses one trail entry, never the publish.
         getSynchronizedFunction(writeResourceActivity)(ctx, {
@@ -183,8 +185,9 @@ export const createPublishProcedures = <TType extends ResourceType>(
     readPublishedResourceContent: standardRateLimitedProcedure
       .input(selectResourceInResourceSchema.shape.id)
       .query<PublishedResourceContent<TType>>(async ({ ctx, input }) => {
-        // A binned resource is no longer served, whatever publication row it still holds. The two reads do not depend
-        // On Each other, so they overlap, and a missing resource still answers its 404 once both settle
+        // A binned resource is no longer served, whatever publication row it still holds.
+        // The two reads do not depend on each other, so they overlap.
+        // A missing resource still answers its 404 once both settle.
         const [resource, [publication]] = await Promise.all([
           requireEntity(
             ctx.db.query.resourcesInResource.findFirst({
@@ -202,14 +205,14 @@ export const createPublishProcedures = <TType extends ResourceType>(
         if (!publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
 
         const content = await readPublishedContent(ctx.db, resource, publication.publishVersion);
-        // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets. Awaited, so the write
-        // Is recorded And published before the read returns; a failed increment still loses only one view, never the
-        // Page.
+        // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
+        // Awaited, so the write is recorded and published before the read returns.
+        // A failed increment still loses only one view, never the page.
         await incrementResourceViewCount(ctx.db, input);
         return { content, name: resource.name };
       }),
-    // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
-    // Visitors never reach this — the public read above always serves the latest publish
+    // An owner-only read of a retained snapshot, backing the view route's `version` query param.
+    // Anonymous visitors never reach this, since the public read above always serves the latest publish.
     readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query<
       PublishedResourceContent<TType>
     >(async ({ ctx, input: { version } }) => ({

@@ -13,10 +13,11 @@ import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsH
 import { computeReadTopics, computeWriteTopics, getWriteRowVersions, recordStatements } from "@esposter/db";
 import { fitTopicsBudget, MAX_READ_TOPICS, MAX_WRITE_ROW_VERSIONS } from "@esposter/db-schema";
 
-// The live topics of every procedure, from the statements it awaits, the blobs its buckets read or write, and the read
-// Sets Its objects report (the live queries design). A query's topics are what its answer was read from, sent back on
-// Its response. The writes a procedure makes, a query's included, are published best-effort once it resolves. A
-// Procedure that declares a Static reason is watched by no topic at all
+// The live topics of every procedure come from the statements it awaits and the blobs its buckets read or write.
+// They also come from the read sets its objects report (the live queries design).
+// A query's topics are what its answer was read from, sent back on its response.
+// The writes a procedure makes, a query's included, are published best-effort once it resolves.
+// A procedure that declares a static reason is watched by no topic at all.
 export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path, type }) => {
   if (type === "subscription" || meta?.staticReason !== undefined) return next();
 

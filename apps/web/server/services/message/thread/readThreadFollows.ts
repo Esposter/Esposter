@@ -1,9 +1,10 @@
 import type { Context } from "#server/trpc/context";
 import type { ThreadFollowInMessage } from "@esposter/db-schema";
 
-// The follow rows a member holds in a room, unfiltered: an unfollowed one is a row too, its decision kept with its
-// Version, So the client applies the unfollow rather than reading its absence as a thread it never followed. Newest
-// Root first, since A root's id is its room's sequence
+// The follow rows a member holds in a room, unfiltered: an unfollowed one is a row too.
+// Its decision is kept with its version, so the client applies the unfollow.
+// It does not read the absence of a row as a thread the member never followed.
+// Newest root first, since a root's id is its room's sequence.
 export const readThreadFollows = (
   db: Context["db"],
   roomId: string,

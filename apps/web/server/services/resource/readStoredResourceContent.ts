@@ -2,11 +2,11 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { readSerializedResourceContent } from "#server/services/resource/readSerializedResourceContent";
 
-// The working copy as the JSON it was stored as, before any schema's parse, and null for a resource created and never
-// Saved: the document a JSON Patch addresses, and an agent's first write replaces whole
+// The working copy as the JSON it was stored as, before any schema's parse.
+// It is null for a resource created and never saved.
+// It is the document a JSON Patch addresses, and an agent's first write replaces it whole.
 export const readStoredResourceContent = async (id: ResourceInResource["id"]): Promise<unknown> => {
   const serializedContent = await readSerializedResourceContent(id);
-  // The stored
   // oxlint-disable-next-line no-restricted-properties -- JSON as written, its ISO strings left for a schema to read
   const storedContent: unknown = serializedContent ? JSON.parse(serializedContent) : null;
   return storedContent;

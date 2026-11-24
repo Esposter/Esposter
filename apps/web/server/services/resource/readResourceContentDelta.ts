@@ -15,12 +15,13 @@ import { promisify } from "node:util";
 import { constants, zstdDecompress } from "node:zlib";
 
 const decompress = promisify(zstdDecompress);
-// The document a delta save describes: the stored content, decoded, is the dictionary, so the baseline the client
-// Compressed against has to be exactly those bytes. The row's hash refuses a stale baseline before anything is
-// Read, and the blob's own hash settles the one case the row cannot — a blob a failed transaction left behind it.
-// The output is capped at the content limit, so a small frame that inflates past it stops there
-// A mismatch is CONFLICT, the one code here errorLink does not alert: the client retries it as a full save, and the
-// Owner has nothing to be told
+// The document a delta save describes: the stored content, decoded, is the dictionary.
+// So the baseline the client compressed against has to be exactly those bytes.
+// The row's hash refuses a stale baseline before anything is read.
+// The blob's own hash settles the one case the row cannot: a blob a failed transaction left behind it.
+// The output is capped at the content limit, so a small frame that inflates past it stops there.
+// A mismatch is CONFLICT, the one code here errorLink does not alert.
+// The client retries it as a full save, and the owner has nothing to be told.
 export const readResourceContentDelta = async (
   resource: ResourceInResource,
   baselineHash: string,
@@ -50,7 +51,7 @@ export const readResourceContentDelta = async (
       );
     },
   );
-  // The content
-  // oxlint-disable-next-line no-restricted-properties -- schema owns date coercion, so free-text ISO strings survive
+  /* oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text
+     ISO strings survive */
   return JSON.parse(serializedContent);
 };
