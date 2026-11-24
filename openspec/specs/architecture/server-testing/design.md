@@ -30,6 +30,8 @@ The Workers test doubles (the object stubs, the bucket and queue doubles, `creat
 
 **Why Miniflare instead of an in-process database?** It is the runtime's own D1, R2 and Queues, so a test exercises the SQL and bindings production runs. No file's state reaches another, since each opens its own copy of the template; only the template outlives the run, and it is keyed by everything it is built from, so a change to the migrations, the lockfile or the opener builds a new one.
 
+**Why a bucket from `createMockBucket` boots its own Miniflare.** It returns a fresh bucket per call with its own `dispose`, used by files that open no database. Served from the database's instance, it would share its state across calls and with `reset()`, which empties every storage bucket, and a bucket-only file would boot D1 as well, so the second boot is kept.
+
 **Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only the Miniflare boot + the auth `vi.mock` (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable neither `context.test.ts` nor `shared/test/setup.ts` mocks, and such a router declares `// @vitest-environment nuxt` and pays the Nuxt environment build.
 
 ### 2. Bindings in place of service mocks
