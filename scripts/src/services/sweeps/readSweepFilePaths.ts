@@ -1,9 +1,8 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { readDeletedPaths } from "#src/services/sweeps/readDeletedPaths";
-import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNames";
+import { readVendoredSkillDirectories } from "#src/services/sweeps/readVendoredSkillDirectories";
 
 // `--others` is load-bearing: without it a suite that is written but not yet `git add`ed is out of scope, and the
 // Scan reports nothing for it — which reads exactly like a swept tree. `--exclude-standard` keeps ignored output
@@ -23,7 +22,7 @@ import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNa
 // A vendored skill is tracked so every checkout has it, and it is still a dependency: its prose and its citations are
 // Its publisher's, so it is left out here the way `node_modules` is, and no scan reports on it.
 export const readSweepFilePaths = (...pathspecs: string[]): string[] => {
-  const vendoredSkillDirectories = readVendoredSkillNames().map((name) => `${SKILLS_DIRECTORY}/${name}/`);
+  const vendoredSkillDirectories = readVendoredSkillDirectories();
   const listedPaths = getNonEmptyLines(
     runGit(["ls-files", "--cached", "--others", "--exclude-standard", ...pathspecs]),
   ).filter(
