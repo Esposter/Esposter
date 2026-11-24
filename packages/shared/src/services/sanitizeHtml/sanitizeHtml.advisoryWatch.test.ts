@@ -7,8 +7,8 @@ import { z } from "zod";
 // It answers to, and an advisory published after the day the sanitiser recorded fails it. The failure is the watch
 // Firing: port the fix, pin it with a regression test that names the advisory, then move the date to the day the
 // Port landed. Only a new advisory fails it. A feed that cannot be read (an outage, the unauthenticated rate limit)
-// Skips the run, so the watch never holds a push hostage to GitHub's availability; the next run with a reachable feed
-// Reads it again
+// Skips the run, so the watch never holds a push hostage to GitHub's availability.
+// The next run with a reachable feed reads it again
 describe("sanitizerAdvisoryWatch", () => {
   const ADVISORIES_URL = "https://api.github.com/advisories?ecosystem=npm&affects=sanitize-html,dompurify&per_page=100";
   const REQUEST_TIMEOUT = Temporal.Duration.from({ seconds: 30 });
