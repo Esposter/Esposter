@@ -1,3 +1,4 @@
+import { BUILD_FOLDER_PATH_PREFIX } from "#shared/services/app/constants";
 import { definePlugin } from "nitro";
 import { isEvent } from "nitro/h3";
 import { getResourceHeaders } from "nuxt-security-module/runtime/nitro/plugins/routeRules";
@@ -11,7 +12,7 @@ export default definePlugin(({ hooks }) => {
   // Setting `headers: false` on the folder drops the module's own.
   hooks.hook("response", (response, event) => {
     // The hook is typed with the request-only event, which the framework hands over as the full event it is
-    if (!isEvent(event) || !event.url.pathname.startsWith("/_nuxt/")) return;
+    if (!isEvent(event) || !event.url.pathname.startsWith(BUILD_FOLDER_PATH_PREFIX)) return;
     for (const [name, value] of Object.entries(getResourceHeaders(event))) response.headers.set(name, value);
     if (response.status === 404) response.headers.set("Cache-Control", "no-store");
   });

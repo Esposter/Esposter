@@ -3,6 +3,7 @@
 import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
+import { BUILD_FOLDER_PATH_PREFIX } from "#shared/services/app/constants";
 import { checkAppManifestUrl } from "#shared/services/serviceWorker/checkAppManifestUrl";
 import { withBuildFileEmbedderPolicy } from "#shared/services/serviceWorker/withBuildFileEmbedderPolicy";
 import { HostedAssetOriginMap } from "@esposter/db-schema";
@@ -47,7 +48,7 @@ addPlugins([
   {
     cachedResponseWillBeUsed: ({ cachedResponse, request }) =>
       Promise.resolve(
-        cachedResponse && new URL(request.url).pathname.startsWith("/_nuxt/")
+        cachedResponse && new URL(request.url).pathname.startsWith(BUILD_FOLDER_PATH_PREFIX)
           ? withBuildFileEmbedderPolicy(cachedResponse)
           : cachedResponse,
       ),
