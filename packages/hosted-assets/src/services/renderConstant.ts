@@ -8,8 +8,6 @@ export const renderConstant = (name: string, pairs: [name: string, lockKey: stri
   const tree = createKeyTreeNode();
   const names = new Set<string>();
   for (const [keyName, lockKey] of pairs) {
-    // The renderer runs from `nuxt prepare` before any workspace package is built.
-    // So it cannot import the shared error classes.
     // oxlint-disable-next-line error-handling/no-bare-error -- it cannot import InvalidOperationError
     if (names.has(keyName)) throw new Error(`${keyName} is derived by two lock keys, so it names only one of them`);
     names.add(keyName);
