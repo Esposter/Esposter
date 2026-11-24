@@ -1,12 +1,11 @@
 import type { Music } from "genshin-engine";
 
 import { getLoginRecordingUrl } from "#src/services/login/music/getLoginRecordingUrl";
-import { readFileResponse } from "@esposter/shared";
-import { HOSTED_ASSETS_FETCH_TIMEOUT_MS } from "hosted-assets";
+import { readHostedAssetFile } from "hosted-assets";
 
-// Every recording a piece's voices play, fetched from the hosted game data's lock by file and decoded once. A context
-// Decodes at its own rate and a buffer source resamples whatever it plays, so any context the piece plays or renders
-// Through can decode them
+// Every recording a piece's voices play, read by file from the hosted game data's lock through the hosted cache, so the
+// Preload finds each one held, and decoded once. A context Decodes at its own rate and a buffer source resamples
+// Whatever it plays, so any context the piece plays or renders through can decode them
 export const loadMusicRecordings = async (
   context: BaseAudioContext,
   { segments }: Music,
@@ -17,13 +16,8 @@ export const loadMusicRecordings = async (
   );
   const entries = await Promise.all(
     Array.from(files, async (file): Promise<[string, AudioBuffer]> => {
-      // A hosted object under the hosted budget, as the preload holds it: every recording is read at the login's start,
-      // While the packs download on the same link, so the world's ten-second budget would drop the piece's voices
-      const response = await readFileResponse(
-        getLoginRecordingUrl(gameDataBaseUrl, file),
-        HOSTED_ASSETS_FETCH_TIMEOUT_MS,
-      );
-      return [file, await context.decodeAudioData(await response.arrayBuffer())];
+      const blob = await readHostedAssetFile(getLoginRecordingUrl(gameDataBaseUrl, file));
+      return [file, await context.decodeAudioData(await blob.arrayBuffer())];
     }),
   );
   return new Map(entries);

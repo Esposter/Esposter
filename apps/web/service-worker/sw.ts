@@ -85,8 +85,9 @@ registerRoute(
   ({ event, url }) => appManifests.handle({ event, request: new Request(new URL(url.pathname, url.origin)) }),
 );
 
-// A hosted object is answered from the cache its preloader filled, and a miss goes to the network unstored, since the
-// Preloader alone decides what the cache holds. The url embeds the object's hash, so a cached answer is never stale
+// A hosted object is answered from the cache its preloader or a product's read filled, and a miss goes to the network
+// Unstored, since those two stores alone decide what the cache holds. The url embeds the object's hash, so a cached
+// Answer is never stale
 const HOSTED_ORIGINS: readonly string[] = Object.values(HostedAssetOriginMap);
 registerRoute(
   ({ url }) => HOSTED_ORIGINS.includes(url.origin),

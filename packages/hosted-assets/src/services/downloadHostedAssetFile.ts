@@ -15,9 +15,9 @@ export const downloadHostedAssetFile = (
   cache: Pick<Cache, "put">,
   { url }: HostedAssetDownloadFile,
   onBytes: (deltaBytes: number) => void,
-): ReturnType<typeof getResultAsync<void>> => {
+): ReturnType<typeof getResultAsync<Blob>> => {
   const waitBeforeAttempt = createExponentialBackoff(HOSTED_ASSETS_RETRY_BASE_MS, HOSTED_ASSETS_RETRY_MAX_MS);
-  const attemptDownload = (): ReturnType<typeof getResultAsync<void>> => {
+  const attemptDownload = (): ReturnType<typeof getResultAsync<Blob>> => {
     let attemptBytes = 0;
     return getResultAsync(() =>
       waitBeforeAttempt(() =>
