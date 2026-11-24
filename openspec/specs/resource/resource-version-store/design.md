@@ -23,7 +23,7 @@ The same codec works on the wire as well: a large document's save is compressed 
 flowchart TD
   trigger["version trigger"] --> anchor["Read channel anchor"]
   anchor --> store["Write to the store — dedupe, delta, or promote to a keyframe"]
-  store --> row[("Upsert the version row — hash, base, both sizes, reason, summary")]
+  store --> row[("Insert the version row — hash, base, both sizes, reason, summary")]
   row --> commit{"Inside a publish batch?"}
   commit -->|yes| claim["The publication claim commits with the row"]
   commit -->|no| charge
@@ -36,7 +36,7 @@ flowchart TD
   publish --> done
 ```
 
-`writeSnapshotVersion` is the one way a version is taken, whichever channel it lands in. It reads the channel's anchor, writes the content to the store against it, and upserts the row that makes the version visible. The object is durable before the row exists, so a failure between the two leaves no version rather than a row naming nothing — the correct outcome for a version that was never stored. An orphaned object is adopted by the next write of the same content, never swept.
+`writeSnapshotVersion` is the one way a version is taken, whichever channel it lands in. It reads the channel's anchor, writes the content to the store against it, and inserts the row that makes the version visible. The object is durable before the row exists, so a failure between the two leaves no version rather than a row naming nothing — the correct outcome for a version that was never stored. An orphaned object is adopted by the next write of the same content, never swept.
 
 **A write and a collection of the same resource never overlap.** Both hold the resource's object lease (`withResourceObjectLock`), a row that a request takes by replacing only an expired one and releases by naming its own holder, because the gap between an object landing and its row existing is one a concurrent eviction could otherwise fall into: it reads the surviving rows, finds nothing naming the hash the write is about to record, and frees the object — or the anchor it decodes against — under a row that then names something unreadable. Under the lock a collection either sees the row or runs before the write reads its anchor, in which case the write finds the anchor gone and honestly starts a new lineage. The lease is keyed on the resource id, so unrelated resources never wait on each other. A holder that never releases it, having crashed, frees the resource when the lease expires, and a request that cannot take it within a bounded wait is refused rather than queued.
 
@@ -46,7 +46,7 @@ flowchart TD
 
 **The charge is separate from the write**, because a publish takes its version inside the batch that claims `publishVersion`, and D1 holds no transaction open across that batch and a charge. `chargeSnapshotVersion` runs after the batch and charges exactly the stored bytes, against the object's own key, so the object's R2 object-create event reconciles to the same figure and its eventual deletion releases it.
 
-**The one rewrite** is a write to a version the channel already holds. The upsert moves the row to the new object, and the object it named before is collected once the row has committed, if no other row still names it — published inside the batch, a commit that failed would leave the row naming an object already gone.
+**A version is never replaced.** Every writer claims its number fresh: a revision from a counter that only rises, and a publish from its claim inside the batch that writes the version. The one writer that reaches a number a row already holds is a publish that lands after its resource's delete, which keeps the number of the publication the delete tombstones. Its insert is refused, so the batch fails whole and the version it would have replaced stays as it was. The alternative that lost was an upsert that moved the row to the new object: it turned that race into a silent overwrite of a published version, and the references it dropped were never released.
 
 ## Reading a version
 

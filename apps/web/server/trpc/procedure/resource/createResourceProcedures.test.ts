@@ -62,6 +62,7 @@ import {
   resourcesInResource,
   ResourceType,
   resourceViewsInResource,
+  SnapshotChannel,
   StorageBucket,
   storageLedgerInStorage,
 } from "@esposter/db-schema";
@@ -783,6 +784,33 @@ describe(createResourceProcedures, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
     );
+  });
+
+  // The second publish stores its object before the delete lands, so the batch that writes its version finds the number
+  // The first publish's publication still holds, and the delete has tombstoned that publication
+  test("a publish that lands after its resource is deleted leaves the version it would have replaced alone", async () => {
+    expect.hasAssertions();
+
+    const newResource = await createSavedResource();
+    await dashboardCaller.publishResource({ id: newResource.id });
+    await dashboardCaller.saveResourceContent({
+      content: new Dashboard({ visuals: [new Visual()] }),
+      contentVersion: 1,
+      id: newResource.id,
+    });
+    const readPublishedVersion = () =>
+      mockContext.db.query.resourceVersionsInResource.findFirst({
+        where: { channel: { eq: SnapshotChannel.Published }, resourceId: { eq: newResource.id }, version: { eq: 1 } },
+      });
+    const publishedVersion = await readPublishedVersion();
+    interceptPut(async () => {
+      await softDeleteResources(mockContext.db, eq(resourcesInResource.id, newResource.id));
+    });
+
+    await expect(dashboardCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
+    await expect(readPublishedVersion()).resolves.toStrictEqual(publishedVersion);
   });
 
   test("omits publish procedures for non-publishable types", () => {

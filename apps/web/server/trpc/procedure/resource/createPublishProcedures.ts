@@ -101,8 +101,9 @@ export const createPublishProcedures = <TType extends ResourceType>(
           );
           // The claim and the version it names are one batch. The version reads the publication counter the claim has
           // Just Bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows
-          // With it. A Version's number is claimed fresh here, so no row of the channel holds it yet and no replaced
-          // Object is released
+          // With it. A Version's number is claimed fresh here, so no row of the channel holds it yet, unless a publish
+          // Lands after its resource's delete: it claims nothing, so its number is the tombstoned publication's, and
+          // The insert refuses that number, so the batch fails whole
           const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id})`;
           const [publicationRows] = await getResultAsync(() =>
             ctx.db.batch([
@@ -146,7 +147,7 @@ export const createPublishProcedures = <TType extends ResourceType>(
             (batchRows) => batchRows,
             async (error) => {
               // The batch commits whole or not at all, so a failure claimed nothing.
-              // A resource binned after the owner guard fails the version's NOT NULL.
+              // A resource binned after the owner guard fails the version's NOT NULL, or its key if the number is held.
               // So it answers the 404 that a read of a binned resource gives.
               await requireEntity(findOwnedResource(ctx.db, ctx.user.id, id, type), DatabaseEntityType.Resource, id);
               throw error;
