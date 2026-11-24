@@ -1,7 +1,8 @@
 import type { MockDatabase } from "#src/models/MockDatabase";
 
 import { createMockDatabase } from "#src/services/createMockDatabase";
-import { getResult, getResultAsync } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
+import { checkIsProcessRunning } from "@esposter/shared-node/check-is-process-running";
 import { findRepositoryRoot } from "@esposter/shared-node/find-repository-root";
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
@@ -50,14 +51,6 @@ const getTemplateDirectory = async (coreMigrationsDirectory: string): Promise<st
     },
   );
 };
-
-// Signal 0 only asks whether the process exists: `ESRCH` is the one answer that says it does not, since `EPERM` names a
-// Process that exists but this user may not signal
-const checkIsProcessRunning = (processId: number) =>
-  getResult(() => process.kill(processId, 0)).match(
-    () => true,
-    (error) => !("code" in error) || error.code !== "ESRCH",
-  );
 
 // A copy is named by the process that made it, so a copy whose process has exited is one nothing reads, and the next
 // Process to make a copy removes it. A file rarely disposes its database, and a worker can end without an exit event,

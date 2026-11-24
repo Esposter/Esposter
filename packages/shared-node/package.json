@@ -42,6 +42,10 @@
       "source": "./src/cache.ts",
       "default": "./dist/cache.js"
     },
+    "./check-is-process-running": {
+      "source": "./src/services/checkIsProcessRunning.ts",
+      "default": "./dist/check-is-process-running.js"
+    },
     "./child-process": {
       "source": "./src/childProcess.ts",
       "default": "./dist/child-process.js"
@@ -69,6 +73,7 @@
       "./bench": "./dist/bench.js",
       "./bench-smoke-provider": "./dist/bench-smoke-provider.js",
       "./cache": "./dist/cache.js",
+      "./check-is-process-running": "./dist/check-is-process-running.js",
       "./child-process": "./dist/child-process.js",
       "./find-repository-root": "./dist/find-repository-root.js",
       "./reporter": "./dist/reporter.js",

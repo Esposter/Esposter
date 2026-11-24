@@ -1,7 +1,7 @@
 import type { HoldFile } from "#src/models/resume/HoldFile";
 
 import { HOLDS_DIRECTORY } from "#src/services/fleet/constants";
-import { checkIsProcessRunning } from "#src/services/shared/checkIsProcessRunning";
+import { checkIsProcessRunning } from "@esposter/shared-node/check-is-process-running";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 

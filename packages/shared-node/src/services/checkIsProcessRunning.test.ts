@@ -1,4 +1,4 @@
-import { checkIsProcessRunning } from "#src/services/shared/checkIsProcessRunning";
+import { checkIsProcessRunning } from "#src/services/checkIsProcessRunning";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(checkIsProcessRunning, () => {

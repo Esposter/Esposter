@@ -8,13 +8,15 @@ import { mergeConfig } from "tsdown";
 // Through the machine-wide cache, a child process imports the hidden-window wrappers, and the wake check reads its
 // Records through one entry shared by its run and its gate. The WebSocket adapters tRPC drives are the `websocket`
 // Entry, which loads `node:events` alone, so a Worker bundle takes no tooling of this package. The repository root is
-// Found through find-repository-root, read by the scripts and the mock database alike. Naming them is also why no
+// Found through find-repository-root, read by the scripts and the mock database alike, and the process check they both
+// Read a lock's holder through is check-is-process-running. Naming them is also why no
 // Barrel is generated — nothing here is an entry for the `src/index.ts` one would produce.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
   entry: {
     bench: "src/services/constants.ts",
     "bench-smoke-provider": "src/services/benchmarkSmokeProvider.ts",
     cache: "src/cache.ts",
+    "check-is-process-running": "src/services/checkIsProcessRunning.ts",
     "child-process": "src/childProcess.ts",
     "find-repository-root": "src/services/findRepositoryRoot.ts",
     reporter: "src/services/BenchmarkMarkdownReporter.ts",
