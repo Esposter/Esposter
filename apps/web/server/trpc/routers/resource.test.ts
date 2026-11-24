@@ -1746,7 +1746,7 @@ describe("resourceRouter", () => {
   });
 
   // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches
-  // That key. the toggle writes that row both ways, so the star and the unstar are each checked
+  // That key. The toggle writes that row both ways, so the star and the unstar are each checked
   test.each([false, true])(
     "the toggle's entry covers the favorite row its header names when starred is %s",
     async (isStarred) => {

@@ -7,7 +7,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 // The committed file beside each fixture variant's snapshot, by its path, to the ids whose manifest rows hold
-// Its bytes. the file's bytes are hashed and matched against the rows, since a manifest row names no path.
+// Its bytes. The file's bytes are hashed and matched against the rows, since a manifest row names no path.
 // A file no row holds is left out, as an uncommitted file is the committed references test's to report.
 export const readCommittedBeside = async (
   componentsDirectory: string,

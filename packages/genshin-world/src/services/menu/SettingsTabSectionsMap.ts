@@ -138,7 +138,7 @@ export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, Settin
         getChoice(GameTextKey.SettingsCoOpTeammateEffects, GameTextKey.SettingsOn),
         getChoice(GameTextKey.SettingsSubsurfaceScattering, GameTextKey.SettingsHigh),
         // The game has no words for a filter's sample count; it writes the number with an x after it, as the
-        // Clip shows. provisional: written alike in every language
+        // Clip shows. Provisional: written alike in every language
         { getValue: () => "8x", kind: SettingsRowKind.Choice, labelKey: GameTextKey.SettingsAnisotropicFiltering },
         getChoice(GameTextKey.SettingsDynamicCharacterResolution, GameTextKey.SettingsOn),
       ],

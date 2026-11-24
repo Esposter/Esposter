@@ -3,7 +3,7 @@ import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialB
 // The weapon each trial character is fought with, from the wiki's Character Trial pages
 // (https://genshin-impact.fandom.com): the newest level-90 build of the character, by the date its page carries, cited
 // To that page. A character whose builds carry no date takes the first one listed. Constellation is 0 on every level-90
-// Block, and a block that omits it is C0. provisional: the join is by character name, not by stage, so a character with
+// Block, and a block that omits it is C0. Provisional: the join is by character name, not by stage, so a character with
 // Several trials takes its newest build. The thirty characters with only level-80 builds are not listed, since no
 // Level-90 weapon is cited for them.
 export const WIKI_TRIAL_BUILDS: WikiTrialBuild[] = [

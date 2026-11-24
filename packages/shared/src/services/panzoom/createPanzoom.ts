@@ -26,7 +26,7 @@ import { zoomPanzoom } from "#src/services/panzoom/zoomPanzoom";
 import { zoomPanzoomStep } from "#src/services/panzoom/zoomPanzoomStep";
 
 // One panzoom on an element: it moves the element by writing its transform, and reads the element and its parent to
-// Contain it. construction applies the start state synchronously and sends no event, so a pan made on the next line is
+// Contain it. Construction applies the start state synchronously and sends no event, so a pan made on the next line is
 // Not overwritten
 export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions = {}): Panzoom => {
   if (element.nodeType !== Node.ELEMENT_NODE)

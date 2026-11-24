@@ -157,7 +157,7 @@ export const RESTRICTED_SYNTAXES: SelectorBanList = {
       // An array method hands its callback the index or accumulator as well as the item, so a bare reference forwards
       // Arguments its own signature never asked for. The three native coercion functions read one argument and ignore
       // The rest, which is why `unicorn/prefer-native-coercion-functions` requires them bare and they are
-      // Excepted here. no array method takes a third argument, so a call with one is some other object's method of the
+      // Excepted here. No array method takes a third argument, so a call with one is some other object's method of the
       // Same name.
       message:
         "Wrap a function passed to an array method — `(item) => fn(item)`, or `(accumulator, item) => fn(accumulator, item)` for `reduce`. A bare reference forwards the index. See the typescript skill's callbacks reference.",

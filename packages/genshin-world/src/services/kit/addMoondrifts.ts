@@ -17,7 +17,7 @@ import {
 
 // The party's answer to each Lunar-Crystallize a combatant triggered on an enemy, written in place. It counts toward
 // The next Moondrift Harmony, and the combatant and the sources of the Hydro it consumed join the
-// Harmony's contributors. while fewer than three Moondrifts stand near the character on the field, it leaves as many
+// Harmony's contributors. While fewer than three Moondrifts stand near the character on the field, it leaves as many
 // More as make three about the enemy. With three standing and three counted, out of the Harmony's cooldown, it spends
 // The three to resonate one: three hits on their way to the enemy from its contributors, who are then cleared, owned by
 // The combatant, and the Moondrifts near kept standing their full seconds again

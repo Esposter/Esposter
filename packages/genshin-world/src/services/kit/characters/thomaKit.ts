@@ -73,7 +73,7 @@ const getConstellation6DamageBonus = (
 // Ooyoroi stands for its seconds, setting off a Fiery Collapse from each normal attack the character on the field
 // Starts, at most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing
 // Blessing's may hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive
-// Is not built yet. constellations 2, 4 and 6 are built, as the burst's seconds, its energy and the Blazing Barrier's
+// Is not built yet. Constellations 2, 4 and 6 are built, as the burst's seconds, its energy and the Blazing Barrier's
 // Party DMG Bonus Constellation 1 needs the Blazing Barrier's protected-ally attacks and the cooldown cuts they give,
 // Not built
 export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {

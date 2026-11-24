@@ -80,7 +80,7 @@ const LIONS_FANG_AFTER_STATUS_ID = "jean-constellation-6-after";
 
 // The Dandelion Field's tick, written for Jean as she cast it, with its heals in HP. Tick 0 is its activation, which
 // Heals the character on the field by the activation heal and, from Ascension 4, gives Jean back a fifth of the
-// Burst's energy. each later tick heals the character on the field by the regeneration. From Constellation 4 each tick
+// Burst's energy. Each later tick heals the character on the field by the regeneration. From Constellation 4 each tick
 // Also cuts the Anemo RES of each opponent within the field
 const createFieldTick =
   (owner: Combatant, field: Pick<KitField, "centre" | "radius">, activationHeal: number, regenerationHeal: number) =>

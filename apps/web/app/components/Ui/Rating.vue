@@ -16,7 +16,7 @@ interface Props {
 // A scale of numbered steps, each drawn by the caller's mark, which is told whether its step is filled. The steps up to
 // The one under the pointer are filled while it rests there, and up to the chosen step otherwise. A radio group, so it
 // Is one stop in the tab order and the arrows move the choice along it. No step is chosen while the choice is an
-// Empty string. nothing chosen fills up to the step below the first
+// Empty string. Nothing chosen fills up to the step below the first
 defineOptions({ inheritAttrs: false });
 defineSlots<{ mark: (props: { isOn: boolean; value: number }) => VNode }>();
 const modelValue = defineModel<number | string>({ required: true });

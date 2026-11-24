@@ -17,7 +17,7 @@ interface Props {
 
 // The text being edited in place, which is the only copy of the text while it is edited: the canvas leaves the
 // Element's own text out. It is laid over the element where the text is drawn, in the layout and the colour the commit
-// Gives the text: its size, its alignment and its wrap, scaled with the viewport. an unwrapped text box is as wide as
+// Gives the text: its size, its alignment and its wrap, scaled with the viewport. An unwrapped text box is as wide as
 // The draft's widest line, so it grows as the owner types. It has no box of its own, so it reads as the text itself,
 // And it takes focus as it opens. A press or a double click in it is no gesture of the canvas
 const draft = defineModel<string>({ required: true });

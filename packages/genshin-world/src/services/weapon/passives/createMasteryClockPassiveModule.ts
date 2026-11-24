@@ -14,7 +14,7 @@ const MASTERY_CLOCK_ID = "masteryClock";
 // Share of its Elemental Mastery, buffed as it stands at the tick, for the rank's seconds, whether or not the wielder
 // Is on the field. Each other member of the deployed team gets the rank's share of that buff. The buffs are sourced by
 // Their wielder, so two wielders' buffs on one member stack, and a wielder's own buff restarts on each tick rather
-// Than stacking. the attribute and scale say what the rank's rate is in, as the Elemental Mastery's rate is a
+// Than stacking. The attribute and scale say what the rank's rate is in, as the Elemental Mastery's rate is a
 // Percentage in one weapon's rows and a fraction in another's
 export const createMasteryClockPassiveModule = (
   params: number[],

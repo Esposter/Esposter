@@ -21,7 +21,7 @@ export const HOSTED_ASSET_REUSE_WINDOW_MS: number = HOSTED_ASSET_RETENTION_MS / 
 // Every object is named by its content, so it never changes and may be cached for good
 export const HOSTED_ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
 // Object bodies a publish compresses and holds at once, a wave at a time, so the copies waiting for a connection
-// Stay bounded. the connections themselves are bounded by the R2 transport, not here
+// Stay bounded. The connections themselves are bounded by the R2 transport, not here
 export const MAX_CONCURRENT_OBJECT_BODIES = 16;
 // Fetches in flight at once against one account, which keeps a check's memory bounded by one wave of objects
 export const MAX_CONCURRENT_VERIFY_FETCHES = 16;

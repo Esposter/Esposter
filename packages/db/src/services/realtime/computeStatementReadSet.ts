@@ -706,7 +706,7 @@ const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[], nullFille
 // The same column of another top-level occurrence, which names the side when an equality chain pairs the two and no
 // Left join null-fills that occurrence: its value is then in every row the read returns, where the side's own value is
 // Absent for the rows its left join leaves unmatched. An occurrence no equality chain reaches holds a value of its own,
-// So it names nothing. the chain may not run through a null-filled occurrence either, so a candidate is equal to the
+// So it names nothing. The chain may not run through a null-filled occurrence either, so a candidate is equal to the
 // Side in every row
 const findBorrowedSelection = (
   key: ReadSetKey,
@@ -771,7 +771,7 @@ export const computeStatementReadSet = (statement: SQLWrapper): ReadSet => {
   const scopedKeys: ScopedKey[] = [];
   const nullFilledKeys = new Set<string>();
   // The statement's SQL is built and its top level scanned once, for the walk and for a relational query's root
-  // Alias alike. the walk enters the top level as walkChunk enters any SQL, so a select that opens with a parenthesis
+  // Alias alike. The walk enters the top level as walkChunk enters any SQL, so a select that opens with a parenthesis
   // Opens a level
   const sql = statement.getSQL();
   const scan = scanChunks(sql.queryChunks);

@@ -9,7 +9,7 @@ import { z } from "zod";
 
 // One trial reliquary as the artifact it is worn as: its level counted from zero, the main stat the game gives it and
 // The sub-stats it carries, each read by its id from the reliquary, main stat and affix tables, and the set and slot
-// Its piece holds. the trial table counts its level from one, as the reliquary table does
+// Its piece holds. The trial table counts its level from one, as the reliquary table does
 export const toTrialReliquary = (
   { AppendPropList, Id, Level, MainPropId, ReliquaryId }: ExcelTrialReliquaryRow,
   pieceMap: ReadonlyMap<number, TrialReliquaryPiece>,

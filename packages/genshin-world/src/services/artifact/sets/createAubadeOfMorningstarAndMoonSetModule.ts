@@ -15,7 +15,7 @@ const AUBADE_ON_FIELD_ID = "aubadeOnField";
 // Aubade of Morningstar and Moon's four-piece. Its wearer's own Lunar Reactions get a DMG Bonus while the wearer is off
 // The field, and the second param more at Ascendant Gleam. A swap that brings the wearer on keeps the bonus for the
 // Third param's seconds, then it lapses until the wearer is off the field again. A battle that opens on the wearer
-// Raises no such window, as gcsim's aubade does not. the bonus is the wearer's alone: gcsim reads it from the wearer's
+// Raises no such window, as gcsim's aubade does not. The bonus is the wearer's alone: gcsim reads it from the wearer's
 // ReactBonus, which a Lunar reaction takes from the character that triggers it, and the text does not say otherwise
 export const createAubadeOfMorningstarAndMoonSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const damageBonus = takeOne(bonus.params, 0);

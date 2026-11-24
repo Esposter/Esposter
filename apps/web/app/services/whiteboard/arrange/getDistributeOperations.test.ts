@@ -75,7 +75,7 @@ describe(getDistributeOperations, () => {
     expect.hasAssertions();
 
     // The first box starts first but ends at 120, before the last box ends at 500, and the last box ends last but
-    // Starts at 400, after the first. the three widths total 420 of the 500 span, so the gaps share the other 80, 40
+    // Starts at 400, after the first. The three widths total 420 of the 500 span, so the gaps share the other 80, 40
     // Each, and the middle box moves from 150 to 160
     const document: PositionedDocument = {
       elements: [

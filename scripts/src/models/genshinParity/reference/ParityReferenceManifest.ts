@@ -9,7 +9,7 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // The one committed manifest: a header naming the game version it was packed from, when known, and one section
-// Per kind. every section holds one row per line, so two machines' additions merge by rebase
+// Per kind. Every section holds one row per line, so two machines' additions merge by rebase
 export interface ParityReferenceManifest {
   animeGameDataCommit?: string | undefined;
   gameVersion?: string | undefined;

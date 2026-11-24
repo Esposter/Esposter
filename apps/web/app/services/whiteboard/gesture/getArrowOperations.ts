@@ -16,7 +16,7 @@ import {
 } from "vue-block-editor-headless";
 
 // The operations that add a straight arrow on top of the element list, inserted free and then bound at each end that
-// Took a binding. the insert and the binds are one edit, so an undo reverts the arrow and its bindings together. A new
+// Took a binding. The insert and the binds are one edit, so an undo reverts the arrow and its bindings together. A new
 // Arrow is solid, at medium width, in the page's text colour, and each end takes the arrowhead it is given
 // An end as the insert takes it, with the arrowhead it draws and none of the binding, which the binds that follow add
 const getFreeEnd = ({ arrowhead, point }: ArrowEnd): Except<ArrowEnd, "binding"> =>

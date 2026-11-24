@@ -58,7 +58,7 @@ const SEAL_PYRO_BONUS_SECONDS = 6;
 // Blazing Eye, as the dump's Feiyan_PermanentSkill_2 row (promote 4, param 0.8) and gcsim v2.47.2 (MIT) yanfei/asc.go
 // Give it: from Ascension 4, the first CRIT hit a charged attack of hers lands while she is on the field sets off 80%
 // Of her ATK as 1U of Pyro, Charged Attack DMG, in a circle of radius 3.5 round the enemy struck, 10 frames on, which
-// The record's frames give. gcsim gives it no poise
+// The record's frames give. Gcsim gives it no poise
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/asc.go
 const BLAZING_EYE_ASCENSION = 4;
 const BLAZING_EYE_HIT: Except<KitHit, "hitmarkSeconds"> = {

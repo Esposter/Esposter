@@ -54,7 +54,7 @@ export type QuestId = (typeof QuestId)[keyof typeof QuestId];
 // The parent quest of each Mondstadt Reputation quest the city pays for, in the order the city reads them. Each is
 // Carried whole, and a finish of it pays the reward its Reputation quest row names. Parents 311, 418, 70061, 70078 and
 // 76096 are not carried: 311 and 418 finish on the game's script notices, the other three on scripted talks with
-// No lines. the reader takes no steps from any of them, so they have nothing to carry
+// No lines. The reader takes no steps from any of them, so they have nothing to carry
 const ReputationParentQuestIds: readonly QuestId[] = [
   QuestId.ReputationParent70123,
   QuestId.ReputationParent70121,

@@ -12,7 +12,7 @@ const GAMBLER_COOLDOWN_ID = "gamblerCooldown";
 
 // Gambler. Its two-piece bonus raises the DMG of its wearer's Elemental Skills by the table's first param. Its
 // Four-piece bonus ends its wearer's skill cooldown when its wearer defeats an opponent, once every the table's first
-// Param's seconds. the table's second param is its chance, a whole one, so the end is never rolled
+// Param's seconds. The table's second param is its chance, a whole one, so the end is never rolled
 export const createGamblerSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;
   if (bonus.pieceCount === 2)

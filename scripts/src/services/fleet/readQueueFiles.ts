@@ -9,7 +9,7 @@ const NEWLINE_BYTE = 0x0a;
 
 // Every file under a folder as the queue branch on origin holds it, never as the checkout does: a checkout behind
 // Origin still lists an item another worker finished and deleted, and the fleet would offer it again. The caller
-// Fetches first. one `git cat-file --batch` reads them all, each answered as a `<sha> blob <size>` line, its bytes and
+// Fetches first. One `git cat-file --batch` reads them all, each answered as a `<sha> blob <size>` line, its bytes and
 // A newline, so the output is cut by byte counts and stays a buffer until each file is cut from it
 export const readQueueFiles = (
   directory: string,

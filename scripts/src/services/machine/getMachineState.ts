@@ -4,7 +4,7 @@ import { CPU_TARGET_PERCENTAGE, GIBIBYTE, ROOM_MEMORY_SHARE, WINDOW_MINUTES } fr
 import { totalmem } from "node:os";
 
 // Tight holds new runs under the gate, idle needs a full window under the CPU target with room to spare, and busy is
-// The rest. the gate and the room are shares of the machine's total RAM, which defaults to this machine's own
+// The rest. The gate and the room are shares of the machine's total RAM, which defaults to this machine's own
 export const getMachineState = (
   cpuAveragePercentage: number,
   sampleCount: number,

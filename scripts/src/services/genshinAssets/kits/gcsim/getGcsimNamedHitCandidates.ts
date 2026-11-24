@@ -52,7 +52,7 @@ export const getGcsimNamedHitCandidates = (
     const joinedAttack = literalSites.size === 1 ? attack : undefined;
     // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its
     // Literals in turn. A list's hits are taken in the order they land, so a call a loop makes early and one it makes
-    // Late sort by their delays. each call carries the declaration its attack is made from, which a list may take the
+    // Late sort by their delays. Each call carries the declaration its attack is made from, which a list may take the
     // Calls of several keys from
     const readAttackCalls = (calls: readonly GcsimQueuedAttack[]) =>
       calls

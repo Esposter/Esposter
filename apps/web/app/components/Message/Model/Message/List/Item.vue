@@ -58,7 +58,7 @@ const contextMenuProps = getContextMenuGestureProps((point) => {
   contextMenuRequest.value = { ...point, messageId: message.id };
 });
 // The list has one tab stop, so a row takes focus by Tab or the arrows, and focus mounts its options bar as a
-// Hover does. focus that moves into the bar stays in the row, which keeps the bar mounted for the keys that reach it
+// Hover does. Focus that moves into the bar stays in the row, which keeps the bar mounted for the keys that reach it
 const isFocused = ref(false);
 // Focus landing anywhere in the row makes it the stop, so the arrows that follow start from the row the reader is in
 const onFocusin = () => {

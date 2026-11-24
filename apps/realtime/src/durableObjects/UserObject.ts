@@ -187,7 +187,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
   }
 
   // The scheduled messages the person's index names, soonest first by their id, from the cursor, at most `limit`
-  // Of them. each is named by its id and its room, and its body is read from the room
+  // Of them. Each is named by its id and its room, and its body is read from the room
   async readScheduledMessages({
     cursor,
     limit,
@@ -283,7 +283,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
   }
 
   // The index entry of a scheduled message is a tombstone once the room sends or cancels it, and the list stops
-  // Naming it. the alarm is re-armed so the tombstone's purge is scheduled, as a reminder's cancel does
+  // Naming it. The alarm is re-armed so the tombstone's purge is scheduled, as a reminder's cancel does
   async removeScheduledMessage(scheduledId: string): Promise<void> {
     await this.db
       .update(scheduledMessagesInUser)
@@ -513,7 +513,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
   }
 
   // Each TodoList reminder is removed only once its notification is queued, so a failed send is retried rather
-  // Than dropped. the delete holds only for the due time the alarm read, so a row a save re-dated while the send was in
+  // Than dropped. The delete holds only for the due time the alarm read, so a row a save re-dated while the send was in
   // Flight stays armed
   async #sendDueTodoReminders(now: Date): Promise<void> {
     const dueReminders = await this.db

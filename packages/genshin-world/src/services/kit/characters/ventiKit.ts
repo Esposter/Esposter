@@ -16,7 +16,7 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/venti/burst.go
 const STORMEYE_OFFSET = 5;
 // Splitting Gales, from one constellation, looses two more arrows with each aimed shot, as the wiki's constellation
-// Page gives it. gcsim v2.47.2 (MIT) venti/cons.go lands them with the shot
+// Page gives it. Gcsim v2.47.2 (MIT) venti/cons.go lands them with the shot
 // https://genshin-impact.fandom.com/wiki/Splitting_Gales
 const SPLITTING_GALES_CONSTELLATION = 1;
 // Breeze of Reminiscence, from two constellations, takes 12% off the Anemo and Physical RES of each enemy Skyward

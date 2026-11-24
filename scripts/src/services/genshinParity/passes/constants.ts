@@ -25,11 +25,11 @@ export const PART_GATE_METRES = 0.02;
 // Families a normal detail would lean their normals by
 export const SURFACE_WAVELENGTH_FAMILIES: readonly string[] = ["Bridges", "Door", "Towers"];
 // The high-pass box the surface wavelength reads its normal angles through, in pixels: a variation longer than it
-// Is shape. on the reference's own angles the towers' lobe holds for boxes of 4 to 32 pixels and the bridges' for 16 to
+// Is shape. On the reference's own angles the towers' lobe holds for boxes of 4 to 32 pixels and the bridges' for 16 to
 // 128, so 16, so where both hold, 16 is used for both families
 export const SURFACE_HIGH_PASS_RADIUS_PIXELS = 16;
 // The longest lag a surface wavelength reads, as a share of its family's width: a lobe past it is the object's
-// Own size. the bridges' 47 metre repeat is about a quarter of their width and falls outside it. Their 22 metre lobe,
+// Own size. The bridges' 47 metre repeat is about a quarter of their width and falls outside it. Their 22 metre lobe,
 // About a ninth, falls inside it, and is the bridges' detail wavelength (design.md, Decisions). The cap is set before
 // The bridges were read, and is not tuned past that reading
 export const SURFACE_LAG_CAP_SHARE = 1 / 8;

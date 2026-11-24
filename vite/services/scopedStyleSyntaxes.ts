@@ -5,8 +5,8 @@ import { htmlTagNames } from "#vite/services/htmlTagNames";
 
 // A package styled by scoped CSS has no UnoCSS to read an attribute as a utility, so an attribute the HTML standard
 // Does not define on a native element (`size-full`, `p="2"`) styles nothing, and the element takes the
-// Browser's defaults. it accepts the standard's attributes (global and per element), WAI-ARIA's `role` and `aria-*`,
-// Custom data, and the two Vue keeps for itself. vize's tree carries no namespace, so SVG and MathML are told apart by
+// Browser's defaults. It accepts the standard's attributes (global and per element), WAI-ARIA's `role` and `aria-*`,
+// Custom data, and the two Vue keeps for itself. Vize's tree carries no namespace, so SVG and MathML are told apart by
 // Their root: an element under one is not HTML's, unless a `foreignObject` holds it. Vue's `<template>` and `<slot>`
 // Share HTML's names but are the framework's outlets, whose bound Attributes are slot props. Elements accepting the
 // Same attributes share one selector

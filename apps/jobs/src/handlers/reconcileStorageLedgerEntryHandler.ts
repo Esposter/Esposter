@@ -9,7 +9,7 @@ import { r2ObjectCreatedQueueMessageSchema, StorageBucket, storageBucketSchema }
 // It reports what happened on a data path our servers are never part of.
 // The ledger row names the bucket and the blob, so each notification is matched against its own row: one from a bucket
 // Nothing reserves into finds no row. No list of buckets is kept beside the reserve writers, so none can drift
-// From them. the row names whose allowance a blob is charged to: a resource asset's owner, or a message
+// From them. The row names whose allowance a blob is charged to: a resource asset's owner, or a message
 // Attachment's uploader.
 // See openspec/specs/resource/storage-quotas/design.md
 export const reconcileStorageLedgerEntryHandler = async (body: unknown): Promise<void> => {

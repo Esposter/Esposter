@@ -7,7 +7,7 @@ const NON_RPC_MEMBERS = new Set(["fetch", "then"]);
 
 // The stub of a Durable Object, each RPC method of which runs through the object's `invoke`. The object publishes the
 // Write set itself, so the stub only unwraps the result, and hands the read set to `onReadSet` where a caller watches
-// Its reads. the stub keeps its own type, so a caller types the object's methods as before
+// Its reads. The stub keeps its own type, so a caller types the object's methods as before
 export const createObjectStub = <T extends object>(stub: T, onReadSet?: (readSet: ColumnTopic[]) => void): T =>
   new Proxy(stub, {
     get: (_target, member) => {

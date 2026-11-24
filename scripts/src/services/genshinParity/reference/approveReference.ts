@@ -25,7 +25,7 @@ const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
 const APPROVE_RUN_COUNT = 3;
 
 // Writes a screen's image as a snapshot of its current render, and prints its compare's status against the bar
-// Beside it. no status stops the image: a missing reference, a failed compare or a reference judging less than the
+// Beside it. No status stops the image: a missing reference, a failed compare or a reference judging less than the
 // Whole screen is printed as such, and the score is recorded wherever a whole-screen compare ran. The compare judges
 // The state the map records for the reference, so a variant's score is only ever its own reference's
 export const approveReference = async (referenceId: string, variant?: string): Promise<void> => {

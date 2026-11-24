@@ -131,7 +131,7 @@ describe(TopicObject, () => {
   });
 
   // A read that began before the topic's last publish may hold a state the publish changed, so the subscriber is
-  // Told now. waiting for the publish's alarm would leave the subscriber stale for the length of the window
+  // Told now. Waiting for the publish's alarm would leave the subscriber stale for the length of the window
   test("a subscription that arrives after a newer publish is notified at once", async () => {
     expect.hasAssertions();
 

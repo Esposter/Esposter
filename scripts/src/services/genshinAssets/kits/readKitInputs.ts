@@ -41,7 +41,7 @@ const GcsimExpectedPathConstantMap: Record<string, string> = {
 
 // What the builder reads for every character with a published kit, the named ones alone, or both where every published
 // Kit is read beside them, as a publish reads them: the record published for each, if one is, and the candidates
-// Gcsim's tag, the wiki and the tables give its record. gcsim's tag is read from its clone and the wiki's answers from
+// Gcsim's tag, the wiki and the tables give its record. Gcsim's tag is read from its clone and the wiki's answers from
 // Their cache, each fetched first where it is absent
 export const readKitInputs = async ({
   characterIds,

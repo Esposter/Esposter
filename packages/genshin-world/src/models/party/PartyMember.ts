@@ -9,7 +9,7 @@ export interface PartyMember {
   // The passives that a clear raises read, none when none has cleared
   bondOfLifeClearedShare: number;
   // The Bond of Life it carries, as a share of its Max HP, which a heal takes down before it restores the HP, none
-  // When none. runtime-only, so a reloaded team carries none
+  // When none. Runtime-only, so a reloaded team carries none
   bondOfLifeShare: number;
   burstCooldownSeconds: number;
   // Its elements on it, moved on each step and never saved, so a team reloaded holds none

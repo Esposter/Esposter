@@ -14,7 +14,7 @@ import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/charge.go, ChargeAttack and chargeJudgementTick. The charge's legal
 // Evaluation starts three frames in and runs 209 frames less 57, 111 or 209 for the one, two or three Sourcewater
-// Droplets it picks up. the judgement then lasts 173 frames, its eight waves landing 6, 28, 53, 78, 103, 128, 153 and
+// Droplets it picks up. The judgement then lasts 173 frames, its eight waves landing 6, 28, 53, 78, 103, 128, 153 and
 // 173 frames after it starts, its HP drains take 8% of Max HP at 40 frames and every 30 after while HP is above half,
 // And each droplet picked up heals 16% of Max HP five frames later
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/charge.go

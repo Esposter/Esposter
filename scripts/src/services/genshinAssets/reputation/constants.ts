@@ -4,7 +4,7 @@ export const DEFAULT_HUNTING_DIFFICULTY = "HUNTING_DIFFICULTY_EASY";
 
 // The Mondstadt bounties' possible targets by the dump's difficulty, from the wiki's list for each tier's stars: an
 // Easy bounty is three-star, a Medium four-star and a Hard five-star, which the dump's Reputation for each
-// Tier confirms. each name is the wiki's, a family's name where the wiki names one, resolved to a monster
+// Tier confirms. Each name is the wiki's, a family's name where the wiki names one, resolved to a monster
 // By toBountyTargetIds
 export const MONDSTADT_BOUNTY_TARGET_NAMES: Readonly<Record<string, readonly string[]>> = {
   HUNTING_DIFFICULTY_EASY: [

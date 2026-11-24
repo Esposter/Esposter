@@ -99,7 +99,7 @@ const giveLightkeepersOath = ({ activeCombatant, kitEffectState, party }: KitCon
 // Torchforger's Covenant gives each other member Lightkeeper's Oath after her skill or burst, and Constellation 6
 // Enhances that Oath. Constellation 2 summons Aedon's hit for every 7 stacks consumed, and Constellation 4 gives the
 // Active party member 200 DEF while Haunted Night holds. Nearby and active are read as the deployed team and the member
-// On the field. not built: the stacks from Geo Constructs; the Lunar-Crystallize enhancement Constellation 1 needs,
+// On the field. Not built: the stacks from Geo Constructs; the Lunar-Crystallize enhancement Constellation 1 needs,
 // Which the kit does not read; Vigilant Sentinel, the passive that restores 12 Elemental Energy after a Geo-related
 // Reaction on the field
 export const createIllugaKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {

@@ -6,7 +6,7 @@ import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafti
 
 // The strongboxes the Mystic Offering makes, one per set a display item names. Each is joined from the decompose row
 // That recipes it, the reward preview of that row, the display item its first item shows and the offer row linked to
-// The set. its pieces are the offer row's pieces of its set at the recipe's star rank, and a strongbox no offer row
+// The set. Its pieces are the offer row's pieces of its set at the recipe's star rank, and a strongbox no offer row
 // Lists is left out. The result is sorted by set id
 export const toCraftingStrongboxes = ({
   decomposeRows,

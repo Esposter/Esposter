@@ -15,7 +15,7 @@ const checkIsRefusedBy = (path: string, stampPath: string): boolean => {
 };
 
 // The paths a copy may move and the ones it refuses, given the stamps that name another game version than the
-// Install's. with no install there is no version to disagree with, so nothing is refused
+// Install's. With no install there is no version to disagree with, so nothing is refused
 export const selectVouchedPaths = (
   paths: string[],
   stamps: StampEntry[],

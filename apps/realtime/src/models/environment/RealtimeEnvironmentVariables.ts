@@ -4,7 +4,7 @@ import { z } from "zod";
 // `.meta({ secret: true })`, and a deploy uploads each marked one from
 // Pulumi ESC as a Worker secret; every other one is a wrangler var in wrangler.jsonc
 // RealtimeKit is optional — a deployment without it runs calls with no media server — so its two variables are `""`
-// When unset. an unset optional secret is `""` too: ESC holds it empty and the deploy uploads that, so it parses to
+// When unset. An unset optional secret is `""` too: ESC holds it empty and the deploy uploads that, so it parses to
 // `""`. `TOPIC_WATCH_SECRET` is required, with no absent form: every watch is checked against it
 // (`checkTopicWatchSigned`)
 export interface RealtimeEnvironmentVariables {

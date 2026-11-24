@@ -73,7 +73,7 @@ export const useProgramStatus = () => {
       onError: createErrorNotification,
       onSuccess: async ({ audienceTruncation, participants }) => {
         // The mutation is the one place a new credential reaches the owner, so its answer leaves as the file of links
-        // They send. it holds only the participants this run issued, since a credential is never given twice, and no
+        // They send. It holds only the participants this run issued, since a credential is never given twice, and no
         // Link is shown again once the file is gone
         if (participants.length > 0)
           downloadFile(

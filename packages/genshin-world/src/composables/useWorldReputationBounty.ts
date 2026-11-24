@@ -24,7 +24,7 @@ interface Props {
 }
 
 // The Mondstadt bounty the player has taken, in progress until its claim pays, and the moments of the bounty
-// Claims made. both are the save's, so a reload finds the hunt and the week's count where they were left
+// Claims made. Both are the save's, so a reload finds the hunt and the week's count where they were left
 export const useWorldReputationBounty = ({ random, savedBountyClaimedAts, savedBountyHunt }: Props) => {
   const worldReputationStore = useWorldReputationStore();
   const { reputation, reputationCity } = storeToRefs(worldReputationStore);

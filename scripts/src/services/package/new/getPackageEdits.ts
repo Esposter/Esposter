@@ -17,7 +17,7 @@ import { insertBeforeMatch } from "#src/services/package/new/insertBeforeMatch";
 import { insertSortedRow } from "#src/services/package/new/insertSortedRow";
 
 // The edits a new package makes to the files that already list the workspace's members. Each one edits a file's text to
-// Write the row a test reads. the test is named beside the edit that writes the row
+// Write the row a test reads. The test is named beside the edit that writes the row
 export const getPackageEdits = (options: CreatePackageOptions): Map<string, (text: string) => string> => {
   const { description, kind, name, register } = options;
   const packageName = getPackageName(options);

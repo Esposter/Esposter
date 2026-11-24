@@ -5,7 +5,7 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
 // The socket of the room on screen, open while that room is the current one. It opens before the room's messages
-// Are read. so a change made while the read is in flight arrives over the socket rather than in the gap between
+// Are read. So a change made while the read is in flight arrives over the socket rather than in the gap between
 // The two.
 // A reconnect replays from the newest message the page holds, then re-reads the loaded window.
 // That is needed because an edit or a delete made while the socket was closed is not replayed

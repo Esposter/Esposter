@@ -10,7 +10,7 @@ import { join } from "node:path";
 export const DUNGEONS_LOCK_REPOSITORY_PATH = "apps/web/shared/generated/hostedAssets/dungeonsLock.json";
 export const DUNGEONS_LOCK_PATH: string = join(REPOSITORY_ROOT, DUNGEONS_LOCK_REPOSITORY_PATH);
 // The dungeons game's files as one product: its asset folder's files, stored under its scope in the shared
-// Hosted bucket. the Tiled authoring files and the code beside them are unhosted, since the bundle or Tiled reads them,
+// Hosted bucket. The Tiled authoring files and the code beside them are unhosted, since the bundle or Tiled reads them,
 // Never the game
 export const DUNGEONS_PRODUCT: HostedAssetProduct = {
   bucket: StorageBucket.PublicHostedAssets,

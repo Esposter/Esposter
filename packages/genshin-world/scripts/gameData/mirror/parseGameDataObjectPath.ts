@@ -1,7 +1,7 @@
 import { HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 
 // A hosted object is named by the sha256 its last segment holds, under the scope before it, and its extension names its
-// Content type. that one shape is what a dataset's JSON and every other hosted file share, so a dataset needs no rule
+// Content type. That one shape is what a dataset's JSON and every other hosted file share, so a dataset needs no rule
 // Of its own.
 const HOSTED_OBJECT_NAME_REGEX = /^.+\/(?<hash>[\da-f]{64})(?<extension>\.[a-z\d]+)$/u;
 

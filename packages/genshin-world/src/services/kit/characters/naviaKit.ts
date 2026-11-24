@@ -58,7 +58,7 @@ const CONSTELLATION_1_BURST_SECONDS_PER_SHRAPNEL = 1;
 
 // Measured: gcsim v2.47.2 (MIT) navia/cons.go, Constellation 2's CRIT Rate of 12% for each shrapnel the press consumes,
 // Three at most, and one Cannon Fire Support shot 30 frames after the blade strikes an enemy, three metres round the
-// Point of its hit. gcsim draws that point uniformly over the disk of 1.2 metres about the enemy, from its random
+// Point of its hit. Gcsim draws that point uniformly over the disk of 1.2 metres about the enemy, from its random
 // Source
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_CRITICAL_RATE_PER_SHRAPNEL = 0.12;
@@ -69,7 +69,7 @@ const CONSTELLATION_2_CANNON_HITMARK_FRAMES = 30;
 
 // Undisclosed Distribution Channels, as the dump's Navia_PermanentSkill_1 row and gcsim v2.47.2 (MIT) navia/asc.go give
 // It: from Ascension 1, for 4 seconds after a shot fires, her normal attacks, charged attack and plunges deal Geo DMG
-// And 40% more of it. gcsim adds only the DMG Bonus, as her attacks are Geo there already
+// And 40% more of it. Gcsim adds only the DMG Bonus, as her attacks are Geo there already
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/navia/asc.go
 const UNDISCLOSED_DISTRIBUTION_CHANNELS_ASCENSION = 1;
 const UNDISCLOSED_DISTRIBUTION_CHANNELS_DAMAGE_BONUS = 0.4;

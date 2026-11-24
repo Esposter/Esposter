@@ -15,8 +15,8 @@ import { and, eq } from "drizzle-orm";
 // Nothing of its own, and the members are read before it goes, so each member's reminders for the room go with it.
 // The memberships are tombstoned after that, and each member's object is sent its tombstone, as deleteRoom sends them,
 // So a member's room list drops the room at the version the removal left. A member whose object cannot be reached sees
-// It on reload. the scheduled messages of other people go with it, and each sender's index publishes its own removal as
-// The object makes it. the room row goes last: the row is what a replay finds the room by.
+// It on reload. The scheduled messages of other people go with it, and each sender's index publishes its own removal as
+// The object makes it. The room row goes last: the row is what a replay finds the room by.
 // So a room whose sweep fails keeps its row and is swept again.
 // The room's moderation log and notes are rows that cascade with the room row. So they need no sweep of their own
 export const deleteAccountOwnedRoom = async (roomId: RoomInMessage["id"]): Promise<void> => {

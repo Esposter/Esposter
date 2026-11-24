@@ -1,6 +1,6 @@
 // The length of a vector, by mathjs's running sum of squares scaled by the largest magnitude so far, which no square
 // Can overflow. A larger magnitude rescales the sum to itself, and an equal one adds one, so two infinities
-// Are infinite. the comparisons are exact, where mathjs's tolerance reads a magnitude near zero as zero
+// Are infinite. The comparisons are exact, where mathjs's tolerance reads a magnitude near zero as zero
 export const computeHypotenuse = (values: readonly number[]): number => {
   let largest = 0;
   let total = 0;

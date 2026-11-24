@@ -6,7 +6,7 @@ import { moveItem } from "#src/internal/placement/moveItem";
 import { CollisionMode } from "#src/models/CollisionMode";
 
 // The layout with the target moved onto its new cell, as the collision mode says. Push moves the items it lands
-// On down. swap trades places with the one item a move lands on, and pushes when it lands on several, when the item
+// On down. Swap trades places with the one item a move lands on, and pushes when it lands on several, when the item
 // Resizes,
 // Or when either item would stick out past the last column once they trade. Prevent refuses a landing on any other
 // Item, so there is no layout to return and the result is undefined. A solid item is never displaced, so a landing over

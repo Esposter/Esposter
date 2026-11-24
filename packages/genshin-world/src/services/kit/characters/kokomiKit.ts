@@ -102,7 +102,7 @@ const getPassiveBonuses = (): { amount: number; attribute: Attribute }[] => [
 ];
 
 // Tamakushi Casket, Kokomi's Ascension 1 passive, as its text gives it: Nereid's Ascension refreshes Bake-Kurage on the
-// Field to its full duration. gcsim's kokomi/asc.go sets it to 12 seconds and a frame instead, which this does not copy
+// Field to its full duration. Gcsim's kokomi/asc.go sets it to 12 seconds and a frame instead, which this does not copy
 const refreshBakeKurage = (effects: KitEffect[], characterId: number): void => {
   for (const effect of effects)
     if (

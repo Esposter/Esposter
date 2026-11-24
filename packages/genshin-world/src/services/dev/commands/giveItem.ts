@@ -21,7 +21,7 @@ export const giveItemArgs = z.object({
 type GiveItemArguments = z.infer<typeof giveItemArgs>;
 
 // Gives an item the way the game's reward act gives one: a wallet currency into the wallet, any other item into
-// The bag. the bag refuses the whole of an item when it cannot take all of it.
+// The bag. The bag refuses the whole of an item when it cannot take all of it.
 // The names are the ones the bag and its screens show
 export const giveItem = (
   save: GenshinSave,

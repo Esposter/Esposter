@@ -17,7 +17,7 @@ import {
 import { checkIsRecord, getResultAsync } from "@esposter/shared";
 
 // A write that asks for no RETURNING is widened to name its rows, and it runs through `run`, the method its
-// Caller awaited. whatever holds that method holds the write too. D1's `run` answers the rows a RETURNING statement
+// Caller awaited. Whatever holds that method holds the write too. D1's `run` answers the rows a RETURNING statement
 // Names as `results`
 const runWidenedWrite = async (statement: PromiseLike<unknown> & SQLWrapper): Promise<unknown> => {
   const run: unknown = await Reflect.apply(Reflect.get(statement, "run", statement), statement, []);

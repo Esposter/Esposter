@@ -2,7 +2,7 @@ import type { ParityReferenceManifestImage } from "#src/models/genshinParity/ref
 import type { ReferenceCollision } from "#src/models/genshinParity/reference/ReferenceCollision";
 
 // One screenshot of an entry as a pack reads it: the scratch screenshot packed, or the image the manifest
-// Already holds. its bytes are read only where a derived image needs them, and `stored` holds the bytes a store must
+// Already holds. Its bytes are read only where a derived image needs them, and `stored` holds the bytes a store must
 // Confirm are present. `collision` is set when a scratch copy packs to other bytes than the held image.
 // With no scratch copy, `collision` is set when a committed file differs from the held image.
 // With no held image, `collision` is set when a scratch copy packs to other bytes than the committed file beside it.

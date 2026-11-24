@@ -10,7 +10,7 @@ import { startPanzoomGesture } from "#src/services/panzoom/startPanzoomGesture";
 const checkIsPointerEvent = (event: Event): event is PointerEvent => "pointerId" in event;
 
 // Listens on the target for pointer downs and clicks, and on the element's document for the moves and the ends of
-// Its pointers. every listener is held by one signal, so aborting it removes them all. The click after a drag is
+// Its pointers. Every listener is held by one signal, so aborting it removes them all. The click after a drag is
 // Swallowed at the target
 export const bindPanzoom = (context: PanzoomContext, signal: AbortSignal): void => {
   const target = getPanzoomTarget(context);

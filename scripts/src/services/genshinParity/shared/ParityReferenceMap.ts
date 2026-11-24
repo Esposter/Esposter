@@ -189,10 +189,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The English PC client's Archive on its Equipment section's Weapons grid at 1080 high, from the public recording at
   // 19.5 seconds: the first five rows of the weapons with the first one selected and the cursor resting on the fifth of
-  // The first row, forty entries open. the page draws the header's title and counter on a dark ground of its own, each
+  // The first row, forty entries open. The page draws the header's title and counter on a dark ground of its own, each
   // Tile over a flat colour where the game draws its picture, and each name band, the filter bar, the selected name
   // With its lore, the close disc, the arrows and the New badges. Scored, by the mask: the name bands, the title, the
-  // Counter, the close disc, the filter bar outside its funnel and label, and the selected name. plated, filled from
+  // Counter, the close disc, the filter bar outside its funnel and label, and the selected name. Plated, filled from
   // The still round them: the star-field sky, the crest and the sword, which is game art, and the lore panel, since the
   // Still's own letters would show through the ground the page does not draw under the selected name. The page draws
   // Its own crest over that plate, and the tab discs, the book and the description there, which the score does not see,
@@ -1244,7 +1244,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Mondstadt City.png",
   },
   // The wiki's 2560 by 1440 location image of Nasha Town, a daytime view of the capital's plaza under its
-  // Central tower. its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth's
+  // Central tower. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth's
   // Front corners, the struts under the tower's pod ledge, and the tower's collar and column edges
   "nasha-town-location": {
     component: DerivedAssetComponent.NodKrai,
@@ -1277,7 +1277,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Quit's centre is 1024 in the frame, 55 above the bottom edge.
   // The map has it 70 of the 1440 high still's pixels from the bottom, which is the same 55 at 0.79.
   // So Quit anchors to the bottom while the five are not, and the menu draws Quit from the bottom edge at
-  // That distance. how the game anchors the five is not known.
+  // That distance. How the game anchors the five is not known.
   // The install's extraction did not find this menu's prefab, so the menu draws them where the 16:9 map has them.
   "paimon-menu": {
     region: { height: 1080, width: 810, x: 150, y: 0 },
@@ -1502,7 +1502,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // 1080 high at 60 frames a second) at 173 seconds: the Restorative Power at 10000 of 10000, auto-recover on at 50%.
   // Scored over the right panel only.
   // The member cards at the left are not scored, since the world shows through them blurred, which the component does
-  // Not draw. the recording's clock and the recorder's UID lie outside the region.
+  // Not draw. The recording's clock and the recorder's UID lie outside the region.
   "statue-blessing": {
     isBackdrop: true,
     plate: STATUE_BLESSING_PLATE,
@@ -1511,7 +1511,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-0z3OdjIBuo8-wow-completionist.mp4 at 173s",
   },
   // The Worship Statue popup of Mondstadt's statue at level 2, from the same guide at 164 seconds, with no Anemoculus
-  // Held toward it. scored over the popup's panel, which the live world on its left does not enter. The recorder's UID
+  // Held toward it. Scored over the popup's panel, which the live world on its left does not enter. The recorder's UID
   // Lies below the region.
   "statue-worship": {
     region: { height: 1040, width: 614, x: 1306, y: 0 },

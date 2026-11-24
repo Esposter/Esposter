@@ -5,7 +5,7 @@ interface Props {
   title: string;
 }
 // The title bar's commands stand before its close button, and the default slot is the body, which scrolls under
-// The bar. the header slot is the row pinned under the title bar, and the footer slot the row pinned under the body.
+// The bar. The header slot is the row pinned under the title bar, and the footer slot the row pinned under the body.
 // Each is drawn only when a call site passes content for it, so neither scrolls with the body
 const slots = defineSlots<{
   actions?: () => VNode;

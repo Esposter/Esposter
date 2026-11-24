@@ -7,7 +7,7 @@ import * as github from "@pulumi/github";
 // A review run, which merges that commit back into `ai/queue`. Nothing else writes it: no pull request targets `main`,
 // So there is no pull request rule, and Renovate, which lands on `ai/queue`, is no bypass actor. A Ruleset cannot name
 // An Individual user, so the Admin role is the only bypass. `deletion` and `nonFastForward` keep `main`'s
-// History whole. required status checks live in queueStatusChecks, not here: bypass is granted per ruleset and never
+// History whole. Required status checks live in queueStatusChecks, not here: bypass is granted per ruleset and never
 // Per rule.
 export const mainProtection: github.RepositoryRuleset = new github.RepositoryRuleset(
   "mainProtection",

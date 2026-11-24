@@ -17,7 +17,7 @@ import { takeOne } from "@esposter/shared";
 // A Stellar reaction's own hit on an enemy, written into it in place, and whether it struck: the reaction's coefficient
 // On each contributor's level multiplier, raised by the Base DMG Bonus of the deployed team's Stellar Jubilees,
 // Elemental Mastery and Stellar Glimmer reaction DMG bonus, with no Moonsign bonus, which only a Lunar reaction takes,
-// Weighted as the Glimmer damage is (provisional), against the enemy's RES to the element. with no contributor, or on
+// Weighted as the Glimmer damage is (provisional), against the enemy's RES to the element. With no contributor, or on
 // An enemy already Dead, it strikes nothing
 export const strikeStellarReaction = (
   enemy: Enemy,

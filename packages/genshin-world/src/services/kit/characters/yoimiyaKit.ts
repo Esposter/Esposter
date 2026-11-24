@@ -29,7 +29,7 @@ export const YOIMIYA_CHARACTER_ID = 10_000_049;
 
 // Measured: gcsim v2.47.2 (MIT) yoimiya/asc.go, Ascension 1: each Blazing Arrow that strikes an enemy while Niwabi
 // Fire-Dance stands and Yoimiya is on the field raises a count to 10, giving 2% Pyro DMG Bonus per count for 3 seconds,
-// The count starting again once that lapses. gcsim's Ascension 4 ATK share is defined there but never called, so it is
+// The count starting again once that lapses. Gcsim's Ascension 4 ATK share is defined there but never called, so it is
 // Not built https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yoimiya/asc.go
 const ASCENSION_1 = 1;
 const ASCENSION_1_STATUS_ID = "yoimiya-a1";

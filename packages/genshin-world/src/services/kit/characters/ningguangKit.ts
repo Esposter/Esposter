@@ -215,7 +215,7 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
         });
     },
     // Jade Screen is a summon standing 3 metres ahead of Ningguang for its seconds, which lands the skill's hit
-    // Round it. only one stands, so a recast shatters the one before
+    // Round it. Only one stands, so a recast shatters the one before
     skill: {
       onStart: (context) => {
         shatterJadeScreen(context);

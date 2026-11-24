@@ -8,7 +8,7 @@ const SESSHOU_SAKURA_MAX_USAGES = 6;
 const SESSHOU_SAKURA_ROUND_END_USAGES = 4;
 
 // Sesshou Sakura, a summon of three usages that stack up to six: at the End Phase it deals 1 Electro DMG and spends
-// A usage. when its side declares the round's end with at least four usages left, it deals 1 Electro DMG and spends one
+// A usage. When its side declares the round's end with at least four usages left, it deals 1 Electro DMG and spends one
 // (the wiki does not print how many it spends there, so one is provisional). A Yakan Evocation's raised DMG adds 1 to
 // Each of its hits
 export const sesshouSakura: GcgCardModule = {

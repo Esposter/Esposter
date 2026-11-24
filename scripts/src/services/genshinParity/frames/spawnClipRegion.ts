@@ -4,7 +4,7 @@ import { RECORDING_FRAME_FILTER } from "#src/services/genshinParity/reference/co
 import { spawn } from "@esposter/shared-node/child-process";
 
 // FFmpeg decoding a clip's rectangle alone as raw RGB, one frame after another on its stdout, and the code it
-// Exits with. the colour conversion is the one a cut frame is made with, so a frame's colours are the ones the probe
+// Exits with. The colour conversion is the one a cut frame is made with, so a frame's colours are the ones the probe
 // Reads from it
 export const spawnClipRegion = (clipPath: string, rect: ImageRegion, ffmpegPath: string) => {
   // `exact` keeps the crop at the rectangle's own size, which the frames are split by

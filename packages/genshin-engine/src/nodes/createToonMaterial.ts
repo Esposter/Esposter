@@ -14,7 +14,7 @@ import { normalGeometry, positionGeometry, transformNormal, transformNormalToVie
 
 // The colour as a uniform of the material's own, not `materialColor`, which reads the colour of whichever material
 // Is drawn. A witness target drawn with its own material read white where the stone's colour stands, so no family's
-// Colour was ever measured. white is the default colour a material without one draws. A detail's amplitudes and texel
+// Colour was ever measured. White is the default colour a material without one draws. A detail's amplitudes and texel
 // Size are uniforms too, so every detail draws in one program
 const createMaterialSurfaceNode = (
   color?: ColorRepresentation,

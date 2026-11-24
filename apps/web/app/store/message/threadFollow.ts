@@ -70,7 +70,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
       });
   });
   // Cached per room rather than per session — the key is the roomId, and one response holds the room's follows
-  // And roots. every follow button in the room joins that one read rather than each issuing its own, so a caller handed
+  // And roots. Every follow button in the room joins that one read rather than each issuing its own, so a caller handed
   // Nothing renders an unfollowed star for a thread the user follows. Untagged: nothing a resource write does changes
   // Who follows
   const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(

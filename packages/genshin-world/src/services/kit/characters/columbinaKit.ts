@@ -340,7 +340,7 @@ export const createColumbinaKitBehaviour = ({
       : skillDotHit;
 
   // The DoT's field follows her body, and each tick deals its hit round the field's centre, priced by her as she
-  // Cast it. the field also builds gravity from the team's Lunar reactions, which a Gravity Ripple fires once it
+  // Cast it. The field also builds gravity from the team's Lunar reactions, which a Gravity Ripple fires once it
   // Reaches its maximum
   const castSkillField = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): Gravity => {
     const gravity = createGravity();

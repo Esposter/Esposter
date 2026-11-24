@@ -35,7 +35,7 @@ import { storeToRefs } from "pinia";
 
 // What using the interactable the player is prompted on does: the open world's pickups, chests, claims and landmarks
 // Run their feature's action, and a stove, a forge, a domain, the Abyss, a shop, a fishing point or a talk opens
-// Its screen. the branches are tried in order, so a kind's more specific cases come before its general one
+// Its screen. The branches are tried in order, so a kind's more specific cases come before its general one
 export const useWorldInteractionDispatch = ({
   characterBody,
   checkIsFishingPoint,

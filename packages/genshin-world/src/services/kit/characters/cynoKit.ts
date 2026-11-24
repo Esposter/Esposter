@@ -47,7 +47,7 @@ const ASCENSION_4 = 4;
 const JUDICATION_FIELD_ID = "cyno-judication";
 const ENDSEER_STATUS_ID = "cyno-endseer";
 // The 35% DMG Judication gives Mortuary Rite's own hit, as gcsim (MIT) cyno/asc.go's a1Buff gives it: a press under
-// Endseer sets its status, which the hit that press lands reads. gcsim's comment there names Secret Rite, but its code
+// Endseer sets its status, which the hit that press lands reads. Gcsim's comment there names Secret Rite, but its code
 // Gates the buff on skill B, Mortuary Rite, which the kit follows
 const JUDICATION_DAMAGE_BONUS = 0.35;
 const JUDICATION_DAMAGE_SECONDS = 1;

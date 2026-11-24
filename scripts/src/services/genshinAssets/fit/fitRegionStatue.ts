@@ -32,7 +32,7 @@ import { Vector3 } from "three";
 // Colour its piece's export texture paints, tinted by the export material's colour as the game's G-buffer holds it,
 // Where the vertex stands: the mean of the piece's fitted points nearest it (`createFaceColourReader`), so the stacks'
 // Colour follows the export's surface over the piece rather than one colour a mesh, whose mean is read over faces no
-// View shows. returns the record `<component>/statue` with its report. A component whose layout places no Goddess stone
+// View shows. Returns the record `<component>/statue` with its report. A component whose layout places no Goddess stone
 // Mesh has no statue, so it returns its note and no record
 export const fitRegionStatue = async (component: DerivedAssetComponent): Promise<GameDataBuild> => {
   const { assets } = getComponentDirectory(component);

@@ -221,8 +221,8 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   // Room's sent messages from theirs, since the rows that name them go with the room. A pending message's sender is a
   // Member, since a departure removes that sender's pending messages here, so the member removals reach every one
   // Of them. The room's storage goes only once every index has taken its removal, so a failed one leaves the room whole
-  // And the teardown is asked again. the members learn of the deletion from the membership tombstones deleteRoom sends
-  // Them, so nothing is sent from here. each sender's index publishes its own removal through its invoke, so the
+  // And the teardown is asked again. The members learn of the deletion from the membership tombstones deleteRoom sends
+  // Them, so nothing is sent from here. Each sender's index publishes its own removal through its invoke, so the
   // Readers of those lists are told by it
   async deleteAll(memberIds: string[]): Promise<void> {
     const senderIds = this.db

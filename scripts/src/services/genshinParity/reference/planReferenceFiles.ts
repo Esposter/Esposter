@@ -16,7 +16,7 @@ const toRepositoryPath = (path: string): string => relative(REPOSITORY_ROOT, pat
 // Each fixture variant with a reference has its primary one beside its snapshot.
 // That file is named `Index.reference.webp` or `Index-<variant>.reference.webp`.
 // Every other reference, and every reference whose screen has no fixture, is flat in the references folder under
-// Its id. the fixture rows were read from `componentsDirectory`.
+// Its id. The fixture rows were read from `componentsDirectory`.
 // `committedBeside` holds each committed file beside a snapshot, by its path, to the ids whose manifest rows hold
 // Its bytes. A map edit that makes another id the variant's primary would move that file to a flat path, so it is
 // Refused here, naming the one git mv that makes the move. Nothing is planned when it is refused.

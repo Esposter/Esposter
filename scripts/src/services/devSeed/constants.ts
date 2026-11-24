@@ -12,5 +12,5 @@ export const SEED_DATE: Date = new Date(0);
 // The migrations each database is migrated from before the seed writes, the same folders the app's own migrator runs
 export const CORE_MIGRATIONS_FOLDER: string = join(REPOSITORY_ROOT, DATABASE_MIGRATIONS_DIRECTORY, "core");
 // The persistence root `nuxt dev` gives its local Miniflare, which keeps each D1 database under its `d1` folder
-// By name. writing here is writing the databases the dev server reads, so the seed is in the app once the server starts
+// By name. Writing here is writing the databases the dev server reads, so the seed is in the app once the server starts
 export const DEV_SEED_PERSIST_ROOT: string = join(REPOSITORY_ROOT, "apps", "web", ".wrangler", "state", "v3");

@@ -13,7 +13,7 @@ type EventData<TEvent extends { data: unknown; type: string }, TType extends TEv
 
 // The handlers a scope's frames reach, keyed by the frame's type. A frame is parsed by its scope's schema before any
 // Handler sees it, and a frame that fails the schema is logged and dropped. Handlers are held outside reactive state,
-// Since none is read. the context is what the socket that carried the frame was opened for: a room's socket names its
+// Since none is read. The context is what the socket that carried the frame was opened for: a room's socket names its
 // Room, since a message is named by its room and its integer id, and a frame carries neither
 const createEventHub = <TEvent extends { data: unknown; type: string }, TContext = undefined>(
   schema: z.ZodType<TEvent>,

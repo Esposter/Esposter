@@ -36,7 +36,7 @@ import { computed, ref, shallowRef } from "vue";
 
 // The drops lying in the world and the gathering points, each drawn as a row the character can pick up. A drop or a
 // Point taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is
-// Saved at once. the session starts it with the tables a drop is named from, and stops it as it unmounts
+// Saved at once. The session starts it with the tables a drop is named from, and stops it as it unmounts
 export const useWorldPickupsStore = defineStore("world/pickups", () => {
   const worldArchiveStore = useWorldArchiveStore();
   const worldGroundStore = useWorldGroundStore();

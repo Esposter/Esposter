@@ -24,7 +24,7 @@ import { noop, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 // A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the
-// Batch names. the membership a member held is tombstoned with it, and so is every child the room's cascade would
+// Batch names. The membership a member held is tombstoned with it, and so is every child the room's cascade would
 // Remove: its roles, each member's role links and overrides, its invites, webhooks, the app users its webhooks post as,
 // Its emoji and its bans, so no live child outlives its room and a link, a webhook or a ban of a deleted room refuses.
 // A client holding one drops it on the answer. The member's own tabs are told their membership's tombstone, and the

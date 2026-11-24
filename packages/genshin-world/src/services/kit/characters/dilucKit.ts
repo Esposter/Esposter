@@ -36,7 +36,7 @@ const DAWN_TICK_COUNT = 8;
 const DAWN_EXPLOSION_SECONDS = 1.7;
 
 // Constellation 4, Flowing Flame: 2s after a Searing Onslaught press, the next press in the combo deals 40% more DMG,
-// For 2s. wiki: the Flowing Flame constellation's text, as gcsim v2.47.2 (MIT) diluc/cons.go models it
+// For 2s. Wiki: the Flowing Flame constellation's text, as gcsim v2.47.2 (MIT) diluc/cons.go models it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_DAMAGE_BONUS = 0.4;
@@ -63,7 +63,7 @@ const CONSTELLATION_1_DAMAGE_BONUS = 0.15;
 const CONSTELLATION_1_HEALTH_SHARE = 0.5;
 
 // Searing Ember, from Constellation 2: each damage Diluc takes raises his ATK by 10% and his ATK SPD by 5% for 10
-// Seconds, up to three stacks, and one stack at most every 1.5 seconds. gcsim v2.47.2 (MIT) diluc/cons.go gives the
+// Seconds, up to three stacks, and one stack at most every 1.5 seconds. Gcsim v2.47.2 (MIT) diluc/cons.go gives the
 // Stacks and the 10 seconds, and the 1.5 seconds is the wiki's, gcsim's interval never being set
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
 const CONSTELLATION_2 = 2;

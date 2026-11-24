@@ -51,7 +51,7 @@ export const createUserMessage = async (
   );
   // The sender has read the room through their own message. The read clock is the message's time as the room's object
   // Stamped it, since the room's activity reads the same clock, and a web Worker's earlier time would leave the
-  // Room unread. the message has landed, so a failed read clock costs an unread badge, never the send
+  // Room unread. The message has landed, so a failed read clock costs an unread badge, never the send
   await getResultAsync(() => updateUserToRoom(db, actor.userId, { lastReadAt: newMessage.createdAt, roomId })).match(
     noop,
     console.error,

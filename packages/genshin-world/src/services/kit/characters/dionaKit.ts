@@ -51,7 +51,7 @@ const CONSTELLATION_6_FIELD_ID = "diona-constellation-6-field";
 const CONSTELLATION_6_SOURCE = "diona-constellation-6";
 
 // Drunkards' Farce, as the dump's Diona_PermanentSkill_2 row (promote 4, params -0.1 and 15) gives it: from Ascension
-// 4, enemies Signature Mix reaches lose 10% of their ATK for 15 seconds. gcsim leaves it unbuilt, so each enemy the
+// 4, enemies Signature Mix reaches lose 10% of their ATK for 15 seconds. Gcsim leaves it unbuilt, so each enemy the
 // Burst's initial hit or a tick strikes is the one that entered its AoE
 const DRUNKARDS_FARCE_ASCENSION = 4;
 const DRUNKARDS_FARCE_STATUS: EnemyStatus = {

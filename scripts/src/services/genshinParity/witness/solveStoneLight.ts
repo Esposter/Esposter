@@ -43,7 +43,7 @@ const BEND_STENCIL = [
 // Line up with the reference's, so their shading is read rather than their texels. A bin's colour is its pixels' mean
 // As the screen shows them, taken back through the tone curve once (`groupStoneBins`) rather than pixel by pixel, since
 // The brightest pixels would then set the mean, and not weighed by the curve's slope, which rises far more steeply at
-// Black than in the middle. it is then taken back through the white balance the frame passes through before the curve,
+// Black than in the middle. It is then taken back through the white balance the frame passes through before the curve,
 // So the light solved is the one under it: a balance can take the stone's red under the curve's black, which no light
 // That cannot fall below none reaches on its own. Returns the light, the pixels its bins kept, and the residual over
 // The bins beside their spread about their mean, the share the light leaves unexplained

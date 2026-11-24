@@ -81,7 +81,7 @@ const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
 // Panoramic Permutation Protocol, Ineffa's Ascension 4 passive: Supreme Instruction: Cyclonic Exterminator gives Ineffa
 // And the active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim v2.47.2 (MIT) ineffa/asc.go
-// Gives it. the amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
+// Gives it. The amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
 const ASCENSION_4 = 4;
 const PERMUTATION_ELEMENTAL_MASTERY_SHARE = 0.06;

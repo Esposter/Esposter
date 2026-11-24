@@ -6,7 +6,7 @@ import { z } from "zod";
 // The sanitiser's upstream feed, watched rather than polled: the suite reads GitHub's advisories for the two packages
 // It answers to, and an advisory published after the day the sanitiser recorded fails it. The failure is the watch
 // Firing: port the fix, pin it with a regression test that names the advisory, then move the date to the day the
-// Port landed. only a new advisory fails it. A feed that cannot be read (an outage, the unauthenticated rate limit)
+// Port landed. Only a new advisory fails it. A feed that cannot be read (an outage, the unauthenticated rate limit)
 // Skips the run, so the watch never holds a push hostage to GitHub's availability; the next run with a reachable feed
 // Reads it again
 describe("sanitizerAdvisoryWatch", () => {

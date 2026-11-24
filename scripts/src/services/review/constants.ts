@@ -84,7 +84,7 @@ export const CLAUDE_EXEMPT_VARIABLE = "CLAUDE_CODE_OAUTH_TOKEN";
 // Can carry text a reviewer read from the repository
 export const SECRET_VARIABLE_REGEX: RegExp = /credential|key|password|secret|token/iu;
 // Tools a reviewer may use, all read-only. Print mode denies every tool not listed, so Edit, Write and the rest
-// Are denied. no git grant: a `Bash(git <verb>:*)` grant also allows `--output=<file>`, which git writes to any path,
+// Are denied. No git grant: a `Bash(git <verb>:*)` grant also allows `--output=<file>`, which git writes to any path,
 // And the batch's diff is already in the reviewer's prompt.
 export const REVIEWER_TOOLS: readonly string[] = ["Read", "Grep", "Glob", "Skill"];
 

@@ -74,7 +74,7 @@ export const NOELLE_CHARACTER_ID = 10_000_034;
 // Table's chance, certain from one constellation under Sweeping Time. Breastplate shields her from her DEF for the
 // Table's seconds, exploding as it ends from four constellations, and Sweeping Time adds a share of her DEF to her ATK,
 // Which Constellation 6 raises by half her DEF again, and extends by a second for each enemy she defeats, 10 seconds
-// At most. it converts her attacks to Geo for the table's seconds past its start. Ascension 1's Devotion shield and
+// At most. It converts her attacks to Geo for the table's seconds past its start. Ascension 1's Devotion shield and
 // Ascension 4's skill cooldown cut are built. The charged attack is one cycle of its spin and its final slash
 // The count an attack adds to Ascension 4's, which a fourth one spends on the skill's cooldown
 const countAttack = ({ kitEffectState, party }: KitContext, characterId: number): void => {

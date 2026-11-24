@@ -73,7 +73,7 @@ export const ROSARIA_CHARACTER_ID = 10_000_045;
 // Rosaria's behaviour: Rites of Termination places a field where she casts it, ticking from the lance on, each tick a
 // Summon cast where the lance landed, for the table's seconds, longer from Constellation 2. Ascension 4's Crit Rate
 // Share is built on the cast. From Ascension 1 Ravaging Confession's first hit gives her CRIT Rate, as gcsim has the
-// Hit land from behind. the kit does too, since her teleport, which decides whether a hit lands from behind, is
+// Hit land from behind. The kit does too, since her teleport, which decides whether a hit lands from behind, is
 // Not built. Her Constellations 1, 4 and 6 are built on the kit's own CRIT events, its skill's status and the enemies'
 // Physical RES
 // Ascension 4: the cast's Crit Rate for every other member of the deployed team, from her own Crit Rate as it stands

@@ -48,7 +48,7 @@ const CONSTELLATION_1_MAX_ENERGY = 10;
 // Lisa's behaviour: Violet Arc's press gives each enemy it strikes a stack of Conductive, as her charged attack does
 // From Ascension 1, and its hold strikes each enemy at the multiplier and poise of its stacks, consuming them.
 // Lightning Rose is a summon whose discharges land from her body, and from Ascension 4 each discharge lowers the DEF of
-// The enemy it hits. constellations 1 and 6 are built. Constellation 2 needs a DEF buff for as long as the hold lasts,
+// The enemy it hits. Constellations 1 and 6 are built. Constellation 2 needs a DEF buff for as long as the hold lasts,
 // Which the skill holds do not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning
 // Rose, which the kit does not read measured: gcsim v2.47.2 (MIT) lisa/burst.go lines 60 to 62: the discharges are
 // Queued from the cast, the first at 119 frames and one every 30 frames after it, thirty in all. The record's discharge

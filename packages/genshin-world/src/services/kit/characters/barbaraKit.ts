@@ -98,7 +98,7 @@ export const BARBARA_CHARACTER_ID = 10_000_014;
 // Field, both where she stands and priced by her as she stood then, and Shining Miracle♪, which deals no damage, heals
 // The character on the field at its hitmark. From two constellations, Vitality Burst cuts the skill's cooldown, and the
 // Loop's first tick gives the rest of the team its Hydro DMG Bonus, and from six constellations a fallen member
-// Is revived. constellations 1 and 4 are built: 1's energy every ten seconds runs on a clock her kit arms on each step
+// Is revived. Constellations 1 and 4 are built: 1's energy every ten seconds runs on a clock her kit arms on each step
 // She is in the team, and 4's energy per enemy her charged attack strikes is counted across the one attack
 export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const regenerationHealthShare = readParameter("regenerationHealthShare");

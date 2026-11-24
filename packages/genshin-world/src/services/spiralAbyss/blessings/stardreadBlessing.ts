@@ -15,7 +15,7 @@ export const STARDREAD_NAME_TEXT_HASH = 1867767671;
 // DMG at an opponent's position when a character triggers Superconduct, Cryo Swirl, Frozen or Shatter on it, at most
 // Once every two seconds. The Stellar-Conduct and Stellar Swirl the page also names are not reactions the engine holds,
 // So they do not trigger it, and the shockwave's damage is in no source read, so this decides when the shockwave fires
-// And where, not what it deals. it returns the seconds the next shockwave may fire from, and the position of the one
+// And where, not what it deals. It returns the seconds the next shockwave may fire from, and the position of the one
 // That fired, if one did
 export const applyStardreadShockwave = (
   readySeconds: number,

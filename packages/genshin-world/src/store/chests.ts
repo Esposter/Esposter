@@ -73,7 +73,7 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { gainWorldAdventureExp } = worldAdventureRankStore;
   // The chest a row names is opened once: its wallet is paid, its drops are poured out or bagged, and it is kept
-  // As opened. drops that fall away go straight into the bag, and what the bag has no room for is poured out where the
+  // As opened. Drops that fall away go straight into the bag, and what the bag has no room for is poured out where the
   // Chest stands
   const openChestById = (chestId: string, random: () => number) => {
     const chestPlace = worldChestPlaces.value.find(({ id }) => id === chestId);

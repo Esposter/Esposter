@@ -24,7 +24,7 @@ export const MAP_OVERLAY_MARK_SHARE = 0.00756;
 export const MAP_PIN_CENTRE = { x: 21, y: 23 };
 export const MAP_MARK_RADIUS_PIXELS = 14.5;
 // An area's name and its progress line, each a share of the open map's extent so they are drawn at the view's
-// Own scale. read off the English PC client's map over Galesong Hill (yt-kgW2IgWKukg at 4.6 seconds, 1080p): the name's
+// Own scale. Read off the English PC client's map over Galesong Hill (yt-kgW2IgWKukg at 4.6 seconds, 1080p): the name's
 // Capitals 28.8 pixels high and the line's 16.0, their middles 45.9 apart, which Signika's capitals, 0.706 of its size
 // As the page draws them, take at these sizes at the default view's 4.8 pixels a metre
 export const MAP_LABEL_SHARE = 0.02125;

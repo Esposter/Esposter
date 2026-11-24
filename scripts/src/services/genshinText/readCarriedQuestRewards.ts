@@ -7,7 +7,7 @@ import { QuestIds, ReputationRequestQuestIds } from "genshin-world";
 
 // Each carried quest's reward items by its id, from its world quest's reward rows. A Reputation request's world quest
 // Is its sub quest's main quest, the one its title is read from, so both the quest and the items the builders publish
-// Read it alike. the main and sub quest maps are the caller's, read once for the build
+// Read it alike. The main and sub quest maps are the caller's, read once for the build
 export const readCarriedQuestRewards = (
   mainQuestMap: ReadonlyMap<number, DumpedMainQuest>,
   subQuestMap: ReadonlyMap<number, DumpedSubQuest>,

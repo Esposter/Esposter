@@ -4,7 +4,7 @@ import { SCRIPT_FILES } from "#src/services/oxlint/selectorBan/constants";
 
 // An optimistic entry is a pure change over the keyed view of held state: it reads and writes rows by key, and nothing
 // Else. The view cannot enumerate its rows, so an entry never walks it, and a change over held state never assigns
-// A ref. an entry is found by its shape rather than its file: the function an `entry` option holds, or the arrow a
+// A ref. An entry is found by its shape rather than its file: the function an `entry` option holds, or the arrow a
 // Factory returns straight, annotated `: Entry` or not. Its view is its first parameter, which every entry names
 // `view`.
 const ENTRY_FUNCTION =

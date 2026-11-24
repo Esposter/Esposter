@@ -30,7 +30,7 @@ export const WORLD_JSON_NAME = "world.json";
 export const LOD_INFO_MAP_NAME = "LODFinInfoMap";
 // The community's asset index (the one published per version up to 2.6, radioegor146/gi-asset-indexes, its mapped file
 // For 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the
-// Prefab's name. read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`). It is
+// Prefab's name. Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`). It is
 // Fetched at the one commit that last changed the file, never at the branch, and the SHA-256 of the file at that commit
 // Is the one the derived names are recorded with
 export const ASSET_PATH_INDEX_COMMIT = "3192b1759a6d1f6879cc348ad92e078092c1fb9f";

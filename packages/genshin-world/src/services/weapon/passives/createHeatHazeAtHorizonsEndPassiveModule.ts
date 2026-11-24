@@ -11,7 +11,7 @@ const DREAM_OF_THE_SCARLET_SANDS_ID = "dreamOfTheScarletSands";
 
 // Heat Haze at Horizon's End at its rank: the wielder gains the rank's share of its Elemental Mastery as bonus ATK, and
 // Each Elemental Skill hit it deals adds a stack of the rank's second share for the rank's seconds, up to the rank's
-// Maximum stacks. the rank's third amount is not read here, as the text does not state it
+// Maximum stacks. The rank's third amount is not read here, as the text does not state it
 export const createHeatHazeAtHorizonsEndPassiveModule = (params: number[]): PassiveModule => {
   const elementalMasteryShare = takeOne(params, 0);
   const stackShare = takeOne(params, 1);

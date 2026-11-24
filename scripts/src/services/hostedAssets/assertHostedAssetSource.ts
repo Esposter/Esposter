@@ -4,7 +4,7 @@ import { HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 import { extname } from "node:path";
 
 // Refuses a source file the placement rules keep out of a product's objects, naming the file, before any object
-// Is written. an extension no content type names has no object to serve as a hosted file, so the file is refused rather
+// Is written. An extension no content type names has no object to serve as a hosted file, so the file is refused rather
 // Than served under a guessed type
 export const assertHostedAssetSource = ({ bytes, path }: { bytes: number; path: string }): void => {
   const extension = extname(path);

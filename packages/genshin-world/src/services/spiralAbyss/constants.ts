@@ -4,7 +4,7 @@ import { GameTextKey } from "genshin-text";
 // Clock
 export const ABYSS_SHORT_CLOCK_LAST_FLOOR_INDEX = 4;
 // The seconds a chamber's clock runs on a short-clock floor and on any other, as the wiki's Spiral Abyss page
-// Gives them. provisional until a recording measures a chamber's clock at its clear, on the roadmap's References sought
+// Gives them. Provisional until a recording measures a chamber's clock at its clear, on the roadmap's References sought
 // List
 export const ABYSS_SHORT_CLOCK_SECONDS = 300;
 export const ABYSS_LONG_CLOCK_SECONDS = 600;

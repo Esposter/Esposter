@@ -39,8 +39,8 @@ export const useSunShadow = ({
     const isMoved = isSunOrEnemyMoved || isBodyMoved;
     // Set on the frame the cascades are drawn and cleared on every other: three leaves a shadow's flag standing after
     // It draws whenever its depth map's version has moved meanwhile, so a flag left to the shadow would draw it
-    // Every frame. the cascades' node sets their flag again when its anchor has moved a texel, after this and before
-    // The frame draws. the body casts only into the nearest cascades, the others' slices lying past the reach of its
+    // Every frame. The cascades' node sets their flag again when its anchor has moved a texel, after this and before
+    // The frame draws. The body casts only into the nearest cascades, the others' slices lying past the reach of its
     // Shadow
     light.shadow.needsUpdate = isMoved;
     for (const [index, { shadow }] of cascadedShadowNode.lights.entries())

@@ -6,7 +6,7 @@ import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCounts
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 
 // The bag and queue after `count` units of a processing are queued at `now`, their ingredients taken from the bag
-// At once. the units of one processing run one after another, so a queue that is idle starts at `now` and one still
+// At once. The units of one processing run one after another, so a queue that is idle starts at `now` and one still
 // Running is extended from when it began. Undefined, with nothing spent, where the processing is not known from the
 // Start, the bag holds too few ingredients, or the queue would hold more than its size
 export const startProcessing = (

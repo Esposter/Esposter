@@ -78,7 +78,7 @@ const GOLDEN_CHALICE_ELEMENTAL_MASTERY = 100;
 
 // Measured: gcsim (MIT) nilou/cons.go, Constellation 2 lowers the Hydro RES of an enemy that a member under Golden
 // Chalice's bounty hits with Hydro, and the Dendro RES of an enemy that a Bloom or Lunar-Bloom reaction triggers on, by
-// 35% for 10 seconds. in gcsim the Dendro half is also gated on the Bounty, which the talent's text does not do, so the
+// 35% for 10 seconds. In gcsim the Dendro half is also gated on the Bounty, which the talent's text does not do, so the
 // Text stands https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_RES_REDUCTION = 0.35;

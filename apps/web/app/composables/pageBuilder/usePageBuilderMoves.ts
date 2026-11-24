@@ -201,7 +201,7 @@ export const usePageBuilderMoves = <
     }, console.error);
   };
   // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer
-  // Clears the selection. returns whether the removal landed, so a caller announcing the delete knows a node was
+  // Clears the selection. Returns whether the removal landed, so a caller announcing the delete knows a node was
   // Actually removed
   const deleteNode = (nodeId: string) => {
     const resourceIdValue = toValue(resourceId);

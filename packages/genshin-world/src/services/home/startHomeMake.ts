@@ -6,7 +6,7 @@ import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCounts
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 
 // The bag and progress after one furnishing is started in a free queue at `now`: its materials taken from the bag
-// At once. the queues are one per Trust Rank, each holding one furnishing. Undefined, with nothing spent, where the
+// At once. The queues are one per Trust Rank, each holding one furnishing. Undefined, with nothing spent, where the
 // Blueprint is not open, every queue is busy, or the bag holds too few of its materials
 export const startHomeMake = (
   blueprint: HomeBlueprint,

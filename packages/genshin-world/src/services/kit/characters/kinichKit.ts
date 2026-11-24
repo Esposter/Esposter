@@ -86,7 +86,7 @@ const gainLoopShotPoints = (context: KitContext) => {
 // From the world's seeded random source then, as gcsim draws each as the laser before it fires. Its schedule is counted
 // In frames, as gcsim counts it. His skill's press enters the Nightsoul Blessing with no points, which gain two a
 // Second up to twenty while it lasts, and his Loop Shots replace his normal attacks in it, each gaining three points as
-// It starts. the press also places the blind spot on the enemy it turns to, which Kinich standing in gives four
+// It starts. The press also places the blind spot on the enemy it turns to, which Kinich standing in gives four
 // Points to.
 // Not built: the press inside the blessing, the Scalespiker Cannon, which spends the points and deals the blessing's
 // Hits, and waits on the cooldown bypass and the points gate. Constellation 1 needs Movement SPD after a mid-air swing,

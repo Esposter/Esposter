@@ -33,7 +33,7 @@ const CONSTELLATION_1_ICD_ID = "flins-c1-icd";
 // Lunar-Charged; Northland Spearstorm, the stance's skill, which waits on a stance's own skill cooldown, so the stance
 // Keeps the kit's own skill as Raiden's Musou Isshin does; Cometh the Night's middle hits' Lunar-Charged reaction,
 // Which the builder sources for the first middle hit only; and Constellation 4's ATK is built; its Elemental Mastery
-// Part needs the ATK total, which a passive bonus does not read. his passives, and Constellations 2 and 6, read the
+// Part needs the ATK total, which a passive bonus does not read. His passives, and Constellations 2 and 6, read the
 // Lunar-Charged reaction or the Manifest Flame's own skill Constellation 1's Energy from the team's Lunar-Charged
 // Reactions is built; its shorter Spearstorm cooldown needs Spearstorm, not built
 // Constellation 2 needs the six seconds after Northland Spearstorm and his next Normal Attack's hit, not built

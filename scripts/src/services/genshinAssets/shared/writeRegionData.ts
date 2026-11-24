@@ -4,7 +4,7 @@ import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldDat
 import { checkIsJumpKind, REGION_LANDMARKS_SUFFIX } from "genshin-world";
 
 // Writes a region's data file and the landmarks file beside it, which holds the region's jump landmarks and
-// Nothing else. the world's start reads that file and no region's whole file. Every region file is written here, so the
+// Nothing else. The world's start reads that file and no region's whole file. Every region file is written here, so the
 // Landmarks file cannot drift from the data it is cut from. Returns the data file's path
 export const writeRegionData = async (
   relativePath: string,

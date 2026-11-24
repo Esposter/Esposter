@@ -25,7 +25,7 @@ describe(removeWorktree, () => {
   });
 
   // Git keeps a record of a worktree whose folder has gone until it is pruned, and the removal refuses a
-  // Missing folder. the record must be pruned on that refusal too, or the listing keeps a worktree nothing holds.
+  // Missing folder. The record must be pruned on that refusal too, or the listing keeps a worktree nothing holds.
   test("prunes the record of a worktree whose folder is already gone, before it names the missing folder", () => {
     expect.hasAssertions();
 

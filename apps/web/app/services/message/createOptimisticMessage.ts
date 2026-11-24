@@ -6,7 +6,7 @@ import { NO_ROW_VERSION } from "@esposter/db-schema";
 // The optimistic bubble a send renders before the server answers. It holds what the server stores under the timestamps.
 // This client gives it until the answer replaces them. The room has not assigned it an id yet.
 // So it takes a negative one, which no room-assigned id can be, counted down so two sends in the same tick never
-// Share it. its loading flag is the send's to add, on the bubble it renders
+// Share it. Its loading flag is the send's to add, on the bubble it renders
 let optimisticMessageId = 0;
 export const createOptimisticMessage = (input: CreateMessageInput, userId: string): ClientMessage => {
   const now = new Date();

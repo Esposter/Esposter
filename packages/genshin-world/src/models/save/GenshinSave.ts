@@ -112,7 +112,7 @@ export const genshinSaveSchema = z
     // (empty before the day's first investigation)
     investigationDay: investigationDaySaveSchema,
     // The last teleport into each area, which holds a boss down until a teleport lands outside its area after
-    // Its defeat. absent before the player's first teleport
+    // Its defeat. Absent before the player's first teleport
     lastTeleportAts: lastTeleportsSaveSchema.optional(),
     // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves
     // On

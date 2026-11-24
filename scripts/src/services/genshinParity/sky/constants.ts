@@ -20,7 +20,7 @@ export const COMPONENT_REGEX: RegExp = /^(?<name>.+)\.(?<index>\d+)$/u;
 export const SAMPLE_STRIDE = 4;
 
 // The depth bands a haze's pixels are binned by, the edges in metres from 0 up to 640, each band running to the
-// Next edge. the fog solve and the stone light both bin their pixels by them, each closing the table with its own open
+// Next edge. The fog solve and the stone light both bin their pixels by them, each closing the table with its own open
 // Top band
 export const DEPTH_BANDS: readonly number[] = [0, 10, 20, 40, 80, 160, 320, 640];
 // The open top band each solve closes DEPTH_BANDS with: the fog's ends at 1280 m, so its pixels past that stand in no

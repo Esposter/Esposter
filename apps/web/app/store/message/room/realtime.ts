@@ -428,7 +428,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     await meeting?.leave();
   };
   // A revoke that narrows the connection replaces it, and its user joins the meeting again with the token it
-  // Was handed. the devices carry across, the microphone only where the new preset still allows it, and the camera
+  // Was handed. The devices carry across, the microphone only where the new preset still allows it, and the camera
   // Comes back on if it was on. A screen share ends with the connection it was shared on, since the browser's picker
   // Has to be answered afresh. Each rejoin waits for the one before it, since each replaces the meeting the next one
   // Reads: a second revoke's token joins once the first meeting is left, rather than being dropped while that meeting

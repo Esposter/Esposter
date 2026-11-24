@@ -8,7 +8,7 @@ import type { Resident, ResidentSpot } from "genshin-world";
 // The day's from the night's. Its name and
 // The talk F begins with it are the game's, and an NPC with no name or no talk is left out, since the schema takes
 // Neither empty. An NPC a crafting bench stands for is left out first, since the bench is its interaction, not
-// A person. an NPC no catalogued area is in reach of is left out too, rather than filed under a guess
+// A person. An NPC no catalogued area is in reach of is left out too, rather than filed under a guess
 export const joinResidents = (
   placements: readonly ResidentPlacement[],
   nameTextIdMap: ReadonlyMap<number, string>,

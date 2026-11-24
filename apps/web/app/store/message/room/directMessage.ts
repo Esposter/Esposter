@@ -88,7 +88,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
   // A conversation the reader is on leaves the list when its membership is removed or hidden, by whichever write or
-  // Event took it off. the reader is then taken to the first conversation left, or to the messages index when none is.
+  // Event took it off. The reader is then taken to the first conversation left, or to the messages index when none is.
   watch(directMessages, async (nextDirectMessages, previousDirectMessages) => {
     const roomId = currentDirectMessageId.value;
     const wasListed = previousDirectMessages.some(({ id }) => id === roomId);
@@ -107,7 +107,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const creatingFriendIds = ref(new Set<PublicUser["id"]>());
   const invitingDirectMessageIds = ref(new Set<RoomInMessage["id"]>());
   // The room the server answers with is drawn once it arrives, with the viewer's membership of it, which the
-  // List needs. its id is returned, or nothing when the server refused
+  // List needs. Its id is returned, or nothing when the server refused
   const createDirectMessageRoom = async (userIds: string[]) => {
     let createdRoomId = "";
     await writeAwaited(
@@ -130,7 +130,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     return true;
   };
   // The link goes into a conversation the reader is already in, so unlike inviteFriend there is no direct message to
-  // Create first. the message is the reader's own.
+  // Create first. The message is the reader's own.
   const inviteDirectMessage = async (roomId: string, inviteLink: string) => {
     invitingDirectMessageIds.value.add(roomId);
     await getResultAsync(() =>
@@ -139,7 +139,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     invitingDirectMessageIds.value.delete(roomId);
   };
   // The invite a friend is sent creates the direct message where none exists, and the reader stays on the screen they
-  // Are on. so unlike createDirectMessage this does not navigate, and the message is the reader's own.
+  // Are on. So unlike createDirectMessage this does not navigate, and the message is the reader's own.
   const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
     creatingFriendIds.value.add(friendId);
     const roomId = await createDirectMessageRoom([friendId]);

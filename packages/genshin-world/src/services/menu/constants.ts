@@ -104,7 +104,7 @@ export const VOLUME_LEVEL_MAXIMUM = 10;
 // The track each volume slider moves across, from its first level to its last
 export const VOLUME_RANGE: SettingRange = { max: VOLUME_LEVEL_MAXIMUM, min: VOLUME_LEVEL_MINIMUM, step: 1 };
 // The camera's ranges on the wiki's Settings page: the sensitivities from 1 to 5 and the default distance from 4.5 to
-// 6.0. the distance's step is provisional until a recording shows the slider's notches
+// 6.0. The distance's step is provisional until a recording shows the slider's notches
 export const CAMERA_SENSITIVITY_RANGE: SettingRange = { max: 5, min: 1, step: 1 };
 export const CAMERA_DISTANCE_RANGE: SettingRange = { max: 6, min: 4.5, step: 0.1 };
 // The key the settings are kept under on this device, as the game keeps its settings per device
