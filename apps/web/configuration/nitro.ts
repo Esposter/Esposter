@@ -28,8 +28,6 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
   // Environment alone: wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is
   // The realtime Worker's Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
   cloudflare: {
-    deployConfig: true,
-    nodeCompat: true,
     wrangler: { compatibility_date: compatibilityDate, ...getEnvironmentWrangler(getCloudflareEnvironment()) },
   },
   // The dev runner loads `miniflare` by name from the app root, where nothing resolves it, so it is pointed at the
