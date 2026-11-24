@@ -6,6 +6,7 @@ import { createMessage } from "#src/services/message/message/createMessage.test"
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useForwardStore } from "#src/store/message/input/forward";
 import { setRouteId } from "#src/util/router/setRouteId.test";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -48,7 +49,8 @@ describe("messageModelMessageForwardSendButton", () => {
     clickSend(reopenedDialog);
     await flushPromises();
     answerForward();
-    await flushPromises();
+    // The answered forward opens its destination, which must finish before the environment is torn down
+    await waitForSynchronizedFunctions();
 
     expect(sendCount).toBe(1);
   });
