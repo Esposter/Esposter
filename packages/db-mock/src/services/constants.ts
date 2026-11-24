@@ -22,8 +22,10 @@ export const TEMPLATE_ROOT: string = join(tmpdir(), "db-mock-templates");
 // Process id back from the name and asks whether it still runs. A template is named by its key and no process
 export const BUILD_PREFIX = "build";
 export const COPY_PREFIX = "copy";
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
 export const PROCESS_ENTRY_REGEX: RegExp = new RegExp(`^(?:${BUILD_PREFIX}|${COPY_PREFIX})-(?<processId>\\d+)-`, "u");
 // A template is named by its key, the hex SHA-256 that getTemplateKey computes
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
 export const TEMPLATE_KEY_REGEX: RegExp = /^[\da-f]{64}$/u;
 // A template no run has read for this long is reaped. A worktree on another lockfile may still read its template, so
 // The age is read from the template's last use, not from its key, which a lockfile change makes a new one
