@@ -1,8 +1,8 @@
 import { ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
-// The quick selects an equipment tab's destroy mode offers, each rarity with the label the game's destroy page gives
-// It: It lists a weapon's three rarities and an artifact's four
+// The quick selects an equipment tab's destroy mode offers, each rarity with its label on the game's destroy page.
+// It lists a weapon's three rarities and an artifact's four.
 export const DestroyQuickSelectGameTextKeyMap: Partial<
   Record<ItemCategory, { gameTextKey: GameTextKey; rarity: number }[]>
 > = {

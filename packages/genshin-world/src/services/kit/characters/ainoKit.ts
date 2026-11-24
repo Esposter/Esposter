@@ -22,12 +22,13 @@ import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
-// Measured: gcsim (MIT) aino/burst.go, Cool Your Jets Ducky's Water Balls fall for 14.2 seconds from the first, each on
-// A Random enemy within 10 metres of the body. Ascension 1's faster and wider balls at Ascendant Gleam are read as the
-// Burst Is cast https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/aino
+// Measured: gcsim (MIT) aino/burst.go, Cool Your Jets Ducky's Water Balls fall for 14.2 seconds from the first.
+// Each lands on a random enemy within 10 metres of the body.
+// Ascension 1's faster and wider balls at Ascendant Gleam are read as the burst is cast.
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/aino`
 const ASCENSION_4 = 4;
-// Ascension 1 at Ascendant Gleam, as gcsim's aino/asc.go gives the balls: one every 0.7 seconds, each landing with a
-// Radius Of 4 metres where the base ball's is 1
+// Ascension 1 at Ascendant Gleam, as gcsim's aino/asc.go gives the balls: one every 0.7 seconds.
+// Each lands with a radius of 4 metres, where the base ball's is 1.
 const ASCENSION_1 = 1;
 const ASCENSION_1_WATER_BALL_INTERVAL_SECONDS = 0.7;
 const ASCENSION_1_WATER_BALL_RADIUS = 4;
@@ -72,20 +73,25 @@ const CONSTELLATION_6_REACTION_TYPES = new Set<ReactionType>([
 
 export const AINO_CHARACTER_ID = 10_000_121;
 
-// Aino's behaviour: Cool Your Jets Ducky casts a field following the body, which drops a Water Ball every interval from
-// Its first tick to its last, and Ascension 4 adds half her Elemental Mastery to each ball's damage. Ascension 1 at
-// Ascendant Gleam drops the balls faster and wider, read as the burst is cast. Constellation 4 gives her 10 energy on
-// Each Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Constellation 1 gives her, and the
-// Member on the field Through a swap, 80 Elemental Mastery for fifteen seconds after her skill or burst. Constellation
-// 2 queues a water ball on each Enemy her active teammate hits while she is off the field and the burst's zone stands,
-// Once every five seconds. The ball Strikes the enemy it is queued on alone, where gcsim's circle of 1.5 metres also
-// Reaches the enemies beside it. Constellation 6 raises the reactions the active member makes for fifteen seconds after
-// The burst. Musecatcher's hold is not built, as gcsim Does not implement it either
+// Aino's behaviour: Cool Your Jets Ducky casts a field following the body.
+// It drops a Water Ball every interval, from its first tick to its last.
+// Ascension 4 adds half her Elemental Mastery to each ball's damage.
+// Ascension 1 at Ascendant Gleam drops the balls faster and wider, read as the burst is cast.
+// Constellation 4 gives her 10 energy on each Skill hit on an enemy, once every ten seconds, as gcsim does.
+// Constellation 1 gives her, and the member on the field through a swap, 80 Elemental Mastery.
+// That lasts fifteen seconds after her skill or burst.
+// Constellation 2 queues a water ball on each enemy her active teammate hits.
+// That happens while she is off the field and the burst's zone stands, once every five seconds.
+// The ball strikes the enemy it is queued on alone.
+// The gcsim circle of 1.5 metres, by contrast, also reaches the enemies beside it.
+// Constellation 6 raises the reactions the active member makes for fifteen seconds after the burst.
+// Musecatcher's hold is not built, as gcsim does not implement it either.
 export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");
   const burstFirstTickSeconds = readSeconds("burstStart");
-  // Gcsim queues each ball at its hitmark from the burst's start, a tick at a time, and a summon's hits count from its
-  // Own Spawn, so a ball lands its hitmark less the first tick's seconds past the tick that drops it
+  // Gcsim queues each ball at its hitmark from the burst's start, a tick at a time.
+  // A summon's hits count from its own spawn.
+  // So a ball lands its hitmark less the first tick's seconds past the tick that drops it.
   const waterBallHit = readHit("waterBall", {
     additiveBaseDamageBonus: (combatant) =>
       combatant.ascension >= ASCENSION_4 ? elementalMasteryMultiplier(combatant, masteryShare) : 0,
@@ -102,8 +108,8 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
     internalCooldownTag: InternalCooldownTag.AinoBurstMoonHit,
   };
   const { internalCooldownTag: _internalCooldownTag, ...waterBallWithoutCooldown } = waterBall;
-  // Constellation 2's ball is the water ball, with the Attack and Elemental Mastery shares of its own in place of the
-  // Burst's Its ball has no internal cooldown, as gcsim's cons.go gives it
+  // Constellation 2's ball is the water ball, with the Attack and Elemental Mastery shares of its own.
+  // It replaces the burst's shares and has no internal cooldown, as gcsim's cons.go gives it.
   const constellation2WaterBall: KitHit = {
     ...waterBallWithoutCooldown,
     additiveBaseDamageBonus: (combatant) =>

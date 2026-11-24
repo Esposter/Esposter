@@ -32,8 +32,9 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { spendDew } from "#src/services/party/spendDew";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
-// Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding
-// The RES below for 10 seconds Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
+// Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds.
+// Each of its ticks sheds the RES below for 10 seconds.
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma`
 const SANCTUARY_SECONDS = 15;
 const SHRED_SECONDS = 10;
 const SHRED_STATUS_ID = "lauma-skill-shred";
@@ -55,9 +56,10 @@ const ASCENSION_4 = 4;
 const CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.0004;
 const CLEANSING_MAXIMUM_DAMAGE_BONUS = 0.32;
 
-// Measured: gcsim (MIT) lauma/burst.go, her burst gives the party 18 Pale Hymn 96 frames after it starts, and the burst
-// And Each Pale Hymn last 15 seconds. Each Bloom or Lunar-Bloom reaction then spends one, Moon Song's before the
-// Burst's Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
+// Measured: gcsim (MIT) lauma/burst.go, her burst gives the party 18 Pale Hymn 96 frames after it starts.
+// The burst and each Pale Hymn last 15 seconds.
+// Each Bloom or Lunar-Bloom reaction then spends one, Moon Song's before the burst's.
+// `https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma`
 const BURST_SECONDS = 15;
 const PALE_HYMN_SECONDS = 15;
 const PALE_HYMN_BURST_STACKS = 18;
@@ -150,8 +152,8 @@ const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: 
   return isLunar ? C2_LUNAR_BLOOM_INCREASE : C2_BLOOM_INCREASE;
 };
 
-// Constellation 4 restores 5 energy to Lauma as a Frostgrove Sanctuary tick strikes an enemy, once every 5 seconds, as
-// Gcsim `v2.47.2` (MIT) lauma/skill.go's tick callback and lauma/cons.go give it
+// Constellation 4 restores 5 energy to Lauma as a Frostgrove Sanctuary tick strikes an enemy, once every 5 seconds.
+// The gcsim `v2.47.2` (MIT) lauma/skill.go tick callback and lauma/cons.go give it that way.
 // `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_COOLDOWN_ID = "lauma-constellation-4-cooldown";

@@ -38,8 +38,8 @@ const castShield = (action: KitAction, combatant = createDionaCombatant()): KitS
   return shield;
 };
 
-// The status each of Signature Mix's hits, its initial hit and its ticks, gives an enemy it strikes, struck by Diona at
-// The Ascension
+// The status each of Signature Mix's hits, its initial hit and its ticks, gives an enemy it strikes.
+// This reads those statuses for an enemy struck by Diona at the ascension given.
 const readSignatureMixEnemyStatuses = (ascension: number) => {
   const combatant: Combatant = { ...createDionaCombatant(), ascension };
   const context = createKitTestContext(combatant);

@@ -45,10 +45,11 @@ const TECTONIC_TIDE_SOURCE = "albedo-tectonic-tide";
 // Constellation 1, Flower of Eden, from the wiki: each Transient Blossom of the Solar Isotoma regenerates 1.2 Energy
 // For Albedo, and his Solar Isotoma raises his DEF by 50% for 20 seconds
 const ALBEDO_CONSTELLATION_1 = 1;
-// Constellation 4: the active party member within the standing Solar Isotoma's field has its Plunging Attack DMG raised
-// 30% For a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it. gcsim checks the field every 0.3 seconds from the
-// Skill's Hitmark, when the Solar Isotoma is made, and a status here counts those 0.3 seconds, so a check runs as it
-// Runs out. A Check that finds the field standing gives the active member the bonus for a second
+// Constellation 4: the active party member within the standing Solar Isotoma's field gets 30% more Plunging Attack DMG.
+// It lasts a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it.
+// The gcsim checks the field every 0.3 seconds from the skill's hitmark, when the Solar Isotoma is made.
+// A status here counts those 0.3 seconds, so a check runs as it runs out.
+// A check that finds the field standing gives the active member the bonus.
 // `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go`
 const ALBEDO_CONSTELLATION_4 = 4;
 const CONSTELLATION_4_PLUNGING_ATTACK_BONUS = 0.3;
@@ -100,8 +101,8 @@ const withFatalReckoningBonus = (hit: KitHit, bonus: number): KitHit => ({
   additiveBaseDamageBonus: (combatant) => (hit.additiveBaseDamageBonus?.(combatant) ?? 0) + bonus,
 });
 
-// Tectonic Tide consumes every stack of Fatal Reckoning, and returns the flat damage they add to each Fatal Blossom,
-// Priced By Albedo's DEF with the buffs on her
+// Tectonic Tide consumes every stack of Fatal Reckoning.
+// It returns the flat damage they add to each Fatal Blossom, priced by Albedo's DEF with the buffs on her.
 const consumeFatalReckoningBonus = (context: KitContext): number => {
   const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
   const { characterId } = combatant;
@@ -117,17 +118,20 @@ const consumeFatalReckoningBonus = (context: KitContext): number => {
   return stacks * FATAL_RECKONING_DEFENSE_SHARE * defense;
 };
 
-// Albedo's behaviour: Abiogenesis: Solar Isotoma casts the Solar Isotoma 3 metres ahead as the press starts, a summon
-// That Spawns as its hit lands and ends the one standing. A hit on an enemy inside the standing field sets off a
-// Transient Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite
-// Of Progeniture: Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma, and from Ascension 4 raises the
-// Elemental Mastery of The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its
-// HP. Constellation 1's energy And Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic
-// Tide adds the stacks as flat Damage to each Fatal Blossom, though not to its own first hit, which the record plays
-// And the kit cannot change per cast. Constellation 4's plunging attack bonus reaches the active member within the
-// Solar Isotoma's field, and Constellation 6's DMG bonus does too, read off the team's Crystallize shield and the
-// Moondrifts the field holds. The Silver Isotoma clause an Earlier note named for Constellation 4 is not built: gcsim
-// `v2.47.2` does not model it, and the wiki text was not checked
+// Albedo's behaviour: Abiogenesis: Solar Isotoma casts the Solar Isotoma 3 metres ahead as the press starts.
+// It is a summon that spawns as its hit lands, and ends the one standing.
+// A hit on an enemy inside the standing field sets off a Transient Blossom at that enemy.
+// That blossom is priced by the DEF of the Albedo who cast the field, once every 2 seconds.
+// Rite of Progeniture: Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma.
+// From Ascension 4 it raises the Elemental Mastery of the deployed team.
+// From Ascension 1 a Transient Blossom deals more to an enemy under half its HP.
+// Constellation 1's energy and Constellation 2's Fatal Reckoning stacks follow each Transient Blossom.
+// Tectonic Tide adds the stacks as flat damage to each Fatal Blossom, though not to its own first hit.
+// The record plays that first hit, and the kit cannot change it per cast.
+// Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field.
+// Constellation 6's DMG bonus does too, read off the team's Crystallize shield and the Moondrifts the field holds.
+// The Silver Isotoma clause an earlier note named for Constellation 4 is not built.
+// The gcsim `v2.47.2` does not model it, and the wiki text was not checked.
 export const createAlbedoKitBehaviour = ({
   readHit,
   readHits,

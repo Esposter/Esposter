@@ -51,8 +51,8 @@ const ASCENSION_4_MAX_HEALTH_SHARE = 0.015;
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_SHIELD_ABSORPTION_BONUS = 0.2;
 const CONSTELLATION_2 = 2;
-// Constellation 6: Shooting Stars and Starlight Slugs deal 40% more DMG, and the Night Stars' tick comes 20% sooner, as
-// Gcsim `v2.47.2` (MIT) layla/cons.go and shield.go give them
+// Constellation 6: Shooting Stars and Starlight Slugs deal 40% more DMG, and the Night Stars' tick comes 20% sooner.
+// The gcsim `v2.47.2` (MIT) layla/cons.go and shield.go give them that way.
 // `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/layla/cons.go`
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.4;
@@ -66,8 +66,9 @@ const CONSTELLATION_4_MAX_HEALTH_SHARE = 0.05;
 const CONSTELLATION_4_SECONDS = 3;
 const CONSTELLATION_4_REMOVAL_SECONDS = 0.05;
 
-// Gcsim's shield.go: four Night Stars fire the Shooting Stars, and a shield's tick adds one each 1.5 seconds while it
-// Lasts. A skill adds two and a burst strike one, each on its own internal cooldown
+// In gcsim's shield.go, four Night Stars fire the Shooting Stars.
+// A shield's tick adds one each 1.5 seconds while it lasts.
+// A skill adds two, and a burst strike one, each on its own internal cooldown.
 const NIGHT_STARS_MAXIMUM = 4;
 const NIGHT_STAR_TICK_SECONDS = 1.5;
 const SKILL_NIGHT_STAR_ICD = { id: "layla-night-star-skill-icd", seconds: 0.3 };

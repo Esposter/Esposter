@@ -87,9 +87,9 @@ const CONSTELLATION_4_STACK_POINTS = 4;
 const CONSTELLATION_4_STACKS = 2;
 const CONSTELLATION_4_STACKS_ID = "iansan-constellation-4-stacks";
 
-// Constellation 6's Kinetic Energy Scale and Extreme Force, as gcsim (MIT) iansan/cons.go c6BurstBonusDur and
-// `c6OnOverflow` Give: the burst's restore runs 3 seconds longer, and points that overflow her maximum give the active
-// Character 25% DMG Bonus for 3 seconds
+// Constellation 6's Kinetic Energy Scale and Extreme Force, as gcsim (MIT) iansan/cons.go gives them.
+// The burst's restore runs 3 seconds longer, and points that overflow her maximum give the active character
+// 25% DMG Bonus for 3 seconds
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_BURST_BONUS_SECONDS = 3;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.25;
@@ -204,17 +204,23 @@ const addExtremeForce = (kitEffectState: KitEffectState, fieldCharacterId: numbe
     });
 };
 
-// Iansan's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain six a second for the
-// 16 Seconds it lasts. gcsim ends the blessing when the points fall to 0.2, and the kit ends it when they reach none, a
-// Gap of A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and her restore's first tick
-// Falls A second after the press, for 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
-// Burst's Party ATK bonus and its conversion of the points into ATK. Her restore's share of the field character's
-// Movement Is logged on the Kinetic Energy Scale her burst starts, and its points heal Warming Up too. Her strikes and
-// Plunges are Her record's alone Constellation 1's energy from each 6 Nightsoul points consumed is built Constellation
-// 2's party ATK and the Precise Movement on the burst are built, from Ascension 1 Constellation 4's Surging Force and
-// The overflow it reads are built Constellation 6's longer restore and Extreme Force on overflow are built Ascension
-// 1's Precise Movement is built on the Stormflight's strikes, and gives its points on the burst's restore Ascension 4's
-// Warming Up is built: a nearby Nightsoul burst gives it, and the restore's points heal the active character on it
+// Iansan's behaviour: her skill's press enters the Nightsoul Blessing with its points.
+// They drain six a second for the 16 seconds it lasts.
+// In gcsim the blessing ends when the points fall to 0.2, but the kit ends it when they reach none.
+// That is a gap of a thirtieth of a second.
+// Her burst's 15 points land 40 frames after the press, and her restore's first tick falls a second after the press.
+// That tick runs for 12 seconds while the blessing lasts, as gcsim's restore task does.
+// Not built: the burst's Party ATK bonus and its conversion of the points into ATK.
+// Her restore's share of the field character's movement is logged on the Kinetic Energy Scale her burst starts.
+// Its points heal Warming Up too.
+// Her strikes and plunges are her record's alone.
+// Constellation 1's energy from each 6 Nightsoul points consumed is built.
+// Constellation 2's party ATK and the Precise Movement on the burst are built, from Ascension 1.
+// Constellation 4's Surging Force and the overflow it reads are built.
+// Constellation 6's longer restore and Extreme Force on overflow are built.
+// Ascension 1's Precise Movement is built on the Stormflight's strikes, and gives its points on the burst's restore.
+// Ascension 4's Warming Up is built: a nearby Nightsoul burst gives it.
+// The restore's points heal the active character on it.
 export const createIansanKitBehaviour = (): KitBehaviour => ({
   burst: {
     onStart: ({ activeCombatant, kitEffectState, party }) => {

@@ -1,8 +1,9 @@
 import { InazumaBuildingRoof } from "#src/models/inazuma/InazumaBuildingRoof";
 import { BufferGeometry, Triangle, Vector3 } from "three";
 
-// A roof as the convex solid its planes close, its base included, so a camera under the eaves sees a ceiling rather
-// Than Through the tiles. The ridge runs along the longer side, and every face is wound to face out of the solid,
+// A roof as the convex solid its planes close, its base included.
+// So a camera under the eaves sees a ceiling rather than through the tiles.
+// The ridge runs along the longer side, and every face is wound to face out of the solid,
 // `flat-shaded`
 export const createInazumaRoofGeometry = (
   roof: InazumaBuildingRoof,

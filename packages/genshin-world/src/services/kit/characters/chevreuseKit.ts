@@ -17,8 +17,9 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 
 export const CHEVREUSE_CHARACTER_ID = 10_000_090;
 
-// Constellation 4: Ring of Bursting Grenades lets the next two holds within six seconds start with no cooldown, as
-// Gcsim (MIT) chevreuse/burst.go and skill.go give it, the status's two shots spent by each hold it lets through
+// Constellation 4: Ring of Bursting Grenades lets the next two holds within six seconds start with no cooldown.
+// Each hold it lets through spends one of the status's two shots.
+// The gcsim (MIT) chevreuse/burst.go and skill.go give it that way.
 // `https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chevreuse/skill.go`
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_SECONDS = 6;

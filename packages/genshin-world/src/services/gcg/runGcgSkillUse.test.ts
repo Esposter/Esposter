@@ -40,8 +40,8 @@ describe(runGcgSkillUse, () => {
   // Diluc at 10 HP, less the skill's 3 Pyro DMG and no more: the Pyronado it creates hears only the skills after it
   const DILUC_HP_AFTER_PYRONADO = 7;
 
-  // A duel of the Oceanid deck against the tutorial deck, both sides prepared and rolled, the first side holding the
-  // Given dice
+  // A duel of the Oceanid deck against the tutorial deck, both sides prepared and rolled.
+  // The first side holds the given dice.
   const openDuel = async (dice: Element[]): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
     const duel = createGcgDuel(

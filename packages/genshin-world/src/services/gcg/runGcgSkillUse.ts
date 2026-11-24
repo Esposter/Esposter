@@ -11,11 +11,14 @@ import { runGcgSkillEffectAndOnUse } from "#src/services/gcg/effects/runGcgSkill
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
-// Runs a skill's effect for its active character, without paying for it: a shared damage effect, or the character's own
-// Script. Then the skill is recorded as used this round, the field's on-use hooks run, the cards on either side's field
-// Hear The use through their any-side hooks, and the active character's passives hear it. Returns false, with nothing
-// Run, when The skill's effect is one no module covers. The cards that hear the skill are those on each field when it
-// Is used, so a Card the skill creates hears the next skill
+// Runs a skill's effect for its active character, without paying for it.
+// The effect is a shared damage effect, or the character's own script.
+// Then the skill is recorded as used this round, and the field's on-use hooks run.
+// The cards on either side's field hear the use through their any-side hooks.
+// The active character's passives hear it too.
+// Returns false, with nothing run, when the skill's effect is one no module covers.
+// The cards that hear the skill are those on each field when it is used.
+// A card the skill creates hears the next skill.
 export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): boolean => {
   const side = takeOne(baseContext.duel.sides, baseContext.sideIndex);
   const user = side.characters.at(side.activeIndex);

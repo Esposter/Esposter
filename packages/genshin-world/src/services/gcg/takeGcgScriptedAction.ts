@@ -8,10 +8,11 @@ import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 
-// The greedy policy a side takes its turn by: it plays the first hand card it can, else uses the first skill it can,
-// Else Declares the round's end. A try is refused without changing the duel, so the first accepted one is the one the
-// Duel Keeps, and only an unpayable one is tried again with other dice, as no other refusal turns on the dice. The
-// Skills are Tried burst first, then the elemental skill, then the normal attack, and a Technique last
+// The greedy policy a side takes its turn by.
+// It plays the first hand card it can, else uses the first skill it can, else declares the round's end.
+// A try is refused without changing the duel, so the first accepted one is the one the duel keeps.
+// Only an unpayable one is tried again with other dice, as no other refusal turns on the dice.
+// The skills are tried burst first, then the elemental skill, then the normal attack, and a technique last.
 const SKILL_KIND_ORDER = ["ElementalBurst", "ElementalSkill", "NormalAttack", "Technique"];
 
 export const takeGcgScriptedAction = (duel: GcgDuel, sideIndex: number): GcgActionResult => {
