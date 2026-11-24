@@ -1,7 +1,8 @@
 import type { Condition } from "#src/models/Condition";
 
-// A panel belongs to one region and is shown under its condition Its content is the one its table names for the
-// Selection kind, and the wildcard content for any kind the table has no entry for
+// A panel belongs to one region and is shown under its condition.
+// Its content is the one its table names for the selection kind.
+// The wildcard content is used for any kind the table has no entry for.
 export interface Panel {
   condition: Condition;
   id: string;

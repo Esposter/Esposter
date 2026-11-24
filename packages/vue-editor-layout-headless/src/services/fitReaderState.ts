@@ -4,9 +4,9 @@ import type { ReaderState } from "#src/models/ReaderState";
 import { clampRegionSize } from "#src/services/clampRegionSize";
 import { fitRegionMap } from "#src/services/fitRegionMap";
 
-// A stored state fitted to a layout. Every entry naming a region or panel the layout no longer has is dropped, every
-// Stored size is held Between its region's limits, and a stored active panel is kept only while it is a panel of its
-// Own region
+// A stored state fitted to a layout. Every entry naming a region or panel the layout no longer has is dropped.
+// Every stored size is held between its region's limits.
+// A stored active panel is kept only while it is a panel of its own region.
 export const fitReaderState = (layout: Layout, readerState: ReaderState): ReaderState => {
   const regionActivePanelIdMap = fitRegionMap(layout, readerState.regionActivePanelIdMap, (region, panelId) =>
     layout.panels.some((panel) => panel.id === panelId && panel.regionId === region.id) ? panelId : undefined,
