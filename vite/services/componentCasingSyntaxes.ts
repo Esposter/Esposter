@@ -4,13 +4,14 @@ import type { SelectorBan } from "#scripts/models/oxlint/selectorBan/SelectorBan
 import { foreignTagNames } from "#vite/services/foreignTagNames";
 import { htmlTagNames } from "#vite/services/htmlTagNames";
 
-// The PascalCase check of `vue/component-name-in-template-casing`, with the exceptions its options name. The rule reads
-// A Tag only up to its first dot, so `Select.Root` is PascalCase and `my-thing.Root` is not. A tag is a component when
-// It is No HTML, SVG or MathML tag name, no Vue built-in (`component`), no `primitive` (TresJS) and no `v-*` (the
-// Vuetify ban Reports that one). A tag fails PascalCase when it starts with a lowercase letter, or has a dash, an
-// Underscore or a Colon before its first dot. vize's regex has no lookahead, so those two are written as alternatives.
-// The name decides, Not the root it sits under, since a child component can hold an svg element whose `<svg>` is in its
-// Parent
+// The PascalCase check of `vue/component-name-in-template-casing`, with the exceptions its options name.
+// The rule reads a tag only up to its first dot, so `Select.Root` is PascalCase and `my-thing.Root` is not.
+// A tag is a component unless it is an HTML, SVG or MathML tag name.
+// Nor is it a Vue built-in (`component`) or `primitive` (TresJS).
+// A `v-*` tag is excluded, since the Vuetify ban reports that one.
+// A tag fails PascalCase when it starts lowercase, or has a dash, underscore or colon before its first dot.
+// Those two are written as alternatives, since vize's regex has no lookahead.
+// The name decides, not the root it sits under, since a child component can hold an `<svg>` element of its own.
 const NOT_PASCAL_CASE_REGEX = "/^(?:[^A-Z]|[^.]*[-_:])/";
 const KNOWN_TAG_NAME_REGEX = `/^(?:${[...htmlTagNames, ...foreignTagNames].join("|")})$/`;
 const MESSAGE =

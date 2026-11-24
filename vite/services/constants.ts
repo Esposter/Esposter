@@ -8,22 +8,24 @@ export const ROOT_URL: URL = new URL("../../", import.meta.url);
 
 export const PACKAGES_DIRECTORY = "packages";
 
-// The state pnpm writes on every install and every run, which no build's result depends on: the dependencies Themselves
-// Are traced file by file. Each run writes a `_tmp_<pid>_<hash>` temporary into the workspace root, beside The package
-// It runs in, and renames or removes it before the run ends, so the pattern names the root and not a package
+// The state pnpm writes on every install and every run, which no build's result depends on.
+// The dependencies themselves are traced file by file.
+// Each run writes a `_tmp_<pid>_<hash>` temporary into the workspace root, beside the package it runs in.
+// It renames or removes that temporary before the run ends, so the pattern names the root and not a package.
 export const PNPM_STATE_PATTERNS: CachePattern[] = [
   "!**/node_modules/.pnpm-task-run-state-v1/**",
   "!node_modules/.pnpm-workspace-state-v1.json",
   { base: CacheBase.Workspace, pattern: "!_tmp_*" },
 ];
 
-// The root project's incremental build state. `tsrs` would write it beside the root tsconfig, where every package
-// Build's listing of the workspace root names it, so the check keeps it under `node_modules/.cache` instead
+// The root project's incremental build state.
+// `tsrs` would write it beside the root tsconfig, where every package build's listing of the workspace root names it.
+// So the check keeps it under `node_modules/.cache` instead.
 export const ROOT_TSBUILDINFO_PATH = "node_modules/.cache/tsrs/root.tsbuildinfo";
 
-// The files a package's build rewrites, or another task writes into the package, relative to the package. Each
-// Package's Build writes its barrels, so both are rewritten: a task that reads a file it also rewrites is one `vp`
-// Refuses to cache
+// The files a package's build rewrites, or another task writes into the package, relative to the package.
+// The package's build writes its barrels, so both are rewritten.
+// A task that reads a file it also rewrites is one `vp` refuses to cache.
 export const PACKAGE_REWRITTEN_PATTERNS: string[] = [
   "auto-imports.d.ts",
   "dist/**",
@@ -35,8 +37,8 @@ export const PACKAGE_REWRITTEN_PATTERNS: string[] = [
   "parity-build/**",
 ];
 
-// The generated sources a package's own build hook rewrites: db-schema's registry and genshin-world's kit map Only the
-// Package build excludes them, since the parity page reads the kit map and the committed game-data lock beside it
+// The generated sources a package's own build hook rewrites: db-schema's registry and genshin-world's kit map.
+// Only the package build excludes them, since the parity page reads the kit map and the committed lock.
 export const BUILD_HOOK_GENERATED_PATTERNS: string[] = [
   "src/generated/characterKitMap/**",
   "src/generated/relations.ts",
