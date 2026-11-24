@@ -5,10 +5,10 @@ import { assertHostedAssetBytes } from "#src/services/hostedAssets/assertHostedA
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
-// Reads one object back from its bucket, as the bucket serves its bytes, and refuses them unless they hash to the
-// Sha256 its Key names and, when the lock records one, are the length it records. A publish checks each object this way
-// Before its lock Is committed, a pull before a file is written, and a repair checks its source and its copy the same
-// Way
+// Reads one object back from its bucket, as the bucket serves its bytes.
+// It refuses them unless they hash to the sha256 its key names, and to the length the lock records.
+// A publish checks each object this way before its lock is committed.
+// A pull checks it before a file is written, and a repair checks its source and its copy the same way.
 export const readHostedAssetBytes = async (
   bucketClient: R2BucketClient,
   object: { bytes?: number | undefined } & HostedAssetName,

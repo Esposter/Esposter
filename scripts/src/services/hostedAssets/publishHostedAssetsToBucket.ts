@@ -15,10 +15,10 @@ import { toHostedAssetPaths } from "#src/services/hostedAssets/toHostedAssetPath
 import { settleAll } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
-// Stores what one bucket does not hold yet, and returns how many objects it wrote. A stored object is reused as it is
-// When The current lock reaches it or it is young, and otherwise rewritten with the same bytes, which restarts its age
-// So no Prune can take it. Leaves are written before the indexes that name them, so an index never names a missing
-// Entry
+// Stores what one bucket does not hold yet, and returns how many objects it wrote.
+// A stored object is reused as it is when the current lock reaches it or it is young.
+// Otherwise it is rewritten with the same bytes, which restarts its age, so no prune can take it.
+// Leaves are written before the indexes that name them, so an index never names a missing entry.
 export const publishHostedAssetsToBucket = async (
   bucketClient: R2BucketClient,
   records: HostedAssetRecord[],
@@ -50,10 +50,9 @@ export const publishHostedAssetsToBucket = async (
     indexWrites.map((write) => () => writeRecord(write)),
     MAX_CONCURRENT_OBJECT_BODIES,
   );
-  // What this run stores, and what the lock newly names, is read back from the bucket and checked against its name,
-  // Written or Reused, so a bucket that stored other bytes under a name fails the publish before the lock that names
-  // Them is committed. An object the current lock already names was checked when that lock was committed, so it is not
-  // Read again
+  // What this run stores, and what the lock newly names, is read back from the bucket and checked against its name.
+  // A bucket that stored other bytes under a name fails the publish before the lock that names them is committed.
+  // An object the current lock already names was checked when that lock was committed, so it is not read again.
   const writtenPaths = new Set(writes.map(({ key }) => key));
   const readBackRecords = records.filter((record) => {
     const key = getHostedAssetPath(record);

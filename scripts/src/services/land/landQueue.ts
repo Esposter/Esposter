@@ -16,10 +16,10 @@ import { removeWorktree } from "#src/services/worktree/remove/removeWorktree";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 
-// Pulls and pushes up to the attempt limit, since another session's push can take the queue between the two. The pull
-// Replays this checkout's own commits, so a conflict stops the landing for its author to settle. The precheck runs on
-// Each Pulled tree before its push, since that tree is what the push sends and the queue's commits are not checked
-// Before it
+// Pulls and pushes up to the attempt limit, since another session's push can take the queue between the two.
+// The pull replays this checkout's own commits, so a conflict stops the landing for its author to settle.
+// The precheck runs on each pulled tree before its push.
+// That tree is what the push sends, and the queue's commits are not checked before it.
 export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise<number> => {
   if (remove && !checkIsLinkedWorktree())
     throw new InvalidOperationError(Operation.Delete, REPOSITORY_ROOT, "the main checkout is not a worktree to remove");

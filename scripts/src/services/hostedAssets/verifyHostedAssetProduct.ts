@@ -7,10 +7,12 @@ import { verifyHostedAssets } from "#src/services/hostedAssets/verifyHostedAsset
 import { CloudflareEnvironment, HostedAssetOriginMap } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The lock on disk is the one a publish wrote, and it must be the one committed, since every checkout reads the
-// Committed One, so a publish whose lock was not committed fails here before any bucket is read. Then every object the
-// Lock reaches Is fetched from both environments' origins, the buckets being read-only and independent, and each
-// Failure is named by its Environment, since a network error from fetch carries no URL of its own
+// The lock on disk is the one a publish wrote, and it must be the one committed.
+// Every checkout reads the committed lock.
+// So a publish whose lock was not committed fails here before any bucket is read.
+// Then every object the lock reaches is fetched from both environments' origins.
+// The buckets are read-only and independent.
+// Each failure is named by its environment, since a network error from fetch carries no URL of its own.
 export const verifyHostedAssetProduct = async (product: HostedAssetProduct, lock: HostedAssetLock): Promise<void> => {
   const differences = getLockDifferences(lock, readLockAt(product, "HEAD"));
   if (differences.length > 0)

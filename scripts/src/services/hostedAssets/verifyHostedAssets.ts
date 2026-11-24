@@ -8,9 +8,10 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { settleAll } from "@esposter/shared";
 import { getHostedAssetPath } from "hosted-assets";
 
-// Every object the lock reaches, as one origin serves it. Each index is fetched and checked as it is read, and each
-// Object The lock names or an index names is fetched once however many names reach it. Resolves to how many distinct
-// Objects were Checked, the indexes included
+// Every object the lock reaches, as one origin serves it.
+// Each index is fetched and checked as it is read.
+// Each object the lock names, or an index names, is fetched once however many names reach it.
+// Resolves to how many distinct objects were checked, the indexes included.
 export const verifyHostedAssets = async (baseUrl: string, lock: HostedAssetLock): Promise<number> => {
   const lockedBytesMap = toLockedBytesMap(lock);
   const { indexes, objects } = await getLockRefs(

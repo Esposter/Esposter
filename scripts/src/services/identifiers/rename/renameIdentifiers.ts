@@ -64,8 +64,8 @@ export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: 
         const replacement = getReplacement(node);
         if (replacement !== undefined) {
           renamedText += `${aliasedText.slice(last, node.start)}${replacement}`;
-          // An identifier's span takes in its type annotation, which must survive the rename, so only its name is
-          // Replaced
+          // An identifier's span takes in its type annotation, which must survive the rename.
+          // So only its name is replaced.
           last = node.start + node.name.length;
         }
       }

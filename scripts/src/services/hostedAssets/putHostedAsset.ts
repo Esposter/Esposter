@@ -4,9 +4,9 @@ import type { HostedAssetName } from "hosted-assets";
 import { HOSTED_ASSET_CACHE_CONTROL } from "#src/services/hostedAssets/constants";
 import { getHostedAssetPath, HOSTED_ASSET_CONTENT_TYPES } from "hosted-assets";
 
-// Stores one object's stored bytes under its name, with the headers every hosted object is served with: its cache
-// Lifetime, The content type its extension names, and the encoding its stored form carries. Resolves to whether this
-// Call wrote it
+// Stores one object's stored bytes under its name, with the headers every hosted object is served with.
+// Those are its cache lifetime, the content type its extension names, and the encoding its stored form carries.
+// Resolves to whether this call wrote it.
 export const putHostedAsset = (
   bucketClient: R2BucketClient,
   name: HostedAssetName,

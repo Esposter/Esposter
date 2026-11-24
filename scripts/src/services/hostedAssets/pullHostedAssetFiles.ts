@@ -11,10 +11,11 @@ import { HOSTED_ASSETS_FETCH_TIMEOUT_MS } from "hosted-assets";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, sep } from "node:path";
 
-// Restores files of a files product's working copy from their objects: each named file is fetched anonymously from the
-// Hosted Origin, checked against its name and the length its lock records, and written at its key under the folder, so
-// A changed Original can be published again. The product is checked first, so a refusal fetches nothing. Resolves to
-// How many files it wrote
+// Restores files of a files product's working copy from their objects.
+// Each named file is fetched anonymously from the hosted origin, checked against its name and its recorded length.
+// It is then written at its key under the folder, so a changed original can be published again.
+// The product is checked first, so a refusal fetches nothing.
+// Resolves to how many files it wrote.
 export const pullHostedAssetFiles = async (
   baseUrl: string,
   product: HostedAssetProduct,
@@ -29,8 +30,8 @@ export const pullHostedAssetFiles = async (
     keys.map((key) => async () => {
       const object = lock.objects[getHostedAssetLockKey(scope, key)];
       if (object === undefined) throw new InvalidOperationError(Operation.Read, key, "is not a key of the lock");
-      // A lock can name a key with a parent segment, which the folder walk never produces, so the path is checked
-      // Before Any byte is read or written
+      // A lock can name a key with a parent segment, which the folder walk never produces.
+      // So the path is checked before any byte is read or written.
       const path = join(directory, key);
       if (!path.startsWith(`${directory}${sep}`))
         throw new InvalidOperationError(Operation.Read, key, "leaves its product's folder");

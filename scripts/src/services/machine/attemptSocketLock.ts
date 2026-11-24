@@ -7,9 +7,10 @@ import { listenSocketLock } from "#src/services/machine/listenSocketLock";
 import { probeSocketLock } from "#src/services/machine/probeSocketLock";
 import { getResultAsync } from "@esposter/shared";
 
-// One attempt at the socket lock. A path nothing holds is listened on and held. A path another listener holds is
-// Probed, and What the probe finds there is the attempt's answer. A path empty by the time it is probed is reported as
-// Absent
+// One attempt at the socket lock.
+// A path nothing holds is listened on and held.
+// A path another listener holds is probed, and what the probe finds there is the attempt's answer.
+// A path empty by the time it is probed is reported as absent.
 export const attemptSocketLock = async (path: string): Promise<SocketAttempt> => {
   const listened = await getResultAsync(() => listenSocketLock(path));
   return listened.match(
