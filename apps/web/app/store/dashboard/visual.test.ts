@@ -68,8 +68,8 @@ describe(useVisualStore, () => {
     });
   });
 
-  // The draft was copied when its form opened, so an apply writes the form's own fields and never the place or size the
-  // Grid Has moved the visual to since
+  // The draft was copied when its form opened, so an apply writes the form's own fields.
+  // It never writes the place or size the grid has moved the visual to since.
   test("an applied edit keeps the visual's place and size", async () => {
     expect.hasAssertions();
 
