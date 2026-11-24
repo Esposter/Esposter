@@ -78,8 +78,7 @@ export const directMessageRouter = router({
       // So they land on whichever room the key belongs to, and the room is read back at the end of the same batch.
       const participantKey = getDirectMessageParticipantKey(allUserIds);
       const participantRoomId = sql`(select ${roomsInMessage.id} from ${roomsInMessage} where ${roomsInMessage.participantKey} = ${participantKey})`;
-      // Each membership row binds its room's key and its user.
-      // That leaves room for a statement to take any number of rows.
+      // Each membership row binds its room's key and its user, so the rows can be chunked per statement.
       const [insertedRoomRows] = await ctx.db.batch([
         ctx.db
           .insert(roomsInMessage)
