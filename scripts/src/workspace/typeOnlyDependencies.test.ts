@@ -98,11 +98,17 @@ describe("typeOnlyDependencies", () => {
           collectUsage(statement, valueNames, typeNames);
   };
 
-  // The names a package's own source under `src` loads, as values and as types alone
-  const collectPackageUsage = (packagePath: string, sourcePaths: readonly string[]) => {
+  // The source files of each package's directory, declarations left out
+  const readSourcePaths = (packages: { packagePath: string }[]) =>
+    readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
+      (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
+    );
+
+  // The names the sources under `directory` load, as values and as types alone
+  const collectPackageUsage = (directory: string, sourcePaths: readonly string[]) => {
     const valueNames = new Set<string>();
     const typeNames = new Set<string>();
-    for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/src/`)))
+    for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${directory}/`)))
       for (const script of readScripts(path)) collectScriptUsage(script, valueNames, typeNames);
     return { typeNames, valueNames };
   };
@@ -129,14 +135,9 @@ describe("typeOnlyDependencies", () => {
     const packages = readPackages((manifest) => manifest.private === true && manifest.dependencies !== undefined);
     // One listing for every package: git walks its index once, where a spawn for each package pays the process start
     // Again
-    const sourcePaths = readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
-      (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
-    );
+    const sourcePaths = readSourcePaths(packages);
     const misplaced = packages.flatMap(({ manifest, packagePath }) => {
-      const valueNames = new Set<string>();
-      const typeNames = new Set<string>();
-      for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/`)))
-        for (const script of readScripts(path)) collectScriptUsage(script, valueNames, typeNames);
+      const { typeNames, valueNames } = collectPackageUsage(packagePath, sourcePaths);
       return Object.keys(manifest.dependencies ?? {})
         .filter((name) => typeNames.has(name) && !valueNames.has(name))
         .map((name) => `${manifest.name} -> ${name}`);
@@ -179,11 +180,9 @@ describe("typeOnlyDependencies", () => {
       const builtPackagePaths = new Set(readTsdownPackagePaths());
       const siblingNames = new Set(readWorkspacePackages(REPOSITORY_ROOT).map(({ manifest }) => manifest.name));
       const packages = readPackages(() => true).filter(({ packagePath }) => builtPackagePaths.has(packagePath));
-      const sourcePaths = readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
-        (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
-      );
+      const sourcePaths = readSourcePaths(packages);
       const unexternal = packages.flatMap(({ manifest, packagePath }) => {
-        const { typeNames, valueNames } = collectPackageUsage(packagePath, sourcePaths);
+        const { typeNames, valueNames } = collectPackageUsage(`${packagePath}/src`, sourcePaths);
         const loadedNames = manifest.private === true ? valueNames : new Set([...valueNames, ...typeNames]);
         const externalNames = readHeldNames(manifest);
         return [...loadedNames]
@@ -204,11 +203,9 @@ describe("typeOnlyDependencies", () => {
       expect.hasAssertions();
 
       const packages = readPackages((manifest) => manifest.private !== true);
-      const sourcePaths = readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
-        (path) => isSourcePath(path) && !DECLARATION_PATH_REGEX.test(path),
-      );
+      const sourcePaths = readSourcePaths(packages);
       const misplaced = packages.flatMap(({ manifest, packagePath }) => {
-        const { typeNames, valueNames } = collectPackageUsage(packagePath, sourcePaths);
+        const { typeNames, valueNames } = collectPackageUsage(`${packagePath}/src`, sourcePaths);
         const heldNames = readHeldNames(manifest);
         return Object.keys(manifest.devDependencies ?? {})
           .filter((name) => typeNames.has(name) && !valueNames.has(name) && !heldNames.has(name))
