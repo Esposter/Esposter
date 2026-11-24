@@ -41,7 +41,7 @@ textureLoader.load(roughnessUrl);
 
 An image's default import is its URL, and a glTF model's too, since `configuration/vite.ts` lists it in `assetsInclude`. A `#src` name carries no query, because the manifest substitutes the whole specifier into its pattern, so a file read another way passes its query as an `import.meta.glob` option: the privacy policy's HTML with `query: "?raw"`, a string in its route's chunk that needs no request, the zstd module with `"?url"`, and a worker with `"?worker"`. The file is never named by a string path in the source, so a missing file is a build error rather than a 404 found at runtime.
 
-A game's or 3D engine's bundled file is named into `_nuxt/engine/` by `configuration/vite.ts`, since it is loaded by URL at runtime and the service worker's precache leaves that folder out (`configuration/pwa.ts`). The folder is the only mark a hashed file name keeps of its source.
+A 3D engine's bundled file is named into `_nuxt/engine/` by `configuration/vite.ts`, since it is loaded by URL at runtime and the service worker's precache leaves that folder out (`configuration/pwa.ts`). The folder is the only mark a hashed file name keeps of its source.
 
 A bundled URL is the same on both renders. Nuxt writes an imported asset's URL through its `__buildAssetsURL` helper on the server, root-relative, and resolves it against the importing chunk on the client, which reads back absolute, so every server-rendered `<img>` of an imported asset hydrated as a mismatch. `viteHooks` in `configuration/vite.ts` has a client chunk ask the same helper, which keeps a configured CDN URL working, since the helper is what applies it.
 

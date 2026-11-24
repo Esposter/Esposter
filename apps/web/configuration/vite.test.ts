@@ -76,12 +76,6 @@ const nuxtAssetFileNames = (asset: { names: string[] }) => `_nuxt/${asset.names[
 describe("viteHooks assetFileNames", () => {
   test.each([
     [
-      "a dungeon's asset",
-      "aquavalor",
-      "assets/dungeons/UI/monsters/aquavalor.png",
-      "_nuxt/engine/aquavalor.[hash].[ext]",
-    ],
-    [
       "a visual scene's texture",
       "roughness",
       "assets/visual/textures/roughness.jpeg",

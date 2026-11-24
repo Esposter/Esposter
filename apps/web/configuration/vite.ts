@@ -40,8 +40,8 @@ export const vite: NonNullable<NuxtConfig["vite"]> = {
   },
 };
 
-// The app assets a game or 3D engine loads by URL at runtime: Phaser's dungeons and the three.js scenes' textures
-const ENGINE_ASSET_REGEX = /(?:^|[/\\])assets[/\\](?:dungeons|visual)[/\\]/u;
+// The app assets the three.js scenes load by URL at runtime, the textures the bundle names into the engine folder
+const ENGINE_ASSET_REGEX = /(?:^|[/\\])assets[/\\]visual[/\\]/u;
 
 // Nuxt resolves a client chunk's imported asset against the chunk (`new URL(file, import.meta.url)`, an absolute URL
 // Once read) where the server render writes it through `__buildAssetsURL`, root-relative: every server-rendered

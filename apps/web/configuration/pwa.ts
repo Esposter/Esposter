@@ -12,8 +12,8 @@ import { fileURLToPath } from "node:url";
 const manifestPalette = UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.Light];
 
 export const pwa: NonNullable<NuxtConfig["pwa"]> = {
-  // The service worker is TypeScript in `service-worker/`, built by the module with its precache list injected. A game
-  // Or 3D engine loads its files by URL when it opens, so they are left out of the list (`vite.ts` names them there)
+  // The service worker is TypeScript in `service-worker/`, built by the module with its precache list injected. A 3D
+  // Engine loads its files by URL when it opens, so they are left out of the list (`vite.ts` names them there)
   buildSW: {
     globIgnores: [`_nuxt/${ENGINE_ASSETS_DIRECTORY}/**`],
     swSrc: fileURLToPath(new URL("../service-worker/sw.ts", import.meta.url)),
