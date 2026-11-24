@@ -6,8 +6,8 @@ import { fileByCell } from "#src/terrain/fileByCell";
 import { getGaussianHillBlend } from "#src/terrain/getGaussianHillBlend";
 
 // The height of a ground of Gaussian hills at any x and z: its base and every hill reaching that point, each hill filed
-// Once under every cell its reach covers, so a point reads one cell's list and draws only the hills whose reach covers
-// It
+// Once under every cell its reach covers, so a point reads one cell's list and draws only the hills whose
+// Reach covers it
 export const createGaussianHillsHeight = ({ base, hills }: GaussianHills): ((x: number, z: number) => number) => {
   const getHills = fileByCell(hills, ({ width, x, z }: GaussianHill) => {
     const reach = GAUSSIAN_REACH_WIDTHS * width;

@@ -1,4 +1,3 @@
-// The `terrainWorker`
 // oxlint-disable oxc/no-barrel-file -- subpath is a barrel by design: the one entry a terrain worker imports through
 // The `terrainWorker` subpath: the generators a terrain worker runs over its ground, pure functions over typed arrays
 // And Three's math, so a worker loads none of the renderer, its nodes or its passes that the package's own entry

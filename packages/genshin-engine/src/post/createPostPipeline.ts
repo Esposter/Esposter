@@ -32,15 +32,17 @@ import {
 import { RenderPipeline } from "three/webgpu";
 
 const MIN_VIEW_DISTANCE = 0.001;
-// The frame after the scene, in the order light meets the eye: 1. One pass draws the scene with every toon material's
-// Outline, the outline thinning past its fade distance, darkened By its screen-space occlusion where the scene draws it
-// 2. God rays are marched through the sun's shadow at half resolution, blurred, and blended in the sun's colour 3. The
-// Height fog hazes what lies far or low, the outlines with it 4. Where a scene has a sight, its reach mutes what is not
-// Lit and shows what is in the colour it is lit in 5. Bloom lifts only what is brighter than the game's threshold, as
-// Its own programs draw it: the sun, glints and elemental light 6. The grade maps display colours through the region's
-// LUT, so it follows the tone mapping rather than feeding it TRAA resolves the scene's edges before the tone mapping,
-// From a velocity target the scene pass writes beside its Colour; SMAA smooths the graded frame instead, for a tier
-// That pays for neither
+// The frame after the scene, in the order light meets the eye:
+// 1. One pass draws the scene with every toon material's outline, the outline thinning past its fade distance, darkened
+// By its screen-space occlusion where the scene draws it
+// 2. God rays are marched through the sun's shadow at half resolution, blurred, and blended in the sun's colour
+// 3. The height fog hazes what lies far or low, the outlines with it
+// 4. Where a scene has a sight, its reach mutes what is not lit and shows what is in the colour it is lit in
+// 5. Bloom lifts only what is brighter than the game's threshold, as its own programs draw it: the sun, glints
+// And elemental light
+// 6. The grade maps display colours through the region's LUT, so it follows the tone mapping rather than feeding it.
+// TRAA resolves the scene's edges before the tone mapping, from a velocity target the scene pass writes beside its
+// Colour; SMAA smooths the graded frame instead, for a tier that pays for neither
 export const createPostPipeline = ({
   bloomStructure,
   camera,

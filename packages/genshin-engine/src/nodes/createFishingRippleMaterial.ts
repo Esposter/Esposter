@@ -6,8 +6,8 @@ import { DoubleSide } from "three";
 import { float, positionWorld, smoothstep } from "three/tsl";
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
-// The slope at which a ripple's crest reads as fully lit. Provisional until a fishing frame's parity compare measures
-// It
+// The slope at which a ripple's crest reads as fully lit. Provisional until a fishing frame's parity compare
+// Measures it
 const CREST_SLOPE = 0.02;
 const RING_OPACITY = 0.6;
 
