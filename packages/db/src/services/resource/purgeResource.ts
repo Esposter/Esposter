@@ -10,8 +10,8 @@ import { eq } from "drizzle-orm";
 // The row behind as the durable marker that re-drives the whole sequence; the blob delete treats already-gone as
 // Success, so replaying is safe. The row's delete cascades to everything the resource owns in the database (its
 // Activity trail, its view counters and whatever its type owns), so none of it can outlive the marker
-// Returns the owner the release gave bytes back to, since a purge running on the timer sweep is out of the
-// Process their meter subscribes to — empty when the resource had no accounted blobs left to free
+// Returns the owner the release gave bytes back to, since a purge running on the timer sweep is out of the process
+// Their meter subscribes to — empty when the resource had no accounted blobs left to free
 export const purgeResource = async (
   db: Database,
   bucket: R2Bucket,

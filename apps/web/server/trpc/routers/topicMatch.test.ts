@@ -425,7 +425,7 @@ describe("topicMatch", () => {
   });
 
   // The sidebar reads a membership's display name and its visibility, not its last read time, so another member's
-  // Last-read update names a column no sidebar read holds, and wakes no sidebar through the room's topic
+  // `last-read` update names a column no sidebar read holds, and wakes no sidebar through the room's topic
   test("another member's last-read update wakes no sidebar that lists the room", async () => {
     expect.hasAssertions();
 

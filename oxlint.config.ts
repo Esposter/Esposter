@@ -280,7 +280,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }],
         // Asking whether an async hook fits the engine's `On` overloads costs this rule tens of seconds over these
         // Trees alone, where tsrs checks the program in under a second. See
-        // Openspec/specs/architecture/lint-toolchain/design.md
+        // `openspec/specs/architecture/lint-toolchain/design.md`
         "typescript/strict-void-return": "off",
       },
     },

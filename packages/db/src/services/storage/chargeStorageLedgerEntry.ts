@@ -8,7 +8,7 @@ import { storageLedgerInStorage } from "@esposter/db-schema";
 // There is nothing to gate and nothing to overshoot. It charges after the fact rather than holding space first,
 // Which is also why a save is never rejected for being over quota: the upload it would refuse has already
 // Happened, and refusing the charge would only make the counter lie. See
-// Openspec/specs/resource/storage-quotas/design.md
+// `openspec/specs/resource/storage-quotas/design.md`
 //
 // The amount is provisional: the write raises its own object-create notification, which finds the row this wrote and
 // Replaces the figure with the stored object's real size. It measures where this declares, so it always wins —
