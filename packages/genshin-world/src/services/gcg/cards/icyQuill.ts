@@ -10,7 +10,7 @@ const ICY_QUILL_BONUS = 1;
 
 // Icy Quill, the onstage Spring Spirit Summoning creates: her character deals 1 more Cryo DMG, for two usages. With
 // Mystical Abandon equipped to a character of its side, its first Normal Attack each Round spends no usage. Its Swirl's
-// Spread is raised too, as every damage its side deals is
+// Spread is raised too, once for the whole Swirl, since the spread is one damage its side deals
 export const icyQuill: GcgCardModule = {
   initialUsages: 2,
   modifyDamageDealt: (context, damage, zoneCard) => {
