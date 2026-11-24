@@ -4,7 +4,7 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // `pnpm -C scripts ai:review:fix --findings <path>` — the fixer over one review issue's findings, the file `ai:review`
-// Wrote For that issue (`services/review`). Its commits land on `ai/queue` from this checkout, and the issue is
+// Wrote for that issue (`services/review`). Its commits land on `ai/queue` from this checkout, and the issue is
 // Narrowed or closed.
 await runCommand(
   defineCommand({

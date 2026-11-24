@@ -3,9 +3,9 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // `pnpm ai:precheck [--fix]` — the formatter, the barrel check, after a manifest change the dependency graph check,
-// Each Derived ledger's rows against the tree, and the ledger trailers of the commits ahead of ai/queue, over what the
-// Checkout Changed against ai/queue, run before a push (the `running-checks` skill). `--fix` rewrites a stale barrel or
-// Graph with The generator that writes it
+// Each derived ledger's rows against the tree, and the ledger trailers of the commits ahead of ai/queue, over what the
+// Checkout changed against ai/queue, run before a push (the `running-checks` skill). `--fix` rewrites a stale barrel or
+// Graph with the generator that writes it
 await runCommand(
   defineCommand({
     args: {

@@ -5,8 +5,8 @@ import { extname } from "node:path";
 const DECLARATION_EXTENSION = ".d.ts";
 
 // An unbundled build writes one file per source module, thousands across the packages, and a row for each would bury
-// What The record is for: a package whose total moved. A file nested under `dist` is a module, so the modules of one
-// Package And extension share one row named for the extension, and a file at the root keeps its own
+// What the record is for: a package whose total moved. A file nested under `dist` is a module, so the modules of one
+// Package and extension share one row named for the extension, and a file at the root keeps its own
 export const rollUpBundleSizes = (bundleSizes: BundleSize[]): BundleSize[] => {
   const rows: BundleSize[] = [];
   const moduleRows = new Map<string, BundleSize>();
