@@ -22,11 +22,11 @@ const isDoorOpened = ref(false);
 // It draws each model from them.
 const isPacksHeld = ref(false);
 // A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
-// So a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too, and
-// Started again at the door, so a step still unfinished then is timed from it. The world's two steps are named once the
-// Save is loaded and the packs are held, which is before the door opens; the packs have their own timer, started at
-// Their request. Nothing is skipped or fallen back to, so the world's absence stays as it was. The save's flag is only
-// Returned once those awaits settle, so until then the warning reads the save as not loaded
+// So a stall says what it waits on. Started at the door, the request that releases the world's held session, so the
+// Title's wait is never named and a step still unfinished then is timed from it. The save and the world's two steps are
+// Named; the character packs have their own timer, started at their request. Nothing is skipped or fallen back to, so
+// The world's absence stays as it was. The save's flag is only returned once those awaits settle, so until then the
+// Warning reads the save as not loaded
 let isSaveLoadedRef: Ref<boolean> | undefined;
 const { start: startStallWarning } = useTimeoutFn(
   () => {
@@ -39,6 +39,7 @@ const { start: startStallWarning } = useTimeoutFn(
         console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
   },
   Temporal.Duration.from({ seconds: LOADING_STALL_WARNING_SECONDS }).total("milliseconds"),
+  { immediate: false },
 );
 watch(isDoorOpened, () => startStallWarning(), { once: true });
 // The character packs are timed from the request the opening makes at the title's click, so a player still at the title
