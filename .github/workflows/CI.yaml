@@ -240,7 +240,7 @@ jobs:
       # merged, as the timings are
       - name: 📋 Union the Vitest module cache
         id: vitest-module-cache-union
-        if: ${{ steps.vitest-module-cache-download.outcome == 'success' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        if: ${{ !cancelled() && steps.vitest-module-cache-download.outcome == 'success' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
         run: |
           # Nothing uploaded, as on a re-run after the uploads expired: the cache stays as it is
           if [ -z "$(find .vitest/module-cache -type f 2>/dev/null)" ]; then
@@ -253,7 +253,7 @@ jobs:
           done
           echo "unioned=true" >> "$GITHUB_OUTPUT"
       - name: 💾 Save the Vitest module cache
-        if: ${{ steps.vitest-module-cache-union.outputs.unioned == 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        if: ${{ !cancelled() && steps.vitest-module-cache-union.outputs.unioned == 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.vitest-cache
