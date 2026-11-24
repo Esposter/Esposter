@@ -4,8 +4,8 @@ import { readWorkingTreeFiles } from "#src/services/shared/readWorkingTreeFiles"
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 
 // Every line-number citation in the specs and the skills, one `path:line → text` each.
-// The repository's listing is the set a cited file is checked against, so a file the listing lacks is external and is
-// No finding
+// The repository's listing is the set a cited file is checked against. A file the listing lacks is external.
+// Its line citations are not checked, so no finding is raised for them
 export const readLineNumberCitationFindings = (): string[] => {
   const repositoryPaths = new Set(readSweepFilePaths());
   return readWorkingTreeFiles(...LINE_NUMBER_PATHSPECS)

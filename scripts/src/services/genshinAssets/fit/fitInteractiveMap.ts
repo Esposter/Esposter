@@ -22,9 +22,8 @@ import { mkdir } from "node:fs/promises";
 
 // The official map fitted to the scene: one similarity carries the map's statues and waypoints onto the scene's
 // Transport points, and each region's share of its matches and of its Oculi is reported, Mondstadt's first. A fit over
-// Its bar writes nothing and is an error, its residual in the message; one under it writes the transform, the residual
-// And
-// Each region's share to the references folder, and returns the report the command prints
+// Its bar writes nothing and is an error, its residual in the message; one under it writes the transform.
+// The residual and each region's share go to the references folder, and the command returns the report it prints
 export const fitInteractiveMap = async (): Promise<string> => {
   const [points, transportPoints] = await Promise.all([readInteractiveMapPoints(), readSceneTransportPoints()]);
   // The map's statues and waypoints on the ground, its underground layers' points kept for their own floors
