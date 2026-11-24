@@ -19,5 +19,8 @@ export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE;
 
 // The PWA's icons and splash screens are named by the manifest and the document head, so they stay in `public/`
 export const PWA_PUBLIC_FOLDER_PATH = "/pwa";
+// The embedder policy every file of the build folder carries, which a dedicated worker's script is refused without.
+// The route rules send it, and the service worker sets it on the copies it answers from its precache
+export const BUILD_FILE_EMBEDDER_POLICY = "credentialless";
 // Between the parts of a document title, broadest first, so its last part names the page itself
 export const PAGE_TITLE_SEPARATOR = " | ";

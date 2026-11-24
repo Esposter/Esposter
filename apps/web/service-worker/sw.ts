@@ -4,11 +4,12 @@ import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
 import { checkAppManifestUrl } from "#shared/services/serviceWorker/checkAppManifestUrl";
+import { withBuildFileEmbedderPolicy } from "#shared/services/serviceWorker/withBuildFileEmbedderPolicy";
 import { HostedAssetOriginMap } from "@esposter/db-schema";
 import { omitUndefined } from "@esposter/shared";
 import { cacheNames } from "@vite-pwa/workbox-swkit/core";
 import { ExpirationPlugin } from "@vite-pwa/workbox-swkit/expiration";
-import { cleanupOutdatedCaches, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
+import { addPlugins, cleanupOutdatedCaches, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
 import { NavigationRoute, registerRoute } from "@vite-pwa/workbox-swkit/routing";
 import { NetworkFirst } from "@vite-pwa/workbox-swkit/strategies";
 import { HOSTED_ASSETS_CACHE_NAME } from "hosted-assets";
@@ -39,6 +40,19 @@ const OWNED_CACHE_NAMES: ReadonlySet<string> = new Set([
 cleanupOutdatedCaches();
 // oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
 precacheAndRoute(self.__WB_MANIFEST);
+// The install answers a URL the cache already holds without fetching it, so a copy stored before a header rule changed
+// Keeps the headers it was stored with. A dedicated worker's script is refused without the policy the page sends, so
+// The build folder's answers carry that policy whatever the copy holds
+addPlugins([
+  {
+    cachedResponseWillBeUsed: ({ cachedResponse, request }) =>
+      Promise.resolve(
+        cachedResponse && new URL(request.url).pathname.startsWith("/_nuxt/")
+          ? withBuildFileEmbedderPolicy(cachedResponse)
+          : cachedResponse,
+      ),
+  },
+]);
 // @TODO: https://github.com/GoogleChrome/workbox/issues/3490 — a plugin class declares each hook it implements as
 // `WorkboxPlugin[hook]`, which carries `undefined` that the interface's optional hook refuses under
 // `exactOptionalPropertyTypes`. Both hooks are arrow-function fields, so they keep their instance without it

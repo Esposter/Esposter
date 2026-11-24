@@ -22,6 +22,8 @@ flowchart LR
 
 **The shell never answers the server.** The worker's navigation route takes a denylist from the module, the server's own routes as Nitro holds them when the worker is built, so a navigation to an API route or a file the server serves reaches the server and only a page route is answered with the home page offline.
 
+**The worker answers a build file with the build's embedder policy.** The install answers a URL its precache already holds without fetching it, so a copy stored by an earlier build keeps the headers that build sent, even when a later build serves the same bytes under the same name. A dedicated worker's script is refused unless its response carries the policy the page sends, so a stale copy would keep the worker from starting. `sw.ts` adds a plugin to the precache strategy with `addPlugins`, which sets `BUILD_FILE_EMBEDDER_POLICY` on every `/_nuxt/` copy the worker answers, so the stored headers cannot matter. `buildFileRule` in `configuration/routeRules.ts` names the same constant for the server's own copies.
+
 **The reader decides when an update lands.** `registerType` is `"prompt"`. A worker that installs during a call or while text is unsent waits, and the notice in `ToastStack` lets the reader accept it. The worker answers the `SKIP_WAITING` message the notice sends, and the page reloads once the new worker takes control.
 
 **Push lives in the worker.** `sw.ts` handles `push` and `notificationclick`. The payload is the `PushNotificationPayload` type from `@esposter/db-schema`, which the server writes through `getPushNotificationPayload` and the tab parses in `pushNotification.client.ts`. The worker imports the type only, so nothing from it reaches the bundle.
@@ -33,6 +35,7 @@ flowchart LR
 | `apps/web/configuration/pwa.ts`                                         | The manifest, the worker's source, the strategy and the update policy                              |
 | `apps/web/configuration/pwa.test.ts`                                    | Every manifest icon exists in the public folder                                                    |
 | `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation and the app manifest, `SKIP_WAITING`, push and click      |
+| `apps/web/shared/services/serviceWorker/withBuildFileEmbedderPolicy.ts` | The copy of a stored response the worker answers with, carrying the build folder's embedder policy |
 | `packages/unplugin-pwa-nuxt/`                                           | The module that builds the worker and registers it ([its page](../../unplugin-pwa-nuxt/README.md)) |
 | `scripts/src/workspace/workerScope.test.ts`                             | Runs every worker, this one included, in a scope with no window or Node                            |
 | `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                                      |
@@ -42,6 +45,7 @@ flowchart LR
 
 ## Notes
 
+- **Rejected: a revision on every precache entry.** Giving each entry the build's revision would make every deploy refetch the whole precache to pick up one header change, where the worker's answer sets the policy on the copy it already holds.
 - **Rejected: `registerType: "autoUpdate"`.** It skips waiting and reloads every open tab on install, which would end a call or drop unsent text. The notice keeps the reader in charge of the moment.
 - **Rejected: `generateSW` with an `importScripts` push file.** The push handler was a separate JavaScript file the build could not check. The `buildSW` worker is typed and checked with the app.
 - **Rejected: `injectManifest` for the worker.** The engine accepts only a JavaScript worker that is not in the public folder under that strategy. A TypeScript worker fails the build with a request to migrate to `buildSW`, and only the dev server warns instead, so the config names `buildSW`.

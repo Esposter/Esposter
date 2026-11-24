@@ -1,6 +1,8 @@
 // oxlint-disable routing/no-route-literal -- the Nuxt configuration loads before `@esposter/shared` is built
 import type { NuxtConfig } from "nuxt/schema";
 
+import { BUILD_FILE_EMBEDDER_POLICY } from "#shared/services/app/constants";
+
 export const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
 // A file of the build folder, which carries the robots header and the lifetime its rule gives it. The embedder policy
 // Is the page's own: a dedicated worker's script is refused unless its response carries it, and the Worker's assets
@@ -8,7 +10,7 @@ export const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
 const buildFileRule = (cacheControl: string) => ({
   headers: {
     "cache-control": cacheControl,
-    "Cross-Origin-Embedder-Policy": "credentialless",
+    "Cross-Origin-Embedder-Policy": BUILD_FILE_EMBEDDER_POLICY,
     "X-Robots-Tag": "noindex",
   },
 });

@@ -95,6 +95,16 @@ The service worker SHALL precache the build's assets and the home page at instal
 - **WHEN** the reader navigates to it
 - **THEN** the request reaches the server and the app shell does not answer it
 
+### Requirement: The service worker answers a build file with the build's embedder policy
+
+The service worker SHALL answer each build file it serves from its precache with the embedder policy the build's files carry, whatever headers the copy it stored kept, so a dedicated worker's script is not refused by a copy stored before a header changed.
+
+#### Scenario: A worker's script is answered from a copy stored before a header change
+
+- **GIVEN** the reader installed the app under an earlier build, whose copy of a worker's script lacks the policy, and a later build serves the same bytes under the same name with the policy
+- **WHEN** a page the worker controls starts a dedicated worker from that script
+- **THEN** the service worker answers the script with the policy, and the worker starts
+
 ### Requirement: Push notifications are shown by the service worker
 
 The service worker SHALL show each push as an operating-system notification with the payload's title, body and icon, and SHALL post the payload to every open tab. Clicking a notification SHALL focus an open window already at its deep link, or open one there.
