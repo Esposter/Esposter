@@ -8,10 +8,10 @@ import { describe, expect, test } from "vitest";
 // A literal name is the one way a token falls outside the convention, and this test fails on any token whose name no
 // Helper builds.
 describe("cloudflareTokenNames", () => {
-  // An environment's token passes its environment before its asset type, and an account's token starts with its asset
-  // Type
+  // A token's name is bound once from a helper and passed as both its logical name and its `name`. An environment's
+  // Token passes its environment before its asset type, and an account's token starts with its asset type
   const TOKEN_NAME_REGEX =
-    /new cloudflare\.AccountToken\(\s*getCloudflare(?:Account)?ResourceName\((?:\s*CloudflareEnvironment\.\w+,)?\s*CloudflareAssetType\.Token,/u;
+    /const tokenName = getCloudflare(?:Account)?ResourceName\((?:\s*CloudflareEnvironment\.\w+,)?\s*CloudflareAssetType\.Token,[\s\S]*new cloudflare\.AccountToken\(\s*tokenName,[\s\S]*name: tokenName,/u;
 
   test("every account token is named by the naming helpers", () => {
     expect.hasAssertions();
