@@ -12,7 +12,7 @@ import { createExponentialBackoff, getResultAsync } from "@esposter/shared";
 // Fails, and each attempt after the first waits longer than the one before. The result is the last attempt's, so a file
 // That fails every attempt is the error the loading reports
 export const downloadHostedAssetFile = (
-  cache: Pick<Cache, "put">,
+  cache: Pick<Cache, "match" | "put">,
   { url }: HostedAssetDownloadFile,
   onBytes: (deltaBytes: number) => void,
 ): ReturnType<typeof getResultAsync<Blob>> => {

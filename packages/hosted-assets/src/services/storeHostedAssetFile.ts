@@ -2,14 +2,15 @@ import { HOSTED_ASSETS_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { readStreamedBlob } from "#src/services/readStreamedBlob";
 import { readFileResponse, withFinalizerAsync } from "@esposter/shared";
 
-// The stores still fetching, by url, so a store asked for a url already in flight joins it rather than fetching again
+// The stores still running, by url, so a store asked for a url already in flight joins it rather than fetching again
 const storesInFlight = new Map<string, Promise<Blob>>();
 
-// A file fetched from its url, each chunk of its body reported as it arrives, and kept in the cache under that url only
-// Once the whole body is in, so a file cut short is never kept. A store of a url already in flight joins that store and
-// Reports the file's bytes once they are in, so a read the preload overlaps is held, not fetched a second time
+// A file kept in the cache under its url: a url the cache already holds is answered from it, and any other is fetched,
+// Each chunk of its body reported as it arrives. A file is kept only once its whole body is in, so a file cut short is
+// Never kept. A store of a url already in flight joins that store and reports the file's bytes once they are in, so a
+// Read the preload overlaps is held, not fetched a second time
 export const storeHostedAssetFile = async (
-  cache: Pick<Cache, "put">,
+  cache: Pick<Cache, "match" | "put">,
   url: string,
   onChunk: (byteLength: number) => void,
 ): Promise<Blob> => {
@@ -21,6 +22,12 @@ export const storeHostedAssetFile = async (
   }
   const store = withFinalizerAsync(
     async () => {
+      const held = await cache.match(url);
+      if (held) {
+        const blob = await held.blob();
+        onChunk(blob.size);
+        return blob;
+      }
       const response = await readFileResponse(url, HOSTED_ASSETS_FETCH_TIMEOUT_MS);
       const blob = await readStreamedBlob(response, onChunk);
       await cache.put(url, new Response(blob));

@@ -27,4 +27,17 @@ describe(storeHostedAssetFile, () => {
     expect(joinedBlob).toBe(firstBlob);
     expect(onChunk).toHaveBeenCalledExactlyOnceWith(modelText.length);
   });
+
+  test("a url the cache already holds is answered from it, so the store does not fetch it again", async () => {
+    expect.hasAssertions();
+
+    const cache = createMockCache();
+    await cache.put(TEST_MODEL_URL, new Response(modelText));
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error(" "));
+    const onChunk = vi.fn<(byteLength: number) => void>();
+    await storeHostedAssetFile(cache, TEST_MODEL_URL, onChunk);
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(onChunk).toHaveBeenCalledExactlyOnceWith(modelText.length);
+  });
 });

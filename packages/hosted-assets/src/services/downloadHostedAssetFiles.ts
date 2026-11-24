@@ -9,7 +9,7 @@ import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposte
 // A file that fails its attempts is listed by its path in the error, while the rest are still fetched.
 // A retry therefore plans only what is missing.
 export const downloadHostedAssetFiles = (
-  cache: Pick<Cache, "put">,
+  cache: Pick<Cache, "match" | "put">,
   files: readonly HostedAssetDownloadFile[],
   onProgress: (loadedBytes: number) => void,
 ): ReturnType<typeof getResultAsync<void>> =>
