@@ -22,7 +22,6 @@ export const runScriptedStep = async (
       return driver.save();
     case ScriptedStepKind.Wait: {
       const frames = Math.round((step.seconds * MILLISECONDS_PER_SECOND) / SCRIPTED_FRAME_MS);
-      // The frames land one at a time on the fixed clock, so each waits for the last
       for (let frame = 0; frame < frames; frame += 1)
         // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each frame lands before the next
         await driver.frame();
