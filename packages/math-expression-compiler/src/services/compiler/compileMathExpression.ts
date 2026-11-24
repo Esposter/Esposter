@@ -10,7 +10,7 @@ import { getMathExpressionOuterValue } from "#src/services/compiler/getMathExpre
 
 // Compiles a parsed formula into a function of the values of the variables named by `variableNames`, in that order.
 // A name the formula reads that is neither a variable, an assignment nor a constant is an error, which the function
-// Yields as NaN. each call starts every assigned name at its outer value, as mathjs reads it until the assignment runs
+// Yields as NaN. Each call starts every assigned name at its outer value, as mathjs reads it until the assignment runs
 export const compileMathExpression = (
   node: MathExpressionNode,
   variableNames: readonly string[],
