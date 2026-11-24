@@ -1,13 +1,16 @@
 import type { SoundMatch } from "#src/models/genshinAssets/sound/SoundMatch";
 import type { SoundSet } from "#src/models/genshinAssets/sound/SoundSet";
 
-import { SOUND_HOP_LENGTH, SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants";
+import {
+  SOUND_HOP_LENGTH,
+  SOUND_MATCH_BAND_CENTRES,
+  SOUND_SAMPLE_RATE,
+} from "#src/services/genshinAssets/shared/constants";
 import { computeSoundBandPowers } from "#src/services/genshinAssets/sound/computeSoundBandPowers";
 import { findSoundStart } from "#src/services/genshinAssets/sound/findSoundStart";
 import { fitSoundSets } from "#src/services/genshinAssets/sound/fitSoundSets";
 import { readGameSoundBandPowers } from "#src/services/genshinAssets/sound/readGameSoundBandPowers";
 import { readAudioSamples } from "#src/services/genshinParity/shared/readAudioSamples";
-import { MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 
 // How long before the window the level of what already plays (the music, an ambience) is read, to be taken out of it
 const BASELINE_SECONDS = 0.25;
@@ -37,15 +40,15 @@ export const matchGameSounds = async (
     Math.max(fromFrame - Math.round(BASELINE_SECONDS / frameSeconds), 0),
     fromFrame,
   );
-  const baseline = MUSIC_NOISE_BAND_CENTRES.map(
+  const baseline = SOUND_MATCH_BAND_CENTRES.map(
     (_centre, band) =>
       baselineFrames.reduce((sum, bands) => sum + (bands[band] ?? 0), 0) / Math.max(baselineFrames.length, 1),
   );
   const window = recording
     .slice(fromFrame, toFrame)
     .map((bands) => bands.map((power, band) => Math.max(power - (baseline[band] ?? 0), 0)));
-  const bands = [...MUSIC_NOISE_BAND_CENTRES.keys()].filter(
-    (band) => (MUSIC_NOISE_BAND_CENTRES[band] ?? 0) >= lowestCentre,
+  const bands = [...SOUND_MATCH_BAND_CENTRES.keys()].filter(
+    (band) => (SOUND_MATCH_BAND_CENTRES[band] ?? 0) >= lowestCentre,
   );
   const starts = Array.from(soundBandPowersMap, ([id, powers]) => ({
     id,

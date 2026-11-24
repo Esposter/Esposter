@@ -1,11 +1,15 @@
-import { SOUND_FRAME_LENGTH, SOUND_HOP_LENGTH, SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants";
+import {
+  SOUND_FRAME_LENGTH,
+  SOUND_HOP_LENGTH,
+  SOUND_MATCH_BAND_CENTRES,
+  SOUND_SAMPLE_RATE,
+} from "#src/services/genshinAssets/shared/constants";
 import { computeBandBins } from "#src/services/recreation/signal/computeBandBins";
 import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
-import { MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 
 // A Hann window's power over its samples, three eighths, and a real signal's spectrum mirrored
 const POWER_SCALE = 2 / (SOUND_FRAME_LENGTH * SOUND_FRAME_LENGTH * (3 / 8));
-// A sound's power in each octave band of `MUSIC_NOISE_BAND_CENTRES`, frame by frame every `SOUND_HOP_LENGTH`: a Hann
+// A sound's power in each octave band of `SOUND_MATCH_BAND_CENTRES`, frame by frame every `SOUND_HOP_LENGTH`: a Hann
 // Window's band of bins over the window's own power, so a band's power is its noise's variance, as
 // `computeNoiseSamples` sounds it, each window centred on its frame by leading the sound with half a window of silence
 export const computeSoundBandPowers = (samples: Float32Array): number[][] => {
@@ -17,7 +21,7 @@ export const computeSoundBandPowers = (samples: Float32Array): number[][] => {
     SOUND_FRAME_LENGTH,
     SOUND_HOP_LENGTH,
   );
-  const bandBins = MUSIC_NOISE_BAND_CENTRES.map((centre) =>
+  const bandBins = SOUND_MATCH_BAND_CENTRES.map((centre) =>
     computeBandBins(centre, SOUND_SAMPLE_RATE, SOUND_FRAME_LENGTH, binCount),
   );
   return Array.from({ length: frameCount }, (_value, frame) =>

@@ -28,6 +28,7 @@ import {
 } from "#src/services/recreation/animeStudio/constants";
 import { MEBIBYTE, PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, WORLD_DATA_DIRECTORY } from "#src/services/shared/constants";
 import { CACHE_ROOT, WINDOWS_ANIMESTUDIO_DIRECTORY } from "@esposter/shared-node/cache";
+import { MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
 
@@ -197,6 +198,9 @@ export const SOUND_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "sounds");
 export const SOUND_SAMPLE_RATE = 48_000;
 export const SOUND_FRAME_LENGTH = 2048;
 export const SOUND_HOP_LENGTH = 1200;
+// The octave bands a sound is matched by: the music's from 63 hertz up, and 31.5 hertz below them, the lowest band a
+// Frame's bins resolve at 23 hertz apart, where a door's rumble lies under the music's own lowest band
+export const SOUND_MATCH_BAND_CENTRES: number[] = [31.5, ...MUSIC_NOISE_BAND_CENTRES];
 // A music fit reads its source's spectrum in Hann windows of this many samples at the transcription's rate, a hop of
 // The transcription's own apart, so a note's frames line up with the model's: long enough that a low note's harmonics
 // Fall in bins of their own, short enough that an attack is not smeared past the window's half
