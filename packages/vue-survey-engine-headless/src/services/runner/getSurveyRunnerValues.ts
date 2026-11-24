@@ -9,9 +9,9 @@ import { runSurveyExpression, toSurveyLogicAnswers } from "survey-expression";
 // A value that reads a later one settles a pass behind it, so the passes bound how far a chain can read ahead
 const MAX_SURVEY_RUNNER_PASSES = 5;
 
-// The answers and the calculated values as the expressions read them. The calculated values are evaluated in document
-// Order The pass repeats until none changes; a value that errors, or still changes after the last pass, is left out A
-// Calculated value never overwrites an answer, so one whose name an answer holds is not evaluated at all
+// The answers and the calculated values as expressions read them. Calculated values are evaluated in document order.
+// The pass repeats until none changes; a value that errors, or still changes after the last pass, is left out.
+// A calculated value never overwrites an answer, so one whose name an answer holds is not evaluated at all
 export const getSurveyRunnerValues = (
   document: SurveyDocument,
   answers: SurveyAnswers,

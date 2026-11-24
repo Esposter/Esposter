@@ -8,9 +8,10 @@ import { checkSurveyNodeRequired } from "#src/services/runner/checkSurveyNodeReq
 import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisible";
 import { toSurveyPanelScope } from "#src/services/runner/toSurveyPanelScope";
 
-// The template questions a row shows, in template order, each with whether the row enables it and requires it A
-// Question its visibleIf hides is absent, and one its enableIf disables is present but not enabled, as a question on a
-// Page is The row's own answers are the panel scope each condition reads, beside the survey's values
+// The template questions a row shows, in template order, each with whether the row enables it and requires it.
+// A question its visibleIf hides is absent, and one its enableIf disables is present but not enabled.
+// Outside a row, a question's conditions read only the survey's values; in a row they also read the row's own answers.
+// Each condition reads that panel scope beside the survey's values.
 export const getSurveyPanelRowViews = (
   node: SurveyPanelDynamicNode,
   row: Record<string, SurveyAnswerValue | undefined>,
