@@ -12,9 +12,10 @@ const RADIANCE_COOLDOWN_ID = "radianceOfTheDeepsCooldown";
 // Evengleam, Afterglow and Dawnblaze, the three states the text names
 const RADIANCE_STATE_COUNT = 3;
 
-// Radiance of the Deeps at its rank: its three states, Evengleam, Afterglow and Dawnblaze, each raise the DMG the
-// Wielder deals by The rank's amount in turn. A hit of hers that strikes an enemy moves the state on, once every
-// Cooldown, whether or not she is on The field. The state is held as the status's count, and it starts at Evengleam
+// Radiance of the Deeps at its rank has three states, Evengleam, Afterglow and Dawnblaze.
+// Each raises the DMG the wielder deals by the rank's amount in turn.
+// A hit of hers that strikes an enemy moves the state on, once every cooldown, whether or not she is on the field.
+// The state is held as the status's count, and it starts at Evengleam.
 export const createRadianceOfTheDeepsPassiveModule = (params: number[]): PassiveModule => {
   const cooldownSeconds = takeOne(params, 0);
   const damageBonuses = [takeOne(params, 1), takeOne(params, 2), takeOne(params, 3)];

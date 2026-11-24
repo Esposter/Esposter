@@ -8,8 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 const REACTION_ATTACK_SECONDS = 12;
 
-// A passive that raises its wielder's ATK by the rank's percentage for twelve seconds when the wielder triggers one of
-// The Reactions it names, a Swirl named by the element it infuses
+// A passive that raises its wielder's ATK by the rank's percentage for twelve seconds.
+// It applies when the wielder triggers one of the reactions it names, a Swirl named by the element it infuses.
 export const createReactionAttackPassiveModule = (
   reactions: Pick<Reaction, "element" | "reactionType">[],
   params: number[],
