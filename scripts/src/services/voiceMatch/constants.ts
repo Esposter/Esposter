@@ -5,8 +5,7 @@ import { join } from "node:path";
 
 // The run's one output is a generated artifact and is committed as such
 // (openspec/specs/architecture/generated-artifacts/design.md): One map of numbers and file titles, read off audio that
-// Those are read off audio that is never written anywhere.
-// A clip is fetched, decoded, measured and dropped.
+// Is never written anywhere. A clip is fetched, decoded, measured and dropped.
 // The rule that no game audio enters the repository holds for a temporary folder exactly as for a commit.
 export const PERSONA_REFERENCE_MAP_PATH: string = join(
   REPOSITORY_ROOT,
