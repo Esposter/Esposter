@@ -6,8 +6,8 @@ import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBes
 import { withFinalizerAsync } from "@esposter/shared";
 
 // The one way a unit of work publishes the writes it records. `run` runs inside `scope`, the recording its handles
-// Write into, And once it settles, whether it succeeded or not, the topics `readTopics` names are published
-// `best-effort`. A write that Landed before a failure still changed rows, so its topics go out either way
+// Write into, and once it settles (succeeded or not), the topics `readTopics` names are published best-effort.
+// A write that landed before a failure still changed rows, so its topics go out either way
 export const runRecordedWrites = <TScope, TId, TResult>(
   storage: AsyncLocalStorage<TScope>,
   scope: TScope,

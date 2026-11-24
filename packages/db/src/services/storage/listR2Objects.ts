@@ -14,8 +14,8 @@ export const listR2Objects = async (
   const objects: R2Object[] = [];
   let cursor: string | undefined;
   do {
-    // With
-    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor is what the next page is requested
+    /* oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor is what the next page is
+       requested with */
     const page = await bucket.list(omitUndefined({ cursor, include, limit, prefix }));
     objects.push(...page.objects);
     cursor = page.truncated ? page.cursor : undefined;

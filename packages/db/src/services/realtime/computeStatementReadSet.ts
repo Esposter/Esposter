@@ -36,7 +36,7 @@ interface AliasDeclaration {
   table: Table;
 }
 // The depth in front of each chunk of one flat chunk array, and the alias declarations in it. Computed once per array:
-// The Walk reads them, and a relational query's root alias reads the statement's top level
+// The walk reads them, and a relational query's root alias reads the statement's top level
 interface ChunkScan {
   declarations: AliasDeclaration[];
   depths: number[];

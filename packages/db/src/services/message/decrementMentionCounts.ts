@@ -6,9 +6,9 @@ import { and, isNull, lt, lte, ne, or, sql } from "drizzle-orm";
 
 // Takes back the count a message made for each member it mentioned, when the message is deleted or edited away from the
 // Mention. The text's counts were made when it was last written — its edit, or else its send — and a count is held only
-// By A member who was in the room by then and has not read the room since, since a read clears the counts it stands on.
-// So Only those members are reached: a count a later message made is never taken, and a member who joined after the
-// Text was Written was never counted for it. A count at zero is skipped, so no count goes below zero
+// By a member who was in the room by then and has not read the room since, since a read clears the counts it stands on.
+// So only those members are reached: a count a later message made is never taken, and a member who joined after the
+// Text was written was never counted for it. A count at zero is skipped, so no count goes below zero
 export const decrementMentionCounts = async (
   db: Database,
   {
