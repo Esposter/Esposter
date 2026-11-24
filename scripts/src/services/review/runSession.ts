@@ -17,7 +17,7 @@ import { spawn } from "@esposter/shared-node/child-process";
 import { once } from "node:events";
 
 // The arguments a role's session gets. A reviewer is print mode with only its read-only tools allowed, which denies
-// Every Other tool, and the fixer and the settler skip their prompts since they edit and commit in their own checkout.
+// Every other tool, and the fixer and the settler skip their prompts since they edit and commit in their own checkout.
 const ReviewSessionRoleArgumentsMap: Record<ReviewSessionRole, string[]> = {
   [ReviewSessionRole.Fixer]: ["--dangerously-skip-permissions"],
   [ReviewSessionRole.Reviewer]: ["--allowedTools", ...REVIEWER_TOOLS],
@@ -25,15 +25,15 @@ const ReviewSessionRoleArgumentsMap: Record<ReviewSessionRole, string[]> = {
 };
 
 // One headless Claude Code session: the prompt on stdin, its output returned whole for `parseReviewAnswer`. A usage
-// Limit Throws `ReviewSessionLimitedError`, read only off a non-zero exit, since a clean exit's text may only quote the
+// Limit throws `ReviewSessionLimitedError`, read only off a non-zero exit, since a clean exit's text may only quote the
 // Sentence. Any other failure throws a plain error.
 export const runSession = async ({ cwd, prompt, role, timeoutMs }: ReviewSessionInput): Promise<string> => {
   const child = spawn(
     PNPM_FILE,
     [
       ...PNPM_ARGS,
-      // The checkout may be mid-conflict, which `pnpm` refuses to parse, and `dlx` installs outside the workspace
-      // Anyway
+      // The checkout may be mid-conflict, which `pnpm` refuses to parse, and `dlx` installs outside the workspace,
+      // So the flag below lets `dlx` run whatever the checkout's state
       "--ignore-workspace",
       "dlx",
       CLAUDE_CODE_PACKAGE,

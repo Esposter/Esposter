@@ -27,8 +27,7 @@ const logRunnerResources = (): void => {
 };
 
 // A line a minute of what the runner has left and what holds it, for the job that runs a session. A session's output
-// Comes Back whole when it ends, so a runner that shuts down mid-session leaves the job log with no word of what was
-// Running.
+// Comes back whole when it ends, so a runner that shuts down mid-session leaves the job log with no word of what ran.
 export const startRunnerResourceHeartbeat = (): void => {
   setInterval(() => {
     getResult(logRunnerResources).match(noop, console.error);

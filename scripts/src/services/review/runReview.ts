@@ -134,8 +134,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
       (opened) => {
         for (const issue of opened) {
           issueNumbers.push(issue.issue);
-          // A
-          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- directory the option names, empty when unset
+          // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the option's directory, empty when unset
           if (findingsDirectory !== "") writeReviewIssueFindings(findingsDirectory, issue);
         }
         return true;

@@ -12,8 +12,7 @@ import { runSession } from "#src/services/review/runSession";
 import { getResultAsync } from "@esposter/shared";
 
 // One reviewer over one batch, read-only, in its window's worktree at `directory`, which the caller creates and
-// Removes. It reports an outcome rather than throwing, so one batch's failure does not end the others' reviews
-// `mid-flight`.
+// Removes. It reports an outcome rather than throwing, so one batch's failure does not stop the others mid-flight.
 export const reviewBatch = (
   directory: string,
   base: string,

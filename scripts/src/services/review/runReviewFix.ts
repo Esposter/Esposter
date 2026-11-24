@@ -20,8 +20,8 @@ import { runGit } from "#src/services/shared/runGit";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
 // The fixer over one review issue's findings, in this checkout at the queue's tip. Its commits land on `ai/queue`. The
-// Issue Is then narrowed to what stays open, or closed when every finding settled. A fixer that is never answered, or
-// Whose Commit did not land, leaves its findings on the issue, which the settle job takes.
+// Issue is then narrowed to what stays open, or closed when every finding settled. A fixer that is never answered, or
+// Whose commit did not land, leaves its findings on the issue, which the settle job takes.
 export const runReviewFix = async ({ base, end, findings, issue }: ReviewIssueFindings): Promise<void> => {
   const summary = [`## Fix issue #${issue}`, "", `${findings.length} finding(s) to fix.`];
   console.info(`fixer on #${issue}: ${findings.length} finding(s)`);
