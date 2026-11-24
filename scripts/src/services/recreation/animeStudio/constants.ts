@@ -32,8 +32,8 @@ export const STAGING_DIRECTORY_NAME = "animestudio-cli-staging";
 // Rebuild Moves that folder into the staged CLI's once the staged CLI passes, before the staged folder replaces the
 // Published one
 export const MAPS_DIRECTORY_NAME = "Maps";
-// The names the CLI's native imports resolve to on macOS. .NET probes `lib<import name>.dylib` and `<import
-// `name>.dylib`` Next to the app; the Ooz import keeps its `.dll` suffix, so its library is
+// The names the CLI's native imports resolve to on macOS. .NET probes `lib<import name>.dylib` and
+// `<import name>.dylib` Next to the app; the Ooz import keeps its `.dll` suffix, so its library is
 // `libAnimeStudio.Ooz.dll.dylib`
 export const OOZ_LIBRARY_FILE_NAME = "libAnimeStudio.Ooz.dll.dylib";
 export const TEXTURE2DDECODER_LIBRARY_FILE_NAME = "libTexture2DDecoderNative.dylib";
