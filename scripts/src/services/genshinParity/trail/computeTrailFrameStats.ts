@@ -2,7 +2,7 @@ import { RGB_CHANNEL_COUNT } from "#src/services/genshinParity/probe/constants";
 import { TRAIL_CHANNEL_SPREAD_THRESHOLD, TRAIL_LUMINANCE_THRESHOLD } from "#src/services/genshinParity/trail/constants";
 
 // One frame of a strike's region as the trail reads it: the trail pixels it holds, the length of each run of them along
-// A Row, and the RGB sum of them, which the trail's colour is their mean of
+// A row, and the RGB sum of them, which the trail's colour is their mean of
 export interface TrailFrameStats {
   area: number;
   runs: number[];

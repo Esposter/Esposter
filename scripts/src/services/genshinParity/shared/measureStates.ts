@@ -11,7 +11,7 @@ const PAUSE_MS = 1000;
 const WALK_MS = 20_000;
 
 // The states of one run, in order: the cold orbit straight after load, where the first sight of each pipeline lands,
-// Then A second orbit, then a walk, each after a pause so one state's frames do not run into the next
+// Then a second orbit, then a walk, each after a pause so one state's frames do not run into the next
 export const measureStates = async (page: Page): Promise<({ state: StallState } & TracedState)[]> => {
   const coldOrbit = await measureState(page, "cold orbit", () => orbit(page, ORBIT_MS));
   await page.waitForTimeout(PAUSE_MS);
