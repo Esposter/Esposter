@@ -1,0 +1,14 @@
+name: Game Data Mirror Key
+description: The cache key of the hosted game data's mirror, hashed over the committed lock of every product it holds
+outputs:
+  key:
+    description: The mirror's cache key, `game-data-mirror-` and the hash of the locks
+    value: ${{ steps.key.outputs.key }}
+runs:
+  using: composite
+  steps:
+    # Read from the checkout, so a caller checks out before it runs this action
+    - name: 🔑 Hash the game data locks
+      id: key
+      shell: bash
+      run: echo "key=game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json', 'apps/web/shared/generated/hostedAssets/dungeonsLock.json') }}" >> "$GITHUB_OUTPUT"

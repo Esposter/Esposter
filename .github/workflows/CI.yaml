@@ -92,11 +92,14 @@ jobs:
         run: pnpm --filter "@esposter/infra" build
       # Restored only: `build-packages` fills and saves the mirror under this key before a shard starts on the default
       # branch and `ai/queue`; another branch restores the newest mirror it can see (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape)
+      - name: 🔑 Key the game data mirror
+        id: game-data-mirror-key
+        uses: ./.github/actions/game-data-mirror-key
       - name: ♻️ Restore the game data mirror
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/workspace-data/content
-          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json', 'apps/web/shared/generated/hostedAssets/dungeonsLock.json') }}
+          key: ${{ steps.game-data-mirror-key.outputs.key }}
           restore-keys: game-data-mirror-
       # Vitest's persisted transforms, per shard, since a shard transforms its own files. An entry is keyed on what the
       # transform read, so one from an earlier commit is reused as it stands; the lockfile in the key starts the cache
