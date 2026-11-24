@@ -132,6 +132,7 @@ The repository declares no certificate. Each hosted hostname is one label under 
 | `packages/hosted-assets/src/services/downloadHostedAssetFile.ts`                          | one file's fetch into the cache, with its retries                                               |
 | `packages/hosted-assets/src/services/storeHostedAssetFile.ts`                             | one file's fetch into the cache, answered from it when held and joined when already in flight   |
 | `packages/hosted-assets/src/services/readHostedAssetFile.ts`                              | a product's read of one object through the cache, which the preload then finds held             |
+| `packages/hosted-assets/src/services/dropHostedAssetFile.ts`                              | a product's drop of one object from the cache by its url, so its next read fetches it again     |
 | `scripts/src/models/hostedAssets/HostedAssetProduct.ts`                                   | the product declaration: bucket, lock, name, scopes and source                                  |
 | `scripts/src/services/hostedAssets/getHostedAssetProducts.ts`                             | the list of every product the tools cover                                                       |
 | `scripts/src/services/hostedAssets/constants.ts`                                          | the object cap, the audio refusals, the reuse and retention windows, and the concurrency bounds |
