@@ -618,6 +618,7 @@ describe(saveResourceContent, () => {
 
     await expect(
       saveResourceContent(ctx, {
+        activityType: ResourceActivityType.ContentSaved,
         content: createWebpageContent(webpage.id, [assetHash]),
         contentVersion: webpage.contentVersion,
         resource: savedWebpage,
