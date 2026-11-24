@@ -45,7 +45,7 @@ export const useWorldMailStore = defineStore("world/mail", () => {
     const { gameDataBaseUrl, language } = worldSessionStore;
     const load = Symbol("mail load");
     loading = load;
-    // `match(`) handles both branches, so the promise
+    // `match()` handles both branches, so the promise
     // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
     getResultAsync(async () => {
       const birthdayMailRows = await readBirthdayMailRows(gameDataBaseUrl);

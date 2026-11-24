@@ -56,7 +56,7 @@ export const useWorldAchievementsStore = defineStore("world/achievements", () =>
   );
   const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
     if (achievementEvents.length === 0) return;
-    // `match(`) handles both branches, so the promise
+    // `match()` handles both branches, so the promise
     // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
     getResultAsync(() => readAchievements(worldSessionStore.gameDataBaseUrl)).match(
       ({ achievements }) => {

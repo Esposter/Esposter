@@ -209,7 +209,7 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
     ({ characterBody, getMapCamera, regionCityIds } = saved);
     foundOculusIds.value = saved.foundOculusIds;
     regionStatueProgressMap.value = saved.regionStatueProgressMap;
-    // `match(`) handles both branches, so the promise
+    // `match()` handles both branches, so the promise
     // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
     getResultAsync(() => readOculusPlaces(worldSessionStore.gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
       (places) => {

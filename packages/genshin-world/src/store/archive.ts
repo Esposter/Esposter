@@ -141,7 +141,7 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
     // The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table
     // When First needed, since the Archive's own screen may not have been opened
     events.on("parentQuestFinish", () => {
-      // `match(`) handles both branches, so the promise
+      // `match()` handles both branches, so the promise
       // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
       getResultAsync(() => readTravelLogEntries(worldSessionStore.gameDataBaseUrl)).match(
         (entries) => {

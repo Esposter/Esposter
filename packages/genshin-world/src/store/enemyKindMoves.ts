@@ -29,7 +29,7 @@ export const useWorldEnemyKindMovesStore = defineStore("world/enemyKindMoves", (
       isLoading = true;
       if (requestedEnemyKindIds.has(enemyKindId)) continue;
       requestedEnemyKindIds.add(enemyKindId);
-      // `match(`) handles both branches, so the promise
+      // `match()` handles both branches, so the promise
       // oxlint-disable-next-line typescript/no-floating-promises -- it returns cannot reject and nothing waits on it
       getResultAsync(loadMoves).match(
         (moves) => {
