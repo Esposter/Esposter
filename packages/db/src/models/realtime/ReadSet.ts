@@ -4,7 +4,7 @@ import type { JoinSide } from "#src/models/realtime/JoinSide";
 
 export interface ReadSet {
   // The columns a read filters on, other than by a scope equality or a join: a row the filter removes can come back, so
-  // A Table filtered this way is read whole, unless the filter sits in a left join's ON clause on the table the join
+  // A table filtered this way is read whole, unless the filter sits in a left join's ON clause on the table the join
   // Brings
   filters: ReadSetFilter[];
   joins: ReadSetJoin[];
@@ -24,7 +24,7 @@ export interface ReadSetColumn {
 
 // A column a read tests by a condition other than a scope equality or a join, the clause the condition sits in, and the
 // Occurrence of the table it tests, and the statement level it sits in: the alias or name the statement gives that
-// Table where The condition reads it, and the level the walk opened for that condition
+// Table where the condition reads it, and the level the walk opened for that condition
 export interface ReadSetFilter extends ReadSetColumn {
   level: number;
   occurrence: string;
