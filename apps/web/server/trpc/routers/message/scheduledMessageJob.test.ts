@@ -41,8 +41,8 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
   };
 });
 
-// The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the
-// Stub It stands in for
+// The stub a Worker hands out is typed by the binding, which the web app types by no RPC.
+// So the fake answers as the stub it stands in for.
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: (roomId: string) => useRoomObjectMock(roomId) as unknown as ReturnType<typeof useRoomObject>,
 }));

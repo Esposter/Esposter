@@ -94,8 +94,8 @@ const baseMessageRouter = router({
     .mutation<RoomMessage>(({ ctx, input: { timeZone: _timeZone, ...input } }) =>
       createUserMessage(ctx.db, getRoomActor(ctx), input),
     ),
-  // Typing earns no achievement, and a mutation
-  // oxlint-disable-next-line trpc-procedure/require-query-verb -- runs the achievement plugin on every keystroke
+  // Typing earns no achievement.
+  // oxlint-disable-next-line trpc-procedure/require-query-verb -- a mutation runs achievements on every keystroke
   createTyping: getMemberProcedure(roomIdSchema, "roomId")
     .meta({ staticReason: "The room object pushes who is typing to its sockets as a typed event" })
     // Query, not mutation: emitting has no ordering/concurrency concerns.

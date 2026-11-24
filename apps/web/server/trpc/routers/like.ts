@@ -23,10 +23,10 @@ export const likeRouter = router({
   createLike: standardAuthedProcedure.input(createLikeInputSchema).mutation<LikeInPost>(async ({ ctx, input }) => {
     const post = await requireEntity(readLikedPost(ctx.db, input.postId), DatabaseEntityType.Post, input.postId);
     const userId = ctx.user.id;
-    // The count moves only while no live vote of the member stands, and the vote is written in the same batch. A vote
-    // That stands refuses both writes, and a removed one is revived by the upsert, whose conflict branch clears
-    // `deletedAt` At the next version. A refusal leaves the batch with no row, which is the same refusal a duplicate
-    // Has Always been
+    // The count moves only while no live vote of the member stands, and the vote is written in the same batch.
+    // A vote that stands refuses both writes, and a removed one is revived by the upsert.
+    // Its conflict branch clears `deletedAt` at the next version.
+    // A refusal leaves the batch with no row, the same refusal a duplicate has always been.
     const [updatedPostRows, newLikeRows] = await ctx.db.batch([
       ctx.db
         .update(postsInPost)

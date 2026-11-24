@@ -26,9 +26,9 @@ const MAX_CACHED_APP_MANIFESTS = 8;
 const MAX_CACHED_PAGES = 32;
 const NETWORK_TIMEOUT_SECONDS = 3;
 const PAGES_CACHE_NAME = "pages";
-// The caches this worker owns: its precache, the pages and app manifests it keeps, and the hosted objects its preloader
-// Fills. Activation deletes every other cache of the origin, so a cache an earlier build or an earlier product left
-// Under another name Is not kept
+// The caches this worker owns: its precache, the pages and app manifests it keeps, and the hosted objects it preloads.
+// Activation deletes every other cache of the origin.
+// A cache an earlier build or an earlier product left under another name is not kept.
 const OWNED_CACHE_NAMES: ReadonlySet<string> = new Set([
   APP_MANIFESTS_CACHE_NAME,
   cacheNames.precache,
@@ -110,8 +110,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     (async () => {
       const clients = await self.clients.matchAll({ includeUncontrolled: true });
-      // A Client takes no target
-      // oxlint-disable-next-line unicorn/require-post-message-target-origin -- origin: it is the matched window itself
+      // A client takes no target.
+      // oxlint-disable-next-line unicorn/require-post-message-target-origin -- its origin is the matched window
       for (const client of clients) client.postMessage(payload);
       await self.registration.showNotification(title ?? "", { body, data, ...(icon ? { icon } : {}) });
     })(),

@@ -297,8 +297,8 @@ describe("resourceRouter", () => {
   test("a name match ranks above a tag-only match", async () => {
     expect.hasAssertions();
 
-    // The name match is created first (older), so without the name ranking ahead of the tag the newer tagged resource
-    // Would lead
+    // The name match is created first (older).
+    // Without the name ranking ahead of the tag, the newer tagged resource would lead.
     const nameResource = await dashboardCaller.createResource({ name: "ai" });
     vi.advanceTimersByTime(1);
     const taggedResource = await sheetCaller.createResource({ name: "Ask" });

@@ -74,8 +74,8 @@ describe("notificationRouter", () => {
     expect(secondPage).not.toHaveProperty("unreadCount");
   });
 
-  // A dismissal leaves the row as a tombstone the read returns, so a read that lands later cannot bring it back, and
-  // The Answer names the row it left
+  // A dismissal leaves the row as a tombstone the read returns, so a read that lands later cannot bring it back.
+  // The answer names the row it left.
   test("keeps a dismissed notification as a tombstone the read returns, and answers the row with the unread count", async () => {
     expect.hasAssertions();
 

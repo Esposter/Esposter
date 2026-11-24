@@ -50,9 +50,9 @@ import { Operation } from "@esposter/shared";
 import { and, eq, isNotNull, sql } from "drizzle-orm";
 
 export const roleRouter = router({
-  // A role a revocation or a deletion left as a tombstone is revived by the insert's conflict branch, and a live
-  // Assignment is Already the answer, so it is read back rather than returned by the write. Either way the answer names
-  // The row it holds
+  // A role a revocation or a deletion left as a tombstone is revived by the insert's conflict branch.
+  // A live assignment is already the answer, so it is read back rather than returned by the write.
+  // Either way the answer names the row it holds.
   assignRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     assignRoleInputSchema,
@@ -151,8 +151,9 @@ export const roleRouter = router({
       )
       .returning();
   }),
-  // The role is deleted as a tombstone, and so are the assignments it held, in one batch. A revival of the role under
-  // The Same id then starts with no member holding it, rather than handing the old holders back
+  // The role is deleted as a tombstone, and so are the assignments it held, in one batch.
+  // A revival of the role under the same id then starts with no member holding it.
+  // It does not hand the old holders back.
   deleteRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     deleteRoleInputSchema,

@@ -237,8 +237,9 @@ export const resourceRouter = router({
     .query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
       readDeletedResourcePage(ctx.db, { cursor, limit, sort, userId: ctx.user.id }),
     ),
-  // The viewer's live stars a page at a time, the most recently set first. Each row answers its own star, so a list
-  // Shows Every star from the page it holds, and a star removed elsewhere reaches a row as its tombstone
+  // The viewer's live stars a page at a time, the most recently set first.
+  // Each row answers its own star, so a list shows every star from the page it holds.
+  // A star removed elsewhere reaches a row as its tombstone.
   readFavorites: standardAuthedProcedure
     .input(readFavoritesInputSchema)
     .query<Page<ResourceListItemWithFavorite>>(async ({ ctx, input: { cursor, limit } }) => {
@@ -528,9 +529,9 @@ export const resourceRouter = router({
   saveResourceRevision: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<number | undefined>(
     ({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport),
   ),
-  // The row it answers is the star's own, so a client reads whether the star is set from its deletedAt. A removal keeps
-  // The Row as a tombstone at the version the removal left, and a star made again revives that row with the new time,
-  // Which is Where the list places it
+  // The row it answers is the star's own, so a client reads whether the star is set from its deletedAt.
+  // A removal keeps the row as a tombstone at the version the removal left.
+  // A star made again revives that row with the new time, which is where the list places it.
   toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<ResourceFavoriteInResource>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.user.id;

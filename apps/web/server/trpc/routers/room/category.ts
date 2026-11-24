@@ -39,8 +39,8 @@ export const categoryRouter = router({
                 .from(usersInAuth)
                 .where(eq(usersInAuth.id, userId)),
             )
-            // A category a deletion left as a tombstone is revived by a create that names its id, and only its owner
-            // May Revive it, so the set-where names the owner too
+            // A category a deletion left as a tombstone is revived by a create that names its id.
+            // Only its owner may revive it, so the set-where names the owner too.
             .onConflictDoUpdate({
               set: { deletedAt: null, name: sql`excluded.name`, position: sql`excluded.position` },
               setWhere: sql`${isNotNull(roomCategoriesInMessage.deletedAt)} and ${eq(roomCategoriesInMessage.userId, userId)}`,
@@ -52,9 +52,9 @@ export const categoryRouter = router({
         JSON.stringify(input),
       );
     }),
-  // The removal keeps the category as a tombstone, and takes the caller's memberships off it, as the foreign key's
-  // `set-null` Did when the row was deleted. Only the caller's own memberships are named, so a category of someone
-  // Else's Is untouched
+  // The removal keeps the category as a tombstone, and takes the caller's memberships off it.
+  // That is what the foreign key's `set-null` did when the row was deleted.
+  // Only the caller's own memberships are named, so a category of someone else is untouched.
   deleteRoomCategory: standardAuthedProcedure
     .input(deleteRoomCategoryInputSchema)
     .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
@@ -87,8 +87,9 @@ export const categoryRouter = router({
       // Category takes its position from the array row that names its id
       const reorderJson = JSON.stringify(input.map(({ id, position }) => ({ id, position })));
       const reorderedIds = sql`(select json_extract(value, '$.id') from json_each(${reorderJson}))`;
-      // One statement for the whole drag. It moves nothing unless every category named is the caller's live one, so a
-      // Miss Refuses the whole reorder rather than moving the ones it owns
+      // One statement for the whole drag.
+      // It moves nothing unless every category named is the caller's live one.
+      // A miss refuses the whole reorder rather than moving the ones it owns.
       const updatedRoomCategories = await ctx.db
         .update(roomCategoriesInMessage)
         .set({

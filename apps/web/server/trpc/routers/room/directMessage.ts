@@ -73,13 +73,13 @@ export const directMessageRouter = router({
       if (acceptedFriendships.length !== targetUserIds.length)
         throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId);
 
-      // The room is inserted unless one already holds this participant set. The memberships name their room by that
-      // Key rather than by an id this request generated, so they land on whichever room the key belongs to, and the
-      // Room is read back at the end of the same batch
+      // The room is inserted unless one already holds this participant set.
+      // The memberships name their room by its key, rather than by an id this request generated.
+      // So they land on whichever room the key belongs to, and the room is read back at the end of the same batch.
       const participantKey = getDirectMessageParticipantKey(allUserIds);
       const participantRoomId = sql`(select ${roomsInMessage.id} from ${roomsInMessage} where ${roomsInMessage.participantKey} = ${participantKey})`;
-      // Each membership row binds its room's key and its user, so a statement takes as many rows as that leaves room
-      // For
+      // Each membership row binds its room's key and its user.
+      // That leaves room for a statement to take any number of rows.
       const [insertedRoomRows] = await ctx.db.batch([
         ctx.db
           .insert(roomsInMessage)
@@ -124,8 +124,8 @@ export const directMessageRouter = router({
   >(async ({ ctx, input: { roomId, userIds } }) => {
     const actorUser = ctx.user;
     await assertIsRoom(ctx.db, roomId, RoomType.DirectMessage);
-    // The key is read before the participants it names, so a change landing between the two reads is one the write
-    // Refuses
+    // The key is read before the participants it names.
+    // A change landing between the two reads is one the write refuses.
     const { participantKey } = await requireEntity(
       ctx.db.query.roomsInMessage.findFirst({ columns: { participantKey: true }, where: { id: { eq: roomId } } }),
       DatabaseEntityType.Room,
@@ -135,12 +135,12 @@ export const directMessageRouter = router({
     const addedUsers = await readAddableDirectMessageParticipants(ctx.db, actorUser.id, participantIds, userIds);
     const addedUserIds = addedUsers.map(({ id }) => id);
 
-    // The memberships and the key are one batch, and both are written only while the room still holds the key the list
-    // Is computed from. A refused key inserts no membership, so the key and the memberships it names land together or
-    // Not at all
+    // The memberships and the key are one batch, and both are written only while the room still holds the key.
+    // The list is computed from that key.
+    // A refused key inserts no membership, so the key and the memberships it names land together or not at all.
     const isRoomKeyUnchanged = getParticipantKeyUnchangedWhere(ctx.db, roomId, participantKey);
-    // A re-added member is revived from the tombstone their removal left, as a fresh membership. The added users are
-    // Bound Once, as a JSON array, so the statement takes any number of them
+    // A re-added member is revived from the tombstone their removal left, as a fresh membership.
+    // The added users are bound once, as a JSON array, so the statement takes any number of them.
     const [, updatedRoomRows] = await runParticipantBatch(() =>
       ctx.db.batch([
         ctx.db
@@ -199,15 +199,17 @@ export const directMessageRouter = router({
       DatabaseEntityType.User,
       userId,
     );
-    // The owner leaving hands the group to the next participant, since the owner's permissions are checked without
-    // Looking for a membership and a departed owner would otherwise keep every gate on a conversation they are not in
+    // The owner leaving hands the group to the next participant.
+    // The owner's permissions are checked without looking for a membership.
+    // A departed owner would otherwise keep every gate on a conversation they are not in.
     const [nextOwnerId] = remainingParticipantIds;
-    // The membership and the key are one batch under the same guard as the add: both are written only while the room
-    // Still Holds the key the list is computed from, so a refused key leaves the membership in place
+    // The membership and the key are one batch under the same guard as the add.
+    // Both are written only while the room still holds the key the list is computed from.
+    // A refused key leaves the membership in place.
     const isRoomKeyUnchanged = getParticipantKeyUnchangedWhere(ctx.db, roomId, room.participantKey);
-    // The membership, then the key, then the membership's cascade, so the batch's second result is the room. The
-    // Cascade Reads the membership's own tombstone, which the guard lets through only while the key is unchanged, so a
-    // Refused key Leaves the children live too
+    // The membership, then the key, then the membership's cascade, so the batch's second result is the room.
+    // The cascade reads the membership's own tombstone, which the guard lets through only while the key is unchanged.
+    // A refused key leaves the children live too.
     const [membershipStatement, ...cascadeStatements] = getRoomMembershipRemoval(
       ctx.db,
       roomId,

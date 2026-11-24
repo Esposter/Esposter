@@ -22,10 +22,10 @@ import { Operation } from "@esposter/shared";
 import { and, asc, eq, getTableColumns, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const bookmarkRouter = router({
-  // Every bookmark the reader holds, a removed one included as its tombstone, with the fields the read joins in from
-  // The Targets: whether the page is reachable, and the mark that names it. A resource in the recycle bin is
-  // Unreachable until it Is restored, and its bookmark is still answered, so it is drawn unavailable rather than left
-  // Out
+  // Every bookmark the reader holds, a removed one included as its tombstone, with the fields the read joins in.
+  // Each one says whether its page is reachable, and carries the mark that names it.
+  // A resource in the recycle bin is unreachable until it is restored.
+  // Its bookmark is still answered, so it is drawn unavailable rather than left out.
   readBookmarks: standardAuthedProcedure.query<ReadBookmark[]>(async ({ ctx }) => {
     const userId = ctx.user.id;
     const userBookmarks = await ctx.db

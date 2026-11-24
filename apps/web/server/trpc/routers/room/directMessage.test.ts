@@ -63,8 +63,9 @@ describe("directMessageRouter", () => {
   const createUserContext = async (user?: AuthSession["user"]) =>
     createMockContext(await createMockAuthSession(mockContext.db, user));
   const readMembership = (roomId: string, userId: string) => readRoomMembership(mockContext.db, roomId, userId);
-  // The join a membership announces, carrying the row it was written with. A direct message's membership holds no name
-  // Of its Own, so the join names the account, the way the room's read names the member
+  // The join a membership announces, carrying the row it was written with.
+  // A direct message's membership holds no name of its own, so the join names the account.
+  // The room's read names the member the same way.
   const readJoinEvent = async (roomId: string, user: PublicUser) => {
     const membership = await readMembership(roomId, user.id);
     assert.exists(membership);

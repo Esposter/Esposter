@@ -162,8 +162,8 @@ describe("programRouter", () => {
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const { participants: reissuedParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
-    // Re-running never rotates a token, since a rotated token would dead-link a link already sent out. A stored
-    // Credential Is a hash, so the repeat has no credential to answer with
+    // Re-running never rotates a token, since a rotated token would dead-link a link already sent out.
+    // A stored credential is a hash, so the repeat has no credential to answer with.
     expect(participants.map((participant) => participant.keyValue)).toStrictEqual([" ", "a"]);
     expect(reissuedParticipants).toStrictEqual([]);
   });

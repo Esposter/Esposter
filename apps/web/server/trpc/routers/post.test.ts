@@ -330,8 +330,9 @@ describe("postRouter", () => {
     expect(comment.commentCount).toBe(1);
   });
 
-  // The reply's entry is the one the store issues. The counters it moves sit on the posts above it, which the entry
-  // Reaches Through its parent's chain, so a write to any of them queues behind the reply
+  // The reply's entry is the one the store issues.
+  // The counters it moves sit on the posts above it, which the entry reaches through its parent's chain.
+  // So a write to any of them queues behind the reply.
   test("the reply entry covers every post above it that its create counts", async () => {
     expect.hasAssertions();
 
@@ -374,8 +375,8 @@ describe("postRouter", () => {
     expect(post.commentCount).toBe(0);
   });
 
-  // A reply page reads the replies of its parent by `parentId`, so the delete of that parent takes the page's replies
-  // With it, And the page the replies were read from is the one the delete changes
+  // A reply page reads the replies of its parent by `parentId`, so deleting that parent takes the replies with it.
+  // The page the replies were read from is the one the delete changes.
   test("deleting a comment leaves its replies' page as tombstones", async () => {
     expect.hasAssertions();
 

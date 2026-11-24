@@ -17,12 +17,13 @@ import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduled
 import { DatabaseEntityType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 
-// The Scheduled tab's rows are held by their owners: a reminder in the person's object, a scheduled message in its
-// Room's. Both are listed and cancelled here, so the tab reads and writes each kind through this router alone
+// The Scheduled tab's rows are held by their owners.
+// A reminder sits in the person's object, and a scheduled message in its room's object.
+// Both are listed and cancelled here, so the tab reads and writes each kind through this router alone.
 export const scheduledMessageJobRouter = router({
-  // A reminder is the person's own row, so their object answers first. A miss means the id is a scheduled message,
-  // Which Its room's object tombstones for the sender who scheduled it and for nobody else. Either answers with the
-  // Tombstone it left
+  // A reminder is the person's own row, so their object answers first. A miss means the id is a scheduled message.
+  // The room's object tombstones that message for the sender who scheduled it and for nobody else.
+  // Either answers with the tombstone it left.
   cancelScheduledMessageJob: standardAuthedProcedure
     .input(scheduledMessageIdentityInputSchema)
     .mutation<CancelScheduledMessageJobResult>(async ({ ctx, input: { id, roomId } }) => {

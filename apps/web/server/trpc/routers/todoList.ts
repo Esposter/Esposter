@@ -21,9 +21,10 @@ import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurr
 import { McpScope, ResourceType } from "@esposter/db-schema";
 
 // The follow-up procedures an agent reaches through the MCP endpoint with a follow-ups key
-// (openspec/specs/resource/todolist-agent-follow-ups/design.md). Each reads, changes and saves the list on the server,
-// And acts only on a Follow-up — a todo with an origin, open and not handed back — so no follow-ups key ticks or
-// Annotates a todo the owner Wrote, and none deletes one
+// (openspec/specs/resource/todolist-agent-follow-ups/design.md).
+// Each reads, changes and saves the list on the server.
+// It acts only on a follow-up, a todo with an origin, open and not handed back.
+// So no follow-ups key ticks or annotates a todo the owner wrote, and none deletes one.
 export const todoListRouter = router({
   ...createResourceProcedures(ResourceType.TodoList),
   addFollowUp: getOwnerProcedure(ResourceType.TodoList, addFollowUpInputSchema, "id")
@@ -102,8 +103,8 @@ export const todoListRouter = router({
           !(item.recurrence && item.dueAt && item.dueAt > now),
       );
     }),
-  // The checkbox's tick for any todo, as the browser takes it: a repeating one rolls on, and any other completes or
-  // Reopens
+  // The checkbox's tick for any todo, as the browser takes it.
+  // A repeating one rolls on, and any other completes or reopens.
   toggleTodoCompleted: getOwnerProcedure(ResourceType.TodoList, toggleTodoCompletedInputSchema, "id")
     .meta({
       mcp: {
