@@ -22,9 +22,9 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 import { join } from "node:path";
 
-// Records a sample's readers: the cells every reader judged clean print their `Ledger:` trailers, once each, and the
-// Rest Are written as the units a fixer is handed. The readers' output sits beside the batch files they were handed, so
-// The Directory holds both and a judgement is matched against the units its reader was given.
+// Records a sample's readers: the cells every reader judged clean print their `Ledger:` trailers, once each.
+// The rest are written as the units a fixer is handed. The readers' output sits beside the batch files.
+// The directory holds both, and a judgement is matched against the units its reader was given.
 await runCommand(
   defineCommand({
     args: {

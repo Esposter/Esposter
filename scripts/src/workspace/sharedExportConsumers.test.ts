@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
  * every export of `packages/shared`. The scan is the `ai:sweep:shared-export-consumers` pass's own: an export the
  * package's other files read is a piece of one that clears the threshold and stays, so what is reported is only the
  * export one package alone names, which belongs beside it, or none does, which is dead where the barrel re-exports
- * it. / */
+ * it. */
 describe("sharedExportConsumers", () => {
   test("no export of packages/shared is named by fewer than two packages", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();

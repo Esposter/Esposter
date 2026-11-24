@@ -8,8 +8,7 @@ import { describe, expect, test } from "vitest";
 
 /** Every built file's size is committed in `bundle-sizes.md`, so a change that moves a bundle shows its exact bytes
  * in the diff, a shrink as plainly as a growth. This holds the record to a fresh build: it fails on any file that
- * grew, shrank, appeared or went, and the review of `ai/queue` writes the fix from its own build (`testing` skill).
- * / */
+ * grew, shrank, appeared or went, and the review of `ai/queue` writes the fix from its own build (`testing` skill). */
 describe("bundleSizes", () => {
   const record = readFileSync(resolve(REPOSITORY_ROOT, BUNDLE_SIZES_FILENAME), "utf8");
   const bundleSizes = readBundleSizes(REPOSITORY_ROOT);

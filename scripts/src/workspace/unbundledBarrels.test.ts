@@ -8,8 +8,8 @@ import { pathToFileURL } from "node:url";
 import { build } from "vite";
 import { assert, describe, expect, onTestFinished, test } from "vitest";
 
-// A package that builds has its `dist` once the build has run, which CI's coverage job waits for, so a missing one is
-// A build that did not run and fails here rather than passing over the package
+// A package that builds has its `dist` once the build has run, which CI's coverage job waits for.
+// A missing one is a build that did not run, and it fails here rather than passing over the package
 const readDistDirectory = (packagePath: string) => {
   const distDirectory = resolve(REPOSITORY_ROOT, packagePath, "dist");
   assert(existsSync(distDirectory), `${packagePath} has no dist, so the build has not run`);
@@ -21,7 +21,7 @@ const readDistDirectory = (packagePath: string) => {
  * schema package is the one that matters: its barrel holds drizzle tables and the schemas derived from them, and the
  * client imports its enums. A package built into one file keeps all of that for a single enum, so this bundles the
  * import the way the app's client does and reads what survives. The other tests hold the shape of the output itself:
- * it is moved between machines and loaded by Node, which neither a stylesheet import nor a hidden folder survives. / */
+ * it is moved between machines and loaded by Node, which neither a stylesheet import nor a hidden folder survives. */
 describe("unbundledBarrels", () => {
   // Matches a module's import of a stylesheet, bare or with bindings, which a bundler resolves and Node cannot load
   const STYLESHEET_IMPORT_REGEX = /^import\s+(?:[^;]*?\sfrom\s+)?["'][^"']+\.css["']/mu;

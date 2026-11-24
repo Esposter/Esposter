@@ -17,8 +17,8 @@ interface JsonFile {
 }
 
 // A strict file must be JSON by the parser that defines JSON, which rejects every construct the strict rules name.
-// A JSONC file is read by jsonc-parser, the one reader here that takes comments and trailing commas and still reports
-// Every other fault it finds.
+// A JSONC file is read by jsonc-parser, the one reader here that takes comments and trailing commas.
+// It still reports every other fault it finds.
 const readSyntaxFaults = (text: string, isJsonc: boolean): string[] => {
   if (!isJsonc)
     return getResult(() => parseMachineJson(text)).match(
@@ -36,7 +36,7 @@ const readSyntaxFaults = (text: string, isJsonc: boolean): string[] => {
 /** The checks on the repository's JSON, held by reading the files, since oxlint reads no JSON. A strict file must
  * parse as JSON; a JSONC file (a tsconfig, a `.vscode` file, a `.jsonc` config) is read with comments and trailing
  * commas, which are its contract. Every rule that config turned on has a fixture below, so a rule that stops reading
- * its input fails here rather than passing in silence. / */
+ * its input fails here rather than passing in silence. */
 describe("jsonFiles", () => {
   // The generated JSON left out: a drizzle migration snapshot is written and re-read by `db:gen`, an asset is an
   // Export from the tool that drew it, and a vitest snapshot is rewritten by `-u`

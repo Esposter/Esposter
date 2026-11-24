@@ -12,8 +12,8 @@ import { readLedgerSample } from "#src/services/sweeps/ledgerCoverage/readLedger
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// Prints each question's `Sampled:` trailer, read from the sample and from the fixers' result files, so the record
-// Commit That ends a sample carries the counts the sample's fixers produced
+// Prints each question's `Sampled:` trailer, read from the sample and from the fixers' result files.
+// The record commit that ends a sample carries the counts the sample's fixers produced
 await runCommand(
   defineCommand({
     args: {
