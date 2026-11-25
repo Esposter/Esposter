@@ -39,6 +39,14 @@ export const TEMPLATE_RESTRICTED_SYNTAXES: SelectorBan[] = [
     selector: "VElement[rawName=/^v-/]",
   },
   {
+    // A bare stop walls the control off from the container that opens on a click. A stop with a handler is a choice
+    // the handler makes, so only the valueless form is banned
+    message:
+      "Don't wall a control off with a bare `@click.stop`. The container that opens on a click asks `checkIsNestedInteraction(event)` first, and a region that is its own control without being a link, button or field carries `data-nested-interaction`. See openspec/specs/architecture/nested-interactions/design.md.",
+    selector:
+      "VAttribute[directive=true][key.name.name='on'][key.argument.name='click'][value=null] > VDirectiveKey > VIdentifier.modifiers[name='stop']",
+  },
+  {
     // `vue/v-bind-style` reads only a bound argument, so the argument-less object form takes this ban
     message: 'Spread an object of bindings with the shorthand: `:="attrs"`, never `v-bind="attrs"`.',
     selector: "VAttribute[directive=true][key.name.rawName='bind'][key.argument=null]",

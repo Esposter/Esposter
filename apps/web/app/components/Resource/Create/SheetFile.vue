@@ -74,9 +74,6 @@ const onUpdateFile = async (newFile?: File | File[]) => {
       Drop a {{ DATA_SOURCE_ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </p>
     <div flex gap-2 min-w-0 items-center>
-      <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/13533 -->
-      <!-- oxlint-disable a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus
-        altogether -->
       <input
         ref="fileInput"
         :accept="DATA_SOURCE_ACCEPT"
@@ -86,7 +83,6 @@ const onUpdateFile = async (newFile?: File | File[]) => {
         hidden
         @change="onUpdateFile(fileInput?.files?.[0])"
       />
-      <!-- oxlint-enable a11y/no-aria-hidden-on-focusable -->
       <UiButton :disabled="isParsing" @click="fileInput?.click()">
         <UiIcon :meaning="UiIconMeaning.Attach" />
         {{ file ? "Choose another file" : "Choose a file" }}

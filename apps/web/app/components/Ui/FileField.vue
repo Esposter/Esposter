@@ -75,8 +75,6 @@ const { isOverDropZone } = useDropZone(dropZone, {
     </div>
     <!-- The button is the labelled way in, so the picker's own input stays out of the accessibility tree and the
       tab order -->
-    <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/13533 -->
-    <!-- oxlint-disable-next-line a11y/no-aria-hidden-on-focusable -- hidden takes the input out of focus altogether -->
     <input
       ref="input"
       :accept

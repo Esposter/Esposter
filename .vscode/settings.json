@@ -21,7 +21,5 @@
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
   "search.followSymlinks": false,
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13548 — the language server's config runtime opens a visible console window on Windows; the template lint still runs in `pnpm lint`
-  "vize.lint.enable": false,
   "vize.typecheck.enable": false
 }

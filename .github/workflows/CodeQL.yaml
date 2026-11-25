@@ -45,7 +45,7 @@ jobs:
       # `build-mode: none` keeps CodeQL off autobuild: neither language needs a build to be analysed, and the
       # build this repository has is minutes of Nuxt for a scan that reads sources
       - name: 🔎 Initialise CodeQL
-        uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+        uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
         with:
           build-mode: none
           languages: ${{ matrix.language }}
@@ -55,7 +55,7 @@ jobs:
               - apps/web/app/assets/dungeons/tilesets/**
 
       - name: 🔎 Analyse
-        uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+        uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
 
   # `analyze` uploads its findings and exits 0 whatever they are, so an alert is a fact on the Security tab and
   # nothing else. This gate reads them back for the ref just scanned and fails on any still open — a dismissed one

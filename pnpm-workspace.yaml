@@ -28,22 +28,22 @@ bail: false
 
 catalog:
   "@arethetypeswrong/core": ^0.18.5
-  "@better-auth/api-key": ^1.7.27
-  "@better-auth/drizzle-adapter": ^1.7.27
+  "@better-auth/api-key": ^1.7.28
+  "@better-auth/drizzle-adapter": ^1.7.28
   "@cloudflare/realtimekit": ^2.1.0
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
-  "@cloudflare/workers-types": ^5.20261124.1
+  "@cloudflare/workers-types": ^5.20261124.2
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.7.6
   "@dxup/nuxt": ^0.5.11
   "@dxup/unimport": ^0.1.2
-  "@fission-ai/openspec": ^2.1.1
+  "@fission-ai/openspec": ^2.2.0
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
   "@huggingface/transformers": ^4.3.2
-  "@iconify-json/lucide": ^1.2.158
+  "@iconify-json/lucide": ^1.2.159
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
@@ -59,7 +59,7 @@ catalog:
   "@nuxt/kit": npm:@nuxt/kit-nightly@5x
   "@nuxt/nitro-server": npm:@nuxt/nitro-server-nightly@5x
   "@nuxt/schema": npm:@nuxt/schema-nightly@5x
-  "@nuxt/scripts": ^1.3.12
+  "@nuxt/scripts": ^1.3.13
   "@nuxt/test-utils": ^4.4.0
   "@nuxtjs/seo": ^6.1.0
   "@oxlint/plugins": ^1.95.0
@@ -84,11 +84,11 @@ catalog:
   "@tiptap/vue-3": ^3.35.0
   "@tresjs/cientos": ^5.13.0
   "@tresjs/core": ^5.12.0
-  "@trpc/client": ^11.31.0
-  "@trpc/server": ^11.31.0
+  "@trpc/client": ^11.31.3
+  "@trpc/server": ^11.31.3
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
-  "@types/node": ^26.6.6
+  "@types/node": ^26.6.7
   "@types/three": ^0.187.0
   "@types/web-push": ^3.6.4
   "@typesafe-ai/sdk": ^0.7.0
@@ -107,9 +107,9 @@ catalog:
   "@vitest/snapshot": ^5.1.1
   "@vitest/spy": ^5.1.1
   "@vitest/utils": ^5.1.1
-  "@vizejs/native": ^0.790.0
-  "@vizejs/unplugin": ^0.790.0
-  "@vizejs/vite-plugin": ^0.790.0
+  "@vizejs/native": ^0.793.0
+  "@vizejs/unplugin": ^0.793.0
+  "@vizejs/vite-plugin": ^0.793.0
   "@vue/compiler-core": ^3.5.46
   "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.4.0
@@ -117,7 +117,7 @@ catalog:
   "@vueuse/nuxt": ^15.1.0
   "@vueuse/router": ^15.1.0
   apexcharts: ^8.9.1
-  better-auth: ^1.7.27
+  better-auth: ^1.7.28
   citty: ^0.2.2
   codemirror: ^6.0.2
   crossws: ^0.4.17
@@ -139,7 +139,7 @@ catalog:
   lru-cache: ^11.5.3
   marked: ^18.3.0
   mime-db: ^1.54.0
-  miniflare: 5.20261123.0-beta
+  miniflare: 5.20261123.1-beta
   minisearch: ^7.2.0
   mjml: ^5.4.1
   mjml-preset-core: ^5.4.1
@@ -167,13 +167,13 @@ catalog:
   re2js: ^2.10.0
   read-excel-file: ^9.3.20
   rolldown: ^1.3.3
-  rollup-plugin-visualizer: ^7.1.3
+  rollup-plugin-visualizer: ^7.3.0
   rou3: ^1.0.0
   sharp: ^0.35.5
   superjson: ^2.2.7
   temporal-polyfill: ^1.0.8
   three: ^0.187.0
-  three-mesh-bvh: ^0.9.18
+  three-mesh-bvh: ^0.10.0
   tinybench: ^6.2.5
   tsdown: ^0.23.7
   tsrs: ^7.1.0-beta.tsrs5
@@ -192,11 +192,11 @@ catalog:
   vite-plus: ^1.8.0
   vitest: ^5.1.1
   vitest-browser-vue: ^3.1.0
-  vize: ^0.790.0
+  vize: ^0.793.0
   vue: ^3.5.46
   vue-router: ^5.5.1
   web-push: ^4.0.0
-  wrangler: ^4.167.0
+  wrangler: ^4.168.0
   write-excel-file: ^4.1.1
   zod: ^4.6.7
 

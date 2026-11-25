@@ -24,12 +24,6 @@ const toFile = (template: string): VueFile => ({ path: "a.vue", text: `<template
 describe("templateTextRules", () => {
   // The top-level template, from its opening tag to its closing tag, each at the start of its line
   const TEMPLATE_REGEX = /^<template\b[^>]*>[\s\S]*?^<\/template>/mu;
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13534 — move the ban to vize's template list once its tree has
-  // Modifiers
-  const BARE_CLICK_STOP_MESSAGE =
-    "Don't wall a control off with a bare `@click.stop`. The container that opens on a click asks `checkIsNestedInteraction(event)` first, and a region that is its own control without being a link, button or field carries `data-nested-interaction`. See openspec/specs/architecture/nested-interactions/design.md.";
-  // A click directive with no value: `@click` or `v-on:click`, its modifiers, then a space, a `/` or a `>`, never a `=`
-  const BARE_CLICK_REGEX = /(?<=\s)(?:@click|v-on:click)(?<modifiers>(?:\.[\w-]+)*)(?=\s|\/|>)(?!\s*=)/gu;
   // @TODO: https://github.com/ubugeeei-prod/vize/issues/13535 — drop the same-name check once vize's `vue/v-bind-style`
   // Takes sameNameShorthand
   const SAME_NAME_BIND_MESSAGE = 'Write a bind whose value is its own name as the shorthand: `:foo`, not `:foo="foo"`.';
@@ -59,14 +53,6 @@ describe("templateTextRules", () => {
         .map((match) => `${path}:${getLine(text, templateMatch.index + match.index)} → ${match[0]}: ${message}`);
     });
 
-  const getBareClickStops = (files: VueFile[]): string[] =>
-    getTemplateFindings(
-      files,
-      BARE_CLICK_REGEX,
-      ({ modifiers = "" }) => modifiers.split(".").includes("stop"),
-      BARE_CLICK_STOP_MESSAGE,
-    );
-
   const getSameNameBinds = (files: VueFile[]): string[] =>
     getTemplateFindings(
       files,
@@ -90,25 +76,6 @@ describe("templateTextRules", () => {
       text: readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"),
     }));
   }, TREE_READ_TIMEOUT_MS);
-
-  test.each(["@click.stop", "@click.stop.prevent", "v-on:click.stop"])("flags the bare click stop %s", (directive) => {
-    expect.hasAssertions();
-
-    expect(getBareClickStops([toFile(`<button ${directive} />`)])).toStrictEqual([
-      `a.vue:2 → ${directive}: ${BARE_CLICK_STOP_MESSAGE}`,
-    ]);
-  });
-
-  test.each([
-    '<button @click.stop="go()" />',
-    '<button @click.stop ="go()" />',
-    '<button @click="go()" />',
-    "<button @keydown.stop />",
-  ])("leaves the click %s alone", (template) => {
-    expect.hasAssertions();
-
-    expect(getBareClickStops([toFile(template)])).toStrictEqual([]);
-  });
 
   test.each([':foo="foo"', ':foo-bar="fooBar"', 'v-bind:foo="foo"', ':foo.prop="foo"'])(
     "flags the same-name bind %s",
@@ -152,10 +119,6 @@ describe("templateTextRules", () => {
   test("no tracked component breaks a template text rule", () => {
     expect.hasAssertions();
 
-    expect([
-      ...getBareClickStops(trackedFiles),
-      ...getSameNameBinds(trackedFiles),
-      ...getUnpaddedBlocks(trackedFiles),
-    ]).toStrictEqual([]);
+    expect([...getSameNameBinds(trackedFiles), ...getUnpaddedBlocks(trackedFiles)]).toStrictEqual([]);
   });
 });
