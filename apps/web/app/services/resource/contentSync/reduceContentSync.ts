@@ -27,10 +27,10 @@ const send = (base: ContentBase, snapshot: ContentSnapshot, isEdited = false): C
         effects: [{ snapshot, type: ContentSyncEffectType.Send, version: base.version }],
         state: { base, isEdited, isReloading: false, kind: ContentSyncKind.Saving, sent: snapshot },
       };
-// A save's answer moves the base to what it stored. A newer row seen meanwhile is then another writer's: adopted when
-// Nothing was edited since, a conflict otherwise. Without one, the latest save asked for goes next
 // An edit the save in flight does not yet hold: one made since it was sent, or one asked for behind it in `next`
 const isEditedSince = (state: SavingContentSync) => state.isEdited || state.next !== undefined;
+// A save's answer moves the base to what it stored. A newer row seen meanwhile is then another writer's: adopted when
+// Nothing was edited since, a conflict otherwise. Without one, the latest save asked for goes next
 const acknowledge = (state: SavingContentSync, version: number, hash: string): ContentSyncTransition => {
   // A compare-and-set answers one past the base, so the clamp only keeps the clock from going back on a broken answer
   const base: ContentBase = { hash, json: state.sent.json, version: Math.max(version, state.base.version) };
