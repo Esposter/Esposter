@@ -60,6 +60,9 @@ describe(useDirectMessageStore, () => {
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    // A join or a removal re-reads the room's member totals too, which no test here judges
+    trpcMsw.room.readMembersCount.query(() => 0);
+    trpcMsw.room.readMemberCountsByTopRole.query(() => []);
   });
 
   afterEach(() => {
@@ -362,9 +365,6 @@ describe(useDirectMessageStore, () => {
       return { items: [directMessage], nextCursor: "", participants: participantsOf(directMessage.id, participants) };
     });
     trpcMsw.userToRoom.readMyUsersToRooms.query(() => []);
-    // The join re-reads the room's member totals too, which this test does not judge
-    trpcMsw.room.readMembersCount.query(() => 0);
-    trpcMsw.room.readMemberCountsByTopRole.query(() => []);
     const directMessageStore = useDirectMessageStore();
     const { getDirectMessageParticipants, readItems } = directMessageStore;
     // The list's answer names its topics in a response header, which msw cannot set.
