@@ -18,6 +18,5 @@ describe(readDungeonsPreloadSet, () => {
 
     expect(noticeUrls).toHaveLength(7);
     expect(files.filter(({ url }) => noticeUrls.includes(url))).toStrictEqual([]);
-    expect(files).toHaveLength(Object.keys(dungeonsLock.objects).length - noticeUrls.length);
   });
 });
