@@ -21,7 +21,10 @@ describe("inlinedDependencies", () => {
     const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
     const rootVersions = getImporterVersions(lockYaml, ROOT_IMPORTER);
     const mismatches = readWorkspacePackages(REPOSITORY_ROOT).flatMap(({ directory, manifest, workspaceDirectory }) => {
-      const packageVersions = getImporterVersions(lockYaml, `${workspaceDirectory}/${directory}`);
+      const packageVersions = getImporterVersions(
+        lockYaml,
+        workspaceDirectory ? `${workspaceDirectory}/${directory}` : directory,
+      );
       return Object.entries(manifest.inlinedDependencies ?? {}).flatMap(([dependencyName, recordedVersion]) => {
         const resolvedVersion = packageVersions.get(dependencyName) ?? rootVersions.get(dependencyName);
         const recorded = [recordedVersion].flat();
