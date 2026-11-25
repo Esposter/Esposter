@@ -362,6 +362,9 @@ describe(useDirectMessageStore, () => {
       return { items: [directMessage], nextCursor: "", participants: participantsOf(directMessage.id, participants) };
     });
     trpcMsw.userToRoom.readMyUsersToRooms.query(() => []);
+    // The join re-reads the room's member totals too, which this test does not judge
+    trpcMsw.room.readMembersCount.query(() => 0);
+    trpcMsw.room.readMemberCountsByTopRole.query(() => []);
     const directMessageStore = useDirectMessageStore();
     const { getDirectMessageParticipants, readItems } = directMessageStore;
     // The list's answer names its topics in a response header, which msw cannot set.

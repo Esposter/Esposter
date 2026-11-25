@@ -36,7 +36,7 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: {
       // @TODO: https://github.com/ubugeeei-prod/vize/issues/13685 — turn the unknown event check on with
-      // `fallthroughAttributes`, which types a native listener that falls through to a component's root, once vize's
+      // "fallthroughAttributes", which types a native listener that falls through to a component's root, once vize's
       // Check reads it as vue-tsc's does. The unknown prop check reads the attributify names
       // `modules/attributifyTypes.ts` declares at prepare
       checkUnknownEvents: false,

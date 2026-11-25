@@ -98,7 +98,12 @@ const read = (state: ContentSyncState, version: number, hash: string): ContentSy
 // Against it without a network (openspec/specs/architecture/content-sync/design.md)
 export const reduceContentSync = (state: ContentSyncState, event: ContentSyncEvent): ContentSyncTransition => {
   if (event.type === ContentSyncEventType.Read) return read(state, event.version, event.hash);
-  else if (state.kind === ContentSyncKind.Unread) return stay(state);
+  // A restore before the first read lands reads again at once: the newer read aborts the one in flight, so only content
+  // Read after the restore applies
+  else if (state.kind === ContentSyncKind.Unread)
+    return event.type === ContentSyncEventType.ReloadRequested
+      ? { effects: [{ type: ContentSyncEffectType.ReadContent }], state }
+      : stay(state);
 
   switch (event.type) {
     case ContentSyncEventType.Edited:

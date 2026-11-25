@@ -7,7 +7,6 @@ import { TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceEmailEditor from "#src/components/Resource/Email/Editor.vue";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
-import { useSession } from "#src/services/auth/authClient.test";
 import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
 import { createEmailButtonSection } from "#src/services/pageBuilder/email/createEmailButtonSection.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -29,7 +28,6 @@ describe("resourceEmailEditor", () => {
 
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    useSession.mockReturnValue({ data: null });
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.email.readResourceContent.query(
       () => new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } }),

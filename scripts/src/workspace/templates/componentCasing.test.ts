@@ -23,6 +23,6 @@ describe("componentCasing", () => {
       { name: "mathElement", template: `<mrow />`, violations: 0 },
       { name: "vuetifyComponent", template: `<v-btn />`, violations: 0 },
     ],
-    messageStart: "Write a component's tag in PascalCase",
+    messageStart: "[vize:vue/component-name-in-template-casing]",
   });
 });
