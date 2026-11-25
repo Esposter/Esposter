@@ -78,7 +78,7 @@ onShutdown((scene) => {
     :id="CharacterId.Player"
     :key="tilemapKey"
     v-model:position="player.position"
-    v-model:direction="player.direction"
+    :direction="player.direction"
     v-model:is-moving="isMoving"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"
     :walking-animation-mapping="PlayerWalkingAnimationMapping"
@@ -96,6 +96,11 @@ onShutdown((scene) => {
         sprite = markRaw(newSprite);
         scene.cameras.main.startFollow(sprite, true);
         scene.cameras.main.setFollowOffset(-sprite.width, -sprite.height);
+      }
+    "
+    @update:direction="
+      (newDirection) => {
+        if (newDirection) player.direction = newDirection;
       }
     "
   />

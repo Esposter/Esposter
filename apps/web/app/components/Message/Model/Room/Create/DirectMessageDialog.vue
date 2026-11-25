@@ -28,6 +28,6 @@ const createSelectedDirectMessage = async () => {
     title="New Message"
     :submit="createSelectedDirectMessage"
   >
-    <MessageModelRoomDirectMessageFriendPicker ref="friendPicker" v-model="selectedUserIds" is-multiple />
+    <MessageModelRoomDirectMessageFriendPicker ref="friendPicker" v-model="selectedUserIds" />
   </StyledFormDialog>
 </template>

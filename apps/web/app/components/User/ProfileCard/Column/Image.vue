@@ -27,7 +27,7 @@ const fileMessage = ref("");
 <template>
   <UserProfileCardField :label>
     <div flex flex-wrap gap-4 items-center>
-      <UiAvatar :image="(isEditMode ? modelValue : value) ?? ''" :name="label" />
+      <UiAvatar :image="isEditMode ? modelValue : value" :name="label" />
       <template v-if="isEditMode">
         <UiHiddenFileInput
           ref="fileInput"

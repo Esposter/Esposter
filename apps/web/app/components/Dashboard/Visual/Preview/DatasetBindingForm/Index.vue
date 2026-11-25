@@ -63,7 +63,12 @@ watch(dataset, (newDataset) => {
     <template v-if="modelValue">
       <div flex flex-col gap-1 w-64>
         <span text-muted>X column</span>
-        <UiSelect v-model="modelValue.query.xColumn" :items="columnItems" label="X column" />
+        <UiSelect
+          :model-value="modelValue.query.xColumn"
+          :items="columnItems"
+          label="X column"
+          @update:model-value="modelValue.query.xColumn = $event"
+        />
       </div>
       <!-- A row edits its series in place, so the bound query holds each change without a write back -->
       <!-- oxlint-disable vue/no-restricted-syntax -- removes a series from the binding draft the form edits, which
@@ -90,8 +95,9 @@ watch(dataset, (newDataset) => {
         Add series
       </UiButton>
       <DashboardVisualPreviewDatasetBindingFormOrder
-        v-model="modelValue.query.order"
+        :model-value="modelValue.query.order"
         :series="modelValue.query.series"
+        @update:model-value="modelValue.query.order = $event"
       />
     </template>
   </template>

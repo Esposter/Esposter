@@ -1,5 +1,4 @@
-<script setup lang="ts" generic="TMultiple extends boolean = false">
-import type { FriendPickerModelValue } from "#src/models/message/room/directMessage/FriendPickerModelValue";
+<script setup lang="ts">
 import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { PublicUser } from "@esposter/db-schema";
 
@@ -10,14 +9,10 @@ import { useFriendStore } from "#src/store/message/user/friend";
 
 interface Props {
   excludedUserIds?: PublicUser["id"][] | undefined;
-  isMultiple?: TMultiple | undefined;
 }
 
-const modelValue = defineModel<FriendPickerModelValue<TMultiple>>();
-const { excludedUserIds = [], isMultiple } = defineProps<Props>();
-// The prop's type is the generic, so Vue gives it no Boolean runtime type and a bare `is-multiple` arrives as `""`.
-// Presence is on, as for an HTML attribute; only an absent or bound-false prop picks one
-const isMultipleMode = computed(() => isMultiple !== undefined && isMultiple !== false);
+const selectedUserIds = defineModel<PublicUser["id"][]>({ required: true });
+const { excludedUserIds = [] } = defineProps<Props>();
 const friendStore = useFriendStore();
 const { friends, friendsError } = storeToRefs(friendStore);
 const searchQuery = ref("");
@@ -29,25 +24,10 @@ const friendItems = computed(() =>
     ({ name }) => ({ name }),
   ).map<UiListItem<string>>(({ id, image, name }) => ({ image, title: name, value: id })),
 );
-// The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
-// The model are read and written here, in one place, rather than cast at every binding
-const readModelValue = () => modelValue.value as string | string[] | undefined;
-const writeModelValue = (value: string | string[] | undefined) => {
-  modelValue.value = value as FriendPickerModelValue<TMultiple>;
-};
-const selectedUserIds = computed(() => {
-  const value = readModelValue();
-  if (Array.isArray(value)) return value;
-  return value ? [value] : [];
-});
 const toggleFriend = (id: string) => {
-  if (isMultipleMode.value)
-    writeModelValue(
-      selectedUserIds.value.includes(id)
-        ? selectedUserIds.value.filter((userId) => userId !== id)
-        : [...selectedUserIds.value, id],
-    );
-  else writeModelValue(readModelValue() === id ? undefined : id);
+  selectedUserIds.value = selectedUserIds.value.includes(id)
+    ? selectedUserIds.value.filter((userId) => userId !== id)
+    : [...selectedUserIds.value, id];
 };
 
 const reset = () => {
@@ -66,11 +46,10 @@ await readFriends();
     <div pb-2 bg-lifted top-0 sticky z-1>
       <UiTextField v-model="searchQuery" is-autofocus label="Search friends" :type="UiTextFieldType.Search" />
     </div>
-    <!-- The selection is written through the pick alone, so choosing a friend already chosen lets them go again in a
-         picker of one as well as of several -->
+    <!-- The selection is written through the pick alone, so choosing a friend already chosen lets them go again -->
     <UiList
       v-if="friendItems.length > 0"
-      :is-multiple="isMultipleMode ? true : undefined"
+      is-multiple
       :items="friendItems"
       label="Friends"
       :model-value="selectedUserIds"

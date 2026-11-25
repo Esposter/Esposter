@@ -39,7 +39,7 @@ const exportJsonFile = useExportJsonFile();
 const findings = useSurveyCreatorFindings();
 const isClearOpen = ref(false);
 // The switch chooses between the editor and the runner, so a preview is a view of the survey rather than an edit of it
-const mode = computed({
+const mode = computed<string>({
   get: () => (isPreview.value ? SURVEY_PREVIEW_MODE : SURVEY_DESIGN_MODE),
   set: (value: string) => {
     isPreview.value = value === SURVEY_PREVIEW_MODE;

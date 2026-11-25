@@ -21,10 +21,10 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 
 - Use `interface` (not `type`) for the value map — value-set values map directly to string literal keys.
 - Define the interface locally (not exported unless reused elsewhere).
-- The map type drives inference at call sites where the key type is statically known.
+- The map type drives the **prop's** inference at call sites where the key type is statically known. It never drives the model's update: vize's strict template check types a `v-model`'s update at the generic's default or constraint, not at the call site's inference, so a parent whose target is the narrower call-site type fails the check. A generic that changes the model's shape (one value or several, a value per kind) is two components or one fixed shape instead.
 - For `as const satisfies` maps, use `Record<Exclude<TValueSet, ExcludedVariant>, ValueType>` to exclude variants using a different component path (e.g. Boolean → checkbox, not text field).
 - If TypeScript can't narrow `TKey` in template `v-if`/`v-else` branches (correlated generics limitation), fall back to the union of all possible values (e.g. `FooValue`) for `defineModel` — the prop type still provides call-site inference.
-- **A boolean prop typed by the generic gets no Boolean runtime type.** Vue's compiler cannot resolve `TMultiple extends boolean` to `Boolean`, so it declares the prop `{ type: null }`, and a bare `is-multiple` arrives as `""`, which reads false. The component reads the prop by presence instead, `isMultiple !== undefined && isMultiple !== false`, as `FriendPicker.vue` does, so a bare attribute and a bound `true` both turn it on.
+- **A boolean prop typed by the generic gets no Boolean runtime type.** Vue's compiler cannot resolve `TMultiple extends boolean` to `Boolean`, so it declares the prop `{ type: null }`, and a bare `is-multiple` arrives as `""`, which reads false. Such a prop is read by presence, `isMultiple !== undefined && isMultiple !== false`, so a bare attribute and a bound `true` both turn it on — though a mode switch typed by the generic is usually the model-shape generic the bullet above rules out.
 
 ## Per-variant type correctness
 

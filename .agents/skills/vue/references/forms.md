@@ -10,6 +10,8 @@ Default to `v-model="ref"`. Keep the split form only when the update is not a di
 - **Multiple writes on update** — the handler sets more than one ref.
 - **Extra-arg function call** — `@update:model-value="setFilter(key, $event)"`.
 - **Dynamic property assignment** — `@update:model-value="row[col] = $event"`.
+- **Assignment under a `v-if` guard** — v-model's generated update closure loses the guard's narrowing, so the strict template check reports the target possibly `undefined`; the update written as a plain statement (`@update:model-value="item.title = $event"`) keeps it.
+- **A model that emits wider than its target** — the strict template check types a component's update as the model's declared type, so a model that accepts `undefined` (an optional or `T | undefined` model, a calendar with no day yet) updates a target that cannot hold it only through a guard: a split binding whose handler narrows (`@update:model-value="(newDate) => { if (newDate) date = newDate; }"`, the only form inside a `v-for`), or, for a single binding already behind a writable computed, the computed typed as the model's type with its setter narrowing (`computed<string[] | undefined>`). A component that never emits `undefined` keeps its model type anyway: an optional model is typed `T | undefined` on update whatever `T` says, and narrowing it breaks every caller passing `undefined` in.
 - **Genuine value transformation** — unit/date-format conversion, bitwise ops (the stored value differs structurally from the displayed one).
 
 ## Upsert forms — create vs edit mode

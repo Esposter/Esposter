@@ -185,7 +185,16 @@ useCommands((): UiCommand[] => [
     <!-- Outlook's navigator: the month around the day shown, each day holding an event marked, a click going there.
       It is as wide as its month's days, which are sized themselves, so the hours beside it take what is left -->
     <aside class="hidden lg:flex" shrink-0 flex-col>
-      <UiCalendar v-model="date" label="Go to a day" :marked-dates />
+      <UiCalendar
+        :model-value="date"
+        label="Go to a day"
+        :marked-dates
+        @update:model-value="
+          (newDate) => {
+            if (newDate) date = newDate;
+          }
+        "
+      />
     </aside>
     <div flex flex-1 flex-col gap-3 min-w-0>
       <header flex gap-2 items-center>

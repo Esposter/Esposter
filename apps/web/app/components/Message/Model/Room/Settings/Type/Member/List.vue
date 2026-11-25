@@ -22,9 +22,9 @@ const memberItems = computed(() =>
     value: member.id,
   })),
 );
-const selectedMemberIds = computed({
+const selectedMemberIds = computed<string[] | undefined>({
   get: () => (selectedMemberId.value ? [selectedMemberId.value] : []),
-  set: ([newSelectedMemberId]) => {
+  set: ([newSelectedMemberId] = []) => {
     if (newSelectedMemberId) selectMember(newSelectedMemberId);
   },
 });

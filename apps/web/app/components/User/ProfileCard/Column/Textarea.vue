@@ -17,13 +17,6 @@ const valueRules = [UiRules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)];
 </script>
 
 <template>
-  <UiTextField
-    v-if="isEditMode"
-    :model-value="modelValue ?? ''"
-    :label
-    :rows="3"
-    :rules="valueRules"
-    @update:model-value="modelValue = $event"
-  />
+  <UiTextField v-if="isEditMode" v-model="modelValue" :label :rows="3" :rules="valueRules" />
   <UserProfileCardField v-else :label ws-pre-wrap>{{ value }}</UserProfileCardField>
 </template>

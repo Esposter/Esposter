@@ -30,8 +30,13 @@ onUnmounted(() => {
   <DungeonsWorldCharacterNpc
     v-for="npc of items"
     :key="npc.id"
-    v-model:direction="npc.direction"
+    :direction="npc.direction"
     v-model:is-moving="npc.isMoving"
     :npc
+    @update:direction="
+      (newDirection) => {
+        if (newDirection) npc.direction = newDirection;
+      }
+    "
   />
 </template>

@@ -32,7 +32,8 @@ const profileCardValues = computed(() => {
   if (!session.value) throw createEntityNotFoundError(DatabaseEntityType.User);
 
   const { biography, image, name } = savedProfile.value ?? session.value.user;
-  return { biography, image, name };
+  // better-auth declares the image nullable, but its column is `notNull().default("")`, so absence is `""` here too
+  return { biography, image: image ?? "", name };
 });
 const profileCardRows = computed(() => {
   const { biography, image, name } = profileCardValues.value;

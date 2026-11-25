@@ -34,7 +34,14 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     },
     contentMappers: [{ extensions: [".vue"], options: { optionsApi: false }, package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
-    vueCompilerOptions: { composables: { useTemplateRef: ["useTemplateRef"] } },
+    vueCompilerOptions: {
+      // UnoCSS attributify utilities and layout props through `NuxtLayout` are attributes no declaration names, and a
+      // Listener a component does not emit falls through to its root, so the unknown prop and event checks stay off
+      checkUnknownEvents: false,
+      checkUnknownProps: false,
+      composables: { useTemplateRef: ["useTemplateRef"] },
+      strictTemplates: true,
+    },
   },
 };
 // Nuxt gives the server the webworker and DOM libs, which declare the same `Headers` and `Response` as the

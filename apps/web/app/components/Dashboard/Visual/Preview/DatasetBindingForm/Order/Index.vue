@@ -55,7 +55,12 @@ const directionItems = DatasetOrderDirections.map((value) => ({ title: value, va
     </div>
     <div v-if="order" flex flex-col gap-1 w-48>
       <span text-muted>Direction</span>
-      <UiSelect v-model="order.direction" :items="directionItems" label="Direction" />
+      <UiSelect
+        :model-value="order.direction"
+        :items="directionItems"
+        label="Direction"
+        @update:model-value="order.direction = $event"
+      />
     </div>
   </div>
 </template>

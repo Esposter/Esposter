@@ -13,6 +13,10 @@ watchDeep(editedItem, (newEditedItem) => {
 
 <template>
   <UiForm v-if="editedItem" p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
-    <UiTextField v-model="editedItem.chart.configuration.title" label="Title" />
+    <UiTextField
+      :model-value="editedItem.chart.configuration.title"
+      label="Title"
+      @update:model-value="editedItem.chart.configuration.title = $event"
+    />
   </UiForm>
 </template>

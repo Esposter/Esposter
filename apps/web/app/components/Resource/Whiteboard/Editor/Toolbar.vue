@@ -23,7 +23,7 @@ const { isToolLocked, shapeKind, tool } = storeToRefs(whiteboardEditorStore);
 const { chooseShape, toggleToolLock } = whiteboardEditorStore;
 const insertImages = useInsertWhiteboardImages();
 const imageInput = useTemplateRef("imageInput");
-const toolbarValue = computed({
+const toolbarValue = computed<string>({
   get: () => (tool.value === GestureTool.Shape ? shapeKind.value : tool.value),
   set: (value) => {
     const shapeItem = Object.values(WhiteboardShapeItemMap).find((item) => item.value === value);

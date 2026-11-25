@@ -56,11 +56,6 @@ const excludedUserIds = computed(() => {
       }
     "
   >
-    <MessageModelRoomDirectMessageFriendPicker
-      ref="friendPicker"
-      v-model="selectedUserIds"
-      :excluded-user-ids
-      is-multiple
-    />
+    <MessageModelRoomDirectMessageFriendPicker ref="friendPicker" v-model="selectedUserIds" :excluded-user-ids />
   </StyledFormDialog>
 </template>
