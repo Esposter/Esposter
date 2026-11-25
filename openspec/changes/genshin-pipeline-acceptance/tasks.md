@@ -9,7 +9,7 @@
 
 ## 3. Owning pages
 
-- [ ] 3.1 Carry the owning pages with the code they describe: the derived assets page and its spec (the producer requirement is replaced), the AnimeStudio macOS page, the hosted game data page, the recoverability page, the scene derivation page, the game text page, and the genshin-data and genshin-parity skills (the genshin-data and genshin-parity skills describe the code genshin-pipeline-hygiene built). Verify: `pnpm -C scripts exec vitest run src/services/openspec src/workspace/openspecLinks.test.ts src/workspace/citations.test.ts` passes.
+- [ ] 3.1 Carry the owning pages with the code they describe: the derived assets page and its spec (the producer requirement is replaced), the AnimeStudio macOS page, the hosted game data page, the recoverability page, the scene derivation page, the game text page, and the genshin-data and genshin-parity skills (the genshin-data and genshin-parity skills describe the code genshin-pipeline-hygiene built). Verify: `pnpm -C scripts exec vitest run src/services/openspec src/workspace/docs/openspecLinks.test.ts src/workspace/docs/citations.test.ts` passes.
 
 ## 4. Reproduction
 

@@ -16,7 +16,7 @@ An `@TODO` marks a workaround the repository carries because something outside i
 
 ## The form
 
-The marker is followed by the link and nothing else first — `scripts/src/workspace/todos.test.ts` fails any tracked file, prose aside, where it is not:
+The marker is followed by the link and nothing else first — `scripts/src/workspace/docs/todos.test.ts` fails any tracked file, prose aside, where it is not:
 
 - `// @TODO: <link>` in TypeScript and a `<script>` block, `<!-- @TODO: <link> -->` in a template, `# @TODO: <link>` in YAML.
 - `package.json` has no comments: the `"scriptsComments"` string is the `package-scripts` skill's (`references/scripts-comments.md`), in this same form.

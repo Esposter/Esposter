@@ -16,7 +16,7 @@ itself on a fresh clone. **That set is wider than the scripts that name it**: th
 and the `uno.config.ts` the UnoCSS module loads — so none of those may import a workspace package either.
 Reaching for the constant, or for the helper a package already exports, is not a tidier version of the duplicate
 there, it is a broken install. Write it out, say in a comment why it cannot be imported, and pin it **only where nothing downstream
-would fail on the drift** — `scripts/src/workspace/agentDirectories.test.ts` exists because a dropped ignore pattern is
+would fail on the drift** — `scripts/src/workspace/agents/agentDirectories.test.ts` exists because a dropped ignore pattern is
 silent, where a misplaced content collection breaks the suite that reads it. A pin is the exception to the rule
 against testing wiring, so it needs that argument made, not assumed.
 
@@ -26,5 +26,5 @@ Any walk that reaches into `.agents/` must exclude `AGENT_WORKTREES_DIRECTORY`, 
 second checkout of the monorepo nested inside it — and a walk that follows directory symlinks must also exclude
 `AGENT_ALIAS_DIRECTORY`, or it enumerates the tree twice under two names. Which of the two a tool wants follows from how
 far it walks, so check before copying an entry across: a formatter that rewrites what it walks needs the worktrees
-exclusion and not the alias, and `.gitignore` is a tool here too. `scripts/src/workspace/agentDirectories.test.ts` pins
+exclusion and not the alias, and `.gitignore` is a tool here too. `scripts/src/workspace/agents/agentDirectories.test.ts` pins
 the copies that cannot import the constants.

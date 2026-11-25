@@ -11,4 +11,4 @@
 ## 3. The removal
 
 - [x] 3.1 Remove both PDF packages, the `pdfjs-dist` override and every config entry the design lists, mount the renderer's data folders from its install in place of the committed character maps, and sweep the residue. Verify: neither package name appears in `apps/web`, `pnpm-workspace.yaml` or `pnpm-lock.yaml`, and `pnpm test configuration --run` from `apps/web` passes.
-- [x] 3.2 Write the capability's design as built, with both Upstream tables, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.
+- [x] 3.2 Write the capability's design as built, with both Upstream tables, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/docs/citations.test.ts src/workspace/docs/openspecLinks.test.ts src/workspace/docs/staleNames.test.ts src/services/openspec` passes.

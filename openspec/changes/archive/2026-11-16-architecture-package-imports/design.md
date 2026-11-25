@@ -56,7 +56,7 @@ flowchart TD
 
 ### Every script runs under `node`, and the test says so
 
-With no `enum` and no alias left, the web app's script entries become `node scripts/…/index.ts`, and `scripts/src/workspace/packageScripts.test.ts` fails any script entry that runs a `.ts` file under `vpx`. Its stripping walk follows only `#src/` imports today, and it skips a specifier whose file it cannot find, so it cannot yet judge the web app's `#scripts/`, `#shared/`, `#server/` and `#configuration/` imports or its `#src/` tree at `app/`. Extending the walk to follow every `imports` entry the entry's own package declares, and failing an unresolved one instead of skipping it, is part of task 3.1, since the app declares those entries in task 1.1. The package-scripts skill's rule becomes one line: a `.ts` script runs under `node`. **Rejected — removing the `vpx` binary:** it is vite-plus's runner, and vite-plus stays for tests, lint and builds; only its use as a script runner ends.
+With no `enum` and no alias left, the web app's script entries become `node scripts/…/index.ts`, and `scripts/src/workspace/packages/packageScripts.test.ts` fails any script entry that runs a `.ts` file under `vpx`. Its stripping walk follows only `#src/` imports today, and it skips a specifier whose file it cannot find, so it cannot yet judge the web app's `#scripts/`, `#shared/`, `#server/` and `#configuration/` imports or its `#src/` tree at `app/`. Extending the walk to follow every `imports` entry the entry's own package declares, and failing an unresolved one instead of skipping it, is part of task 3.1, since the app declares those entries in task 1.1. The package-scripts skill's rule becomes one line: a `.ts` script runs under `node`. **Rejected — removing the `vpx` binary:** it is vite-plus's runner, and vite-plus stays for tests, lint and builds; only its use as a script runner ends.
 
 ## Key files
 
@@ -66,6 +66,6 @@ With no `enum` and no alias left, the web app's script entries become `node scri
 | `apps/web/configuration/typescript.ts`                            | the Nuxt TypeScript options beside which the alias test sits     |
 | `oxlint/importRestrictions.ts`                                    | `WEB_IMPORT_PATTERNS`: the old aliases and a query on a `#` name |
 | `apps/web/configuration/imports.test.ts`                          | Nuxt's `#shared` and `#server` and the manifest reach one folder |
-| `scripts/src/workspace/packageScripts.test.ts`                    | strips each `node` entry's modules; fails a `.ts` entry on `vpx` |
+| `scripts/src/workspace/packages/packageScripts.test.ts`           | strips each `node` entry's modules; fails a `.ts` entry on `vpx` |
 | `.agents/skills/file-organization/references/import-aliases.md`   | the alias map, rewritten for one way                             |
 | `.agents/skills/package-scripts/references/typescript-scripts.md` | the runner rule, reduced to `node`                               |

@@ -2,7 +2,7 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { LEDGER_AREA_DIRECTORY, LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
 import { readLedgerIndex } from "#src/services/sweeps/ledgerCoverage/readLedgerIndex";
-import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
+import { checkHasGlobMatch } from "#src/workspace/source/checkHasGlobMatch.test";
 import { existsSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";

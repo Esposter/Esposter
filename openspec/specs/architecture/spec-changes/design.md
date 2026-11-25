@@ -27,10 +27,10 @@ The proposals report (`pnpm ai:proposals:report`) groups the open changes by the
 | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `openspec/config.yaml`                                    | The spec-driven schema and the rules each artifact is written to                                    |
 | `openspec/specs/`                                         | The spec of record: each capability's `spec.md`, merged by the archive that ships its change        |
-| `scripts/src/workspace/openspecValidate.test.ts`          | The CLI's strict validation over every open change and every capability                             |
+| `scripts/src/workspace/docs/openspecValidate.test.ts`     | The CLI's strict validation over every open change and every capability                             |
 | `scripts/src/services/openspec/readSpecFindings.ts`       | The scenario check: each scenario's steps in GIVEN, WHEN, THEN order with nothing else between them |
-| `scripts/src/workspace/openspecLinks.test.ts`             | Every relative link in the tree resolves                                                            |
-| `scripts/src/workspace/openspecIndexes.test.ts`           | Every capability is linked from the area README, or the capability's design, above it               |
+| `scripts/src/workspace/docs/openspecLinks.test.ts`        | Every relative link in the tree resolves                                                            |
+| `scripts/src/workspace/docs/openspecIndexes.test.ts`      | Every capability is linked from the area README, or the capability's design, above it               |
 | `scripts/src/services/workspace/readHandWrittenPages.ts`  | The pages every prose check reads: the tree short of its archive, the agent tree and the READMEs    |
 | `scripts/src/services/openspec/getOpenSpecOwners.ts`      | The capability or change a page belongs to, so the pages of one owner may share text                |
 | `scripts/src/services/proposals/readProposalChanges.ts`   | Reads each open change once, its metadata parsed and its phase picked, cheapest first               |

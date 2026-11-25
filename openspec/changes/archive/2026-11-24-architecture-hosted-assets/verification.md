@@ -122,7 +122,7 @@ The fix (`packages/unplugin-pwa-nuxt`, the build test asserts it) leaves the app
 
 The offline reload still raises the two exceptions in both runs, and the stacks of the after run place them in the engine's loader, which fetches `_nuxt/engine/*.gltf` and `.jpeg` by url, files the precache leaves out on purpose. They are not manifest reads. The requests the reload reports as aborted are the online reads' own, which the navigation tore down.
 
-**Not yet on the deployed dev site.** The Deploy of `ai/queue` is skipped: CI on the current head (`2251a4a81f`) is red in `scripts/src/workspace/oxlintPlugins.test.ts` (the `comments/no-over-width-comment` rule is not enabled), which is not this change. The same driven run against `https://dev.esposter.com` (`HOSTED=https://hosted.dev.esposter.com`) is the check once a Deploy carries this change.
+**Not yet on the deployed dev site.** The Deploy of `ai/queue` is skipped: CI on the current head (`2251a4a81f`) is red in `scripts/src/workspace/source/oxlintPlugins.test.ts` (the `comments/no-over-width-comment` rule is not enabled), which is not this change. The same driven run against `https://dev.esposter.com` (`HOSTED=https://hosted.dev.esposter.com`) is the check once a Deploy carries this change.
 
 ## 6.8: the local production run, after the terrain-worker, embedder-policy and TSL fixes
 

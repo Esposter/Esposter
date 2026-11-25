@@ -53,7 +53,7 @@ A token names its permission groups by their names, never by their ids. `getAcco
 
 ## Names
 
-A token's resource name is built by `getCloudflareResourceName` for an environment's token and by `getCloudflareAccountResourceName` for an account's, both from `@esposter/db-schema`. The name is therefore `<env>-tok-esposter-<responsibility>` or `tok-esposter-<responsibility>`, as `apps/infra/docs/cloudflare/naming-conventions.md` defines it. `scripts/src/workspace/cloudflareTokenNames.test.ts` fails a token resource that builds its name any other way. The bootstrap token keeps its hand-made name, since nothing renames it.
+A token's resource name is built by `getCloudflareResourceName` for an environment's token and by `getCloudflareAccountResourceName` for an account's, both from `@esposter/db-schema`. The name is therefore `<env>-tok-esposter-<responsibility>` or `tok-esposter-<responsibility>`, as `apps/infra/docs/cloudflare/naming-conventions.md` defines it. `scripts/src/workspace/ci/cloudflareTokenNames.test.ts` fails a token resource that builds its name any other way. The bootstrap token keeps its hand-made name, since nothing renames it.
 
 ## Outputs
 
@@ -93,7 +93,7 @@ Each output reaches ESC as one `pulumi env set` per key, as `apps/infra/docs/sta
 | `apps/infra/src/cloudflare/outputs/`                                     | the stack outputs that reach ESC                                                                   |
 | `apps/infra/src/github/secrets/cloudflareApiToken.ts`                    | the GitHub secret `CLOUDFLARE_API_TOKEN`, holding the Deploy token's value                         |
 | `scripts/src/services/realtimeKit/applyRealtimeKitActions.ts`            | the RealtimeKit provisioning's apps, presets and webhooks, which creates no token                  |
-| `scripts/src/workspace/cloudflareTokenNames.test.ts`                     | fails a token resource whose name is built outside the naming helpers                              |
+| `scripts/src/workspace/ci/cloudflareTokenNames.test.ts`                  | fails a token resource whose name is built outside the naming helpers                              |
 | `apps/infra/docs/cloudflare/naming-conventions.md`                       | the token names                                                                                    |
 | `apps/infra/docs/stacks.md`                                              | the `pulumi env set` commands that write the outputs to ESC                                        |
 | `.agents/skills/security/references/credentials.md`                      | the handling rules for every credential                                                            |

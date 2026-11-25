@@ -79,23 +79,23 @@ The driver step itself is a post to the route followed by the page visits, writt
 
 ## Key files
 
-| File                                                     | Role                                                                                                    |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `apps/web/modules/startAzuriteEmulator.ts`               | The precedent: a development-only module gated on the development flag, which the new module follows.   |
-| `apps/web/modules/serveGenshinExtractions.test.ts`       | The precedent for a module's colocated test, in the same folder.                                        |
-| `apps/web/server/auth.ts`                                | The better-auth instance whose context the handler takes; its sign-in requirements do not change.       |
-| `apps/web/server/services/auth/readSession.ts`           | The session reader the handler's cookie is proved against in its read-back test.                        |
-| `apps/web/server/trpc/middleware/getAuthedMiddleware.ts` | The one check a minted session passes, unchanged.                                                       |
-| `apps/web/server/db/index.ts`                            | Reads the database address when the server starts, so the driver's override reaches the app's database. |
-| `apps/web/shared/models/environment/Environment.ts`      | The production value the runtime gate compares the environment flag with.                               |
-| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`   | The session row a minted session writes, whose token is unique.                                         |
-| `packages/shared/src/index.ts`                           | The generated barrel that carries the driven user's constant after the package builds.                  |
-| `scripts/package.json`                                   | Gains the `dev:seed` script.                                                                            |
-| `scripts/src/workspace/commandEntries.test.ts`           | The rule that the seed's entry starts through the timing wrapper.                                       |
-| `scripts/src/workspace/openspecScenarioTasks.test.ts`    | Holds this change's tasks and its scenarios to each other.                                              |
-| `.agents/skills/run-app/references/driven-browser.md`    | Gains the driver step and loses its statement that nothing is signed in.                                |
-| `openspec/changes/genshin-phases/design.md`              | Its rejected Playwright option is amended by task 5.1.                                                  |
-| `openspec/specs/architecture/auth/design.md`             | On ship, gains a note on the development-only route beside its provider-only requirement.               |
+| File                                                       | Role                                                                                                    |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `apps/web/modules/startAzuriteEmulator.ts`                 | The precedent: a development-only module gated on the development flag, which the new module follows.   |
+| `apps/web/modules/serveGenshinExtractions.test.ts`         | The precedent for a module's colocated test, in the same folder.                                        |
+| `apps/web/server/auth.ts`                                  | The better-auth instance whose context the handler takes; its sign-in requirements do not change.       |
+| `apps/web/server/services/auth/readSession.ts`             | The session reader the handler's cookie is proved against in its read-back test.                        |
+| `apps/web/server/trpc/middleware/getAuthedMiddleware.ts`   | The one check a minted session passes, unchanged.                                                       |
+| `apps/web/server/db/index.ts`                              | Reads the database address when the server starts, so the driver's override reaches the app's database. |
+| `apps/web/shared/models/environment/Environment.ts`        | The production value the runtime gate compares the environment flag with.                               |
+| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`     | The session row a minted session writes, whose token is unique.                                         |
+| `packages/shared/src/index.ts`                             | The generated barrel that carries the driven user's constant after the package builds.                  |
+| `scripts/package.json`                                     | Gains the `dev:seed` script.                                                                            |
+| `scripts/src/workspace/ci/commandEntries.test.ts`          | The rule that the seed's entry starts through the timing wrapper.                                       |
+| `scripts/src/workspace/docs/openspecScenarioTasks.test.ts` | Holds this change's tasks and its scenarios to each other.                                              |
+| `.agents/skills/run-app/references/driven-browser.md`      | Gains the driver step and loses its statement that nothing is signed in.                                |
+| `openspec/changes/genshin-phases/design.md`                | Its rejected Playwright option is amended by task 5.1.                                                  |
+| `openspec/specs/architecture/auth/design.md`               | On ship, gains a note on the development-only route beside its provider-only requirement.               |
 
 The new files, all in the change's own folders:
 

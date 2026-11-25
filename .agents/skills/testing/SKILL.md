@@ -7,7 +7,7 @@ description: Apply when writing .test.ts or .test-d.ts files. Esposter's Vitest 
 
 ## Settled — do not re-propose
 
-- **A lint rule for constant scope** — an AST selector cannot ask the two whole-Program questions the exceptions turn on (a helper file, a binding read from a hoisted `vi.mock` factory or an awaited initialiser); `scripts/src/workspace/constantScope.test.ts` is the enforcer and asks both.
+- **A lint rule for constant scope** — an AST selector cannot ask the two whole-Program questions the exceptions turn on (a helper file, a binding read from a hoisted `vi.mock` factory or an awaited initialiser); `scripts/src/workspace/source/constantScope.test.ts` is the enforcer and asks both.
 - **`isolate: false`, per project or globally.** Its apparent gain belongs to the package that fails under it, for the reason isolation exists (`references/running-the-suite.md`).
 - **A count target for tests** — a cap or quota per package measures how many tests exist, not whether a regression is caught. The keep test in `references/what-earns-a-test.md` is the only gate on a test.
 

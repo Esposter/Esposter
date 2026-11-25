@@ -51,7 +51,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - **A new screen is built in a fixed order: its reference, its fixture, its component, `compare`, `approve`, then the visual suite** — `references/approval.md`. A reference is hunted once per component, never again to approve its image.
 - **A screen's load is held to its budget by the load bench**, `pnpm -C scripts genshin:parity load <screen>` (`openspec/specs/genshin/load-budget/design.md`).
 - **A landmark or area missing from the extract is looked up in the dump before it is called missing** — its name is searched in `extracted/maps/index.tsv` first, and a mesh the index holds is a name-pattern gap (`references/data-sources.md`).
-- **What a screen draws** — the rule is `openspec/specs/genshin/parity/screens/design.md`'s ("What a screen draws"): before a new element ships, its game reference is cited in its spec, and `scripts/src/workspace/genshinComponentReference.test.ts` names any component it cannot place.
+- **What a screen draws** — the rule is `openspec/specs/genshin/parity/screens/design.md`'s ("What a screen draws"): before a new element ships, its game reference is cited in its spec, and `scripts/src/workspace/genshin/genshinComponentReference.test.ts` names any component it cannot place.
 
 ## Reference pages
 

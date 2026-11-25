@@ -25,7 +25,7 @@ flowchart LR
   Tooling -. ignored .-> Worktrees
 ```
 
-`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The formatter's configuration lives in the package and imports the worktrees one. The rest cannot reach them — `.gitignore` has no imports, and `oxlint.config.ts` sits at the repository root, outside any package's import map — so they repeat the literal and `scripts/src/workspace/agentDirectories.test.ts` pins every copy to its constant. A copy can be silently un-excluded by an unrelated edit that widens a glob, and nothing else would notice.
+`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The formatter's configuration lives in the package and imports the worktrees one. The rest cannot reach them — `.gitignore` has no imports, and `oxlint.config.ts` sits at the repository root, outside any package's import map — so they repeat the literal and `scripts/src/workspace/agents/agentDirectories.test.ts` pins every copy to its constant. A copy can be silently un-excluded by an unrelated edit that widens a glob, and nothing else would notice.
 
 Which literal a tool needs follows from how far it walks, so the two exclusions are not interchangeable:
 
@@ -44,7 +44,7 @@ The plugin commands write `.agents/settings.json` rather than a local sibling, b
 
 A recipe pasted into a skill page or a ledger rots silently, for the reasons `.agents/skills/skill-authoring/references/embedded-recipes.md` gives. So a recipe that is more than one command has its entrypoint at `scripts/src/<domain>/<verb>/index.ts` and its functions under `scripts/src/services/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
 
-The tree stays free of executables for one reason — it is the rules an agent reads, and a path inside it should never have to be asked whether it is a rule or a tool. A check **about** the agent tree is an ordinary `scripts` test, which is why `scripts/src/workspace/agentDirectories.test.ts` sits with the other workspace invariants rather than beside the thing it checks.
+The tree stays free of executables for one reason — it is the rules an agent reads, and a path inside it should never have to be asked whether it is a rule or a tool. A check **about** the agent tree is an ordinary `scripts` test, which is why `scripts/src/workspace/agents/agentDirectories.test.ts` sits with the other workspace invariants rather than beside the thing it checks.
 
 ```mermaid
 flowchart LR
@@ -106,7 +106,7 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 | `.claude-plugin/marketplace.json`                       | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root                                                                                                                |
 | `AGENTS.md`                                             | Repo instruction file, the only one: Claude Code loads it where no `CLAUDE.md` exists                                                                                                                          |
 | `packages/configuration/src/services/constants.ts`      | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                                                                                                                                     |
-| `scripts/src/workspace/agentDirectories.test.ts`        | Pins both exclusions in the configs that cannot import the constants                                                                                                                                           |
-| `scripts/src/workspace/citations.test.ts`               | Fails on a cited repo path or skill name in the specs, the tree, a README or a source comment that resolves nowhere                                                                                            |
-| `scripts/src/workspace/skillDocs.test.ts`               | Fails on every `ai:sweep:skill-docs` finding but the budget                                                                                                                                                    |
-| `scripts/src/workspace/staleNames.test.ts`              | Fails on a backticked code name in the same trees, or in a source file's comment, that neither the code nor a dependency holds                                                                                 |
+| `scripts/src/workspace/agents/agentDirectories.test.ts` | Pins both exclusions in the configs that cannot import the constants                                                                                                                                           |
+| `scripts/src/workspace/docs/citations.test.ts`          | Fails on a cited repo path or skill name in the specs, the tree, a README or a source comment that resolves nowhere                                                                                            |
+| `scripts/src/workspace/docs/skillDocs.test.ts`          | Fails on every `ai:sweep:skill-docs` finding but the budget                                                                                                                                                    |
+| `scripts/src/workspace/docs/staleNames.test.ts`         | Fails on a backticked code name in the same trees, or in a source file's comment, that neither the code nor a dependency holds                                                                                 |

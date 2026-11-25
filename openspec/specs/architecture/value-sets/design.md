@@ -72,7 +72,7 @@ The dungeons' texture and sound keys are one generated set, `DungeonsKeys`, whic
 | `packages/configuration/tsconfig.base.json`                                    | the base every package tsconfig extends; `erasableSyntaxOnly`     |
 | `apps/web/configuration/typescript.ts`                                         | the Nuxt options reaching the app's four tsconfigs; the same flag |
 | `scripts/src/services/genshinText/getPersonaModuleSource.ts`                   | the persona copy: the source, its alias re-aimed                  |
-| `scripts/src/workspace/packageScripts.test.ts`                                 | strips every module a `node` script reaches                       |
+| `scripts/src/workspace/packages/packageScripts.test.ts`                        | strips every module a `node` script reaches                       |
 | `packages/shared/src/util/object/mergeObjectsStrict.ts`                        | the one merge, throwing on a repeated key                         |
 | `packages/shared/src/util/types/MergeObjectsStrict.ts`                         | its type, comparing every pair                                    |
 | `apps/web/scripts/util/createValueSetString.ts`                                | the set generator                                                 |

@@ -95,7 +95,7 @@ A session holds one document and one history, so a store that edits one document
 | `apps/web/app/store/resource/whiteboard/index.ts`                             | the whiteboard's store, which calls the session without a selection port                 |
 | `scripts/src/services/workspace/getHeadlessPackageFailures.ts`                | the shape check: each kind's name, peers and imports, and one entry for both             |
 | `scripts/src/services/workspace/getHeadlessPackageFailures.test.ts`           | the check's scenarios over fixture manifests and sources                                 |
-| `scripts/src/workspace/headlessPackages.test.ts`                              | holds every headless package in the tree to the check                                    |
+| `scripts/src/workspace/packages/headlessPackages.test.ts`                     | holds every headless package in the tree to the check                                    |
 | `scripts/src/services/workspace/checkIsHeadlessPackage.ts`                    | which packages the shape check applies to: a headless name or keyword                    |
 | `scripts/src/services/workspace/checkIsHeadlessPackage.test.ts`               | the cases of which packages count as headless                                            |
 | `scripts/src/services/workspace/constants.ts`                                 | the headless keyword, each kind's name rule and the import rules                         |

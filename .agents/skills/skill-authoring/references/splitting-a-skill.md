@@ -43,7 +43,7 @@ The ceiling is one byte count — `MAX_SKILL_BYTES` in `scripts/src/services/swe
 names has a missed split; the fix is separating topics, never shaving prose, and the space below it is never room a
 skill is entitled to. The check reads `SKILL.md` alone, by design: a reference page's bytes are paid only when its
 index line matches, so its size is not the always-on cost the ceiling measures. Every other check the sweep runs is a
-test, `scripts/src/workspace/skillDocs.test.ts`.
+test, `scripts/src/workspace/docs/skillDocs.test.ts`.
 
 ## A reference page opens by naming its trigger
 
@@ -60,7 +60,7 @@ needs only the trigger, and adding the second line there invents a split that do
 ## A split breaks inbound pointers, so fix them in the same change
 
 Other skills cite sections by heading (``see the `x` skill ("Heading")``), and a heading
-that moved or was reworded leaves that citation pointing at nothing. `scripts/src/workspace/citations.test.ts`
+that moved or was reworded leaves that citation pointing at nothing. `scripts/src/workspace/docs/citations.test.ts`
 fails on a cited heading or bold rule the skill no longer holds; the fix is to repoint the citation at the page
 (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to
 the heading itself. A positional pointer inside one skill — a bare `("Heading")`, "see below" — is invisible to

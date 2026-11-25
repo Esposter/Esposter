@@ -50,16 +50,16 @@ flowchart TD
 
 ## Key files
 
-| File                                                    | Role                                                                  |
-| ------------------------------------------------------- | --------------------------------------------------------------------- |
-| `packages/trpc-nuxt-module/tsdown.config.ts`            | The module entry and the unbundled runtime directory                  |
-| `packages/trpc-nuxt-module/src/module.ts`               | The module entry — options, templates, handlers and imports           |
-| `packages/trpc-nuxt-module/src/runtime/constants.ts`    | The runtime hook names, readable from both the module and the runtime |
-| `packages/trpc-nuxt-module/vitest.config.ts`            | The fixture-rooted Nuxt project with a node default                   |
-| `packages/trpc-nuxt-module/test/fixture/nuxt.config.ts` | The fixture app the composable suites run in                          |
-| `packages/unplugin-pwa-nuxt/test/build.test.ts`         | One fixture build whose output is read back                           |
-| `scripts/src/workspace/nuxtModuleNames.test.ts`         | Every module's `MODULE_NAME` is its package's name                    |
-| `apps/web/configuration/modules.ts`                     | The app registering a workspace module by its source                  |
+| File                                                      | Role                                                                  |
+| --------------------------------------------------------- | --------------------------------------------------------------------- |
+| `packages/trpc-nuxt-module/tsdown.config.ts`              | The module entry and the unbundled runtime directory                  |
+| `packages/trpc-nuxt-module/src/module.ts`                 | The module entry — options, templates, handlers and imports           |
+| `packages/trpc-nuxt-module/src/runtime/constants.ts`      | The runtime hook names, readable from both the module and the runtime |
+| `packages/trpc-nuxt-module/vitest.config.ts`              | The fixture-rooted Nuxt project with a node default                   |
+| `packages/trpc-nuxt-module/test/fixture/nuxt.config.ts`   | The fixture app the composable suites run in                          |
+| `packages/unplugin-pwa-nuxt/test/build.test.ts`           | One fixture build whose output is read back                           |
+| `scripts/src/workspace/templates/nuxtModuleNames.test.ts` | Every module's `MODULE_NAME` is its package's name                    |
+| `apps/web/configuration/modules.ts`                       | The app registering a workspace module by its source                  |
 
 ## Sources
 

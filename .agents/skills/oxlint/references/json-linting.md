@@ -4,8 +4,8 @@ Read when changing what is checked in the repo's JSON, adding a JSONC file, or a
 
 oxlint reads no JSON ([oxc#18656](https://github.com/oxc-project/oxc/issues/18656)), so the JSON checks are workspace tests rather than lint rules:
 
-- `scripts/src/workspace/jsonFiles.test.ts` parses every tracked JSON and JSONC file with `jsonc-parser`. A strict file must parse as JSON, and a JSONC file (a tsconfig, a `.vscode` file, a `.jsonc` config) may hold comments and trailing commas. Both fail on a duplicate key, which `JSON.parse` would keep silently as the last one, and on an escape JSON never needs. Each rule the test holds has a fixture, so a check that stops reading its input fails rather than passing.
-- `scripts/src/workspace/bannedDependencies.test.ts` fails a manifest whose `dependencies` or `devDependencies` names a package `module-replacements` records a replacement for.
+- `scripts/src/workspace/source/jsonFiles.test.ts` parses every tracked JSON and JSONC file with `jsonc-parser`. A strict file must parse as JSON, and a JSONC file (a tsconfig, a `.vscode` file, a `.jsonc` config) may hold comments and trailing commas. Both fail on a duplicate key, which `JSON.parse` would keep silently as the last one, and on an escape JSON never needs. Each rule the test holds has a fixture, so a check that stops reading its input fails rather than passing.
+- `scripts/src/workspace/packages/bannedDependencies.test.ts` fails a manifest whose `dependencies` or `devDependencies` names a package `module-replacements` records a replacement for.
 
 **JSONC is a contract, not an extension.** A file whose consumer reads comments is listed in the test's JSONC patterns. Matched as strict JSON, its comment is a parse failure.
 

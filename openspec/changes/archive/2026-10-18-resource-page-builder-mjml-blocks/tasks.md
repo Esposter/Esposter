@@ -15,4 +15,4 @@
 
 ## 3. The record
 
-- [x] 3.1 Write the package's area as built, with the Upstream table in its `README.md`, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/duplicateProse.test.ts src/services/openspec` passes.
+- [x] 3.1 Write the package's area as built, with the Upstream table in its `README.md`, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/docs/citations.test.ts src/workspace/docs/openspecLinks.test.ts src/workspace/docs/duplicateProse.test.ts src/services/openspec` passes.

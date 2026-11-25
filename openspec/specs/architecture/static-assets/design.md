@@ -55,7 +55,7 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 
 ## Limits on what ships
 
-Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web/public/`, and `scripts/src/workspace/staticAssets.test.ts` enforces both over the files git lists:
+Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web/public/`, and `scripts/src/workspace/templates/staticAssets.test.ts` enforces both over the files git lists:
 
 - **Audio is compressed.** No `.wav`, `.aiff` or `.flac` file is tracked there. A sound is an MP3, the format the dungeons' other music and sound effects already use. An uncompressed two-minute track runs toward the per-file limit that Workers static assets set, and its MP3 is a small fraction of its size.
 - **No bundled file is over the precache limit.** The service worker precaches the build's code, styles, images and fonts, the extensions `PRECACHE_EXTENSIONS` lists (`packages/unplugin-pwa-nuxt/src/services/constants.ts`), and leaves one of those past the limit out of its list with a warning (`apps/web/configuration/pwa.ts`). A bundled audio file is not a precache candidate, since no audio extension is listed, and a file a game or 3D engine loads by URL sits under `_nuxt/engine/`, which the app's `globIgnores` leaves out, so the page fetches either when it needs it; the test holds every served file to the limit regardless. An image past the limit is converted to lossless WebP, which keeps its pixels exact and which Phaser's `load.image` reads. The test names the limit once, in its `SIZE_LIMIT_BYTES`.
@@ -100,7 +100,7 @@ Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web
 | `apps/web/configuration/ogImage.ts`                                           | Turns off `@nuxtjs/seo`'s OG image module, for the reasons under Rejected                              |
 | `apps/web/configuration/typescript.ts`                                        | Excludes the Tiled `.tsx` sources from the app's TypeScript include                                    |
 | `apps/web/shared/services/app/constants.ts`                                   | `PWA_PUBLIC_FOLDER_PATH`, the one public path the config reads                                         |
-| `scripts/src/workspace/staticAssets.test.ts`                                  | Enforces the two limits under Limits on what ships, over every tracked file in the two folders         |
+| `scripts/src/workspace/templates/staticAssets.test.ts`                        | Enforces the two limits under Limits on what ships, over every tracked file in the two folders         |
 
 ## Notes
 

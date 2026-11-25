@@ -18,7 +18,7 @@ Add one with:
 pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:<NAME> <value> --secret
 ```
 
-**Never `pulumi config set --secret`.** That writes the ciphertext into `Pulumi.prod.yaml`, which is tracked in a public repository — publishing the encrypted secret to everybody and betting it on one algorithm, one key, and however long the repository outlives them. Nothing is gained: the stack already reads ESC. `scripts/src/workspace/stackConfig.test.ts` fails the build on any stack file carrying an encrypted value.
+**Never `pulumi config set --secret`.** That writes the ciphertext into `Pulumi.prod.yaml`, which is tracked in a public repository — publishing the encrypted secret to everybody and betting it on one algorithm, one key, and however long the repository outlives them. Nothing is gained: the stack already reads ESC. `scripts/src/workspace/ci/stackConfig.test.ts` fails the build on any stack file carrying an encrypted value.
 
 ## Cloudflare
 

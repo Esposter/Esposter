@@ -15,7 +15,7 @@ files changed since.
 
 Enforced rather than swept, so not in this table:
 
-- constants inside the `describe`: `scripts/src/workspace/constantScope.test.ts`
+- constants inside the `describe`: `scripts/src/workspace/source/constantScope.test.ts`
 - exact assertions: `vitest/prefer-strict-equal`, in `oxlint.config.ts`
 - a test file declares a suite, so a helper ends with `describe.todo`: `testing/require-suite`, in `scripts/src/oxlint/testing.ts`
 - a test's timeout is a named constant, never a literal: `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedTestSyntaxes.ts`
@@ -46,7 +46,7 @@ a `;` inside a string and a quote inside a regex literal all fool a bracket coun
 believing it passed" (`sweeps` skill) a thing that stays proved rather than a thing each pass re-does by hand.
 
 A clean pass prints nothing: every exception below is a shape the scan reads for itself, and
-`scripts/src/workspace/constantScope.test.ts` fails on anything it prints, so this rule is enforced rather than
+`scripts/src/workspace/source/constantScope.test.ts` fails on anything it prints, so this rule is enforced rather than
 swept.
 
 ## Judging a match

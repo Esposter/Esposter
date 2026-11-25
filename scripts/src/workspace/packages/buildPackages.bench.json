@@ -1,7 +1,7 @@
 {
   "files": [
     {
-      "filepath": "src/workspace/buildPackages.bench.ts",
+      "filepath": "src/workspace/packages/buildPackages.bench.ts",
       "groups": [
         {
           "benchmarks": [

@@ -66,7 +66,7 @@ find <scope directory> -maxdepth 1
 ```
 
 Anything no area unit names gets a bullet, open for every question — a directory no resume would ever have reported, because nothing
-in it changed. The coarsest form of that gap is held by a test: `scripts/src/workspace/ledgerMembers.test.ts` fails on a
+in it changed. The coarsest form of that gap is held by a test: `scripts/src/workspace/agents/ledgerMembers.test.ts` fails on a
 workspace member no area unit names, since a package added after the list was written is the
 unnamed tree that arrives most often.
 
@@ -76,7 +76,7 @@ was meant to locate.
 
 A pathspec that resolves to nothing is the silent scan (`references/find-recipes.md`) wearing a different hat — it reports no work and
 reads exactly like a swept tree, and nothing else would notice, because a scope is prose to every other tool. So
-`scripts/src/workspace/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
+`scripts/src/workspace/agents/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
 to declaring one.
 
 ## A rule change reopens what its recipe finds

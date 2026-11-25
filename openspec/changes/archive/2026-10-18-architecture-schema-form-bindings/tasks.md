@@ -6,4 +6,4 @@
 
 ## 2. The record
 
-- [x] 2.1 Rewrite the schema forms design as built, with the Upstream table, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.
+- [x] 2.1 Rewrite the schema forms design as built, with the Upstream table, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/docs/citations.test.ts src/workspace/docs/openspecLinks.test.ts src/workspace/docs/staleNames.test.ts src/services/openspec` passes.

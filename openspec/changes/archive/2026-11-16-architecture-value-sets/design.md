@@ -60,7 +60,7 @@ The dungeons' texture and sound keys are merges of a dozen hand-written sets res
 
 ## Migration
 
-The conversion is mechanical, so it is one throwaway codemod run per package, never a hand sweep: each `enum` becomes its object and type, each member in a type position becomes `typeof` the member, and the generators are re-run. Everything else an `enum` does carries over: `z.enum`, `Record<X, …>`, mapped types over a set, a Drizzle column built from a set's values, a member as an interface's computed key, and serialized values. One use needs a hand edit, made in its own commit before the codemod: a numeric set read back from a number to its member name (the Lua opcode names), which takes a map written beside the set. An unfiltered `Object.values` over a numeric set changes for the better, since its result today also holds the reverse mapping's name strings. A package is converted whole in one commit, and the base and the Nuxt options turn `erasableSyntaxOnly` on in the commit converting the last, so no package holds both forms. Every `scripts` entry runs under `node`: `scripts/src/workspace/packageScripts.test.ts` strips every module a `node` entry reaches with Node's own stripper.
+The conversion is mechanical, so it is one throwaway codemod run per package, never a hand sweep: each `enum` becomes its object and type, each member in a type position becomes `typeof` the member, and the generators are re-run. Everything else an `enum` does carries over: `z.enum`, `Record<X, …>`, mapped types over a set, a Drizzle column built from a set's values, a member as an interface's computed key, and serialized values. One use needs a hand edit, made in its own commit before the codemod: a numeric set read back from a number to its member name (the Lua opcode names), which takes a map written beside the set. An unfiltered `Object.values` over a numeric set changes for the better, since its result today also holds the reverse mapping's name strings. A package is converted whole in one commit, and the base and the Nuxt options turn `erasableSyntaxOnly` on in the commit converting the last, so no package holds both forms. Every `scripts` entry runs under `node`: `scripts/src/workspace/packages/packageScripts.test.ts` strips every module a `node` entry reaches with Node's own stripper.
 
 ## Sources
 
@@ -76,7 +76,7 @@ The conversion is mechanical, so it is one throwaway codemod run per package, ne
 | `packages/configuration/tsconfig.base.json`                  | the base every package tsconfig extends; `erasableSyntaxOnly`     |
 | `apps/web/configuration/typescript.ts`                       | the Nuxt options reaching the app's four tsconfigs; the same flag |
 | `scripts/src/services/genshinText/getPersonaModuleSource.ts` | the persona copy: the source, its alias re-aimed                  |
-| `scripts/src/workspace/packageScripts.test.ts`               | strips every module a `node` script reaches                       |
+| `scripts/src/workspace/packages/packageScripts.test.ts`      | strips every module a `node` script reaches                       |
 | `packages/shared/src/util/object/mergeObjectsStrict.ts`      | the one merge, throwing on a repeated key                         |
 | `packages/shared/src/util/types/MergeObjectsStrict.ts`       | its type, comparing every pair                                    |
 | `apps/web/scripts/util/createValueSetString.ts`              | the set generator                                                 |

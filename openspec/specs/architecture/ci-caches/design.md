@@ -27,7 +27,7 @@ Each coverage shard restores and saves Vitest's module cache, its persisted tran
 
 ## What the regression test checks
 
-`scripts/src/workspace/ciCaches.test.ts` scans every workflow and composite action. It fails if a file uses the combined cache action, which saves on every run, or if a cache save step lacks the default-branch-and-`ai/queue` condition. It names the file, so a new save added without the condition fails the workspace suite.
+`scripts/src/workspace/ci/ciCaches.test.ts` scans every workflow and composite action. It fails if a file uses the combined cache action, which saves on every run, or if a cache save step lacks the default-branch-and-`ai/queue` condition. It names the file, so a new save added without the condition fails the workspace suite.
 
 ## Key files
 
@@ -36,7 +36,7 @@ Each coverage shard restores and saves Vitest's module cache, its persisted tran
 | `.github/actions/run-cached-task/action.yaml` | restores and saves the vp task cache; the save is gated                                                |
 | `.github/workflows/build-packages.yaml`       | restores the game-data mirror everywhere; fills and saves it on the two                                |
 | `.github/workflows/CI.yaml`                   | the coverage shards restore the mirror and never save it, and restore and save the Vitest module cache |
-| `scripts/src/workspace/ciCaches.test.ts`      | the guard: no combined cache action, gated saves                                                       |
+| `scripts/src/workspace/ci/ciCaches.test.ts`   | the guard: no combined cache action, gated saves                                                       |
 
 ## Notes
 

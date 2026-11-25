@@ -4,7 +4,7 @@ Read when a change adds, widens, renames, rotates or deletes a credential: a Clo
 
 ## Where a secret lives
 
-A secret is never in the tree and never in a stack file, encrypted or not. `pulumi config set --secret` writes the ciphertext into `Pulumi.prod.yaml`, a tracked file in a public repository, and rests the secret on one algorithm and one key for as long as the repository lives. Every secret this estate holds is in the `esposter-infra/prod` ESC environment, which the stack imports. The `pulumi env set` form is in `apps/infra/docs/stacks.md`, and `scripts/src/workspace/stackConfig.test.ts` fails a stack file carrying an encrypted value.
+A secret is never in the tree and never in a stack file, encrypted or not. `pulumi config set --secret` writes the ciphertext into `Pulumi.prod.yaml`, a tracked file in a public repository, and rests the secret on one algorithm and one key for as long as the repository lives. Every secret this estate holds is in the `esposter-infra/prod` ESC environment, which the stack imports. The `pulumi env set` form is in `apps/infra/docs/stacks.md`, and `scripts/src/workspace/ci/stackConfig.test.ts` fails a stack file carrying an encrypted value.
 
 ## Handling
 

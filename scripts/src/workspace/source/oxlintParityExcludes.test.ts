@@ -2,7 +2,7 @@
 import { NON_SOURCE_SUFFIXES } from "@esposter/configuration/constants";
 import { describe, expect, test } from "vitest";
 
-import oxlintConfiguration from "../../../oxlint.config.ts";
+import oxlintConfiguration from "../../../../oxlint.config.ts";
 
 /**
  * The genshin-world override repeats the suffixes the barrel generator and the declaration program leave out, as globs,

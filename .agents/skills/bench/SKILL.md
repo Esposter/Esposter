@@ -13,7 +13,7 @@ A reporter writes each bench file's results to colocated `*.bench.{json,md}` you
 
 - **Sharding the 🏎️ Bench job** — it is an executes-clean smoke signal whose numbers nothing reads, so a shard buys only repeated setup (`references/running-benchmarks.md`).
 - **Measuring type cost with `@ark/attest` or an older TypeScript** — the user rejected both: a count is the repo's current compiler's, so a second measurer or an older compiler is a different number, and the counts are measured only by `pnpm bench:types` (`references/type-benches.md`).
-- **A lint rule or scan for the bench rules** — whether a fixture is fresh all the way down, whether a group holds one scale, whether the thing benched is the unit or its wrapper are questions about what the code means, and the population is small enough to read; the committed-artifact rule is `scripts/src/workspace/benchArtifacts.test.ts`.
+- **A lint rule or scan for the bench rules** — whether a fixture is fresh all the way down, whether a group holds one scale, whether the thing benched is the unit or its wrapper are questions about what the code means, and the population is small enough to read; the committed-artifact rule is `scripts/src/workspace/ci/benchArtifacts.test.ts`.
 
 ## Deep dive
 

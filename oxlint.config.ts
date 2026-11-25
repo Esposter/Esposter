@@ -224,7 +224,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       // Never built, so they keep the import. The excluded suffixes are the ones the barrel generator and the
       // Declaration program leave out (`NON_SOURCE_SUFFIXES` in `packages/configuration/src/services/constants.ts`),
       // Repeated here since this config cannot import them without a build, and pinned against it by
-      // `scripts/src/workspace/oxlintParityExcludes.test.ts`
+      // `scripts/src/workspace/source/oxlintParityExcludes.test.ts`
       excludeFiles: [
         "**/*.bench.ts",
         "**/*.fixture.ts",

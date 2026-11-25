@@ -11,8 +11,8 @@
 | File                                                           | Role                                              |
 | -------------------------------------------------------------- | ------------------------------------------------- |
 | `scripts/src/workspace/constants.test.ts`                      | `TREE_READ_TIMEOUT_MS` and its contention comment |
-| `scripts/src/workspace/openspecLinks.test.ts`                  | a whole-tree suite without the constant           |
-| `scripts/src/workspace/openspecIndexes.test.ts`                | a whole-tree suite without the constant           |
-| `scripts/src/workspace/ledgerScopes.test.ts`                   | a per-row whole-tree test without the constant    |
+| `scripts/src/workspace/docs/openspecLinks.test.ts`             | a whole-tree suite without the constant           |
+| `scripts/src/workspace/docs/openspecIndexes.test.ts`           | a whole-tree suite without the constant           |
+| `scripts/src/workspace/agents/ledgerScopes.test.ts`            | a per-row whole-tree test without the constant    |
 | `.agents/skills/runtime-efficiency/references/script-clock.md` | the contention rule                               |
 | `.agents/skills/testing/references/timeouts.md`                | the measured-isolation rule                       |

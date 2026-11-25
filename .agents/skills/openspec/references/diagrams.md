@@ -63,7 +63,7 @@ check. These are the mistakes that parse cleanly and still draw wrong:
 - A label is one quoted string on one line, so a break inside it is written `<br/>`. A backslash-n draws those
   two characters into the box, and a real newline is swallowed and renders as one run-on line.
 
-Only the second is checked, in both of its forms, by `scripts/src/workspace/diagrams.test.ts` over every
+Only the second is checked, in both of its forms, by `scripts/src/workspace/docs/diagrams.test.ts` over every
 hand-written page, so a line break written wrong fails `pnpm test` rather than only the rendered page. The semicolon is not: a semicolon closing an HTML entity (`&lt;`, `&quot;`) is correct, so a
 pattern that flags the character flags correct diagrams, and one narrow enough to
 tell a message from an entity is more machinery than the rule is worth. It stays on the writer.

@@ -37,7 +37,7 @@ flowchart LR
 | `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation and the app manifest, `SKIP_WAITING`, push and click      |
 | `apps/web/shared/services/serviceWorker/withBuildFileEmbedderPolicy.ts` | The copy of a stored response the worker answers with, carrying the build folder's embedder policy |
 | `packages/unplugin-pwa-nuxt/`                                           | The module that builds the worker and registers it ([its page](../../unplugin-pwa-nuxt/README.md)) |
-| `scripts/src/workspace/workerScope.test.ts`                             | Runs every worker, this one included, in a scope with no window or Node                            |
+| `scripts/src/workspace/ci/workerScope.test.ts`                          | Runs every worker, this one included, in a scope with no window or Node                            |
 | `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                                      |
 | `apps/web/app/plugins/06.pushNotification.client.ts`                    | The tab's end of the worker's `postMessage`                                                        |
 | `apps/web/public/pwa/`                                                  | The manifest and Apple icons, each named by its path in `pwa.ts`                                   |

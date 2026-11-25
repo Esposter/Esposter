@@ -7,7 +7,7 @@ export const AGENT_DIRECTORY = ".agents";
 // The alias itself. Only a tool that follows directory symlinks has to ignore it: this is done by the root
 // TypeScript program and by oxlint, but not by oxfmt or VS Code's search. The configs that cannot import repeat the
 // Literal and are pinned against this
-// Constant by `scripts/src/workspace/agentDirectories.test.ts`.
+// Constant by `scripts/src/workspace/agents/agentDirectories.test.ts`.
 export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Agent tools run `git worktree add` into `<agent tree>/worktrees/<name>/`, so a live worktree is a full second copy of
 // This monorepo nested inside it. Every repo-wide walk — the root tsconfig program, the oxlint ignore list,
@@ -17,7 +17,7 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Machine-local `.git/info/exclude`, which no clone, CI runner or non-git tool sees, so the exclusion is stated in
 // Each tool's own configuration. The formatter's, in this package, imports it; `tsconfig.json` and `.gitignore` have no
 // Imports, and `oxlint.config.ts` sits at the repository root outside any package's import map, so those repeat the
-// Literal and are pinned against this constant by `scripts/src/workspace/agentDirectories.test.ts`.
+// Literal and are pinned against this constant by `scripts/src/workspace/agents/agentDirectories.test.ts`.
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 // Path prefixes a hand-written citation may use relative to `apps/web` instead of the repository root — the
 // Design pages' Key Files tables write them, so the citations suite resolves them and the citation sync rewrites them.

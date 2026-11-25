@@ -37,7 +37,7 @@ says what the pass does: `move to <package>` for an export one package alone nam
 its colocated test with it, and the alias import replaces the barrel one — and `dead` for an export nothing names in a
 file the barrel re-exports. knip's default run skips those as entry exports and reports every other file's unused
 exports itself (`knip.config.ts`).
-A clean pass prints nothing, and `scripts/src/workspace/sharedExportConsumers.test.ts` fails on anything it
+A clean pass prints nothing, and `scripts/src/workspace/packages/sharedExportConsumers.test.ts` fails on anything it
 prints, so the rule is enforced rather than swept.
 
 ## Exclusions

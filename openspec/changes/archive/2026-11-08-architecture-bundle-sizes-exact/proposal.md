@@ -20,5 +20,5 @@ None.
 ## Impact
 
 - `scripts/src/services/bundleSizes/` — the constants lose the checkout-dependent set and the tolerance, and `settleBundleSizes.ts` and its test go.
-- `scripts/src/bundleSizes/index.ts` and `scripts/src/workspace/bundleSizes.test.ts` — both read the build's sizes directly.
+- `scripts/src/bundleSizes/index.ts` and `scripts/src/workspace/packages/bundleSizes.test.ts` — both read the build's sizes directly.
 - `bundle-sizes.md` — regenerated from a fresh build.

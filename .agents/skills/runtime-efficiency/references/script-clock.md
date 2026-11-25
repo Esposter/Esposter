@@ -3,7 +3,7 @@
 Read when a tooling script or sweep feels slow, or a whole-tree suite is added.
 
 A tooling script's walltime is measured end to end before any unit in it is, and the measurement is a bench —
-`scripts/src/workspace/sweepCommands.bench.ts` spawns every `ai:sweep:*` command as an agent types it, and its `*.bench.md` is
+`scripts/src/workspace/ci/sweepCommands.bench.ts` spawns every `ai:sweep:*` command as an agent types it, and its `*.bench.md` is
 the table to read before timing anything by hand (the `bench` skill, `references/speed-gate.md`). What it
 shows: most of a sweep over the whole tree is the loader booting, a `git ls-files` per pathspec and every file read,
 and the scan itself is a small share. So the savings sit at those three:

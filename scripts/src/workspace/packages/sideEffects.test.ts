@@ -1,6 +1,6 @@
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { readTsdownPackagePaths } from "#src/workspace/packages/readTsdownPackagePaths.test";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
-import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";

@@ -9,7 +9,7 @@ import { readVueSegments } from "#src/services/shared/readVueSegments";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
-import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
+import { readTsdownPackagePaths } from "#src/workspace/packages/readTsdownPackagePaths.test";
 import { NON_SOURCE_SUFFIXES } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

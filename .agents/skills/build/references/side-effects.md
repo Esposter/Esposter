@@ -30,7 +30,7 @@ and the components render unstyled with nothing failing.
 
 Leaving the field off is not the safe middle — absent means _unknown_, so a consumer's bundler keeps everything,
 the same outcome as `true` while reading as nobody having considered it. Nothing can derive the value, so
-`scripts/src/workspace/sideEffects.test.ts` enforces what is derivable: every package with a tsdown config declares the field,
+`scripts/src/workspace/packages/sideEffects.test.ts` enforces what is derivable: every package with a tsdown config declares the field,
 and only the run-on-import one claims `true` wholesale.
 
 **Assert it in that package's own `src/index.test.ts`.** Count the registrations in the built bundle against the

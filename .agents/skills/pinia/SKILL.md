@@ -31,7 +31,7 @@ A store is app-lifetime; a ref a component populates for code outside its subtre
 
 A store function is destructured and called where it is used, never forwarded through a composable or wrapper (`pass-through-helper/no-forwarding-wrapper`); a store cannot be generic, so a generic member is a generic method (`references/no-redirects.md`).
 
-A shape several stores share is a generic composable called in each store's setup, written once in the headless package that owns the document (`useEditSession` in `vue-block-editor-headless` holds the document, history, commit and load the editor stores repeat). The composable forwards no store function, so this rule does not touch it, and no headless package imports Pinia (`scripts/src/workspace/headlessPackages.test.ts`).
+A shape several stores share is a generic composable called in each store's setup, written once in the headless package that owns the document (`useEditSession` in `vue-block-editor-headless` holds the document, history, commit and load the editor stores repeat). The composable forwards no store function, so this rule does not touch it, and no headless package imports Pinia (`scripts/src/workspace/packages/headlessPackages.test.ts`).
 
 ## Selection State Belongs in the Store
 

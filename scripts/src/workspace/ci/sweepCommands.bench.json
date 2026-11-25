@@ -1,7 +1,7 @@
 {
   "files": [
     {
-      "filepath": "src/workspace/sweepCommands.bench.ts",
+      "filepath": "src/workspace/ci/sweepCommands.bench.ts",
       "groups": [
         {
           "benchmarks": [

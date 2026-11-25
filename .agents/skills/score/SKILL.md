@@ -32,6 +32,6 @@ The repository holds one compatibility date for Nuxt and the three Workers, sinc
 
 The shared writing rules are the `openspec` skill's. Three are specific to this file:
 
-- **The scores are exact, their evidence is a magnitude.** A score is the artifact rather than a reading of the tree, so it stays precise; the counts cited to justify one are wrong within weeks, and a stale count discredits the score it was cited for. Held by `scripts/src/workspace/preciseCounts.test.ts`, which fails on a precise count of anything the repo can count — an enumeration is its own count.
+- **The scores are exact, their evidence is a magnitude.** A score is the artifact rather than a reading of the tree, so it stays precise; the counts cited to justify one are wrong within weeks, and a stale count discredits the score it was cited for. Held by `scripts/src/workspace/docs/preciseCounts.test.ts`, which fails on a precise count of anything the repo can count — an enumeration is its own count.
 - **Accepted trade-offs are first-class.** A score below maximum must say what the trade-off is and why it was accepted, not just what's missing. An area at maximum with a known compromise (e.g. `skipLibCheck`) still records it.
 - **No aspiration.** SCORE.md describes the repo as it is, never as it will be. Planned work belongs in `openspec/changes/` (the `openspec` skill).

@@ -1,6 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
-import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
+import { readTsdownPackagePaths } from "#src/workspace/packages/readTsdownPackagePaths.test";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative, resolve, sep } from "node:path";

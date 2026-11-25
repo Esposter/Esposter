@@ -1,6 +1,6 @@
 # Bundle sizes
 
-`bundle-sizes.md` at the repository root is the committed size of everything the workspace builds. The review of `ai/queue` writes it from the Linux build of the queue's tip (`openspec/specs/infra/review/design.md`, "The bundle-size record"), and `scripts/src/workspace/bundleSizes.test.ts` fails on `main` when a fresh build differs from it.
+`bundle-sizes.md` at the repository root is the committed size of everything the workspace builds. The review of `ai/queue` writes it from the Linux build of the queue's tip (`openspec/specs/infra/review/design.md`, "The bundle-size record"), and `scripts/src/workspace/packages/bundleSizes.test.ts` fails on `main` when a fresh build differs from it.
 
 ```mermaid
 flowchart LR
@@ -36,7 +36,7 @@ flowchart LR
 | `scripts/src/services/bundleSizes/parseBundleSizes.ts`        | the rows of a committed record, read back              |
 | `scripts/src/services/bundleSizes/checkIsPureSizeUpdate.ts`   | whether a record change moves sizes only               |
 | `scripts/src/services/bundleSizes/renderBundleSizeChanges.ts` | the record commit's body, one line per row that moved  |
-| `scripts/src/workspace/bundleSizes.test.ts`                   | holds the record to a fresh build                      |
+| `scripts/src/workspace/packages/bundleSizes.test.ts`          | holds the record to a fresh build                      |
 
 ## Notes
 

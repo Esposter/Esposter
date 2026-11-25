@@ -3,7 +3,7 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // Prints rather than exits non-zero: the pass reads the list and decides which page owns each run and which
-// Keeps a pointer (`.agents/ledgers/docs/README.md`); `src/workspace/duplicateProse.test.ts` is what fails on it.
+// Keeps a pointer (`.agents/ledgers/docs/README.md`); `src/workspace/docs/duplicateProse.test.ts` is what fails on it.
 await runCommand(
   defineCommand({
     meta: {

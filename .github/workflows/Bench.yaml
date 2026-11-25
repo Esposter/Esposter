@@ -40,7 +40,7 @@ jobs:
       # where `pnpm bench` is each member's own run in turn, and a smoke run, so each bench executes once and no
       # report is written. Unsharded because a smoke test gains nothing from splitting but repeated setup.
       #
-      # `scripts/src/workspace/buildPackages.bench.ts` opts out on `CI` itself: it measures cold builds by
+      # `scripts/src/workspace/packages/buildPackages.bench.ts` opts out on `CI` itself: it measures cold builds by
       # deleting each `dist` — here the `package-builds` artifact just downloaded, including the smoke provider
       # this run executes through.
       - name: 🏎️ Run benchmarks

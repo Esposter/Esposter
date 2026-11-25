@@ -11,7 +11,7 @@ out of every file (a closed set is an `as const` object, the `typescript` skill'
 package — the web app included — reaches its own source through the subpath imports its manifest declares, each naming
 its file (the `file-organization` skill, `references/import-aliases.md`). A relative import keeps its extension.
 
-`scripts/src/workspace/packageScripts.test.ts` holds both halves: it walks every module a `node` entry reaches through
+`scripts/src/workspace/packages/packageScripts.test.ts` holds both halves: it walks every module a `node` entry reaches through
 the importing file's own manifest, failing a specifier that resolves to no file or a module node cannot strip, and it
 fails a `.ts` entry run by `vpx`. Neither failure is one a typecheck or lint reports; without it a script dies at
 startup. The root declares no `.ts` script: each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare

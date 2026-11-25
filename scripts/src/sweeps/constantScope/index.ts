@@ -2,7 +2,7 @@ import { readConstantScopeFindings } from "#src/services/sweeps/constantScope/re
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// Prints rather than exits non-zero: the pass reads the list, and `src/workspace/constantScope.test.ts` is what
+// Prints rather than exits non-zero: the pass reads the list, and `src/workspace/source/constantScope.test.ts` is what
 // Fails on it. A clean repository prints nothing — every shape that cannot move into a describe is the scan's
 // To know, not a list here (`.agents/ledgers/testing/README.md`).
 await runCommand(

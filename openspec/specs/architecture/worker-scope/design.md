@@ -20,7 +20,7 @@ flowchart LR
 
 | File                                                       | Role                                                                              |
 | ---------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `scripts/src/workspace/workerScope.test.ts`                | Finds every worker entry, builds it and runs it in a scope with no window or Node |
+| `scripts/src/workspace/ci/workerScope.test.ts`             | Finds every worker entry, builds it and runs it in a scope with no window or Node |
 | `packages/shared/src/util/time/now.ts`                     | The clock a worker can import: the platform's own, with no load-time work         |
 | `apps/web/service-worker/sw.ts`                            | The service worker entry the PWA module fixes by name                             |
 | `apps/web/app/workers/`                                    | The app's dedicated workers                                                       |

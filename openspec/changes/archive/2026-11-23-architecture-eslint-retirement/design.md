@@ -111,26 +111,26 @@ The gate passed whole. oxlint's JS plugins take an esquery selector as a visitor
 
 ## Key files
 
-| File                                                     | Role                                                                                                                          |
-| :------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `oxlint.config.ts`                                       | turns on the selector-ban plugin, loads the JS plugins and wires the template pass                                            |
-| `vite/vueOptions.ts`                                     | the template pass's options: the incremental preset and the rules it runs                                                     |
-| `vite/checkTasks.ts`                                     | the `lint:vue` and `lint:packages:vue` leaves of the root lint                                                                |
-| `oxlint/jsPlugins.ts`                                    | lists the JS plugins oxlint loads, each local plugin by its file                                                              |
-| `scripts/src/oxlint/selectorBan.ts`                      | the selector-ban plugin, beside the other local JS plugins                                                                    |
-| `scripts/src/services/oxlint/selectorBan/syntaxes/`      | one selector-ban list per module, each stating the files it runs over, its suite beside it                                    |
-| `scripts/src/workspace/templateTextRules.test.ts`        | the template rules vize cannot run yet — bare `@click.stop`, same-name bind shorthand, block padding — each under its `@TODO` |
-| `vite/services/componentCasingSyntaxes.ts`               | the PascalCase component-tag check as a vize selector ban, under its `@TODO`                                                  |
-| `scripts/src/oxlint/vueTypeImports.ts`                   | `consistent-type-imports` for `.vue` script blocks, which oxlint's own rule skips                                             |
-| `vite/services/scopedStyleSyntaxes.ts`                   | the scoped-style packages' attribute bans, one selector per set of elements' attributes                                       |
-| `scripts/src/workspace/templateDirectiveReasons.test.ts` | the template half of the directive-reason check                                                                               |
-| `scripts/src/workspace/bannedDependencies.test.ts`       | the dependency ban, read from `module-replacements`                                                                           |
-| `scripts/src/workspace/jsonFiles.test.ts`                | the JSON and JSONC checks, over every tracked file but the generated ones                                                     |
-| `vite/services/blockedSpellingSyntaxes.ts`               | the app's UnoCSS blocklist as vize selector bans                                                                              |
-| `scripts/src/services/vize/setupVizeEntrySuite.test.ts`  | lints fixtures through one vize entry of the root config                                                                      |
-| `apps/web/configuration/modules.ts`                      | loads `@nuxt/eslint`, which is removed                                                                                        |
-| `package.json`, `pnpm-workspace.yaml`                    | the lint scripts, the catalog entries removed, the override and the `typescript` entry                                        |
-| `openspec/specs/architecture/lint-toolchain/design.md`   | rewritten at archive for oxlint and vize, with no bridge and no blocker table for ESLint                                      |
+| File                                                               | Role                                                                                                                          |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| `oxlint.config.ts`                                                 | turns on the selector-ban plugin, loads the JS plugins and wires the template pass                                            |
+| `vite/vueOptions.ts`                                               | the template pass's options: the incremental preset and the rules it runs                                                     |
+| `vite/checkTasks.ts`                                               | the `lint:vue` and `lint:packages:vue` leaves of the root lint                                                                |
+| `oxlint/jsPlugins.ts`                                              | lists the JS plugins oxlint loads, each local plugin by its file                                                              |
+| `scripts/src/oxlint/selectorBan.ts`                                | the selector-ban plugin, beside the other local JS plugins                                                                    |
+| `scripts/src/services/oxlint/selectorBan/syntaxes/`                | one selector-ban list per module, each stating the files it runs over, its suite beside it                                    |
+| `scripts/src/workspace/templates/templateTextRules.test.ts`        | the template rules vize cannot run yet — bare `@click.stop`, same-name bind shorthand, block padding — each under its `@TODO` |
+| `vite/services/componentCasingSyntaxes.ts`                         | the PascalCase component-tag check as a vize selector ban, under its `@TODO`                                                  |
+| `scripts/src/oxlint/vueTypeImports.ts`                             | `consistent-type-imports` for `.vue` script blocks, which oxlint's own rule skips                                             |
+| `vite/services/scopedStyleSyntaxes.ts`                             | the scoped-style packages' attribute bans, one selector per set of elements' attributes                                       |
+| `scripts/src/workspace/templates/templateDirectiveReasons.test.ts` | the template half of the directive-reason check                                                                               |
+| `scripts/src/workspace/packages/bannedDependencies.test.ts`        | the dependency ban, read from `module-replacements`                                                                           |
+| `scripts/src/workspace/source/jsonFiles.test.ts`                   | the JSON and JSONC checks, over every tracked file but the generated ones                                                     |
+| `vite/services/blockedSpellingSyntaxes.ts`                         | the app's UnoCSS blocklist as vize selector bans                                                                              |
+| `scripts/src/services/vize/setupVizeEntrySuite.test.ts`            | lints fixtures through one vize entry of the root config                                                                      |
+| `apps/web/configuration/modules.ts`                                | loads `@nuxt/eslint`, which is removed                                                                                        |
+| `package.json`, `pnpm-workspace.yaml`                              | the lint scripts, the catalog entries removed, the override and the `typescript` entry                                        |
+| `openspec/specs/architecture/lint-toolchain/design.md`             | rewritten at archive for oxlint and vize, with no bridge and no blocker table for ESLint                                      |
 
 ## Notes
 

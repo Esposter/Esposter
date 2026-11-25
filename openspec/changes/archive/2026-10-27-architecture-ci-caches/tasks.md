@@ -2,7 +2,7 @@
 
 ## 1. Write the guard
 
-- [x] 1.1 Write `scripts/src/workspace/ciCaches.test.ts` asserting that no workflow or action uses the combined cache action, that the pnpm store's own cache is off, and that every cache save carries the default-branch-and-`ai/queue` condition. Verified by seeing all three fail against the workflows before the fix.
+- [x] 1.1 Write `scripts/src/workspace/ci/ciCaches.test.ts` asserting that no workflow or action uses the combined cache action, that the pnpm store's own cache is off, and that every cache save carries the default-branch-and-`ai/queue` condition. Verified by seeing all three fail against the workflows before the fix.
 
 ## 2. Save from two branches
 

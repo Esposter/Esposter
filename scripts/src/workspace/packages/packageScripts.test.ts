@@ -1,7 +1,7 @@
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
-import { matchImportPattern } from "#src/workspace/matchImportPattern.test";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
+import { matchImportPattern } from "#src/workspace/source/matchImportPattern.test";
 import { getResult } from "@esposter/shared";
 import { existsSync, readFileSync } from "node:fs";
 import { stripTypeScriptTypes } from "node:module";

@@ -20,4 +20,4 @@ Every package and the repo-root `scripts` reach their own files through the subp
 
 ## Impact
 
-`apps/web/package.json`, every module under `apps/web` that imports through `@/` or `@@/`, `oxlint.config.ts`'s import ban, `scripts/src/workspace/packageScripts.test.ts`, the web app's script entries, and the file-organization and package-scripts skills.
+`apps/web/package.json`, every module under `apps/web` that imports through `@/` or `@@/`, `oxlint.config.ts`'s import ban, `scripts/src/workspace/packages/packageScripts.test.ts`, the web app's script entries, and the file-organization and package-scripts skills.

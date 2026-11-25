@@ -71,7 +71,7 @@ The fill is a step of `build-packages`, which the CI workflow calls. It runs on 
 
 Test suites read hosted objects from the same mirror. The vitest setup of `genshin-world`, `packages/genshin-world/scripts/gameData/mirror/setupGameDataFetch.ts`, answers any fetch under `HOSTED_ASSETS_LOCAL_BASE_URL` from the mirror, so a suite that loads a hosted object runs without the network. The same setup stubs Cache Storage with an in-memory cache, since a node suite has none and the hosted reads go through one. The dungeons suites mock the loader and read no object, so they carry no mirror.
 
-Two enforcers hold the placement rule, both in `scripts/src/workspace/staticAssets.test.ts`. The bundle check fails a file under the app's assets or its `public/` folder that is over `SIZE_LIMIT_BYTES` or uncompressed audio. The hosted check fails a dungeons engine loader that names a media file by its path, in a static import, a dynamic import or an `import.meta.glob`, since that file belongs in the key map.
+Two enforcers hold the placement rule, both in `scripts/src/workspace/templates/staticAssets.test.ts`. The bundle check fails a file under the app's assets or its `public/` folder that is over `SIZE_LIMIT_BYTES` or uncompressed audio. The hosted check fails a dungeons engine loader that names a media file by its path, in a static import, a dynamic import or an `import.meta.glob`, since that file belongs in the key map.
 
 ## Load
 
@@ -168,6 +168,6 @@ The repository declares no certificate. Each hosted hostname is one label under 
 | `packages/genshin-world/src/generated/gameDataLock.json`                                  | Genshin's committed lock                                                                        |
 | `packages/genshin-world/src/generated/gameDataKeys.ts`                                    | Genshin's committed key map, rendered by the publish                                            |
 | `packages/genshin-world/scripts/gameData/mirror/setupGameDataFetch.ts`                    | the vitest setup that answers a hosted url from the mirror                                      |
-| `scripts/src/workspace/staticAssets.test.ts`                                              | the bundle check and the hosted check of the placement rule                                     |
+| `scripts/src/workspace/templates/staticAssets.test.ts`                                    | the bundle check and the hosted check of the placement rule                                     |
 | `.github/workflows/build-packages.yaml`                                                   | the mirror fill and the mirror cache, keyed on the locks                                        |
 | `.github/workflows/CI.yaml`                                                               | the Coverage job's restore of the same mirror                                                   |

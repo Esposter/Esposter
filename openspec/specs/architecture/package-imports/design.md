@@ -42,7 +42,7 @@ Knip resolves a glob's alias through tsconfig `paths` only, never a manifest's `
 
 ### Every script runs under `node`, and the test says so
 
-`scripts/src/workspace/packageScripts.test.ts` holds it, through each importer's own manifest; what it fails and why no other check sees it is the package-scripts skill's `references/typescript-scripts.md`.
+`scripts/src/workspace/packages/packageScripts.test.ts` holds it, through each importer's own manifest; what it fails and why no other check sees it is the package-scripts skill's `references/typescript-scripts.md`.
 
 ## Key files
 
@@ -51,6 +51,6 @@ Knip resolves a glob's alias through tsconfig `paths` only, never a manifest's `
 | `apps/web/package.json`                                         | the web app's subpath imports and its `node` script entries      |
 | `oxlint/importRestrictions.ts`                                  | `WEB_IMPORT_PATTERNS`: the old aliases and a query on a `#` name |
 | `apps/web/configuration/imports.test.ts`                        | Nuxt's `#shared` and `#server` and the manifest reach one folder |
-| `scripts/src/workspace/packageScripts.test.ts`                  | walks each `node` entry's modules; fails a `.ts` entry on `vpx`  |
+| `scripts/src/workspace/packages/packageScripts.test.ts`         | walks each `node` entry's modules; fails a `.ts` entry on `vpx`  |
 | `knip.config.ts`                                                | the glob targets knip cannot resolve through the manifest        |
 | `.agents/skills/file-organization/references/import-aliases.md` | the app's names, `/index` and queries as glob options            |

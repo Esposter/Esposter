@@ -227,7 +227,7 @@ The change makes one generic check over every product's lock, and places it in t
 
 **It gates the push's CI, and so the deploy.** The fill runs inside `build-packages`, which is part of CI for the commit on `main` or `ai/queue`, and the Deploy workflow runs only once CI's run on that commit succeeds (`pulumi-infra` skill, "Worker code"). A red fill therefore holds the deploy, which is the right gate: a deploy of a lock naming a missing object would ship pages that 404 on their first assets. It does not gate on every run, because a cache hit skips the fill, and a cache hit means the lock did not change. An object can go missing only by a manual delete, since `prune` keeps every object a lock names, and that delete is outside any push, so a run does not re-check it.
 
-3. **Every other sync invariant stays a workspace test under `scripts/src/workspace`**, run by the Coverage job's single test run, with no new step. One test per invariant, sharing helpers. This change touches one of them: `scripts/src/workspace/pathLiterals.test.ts` holds the workflows to the mirror cache constant's path, and it moves with the constant, which gives the generic mirror its own name.
+3. **Every other sync invariant stays a workspace test under `scripts/src/workspace`**, run by the Coverage job's single test run, with no new step. One test per invariant, sharing helpers. This change touches one of them: `scripts/src/workspace/source/pathLiterals.test.ts` holds the workflows to the mirror cache constant's path, and it moves with the constant, which gives the generic mirror its own name.
 
 No new CI job is added. The fill is an existing step, and the check is added to it.
 
@@ -307,7 +307,7 @@ Each check is one test, sharing the file-walking helper the bundle check uses. N
 | `apps/web/configuration/nitro.ts`                                              | the `publicAssets` mount of the login recordings, removed                                     |
 | `.github/workflows/build-packages.yaml`                                        | the mirror fill, which gains the per-object hash check                                        |
 | `.github/workflows/CI.yaml`                                                    | the mirror restore, keyed on the lock                                                         |
-| `scripts/src/workspace/pathLiterals.test.ts`                                   | holds the workflows to the mirror cache constant's path                                       |
+| `scripts/src/workspace/source/pathLiterals.test.ts`                            | holds the workflows to the mirror cache constant's path                                       |
 | `openspec/specs/architecture/static-assets/design.md`                          | the two-place rule this design replaces                                                       |
 | `openspec/specs/architecture/generated-artifacts/design.md`                    | the table row for `pnpm phaser:gen`, removed                                                  |
 | "openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md"               | the superseded rejection, deleted                                                             |

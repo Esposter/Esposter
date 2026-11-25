@@ -18,7 +18,7 @@ module-scope fixture, skips the multi-line arrow, skips the helper file, reads p
 trap is a test that fails when the trap reopens, rather than prose in the ledger explaining it.
 
 **Not `.agents/`.** The tree is the rules an agent reads, and mixing an executable into it makes "is this a rule
-or a tool" unanswerable from the path. `scripts/src/workspace/agentDirectories.test.ts` is the shape — a test **about** the
+or a tool" unanswerable from the path. `scripts/src/workspace/agents/agentDirectories.test.ts` is the shape — a test **about** the
 agent tree, living where the toolchain already looks.
 
 ## How a scan goes wrong without failing

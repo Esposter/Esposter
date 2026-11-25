@@ -65,13 +65,14 @@
 - `scripts/src/models/genshinAssets/camps` — `FamilyLabelMap.ts`, `FamilyLabelMatch.ts`, `FamilyLabelUnmapped.ts`, `FamilyPageContent.ts`
 - `scripts/src/models/updateNode` — `Packument.ts`
 - `scripts/src/models/usage`, `scripts/src/models/voiceMatch`, `scripts/src/models/vue`, `scripts/src/models/workspace`
-- `scripts/src/workspace` — `agentDirectories.test.ts`, `aiScripts.test.ts`, `benchArtifacts.test.ts`, `benchmarkReporter.test.ts`, `buildPackages.bench.json`, `buildPackages.bench.md`, `buildPackages.bench.ts`, `bundleSizes.test.ts`, `changeModel.test.ts`, `checkHasGlobMatch.test.ts`, `childProcessImport.test.ts`, `ciCaches.test.ts`, `citations.test.ts`, `commandEntries.test.ts`, `constantScope.test.ts`, `constants.test.ts`, `controlCharacters.test.ts`, `d1RebuildCascades.test.ts`, `dataRoot.test.ts`, `dataRootCommands.test.ts`, `deployedPictures.test.ts`, `deprecatedPackages.test.ts`, `diagrams.test.ts`, `duplicateCode.test.ts`, `duplicateProse.test.ts`, `gcsimLinks.test.ts`, `genshinChangePhases.test.ts`, `genshinComponentReference.test.ts`, `genshinExitGates.test.ts`, `headlessPackages.test.ts`, `hoverGuard.test.ts`, `ledgerMembers.test.ts`, `ledgerScopes.test.ts`, `precheck.test.ts`, `lernaPackages.test.ts`, `lineEndings.test.ts`, `lineNumberCitations.test.ts`, `machineRootPaths.test.ts`, `nuxtModuleNames.test.ts`
-- `scripts/src/workspace` — `cloudflareTokenNames.test.ts`, `oxlintParityExcludes.test.ts`
-- `scripts/src/workspace` — `bannedDependencies.test.ts`, `blockedSpellings.test.ts`, `componentCasing.test.ts`, `inlinedDependencies.test.ts`, `jsonFiles.test.ts`, `lintToolchain.test.ts`, `matchImportPattern.test.ts`, `readmeKeyExports.test.ts`, `readRepositoryFile.test.ts`, `resourceProtection.test.ts`, `scopedStyles.test.ts`, `staticAssets.test.ts`, `templateDirectiveReasons.test.ts`, `templateTextRules.test.ts`
-- `scripts/src/workspace` — `openspecIndexes.test.ts`, `openspecLinks.test.ts`, `openspecScenarioTasks.test.ts`, `openspecTickedTasks.test.ts`, `openspecValidate.test.ts`, `oxlintPlugins.test.ts`, `packageInventories.test.ts`, `packageKeywords.test.ts`, `packageScripts.test.ts`, `packageSymlinks.test.ts`, `pathLiterals.test.ts`, `peerDependencies.test.ts`, `preCommitHook.test.ts`, `preciseCounts.test.ts`, `publishedDependencies.test.ts`, `publishedFiles.test.ts`, `readJsonFile.test.ts`, `readTsdownPackagePaths.test.ts`, `requiredChecks.test.ts`, `restatedGameColours.test.ts`, `restatedPointers.test.ts`, `roadmapPhases.test.ts`, `runOnBullets.test.ts`, `serverComponentGraph.test.ts`, `serverMiddlewareBody.test.ts`, `sharedExportConsumers.test.ts`, `sideEffects.test.ts`, `skillDocs.test.ts`, `skillPortability.test.ts`, `stackConfig.test.ts`, `staleNames.test.ts`, `subpathAudit.test.ts`, `supersededPackages.test.ts`, `sweepCommands.bench.json`, `sweepCommands.bench.md`, `sweepCommands.bench.ts`, `textCloseGlyphs.test.ts`, `todos.test.ts`, `toolchainVersionRestatements.test.ts`, `typeOnlyDependencies.test.ts`
-- `scripts/src/workspace` — `unbundledBarrels.test.ts`, `workerScope.test.ts`
-- `scripts/src/workspace` — `nodeFloors.test.ts`
-- `scripts/src/workspace` — `templateCommentWidths.test.ts`
+- `scripts/src/workspace/agents`
+- `scripts/src/workspace/ci`
+- `scripts/src/workspace/docs`
+- `scripts/src/workspace/genshin`
+- `scripts/src/workspace/packages`
+- `scripts/src/workspace/source`
+- `scripts/src/workspace/templates`
+- `scripts/src/workspace` — `constants.test.ts`, `readJsonFile.test.ts`, `readRepositoryFile.test.ts`
 - `scripts/src/outdatedDependencies`
 - `scripts/src/oxlint` — `comments.test.ts`, `comments.ts`, `errorAlert.test.ts`, `errorAlert.ts`, `errorHandling.test.ts`, `errorHandling.ts`, `immutability.test.ts`, `immutability.ts`, `literalUnion.test.ts`, `literalUnion.ts`, `naming.test.ts`, `naming.ts`, `passThroughHelper.test.ts`, `passThroughHelper.ts`, `pinia.test.ts`, `pinia.ts`, `piniaStore.test.ts`, `piniaStore.ts`, `propsInterface.test.ts`, `propsInterface.ts`, `routing.test.ts`
 - `scripts/src/oxlint` — `routing.ts`, `selectorBan.test.ts`, `selectorBan.ts`, `sequentialLoops.test.ts`, `sequentialLoops.ts`, `setupScope.test.ts`, `setupScope.ts`, `sorting.test.ts`, `sorting.ts`, `templateRef.test.ts`, `templateRef.ts`, `testValues.test.ts`, `testValues.ts`, `testing.test.ts`, `testing.ts`, `trpcProcedure.test.ts`, `trpcProcedure.ts`, `valueSetMap.test.ts`, `valueSetMap.ts`, `vueTypeImports.test.ts`, `vueTypeImports.ts`
@@ -325,7 +326,7 @@
 - `scripts/src/services` — `usage`
 - `scripts/src/services` — `workerSecrets`, `workspace`
 - `scripts/src/services/worktree` — `create`, `remove`
-- `scripts/src/setup`, `scripts/src/skills`, `scripts/src/sweeps`, `scripts/src/todos`, `scripts/src/triage`, `scripts/src/usage`, `scripts/src/voiceMatch`, `scripts/src/wakeCheck`, `scripts/src/workerSecrets`, `scripts/src/workspace/entryNames.test.ts`, `scripts/src/workspace/nuxtPluginOrder.test.ts`, `scripts/src/worktree`
+- `scripts/src/setup`, `scripts/src/skills`, `scripts/src/sweeps`, `scripts/src/todos`, `scripts/src/triage`, `scripts/src/usage`, `scripts/src/voiceMatch`, `scripts/src/wakeCheck`, `scripts/src/workerSecrets`, `scripts/src/worktree`
 - `scripts/types` — `imagetracerjs.d.ts`
 - `vite` — `buildTasks.ts`, `checkTasks.ts`
 - `vite` — `vueOptions.ts`

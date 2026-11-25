@@ -48,10 +48,10 @@ out, and neither a URL nor the words of a path both pages cite are counted — a
 so a key-files row or a link is a copy only by the `SHINGLE_SIZE` prose words around it.
 
 **Which page owns a rule is a judgement; that there is one to make is not.** The scan prints, and
-`scripts/src/workspace/duplicateProse.test.ts` fails `pnpm test` on anything it prints: a new run is a
+`scripts/src/workspace/docs/duplicateProse.test.ts` fails `pnpm test` on anything it prints: a new run is a
 restatement to resolve — one page keeps the argument, the other a pointer — before the change lands. The subset
 where the convention already names the owner — a `## Settled — do not re-propose` line or a `## The catalogue`
-row pointing at the one page that argues it — is `scripts/src/workspace/restatedPointers.test.ts`, which also
+row pointing at the one page that argues it — is `scripts/src/workspace/docs/restatedPointers.test.ts`, which also
 names the direction.
 
 The skill tree adds a structural check the greps cannot make — a skill over budget, a reference page nothing
@@ -67,7 +67,7 @@ whole tree, one of which has to decide when **not** to resolve a pointer. It was
 Windows checkout prints a Microsoft Store notice and exits 0 — no findings, no error, indistinguishable from a
 clean tree (the `sweeps` skill, `references/find-recipes.md`).
 
-Every check but the budget also fails `pnpm test`, in `scripts/src/workspace/skillDocs.test.ts` — the budget stays
+Every check but the budget also fails `pnpm test`, in `scripts/src/workspace/docs/skillDocs.test.ts` — the budget stays
 a warning because a skill that has nothing narrow left to move is over by design (the `skill-authoring` skill). An `unresolved` hit is a
 pointer nothing resolves; a citation from inside `references/` to a file at its own skill's root is the
 recurring shape, and it needs `../`. The one line the check cannot judge is `skill-authoring`'s
@@ -76,13 +76,13 @@ recurring shape, and it needs `../`. The one line the check cannot judge is `ski
 Excluded: `CHANGELOG.md` (lerna output) · `{home}/.claude/plugins` skills (external, not ours to edit).
 
 Enforceable next. What is already enforced sits with what it guards: every relative link under `openspec/` in
-`scripts/src/workspace/openspecLinks.test.ts`, the label-size cap and both label-line-break checks in
-`scripts/src/workspace/diagrams.test.ts`, every open change's model in `scripts/src/workspace/changeModel.test.ts`,
+`scripts/src/workspace/docs/openspecLinks.test.ts`, the label-size cap and both label-line-break checks in
+`scripts/src/workspace/docs/diagrams.test.ts`, every open change's model in `scripts/src/workspace/agents/changeModel.test.ts`,
 every backticked repo path — a Key files row's included — and every ``the `x` skill`` name across all of this
-ledger's trees in `scripts/src/workspace/citations.test.ts`, every backticked code name in the same trees against
-the code and the installed packages in `scripts/src/workspace/staleNames.test.ts` (the rename greps 2 and 3 find
-only where the prose admits to it), grep 8's decided subset in `scripts/src/workspace/restatedPointers.test.ts`,
-and prose restating a node or pnpm version in `scripts/src/workspace/toolchainVersionRestatements.test.ts`. Greps
+ledger's trees in `scripts/src/workspace/docs/citations.test.ts`, every backticked code name in the same trees against
+the code and the installed packages in `scripts/src/workspace/docs/staleNames.test.ts` (the rename greps 2 and 3 find
+only where the prose admits to it), grep 8's decided subset in `scripts/src/workspace/docs/restatedPointers.test.ts`,
+and prose restating a node or pnpm version in `scripts/src/workspace/docs/toolchainVersionRestatements.test.ts`. Greps
 4, 5 and 6 are exact and decide themselves — but each can only land once every row is swept, since an unswept
 area still holds instances that would fail the build. Grep 1 needs an allowlist for the counts that may be exact
 (package count, configured limits) first. The diagram checks reach the skill tree too, since the pages they run

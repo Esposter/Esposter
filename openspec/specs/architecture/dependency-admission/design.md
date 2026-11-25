@@ -193,14 +193,14 @@ The recurring half of this work is already automated and should stay that way. `
 
 So the follow-through from any decision here is an `allowed` entry carrying the reason, or nothing at all. A package we consciously keep against the enforcer's advice belongs on that list; a package we absorb disappears from it. Neither is a docs edit.
 
-The catalog's own standing check is `scripts/src/workspace/deprecatedPackages.test.ts`, which fails on a direct dependency npm has deprecated, and `supersededPackages.test.ts`, which fails on a predecessor the superseded map names. Both run offline in the workspace suite.
+The catalog's own standing check is `scripts/src/workspace/packages/deprecatedPackages.test.ts`, which fails on a direct dependency npm has deprecated, and `supersededPackages.test.ts`, which fails on a predecessor the superseded map names. Both run offline in the workspace suite.
 
 ## Key files
 
-| File                                               | Role                                                                              |
-| -------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `pnpm-workspace.yaml`                              | The catalog — every version in the workspace, under `catalogMode: strict`         |
-| `scripts/src/workspace/bannedDependencies.test.ts` | The ban on every manifest, read from `module-replacements`' recorded replacements |
-| `packages/shared/src`                              | Where an absorbed utility lands                                                   |
-| `scripts/src/services/dependencies/score`          | The absorb score, its dimensions and the disagreement filter                      |
-| `apps/web/app/services/message/emoji`              | The precedent — data and search engine kept, behaviour taken back                 |
+| File                                                        | Role                                                                              |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `pnpm-workspace.yaml`                                       | The catalog — every version in the workspace, under `catalogMode: strict`         |
+| `scripts/src/workspace/packages/bannedDependencies.test.ts` | The ban on every manifest, read from `module-replacements`' recorded replacements |
+| `packages/shared/src`                                       | Where an absorbed utility lands                                                   |
+| `scripts/src/services/dependencies/score`                   | The absorb score, its dimensions and the disagreement filter                      |
+| `apps/web/app/services/message/emoji`                       | The precedent — data and search engine kept, behaviour taken back                 |

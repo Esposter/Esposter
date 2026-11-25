@@ -8,7 +8,7 @@
 ## 2. The consumers
 
 - [x] 2.1 The Functions bundle and the web app build against the unbundled packages. Verify: `pnpm -C apps/functions build` and `pnpm -C apps/web build` succeed, and the regenerated record moves the apps' rows only by what tree-shaking dropped.
-- [x] 2.2 An import of one enum from the schema package loads no drizzle. Verify: the test 'an import of one enum loads no drizzle' in `scripts/src/workspace/unbundledBarrels.test.ts` passes against the unbundled build and fails against the schema package built into one file.
+- [x] 2.2 An import of one enum from the schema package loads no drizzle. Verify: the test 'an import of one enum loads no drizzle' in `scripts/src/workspace/packages/unbundledBarrels.test.ts` passes against the unbundled build and fails against the schema package built into one file.
 
 ## 3. The Vue packages
 

@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-import oxlintConfiguration from "../../../oxlint.config.ts";
+import oxlintConfiguration from "../../../../oxlint.config.ts";
 
 const readGitignorePatterns = (): string[] =>
   readFileSync(resolve(REPOSITORY_ROOT, ".gitignore"), "utf8")

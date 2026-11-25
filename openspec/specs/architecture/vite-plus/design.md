@@ -39,7 +39,7 @@ Every cached task is probed against this tree before it is trusted: a source edi
 
 ## Scripts run under `node`
 
-Every TypeScript script runs under plain `node`: every source file is erasable (`erasableSyntaxOnly`), and every package, the web app included, reaches its own source through the subpath imports its manifest declares, so Node's own type stripping and resolution run it with no loader. `vpx` ships with `vite-plus`, which stays for tests, lint and builds; no script entry runs through it, which `scripts/src/workspace/packageScripts.test.ts` holds, and the `package-scripts` skill's `references/typescript-scripts.md` owns the rule. The persona plugin runs its TypeScript under plain `node` the same way ([persona plugin](../../infra/claude-interface/persona-plugin/README.md)).
+Every TypeScript script runs under plain `node`: every source file is erasable (`erasableSyntaxOnly`), and every package, the web app included, reaches its own source through the subpath imports its manifest declares, so Node's own type stripping and resolution run it with no loader. `vpx` ships with `vite-plus`, which stays for tests, lint and builds; no script entry runs through it, which `scripts/src/workspace/packages/packageScripts.test.ts` holds, and the `package-scripts` skill's `references/typescript-scripts.md` owns the rule. The persona plugin runs its TypeScript under plain `node` the same way ([persona plugin](../../infra/claude-interface/persona-plugin/README.md)).
 
 ## One copy of every tool
 

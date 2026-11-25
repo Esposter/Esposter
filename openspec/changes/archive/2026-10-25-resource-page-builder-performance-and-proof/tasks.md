@@ -29,5 +29,5 @@
 
 ## 5. The record
 
-- [x] 5.1 Record each target with the bench or test that holds it as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.
+- [x] 5.1 Record each target with the bench or test that holds it as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/docs/citations.test.ts src/workspace/docs/openspecLinks.test.ts src/services/openspec` passes.
   - Done: the citations and links the verify checks name now point where their files live. The ledger rows that named this change's and the style panel's pre-archive `openspec/changes/` paths name the archive folders, and the rows for deleted units are gone; the skills, the live-edits and gap-survey designs, and the paid-storage and roadmap links follow their moves. Each repair is its own commit on `ai/queue`, from `7c4915b140` to `543cbc3888`. The as-built record is the Performance table's Held by column. The browser tasks 1.1, 3.1, 3.2 and 3.3 are dropped, since the editors need Nuxt, and the harness costs more than the check is worth; the visual judgments stay owed.

@@ -8,7 +8,7 @@ A screen to be matched is a presentational component in the world package, with 
 
 Every element a Genshin screen draws is one the game shows, and its owning spec cites the game's reference for it: a recording, a capture, or the game's own UI tree or text. An element the game does not show is not drawn, not even disabled. An element with no reference yet is not built, and the Open row of its spec names the reference sought.
 
-`scripts/src/workspace/genshinComponentReference.test.ts` holds each component that draws something of its own in one of three ways, tried in this order:
+`scripts/src/workspace/genshin/genshinComponentReference.test.ts` holds each component that draws something of its own in one of three ways, tried in this order:
 
 ```mermaid
 flowchart TD
@@ -35,7 +35,7 @@ flowchart TD
 | `packages/genshin-world/src/components/Loading/Startup/Index.vue`             | The game's startup screen: the seven marks, wiped in as loading goes                                                                                                                                                          |
 | `packages/genshin-world/src/components/Splash/Sequence/Index.vue`             | The game's splashes: its logos and health notice, each judged against its reference in the opening recording `{data-root}/genshin-parity/captures/yt-sQNqMfmfkZU-splash-opening.mp4` or the session recording `session-2.mp4` |
 | `packages/genshin-world/src/components/Game/Opening/Index.vue`                | The game's opening: the splashes, the login screen, then the startup screen, handed on by their own timings                                                                                                                   |
-| `scripts/src/workspace/genshinComponentReference.test.ts`                     | The check: every drawn component held, owed or named, and every ledger row a folder the tree holds                                                                                                                            |
+| `scripts/src/workspace/genshin/genshinComponentReference.test.ts`             | The check: every drawn component held, owed or named, and every ledger row a folder the tree holds                                                                                                                            |
 | `scripts/src/services/genshinParity/componentReference/findHeldComponents.ts` | The walk from referenced screens through their imports, and the components a spec names beside a reference                                                                                                                    |
 | `scripts/src/services/genshinParity/componentReference/checkIsDrawn.ts`       | Whether a component draws something of its own, or only mounts components that do                                                                                                                                             |
 | `.agents/ledgers/component-reference.md`                                      | The debt rows the check reads, one per component folder that no route holds                                                                                                                                                   |

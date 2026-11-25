@@ -28,7 +28,7 @@ The lint rule is written in `oxlint/importRestrictions.ts`. It bans `child_proce
 ## Notes
 
 - The scenario titles are the names of the wrappers' own tests. Each wrapper's test file asserts the window flag on the arguments node receives, and the `execSync` and `execFile` tests cover the undefined-options and trailing-callback shapes.
-- `scripts/src/workspace/childProcessImport.test.ts` runs the real oxlint over a probe file kept outside the repo, so the root pass never lints it. The probe sits outside every scope, so it is judged by the root rules alone. The test shows that the root entries fire, and it does not show that each scope's override carries them: a scope that dropped its entries would pass it.
+- `scripts/src/workspace/source/childProcessImport.test.ts` runs the real oxlint over a probe file kept outside the repo, so the root pass never lints it. The probe sits outside every scope, so it is judged by the root rules alone. The test shows that the root entries fire, and it does not show that each scope's override carries them: a scope that dropped its entries would pass it.
 
 ## Key files
 
@@ -40,4 +40,4 @@ The lint rule is written in `oxlint/importRestrictions.ts`. It bans `child_proce
 | `packages/shared-node/src/services/childProcess/spawn.ts`                    | wraps spawn; the other four wrappers follow the same shape         |
 | `packages/shared-node/src/services/childProcess/execFile.ts`                 | wraps execFile and keeps node's promisified result                 |
 | `oxlint/importRestrictions.ts`                                               | the restricted import entries for `child_process`                  |
-| `scripts/src/workspace/childProcessImport.test.ts`                           | the lint probe whose title is this capability's lint scenario      |
+| `scripts/src/workspace/source/childProcessImport.test.ts`                    | the lint probe whose title is this capability's lint scenario      |

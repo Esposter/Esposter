@@ -75,7 +75,7 @@ Our own R2 objects and the lock-pinned game data are trusted, so their readers n
 
 ## A script's clock is boot, spawns and reads
 
-Measure a script end to end first (`scripts/src/workspace/sweepCommands.bench.md`); what its time is made of, and the timeout a whole-tree suite needs, is in `references/script-clock.md`.
+Measure a script end to end first (`scripts/src/workspace/ci/sweepCommands.bench.md`); what its time is made of, and the timeout a whole-tree suite needs, is in `references/script-clock.md`.
 
 ## The server never carries what it does not interpret
 
