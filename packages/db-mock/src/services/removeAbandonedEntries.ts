@@ -4,6 +4,7 @@ import {
   TEMPLATE_ROOT,
   TEMPLATE_UNUSED_MILLISECONDS,
 } from "#src/services/constants";
+import { getResult, noop } from "@esposter/shared";
 import { checkIsProcessRunning } from "@esposter/shared-node/check-is-process-running";
 import { readdirSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -18,12 +19,23 @@ const isUnusedTemplate = (path: string) => {
   return modifiedMilliseconds !== undefined && Date.now() - modifiedMilliseconds > TEMPLATE_UNUSED_MILLISECONDS;
 };
 
+// On Windows a database's files stay locked while the Miniflare process that opened them runs, which can outlive the
+// Test process that started it. A locked entry is left for a later run to remove once it unlocks, rather than failing
+// The file that happened to make the next copy
+const removeEntry = (path: string) => {
+  getResult(() => {
+    rmSync(path, { force: true, recursive: true });
+  }).match(noop, (error) => {
+    console.warn(`Kept ${path}, which a later run removes once nothing holds it open`, error);
+  });
+};
+
 export const removeAbandonedEntries = (): void => {
   for (const entry of readdirSync(TEMPLATE_ROOT)) {
     const path = join(TEMPLATE_ROOT, entry);
     const processId = Number(PROCESS_ENTRY_REGEX.exec(entry)?.groups?.processId);
     if (processId) {
-      if (!checkIsProcessRunning(processId)) rmSync(path, { force: true, recursive: true });
-    } else if (TEMPLATE_KEY_REGEX.test(entry) && isUnusedTemplate(path)) rmSync(path, { force: true, recursive: true });
+      if (!checkIsProcessRunning(processId)) removeEntry(path);
+    } else if (TEMPLATE_KEY_REGEX.test(entry) && isUnusedTemplate(path)) removeEntry(path);
   }
 };

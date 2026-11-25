@@ -3,7 +3,12 @@ import { removeAbandonedEntries } from "#src/services/removeAbandonedEntries";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, rmSync, utimesSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("node:fs"), async (importOriginal) => {
+  const nodeFs = await importOriginal();
+  return { ...nodeFs, rmSync: vi.fn<typeof nodeFs.rmSync>(nodeFs.rmSync) };
+});
 
 describe(removeAbandonedEntries, () => {
   // A process id no process holds, which the process check reads as gone
@@ -22,6 +27,8 @@ describe(removeAbandonedEntries, () => {
   });
 
   afterEach(() => {
+    vi.mocked(rmSync).mockReset();
+    vi.restoreAllMocks();
     for (const name of createdNames) rmSync(join(TEMPLATE_ROOT, name), { force: true, recursive: true });
   });
 
@@ -40,5 +47,25 @@ describe(removeAbandonedEntries, () => {
     removeAbandonedEntries();
 
     expect([...removed, ...kept].filter((name) => existsSync(join(TEMPLATE_ROOT, name)))).toStrictEqual(kept);
+  });
+
+  // On Windows a copy stays locked while the Miniflare process that opened it runs, which can outlive its test process
+  test("keeps an entry it cannot remove, rather than failing the file that made the next copy", () => {
+    expect.hasAssertions();
+
+    const name = `${COPY_PREFIX}-${DEAD_PROCESS_ID}-a`;
+    const path = join(TEMPLATE_ROOT, name);
+    createEntry(name, new Date());
+    const removeEntry = vi.mocked(rmSync).getMockImplementation();
+    vi.mocked(rmSync).mockImplementation((target, options) => {
+      if (target === path) throw new Error(" ");
+      removeEntry?.(target, options);
+    });
+    vi.spyOn(console, "warn").mockReturnValue(undefined);
+
+    expect(() => {
+      removeAbandonedEntries();
+    }).not.toThrow();
+    expect(existsSync(path)).toBe(true);
   });
 });
