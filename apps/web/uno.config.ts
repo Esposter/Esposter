@@ -14,6 +14,10 @@ const opacityUtilities = {
   "op-disabled": { opacity: "0.38" },
   "op-loading": { opacity: "0.5" },
 } as const satisfies Record<string, Record<string, string>>;
+// A transition names each property beside the motion token that carries its duration and easing, which UnoCSS's own
+// `transition-[…]` reads as a property list and generates nothing for, so a value with a space in it, written `_`, is
+// Read as the whole shorthand instead
+const TRANSITION_SHORTHAND_REGEX = /^transition-\[(?<value>[^\]]+_[^\]]+)\]$/u;
 const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
 const HTML_COMMENT_REGEX = /<!--[\s\S]*?-->/gu;
 // Attributify reads `<!-- ` as the start of a tag, so an apostrophe in a template comment opens a quote that runs on to
@@ -220,6 +224,7 @@ export default defineConfig({
   ],
   rules: [
     ["of-anchor-none", { "overflow-anchor": "none" }],
+    [TRANSITION_SHORTHAND_REGEX, ({ groups }) => ({ transition: groups?.value?.replaceAll("_", " ") })],
     ...Object.entries(opacityUtilities),
     ...Object.entries(uiSurfaceUtilities),
     ...Object.entries(uiShapeUtilities),

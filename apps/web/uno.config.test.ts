@@ -19,6 +19,10 @@ describe("unoConfig", () => {
             },
           ],
           [
+            /\\^transition-\\\\\\[\\(\\?<value>\\[\\^\\\\\\]\\]\\+_\\[\\^\\\\\\]\\]\\+\\)\\\\\\]\\$/u,
+            [Function],
+          ],
+          [
             "op-disabled",
             {
               "opacity": "0.38",
@@ -282,6 +286,24 @@ describe("unoConfig", () => {
     );
 
     expect(matched).toStrictEqual(new Set(["[d:e]", '[pb~="[var(--a)]"]', "b"]));
+  });
+
+  test("generates a transition that names its properties beside a motion token", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const { css } = await uno.generate(`<div transition="[opacity_var(--a),transform_var(--a)]" />`, {
+      preflights: false,
+      safelist: false,
+    });
+
+    expect(css).toMatchInlineSnapshot(`
+      "@layer uno-default;
+      /* layer: default, alias: uno-default */
+      @layer uno-default{
+      [transition~="\\[opacity_var\\(--a\\)\\,transform_var\\(--a\\)\\]"]{transition:opacity var(--a),transform var(--a);}
+      }"
+    `);
   });
 
   // Forced colours paint over every fill and drop every shadow, so a surface keeps its outline only through the
