@@ -2,9 +2,9 @@ import { readSharedExportFindings } from "#src/services/sweeps/sharedExportConsu
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// Prints rather than exits non-zero: the pass reads the list, and `src/workspace/packages/sharedExportConsumers.test.ts`
-// Is what fails on it. Each line says what the pass does with the export: move it beside its one consumer, or
-// Delete it (`.agents/ledgers/file-organization/`).
+// Prints rather than exits non-zero: the pass reads the list, and
+// `src/workspace/packages/sharedExportConsumers.test.ts` is what fails on it. Each line says what the pass does with
+// The export: move it beside its one consumer, or delete it (`.agents/ledgers/file-organization/`).
 await runCommand(
   defineCommand({
     meta: {

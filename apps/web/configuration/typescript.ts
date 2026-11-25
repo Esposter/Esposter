@@ -8,8 +8,8 @@ import type { NuxtConfig } from "nuxt/schema";
 // `<script setup>` binding nothing reads, which no lint rule can see
 // The Tiled tilesets are XML under `app/assets/`, where Nuxt's `app/**` include would compile them as TSX
 // `vize` is the content mapper that turns `.vue` files into TypeScript for `tsrs -b`, with Options API bindings left
-// Unresolved because `vue.optionsApi` is off, and `useTemplateRef` is named as Vue's because the auto-import declaration
-// Is ambient
+// Unresolved because `vue.optionsApi` is off, and `useTemplateRef` is named as Vue's because the auto-import
+// Declaration is ambient
 export const typescript: NonNullable<NuxtConfig["typescript"]> = {
   // Nuxt includes each local module's whole `runtime/server` folder, tests too; a package's tests are its own
   // Program's, typechecked by the package against its own globals, which the Workers ones would change here

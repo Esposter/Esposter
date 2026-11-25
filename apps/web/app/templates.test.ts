@@ -9,6 +9,7 @@ import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createGenerator } from "unocss";
 import { describe, expect, test } from "vitest";
+
 // @TODO: https://github.com/ubugeeei-prod/vize/issues/13664 — vize's template AST replaces the compiler
 import { parse } from "vue/compiler-sfc";
 

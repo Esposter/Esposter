@@ -19,7 +19,8 @@ export const SENTENCE_END_REGEX: RegExp = /[.!?:]\s*$/u;
 export const DIRECTIVE_REGEX: RegExp = /^\s*oxlint-disable(?:-next-line|-line)?(?:\s|$)/u;
 // The reason a directive states after ` -- `, which tells a load-bearing exception from a stale one. Both halves of the
 // Directive-reason check read it: the script half in `comments/require-directive-reason`, and the template half in
-// `scripts/src/workspace/templates/templateDirectiveReasons.test.ts`, so the two cannot disagree on what counts as a reason
+// `scripts/src/workspace/templates/templateDirectiveReasons.test.ts`, so the two cannot disagree on what counts as a
+// Reason
 export const DIRECTIVE_REASON_REGEX: RegExp = /\s--\s+\S/u;
 export const DIRECTIVE_REASON_MESSAGE =
   "A disable directive carries its reason after ` -- ` on the directive itself, so the next reader can tell a load-bearing exception from a stale one. See the oxlint skill.";

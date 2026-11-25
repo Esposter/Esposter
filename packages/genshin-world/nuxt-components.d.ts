@@ -7,12 +7,12 @@ declare module "vue" {
   interface GlobalComponents {
     NuxtImg: DefineComponent<ImgHTMLAttributes>;
     NuxtTime: DefineComponent<
-      Intl.DateTimeFormatOptions & {
+      {
         datetime: Date | number | string;
         locale?: string;
         relative?: boolean;
         title?: boolean | string;
-      }
+      } & Intl.DateTimeFormatOptions
     >;
   }
 }

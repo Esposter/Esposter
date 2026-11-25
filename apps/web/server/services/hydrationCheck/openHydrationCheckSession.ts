@@ -16,11 +16,10 @@ export const openHydrationCheckSession = async (
   if (!checkIsHydrationCheckSecret(authorization)) return undefined;
   const user =
     (await context.internalAdapter.findUserById(HYDRATION_CHECK_USER_ID)) ??
-    (await context.internalAdapter.createUser({
-      email: HYDRATION_CHECK_USER_EMAIL,
-      id: HYDRATION_CHECK_USER_ID,
-      name: "Hydration check",
-    }));
+    (await context.internalAdapter.createUser(
+      { email: HYDRATION_CHECK_USER_EMAIL, id: HYDRATION_CHECK_USER_ID, name: "Hydration check" },
+      { method: "admin" },
+    ));
   await context.internalAdapter.deleteUserSessions(user.id);
   return createSessionCookie(context, user.id);
 };

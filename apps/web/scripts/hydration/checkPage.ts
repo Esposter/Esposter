@@ -11,7 +11,7 @@ export const checkPage = async (
   location: string,
   storageState?: BrowserContextOptions["storageState"],
 ) => {
-  const context = await browser.newContext({ ...device, storageState });
+  const context = await browser.newContext(storageState ? { ...device, storageState } : device);
   const page = await context.newPage();
   const messages: string[] = [];
   page.on("console", (message) => {

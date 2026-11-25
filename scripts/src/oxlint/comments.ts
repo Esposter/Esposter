@@ -26,8 +26,8 @@ import { definePlugin } from "@oxlint/plugins";
  * `require-directive-reason` enforces the oxlint skill's rule that every disable directive states its reason after
  * ` -- `. It reads the comment alone — the directive syntax both linters share — so it carries no list at all. A
  * `<!-- oxlint-disable -->` in a `.vue` template is outside what oxlint parses, and is a workspace test's half
- * (`scripts/src/workspace/templates/templateDirectiveReasons.test.ts`). A bare directive naming no rule switches this one off
- * with the rest, so it is the one shape neither half sees; the only ones are generated files the lint ignores.
+ * (`scripts/src/workspace/templates/templateDirectiveReasons.test.ts`). A bare directive naming no rule switches this
+ * one off with the rest, so it is the one shape neither half sees; the only ones are generated files the lint ignores.
  *
  * `no-repeated-disable-next-line` enforces the oxlint skill's rule that a file repeating one
  * rule's `-next-line` disable collapses into one file-level directive at its top. It reads the
