@@ -16,5 +16,5 @@
     "${configDir}/src/**/*.ts",
     "${configDir}/src/**/*.vue"
   ],
-  "vueCompilerOptions": { "composables": { "useTemplateRef": ["useTemplateRef"] } }
+  "vueCompilerOptions": { "composables": { "useTemplateRef": ["useTemplateRef"] }, "strictTemplates": true }
 }

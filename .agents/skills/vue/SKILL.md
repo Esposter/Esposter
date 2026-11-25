@@ -88,7 +88,7 @@ Every rendered date is a `<NuxtTime>`; the date-formatting ban inside a `.vue` a
 - `references/ordering.md` — when laying out a `<script setup>` block's macros and declarations, or an element's attributes.
 - `references/inline-handlers.md` — when naming, extracting or reviewing a function used once.
 - `references/forms.md` — when an input needs the split binding, or a form handles both create and edit.
-- `references/template-gotchas.md` — when a directive or slot renders nothing, or the type check cannot see a template identifier.
+- `references/template-gotchas.md` — when a directive or slot renders nothing, or the type check cannot see a template identifier, prop or global component.
 - `references/computed-extraction.md` — before extracting or inlining any `computed`.
 - `references/auth-session.md` — when anything needs the signed-in user.
 - `references/watch-decision-tree.md` — before writing any `watch`, or when a local `ref` mirrors a prop or store value.

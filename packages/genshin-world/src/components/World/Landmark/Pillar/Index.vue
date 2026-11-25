@@ -33,7 +33,7 @@ onUnmounted(() => {
 <template>
   <TresGroup
     :position="[arrival.position.x, groundHeight + arrival.heightOffset, arrival.position.z]"
-    :rotation-y="arrival.rotation"
+    :rotation="[0, arrival.rotation, 0]"
   >
     <primitive :object="mesh" />
   </TresGroup>

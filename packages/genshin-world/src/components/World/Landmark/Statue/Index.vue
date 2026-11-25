@@ -39,7 +39,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <TresGroup :position="[position.x, groundHeight + heightOffset, position.z]" :rotation-y="rotation">
+  <TresGroup :position="[position.x, groundHeight + heightOffset, position.z]" :rotation="[0, rotation, 0]">
     <primitive v-for="(mesh, index) of statueMeshes" :key="index" :object="mesh" />
   </TresGroup>
 </template>

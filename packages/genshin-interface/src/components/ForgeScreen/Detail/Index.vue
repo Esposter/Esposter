@@ -36,7 +36,7 @@ interface Props {
   yieldCount: number;
 }
 
-const amount = defineModel<number>("amount");
+const amount = defineModel<number>("amount", { required: true });
 defineProps<Props>();
 const emit = defineEmits<{ obtain: [queueId: number]; start: [] }>();
 </script>

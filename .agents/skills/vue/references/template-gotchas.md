@@ -1,6 +1,6 @@
 # Template Gotchas
 
-Read when a directive or slot renders nothing, when the type check reports a template identifier it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler. Some template forms compile and are still wrong — rendering nothing while typechecking cleanly, or losing a guard's narrowing at a closure — and a cast on a type-only import is right all along, though the checker's error names it in place of the value usage that caused it.
+Read when a directive or slot renders nothing, when the type check reports a template identifier or prop it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler. Some template forms compile and are still wrong — rendering nothing while typechecking cleanly, or losing a guard's narrowing at a closure — and a cast on a type-only import is right all along, though the checker's error names it in place of the value usage that caused it.
 
 ## `v-html` only on a plain element
 
@@ -43,6 +43,14 @@ A template comment is a node. The server renders it, but the client's transition
 ```
 
 `apps/web/app/templates.test.ts` ("transition slots") fails on a comment directly inside a `Transition*` or `KeepAlive` tag, since vize's template AST holds no comment node for a selector ban to match. The cause is recorded in `openspec/specs/architecture/hydration/design.md`.
+
+## A Tres element takes its whole transform, never a pierced prop
+
+The type check runs with `strictTemplates`, so a prop a component does not declare is an error, and a Tres element declares `rotation`, `position` and `scale` but none of their pierced forms. Pass the whole value instead: `:rotation="[0, yaw, 0]"`, with the Euler order as the fourth element where it is not the default (`[pitch, yaw, 0, "YXZ"]`). Tres applies an array through the target's `fromArray`, so the order lands with the angles. A `<primitive>` is untyped, so a pierced prop on one is not checked.
+
+## A global a package's host registers is declared in the package
+
+A workspace package that renders a component its host app registers globally (`<NuxtTime>`, `<NuxtImg>` in `genshin-world`) cannot import it, so its own program sees an unknown component. The package declares it on `vue`'s `GlobalComponents` in a root `.d.ts` (`packages/genshin-world/nuxt-components.d.ts`) that its tsconfig includes, the build never ships and the host never loads, typed for the props the package passes.
 
 ## A guard in an inline handler does not narrow inside a closure
 

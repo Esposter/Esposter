@@ -48,7 +48,7 @@ export const useWorldForging = ({
   const forgeNow = shallowRef(getWorldNow());
   const forgeRecipeId = ref(FIRST_FORGE_RECIPE_ID);
   const forgeRecipeMap = computed(() => createUnlockItemMap(forgeRecipes.value));
-  const forgeTab = ref(ForgeTab.Materials);
+  const forgeTab = ref<ForgeTab>(ForgeTab.Materials);
   const forgeWeapons = computed(() =>
     computeForgeWeapons(forgeRecipes.value, worldSessionStore.weaponDataMap, worldSessionStore.nameText),
   );

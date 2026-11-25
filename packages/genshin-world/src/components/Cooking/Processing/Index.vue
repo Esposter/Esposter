@@ -35,7 +35,7 @@ const emit = defineEmits<{ close: [] }>();
 // The processings offered: only the ones known from the start, since a processing not yet known is refused
 const knownRecipes = recipes.filter((recipe) => recipe.isDefaultUnlocked);
 // The units the player picked for each processing, one until picked
-const counts = ref<Record<number, number>>({});
+const counts = ref<Record<number, number | undefined>>({});
 const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, materialDataMap);
 const pickedCount = (recipe: ProcessingRecipe) => counts.value[recipe.id] ?? 1;
 const queuedCount = (recipe: ProcessingRecipe) => jobs.value[recipe.id]?.count ?? 0;

@@ -12,6 +12,7 @@ import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import type { LoginTowers } from "#src/models/login/LoginTowers";
 import type { LoginWalkway } from "#src/models/login/LoginWalkway";
 import type { CloudLayerTextureProfiles, GameBloomStructure, QualityTier } from "genshin-engine";
+import type { EulerOrder } from "three";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useSceneExports } from "#src/composables/useSceneExports";
@@ -486,7 +487,7 @@ const cameraZ = computed(() => {
 });
 // The camera's place and turn, each kept as one value so the template's props keep their identity across renders
 const cameraPosition = computed((): [number, number, number] => [0, cameraHeight, cameraZ.value]);
-const cameraRotation: [number, number, number] = [LOGIN_CAMERA_PITCH, LOGIN_CAMERA_YAW, 0];
+const cameraRotation: [number, number, number, EulerOrder] = [LOGIN_CAMERA_PITCH, LOGIN_CAMERA_YAW, 0, "YXZ"];
 onRender(({ delta: frameDelta }) => {
   // A tool holding the witness's clock holds the scene's time too, so one view draws one frame
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
@@ -592,7 +593,6 @@ onUnmounted(() => {
     :fov="cameraFov"
     :position="cameraPosition"
     :rotation="cameraRotation"
-    rotation-order="YXZ"
   />
   <primitive :object="light" />
   <primitive :object="light.target" />
