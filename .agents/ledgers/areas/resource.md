@@ -105,7 +105,7 @@
 - `apps/web/app/services/whiteboard/gesture` — `getWorldPoint.ts`, `reduceArrowGesture.ts`, `reduceConnectGesture.ts`, `reduceDrawingGesture.ts`, `reduceEndGesture.ts`, `reduceMarqueeGesture.ts`, `reduceMovingGesture.ts`, `reducePanningGesture.ts`, `reducePlacingGesture.ts`, `reducePointerGesture.ts`, `reducePressedGesture.ts`, `reducePreviewOrCommitGesture.ts`, `reduceResizingGesture.ts`, `reduceWhiteboardGesture.test.ts`, `reduceWhiteboardGesture.ts`, `startPlacingGesture.ts`, `startWhiteboardGesture.ts`
 - `apps/web/app/services/whiteboard` — `getCentredPosition.ts`, `getPlacedBounds.ts`, `getSelectedElement.ts`, `getSelectedElements.ts`, `getWhiteboardElementTitle.ts`, `keyboard`, `layout`, `overlay`, `palette`, `serializeClipboardElements.ts`, `stroke`, `style`, `text`, `tool`, `viewport`
 - `apps/web/app` — `storeRefDestructure.test.ts`, `templates.bench.json`, `templates.bench.md`, `templates.bench.ts`, `templates.test.ts`, `test`, `walkElements.test.ts`, `workers`
-- `apps/web/modules` — `devSession.test.ts`, `devSession.ts`, `serveGenshinExtractions.test.ts`, `serveGenshinExtractions.ts`
+- `apps/web/modules` — `attributifyTypes.test.ts`, `attributifyTypes.ts`, `devSession.test.ts`, `devSession.ts`, `nuxtLayoutTypes.ts`, `serveGenshinExtractions.test.ts`, `serveGenshinExtractions.ts`
 - `apps/web/public` — `favicon.ico`, `page-builder`, `pdfjs`, `polyfills`, `pwa`
 - `apps/web/service-worker` — `sw.ts`
 - `apps/web/app/assets/dashboard`
