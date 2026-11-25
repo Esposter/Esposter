@@ -86,6 +86,7 @@
 - `packages/configuration/src/services` — `autoImportDeclarationsPlugin.ts`, `DurationSequencer.test.ts`, `DurationSequencer.ts`, `generateBarrels.ts`, `readExportsGeneration.ts`
 - `packages/configuration/src/services` — `readApprovedImageNames.ts`, `readPackageManifest.test.ts`, `readPackageManifest.ts`, `removeDynamicJsonImportAttributes.test.ts`, `removeDynamicJsonImportAttributes.ts`, `toPascalCase.ts`, `writeBarrel.ts`
 - `packages/configuration/src/services` — `TestTimingsReporter.test.ts`, `TestTimingsReporter.ts`
+- `packages/configuration/src/services` — `autoImportDeclarationsPlugin.test.ts`
 - `packages/configuration/types`, `packages/configuration/vitest`
 - `packages/configuration` — `CHANGELOG.md`, `README.md`, `package.json`, `tsconfig.base.json`, `tsconfig.browser.json`, `tsconfig.build.base.json`, `tsconfig.json`, `tsconfig.library.json`, `tsconfig.node.json`, `tsconfig.nuxt-module.json`, `tsconfig.vue.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/grid-engine-headless/src/internal/models`, `packages/grid-engine-headless/src/internal/services`
@@ -179,6 +180,7 @@
 - `packages/genshin-world/src/composables` — `useWorldOutcrops.test.ts`, `useWorldOutcrops.ts`, `useWorldPointedLandmark.ts`, `useWorldProfileNamecards.ts`, `useWorldQuestRewards.test.ts`, `useWorldQuestRewards.ts`, `useWorldQuestTargets.ts`, `useWorldReputationBounty.ts`, `useWorldReputationRequest.ts`, `useWorldRestorativePower.ts`, `useWorldSave.test.ts`, `useWorldSave.ts`, `useWorldSaveSync.test.ts`, `useWorldSaveSync.ts`, `useWorldScreenBehaviour.ts`, `useWorldScreenRecords.test.ts`, `useWorldScreenRecords.ts`, `useWorldShortcutWheel.ts`, `useWorldShrines.test.ts`, `useWorldShrines.ts`, `useWorldSpiralAbyss.test.ts`, `useWorldSpiralAbyss.ts`, `useWorldTalks.test.ts`, `useWorldTalks.ts`
 - `packages/genshin-world/src/composables` — `useWorldTips.test.ts`, `useWorldTips.ts`, `useWorldTrials.test.ts`, `useWorldTrials.ts`, `useWorldTrounceBlossoms.test.ts`, `useWorldTrounceBlossoms.ts`
 - `packages/genshin-world` — `CHANGELOG.md`, `README.md`, `auto-imports.d.ts`, `package.json`, `tsconfig.build.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.browser.config.ts`, `vitest.config.ts`
+- `packages/genshin-world` — `nuxt-components.d.ts`
 - `packages/genshin-world/src` — `definitions.ts`, `save.ts`, `sceneExport.ts`
 - `packages/genshin-world/src/models/achievement`, `packages/genshin-world/src/models/adventureRank`, `packages/genshin-world/src/models/archive`
 - `packages/genshin-world/src/models/artifact`, `packages/genshin-world/src/models/avatar`, `packages/genshin-world/src/models/bosses`

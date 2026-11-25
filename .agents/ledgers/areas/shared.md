@@ -17,6 +17,7 @@
 - `apps/web/shared/models/resource` — `survey`, `program`, `blueprint`, `todoList`, `note`
 - `apps/web/shared/models` — the rest
 - `apps/web/shared/services/achievement`, `apps/web/shared/services/app`, `apps/web/shared/services/auth`
+- `apps/web/shared/services/hydrationCheck`
 - `apps/web/shared/services/blobState`, `apps/web/shared/services/compiler`, `apps/web/shared/services/dashboard`, `apps/web/shared/services/dataset`, `apps/web/shared/services/environment`, `apps/web/shared/services/genshin`, `apps/web/shared/services/id`, `apps/web/shared/services/intl`, `apps/web/shared/services/message`, `apps/web/shared/services/notification`
 - `apps/web/shared/services/pageBuilder/critique`
 - `apps/web/shared/services/pageBuilder/email`

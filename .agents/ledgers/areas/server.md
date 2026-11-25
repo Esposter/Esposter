@@ -48,6 +48,7 @@
 - `apps/web/server/services/emailEditor`, `apps/web/server/services/dashboard`
 - `apps/web/server` — `auth.test.ts`, `development`, `middleware`
 - `apps/web/server/services` — `app`, `devSession`, `genshin`
+- `apps/web/server/services` — `hydrationCheck`
 - `apps/web/server/services/webhook` — `publicWebhookColumns.ts`
 - `apps/web/server/services/mcp`, `apps/web/server/services/queue`
 - `apps/web/server/services/realtime`, `apps/web/server/services/realtimeKit`, `apps/web/server/services/resource/reapplyLiveResourceContent.test-d.ts`, `apps/web/server/services/room/deleteRoom.test.ts`

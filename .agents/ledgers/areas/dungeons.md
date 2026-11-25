@@ -22,6 +22,7 @@ because a model every group shares belongs to none of their rows.
 - `apps/web/app/composables/dungeons/scene`
 - `apps/web/app/services/dungeons/animation`, `apps/web/app/services/dungeons/area`, `apps/web/app/services/dungeons/attack`, `apps/web/app/services/dungeons/camera`, `apps/web/app/services/dungeons/chest`, `apps/web/app/services/dungeons/dialog`, `apps/web/app/services/dungeons/direction`, `apps/web/app/services/dungeons/item`
 - `apps/web/app/services/dungeons/loader` — `ImageFileKeys.ts`, `PixelArtTextureKeys.ts`, `SoundFileKeys.ts`, `dungeonsLock.ts`, `getDungeonsUrl.ts`, `loadDungeonsFiles.test.ts`, `loadDungeonsFiles.ts`, `loadImages.test.ts`, `loadImages.ts`, `loadSounds.ts`, `loadSpritesheets.ts`, `loadTilemaps.test.ts`, `loadTilemaps.ts`, `loadTilesets.ts`, `readDungeonsPreloadSet.ts`
+- `apps/web/app/services/dungeons/loader` — `constants.ts`, `readDungeonsPreloadSet.test.ts`
 - `apps/web/app/services/dungeons` — `monster`, `npc`, `sound`
 - `apps/web/app/services/dungeons/state`, `apps/web/app/services/dungeons/text`, `apps/web/app/services/dungeons/tilemap`
 - `apps/web/app/services/dungeons` — `dungeonsLocalSave.ts`, `toLocalDungeons.test.ts`, `toLocalDungeons.ts`
