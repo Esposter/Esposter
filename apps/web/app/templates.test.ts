@@ -239,7 +239,7 @@ describe("breakpoints", () => {
 // Child on the client in a development build while the server renders it, so hydration meets the comment where it
 // Expects the child. Vize's template AST holds no comment node, so no selector ban can see one (the `vue` skill)
 describe("transition slots", () => {
-  // @TODO: no upstream issue — ubugeeei-prod/vize: comment nodes in the template AST its selector bans read
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13074 — a custom rule over the comment nodes replaces it
   test("holds no comment directly inside a transition's slot", () => {
     expect.hasAssertions();
 
