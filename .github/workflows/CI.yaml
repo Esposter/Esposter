@@ -27,9 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      # The web build counts every commit for its build version, so it takes the whole history without its trees, as Deploy does
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
+          filter: tree:0
           persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies

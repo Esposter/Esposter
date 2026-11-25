@@ -1,7 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 import { getCloudflareEnvironment } from "#configuration/wrangler";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 
 import { HostedAssetOriginMap } from "../../../packages/db-schema/src/services/storage/HostedAssetOriginMap.ts";
 
@@ -13,7 +13,7 @@ export const runtimeConfig: NonNullable<NuxtConfig["runtimeConfig"]> = {
   public: {
     baseUrl: process.env.BASE_URL ?? "",
     // The commit count of the source being built, so the version names the deployed commit with no read of GitHub at
-    // Runtime. The deploy checks out the full history for it, since a shallow clone counts one
+    // Runtime. The deploy and the CI build both check out the full history, since a shallow clone counts one
     buildVersion: Number(execFileSync("git", ["rev-list", "--count", "HEAD"], { encoding: "utf8" })),
     // An unset value is the empty string, so the key is in place for the build to fill
     facebook: { clientId: process.env.FACEBOOK_CLIENT_ID ?? "" },
