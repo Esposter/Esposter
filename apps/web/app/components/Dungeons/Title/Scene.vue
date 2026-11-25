@@ -6,7 +6,7 @@ import { useControlsStore } from "#src/store/dungeons/controls";
 import { useTitleSceneStore } from "#src/store/dungeons/title/scene";
 import { Image, Text } from "vue-phaserjs";
 
-const buildVersion = await useBuildVersion();
+const { buildVersion } = useRuntimeConfig().public;
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const titleSceneStore = useTitleSceneStore();

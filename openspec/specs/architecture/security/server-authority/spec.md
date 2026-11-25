@@ -70,12 +70,12 @@ Rate limiting for anonymous callers SHALL use the address the platform records f
 - **WHEN** its requests are rate limited
 - **THEN** the limit is applied to the address the platform recorded
 
-### Requirement: A public read of an external service is answered once per server process
+### Requirement: The build version is fixed by the build
 
-A public read that calls an external service SHALL answer from one fetch per server process, so that callers cannot use up the external service's quota.
+The build version SHALL be the commit count of the source the web build was built from, written into its public runtime config, so that no request reads an external service for it.
 
-#### Scenario: Many callers read the build version
+#### Scenario: A visitor reads the build version
 
-- **GIVEN** many callers requesting the build version
-- **WHEN** they all read it within one server process
-- **THEN** the external service is called once for that process
+- **GIVEN** a deployed web build
+- **WHEN** a visitor's page shows the build version
+- **THEN** it shows the commit count of the deployed commit, and no external service is called

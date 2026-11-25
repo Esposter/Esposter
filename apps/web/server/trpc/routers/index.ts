@@ -1,6 +1,5 @@
 import { router } from "#server/trpc/index";
 import { achievementRouter } from "#server/trpc/routers/achievement";
-import { appRouter } from "#server/trpc/routers/app";
 import { blockRouter } from "#server/trpc/routers/block";
 import { blueprintRouter } from "#server/trpc/routers/blueprint";
 import { bookmarkRouter } from "#server/trpc/routers/bookmark";
@@ -40,7 +39,6 @@ import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 export const trpcRouter = router({
   achievement: achievementRouter,
-  app: appRouter,
   block: blockRouter,
   blueprint: blueprintRouter,
   bookmark: bookmarkRouter,

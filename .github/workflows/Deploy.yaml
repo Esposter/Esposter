@@ -32,11 +32,14 @@ jobs:
       BASE_URL: ${{ fromJSON('{"ai/queue":"https://dev.esposter.com","main":"https://esposter.com"}')[github.event.workflow_run.head_branch] }}
       PUBLIC_ASSETS_BASE_URL: ${{ fromJSON('{"ai/queue":"https://assets.dev.esposter.com","main":"https://assets.esposter.com"}')[github.event.workflow_run.head_branch] }}
     steps:
-      # The commit CI's run tested, not the branch's tip, which a newer push may already have moved
+      # The commit CI's run tested, not the branch's tip, which a newer push may already have moved. The whole history
+      # Without its trees, so the web build counts every commit for its build version while fetching only commits
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          filter: tree:0
           persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies
