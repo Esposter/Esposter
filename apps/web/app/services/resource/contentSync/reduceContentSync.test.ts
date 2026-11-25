@@ -110,6 +110,15 @@ describe(reduceContentSync, () => {
     expect(effects).toStrictEqual([]);
   });
 
+  test("a restore before the first read lands reads again", () => {
+    expect.hasAssertions();
+
+    expect(run([{ type: ContentSyncEventType.ReloadRequested }])).toStrictEqual({
+      effects: [{ type: ContentSyncEffectType.ReadContent }],
+      state: { kind: ContentSyncKind.Unread },
+    });
+  });
+
   test("an edit made after a restore asked during a save is kept as a conflict, not replaced by a read", () => {
     expect.hasAssertions();
 
