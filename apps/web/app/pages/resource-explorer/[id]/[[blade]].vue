@@ -22,7 +22,7 @@ const resourceStore = useResourceStore();
 const { isReloadPending, resource } = storeToRefs(resourceStore);
 const { clearResource, reloadResource } = resourceStore;
 // The read is the page's, so its watch ends with the page and keeps the row merged as the topic publishes. Refresh is
-// The explicit full reload instead: it takes the current version and lifts the stale latch, as a read always did
+// The explicit full reload of the row instead
 const { isPending: isReadPending, readResource } = useReadOpenResource();
 const isPending = computed(() => isReadPending.value || isReloadPending.value);
 await readResource();

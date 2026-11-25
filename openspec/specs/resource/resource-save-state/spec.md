@@ -45,16 +45,6 @@ A Saved state SHALL show how long ago the resource was last saved, and the exact
 - **WHEN** the owner hovers over the save state
 - **THEN** the exact time of the last save is shown
 
-### Requirement: Out of date stays until the resource is reloaded
-
-A resource whose save was refused as out of date SHALL show Out of date until it is reloaded.
-
-#### Scenario: Owner dismisses the notice
-
-- **GIVEN** a save was refused as out of date
-- **WHEN** the owner dismisses the notice
-- **THEN** the save state still reads Out of date
-
 ### Requirement: A failed save shows Not saved until one succeeds
 
 A save that fails for any reason other than being out of date SHALL leave the save state as Not saved until a later save succeeds.
@@ -123,3 +113,13 @@ A content save of a resource the owner has navigated away from SHALL carry the v
 - **GIVEN** a resource no longer open whose row is read at version 4 from another device
 - **WHEN** a save of its content issued at version 3 is sent
 - **THEN** the save carries version 3, not 4
+
+### Requirement: Out of date stays until a version is chosen
+
+A resource whose save was refused as out of date, or whose unsaved edit met another writer's save, SHALL show Out of date until the person takes the other version or keeps their own.
+
+#### Scenario: Taking theirs replaces the unsaved edit
+
+- **GIVEN** an unsaved edit met another device's save
+- **WHEN** the person takes the other version
+- **THEN** the save state reads Saved

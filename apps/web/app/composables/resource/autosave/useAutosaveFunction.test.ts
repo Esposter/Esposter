@@ -3,7 +3,6 @@ import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
 import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
@@ -82,38 +81,6 @@ describe(useAutosaveFunction, () => {
     await waitForSynchronizedFunctions();
 
     expect(save).toHaveBeenCalledExactlyOnceWith();
-  });
-
-  // Edits that exist only in the tab are the one thing the toolbar must not call saved, and the debounce
-  // Re-arms for as long as the owner keeps typing — so a state read from the write alone reports a tab full of
-  // Unwritten edits as saved for however long the typing lasts. Clearing it again is `saveContent`'s, since
-  // Every door into a save goes through that one, and its own suite is where that half is asserted
-  test("reports saving from the keystroke rather than from the write", async () => {
-    expect.hasAssertions();
-
-    const resourceStore = useResourceStore();
-    const { saveState } = storeToRefs(resourceStore);
-    await mountAutosave();
-    autosave();
-    autosave();
-
-    expect(saveState.value).toBe(ResourceSaveState.Saving);
-  });
-
-  // A refused save is an edit that was dropped, not one that landed, so the state it leaves must not be the one
-  // Whose tooltip dates the resource's last durable write. The navigation that refused it is what clears the
-  // Signal, through the `readResource()` its own page awaits
-  test("does not report a save it refuses as saved", async () => {
-    expect.hasAssertions();
-
-    const resourceStore = useResourceStore();
-    const { saveState } = storeToRefs(resourceStore);
-    await mountAutosave();
-    autosave();
-    Object.assign(router.currentRoute.value.params, { id: otherResourceId });
-    await elapseDebounce();
-
-    expect(saveState.value).toBe(ResourceSaveState.Saving);
   });
 
   // The blade is reused across resources, so disposal never runs on this path: the edit was scheduled against

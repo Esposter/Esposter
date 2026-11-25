@@ -17,7 +17,7 @@ Both render through one `AppNotification` shape, so the panel and the toast neve
 
 Local sources, fired from `useResourceStore` and the `/all` list dialogs:
 
-- save conflict (stale `contentVersion`) → warning with **Refresh** action ([resource page parity](../resource-page-parity/design.md))
+- save conflict (stale `contentVersion`) of a resource no longer open → warning that the last edit was not saved ([resource page parity](../resource-page-parity/design.md))
 - any mutation error → error severity with the message
 - CSV export completed/truncated, and the file exports that produce a local artifact
 

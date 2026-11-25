@@ -16,7 +16,7 @@ Delete moves the resource to the [recycle bin](../recycle-bin/design.md), so a p
 
 ## Save-conflict surface
 
-A `saveResourceContent` rejected for a stale `contentVersion` routes into the [notifications](../notifications/design.md) store as "'{name}' was modified elsewhere — refresh to load the latest", with a Refresh action that hard-reloads (the one path guaranteed to re-run every blade's content loader).
+A `saveResourceContent` rejected for a stale `contentVersion` is another writer's save, so it opens the same Take theirs or Keep mine notice as another device's save that meets an unsaved edit ([content sync](../../architecture/content-sync/design.md)). A save refused for a resource the blade has already moved on from has no notice to show, so a warning notification says "'{name}' was modified elsewhere, so your last edit to it was not saved".
 
 ```mermaid
 sequenceDiagram
@@ -27,7 +27,9 @@ sequenceDiagram
   B->>S: save (contentVersion n) → n+1
   A->>S: save (stale contentVersion n)
   S-->>A: rejected (optimistic concurrency)
-  A->>A: warning notification "modified elsewhere" + Refresh action
+  A->>S: read the row
+  S-->>A: contentVersion n+1
+  A->>A: notice: take theirs, or keep mine at n+1
 ```
 
 ## Procedures

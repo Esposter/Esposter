@@ -74,7 +74,7 @@
 - `apps/web/app/store/survey`
 - `apps/web/app/composables/survey`
 - `apps/web/app/services/survey`
-- `apps/web/app/components/Resource` — `ActivityLog.test.ts`, `ActivityLog.vue`, `ActivityLogListItem.test.ts`, `ActivityLogListItem.vue`, `AskClaudeDialog.test.ts`, `AskClaudeDialog.vue`, `CloseButton.vue`, `ConsumersWarning.vue`, `FavoriteToggle.vue`, `ImportPreviewFooter.vue`, `LinkedResourceList.vue`, `OtherSaveNotice.test.ts`, `OtherSaveNotice.vue`, `Overview.test.ts`, `RelatedResources.test.ts`, `RelatedResources.vue`, `RenameDialog.vue`, `SaveStateIndicator.vue`, `ServiceMenu.test.ts`, `ServiceMenu.vue`, `ShareDialog.test.ts`, `ShareDialog.vue`, `SrcdocIframe.vue`, `StorageMeter.vue`, `TagList.test.ts`, `TagList.vue`, `TagsEditorDialog`, `TypeMark.vue`
+- `apps/web/app/components/Resource` — `ActivityLog.test.ts`, `ActivityLog.vue`, `ActivityLogListItem.test.ts`, `ActivityLogListItem.vue`, `AskClaudeDialog.test.ts`, `AskClaudeDialog.vue`, `CloseButton.vue`, `ConsumersWarning.vue`, `FavoriteToggle.vue`, `ImportPreviewFooter.vue`, `LinkedResourceList.vue`, `OtherSaveNotice.vue`, `Overview.test.ts`, `RelatedResources.test.ts`, `RelatedResources.vue`, `RenameDialog.vue`, `SaveStateIndicator.vue`, `ServiceMenu.test.ts`, `ServiceMenu.vue`, `ShareDialog.test.ts`, `ShareDialog.vue`, `SrcdocIframe.vue`, `StorageMeter.vue`, `TagList.test.ts`, `TagList.vue`, `TagsEditorDialog`, `TypeMark.vue`
 - `apps/web/app/components/Resource/Create`, `apps/web/app/components/Resource/Home`, `apps/web/app/components/Resource/RecycleBin`, `apps/web/app/components/Resource/VersionHistory`
 - `apps/web/app/models/resource/sheet/column`
 - `apps/web/app/models/resource/sheet/commands`, `apps/web/app/models/resource/sheet/dataSource`

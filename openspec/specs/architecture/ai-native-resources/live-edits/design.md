@@ -1,6 +1,6 @@
 # Live edits
 
-An open editor that does not hear another device's save keeps the version it read, and its next save is refused as stale. The notice then asks for a refresh, which reloads the page and drops whatever the person typed since their last save. A second tab meets that now and then, and an agent editing a resource the owner has open would meet it on every write. So adoption is generic, for every type, and it helps two tabs as much as an agent.
+An open editor that does not hear another device's save keeps the version it read, and learns of the other save only when its own is refused as stale. A second tab meets that now and then, and an agent editing a resource the owner has open would meet it on every write. So adoption is generic, for every type, and it helps two tabs as much as an agent.
 
 ## One watch for every type
 
@@ -31,7 +31,7 @@ An editor holding an unwritten edit overwrites nothing in either direction. The 
 - **Take theirs** adopts as above and drops the local edit.
 - **Keep mine** re-saves the local document through the existing save mutation at the newer version, replacing the other write, which stays in version history.
 
-An edit made while an adoption is already reading the other save's content counts the same: the read does not land over it, and the notice comes up instead, since the person's edit is checked when the content arrives rather than only when the row did. Until it is answered, the store's stale latch holds autosave, as it does after a refused save. The latch is raised when the watch brings the other save's row. After Keep mine, an agent's next pinned patch is stale and it reads again; an unpinned one reapplies over the owner's document under its tests.
+An edit made while an adoption is already reading the other save's content counts the same: the read does not land over it, and the notice comes up instead, since the opening's [content sync](../../content-sync/design.md) turns an adoption an edit interrupts into a conflict. Until it is answered, the opening sends no save, as after a save refused as stale. After Keep mine, an agent's next pinned patch is stale and it reads again; an unpinned one reapplies over the owner's document under its tests.
 
 ```mermaid
 flowchart TD
@@ -51,7 +51,7 @@ flowchart TD
 
 The store holds no document, so it cannot write one. Keep mine therefore runs a `Keep` stage on `ResourceContentHookMap`: the store moves the resource to the held save's version and runs the stage, and each content store (`createContentData`) answers by saving the document it holds through its own save, so the write goes through the existing save mutation and the other write stays in version history. Taking theirs runs no stage; it reloads and drops the unwritten edit.
 
-A save the server refuses is the one case the watch did not deliver, so it keeps the stale-save refresh rather than a second route to the choice. A refused save names no other save, so there is no other version to choose between. The choice is offered only where the other save is known: when it lands over an unsaved edit. The [resource page parity](../../../resource/resource-page-parity/design.md) delta records this.
+A save the server refuses as stale offers the same choice. The refusal proves another writer moved the version on, so the store reads the row, which names that version, and the notice answers it like any other save that met an unsaved edit. A refresh-only prompt for a refused save is rejected: it dropped the person's edit to resolve a conflict the notice resolves in place.
 
 ## Key files
 

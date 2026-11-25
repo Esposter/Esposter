@@ -60,6 +60,8 @@ into an enforcer.
 
 **A check a session writes to verify its own work is an enforcer the repo lacks** — promote it into the repo, extending the enforcer that already owns its class before adding one (`references/scratch-checks.md`).
 
+**Flags that move together are one state.** A discriminated union with a pure reducer removes their impossible combinations by construction, and its invariants are proven one transition at a time (`references/state-machines.md`).
+
 **Remembered** is a last resort, and it comes with an obligation: one place owns the list of sites it applies to,
 and that place is checked by something. A guard with no owner is a bug with a delay.
 
@@ -84,3 +86,4 @@ The worked case is a room-scoped store's writes (`references/room-scoped-writes.
 - `references/retiring-an-enforcer.md` — when a change simplifies, deletes or restructures code, or an enforcer seems to guard something the tree no longer has.
 - `references/probing-for-an-enforcer.md` — before writing a convention into a skill: whether oxlint already decides it.
 - `references/room-scoped-writes.md` — when a guard is about to be written at every call site, or the ladder needs a worked case.
+- `references/state-machines.md` — when flags that move together keep producing bugs, or a concurrent protocol needs its invariants proven.

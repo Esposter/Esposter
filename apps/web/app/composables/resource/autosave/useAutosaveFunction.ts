@@ -13,7 +13,7 @@ import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared"
 export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   const { beforeEach, currentRoute } = useRouter();
   const resourceStore = useResourceStore();
-  const { unwrittenContentResourceId } = storeToRefs(resourceStore);
+  const { markContentEdited } = resourceStore;
   // The resource the held edit was made on, until its write starts
   let pendingResourceId: string | undefined;
   const writePending = async () => {
@@ -45,13 +45,10 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   tryOnScopeDispose(beforeEach(writeHeldEdits));
 
   return () => {
-    // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so Between the
-    // Keystroke and the write there is nothing in flight to read — the toolbar would call a tab Full of unwritten edits
-    // Saved (openspec/specs/resource/resource-save-state/design.md). Only set here: `saveContent` is the One door every
-    // Save goes through, so clearing it is its, and a save this refuses never reaches it — which Is the point, since a
-    // Refused save is an edit that was dropped rather than one that landed
+    // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so the edit is
+    // Told to the content sync machine now: the toolbar reads Saving from the keystroke rather than from the write
     const resourceId = getRouteParam(currentRoute.value.params, "id");
-    unwrittenContentResourceId.value = resourceId;
+    markContentEdited(resourceId);
     pendingResourceId = resourceId;
     start();
   };

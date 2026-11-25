@@ -152,29 +152,6 @@ A read made in a test SHALL settle without waiting for another read sent in the 
 - **WHEN** a second read is sent in the same tick
 - **THEN** the second read settles while the first is still held
 
-### Requirement: A write waits for the server only for a reason the server alone can answer
-
-A write SHALL wait for the server's answer before the screen changes only when what the reader sees next is a value only the server issues, an outcome the server decides, or a step that cannot be undone, and a write that carries a version token applies at once like any other.
-
-#### Scenario: A create whose link only the server mints waits for the server
-
-- **GIVEN** a create whose result is a link only the server mints
-- **WHEN** the create is sent
-- **THEN** the link appears only once the server has answered
-
-#### Scenario: A stale version drops the save and prompts a refresh
-
-- **GIVEN** a save that carries the content version it was made against, already shown on screen
-- **WHEN** the server reports that version is stale
-- **THEN** the save is dropped, and the screen keeps the content the reader made
-- **AND** the reader is asked to refresh
-
-#### Scenario: A rapid second click on a like creates only one like
-
-- **GIVEN** a like that is already being created
-- **WHEN** the reader clicks the like again
-- **THEN** no second like is created
-
 ### Requirement: Nothing the screen does because of a write waits for the server's answer
 
 A step the screen takes because of a write, such as closing a dialog, moving a row, ending an edit, clearing a field or navigating to a known place, SHALL run when the write is sent, and a refused write hands back what that step took from the reader unless the reader has typed or moved on since.
@@ -289,3 +266,26 @@ A viewer's own vote SHALL show its mark at once as an overlay entry, and a count
 - **WHEN** the write settles with an error
 - **THEN** the viewer's mark shows its stored value
 - **AND** the like count is read back from the server
+
+### Requirement: A write waits for the server only when the server alone can answer
+
+A write SHALL wait for the server's answer before the screen changes only when what the reader sees next is a value only the server issues, an outcome the server decides, or a step that cannot be undone, and a write that carries a version token applies at once like any other.
+
+#### Scenario: A create whose link only the server mints waits for the server
+
+- **GIVEN** a create whose result is a link only the server mints
+- **WHEN** the create is sent
+- **THEN** the link appears only once the server has answered
+
+#### Scenario: A stale version drops the save and offers the choice
+
+- **GIVEN** a save that carries the content version it was made against, already shown on screen
+- **WHEN** the server reports that version is stale
+- **THEN** the save is dropped, and the screen keeps the content the reader made
+- **AND** the reader is offered the other version or their own
+
+#### Scenario: A rapid second click on a like creates only one like
+
+- **GIVEN** a like that is already being created
+- **WHEN** the reader clicks the like again
+- **THEN** no second like is created

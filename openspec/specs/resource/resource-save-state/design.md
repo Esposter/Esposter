@@ -6,31 +6,20 @@ So the resource's title row carries a **save state** instead: one line beside th
 
 ## Why there is no per-type registry
 
-The types differ in how an edit is _triggered_, and not at all in how it is _written_. `useResourceStore().saveContent` is the single door — the debounced watcher, the Sheet toolbar command, the TodoList dialog's Save and the survey Creator's autosave all call it, and it owns the dirty check, the queue, the `contentVersion` guard and the conflict handling for every one of them.
+The types differ in how an edit is _triggered_, and not at all in how it is _written_. `useResourceStore().saveContent` is the single door — the debounced watcher, the Sheet toolbar command, the TodoList dialog's Save and the survey Creator's autosave all call it — and behind it one [content sync](../../architecture/content-sync/design.md) machine per opening owns the dirty check, the one save in flight, the `contentVersion` clock and the conflict handling for every one of them.
 
-A map from `ResourceType` to a save mode would therefore describe a difference that stops at the trigger. It would also be the over-generalization the [capability admission rule](../../architecture/resource/design.md) forbids: a branch with indirection between it and its reader, added for a variation the mechanism below it has already erased. The state is derived from the door instead, once, for every type.
+A map from `ResourceType` to a save mode would therefore describe a difference that stops at the trigger. It would also be the over-generalization the [capability admission rule](../../architecture/resource/design.md) forbids: a branch with indirection between it and its reader, added for a variation the mechanism below it has already erased. The state is derived from the machine instead, once, for every type.
 
 ```mermaid
 flowchart TD
-  AUTO["watchAutosave / useAutosaveFunction<br/>Autosaving editors"] --> DOOR
+  AUTO["watchAutosave / useAutosaveFunction<br/>Autosaving editors"] -->|"markContentEdited"| SYNC
+  AUTO --> DOOR
   CMD["command or dialog Save"] --> DOOR
   LIB["the survey Creator's autosave<br/>useSurveyCreatorAutosave"] --> DOOR
-  DOOR["resourceStore.saveContent<br/>dirty check, queue, contentVersion guard"]
-  REFUSE["resourceStore.refuseSaveContent<br/>an editor's check refused the save"]
-  LIB -.->|"its check refused the save"| REFUSE
-
-  AUTO -.->|"arms"| ARMED(["unwrittenContentResourceId"])
-  DOOR -.->|"clears"| ARMED
-  DOOR -.->|"in flight"| PENDING(["checkIsSaveContentPending"])
-  DOOR -.->|"rejected as stale"| STALE(["isContentStale"])
-  DOOR -.->|"rejected otherwise"| FAILED(["isSaveContentFailed"])
-  REFUSE -.->|"clears"| ARMED
-  REFUSE -.->|"refused"| FAILED
-
-  ARMED --> STATE{{"saveState"}}
-  PENDING --> STATE
-  STALE --> STATE
-  FAILED --> STATE
+  LIB -.->|"its check refused the save"| REFUSE["resourceStore.refuseSaveContent"]
+  DOOR["resourceStore.saveContent<br/>size check, then the snapshot"] --> SYNC
+  REFUSE --> SYNC
+  SYNC["content sync<br/>one state per opening"] --> STATE{{"saveState<br/>one case per kind"}}
   STATE --> UI["Resource/SaveStateIndicator<br/>on the title row"]
 ```
 
@@ -38,42 +27,34 @@ The autosaving editors are the Dashboard, Note, Program, Sheet, Email, Webpage a
 
 ## The four states
 
-`saveState` reads the flags in priority order, so the state on screen is always the most urgent thing true about the resource.
+`saveState` is one switch over the kind of the opening on screen, so every kind maps to exactly one state and a kind added to the machine fails the typecheck until it is mapped.
 
-| State    | Shown as          | True when                                                                         | What the owner does            |
-| -------- | ----------------- | --------------------------------------------------------------------------------- | ------------------------------ |
-| `Stale`  | Out of date       | another session's save moved `contentVersion` on                                  | refresh — nothing else lands   |
-| `Saving` | Saving…           | a debounce is armed, a write of _this_ resource is in flight, or both             | nothing                        |
-| `Failed` | Not saved         | the last save did not land: a write was rejected, or an editor's check refused it | retry the edit, or copy it out |
-| `Saved`  | Saved, and _when_ | none of the above                                                                 | nothing                        |
+| State    | Shown as          | Kinds                   | What the owner does                       |
+| -------- | ----------------- | ----------------------- | ----------------------------------------- |
+| `Stale`  | Out of date       | Conflict                | take the other version, or keep their own |
+| `Saving` | Saving…           | Dirty, Saving, Adopting | nothing                                   |
+| `Failed` | Not saved         | Failed                  | edit again, which asks for a save again   |
+| `Saved`  | Saved, and _when_ | Synced, Unread          | nothing                                   |
 
-**An edit the debounce is holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `unwrittenContentResourceId` is set where the edit is seen, to the resource it was made on, and cleared by `saveContent` itself once that resource is written, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
+**An edit the debounce is holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. So the debounce tells the machine of the edit itself with `markContentEdited`, which makes the opening Dirty, or marks the save in flight as followed by an edit. Folding it into `Saving` rather than giving unwritten edits a state of their own keeps a word off the screen that would appear and vanish between keystrokes.
 
-**Leaving writes a held edit.** An edit the debounce holds is written when its editor's scope ends with its resource still open, and before the route changes for any navigation, so the write names the resource the edit was made on. Nothing is confirmed with the owner. A write the route no longer names is refused, and its edit stays flagged on the resource it was made on rather than on the one on screen, so the screen does not report it as saved.
+**Leaving writes a held edit.** An edit the debounce holds is written when its editor's scope ends with its resource still open, and before the route changes for any navigation, so the write names the resource the edit was made on. Nothing is confirmed with the owner. A save in flight when the blade moves on keeps its opening's machine until it answers, so its answer lands on the resource it was made on and never on the one on screen.
 
-**The in-flight half is asked of the resource, not of every save.** Each save is recorded under the resource it writes, so a save issued before the blade moved on is still in flight under that resource's id while the next resource is loading. Read in aggregate, one flag for all saves would have the resource on screen report `Saving` for work that belongs to another — and then settle to `Saved` at a moment that says nothing about it. The state asks `checkIsSavePending` for the loaded resource's own id, which is the same scoping every one of `saveContent`'s callbacks applies to what it writes back.
+**Only the opening on screen is read.** A save issued before the blade moved on belongs to the opening that issued it, so the resource on screen never reports `Saving` for work that belongs to another, and never settles to `Saved` at a moment that says nothing about it.
 
-**A refused save keeps its change on screen.** A save is an overlay write whose entry only reads the resource's row, so a refusal restores nothing: the content the editor holds stays as the owner left it, and the state reads `Failed` until a save that lands. Saves of one resource queue on its row in issue order, and each sends the content it was issued with, so a later save never overtakes an earlier one's content.
-
-**The clear belongs to the door, not to the trigger that armed it.** A dialog's Save arms nothing and would leave a flag it never set standing; a debounce that cleared its own would clear it for a save it then refuses — one scheduled against a resource the app has since navigated away from — and so report a dropped edit as `Saved`. The door is the one place that knows the edit was actually taken. The flag names the resource it was armed for, so loading another resource leaves it standing: a read is not a write, and clearing on it would report an edit the app never wrote as saved.
-
-**It is a flag, not a count of armed debounces.** A save writes the whole content blob, so one write cleans every edit waiting on the resource however many watchers observed them — a count would claim two pending saves where there is one, and would need a per-instance guard and a disposal hook to stay honest about a number nothing reads. A pair of counters beside a ref in a store is the shape the [async sequencing rule](../../architecture/async-operations/design.md) names as the tell for ordering done by hand.
-
-It is also never derived by comparing the content against what was persisted, though the store holds exactly that snapshot: deriving it reactively means serializing the whole blob on every keystroke, which is the cost the debounce exists to avoid. The flag is the cheap early signal, and `persistedContentJson` is the exact one the write itself consults — skipping a write only when nothing of the resource is in flight, since an in-flight write can still replace the content the baseline names.
+**A refused save keeps its change on screen.** A save is an overlay write whose entry only reads the resource's row, so a refusal restores nothing: the content the editor holds stays as the owner left it, and the state reads `Failed` until an edit asks for a save that lands.
 
 **`Saved` carries the time.** The word on its own is a claim the owner has to take on trust, which is exactly the trust they did not have when they went looking for a Save button. `updatedAt` is what the row already tracks, so the resting state is `Saved` plus a relative time, with the absolute one on hover.
 
-**`Stale` outranks everything** because it is the only state where the remedy is not "wait". Once the server has rejected a save as stale every retry is a guaranteed rejection, so the flag latches until the next read — the [conflict](../../architecture/conditional-writes/design.md) has to be resolved by reloading, and the indicator keeps saying so after the notification that raised it has been dismissed.
+**`Stale` outranks everything** because it is the only state where the remedy is not "wait". An unsaved edit that meets another writer's save, and a save the server refused because another writer moved the version on, both leave the opening in Conflict, and nothing is written until the owner takes the other version or keeps their own in the notice. The indicator keeps saying so after the notification that raised it has been dismissed. A save refused as stale for a resource the blade has already moved on from has no notice to show, so a warning names the resource and says the last edit to it was not saved.
 
 `Failed` exists for the same reason: a notification is a one-shot the owner dismisses, and the fact that their work is not durable outlives it.
 
-**A refused save is `Failed` too.** An editor's own check can refuse a save before it reaches the door, as the survey's does for a document its check rejects. `refuseSaveContent` is the door's second entry point: it sets `isSaveContentFailed` and clears the held edit the way a write would, since the edit was dropped rather than landed. A save of content the server already holds clears `isSaveContentFailed` as it returns, so an edit reverted to what was saved reads `Saved` again.
+**A refused save is `Failed` too.** An editor's own check can refuse a save before it reaches the door, as the survey's does for a document its check rejects. `refuseSaveContent` is the door's second entry point, and the machine takes it as a refusal: the opening is Failed until a save that lands. A save of content the server already holds writes nothing and settles the opening, so an edit reverted to what was saved reads `Saved` again.
 
-**A save's waiter resumes after its outcome is recorded.** `whenContentSaved` settles when the save's state is set, not in a finalizer: a refused save's `Failed` is set by its error handler, which runs after the write's promise has settled, so a caller that awaits the save and then reads the state (the email export's gate) would otherwise read `Saved` and act on a save that failed. The success path settles before it returns its answer, and the failure path settles after `Failed` or `Stale` is set.
+**A save's waiter resumes after its outcome is recorded.** `whenContentSaved` settles once the opening is no longer Saving, so a caller that awaits the save and then reads the state (the email export's gate) reads the outcome, never a `Saved` that came before it.
 
-**A queued save carries the version its content was confirmed at.** A save sends the version of the content it carries, never the held row's `contentVersion`. A row another device's save moved on, or a Recent read brought, can be ahead of the content in hand, and a save sent with that version would be accepted over the other device's content with no stale notice. The store keeps the versions per opening, set by each content read and each confirmed save of that opening whether or not the resource is still open, and a save reads the map of the opening it was issued in where it is sent. So saves queued in one opening see each other's answers, while a reopened read confirms its newer version in the new opening, which a save the old opening left queued never reads. A map is dropped with its opening once no save issued in it is queued, and the content in hand stops being claimed for a closed resource, so reopening it reads the content again before any save. So a save of a resource the owner has closed is refused as stale when another device has moved its content on, and the owner sees the stale notice.
-
-**A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it already made for the dirty check, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and sets `isSaveContentFailed`, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved: as a delta against the stored bytes when this client holds them, and staged through R2 otherwise ([file uploads](../../architecture/file-uploads/design.md)).
+**A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it makes for the snapshot, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and refuses the save, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved: as a delta against the stored bytes when this client holds them, and staged through R2 otherwise ([file uploads](../../architecture/file-uploads/design.md)).
 
 ## Where it sits
 
@@ -83,13 +64,13 @@ The indicator is a readout, never a control. Pending state that gates a _trigger
 
 ## Key files
 
-| File                                                                | Role                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `apps/web/app/store/resource/index.ts`                              | `saveContent`, the flags it sets and the derived `saveState` |
-| `apps/web/app/composables/resource/autosave/useAutosaveFunction.ts` | the shared debounce, and the arm that makes it visible       |
-| `apps/web/app/models/resource/ResourceSaveState.ts`                 | the four states                                              |
-| `apps/web/app/services/resource/ResourceSaveStateDefinitionMap.ts`  | what each one looks like                                     |
-| `apps/web/app/components/Resource/SaveStateIndicator.vue`           | the title row's readout                                      |
+| File                                                                | Role                                                             |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `apps/web/app/store/resource/index.ts`                              | `saveContent`, the opening's machine and the derived `saveState` |
+| `apps/web/app/composables/resource/autosave/useAutosaveFunction.ts` | the shared debounce, and the edit signal that makes it visible   |
+| `apps/web/app/models/resource/ResourceSaveState.ts`                 | the four states                                                  |
+| `apps/web/app/services/resource/ResourceSaveStateDefinitionMap.ts`  | what each one looks like                                         |
+| `apps/web/app/components/Resource/SaveStateIndicator.vue`           | the title row's readout                                          |
 
 ## Notes
 

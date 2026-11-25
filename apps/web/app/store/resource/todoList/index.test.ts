@@ -231,40 +231,6 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName, itemName]);
   });
 
-  // Keeping mine writes the list on screen over another device's save, as the newest version: the content store that
-  // Holds the list is the one that writes it, at the version that save left the resource on
-  test("keeps the unsaved list over another device's save, written as the newest version", async () => {
-    expect.hasAssertions();
-
-    const todoListStore = await setupStore();
-    const { items } = storeToRefs(todoListStore);
-    const resourceStore = useResourceStore();
-    const { keepUnwrittenContent } = resourceStore;
-    const { unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { promise: isKeptSaveReached, resolve: onKeptSaveReached } = Promise.withResolvers<void>();
-    const saveKept = vi.fn<(options: { input: { contentVersion: number; id: string } }) => ResourceInResource>(() => {
-      onKeptSaveReached();
-      return createResource(2);
-    });
-    trpcMsw.todoList.saveResourceContent.mutation(saveKept);
-    items.value = [new TodoListItem({ name: newItemName })];
-    unwrittenContentResourceId.value = resourceId;
-    trpcMsw.resource.readResource.query(() => ({
-      ...createResource(1),
-      contentHash: otherDeviceHash,
-      favorite: null,
-      publication: null,
-    }));
-    await useReadOpenResource().readResource();
-    await keepUnwrittenContent();
-    await isKeptSaveReached;
-    await flushPromises();
-
-    expect(
-      saveKept.mock.calls.map(([{ input }]) => ({ contentVersion: input.contentVersion, id: input.id })),
-    ).toStrictEqual([{ contentVersion: 1, id: resourceId }]);
-  });
-
   // The field above the list adds with no dialog to hold a draft, so a refused save has to take the new row back out
   // The field above the list clears as a todo is added, so a name a todo cannot take and a save the server refuses both
   // Hand its text back through `onRefused`, and the refused todo leaves the list

@@ -18,6 +18,9 @@ export const getSynchronizedFunction =
     pendingPromises.add(promise);
   };
 
+// A function can start another before it settles, so the drain runs until none is left rather than over a snapshot
 export const waitForSynchronizedFunctions = async (): Promise<void> => {
-  await Promise.allSettled(pendingPromises);
+  while (pendingPromises.size > 0)
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: what the pass before started
+    await Promise.allSettled(pendingPromises);
 };

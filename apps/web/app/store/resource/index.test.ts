@@ -28,7 +28,7 @@ import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
-import { ResourceType } from "@esposter/db-schema";
+import { NotificationSeverity, ResourceType } from "@esposter/db-schema";
 import { ASSET_HASH_REGEX, noop, takeOne, waitForSynchronizedFunctions, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -446,90 +446,6 @@ describe(useResourceStore, () => {
     expect(saveState.value).toBe(ResourceSaveState.Failed);
   });
 
-  test("skips a save with nothing new since the one it wrote", async () => {
-    expect.hasAssertions();
-
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    const content = createDefaultSheetResource();
-    saveContent(content);
-    await settleSave();
-    saveContent(content);
-    await settleSave();
-
-    expect(saveResourceContent).toHaveBeenCalledTimes(1);
-  });
-
-  // The signal is armed by the keystroke and cleared by the write, and every door into a write is this one — a
-  // Settings dialog saving directly arms nothing, so a door that cleared its own would leave the toolbar at
-  // Saving for an edit the server already has. A save with nothing left to write is a save all the same
-  test("clears the unwritten-edit signal on a save with nothing to write", async () => {
-    expect.hasAssertions();
-
-    const resourceStore = useResourceStore();
-    const { currentResourceId, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readContent, saveContent, setPersistedContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    setPersistedContent(createDefaultSheetResource());
-    unwrittenContentResourceId.value = currentResourceId.value;
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(saveResourceContent).not.toHaveBeenCalled();
-    expect(saveState.value).toBe(ResourceSaveState.Saved);
-  });
-
-  // A refused save stays Not saved only while the content differs from what the server holds. Reverting the edit to
-  // That content is a save that lands, so the refusal's state goes with it rather than standing over a document the
-  // Server already has
-  test("a save with nothing to write clears a refused save's not-saved state", async () => {
-    expect.hasAssertions();
-
-    const resourceStore = useResourceStore();
-    const { saveState } = storeToRefs(resourceStore);
-    const { readContent, refuseSaveContent, saveContent, setPersistedContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    setPersistedContent(createDefaultSheetResource());
-    refuseSaveContent();
-
-    expect(saveState.value).toBe(ResourceSaveState.Failed);
-
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(saveResourceContent).not.toHaveBeenCalled();
-    expect(saveState.value).toBe(ResourceSaveState.Saved);
-  });
-
-  // The signal belongs to the resource its edit was made on. Loading another resource must leave it standing, or an
-  // Edit the app never wrote would read as saved the moment the owner navigated away from it
-  test("keeps the unwritten-edit signal when another resource is loaded", async () => {
-    expect.hasAssertions();
-
-    const resourceStore = useResourceStore();
-    const { currentResourceId, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    const heldResourceId = currentResourceId.value;
-    unwrittenContentResourceId.value = heldResourceId;
-    setRouteId(otherResourceId);
-    await readResource();
-
-    expect(saveState.value).toBe(ResourceSaveState.Saved);
-
-    setRouteId(heldResourceId);
-    await readResource();
-
-    expect(saveState.value).toBe(ResourceSaveState.Saving);
-  });
-
   // Saves of different resources are different single-flight keys, so one settles after the blade has moved on.
   // The contentVersion it carries back is its own resource's, and merged into the loaded one it makes that one's
   // Next save carry a version the server never issued for it — which comes back as a stale rejection
@@ -588,62 +504,8 @@ describe(useResourceStore, () => {
     await saveSettled;
   });
 
-  // Autosave fires again while the previous save is still in flight, and the row is read when the write is sent
-  // Rather than when it was issued — sending the version it was holding makes the server reject our own
-  // Overlapping save as a cross-session edit and strand the blade behind a refresh prompt
-  test("carries the contentVersion the save ahead of it wrote back", async () => {
-    expect.hasAssertions();
-
-    const contentVersions: number[] = [];
-    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
-      contentVersions.push(input.contentVersion);
-      return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
-    });
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(contentVersions).toStrictEqual([0, 1]);
-  });
-
-  // Two saves issued back to back, against a server that refuses any save sent with a version it no longer holds. The
-  // Second is sent once the first has answered, so it carries the version the first left and lands rather than being
-  // Refused as stale and leaving the refresh prompt over the blade
-  test("does not refuse the second of two quick saves as stale", async () => {
-    expect.hasAssertions();
-
-    let serverContentVersion = 0;
-    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
-      if (input.contentVersion !== serverContentVersion)
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-
-      serverContentVersion++;
-      return { ...createResource(resourceId), contentVersion: serverContentVersion };
-    });
-    const notificationStore = useNotificationStore();
-    const { displayNotifications } = storeToRefs(notificationStore);
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent } = resourceStore;
-    const { saveState } = storeToRefs(resourceStore);
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(serverContentVersion).toBe(2);
-    expect(saveState.value).toBe(ResourceSaveState.Saved);
-    expect(displayNotifications.value).toHaveLength(0);
-  });
-
-  // A save queued behind an in-flight one carries the version its content was read at, not the held row's. Another
-  // Device's save moves the row, so a save sent with that version is accepted over its content, with no stale notice
+  // A save still in flight when its resource closes answers under the version its opening confirmed. Another device's
+  // Save moved the version on, so it is refused, and with no notice left to offer the choice the person is told
   test("a queued save of a closed resource is refused after another device saved", async () => {
     expect.hasAssertions();
 
@@ -678,90 +540,9 @@ describe(useResourceStore, () => {
     releaseFirstSave();
     await settleSave();
 
-    expect(contentVersions).toStrictEqual([0, 0]);
+    expect(contentVersions).toStrictEqual([0]);
     expect(serverContentVersion).toBe(1);
-    expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
-  });
-
-  // A save keeps the version its own opening confirmed. A reopened read confirms the resource's newer version, which is
-  // Not the version the save was issued at, so the queued save is refused as stale rather than written over that
-  // Version
-  test("sends a save queued before the resource closed the version its opening confirmed, not the one a reopened read confirmed", async () => {
-    expect.hasAssertions();
-
-    const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
-    const contentVersions: number[] = [];
-    let serverContentVersion = 0;
-    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
-      contentVersions.push(input.contentVersion);
-      if (contentVersions.length === 1) await isFirstSaveReleased;
-
-      if (input.contentVersion !== serverContentVersion)
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-
-      serverContentVersion++;
-      return { ...createResource(input.id), contentVersion: serverContentVersion };
-    });
-    const notificationStore = useNotificationStore();
-    const { displayNotifications } = storeToRefs(notificationStore);
-    const resourceStore = useResourceStore();
-    const { clearResource, readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    saveContent(createDefaultSheetResource());
-    clearResource(resourceId);
-    // Another device saves while the first save is in flight, and the resource is reopened after it
-    serverContentVersion = 1;
-    readResourceQuery.mockImplementation(({ input }) => ({
-      ...createResource(input.id),
-      contentVersion: serverContentVersion,
-      favorite: null,
-      publication: null,
-      version: 1,
-    }));
-    await readResource();
-    await readContent(noop);
-    releaseFirstSave();
-    await settleSave();
-
-    expect(contentVersions).toStrictEqual([0, 0]);
-    expect(serverContentVersion).toBe(1);
-    expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
-  });
-
-  // The row another device's read brings does not move the version the content was read at. A save queued behind a
-  // Refused one is sent with that content version, so the server holds it to the version the content carries
-  test("a row read from another device does not raise the version a save carries", async () => {
-    expect.hasAssertions();
-
-    const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
-    const contentVersions: number[] = [];
-    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
-      contentVersions.push(input.contentVersion);
-      if (contentVersions.length === 1) {
-        await isFirstSaveReleased;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }
-
-      return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
-    });
-    const resourceStore = useResourceStore();
-    const { clearResource, readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    saveContent(createDefaultSheetResource());
-    clearResource(resourceId);
-    const overlayStore = useOverlayStore();
-    const { arrive } = overlayStore;
-    arrive(resourceTable, { ...createResource(resourceId), contentVersion: 1, version: 1 });
-    releaseFirstSave();
-    await settleSave();
-
-    expect(contentVersions).toStrictEqual([0, 0]);
+    expect(displayNotifications.value.map(({ severity }) => severity)).toStrictEqual([NotificationSeverity.Warning]);
   });
 
   // Records the name of each content the server receives, and holds the first save until the test releases it, so a
@@ -800,149 +581,6 @@ describe(useResourceStore, () => {
     await settleSave();
 
     expect(savedNames).toStrictEqual(["", " "]);
-  });
-
-  // The baseline a save is skipped against is the last content the server confirmed. While another write of the
-  // Resource is in flight, that confirmed content is not what the server holds yet, so a save of it still has to be
-  // Written — skipping it leaves the in-flight write to land as the last word
-  test("does not skip a save of the confirmed content while another write is in flight", async () => {
-    expect.hasAssertions();
-
-    const { releaseFirstSave, savedNames } = holdFirstSave();
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent, setPersistedContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    setPersistedContent(createDefaultSheetResource());
-    const content = createDefaultSheetResource();
-    content.data.metadata.name = " ";
-    saveContent(content);
-    saveContent(createDefaultSheetResource());
-    releaseFirstSave();
-
-    await settleSave();
-
-    expect(savedNames).toStrictEqual([" ", ""]);
-  });
-
-  // The notification that reports a failed save is a one-shot the owner dismisses, so the state is what keeps
-  // Saying their work is only in the tab
-  test("reports a rejected save as not saved until one lands", async () => {
-    expect.hasAssertions();
-
-    let isSaveRejected = true;
-    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
-      if (isSaveRejected) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-
-      return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
-    });
-    const resourceStore = useResourceStore();
-    const { saveState } = storeToRefs(resourceStore);
-    const { readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(saveState.value).toBe(ResourceSaveState.Failed);
-
-    isSaveRejected = false;
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(saveState.value).toBe(ResourceSaveState.Saved);
-  });
-
-  // Every retry after a stale rejection is a guaranteed rejection, so the state latches: the remedy is a reload,
-  // Not waiting, and the owner has to be able to see that after the warning is gone
-  test("a stale version prompts a refresh and holds the content as the save left it", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.sheet.saveResourceContent.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-    });
-    const notificationStore = useNotificationStore();
-    const { displayNotifications } = storeToRefs(notificationStore);
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
-  });
-
-  // An explicit reload is a read like any other: its answer can land after a newer read has held a newer version. When
-  // The row it answers with is older, it applies nothing, so it must not clear the stale latch a save raised after that
-  // Read
-  test("an older reload answer leaves a stale latch raised after a newer read", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.sheet.saveResourceContent.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-    });
-    const { promise: isReloadReached, resolve: onReloadReached } = Promise.withResolvers<void>();
-    const { promise: olderAnswer, resolve: answerOlderReload } = Promise.withResolvers<ReadResourceResult>();
-    let readCount = 0;
-    trpcMsw.resource.readResource.query(async ({ input }) => {
-      readCount++;
-      // The first read the store makes is the reload, which is held until its older answer is given
-      if (readCount === 1) {
-        onReloadReached();
-        return olderAnswer;
-      }
-
-      return { ...createResource(input.id), favorite: null, publication: null, version: 2 };
-    });
-    const resourceStore = useResourceStore();
-    const { saveState } = storeToRefs(resourceStore);
-    const { readContent, reloadResource, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    const reload = reloadResource();
-    await isReloadReached;
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(saveState.value).toBe(ResourceSaveState.Stale);
-
-    answerOlderReload({ ...createResource(resourceId), favorite: null, publication: null, version: 1 });
-    await reload;
-
-    expect(saveState.value).toBe(ResourceSaveState.Stale);
-  });
-
-  test("reports a stale save as out of date until the resource is opened afresh", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.sheet.saveResourceContent.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-    });
-    const resourceStore = useResourceStore();
-    const { saveState } = storeToRefs(resourceStore);
-    const { clearResource, readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
-    await readContent(noop);
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-
-    expect(saveState.value).toBe(ResourceSaveState.Stale);
-
-    // A refresh of the open resource keeps its content, so the stale latch holds until the resource is opened afresh
-    await readResource();
-
-    expect(saveState.value).toBe(ResourceSaveState.Stale);
-
-    clearResource(resourceId);
-    await readResource();
-
-    expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
   // Renames of one resource queue on the row they write, and a refused rename leaves the row as the rename ahead of it
@@ -1309,9 +947,11 @@ describe(useResourceStore, () => {
 
     const stages: string[] = [];
     const resourceStore = useResourceStore();
-    const { reloadResourceContent } = resourceStore;
+    const { readContent, reloadResourceContent } = resourceStore;
+    await useReadOpenResource().readResource();
+    await readContent(noop);
     const unregisterReload = ResourceContentHookMap.Reload.register(async () => {
-      await Promise.resolve();
+      await readContent(noop);
       stages.push("reload");
     });
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(() => {
@@ -1340,38 +980,6 @@ describe(useResourceStore, () => {
   };
   const otherDeviceHash = "other-device-content-hash";
 
-  // The store holds the hash of the content it read or wrote, so the watch's refetch of an editor's own save finds a
-  // Hash the store already holds: it reads no blob and applies nothing
-  test("an editor's own save applies nothing when its watch fires for it", async () => {
-    expect.hasAssertions();
-
-    const savedHash = "saved-content-hash";
-    const applyContent = vi.fn<(content: unknown) => void>();
-    const readContentQuery = vi.fn<() => SheetResource>(() => createDefaultSheetResource());
-    trpcMsw.sheet.readResourceContent.query(readContentQuery);
-    trpcMsw.sheet.saveResourceContent.mutation(() => ({
-      ...createResource(resourceId),
-      contentHash: savedHash,
-      contentVersion: 1,
-    }));
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
-    await readResource();
-    await readContent(applyContent);
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-    await withFinalizerAsync(async () => {
-      serveOpenRow({ contentHash: savedHash, contentVersion: 1 });
-      await readResource();
-      await waitForSynchronizedFunctions();
-    }, unregisterReload);
-
-    expect(readContentQuery).toHaveBeenCalledTimes(1);
-    expect(applyContent).toHaveBeenCalledTimes(1);
-  });
-
   // Another device's save is a row whose hash the store does not hold, so the watch's refetch reads the content and the
   // Editor adopts it through the two stages a restore runs
   test("another device's save reaches the open editor through the watch", async () => {
@@ -1396,81 +1004,14 @@ describe(useResourceStore, () => {
     expect(applyContent).toHaveBeenCalledTimes(2);
   });
 
-  // Another writer's commit lands on top of this store's own save while that save is still in flight, so the watch's
-  // Refetch of the row lands during it. The row is compared once the save has answered, since the answer sets the hash
-  // It is compared against, and the other writer's content is adopted
-  test("adopts another writer's commit that lands on top of an own save still in flight", async () => {
-    expect.hasAssertions();
-
-    const ownContentHash = "own-content-hash";
-    const applyContent = vi.fn<(content: unknown) => void>();
-    const readContentQuery = vi.fn<() => SheetResource>(() => createDefaultSheetResource());
-    trpcMsw.sheet.readResourceContent.query(readContentQuery);
-    const { promise: saveAnswered, resolve: answerSave } = Promise.withResolvers<void>();
-    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
-      await saveAnswered;
-      return { ...createResource(input.id), contentHash: ownContentHash, contentVersion: input.contentVersion + 1 };
-    });
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
-    await readResource();
-    await readContent(applyContent);
-    saveContent(createDefaultSheetResource());
-    serveOpenRow({ contentHash: otherDeviceHash, contentVersion: 2 });
-    await readResource();
-    answerSave();
-    await withFinalizerAsync(async () => {
-      await settleSave();
-      await waitForSynchronizedFunctions();
-    }, unregisterReload);
-
-    expect(readContentQuery).toHaveBeenCalledTimes(2);
-    expect(applyContent).toHaveBeenCalledTimes(2);
-  });
-
-  // Quick edits issue saves back to back, and each save's topic re-runs the watched read, so a read answered between
-  // Two saves can land after the later one. Its row names the earlier save's content, which the store already moved
-  // Past: adopting it would reload the document over the latest edit
-  test("a late row of a device's own earlier save is not adopted", async () => {
-    expect.hasAssertions();
-
-    const applyContent = vi.fn<(content: unknown) => void>();
-    const readContentQuery = vi.fn<() => SheetResource>(() => createDefaultSheetResource());
-    trpcMsw.sheet.readResourceContent.query(readContentQuery);
-    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => ({
-      ...createResource(input.id),
-      contentHash: String(input.contentVersion + 1),
-      contentVersion: input.contentVersion + 1,
-    }));
-    const resourceStore = useResourceStore();
-    const { readContent, saveContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
-    await readResource();
-    await readContent(applyContent);
-    saveContent(createDefaultSheetResource());
-    saveContent(createDefaultSheetResource());
-    await settleSave();
-    await withFinalizerAsync(async () => {
-      serveOpenRow({ contentHash: "1", contentVersion: 1 });
-      await readResource();
-      await waitForSynchronizedFunctions();
-    }, unregisterReload);
-
-    expect(readContentQuery).toHaveBeenCalledTimes(1);
-    expect(applyContent).toHaveBeenCalledTimes(1);
-  });
-
-  // An unwritten edit is the person's, and another device's save must not replace it. The save is held behind the
-  // Stale latch, which holds autosave too, until the person answers
+  // An unsaved edit is the person's, and another device's save must not replace it. The save is held behind the
+  // Notice, and autosave writes nothing, until the person answers
   test("an unsaved edit stays on screen when another device saves", async () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readContent, saveContent } = resourceStore;
+    const { heldSave, resource, saveState } = storeToRefs(resourceStore);
+    const { markContentEdited, readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
     await readResource();
     assert.exists(resource.value);
@@ -1478,7 +1019,7 @@ describe(useResourceStore, () => {
     const reload = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     await readContent(noop);
-    unwrittenContentResourceId.value = id;
+    markContentEdited(id);
     await withFinalizerAsync(async () => {
       serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
       await readResource();
@@ -1491,44 +1032,20 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  // The adoption reads the row and then the content, so an edit can land between the decision to adopt and the content
-  // Arriving. The edit is the person's, so the other save is held behind the notice as if the edit had come first
-  test("an edit made while another device's save is adopted stays on screen", async () => {
+  // The autosave debounce holds an edit for half a second, so the edit itself is told to the store: the title row reads
+  // Saving from the keystroke rather than from the write
+  test("reports saving from the keystroke rather than from the write", async () => {
     expect.hasAssertions();
 
-    const applyContent = vi.fn<(content: unknown) => void>();
     const resourceStore = useResourceStore();
-    const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readContent } = resourceStore;
-    const { readResource } = useReadOpenResource();
-    await readResource();
+    const { resource, saveState } = storeToRefs(resourceStore);
+    const { markContentEdited, readContent } = resourceStore;
+    await useReadOpenResource().readResource();
+    await readContent(noop);
     assert.exists(resource.value);
-    const { contentVersion, id, version } = resource.value;
-    await readContent(applyContent);
-    // The edit lands while the adoption's content read is in flight
-    trpcMsw.sheet.readResourceContent.query(() => {
-      unwrittenContentResourceId.value = id;
-      return createDefaultSheetResource();
-    });
-    const adopt = vi.fn<(type: ResourceType) => void>();
-    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
-    const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
-    await withFinalizerAsync(
-      async () => {
-        serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1, version: version + 1 });
-        await readResource();
-        await waitForSynchronizedFunctions();
-      },
-      () => {
-        unregisterReload();
-        unregisterAdopt();
-      },
-    );
+    markContentEdited(resource.value.id);
 
-    expect(applyContent).toHaveBeenCalledTimes(1);
-    expect(adopt).not.toHaveBeenCalled();
-    expect(heldSave.value).toStrictEqual({ contentVersion: contentVersion + 1 });
-    expect(saveState.value).toBe(ResourceSaveState.Stale);
+    expect(saveState.value).toBe(ResourceSaveState.Saving);
   });
 
   // Taking theirs adopts the other version and drops the unwritten edit with the document it was an edit of
@@ -1536,17 +1053,16 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { takeOtherSave } = resourceStore;
-    const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readContent } = resourceStore;
+    const { markContentEdited, readContent, takeOtherSave } = resourceStore;
+    const { heldSave, resource, saveState } = storeToRefs(resourceStore);
     const { readResource } = useReadOpenResource();
     await readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
-    const reload = vi.fn<(type: ResourceType) => void>();
-    const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     await readContent(noop);
-    unwrittenContentResourceId.value = id;
+    const reload = vi.fn<(type: ResourceType) => Promise<void>>(() => readContent(noop));
+    const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+    markContentEdited(id);
     await withFinalizerAsync(async () => {
       serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
       await readResource();
@@ -1555,7 +1071,6 @@ describe(useResourceStore, () => {
 
     expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
     expect(heldSave.value).toBeUndefined();
-    expect(unwrittenContentResourceId.value).toBe("");
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
@@ -1570,8 +1085,8 @@ describe(useResourceStore, () => {
       return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
     });
     const resourceStore = useResourceStore();
-    const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { keepUnwrittenContent, readContent, saveContent } = resourceStore;
+    const { heldSave, resource } = storeToRefs(resourceStore);
+    const { keepUnwrittenContent, markContentEdited, readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
     await readResource();
     assert.exists(resource.value);
@@ -1579,7 +1094,7 @@ describe(useResourceStore, () => {
     const keep = vi.fn<(type: ResourceType) => void>();
     const unregisterKeep = ResourceContentHookMap.Keep.register(keep);
     await readContent(noop);
-    unwrittenContentResourceId.value = id;
+    markContentEdited(id);
     await withFinalizerAsync(async () => {
       serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
       await readResource();
@@ -1593,6 +1108,56 @@ describe(useResourceStore, () => {
     expect(heldSave.value).toBeUndefined();
   });
 
+  // A stale refusal proves another writer moved the version on, so the row is read for the version it names and the
+  // Person chooses between the two, with the edit still on screen and the other save not overwritten
+  test("a stale version drops the save and offers the choice", async () => {
+    expect.hasAssertions();
+
+    const savedVersions: number[] = [];
+    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+      savedVersions.push(input.contentVersion);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+    });
+    const resourceStore = useResourceStore();
+    const { readContent, saveContent } = resourceStore;
+    const { heldSave, resource } = storeToRefs(resourceStore);
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    assert.exists(resource.value);
+    const { contentVersion } = resource.value;
+    await readContent(noop);
+    serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
+    saveContent(createDefaultSheetResource());
+
+    await expect(settleSave()).resolves.toBe(ResourceSaveState.Stale);
+    expect(savedVersions).toStrictEqual([contentVersion]);
+    expect(heldSave.value).toStrictEqual({ contentVersion: contentVersion + 1 });
+  });
+
+  // A save still in flight when its resource closes may answer that another writer moved on, but there is no screen
+  // Left to adopt into, so the answer reads nothing and leaves the closed resource closed
+  test("a closed resource's save answer reads nothing", async () => {
+    expect.hasAssertions();
+
+    const { releaseFirstSave } = holdFirstSave();
+    const resourceStore = useResourceStore();
+    const { clearResource, readContent, saveContent } = resourceStore;
+    const { resource } = storeToRefs(resourceStore);
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    assert.exists(resource.value);
+    const { contentVersion, id } = resource.value;
+    await readContent(noop);
+    saveContent(createDefaultSheetResource());
+    serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 2 });
+    await readResource();
+    clearResource(id);
+    releaseFirstSave();
+    await settleSave();
+
+    expect(resource.value).toBeUndefined();
+  });
+
   // An editor with nothing unwritten adopts another device's save in place, through the same two stages a restore runs
   test("an editor with nothing unsaved adopts a save in place", async () => {
     expect.hasAssertions();
@@ -1602,7 +1167,7 @@ describe(useResourceStore, () => {
     const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
-    const reload = vi.fn<(type: ResourceType) => void>();
+    const reload = vi.fn<(type: ResourceType) => Promise<void>>(() => readContent(noop));
     const adopt = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);

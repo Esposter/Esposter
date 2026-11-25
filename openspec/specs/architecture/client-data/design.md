@@ -134,7 +134,7 @@ A create that opens the page of what it created keeps the server's id and waits:
 
 What is not a reason:
 
-- **A version token.** A stale `contentVersion`, `modelVersion` or `publishVersion` is a refusal like any other: the refused entry drops and `onError` shows the refresh prompt, while the bumped token arrives with the answer.
+- **A version token.** A stale `contentVersion`, `modelVersion` or `publishVersion` is a refusal like any other: the refused entry drops and `onError` hands the refusal to the caller, which for a content save offers the choice between versions, while the bumped token arrives with the answer.
 - **A row nobody can see.** A create landing in a list that is not on screen does not wait by itself: an entry changes nothing visible, and the dialog that sent it closes at once. A create whose id the server mints waits under `ServerIssuedValue`, as the schedule dialogs do, so a refusal leaves their draft in place.
 - **A single-flight hazard.** `createLike` draws the viewer's vote at once, and its entry touches the vote's row, so a rapid second press queues behind the create. A press on the same arrow is the withdrawal of the vote just drawn, so it never sends a second create.
 
