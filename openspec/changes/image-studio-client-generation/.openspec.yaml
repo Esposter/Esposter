@@ -1,5 +1,4 @@
 schema: spec-driven
 affected_areas: [image-studio]
 x-model: claude-opus-5-5
-x-waiting: "3.2 and 5.1: neither licence allows a public page (CircleStone 1(c) excludes use by third-party end users, paid or not; Qwen allows research or evaluation only), so they wait on the owner: a licence from CircleStone or Qwen, or Z-Image Turbo (Apache-2.0) as the model"
 x-touches: ["scripts/src/imageStudio/**", "apps/web/app/components/ImageStudio/**"]

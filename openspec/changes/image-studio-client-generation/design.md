@@ -10,7 +10,7 @@ Nothing in the repository generates an image today. This change adds:
 - a `scripts` command that converts and publishes the weights;
 - the Image Studio route, with its entry in the product list's Labs group.
 
-The first build ships Anima's Turbo preset as the default model. Qwen-Image 2.1 is offered as a larger second model. Anima's Base preset, a gallery kept across visits, editing and a server fallback are all outside it (the proposal's "Not in this change").
+The model is Z-Image Turbo. Other models, a gallery kept across visits, editing and a server fallback are all outside it (the proposal's "Not in this change").
 
 ## How it works
 
@@ -42,7 +42,7 @@ flowchart TD
 
 ### The models
 
-The page reads WebGPU first. With no adapter, or an adapter without `shader-f16`, it shows a notice naming the browsers that run the page, Chrome and Edge, and it never offers a download. WebGPU tells a page nothing about a card's memory, so the page reads the adapter's buffer limits and, after the first load, times one denoising step. It defaults to Anima's low-memory mode and a 768×768 image when that step is slow, and to 1024×1024 otherwise. The user can always change either. Qwen-Image 2.1 is offered only when the adapter's limits allow its largest buffer, and the dialog warns that it needs a strong GPU.
+The page reads WebGPU first. With no adapter, or an adapter without `shader-f16`, it shows a notice naming the browsers that run the page, Chrome and Edge, and it never offers a download. WebGPU tells a page nothing about a card's memory, so the page reads the adapter's buffer limits and, after the first load, times one denoising step. It defaults to low-memory mode and a 768×768 image when that step is slow, and to 1024×1024 otherwise. The user can always change either. In low-memory mode the worker releases the text encoder's session once the prompt is encoded, so the encoder and the denoiser are never on the GPU together.
 
 **Nothing downloads until the user confirms.** The model card shows a "Download" button that names the model's size. Pressing it opens a confirmation dialog built on the app's dialog shell. The dialog shows:
 
@@ -50,7 +50,7 @@ The page reads WebGPU first. With no adapter, or an adapter without `shader-f16`
 - the space the model takes, the same figure, since the cache holds the files as they were sent;
 - the free space `navigator.storage.estimate()` reports;
 - a time estimate from the connection's `downlink`, falling back to "a few minutes on a fast connection" when the browser does not report one;
-- the model's licence, its non-commercial terms summarised in one sentence and linked in full;
+- the model's licence, Apache-2.0, linked in full;
 - whether part of the model is already held from an interrupted download, and how much is left.
 
 Confirm is disabled, and the dialog says how much space is missing, when the estimate leaves too little room. Confirming calls `navigator.storage.persist()`, so the browser does not evict the model under storage pressure, and then starts the download. The progress bar shows the bytes held out of the total, the time left and a Cancel button. Cancelling keeps the files already finished, so the next confirmation shows only what is left.
@@ -65,7 +65,7 @@ The sessions live in a dedicated Web Worker, so a step never blocks the page. Th
 
 1. It encodes the prompt.
 2. It draws the starting noise from the seed with a seeded generator, so a seed reproduces an image on the same device.
-3. It runs the flow-matching sampler for the preset's steps. Turbo uses eight steps at a guidance of one, so each step is a single denoiser call.
+3. It runs the flow-matching sampler for eight steps. Z-Image Turbo is distilled to need no classifier-free guidance, so each step is a single denoiser call.
 4. It decodes the latent to pixels.
 
 After each step it reports progress and reads the cancel flag, so a cancellation lands within one step. A lost GPU device, or an allocation the GPU refuses, fails the generation with a message suggesting a smaller size or low-memory mode, and the sessions are rebuilt before the next generation.
@@ -74,11 +74,11 @@ An image is saved as a PNG whose `tEXt` chunk carries the prompt, the seed, the 
 
 ### LoRAs
 
-The converter exports the denoiser with an empty low-rank slot beside each linear layer a LoRA can target, at a fixed rank of 48, the rank anima-webgpu uses. Each slot's down and up matrices, and one scale, are inputs to the graph. The base weights never change, so a LoRA costs no re-export and no re-quantizing.
+The converter exports the denoiser with an empty low-rank slot beside each linear layer a LoRA can target, at a fixed rank of 48, the rank anima-webgpu settled on for its slots. Each slot's down and up matrices, and one scale, are inputs to the graph. The base weights never change, so a LoRA costs no re-export and no re-quantizing.
 
 The page reads an uploaded `.safetensors` file in the worker, through the File API, and it never fetches anything with it. `image-diffusion` then:
 
-1. maps the file's keys, in the kohya form (`lora_unet_…`) or the `diffusion_model.` form, to slot names;
+1. maps the file's keys, in the forms Z-Image LoRAs are published in (the kohya `lora_unet_…` form and the `diffusion_model.` form), to slot names;
 2. lists every key that maps to no slot, such as text-encoder keys or LoKr factors, and shows that list beside the LoRA;
 3. refuses the file when none of its keys map, naming the file as made for another model.
 
@@ -92,18 +92,18 @@ A LoRA whose rank exceeds 48, or several whose summed rank does, loses its small
 
 ### The weights
 
-The conversion command in `scripts` reads the official Anima release, exports the denoiser with its LoRA slots, the text encoder (Qwen3-0.6B) and the decoder to ONNX, and quantizes the weights. It writes each graph's weights as external data files small enough for the bucket's object limit, and publishes them through hosted assets, which commits the lock.
+The conversion command in `scripts` reads the official Z-Image Turbo release, exports the denoiser with its LoRA slots, the text encoder (Qwen3-4B) and the decoder to ONNX, and quantizes the weights. It writes each graph's weights as external data files small enough for the bucket's object limit, and publishes them through hosted assets, which commits the lock. It checks each component's licence as it reads it, and refuses a component whose licence is not Apache-2.0 or MIT.
 
-The command takes its export and slot construction from anima-webgpu's converter, which is MIT. It quantizes the denoiser to int4 and to int8 and measures each denoiser call against the PyTorch reference on fixed prompts and seeds. It publishes the smaller build whose relative difference stays within anima-webgpu's published figure for Turbo, from 1.6 to 3.0%. An int4 build of Anima is estimated at 1.5 to 2 GB, against the 3.6 GB anima-webgpu downloads, but that figure is an estimate from the parameter counts until the command measures it. Qwen-Image 2.1 goes through the same command, starting from the published int4 browser build, which is 7.4 GB.
+No browser port of Z-Image Turbo carries LoRA slots, so the command builds them, taking the slot construction from anima-webgpu's converter, which is MIT. It quantizes the denoiser and the text encoder to int4 and to int8, and measures each denoiser call against the PyTorch reference on fixed prompts and seeds. It publishes the smaller build whose relative difference per call stays under 3%, the upper end anima-webgpu reports for its own distilled preset. The int4 build is estimated at 5.5 to 6 GB, about 3 GB for the denoiser and 2 GB for the text encoder, but that figure is an estimate from the parameter counts until the command measures it.
 
 ## Decisions
 
-- **Anima as the default model.** Its denoiser is about two billion parameters. It runs in about twelve seconds per 1024×1024 image on a 16 GB card, has a low-memory mode for 8 GB cards, and is the one model whose runtime LoRA path is already proven in a browser. Qwen-Image 2.1, whose visual transformer alone is seven billion parameters, is too large to be the default for most visitors. It is offered as the large model.
-- **Z-Image Turbo rejected while the page is free.** It is Apache-2.0, so it would allow commercial use, but no browser build of it takes a LoRA, and its six billion parameters make it slower than Anima on the same card. The page is free and non-commercial, so Anima's licence fits. If the page is ever monetised, the model changes to Z-Image Turbo with the same slot export.
+- **Z-Image Turbo as the model.** It is the strongest open model whose licence allows a public page. Its Apache-2.0 licence allows hosting converted weights and any use of the page, paid or not. Its six billion parameters make it a larger download and a slower step than Anima, which is the cost of that licence.
+- **Anima and Qwen-Image 2.1 deferred.** Anima's licence (CircleStone Non-Commercial, section 1(c)) excludes any use in direct interaction with third-party end users, paid or not, and counts hosting as distribution. Qwen-Image 2.1's licence allows research or evaluation only. Neither can back a public page without a licence from its maker, so both wait in [licensed models](../../deferred/image-studio/licensed-models/design.md).
 - **The visitor's GPU over a server.** The Cloudflare estate has no GPU we control. Workers AI runs only its own catalogue, and a user's LoRA would have to leave the device to reach it. Running on the client costs nothing per image and keeps every prompt and LoRA private.
-- **Our bucket over Hugging Face at run time.** A third party's uptime and rate limits would sit in front of every first visit. We could not pin a build's quantization. And the browser's storage partitioning means no visitor arrives with a copy cached from another site anyway. Hosted assets already gives content addressing, resumption and eviction. Hosting converted weights is redistribution, which is why tasks 3.2 and 5.1 wait on the owner's read of both licences. If redistribution is not allowed, the fallback keeps our graphs on our bucket and fetches the official weights from the model's own repository, quantizing them on the device on first load. That fallback means a larger first download.
-- **A confirmed download over a silent one.** A download of gigabytes is the visitor's bandwidth and disk, so it starts only from a dialog that states its cost. Downloading on page load was rejected, because a visitor who only looks at the page would pay for the model. A browser permission prompt was rejected too, because it shows no size, time or licence.
-- **Slot graphs over merging a LoRA into the weights.** Merging on the device would dequantize and requantize two billion weights for every LoRA change. Exporting a model per LoRA cannot take a file the user brings. Slots keep the base weights fixed and make one LoRA's strength a single input.
+- **Our bucket over Hugging Face at run time.** A third party's uptime and rate limits would sit in front of every first visit. We could not pin a build's quantization. And the browser's storage partitioning means no visitor arrives with a copy cached from another site anyway. Hosted assets already gives content addressing, resumption and eviction. Hosting the converted weights is redistribution, which Apache-2.0 allows with its licence and notice kept beside them.
+- **A confirmed download over a silent one.** A download of gigabytes is the visitor's bandwidth and disk, so it starts only from a dialog that states its cost. Downloading on page load was rejected, because a visitor who only looks at the page would pay for the model. A browser permission prompt was rejected too, because it shows no size or time.
+- **Slot graphs over merging a LoRA into the weights.** Merging on the device would dequantize and requantize six billion weights for every LoRA change. Exporting a model per LoRA cannot take a file the user brings. Slots keep the base weights fixed and make one LoRA's strength a single input.
 - **A package with the consumer's session, as `pitch-transcription` does.** `image-diffusion` builds its tensors from `onnxruntime-common`, and the worker brings `onnxruntime-web`. So the pipeline's pure parts (key mapping, the truncation, the sampler, the PNG chunk) are tested under Node with fake sessions, and no test needs a GPU. Transformers.js, already in the catalog, has no pipeline for these models.
 - **ONNX Runtime Web's faster WebGPU build.** anima-webgpu reports that the default build lacks the DP4A and FlashAttention kernels its other build carries. Task 4.1 times both on the owner's GPU and keeps the faster one.
 - **Images for the session only.** A stored gallery is a second feature with its own quota and deletion. Saving a PNG with its settings keeps every image the user wants.
@@ -141,15 +141,13 @@ scripts/src/imageStudio/
 ## Notes
 
 - The download size is the cost a visitor sees, so a model update that changes every weight file costs every returning visitor the full download again. A converter change therefore ships only when it improves the images or their speed.
-- The browser's storage partitioning means each site keeps its own copy, so a visitor who used another Anima demo still downloads ours.
+- The browser's storage partitioning means each site keeps its own copy, so a visitor who used another Z-Image demo still downloads ours.
 - Tests cannot cover the real run, a prompt becoming a recognisable image on a GPU, because CI has none. That run is task 4.3's driven-browser check on the owner's machine, with the timings recorded in the commit body.
 
 ## Sources
 
-- [anima-webgpu](https://github.com/joykst96/anima-webgpu) — the ONNX export with rank-48 LoRA slots, the multi-LoRA merge by summed change and SVD, the low-memory mode, the per-call difference against the reference, the 3.6 GB download and the note on ONNX Runtime Web's two WebGPU builds.
-- [Anima](https://huggingface.co/circlestone-labs/Anima/blob/main/README.md) — the model, its parameter count, its Cosmos-Predict2 base and its CircleStone Non-Commercial Licence.
-- [Qwen-Image 2.1 WebGPU](https://huggingface.co/linoyts/Qwen-Image-2.1-WebGPU) — the int4 browser build, its 7.4 GB size and its merged two-step LoRA.
-- [Qwen-Image 2.1's licence](https://runtimewire.com/article/alibaba-qwen-image-2-1-transparent-editing-research-license) — the Qwen Research Licence's restriction to research and non-commercial use.
-- [Z-Image Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/blame/main/README.md) — the Apache-2.0 alternative and its parameter count.
+- [anima-webgpu](https://github.com/joykst96/anima-webgpu) — the ONNX export with rank-48 LoRA slots, the multi-LoRA merge by summed change and SVD, the per-call difference against the reference and the note on ONNX Runtime Web's two WebGPU builds; its code is MIT.
+- [Z-Image Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/blame/main/README.md) — the model, its parameter count, its eight-step distillation and its Apache-2.0 licence.
+- [webnn/Z-Image-Turbo](https://huggingface.co/webnn/Z-Image-Turbo/blob/main/README.md) — an ONNX port run by ONNX Runtime Web on WebNN and WebGPU, which shows the model's graphs export and run in a browser.
 - [ONNX Runtime Web](https://onnxruntime.ai/docs/tutorials/web/) — the WebGPU execution provider and external data loading.
 - [onnxruntime-web](https://www.npmjs.com/package/onnxruntime-web) — the browsers its WebGPU backend lists.
