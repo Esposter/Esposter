@@ -1,4 +1,4 @@
-import type { Plugin } from "rolldown";
+import type { Plugin } from "vite";
 
 import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -30,10 +30,18 @@ const generateDeclarations = async (presets: readonly (keyof typeof builtinPrese
 };
 
 // Written at each build start from the presets the transform injects, so the declarations and the injected imports
-// Cannot drift apart. The transform's own `dts` is off for this reason
-export const autoImportDeclarationsPlugin = (presets: readonly (keyof typeof builtinPresets)[]): Plugin => ({
-  async buildStart() {
-    await writeFile(resolve(process.cwd(), AUTO_IMPORT_DECLARATIONS_FILE), await generateDeclarations(presets));
-  },
-  name: "auto-import-declarations",
-});
+// Cannot drift apart. The transform's own `dts` is off for this reason. The file goes to Vite's resolved root, which is
+// The package's own folder even when the root Vitest run loads it as a project from the repository root. A tsdown build
+// Has no Vite config, and pnpm runs it in the package's folder, so its working directory is that root
+export const autoImportDeclarationsPlugin = (presets: readonly (keyof typeof builtinPresets)[]): Plugin => {
+  let root = process.cwd();
+  return {
+    async buildStart() {
+      await writeFile(resolve(root, AUTO_IMPORT_DECLARATIONS_FILE), await generateDeclarations(presets));
+    },
+    configResolved(config) {
+      root = config.root;
+    },
+    name: "auto-import-declarations",
+  };
+};
