@@ -35,9 +35,10 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     contentMappers: [{ extensions: [".vue"], options: { optionsApi: false }, package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: {
-      // A native listener a component does not emit falls through to its root, and vize checks a listener against the
-      // Component's own emits alone, with nothing a declaration can add to them, so the unknown event check stays off.
-      // The unknown prop check reads the attributify names `modules/attributifyTypes.ts` declares at prepare
+      // @TODO: https://github.com/ubugeeei-prod/vize/issues/13685 — turn the unknown event check on with
+      // `fallthroughAttributes`, which types a native listener that falls through to a component's root, once vize's
+      // Check reads it as vue-tsc's does. The unknown prop check reads the attributify names
+      // `modules/attributifyTypes.ts` declares at prepare
       checkUnknownEvents: false,
       checkUnknownProps: true,
       composables: { useTemplateRef: ["useTemplateRef"] },

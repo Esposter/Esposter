@@ -16,8 +16,9 @@ declare module "vue" {
     popover?: "" | "auto" | "hint" | "manual";
   }
 
-  // @TODO: no upstream issue — vuejs/core: a `.prop` binding is checked against the element's attributes, so a DOM
-  // Property that is no attribute, such as a video's `srcObject`, is unknown
+  // @TODO: https://github.com/vuejs/language-tools/issues/6377 — a `.prop` binding is checked against the element's
+  // Attributes, so a DOM property that is no attribute, such as a video's `srcObject`, is unknown; vize copies the
+  // Check, so this goes once vize follows the fix
   interface VideoHTMLAttributes {
     srcObject?: MediaProvider | null;
   }
