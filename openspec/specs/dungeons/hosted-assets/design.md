@@ -61,7 +61,7 @@ The dungeons suites mock the loader, and `loadDungeonsFiles.test.ts` checks the 
 | `apps/web/app/assets/dungeons/`                                             | the Tiled sources and the code that stay in git, with the binaries removed from it |
 | `apps/web/app/services/dungeons/loader/loadDungeonsFiles.ts`                | every file the game loads by its url, with anonymous CORS set first                |
 | `apps/web/app/services/dungeons/loader/getDungeonsUrl.ts`                   | a key's absolute url, read from the lock                                           |
-| `apps/web/app/services/dungeons/loader/readDungeonsPreloadSet.ts`           | the Preloader's set: every object the lock names, and the game's scope prefix      |
+| `apps/web/app/services/dungeons/loader/readDungeonsPreloadSet.ts`           | the Preloader's set: every object but the license notices, and the scope prefix    |
 | `apps/web/app/services/dungeons/loader/loadTilemaps.ts`                     | each map's Tiled JSON and the map of tileset urls                                  |
 | `apps/web/app/services/dungeons/loader/loadImages.ts`                       | each image loaded under its key from its url                                       |
 | `apps/web/app/services/dungeons/loader/dungeonsLock.ts`                     | the committed lock as the app imports it                                           |
