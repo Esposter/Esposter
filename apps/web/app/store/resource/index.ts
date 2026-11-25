@@ -171,6 +171,15 @@ export const useResourceStore = defineStore("resource", () => {
   // Another device's save held behind an unwritten edit, until the person answers the notice. The stale latch holds
   // Autosave in the meantime; this is what the notice shows and answers
   const heldSave = ref<ResourceSave>();
+  // The unwritten edit is the person's, so the other save waits for their answer, and the stale latch holds autosave
+  // Until then
+  const holdOtherSave = (contentVersion: number) => {
+    heldSave.value = { contentVersion };
+    isContentStale.value = true;
+  };
+  // Set while another writer's save is being adopted, so an edit made between the decision and the content's arrival
+  // Holds that save behind the notice rather than being overwritten; a restore and taking theirs apply regardless
+  let isAdoptingOtherContent = false;
   // Whether the last content save did not land: its write was rejected for any other reason, or an editor's own check
   // Refused it before any write. Its notification is a one-shot the owner dismisses; this is what keeps saying so
   // Afterwards, because a failed save leaves work only in the tab
@@ -310,6 +319,9 @@ export const useResourceStore = defineStore("resource", () => {
     if (!resource.value) return;
 
     await ResourceContentHookMap.Reload.run(resource.value.type);
+    // An adoption the person's edit held behind the notice hands the editors nothing: the store kept their document
+    if (isAdoptingOtherContent && heldSave.value) return;
+
     await ResourceContentHookMap.Adopt.run(resource.value.type);
   };
   // Another device's document is adopted in place of this client's. The bytes it held name the document the save
@@ -357,6 +369,12 @@ export const useResourceStore = defineStore("resource", () => {
             // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a
             // Later read of the same opening — holds content that is not the open blade's
             if (opening !== readOpening) return;
+            // An edit made while another writer's save was being adopted is the person's, so the save waits behind the
+            // Notice as it would had the edit come first, rather than the read landing over it
+            if (isAdoptingOtherContent && hasUnwrittenContent.value) {
+              holdOtherSave(contentVersion);
+              return;
+            }
 
             contentResourceId = id;
             // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the
@@ -393,7 +411,12 @@ export const useResourceStore = defineStore("resource", () => {
   // Synchronized function, so the adoption is awaited by whatever drains the store's work, and a failed read is logged
   // Rather than left unhandled
   const adoptOtherContent = getSynchronizedFunction(() =>
-    getResultAsync(() => adoptResourceContent()).match(noop, console.error),
+    getResultAsync(() => {
+      isAdoptingOtherContent = true;
+      return withFinalizerAsync(adoptResourceContent, () => {
+        isAdoptingOtherContent = false;
+      });
+    }).match(noop, console.error),
   );
   // The page's watch of the open row brings the row here, and every write to the content publishes that row, so this is
   // Where another device's save, an agent's and a restore's reach the editor. The blob is read only for a hash the
@@ -421,11 +444,8 @@ export const useResourceStore = defineStore("resource", () => {
       return;
     }
 
-    // The unwritten edit is the person's, so the other save waits for their answer, and the stale latch holds autosave
-    // Until then
     if (hasUnwrittenContent.value) {
-      heldSave.value = { contentVersion: newResource.contentVersion };
-      isContentStale.value = true;
+      holdOtherSave(newResource.contentVersion);
       return;
     }
 

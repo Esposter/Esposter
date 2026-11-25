@@ -31,7 +31,7 @@ An editor holding an unwritten edit overwrites nothing in either direction. The 
 - **Take theirs** adopts as above and drops the local edit.
 - **Keep mine** re-saves the local document through the existing save mutation at the newer version, replacing the other write, which stays in version history.
 
-Until it is answered, the store's stale latch holds autosave, as it does after a refused save. The latch is raised when the watch brings the other save's row. After Keep mine, an agent's next pinned patch is stale and it reads again; an unpinned one reapplies over the owner's document under its tests.
+An edit made while an adoption is already reading the other save's content counts the same: the read does not land over it, and the notice comes up instead, since the person's edit is checked when the content arrives rather than only when the row did. Until it is answered, the store's stale latch holds autosave, as it does after a refused save. The latch is raised when the watch brings the other save's row. After Keep mine, an agent's next pinned patch is stale and it reads again; an unpinned one reapplies over the owner's document under its tests.
 
 ```mermaid
 flowchart TD

@@ -1491,6 +1491,46 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
+  // The adoption reads the row and then the content, so an edit can land between the decision to adopt and the content
+  // Arriving. The edit is the person's, so the other save is held behind the notice as if the edit had come first
+  test("an edit made while another device's save is adopted stays on screen", async () => {
+    expect.hasAssertions();
+
+    const applyContent = vi.fn<(content: unknown) => void>();
+    const resourceStore = useResourceStore();
+    const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    const { readContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    assert.exists(resource.value);
+    const { contentVersion, id } = resource.value;
+    await readContent(applyContent);
+    // The edit lands while the adoption's content read is in flight
+    trpcMsw.sheet.readResourceContent.query(() => {
+      unwrittenContentResourceId.value = id;
+      return createDefaultSheetResource();
+    });
+    const adopt = vi.fn<(type: ResourceType) => void>();
+    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
+    const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
+    await withFinalizerAsync(
+      async () => {
+        serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
+        await readResource();
+        await waitForSynchronizedFunctions();
+      },
+      () => {
+        unregisterReload();
+        unregisterAdopt();
+      },
+    );
+
+    expect(applyContent).toHaveBeenCalledTimes(1);
+    expect(adopt).not.toHaveBeenCalled();
+    expect(heldSave.value).toStrictEqual({ contentVersion: contentVersion + 1 });
+    expect(saveState.value).toBe(ResourceSaveState.Stale);
+  });
+
   // Taking theirs adopts the other version and drops the unwritten edit with the document it was an edit of
   test("taking theirs replaces the unsaved edit", async () => {
     expect.hasAssertions();

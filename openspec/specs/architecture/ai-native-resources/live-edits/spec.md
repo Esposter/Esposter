@@ -46,6 +46,13 @@ An open editor with no unsaved edit SHALL show another device's saved content in
 - **THEN** the undo history is empty
 - **AND** that save is written whole rather than as a delta
 
+#### Scenario: An edit made while another device's save is adopted stays on screen
+
+- **GIVEN** an open editor with nothing unsaved is adopting another device's save
+- **WHEN** the person edits before the other save's content arrives
+- **THEN** the edit stays on screen
+- **AND** the notice offers the choice between the two versions
+
 ### Requirement: An unsaved edit is kept and the other save is offered as a choice
 
 An editor holding an unsaved edit SHALL NOT overwrite it when another device saves, and SHALL say the save came from another device or from an agent, without naming the agent, and offer the person a choice.
