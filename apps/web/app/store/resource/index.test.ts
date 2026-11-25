@@ -1430,6 +1430,39 @@ describe(useResourceStore, () => {
     expect(applyContent).toHaveBeenCalledTimes(2);
   });
 
+  // Quick edits issue saves back to back, and each save's topic re-runs the watched read, so a read answered between two
+  // Saves can land after the later one. Its row names the earlier save's content, which the store already moved past:
+  // Adopting it would reload the document over the latest edit
+  test("a late row of a device's own earlier save is not adopted", async () => {
+    expect.hasAssertions();
+
+    const applyContent = vi.fn<(content: unknown) => void>();
+    const readContentQuery = vi.fn<() => SheetResource>(() => createDefaultSheetResource());
+    trpcMsw.sheet.readResourceContent.query(readContentQuery);
+    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => ({
+      ...createResource(input.id),
+      contentHash: String(input.contentVersion + 1),
+      contentVersion: input.contentVersion + 1,
+    }));
+    const resourceStore = useResourceStore();
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
+    await readResource();
+    await readContent(applyContent);
+    saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
+    await withFinalizerAsync(async () => {
+      serveOpenRow({ contentHash: "1", contentVersion: 1 });
+      await readResource();
+      await waitForSynchronizedFunctions();
+    }, unregisterReload);
+
+    expect(readContentQuery).toHaveBeenCalledTimes(1);
+    expect(applyContent).toHaveBeenCalledTimes(1);
+  });
+
   // An unwritten edit is the person's, and another device's save must not replace it. The save is held behind the
   // Stale latch, which holds autosave too, until the person answers
   test("an unsaved edit stays on screen when another device saves", async () => {

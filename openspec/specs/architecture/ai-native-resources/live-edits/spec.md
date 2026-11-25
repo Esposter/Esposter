@@ -22,6 +22,13 @@ An open resource SHALL receive a save made from another device, whatever its typ
 - **WHEN** that same device saves the resource
 - **THEN** no notice of another device's save is shown
 
+#### Scenario: A late row of a device's own earlier save is not adopted
+
+- **GIVEN** a device has saved a resource twice in quick succession
+- **WHEN** the row its first save wrote arrives after the second save's answer
+- **THEN** the open resource keeps the second save's content
+- **AND** no content is read again
+
 ### Requirement: An editor with nothing unsaved adopts another device's save in place
 
 An open editor with no unsaved edit SHALL show another device's saved content in place, without a reload.

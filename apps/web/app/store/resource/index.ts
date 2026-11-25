@@ -399,10 +399,17 @@ export const useResourceStore = defineStore("resource", () => {
   // Where another device's save, an agent's and a restore's reach the editor. The blob is read only for a hash the
   // Store does not hold. A row that lands while a save of this store's own is in flight waits: that save's answer sets
   // The hash the row is compared against, and a row another writer committed on top of it is compared once the saves
-  // Settle, not dropped. Only the latest row is held, since it names the newest state
+  // Settle, not dropped. Only the latest row is held, since it names the newest state. A row at or below the version
+  // This opening confirmed names content the store already moved past — a read answered between two of its own quick
+  // Saves lands after the later one — so only a newer version is another writer's
   const applyOtherContent = (newResource: ResourceInResource): void => {
     heldOtherRow = undefined;
-    if (!checkIsContentRead() || newResource.contentHash === persistedContentHash) return;
+    if (
+      !checkIsContentRead() ||
+      newResource.contentHash === persistedContentHash ||
+      newResource.contentVersion <= (confirmedContentVersions.get(newResource.id) ?? -1)
+    )
+      return;
 
     if (checkIsSavePending(newResource.id)) {
       heldOtherRow = newResource;

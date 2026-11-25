@@ -12,7 +12,7 @@ The watch belongs to the page rather than to a blade, and it lasts as long as th
 
 The store holds the hash of the content it read or wrote. Each row the watch brings is compared with that hash, and one of three things follows:
 
-- **The hash is the one the store holds, or a save is in flight.** Nothing is applied. An editor's own save lands here, because the save's reply sets the hash the store holds, so the row the watch re-reads names content the store already has. A save still in flight is the store's own: its reply sets the hash, and the row it wrote is left to that reply rather than read back over the edit being saved.
+- **The hash is the one the store holds, the row is no newer than the store's content, or a save is in flight.** Nothing is applied. An editor's own save lands here, because the save's reply sets the hash the store holds, so the row the watch re-reads names content the store already has. Quick edits issue saves back to back, and a read answered between two of them can land after the later one, naming the earlier save's hash. Its content version is at or below the one the store confirmed, so it is left alone rather than reloaded over the latest edit: only a newer content version is another writer's. A save still in flight is the store's own: its reply sets the hash, and the row it wrote is left to that reply rather than read back over the edit being saved.
 - **The hash differs and the editor holds no unwritten edit.** The store adopts the content through the two stages a restore runs, as [third-party document adapters](../../third-party-document-adapters/design.md) describe. The reload re-reads the row, which brings the content version the store then holds, and each content store re-reads its content through `createContentData`. The adopt stage then hands the document to an editor that holds its own copy, such as Tiptap and the survey's Creator. The blob is read only in this case, so a large Sheet arrives by the [large-documents](../../large-documents/design.md) path rather than over the socket, and one path adopts whatever wrote the blob.
 - **The hash differs and the editor holds an unwritten edit.** The store does not overwrite the edit. The notice comes up over the editor, and autosave is held until the person answers, as the next heading describes.
 
@@ -38,7 +38,9 @@ flowchart TD
   SAVE["another device saves — an agent, or another tab"] --> ROW["the save writes the row's hash, and the open row's watch runs again"]
   ROW --> SAME{"does the row name the hash the store holds?"}
   SAME -->|"yes — its own save, or one in flight"| NONE["nothing applied"]
-  SAME -->|no| DIRTY{"does this editor hold an unwritten edit?"}
+  SAME -->|no| NEWER{"is its content version newer than the store's?"}
+  NEWER -->|"no — a late row of its own earlier save"| NONE
+  NEWER -->|yes| DIRTY{"does this editor hold an unwritten edit?"}
   DIRTY -->|no| RELOAD["Reload stage — the content store re-reads"]
   RELOAD --> ADOPT["Adopt stage — a library editor takes the document"]
   ADOPT --> CLEAR["undo history and delta baseline cleared"]
