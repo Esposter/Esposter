@@ -72,7 +72,7 @@ await loadContent();
         object-contain
         rd="[var(--ui-container-radius)]"
       />
-      <FileField
+      <UiFileField
         v-model="shareImageFiles"
         :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
         :label="webpageEditor.imageUrl ? 'Replace share image' : 'Share image'"
