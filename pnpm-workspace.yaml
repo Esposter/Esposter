@@ -28,8 +28,8 @@ bail: false
 
 catalog:
   "@arethetypeswrong/core": ^0.18.5
-  "@better-auth/api-key": ^1.7.27
-  "@better-auth/drizzle-adapter": ^1.7.27
+  "@better-auth/api-key": ^1.7.28
+  "@better-auth/drizzle-adapter": ^1.7.28
   "@cloudflare/realtimekit": ^2.1.0
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
   "@cloudflare/workers-types": ^5.20261124.1
@@ -117,7 +117,7 @@ catalog:
   "@vueuse/nuxt": ^15.1.0
   "@vueuse/router": ^15.1.0
   apexcharts: ^8.9.1
-  better-auth: ^1.7.27
+  better-auth: ^1.7.28
   citty: ^0.2.2
   codemirror: ^6.0.2
   crossws: ^0.4.17
