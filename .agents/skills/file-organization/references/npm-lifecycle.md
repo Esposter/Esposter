@@ -21,7 +21,7 @@ Read when a workspace package is created, renamed or removed and npm has to lear
 
 ## A new name the nightly reached first
 
-A release whose tag holds a name npm has never seen stops in `finish` with `E404 Not found`, and no package of that tag is published. The tag's version is then on no name, so the sequence above runs from the tag rather than the tree, with these changes:
+A release whose tag holds a name npm has never seen stops in `finish` with `E404 Not found`, its log naming the cause as `OIDC token exchange error - package not found`. lerna publishes in batches, so the names that went out before the failure are on the tag's version and the rest, the new name's dependents among them, are not; a plain re-run fails the same way. The sequence above runs from the tag rather than the tree, with these changes:
 
 - Steps 2 to 4 are done in a worktree on a branch at the tag (`git worktree add -b <branch> <path> v<version>`), with `pnpm i --frozen-lockfile --ignore-scripts --filter "<name>..."`, then `@esposter/configuration` and the package built, so the version npm gets is the tagged code.
 - The publish is that one package's own: `pnpm publish --access public --no-git-checks --otp=<code>` from its folder. A `lerna publish from-package` there would hand-publish every name of the tag without provenance.
