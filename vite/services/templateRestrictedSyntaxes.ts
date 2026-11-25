@@ -1,12 +1,10 @@
 import type { SelectorBan } from "#scripts/models/oxlint/selectorBan/SelectorBan";
 
 import { SELECTOR_BAN_LISTS } from "#scripts/services/oxlint/selectorBan/selectorBanLists";
-import { COMPONENT_CASING_SYNTAXES } from "#vite/services/componentCasingSyntaxes";
 
 // The template's selector bans: every list that marks itself as one, and the bans only a template can break
 export const TEMPLATE_RESTRICTED_SYNTAXES: SelectorBan[] = [
   ...SELECTOR_BAN_LISTS.filter(({ isTemplate }) => isTemplate).flatMap(({ bans }) => bans),
-  ...COMPONENT_CASING_SYNTAXES,
   {
     // The `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` rules oxlint ships cover the script.
     // They cannot see template expressions, so the same three bans are restated for the half they do not read.
@@ -59,19 +57,5 @@ export const TEMPLATE_RESTRICTED_SYNTAXES: SelectorBan[] = [
       'Call the handler instead of naming it: `@click="save()"`, or an arrow when it takes the payload — `@select="(id) => selectRole(id)"`.',
     selector:
       "VAttribute[directive=true][key.name.name='on'] > VExpressionContainer > :matches(Identifier, MemberExpression)",
-  },
-  // The three element bans are selectors rather than `vue/no-restricted-html-elements`.
-  // That rule's vize options drop the message saying what to use instead.
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13536
-  // Move them to `vue/no-restricted-html-elements` once it takes a message.
-  {
-    message:
-      'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',
-    selector: "VElement[rawName='a']",
-  },
-  { message: "Don't use a raw <img>. Use <NuxtImg>.", selector: "VElement[rawName='img']" },
-  {
-    message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
-    selector: "VElement[rawName='time']",
   },
 ];

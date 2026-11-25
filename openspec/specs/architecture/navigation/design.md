@@ -40,10 +40,10 @@ Write it in **one** place — a `router.afterEach` hook — never at each link. 
 
 ## Key files
 
-| File                                                                     | Role                                                                                                   |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `app/components/Nuxt/InvisibleLink.vue`                                  | `NuxtInvisibleLink` — base link primitive, a `NuxtLink` clone with default styling stripped            |
-| `vite/services/templateRestrictedSyntaxes.ts`                            | bans the raw `a` element in templates; `router.push` is banned by the shared selector lists it imports |
-| `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSyntaxes.ts` | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`)                                   |
-| `app/components/User/Settings/SideBar.vue`                               | in-page hash anchors to the settings sections — a plain `:to` with a hash, no handler                  |
-| `configuration/router.ts`                                                | `scrollBehaviorType: "smooth"` — the whole of our hash-scrolling code                                  |
+| File                                                                     | Role                                                                                        |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `app/components/Nuxt/InvisibleLink.vue`                                  | `NuxtInvisibleLink` — base link primitive, a `NuxtLink` clone with default styling stripped |
+| `vite/vueOptions.ts`                                                     | bans the raw `a` element in templates through vize's `vue/no-restricted-html-elements`      |
+| `scripts/src/services/oxlint/selectorBan/syntaxes/restrictedSyntaxes.ts` | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`)                        |
+| `app/components/User/Settings/SideBar.vue`                               | in-page hash anchors to the settings sections — a plain `:to` with a hash, no handler       |
+| `configuration/router.ts`                                                | `scrollBehaviorType: "smooth"` — the whole of our hash-scrolling code                       |

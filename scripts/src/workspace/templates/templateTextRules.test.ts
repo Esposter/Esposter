@@ -10,56 +10,20 @@ interface VueFile {
   text: string;
 }
 
-// The name a kebab-case attribute is bound to, its dashes cut and the next letter raised, as `vue/v-bind-style` reads
-// It
-const toBoundName = (name: string): string =>
-  /[A-Z_]/u.test(name) ? name : name.replaceAll(/-(?<letter>\w)/gu, (_match, letter: string) => letter.toUpperCase());
-
 const getLine = (text: string, index: number): number => text.slice(0, index).split("\n").length;
-
-const toFile = (template: string): VueFile => ({ path: "a.vue", text: `<template>\n  ${template}\n</template>\n` });
 
 // The template rules no tool runs for us yet, each read over the components' text in place of the rule, and each going
 // With the upstream marker on its constants. The tree is read once for all of them
 describe("templateTextRules", () => {
-  // The top-level template, from its opening tag to its closing tag, each at the start of its line
-  const TEMPLATE_REGEX = /^<template\b[^>]*>[\s\S]*?^<\/template>/mu;
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13535 — drop the same-name check once vize's `vue/v-bind-style`
-  // Takes sameNameShorthand
-  const SAME_NAME_BIND_MESSAGE = 'Write a bind whose value is its own name as the shorthand: `:foo`, not `:foo="foo"`.';
-  // A bind whose value is a bare identifier: `:` or `v-bind:`, the attribute's name, its modifiers, then the identifier
-  const BIND_REGEX = /(?<=\s)(?::|v-bind:)(?<name>[A-Za-z][\w-]*)(?:\.[\w-]+)*="(?<value>[A-Za-z_$][\w$]*)"/gu;
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13666 — `vize fmt` replacing oxfmt pads the blocks, so drop
-  // The padding check then
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13666 — `vize fmt` pads the blocks, so components move to it
+  // And this check goes once it formats a staged copy, honours `objectWrap` and keeps multi-line CSS arguments, the
+  // Gaps listed on that issue
   const UNPADDED_BLOCK_MESSAGE =
     "Put a blank line between a component's top-level blocks: this block opens straight after the previous one closes.";
   // A top-level closing tag on its own line, and the line after it starting with a tag: the lookahead leaves that tag
   // Out
   const UNPADDED_BLOCK_REGEX = /^<\/[\w-]+>\r?\n(?=<[\w-])/gmu;
   let trackedFiles: VueFile[] = [];
-
-  // Every match of the regex inside the file's template that the check keeps, as `<path>:<line> → <match>: <message>`
-  const getTemplateFindings = (
-    files: VueFile[],
-    regex: RegExp,
-    checkIsFinding: (groups: Record<string, string | undefined>) => boolean,
-    message: string,
-  ): string[] =>
-    files.flatMap(({ path, text }) => {
-      const templateMatch = TEMPLATE_REGEX.exec(text);
-      if (!templateMatch) return [];
-      return [...templateMatch[0].matchAll(regex)]
-        .filter(({ groups = {} }) => checkIsFinding(groups))
-        .map((match) => `${path}:${getLine(text, templateMatch.index + match.index)} → ${match[0]}: ${message}`);
-    });
-
-  const getSameNameBinds = (files: VueFile[]): string[] =>
-    getTemplateFindings(
-      files,
-      BIND_REGEX,
-      ({ name = "", value }) => toBoundName(name) === value,
-      SAME_NAME_BIND_MESSAGE,
-    );
 
   // Reported on the line the block opens on
   const getUnpaddedBlocks = (files: VueFile[]): string[] =>
@@ -76,26 +40,6 @@ describe("templateTextRules", () => {
       text: readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"),
     }));
   }, TREE_READ_TIMEOUT_MS);
-
-  test.each([':foo="foo"', ':foo-bar="fooBar"', 'v-bind:foo="foo"', ':foo.prop="foo"'])(
-    "flags the same-name bind %s",
-    (bind) => {
-      expect.hasAssertions();
-
-      expect(getSameNameBinds([toFile(`<div ${bind} />`)])).toStrictEqual([
-        `a.vue:2 → ${bind}: ${SAME_NAME_BIND_MESSAGE}`,
-      ]);
-    },
-  );
-
-  test.each([':foo="foo.bar"', ':foo="bar"', ':foo-bar="foo-bar"', ":foo", 'foo="foo"'])(
-    "leaves the attribute %s alone",
-    (attribute) => {
-      expect.hasAssertions();
-
-      expect(getSameNameBinds([toFile(`<div ${attribute} />`)])).toStrictEqual([]);
-    },
-  );
 
   test.each([
     '<script setup lang="ts">\nconst a = 1;\n</script>\n<template>\n  <div />\n</template>\n',
@@ -119,6 +63,6 @@ describe("templateTextRules", () => {
   test("no tracked component breaks a template text rule", () => {
     expect.hasAssertions();
 
-    expect([...getSameNameBinds(trackedFiles), ...getUnpaddedBlocks(trackedFiles)]).toStrictEqual([]);
+    expect(getUnpaddedBlocks(trackedFiles)).toStrictEqual([]);
   });
 });

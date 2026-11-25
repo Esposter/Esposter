@@ -10,4 +10,4 @@ Declarative links use a Nuxt-native link component or a component's `:to` prop â
 - An action styled as a link, with no destination, is not an anchor: the `styling` skill (`references/links.md`) says how it is written.
 - `UiButtonLink`, `UiTabLinks` and a `UiList` row with a plain destination take `:to` directly â€” an icon that goes somewhere is a `UiButtonLink` inside a `UiTooltip`, as `apps/web/app/components/Resource/CloseButton.vue` is, since `UiIconButton` is a button. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
 
-The raw-`<a>` ban is a template selector in `vite/services/templateRestrictedSyntaxes.ts`, run by vize's `vue/no-restricted-syntax`. Full standard: `openspec/specs/architecture/navigation/design.md`.
+The raw-`<a>` ban is vize's `vue/no-restricted-html-elements`, its message in `vite/vueOptions.ts`. Full standard: `openspec/specs/architecture/navigation/design.md`.

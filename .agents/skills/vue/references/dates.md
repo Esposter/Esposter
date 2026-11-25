@@ -2,7 +2,7 @@
 
 Read when rendering a date or time in a `.vue` file.
 
-Every rendered date is a `<NuxtTime>`, except in the message list — "The one display exception" on this page. The ban itself is lint-enforced (vize's `vue/no-restricted-syntax`, over the template ban in `vite/services/templateRestrictedSyntaxes.ts`), and the full standard is `openspec/specs/architecture/date-time-display/design.md`.
+Every rendered date is a `<NuxtTime>`, except in the message list — "The one display exception" on this page. The ban itself is lint-enforced (vize's `vue/no-restricted-html-elements`, its message in `vite/vueOptions.ts`), and the full standard is `openspec/specs/architecture/date-time-display/design.md`.
 
 The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration.
 

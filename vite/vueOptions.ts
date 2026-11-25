@@ -41,6 +41,25 @@ export const VUE_OPTIONS: VueOptions = {
       "a11y/heading-has-content": { accessibleChildren: ["NuxtTime"] },
       // A component's macros stand at the top of its script, after the imports and the types they read. `defineExpose`
       // Stays out of the order, since the `vue` skill puts it before the watches and lifecycle hooks
+      // A tag is PascalCase as its component is named, every tag checked rather than only the registered ones. A `v-*`
+      // Tag is the Vuetify ban's to report, and `component` and TresJS's `primitive` are built-ins spelt lowercase
+      "vue/component-name-in-template-casing": {
+        ignores: ["/^v-/", "component", "primitive"],
+        registeredComponentsOnly: false,
+      },
+      // Each raw element the app renders through a component instead, with the component that replaces it
+      "vue/no-restricted-html-elements": [
+        {
+          element: "a",
+          message:
+            'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',
+        },
+        { element: "img", message: "Don't use a raw <img>. Use <NuxtImg>." },
+        {
+          element: "time",
+          message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
+        },
+      ],
       "script/define-macros-order": {
         order: ["defineOptions", "defineSlots", "defineModel", "defineProps", "defineEmits"],
       },
@@ -48,7 +67,8 @@ export const VUE_OPTIONS: VueOptions = {
       // Comment with its reason; library CSS is a script-setup import, code-split with the component
       "vue/enforce-style-attribute": { allow: ["scoped"] },
       "vue/no-restricted-syntax": TEMPLATE_RESTRICTED_SYNTAXES,
-      "vue/v-bind-style": "shorthand",
+      // A bind whose value is its own name is the shorthand: `:foo`, not `:foo="foo"`
+      "vue/v-bind-style": ["shorthand", { sameNameShorthand: "always" }],
       "vue/v-on-event-hyphenation": { autofix: true, style: "always" },
       "vue/v-slot-style": { atComponent: "shorthand" },
     },
@@ -76,6 +96,9 @@ export const VUE_OPTIONS: VueOptions = {
       "a11y/no-role-presentation-on-focusable": "error",
       "a11y/role-has-required-aria-props": "error",
       "a11y/tabindex-no-positive": "error",
+      // An import a component uses only as a type is `import type`, counting the template's uses, which oxlint's own
+      // Rule cannot see
+      "script/consistent-type-imports": "error",
       "script/define-macros-order": "error",
       "script/no-deprecated-dollar-listeners-api": "error",
       "script/no-deprecated-dollar-scopedslots-api": "error",
@@ -97,6 +120,7 @@ export const VUE_OPTIONS: VueOptions = {
       "vue/no-deprecated-html-element-is": "error",
       "vue/no-deprecated-inline-template": "error",
       "vue/no-deprecated-router-link-tag-prop": "error",
+      "vue/component-name-in-template-casing": "error",
       "vue/no-deprecated-scope-attribute": "error",
       "vue/no-deprecated-slot-attribute": "error",
       "vue/no-deprecated-slot-scope-attribute": "error",
@@ -108,6 +132,7 @@ export const VUE_OPTIONS: VueOptions = {
       "vue/no-duplicate-attributes": "error",
       "vue/no-lone-template": "error",
       "vue/no-mutating-props": "error",
+      "vue/no-restricted-html-elements": "error",
       "vue/no-restricted-syntax": "error",
       "vue/no-template-key": "error",
       "vue/no-template-shadow": "error",
