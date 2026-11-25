@@ -1,6 +1,6 @@
 import { BATCHED_REFRESH_BASE_DELAY_MS, BATCHED_REFRESH_MAX_DELAY_MS } from "#src/services/shared/constants";
 import { createSingleFlight } from "#src/services/shared/createSingleFlight";
-import { createExponentialBackoff, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { createExponentialBackoff, getResultAsync, getSynchronizedFunction, sleep } from "@esposter/shared";
 
 // A server that stays down is not asked forever: past this many retries in a row the keys stay dirty until the next
 // Mark
@@ -29,8 +29,13 @@ export const createBatchedRefresh = <TKey>(refresh: (keys: TKey[]) => Promise<vo
         if (retryCount >= MAX_RETRIES) return;
 
         retryCount += 1;
-        // The backoff sleeps before the run it starts, so the retry is scheduled at once and paced by it
-        setTimeout(getSynchronizedFunction(flush), 0);
+        // The backoff sleeps before the run it starts, so the retry is scheduled at once and paced by it. It is tracked
+        // From the moment it is scheduled, so a drain waits for it rather than ending before its timer fires, and it
+        // Starts a timer boundary later, once this flight has cleared, so the call that failed settles without it
+        getSynchronizedFunction(async () => {
+          await sleep(0);
+          await flush();
+        })();
       },
     );
   });

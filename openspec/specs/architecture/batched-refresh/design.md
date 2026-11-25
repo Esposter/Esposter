@@ -13,7 +13,7 @@ flowchart TD
   Run --> Result{"read succeeded?"}
   Result -- "yes" --> Done["reset the failure count"]
   Result -- "no" --> Back["keys go back to the dirty set, error logged"]
-  Back --> Retry["one more run scheduled, paced by the backoff, up to five times"]
+  Back --> Retry["one more run scheduled and tracked for the drain, paced by the backoff, up to five times"]
 ```
 
 A run takes every key marked before it starts, so a batch is one read, or one read per chunk for a reader that caps its list (post counts, at `MAX_POST_COUNTS_PER_READ`). Runs do not overlap: a mark made during a run is read by the run owed after it, and the run that finishes last is always the newest. A run with no dirty keys makes no read.
@@ -25,6 +25,8 @@ The caller that starts a flight awaits the run owed after it, and so does every 
 A run that fails puts its keys back in the dirty set and logs the error, so the next mark reads them again. It also schedules one more run without a mark, paced by the backoff from [retry and backoff](../retry-and-backoff/design.md). A success resets the count. After five retries in a row the keys stay dirty until the next mark, so a server that stays down is not asked forever. The wait does not reset when the retries stop: the next mark's read runs only after the backoff's last wait, the thirty-second maximum, so a server that recovered is read within that window rather than at once.
 
 The primitive never rejects. Its callers do not need to wrap a call in a result, because the failure is already logged and retried.
+
+The retry is fire-and-forget, so it runs through `getSynchronizedFunction`, tracked from the moment the failed run schedules it: `waitForSynchronizedFunctions()` waits for every retry a failure leaves owed, through each backoff, rather than ending in the gap before the retry's timer fires. The retry starts a timer boundary later, once the failed flight has cleared, so the call that failed settles on its own and never waits for its retries. A test that leaves a refresh failing therefore waits the whole backoff, and under fake timers waits until it advances them, so a test answers every read its code makes; the client test harness fails one that does not (`.agents/skills/testing/references/client-trpc-calls.md`).
 
 ## Owners
 

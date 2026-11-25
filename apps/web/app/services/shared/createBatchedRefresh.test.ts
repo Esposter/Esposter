@@ -1,5 +1,6 @@
 import { BATCHED_REFRESH_MAX_DELAY_MS } from "#src/services/shared/constants";
 import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
+import { getSynchronizedFunction, waitForSynchronizedFunctions } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(createBatchedRefresh, () => {
@@ -65,6 +66,24 @@ describe(createBatchedRefresh, () => {
     await vi.runAllTimersAsync();
 
     expect(refreshedKeys).toStrictEqual([[""], [""]]);
+  });
+
+  test("a drain waits for the retry a failed run scheduled", async () => {
+    expect.hasAssertions();
+
+    const refreshedKeys: string[][] = [];
+    const markChanged = createBatchedRefresh((keys: string[]) => {
+      refreshedKeys.push(keys);
+      return refreshedKeys.length === 1 ? Promise.reject(new Error(" ")) : Promise.resolve();
+    });
+    getSynchronizedFunction(() => markChanged([""]))();
+    const drainedKeys = (async () => {
+      await waitForSynchronizedFunctions();
+      return [...refreshedKeys];
+    })();
+    await vi.runAllTimersAsync();
+
+    await expect(drainedKeys).resolves.toStrictEqual([[""], [""]]);
   });
 
   test("a run that keeps failing stops retrying at the cap, and the next mark reads again", async () => {
