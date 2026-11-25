@@ -29,8 +29,8 @@ describe("templateTextRules", () => {
   const SAME_NAME_BIND_MESSAGE = 'Write a bind whose value is its own name as the shorthand: `:foo`, not `:foo="foo"`.';
   // A bind whose value is a bare identifier: `:` or `v-bind:`, the attribute's name, its modifiers, then the identifier
   const BIND_REGEX = /(?<=\s)(?::|v-bind:)(?<name>[A-Za-z][\w-]*)(?:\.[\w-]+)*="(?<value>[A-Za-z_$][\w$]*)"/gu;
-  // @TODO: no upstream issue — ubugeeei-prod/vize: `vize fmt` pads the blocks but cannot replace oxfmt until it formats
-  // In parallel and formats Markdown, YAML and CSS; drop the padding check once it does
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13666 — `vize fmt` replacing oxfmt pads the blocks, so drop
+  // The padding check then
   const UNPADDED_BLOCK_MESSAGE =
     "Put a blank line between a component's top-level blocks: this block opens straight after the previous one closes.";
   // A top-level closing tag on its own line, and the line after it starting with a tag: the lookahead leaves that tag

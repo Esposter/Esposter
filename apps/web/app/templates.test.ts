@@ -9,6 +9,7 @@ import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createGenerator } from "unocss";
 import { describe, expect, test } from "vitest";
+// @TODO: https://github.com/ubugeeei-prod/vize/issues/13664 — vize's template AST replaces the compiler
 import { parse } from "vue/compiler-sfc";
 
 // Every check below reads the same tree, so it is globbed and read once, each template is parsed once and walked
@@ -186,8 +187,7 @@ const checkIsSpacer = (node: TemplateChildNode) =>
   getAttributeNames(node).has("flex-1");
 
 describe("bars", () => {
-  // @TODO: no upstream issue — ubugeeei-prod/vize: `:has(> …)` relative selectors, so a selector ban reads an
-  // Element's own attributes beside its children's
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13665 — a selector ban replaces it
   test("wraps no bar that pushes its groups apart", () => {
     expect.hasAssertions();
 
