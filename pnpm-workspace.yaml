@@ -88,7 +88,7 @@ catalog:
   "@trpc/server": ^11.31.3
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
-  "@types/node": ^26.6.7
+  "@types/node": ^26.6.9
   "@types/three": ^0.187.0
   "@types/web-push": ^3.6.4
   "@typesafe-ai/sdk": ^0.7.0
