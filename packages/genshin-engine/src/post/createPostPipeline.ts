@@ -1,6 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's types declare each node class on a base
-   whose instance is an intersection, which the rule does not read as a subclass
-   (typescript-eslint/typescript-eslint#13214, closed as not planned) */
 import type { PostPipeline } from "#src/models/post/PostPipeline";
 import type { PostPipelineOptions } from "#src/models/post/PostPipelineOptions";
 import type { Node } from "three/webgpu";
@@ -72,7 +69,9 @@ export const createPostPipeline = ({
   // Beside its colour, the scene pass writes the velocity TRAA resolves by and the stone's mask where the scene asks
   // For Them, every material but the stone's writing none into the mask
   const sceneOutputs: Record<string, Node> = { output };
+  // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
   if (isTraa) sceneOutputs.velocity = velocity;
+  // oxlint-enable typescript/no-unsafe-class-instance-assignment
   if (stoneLight) sceneOutputs[STONE_MASK_OUTPUT] = float(0);
   scenePass.setMRT(mrt(sceneOutputs));
   const sceneColor = scenePass.getTextureNode("output");
@@ -131,7 +130,9 @@ export const createPostPipeline = ({
   if (isBloomed && isBloomEnabled) {
     const bloomNode = new GameBloomNode(sightedNode, bloomStructure);
     passNodes.push(bloomNode);
+    // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
     bloomedNode = sightedNode.add(bloomNode);
+    // oxlint-enable typescript/no-unsafe-class-instance-assignment
   }
 
   let resolvedNode: Node<"vec4"> = bloomedNode;
@@ -139,20 +140,30 @@ export const createPostPipeline = ({
   if (isTraa) {
     const traaNode = traa(bloomedNode, sceneDepth, scenePass.getTextureNode("velocity"), camera);
     passNodes.push(traaNode);
+    // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
     resolvedNode = traaNode;
+    // oxlint-enable typescript/no-unsafe-class-instance-assignment
   }
 
   // The white balance before the curve, as the uber pass draws _WhiteBalanceMat
   const displayNode = renderOutput(vec4(toneMapGenshinNode(whiteBalance.mul(resolvedNode.rgb)), resolvedNode.a));
+  // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
   const gradedNode = gradeLutTexture
     ? lut3D(displayNode, texture3D(gradeLutTexture), gradeLutTexture.image.width, gradeIntensity)
     : displayNode;
+  // oxlint-enable typescript/no-unsafe-class-instance-assignment
 
+  // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
   if (isTraa) renderPipeline.outputNode = gradedNode;
+  // oxlint-enable typescript/no-unsafe-class-instance-assignment
   else {
+    // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
     const smaaNode = smaa(gradedNode);
+    // oxlint-enable typescript/no-unsafe-class-instance-assignment
     passNodes.push(smaaNode);
+    // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
     renderPipeline.outputNode = smaaNode;
+    // oxlint-enable typescript/no-unsafe-class-instance-assignment
   }
 
   return postPipeline;

@@ -1,6 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's types declare each node class on a base
-   whose instance is an intersection, which the rule does not read as a subclass
-   (typescript-eslint/typescript-eslint#13214, closed as not planned) */
 import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
 import type { LightUniforms } from "#src/models/nodes/LightUniforms";
 import type { WaterFlow } from "#src/models/water/WaterFlow";
@@ -57,12 +54,16 @@ export const createWaterMaterial = (
   const flowedPosition = positionWorld.xz.sub(direction.mul(speed).mul(time));
   const normal = createWaterRippleNormal(flowedPosition);
   const refractedUV = screenUV.add(normal.xz.mul(REFRACTION_STRENGTH));
+  // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
   const floorViewZ = perspectiveDepthToViewZ(viewportDepthTexture(refractedUV), cameraNear, cameraFar);
+  // oxlint-enable typescript/no-unsafe-class-instance-assignment
   // Water behind a nearer object would pull it into the refraction, so there the unbent floor is read instead
   const isBentPastSurface = floorViewZ.greaterThan(positionView.z);
   const floorUV = isBentPastSurface.select(screenUV, refractedUV);
   const depth = positionView.z
+    // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
     .sub(perspectiveDepthToViewZ(viewportDepthTexture(floorUV), cameraNear, cameraFar))
+    // oxlint-enable typescript/no-unsafe-class-instance-assignment
     .max(0);
   const deepness = smoothstep(0, deepDepth, depth);
   const waterColor = mix(shallowColor, deepColor, deepness);

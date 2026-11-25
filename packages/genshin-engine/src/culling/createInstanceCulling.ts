@@ -1,6 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's types declare each node class on a base
-   whose instance is an intersection, which the rule does not read as a subclass
-   (typescript-eslint/typescript-eslint#13214, closed as not planned) */
 import type { InstanceCulling } from "#src/models/culling/InstanceCulling";
 import type { ComputeNode, Node, Renderer } from "three/webgpu";
 
@@ -48,9 +45,13 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
     atomicStore(counter.element(CULLING_INSTANCE_COUNT_INDEX), uint(0));
   })().compute(1);
   const cullInstances = Fn(() => {
+    // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
     If(isVisible(float(instanceIndex)).greaterThan(0), () => {
+      // oxlint-enable typescript/no-unsafe-class-instance-assignment
       const slot = atomicAdd(counter.element(CULLING_INSTANCE_COUNT_INDEX), uint(1));
+      // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
       survivors.element(slot).assign(uint(instanceIndex));
+      // oxlint-enable typescript/no-unsafe-class-instance-assignment
     });
   })().compute(count);
   return {
@@ -64,6 +65,8 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
     },
     indirect,
     // The instance a survivor's slot draws, read by the draw's own vertex stage at its instance index
+    // oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's node types, typescript-eslint#13214
     survivor: float(survivorStorage().toReadOnly().element(instanceIndex)),
+    // oxlint-enable typescript/no-unsafe-class-instance-assignment
   };
 };
