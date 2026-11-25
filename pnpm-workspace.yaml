@@ -52,7 +52,7 @@ catalog:
   "@lerna-lite/publish": ^5.9.0
   "@lezer/highlight": ^1.2.5
   "@modelcontextprotocol/sdk": ^1.32.2
-  "@nuxt/fonts": ^1.2.0
+  "@nuxt/fonts": ^1.2.1
   "@nuxt/image": ^2.2.1
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
   # Aliases, once Nuxt 5 reaches `latest`: until then it ships only as nightly packages
