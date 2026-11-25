@@ -32,7 +32,7 @@ catalog:
   "@better-auth/drizzle-adapter": ^1.7.28
   "@cloudflare/realtimekit": ^2.1.0
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
-  "@cloudflare/workers-types": ^5.20261124.2
+  "@cloudflare/workers-types": ^5.20261125.1
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -59,7 +59,7 @@ catalog:
   "@nuxt/kit": npm:@nuxt/kit-nightly@5x
   "@nuxt/nitro-server": npm:@nuxt/nitro-server-nightly@5x
   "@nuxt/schema": npm:@nuxt/schema-nightly@5x
-  "@nuxt/scripts": ^1.3.13
+  "@nuxt/scripts": ^1.3.14
   "@nuxt/test-utils": ^4.4.0
   "@nuxtjs/seo": ^6.1.0
   "@oxlint/plugins": ^1.95.0
@@ -88,7 +88,7 @@ catalog:
   "@trpc/server": ^11.31.3
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
-  "@types/node": ^26.6.7
+  "@types/node": ^26.6.10
   "@types/three": ^0.187.0
   "@types/web-push": ^3.6.4
   "@typesafe-ai/sdk": ^0.7.0
@@ -107,9 +107,9 @@ catalog:
   "@vitest/snapshot": ^5.1.1
   "@vitest/spy": ^5.1.1
   "@vitest/utils": ^5.1.1
-  "@vizejs/native": ^0.793.0
-  "@vizejs/unplugin": ^0.793.0
-  "@vizejs/vite-plugin": ^0.793.0
+  "@vizejs/native": ^0.796.0
+  "@vizejs/unplugin": ^0.796.0
+  "@vizejs/vite-plugin": ^0.796.0
   "@vue/compiler-core": ^3.5.46
   "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.4.0
@@ -187,12 +187,12 @@ catalog:
   unocss: ^66.13.0
   unplugin-auto-import: ^21.1.0
   uuid: ^14.0.3
-  vite: ^8.4.0-beta.1
+  vite: ^8.4.0-beta.2
   vite-plugin-glsl: ^1.6.4
   vite-plus: ^1.8.0
   vitest: ^5.1.1
   vitest-browser-vue: ^3.1.0
-  vize: ^0.793.0
+  vize: ^0.796.0
   vue: ^3.5.46
   vue-router: ^5.5.1
   web-push: ^4.0.0
