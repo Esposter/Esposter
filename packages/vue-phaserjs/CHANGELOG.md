@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **build:** genshin-world and vue-phaserjs list as peers only the packages one instance must be shared for ([c558cbe](https://github.com/Esposter/Esposter/commit/c558cbeea2b98f33638c72f705316b731b2cf2da))
+* **build:** type-fest and vite list in dependencies where a published declaration names them ([ce870e0](https://github.com/Esposter/Esposter/commit/ce870e0ab8e7c8cc8e3ed6f88e2184928a9f3a00))
+* **configuration:** the Vue packages' auto-import declarations carry no lint directive, since the configuration writes them through unimport ([7a269fe](https://github.com/Esposter/Esposter/commit/7a269fe339e911252651bd6d8d7d08c28cd4dd27))
+* **lint:** the vue-phaserjs tests give each vi.fn its signature, and the helpers that capture nothing sit at module scope ([c14f04a](https://github.com/Esposter/Esposter/commit/c14f04a586896d8842cb07d7854f1fbcef05955f))
+* **phaserjs:** the render nodes' three configured stores are written to the game object, not accepted and dropped ([4734690](https://github.com/Esposter/Esposter/commit/47346905bb1156d07c5f6e26e8eddd189d714008))
+* **vue-phaserjs:** a canvas's 2d context is a plain property, so vi.restoreAllMocks cannot leave Phaser's pooled canvas with no context ([c73628e](https://github.com/Esposter/Esposter/commit/c73628ec095a5eca1434be93c5a37bc470d1283e))
+* **vue-phaserjs:** a file's canvas spies outlive it, so Phaser's cross-file canvas reads still find a mock context ([70580fe](https://github.com/Esposter/Esposter/commit/70580fe3cea07dc0788d680e0e7b9f82f7c8f030))
+* **vue-phaserjs:** a slider on a zero-length segment keeps its value on a drag ([e85e274](https://github.com/Esposter/Esposter/commit/e85e27458bff1b6a69cfc10396ee382bbacad06f))
+* **vue-phaserjs:** clearing a shape's fill colour leaves its fill as it was, as the alpha setter does ([3df904c](https://github.com/Esposter/Esposter/commit/3df904cab52ed1ffc34a5d1eb9d5f11b6f5405fe))
+* **vue-phaserjs:** the zero-length segment comment is kept once, above its guard ([bdd4e05](https://github.com/Esposter/Esposter/commit/bdd4e05867a69c6980e3d373751f613e813a5b8b))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package vue-phaserjs

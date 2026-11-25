@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **apps:** a fallback that becomes nothing logs its failure, or its comment names why the failure is the expected answer ([2dd364f](https://github.com/Esposter/Esposter/commit/2dd364f3510db498fd262bae8f56d5fead9fee1d))
+* **realtime:** the rewrapped invoke comment reads once, and its directive reasons stay whole ([5f108c4](https://github.com/Esposter/Esposter/commit/5f108c4b3aba37c464acb7189133262fe951556c))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 ### Performance Improvements

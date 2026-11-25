@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **comments:** the comments name the code that now exists, or an example the scan can judge ([3a51a39](https://github.com/Esposter/Esposter/commit/3a51a3970ca57533ed3abf9f2688675413e94788))
+* **db:** the realtime and shared model comments join back into whole sentences ([22758c8](https://github.com/Esposter/Esposter/commit/22758c8d980835dc7018d9c74d06b4956d425b72))
+* **db:** the rewrapped comment on ChangedCondition reads as a whole sentence ([69a001a](https://github.com/Esposter/Esposter/commit/69a001a9d8c678b0089c1efb690626a7e3ee4698))
+* **db:** the service comments and directive reasons join back into whole sentences ([3a30de3](https://github.com/Esposter/Esposter/commit/3a30de325f03f0cb8b6f4ea0c85eb073dbbd0008))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+* **web:** favorites page like any list, each row carries its star ([ca1b24b](https://github.com/Esposter/Esposter/commit/ca1b24bef9b51cd0adc1e1015d7c8767420c83e4))
+
+### Performance Improvements
+
+* **storage:** the owner's usage is sent from the row its charge's write returned, not read back ([d46c64e](https://github.com/Esposter/Esposter/commit/d46c64e1ca09ee81e87507fec8351835051b1a98))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package @esposter/db

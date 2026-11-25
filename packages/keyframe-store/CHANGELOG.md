@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **bench:** the per-iteration event, request and store are built in beforeEach, outside the timing, as the rules bench already does ([38c0854](https://github.com/Esposter/Esposter/commit/38c0854251080055ba9f3c69d9c57f2c9d5e69d9))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package keyframe-store

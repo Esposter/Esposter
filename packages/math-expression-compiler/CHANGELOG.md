@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **math-expression-compiler:** readRadixNumber reads an empty digit run by truthiness ([7a21422](https://github.com/Esposter/Esposter/commit/7a21422001671cb78331232e307703bb012cb862))
+* **packages:** each fallback that becomes nothing names, beside it, why its failure is the expected answer ([0b2b0a2](https://github.com/Esposter/Esposter/commit/0b2b0a27a77d125cefcb25d32258be7d6c101e12))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package math-expression-compiler

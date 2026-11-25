@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **genshin-mods:** a band press settles its action, so a rejected submit or compact reaches a toast ([f171203](https://github.com/Esposter/Esposter/commit/f17120322d2ae4488c0f825118afa63a0f4e2c2a))
+* **genshin-mods:** a whitespace-only typesafe_key option is no key, so the variable answers ([a506acb](https://github.com/Esposter/Esposter/commit/a506acba3d2c38cb6b23619e0616bde698b72b7f))
+* **genshin-mods:** joinDirectory reads an empty base, next and segment by truthiness ([dd9a667](https://github.com/Esposter/Esposter/commit/dd9a66753eb2f8173f9c588594b3fae79b78ce1b))
+* **genshin-mods:** the atom copies the engine requires are wrapped as recorded duplicate-code exemptions ([ff7a50f](https://github.com/Esposter/Esposter/commit/ff7a50f5277b79a5bbfead397d73006fe62950a5))
+* **genshin-mods:** the checkout-root walk comment reads as one sentence around its oxlint directive ([25d36c9](https://github.com/Esposter/Esposter/commit/25d36c914690b8e8483b8c52d1447a2addd21e7d))
+* **genshin-mods:** the package typechecks with the engine's declarations laid ([d6f79f4](https://github.com/Esposter/Esposter/commit/d6f79f47a5a1a11100e869e2a74c03fa3fb8ba4b))
+* **genshin-mods:** the sins comments rewrapped into whole sentences, with no mid-sentence capitals ([8b83354](https://github.com/Esposter/Esposter/commit/8b83354629684178612603d2f2ca98e5a2d97b0b))
+* **genshin-mods:** the sins scorer imports its status kind from the models folder ([ad93090](https://github.com/Esposter/Esposter/commit/ad930905f41a53b8d2677f9f7158aae03c8716c2))
+* **genshin-mods:** the sins scores read the posterior from its own module ([a3436d9](https://github.com/Esposter/Esposter/commit/a3436d97eee599bf69365498273698371d119861))
+* **genshin-mods:** the veil comment's continuation lines keep the capital capitalized-comments sets ([d787c3f](https://github.com/Esposter/Esposter/commit/d787c3fa05d457f895d9538c44ca940b8770fee0))
+* **genshin-mods:** the veil's module comment reads as one sentence across its lines ([4309447](https://github.com/Esposter/Esposter/commit/43094471da37b6a59fb03b251d224c468743ea0b))
+* **genshin-mods:** the watcher's retry arms even when its spawn cannot start, and each lifecycle helper sits in its own file ([5715147](https://github.com/Esposter/Esposter/commit/5715147b884c71c81f0f671ddadaa8d2d794f45a))
+* **scripts:** an outside body is read only through a named ceiling, and fetchOk returns its bytes, never the response ([0a3d7b4](https://github.com/Esposter/Esposter/commit/0a3d7b454a502f53aad460c0535fdd1516f206ee))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package genshin-mods

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **genshin-engine:** the stone lighting checks each vec3 node's type through the builder, not a null field on the node ([6c9d17b](https://github.com/Esposter/Esposter/commit/6c9d17b94d04930ad90a0a01d2b9478c2df34827))
+* **genshin-engine:** the terrain cell map is keyed by a packed number, so a point's query builds no string, and the cell indices are benched at two sizes ([112c9fe](https://github.com/Esposter/Esposter/commit/112c9fed9b52740bd3b928bfc93702f626d2e309))
+* **genshin-engine:** the terrainWorker subpath's barrel is named a barrel by design, as the other subpath entries are ([975ec34](https://github.com/Esposter/Esposter/commit/975ec34c9539f140c656e27e2783c8d80cadde35))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package genshin-engine

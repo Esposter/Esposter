@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **genshin-interface:** the statue's threshold steps are labelled with the game's own increase and decrease words, not English ([69dbda5](https://github.com/Esposter/Esposter/commit/69dbda55fd35421665fb0e900207031cf995bb00))
+* **genshin-persona:** a refresh whose script cannot start settles it, and so does the voice answer's log write ([7284284](https://github.com/Esposter/Esposter/commit/7284284e994e1ad040aa7715fad007108bfac276))
+* **genshin-persona:** a wiki file past its ceiling is refused rather than held whole ([cfbe1e7](https://github.com/Esposter/Esposter/commit/cfbe1e72baea7001569cf4a1e66a9c80fe053a09))
+* **genshin-persona:** the persona's game-text loader is its writer's copy again, and the hosted task names the retired bucket resources without their deleted paths ([818a59d](https://github.com/Esposter/Esposter/commit/818a59d66d4519338dceabb70a35a860de32e53f))
+* **genshin-persona:** the persona's GameTextKey copy follows its source's comments again ([d6af628](https://github.com/Esposter/Esposter/commit/d6af628ab41c79dc06219c3c363e5d7ff8c010fc))
+* **genshin-persona:** the Vietnamese forging and the Thai playing verbs are read from the game's own text, not typed beside it ([740bfe0](https://github.com/Esposter/Esposter/commit/740bfe060728953770fb11a1fee69c0babb63b1e))
+* **genshin-text:** Decrease sits in its sorted place in GameTextKey, and the persona's generated copy follows it ([9df8a26](https://github.com/Esposter/Esposter/commit/9df8a264d742c46128023ca6b82873890e7b69a6))
+* **genshin-text:** four Mondstadt expedition places' names and descriptions are game text keys ([8739663](https://github.com/Esposter/Esposter/commit/87396634a06f1aafb7b0606dd032da2de15ff193))
+* **genshin-text:** the 38 domain entrance titles the region data names are back in GameTextKey, and every generated copy carries them ([5f9bc2b](https://github.com/Esposter/Esposter/commit/5f9bc2b0459270d7c89a43e2a7f218720eb6dc1c))
+* **genshin:** an added Party Setup team holds no name and shows the game's own standing-by name, not an English literal ([3eba273](https://github.com/Esposter/Esposter/commit/3eba273c0718d3cc1ea9920d19394eda3355bfbb))
+* **scripts:** every JSON read of an outside body takes a byte ceiling, through one bounded reader ([edd77b3](https://github.com/Esposter/Esposter/commit/edd77b3c0c5309c047ceb5320c0b153eb0b7a86e))
+
+### Features
+
+* **genshin-world:** the download starts on the title's click, and the launch bar shows its line while bytes arrive ([e3dadb7](https://github.com/Esposter/Esposter/commit/e3dadb7f9fc5bc8cadcd48c48f83520a86fabcf6))
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+* the isolated architecture roadmap items are closed ([281d131](https://github.com/Esposter/Esposter/commit/281d13118146553f66edf9da0b42bcd214989f25))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package genshin-persona

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **build:** type-fest and vite list in dependencies where a published declaration names them ([ce870e0](https://github.com/Esposter/Esposter/commit/ce870e0ab8e7c8cc8e3ed6f88e2184928a9f3a00))
+* **trpc-msw:** the WebSocket adapters come from @esposter/shared-node/websocket, so trpc-msw installs no Nuxt ([dcfc832](https://github.com/Esposter/Esposter/commit/dcfc83237f29fdb9749e0a7bba44bb239c398458))
+* **trpc-msw:** trpc-nuxt-module is a runtime dependency, so its WebSocket adapters stay external instead of being copied into the dist ([a958573](https://github.com/Esposter/Esposter/commit/a958573d7d6ebc3cdc17cac1f5b7a619c583353f))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package trpc-msw

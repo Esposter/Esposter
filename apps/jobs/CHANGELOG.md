@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **ci:** the precache extensions carry their type, the jobs Worker binds the hosted bucket, and the node floors test holds no module constant ([49c0164](https://github.com/Esposter/Esposter/commit/49c01644647f59d43c7f4e3371512c4a5253b1d4))
+* **jobs:** the rewrapped comments and their directives read as whole sentences ([4ed85fd](https://github.com/Esposter/Esposter/commit/4ed85fdad0b09c933a8751243bb14adbd19e5ba8))
+* **jobs:** the save loop drops its @TODO, which marked no workaround ([0b4ba9c](https://github.com/Esposter/Esposter/commit/0b4ba9c2064b1e211d2106bba0f67b4c4cfb735f))
+* **lint:** the oxlint gaps link their filed issues, and the new comments fit the print width ([063853e](https://github.com/Esposter/Esposter/commit/063853e284bc66dfb67536118cff5ea6d2cef75b)), closes [oxc-project/oxc#30134](https://github.com/oxc-project/oxc/issues/30134) [oxc-project/oxc#30135](https://github.com/oxc-project/oxc/issues/30135)
+* **lint:** the tombstone test reads its argument at the pinned epoch, the Temporal error is snapshotted, and the webpage comment opens each line on prose ([b667335](https://github.com/Esposter/Esposter/commit/b667335b7f8ef0ed8267c88157648b87df4f218b))
+
+### Features
+
+* the isolated architecture roadmap items are closed ([281d131](https://github.com/Esposter/Esposter/commit/281d13118146553f66edf9da0b42bcd214989f25))
+
+### Performance Improvements
+
+* **lint:** drop the enum rule no code can trip, and fail the lint on a stale disable directive ([17d2f3e](https://github.com/Esposter/Esposter/commit/17d2f3e978caefe453d14a50073ad238bf39fe73))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package @esposter/jobs

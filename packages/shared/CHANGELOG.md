@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **build:** type-fest and vite list in dependencies where a published declaration names them ([ce870e0](https://github.com/Esposter/Esposter/commit/ce870e0ab8e7c8cc8e3ed6f88e2184928a9f3a00))
+* **packages:** each fallback that becomes nothing names, beside it, why its failure is the expected answer ([0b2b0a2](https://github.com/Esposter/Esposter/commit/0b2b0a27a77d125cefcb25d32258be7d6c101e12))
+* **shared:** checkIsLocalUrl and parseJsonPointer read an empty hash and root pointer by truthiness ([e1fe823](https://github.com/Esposter/Esposter/commit/e1fe82388b713f00fece343b3a2ddbf2e32c46b6))
+* **shared:** the rewrapped panzoom, asset and advisory-watch comments read as their sentences, with no duplicated word and no mid-clause capital ([8456818](https://github.com/Esposter/Esposter/commit/8456818d4e9edadb262dd45b7440b2ef9f5c6bd3))
+
+### Features
+
+* **configuration:** a blank test on raw text is a lint error, and checkIsBlankText is its trimmed form ([40a5919](https://github.com/Esposter/Esposter/commit/40a59198f2f8e2f7044d4db3186c321a4e57718b))
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 ### Performance Improvements

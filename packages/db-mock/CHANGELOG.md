@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **db-mock:** the reaper also removes the builds of exited processes and any template no run has read for thirty days ([67cbefd](https://github.com/Esposter/Esposter/commit/67cbefd3d4fe31fa07709cb091bfa4d376ab6cb0))
+* **db-mock:** the rewrapped comments state each sentence whole, and the duplicated copy is dropped ([9e22951](https://github.com/Esposter/Esposter/commit/9e22951dcc0512976f4085c301001e147c7dd2b9))
+* **db-mock:** the template regex constants keep the annotations isolated declarations demand, with the inferrable-types directive naming why ([9f5c60c](https://github.com/Esposter/Esposter/commit/9f5c60cab6b0ec4000df59e772b1917f28f9eb78))
+* **db-mock:** the template services' exports state their types, as isolated declarations require ([c6ce67b](https://github.com/Esposter/Esposter/commit/c6ce67b6f89b5b5c32e1d71276ba502d26944a00))
+* **db-mock:** the workspace siblings it loads are runtime dependencies, so none is copied into the dist ([2b4efb2](https://github.com/Esposter/Esposter/commit/2b4efb2597b52cf590892777a1dbc176774d4fa4))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package @esposter/db-mock

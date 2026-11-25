@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **configuration:** the Vue packages' auto-import declarations carry no lint directive, since the configuration writes them through unimport ([7a269fe](https://github.com/Esposter/Esposter/commit/7a269fe339e911252651bd6d8d7d08c28cd4dd27))
+* **genshin-interface:** the fixture and action comments read as whole sentences ([9bd73f3](https://github.com/Esposter/Esposter/commit/9bd73f328838c14b0cd5ed9a13eeff0737556f0b))
+* **genshin-interface:** the statue's threshold steps are labelled with the game's own increase and decrease words, not English ([69dbda5](https://github.com/Esposter/Esposter/commit/69dbda55fd35421665fb0e900207031cf995bb00))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package genshin-interface

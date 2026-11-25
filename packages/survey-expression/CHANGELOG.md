@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **survey-expression:** isJoin reads an empty operand by truthiness, with the file-level directive removed ([d3e27b5](https://github.com/Esposter/Esposter/commit/d3e27b522520130f75001566892ec53b3ef2b334))
+* **survey-expression:** the rewrapped comments read as whole sentences, each continuation line opening a sentence ([ddad9f9](https://github.com/Esposter/Esposter/commit/ddad9f9f74307b9d5e859f6f66e0ec5eb35272d3))
+* **survey-expression:** the rewrapped comments state each sentence whole ([f44641e](https://github.com/Esposter/Esposter/commit/f44641e16cc4d9de3a018588e8e985f8156eb41c))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package survey-expression

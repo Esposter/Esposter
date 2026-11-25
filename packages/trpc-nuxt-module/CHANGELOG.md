@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **bench:** the per-iteration event, request and store are built in beforeEach, outside the timing, as the rules bench already does ([38c0854](https://github.com/Esposter/Esposter/commit/38c0854251080055ba9f3c69d9c57f2c9d5e69d9))
+* **trpc-msw:** the WebSocket adapters come from @esposter/shared-node/websocket, so trpc-msw installs no Nuxt ([dcfc832](https://github.com/Esposter/Esposter/commit/dcfc83237f29fdb9749e0a7bba44bb239c398458))
+* **trpc-nuxt-module:** the WebSocket adapter's comment names trpc-msw's real import, the null-body statuses are one runtime constant the test iterates, and the bare type aliases are gone ([40989a6](https://github.com/Esposter/Esposter/commit/40989a6e971a7a9cb9a1902700f434ba738c9be7))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package trpc-nuxt-module

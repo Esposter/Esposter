@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **build:** a workspace sibling a devDependency inlines is written under vendor, so no dist carries the checkout's path ([e13c6dd](https://github.com/Esposter/Esposter/commit/e13c6dd595d423e5932c57be7c46258e468d913f))
+* **build:** no built package inlines a workspace sibling, so the factory writes no sibling's output under vendor ([dce4ea3](https://github.com/Esposter/Esposter/commit/dce4ea33906f52d00e7494a5e86aa58dcc8209f2))
+* **ci:** a shard records each file's whole time, imports included, so the split stops piling import-only files onto one shard ([eee11f2](https://github.com/Esposter/Esposter/commit/eee11f268b712327e65db136c67aba809ea479e1))
+* **comments:** the comments name the code that now exists, or an example the scan can judge ([3a51a39](https://github.com/Esposter/Esposter/commit/3a51a3970ca57533ed3abf9f2688675413e94788))
+* **configuration:** the rewrapped comments state each sentence whole ([488a02b](https://github.com/Esposter/Esposter/commit/488a02b5ca5b60f8c002402ec73a23a0c6b53c80))
+* **configuration:** the shard split orders files by path and then project, so it is one split whatever order they arrive in ([79e09e1](https://github.com/Esposter/Esposter/commit/79e09e16c92925122007937e9d8606490cd7efb2))
+* **configuration:** the test timings schema carries its type annotation, as isolatedDeclarations requires of an export ([ba2b3bd](https://github.com/Esposter/Esposter/commit/ba2b3bda4e409b7cb83ce105d22c8d629be74225))
+* **configuration:** the test timings type reads an absent files record as the schema does ([1c15468](https://github.com/Esposter/Esposter/commit/1c1546834269ed1e5caf4a11f6df72601086656c))
+* **configuration:** the Vue packages' auto-import declarations carry no lint directive, since the configuration writes them through unimport ([7a269fe](https://github.com/Esposter/Esposter/commit/7a269fe339e911252651bd6d8d7d08c28cd4dd27))
+* **lint:** clear the oxlint and ESLint findings in the vize suites and the click-outside test ([cdf44d9](https://github.com/Esposter/Esposter/commit/cdf44d93a084d42bd047b115f3ae010f1e1ad8b6))
+* **lint:** the autofixable findings of the first ESLint-free lint run, and the app scripts page loses its ESLint rows ([d9f469a](https://github.com/Esposter/Esposter/commit/d9f469acd304c7383613dbb5bf225d327173ace4))
+* **lint:** the files the queue changed since the re-sort follow the collation, and the last ESLint list goes ([c39441c](https://github.com/Esposter/Esposter/commit/c39441cc61778a999681f32282f1fb3fd22f66ac))
+* **lint:** the flagged keys, switch cases and comment openers are in the order and case the rules read ([3b4e1bd](https://github.com/Esposter/Esposter/commit/3b4e1bd38430ba1f2575414996e940fed933edb5))
+* **scripts:** a fresh worktree carries every package's barrels, written before its install ([edc6d20](https://github.com/Esposter/Esposter/commit/edc6d2084b80c3ca1c2e4ebbf21ba89107be6e33))
+* **testing:** a test's timeout is a named constant, since a literal in the timeout slot is now refused by the lint ([a055b44](https://github.com/Esposter/Esposter/commit/a055b449abada5f8cf5f3a721e2923900fbff6d8))
+
+### Features
+
+* **ci:** the coverage shards split their files by the durations the last run recorded ([207e42e](https://github.com/Esposter/Esposter/commit/207e42ed1e6608cf1004fbcd38316b4070cdf505))
+* **configuration:** a blank test on raw text is a lint error, and checkIsBlankText is its trimmed form ([40a5919](https://github.com/Esposter/Esposter/commit/40a59198f2f8e2f7044d4db3186c321a4e57718b))
+* **format:** oxfmt sorts the imports in place of perfectionist/sort-imports ([930432e](https://github.com/Esposter/Esposter/commit/930432e2f1890f107407c3e0327d05d6a0ff6f3d))
+* **lint:** the UnoCSS blocklist is a vize ban, the Nuxt and link-checker rules go, and the JSON checks are workspace tests ([ea0443c](https://github.com/Esposter/Esposter/commit/ea0443cf39fd1c7fd436c817d9f01a4b785109e3))
+* **lint:** the util package ban is a selector-ban list, no-useless-assignment runs in oxlint, and vize lint takes its default ([93b5f25](https://github.com/Esposter/Esposter/commit/93b5f251e053ae8f9849fbafa4da4b5e9fc5b888))
+* **lint:** the vize-blocked template rules and the .vue type-import check leave ESLint ([c1a1976](https://github.com/Esposter/Esposter/commit/c1a1976dc500d687cdd93f9950e936fc278815f2))
+* **lint:** vize bans undefined attributes in the scoped-style packages, and a workspace test holds template directive reasons ([f074f4c](https://github.com/Esposter/Esposter/commit/f074f4c8d6ce273454eb7519a3dc98c9097e6329))
+* **lint:** vize lints every component's template as a leaf of the root lint, starting with vue/require-v-for-key ([5faaaa4](https://github.com/Esposter/Esposter/commit/5faaaa42428ecf734474e06b8c169818b1b036b1))
+* **lint:** vize runs every Vue template and accessibility rule, and ESLint keeps only the ones vize cannot yet ([a9c29e7](https://github.com/Esposter/Esposter/commit/a9c29e76679c5575eddd7e8aaad57e91f763b26b))
+* **oxlint:** comments/no-over-width-comment reports a comment line past the print width ([a07b61f](https://github.com/Esposter/Esposter/commit/a07b61f37ec1479e75990ac64fd451f0dc95b87d))
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 ### Features

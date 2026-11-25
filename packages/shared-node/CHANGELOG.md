@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **scripts:** a fresh worktree carries every package's barrels, written before its install ([edc6d20](https://github.com/Esposter/Esposter/commit/edc6d2084b80c3ca1c2e4ebbf21ba89107be6e33))
+* **shared-node:** getContentAddress takes a string, so a save hashes its serialized content without copying it into a Buffer ([2126ef1](https://github.com/Esposter/Esposter/commit/2126ef1d97dd5c5fabfa3a167c6f0c8f591c688e))
+* **trpc-msw:** the WebSocket adapters come from @esposter/shared-node/websocket, so trpc-msw installs no Nuxt ([dcfc832](https://github.com/Esposter/Esposter/commit/dcfc83237f29fdb9749e0a7bba44bb239c398458))
+
+### Performance Improvements
+
+* **lint:** drop the enum rule no code can trip, and fail the lint on a stale disable directive ([17d2f3e](https://github.com/Esposter/Esposter/commit/17d2f3e978caefe453d14a50073ad238bf39fe73))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 ### Bug Fixes

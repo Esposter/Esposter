@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **build:** type-fest and vite list in dependencies where a published declaration names them ([ce870e0](https://github.com/Esposter/Esposter/commit/ce870e0ab8e7c8cc8e3ed6f88e2184928a9f3a00))
+* **ci:** the precache extensions carry their type, the jobs Worker binds the hosted bucket, and the node floors test holds no module constant ([49c0164](https://github.com/Esposter/Esposter/commit/49c01644647f59d43c7f4e3371512c4a5253b1d4))
+* **pwa:** the precache holds the app's images and fonts, and leaves the game engines' files out ([7461fca](https://github.com/Esposter/Esposter/commit/7461fca5031d798c46e18afd691ac58290b752ae))
+* **pwa:** the precache leaves out the build's app manifest, which a superseded build's worker cannot fetch ([b0cd436](https://github.com/Esposter/Esposter/commit/b0cd43689196d524096d214b84d12c8bf922759d))
+* **unplugin-pwa-nuxt:** the manifest transform and navigation routes read an empty route and method by truthiness ([be013bc](https://github.com/Esposter/Esposter/commit/be013bc7e58fc4b39454dfbc46c61df301d78229))
+* **unplugin-pwa:** the build-meta prefix is joined inside the manifest transform, and the pwa tests restore what they spy ([f7638be](https://github.com/Esposter/Esposter/commit/f7638bef9432a43ffc262786435671c8d49ac44d))
+
+### Features
+
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package unplugin-pwa-nuxt

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **packages:** each fallback that becomes nothing names, beside it, why its failure is the expected answer ([0b2b0a2](https://github.com/Esposter/Esposter/commit/0b2b0a27a77d125cefcb25d32258be7d6c101e12))
+* **whiteboard:** a bound arrow end whose point is off the connection point it names fails the parse ([ddba5ac](https://github.com/Esposter/Esposter/commit/ddba5ace116db6242ffa9f34ca72a0fd8febb50a))
+
+### Performance Improvements
+
+* **lint:** drop the enum rule no code can trip, and fail the lint on a stale disable directive ([17d2f3e](https://github.com/Esposter/Esposter/commit/17d2f3e978caefe453d14a50073ad238bf39fe73))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package vue-block-editor-headless

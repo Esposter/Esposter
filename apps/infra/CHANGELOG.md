@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **ci:** the land test's spawn fake is a whole spawn result, and the backfill output's comment names no key the code does not hold ([4e77563](https://github.com/Esposter/Esposter/commit/4e77563eddd19fc8316362f8cce07503de6d2649))
+* **infra:** the edge text set and the Brotli set share one db-schema export, which drops .xml ([349c2db](https://github.com/Esposter/Esposter/commit/349c2dbbfda78d0297b63d5c0f282eb9904e3846))
+* **infra:** the R2 bucket factory names its return type, as isolated declarations require ([cbc98b1](https://github.com/Esposter/Esposter/commit/cbc98b183ee11305123065f1e57ed16d47d1eb9d))
+* **infra:** the www record is named for its hostname, and the Cloudflare configuration has a file of its own ([3463c8c](https://github.com/Esposter/Esposter/commit/3463c8cb7da43b91ec0d6123f4983ab71579c5bf))
+* **infra:** the zone's bypass rule for /sw.js and the build list is removed, since the zone never caches either ([9e35d46](https://github.com/Esposter/Esposter/commit/9e35d46dda1fe63d2a836c06488496f9da353707))
+* **infra:** the zone's cache rules bypass the edge cache for /sw.js ([f45f8c0](https://github.com/Esposter/Esposter/commit/f45f8c0b2327bb05d686625d16c983ea09c32329))
+* **lint:** the queue job map imports the cloudflare namespace as a type ([cd31b11](https://github.com/Esposter/Esposter/commit/cd31b11574b9e94d8abc2ba7bd978e2d2fecb378))
+* **pwa:** the worker keeps the app manifest for offline, and the edge bypasses the build list and the worker script ([2dd4a75](https://github.com/Esposter/Esposter/commit/2dd4a753dd79ef9980aef0110c4840f17bd99e1b))
+
+### Features
+
+* **hosted-assets:** the hosted hostnames' JSON, XML, TSX and TMX are eligible for the edge cache, and the origin's Cache-Control sets their lifetime ([17cda47](https://github.com/Esposter/Esposter/commit/17cda475e7c4bc57adc3579519cfbcf8b7513887))
+* **infra:** a backfill's D1 access is an account token with the D1 group alone, its value a stack output for ESC ([b77309d](https://github.com/Esposter/Esposter/commit/b77309dd452e5282073a3d267491dbe84bc65cd1))
+* **infra:** every Cloudflare token is an account token resource with one consumer, made under the bootstrap token ([7cc5513](https://github.com/Esposter/Esposter/commit/7cc5513330f4730d00987d708c4bd3f37705d1e9))
+* **infra:** hosted objects share one public bucket and one custom domain per environment ([36c819d](https://github.com/Esposter/Esposter/commit/36c819d00e6fd970b9d7871f8c0309dbe549df23))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 ### Features

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **packages:** each fallback that becomes nothing names, beside it, why its failure is the expected answer ([0b2b0a2](https://github.com/Esposter/Esposter/commit/0b2b0a27a77d125cefcb25d32258be7d6c101e12))
+* **vue-survey-engine-headless:** a survey's text props read blank when they hold only spaces ([3c4e907](https://github.com/Esposter/Esposter/commit/3c4e907eb096612770609056aa1f7adfa3a1f0f0))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package vue-survey-engine-headless

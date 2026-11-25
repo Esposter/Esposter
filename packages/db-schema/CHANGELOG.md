@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
+
+### Bug Fixes
+
+* **db-schema:** the relation directives keep their reason on the directive line ([a41fa4b](https://github.com/Esposter/Esposter/commit/a41fa4bb87a84a8386e48120d456198cf68fc5a2))
+* **db-schema:** the reminder content comment drops the backticks on a plain word ([d25077a](https://github.com/Esposter/Esposter/commit/d25077abd527ae6e0c3e04d2b36c20fccf831b9b))
+* **esbabbler:** the sidebar names drafts and sent once, and a stored status message is normalised on read ([a44e251](https://github.com/Esposter/Esposter/commit/a44e251df2b7118e8ed7368214e31dd38e13ff93))
+* **infra:** the edge text set and the Brotli set share one db-schema export, which drops .xml ([349c2db](https://github.com/Esposter/Esposter/commit/349c2dbbfda78d0297b63d5c0f282eb9904e3846))
+* **messaging:** a padded search is recorded trimmed, so it and its unpadded twin are one history row ([97d9a75](https://github.com/Esposter/Esposter/commit/97d9a752b393091d569289785c66b353ca813844))
+* **queue:** a blob deletion names no empty blob name, as its prefix already requires a non-empty one ([8e9a538](https://github.com/Esposter/Esposter/commit/8e9a53887c90f3e9cc6d3d0b2fbc3da65c385c64))
+
+### Features
+
+* **infra:** hosted objects share one public bucket and one custom domain per environment ([36c819d](https://github.com/Esposter/Esposter/commit/36c819d00e6fd970b9d7871f8c0309dbe549df23))
+* **oxlint:** the selector-ban lists move to TypeScript, each scoped to its own paths and discovered by the plugin ([d5054e3](https://github.com/Esposter/Esposter/commit/d5054e30e21912f7341c1ce25b50578c51d372e8))
+
+### Performance Improvements
+
+* **lint:** drop the enum rule no code can trip, and fail the lint on a stale disable directive ([17d2f3e](https://github.com/Esposter/Esposter/commit/17d2f3e978caefe453d14a50073ad238bf39fe73))
+
 # [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
 
 **Note:** Version bump only for package @esposter/db-schema
