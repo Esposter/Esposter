@@ -14,7 +14,7 @@ An icon set such as Streamline, a traced or redrawn copy, and any file found und
 
 ## Form
 
-- One file per project at `.github/assets/<name>/logo.svg`, copied byte for byte: nothing recoloured, resized or re-exported. The one exception is the simple-icons fill in Order step 3.
+- One file per project at `.github/assets/<name>/logo.svg`, copied byte for byte: nothing recoloured, resized or re-exported. Two exceptions: the simple-icons fill in Order step 3, and a square crop. A logo renders at its cell's width and keeps its aspect ratio, so a file whose drawing sits in a wider canvas draws small; its `<svg>` element's `viewBox`, `width` and `height` are set to a square around the drawing, and nothing inside the element changes.
 - A logo column takes the mark. A wordmark is used only when the project has no mark. The README gives no logo a size attribute, so each file's own size stands, and every cell in a README table is top-aligned (`valign="top"`), so the rows line up whatever the mark's shape.
 - Fetch from `raw.githubusercontent.com/<owner>/<repo>/HEAD/<path>`. A refresh fetches the same path.
 
@@ -30,8 +30,8 @@ An icon set such as Streamline, a traced or redrawn copy, and any file found und
 | Drizzle    | `drizzle-team/drizzle-orm-docs`     | public/svg/drizzle-dark.svg (black mark)                                             |
 | Pulumi     | `pulumi/docs`                       | assets/fingerprinted/logos/brand/pulumi-mark.svg                                     |
 | Cloudflare | `cloudflare/cloudflare-docs`        | public/logo.svg                                                                      |
-| Vite+      | `voidzero-dev/vite-plus`            | docs/public/favicon.svg                                                              |
-| Vize       | `ubugeeei-prod/vize`                | docs/public/logo-mark.svg                                                            |
+| Vite+      | `voidzero-dev/vite-plus`            | docs/public/favicon.svg (the logo's own bolt without its letters)                    |
+| Vize       | `ubugeeei-prod/vize`                | assets/logo.svg (square crop)                                                        |
 | tsrs       | `oxc-project/oxc-project.github.io` | public/logo-without-border.svg (Oxc's site, tsrs's home; the repository has no mark) |
 | tsdown     | `rolldown/tsdown`                   | docs/public/tsdown.svg                                                               |
 
