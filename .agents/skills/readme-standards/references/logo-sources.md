@@ -30,8 +30,8 @@ An icon set such as Streamline, a traced or redrawn copy, and any file found und
 | Drizzle    | `drizzle-team/drizzle-orm-docs`     | public/svg/drizzle-dark.svg (black mark)                                             |
 | Pulumi     | `pulumi/docs`                       | assets/fingerprinted/logos/brand/pulumi-mark.svg                                     |
 | Cloudflare | `cloudflare/cloudflare-docs`        | public/logo.svg                                                                      |
-| Vite+      | `voidzero-dev/vite-plus`            | docs/public/logo.svg (wordmark; the repository has no mark)                          |
-| Vize       | `ubugeeei-prod/vize`                | assets/logo.svg                                                                      |
+| Vite+      | `voidzero-dev/vite-plus`            | docs/public/favicon.svg                                                              |
+| Vize       | `ubugeeei-prod/vize`                | docs/public/logo-mark.svg                                                            |
 | tsrs       | `oxc-project/oxc-project.github.io` | public/logo-without-border.svg (Oxc's site, tsrs's home; the repository has no mark) |
 | tsdown     | `rolldown/tsdown`                   | docs/public/tsdown.svg                                                               |
 
