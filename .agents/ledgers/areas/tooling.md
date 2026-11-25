@@ -180,7 +180,8 @@
 - `.agents/skills` — `vue-page-composition`, `vue-phaserjs`, `zod`
 - `.claude-plugin` — `marketplace.json`
 - `.githooks` — `post-commit`, `pre-commit`
-- `.github` — `ISSUE_TEMPLATE`, `PULL_REQUEST_TEMPLATE.md`, `actions`, `assets`, `worker-secrets.json`, `workflows`
+- `.github` — `ISSUE_TEMPLATE`, `PULL_REQUEST_TEMPLATE.md`, `actions`, `worker-secrets.json`, `workflows`
+- `.github/assets`
 - `.vscode` — `extensions.json`, `settings.json`
 - `openspec` — `config.yaml`
 - `openspec/changes/architecture-ledger-refresh/.openspec.yaml`, `openspec/changes/architecture-roadmap/.openspec.yaml`
