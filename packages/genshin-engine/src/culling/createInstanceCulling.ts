@@ -1,3 +1,6 @@
+/* oxlint-disable typescript/no-unsafe-class-instance-assignment -- three's types declare each node class on a base
+   whose instance is an intersection, which the rule does not read as a subclass
+   (typescript-eslint/typescript-eslint#13214, closed as not planned) */
 import type { InstanceCulling } from "#src/models/culling/InstanceCulling";
 import type { ComputeNode, Node, Renderer } from "three/webgpu";
 

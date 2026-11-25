@@ -95,6 +95,9 @@ export const createCloudBandSprite = (
     .mul(smoothstep(0, 1, saturate(elevation.add(BELOW_FADE_START).mul(BELOW_FADE_SCALE))))
     .mul(step(instancedBufferAttribute<"float">(ranks), cover));
   material.alphaTest = DROPPED_COVERAGE;
+  /* oxlint-disable-next-line typescript/no-unsafe-class-instance-assignment -- three's types declare each node class
+     on a base whose instance is an intersection, which the rule does not read as a subclass
+     (typescript-eslint/typescript-eslint#13214, closed as not planned) */
   const sprite = new Sprite(material);
   sprite.center.set(0.5, 0);
   sprite.count = clouds.length;

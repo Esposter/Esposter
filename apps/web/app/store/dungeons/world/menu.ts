@@ -4,6 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Grid } from "#src/models/dungeons/Grid";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { MenuOption } from "#src/models/dungeons/scene/world/MenuOption";
+import { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
@@ -48,7 +49,7 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
           break;
         case MenuOption.Save:
           saveData();
-          await showMessages(scene, [{ text: "Game has been saved." }]);
+          await showMessages(scene, [new DialogMessage({ text: "Game has been saved." })]);
           break;
         default:
           exhaustiveGuard(worldMenuOptionGrid.value);

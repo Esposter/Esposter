@@ -4,6 +4,7 @@ import type { Effect } from "#src/models/dungeons/scene/world/interaction/Effect
 import { DungeonsKeys } from "#shared/generated/hostedAssetKeys/dungeonsKeys";
 import { ChestObjectProperty } from "#shared/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import { getItem } from "#shared/services/dungeons/item/getItem";
+import { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { getInteractiveObject } from "#src/services/dungeons/scene/world/interaction/getInteractiveObject";
 import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
@@ -26,7 +27,7 @@ export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
   const positionId = getPositionId(chestObject);
   const chest = worldData.value.chestMap[positionId];
   if (!chest || chest.isOpened) {
-    await showMessages(scene, [{ text: "There is nothing left in the chest." }]);
+    await showMessages(scene, [new DialogMessage({ text: "There is nothing left in the chest." })]);
     return true;
   }
 
@@ -36,6 +37,6 @@ export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
   chest.isOpened = true;
 
   getDungeonsSoundEffect(scene, DungeonsKeys.SoundOpenChest).play();
-  await showMessages(scene, [{ text: `You've obtained ${itemIdTiledObjectProperty.value}.` }]);
+  await showMessages(scene, [new DialogMessage({ text: `You've obtained ${itemIdTiledObjectProperty.value}.` })]);
   return true;
 };

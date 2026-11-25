@@ -35,6 +35,9 @@ export const createPrecipitationMaterial = ({
   windUniforms,
 }: PrecipitationMaterialOptions): MeshBasicNodeMaterial => {
   const { density, eye, fallSpeed, length, opacity, sway, width, windDrift } = precipitationUniforms;
+  /* oxlint-disable-next-line typescript/no-unsafe-class-instance-assignment -- three's types declare each node class
+     on a base whose instance is an intersection, which the rule does not read as a subclass
+     (typescript-eslint/typescript-eslint#13214, closed as not planned) */
   const index = float(instanceIndex);
   const base = vec3(hash(index), hash(index.add(1)), hash(index.add(2))).mul(VOLUME_SPAN);
   const isDrawn = step(hash(index.add(3)), density);

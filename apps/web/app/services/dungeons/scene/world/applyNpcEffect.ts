@@ -3,6 +3,7 @@ import type { Npc } from "#src/models/dungeons/scene/world/Npc";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { EffectType } from "#src/models/dungeons/npc/effect/EffectType";
+import { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 import { getEffectCompleteEventKey } from "#src/services/dungeons/scene/world/getEffectCompleteEventKey";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
@@ -30,7 +31,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       const { showMessages } = worldDialogStore;
       await showMessages(
         scene,
-        effect.messages.map((text) => ({ text, title: npc.name })),
+        effect.messages.map((text) => new DialogMessage({ text, title: npc.name })),
       );
       onComplete();
       return;

@@ -109,6 +109,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"],
       rules: { "typescript/no-unsafe-type-assertion": "off" },
     },
+    // A test's double stands in for a class instance without its constructor, which is what the rule reports
+    { files: ["**/*.test.ts", "**/*.fixture.ts"], rules: { "typescript/no-unsafe-class-instance-assignment": "off" } },
     {
       files: ["**/*.test.ts"],
       rules: {
@@ -483,10 +485,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/no-unsafe-argument": "off",
     "typescript/no-unsafe-assignment": "off",
     "typescript/no-unsafe-call": "off",
-    // The type-aware backend implements this rule, and on it reports many sites that each want a judgement: test
-    // Doubles passed where a class instance is typed, and the three.js nodes the engine builds. It stays off until they
-    // Are read
-    "typescript/no-unsafe-class-instance-assignment": "off",
+    // A class of our own is built by its constructor, never an object literal of its shape, so its defaults are set
+    "typescript/no-unsafe-class-instance-assignment": "error",
     // The repository declares no `enum` (`erasableSyntaxOnly` refuses one), so this rule only asks the checker for
     // Types it can never report on, and it is the costliest rule of the type-aware pass
     "typescript/no-unsafe-enum-assignment": "off",

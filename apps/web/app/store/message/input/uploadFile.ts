@@ -1,11 +1,11 @@
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { UploadFileUrl } from "#src/models/message/file/UploadFileUrl";
-import type { FileEntity } from "@esposter/db-schema";
 
 import { MessageHook } from "#src/models/message/MessageHook";
 import { getComposerKey } from "#src/services/message/composer/getComposerKey";
 import { SPOILER_FILENAME_PREFIX } from "#src/services/message/file/constants";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { FileEntity } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const useUploadFileStore = defineStore("message/input/uploadFile", () => {
@@ -72,14 +72,16 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     const composerFileUrlMap = getFileUrlMap(key) ?? new Map<string, UploadFileUrl>();
     const composerUploadTokenMap = getUploadTokenMap(key) ?? new Map<string, string>();
     for (const { file, id, token } of uploadFiles) {
-      composerFiles.push({
-        filename: file.name,
-        hasThumbnail: false,
-        id,
-        isSpoiler: file.name.startsWith(SPOILER_FILENAME_PREFIX),
-        mimetype: file.type,
-        size: file.size,
-      });
+      composerFiles.push(
+        new FileEntity({
+          filename: file.name,
+          hasThumbnail: false,
+          id,
+          isSpoiler: file.name.startsWith(SPOILER_FILENAME_PREFIX),
+          mimetype: file.type,
+          size: file.size,
+        }),
+      );
       composerFileUrlMap.set(id, reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) }));
       composerUploadTokenMap.set(id, token);
     }

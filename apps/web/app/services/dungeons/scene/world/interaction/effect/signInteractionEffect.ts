@@ -1,6 +1,7 @@
 import type { Effect } from "#src/models/dungeons/scene/world/interaction/Effect";
 
 import { SignObjectProperty } from "#shared/generated/tiled/propertyTypes/class/SignObjectProperty";
+import { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 import { getInteractiveObject } from "#src/services/dungeons/scene/world/interaction/getInteractiveObject";
 import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
 import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
@@ -18,6 +19,6 @@ export const signInteractionEffect: Effect = async (scene, signObjects) => {
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const messageTiledObjectProperty = getTiledObjectProperty<string>(signObject.properties, SignObjectProperty.Message);
-  await showMessages(scene, [{ text: messageTiledObjectProperty.value }]);
+  await showMessages(scene, [new DialogMessage({ text: messageTiledObjectProperty.value })]);
   return true;
 };

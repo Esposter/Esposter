@@ -1,5 +1,6 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 import { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
 import { useDialogStore } from "#src/store/dungeons/dialog";
 
@@ -14,7 +15,7 @@ export const useMonsterPartyInfoPanelStore = defineStore("dungeons/monsterParty/
     updateQueuedMessagesAndShowMessage(
       scene,
       new DialogTarget({ inputPromptCursorX, message: infoDialogMessage }),
-      messages.map((text) => ({ text })),
+      messages.map((text) => new DialogMessage({ text })),
     );
   return { infoDialogMessage, infoTextDisplayWidth, showMessages };
 });

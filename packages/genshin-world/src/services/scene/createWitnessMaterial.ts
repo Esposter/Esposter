@@ -52,6 +52,9 @@ export const createWitnessMaterial = (
   if (normal) {
     // Three's typings leave a normal map's output untyped, though it is a vec3, so the annotation is what the compiler
     // Cannot see
+    /* oxlint-disable-next-line typescript/no-unsafe-class-instance-assignment -- three's types declare each node
+       class on a base whose instance is an intersection, which the rule does not read as a subclass
+       (typescript-eslint/typescript-eslint#13214, closed as not planned) */
     const mappedNormal: Node = normalMap(texture(normal));
     // Three turns a double-sided face's whole tangent frame round on its back, so a card's mapped normal is turned
     // Back to the crown's, as the stand-in's card reads it

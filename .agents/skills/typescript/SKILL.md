@@ -21,7 +21,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - `references/function-signatures.md` — when writing a function's parameters: one-or-many input (two functions, never an overload), nullability a caller narrows, an options object, a default, or a boolean flag.
 - `references/floating-promises.md` — when a lint error flags a floating promise, or an async function must be called from a sync slot.
 - `references/dynamic-imports.md` — when reaching for `await import(...)`, or a dependency's docs mention `optimizeDeps`.
-- `references/class-fields.md` — when adding a field to a class.
+- `references/class-fields.md` — when adding a field to a class, or building an instance of one.
 - `references/loops.md` — when writing a loop: an index-based `for` that stays, binding-position destructuring, bounding a zip.
 - `references/cloning.md` — when copying an object or a class instance, deeply or with overrides.
 - `references/callbacks.md` — when handing a function to an array method, a hook or a listener.

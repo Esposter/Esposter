@@ -230,6 +230,8 @@ const baseMessageRouter = router({
           const roomObject = useRoomObject(targetRoomId);
           const forwardedRoomMessage = await roomObject.createMessage(
             {
+              /* oxlint-disable-next-line typescript/no-unsafe-class-instance-assignment -- Workers RPC serializes a
+                 plain object and refuses an instance of a class of our own */
               files: source.files.map((file, index) => ({ ...file, ...takeOne(clonedFiles, index) })),
               isForward: true,
               // Reply information is not forwarded, for privacy
