@@ -1,0 +1,5 @@
+schema: spec-driven
+affected_areas: [image-studio]
+x-model: claude-opus-5-5
+x-waiting: "3.2 and 5.1: the owner's read of the CircleStone Non-Commercial Licence and the Qwen Research Licence, on whether converted weights may be hosted on our bucket for a free public page"
+x-touches: ["scripts/src/imageStudio/**", "apps/web/app/components/ImageStudio/**"]
