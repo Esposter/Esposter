@@ -33,6 +33,10 @@ The Vuetify 0 rows are where its defaults assume a browser-only app: its breakpo
 
 A unit test sees neither render: the asset URL mismatch existed only in a production build, and the viewport one only at a desktop width. So after each deploy, `pnpm -C apps/web hydration:check --origin <site>` loads every page the deployed sitemap lists (the site's server-rendered surface, with no route list to keep) in headless Chromium at Playwright's desktop and phone presets, and fails on any hydration message Vue logs or a page that never finishes. It knows completion as an event: an init script catches the Vue app as it mounts and awaits Nuxt's `app:suspense:resolve`, so nothing is timed. It is the Deploy workflow's last step, against the environment just deployed, so a mismatch fails the deploy run it shipped in.
 
+A signed-in reader sees what a guest never does — the votes and the reply button among them — so `--signed-in` loads every page a second time as the check's own user. The deploy reads `HYDRATION_CHECK_SECRET` from ESC and posts it to `POST /api/hydration-check/session`, which signs that one user in: an ordinary account with no roles, created on its first session, budgeted through the address rate limiter every route that answers before it knows its caller spends, and answered not found on a wrong secret. The run takes one session for all its pages and signs it out at the end. Each call to the route also revokes the user's earlier sessions, since better-auth extends a session read close to its end, so an expiry could not bound one that a failed run leaves behind.
+
+**Rejected — `enableSessionForAPIKeys`:** it would let every user's API key open a full session, where a key reaches only the MCP endpoint's opted-in procedures today (`server/services/auth/apiKeyPlugin.ts`).
+
 **Rejected — a check against a local production build in CI:** the built Worker needs the environment's secrets, a migrated local D1 and prod-shaped bindings to serve a page at all, and the deployed site has all three. **Rejected — the screenshot suite's argument (`run-app` skill):** that suite paid a production build per run and found nothing; this check pays no build, since the deploy already built, and its first run found the `/clicker` mismatch.
 
 ```mermaid
@@ -47,11 +51,13 @@ flowchart LR
 
 ## Key files
 
-| Path                                             | Role                                                             |
-| :----------------------------------------------- | :--------------------------------------------------------------- |
-| `apps/web/scripts/hydration/index.ts`            | The check: the sitemap's pages at two sizes                      |
-| `apps/web/scripts/hydration/observeHydration.ts` | The init script reporting Nuxt's hydration end as an event       |
-| `.github/workflows/Deploy.yaml`                  | Runs the check against the environment it just deployed          |
-| `apps/web/app/plugins/03.ui.ts`                  | Vuetify 0's breakpoints and theme configured for a server render |
-| `apps/web/configuration/vite.ts`                 | `viteHooks`: one asset URL on both renders                       |
-| `apps/web/configuration/routeRules.ts`           | The routes that render on the client alone                       |
+| Path                                                                   | Role                                                                  |
+| :--------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `apps/web/scripts/hydration/index.ts`                                  | The check: the sitemap's pages at two sizes                           |
+| `apps/web/scripts/hydration/observeHydration.ts`                       | The init script reporting Nuxt's hydration end as an event            |
+| `apps/web/server/api/hydration-check/session.post.ts`                  | The signed-in pass's session route                                    |
+| `apps/web/server/services/hydrationCheck/openHydrationCheckSession.ts` | The secret check, the check's user and the revoke before each session |
+| `.github/workflows/Deploy.yaml`                                        | Runs the check against the environment it just deployed               |
+| `apps/web/app/plugins/03.ui.ts`                                        | Vuetify 0's breakpoints and theme configured for a server render      |
+| `apps/web/configuration/vite.ts`                                       | `viteHooks`: one asset URL on both renders                            |
+| `apps/web/configuration/routeRules.ts`                                 | The routes that render on the client alone                            |

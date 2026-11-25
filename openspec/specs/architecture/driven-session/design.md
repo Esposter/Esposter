@@ -29,28 +29,29 @@ flowchart TB
 
 ## Key files
 
-| File                                                           | Role                                                                                    |
-| :------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-| `apps/web/modules/devSession.ts`                               | Registers the handler at the route under the dev command only.                          |
-| `apps/web/modules/devSession.test.ts`                          | The module's gate test, beside the module.                                              |
-| `apps/web/server/services/devSession/postDevSession.ts`        | The route handler: a refusal answers not found, an accepted request sets the cookie.    |
-| `apps/web/server/services/devSession/checkIsDevSessionOpen.ts` | The runtime gate on the environment flag and the base URL.                              |
-| `apps/web/server/services/devSession/openDevSession.ts`        | The seeded-user check and the session created through the auth context.                 |
-| `apps/web/server/services/devSession/signSessionToken.ts`      | The signed cookie value the session reader verifies.                                    |
-| `apps/web/server/services/devSession/constants.ts`             | The route's path.                                                                       |
-| `apps/web/server/auth.ts`                                      | The better-auth instance whose context the handler takes.                               |
-| `apps/web/server/services/auth/readSession.ts`                 | The session reader that accepts the minted cookie unchanged.                            |
-| `apps/web/server/trpc/middleware/getAuthedMiddleware.ts`       | The authed check a minted session passes unchanged.                                     |
-| `apps/web/server/db/index.ts`                                  | Binds the `core` D1 database the dev server serves, the one the seed writes.            |
-| `apps/web/shared/models/environment/Environment.ts`            | Declares the production member the runtime gate compares against.                       |
-| `packages/shared/src/services/devSeed/constants.ts`            | The driven user's id, read by the route and by the seed.                                |
-| `packages/shared/src/services/devSeed/checkIsLocalUrl.ts`      | The local-address test the route's gate uses.                                           |
-| `scripts/src/devSeed/index.ts`                                 | The seed's entry, which runs through the timing wrapper.                                |
-| `scripts/src/services/devSeed/runDevSeed.ts`                   | The run: migrates the local databases and writes the dataset into them.                 |
-| `scripts/src/services/devSeed/seedDevDataset.ts`               | The write order of the dataset.                                                         |
-| `scripts/src/services/devSeed/constants.ts`                    | The seed's friend id, the fixed row time and the persistence root the seed writes into. |
-| `scripts/package.json`                                         | Declares the `dev:seed` script.                                                         |
-| `.agents/skills/run-app/references/driven-browser.md`          | The driver's steps, which post to the route once per run.                               |
+| File                                                           | Role                                                                                                         |
+| :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `apps/web/modules/devSession.ts`                               | Registers the handler at the route under the dev command only.                                               |
+| `apps/web/modules/devSession.test.ts`                          | The module's gate test, beside the module.                                                                   |
+| `apps/web/server/services/devSession/postDevSession.ts`        | The route handler: a refusal answers not found, an accepted request sets the cookie.                         |
+| `apps/web/server/services/devSession/checkIsDevSessionOpen.ts` | The runtime gate on the environment flag and the base URL.                                                   |
+| `apps/web/server/services/devSession/openDevSession.ts`        | The seeded-user check before the session is created.                                                         |
+| `apps/web/server/services/auth/createSessionCookie.ts`         | The session created through the auth context and its signed cookie, shared with the hydration check's route. |
+| `apps/web/server/services/auth/signSessionToken.ts`            | The signed cookie value the session reader verifies.                                                         |
+| `apps/web/server/services/devSession/constants.ts`             | The route's path.                                                                                            |
+| `apps/web/server/auth.ts`                                      | The better-auth instance whose context the handler takes.                                                    |
+| `apps/web/server/services/auth/readSession.ts`                 | The session reader that accepts the minted cookie unchanged.                                                 |
+| `apps/web/server/trpc/middleware/getAuthedMiddleware.ts`       | The authed check a minted session passes unchanged.                                                          |
+| `apps/web/server/db/index.ts`                                  | Binds the `core` D1 database the dev server serves, the one the seed writes.                                 |
+| `apps/web/shared/models/environment/Environment.ts`            | Declares the production member the runtime gate compares against.                                            |
+| `packages/shared/src/services/devSeed/constants.ts`            | The driven user's id, read by the route and by the seed.                                                     |
+| `packages/shared/src/services/devSeed/checkIsLocalUrl.ts`      | The local-address test the route's gate uses.                                                                |
+| `scripts/src/devSeed/index.ts`                                 | The seed's entry, which runs through the timing wrapper.                                                     |
+| `scripts/src/services/devSeed/runDevSeed.ts`                   | The run: migrates the local databases and writes the dataset into them.                                      |
+| `scripts/src/services/devSeed/seedDevDataset.ts`               | The write order of the dataset.                                                                              |
+| `scripts/src/services/devSeed/constants.ts`                    | The seed's friend id, the fixed row time and the persistence root the seed writes into.                      |
+| `scripts/package.json`                                         | Declares the `dev:seed` script.                                                                              |
+| `.agents/skills/run-app/references/driven-browser.md`          | The driver's steps, which post to the route once per run.                                                    |
 
 ## Notes
 

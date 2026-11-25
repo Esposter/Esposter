@@ -1,4 +1,4 @@
-import { signSessionToken } from "#server/services/devSession/signSessionToken";
+import { signSessionToken } from "#server/services/auth/signSessionToken";
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { describe, expect, test } from "vitest";
 

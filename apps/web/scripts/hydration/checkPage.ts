@@ -5,8 +5,13 @@ import { observeHydration } from "#scripts/hydration/observeHydration";
 import { setTimeout } from "node:timers/promises";
 
 // One page in a context of its own, so pages run side by side: each awaits its own hydration event, never a timing
-export const checkPage = async (browser: Browser, device: BrowserContextOptions, location: string) => {
-  const context = await browser.newContext(device);
+export const checkPage = async (
+  browser: Browser,
+  device: BrowserContextOptions,
+  location: string,
+  storageState?: BrowserContextOptions["storageState"],
+) => {
+  const context = await browser.newContext({ ...device, storageState });
   const page = await context.newPage();
   const messages: string[] = [];
   page.on("console", (message) => {
@@ -22,7 +27,7 @@ export const checkPage = async (browser: Browser, device: BrowserContextOptions,
   const isHydrated = await Promise.race([promise, setTimeout(HYDRATION_TIMEOUT_MS, false, { signal: timeout.signal })]);
   timeout.abort();
   await context.close();
-  const name = `${location} at ${device.viewport?.width}x${device.viewport?.height}`;
+  const name = `${location} at ${device.viewport?.width}x${device.viewport?.height}${storageState ? " signed in" : ""}`;
   console.info(`${name}: ${isHydrated && messages.length === 0 ? "clean" : "mismatched"}`);
   return [
     ...(isHydrated ? [] : [`${name}: never finished hydrating`]),

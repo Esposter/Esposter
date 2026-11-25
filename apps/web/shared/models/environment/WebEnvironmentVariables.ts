@@ -20,6 +20,7 @@ export interface WebEnvironmentVariables {
   GITHUB_CLIENT_SECRET: string;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
+  HYDRATION_CHECK_SECRET: string;
   PUBLIC_ASSETS_BASE_URL: string;
   R2_ACCESS_KEY_ID: string;
   R2_SECRET_ACCESS_KEY: string;
@@ -41,6 +42,7 @@ export const webEnvironmentVariablesSchema = z.object({
   GITHUB_CLIENT_SECRET: secretSchema,
   GOOGLE_CLIENT_ID: secretSchema,
   GOOGLE_CLIENT_SECRET: secretSchema,
+  HYDRATION_CHECK_SECRET: secretSchema,
   PUBLIC_ASSETS_BASE_URL: z.url(),
   R2_ACCESS_KEY_ID: secretSchema,
   R2_SECRET_ACCESS_KEY: secretSchema,

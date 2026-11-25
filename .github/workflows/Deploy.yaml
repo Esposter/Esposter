@@ -161,5 +161,13 @@ jobs:
       - name: 🎭 Install the hydration check's browser
         run: pnpm -C apps/web hydration:browser
 
+      # Each page loads signed out, then signed in as the check's own user through the session route its secret opens
       - name: 💧 Check every sitemap page hydrates cleanly
-        run: pnpm -C apps/web hydration:check --origin "$BASE_URL"
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          HYDRATION_CHECK_SECRET="$(pulumi env get esposter-infra/prod "pulumiConfig.esposter-infra:${CLOUDFLARE_ENV}_HYDRATION_CHECK_SECRET" --value string --show-secrets)"
+          echo "::add-mask::$HYDRATION_CHECK_SECRET"
+          export HYDRATION_CHECK_SECRET
+          pnpm -C apps/web hydration:check --origin "$BASE_URL" --signed-in
