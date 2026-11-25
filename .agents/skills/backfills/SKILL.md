@@ -20,6 +20,7 @@ A schema change is finished only when the stored data it affects satisfies the n
 
 - A field goes from nullable to optional, or from optional to required, in a schema that parses stored JSON.
 - A field is renamed, re-typed or moved in such a schema.
+- A validator tightens in such a schema, even one shared from elsewhere: an id's version (`z.uuid()` to `z.uuidv7()`), a format, a range or an enum's members. The stored values were minted under the old rule, so every store the schema reads is scanned for values the new one rejects.
 - Stored data is found failing its schema for any reason.
 
 A field _removed_ from a plain `z.object` schema is not one: Zod's object parse drops the stale key, so the old documents still read. A `z.strictObject` rejects that key, so its removal is one like any other.
