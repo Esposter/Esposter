@@ -20,7 +20,7 @@ const ATTRIBUTE_SELECTOR_REGEX = /^\[(?<name>.+?)(?:=""|~=")/u;
 // CamelCase spelling, since a component's prop check reads the camelCase one
 export const getAttributifyNames = async (generator: UnoGenerator, sources: Source[]) => {
   const tokens = new Set<string>();
-  for (const { code, id } of sources) await generator.applyExtractors(code, id, tokens);
+  await Promise.all(sources.map(({ code, id }) => generator.applyExtractors(code, id, tokens)));
   const { matched } = await generator.generate(tokens, { preflights: false });
   const names = new Set<string>();
   for (const token of matched) {
@@ -47,6 +47,7 @@ export {};
 export default defineNuxtModule({
   meta: { name: "attributify-types" },
   setup: (_options, nuxt) => {
+    // oxlint-disable-next-line no-underscore-dangle -- `_prepare` is Nuxt's own flag for `nuxt prepare`
     if (!nuxt.options._prepare && !nuxt.options.dev) return;
     addTypeTemplate({
       filename: "types/attributify.d.ts",

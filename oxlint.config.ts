@@ -483,9 +483,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/no-unsafe-argument": "off",
     "typescript/no-unsafe-assignment": "off",
     "typescript/no-unsafe-call": "off",
-    // @TODO: https://github.com/oxc-project/tsgolint/issues/1371 — oxlint 1.95 enables this rule through the `pedantic`
-    // And `restriction` categories above, and the type-aware backend does not implement it, so every type-aware run
-    // Fails on "unknown rule". Drop the `off` once the backend ships the rule
+    // The type-aware backend implements this rule, and on it reports many sites that each want a judgement: test doubles
+    // Passed where a class instance is typed, and the three.js nodes the engine builds. It stays off until they are read
     "typescript/no-unsafe-class-instance-assignment": "off",
     // The repository declares no `enum` (`erasableSyntaxOnly` refuses one), so this rule only asks the checker for
     // Types it can never report on, and it is the costliest rule of the type-aware pass

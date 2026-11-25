@@ -41,12 +41,18 @@ export const VUE_OPTIONS: VueOptions = {
       "a11y/heading-has-content": { accessibleChildren: ["NuxtTime"] },
       // A component's macros stand at the top of its script, after the imports and the types they read. `defineExpose`
       // Stays out of the order, since the `vue` skill puts it before the watches and lifecycle hooks
+      "script/define-macros-order": {
+        order: ["defineOptions", "defineSlots", "defineModel", "defineProps", "defineEmits"],
+      },
       // A tag is PascalCase as its component is named, every tag checked rather than only the registered ones. A `v-*`
       // Tag is the Vuetify ban's to report, and `component` and TresJS's `primitive` are built-ins spelt lowercase
       "vue/component-name-in-template-casing": {
         ignores: ["/^v-/", "component", "primitive"],
         registeredComponentsOnly: false,
       },
+      // A global style block (transition classes for slotted content, third-party DOM on the body) carries a disable
+      // Comment with its reason; library CSS is a script-setup import, code-split with the component
+      "vue/enforce-style-attribute": { allow: ["scoped"] },
       // Each raw element the app renders through a component instead, with the component that replaces it
       "vue/no-restricted-html-elements": [
         {
@@ -60,12 +66,6 @@ export const VUE_OPTIONS: VueOptions = {
           message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
         },
       ],
-      "script/define-macros-order": {
-        order: ["defineOptions", "defineSlots", "defineModel", "defineProps", "defineEmits"],
-      },
-      // A global style block (transition classes for slotted content, third-party DOM on the body) carries a disable
-      // Comment with its reason; library CSS is a script-setup import, code-split with the component
-      "vue/enforce-style-attribute": { allow: ["scoped"] },
       "vue/no-restricted-syntax": TEMPLATE_RESTRICTED_SYNTAXES,
       // A bind whose value is its own name is the shorthand: `:foo`, not `:foo="foo"`
       "vue/v-bind-style": ["shorthand", { sameNameShorthand: "always" }],
@@ -111,6 +111,7 @@ export const VUE_OPTIONS: VueOptions = {
       "vue/attribute-hyphenation": "error",
       "vue/attribute-order": "error",
       "vue/comment-directive": "error",
+      "vue/component-name-in-template-casing": "error",
       "vue/enforce-style-attribute": "error",
       "vue/html-end-tags": "error",
       "vue/jsx-uses-vars": "error",
@@ -120,7 +121,6 @@ export const VUE_OPTIONS: VueOptions = {
       "vue/no-deprecated-html-element-is": "error",
       "vue/no-deprecated-inline-template": "error",
       "vue/no-deprecated-router-link-tag-prop": "error",
-      "vue/component-name-in-template-casing": "error",
       "vue/no-deprecated-scope-attribute": "error",
       "vue/no-deprecated-slot-attribute": "error",
       "vue/no-deprecated-slot-scope-attribute": "error",
