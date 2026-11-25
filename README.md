@@ -61,6 +61,47 @@
         </p>
       </td>
     </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://github.com/ubugeeei-prod/vize">
+          <img src="./.github/assets/vize/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3><a href="https://github.com/ubugeeei-prod/vize">Vize</a></h3>
+        <p>
+          The Vue toolchain in Rust: it compiles the Vue packages' components, lints every template, and gives tsrs the
+          <code>.vue</code> files to typecheck.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://github.com/oxc-project/tsrs">
+          <img src="./.github/assets/tsrs/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3><a href="https://github.com/oxc-project/tsrs">tsrs</a></h3>
+        <p>
+          The Rust port of the TypeScript 7 checker. It typechecks every package and runs oxlint's type-aware rules.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://tsdown.dev">
+          <img src="./.github/assets/tsdown/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3><a href="https://tsdown.dev">tsdown</a></h3>
+        <p>The library bundler on Rolldown. It builds the workspace packages and their declarations.</p>
+      </td>
+    </tr>
   </tbody>
 </table>
 

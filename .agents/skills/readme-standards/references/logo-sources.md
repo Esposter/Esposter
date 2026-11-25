@@ -20,16 +20,19 @@ An icon set such as Streamline, a traced or redrawn copy, and any file found und
 
 ## Sources
 
-| Project    | Source                          | Path (upstream, not a repo path, so not backticked)         |
-| :--------- | :------------------------------ | :---------------------------------------------------------- |
-| Vue        | `vuejs/art`                     | logo.svg                                                    |
-| Vuetify 0  | `vuetifyjs/0`                   | apps/docs/public/vzero.svg                                  |
-| Nuxt       | `nuxt/nuxt.com`                 | public/assets/design-kit/icon-green.svg                     |
-| tRPC       | `trpc/trpc`                     | www/static/img/logo.svg                                     |
-| Zod        | `colinhacks/zod`                | logo.svg                                                    |
-| Drizzle    | `drizzle-team/drizzle-orm-docs` | public/svg/drizzle-dark.svg (black mark)                    |
-| Pulumi     | `pulumi/docs`                   | assets/fingerprinted/logos/brand/pulumi-mark.svg            |
-| Cloudflare | `cloudflare/cloudflare-docs`    | public/logo.svg                                             |
-| Vite+      | `voidzero-dev/vite-plus`        | docs/public/logo.svg (wordmark; the repository has no mark) |
+| Project    | Source                              | Path (upstream, not a repo path, so not backticked)                                  |
+| :--------- | :---------------------------------- | :----------------------------------------------------------------------------------- |
+| Vue        | `vuejs/art`                         | logo.svg                                                                             |
+| Vuetify 0  | `vuetifyjs/0`                       | apps/docs/public/vzero.svg                                                           |
+| Nuxt       | `nuxt/nuxt.com`                     | public/assets/design-kit/icon-green.svg                                              |
+| tRPC       | `trpc/trpc`                         | www/static/img/logo.svg                                                              |
+| Zod        | `colinhacks/zod`                    | logo.svg                                                                             |
+| Drizzle    | `drizzle-team/drizzle-orm-docs`     | public/svg/drizzle-dark.svg (black mark)                                             |
+| Pulumi     | `pulumi/docs`                       | assets/fingerprinted/logos/brand/pulumi-mark.svg                                     |
+| Cloudflare | `cloudflare/cloudflare-docs`        | public/logo.svg                                                                      |
+| Vite+      | `voidzero-dev/vite-plus`            | docs/public/logo.svg (wordmark; the repository has no mark)                          |
+| Vize       | `ubugeeei-prod/vize`                | assets/logo.svg                                                                      |
+| tsrs       | `oxc-project/oxc-project.github.io` | public/logo-without-border.svg (Oxc's site, tsrs's home; the repository has no mark) |
+| tsdown     | `rolldown/tsdown`                   | docs/public/tsdown.svg                                                               |
 
 The README's entry is Vuetify 0, not Vuetify, so its mark is `vuetifyjs/0`'s own vzero.svg, never simple-icons' Vuetify 3 mark, which is a different shape.
