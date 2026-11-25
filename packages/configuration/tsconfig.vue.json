@@ -6,7 +6,7 @@
     "lib": ["ESNext", "dom", "dom.iterable", "webworker"],
     "plugins": [{ "name": "@dxup/unimport" }, { "name": "@dxup/nuxt" }]
   },
-  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
+  "contentMappers": [{ "package": "vize", "extensions": [".vue"], "options": { "optionsApi": false } }],
   "extends": "./tsconfig.base.json",
   "include": [
     "types/*.d.ts",
