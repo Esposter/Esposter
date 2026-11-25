@@ -1430,9 +1430,9 @@ describe(useResourceStore, () => {
     expect(applyContent).toHaveBeenCalledTimes(2);
   });
 
-  // Quick edits issue saves back to back, and each save's topic re-runs the watched read, so a read answered between two
-  // Saves can land after the later one. Its row names the earlier save's content, which the store already moved past:
-  // Adopting it would reload the document over the latest edit
+  // Quick edits issue saves back to back, and each save's topic re-runs the watched read, so a read answered between
+  // Two saves can land after the later one. Its row names the earlier save's content, which the store already moved
+  // Past: adopting it would reload the document over the latest edit
   test("a late row of a device's own earlier save is not adopted", async () => {
     expect.hasAssertions();
 
@@ -1503,7 +1503,7 @@ describe(useResourceStore, () => {
     const { readResource } = useReadOpenResource();
     await readResource();
     assert.exists(resource.value);
-    const { contentVersion, id } = resource.value;
+    const { contentVersion, id, version } = resource.value;
     await readContent(applyContent);
     // The edit lands while the adoption's content read is in flight
     trpcMsw.sheet.readResourceContent.query(() => {
@@ -1515,7 +1515,7 @@ describe(useResourceStore, () => {
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
     await withFinalizerAsync(
       async () => {
-        serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
+        serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1, version: version + 1 });
         await readResource();
         await waitForSynchronizedFunctions();
       },

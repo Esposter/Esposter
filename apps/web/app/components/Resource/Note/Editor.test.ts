@@ -96,7 +96,7 @@ describe("resourceNoteEditor", () => {
     expect.hasAssertions();
 
     uploadResourceFileMock.mockResolvedValue(assetUrl);
-    vi.spyOn(EditorView.prototype, "posAtCoords").mockReturnValue({ inside: -1, pos: 1 });
+    vi.spyOn(EditorView.prototype, "posAtCoords").mockReturnValue({ affinity: 0, inside: -1, pos: 1 });
     const component = await mountSuspended(ResourceNoteEditor);
     const drop = new Event("drop", { bubbles: true, cancelable: true });
     Object.defineProperty(drop, "dataTransfer", { value: { files: [file], getData: () => "", types: ["Files"] } });
