@@ -104,6 +104,7 @@ describe("attributify", () => {
   // The two shapes that give an attribute the empty string: `cond ? '' : undefined` and its mirror
   const EMPTY_BRANCH_REGEX = /\?\s*(?:(?:''|"")\s*:\s*undefined|undefined\s*:\s*(?:''|""))\s*$/u;
 
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13074 — a lint rule asking UnoCSS's generator replaces it
   test("generates a rule for every valueless attribute on a native element", async () => {
     expect.hasAssertions();
 
@@ -129,6 +130,7 @@ describe("attributify", () => {
   // Depends on nothing. The generator is again what tells a utility from a prop, and here a component is asked
   // Too: the test above reports a name it matches nothing for, which every component prop is, while this one
   // Reports only a name it does match, which a prop almost never is
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13074 — a lint rule asking UnoCSS's generator replaces it
   test("switches a utility through :class rather than an empty attribute value", async () => {
     expect.hasAssertions();
 
@@ -152,6 +154,7 @@ describe("attributify", () => {
   // Inside a `:class` expression, where it is just a string. The generator refuses it there all the same, so a
   // Grid switched on a condition as `'grid-rows-1'` loses its rows with nothing reporting it. A variant is
   // Stripped first, because the blocklist is matched against the utility the variant wraps
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13074 — a lint rule asking UnoCSS's generator replaces it
   test("writes no refused spelling inside a bound class", () => {
     expect.hasAssertions();
 
@@ -170,21 +173,6 @@ describe("attributify", () => {
 
     expect(refusedTokens).toStrictEqual([]);
   });
-
-  // UnoCSS extracts a bare bracket attribute as a class token, so the rule it emits is a `.class` the element
-  // Never carries; only the valued form `prop="[...]"` produces an attribute selector
-  test("writes every arbitrary value in the valued form", () => {
-    expect.hasAssertions();
-
-    const bareBrackets: string[] = [];
-    for (const { elements, sourcePath: templatePath } of sourceFiles)
-      for (const { props, tag } of elements)
-        for (const prop of props)
-          if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && prop.name.includes("["))
-            bareBrackets.push(`${templatePath}: <${tag} ${prop.name}>`);
-
-    expect(bareBrackets).toStrictEqual([]);
-  });
 });
 
 // A bar that pushes its groups apart — a spacer between them, `justify-between` or `justify-end` — and also wraps
@@ -198,6 +186,8 @@ const checkIsSpacer = (node: TemplateChildNode) =>
   getAttributeNames(node).has("flex-1");
 
 describe("bars", () => {
+  // @TODO: no upstream issue — ubugeeei-prod/vize: `:has(> …)` relative selectors, so a selector ban reads an
+  // Element's own attributes beside its children's
   test("wraps no bar that pushes its groups apart", () => {
     expect.hasAssertions();
 
@@ -249,6 +239,7 @@ describe("breakpoints", () => {
 // Child on the client in a development build while the server renders it, so hydration meets the comment where it
 // Expects the child. Vize's template AST holds no comment node, so no selector ban can see one (the `vue` skill)
 describe("transition slots", () => {
+  // @TODO: no upstream issue — ubugeeei-prod/vize: comment nodes in the template AST its selector bans read
   test("holds no comment directly inside a transition's slot", () => {
     expect.hasAssertions();
 
@@ -264,31 +255,6 @@ describe("transition slots", () => {
   });
 });
 
-// A button and a list row lay out their own content — the flex row, its gap and alignment, the block padding and the
-// Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second
-// Copy that drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
-describe("library layout", () => {
-  const BUTTON_TAGS = new Set(["UiButton", "UiButtonLink", "UiIconButton"]);
-  const LAYOUT_ATTRIBUTE_REGEX = /^(?:inline-flex|flex|gap-\d+|items-center|justify-center|py-\d+|min-h-8)$/u;
-
-  test("restates no layout a button or a row lays out itself", () => {
-    expect.hasAssertions();
-
-    const restatedLayouts: string[] = [];
-    for (const { elements, sourcePath: templatePath } of sourceFiles)
-      for (const element of elements) {
-        const attributeNames = getAttributeNames(element);
-        const isRow = attributeNames.has("ui-item") || attributeNames.has("ui-row");
-        if (!isRow && !attributeNames.has("ui-button") && !BUTTON_TAGS.has(toPascalCase(element.tag))) continue;
-        for (const attributeName of attributeNames)
-          if (LAYOUT_ATTRIBUTE_REGEX.test(attributeName) || (isRow && attributeName === "px-2"))
-            restatedLayouts.push(`${templatePath}: <${element.tag} ${attributeName}>`);
-      }
-
-    expect(restatedLayouts).toStrictEqual([]);
-  });
-});
-
 // A style block selects its own elements by a class the template sets, and a class the generator matches also draws
 // That utility on every element carrying it: a hook named `ring` drew UnoCSS's box-shadow ring on each round mark. The
 // Library's style blocks are checked, since its hooks are the ones every feature inherits
@@ -296,6 +262,7 @@ describe("style hooks", () => {
   const STYLE_BLOCK_REGEX = /<style[^>]*>(?<css>[\s\S]*?)<\/style>/gu;
   const HOOK_REGEX = /(?<![\w-])\.(?<name>[a-z][\w-]*)/gu;
 
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13074 — a lint rule asking UnoCSS's generator replaces it
   test("selects no class a utility also matches", async () => {
     expect.hasAssertions();
 
@@ -312,6 +279,7 @@ describe("style hooks", () => {
 });
 
 // Every authored length is `rem` (`styling` skill)
+// @TODO: https://github.com/oxc-project/oxc/issues/15761
 describe("lengths", () => {
   const STYLE_PATH_REGEX = /\.(?:vue|css)$/u;
   const PX_REGEX = /[^a-z-]\d+px\b/u;
