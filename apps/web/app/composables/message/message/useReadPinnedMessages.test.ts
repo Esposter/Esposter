@@ -24,6 +24,7 @@ describe(useReadPinnedMessages, () => {
       nextCursor: "",
     }));
     trpcMsw.room.readUsersByIds.query(() => [{ ...createUser({ id: userId }), displayName: "", isMember: true }]);
+    trpcMsw.message.emoji.readReactions.query(() => []);
     await mountSuspended(
       defineComponent({
         render: () => h("div"),

@@ -60,11 +60,11 @@ Batching, your transformer, your error formatter, `FormData` input and subscript
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                     | Description                                                                                                                                              |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createTRPCMsw`            | The factory. It returns the msw `handlers`, the typed `trpc` registration proxy and `reset`.                                                             |
-| `TRPCMswOptions`           | The options object. Required: `t` and `endpoint`. Optional: `allowMethodOverride`, `createContext`, `onUnhandledProcedure`, `router` and `webSocketUrl`. |
-| `UnhandledProcedureAction` | `Error` (default) answers an unregistered procedure with tRPC's `NOT_FOUND`. `Bypass` passes the request to the next handler.                            |
+| Export                     | Description                                                                                                                                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createTRPCMsw`            | The factory. It returns the msw `handlers`, the typed `trpc` registration proxy and `reset`.                                                                                                         |
+| `TRPCMswOptions`           | The options object. Required: `t` and `endpoint`. Optional: `allowMethodOverride`, `createContext`, `onUnhandledProcedure`, `onUnhandledProcedureCall`, `responseMeta`, `router` and `webSocketUrl`. |
+| `UnhandledProcedureAction` | `Error` (default) answers an unregistered procedure with tRPC's `NOT_FOUND`. `Bypass` passes the request to the next handler.                                                                        |
 
 Pass your real `router` to check each call against its procedure's input parsers before the resolver runs.
 

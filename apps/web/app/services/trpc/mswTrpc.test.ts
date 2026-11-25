@@ -16,12 +16,19 @@ interface MswContext {
 // Client-side tRPC calls are answered at the network, not by replacing the client: the real plugin, its links and
 // Its transformer all run, and the mock router answers with the real server's transformer and error formatter.
 // Call at `describe` scope, then register per-test resolvers with `trpcMsw.<procedure>.<query|mutation|subscription>`.
-// Resolvers are forgotten between tests. A request no handler answers is an error naming its method and url.
+// Resolvers are forgotten between tests. A request no handler answers is an error naming its method and url, and a
+// Procedure the test registered no resolver for fails the test by its path once it ends.
 // It never reaches a real socket. A request a resolver holds fails the test that held it, not the hooks after it
 export const setupMswTrpc = () => {
+  // Each procedure called with no resolver to answer it, which tRPC answers with NOT_FOUND. The code under test reads that
+  // As a failed call and carries on, so the test would pass on a path it never meant to take
+  const unansweredPaths = new Set<string>();
   const { handlers, reset, trpc } = createTRPCMsw<TRPCRouter, MswContext>({
     createContext: () => ({ responseHeaders: new Headers() }),
     endpoint: `${window.location.origin}${TRPC_CLIENT_PATH}`,
+    onUnhandledProcedureCall: (path) => {
+      unansweredPaths.add(path);
+    },
     responseMeta: ({ ctx }) => ({ headers: ctx?.responseHeaders ?? new Headers() }),
     // Every mocked call passes the real procedure's input parsers, so a test sending what the server rejects fails
     router: trpcRouter,
@@ -81,11 +88,14 @@ export const setupMswTrpc = () => {
     });
     const heldRequestUrls = Array.from(pendingRequestMap.values(), ({ url }) => url);
     pendingRequestMap.clear();
+    const unansweredProcedurePaths = [...unansweredPaths];
+    unansweredPaths.clear();
     server.events.removeListener("request:start", onRequestStart);
     reset();
     server.resetHandlers();
     expect(lateRequestUrls, "requests sent after the test ended").toStrictEqual([]);
     expect(heldRequestUrls, "requests the test left unanswered").toStrictEqual([]);
+    expect(unansweredProcedurePaths, "procedures the test registered no resolver for").toStrictEqual([]);
   });
 
   afterAll(() => {

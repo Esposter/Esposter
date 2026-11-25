@@ -12,6 +12,9 @@ export interface TRPCMswOptions<TContext extends object> {
   // The url the client's http links point at, matched as msw matches any request url
   endpoint: string;
   onUnhandledProcedure?: UnhandledProcedureAction;
+  // Called with the path of each call answered with NOT_FOUND because no resolver of its type is registered, over HTTP
+  // And a WebSocket alike. A resolver that throws NOT_FOUND itself is not one
+  onUnhandledProcedureCall?: (path: string) => void;
   // The response headers a call's answer carries, which a test sets through its context
   responseMeta?: (
     options: { ctx?: TContext } & Except<Parameters<ResponseMetaFn>[0], "ctx">,

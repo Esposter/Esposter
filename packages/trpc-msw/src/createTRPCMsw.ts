@@ -1,7 +1,7 @@
 import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
 import type { TRPCMsw } from "#src/models/TRPCMsw";
 import type { TRPCMswOptions } from "#src/models/TRPCMswOptions";
-import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
+import type { AnyTRPCRouter, TRPCError, TRPCProcedureType } from "@trpc/server";
 import type { HttpHandler, WebSocketHandler } from "msw";
 
 import { WEBSOCKET_ROUTER_REPLACED_CLOSE_CODE } from "#src/constants";
@@ -24,6 +24,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   createContext,
   endpoint,
   onUnhandledProcedure = UnhandledProcedureAction.Error,
+  onUnhandledProcedureCall,
   responseMeta,
   router,
   t,
@@ -37,6 +38,14 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   // Built once and reused until a path is registered for the first time, since the router's procedures are the paths
   // Registered then; the resolvers themselves are read from `registrations` at each call
   let httpRouter: AnyTRPCRouter | undefined;
+  // tRPC reports every error a call ends in, so a NOT_FOUND is told apart from a resolver's own by whether a resolver of
+  // The call's type was registered for its path when it failed
+  const onError = onUnhandledProcedureCall
+    ? ({ error, path, type }: { error: TRPCError; path: string | undefined; type: string }) => {
+        if (error.code === "NOT_FOUND" && path !== undefined && registrations.get(path)?.type !== type)
+          onUnhandledProcedureCall(path);
+      }
+    : undefined;
   const handlers: (HttpHandler | WebSocketHandler)[] = [
     http.all(`${endpoint}/*`, ({ request }) => {
       if (
@@ -47,7 +56,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
 
       httpRouter ??= createMockRouter(t, procedureTypes, registrations, router);
       return fetchRequestHandler({
-        ...omitUndefined({ allowMethodOverride, createContext, responseMeta }),
+        ...omitUndefined({ allowMethodOverride, createContext, onError, responseMeta }),
         endpoint: endpointPathname,
         req: request,
         router: httpRouter,
@@ -57,7 +66,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   const createWebSocketServer = () => {
     const webSocketServer = new WebSocketServerAdapter<MswWebSocketAdapter>();
     applyWSSHandler({
-      ...omitUndefined({ createContext }),
+      ...omitUndefined({ createContext, onError }),
       router: createMockRouter(t, new Map(procedureTypes), registrations, router),
       wss: webSocketServer,
     });

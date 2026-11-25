@@ -73,6 +73,7 @@ describe(createTRPCMsw, () => {
     upload: t.procedure.input(z.instanceof(FormData)).mutation(() => ""),
     write: t.procedure.mutation(() => undefined),
   });
+  const onUnhandledProcedureCall = vi.fn<(path: string) => void>();
   const { handlers, reset, trpc } = createTRPCMsw<typeof router, { authorization: string; responseHeaders: Headers }>({
     allowMethodOverride: true,
     createContext: ({ req }) => ({
@@ -80,6 +81,7 @@ describe(createTRPCMsw, () => {
       responseHeaders: new Headers(),
     }),
     endpoint,
+    onUnhandledProcedureCall,
     responseMeta: ({ ctx }) => ({ headers: ctx?.responseHeaders ?? new Headers() }),
     router,
     t,
@@ -103,6 +105,7 @@ describe(createTRPCMsw, () => {
   afterEach(() => {
     parserSteps.length = 0;
     standardValidatorInputs.length = 0;
+    onUnhandledProcedureCall.mockClear();
     reset();
     server.resetHandlers();
   });
@@ -264,6 +267,20 @@ describe(createTRPCMsw, () => {
     await expect(client.unregistered.query()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: formatted No procedure found on path "unregistered"]`,
     );
+  });
+
+  test("reports a call no resolver answers, and not a resolver's own NOT_FOUND", async () => {
+    expect.hasAssertions();
+
+    trpc.write.mutation(() => {
+      throw new TRPCError({ code: "NOT_FOUND", message: "" });
+    });
+    await expect(client.write.mutate()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCClientError: formatted ]`);
+    await expect(client.unregistered.query()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCClientError: formatted No procedure found on path "unregistered"]`,
+    );
+
+    expect(onUnhandledProcedureCall).toHaveBeenCalledExactlyOnceWith("unregistered");
   });
 
   test("forgets every resolver on reset", async () => {
