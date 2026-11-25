@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { CallParticipant } from "@esposter/db-schema";
 
@@ -7,6 +8,8 @@ import { useCallStore } from "#src/store/message/room/call/index";
 
 interface Props {
   participant: CallParticipant;
+  // The trigger's look, the popover's own when none is named
+  variant?: UiButtonVariant | undefined;
 }
 // A panel rather than a menu, since it holds the participant's volume, which stays open while it is dragged. What a
 // Call site passes goes to the trigger, and the trigger's content is the call site's own where it is more than a mark:
@@ -25,7 +28,7 @@ const actionItems = computed(() =>
 </script>
 
 <template>
-  <UiPopover :label="`Options for ${participant.name}`" px-0>
+  <UiPopover :label="`Options for ${participant.name}`" :variant px-0>
     <template #trigger>
       <slot name="trigger"><UiIcon :meaning="UiIconMeaning.More" /></slot>
     </template>

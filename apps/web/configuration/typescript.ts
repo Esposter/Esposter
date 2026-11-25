@@ -35,10 +35,11 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     contentMappers: [{ extensions: [".vue"], options: { optionsApi: false }, package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: {
-      // UnoCSS attributify utilities and layout props through `NuxtLayout` are attributes no declaration names, and a
-      // Listener a component does not emit falls through to its root, so the unknown prop and event checks stay off
+      // A native listener a component does not emit falls through to its root, and vize checks a listener against the
+      // Component's own emits alone, with nothing a declaration can add to them, so the unknown event check stays off.
+      // The unknown prop check reads the attributify names `modules/attributifyTypes.ts` declares at prepare
       checkUnknownEvents: false,
-      checkUnknownProps: false,
+      checkUnknownProps: true,
       composables: { useTemplateRef: ["useTemplateRef"] },
       strictTemplates: true,
     },

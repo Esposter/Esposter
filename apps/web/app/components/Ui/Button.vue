@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import type { ButtonHTMLAttributes } from "vue";
 
 import { Button } from "@vuetify/v0";
 
@@ -10,6 +11,8 @@ interface Props {
   // A write it started is still out: pressing again would only send it twice, so it holds disabled with a spinner
   // Ahead of its content until the write settles
   isPending?: boolean | undefined;
+  // The native button's own, which the primitive sets to button when none is named, so a form's submit names submit
+  type?: ButtonHTMLAttributes["type"];
   variant?: UiButtonVariant | undefined;
 }
 // The button is ours to render rather than the primitive's, which lays its own attributes over the ones passed to it:
@@ -33,6 +36,7 @@ defineExpose({ element });
       :aria-busy="isPending || undefined"
       :autofocus="isAutofocus || undefined"
       :data-variant="variant"
+      :type="type ?? attrs.type"
       ui-button
     >
       <UiSpinner v-if="isPending" />

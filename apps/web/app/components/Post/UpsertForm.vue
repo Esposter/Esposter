@@ -38,6 +38,6 @@ const isValid = ref(true);
       is-label-hidden
       placeholder="Title"
     />
-    <PostDescriptionRichTextEditor v-model="editedInitialValues.description" />
+    <PostDescriptionEditor v-model="editedInitialValues.description" />
   </UiForm>
 </template>

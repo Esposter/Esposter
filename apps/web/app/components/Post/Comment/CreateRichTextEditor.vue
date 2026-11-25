@@ -15,7 +15,7 @@ const description = ref("");
 </script>
 
 <template>
-  <PostDescriptionRichTextEditor v-model="description" height="4rem" placeholder="Add a comment">
+  <PostDescriptionEditor v-model="description" height="4rem" placeholder="Add a comment">
     <template #append-footer="{ editor }">
       <UiButton
         v-if="editor"
@@ -37,5 +37,5 @@ const description = ref("");
         Comment
       </UiButton>
     </template>
-  </PostDescriptionRichTextEditor>
+  </PostDescriptionEditor>
 </template>

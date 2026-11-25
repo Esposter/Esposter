@@ -22,12 +22,12 @@ const { isSaving, save: saveComment } = useSaveRichTextEdit(
 </script>
 
 <template>
-  <PostDescriptionRichTextEditor v-model="editedDescriptionHtml" height="4rem" placeholder="">
+  <PostDescriptionEditor v-model="editedDescriptionHtml" height="4rem" placeholder="">
     <template #append-footer="{ editor }">
       <UiButton :disabled="isSaving" @click="emit('update:update-mode', false)">Cancel</UiButton>
       <UiButton v-if="editor" :variant="UiButtonVariant.Accent" :is-pending="isSaving" @click="saveComment(editor)">
         Save
       </UiButton>
     </template>
-  </PostDescriptionRichTextEditor>
+  </PostDescriptionEditor>
 </template>

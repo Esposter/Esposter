@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
-import type { AnyExtension } from "@tiptap/vue-3";
+import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 
 import { useInputStore } from "#src/store/message/input/index";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
   extraExtensions?: AnyExtension[] | undefined;
+  // Where the caret lands once the editor is made, which leaves it unfocused when none is named
+  focusPosition?: FocusPosition | undefined;
   target: ComposerTarget;
 }
 
@@ -25,6 +27,7 @@ const editorExtensions = computed(() => [...extensions, ...extraExtensions]);
 <template>
   <RichTextEditor
     v-model="input"
+    :focus-position
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="editorExtensions"
     @paste="(_editor, files) => uploadFiles(files)"

@@ -2,7 +2,7 @@
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import PostCommentUpdateRichTextEditor from "#src/components/Post/Comment/UpdateRichTextEditor.vue";
-import PostDescriptionRichTextEditor from "#src/components/Post/Description/RichTextEditor.vue";
+import PostDescriptionEditor from "#src/components/Post/Description/Editor.vue";
 import { createPost } from "#src/services/post/createPost.test";
 import { findButton } from "#src/services/shared/findButton.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -23,7 +23,7 @@ describe("postCommentUpdateRichTextEditor", () => {
     trpcMsw.post.updateComment.mutation(() => answer);
     const comment = createPost({ parentId: v7() });
     const component = await mountSuspended(PostCommentUpdateRichTextEditor, { props: { comment } });
-    component.findComponent(PostDescriptionRichTextEditor).vm.$emit("update:modelValue", "<p>edited</p>");
+    component.findComponent(PostDescriptionEditor).vm.$emit("update:modelValue", "<p>edited</p>");
     await flushPromises();
     expect(findButton(component, "Cancel").disabled).toBe(false);
 

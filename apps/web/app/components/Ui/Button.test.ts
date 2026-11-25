@@ -20,6 +20,15 @@ describe("uiButton", () => {
       expect(component.get("button").attributes("aria-pressed")).toBe("true");
     });
 
+    // A button that names no type must never submit the form it sits in
+    test("is a plain button when its call site names no type", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiButton);
+
+      expect(component.get("button").attributes("type")).toBe("button");
+    });
+
     test("is left out of the tab order and inert while disabled", () => {
       expect.hasAssertions();
 
