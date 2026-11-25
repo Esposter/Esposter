@@ -1,8 +1,7 @@
 declare module "vue" {
-  // @TODO: no upstream issue — ubugeeei-prod/vize: the content mapper checks a `Lazy*` component's props against the
-  // Component's own and drops the hydration strategies Nuxt's type adds, which vue-tsc keeps. A minimal Nuxt project
-  // Does not reproduce it, so the trigger is still to reduce. Each strategy the app writes is declared for every
-  // Component until then
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13689 — under `checkUnknownProps`, the content mapper reads
+  // Only the SFC's props for an intersection with an SFC, so it drops the hydration strategies Nuxt's `LazyComponent`
+  // Intersects in, which vue-tsc keeps. Each strategy the app writes is declared for every component until then
   interface ComponentCustomProps {
     hydrateOnIdle?: number | true;
   }
