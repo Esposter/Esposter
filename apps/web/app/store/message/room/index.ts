@@ -7,7 +7,6 @@ import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 
 import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { authClient } from "#src/services/auth/authClient";
 import { compareLastMessageAtDescending } from "#src/services/message/room/compareLastMessageAtDescending";
 import { roomTable } from "#src/services/message/room/constants";
 import { getRoomPatchEntry } from "#src/services/message/room/getRoomPatchEntry";
@@ -86,8 +85,8 @@ export const useRoomStore = defineStore("message/room", () => {
     if (currentRoomId.value) return rooms.value.find(({ id }) => id === currentRoomId.value);
     else return undefined;
   });
-  const session = authClient.useSession();
-  const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
+  const session = useSessionData();
+  const isCreator = computed(() => currentRoom.value?.userId === session.value?.user.id);
   // A room the viewer has just joined or created is listed by its membership, which the server answers apart from the
   // Room
   const readMyMembershipArrivals = async (roomId: RoomInMessage["id"]) => {

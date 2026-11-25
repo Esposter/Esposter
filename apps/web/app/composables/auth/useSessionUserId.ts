@@ -1,7 +1,5 @@
-import { authClient } from "#src/services/auth/authClient";
-
-// The signed-in user's id on the client, "" until the session resolves
+// The signed-in user's id, "" for a guest
 export const useSessionUserId = () => {
-  const session = authClient.useSession();
-  return computed(() => session.value.data?.user.id ?? "");
+  const session = useSessionData();
+  return computed(() => session.value?.user.id ?? "");
 };

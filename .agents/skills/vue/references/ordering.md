@@ -13,7 +13,7 @@ Read when laying out a `<script setup>` block — the macros, then the declarati
 
 1. **Macros** — in the order "Macros" on this page gives. No blank line between the macros and the declarations that follow.
 2. **Page-metadata side-effects** — `useHead`, `useSeoMeta` right after the macros when they depend on no local state; one reading reactive state sits just after that state, still above unrelated logic.
-3. **Framework / third-party value composables** — `useNuxtApp`, `useRouter`, `useRuntimeConfig`, value composables (`useUiDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Grouped immediately after the macros.
+3. **Framework / third-party value composables** — `useNuxtApp`, `useRouter`, `useRuntimeConfig`, value composables (`useUiDisplay`, `useWindowSize`, …), auth (`useSessionData`). Grouped immediately after the macros.
 4. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods; the per-store grouping order is the `pinia` skill's (`references/consuming-a-store.md`).
 5. **Custom composables, refs, computeds, watches, functions** — everything else.
 

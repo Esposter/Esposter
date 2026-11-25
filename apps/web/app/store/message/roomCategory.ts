@@ -3,7 +3,6 @@ import type { DeleteRoomCategoryInput } from "#shared/models/db/roomCategory/Del
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
-import { authClient } from "#src/services/auth/authClient";
 import { roomCategoryTable } from "#src/services/message/roomCategory/constants";
 import { getCreateRoomCategoryEntry } from "#src/services/message/roomCategory/getCreateRoomCategoryEntry";
 import { getDeleteRoomCategoryEntry } from "#src/services/message/roomCategory/getDeleteRoomCategoryEntry";
@@ -18,7 +17,7 @@ import { NO_ROW_VERSION } from "@esposter/db-schema";
 import { v7 } from "uuid";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
-  const session = authClient.useSession();
+  const session = useSessionData();
   const { $trpc } = useNuxtApp();
   const overlayStore = useOverlayStore();
   const { arrive, view, writeOptimistic } = overlayStore;
@@ -42,7 +41,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   // The category is drawn under the id the client gives it, at a placeholder that holds no version. The server's row
   // Arrives in the answer, and the answer confirms the placeholder at the version that row holds
   const createRoomCategory = (input: Except<CreateRoomCategoryInput, "id">) => {
-    if (!session.value.data) return;
+    if (!session.value) return;
 
     const roomCategory: RoomCategoryInMessage = {
       createdAt: new Date(),
@@ -51,7 +50,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
       name: input.name,
       position: 0,
       updatedAt: new Date(),
-      userId: session.value.data.user.id,
+      userId: session.value.user.id,
       version: NO_ROW_VERSION,
     };
     writeOptimistic(

@@ -2,7 +2,6 @@ import type { ReactionIdentityInput } from "#shared/models/db/message/reaction/R
 import type { RoomReaction } from "@esposter/db-schema";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { authClient } from "#src/services/auth/authClient";
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerArrival";
@@ -15,7 +14,7 @@ const getEmojiKey = ({ emojiTag, messageId, roomId }: ReactionIdentityInput) =>
   `${roomId}${ID_SEPARATOR}${messageId}${ID_SEPARATOR}${emojiTag}`;
 
 export const useEmojiStore = defineStore("message/emoji", () => {
-  const session = authClient.useSession();
+  const session = useSessionData();
   const { $trpc } = useNuxtApp();
   // A message's reactions, filed under the room they belong to and then under the message. A reaction with no reactor
   // Is held too, since its removal's version is what an older copy of it loses to
@@ -49,7 +48,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   // The reaction a press holds while its write is out, which is the one the reaction's button shows as pending
   const checkIsEmojiPending = (input: ReactionIdentityInput) => checkIsPending(getEmojiKey(input));
   const awaitEmojiAnswer = async (input: ReactionIdentityInput, write: () => Promise<RoomReaction>) => {
-    if (!session.value.data) return;
+    if (!session.value) return;
 
     await executeMutation(write, {
       awaitedBecause: AwaitedReason.ServerDecidedOutcome,
@@ -68,10 +67,10 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     awaitEmojiAnswer(input, () => $trpc.message.emoji.removeReaction.mutate(input));
   // Reacting again removes this user's own reaction; the last one to leave leaves the reaction with no reactor
   const toggleEmoji = async (roomId: string, emoji: RoomReaction) => {
-    if (!session.value.data) return;
+    if (!session.value) return;
 
     const { emojiTag, messageId } = emoji;
-    if (emoji.userIds.includes(session.value.data.user.id)) await deleteEmoji({ emojiTag, messageId, roomId });
+    if (emoji.userIds.includes(session.value.user.id)) await deleteEmoji({ emojiTag, messageId, roomId });
     else await createEmoji({ emojiTag, messageId, roomId });
   };
   // A deleted message's reactions go with it, and the room sends no removal for them, so each one is emptied at the

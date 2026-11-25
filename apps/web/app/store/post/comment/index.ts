@@ -8,7 +8,6 @@ import type { Except } from "type-fest";
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { usePostRows } from "#src/composables/post/usePostRows";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { authClient } from "#src/services/auth/authClient";
 import { postTable } from "#src/services/post/overlay/constants";
 import { getSetPostEntry } from "#src/services/post/overlay/getSetPostEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
@@ -24,7 +23,7 @@ import { v7 } from "uuid";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
+  const session = useSessionData();
   const overlayStore = useOverlayStore();
   const { arrive, writeAwaited, writeOptimistic } = overlayStore;
   const postCountStore = usePostCountStore();
@@ -106,7 +105,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const createComment = (input: Except<CreateCommentInput, "id">, onRefused?: () => void) => {
     if (EMPTY_TEXT_REGEX.test(input.description)) return;
 
-    const user = session.value.data?.user;
+    const user = session.value?.user;
     // Signed out while composing, so nothing is sent and the composer keeps its text
     if (!user) {
       onRefused?.();

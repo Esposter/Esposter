@@ -6,7 +6,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { MemberDialogType } from "#src/models/message/user/MemberDialogType";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { authClient } from "#src/services/auth/authClient";
 import { AdminActionIconMap } from "#src/services/message/moderation/AdminActionIconMap";
 import { checkIsRoomOwner } from "#src/services/message/room/checkIsRoomOwner";
 import { useClipboardStore } from "#src/store/clipboard";
@@ -25,7 +24,7 @@ export const useMemberActionItems = (
   roomId: MaybeRefOrGetter<RoomInMessage["id"]>,
   openDialog: (type: MemberDialogType) => void,
 ) => {
-  const session = authClient.useSession();
+  const session = useSessionData();
   const clipboardStore = useClipboardStore();
   const { copy } = clipboardStore;
   const friendStore = useFriendStore();
@@ -38,7 +37,7 @@ export const useMemberActionItems = (
   const { checkIsMemberRolesRead, getMemberRoles, getMyPermissions } = roleStore;
   const moderationNoteStore = useModerationNoteStore();
   const { getModerationNoteCount } = moderationNoteStore;
-  const isSelf = computed(() => session.value.data?.user.id === toValue(user).id);
+  const isSelf = computed(() => session.value?.user.id === toValue(user).id);
   // The moderator picked this member off a list that names them by displayName, so every action names them the same way
   const displayName = computed(() => toValue(user).displayName);
   // Discord leads a stranger's profile with adding them and a friend's with messaging them, and a direct message is

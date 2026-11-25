@@ -1,6 +1,6 @@
 # Auth
 
-Authentication is OAuth-only through [better-auth](https://better-auth.com) with the Drizzle adapter — Google, GitHub, and Facebook — mounted at the catch-all `server/api/auth/[...].ts`. Sessions are cookie-based; the Vue client reads them through `authClient.useSession` (better-auth's Vue plugin with the server's inferred additional fields, so `user.biography` is typed end-to-end).
+Authentication is OAuth-only through [better-auth](https://better-auth.com) with the Drizzle adapter — Google, GitHub, and Facebook — mounted at the catch-all `server/api/auth/[...].ts`. Sessions are cookie-based; the Vue client reads them through `useAuthSession` once at the root and `useSessionData` after it (better-auth's Vue plugin with the server's inferred additional fields, so `user.biography` is typed end-to-end).
 
 ## How it works
 

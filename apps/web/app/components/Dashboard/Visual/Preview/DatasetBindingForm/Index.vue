@@ -4,12 +4,11 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { authClient } from "#src/services/auth/authClient";
 import { removeDatasetQuerySeries } from "#src/services/dashboard/dataset/removeDatasetQuerySeries";
 import { useAlertStore } from "#src/store/alert";
 
 const modelValue = defineModel<undefined | VisualDatasetBinding>({ required: true });
-const session = authClient.useSession();
+const session = useSessionData();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 // A pick is read by the reader that reads the bound source, and is bound from that one read once its columns land,
@@ -45,7 +44,7 @@ watch(dataset, (newDataset) => {
 </script>
 
 <template>
-  <template v-if="session.data">
+  <template v-if="session">
     <DatasetReferencePicker
       :error
       :model-value="modelValue?.reference"

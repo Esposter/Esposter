@@ -3,17 +3,16 @@ import { RightDrawer } from "#src/models/message/RightDrawer";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { authClient } from "#src/services/auth/authClient";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
 const directMessageStore = useDirectMessageStore();
 const { currentDirectMessage } = storeToRefs(directMessageStore);
 const { deleteDirectMessageParticipant, getDirectMessageParticipants, leaveDirectMessage } = directMessageStore;
 const directMessageName = useDirectMessageName(currentDirectMessage);
-const session = authClient.useSession();
+const session = useSessionData();
 // Discord's rule: anyone leaves a group direct message, and only its owner removes somebody else — the owner reads
 // Remove on each participant, everyone else a Leave of their own, since the list never holds the reader
-const isOwner = computed(() => currentDirectMessage.value?.userId === session.value.data?.user.id);
+const isOwner = computed(() => currentDirectMessage.value?.userId === session.value?.user.id);
 const participants = computed(() =>
   currentDirectMessage.value ? getDirectMessageParticipants(currentDirectMessage.value.id) : [],
 );

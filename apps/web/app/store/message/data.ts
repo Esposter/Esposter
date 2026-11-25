@@ -15,7 +15,6 @@ import type { Editor } from "@tiptap/core";
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { MessageHook } from "#src/models/message/MessageHook";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { authClient } from "#src/services/auth/authClient";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
@@ -40,7 +39,7 @@ import {
 const getVotingPollKey = ({ id, roomId }: Pick<ClientMessage, "id" | "roomId">) => `${roomId}:${id}`;
 
 export const useDataStore = defineStore("message/data", () => {
-  const session = authClient.useSession();
+  const session = useSessionData();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
@@ -100,7 +99,7 @@ export const useDataStore = defineStore("message/data", () => {
     // Whose attachments this send took, so the commit and the rollback reach the composer that is holding them
     target: ComposerTarget = { roomId: input.roomId, threadRootId: 0 },
   ) => {
-    if (!session.value.data) return false;
+    if (!session.value) return false;
     // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
     // Round trip — so the attachments are snapshotted once, here, and that one snapshot is what the bubble
     // Carries, what goes on the wire, and what the hooks are handed. Reading the live array in any of those
@@ -110,7 +109,7 @@ export const useDataStore = defineStore("message/data", () => {
     const sentInput = input.files ? { ...input, files: [...input.files] } : input;
     const sentFileIds = sentInput.files?.map(({ id }) => id) ?? [];
     const newMessage: ClientMessage = reactive({
-      ...createOptimisticMessage(sentInput, session.value.data.user.id),
+      ...createOptimisticMessage(sentInput, session.value.user.id),
       isLoading: true,
     });
     // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the list,

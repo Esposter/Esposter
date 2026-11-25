@@ -3,7 +3,6 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { authClient } from "#src/services/auth/authClient";
 import { DatasetProviderTypeIconMeaningMap } from "#src/services/dataset/DatasetProviderTypeIconMeaningMap";
 import { DatasetProviderTypeItemCategoryDefinitions } from "#src/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
 import { DatasetProviderTypeSourceRouterMap } from "#src/services/dataset/DatasetProviderTypeSourceRouterMap";
@@ -20,7 +19,7 @@ interface Props {
 const modelValue = defineModel<DatasetReference | undefined>({ required: true });
 defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const session = authClient.useSession();
+const session = useSessionData();
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
 // Every provider type lists its sources the one way: every page of its router's resources, read to the end so none is
 // Left out of the list
@@ -34,7 +33,7 @@ const readSources = (providerType: DatasetProviderType) =>
 const typeSourceItemsMap = ref(new Map<DatasetProviderType, UiSelectItem<string>[]>());
 const sourceSelectItems = computed(() => prependNoneSelectItem(typeSourceItemsMap.value.get(type.value) ?? []));
 
-watchImmediate([() => session.value.data, type], async ([newSession, newType]) => {
+watchImmediate([() => session.value, type], async ([newSession, newType]) => {
   if (!newSession) return;
   await getResultAsync(async () => {
     const sources = await readSources(newType);

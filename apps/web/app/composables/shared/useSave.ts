@@ -1,7 +1,6 @@
 import type { ItemMetadata } from "#shared/models/shared/ItemMetadata";
 import type { z } from "zod";
 
-import { authClient } from "#src/services/auth/authClient";
 import { getSnapshotJson } from "#src/services/shared/getSnapshotJson";
 import { saveItemMetadata } from "#src/services/shared/metadata/saveItemMetadata";
 import { checkIsTRPCConflict } from "#src/services/trpc/checkIsTRPCConflict";
@@ -29,7 +28,7 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
   state: Ref<TState>,
   { auth, toSave, unauth }: UseSaveOptions<TState, T>,
 ) => {
-  const session = authClient.useSession();
+  const session = useSessionData();
   const { executeBackgroundMutation: executeSaveMutation } = useMutation();
   const saveToLocalStorage = useSaveToLocalStorage();
   // The etag of the save the state was last read or written under, which the next remote save is sent under
@@ -47,7 +46,7 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
     if (valueJson === lastSavedJson) return;
 
     saveItemMetadata(value);
-    if (session.value.data && auth)
+    if (session.value && auth)
       // This composable persists a single state, so its saves queue behind one another under a stable key. The save
       // Is read at send time, so a save queued behind another is sent under the etag that one answered
       executeSaveMutation(() => auth.save(value, etag), {

@@ -6,7 +6,6 @@ import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/con
 import { EmailView } from "#src/models/pageBuilder/EmailView";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiToggleGroupVariant } from "#src/models/ui/UiToggleGroupVariant";
-import { authClient } from "#src/services/auth/authClient";
 import { ROOT_INTERACTION_ID, ROOT_POINTER } from "#src/services/pageBuilder/constants";
 import { useEmailImportDialogStore } from "#src/store/emailEditor/importDialog";
 import { useEmailEditorStore } from "#src/store/emailEditor/index";
@@ -29,7 +28,7 @@ interface Props {
 // The mode the editor shows, Design or Preview, which the bar's switch chooses between
 const modelValue = defineModel<EmailView>({ required: true });
 const { resourceId } = defineProps<Props>();
-const session = authClient.useSession();
+const session = useSessionData();
 const emailEditorStore = useEmailEditorStore();
 const { datasetReference } = storeToRefs(emailEditorStore);
 const { saveDatasetReference } = emailEditorStore;
@@ -78,7 +77,7 @@ const overflowItems: Item[] = [
   <div ui-bar of-x-auto>
     <div px-4 py-2 flex gap-4 min-w-full w-max items-center>
       <DatasetReferencePicker
-        v-if="session.data"
+        v-if="session"
         :error
         :model-value="datasetReference"
         @update:model-value="saveDatasetReference($event)"

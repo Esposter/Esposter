@@ -7,6 +7,8 @@ import { ID_SEPARATOR, Operation } from "@esposter/shared";
 // Central registry for every nuxt payload key (RoutePath-style) so keys can never overlap. The keys live for
 // One render, so they are composed from the enums that name what was read rather than a spelling of their own.
 export const AsyncDataKey = {
+  // The signed-in session, read once at the root (`useAuthSession`) and read back synchronously by `useSessionData`
+  AuthSession: "auth-session",
   // The game's own words in the reader's language, read once per render of the Genshin page
   GameText: "game-text",
   ReadComments: (postId: PostInPost["id"]) =>

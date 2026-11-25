@@ -3,7 +3,6 @@ import type { RoomReaction } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { authClient } from "#src/services/auth/authClient";
 import { useMessageDialogStore } from "#src/store/message/dialog";
 import { useEmojiStore } from "#src/store/message/emoji";
 import { mergeProps } from "vue";
@@ -15,7 +14,7 @@ interface Props {
 
 const { emoji, roomId } = defineProps<Props>();
 // Rendered inside a `v-for`, so the bare form keeps this component synchronous rather than suspending the list
-const session = authClient.useSession();
+const session = useSessionData();
 const messageDialogStore = useMessageDialogStore();
 const { reactionsMessageId, reactionsRoomId } = storeToRefs(messageDialogStore);
 const emojiStore = useEmojiStore();
@@ -23,7 +22,7 @@ const { checkIsEmojiPending, toggleEmoji } = emojiStore;
 const { description } = useEmojiTag(() => emoji.emojiTag);
 const { getContextMenuProps } = useContextMenu();
 const isReacted = computed(() => {
-  const userId = session.value.data?.user.id;
+  const userId = session.value?.user.id;
   return Boolean(userId && emoji.userIds.includes(userId));
 });
 // Everyone who reacted is a right-click, long press or menu key away, since the tooltip that names them cannot be

@@ -3,7 +3,6 @@ import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { authClient } from "#src/services/auth/authClient";
 import { MAX_COMMENT_INDENT_DEPTH } from "#src/services/post/constants";
 import { getEditDeleteItems } from "#src/services/ui/getEditDeleteItems";
 import { useCommentDialogStore } from "#src/store/post/comment/dialog";
@@ -18,11 +17,11 @@ interface Props {
 const { comment } = defineProps<Props>();
 // The synchronous form: a tree renders one of these per node, and the awaited one makes every node an async
 // Boundary for something that only gates action affordances
-const session = authClient.useSession();
+const session = useSessionData();
 const commentDialogStore = useCommentDialogStore();
 const { replyingId } = storeToRefs(commentDialogStore);
 const { setDeletingComment } = commentDialogStore;
-const isCreator = computed(() => comment.userId === session.value.data?.user.id);
+const isCreator = computed(() => comment.userId === session.value?.user.id);
 const isUpdateMode = ref(false);
 const commentStore = useCommentStore();
 const { expandedCommentIds } = storeToRefs(commentStore);
@@ -62,7 +61,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () =>
         <PostDescription v-else :description="comment.description" />
         <div flex gap-2 items-center>
           <PostLikeSection :post="comment" />
-          <PostCommentReplyButton v-if="session.data" :comment-id="comment.id" />
+          <PostCommentReplyButton v-if="session" :comment-id="comment.id" />
           <UiEditDeleteMenu
             v-if="isCreator"
             :="editDeleteLabels"

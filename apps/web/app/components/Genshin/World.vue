@@ -5,7 +5,6 @@ import type { GenshinSave } from "genshin-world/save";
 
 import { GENSHIN_REGION_DATA_BASE_URL, GENSHIN_SCENE_EXPORT_BASE_URL } from "#shared/services/genshin/constants";
 import { IS_NUXT_DEVELOPMENT } from "#shared/util/environment/constants";
-import { authClient } from "#src/services/auth/authClient";
 import { GENSHIN_QUALITY_TIER } from "#src/services/genshin/constants";
 import { RoutePath } from "@esposter/shared";
 import { WorldScreen } from "genshin-world";
@@ -29,7 +28,7 @@ const { save } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const gameDataBaseUrl = useRuntimeConfig().public.hostedAssets.baseUrl;
 // The signed-in player's picture and name, which the world's profile card shows
-const session = authClient.useSession();
+const session = useSessionData();
 // The developer surface sits in a DevOnly block of the template, which a production build strips out.
 // Its registry is handed up before the world mounts, so the world waits for it in development.
 const devRegistry = shallowRef<DevRegistry>();
@@ -53,8 +52,8 @@ onMounted(() => {
 <template>
   <WorldScreen
     v-if="isWorldReady"
-    :account-avatar-url="session.data?.user.image || ''"
-    :account-name="session.data?.user.name || ''"
+    :account-avatar-url="session?.user.image || ''"
+    :account-name="session?.user.name || ''"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :dev-registry
     :game-data-base-url
