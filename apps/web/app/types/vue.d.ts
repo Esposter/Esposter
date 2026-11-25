@@ -16,9 +16,9 @@ declare module "vue" {
     popover?: "" | "auto" | "hint" | "manual";
   }
 
-  // @TODO: https://github.com/vuejs/language-tools/issues/6377 — a `.prop` binding is checked against the element's
-  // Attributes, so a DOM property that is no attribute, such as a video's `srcObject`, is unknown; vize copies the
-  // Check, so this goes once vize follows the fix
+  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13688 — a `.prop` binding is checked against the element's
+  // Attributes, so a DOM property that is no attribute, such as a video's `srcObject`, is unknown. vue-tsc does the
+  // Same (vuejs/language-tools#6377), but the app's check is vize's
   interface VideoHTMLAttributes {
     srcObject?: MediaProvider | null;
   }
