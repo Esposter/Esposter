@@ -255,7 +255,7 @@ describe("transition slots", () => {
     const slotComments: string[] = [];
     for (const { elements, sourcePath: templatePath } of sourceFiles)
       for (const { children, tag } of elements) {
-        if (!/^(?:KeepAlive|Transition\w*)$/u.test(tag)) continue;
+        if (!/^(?:KeepAlive|Transition\w*)$/u.test(toPascalCase(tag))) continue;
         for (const child of children)
           if (child.type === NodeTypes.COMMENT) slotComments.push(`${templatePath}:${child.loc.start.line}`);
       }
