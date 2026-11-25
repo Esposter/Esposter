@@ -42,7 +42,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **No allocating expressions in render positions** — `Object.*` in a `:prop`, `v-for` source or `{{ }}` allocates a fresh reference every render. Enforced by `vue/no-restricted-syntax`, whose message states the fix.
 - **Event modifiers over raw event methods** (`vue/no-restricted-syntax`); the exceptions and the one banned call are on `references/template-bindings.md`.
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
-- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or the type check cannot see a template identifier: `v-html` on a component, a dotted slot name, a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
+- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or the type check cannot see a template identifier: `v-html` on a component, a dotted slot name, a comment inside a `<Transition>` slot (a development-only hydration mismatch), a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
 
 ## Props, Refs & Computed
 

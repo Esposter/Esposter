@@ -18,6 +18,32 @@ sanitizing again in the template says the boundary is not trusted, and leaves tw
 
 Vue rejects dots in static slot names, so a slot named with one is written in brackets: ``#[`item.drag`]``. Only dot-free names are static (`#top`).
 
+## A comment inside a `<Transition>` slot breaks hydration in development
+
+A template comment is a node. The server renders it, but the client's transition slot drops it in a development build, so hydration meets the comment where it expects the slot's element and reports a mismatch. Production strips comments on both sides, which is why a deployed check stays clean while a development page fails. Put a comment that explains a transition's child outside the transition's tag, directly above it:
+
+```vue
+<template>
+  <!-- WRONG — the comment is the transition's first child -->
+  <TransitionFade mode="out-in">
+    <!-- A drawing left keeps its calculator -->
+    <KeepAlive>
+      <component :is="drawing" />
+    </KeepAlive>
+  </TransitionFade>
+
+  <!-- CORRECT — the note sits outside the slot -->
+  <!-- A drawing left keeps its calculator -->
+  <TransitionFade mode="out-in">
+    <KeepAlive>
+      <component :is="drawing" />
+    </KeepAlive>
+  </TransitionFade>
+</template>
+```
+
+The cause and its one case are recorded in `openspec/specs/architecture/hydration/design.md`.
+
 ## A guard in an inline handler does not narrow inside a closure
 
 A template identifier resolving to the **render context** compiles to a property access on it, and a property
