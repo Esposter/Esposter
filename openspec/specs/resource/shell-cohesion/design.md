@@ -13,7 +13,7 @@ Shell primitives live in `app/components/Ui/` (the UI library) and `app/componen
 
 ## Navigation
 
-- `ProductGroups`: the launcher's products, grouped by what they are for. One **Resource Explorer** entry covers every resource type rather than one entry per editor; Clicker and Dungeons are the "Play" group. `AppProductGroups` draws them in the launcher, the one list of products.
+- `ProductGroups`: the launcher's products, grouped by what they are for. One **Resource Explorer** entry covers every resource type rather than one entry per editor; Clicker and Dungeons are the "Play" group, and the demos — Anime and Fluid Simulator — are "Labs" rather than account-menu links. `AppProductGroups` draws them in the launcher, the one list of products.
 - The frame itself — the dock, its launcher, bookmarks and recent pages, the account menu and the toasts — is the [UI library's app shell](../../architecture/ui-library/design.md#app-shell).
 
 ## Key files

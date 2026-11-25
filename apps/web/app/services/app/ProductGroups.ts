@@ -52,4 +52,21 @@ export const ProductGroups = [
     ],
     title: "Play",
   },
+  {
+    items: [
+      {
+        description: "Characters drawn with nothing but graphing-calculator curves.",
+        href: RoutePath.Anime,
+        icon: "i-custom:anime",
+        title: "Anime",
+      },
+      {
+        description: "Water you can push around, lit by a moving sky.",
+        href: RoutePath.FluidSimulator,
+        icon: "i-mdi:water",
+        title: "Fluid Simulator",
+      },
+    ],
+    title: "Labs",
+  },
 ] as const satisfies ProductGroup[];
