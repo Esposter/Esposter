@@ -14,7 +14,6 @@ The key map is what the loaders import. The Nuxt module that writes it is regist
 - Each tileset's `.tsx` definition and each map's `tilemap.json` stay in git beside those maps, because the editor reads them there. They are also hosted objects, and the game loads the hosted copy. The git copy is never the one the runtime reads.
 - The code under the folder stays in git, since the bundle imports it.
 - The binaries, the images, the sounds and the font, are not kept in git. The lock names each one, and a working copy is restored from the lock by `pull`.
-- The attribution notices are under `apps/web/third-party/dungeons/`, outside the asset folder, because no code imports them.
 
 ## How the game loads its files
 
@@ -29,7 +28,7 @@ The Preloader requests every file with anonymous CORS, which `loadDungeonsFiles`
 
 ## The Preloader
 
-The Preloader scene, `apps/web/app/components/Dungeons/Preloader/Scene.vue`, shows one loading bar. Its preload set is `readDungeonsPreloadSet`, which holds every object the lock names, so the bar's share is the download of the objects the browser lacks. Once every object is held, the bar reads full and the Phaser pass starts. Its requests are answered from the cache, so the pass only decodes the files, and Phaser's `complete` event switches the scene to the title. The bar follows the download rather than Phaser's own progress events, which would move in jumps.
+The Preloader scene, `apps/web/app/components/Dungeons/Preloader/Scene.vue`, shows one loading bar. Its preload set is `readDungeonsPreloadSet`, which holds every object the lock names but the third-party license notices, which `DUNGEONS_LICENSE_NOTICE_REGEX` matches: they are hosted beside their packs' files under `thirdParty/`, and no scene reads them. So the bar's share is the download of the objects the browser lacks. Once every object is held, the bar reads full and the Phaser pass starts. Its requests are answered from the cache, so the pass only decodes the files, and Phaser's `complete` event switches the scene to the title. The bar follows the download rather than Phaser's own progress events, which would move in jumps.
 
 A failed download leaves the bar on a failure line, and the title scene does not start. The error names the object paths that failed, and it is logged.
 
@@ -60,7 +59,6 @@ The dungeons suites mock the loader, and `loadDungeonsFiles.test.ts` checks the 
 | `apps/web/shared/generated/hostedAssets/dungeonsLock.json`                  | the committed lock that names every object the game reads                          |
 | `apps/web/configuration/modules.ts`                                         | registers the key map module with the dungeons options                             |
 | `apps/web/app/assets/dungeons/`                                             | the Tiled sources and the code that stay in git, with the binaries removed from it |
-| `apps/web/third-party/dungeons/`                                            | the attribution notices, which no code imports                                     |
 | `apps/web/app/services/dungeons/loader/loadDungeonsFiles.ts`                | every file the game loads by its url, with anonymous CORS set first                |
 | `apps/web/app/services/dungeons/loader/getDungeonsUrl.ts`                   | a key's absolute url, read from the lock                                           |
 | `apps/web/app/services/dungeons/loader/readDungeonsPreloadSet.ts`           | the Preloader's set: every object the lock names, and the game's scope prefix      |

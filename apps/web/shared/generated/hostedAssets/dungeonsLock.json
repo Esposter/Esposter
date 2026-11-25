@@ -175,6 +175,12 @@
       "scope": "dungeons",
       "sha256": "c51b6b8b2a6912512c2aa9a5a5cb315514f60199b68bc49ffff25f36b4211739"
     },
+    "dungeons/thirdParty/axulart/character/license.txt": {
+      "bytes": 614,
+      "extension": ".txt",
+      "scope": "dungeons",
+      "sha256": "caeb5fceed22c537c4ad2d6ff36bc74fec9e2f5e46b8a02c6d2f13a6546d9240"
+    },
     "dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png": {
       "bytes": 530,
       "extension": ".png",
@@ -186,6 +192,12 @@
       "extension": ".png",
       "scope": "dungeons",
       "sha256": "9fe632c0117a57c0fa4b94a94530a6b301ea3be381b2df245b4b748e4ae0e65f"
+    },
+    "dungeons/thirdParty/kenneysAssets/UIPack/license.txt": {
+      "bytes": 461,
+      "extension": ".txt",
+      "scope": "dungeons",
+      "sha256": "20b2043e1a36778a34ce9e06a4298fd0ce85911c92e6d102ed9408e036390b2e"
     },
     "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png": {
       "bytes": 245,
@@ -265,11 +277,23 @@
       "scope": "dungeons",
       "sha256": "f5b16862c6b5fce5db7e68f6a076f74f23073a238e3b42ff59343f740c5faecc"
     },
+    "dungeons/thirdParty/kenneysAssets/UISpaceExpansion/license.txt": {
+      "bytes": 478,
+      "extension": ".txt",
+      "scope": "dungeons",
+      "sha256": "738af0909221d641a8ce61c039c57ea9d076630d79834a07fd090f7c0f9b611a"
+    },
     "dungeons/thirdParty/kenneysAssets/fonts/KenneyFutureNarrow.woff2": {
       "bytes": 3320,
       "extension": ".woff2",
       "scope": "dungeons",
       "sha256": "6b3eba8b046b9d470e34d2e98a0445838ec17a095d879d8fa689bf0e5610add7"
+    },
+    "dungeons/thirdParty/kenneysAssets/fonts/License.txt": {
+      "bytes": 542,
+      "extension": ".txt",
+      "scope": "dungeons",
+      "sha256": "fcc9219969f63dfc3c97f152ef242ceb1cc31f7f2ac1948818a9be2d2a7dcc8c"
     },
     "dungeons/thirdParty/leohpaz/claw.mp3": {
       "bytes": 10599,
@@ -289,6 +313,12 @@
       "scope": "dungeons",
       "sha256": "f43eb5f1f440f784fb313ca2df24d53829b67dfa584850c3601d51904e7bd955"
     },
+    "dungeons/thirdParty/leohpaz/license.png": {
+      "bytes": 40789,
+      "extension": ".png",
+      "scope": "dungeons",
+      "sha256": "c6e595541d25fbc985428a79f389830f639aa5c5d97759f213ca250750e00bbd"
+    },
     "dungeons/thirdParty/leohpaz/stepGrass.mp3": {
       "bytes": 4596,
       "extension": ".mp3",
@@ -300,6 +330,12 @@
       "extension": ".png",
       "scope": "dungeons",
       "sha256": "f1fefe36d327a9a73f03187499478d8a40274b469012201cf0a7202d920da7d8"
+    },
+    "dungeons/thirdParty/parabellumGames/notes.txt": {
+      "bytes": 58,
+      "extension": ".txt",
+      "scope": "dungeons",
+      "sha256": "ff142fcea8aec76bb7846bc1f80e99dad3b774dae198c085e9b55a8ae1cc3062"
     },
     "dungeons/thirdParty/pimen/iceAttack/active.png": {
       "bytes": 1149,
@@ -330,6 +366,12 @@
       "extension": ".mp3",
       "scope": "dungeons",
       "sha256": "db80655357ea363e2dcc28dc15be942a0eb5b74de1c826bdeb15c29514af5548"
+    },
+    "dungeons/thirdParty/xDeviruchi/license.pdf": {
+      "bytes": 216192,
+      "extension": ".pdf",
+      "scope": "dungeons",
+      "sha256": "6367f519d8a971a16fe4df99d7b172da395e806ba1c4f5b2d511f0207e01488f"
     },
     "dungeons/thirdParty/xDeviruchi/titleTheme.mp3": {
       "bytes": 1827355,

@@ -17,9 +17,11 @@ export const HOSTED_ASSET_CONTENT_TYPES: Readonly<Record<string, string>> = {
   ".json": "application/json",
   ".mp3": "audio/mpeg",
   ".ogg": "audio/ogg",
+  ".pdf": "application/pdf",
   ".png": "image/png",
   ".tmx": "application/xml",
   ".tsx": "application/xml",
+  ".txt": "text/plain; charset=utf-8",
   ".webp": "image/webp",
   ".woff2": "font/woff2",
 };

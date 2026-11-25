@@ -17,11 +17,12 @@ The dungeons game SHALL load every image, sound, font and Tiled file its engine 
 - **THEN** the texture is requested from the product's absolute url for its key
 - **AND** the app's bundle contains no copy of the texture
 
-#### Scenario: A file the code never loads is not hosted
+#### Scenario: A license notice is hosted but never preloaded
 
-- **GIVEN** an attribution notice that no code imports
-- **WHEN** the dungeons game publishes its objects
-- **THEN** the notice is not published as an object
+- **GIVEN** a third-party pack's license notice beside the pack's files in the asset folder
+- **WHEN** the dungeons game publishes its objects and the Preloader runs
+- **THEN** the notice is published as an object under the pack's path
+- **AND** the Preloader does not download it
 
 ### Requirement: The Preloader shows one bar for the download of its objects
 
