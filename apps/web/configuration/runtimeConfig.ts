@@ -1,9 +1,9 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 import { getCloudflareEnvironment } from "#configuration/wrangler";
-import { execFileSync } from "@esposter/shared-node/child-process";
 
 import { HostedAssetOriginMap } from "../../../packages/db-schema/src/services/storage/HostedAssetOriginMap.ts";
+import { execFileSync } from "../../../packages/shared-node/src/services/childProcess/execFileSync.ts";
 
 // Only what the browser needs — everything under `public` is serialised into the client payload. Server code reads its
 // Secrets straight off the environment under their own names, checked at startup by the environment plugin. These

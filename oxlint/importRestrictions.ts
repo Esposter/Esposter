@@ -94,12 +94,19 @@ export const WEB_ALIAS_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   },
   SUBPATH_QUERY_IMPORT_PATTERN,
 ];
-// The app's configuration and scripts reach `db-schema`'s source by path, its one relative import: Nuxt loads them at
-// Install, before any workspace package is built, and a subpath import never targets a file outside its own package
+// The app's configuration and scripts reach `db-schema`'s and `shared-node`'s source by path, their one relative
+// Import: Nuxt loads them at install, before any workspace package is built, and a subpath import never targets a file
+// Outside its own package
 export const WEB_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   ...WEB_ALIAS_IMPORT_PATTERNS,
   {
-    group: [...RELATIVE_IMPORT_GROUP, "!../../../packages/db-schema/src/**", "!../../../../packages/db-schema/src/**"],
+    group: [
+      ...RELATIVE_IMPORT_GROUP,
+      ...["db-schema", "shared-node"].flatMap((name) => [
+        `!../../../packages/${name}/src/**`,
+        `!../../../../packages/${name}/src/**`,
+      ]),
+    ],
     message: RELATIVE_IMPORT_MESSAGE,
   },
 ];
