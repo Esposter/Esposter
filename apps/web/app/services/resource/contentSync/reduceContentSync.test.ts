@@ -109,4 +109,20 @@ describe(reduceContentSync, () => {
     expect(state.kind).toBe(ContentSyncKind.Failed);
     expect(effects).toStrictEqual([]);
   });
+
+  test("an edit made after a restore asked during a save is kept as a conflict, not replaced by a read", () => {
+    expect.hasAssertions();
+
+    const { effects, state } = run([
+      ...opened,
+      { snapshot: snapshot(1), type: ContentSyncEventType.SaveRequested },
+      { type: ContentSyncEventType.ReloadRequested },
+      { type: ContentSyncEventType.Edited },
+      { snapshot: snapshot(2), type: ContentSyncEventType.SaveRequested },
+      { hash: "1", type: ContentSyncEventType.SaveAcknowledged, version: 1 },
+    ]);
+
+    expect(state.kind).toBe(ContentSyncKind.Conflict);
+    expect(effects).toStrictEqual([]);
+  });
 });

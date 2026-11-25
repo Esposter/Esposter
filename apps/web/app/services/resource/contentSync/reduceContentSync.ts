@@ -29,10 +29,12 @@ const send = (base: ContentBase, snapshot: ContentSnapshot, isEdited = false): C
       };
 // A save's answer moves the base to what it stored. A newer row seen meanwhile is then another writer's: adopted when
 // Nothing was edited since, a conflict otherwise. Without one, the latest save asked for goes next
+// An edit the save in flight does not yet hold: one made since it was sent, or one asked for behind it in `next`
+const isEditedSince = (state: SavingContentSync) => state.isEdited || state.next !== undefined;
 const acknowledge = (state: SavingContentSync, version: number, hash: string): ContentSyncTransition => {
   // A compare-and-set answers one past the base, so the clamp only keeps the clock from going back on a broken answer
   const base: ContentBase = { hash, json: state.sent.json, version: Math.max(version, state.base.version) };
-  const isEdited = state.isEdited || state.next !== undefined;
+  const isEdited = isEditedSince(state);
   if (state.isReloading) return answerReload(state, base);
   else if (state.remoteVersion !== undefined && state.remoteVersion > version)
     return isEdited
@@ -43,7 +45,7 @@ const acknowledge = (state: SavingContentSync, version: number, hash: string): C
 };
 // The restore asked for during the save goes ahead once the save answers, unless the person edited after asking
 const answerReload = (state: SavingContentSync, base: ContentBase): ContentSyncTransition =>
-  state.isEdited
+  isEditedSince(state)
     ? stay({
         base,
         kind: ContentSyncKind.Conflict,
