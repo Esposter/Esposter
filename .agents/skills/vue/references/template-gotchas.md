@@ -42,7 +42,7 @@ A template comment is a node. The server renders it, but the client's transition
 </template>
 ```
 
-The cause and its one case are recorded in `openspec/specs/architecture/hydration/design.md`.
+`apps/web/app/templates.test.ts` ("transition slots") fails on a comment directly inside a `Transition*` or `KeepAlive` tag, since vize's template AST holds no comment node for a selector ban to match. The cause is recorded in `openspec/specs/architecture/hydration/design.md`.
 
 ## A guard in an inline handler does not narrow inside a closure
 

@@ -245,6 +245,25 @@ describe("breakpoints", () => {
   });
 });
 
+// A transition's slot (`<Transition>`, a wrapper of it such as `<TransitionFade>`, or `<KeepAlive>`) drops a comment
+// Child on the client in a development build while the server renders it, so hydration meets the comment where it
+// Expects the child. Vize's template AST holds no comment node, so no selector ban can see one (the `vue` skill)
+describe("transition slots", () => {
+  test("holds no comment directly inside a transition's slot", () => {
+    expect.hasAssertions();
+
+    const slotComments: string[] = [];
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const { children, tag } of elements) {
+        if (!/^(?:KeepAlive|Transition\w*)$/u.test(tag)) continue;
+        for (const child of children)
+          if (child.type === NodeTypes.COMMENT) slotComments.push(`${templatePath}:${child.loc.start.line}`);
+      }
+
+    expect(slotComments).toStrictEqual([]);
+  });
+});
+
 // A button and a list row lay out their own content — the flex row, its gap and alignment, the block padding and the
 // Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second
 // Copy that drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
