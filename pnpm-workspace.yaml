@@ -66,7 +66,7 @@ catalog:
   "@pinia/nuxt": ^1.0.3
   "@pulumi/cloudflare": ^6.24.0
   "@pulumi/github": ^6.15.1
-  "@pulumi/pulumi": ^3.277.0
+  "@pulumi/pulumi": ^3.278.0
   "@standard-schema/spec": ^1.1.0
   "@tiptap/core": ^3.35.0
   "@tiptap/extension-code-block-lowlight": ^3.35.0
