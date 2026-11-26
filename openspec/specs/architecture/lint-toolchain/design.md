@@ -91,7 +91,7 @@ Oxfmt formats every file but a component, and `vize fmt` formats the components:
 - **The pre-commit hook** formats every staged component from its staged blob through `.githooks/formatComponent.ts`, which calls vize's `format()`: the command line reads no stdin, and under the main checkout's config, which a worktree with no install borrows, it skips the worktree's files as ignored.
 - **`pnpm ai:format`** and the precheck format a component in process with `formatSync`, one file at a time (`scripts/src/services/format/formatSource.ts`).
 
-Each names the root `vite.config.ts` as its configuration. `format()` discovers one from the component's directory otherwise and stops at the nearest Vite or Vitest config, which in an app is the app's `vitest.config.ts`, holding no formatter options.
+Each names the root `vite.config.ts` as its configuration. Otherwise `format()` finds its config from the component's directory, by design the one `vize fmt` run there would find, so the API and the command line never disagree: in a monorepo the nearest Vite or Vitest config is the boundary for both, and in an app that is its `vitest.config.ts`, which holds no formatter options.
 
 A blank line inside a multi-line handler attribute keeps the handler's indentation, where every other blank line is written empty, and `vize fmt --check` fails the trimmed form ([Vize issue 13714](https://github.com/ubugeeei-prod/vize/issues/13714)). It is invisible at runtime, and the next format after the fix rewrites those lines.
 
