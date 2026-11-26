@@ -27,11 +27,12 @@ export const usePostRows = () => {
   const postMap = computed(
     () => new Map(postRows.value.map((post): [string, Readonly<Draft<PostInPost>>] => [post.id, post])),
   );
+  // A guest's pending vote is drawn under the empty id, so the viewer's own vote is read only for a signed-in viewer
   const viewerLikeMap = computed(
     () =>
       new Map(
         likeRows.value
-          .filter((like) => like.userId === userId.value)
+          .filter((like) => Boolean(userId.value) && like.userId === userId.value)
           .map((like): [string, LikeInPost] => [like.postId, { ...like, version: like.version ?? NO_ROW_VERSION }]),
       ),
   );

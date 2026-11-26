@@ -270,7 +270,10 @@ export default defineConfig({
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does
       "data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
-      "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
+      // Its hover is the tint alone, so the style's hover overlay and filter are cleared, as a rating step's are
+      "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:hover:[background-image:none] data-[variant=Quiet]:hover:[filter:none]",
+      // A pressed one keeps its fill under the pointer, where the tint would otherwise replace it
+      "data-[variant=Quiet]:aria-pressed:hover:bg-accent data-[variant=Quiet]:aria-pressed:hover:text-background data-[variant=Quiet]:aria-checked:hover:bg-accent data-[variant=Quiet]:aria-checked:hover:text-background",
       "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
       // A step of a rating scale is its mark alone: no surface, no overlay under the pointer and no fill while chosen,
       // Since the scale fills the marks up to the step it shows. It takes the colour of the scale it sits in
