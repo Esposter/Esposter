@@ -1,7 +1,7 @@
 # Packages
 
 - `packages/db-mock` — `CHANGELOG.md`, `README.md`, `package.json`
-- `packages/db-mock/src` — `cloudflareWorkers.ts`, `createMockBucket.ts`, `createMockBuckets.ts`, `createMockDb.test.ts`, `createMockDb.ts`, `models`, `services`
+- `packages/db-mock/src` — `cloudflareWorkers.ts`, `createMockBucket.ts`, `createMockBuckets.ts`, `createMockDb.test.ts`, `createMockDb.ts`, `models`, `services`, `setupMockBucket.ts`
 - `packages/db-mock/src/workers` — `index.ts`, `models`, `services`
 - `packages/db-mock` — `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/db/src/models`
