@@ -7,7 +7,7 @@ import { defineConfig } from "oxfmt";
 export const PRINT_WIDTH = 120;
 
 // The paths no formatter rewrites, which `vize fmt` reads too (`vite/vueOptions.ts`)
-export const IGNORE_PATTERNS = [
+export const IGNORE_PATTERNS: string[] = [
   AGENT_WORKTREES_DIRECTORY,
   "*.tsx",
   "**/tilemap.json",
