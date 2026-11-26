@@ -14,7 +14,8 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 // The cheap checks CI would otherwise be the first to run on a push: the formatter over each changed file, each changed
 // Package's barrel against what its generator writes, after a manifest change the dependency graph against what its
 // Generator draws, each derived ledger's rows against the tree they are derived from, and each ledger trailer of the
-// Commits being landed against the rows it names. Typecheck, lint and the tests stay CI's
+// Commits being landed against the rows it names. With `fix`, each stale generated file and each row naming a reworded
+// Unit is rewritten. Typecheck, lint and the tests stay CI's
 export const runPrecheck = async (fix: boolean): Promise<PrecheckReport> => {
   const mainCheckoutRoot = readMainCheckoutRoot();
   const changedFiles = readChangedFiles();
@@ -24,13 +25,12 @@ export const runPrecheck = async (fix: boolean): Promise<PrecheckReport> => {
   // The graph's edges come from the committed lockfile, which every checkout holds the same way, so a manifest change
   // In a linked worktree is checked like one in the main checkout
   const graphChecks = checkHasGraphInput(changedFiles) ? [await checkGraph(fix)] : [];
-  const checks = [...barrelChecks, ...graphChecks];
+  const checks = [...barrelChecks, ...graphChecks, checkLedgerUnits(fix)];
   return {
     findings: [
       ...unformattedPaths.map((path) => `unformatted ${path}`),
       ...(unformattedPaths.length === 0 ? [] : [`fix: pnpm ai:format ${unformattedPaths.join(" ")}`]),
       ...checks.flatMap(({ findings }) => findings),
-      ...checkLedgerUnits(),
       ...checkLedgerTrailers(),
     ],
     regenerated: checks.flatMap(({ regenerated }) => regenerated),

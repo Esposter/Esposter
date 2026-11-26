@@ -10,6 +10,6 @@ describe("precheck", () => {
   test("the area list and each derived ledger hold to the tree", () => {
     expect.hasAssertions();
 
-    expect(checkLedgerUnits()).toStrictEqual([]);
+    expect(checkLedgerUnits(false)).toStrictEqual({ findings: [], regenerated: [] });
   });
 });

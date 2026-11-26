@@ -5,13 +5,14 @@ import { defineCommand } from "citty";
 // `pnpm ai:precheck [--fix]` — the formatter, the barrel check, after a manifest change the dependency graph check,
 // Each derived ledger's rows against the tree, and the ledger trailers of the commits ahead of ai/queue, over what the
 // Checkout changed against ai/queue, run before a push (the `running-checks` skill). `--fix` rewrites a stale barrel or
-// Graph with the generator that writes it
+// Graph with the generator that writes it, and a ledger row whose unit was reworded to name the unit it became
 await runCommand(
   defineCommand({
     args: {
       fix: {
         default: false,
-        description: "Rewrite each stale barrel and a stale dependency graph with the generator that writes it",
+        description:
+          "Rewrite each stale barrel and a stale dependency graph with the generator that writes it, and each ledger row whose unit was reworded to name the unit it became",
         type: "boolean",
       },
     },

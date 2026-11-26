@@ -14,7 +14,9 @@ vi.mock(import("#src/services/queue/readChangedFiles"), () => ({
   readChangedFiles: () => [{ path: "packages/shared/package.json", status: ChangeStatus.Modified }],
 }));
 vi.mock(import("#src/services/precheck/readUnformattedPaths"), () => ({ readUnformattedPaths: () => [] }));
-vi.mock(import("#src/services/precheck/checkLedgerUnits"), () => ({ checkLedgerUnits: () => [] }));
+vi.mock(import("#src/services/precheck/checkLedgerUnits"), () => ({
+  checkLedgerUnits: () => ({ findings: [], regenerated: [] }),
+}));
 vi.mock(import("#src/services/precheck/checkLedgerTrailers"), () => ({ checkLedgerTrailers: () => [] }));
 
 describe(runPrecheck, () => {
