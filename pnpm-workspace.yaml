@@ -107,9 +107,9 @@ catalog:
   "@vitest/snapshot": ^5.1.2
   "@vitest/spy": ^5.1.2
   "@vitest/utils": ^5.1.2
-  "@vizejs/native": ^0.798.0
-  "@vizejs/unplugin": ^0.798.0
-  "@vizejs/vite-plugin": ^0.798.0
+  "@vizejs/native": ^0.799.0
+  "@vizejs/unplugin": ^0.799.0
+  "@vizejs/vite-plugin": ^0.799.0
   "@vue/compiler-core": ^3.5.46
   "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.4.0
@@ -192,7 +192,7 @@ catalog:
   vite-plus: ^1.8.0
   vitest: ^5.1.2
   vitest-browser-vue: ^3.1.0
-  vize: ^0.798.0
+  vize: ^0.799.0
   vue: ^3.5.46
   vue-router: ^5.5.1
   web-push: ^4.0.0
