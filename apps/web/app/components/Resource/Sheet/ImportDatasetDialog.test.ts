@@ -18,6 +18,7 @@ describe("resourceSheetImportDatasetDialog", () => {
 
     setupWithDataSource();
     trpcMsw.resource.saveResourceRevision.mutation(() => 1);
+    trpcMsw.resource.readSnapshotHistory.query(() => []);
     const survey = createResourceListItem();
     const { promise: isSurveysRead, resolve: onSurveysRead } = Promise.withResolvers<void>();
     trpcMsw.survey.readResources.query(() => {

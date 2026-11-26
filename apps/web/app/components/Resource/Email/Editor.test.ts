@@ -33,6 +33,7 @@ describe("resourceEmailEditor", () => {
       () => new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } }),
     );
     trpcMsw.email.readResourcePublication.query(() => undefined);
+    trpcMsw.email.compile.mutation(() => ({ html }));
     const { readResource } = useReadOpenResource();
     // The page reads the row before any blade mounts, and a content load reads only the blob
     await readResource();
@@ -52,7 +53,6 @@ describe("resourceEmailEditor", () => {
   test("nothing selected asks for a selection", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.mutation(() => ({ html }));
     const component = await mountSuspended(ResourceEmailEditor);
     await waitForSynchronizedFunctions();
     await flushPromises();
@@ -63,7 +63,6 @@ describe("resourceEmailEditor", () => {
   test("a link finding on a button is counted as one problem", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.mutation(() => ({ html }));
     trpcMsw.email.readResourceContent.query(
       () =>
         new EmailEditor({ content: [createEmailButtonSection(undefined)], root: { props: { lang: "", title: "" } } }),
@@ -78,7 +77,6 @@ describe("resourceEmailEditor", () => {
   test("a mobile device sizes the preview frame to the mobile width", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.mutation(() => ({ html }));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const { setDevice } = pageBuilderCanvasStore;
     setDevice(resourceId, PageBuilderDevice.Mobile);

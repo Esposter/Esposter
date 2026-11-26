@@ -1,7 +1,8 @@
 import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
 import type { TRPCMsw } from "#src/models/TRPCMsw";
 import type { TRPCMswOptions } from "#src/models/TRPCMswOptions";
-import type { AnyTRPCRouter, TRPCError, TRPCProcedureType } from "@trpc/server";
+import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
+import type { HTTPErrorHandler } from "@trpc/server/http";
 import type { HttpHandler, WebSocketHandler } from "msw";
 
 import { WEBSOCKET_ROUTER_REPLACED_CLOSE_CODE } from "#src/constants";
@@ -38,10 +39,10 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   // Built once and reused until a path is registered for the first time, since the router's procedures are the paths
   // Registered then; the resolvers themselves are read from `registrations` at each call
   let httpRouter: AnyTRPCRouter | undefined;
-  // tRPC reports every error a call ends in, so a NOT_FOUND is told apart from a resolver's own by whether a resolver of
-  // The call's type was registered for its path when it failed
-  const onError = onUnhandledProcedureCall
-    ? ({ error, path, type }: { error: TRPCError; path: string | undefined; type: string }) => {
+  // Every error a call ends in reaches the adapter's error hook, so a NOT_FOUND is told apart from a resolver's own by
+  // Whether a resolver of the call's type was registered for its path when it failed
+  const onError: HTTPErrorHandler<AnyTRPCRouter, unknown> | undefined = onUnhandledProcedureCall
+    ? ({ error, path, type }) => {
         if (error.code === "NOT_FOUND" && path !== undefined && registrations.get(path)?.type !== type)
           onUnhandledProcedureCall(path);
       }

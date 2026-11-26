@@ -33,6 +33,7 @@ describe("resourceBlueprintEditor", () => {
     }));
     trpcMsw.blueprint.readResourceContent.query(() => createEmptyBlueprint());
     trpcMsw.resource.saveResourceRevision.mutation(() => 1);
+    trpcMsw.resource.readSnapshotHistory.query(() => []);
     const { readResource } = useReadOpenResource();
     await readResource();
   });

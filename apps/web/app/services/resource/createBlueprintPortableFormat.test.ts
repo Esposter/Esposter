@@ -37,6 +37,7 @@ describe(createBlueprintPortableFormat, () => {
     trpcMsw.resource.readResource.query(() => ({ ...resource, favorite: null, publication: null }));
     trpcMsw.blueprint.readResourceContent.query(() => savedManifest);
     trpcMsw.resource.saveResourceRevision.mutation(() => 1);
+    trpcMsw.resource.readSnapshotHistory.query(() => []);
   });
 
   // The file is the saved manifest, so it is what a deploy would create and never the text on screen
