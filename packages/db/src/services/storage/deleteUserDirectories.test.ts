@@ -1,27 +1,19 @@
 import { deleteUserDirectories } from "#src/services/storage/deleteUserDirectories";
 import { listBlobNames } from "#src/services/storage/listBlobNames";
-import { createMockBucket } from "@esposter/db-mock";
+import { setupMockBucket } from "@esposter/db-mock/vitest";
 import { StorageBucket } from "@esposter/db-schema";
 import { v7 } from "uuid";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(deleteUserDirectories, () => {
   const userId = v7();
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
-
-  beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.UserAssets));
-  });
-
-  afterAll(async () => {
-    await dispose();
-  });
+  const { getBucket } = setupMockBucket(StorageBucket.UserAssets);
 
   // The trailing slash is what keeps one user's directory from taking another whose id starts with the same characters
   test("removes only the user's own directory, not one whose id extends it", async () => {
     expect.hasAssertions();
 
+    const bucket = getBucket();
     await bucket.put(`${userId}/ProfileImage`, "");
     await bucket.put(`${userId}2/ProfileImage`, "");
 

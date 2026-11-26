@@ -1,14 +1,12 @@
 import type { Context } from "#server/trpc/context";
 import type { DecorateRouterRecord, RouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getBucket } from "#server/services/storage/getBucket";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import { resourcesInResource, StorageBucket } from "@esposter/db-schema";
-import { afterAll, afterEach, beforeAll, describe } from "vitest";
+import { afterEach, beforeAll, describe } from "vitest";
 
 // Resource-suite fixture: owns the mock context, the caller for the resource-typed router under test, and the
 // Cleanup every resource suite owes — the content bucket and the resource rows. Suite-specific hooks compose —
@@ -18,26 +16,19 @@ export const setupResourceSuite = <TRecord extends RouterRecord>(
 ) => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRecord>;
-  let disposeBucket: (() => Promise<void>) | undefined;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(resourceRouter)(mockContext);
-    const { bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets);
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
-    disposeBucket = dispose;
   });
 
   afterEach(async () => {
-    await deleteDirectory(getBucket(StorageBucket.ResourceAssets));
+    await deleteDirectory(getMockBucket());
     await mockContext.db.delete(resourcesInResource);
   });
 
-  afterAll(async () => {
-    await disposeBucket?.();
-  });
-
-  return { getCaller: () => caller, getMockContext: () => mockContext };
+  return { getCaller: () => caller, getMockBucket, getMockContext: () => mockContext };
 };
 
 describe.todo("setupResourceSuite");

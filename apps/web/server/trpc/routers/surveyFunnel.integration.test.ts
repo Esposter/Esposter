@@ -2,11 +2,10 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
@@ -27,7 +26,6 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import { DatabaseEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
 import { generateSecretToken, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
@@ -38,8 +36,7 @@ import { SurveyNodeType } from "vue-survey-engine-headless";
 // Scenario-named describe: there is no single function to reference (a documented deviation).
 describe("surveyFunnel", () => {
   let mockContext: Context;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;
   let emailCaller: DecorateRouterRecord<TRPCRouter["email"]>;
@@ -55,8 +52,6 @@ describe("surveyFunnel", () => {
   const customers = [customerKeyValue, `${customerKeyValue} `, `${customerKeyValue}  `];
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);
@@ -67,9 +62,8 @@ describe("surveyFunnel", () => {
   });
 
   afterAll(async () => {
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     await mockContext.db.delete(resourcesInResource);
-    await dispose();
   });
 
   test("the audience's responses reach the status and a published chart without naming who was added", async () => {

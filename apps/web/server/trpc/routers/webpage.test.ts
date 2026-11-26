@@ -1,8 +1,6 @@
 import type { TRPCRouter } from "#server/trpc/routers/index";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createSurvey } from "#server/trpc/routers/createSurvey.test";
 import { createSurveyDocumentWith } from "#server/trpc/routers/createSurveyDocumentWith.test";
@@ -15,26 +13,21 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { createMockBucket } from "@esposter/db-mock";
-import { getResourceFileBlobName, ResourceType, StorageBucket } from "@esposter/db-schema";
+import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 describe("webpageRouter", () => {
-  const { getCaller, getMockContext } = setupResourceSuite(webpageRouter);
+  const { getCaller, getMockBucket, getMockContext } = setupResourceSuite(webpageRouter);
   let caller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
   const name = "name";
   const hash = "a".repeat(64);
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     caller = getCaller();
     resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
     surveyCaller = createCallerFactory(surveyRouter)(getMockContext());
@@ -44,14 +37,10 @@ describe("webpageRouter", () => {
     vi.restoreAllMocks();
   });
 
-  afterAll(async () => {
-    await dispose();
-  });
-
   // Stores an uploaded image under its hash, the way the upload's write target lands it
   const addAsset = async (resourceId: string) => {
     const blobName = getResourceFileBlobName(resourceId, hash);
-    await bucket.put(blobName, Buffer.alloc(1));
+    await getMockBucket().put(blobName, Buffer.alloc(1));
     return getResourceAssetUrl(blobName);
   };
 
@@ -130,7 +119,7 @@ describe("webpageRouter", () => {
     const assetBlobName = getResourceFileBlobName(newResource.id, hash);
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    await expect(bucket.head(assetBlobName)).resolves.not.toBeNull();
+    await expect(getMockBucket().head(assetBlobName)).resolves.not.toBeNull();
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 

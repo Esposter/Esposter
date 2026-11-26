@@ -12,11 +12,14 @@ import { mergeConfig } from "tsdown";
 // `cache` is the in-memory Cache Storage two packages' suites share. It is its own entry because the barrel's
 // `createMockDatabase` loads Miniflare and `@esposter/db-schema` into any suite that imports it, and that suite would
 // Then be held to the Miniflare clock rule. The entry names its file, so the barrel never lists it.
+// `vitest` is the suite fixtures, which register Vitest hooks. It is its own entry because the barrel reaches the
+// Dev seed and the Nitro config, which run outside Vitest. The entry names its file, so the barrel never lists it.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
   entry: {
     cache: "src/services/createMockCache.ts",
     "cloudflare-workers": "src/cloudflareWorkers.ts",
     index: "src/index.ts",
+    vitest: "src/setupMockBucket.ts",
     workers: "src/workers/index.ts",
   },
 });

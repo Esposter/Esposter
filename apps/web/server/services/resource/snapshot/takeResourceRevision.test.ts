@@ -8,11 +8,11 @@ import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnap
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
 import { getBucket } from "#server/services/storage/getBucket";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { deleteDirectory, getContentBlobName, writeJsonBlob } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   QueueJob,
   resourcesInResource,
@@ -27,7 +27,7 @@ import {
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const seedContentBlob = async (id: ResourceInResource["id"], content: string) => {
   const bucket = getBucket(StorageBucket.ResourceAssets);
@@ -38,8 +38,7 @@ describe(takeResourceRevision, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: ResourceInResource;
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
   const name = "name";
   const serializedContent = JSON.stringify({ items: [] });
   // Content that shares nothing with the empty list, so a version holding it promotes to a keyframe of its own
@@ -63,8 +62,6 @@ describe(takeResourceRevision, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, ...getMockSession() };
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   beforeEach(async () => {
@@ -79,15 +76,11 @@ describe(takeResourceRevision, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   // The reason and the type's own one-line summary are what make a row choosable, and both are columns so the
@@ -118,7 +111,7 @@ describe(takeResourceRevision, () => {
     });
     // Charged for what the object cost to store rather than for a copy of the document
     expect(resourceVersion.storedBytes).toBe(
-      (await bucket.head(getSnapshotObjectBlobName(resource.id, resourceVersion.hash)))?.size,
+      (await getMockBucket().head(getSnapshotObjectBlobName(resource.id, resourceVersion.hash)))?.size,
     );
     await expect(readStorageBytesUsed()).resolves.toBe(resourceVersion.storedBytes);
   });

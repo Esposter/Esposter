@@ -6,13 +6,13 @@ import type { StorageCredentials } from "@esposter/db";
 import { generateReservedResourceAssetPresignedUrlEntities } from "#server/services/resource/generateReservedResourceAssetPresignedUrlEntities";
 import { readResourceFiles } from "#server/services/resource/readResourceFiles";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { createMockBucket } from "@esposter/db-mock";
 import { FILES_DIRECTORY_SEGMENT, StorageBucket } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { reserveStorageBytesMock } = vi.hoisted(() => ({
   reserveStorageBytesMock: vi.fn<typeof reserveStorageBytes>(),
@@ -43,24 +43,15 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   const blobName = `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;
   const file = { hash, mimetype: "image/png", size: bytes.byteLength };
   const db = {} as Context["db"];
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
-
-  beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-  });
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
 
   beforeEach(() => {
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = getMockBucket();
   });
 
   afterEach(async () => {
     vi.useRealTimers();
-    await bucket.delete(blobName);
-  });
-
-  afterAll(async () => {
-    await dispose();
+    await getMockBucket().delete(blobName);
   });
 
   test("uploading the same bytes twice gives one address", async () => {
@@ -69,7 +60,7 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
     const firstEntity = takeOne(
       await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]),
     );
-    await bucket.put(blobName, bytes);
+    await getMockBucket().put(blobName, bytes);
     const secondEntity = takeOne(
       await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]),
     );
@@ -94,23 +85,25 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    await bucket.put(blobName, bytes);
+    await getMockBucket().put(blobName, bytes);
     const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));
 
     expect(entity).toStrictEqual({ id: hash, isHeld: true, presignedUrl: "" });
-    expect((await bucket.head(blobName))?.customMetadata).toStrictEqual({ touchedAt: new Date(0).toISOString() });
+    expect((await getMockBucket().head(blobName))?.customMetadata).toStrictEqual({
+      touchedAt: new Date(0).toISOString(),
+    });
     expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, []);
   });
 
   test("held bytes re-uploaded as a video are listed as a video", async () => {
     expect.hasAssertions();
 
-    await bucket.put(blobName, bytes, { httpMetadata: { contentType: "application/octet-stream" } });
+    await getMockBucket().put(blobName, bytes, { httpMetadata: { contentType: "application/octet-stream" } });
     await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [
       { ...file, mimetype: "video/mp4" },
     ]);
 
-    await expect(readResourceFiles(bucket, resourceId)).resolves.toStrictEqual([
+    await expect(readResourceFiles(getMockBucket(), resourceId)).resolves.toStrictEqual([
       { mimetype: "video/mp4", size: bytes.byteLength, url: getResourceAssetUrl(blobName) },
     ]);
   });
@@ -118,10 +111,10 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   test("held bytes re-uploaded with the same type keep it", async () => {
     expect.hasAssertions();
 
-    await bucket.put(blobName, bytes, { httpMetadata: { contentType: file.mimetype } });
+    await getMockBucket().put(blobName, bytes, { httpMetadata: { contentType: file.mimetype } });
     await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]);
 
-    await expect(readResourceFiles(bucket, resourceId)).resolves.toStrictEqual([
+    await expect(readResourceFiles(getMockBucket(), resourceId)).resolves.toStrictEqual([
       { mimetype: file.mimetype, size: bytes.byteLength, url: getResourceAssetUrl(blobName) },
     ]);
   });
@@ -147,10 +140,10 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   test("a held address whose stored bytes do not hash to it is removed and uploaded again", async () => {
     expect.hasAssertions();
 
-    await bucket.put(blobName, Uint8Array.of(1));
+    await getMockBucket().put(blobName, Uint8Array.of(1));
     const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));
 
     expect(entity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://presigned.example/${blobName}` });
-    await expect(bucket.head(blobName)).resolves.toBeNull();
+    await expect(getMockBucket().head(blobName)).resolves.toBeNull();
   });
 });

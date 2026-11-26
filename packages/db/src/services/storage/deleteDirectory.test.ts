@@ -1,28 +1,24 @@
 import { deleteDirectory } from "#src/services/storage/deleteDirectory";
 import { listBlobNames } from "#src/services/storage/listBlobNames";
-import { createMockBucket } from "@esposter/db-mock";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { setupMockBucket } from "@esposter/db-mock/vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe(deleteDirectory, () => {
   const prefix = "prefix";
   // Five objects under pages of two: the listing takes three pages, the last one holding the odd object
   const blobNames = Array.from({ length: 5 }, (_value, index) => `${prefix}/${index}`);
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
+  const { getBucket } = setupMockBucket("resource-assets");
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket("resource-assets"));
+    const bucket = getBucket();
     await Promise.all(blobNames.map((blobName) => bucket.put(blobName, "")));
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   // The listing pages by the size it is given, so a prefix longer than one page is still removed whole
   test("removes every object under the prefix across pages of the size it is given, and leaves the rest", async () => {
     expect.hasAssertions();
 
+    const bucket = getBucket();
     await bucket.put("other/kept", "");
     // Counts the listing's pages through the bucket it is given, since the mock's methods do not take a spy
     const pages: unknown[][] = [];

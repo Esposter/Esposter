@@ -4,8 +4,8 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 
 import { deleteCreatedResources } from "#server/services/resource/deleteCreatedResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
-import { createMockBucket } from "@esposter/db-mock";
 import {
   resourceActivitiesInResource,
   ResourceActivityType,
@@ -15,14 +15,13 @@ import {
 } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(deleteCreatedResources, () => {
   const name = "name";
   let mockContext: Context;
   let ctx: AuthedContext;
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
   const createResource = async () =>
     takeOne(
       await mockContext.db
@@ -46,21 +45,16 @@ describe(deleteCreatedResources, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, ...getMockSession() };
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
   });
 
   beforeEach(() => {
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = getMockBucket();
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
     // The row's delete cascades to the activity trail, so clearing the rows clears the trail too
     await mockContext.db.delete(resourcesInResource);
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   // The trail opened at insert time goes with its row, so the rollback leaves no entry that no read can reach

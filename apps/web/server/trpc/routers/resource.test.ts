@@ -3,7 +3,6 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -14,7 +13,6 @@ import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getBucket } from "#server/services/storage/getBucket";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockOtherUserCaller, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
@@ -58,7 +56,6 @@ import { getSaveResourceEntry } from "#src/services/resource/overlay/getSaveReso
 import { getToggleFavoriteEntry } from "#src/services/resource/overlay/getToggleFavoriteEntry";
 import { userTable } from "#src/services/user/overlay/constants";
 import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import {
   apiKeysInAuth,
   getResourceFileBlobName,
@@ -78,7 +75,7 @@ import { eq } from "drizzle-orm";
 import { MjmlNodeType } from "mjml-blocks";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Every asset the resource's files directory holds
 const readFilesBlobNames = (id: string): Promise<string[]> => {
@@ -123,7 +120,7 @@ const createEmailButtonSection = (id: string, href: string | undefined): MjmlSec
     type: MjmlNodeType.Button,
   });
 describe("resourceRouter", () => {
-  const { getMockContext } = setupResourceSuite(resourceRouter);
+  const { getMockBucket, getMockContext } = setupResourceSuite(resourceRouter);
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -131,8 +128,6 @@ describe("resourceRouter", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let todoListCaller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
   const name = "name";
   const updatedName = "updatedName";
   const webpageEditor = new WebpageEditor({ description: "a" });
@@ -163,8 +158,6 @@ describe("resourceRouter", () => {
     });
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = getMockContext();
     caller = createCallerFactory(trpcRouter)(mockContext).resource;
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
@@ -184,10 +177,6 @@ describe("resourceRouter", () => {
     vi.restoreAllMocks();
     vi.useRealTimers();
     userObjectCalls.length = 0;
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   test("reads a single resource by id", async () => {
@@ -736,7 +725,7 @@ describe("resourceRouter", () => {
         ),
       ),
     );
-    await expect(bucket.head(duplicatedBlobName)).resolves.not.toBeNull();
+    await expect(getMockBucket().head(duplicatedBlobName)).resolves.not.toBeNull();
     expect(publication).toBeUndefined();
   });
 
@@ -798,14 +787,14 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
-    await writeJsonBlob(bucket, getContentBlobName(webpageResource.id), "a");
+    await writeJsonBlob(getMockBucket(), getContentBlobName(webpageResource.id), "a");
 
     await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Unexpected token 'a', "a" is not valid JSON]`,
     );
 
     const { items } = await caller.readResources();
-    const blobNames = await listBlobNames(bucket, "");
+    const blobNames = await listBlobNames(getMockBucket(), "");
 
     // The copy is fully reverted: no row and no blobs outside the original's directory
     expect(items.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
@@ -1304,7 +1293,7 @@ describe("resourceRouter", () => {
     await saveWebpageContent(webpageResource, imageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await saveWebpageContent(webpageResource, webpageEditor, 1);
-    await bucket.delete(blobName);
+    await getMockBucket().delete(blobName);
 
     const { resource } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,

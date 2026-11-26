@@ -9,7 +9,7 @@ import { saveResourceContent } from "#server/services/resource/saveResourceConte
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
@@ -27,7 +27,7 @@ import {
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { deleteDirectory, getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   getResourceFileBlobName,
   QueueJob,
@@ -47,7 +47,7 @@ import {
 import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
@@ -88,8 +88,7 @@ describe(saveResourceContent, () => {
         .from(resourceActivitiesInResource)
         .where(eq(resourceActivitiesInResource.resourceId, resource.id))
     ).map(({ activityType }) => activityType);
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
   const name = "name";
   const surveyId = v7();
   const unboundProgramContent = { emailId: "", keyColumn: "", surveyId: "" };
@@ -113,7 +112,7 @@ describe(saveResourceContent, () => {
         where: { id: { eq: ctx.user.id } },
       })
     )?.storageBytesUsed;
-  const getStoredContentBytes = async () => (await bucket.head(getContentBlobName(resource.id)))?.size;
+  const getStoredContentBytes = async () => (await getMockBucket().head(getContentBlobName(resource.id)))?.size;
   const readStoredVersionBytes = async () =>
     (
       await mockContext.db.query.resourceVersionsInResource.findMany({
@@ -168,7 +167,7 @@ describe(saveResourceContent, () => {
         .returning(),
     );
   const uploadAssetBlob = async (resourceId: ResourceInResource["id"], hash: string) => {
-    await bucket.put(getResourceFileBlobName(resourceId, hash), assetBytes);
+    await getMockBucket().put(getResourceFileBlobName(resourceId, hash), assetBytes);
   };
   const readWorkingAssetHashes = async (resourceId: ResourceInResource["id"]) =>
     (
@@ -183,8 +182,6 @@ describe(saveResourceContent, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, ...getMockSession() };
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   beforeEach(async () => {
@@ -200,7 +197,7 @@ describe(saveResourceContent, () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     MockJobQueueDatabase.clear();
     userObjectCalls.length = 0;
     await mockContext.db.delete(resourcesInResource);
@@ -208,10 +205,6 @@ describe(saveResourceContent, () => {
     // Content, which now charges the counter
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   // A resource's first save has nothing behind it to keep — the blob it would snapshot is the one this save
@@ -297,7 +290,7 @@ describe(saveResourceContent, () => {
 
     await saveResourceContent(ctx, { content, resource });
     const contentBlobName = getContentBlobName(resource.id);
-    const firstStoredContent = await bucket.head(contentBlobName);
+    const firstStoredContent = await getMockBucket().head(contentBlobName);
     assert.exists(firstStoredContent);
     // The first save's own event, arriving with the position storage wrote the blob in
     await reconcileStorageLedgerEntry(
@@ -308,7 +301,7 @@ describe(saveResourceContent, () => {
       sequencer,
     );
     await saveResourceContent(ctx, { content: { items: [item, new TodoListItem({ dueAt, name })] }, resource });
-    const storedContent = await bucket.head(contentBlobName);
+    const storedContent = await getMockBucket().head(contentBlobName);
     assert.exists(storedContent);
 
     expect(storedContent.size).toBeGreaterThan(firstStoredContent.size);
@@ -525,7 +518,7 @@ describe(saveResourceContent, () => {
 
     // Past the grace window the upload restarted, so the dropped asset is deleted rather than kept. R2 stamps an upload
     // With its own clock, so the window is measured from the moment that object was written
-    const droppedAsset = await bucket.head(getResourceFileBlobName(webpage.id, otherAssetHash));
+    const droppedAsset = await getMockBucket().head(getResourceFileBlobName(webpage.id, otherAssetHash));
     assert.exists(droppedAsset);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(droppedAsset.uploaded.getTime() + ASSET_GRACE_MS));
     await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });

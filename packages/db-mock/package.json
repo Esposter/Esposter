@@ -35,6 +35,10 @@
       "source": "./src/cloudflareWorkers.ts",
       "default": "./dist/cloudflare-workers.js"
     },
+    "./vitest": {
+      "source": "./src/setupMockBucket.ts",
+      "default": "./dist/vitest.js"
+    },
     "./workers": {
       "source": "./src/workers/index.ts",
       "default": "./dist/workers.js"
@@ -46,6 +50,7 @@
       ".": "./dist/index.js",
       "./cache": "./dist/cache.js",
       "./cloudflare-workers": "./dist/cloudflare-workers.js",
+      "./vitest": "./dist/vitest.js",
       "./workers": "./dist/workers.js",
       "./package.json": "./package.json"
     }
@@ -69,6 +74,7 @@
   },
   "peerDependencies": {
     "@esposter/db-schema": "workspace:*",
-    "drizzle-orm": "catalog:"
+    "drizzle-orm": "catalog:",
+    "vitest": "catalog:"
   }
 }

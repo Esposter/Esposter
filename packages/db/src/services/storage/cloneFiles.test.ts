@@ -3,22 +3,21 @@ import type { Database } from "@esposter/db-schema";
 import { createUser } from "#src/services/message/createUser.test";
 import { cloneFiles } from "#src/services/storage/cloneFiles";
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
-import { createMockBucket, createMockDb } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { setupMockBucket } from "@esposter/db-mock/vitest";
 import { FileEntity, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(cloneFiles, () => {
   let db: Database;
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
+  const { getBucket } = setupMockBucket(StorageBucket.MessageAssets);
   const userId = v7();
   const filename = "a";
 
   beforeAll(async () => {
     db = (await createMockDb()).db;
     await db.insert(usersInAuth).values(createUser(userId, new Date(0), "name"));
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.MessageAssets));
   });
 
   afterEach(async () => {
@@ -28,12 +27,12 @@ describe(cloneFiles, () => {
 
   afterAll(async () => {
     await db.delete(usersInAuth);
-    await dispose();
   });
 
   test("copies the original and its sibling thumbnail, and reports the thumbnail as written", async () => {
     expect.hasAssertions();
 
+    const bucket = getBucket();
     const sourcePrefix = v7();
     const destinationPrefix = v7();
     const id = v7();
@@ -61,6 +60,7 @@ describe(cloneFiles, () => {
   test("clears what it wrote and releases its charges when a copy fails", async () => {
     expect.hasAssertions();
 
+    const bucket = getBucket();
     const sourcePrefix = v7();
     const destinationPrefix = v7();
     const id = v7();

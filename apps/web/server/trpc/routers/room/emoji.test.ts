@@ -1,11 +1,10 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
@@ -17,7 +16,7 @@ import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
 import { getRoomEmojiPatchEntry } from "#src/services/message/room/overlay/getRoomEmojiPatchEntry";
 import { getRowsPerStatement } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   getRoomEmojiBlobName,
@@ -27,7 +26,7 @@ import {
   StorageBucket,
 } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
   new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
@@ -37,8 +36,7 @@ describe("emojiRouter", () => {
   let mockContext: Context;
   let roomEmojiCaller: DecorateRouterRecord<TRPCRouter["room"]["emoji"]>;
   let roomId: string;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.MessageAssets);
   const name = "name";
   const updatedName = "a";
   const mimetype = MimeType.Png;
@@ -49,7 +47,7 @@ describe("emojiRouter", () => {
   const position = 1;
   // The client's PUT, which is what makes the blob the create insists on exist
   const uploadRoomEmojiBlob = async (id: string, body = "") => {
-    await bucket.put(getRoomEmojiBlobName(roomId, id), body);
+    await getMockBucket().put(getRoomEmojiBlobName(roomId, id), body);
   };
   const createRoomEmoji = async (emojiName = name) => {
     const { id } = await roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size });
@@ -58,8 +56,6 @@ describe("emojiRouter", () => {
   };
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.MessageAssets));
-    mockBuckets[StorageBucket.MessageAssets] = bucket;
     mockContext = getMockContext();
     roomEmojiCaller = createCallerFactory(emojiRouter)(mockContext);
   });
@@ -72,10 +68,6 @@ describe("emojiRouter", () => {
   afterEach(() => {
     vi.useRealTimers();
     mockContext.headers.delete(DEVICE_ID_HEADER);
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   test("fails generateUploadRoomEmojiPresignedUrlEntity with anything but an image", async () => {

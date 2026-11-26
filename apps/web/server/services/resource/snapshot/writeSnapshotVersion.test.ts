@@ -3,11 +3,11 @@ import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deleteDirectory, listBlobNames } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   getResourceFileBlobName,
   resourcesInResource,
@@ -20,21 +20,18 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(writeSnapshotVersion, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: ResourceInResource;
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
   const missingAssetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, ...getMockSession() };
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   beforeEach(async () => {
@@ -50,15 +47,11 @@ describe(writeSnapshotVersion, () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   // A publish that read content embedding an image, then lost the image to a file delete, must fail here. The version
@@ -83,7 +76,7 @@ describe(writeSnapshotVersion, () => {
       mockContext.db.query.resourceVersionsInResource.findFirst({ where: { resourceId: { eq: resource.id } } }),
     ).resolves.toBeUndefined();
     await expect(mockContext.db.select().from(resourceVersionAssetsInResource)).resolves.toStrictEqual([]);
-    await expect(listBlobNames(bucket, "")).resolves.toStrictEqual([]);
+    await expect(listBlobNames(getMockBucket(), "")).resolves.toStrictEqual([]);
   });
 
   // A touch restarts the grace window of an asset nothing references, which rewrites the stored object with the time it
@@ -93,6 +86,7 @@ describe(writeSnapshotVersion, () => {
   test("touches an asset no row names once, and none a row already names", async () => {
     expect.hasAssertions();
 
+    const bucket = getMockBucket();
     const digests = Array.from({ length: 5 }, (_value, index) => `${index}`.repeat(64));
     const blobNames = digests.map((digest) => getResourceFileBlobName(resource.id, digest));
     const serializedContent = JSON.stringify({ text: digests.join(" ") });

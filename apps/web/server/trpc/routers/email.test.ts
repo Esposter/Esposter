@@ -1,10 +1,8 @@
 import type { TRPCRouter } from "#server/trpc/routers/index";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { transformPublishedEmail } from "#server/services/emailEditor/transformPublishedEmail";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { emailRouter } from "#server/trpc/routers/email";
@@ -14,26 +12,22 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { listBlobNames } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import {
   resourceActivitiesInResource,
   ResourceType,
   resourceViewsInResource,
-  StorageBucket,
   storageLedgerInStorage,
 } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
-import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
+import { assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("emailRouter", () => {
-  const { getCaller, getMockContext } = setupResourceSuite(emailRouter);
+  const { getCaller, getMockBucket, getMockContext } = setupResourceSuite(emailRouter);
   let caller: DecorateRouterRecord<TRPCRouter["email"]>;
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
   const name = "name";
   const html = "html";
 
@@ -46,14 +40,8 @@ describe("emailRouter", () => {
     )?.storageBytesUsed;
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     caller = getCaller();
     resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   test("saves and reads content", async () => {
@@ -209,7 +197,7 @@ describe("emailRouter", () => {
     });
     await caller.publishResource({ id: newResource.id });
     const storageBytesUsedWhilePublished = await readStorageBytesUsed(newResource.userId);
-    const readResourceBlobNames = () => listBlobNames(bucket, `${newResource.id}/`);
+    const readResourceBlobNames = () => listBlobNames(getMockBucket(), `${newResource.id}/`);
     const storedBlobNamesBeforePurge = await readResourceBlobNames();
     // The rows keyed by this email, each read before the purge so it is proved populated
     const readResourceActivities = () =>

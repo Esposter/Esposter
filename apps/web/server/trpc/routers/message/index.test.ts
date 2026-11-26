@@ -8,7 +8,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/constants";
 import { createRoomMessage as baseCreateRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { takeBackMentionCounts } from "#server/services/message/takeBackMentionCounts";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import {
   createMockAuthSession,
   createMockContext,
@@ -33,7 +33,7 @@ import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 import { threadFollowTable } from "#src/services/message/threadFollow/constants";
 import { getThreadFollowEntry } from "#src/services/message/threadFollow/getThreadFollowEntry";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   encodePageCursor,
@@ -48,7 +48,7 @@ import {
 import { InvalidOperationError, noop, NotFoundError, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The room and user objects are programmable: every RPC is a typed fake whose return value a test sets. Each contract
 // Is listed in full with `satisfies`, so a method added to either interface fails here until it has a fake
@@ -147,7 +147,9 @@ describe("messageRouter", () => {
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
-  let disposeMessageAssets: () => Promise<void>;
+  // A forward reads the message-assets bucket before it writes anything, so the suite makes one for the bucket to
+  // Answer
+  setupMockStorageBucket(StorageBucket.MessageAssets);
   const editedAt = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
   const filename = "a";
   const joinedAt = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
@@ -170,11 +172,6 @@ describe("messageRouter", () => {
     mockContext = getMockContext();
     messageCaller = createCallerFactory(messageRouter)(mockContext);
     roomCaller = getRoomCaller();
-    // A forward reads the message-assets bucket before it writes anything, so the suite makes one for the bucket to
-    // Answer
-    const messageAssets = await createMockBucket(StorageBucket.MessageAssets);
-    mockBuckets[StorageBucket.MessageAssets] = messageAssets.bucket;
-    disposeMessageAssets = messageAssets.dispose;
   });
 
   beforeEach(() => {
@@ -185,10 +182,6 @@ describe("messageRouter", () => {
     for (const method of [...Object.values(roomObject), ...Object.values(userObject)]) method.mockReset();
     MockJobQueueDatabase.clear();
     vi.restoreAllMocks();
-  });
-
-  afterAll(async () => {
-    await disposeMessageAssets();
   });
 
   test("creates a message as the sender, reading its mentions from the text and naming the tab that sent it", async () => {

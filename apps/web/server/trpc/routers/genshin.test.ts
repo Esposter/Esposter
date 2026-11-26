@@ -1,26 +1,23 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { genshinRouter } from "#server/trpc/routers/genshin";
 import { deleteDirectory, listBlobNames } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { createStartingGenshinSave, EMPTY_GENSHIN_SAVE, getResinParamPath } from "genshin-world/save";
 import { zstdCompressSync } from "node:zlib";
 import { v7 } from "uuid";
-import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("genshinRouter", () => {
   let mockContext: Context;
   let genshinCaller: DecorateRouterRecord<TRPCRouter["genshin"]>;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
-  let disposePublic: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.GenshinAssets);
+  const { getMockBucket: getPublicHostedAssets } = setupMockStorageBucket(StorageBucket.PublicHostedAssets);
   // The game's record the new player's save starts from, stored in the shared hosted bucket it is published to
   const resinRecord = {
     originalResinCap: 123,
@@ -34,24 +31,14 @@ describe("genshinRouter", () => {
   const secondSessionId = v7();
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.GenshinAssets));
-    mockBuckets[StorageBucket.GenshinAssets] = bucket;
-    const publicBucket = await createMockBucket(StorageBucket.PublicHostedAssets);
-    mockBuckets[StorageBucket.PublicHostedAssets] = publicBucket.bucket;
-    disposePublic = publicBucket.dispose;
-    await publicBucket.bucket.put(getResinParamPath(), zstdCompressSync(JSON.stringify(resinRecord)));
+    await getPublicHostedAssets().put(getResinParamPath(), zstdCompressSync(JSON.stringify(resinRecord)));
     mockContext = await createMockContext();
     genshinCaller = createCallerFactory(genshinRouter)(mockContext);
   });
 
   afterEach(async () => {
     vi.useRealTimers();
-    await deleteDirectory(bucket);
-  });
-
-  afterAll(async () => {
-    await dispose();
-    await disposePublic();
+    await deleteDirectory(getMockBucket());
   });
 
   test("a second start replaces the first session, which its next save is refused for", async () => {
@@ -150,15 +137,15 @@ describe("genshinRouter", () => {
     expect.hasAssertions();
 
     const start = await genshinCaller.startGenshin({ sessionId: firstSessionId });
-    const [blobName] = await listBlobNames(bucket, "");
+    const [blobName] = await listBlobNames(getMockBucket(), "");
     assert.exists(blobName);
     const unparsableBlob = zstdCompressSync(JSON.stringify({ save: {}, sessionId: start.sessionId }));
-    await bucket.put(blobName, unparsableBlob);
+    await getMockBucket().put(blobName, unparsableBlob);
 
     await expect(genshinCaller.startGenshin({ sessionId: secondSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: The saved game could not be read]`,
     );
-    const storedBlob = await bucket.get(blobName);
+    const storedBlob = await getMockBucket().get(blobName);
     assert.exists(storedBlob);
     expect(Buffer.from(await storedBlob.arrayBuffer())).toStrictEqual(unparsableBlob);
   });

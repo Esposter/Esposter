@@ -5,12 +5,12 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   getResourceFileBlobName,
   QueueJob,
@@ -27,7 +27,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getFileIdContent = (...fileIds: string[]) => JSON.stringify({ elements: fileIds.map((fileId) => ({ fileId })) });
 
@@ -41,8 +41,7 @@ describe(releaseResourceAssets, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: ResourceInResource;
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
   const assetBytes = new Uint8Array(1);
@@ -58,7 +57,7 @@ describe(releaseResourceAssets, () => {
     );
   // Uploaded at the moment the clock reads, which is what a re-upload stamps onto the object
   const uploadAsset = async (hash: string) => {
-    await bucket.put(getResourceFileBlobName(resource.id, hash), assetBytes);
+    await getMockBucket().put(getResourceFileBlobName(resource.id, hash), assetBytes);
   };
   const deleteVersion = async (version: number) => {
     const [referenceRows, deletedVersions] = await mockContext.db.batch(
@@ -82,8 +81,6 @@ describe(releaseResourceAssets, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, ...getMockSession() };
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   beforeEach(async () => {
@@ -98,15 +95,11 @@ describe(releaseResourceAssets, () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   test("an asset embedded in a stored version is kept while the version lives", async () => {

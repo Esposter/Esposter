@@ -3,9 +3,8 @@ import type { GenshinSave } from "genshin-world/save";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { saveGenshin } from "#server/services/genshin/saveGenshin";
 import { getBucket } from "#server/services/storage/getBucket";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { transformer } from "#shared/services/trpc/transformer";
-import { createMockBucket } from "@esposter/db-mock";
 import { getSaveBlobName, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
@@ -16,7 +15,7 @@ import {
   MAX_STORED_INVENTORY_ITEM_COUNT,
 } from "genshin-world/save";
 import { v7 } from "uuid";
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { describe, test } from "vitest";
 
 // The bag is the one collection that reaches its ceiling, so its entry count is the scale: a typical bag,
 // Then the most the schema admits
@@ -73,18 +72,8 @@ describe("client stringify and send", () => {
 // Of its own, and the PUT threads the ETag each write returns into the next one, as a session's saves do. The save
 // Is read-only, so it is built once per scale
 describe(saveGenshin, () => {
-  let dispose: () => Promise<void>;
-
-  beforeAll(async () => {
-    let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.GenshinAssets));
-    mockBuckets[StorageBucket.GenshinAssets] = bucket;
-  });
-
-  afterAll(async () => {
-    delete mockBuckets[StorageBucket.GenshinAssets];
-    await dispose();
-  });
+  // The bench reads its bucket through getBucket, which the fixture's record serves, so no getter is taken here
+  setupMockStorageBucket(StorageBucket.GenshinAssets);
 
   test.for(BENCH_BAG_ENTRY_COUNTS)("%i bag entries", async (bagEntryCount, { bench }) => {
     const save = createSave(bagEntryCount);

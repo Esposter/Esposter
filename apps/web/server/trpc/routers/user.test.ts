@@ -1,6 +1,5 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -9,7 +8,7 @@ import { getCallBackgroundBlobName } from "#server/services/message/call/getCall
 import { MockJobQueue } from "#server/services/queue/getJobQueue.test";
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
 import {
   createMockAuthSession,
@@ -34,7 +33,7 @@ import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { userSettingsTable } from "#src/services/message/user/settings/constants";
 import { getUpdateUserSettingsEntry } from "#src/services/message/user/settings/getUpdateUserSettingsEntry";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   dataExportsInUser,
@@ -54,7 +53,7 @@ import {
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
@@ -68,10 +67,8 @@ const seedSlots = (userId: string, slots: number[], slotSize: number) => {
 describe("userRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
-  let publicUserAssets: R2Bucket;
-  let disposePublicUserAssets: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.UserAssets);
+  const { getMockBucket: getPublicUserAssets } = setupMockStorageBucket(StorageBucket.PublicUserAssets);
   const biography = "biography";
   const blobName = "a";
   const expiredAt = new Date(-1);
@@ -124,12 +121,6 @@ describe("userRouter", () => {
     );
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.UserAssets));
-    mockBuckets[StorageBucket.UserAssets] = bucket;
-    ({ bucket: publicUserAssets, dispose: disposePublicUserAssets } = await createMockBucket(
-      StorageBucket.PublicUserAssets,
-    ));
-    mockBuckets[StorageBucket.PublicUserAssets] = publicUserAssets;
     mockContext = await createMockContext();
     caller = createCallerFactory(userRouter)(mockContext);
   });
@@ -142,17 +133,12 @@ describe("userRouter", () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
     getMockRevokeSession().mockReset();
-    await deleteDirectory(bucket);
-    await deleteDirectory(publicUserAssets);
+    await deleteDirectory(getMockBucket());
+    await deleteDirectory(getPublicUserAssets());
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(dataExportsInUser);
     await mockContext.db.delete(userStatusesInMessage);
     userObjectCalls.length = 0;
-  });
-
-  afterAll(async () => {
-    await dispose();
-    await disposePublicUserAssets();
   });
 
   // The plugin takes a key's permissions only from the server, so this is the one place they are set: to the scopes the
@@ -355,14 +341,14 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     const profileImageBlobName = getUserProfileImageBlobName(userId);
-    await publicUserAssets.put(profileImageBlobName, Buffer.alloc(MAX_FILE_REQUEST_SIZE + 1));
+    await getPublicUserAssets().put(profileImageBlobName, Buffer.alloc(MAX_FILE_REQUEST_SIZE + 1));
 
     await expect(
       caller.updateUser({ image: `${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/${profileImageBlobName}` }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.User, userId).message}]`,
     );
-    await expect(publicUserAssets.head(profileImageBlobName)).resolves.toBeNull();
+    await expect(getPublicUserAssets().head(profileImageBlobName)).resolves.toBeNull();
   });
 
   test("updates", async () => {
@@ -494,7 +480,7 @@ describe("userRouter", () => {
   test.each(["a", String(Number.NaN)])("readCallBackgrounds passes over %s under the prefix", async (slotName) => {
     expect.hasAssertions();
 
-    await bucket.put(`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size));
+    await getMockBucket().put(`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size));
     const callBackgrounds = await caller.readCallBackgrounds();
 
     // Never listed, and never reclaimed on a guess either — nothing is published for a name this router did

@@ -1,10 +1,10 @@
 /* oxlint-disable typescript/require-await -- An AsyncIterable is what uploadArchive reads, and only an async
    generator yields one */
 import { uploadArchive } from "#src/services/user/uploadArchive";
-import { createMockBucket } from "@esposter/db-mock";
+import { setupMockBucket } from "@esposter/db-mock/vitest";
 import { StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, KIBIBYTE, Operation } from "@esposter/shared";
-import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const toChunks = async function* (chunks: Uint8Array[]) {
   for (const chunk of chunks) yield chunk;
@@ -17,24 +17,15 @@ describe(uploadArchive, () => {
     yield new Uint8Array(chunkBytes);
     throw new InvalidOperationError(Operation.Create, "archive", "stopped after its first part");
   };
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
-
-  beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.UserAssets));
-  });
-
-  afterAll(async () => {
-    await dispose();
-  });
+  const { getBucket } = setupMockBucket(StorageBucket.UserAssets);
 
   test("stores the chunks as one object, sent in parts", async () => {
     expect.hasAssertions();
 
     const chunks = [1, 2].map((byte) => new Uint8Array(chunkBytes).fill(byte));
-    await uploadArchive(bucket, "archive.zip", toChunks(chunks));
+    await uploadArchive(getBucket(), "archive.zip", toChunks(chunks));
 
-    const archiveObject = await bucket.get("archive.zip");
+    const archiveObject = await getBucket().get("archive.zip");
     assert.exists(archiveObject);
     // Compared as bytes in one native pass, since an element-wise equality over 12 MiB runs near the test's timeout
     expect(Buffer.from(await archiveObject.arrayBuffer()).equals(Buffer.concat(chunks))).toBe(true);
@@ -44,9 +35,11 @@ describe(uploadArchive, () => {
   test("leaves no object when the archive fails after a part is sent", async () => {
     expect.hasAssertions();
 
-    await expect(uploadArchive(bucket, "abandoned.zip", failingArchive())).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      uploadArchive(getBucket(), "abandoned.zip", failingArchive()),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: archive, stopped after its first part]`,
     );
-    await expect(bucket.get("abandoned.zip")).resolves.toBeNull();
+    await expect(getBucket().get("abandoned.zip")).resolves.toBeNull();
   });
 });

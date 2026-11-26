@@ -2,10 +2,10 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { Database } from "@esposter/db-schema";
 
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deleteDirectory, listBlobNames } from "@esposter/db";
-import { createMockBucket, createMockDb } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
 import {
   FILES_DIRECTORY_SEGMENT,
   resourcePublicationsInResource,
@@ -18,7 +18,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The charge every clone makes is asserted where a real database exists, in the duplicate router test, rather than
 // Faked into this one
@@ -112,32 +112,23 @@ describe(cloneContentAssets, () => {
     }
     return db;
   };
-  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
-  let dispose: () => Promise<void>;
-
-  beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-  });
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
 
   beforeEach(async () => {
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
+    const bucket = getMockBucket();
     await Promise.all(
       [sourceBlobName, otherSourceBlobName, thirdBlobName].map((blobName) => bucket.put(blobName, new Uint8Array(1))),
     );
   });
 
   afterEach(async () => {
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     // Each test seeds the same resource and owner, so the rows the last one wrote are cleared before the next
     await (await createMockDb()).reset();
     vi.restoreAllMocks();
   });
 
-  afterAll(async () => {
-    await dispose();
-  });
-
-  const getBlobNames = (prefix: string) => listBlobNames(bucket, prefix);
+  const getBlobNames = (prefix: string) => listBlobNames(getMockBucket(), prefix);
 
   test("duplicating a document copies its images to the new resource", async () => {
     expect.hasAssertions();
@@ -179,7 +170,7 @@ describe(cloneContentAssets, () => {
   test("skips the copy when the destination already holds the hash", async () => {
     expect.hasAssertions();
 
-    await bucket.put(destinationBlobName, new Uint8Array(1));
+    await getMockBucket().put(destinationBlobName, new Uint8Array(1));
     const content = { html: `<img src="${getResourceAssetUrl(sourceBlobName)}">` };
     const clonedContent = await cloneContentAssets(
       createOwnerDatabase(),

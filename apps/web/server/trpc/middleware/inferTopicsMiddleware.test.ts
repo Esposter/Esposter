@@ -6,13 +6,12 @@ import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/re
 import { recordObjectReads } from "#server/services/realtime/recordObjectReads";
 import { confirmBlobUpload } from "#server/services/storage/confirmBlobUpload";
 import { getBucket } from "#server/services/storage/getBucket";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockAuthSession, createMockContext, createMockUser } from "#server/trpc/context.test";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc/index";
 import { ROW_VERSIONS_HEADER } from "#shared/services/realtime/constants";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { getWokenTopics, inJsonArray } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import {
   getBlobTopic,
   getStorageBucketBindingName,
@@ -31,7 +30,7 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, getTableName } from "drizzle-orm";
 import { createHmac } from "node:crypto";
 import { v7 } from "uuid";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 type UserRow = typeof usersInAuth.$inferSelect;
@@ -114,10 +113,8 @@ describe("inferTopicsMiddleware", () => {
   const userTable = getTableName(usersInAuth);
   const usersToRoomTable = getTableName(usersToRoomsInMessage);
   const userAssetsRootTopic = getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "");
-
-  beforeAll(async () => {
-    ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
-  });
+  // The router reads its bucket through getBucket, which the fixture's record serves, so no getter is taken here
+  setupMockStorageBucket(StorageBucket.UserAssets);
 
   afterEach(() => {
     MockPublishedTopics.length = 0;

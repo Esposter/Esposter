@@ -1,29 +1,24 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
-import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import { achievementsInAchievement, ClickerAchievementName, StorageBucket } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("achievementPlugin", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ClickerAssets);
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ClickerAssets));
-    mockBuckets[StorageBucket.ClickerAssets] = bucket;
     mockContext = await createMockContext();
     caller = createCallerFactory(trpcRouter)(mockContext);
   });
@@ -36,12 +31,8 @@ describe("achievementPlugin", () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     await mockContext.db.delete(achievementsInAchievement);
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   test("mutation succeeds when achievement processing fails", async () => {

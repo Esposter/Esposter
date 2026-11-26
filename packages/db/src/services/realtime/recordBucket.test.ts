@@ -1,21 +1,13 @@
 import type { RecordedBlobs } from "#src/models/realtime/RecordedBlobs";
 
 import { recordBucket } from "#src/services/realtime/recordBucket";
-import { createMockBucket } from "@esposter/db-mock";
+import { setupMockBucket } from "@esposter/db-mock/vitest";
 import { topicSchema } from "@esposter/db-schema";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(recordBucket, () => {
   const bucketName = "USER_ASSETS";
-  let mockBucket: Awaited<ReturnType<typeof createMockBucket>>;
-
-  beforeAll(async () => {
-    mockBucket = await createMockBucket(bucketName);
-  });
-
-  afterAll(async () => {
-    await mockBucket.dispose();
-  });
+  const { getBucket } = setupMockBucket(bucketName);
 
   // A read names the key it reads, and a listing names the directory its prefix lies in, so a write beneath the prefix
   // Wakes it
@@ -23,7 +15,7 @@ describe(recordBucket, () => {
     expect.hasAssertions();
 
     const blobs: RecordedBlobs = { reads: [], writes: [] };
-    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+    const bucket = recordBucket(getBucket(), bucketName, () => blobs);
 
     await bucket.get("user/a/one");
     await bucket.head("user/a/one");
@@ -42,7 +34,7 @@ describe(recordBucket, () => {
     expect.hasAssertions();
 
     const blobs: RecordedBlobs = { reads: [], writes: [] };
-    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+    const bucket = recordBucket(getBucket(), bucketName, () => blobs);
     const published = [`${bucketName}:user/a/one`, `${bucketName}:user/a/`, `${bucketName}:user/`, `${bucketName}:`];
 
     await bucket.put("user/a/one", "x");
@@ -57,7 +49,7 @@ describe(recordBucket, () => {
     expect.hasAssertions();
 
     const blobs: RecordedBlobs = { reads: [], writes: [] };
-    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+    const bucket = recordBucket(getBucket(), bucketName, () => blobs);
 
     await bucket.put("user/a/one", "x");
 
@@ -70,7 +62,7 @@ describe(recordBucket, () => {
     expect.hasAssertions();
 
     const blobs: RecordedBlobs = { reads: [], writes: [] };
-    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+    const bucket = recordBucket(getBucket(), bucketName, () => blobs);
 
     await bucket.put(`user/${"a".repeat(1000)}`, "x");
 
@@ -82,7 +74,7 @@ describe(recordBucket, () => {
     expect.hasAssertions();
 
     const blobs: RecordedBlobs = { reads: [], writes: [] };
-    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+    const bucket = recordBucket(getBucket(), bucketName, () => blobs);
     const key = "user/a/archive";
 
     const upload = await bucket.createMultipartUpload(key);

@@ -1,16 +1,13 @@
-import type { R2Bucket } from "@cloudflare/workers-types";
-
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
-import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory, router } from "#server/trpc/index";
 import { createReadBlobStateProcedure } from "#server/trpc/procedure/blobState/createReadBlobStateProcedure";
 import { createSaveBlobStateProcedure } from "#server/trpc/procedure/blobState/createSaveBlobStateProcedure";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { compressZstd, deleteDirectory, listBlobNames } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
 import { getBlobTopic, getSaveBlobName, getStorageBucketBindingName, StorageBucket } from "@esposter/db-schema";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 class Save {
@@ -35,25 +32,15 @@ describe("blob state procedures", () => {
     ),
   });
   const getCaller = async () => createCallerFactory(blobStateRouter)(await createMockContext());
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
-
-  beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.UserAssets));
-    mockBuckets[StorageBucket.UserAssets] = bucket;
-  });
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.UserAssets);
 
   beforeEach(() => {
     MockPublishedTopics.length = 0;
   });
 
   afterEach(async () => {
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     vi.restoreAllMocks();
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   // A read's topics travel back with its answer, so the save it reads is named by its blob, which a save publishes
@@ -116,9 +103,9 @@ describe("blob state procedures", () => {
 
     const caller = await getCaller();
     await caller.saveSave({ data: { value: 0 } });
-    const [blobName] = await listBlobNames(bucket, "");
+    const [blobName] = await listBlobNames(getMockBucket(), "");
     assert.exists(blobName);
-    await bucket.put(blobName, Buffer.from(" "));
+    await getMockBucket().put(blobName, Buffer.from(" "));
 
     await expect(caller.readSave()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Unknown frame descriptor]`);
   });
@@ -130,15 +117,15 @@ describe("blob state procedures", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     const caller = await getCaller();
     await caller.saveSave({ data: { value: 0 } });
-    const [blobName] = await listBlobNames(bucket, "");
+    const [blobName] = await listBlobNames(getMockBucket(), "");
     assert.exists(blobName);
     const unparseableBlob = await compressZstd(JSON.stringify({ value: "many" }));
-    await bucket.put(blobName, unparseableBlob);
+    await getMockBucket().put(blobName, unparseableBlob);
 
     await expect(caller.readSave()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: The saved game could not be read]`,
     );
-    const storedBlob = await bucket.get(blobName);
+    const storedBlob = await getMockBucket().get(blobName);
     assert.exists(storedBlob);
     expect(Buffer.from(await storedBlob.arrayBuffer())).toStrictEqual(unparseableBlob);
   });

@@ -15,6 +15,7 @@ import { PublishProcedureNames } from "#server/models/resource/PublishProcedureN
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
+import { setupMockStorageBucket } from "#server/services/storage/setupMockStorageBucket.test";
 import { createMockContext, createMockOtherUserCaller } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
@@ -53,7 +54,7 @@ import { createEmptySurvey } from "#shared/services/resource/survey/createEmptyS
 import { createEmptyTodoList } from "#shared/services/resource/todoList/createEmptyTodoList";
 import { createEmptyWhiteboard } from "#shared/services/resource/whiteboard/createEmptyWhiteboard";
 import { deleteDirectory, getContentBlobName, readJsonBlob } from "@esposter/db";
-import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   getResourceFilesDirectoryName,
@@ -78,7 +79,7 @@ import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
 import { v7 } from "uuid";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType, TextSize } from "vue-block-editor-headless";
 
 // A caller of a type with the fileAssets capability, and of a publishable one: each adds its group beside the base
@@ -144,8 +145,7 @@ describe(createResourceProcedures, () => {
   // Dashboard is the publishable representative; Webpage is the FileAssets one
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
-  let bucket: R2Bucket;
-  let dispose: () => Promise<void>;
+  const { getMockBucket } = setupMockStorageBucket(StorageBucket.ResourceAssets);
   const name = "name";
   const updatedName = "updatedName";
   const hash = "a".repeat(64);
@@ -253,7 +253,7 @@ describe(createResourceProcedures, () => {
     compressedContent: Buffer,
   ) => {
     await stagingCaller.generateUploadContentPresignedUrl({ id, size: compressedContent.byteLength });
-    await bucket.put(getStagingContentBlobName(id), compressedContent);
+    await getMockBucket().put(getStagingContentBlobName(id), compressedContent);
     return createHash("sha256").update(compressedContent).digest("hex");
   };
 
@@ -262,7 +262,7 @@ describe(createResourceProcedures, () => {
   // Replaced for the test the commit reads only a staged object's etag and size, so an intercepted measurement names
   // Those two
   const interceptHead = (head: (blobName: string) => Promise<null | Pick<R2Object, "etag" | "size">>) => {
-    mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
+    mockBuckets[StorageBucket.ResourceAssets] = new Proxy(getMockBucket(), {
       get: (target, property: keyof R2Bucket) => {
         if (property === "head") return head;
         const value: unknown = Reflect.get(target, property);
@@ -274,7 +274,7 @@ describe(createResourceProcedures, () => {
   // Routes the bucket's `put` through `afterPut`, which runs once the object is stored: the one call a race has to land
   // After
   const interceptPut = (afterPut: () => Promise<void>) => {
-    mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
+    mockBuckets[StorageBucket.ResourceAssets] = new Proxy(getMockBucket(), {
       get: (target, property: keyof R2Bucket) => {
         if (property !== "put") {
           const value: unknown = Reflect.get(target, property);
@@ -293,8 +293,6 @@ describe(createResourceProcedures, () => {
     mockContext.db.select().from(resourceViewsInResource).where(eq(resourceViewsInResource.resourceId, resourceId));
 
   beforeAll(async () => {
-    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
@@ -309,17 +307,13 @@ describe(createResourceProcedures, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
     MockJobQueueDatabase.clear();
     // Cascade removes any resourcePublications, activity and view rows too
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
-    mockBuckets[StorageBucket.ResourceAssets] = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = getMockBucket();
     vi.restoreAllMocks();
-  });
-
-  afterAll(async () => {
-    await dispose();
   });
 
   test("reads the type's resources a page at a time, the total with the first page", async () => {
@@ -453,7 +447,7 @@ describe(createResourceProcedures, () => {
 
     expect(updatedResource.contentVersion).toBe(1);
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
-    await expect(bucket.head(getStagingContentBlobName(newResource.id))).resolves.toBeNull();
+    await expect(getMockBucket().head(getStagingContentBlobName(newResource.id))).resolves.toBeNull();
     // The content blob's own charge is all that is left
     expect(storageLedgerEntries.map(({ blobName }) => blobName)).toStrictEqual([getContentBlobName(newResource.id)]);
   });
@@ -480,6 +474,8 @@ describe(createResourceProcedures, () => {
   test("fails commit staged content replaced after it was measured", async () => {
     expect.hasAssertions();
 
+    const bucket = getMockBucket();
+
     const newResource = await dashboardCaller.createResource({ name });
     const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(new Dashboard())));
     const replacement = gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] })));
@@ -497,7 +493,7 @@ describe(createResourceProcedures, () => {
       `[TRPCError: Invalid operation: Update, name: Resource, staged content does not match its hash]`,
     );
     await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
-    await expect(bucket.head(getStagingContentBlobName(newResource.id))).resolves.toHaveProperty(
+    await expect(getMockBucket().head(getStagingContentBlobName(newResource.id))).resolves.toHaveProperty(
       "size",
       replacement.byteLength,
     );
@@ -510,7 +506,7 @@ describe(createResourceProcedures, () => {
     const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(new Dashboard())));
     // The staged object as the bucket measured it, reported at a size past the limit
     interceptHead(async (blobName) => {
-      const measured = await bucket.head(blobName);
+      const measured = await getMockBucket().head(blobName);
       assert.exists(measured);
       return { etag: measured.etag, size: MAX_RESOURCE_CONTENT_SIZE + 1 };
     });
@@ -734,7 +730,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
-    await deleteDirectory(bucket);
+    await deleteDirectory(getMockBucket());
 
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
@@ -1020,8 +1016,8 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const directory = getResourceFilesDirectoryName(newResource.id);
-    await bucket.put(`${directory}/a`, Buffer.alloc(1), { httpMetadata: { contentType: MimeType.Png } });
-    await bucket.put(`${directory}/b`, Buffer.alloc(2), { httpMetadata: { contentType: MimeType.VideoMp4 } });
+    await getMockBucket().put(`${directory}/a`, Buffer.alloc(1), { httpMetadata: { contentType: MimeType.Png } });
+    await getMockBucket().put(`${directory}/b`, Buffer.alloc(2), { httpMetadata: { contentType: MimeType.VideoMp4 } });
 
     await expect(webpageCaller.readResourceFiles({ id: newResource.id })).resolves.toStrictEqual([
       { mimetype: MimeType.Png, size: 1, url: getResourceAssetUrl(`${directory}/a`) },
@@ -1047,10 +1043,10 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    await bucket.put(blobName, Buffer.alloc(1));
+    await getMockBucket().put(blobName, Buffer.alloc(1));
     // The store stamps the upload with its own clock, not the pinned one, so the clock moves to the end of the grace
     // Window that stamp opens, which is when the release may delete the blob
-    const upload = await bucket.head(blobName);
+    const upload = await getMockBucket().head(blobName);
     assert.exists(upload);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(upload.uploaded.getTime() + ASSET_GRACE_MS));
 
@@ -1064,7 +1060,7 @@ describe(createResourceProcedures, () => {
         storageBucket: StorageBucket.ResourceAssets,
       },
     ]);
-    await expect(bucket.head(blobName)).resolves.not.toBeNull();
+    await expect(getMockBucket().head(blobName)).resolves.not.toBeNull();
   });
 
   // A version naming an asset the bucket no longer holds is refused, so a publish that races a file's delete cannot
@@ -1074,14 +1070,14 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    await bucket.put(blobName, Buffer.alloc(1));
+    await getMockBucket().put(blobName, Buffer.alloc(1));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,
       id: newResource.id,
     });
     // Deleted after the working copy named it, as the file delete does before the release decides on it
-    await bucket.delete(blobName);
+    await getMockBucket().delete(blobName);
 
     await expect(webpageCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Create, name: Resource, cannot store content naming a missing asset]`,
@@ -1093,7 +1089,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    await bucket.put(blobName, Buffer.alloc(1));
+    await getMockBucket().put(blobName, Buffer.alloc(1));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,
@@ -1103,7 +1099,7 @@ describe(createResourceProcedures, () => {
     await webpageCaller.publishResource({ id: newResource.id });
 
     // A touch rewrites the asset under its own name, stamping the time the publish touched it
-    const touchedAsset = await bucket.head(blobName);
+    const touchedAsset = await getMockBucket().head(blobName);
     assert.exists(touchedAsset);
     expect(touchedAsset.customMetadata).toHaveProperty("touchedAt");
   });
@@ -1206,7 +1202,7 @@ describe(createResourceProcedures, () => {
           contentVersion: newResource.contentVersion,
           id: newResource.id,
         });
-        const baseline = await readJsonBlob(bucket, getContentBlobName(newResource.id));
+        const baseline = await readJsonBlob(getMockBucket(), getContentBlobName(newResource.id));
         assert.exists(baseline);
         const changedContent = createChangedContent();
         // The delta is a plain zstd frame with the stored bytes as its dictionary, which is what the browser's encoder
@@ -1219,7 +1215,7 @@ describe(createResourceProcedures, () => {
           id: newResource.id,
         });
         const storedContent = await caller.readResourceContent({ id: newResource.id });
-        const storedBytes = await readJsonBlob(bucket, getContentBlobName(newResource.id));
+        const storedBytes = await readJsonBlob(getMockBucket(), getContentBlobName(newResource.id));
         assert.exists(storedBytes);
 
         expect(savedResource.contentHash).toBe(createHash("sha256").update(baseline).digest("hex"));
@@ -1245,7 +1241,7 @@ describe(createResourceProcedures, () => {
 
         expect(updatedResource.contentVersion).toBe(1);
         expect(storedContent).toStrictEqual(jsonDateParse(JSON.stringify(content)));
-        await expect(bucket.head(getStagingContentBlobName(newResource.id))).resolves.toBeNull();
+        await expect(getMockBucket().head(getStagingContentBlobName(newResource.id))).resolves.toBeNull();
       });
     },
     type,
@@ -1263,14 +1259,14 @@ describe(createResourceProcedures, () => {
 
         const newResource = await caller.createResource({ name });
         const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-        await bucket.put(blobName, Buffer.alloc(1), { httpMetadata: { contentType: mimetype } });
+        await getMockBucket().put(blobName, Buffer.alloc(1), { httpMetadata: { contentType: mimetype } });
 
         await expect(caller.readResourceFiles({ id: newResource.id })).resolves.toStrictEqual([
           { mimetype, size, url: getResourceAssetUrl(blobName) },
         ]);
         // The store stamps the upload with its own clock, so the clock moves to the end of the grace window that stamp
         // Opens, which is when the release may delete the blob
-        const upload = await bucket.head(blobName);
+        const upload = await getMockBucket().head(blobName);
         assert.exists(upload);
         vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(upload.uploaded.getTime() + ASSET_GRACE_MS));
 
