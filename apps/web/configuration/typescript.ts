@@ -35,14 +35,20 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     contentMappers: [{ extensions: [".vue"], options: { optionsApi: false }, package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: {
-      // A listener a component neither emits nor declares is unknown, unless it falls through to the component's root:
-      // "fallthroughAttributes" types it from that root, a `@vuetify/v0` one by the listeners `app/types/vuetifyV0.d.ts`
-      // Declares. The unknown prop check reads the attributify names `modules/attributifyTypes.ts` declares at prepare
+      // The template checks of `@esposter/configuration/tsconfig.vue.json`, which Nuxt's generated tsconfigs cannot extend,
+      // So `typescript.test.ts` holds this set to that one. "fallthroughAttributes" types a listener from the root it falls
+      // Through to, a `@vuetify/v0` one by the listeners `app/types/vuetifyV0.d.ts` declares. The unknown prop check reads
+      // The attributify names `modules/attributifyTypes.ts` declares at prepare
+      checkUnknownComponents: true,
+      checkUnknownDirectives: true,
       checkUnknownEvents: true,
       checkUnknownProps: true,
       composables: { useTemplateRef: ["useTemplateRef"] },
       fallthroughAttributes: true,
+      inferTemplateDollarAttrs: true,
+      inferTemplateDollarSlots: true,
       strictTemplates: true,
+      strictVModel: true,
     },
   },
 };

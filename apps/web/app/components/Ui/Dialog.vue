@@ -36,7 +36,7 @@ defineOptions({ inheritAttrs: false });
 // Slot is the body, which scrolls inside the frame; the footer slot is the row drawn under it, which never does
 defineSlots<{
   actions?: () => VNode;
-  default: (props: { formId: string }) => VNode;
+  default?: (props: { formId: string }) => VNode;
   footer?: (props: { formId: string }) => VNode;
 }>();
 const isOpen = defineModel<boolean>({ default: false });

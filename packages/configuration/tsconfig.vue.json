@@ -16,5 +16,16 @@
     "${configDir}/src/**/*.ts",
     "${configDir}/src/**/*.vue"
   ],
-  "vueCompilerOptions": { "composables": { "useTemplateRef": ["useTemplateRef"] }, "strictTemplates": true }
+  "vueCompilerOptions": {
+    "checkUnknownComponents": true,
+    "checkUnknownDirectives": true,
+    "checkUnknownEvents": true,
+    "checkUnknownProps": true,
+    "composables": { "useTemplateRef": ["useTemplateRef"] },
+    "fallthroughAttributes": true,
+    "inferTemplateDollarAttrs": true,
+    "inferTemplateDollarSlots": true,
+    "strictTemplates": true,
+    "strictVModel": true
+  }
 }
