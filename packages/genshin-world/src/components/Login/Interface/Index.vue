@@ -92,7 +92,7 @@ const { isStartShown } = useLoginStageClips({
          RectTransform inside its game parent's, and what the tree cannot hold measured inside the piece holding it -->
     <GameRect #default="{ rect: loginRect }" :rect="interfaceRects[LoginInterfaceRectName.Login]">
       <!-- The root the clips play on, the empty path, over GrpLogin's whole box -->
-      <div class="page" ref="page">
+      <div ref="page" class="page">
         <GameRect
           #default="{ rect: backgroundRect }"
           :parent="loginRect"

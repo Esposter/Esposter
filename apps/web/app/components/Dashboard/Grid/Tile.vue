@@ -45,8 +45,8 @@ useResizeObserver(tile, (entries) => {
 
 <template>
   <div
-    class="dashboard-grid-tile"
     ref="tile"
+    class="dashboard-grid-tile"
     :class="{ 'touch-none': isEditable }"
     absolute
     :aria-label="isEditable ? label : altText || label"

@@ -43,8 +43,8 @@ defineExpose({ focus: () => button.value?.focus() });
     look: the other kinds look the same enabled or disabled. The look is the button's own, and its content takes the
     colour it sets -->
   <button
-    class="game-button"
     ref="button"
+    class="game-button"
     :class="{ 'row-tint': kind === GameButtonKind.Row }"
     :data-kind="kind"
     type="button"

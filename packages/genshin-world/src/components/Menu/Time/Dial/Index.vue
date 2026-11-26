@@ -39,8 +39,8 @@ const onDialPointerUp = () => {
 
 <template>
   <div
-    class="dial"
     ref="dial"
+    class="dial"
     @pointerdown="(event) => onDialPointerDown(event)"
     @pointermove="(event) => onDialPointerMove(event)"
     @pointerup="onDialPointerUp()"

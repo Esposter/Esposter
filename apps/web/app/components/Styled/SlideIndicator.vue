@@ -62,7 +62,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="indicator" ref="indicator" :style="indicatorStyle" rd-r bg-accent w-1 left-0 top-0 absolute />
+  <div ref="indicator" class="indicator" :style="indicatorStyle" rd-r bg-accent w-1 left-0 top-0 absolute />
 </template>
 
 <style scoped>

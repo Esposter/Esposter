@@ -24,8 +24,8 @@ defineExpose({ focusQuitGame: () => quitGameButton.value?.focus() });
 
 <template>
   <GameButton
-    class="side-entry"
     ref="quitGameButton"
+    class="side-entry"
     :kind="GameButtonKind.Disc"
     :style="quitStyle"
     :tip

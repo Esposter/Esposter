@@ -3,6 +3,7 @@ import type { VueOptions } from "vize";
 import { BLOCKED_SPELLING_SYNTAXES } from "#vite/services/blockedSpellingSyntaxes";
 import { SCOPED_STYLE_SYNTAXES } from "#vite/services/scopedStyleSyntaxes";
 import { TEMPLATE_RESTRICTED_SYNTAXES } from "#vite/services/templateRestrictedSyntaxes";
+import { WRAPPING_BAR_SYNTAXES } from "#vite/services/wrappingBarSyntaxes";
 import { IGNORE_PATTERNS } from "@esposter/configuration/oxfmt";
 
 // The Vue rules, which vize's own lint runs over each whole component: oxlint reads only a component's script. The
@@ -27,19 +28,27 @@ export const VUE_OPTIONS: VueOptions = {
         ruleOptions: { "vue/no-restricted-syntax": [...TEMPLATE_RESTRICTED_SYNTAXES, ...SCOPED_STYLE_SYNTAXES] },
       },
     },
-    // The app is the one package UnoCSS styles, so its components take the spellings its blocklist refuses
+    // The app is the one package UnoCSS styles, so its components take the spellings its blocklist refuses and the bars
+    // Its utilities can wrap
     {
       files: ["apps/web/**/*.vue"],
       linter: {
-        ruleOptions: { "vue/no-restricted-syntax": [...TEMPLATE_RESTRICTED_SYNTAXES, ...BLOCKED_SPELLING_SYNTAXES] },
+        ruleOptions: {
+          "vue/no-restricted-syntax": [
+            ...TEMPLATE_RESTRICTED_SYNTAXES,
+            ...BLOCKED_SPELLING_SYNTAXES,
+            ...WRAPPING_BAR_SYNTAXES,
+          ],
+        },
       },
     },
   ],
   // `vize fmt` formats the components over the shared `fmt` block, this block winning a clash key by key. Oxfmt formats
   // Everything else and ignores them, so this list is the shared one without that entry. The attributes are left as
-  // Written except `class`, which leads its run of static attributes, as the template order in the `vue` skill puts it
+  // Written except `ref` and `class`, which lead the static attributes in that order, as the template order in the `vue`
+  // Skill puts them: `vue/attribute-order` keeps `ref` ahead of every plain attribute
   fmt: {
-    attributeGroups: [["class"], ["*"]],
+    attributeGroups: [["ref"], ["class"], ["*"]],
     attributeSortOrder: "as-written",
     ignorePatterns: IGNORE_PATTERNS,
     sortAttributes: true,

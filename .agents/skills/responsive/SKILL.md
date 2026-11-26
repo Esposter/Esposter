@@ -75,7 +75,7 @@ A dialog a menu item opens is mounted in the toolbar, never inside the menu, whi
 
 Wrapping a button row to a second line is allowed **only** when the surface genuinely has vertical room to spare and the row is short (roughly ≤ 3 controls) — e.g. a transient selection toolbar. It is not the default, and it is never the answer for a full command bar. When in doubt, move the occasional commands into the `…`.
 
-**A bar that pushes its groups apart never wraps.** A group pushed to the row's end strands alone on a second line once the row runs short. The leading content yields instead (`truncate`, `min-w-0`) and the occasional actions wait in the overflow menu. `apps/web/app/templates.test.ts` ("bars") refuses the wrapping combination.
+**A bar that pushes its groups apart never wraps.** A group pushed to the row's end strands alone on a second line once the row runs short. The leading content yields instead (`truncate`, `min-w-0`) and the occasional actions wait in the overflow menu. A selector ban in vize's lint (`vite/services/wrappingBarSyntaxes.ts`) refuses the wrapping combination.
 
 ## Reference pages
 

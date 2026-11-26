@@ -77,7 +77,7 @@ onMounted(() => {
     @keydown.esc.stop="emit('close')"
   >
     <div class="backdrop" />
-    <div class="frame" ref="frame" :inert="isAdjustPromptOpen" tabindex="-1">
+    <div ref="frame" class="frame" :inert="isAdjustPromptOpen" tabindex="-1">
       <div v-for="scale of MENU_DIALOG_CORNER_SCALES" :key="scale" class="corner" :style="{ scale }">
         <MenuGlyph :glyph="MenuDialogGlyphMap[MenuDialogIcon.Corner]" class="corner-glyph" />
       </div>

@@ -68,8 +68,8 @@ onMounted(() => {
     <p class="hour">{{ targetTime }}</p>
     <p class="day">{{ gameText[targetDayKey] }}</p>
     <GameButton
-      class="confirm"
       ref="confirmButton"
+      class="confirm"
       :kind="GameButtonKind.Pill"
       tip=""
       @click="emit('confirm', targetMinutes)"

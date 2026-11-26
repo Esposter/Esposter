@@ -126,7 +126,7 @@ onClickOutside(table, () => {
 </script>
 
 <template>
-  <div class="sheet" ref="table" flex flex-col gap-2>
+  <div ref="table" class="sheet" flex flex-col gap-2>
     <!-- The selection toolbar takes the search row's place rather than a row of its own, so the table holds still
       when a selection starts -->
     <ResourceSheetRowTextSlot v-if="selectedRowIds.length === 0" />

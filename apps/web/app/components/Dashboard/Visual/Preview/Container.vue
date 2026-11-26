@@ -27,7 +27,7 @@ onClickExceptDrag(
 </script>
 
 <template>
-  <div class="visual-preview" ref="container" size-full cursor-pointer ui-frame>
+  <div ref="container" class="visual-preview" size-full cursor-pointer ui-frame>
     <!-- The chart is drawn as it is published, but takes no pointer: a press on it is the tile's drag, and its click
       opens the edit form. The corner's menu sits above it again -->
     <div size-full pointer-events-none>

@@ -16,8 +16,8 @@ defineExpose({ focusBack: () => backButton.value?.focus() });
 
 <template>
   <GameButton
-    class="back"
     ref="backButton"
+    class="back"
     :aria-label="label"
     :kind="GameButtonKind.Plain"
     tip=""

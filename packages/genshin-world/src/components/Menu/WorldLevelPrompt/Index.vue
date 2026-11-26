@@ -62,7 +62,7 @@ onMounted(() => {
       <p class="tips">
         <span v-for="({ color, text }, index) of tipsSegments" :key="index" :style="{ color }">{{ text }}</span>
       </p>
-      <GameButton class="choice cancel" ref="cancelButton" :kind="GameButtonKind.Row" tip="" @click="emit('close')">
+      <GameButton ref="cancelButton" class="choice cancel" :kind="GameButtonKind.Row" tip="" @click="emit('close')">
         <span class="label-text">{{ gameText[GameTextKey.Cancel] }}</span>
       </GameButton>
       <GameButton class="choice confirm" :kind="GameButtonKind.Row" tip="" @click="emit('confirm')">

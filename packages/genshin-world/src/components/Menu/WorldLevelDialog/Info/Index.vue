@@ -20,14 +20,14 @@ const { scrollThumb, updateScrollThumb } = useScrollThumb(body, info, { isRevers
 <template>
   <!-- Focusable, so a keyboard scrolls back up the help text it opens at the end of -->
   <div
-    class="body"
     ref="body"
+    class="body"
     role="region"
     :aria-label="gameText[GameTextKey.WorldLevel]"
     tabindex="0"
     @scroll="updateScrollThumb()"
   >
-    <p class="info" ref="info">
+    <p ref="info" class="info">
       <span v-for="({ color, text }, index) of infoSegments" :key="index" :style="{ color }">{{ text }}</span>
     </p>
   </div>

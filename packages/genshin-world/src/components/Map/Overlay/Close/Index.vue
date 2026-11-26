@@ -24,7 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <button class="close" ref="closeButton" type="button" :aria-label="gameText[GameTextKey.Back]" @click="emit('close')">
+  <button ref="closeButton" class="close" type="button" :aria-label="gameText[GameTextKey.Back]" @click="emit('close')">
     <svg viewBox="-1 -1 2 2" aria-hidden="true">
       <path
         d="M -0.7 -0.7 L 0.7 0.7 M 0.7 -0.7 L -0.7 0.7 M -0.7 -0.7 h 0.45 M -0.7 -0.7 v 0.45 M 0.7 -0.7 h -0.45 M 0.7 -0.7 v 0.45 M -0.7 0.7 h 0.45 M -0.7 0.7 v -0.45 M 0.7 0.7 h -0.45 M 0.7 0.7 v -0.45"

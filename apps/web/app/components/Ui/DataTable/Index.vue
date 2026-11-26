@@ -254,8 +254,8 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
           <tr>
             <th
               v-if="isSelectable"
-              class="header cell selection"
               ref="selectionHeaderCell"
+              class="header cell selection"
               :class="selectionPinClass"
               px-3
               w-0
@@ -270,8 +270,8 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
             <th
               v-for="(column, columnIndex) of columns"
               :key="column.key"
-              class="header cell"
               ref="headerCells"
+              class="header cell"
               :class="getColumnPinClass(columnIndex)"
               :aria-sort="getAriaSort(column.key)"
               :data-column-key="column.key"

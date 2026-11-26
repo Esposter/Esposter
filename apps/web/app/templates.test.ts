@@ -1,4 +1,4 @@
-import type { AttributeNode, DirectiveNode, ElementNode, TemplateChildNode } from "@vue/compiler-core";
+import type { AttributeNode, DirectiveNode, ElementNode } from "@vue/compiler-core";
 
 import { BREAKPOINTS } from "#configuration/breakpoints";
 import { UiStyleToken } from "#src/models/ui/UiStyleToken";
@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { createGenerator } from "unocss";
 import { describe, expect, test } from "vitest";
 
-// @TODO: https://github.com/ubugeeei-prod/vize/issues/13664 — vize's template AST replaces the compiler
+// Vize exports no typed template tree (vize#13664, not planned), so the checks parse with Vue's compiler
 import { parse } from "vue/compiler-sfc";
 
 // Every check below reads the same tree, so it is globbed and read once, each template is parsed once and walked
@@ -174,38 +174,6 @@ describe("attributify", () => {
         }
 
     expect(refusedTokens).toStrictEqual([]);
-  });
-});
-
-// A bar that pushes its groups apart — a spacer between them, `justify-between` or `justify-end` — and also wraps
-// Puts its trailing group alone at the end of a second line once the row runs short: one button at the start of the
-// First line and one at the end of the next. A bar never wraps; its leading content yields and its actions collapse
-// Into an overflow menu on a narrow screen (`responsive` skill)
-const checkIsSpacer = (node: TemplateChildNode) =>
-  node.type === NodeTypes.ELEMENT &&
-  node.tag === "div" &&
-  node.children.length === 0 &&
-  getAttributeNames(node).has("flex-1");
-
-describe("bars", () => {
-  // @TODO: https://github.com/ubugeeei-prod/vize/issues/13665 — a selector ban replaces it
-  test("wraps no bar that pushes its groups apart", () => {
-    expect.hasAssertions();
-
-    const wrappingBars: string[] = [];
-    for (const { elements, sourcePath: templatePath } of sourceFiles)
-      for (const element of elements) {
-        const attributeNames = getAttributeNames(element);
-        if (
-          attributeNames.has("flex-wrap") &&
-          (attributeNames.has("justify-between") ||
-            attributeNames.has("justify-end") ||
-            element.children.some((child) => checkIsSpacer(child)))
-        )
-          wrappingBars.push(`${templatePath}: <${element.tag}>`);
-      }
-
-    expect(wrappingBars).toStrictEqual([]);
   });
 });
 

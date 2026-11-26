@@ -100,7 +100,7 @@ const closeSidebarOnPhone = () => {
         the container fills -->
       <div flex-1 min-h-0 min-w-0 relative>
         <div ref="container" inset-0 absolute of-auto>
-          <div class="pdfViewer" ref="viewer" />
+          <div ref="viewer" class="pdfViewer" />
         </div>
       </div>
       <div v-if="isLoading" flex items-center inset-0 justify-center absolute>

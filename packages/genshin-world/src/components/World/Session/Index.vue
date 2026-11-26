@@ -1035,7 +1035,7 @@ useWorldSaveSync({
 </script>
 
 <template>
-  <div class="world-screen" ref="worldScreen">
+  <div ref="worldScreen" class="world-screen">
     <TresCanvas
       ref="canvas"
       :dpr="canvasDpr"

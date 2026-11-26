@@ -103,7 +103,7 @@ useListScreenTabStep(
       </svg>
       <span class="search-placeholder">{{ gameText[GameTextKey.AchievementSearch] }}</span>
     </span>
-    <div class="list" ref="list" role="tablist" aria-orientation="vertical">
+    <div ref="list" class="list" role="tablist" aria-orientation="vertical">
       <AchievementScreenCategory
         v-for="category of categories"
         :key="category.id"
