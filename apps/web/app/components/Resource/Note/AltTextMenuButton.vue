@@ -22,7 +22,9 @@ const altText = ref("");
     label="Alt text"
     :variant="UiButtonVariant.Quiet"
     px-0
-    @click="altText = String(editor?.getAttributes('image').alt ?? '')"
+    @update:is-open="(isOpen) => {
+      if (isOpen) altText = String(editor?.getAttributes('image').alt ?? '');
+    }"
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Edit" />

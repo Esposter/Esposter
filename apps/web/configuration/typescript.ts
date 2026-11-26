@@ -35,13 +35,13 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     contentMappers: [{ extensions: [".vue"], options: { optionsApi: false }, package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: {
-      // The unknown event check stays off. Under "fallthroughAttributes" a native listener is typed from the component's
-      // Root, and the library's fields, forms, selects and trees root on a `@vuetify/v0` component whose props type no
-      // DOM listener, so vue-tsc and vize alike report `@focusout` on a `UiTextField`. The unknown prop check reads the
-      // Attributify names `modules/attributifyTypes.ts` declares at prepare
-      checkUnknownEvents: false,
+      // A listener a component neither emits nor declares is unknown, unless it falls through to the component's root:
+      // "fallthroughAttributes" types it from that root, a `@vuetify/v0` one by the listeners `app/types/vuetifyV0.d.ts`
+      // Declares. The unknown prop check reads the attributify names `modules/attributifyTypes.ts` declares at prepare
+      checkUnknownEvents: true,
       checkUnknownProps: true,
       composables: { useTemplateRef: ["useTemplateRef"] },
+      fallthroughAttributes: true,
       strictTemplates: true,
     },
   },

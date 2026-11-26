@@ -22,7 +22,9 @@ const linkUrl = ref("");
     label="Link"
     :variant="UiButtonVariant.Quiet"
     px-0
-    @click="linkUrl = String(editor?.getAttributes('link').href ?? '')"
+    @update:is-open="(isOpen) => {
+      if (isOpen) linkUrl = String(editor?.getAttributes('link').href ?? '');
+    }"
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Link" />

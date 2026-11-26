@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// @TODO: https://github.com/ubugeeei-prod/vize/issues/13721
+import UiTextField from "#src/components/Ui/TextField.vue";
 import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
 import { UiRules } from "#src/services/ui/UiRules";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
