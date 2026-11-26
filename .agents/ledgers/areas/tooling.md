@@ -332,7 +332,7 @@
 - `vite` — `vueOptions.ts`
 - `vite/models`
 - `vite/services` — `constants.ts`, `createBuildCache.ts`, `createTask.ts`, `getBuildTaskName.ts`, `readManifest.ts`, `readPackageBuildManifests.ts`, `readPackageBuildTasks.ts`
-- `vite/services` — `blockedSpellingSyntaxes.ts`, `htmlElementAttributes.ts`, `htmlTagNames.ts`, `scopedStyleSyntaxes.ts`, `templateRestrictedSyntaxes.ts`
+- `vite/services` — `blockedSpellingSyntaxes.ts`, `htmlElementAttributes.ts`, `htmlTagNames.ts`, `scopedStyleSyntaxes.ts`, `templateRestrictedSyntaxes.ts`, `wrappingBarSyntaxes.ts`
 - `apps/web/scripts` — `constants.ts`, `flowMap`, `hydration`, `models`, `services`
 - `apps/web/scripts` — `tiled`, `unocss`, `unrenderedComponents`, `util`, `zstd`
 - `scripts/src/services/gameData` — `gameDataKeys.test.ts`
