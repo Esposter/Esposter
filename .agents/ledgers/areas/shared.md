@@ -25,7 +25,7 @@
 - `apps/web/shared/services/pageBuilder` — `renderWebpageDocument.bench.md`
 - `apps/web/shared/services/pageBuilder` — `renderWebpageDocument.bench.ts`, `renderWebpageDocument.test.ts`, `renderWebpageDocument.ts`, `renderWebpageNode.ts`, `sectionNodeType.test.ts`, `sectionNodeType.ts`, `serializeHtml.test.ts`, `serializeHtml.ts`, `surveyInviteNodeType.test.ts`, `surveyInviteNodeType.ts`, `tabNodeType.test.ts`, `tabNodeType.ts`, `tabsNodeType.test.ts`, `tabsNodeType.ts`, `textNodeType.test.ts`, `textNodeType.ts`, `tooltipNodeType.test.ts`, `tooltipNodeType.ts`, `typedTextNodeType.test.ts`, `typedTextNodeType.ts`, `videoNodeType.test.ts`, `videoNodeType.ts`, `webpageDocumentSchema.test.ts`, `webpageDocumentSchema.ts`, `webpageNodeChildren.test.ts`, `webpageNodeChildren.ts`, `webpageNodeSchema.test.ts`, `webpageNodeSchema.ts`, `webpageNodeTypeDefinitionMap.ts`, `webpageRegistry.test.ts`, `webpageRegistry.ts`, `webpageUrlSchema.ts`
 - `apps/web/shared/services/pagination`, `apps/web/shared/services/post`, `apps/web/shared/services/realtime`, `apps/web/shared/services/room`, `apps/web/shared/services/searchHistory`, `apps/web/shared/services/serviceWorker`, `apps/web/shared/services/storage`, `apps/web/shared/services/superjson`, `apps/web/shared/services/survey`, `apps/web/shared/services/trpc`
-- `apps/web/shared/services` — `constants.ts`
+- `apps/web/shared/services` — the rest
 - `apps/web/shared/util`
 - `apps/web/shared/services/dungeons`, `apps/web/shared/assets`
 - `apps/web/shared/models/dungeons/attack`, `apps/web/shared/models/dungeons/data`, `apps/web/shared/models/dungeons/item`, `apps/web/shared/models/dungeons/keys`
@@ -33,21 +33,21 @@
 - `apps/web/shared/models/clicker`
 - `apps/web/shared/models/achievement`
 - `apps/web/shared/services/resource/blueprint`, `apps/web/shared/services/resource/item`, `apps/web/shared/services/resource/link`, `apps/web/shared/services/resource/list`
-- `apps/web/shared/services/resource/note` — `constants.ts`, `createEmptyNote.ts`, `deserialize`, `deserializeNoteMarkdown.test.ts`, `deserializeNoteMarkdown.ts`, `getNoteExtensions.test.ts`, `getNoteExtensions.ts`, `noteProseMirrorSchema.ts`, `renderNoteHtml.test.ts`, `renderNoteHtml.ts`, `serialize`, `serializeNoteMarkdown.ts`
-- `apps/web/shared/services/resource/program` — `constants.ts`, `createEmptyProgram.ts`
+- `apps/web/shared/services/resource/note`
+- `apps/web/shared/services/resource/program`
 - `apps/web/shared/services/resource/sheet/column`
 - `apps/web/shared/services/resource/sheet/commands`
-- `apps/web/shared/services/resource/sheet` — `createDefaultSheetResource.ts`, `createDefaultSheetSettings.ts`, `dataSourceToDataset.test.ts`, `dataSourceToDataset.ts`
+- `apps/web/shared/services/resource/sheet` — the rest
 - `apps/web/shared/services/resource/survey`, `apps/web/shared/services/resource/todoList`
-- `apps/web/shared/services/resource` — `ResourceDefinitionMap.ts`, `ResourceSortNamePageSortMap.ts`, `SnapshotChannelDefinitionMap.ts`, `SnapshotReasonTitleMap.ts`, `SnapshotSummaryMap.ts`, `checkHasCapability.ts`, `checkIsSortNameAvailable.ts`, `constants.ts`, `getResourceAssetUrl.test.ts`, `getResourceAssetUrl.ts`, `getSnapshotRetainedSince.ts`, `parseResourceAssetPath.test.ts`, `parseResourceAssetPath.ts`
+- `apps/web/shared/services/resource` — the rest
 - `apps/web/shared/models/message`
 - `apps/web/shared/models` — `dashboard`, `dataset`
 - `apps/web/shared/models/emailEditor`
 - `apps/web/shared/models/webpageEditor`
 - `apps/web/shared/models/pageBuilder` — `ButtonNode.ts`, `ButtonNodeProps.ts`, `ButtonTarget.ts`, `ColumnNode.ts`, `ColumnNodeProps.ts`, `ColumnsNode.ts`, `ColumnsNodeProps.ts`, `CountdownNode.ts`, `CountdownNodeProps.ts`, `CritiqueFinding.ts`, `CritiqueFindingKind.ts`, `CritiqueSources.ts`, `CustomHtmlNode.ts`, `CustomHtmlNodeProps.ts`, `EffectiveColors.ts`, `EmailCritiqueSources.ts`, `EmailHeading.ts`, `EmailNodeType.ts`, `EmailSurveyInviteNode.ts`, `EmailValidationLevel.ts`, `EmailValidatorMessage.ts`, `HtmlAttributeName.ts`, `HtmlElement.ts`, `HtmlNode.ts`, `HtmlRawNode.ts`, `HtmlTag.ts`, `ImageNode.ts`, `ImageNodeProps.ts`, `NodeSlots.ts`, `NodeStyle.ts`, `NodeTypeDefinition.ts`, `PageBuilderDevice.ts`, `RenderContext.ts`, `SectionNode.ts`, `SectionNodeProps.ts`, `StyleBreakpoint.ts`, `StyleProperty.ts`, `StyleState.ts`, `StyleValue.test.ts`, `StyleValue.ts`
 - `apps/web/shared/models/pageBuilder` — `SurveyInviteNode.ts`, `SurveyInviteNodeProps.ts`, `SurveyPublishState.ts`, `TabNode.ts`, `TabNodeProps.ts`, `TabsNode.ts`, `TabsNodeProps.ts`, `TextNode.ts`, `TextNodeProps.ts`, `TooltipNode.ts`, `TooltipNodeProps.ts`, `TypedTextNode.ts`, `TypedTextNodeProps.ts`, `VideoNode.ts`, `VideoNodeProps.ts`, `WebpageDocument.ts`, `WebpageNode.ts`, `WebpageNodeDefinition.ts`, `WebpageNodeDefinitionMap.ts`, `WebpageNodeType.ts`, `WebpagePlaceableNode.ts`, `WebpageRootProps.test.ts`, `WebpageRootProps.ts`
-- `apps/web/shared/models/pagination/sorting` — `SortItem.ts`
-- `apps/web/shared/models/compiler` — `Delimiter.ts`
+- `apps/web/shared/models/pagination/sorting`
+- `apps/web/shared/models/compiler`
 - `apps/web/shared/generated`, `apps/web/shared/test`, `apps/web/shared/types`
 - `packages/shared/src/models/error`, `packages/shared/src/models/eventEmitter`, `packages/shared/src/models/history`, `packages/shared/src/models/indexedDb`, `packages/shared/src/models/jsonPatch`, `packages/shared/src/models/message`, `packages/shared/src/models/mime`, `packages/shared/src/models/object`
 - `packages/shared/src/models/panzoom`, `packages/shared/src/models/profanity`, `packages/shared/src/models/reactivity`, `packages/shared/src/models/router`, `packages/shared/src/models/sanitizeHtml`, `packages/shared/src/models/shared`, `packages/shared/src/models/sigv4`, `packages/shared/src/models/text`, `packages/shared/src/models/zod`
@@ -61,8 +61,8 @@
 - `packages/shared/src/services/sigv4`, `packages/shared/src/services/zod`, `packages/shared/src/services/zstd`
 - `packages/shared` — `src/util/types`
 - `packages/shared/src/util/array`, `packages/shared/src/util/date`, `packages/shared/src/util/dom`, `packages/shared/src/util/environment`, `packages/shared/src/util/function`, `packages/shared/src/util/id`, `packages/shared/src/util/map`
-- `packages/shared/src/util` — `object`, `promise`, `reactivity`
-- `packages/shared/src/util/secret` — `checkIsSecretEqual.test.ts`, `checkIsSecretEqual.ts`, `constants.ts`, `generateSecretToken.test.ts`, `generateSecretToken.ts`, `hashSecretToken.test.ts`, `hashSecretToken.ts`
+- `packages/shared/src/util` — the rest
+- `packages/shared/src/util/secret`
 - `packages/shared/src/util/text`, `packages/shared/src/util/time`, `packages/shared/src/util/validation`
 - `packages/shared` — `CHANGELOG.md`, `README.md`, `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - `packages/shared-node` — `CHANGELOG.md`, `README.md`, `package.json`

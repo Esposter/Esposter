@@ -4,22 +4,22 @@
 - `apps/web/app/components/Resource/Blade`, `apps/web/app/components/Resource/Explorer`, `apps/web/app/components/Resource/Overview.vue`
 - `apps/web/app/components/Resource/Sheet/Column`, `apps/web/app/components/Resource/Sheet/EditDialog`, `apps/web/app/components/Resource/Sheet/ExportDialog`, `apps/web/app/components/Resource/Sheet/FindReplace`
 - `apps/web/app/components/Resource/Sheet/Row`, `apps/web/app/components/Resource/Sheet/Toolbar`
-- `apps/web/app/components/Resource/Sheet` — `Data.vue`, `Dialogs.test.ts`, `Dialogs.vue`, `ImportDatasetDialog.test.ts`, `ImportDatasetDialog.vue`, `MetadataBar.vue`, `PreviewDialog.vue`, `PreviewTable.vue`, `SelectionToolbar.vue`, `Settings.test.ts`, `Settings.vue`, `StatisticsBar.vue`
+- `apps/web/app/components/Resource/Sheet` — the rest
 - `apps/web/app/composables/resource/sheet/commands` — `constants.bench.ts`, `createBenchDataSource.bench.ts`, `createBooleanColumn.test.ts`, `createUpdatedColumn.test.ts`, `createUpdatedRow.test.ts`, `generateBenchRows.bench.ts`, `setupCommandBench.bench.ts`, `setupCommandTest.test.ts`, `setupWithDataSource.test.ts`, `undoRedoInvariants.test.ts`, `useCreateColumn.test.ts`, `useCreateColumn.ts`, `useCreateRow.test.ts`, `useCreateRow.ts`, `useCreateRows.test.ts`, `useCreateRows.ts`, `useDeleteColumns.test.ts`, `useDeleteColumns.ts`, `useDeleteDuplicateRows.test.ts`, `useDeleteDuplicateRows.ts`, `useDeleteRows.test.ts`, `useDeleteRows.ts`, `useFindReplace.test.ts`, `useFindReplace.ts`, `useNullStrategy.test.ts`, `useNullStrategy.ts`, `usePasteRange.ts`, `usePasteRangeFromClipboard.test.ts`, `usePasteRangeFromClipboard.ts`, `useReorderColumns.test.ts`, `useReorderColumns.ts`, `useReorderRows.test.ts`, `useReorderRows.ts`, `useSetDataSource.test.ts`, `useSetDataSource.ts`, `useSheetCommand.test.ts`, `useSheetCommand.ts`, `useStringTransformation.test.ts`
 - `apps/web/app/composables/resource/sheet/commands` — `useStringTransformation.ts`, `useToggleColumnVisibility.test.ts`, `useToggleColumnVisibility.ts`, `useUpdateColumn.test.ts`, `useUpdateColumn.ts`, `useUpdateRow.test.ts`, `useUpdateRow.ts`
-- `apps/web/app/composables/resource/sheet` — `useColumnActionItems.ts`, `useColumnForm.ts`, `useColumnStatistics.ts`, `useCopyRangeToClipboard.test.ts`, `useCopyRangeToClipboard.ts`, `useHistoryTooltipHtml.ts`, `useSheetCommands.ts`, `useSheetHistory.ts`
+- `apps/web/app/composables/resource/sheet` — the rest
 - `apps/web/app/services/resource/sheet/column` — `BooleanFilterValueItemCategoryDefinitions.ts`, `ChartableColumnTypes.ts`, `ColumnHeaders.ts`, `ColumnStatisticsDefinitionMap.ts`, `ColumnStatisticsHeaders.ts`, `ColumnTypeChartDataComputeMap.ts`, `ColumnTypeCommandMap.ts`, `ColumnTypeFormSchemaMap.ts`, `ColumnTypeTokenMap.ts`, `FieldInputComponentMap.ts`, `FieldInputTypeMap.ts`, `buildColumnStatisticsComputeContext.ts`, `buildTopFrequenciesChartData.ts`, `checkIsActiveColumnFilter.test.ts`, `checkIsActiveColumnFilter.ts`, `compareColumnValues.test.ts`, `compareColumnValues.ts`, `compileSheetColumns.bench.json`, `compileSheetColumns.bench.md`, `compileSheetColumns.bench.ts`, `computeColumnChartData.test.ts`, `computeColumnChartData.ts`, `computeColumnStatisticsForColumn.test.ts`, `computeColumnStatisticsForColumn.ts`, `computeMonthFrequencies.ts`, `computeTopFrequencies.ts`, `constants.ts`, `createBaseColumnFormSchema.ts`, `createColumnStatistics.test.ts`, `createSourceColumnIdFormShape.ts`, `defineColumnStatistics.ts`, `formatBoolean.ts`, `formatNumber.ts`, `formatOptionalColumnValue.test.ts`, `formatOptionalColumnValue.ts`, `formatValue.test.ts`, `formatValue.ts`, `getDisplayText.test.ts`, `getDisplayText.ts`, `getVisibleColumns.test.ts`
 - `apps/web/app/services/resource/sheet/column` — `getVisibleColumns.ts`, `getVisibleEditableColumns.test.ts`, `getVisibleEditableColumns.ts`, `getVisibleStringColumns.test.ts`, `getVisibleStringColumns.ts`, `inferColumnType.test.ts`, `inferColumnType.ts`, `inferDateFormat.ts`, `toColumnKey.ts`
 - `apps/web/app/services/resource/sheet/commands`
 - `apps/web/app/services/resource/sheet/csv`, `apps/web/app/services/resource/sheet/dataSource`
 - `apps/web/app/services/resource/sheet/json`, `apps/web/app/services/resource/sheet/xlsx`, `apps/web/app/services/resource/sheet/xml`
-- `apps/web/app/services/resource/sheet` — `ArrowKeyDefinitionMap.ts`, `constants.ts`, `getItemId.ts`
-- `apps/web/app/services/resource/sheet/findReplace` — `getHighlightParts.ts`
+- `apps/web/app/services/resource/sheet` — the rest
+- `apps/web/app/services/resource/sheet/findReplace`
 - `apps/web/app/store/resource/sheet`
 - `apps/web/shared/models/resource/sheet/column/transformation`
-- `apps/web/shared/models/resource/sheet/column` — `AColumn.ts`, `BooleanColumn.ts`, `BooleanFormat.ts`, `BooleanValue.ts`, `Column.test.ts`, `Column.ts`, `ColumnCellReader.ts`, `ColumnStatisticName.ts`, `ColumnStatistics.ts`, `ColumnStatisticsKey.ts`, `ColumnType.ts`, `ColumnValue.ts`, `ComputedColumn.ts`, `DateColumn.ts`, `DateFormat.ts`, `EditableColumnValue.ts`, `Format.ts`, `NumberColumn.ts`, `NumberFormat.ts`, `SheetCellReader.ts`, `StringColumn.ts`, `createColumn.test.ts`, `createComputedColumn.test.ts`, `createDateColumn.test.ts`, `createNumberColumn.test.ts`
+- `apps/web/shared/models/resource/sheet/column` — the rest
 - `apps/web/shared/models/resource/sheet/commands`, `apps/web/shared/models/resource/sheet/csv`, `apps/web/shared/models/resource/sheet/datasource`, `apps/web/shared/models/resource/sheet/json`, `apps/web/shared/models/resource/sheet/xlsx`, `apps/web/shared/models/resource/sheet/xml`
-- `apps/web/shared/models/resource/sheet` — `CsvFileSettings.ts`, `JsonFileSettings.ts`, `SheetLayoutSettings.ts`, `SheetResource.ts`, `SheetSettings.test.ts`, `SheetSettings.ts`, `XlsxFileSettings.ts`, `XmlFileSettings.ts`
+- `apps/web/shared/models/resource/sheet` — the rest
 - `apps/web/app/components/Resource/Dashboard`, `apps/web/app/components/Resource/Email`, `apps/web/app/components/Resource/Webpage`
 - `apps/web/app/components/Resource/Survey/Creator/Canvas`
 - `apps/web/app/components/Resource/Survey/Creator` — `AddRowForm.vue`, `CalculatedValues.test.ts`, `CalculatedValues.vue`, `ChoiceListEditor.test.ts`, `ChoiceListEditor.vue`, `ImageChoicesEditor.test.ts`, `ImageChoicesEditor.vue`, `ImageUpload.test.ts`, `ImageUpload.vue`, `Layers.test.ts`, `Layers.vue`, `ListEditor.vue`, `LogicBuilder.test.ts`, `LogicBuilder.vue`, `MatrixColumnsEditor.test.ts`, `MatrixColumnsEditor.vue`, `MultipleTextItemsEditor.test.ts`, `MultipleTextItemsEditor.vue`, `NameTitleFields.vue`, `Palette.test.ts`, `Palette.vue`, `PreviewRun.test.ts`, `PreviewRun.vue`, `Properties.test.ts`, `Properties.vue`, `RowActions.vue`, `Shell.test.ts`
@@ -27,7 +27,7 @@
 - `apps/web/app/components/Resource/Survey/Field` — `Boolean.test.ts`, `Boolean.vue`, `ButtonGroup.test.ts`, `ButtonGroup.vue`, `Checkbox.test.ts`, `Checkbox.vue`, `Comment.test.ts`, `Comment.vue`, `Dropdown.test.ts`, `Dropdown.vue`, `Expression.test.ts`, `Expression.vue`, `Html.test.ts`, `Html.vue`, `Image.test.ts`, `Image.vue`, `ImagePicker.test.ts`, `ImagePicker.vue`, `Index.vue`, `Matrix.test.ts`, `Matrix.vue`, `MultipleText.test.ts`, `MultipleText.vue`, `RadioGroup.test.ts`, `RadioGroup.vue`, `Ranking.test.ts`, `Ranking.vue`, `Rating.test.ts`, `Rating.vue`, `Shell.test.ts`
 - `apps/web/app/components/Resource/Survey/Field` — `MatrixDynamic`, `PanelDynamic`, `Shell.vue`, `SingleChoice.vue`, `Slider.test.ts`, `Slider.vue`, `TagBox.test.ts`, `TagBox.vue`, `Text.test.ts`, `Text.vue`
 - `apps/web/app/components/Resource/Survey/Response`
-- `apps/web/app/components/Resource/Survey` — `BackgroundPicture.vue`, `Collection.test.ts`, `Collection.vue`, `Editor.test.ts`, `Editor.vue`, `Overview.vue`, `Responses.test.ts`, `Responses.vue`, `Runner.test.ts`, `Runner.vue`, `RunnerElement.vue`, `View.test.ts`, `View.vue`
+- `apps/web/app/components/Resource/Survey` — the rest
 - `apps/web/app/components/Resource/Program`
 - `apps/web/app/components/Resource/TodoList`
 - `apps/web/app/components/Resource/Blueprint`
@@ -49,14 +49,14 @@
 - `apps/web/app/store/resource` — `versionHistory.test.ts`, `versionHistory.ts`
 - `apps/web/app/components/Dashboard/Editor`, `apps/web/app/components/Dashboard/Grid`, `apps/web/app/components/Dashboard/Palette`
 - `apps/web/app/components/Dashboard/Visual`
-- `apps/web/app/components/Dashboard` — `Index.test.ts`, `Index.vue`
+- `apps/web/app/components/Dashboard` — the rest
 - `apps/web/app/components/Dataset`
 - `apps/web/app/store/dashboard`
 - `apps/web/app/composables/dashboard`
 - `apps/web/app/services/dashboard/chart`, `apps/web/app/services/dashboard/dataset`
 - `apps/web/app/services/dashboard/demo`, `apps/web/app/services/dashboard/editor`, `apps/web/app/services/dashboard/export`, `apps/web/app/services/dashboard/grid`
 - `apps/web/app/services/dashboard/visual`
-- `apps/web/app/services/dashboard` — `VisualTypeCategoryDefinitions.test.ts`, `VisualTypeCategoryDefinitions.ts`, `checkIsAxisVisualPropsData.ts`, `checkIsChartVisualType.ts`, `constants.ts`, `setVisualType.test.ts`, `setVisualType.ts`
+- `apps/web/app/services/dashboard` — the rest
 - `apps/web/app/composables/dataset`
 - `apps/web/app/services/dataset`
 - `apps/web/app/store/emailEditor`
@@ -75,28 +75,28 @@
 - `apps/web/app/store/survey`
 - `apps/web/app/composables/survey`
 - `apps/web/app/services/survey`
-- `apps/web/app/components/Resource` — `ActivityLog.test.ts`, `ActivityLog.vue`, `ActivityLogListItem.test.ts`, `ActivityLogListItem.vue`, `AskClaudeDialog.test.ts`, `AskClaudeDialog.vue`, `CloseButton.vue`, `ConsumersWarning.vue`, `FavoriteToggle.vue`, `ImportPreviewFooter.vue`, `LinkedResourceList.vue`, `OtherSaveNotice.vue`, `Overview.test.ts`, `RelatedResources.test.ts`, `RelatedResources.vue`, `RenameDialog.vue`, `SaveStateIndicator.vue`, `ServiceMenu.test.ts`, `ServiceMenu.vue`, `ShareDialog.test.ts`, `ShareDialog.vue`, `SrcdocIframe.vue`, `StorageMeter.vue`, `TagList.test.ts`, `TagList.vue`, `TagsEditorDialog`, `TypeMark.vue`
+- `apps/web/app/components/Resource` — the rest
 - `apps/web/app/components/Resource/Create`, `apps/web/app/components/Resource/Home`, `apps/web/app/components/Resource/RecycleBin`, `apps/web/app/components/Resource/VersionHistory`
 - `apps/web/app/models/resource/sheet/column`
 - `apps/web/app/models/resource/sheet/commands`, `apps/web/app/models/resource/sheet/dataSource`
-- `apps/web/app/models/resource/sheet` — `ArrowKeyDefinition.ts`, `CellMode.ts`, `CellPosition.ts`, `CellState.ts`
+- `apps/web/app/models/resource/sheet` — the rest
 - `apps/web/app/models/resource/contentSync`
 - `apps/web/app/models/resource/link`, `apps/web/app/models/resource/list`, `apps/web/app/models/resource/note`, `apps/web/app/models/resource/search`
 - `apps/web/app/models/resource/survey`, `apps/web/app/models/resource/todoList`
-- `apps/web/app/models/resource` — `BladeDefinition.ts`, `ContentBaseline.ts`, `ContentDeltaRequest.ts`, `ContentDeltaResponse.ts`, `CreatableResourceType.ts`, `PortableFormat.ts`, `PortableFormatKind.ts`, `PortableResourceType.ts`, `ResourceBlade.ts`, `ResourceBladeSlug.test.ts`, `ResourceBladeSlug.ts`, `ResourceBladeType.ts`, `ResourceHomeTab.ts`, `ResourceRouter.ts`, `ResourceSave.ts`, `ResourceSaveState.ts`, `ResourceSaveStateDefinition.ts`, `TagRow.ts`, `ZstdEncoder.ts`
+- `apps/web/app/models/resource` — the rest
 - `apps/web/app/components` — `Editor`, `Genshin`
 - `apps/web/app/components/PageBuilder` — `Bar.vue`, `Canvas`
 - `apps/web/app/components/PageBuilder` — `ContentPanel.test.ts`, `ContentPanel.vue`, `Editor.test.ts`, `Editor.vue`
 - `apps/web/app/components/PageBuilder` — `Email`, `EmptyPage.test.ts`, `EmptyPage.vue`, `FilePicker`, `Layers.test.ts`, `Layers.vue`, `MediaField.test.ts`, `MediaField.vue`, `MergeFieldList.vue`, `Palette.test.ts`, `Palette.vue`, `StylePanel`, `ThemePanel`
-- `apps/web/app/components/Pdf` — `Thumbnail.test.ts`, `Thumbnail.vue`, `Viewer`
-- `apps/web/app/components/Resource/Link` — `Select.test.ts`, `Select.vue`
-- `apps/web/app/components/Resource/Whiteboard/Editor` — `Canvas.test.ts`, `Canvas.vue`, `Controls.vue`, `Index.test.ts`, `Index.vue`, `Marquee.vue`, `Properties`, `Selection.vue`, `SnapGuides.vue`, `TextEdit.test.ts`, `TextEdit.vue`, `Toolbar.test.ts`, `Toolbar.vue`
-- `apps/web/app/components/Resource/Whiteboard` — `Element`, `Label.test.ts`, `Label.vue`
+- `apps/web/app/components/Pdf`
+- `apps/web/app/components/Resource/Link`
+- `apps/web/app/components/Resource/Whiteboard/Editor`
+- `apps/web/app/components/Resource/Whiteboard` — the rest
 - `apps/web/app/components` — `index.test.ts`
 - `apps/web/app/composables/app`, `apps/web/app/composables/auth`, `apps/web/app/composables/desmos`, `apps/web/app/composables/editor`, `apps/web/app/composables/genshin`, `apps/web/app/composables/realtime`, `apps/web/app/composables/resource/sheet/useSheetCommands.test.ts`, `apps/web/app/composables/storage`
-- `apps/web/app/composables/whiteboard` — `useInsertWhiteboardImages.test.ts`, `useInsertWhiteboardImages.ts`, `useWhiteboardArrangeKeyboard.test.ts`, `useWhiteboardArrangeKeyboard.ts`, `useWhiteboardContextMenu.test.ts`, `useWhiteboardContextMenu.ts`, `useWhiteboardGesture.test.ts`, `useWhiteboardGesture.ts`, `useWhiteboardKeyboard.test.ts`, `useWhiteboardKeyboard.ts`, `useWhiteboardSelectedElement.ts`, `useWhiteboardSelectionOperations.ts`, `useWhiteboardStyleKeyboard.test.ts`, `useWhiteboardStyleKeyboard.ts`, `useWhiteboardTextEdit.test.ts`, `useWhiteboardTextEdit.ts`, `useWhiteboardViewportKeyboard.test.ts`, `useWhiteboardViewportKeyboard.ts`
+- `apps/web/app/composables/whiteboard`
 - `apps/web/app` — `error.test.ts`, `generated`, `moduleCycles.test.ts`
-- `apps/web/app/models/bookmark` — `BookmarkLink.ts`
+- `apps/web/app/models/bookmark`
 - `apps/web/app/services/bookmark`, `apps/web/app/services/capture`, `apps/web/app/services/dashboard/createBoundVisual.test.ts`, `apps/web/app/services/desmos`
 - `apps/web/app/services/editor`, `apps/web/app/services/genshin`, `apps/web/app/services/pdf`
 - `apps/web/app/services/realtime`, `apps/web/app/services/resource/overlay`, `apps/web/app/services/resource/parseResourceBlade.test.ts`, `apps/web/app/services/resource/parseResourceBlade.ts`, `apps/web/app/services/resource/sheet/loadCommandSheet.ts`, `apps/web/app/services/richTextEditor`, `apps/web/app/services/search`
@@ -105,7 +105,7 @@
 - `apps/web/app/services/whiteboard/gesture` — `getWorldPoint.ts`, `reduceArrowGesture.ts`, `reduceConnectGesture.ts`, `reduceDrawingGesture.ts`, `reduceEndGesture.ts`, `reduceMarqueeGesture.ts`, `reduceMovingGesture.ts`, `reducePanningGesture.ts`, `reducePlacingGesture.ts`, `reducePointerGesture.ts`, `reducePressedGesture.ts`, `reducePreviewOrCommitGesture.ts`, `reduceResizingGesture.ts`, `reduceWhiteboardGesture.test.ts`, `reduceWhiteboardGesture.ts`, `startPlacingGesture.ts`, `startWhiteboardGesture.ts`
 - `apps/web/app/services/whiteboard` — `getCentredPosition.ts`, `getPlacedBounds.ts`, `getSelectedElement.ts`, `getSelectedElements.ts`, `getWhiteboardElementTitle.ts`, `keyboard`, `layout`, `overlay`, `palette`, `serializeClipboardElements.ts`, `stroke`, `style`, `text`, `tool`, `viewport`
 - `apps/web/app` — `storeRefDestructure.test.ts`, `templates.bench.json`, `templates.bench.md`, `templates.bench.ts`, `templates.test.ts`, `test`, `walkElements.test.ts`, `workers`
-- `apps/web/modules` — `attributifyTypes.test.ts`, `attributifyTypes.ts`, `devSession.test.ts`, `devSession.ts`, `nuxtLayoutTypes.ts`, `serveGenshinExtractions.test.ts`, `serveGenshinExtractions.ts`
-- `apps/web/public` — `favicon.ico`, `page-builder`, `pdfjs`, `polyfills`, `pwa`
-- `apps/web/service-worker` — `sw.ts`
+- `apps/web/modules`
+- `apps/web/public`
+- `apps/web/service-worker`
 - `apps/web/app/assets/dashboard`

@@ -6,7 +6,7 @@ The one partition of the tracked files, one file per area. Every file-based ques
 - `` `dir` — `a`, `b` ``: those entries of the directory.
 - `` `dir` — the rest ``: the directory's files no other unit names.
 
-Each file belongs to the deepest path naming it, so a unit naming a directory never holds a file a deeper unit names.
+Each file belongs to the deepest path naming it, so a unit naming a directory never holds a file a deeper unit names. A unit that holds every file of its directory names the directory, bare or as the rest beside a deeper unit, never its entries one by one, so a file added there joins it with no edit; entries are listed only where the directory is split between units. Rewording a unit is a new unit to the trailers, so a rewording that keeps its files carries each dated pass onto the new spelling (`Ledger: <ledger> | <unit> | <date> · <model>`), and `pnpm ai:precheck --fix` moves the rows other ledgers keep for it.
 
 | Area                      | What it holds                                                                                                                                                                                                                                  |
 | :------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

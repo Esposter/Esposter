@@ -9,7 +9,7 @@
 - `apps/web/app/store/clicker`
 - `apps/web/app/composables/clicker`
 - `apps/web/app/services/clicker/building`, `apps/web/app/services/clicker/effect`, `apps/web/app/services/clicker/icon`, `apps/web/app/services/clicker/properties`, `apps/web/app/services/clicker/save`, `apps/web/app/services/clicker/upgrade`
-- `apps/web/app/services/clicker` — `SoundUrlMap.ts`, `applyGameTick.test.ts`, `applyGameTick.ts`, `constants.ts`, `createBuildingWithStatistics.test.ts`, `createClicker.ts`, `formatNumberLong.test.ts`, `formatNumberLong.ts`
+- `apps/web/app/services/clicker` — the rest
 - `apps/web/app/pages/clicker.vue`
 - `apps/web/app/components/User`
 - `apps/web/app/components/Achievement`

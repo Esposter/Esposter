@@ -16,8 +16,8 @@
 - `apps/web/server/trpc/routers` — `sheet.test.ts`, `sheet.ts`, `todoList.test.ts`, `todoList.ts`, `topicMatch.test.ts`
 - `apps/web/server/trpc/routers` — `webpage.test.ts`, `webpage.ts`, `whiteboard.test.ts`, `whiteboard.ts`
 - `apps/web/server/trpc` — `guards`, `middleware`, `plugins`
-- `apps/web/server/trpc/procedure` — `blobState`, `getAuthedProcedure.ts`, `getProfanityFilterProcedure.ts`, `message`, `resource`, `room`, `slowAuthedProcedure.ts`, `slowRateLimitedProcedure.ts`, `standardAuthedProcedure.ts`, `standardRateLimitedProcedure.ts`
-- `apps/web/server/trpc/procedure/survey` — `slowRespondentProcedure.ts`, `standardRespondentProcedure.ts`
+- `apps/web/server/trpc/procedure` — the rest
+- `apps/web/server/trpc/procedure/survey`
 - `apps/web/server/trpc` — `context.test.ts`, `context.ts`, `index.ts`, `indexWithWakeCheck.test.ts`, `initTrpc.ts`, `liveTopicWakeCheck.harness.test.ts`, `liveTopicWakeCheck.test.ts`, `liveTopicWakeCheckGlobal.ts`, `optimisticWriteCrossCheck.harness.test.ts`, `optimisticWriteCrossCheck.test.ts`, `rootConfig.ts`
 - `apps/web/server/models`
 - `apps/web/server/composables`
@@ -37,7 +37,7 @@
 - `apps/web/server/services/resource` — `withResourceRollback.ts`, `writeResourceActivities.ts`, `writeResourceActivity.ts`
 - `apps/web/server/services/resource` — `snapshot`, `todoList`
 - `apps/web/server/services/room/category`, `apps/web/server/services/room/directMessage`, `apps/web/server/services/room/rbac`
-- `apps/web/server/services/room` — `announceRoomMemberDeparture.ts`, `announceRoomMemberRemoval.ts`, `announceRoomMembersJoined.ts`, `assertIsMember.test.ts`, `assertIsMember.ts`, `assertIsRoom.ts`, `constants.ts`, `deleteRoom.ts`, `getAdmittedInviteWhere.ts`, `getDirectMessageDisplayNames.test.ts`, `getDirectMessageDisplayNames.ts`, `getLiveInviteWhere.ts`, `getNotLiveMembershipWhere.ts`, `getReviveMembershipConflict.ts`, `getRoomMemberJoinCondition.ts`, `getRoomMembershipRemoval.ts`, `getRoomMembershipWhere.ts`, `getRoomProfileImageBlobNameFromUrl.ts`, `getRoomProfileImageBlobPrefix.ts`, `listRoomProfileImageBlobNames.ts`, `notifyOnlineRoomMembers.ts`, `requireUserToRoom.ts`, `resolveLiveInvite.test.ts`, `resolveLiveInvite.ts`
+- `apps/web/server/services/room` — the rest
 - `apps/web/server/services/blueprint`
 - `apps/web/server/services/survey`
 - `apps/web/server/services/auth`, `apps/web/server/services/rateLimiter`
@@ -46,10 +46,10 @@
 - `apps/web/server/services/friend`, `apps/web/server/services/db`, `apps/web/server/services/blobState`
 - `apps/web/server/services/user`, `apps/web/server/services/request`, `apps/web/server/services/notification`
 - `apps/web/server/services/emailEditor`, `apps/web/server/services/dashboard`
-- `apps/web/server` — `auth.test.ts`, `development`, `middleware`
+- `apps/web/server` — the rest
 - `apps/web/server/services` — `app`, `devSession`, `genshin`
 - `apps/web/server/services` — `hydrationCheck`
-- `apps/web/server/services/webhook` — `publicWebhookColumns.ts`
+- `apps/web/server/services/webhook`
 - `apps/web/server/services/mcp`, `apps/web/server/services/queue`
 - `apps/web/server/services/realtime`, `apps/web/server/services/realtimeKit`, `apps/web/server/services/resource/reapplyLiveResourceContent.test-d.ts`, `apps/web/server/services/room/deleteRoom.test.ts`
 - `apps/web/server/services` — `security`, `tombstone`, `webpage`

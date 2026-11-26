@@ -15,10 +15,10 @@ because a model every group shares belongs to none of their rows.
 - `apps/web/app/components/Dungeons/Settings`
 - `apps/web/app/components/Dungeons/Inventory`
 - `apps/web/app/components/Dungeons/World`, `apps/web/app/components/Dungeons/Title`, `apps/web/app/components/Dungeons/MobileJoystick`, `apps/web/app/components/Dungeons/Preloader`, `apps/web/app/components/Dungeons/Scene.vue`
-- `apps/web/app/store/dungeons` — `controls.ts`, `dialog.ts`, `index.test.ts`, `index.ts`, `player.ts`, `scene.test.ts`, `scene.ts`
+- `apps/web/app/store/dungeons` — the rest
 - `apps/web/app/services/dungeons/scene/battle`, `apps/web/app/services/dungeons/scene/inventory`, `apps/web/app/services/dungeons/scene/joystick`, `apps/web/app/services/dungeons/scene/monsterParty`, `apps/web/app/services/dungeons/scene/preloader`, `apps/web/app/services/dungeons/scene/settings`, `apps/web/app/services/dungeons/scene/title`
 - `apps/web/app/services/dungeons/scene/world`
-- `apps/web/app/services/dungeons/scene` — `SceneComponentMap.ts`, `initializeControls.ts`, `transitionFrom.ts`
+- `apps/web/app/services/dungeons/scene` — the rest
 - `apps/web/app/composables/dungeons/scene`
 - `apps/web/app/services/dungeons/animation`, `apps/web/app/services/dungeons/area`, `apps/web/app/services/dungeons/attack`, `apps/web/app/services/dungeons/camera`, `apps/web/app/services/dungeons/chest`, `apps/web/app/services/dungeons/dialog`, `apps/web/app/services/dungeons/direction`, `apps/web/app/services/dungeons/item`
 - `apps/web/app/services/dungeons/loader` — `ImageFileKeys.ts`, `PixelArtTextureKeys.ts`, `SoundFileKeys.ts`, `dungeonsLock.ts`, `getDungeonsUrl.ts`, `loadDungeonsFiles.test.ts`, `loadDungeonsFiles.ts`, `loadImages.test.ts`, `loadImages.ts`, `loadSounds.ts`, `loadSpritesheets.ts`, `loadTilemaps.test.ts`, `loadTilemaps.ts`, `loadTilesets.ts`, `readDungeonsPreloadSet.ts`
@@ -30,7 +30,7 @@ because a model every group shares belongs to none of their rows.
 - `apps/web/app/composables/phaser`, `apps/web/app/services/phaser`
 - `apps/web/app/models/dungeons/UI`, `apps/web/app/models/dungeons/area`, `apps/web/app/models/dungeons/attack`, `apps/web/app/models/dungeons/camera`, `apps/web/app/models/dungeons/direction`, `apps/web/app/models/dungeons/input`, `apps/web/app/models/dungeons/item`, `apps/web/app/models/dungeons/keys`, `apps/web/app/models/dungeons/npc`
 - `apps/web/app/models/dungeons/scene`, `apps/web/app/models/dungeons/state`, `apps/web/app/models/dungeons/theme`, `apps/web/app/models/dungeons/tilemap`
-- `apps/web/app/models/dungeons` — `Asset.ts`, `Grid.test.ts`, `Grid.ts`, `GridValue.ts`, `ImagePosition.ts`
+- `apps/web/app/models/dungeons` — the rest
 - `apps/web/app/models/phaser`
 - `apps/web/app/models/resolvers/dungeons`
 - `apps/web/app/assets/dungeons/data`
