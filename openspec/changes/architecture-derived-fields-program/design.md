@@ -33,7 +33,7 @@ It is delivered in four changes, built in this order, each shippable on its own 
 - **SQLite generated columns for aggregates.** A generated column reads only its own row, so a count over other rows needs a trigger. A generated column is used for the one kind that reads only its own row, which is the ranking.
 - **Maintenance through Drizzle hooks.** A hook runs only for statements built through Drizzle, so a cascade, a job or a raw statement skips it.
 - **Recomputing an aggregate on the client.** A client holds the contributing rows only for what it has loaded, never all of a post's votes, so it cannot compute the count and must predict its change.
-- **Adopting an existing library for the whole mechanism.** Checked against the open-source options before review. Incremental view engines (DBSP, Materialize, OpenIVM, pg_trickle) run on a database server, not on D1 or a Durable Object's storage, and no SQLite or D1 build was found. Rails counter caches keep a declared count in application callbacks, which raw writes and external loads skip, so the database trigger is the mechanism here. TanStack DB would replace the overlay and predictor on the client, a change larger than this program, which keeps the overlay it already built. Revisit if D1 gains an incremental engine, or the overlay is retired for another reason.
+- **Adopting an existing library for the whole mechanism.** Checked against the open-source options before review. The incremental view engines found each run in a PostgreSQL, DuckDB or streaming server (DBSP as Feldera's runtime, Materialize, OpenIVM, pg_trickle), not in D1 or a Durable Object's SQLite, and no SQLite or D1 build was found. Rails counter caches keep a declared count in application callbacks, which raw writes and external loads skip, so the database trigger is the mechanism here. TanStack DB would replace the overlay and predictor on the client, a change larger than this program, which keeps the overlay it already built. Revisit if D1 gains an incremental engine, or the overlay is retired for another reason.
 
 ## How it works
 
@@ -275,3 +275,11 @@ Each item below is a question the build answers. The outcome named under it is t
 ## Sources
 
 - The SQLite pages on `CREATE TRIGGER` and on generated columns. Neither is read yet. The relations-server change reads both before it builds, and records in its design the cases they settle, so no decision here rests on an unread page.
+- The library survey in Settled. These were read as search results, not as full pages, and each full page is read before a build relies on it:
+  - Rails counter caches: the [Active Record Associations guide](https://guides.rubyonrails.org/association_basics.html) and the [Associations API](https://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html). The count column sits on the parent, a count changed outside Rails's callbacks is not updated, and `reset_counters` repairs drift.
+  - DBSP: the [DBSP paper](https://arxiv.org/abs/2203.16684), which describes the incremental view maintenance framework. The Feldera engine that runs it is a separate streaming runtime.
+  - Materialize: [What is Materialize?](https://materialize.com/docs/overview/), a streaming database built on Timely and Differential Dataflow.
+  - OpenIVM: the [OpenIVM paper](https://arxiv.org/abs/2404.16486) and its [repository](https://github.com/ila/openivm), a DuckDB extension.
+  - pg_trickle: the [pgxn distribution page](https://pgxn.org/dist/pg_trickle/), a PostgreSQL extension.
+  - TanStack DB: the [mutations guide](https://tanstack.com/db/latest/docs/guides/mutations), which gives optimistic client state with rollback on error.
+- The negative result that no SQLite or D1 build was found comes from the search run in an earlier round. It was not repeated here.
