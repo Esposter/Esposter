@@ -140,6 +140,6 @@
     "zod": "catalog:"
   },
   "inlinedDependencies": {
-    "vize": "0.796.0"
+    "vize": "0.798.0"
   }
 }

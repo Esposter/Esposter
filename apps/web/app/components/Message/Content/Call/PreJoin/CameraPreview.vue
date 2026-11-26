@@ -18,7 +18,7 @@ defineProps<Props>();
       playsinline
       size-full
       object-cover
-      :srcObject.prop="stream"
+      :srcObject.prop="stream ?? null"
     />
     <div v-if="!isCameraEnabled || !stream" text-muted flex flex-col gap-2 size-full items-center justify-center>
       <UiIcon :meaning="UiIconMeaning.CameraOff" />

@@ -47,7 +47,7 @@ jobs:
 
       # Installs the CLI only, since no `command` is given, so the secrets below are read with `pulumi env get`
       - name: 🔧 Install the Pulumi CLI
-        uses: pulumi/actions@96c7761824268174e0d2a4e8c7d75671eebd24a7 # v7.1.0
+        uses: pulumi/actions@0ce33695f880624d4f27bd6db25e680c7df4d551 # v7.2.0
 
       # It goes first, ahead of every app's install, so the jobs build's install is still the last one before the D1
       # migrations, which read it

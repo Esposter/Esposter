@@ -52,7 +52,7 @@ catalog:
   "@lerna-lite/publish": ^5.9.0
   "@lezer/highlight": ^1.2.5
   "@modelcontextprotocol/sdk": ^1.32.2
-  "@nuxt/fonts": ^1.2.0
+  "@nuxt/fonts": ^1.2.1
   "@nuxt/image": ^2.2.1
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
   # Aliases, once Nuxt 5 reaches `latest`: until then it ships only as nightly packages
@@ -66,7 +66,7 @@ catalog:
   "@pinia/nuxt": ^1.0.3
   "@pulumi/cloudflare": ^6.24.0
   "@pulumi/github": ^6.15.1
-  "@pulumi/pulumi": ^3.277.0
+  "@pulumi/pulumi": ^3.278.0
   "@standard-schema/spec": ^1.1.0
   "@tiptap/core": ^3.35.0
   "@tiptap/extension-code-block-lowlight": ^3.35.0
@@ -88,7 +88,7 @@ catalog:
   "@trpc/server": ^11.31.3
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
-  "@types/node": ^26.6.10
+  "@types/node": ^26.6.11
   "@types/three": ^0.187.0
   "@types/web-push": ^3.6.4
   "@typesafe-ai/sdk": ^0.7.0
@@ -98,18 +98,18 @@ catalog:
   "@vite-pwa/workbox-build": ^8.0.15
   "@vite-pwa/workbox-swkit": ^8.0.15
   "@vite-pwa/workbox-window": ^8.0.15
-  "@vitest/browser": ^5.1.1
-  "@vitest/browser-playwright": ^5.1.1
-  "@vitest/browser-preview": ^5.1.1
-  "@vitest/coverage-v8": ^5.1.1
-  "@vitest/mocker": ^5.1.1
-  "@vitest/pretty-format": ^5.1.1
-  "@vitest/snapshot": ^5.1.1
-  "@vitest/spy": ^5.1.1
-  "@vitest/utils": ^5.1.1
-  "@vizejs/native": ^0.796.0
-  "@vizejs/unplugin": ^0.796.0
-  "@vizejs/vite-plugin": ^0.796.0
+  "@vitest/browser": ^5.1.2
+  "@vitest/browser-playwright": ^5.1.2
+  "@vitest/browser-preview": ^5.1.2
+  "@vitest/coverage-v8": ^5.1.2
+  "@vitest/mocker": ^5.1.2
+  "@vitest/pretty-format": ^5.1.2
+  "@vitest/snapshot": ^5.1.2
+  "@vitest/spy": ^5.1.2
+  "@vitest/utils": ^5.1.2
+  "@vizejs/native": ^0.798.0
+  "@vizejs/unplugin": ^0.798.0
+  "@vizejs/vite-plugin": ^0.798.0
   "@vue/compiler-core": ^3.5.46
   "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.4.0
@@ -145,7 +145,7 @@ catalog:
   mjml-preset-core: ^5.4.1
   mlly: ^1.8.2
   module-replacements: ^3.4.0
-  msw: ^3.0.7
+  msw: ^3.0.8
   neverthrow: ^8.2.0
   # @TODO: https://github.com/nitrojs/nitro/releases/tag/v3.0.0 — back to a range once Nitro 3 reaches `latest`
   nitro: npm:nitro-nightly@latest
@@ -190,9 +190,9 @@ catalog:
   vite: ^8.4.0-beta.2
   vite-plugin-glsl: ^1.6.4
   vite-plus: ^1.8.0
-  vitest: ^5.1.1
+  vitest: ^5.1.2
   vitest-browser-vue: ^3.1.0
-  vize: ^0.796.0
+  vize: ^0.798.0
   vue: ^3.5.46
   vue-router: ^5.5.1
   web-push: ^4.0.0
