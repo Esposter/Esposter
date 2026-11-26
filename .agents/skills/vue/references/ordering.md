@@ -30,7 +30,7 @@ Never leave a framework value composable stranded at the bottom below custom sto
 
 ## Template attributes
 
-1. **`v-model`** (or **`v-for`** + **`:key`**), then **`ref`** — binding/iteration directives and the unique attributes first, as `vue/attribute-order` puts them
+1. **`v-for`** + **`:key`**, then **`ref`**, then **`v-model`** — iteration first, then the unique attributes, then the two-way binding, as `vue/attribute-order` puts them (`ref` ranks ahead of `v-model` there, so `v-model` never leads a `ref`)
 2. **`class`** — static class string
 3. **UnoCSS attributify props** — shorthand utilities as props (`m-2`, `flex`, `flex-col`)
 4. **Component props with values** — `:prop="value"` / `prop="string"` (alphabetical)
