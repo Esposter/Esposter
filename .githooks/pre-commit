@@ -50,7 +50,7 @@ if [ -s "$PARTIAL_FILE" ]; then
     case $mode in 100644|100755) ;; *) continue ;; esac
     git cat-file blob "$(printf "%s" "$entry" | cut -d" " -f2)" > "$BASE_FILE"
     if [ "${path%.vue}" != "$path" ]; then
-      node "$FORMAT_COMPONENT" "$TOOLS_ROOT" "$path" < "$BASE_FILE" > "$FORMATTED_FILE" || exit 1
+      COMPONENT_PATH="$path" node "$FORMAT_COMPONENT" < "$BASE_FILE" > "$FORMATTED_FILE" || exit 1
     elif "$OXFMT" --config "$CONFIGURATION" --stdin-filepath "$path" < "$BASE_FILE" > "$FORMATTED_FILE" 2> "$ERROR_FILE"; then
       :
     elif grep -qF "$OXFMT_UNSUPPORTED_MESSAGE" "$ERROR_FILE"; then

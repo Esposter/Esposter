@@ -27,7 +27,8 @@ export const readUnformattedPaths = (
   const unformattedPaths = new Set([
     ...paths.filter((path) => checkIsComponentPath(path) && checkIsUnformatted(path)),
     ...chunkPaths(paths.filter((path) => !checkIsComponentPath(path))).flatMap(
-      (chunk) => listDifferent(chunk, repositoryRoot, mainCheckoutRoot) ?? chunk.filter(checkIsUnformatted),
+      (chunk) =>
+        listDifferent(chunk, repositoryRoot, mainCheckoutRoot) ?? chunk.filter((path) => checkIsUnformatted(path)),
     ),
   ]);
   return paths.filter((path) => unformattedPaths.has(path));

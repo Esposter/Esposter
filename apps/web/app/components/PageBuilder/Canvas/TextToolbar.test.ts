@@ -57,11 +57,18 @@ describe("pageBuilderCanvasTextToolbar", () => {
     expect.hasAssertions();
 
     const editor = createFocusedEditor('<p><a href="https://example.com">one</a> two</p>', 2);
+    // In the document, since the panel takes a toggle only while it is connected
     const component = await mountSuspended(PageBuilderCanvasTextToolbar, {
+      attachTo: document.body,
       props: { editor, position: { left: 0, top: 0 } },
     });
 
     await component.get("button[aria-label='Link']").trigger("click");
+    // The browser opens the panel on the click and reports it as a toggle, which the test environment never sends
+    component
+      .get('[role="dialog"][aria-label="Link"]')
+      .element.dispatchEvent(Object.assign(new Event("toggle"), { newState: "open" }));
+    await flushPromises();
     // The field opens on the address the words already link to, so clearing it is an edit of that link
     expect(component.get<HTMLInputElement>("input").element.value).toBe("https://example.com");
     await component.get("input").setValue("");

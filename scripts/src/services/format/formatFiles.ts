@@ -26,7 +26,7 @@ export const formatFiles = (repositoryPaths: string[], repositoryRoot: string, m
     return count;
   };
   const formattablePaths = repositoryPaths.filter((path) => readFormattableText(path, repositoryRoot) !== undefined);
-  let rewrittenCount = writeEachFormatted(formattablePaths.filter(checkIsComponentPath));
+  let rewrittenCount = writeEachFormatted(formattablePaths.filter((path) => checkIsComponentPath(path)));
   for (const chunk of chunkPaths(formattablePaths.filter((path) => !checkIsComponentPath(path)))) {
     const unformattedPaths = listDifferent(chunk, repositoryRoot, mainCheckoutRoot);
     if (unformattedPaths === undefined) {

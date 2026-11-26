@@ -1,5 +1,6 @@
-// A ledger's text with each row whose unit cell names a key of `successors` naming its value instead, the rest of the row
-// Kept. The cell is matched as the row spells it, so a line outside a table, or a row naming another unit, is untouched
+// A ledger's text with each row whose unit cell names a key of `successors` naming its value instead, the rest of the
+// Row kept. The cell is matched as the row spells it, so a line outside a table, or a row naming another unit, is
+// Untouched
 export const rewriteLedgerRows = (text: string, successors: ReadonlyMap<string, string>): string =>
   text
     .split("\n")

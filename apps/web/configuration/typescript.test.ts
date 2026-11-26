@@ -25,16 +25,21 @@ describe("typescript", () => {
     },
   );
 
-  // The Vue packages read their template checks from `tsconfig.vue.json`, which no generated tsconfig extends either, so
-  // The app restates them and may add to them, but never drops or changes one
+  // The Vue packages read their template checks from `tsconfig.vue.json`, which no generated tsconfig extends either,
+  // So the app restates them and may add to them, but never drops or changes one
   test("checks templates as strictly as the Vue packages do", async () => {
     expect.hasAssertions();
 
     const configurationPath = dirname(createRequire(import.meta.url).resolve("@esposter/configuration/package.json"));
+    // oxlint-disable-next-line no-restricted-properties -- a tsconfig holds no dates to revive
     const { vueCompilerOptions } = JSON.parse(await readFile(join(configurationPath, "tsconfig.vue.json"), "utf8")) as {
       vueCompilerOptions: Record<string, unknown>;
     };
 
-    expect(typescript?.tsConfig?.vueCompilerOptions).toMatchObject(vueCompilerOptions);
+    const appOptions: Record<string, unknown> = typescript?.tsConfig?.vueCompilerOptions ?? {};
+
+    expect(Object.fromEntries(Object.keys(vueCompilerOptions).map((key) => [key, appOptions[key]]))).toStrictEqual(
+      vueCompilerOptions,
+    );
   });
 });

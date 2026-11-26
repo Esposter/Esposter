@@ -27,7 +27,7 @@ describe("webpageRouter", () => {
   const name = "name";
   const hash = "a".repeat(64);
 
-  beforeAll(async () => {
+  beforeAll(() => {
     caller = getCaller();
     resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
     surveyCaller = createCallerFactory(surveyRouter)(getMockContext());

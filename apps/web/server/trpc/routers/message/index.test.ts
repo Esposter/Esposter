@@ -168,7 +168,7 @@ describe("messageRouter", () => {
   const createRoomMessage = (overrides: Partial<RoomMessage> = {}): RoomMessage =>
     baseCreateRoomMessage({ id: messageId, message: text, userId, ...overrides });
 
-  beforeAll(async () => {
+  beforeAll(() => {
     mockContext = getMockContext();
     messageCaller = createCallerFactory(messageRouter)(mockContext);
     roomCaller = getRoomCaller();

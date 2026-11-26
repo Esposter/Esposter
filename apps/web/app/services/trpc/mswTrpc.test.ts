@@ -20,8 +20,8 @@ interface MswContext {
 // Procedure the test registered no resolver for fails the test by its path once it ends.
 // It never reaches a real socket. A request a resolver holds fails the test that held it, not the hooks after it
 export const setupMswTrpc = () => {
-  // Each procedure called with no resolver to answer it, which tRPC answers with NOT_FOUND. The code under test reads that
-  // As a failed call and carries on, so the test would pass on a path it never meant to take
+  // Each procedure called with no resolver to answer it, which tRPC answers with NOT_FOUND. The code under test reads
+  // That as a failed call and carries on, so the test would pass on a path it never meant to take
   const unansweredPaths = new Set<string>();
   const { handlers, reset, trpc } = createTRPCMsw<TRPCRouter, MswContext>({
     createContext: () => ({ responseHeaders: new Headers() }),

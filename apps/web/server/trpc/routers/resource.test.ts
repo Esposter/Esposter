@@ -157,7 +157,7 @@ describe("resourceRouter", () => {
       id: webpageResource.id,
     });
 
-  beforeAll(async () => {
+  beforeAll(() => {
     mockContext = getMockContext();
     caller = createCallerFactory(trpcRouter)(mockContext).resource;
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);

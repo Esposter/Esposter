@@ -9,6 +9,9 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 const runGit = (root: string, args: string[]): string =>
   execFileSync("git", ["-c", "commit.gpgsign=false", ...args], { cwd: root, encoding: "utf8" });
+// A component of one script line and one template line
+const getComponent = (script: string, template: string) =>
+  `<script setup lang="ts">\n${script}\n</script>\n\n<template>\n  ${template}\n</template>\n`;
 
 // A file whose two declarations are both unformatted at the end, so a format pass that reaches either one is visible.
 // The first is the staged hunk; the last is the unstaged one.
@@ -57,8 +60,6 @@ describe("pre-commit hook", () => {
     expect.hasAssertions();
 
     const componentName = "Component.vue";
-    const getComponent = (script: string, template: string) =>
-      `<script setup lang="ts">\n${script}\n</script>\n\n<template>\n  ${template}\n</template>\n`;
     writeFileSync(join(root, VITE_CONFIGURATION_FILE), "export default {};\n");
     writeFileSync(join(root, componentName), getComponent("const a = 1;", "<div>{{ a }}</div>"));
     runGit(root, ["add", componentName]);

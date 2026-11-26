@@ -52,7 +52,9 @@ describe(checkLedgerRows, () => {
       checkLedgerRows(
         () => getText(rewordedUnit),
         { derived: () => ["`a`"] },
-        (_ledger, text) => written.push(text),
+        (_ledger, text) => {
+          written.push(text);
+        },
       ),
     ).toStrictEqual({ findings: [], regenerated: [label] });
     expect(written).toStrictEqual([getText("`a`")]);

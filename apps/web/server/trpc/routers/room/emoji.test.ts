@@ -55,7 +55,7 @@ describe("emojiRouter", () => {
     return roomEmojiCaller.createRoomEmoji({ id, name: emojiName, roomId });
   };
 
-  beforeAll(async () => {
+  beforeAll(() => {
     mockContext = getMockContext();
     roomEmojiCaller = createCallerFactory(emojiRouter)(mockContext);
   });

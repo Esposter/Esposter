@@ -39,7 +39,7 @@ describe("emailRouter", () => {
       })
     )?.storageBytesUsed;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     caller = getCaller();
     resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
   });

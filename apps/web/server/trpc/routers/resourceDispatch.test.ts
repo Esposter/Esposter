@@ -31,7 +31,7 @@ describe("resourceDispatchRouter", () => {
   const size = 1;
   const webpageEditor = new WebpageEditor({ description: "a" });
 
-  beforeAll(async () => {
+  beforeAll(() => {
     mockContext = getMockContext();
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);

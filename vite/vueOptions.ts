@@ -45,8 +45,8 @@ export const VUE_OPTIONS: VueOptions = {
   ],
   // `vize fmt` formats the components over the shared `fmt` block, this block winning a clash key by key. Oxfmt formats
   // Everything else and ignores them, so this list is the shared one without that entry. The attributes are left as
-  // Written except `ref` and `class`, which lead the static attributes in that order, as the template order in the `vue`
-  // Skill puts them: `vue/attribute-order` keeps `ref` ahead of every plain attribute
+  // Written except `ref` and `class`, which lead the static attributes in that order, as the template order in the
+  // `vue` skill puts them: `vue/attribute-order` keeps `ref` ahead of every plain attribute
   fmt: {
     attributeGroups: [["ref"], ["class"], ["*"]],
     attributeSortOrder: "as-written",
