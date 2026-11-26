@@ -184,7 +184,7 @@ Each rung is the highest one that can carry the rule. The rules this program rem
 - **Construction.** Derived keys are `readonly` in every row type, and drafts and patches omit them. A client write to one is a type error.
 - **Structural.** One store, one predictor, one answer helper, one read procedure and one trigger generator. Each rule has one place.
 - **Build.** The generated set and the migration's triggers are regenerated and compared by a test, under the generated-artifacts standard.
-- **Lint.** The count selectors are retired. One selector, fed by the generated set, refuses a `set` of a derived key outside the helper module. The relations-server change adds it, since that change removes the arithmetic it guards.
+- **Lint.** The count selectors are retired in the relations-client change, since the readonly types refuse the same writes there. One selector, fed by the generated set, refuses a `set` of a derived key outside the helper module. The relations-server change adds it, since that change removes the arithmetic it guards.
 - **Test.** The relations-server change's invariant test runs random sequences of routed votes and comments and checks every in-store aggregate against its recomputation. A cross-store value is checked by the reconcile's test, and each counter step by its write's router test. A generation check holds the database's triggers to the generated set.
 
 ## Generated artifacts
