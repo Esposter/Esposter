@@ -5,11 +5,11 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | Package                    | File                          |   Bytes |    KiB |
 | :------------------------- | :---------------------------- | ------: | -----: |
 | genshin-world              | **/*.js                       | 4213612 | 4114.9 |
-| genshin-world              | **/*.d.ts                     | 2781866 | 2716.7 |
+| genshin-world              | **/*.d.ts                     | 2787204 | 2721.9 |
 | @esposter/db               | **/*.js                       |  826869 |  807.5 |
 | genshin-text               | **/*.js                       |  625628 |  611.0 |
 | genshin-engine             | **/*.js                       |  358781 |  350.4 |
-| genshin-interface          | **/*.d.ts                     |  338862 |  330.9 |
+| genshin-interface          | **/*.d.ts                     |  336501 |  328.6 |
 | genshin-world              | index.d.ts                    |  283620 |  277.0 |
 | genshin-world              | style.css                     |  272923 |  266.5 |
 | genshin-interface          | **/*.js                       |  268034 |  261.8 |
@@ -179,4 +179,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts                |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts        |       9 |    0.0 |
 
-**Total:** 174 files, 13139372 bytes, 12831.4 KiB, 12.53 MiB
+**Total:** 174 files, 13142349 bytes, 12834.3 KiB, 12.53 MiB
