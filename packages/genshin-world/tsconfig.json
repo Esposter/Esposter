@@ -3,6 +3,7 @@
   "compilerOptions": { "types": [] },
   "include": [
     "../configuration/types/*.d.ts",
+    "../configuration/types/vue/*.d.ts",
     "*.ts",
     "parity/**/*.ts",
     "scripts/**/*.ts",

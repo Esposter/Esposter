@@ -10,6 +10,7 @@
   "extends": "./tsconfig.base.json",
   "include": [
     "types/*.d.ts",
+    "types/vue/*.d.ts",
     "${configDir}/types/*.d.ts",
     "${configDir}/*.ts",
     "${configDir}/scripts/**/*.ts",

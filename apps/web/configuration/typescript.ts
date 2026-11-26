@@ -35,6 +35,7 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     contentMappers: [{ extensions: [".vue"], options: { optionsApi: false }, package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: {
+      // @TODO: https://github.com/ubugeeei-prod/vize/issues/13721 — strictComponentAttrs on, here and shared
       // The template checks of `@esposter/configuration/tsconfig.vue.json`, which Nuxt's generated tsconfigs cannot
       // Extend, so `typescript.test.ts` holds this set to that one. "fallthroughAttributes" types a listener from the
       // Root it falls through to, a `@vuetify/v0` one by the listeners `app/types/vuetifyV0.d.ts` declares. The unknown
