@@ -35,10 +35,9 @@ describe("uiSchemaForm", () => {
       expect.hasAssertions();
 
       const survey = createResourceListItem({ type: ResourceType.Survey });
-      trpcMsw.survey.readResources.query(() => ({
-        items: [{ ...survey, favorite: null, publication: null }],
-        nextCursor: "",
-      }));
+      const surveyRow = { ...survey, favorite: null, publication: null };
+      trpcMsw.survey.readResources.query(() => ({ items: [surveyRow], nextCursor: "" }));
+      trpcMsw.resource.readResource.query(() => surveyRow);
       const component = await mountSuspended(UiSchemaForm, {
         props: { modelValue: { name: "", surveyId: survey.id }, schema: linkSchema },
       });

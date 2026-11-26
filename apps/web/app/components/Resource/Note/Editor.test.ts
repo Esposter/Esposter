@@ -50,6 +50,10 @@ describe("resourceNoteEditor", () => {
     }));
     trpcMsw.note.readResourceContent.query(() => ({ doc: EMPTY_NOTE_DOC }));
     trpcMsw.note.readResourcePublication.query(() => undefined);
+    // An added image is an edit, which the autosave writes, at the latest when the editor unmounts
+    trpcMsw.note.saveResourceContent.mutation(() =>
+      createResourceListItem({ contentVersion: 1, id: resourceId, type: ResourceType.Note }),
+    );
     // The page reads the row before any blade mounts, and the editor's load reads only the content
     const { readResource } = useReadOpenResource();
     await readResource();
