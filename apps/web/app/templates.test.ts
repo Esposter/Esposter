@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { createGenerator } from "unocss";
 import { describe, expect, test } from "vitest";
 
-// Vize exports no typed template tree (vize#13664, not planned), so the checks parse with Vue's compiler
+// @TODO: https://github.com/ubugeeei-prod/vize/issues/13074 — vize's tree for custom rules replaces the compiler
 import { parse } from "vue/compiler-sfc";
 
 // Every check below reads the same tree, so it is globbed and read once, each template is parsed once and walked
