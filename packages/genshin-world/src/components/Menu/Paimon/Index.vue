@@ -209,19 +209,15 @@ onBeforeUnmount(() => {
       @close-exit="closeExitPrompt()"
       @close-namecard="isNamecardDialogOpen = false"
       @close-world-level="closeWorldLevelDialog()"
-      @pick-namecard="
-        (itemId) => {
-          isNamecardDialogOpen = false;
-          emit('pickNamecard', itemId);
-        }
-      "
+      @pick-namecard="(itemId) => {
+        isNamecardDialogOpen = false;
+        emit('pickNamecard', itemId);
+      }"
       @quit="emit('quit')"
-      @set-birthday="
-        (birthday) => {
-          isBirthdayDialogOpen = false;
-          emit('setBirthday', birthday);
-        }
-      "
+      @set-birthday="(birthday) => {
+        isBirthdayDialogOpen = false;
+        emit('setBirthday', birthday);
+      }"
       @toggle-world-level="emit('toggleWorldLevel')"
     />
   </GameScreen>

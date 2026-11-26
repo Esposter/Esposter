@@ -46,19 +46,13 @@ const equipOptions = computed(() =>
     :close-label="gameText[GameTextKey.Cancel]"
     :options="equipOptions"
     :title="gameText[GameTextKey.ArtifactActionEquip]"
-    @choose="
-      (id) => {
-        // The artifact the player chose is worn, and the piece it wore goes back to the bag
-        const equipped = equipBagArtifact(inventory, character, Number(id), {
-          itemRooms,
-          names: nameText,
-          reliquarySets,
-        });
-        characters = replaceCharacterInRoster(characters, equipped.character);
-        inventory = equipped.inventory;
-        emit('close');
-      }
-    "
+    @choose="(id) => {
+      // The artifact the player chose is worn, and the piece it wore goes back to the bag
+      const equipped = equipBagArtifact(inventory, character, Number(id), { itemRooms, names: nameText, reliquarySets });
+      characters = replaceCharacterInRoster(characters, equipped.character);
+      inventory = equipped.inventory;
+      emit('close');
+    }"
     @close="emit('close')"
   />
 </template>

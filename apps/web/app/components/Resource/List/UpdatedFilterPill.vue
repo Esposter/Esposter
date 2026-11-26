@@ -28,15 +28,13 @@ const updatedBeforeDay = createDayBound(updatedBefore);
       :items="ResourceUpdatedFilterItems"
       :meaning="UiIconMeaning.Recent"
       :selected-values
-      @toggle="
-        (preset) => {
-          updatedFilter = preset;
-          if (preset === ResourceUpdatedFilter.Custom) return;
-
-          updatedAfter = undefined;
-          updatedBefore = undefined;
-        }
-      "
+      @toggle="(preset) => {
+        updatedFilter = preset;
+        if (preset === ResourceUpdatedFilter.Custom) return;
+      
+        updatedAfter = undefined;
+        updatedBefore = undefined;
+      }"
     />
     <UiDateRangeField
       v-if="updatedFilter === ResourceUpdatedFilter.Custom"

@@ -24,8 +24,8 @@ const selection = computed(() => getCallBackgroundSelection(callBackground));
         aria-label="Uploaded background"
         :aria-pressed="selectedVirtualBackground === selection"
         :style="{ backgroundImage: `url(${callBackground.presignedUrl})` }"
-        type="button"
         class="aria-pressed:shadow-[0_0_0_var(--ui-indicator-width)_var(--ui-accent)]"
+        type="button"
         size-full
         aspect-square
         cursor-pointer

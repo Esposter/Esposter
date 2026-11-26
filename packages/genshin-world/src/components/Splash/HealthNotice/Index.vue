@@ -45,8 +45,7 @@ const fontFamily = `"GameNoticeCjk", ${GAME_FONT_FAMILY}`;
   font-family: "GameNoticeCjk";
   font-weight: 600;
   size-adjust: 75%;
-  src:
-    local("PingFangSC-Semibold"), local("HiraginoSans-W6"), local("MicrosoftYaHei-Bold"), local("NotoSansCJKjp-Bold"),
+  src: local("PingFangSC-Semibold"), local("HiraginoSans-W6"), local("MicrosoftYaHei-Bold"), local("NotoSansCJKjp-Bold"),
     local("NotoSansCJKsc-Bold");
   unicode-range: U+3000-303F, U+3040-30FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
 }

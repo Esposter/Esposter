@@ -41,11 +41,9 @@ const animations = createAnimationConfigurations ? useAnimations(createAnimation
       playAnimationKey,
     }"
     immediate
-    @[getAnimationCompleteEventKey(spritesheetKey)]="
-      () => {
-        isActive = false;
-        frame = 0;
-      }
-    "
+    @[getAnimationCompleteEventKey(spritesheetKey)]="() => {
+      isActive = false;
+      frame = 0;
+    }"
   />
 </template>

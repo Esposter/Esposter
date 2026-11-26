@@ -16,15 +16,13 @@ const { createPost } = postStore;
       <PostUpsertForm
         is-create
         :is-pending="isCreatePostPending"
-        @submit="
-          async (values) => {
-            const newPost = await createPost(values);
-            // A rejected create leaves the reader on their own draft rather than on a feed without it — the
-            // Error alert is already up, so there is nothing to say and everything still to submit
-            if (!newPost) return;
-            await navigateTo(RoutePath.Post(newPost.id));
-          }
-        "
+        @submit="async (values) => {
+          const newPost = await createPost(values);
+          // A rejected create leaves the reader on their own draft rather than on a feed without it — the
+          // Error alert is already up, so there is nothing to say and everything still to submit
+          if (!newPost) return;
+          await navigateTo(RoutePath.Post(newPost.id));
+        }"
       />
     </div>
   </NuxtLayout>

@@ -38,19 +38,16 @@ const directionItems = DatasetOrderDirections.map((value) => ({ title: value, va
         :items="orderByItems"
         :model-value="orderByValue"
         label="Order by"
-        @update:model-value="
-          (choice) => {
-            // Changing what the categories rank by keeps the direction the owner already chose
-            if (!choice) {
-              order = undefined;
-              return;
-            }
-
-            const direction = order?.direction ?? DatasetOrderDirection.Ascending;
-            order =
-              choice === DASHBOARD_TABLE_CATEGORY_KEY ? { direction } : { direction, seriesIndex: Number(choice) };
+        @update:model-value="(choice) => {
+          // Changing what the categories rank by keeps the direction the owner already chose
+          if (!choice) {
+            order = undefined;
+            return;
           }
-        "
+        
+          const direction = order?.direction ?? DatasetOrderDirection.Ascending;
+          order = choice === DASHBOARD_TABLE_CATEGORY_KEY ? { direction } : { direction, seriesIndex: Number(choice) };
+        }"
       />
     </div>
     <div v-if="order" flex flex-col gap-1 w-48>

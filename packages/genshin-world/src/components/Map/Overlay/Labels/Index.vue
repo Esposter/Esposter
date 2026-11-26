@@ -50,8 +50,7 @@ defineProps<Props>();
         :key="index"
         :fill="color || undefined"
         :stroke="color || undefined"
-        >{{ text }}</tspan
-      >
+      >{{ text }}</tspan>
     </text>
   </template>
 </template>

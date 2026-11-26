@@ -22,11 +22,9 @@ const scrollToMessage = useScrollToMessage();
     role="button"
     tabindex="0"
     ui-card
-    @click="
-      (event: MouseEvent) => {
-        if (!checkIsNestedInteraction(event)) scrollToMessage(message.roomId, message.id);
-      }
-    "
+    @click="(event: MouseEvent) => {
+      if (!checkIsNestedInteraction(event)) scrollToMessage(message.roomId, message.id);
+    }"
     @keydown.enter.self.prevent="scrollToMessage(message.roomId, message.id)"
     @keydown.space.self.prevent="scrollToMessage(message.roomId, message.id)"
   >

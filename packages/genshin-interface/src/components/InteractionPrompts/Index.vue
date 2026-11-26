@@ -140,8 +140,7 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   z-index: -1;
   border-radius: calc(var(--unit) * 31.5) 0 0 calc(var(--unit) * 31.5);
   background: var(--pill-fill);
-  --pill-lit-shadow:
-    inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill), inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.41);
+  --pill-lit-shadow: inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill), inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.41);
   box-shadow:
     inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill),
     inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.24);

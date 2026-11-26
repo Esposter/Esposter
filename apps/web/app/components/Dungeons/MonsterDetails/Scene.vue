@@ -30,12 +30,9 @@ const monsterName = computed(() => prettify(monster.value.key));
     <Image :configuration="{ origin: 0, texture: DungeonsKeys.SceneMonsterPartyMonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
-      :configuration="{
-        x: 20,
-        y: 60,
-        text: `LV. ${monster.statistics.level}`,
-        style: { ...MenuTextStyle, fontSize: 40 },
-      }"
+      :configuration="
+        { x: 20, y: 60, text: `LV. ${monster.statistics.level}`, style: { ...MenuTextStyle, fontSize: 40 } }
+      "
     />
     <Text :configuration="{ x: 200, y: 60, text: monsterName, style: { ...MenuTextStyle, fontSize: 40 } }" />
     <Image
@@ -54,14 +51,9 @@ const monsterName = computed(() => prettify(monster.value.key));
     />
     <Text :configuration="{ x: 20, y: 365, origin: 0, text: 'Exp. to next level', style: MenuExperienceTextStyle }" />
     <Text
-      :configuration="{
-        x: 516,
-        y: 365,
-        originX: 1,
-        originY: 0,
-        text: experienceToNextLevel.toString(),
-        style: MenuExperienceTextStyle,
-      }"
+      :configuration="
+        { x: 516, y: 365, originX: 1, originY: 0, text: experienceToNextLevel.toString(), style: MenuExperienceTextStyle }
+      "
     />
     <Text :configuration="{ x: 108, y: 392, text: 'EXP', style: ExperienceLabelTextStyle }" />
     <DungeonsUIExperienceBar :position="{ x: 70, y: 200 }" :bar-percentage />

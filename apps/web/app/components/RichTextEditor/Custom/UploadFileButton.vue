@@ -9,11 +9,9 @@ const emit = defineEmits<{ "upload-file": [files: File[]] }>();
   <UiIconButton
     label="Upload a file"
     :meaning="UiIconMeaning.Upload"
-    @click="
-      async () => {
-        const files = await pickFiles();
-        if (files.length > 0) emit('upload-file', files);
-      }
-    "
+    @click="async () => {
+      const files = await pickFiles();
+      if (files.length > 0) emit('upload-file', files);
+    }"
   />
 </template>

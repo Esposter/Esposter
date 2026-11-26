@@ -88,12 +88,10 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
       @keydown.enter.prevent="create(slotStart)"
       @dragover.prevent="dropTargetIndex = index"
       @dragleave="dropTargetIndex = -1"
-      @drop.prevent="
-        () => {
-          dropTargetIndex = -1;
-          emit('drop', day.toPlainDateTime(slotStart));
-        }
-      "
+      @drop.prevent="() => {
+        dropTargetIndex = -1;
+        emit('drop', day.toPlainDateTime(slotStart));
+      }"
     >
       <!-- An empty slot is named by its day and time, which only the slot holding the tab stop is ever focused to
         read -->
@@ -110,11 +108,9 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
     <div
       v-for="{ count, event, index, slotIndex } of placedEvents"
       :key="event.id"
-      :style="{
-        left: `${(index / count) * 100}%`,
-        top: `calc(var(--slot-height) * ${slotIndex})`,
-        width: `${100 / count}%`,
-      }"
+      :style="
+        { left: `${(index / count) * 100}%`, top: `calc(var(--slot-height) * ${slotIndex})`, width: `${100 / count}%` }
+      "
       class="placed"
       p-0.5
       absolute

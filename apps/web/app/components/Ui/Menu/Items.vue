@@ -57,12 +57,8 @@ const getItemRole = (isChecked: boolean | undefined, isSelected: boolean | undef
         @click="emit('select', value, $event)"
       >
         <UiItemContent :description :icon :meaning :title>
-          <template v-if="children" #append
-            ><UiDisclosureIcon :data-state="isExpanded ? 'open' : 'closed'" text-muted
-          /></template>
-          <template v-else-if="isChecked || isSelected" #append
-            ><UiIcon :meaning="UiIconMeaning.Selected" text-accent
-          /></template>
+          <template v-if="children" #append><UiDisclosureIcon :data-state="isExpanded ? 'open' : 'closed'" text-muted /></template>
+          <template v-else-if="isChecked || isSelected" #append><UiIcon :meaning="UiIconMeaning.Selected" text-accent /></template>
         </UiItemContent>
       </button>
     </template>

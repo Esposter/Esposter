@@ -34,22 +34,18 @@ const isAnimatingLevelUp = ref(false);
     :bar-percentage="isAnimatingLevelUp && !(isSkipAnimations || isSettingsSkipAnimations) ? 0 : baseBarPercentage"
     :is-skip-animations="(isSkipAnimations && !isAnimatingLevelUp) || undefined"
     @start:display-width="isAnimating = true"
-    @update:display-width="
-      (value) => {
-        if (isAnimatingLevelUp || value < BAR_WIDTH) return;
-
-        isAnimatingLevelUp = true;
-        emit('level-up', () => {
-          isAnimatingLevelUp = isSkipAnimations = false;
-        });
-      }
-    "
-    @complete:display-width="
-      () => {
-        isAnimating = false;
-        if (isAnimatingLevelUp) return;
-        isSkipAnimations = false;
-      }
-    "
+    @update:display-width="(value) => {
+      if (isAnimatingLevelUp || value < BAR_WIDTH) return;
+    
+      isAnimatingLevelUp = true;
+      emit('level-up', () => {
+        isAnimatingLevelUp = isSkipAnimations = false;
+      });
+    }"
+    @complete:display-width="() => {
+      isAnimating = false;
+      if (isAnimatingLevelUp) return;
+      isSkipAnimations = false;
+    }"
   />
 </template>

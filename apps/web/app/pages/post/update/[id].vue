@@ -28,14 +28,12 @@ const { updatePost } = postStore;
       <PostUpsertForm
         :initial-values="{ title: post.title, description: post.description }"
         :is-pending="isUpdatePostPending"
-        @submit="
-          async (values) => {
-            updatePost({ id: post.id, ...values });
-            // Back to the post that was edited rather than the home feed: every entry point into this form is a
-            // Post someone was reading, and dropping them at the top of the feed loses the place they came from
-            await navigateTo(RoutePath.Post(post.id));
-          }
-        "
+        @submit="async (values) => {
+          updatePost({ id: post.id, ...values });
+          // Back to the post that was edited rather than the home feed: every entry point into this form is a
+          // Post someone was reading, and dropping them at the top of the feed loses the place they came from
+          await navigateTo(RoutePath.Post(post.id));
+        }"
       />
     </div>
   </NuxtLayout>

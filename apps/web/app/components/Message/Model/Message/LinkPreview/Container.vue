@@ -28,12 +28,10 @@ const isHovered = useElementHover(container);
       label="Remove embeds"
       :meaning="UiIconMeaning.Remove"
       :variant="UiButtonVariant.Quiet"
-      @click="
-        () => {
-          removingMessageId = messageId;
-          removingRoomId = roomId;
-        }
-      "
+      @click="() => {
+        removingMessageId = messageId;
+        removingRoomId = roomId;
+      }"
     />
   </div>
 </template>

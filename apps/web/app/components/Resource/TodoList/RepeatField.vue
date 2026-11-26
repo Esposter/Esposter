@@ -46,11 +46,9 @@ const intervalRules = [UiRules.minValue(1), UiRules.maxValue(TODO_LIST_RECURRENC
         label="Every"
         :rules="intervalRules"
         :type="UiTextFieldType.Number"
-        @update:model-value="
-          (newInterval) => {
-            if (modelValue) modelValue = { ...modelValue, interval: Number(newInterval) };
-          }
-        "
+        @update:model-value="(newInterval) => {
+          if (modelValue) modelValue = { ...modelValue, interval: Number(newInterval) };
+        }"
       />
     </div>
   </div>

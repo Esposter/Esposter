@@ -11,7 +11,14 @@ import { createTask } from "#vite/services/createTask";
 // Every leaf runs even after one fails, since `dependsOn` runs them all where `&&` stops at the first.
 // A red check hides none.
 export const CHECK_TASKS: RunTasks = {
-  "format:check": createTask("vp fmt --check"),
+  "format:check": {
+    cache: false,
+    command: 'echo "every format check ran"',
+    dependsOn: ["format:check:oxfmt", "format:check:vue"],
+  },
+  "format:check:oxfmt": createTask("vp fmt --check"),
+  // The components are vize's to format, and oxfmt ignores them
+  "format:check:vue": createTask('vize fmt --check "**/*.vue"'),
   lint: {
     cache: false,
     command: 'echo "every lint check ran"',

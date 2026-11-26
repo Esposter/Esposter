@@ -49,12 +49,10 @@ const save = () => {
       :model-value="selectedStatuses"
       :items="statusItems"
       label="Status"
-      @select="
-        (status: UserStatus) => {
-          if (status === editedStatus.status) save();
-          else editedStatus.status = status;
-        }
-      "
+      @select="(status: UserStatus) => {
+        if (status === editedStatus.status) save();
+        else editedStatus.status = status;
+      }"
     >
       <template #mark="{ item }">
         <span :class="item.icon" :style="{ color: `var(--ui-${StatusTokenMap[item.value]})` }" size-6 />

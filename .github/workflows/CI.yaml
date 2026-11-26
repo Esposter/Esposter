@@ -227,7 +227,7 @@ jobs:
           path: coverage
           if-no-files-found: error
 
-  # No `needs`: oxfmt is a standalone binary over source files, so it waits on no build
+  # No `needs`: oxfmt and vize are standalone binaries over source files, so it waits on no build
   format:
     name: Format
     runs-on: ubuntu-latest
@@ -240,7 +240,7 @@ jobs:
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
-      # The root project alone — where `vite-plus` and the lockfile-pinned `oxfmt` it runs are declared — and no
+      # The root project alone — where `vite-plus`, the lockfile-pinned `oxfmt` it runs and `vize` are declared — and no
       # scripts. Not a global or `dlx` install: a formatter's version is its output, and a second source of truth for
       # it drifts from the lockfile until this check and `pnpm format` disagree.
       - name: 📦 Install dependencies

@@ -48,17 +48,15 @@ watch(dataset, (newDataset) => {
     <DatasetReferencePicker
       :error
       :model-value="modelValue?.reference"
-      @update:model-value="
-        (newReference) => {
-          if (!newReference) {
-            pickedReference = undefined;
-            modelValue = undefined;
-            return;
-          }
-
-          pickedReference = newReference;
+      @update:model-value="(newReference) => {
+        if (!newReference) {
+          pickedReference = undefined;
+          modelValue = undefined;
+          return;
         }
-      "
+      
+        pickedReference = newReference;
+      }"
     />
     <template v-if="modelValue">
       <div flex flex-col gap-1 w-64>
@@ -84,12 +82,10 @@ watch(dataset, (newDataset) => {
       <!-- oxlint-enable vue/no-restricted-syntax -->
       <UiButton
         self-start
-        @click="
-          modelValue.query.series = [
-            ...modelValue.query.series,
-            { aggregation: DatasetAggregationType.Count, column: modelValue.query.xColumn },
-          ]
-        "
+        @click="modelValue.query.series = [
+          ...modelValue.query.series,
+          { aggregation: DatasetAggregationType.Count, column: modelValue.query.xColumn },
+        ]"
       >
         <UiIcon :meaning="UiIconMeaning.Create" />
         Add series

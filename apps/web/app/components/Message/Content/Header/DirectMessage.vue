@@ -63,12 +63,10 @@ const isLeaveOpen = ref(false);
       :awaited-because="AwaitedReason.ServerDecidedOutcome"
       confirm-label="Remove"
       :title="`Remove ${removingParticipant.displayName}`"
-      :confirm="
-        () =>
-          currentDirectMessage &&
-          removingParticipant &&
-          deleteDirectMessageParticipant(currentDirectMessage.id, removingParticipant.id)
-      "
+      :confirm="() =>
+        currentDirectMessage &&
+        removingParticipant &&
+        deleteDirectMessageParticipant(currentDirectMessage.id, removingParticipant.id)"
     >
       <p>Remove {{ removingParticipant.displayName }} from this conversation?</p>
     </UiConfirmDialog>

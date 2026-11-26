@@ -6,21 +6,25 @@ import { defineConfig } from "oxfmt";
 // The print width the formatter wraps code at, and the width a comment line keeps (`comments/no-over-width-comment`)
 export const PRINT_WIDTH = 120;
 
+// The paths no formatter rewrites, which `vize fmt` reads too (`vite/vueOptions.ts`)
+export const IGNORE_PATTERNS = [
+  AGENT_WORKTREES_DIRECTORY,
+  "*.tsx",
+  "**/tilemap.json",
+  "**/auto-imports.d.ts",
+  // A file snapshot is written by its test verbatim, beside what it holds
+  "**/*.snapshot.*",
+  "**/snapshot.json",
+  // A patch is applied byte for byte, and its context lines are exact, so a format pass never rewrites one
+  "**/*.patch",
+  // Generated output is the writer's, formatted or not, and a format pass never rewrites it
+  "**/generated/**",
+  "CHANGELOG*.md",
+];
+
 const oxfmtConfiguration: OxfmtConfig = defineConfig({
-  ignorePatterns: [
-    AGENT_WORKTREES_DIRECTORY,
-    "*.tsx",
-    "**/tilemap.json",
-    "**/auto-imports.d.ts",
-    // A file snapshot is written by its test verbatim, beside what it holds
-    "**/*.snapshot.*",
-    "**/snapshot.json",
-    // A patch is applied byte for byte, and its context lines are exact, so a format pass never rewrites one
-    "**/*.patch",
-    // Generated output is the writer's, formatted or not, and a format pass never rewrites it
-    "**/generated/**",
-    "CHANGELOG*.md",
-  ],
+  // `vize fmt` formats the components
+  ignorePatterns: [...IGNORE_PATTERNS, "**/*.vue"],
   objectWrap: "collapse",
   overrides: [
     // The import sort is for source; a Markdown code block keeps the import order its author wrote

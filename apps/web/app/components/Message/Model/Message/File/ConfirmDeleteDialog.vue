@@ -21,9 +21,8 @@ const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
     :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Remove"
     title="Remove attachment"
-    :confirm="
-      () => file && deletingMessageId && deleteFile({ fileId: file.id, id: deletingMessageId, roomId: deletingRoomId })
-    "
+    :confirm="() =>
+      file && deletingMessageId && deleteFile({ fileId: file.id, id: deletingMessageId, roomId: deletingRoomId })"
   >
     <p>Are you sure you want to remove {{ file.filename }}? This cannot be undone.</p>
   </UiConfirmDialog>

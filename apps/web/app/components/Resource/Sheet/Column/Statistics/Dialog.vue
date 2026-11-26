@@ -34,12 +34,10 @@ const selectedStatistics = ref<ColumnStatistics>();
             :label="`Chart ${item.column.name}`"
             :meaning="UiIconMeaning.Chart"
             :variant="UiButtonVariant.Quiet"
-            @click="
-              () => {
-                selectedStatistics = item.statistics;
-                isChartOpen = true;
-              }
-            "
+            @click="() => {
+              selectedStatistics = item.statistics;
+              isChartOpen = true;
+            }"
           />
           <template v-else>{{ value }}</template>
         </template>

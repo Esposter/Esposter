@@ -47,22 +47,14 @@ const items = computed<UiSelectItem<string>[]>(() =>
         :items
         :label="control.label || 'Type'"
         :model-value="String(selectedIndex)"
-        @update:model-value="
-          (index) => {
-            const variant = variants[Number(index)];
-            if (variant)
-              handleChange(
-                control.path,
-                getSchemaFormVariantValue(
-                  control.data,
-                  variants,
-                  variant,
-                  control.rootSchema,
-                  control.indexOfFittingSchema,
-                ),
-              );
-          }
-        "
+        @update:model-value="(index) => {
+          const variant = variants[Number(index)];
+          if (variant)
+            handleChange(
+              control.path,
+              getSchemaFormVariantValue(control.data, variants, variant, control.rootSchema, control.indexOfFittingSchema),
+            );
+        }"
       />
     </div>
     <UiSchemaFormDispatch

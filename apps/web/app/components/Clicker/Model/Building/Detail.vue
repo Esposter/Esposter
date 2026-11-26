@@ -51,12 +51,10 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
       <UiButton
         :disabled="!isAffordable"
         :variant="UiButtonVariant.Accent"
-        @click="
-          () => {
-            createBoughtBuilding(building, buyQuantity);
-            play();
-          }
-        "
+        @click="() => {
+          createBoughtBuilding(building, buyQuantity);
+          play();
+        }"
       >
         Buy ×{{ buyQuantity }}
       </UiButton>

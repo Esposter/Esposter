@@ -64,19 +64,15 @@ watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
         :commands="foundCommands"
         label="Command palette"
         :placeholder="isScoped && scope ? scope.placeholder : 'Search pages and commands'"
-        @keydown.backspace="
-          () => {
-            if (isScoped && !fieldQuery) isScoped = false;
-          }
-        "
-        @select="
-          async (command) => {
-            isCommandPaletteOpen = false;
-            if (isScoped) scope?.onSelect?.();
-            // A command with somewhere to go is a link the click already followed
-            if (!command.to) await runCommand(command);
-          }
-        "
+        @keydown.backspace="() => {
+          if (isScoped && !fieldQuery) isScoped = false;
+        }"
+        @select="async (command) => {
+          isCommandPaletteOpen = false;
+          if (isScoped) scope?.onSelect?.();
+          // A command with somewhere to go is a link the click already followed
+          if (!command.to) await runCommand(command);
+        }"
       >
         <template v-if="isScoped && scope" #prepend>
           <UiChip shrink-0>{{ scope.title }}</UiChip>

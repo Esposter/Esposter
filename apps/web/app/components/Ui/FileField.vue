@@ -65,12 +65,10 @@ const { isOverDropZone } = useDropZone(dropZone, {
         right-0
         top-0
         absolute
-        @click="
-          () => {
-            modelValue = [];
-            if (input) input.value = '';
-          }
-        "
+        @click="() => {
+          modelValue = [];
+          if (input) input.value = '';
+        }"
       />
     </div>
     <!-- The button is the labelled way in, so the picker's own input stays out of the accessibility tree and the
@@ -83,11 +81,9 @@ const { isOverDropZone } = useDropZone(dropZone, {
       tabindex="-1"
       type="file"
       hidden
-      @change="
-        () => {
-          if (input?.files) takeAccepted([...input.files]);
-        }
-      "
+      @change="() => {
+        if (input?.files) takeAccepted([...input.files]);
+      }"
     />
   </div>
 </template>

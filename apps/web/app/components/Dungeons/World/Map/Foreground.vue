@@ -13,10 +13,8 @@ const { sprite } = storeToRefs(worldPlayerStore);
 <template>
   <!-- Foreground sits above the player so they can hide behind it. -->
   <Image
-    :configuration="{
-      origin: 0,
-      texture: TilemapForegroundFileKeyMap[tilemapKey],
-      depth: sprite ? sprite.depth + 1 : 0,
-    }"
+    :configuration="
+      { origin: 0, texture: TilemapForegroundFileKeyMap[tilemapKey], depth: sprite ? sprite.depth + 1 : 0 }
+    "
   />
 </template>

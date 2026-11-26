@@ -21,14 +21,12 @@ const creator = useCreator(message);
     v-if="message && creator"
     v-model="isOpen"
     :awaited-because="AwaitedReason.ServerDecidedOutcome"
-    :confirm="
-      () => {
-        const target = getMessageWriteTarget(message, getSlice);
-        if (!target) return;
-
-        return pinMessage({ id: target.messageId, roomId: target.roomId });
-      }
-    "
+    :confirm="() => {
+      const target = getMessageWriteTarget(message, getSlice);
+      if (!target) return;
+    
+      return pinMessage({ id: target.messageId, roomId: target.roomId });
+    }"
     confirm-label="Oh yeah. Pin it"
     title="Pin It. Pin It Good."
   >

@@ -92,7 +92,7 @@ const { isStartShown } = useLoginStageClips({
          RectTransform inside its game parent's, and what the tree cannot hold measured inside the piece holding it -->
     <GameRect #default="{ rect: loginRect }" :rect="interfaceRects[LoginInterfaceRectName.Login]">
       <!-- The root the clips play on, the empty path, over GrpLogin's whole box -->
-      <div ref="page" class="page">
+      <div class="page" ref="page">
         <GameRect
           #default="{ rect: backgroundRect }"
           :parent="loginRect"
@@ -165,7 +165,7 @@ const { isStartShown } = useLoginStageClips({
               <rect class="age-rating-white" x="-0.8" y="-0.2" width="84.7" height="110.7" rx="6" />
               <rect x="6.3" y="7.5" width="70.7" height="79.5" rx="4" fill="#178ed0" />
               <path class="age-rating-mark" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
-              <text x="42" y="83" class="age-rating-name">CADPA</text>
+              <text class="age-rating-name" x="42" y="83">CADPA</text>
               <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
             </svg>
           </GameRect>

@@ -26,11 +26,9 @@ const unlockedCountSegments = computed(() =>
 <template>
   <p class="counter">
     <span>{{ gameText[GameTextKey.ArchiveUnlockedEntries] }}</span>
-    <span class="count"
-      ><span v-for="({ color, text }, index) of unlockedCountSegments" :key="index" :style="{ color }">{{
+    <span class="count"><span v-for="({ color, text }, index) of unlockedCountSegments" :key="index" :style="{ color }">{{
         text
-      }}</span></span
-    >
+      }}</span></span>
   </p>
 </template>
 

@@ -31,14 +31,8 @@ watch(
 
 <template>
   <Sprite
-    :configuration="{
-      ...position,
-      origin: 0,
-      texture: TilesetKey.Dungeon,
-      frame,
-      scale: 4,
-      animations,
-      playAnimationKey,
-    }"
+    :configuration="
+      { ...position, origin: 0, texture: TilesetKey.Dungeon, frame, scale: 4, animations, playAnimationKey }
+    "
   />
 </template>

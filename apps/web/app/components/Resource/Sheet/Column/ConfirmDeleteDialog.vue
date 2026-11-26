@@ -24,12 +24,10 @@ const { isOpen, item: deletingColumns } = useSingletonDialog(deletingColumnIds, 
     v-model="isOpen"
     confirm-label="Delete"
     :title="`Delete ${pluralize('column', deletingColumns.length)}`"
-    :confirm="
-      () => {
-        if (!deletingColumns) return;
-        deleteColumns(deletingColumns.map(({ id }) => id));
-      }
-    "
+    :confirm="() => {
+      if (!deletingColumns) return;
+      deleteColumns(deletingColumns.map(({ id }) => id));
+    }"
   >
     <p>
       Delete {{ deletingColumns.length === 1 ? deletingColumns[0]?.name : `${deletingColumns.length} columns` }} and

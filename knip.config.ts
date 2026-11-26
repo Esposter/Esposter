@@ -15,6 +15,8 @@ const knipConfiguration: KnipConfig = {
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
   workspaces: {
     ".": {
+      // The pre-commit hook runs its helper by path
+      entry: [".githooks/*.ts"],
       // The composite action runs `wrangler` in a Worker app's directory, whose devDependency provides it
       // The `typecheck` task is a `vp run` task with no root script of that name, so knip reads a recursive
       // `pnpm -r --parallel typecheck`'s bare script name as a binary

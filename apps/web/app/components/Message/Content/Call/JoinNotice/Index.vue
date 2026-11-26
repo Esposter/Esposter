@@ -51,7 +51,9 @@ const { getRoomMemberName } = userStore;
     <div ui-row>
       <UiItemContent
         :image="joinNoticeParticipant.image ?? undefined"
-        :title="`${getRoomMemberName(callRoomId, joinNoticeParticipant.userId, joinNoticeParticipant.name)} joined the call`"
+        :title="
+          `${getRoomMemberName(callRoomId, joinNoticeParticipant.userId, joinNoticeParticipant.name)} joined the call`
+        "
       >
         <template #append>
           <UiIconButton

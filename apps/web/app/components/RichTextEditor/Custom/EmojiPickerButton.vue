@@ -15,9 +15,7 @@ defineProps<Props>();
   <!-- The room's custom emoji are empty wherever there is no room in scope — a post's comment editor gets the
     dataset alone -->
   <MessageModelMessageEmojiPicker
-    @select="
-      (emojiTag: string, emoji: PickableEmoji) =>
-        editor?.chain().focus().insertContent(getPickableEmojiContent(emoji, emojiTag)).run()
-    "
+    @select="(emojiTag: string, emoji: PickableEmoji) =>
+      editor?.chain().focus().insertContent(getPickableEmojiContent(emoji, emojiTag)).run()"
   />
 </template>

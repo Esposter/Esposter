@@ -35,7 +35,9 @@ defineProps<Props>();
     <span class="label">{{ gameText[row.labelKey] }}</span>
     <MenuSettingsRowTrack
       v-if="
-        row.kind === SettingsRowKind.Range || row.kind === SettingsRowKind.Slider || row.kind === SettingsRowKind.Volume
+        row.kind === SettingsRowKind.Range ||
+        row.kind === SettingsRowKind.Slider ||
+        row.kind === SettingsRowKind.Volume
       "
       v-model:settings="settings"
       :game-text
@@ -65,8 +67,7 @@ defineProps<Props>();
   border-radius: calc(var(--unit) * 28);
   background: rgb(240 231 215 / 0.78);
   box-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.15);
-  --lit-shadow:
-    0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.9),
+  --lit-shadow: 0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.9),
     inset 0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.6);
   color: #4b4d54;
   font-size: calc(var(--unit) * 27);

@@ -24,11 +24,9 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
     :aria-disabled="command.isDisabled || undefined"
     :aria-selected="isHighlighted"
     role="option"
-    @click="
-      () => {
-        if (!command.isDisabled) emit('select', command);
-      }
-    "
+    @click="() => {
+      if (!command.isDisabled) emit('select', command);
+    }"
     @mousedown.prevent
   >
     <UiItemContent

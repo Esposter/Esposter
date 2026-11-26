@@ -33,18 +33,16 @@ const roomItems = computed<UiListItem<string>[]>(() =>
       v-if="roomItems.length > 0"
       label="Rooms"
       :items="roomItems"
-      @select="
-        async (roomId) => {
-          const room = invitableRooms.find(({ id }) => id === roomId);
-          if (!room || !friend) return;
-
-          const { id: friendId } = friend;
-          await answer(async () => {
-            const inviteLink = await getUsableInviteLink(room);
-            if (inviteLink) await inviteFriend(friendId, inviteLink);
-          }, AwaitedReason.ServerIssuedValue);
-        }
-      "
+      @select="async (roomId) => {
+        const room = invitableRooms.find(({ id }) => id === roomId);
+        if (!room || !friend) return;
+      
+        const { id: friendId } = friend;
+        await answer(async () => {
+          const inviteLink = await getUsableInviteLink(room);
+          if (inviteLink) await inviteFriend(friendId, inviteLink);
+        }, AwaitedReason.ServerIssuedValue);
+      }"
     />
     <UiEmptyState
       v-else

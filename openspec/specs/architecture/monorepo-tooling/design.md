@@ -135,7 +135,7 @@ flowchart LR
   BP --> A[build app]
 ```
 
-`format` is the one check with no `needs`. oxfmt is a standalone binary over source files — no barrels and no package `dist` — so gating it on the package build only made the workflow's quickest check wait out its slowest job. It installs with `--filter "{.}" --ignore-scripts` for the same reason it skips `setup-packages`: it wants the lockfile-pinned binary, not the built artifact and not the app's `nuxt prepare`.
+`format` is the one check with no `needs`. oxfmt and vize are standalone binaries over source files — no barrels and no package `dist` — so gating it on the package build only made the workflow's quickest check wait out its slowest job. It installs with `--filter "{.}" --ignore-scripts` for the same reason it skips `setup-packages`: it wants the lockfile-pinned binaries, not the built artifact and not the app's `nuxt prepare`.
 
 Tests run through a single root `vitest.config.ts` whose `projects` are the globs `pnpm-workspace.yaml` declares — `apps/*`, `packages/*` and `scripts` — each member configuring its own project, the app as a Nuxt project via `defineVitestProject`. Nothing in the root config knows what any member contains, `scripts` included: it is a member like the rest, and the tooling it holds (the dependency graph, the outdated-dependency report, the oxlint plugins, the sweep scans) is named by its own config rather than by a hand-scoped entry here. So `coverage`/`test` are `vitest run` at the root, not a `pnpm -r` fan-out, and a coverage shard can land a tooling test as readily as a package one. The agent tree under `.agents/` holds no executable, so a check **about** it lives in `scripts` like any other.
 

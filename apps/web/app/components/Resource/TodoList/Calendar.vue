@@ -25,20 +25,16 @@ await loadContent();
     <UiEventCalendar
       :events
       label="Todos by due date"
-      :on-create="
-        (dueAt) => {
-          editedItem = new TodoListItem({ dueAt });
-          isEditFormDialogOpen = true;
-        }
-      "
-      @move="
-        (id, start) => {
-          const item = items.find((todoListItem) => todoListItem.id === id);
-          if (!item) return;
-          setDueAt(item, start);
-          saveTodoList();
-        }
-      "
+      :on-create="(dueAt) => {
+        editedItem = new TodoListItem({ dueAt });
+        isEditFormDialogOpen = true;
+      }"
+      @move="(id, start) => {
+        const item = items.find((todoListItem) => todoListItem.id === id);
+        if (!item) return;
+        setDueAt(item, start);
+        saveTodoList();
+      }"
       @open="editItem({ id: $event })"
     />
   </div>

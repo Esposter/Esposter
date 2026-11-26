@@ -31,13 +31,11 @@ const { answer, isPending } = useDialogAnswer(isOpen);
   <!-- Mounted once beside the heading, so it is the button and its dialog in one component -->
   <UiButton
     aria-haspopup="dialog"
-    @click="
-      () => {
-        name = createdKey = '';
-        mcpScopes = [];
-        isOpen = true;
-      }
-    "
+    @click="() => {
+      name = createdKey = '';
+      mcpScopes = [];
+      isOpen = true;
+    }"
   >
     <UiIcon :meaning="UiIconMeaning.Create" />
     Create key
@@ -84,13 +82,11 @@ const { answer, isPending } = useDialogAnswer(isOpen);
             is-label-visible
             :label="McpScopeTitleMap[mcpScope]"
             :model-value="mcpScopes.includes(mcpScope)"
-            @update:model-value="
-              (newModelValue) => {
-                mcpScopes = newModelValue
-                  ? McpScopes.filter((scope) => scope === mcpScope || mcpScopes.includes(scope))
-                  : mcpScopes.filter((scope) => scope !== mcpScope);
-              }
-            "
+            @update:model-value="(newModelValue) => {
+              mcpScopes = newModelValue
+                ? McpScopes.filter((scope) => scope === mcpScope || mcpScopes.includes(scope))
+                : mcpScopes.filter((scope) => scope !== mcpScope);
+            }"
           />
         </div>
       </UiForm>

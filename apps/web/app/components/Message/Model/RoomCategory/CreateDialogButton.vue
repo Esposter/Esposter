@@ -23,12 +23,10 @@ const name = ref("");
   <StyledFormDialog
     v-model="isOpen"
     confirm-label="Create category"
-    :submit="
-      () => {
-        createRoomCategory({ name });
-        name = '';
-      }
-    "
+    :submit="() => {
+      createRoomCategory({ name });
+      name = '';
+    }"
     title="New category"
   >
     <UiTextField

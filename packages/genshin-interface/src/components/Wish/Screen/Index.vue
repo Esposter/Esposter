@@ -114,14 +114,9 @@ const bannerLabelText = computed(() => bannerLabels.value.find(({ id }) => id ==
     />
     <div class="links">
       <GameButton class="link" :kind="GameButtonKind.Reply" tip="">{{ shopLabel }}</GameButton>
-      <GameButton
-        v-if="trialLabel"
-        class="link trial"
-        :kind="GameButtonKind.Reply"
-        tip=""
-        @click="emit('startTrial')"
-        >{{ trialLabel }}</GameButton
-      >
+      <GameButton v-if="trialLabel" class="link trial" :kind="GameButtonKind.Reply" tip="" @click="emit('startTrial')">{{
+        trialLabel
+      }}</GameButton>
       <GameButton class="link" :kind="GameButtonKind.Reply" tip="" @click="isDetailsOpen = true">{{
         detailsLabel
       }}</GameButton>

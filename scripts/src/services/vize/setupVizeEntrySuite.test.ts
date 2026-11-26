@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT, VITE_CONFIGURATION_FILE } from "#src/services/shared/constants";
 import { jsonDateParse } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
@@ -39,7 +39,7 @@ export const setupVizeEntrySuite = ({ directory, fixtures, messageStart }: Setup
     mkdirSync(fixtureDirectory, { recursive: true });
     writeFileSync(
       join(root, "vite.config.mjs"),
-      `export { default } from "${pathToFileURL(join(REPOSITORY_ROOT, "vite.config.ts")).href}";\n`,
+      `export { default } from "${pathToFileURL(join(REPOSITORY_ROOT, VITE_CONFIGURATION_FILE)).href}";\n`,
     );
     const filePaths = fixtures.map(({ name, template }) => {
       const filePath = join(fixtureDirectory, `${name}.vue`);

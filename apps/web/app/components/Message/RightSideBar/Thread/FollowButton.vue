@@ -24,8 +24,8 @@ const isFollowing = computed(() => checkIsFollowing(activeRoomId.value, threadRo
     label="Follow thread"
     :meaning="isFollowing ? UiIconMeaning.Notifications : UiIconMeaning.NotificationsOff"
     :variant="UiButtonVariant.Quiet"
-    @click="
-      isFollowing ? unfollowThread(activeRoomId, threadRootId) : followThread(activeRoomId, threadRootId, activeThread)
-    "
+    @click="isFollowing
+      ? unfollowThread(activeRoomId, threadRootId)
+      : followThread(activeRoomId, threadRootId, activeThread)"
   />
 </template>

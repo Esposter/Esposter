@@ -22,19 +22,17 @@ const isPending = ref(false);
     so a Failed admit does not leave its spinner running -->
   <UiButton
     :is-pending
-    @click="
-      async () => {
-        const callSessionId = activeCallSessionId;
-        if (!callSessionId) return;
-        isPending = true;
-        await withFinalizerAsync(
-          () => admitKnocker(callSessionId, knocker.id),
-          () => {
-            isPending = false;
-          },
-        );
-      }
-    "
+    @click="async () => {
+      const callSessionId = activeCallSessionId;
+      if (!callSessionId) return;
+      isPending = true;
+      await withFinalizerAsync(
+        () => admitKnocker(callSessionId, knocker.id),
+        () => {
+          isPending = false;
+        },
+      );
+    }"
   >
     Let in
   </UiButton>

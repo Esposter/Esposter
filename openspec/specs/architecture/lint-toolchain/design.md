@@ -1,6 +1,6 @@
 # Lint Toolchain
 
-Lint is a set of passes, each reading the files it can parse and no other, so a rule runs in one pass only. Oxlint checks every script in the repository in one native pass, its type-aware rules included. Vize checks each component's template, which oxlint does not read. The workspace tests check what no linter reads: JSON files, banned dependencies, the reasons on template directives and the template text rules. Knip finds unused files, exports and dependencies, and actionlint checks the workflows. Oxfmt formats and sorts imports, and lints nothing.
+Lint is a set of passes, each reading the files it can parse and no other, so a rule runs in one pass only. Oxlint checks every script in the repository in one native pass, its type-aware rules included. Vize checks each component's template, which oxlint does not read. The workspace tests check what no linter reads: JSON files, banned dependencies, and the reasons on template directives. Knip finds unused files, exports and dependencies, and actionlint checks the workflows. `vize fmt` formats the components and oxfmt everything else, both sorting imports, and neither lints.
 
 ```mermaid
 flowchart LR
@@ -20,8 +20,9 @@ The root `lint` task depends on the four checks above. `lint:fix` runs the two t
 - **Vize** runs each component's whole template from `vite/vueOptions.ts`. Its `incremental` preset runs only the rules that file names. Entries scope a rule set by path: the packages styled by scoped CSS alone take the template bans and the scoped-style bans, and the app takes its UnoCSS blocklist. The template ban lists are in `vite/services/`.
 - **Knip** reads `knip.config.ts`. Its entries include the oxlint plugins, since oxlint loads them by path, and the sorting plugin's rules, which it imports from their folder at load.
 - **Actionlint** checks the workflows, with its shellcheck and pyflakes passes off.
-- **Workspace tests** are Vitest suites under `scripts/src/workspace/`, for what no linter reads: JSON and JSONC files (`jsonFiles.test.ts`), banned dependencies (`bannedDependencies.test.ts`), the reasons on template directives (`templateDirectiveReasons.test.ts`) and the template text rules vize cannot yet run (`templateTextRules.test.ts`).
-- **Oxfmt** formats with `oxfmt.config.ts` at the root, whose settings live in `packages/configuration/oxfmt/`. Its `sortImports` puts type imports first and values after, with packages and `#` subpaths ahead of relative ones.
+- **Workspace tests** are Vitest suites under `scripts/src/workspace/`, for what no linter reads: JSON and JSONC files (`jsonFiles.test.ts`), banned dependencies (`bannedDependencies.test.ts`) and the reasons on template directives (`templateDirectiveReasons.test.ts`).
+- **Oxfmt** formats every file but a component with `oxfmt.config.ts` at the root, whose settings live in `packages/configuration/oxfmt/`. Its `sortImports` puts type imports first and values after, with packages and `#` subpaths ahead of relative ones.
+- **`vize fmt`** formats the components, which oxfmt ignores, under the same shared block with `vue.fmt` in `vite/vueOptions.ts` over it (see [Two formatters](#two-formatters)).
 
 ## Directives and reasons
 
@@ -77,7 +78,22 @@ The type-aware rules read the `.ts` files of the program and never a component's
 
 **A consequence of the content mapper: a generic component's props are typed.** The mapper types a generic `.vue` component's test-utils `props()`, so a type-aware rule can report an assertion over an optional wrapper as unnecessary. The fix narrows the wrapper first, never a disable.
 
-**The blank line between an SFC's top-level blocks waits on `vize fmt`.** `scripts/src/workspace/templates/templateTextRules.test.ts` fails a missing one and writes none, since oxfmt keeps whatever is written and vize has no lint rule for it. `vize fmt` pads the blocks, but it cannot yet replace oxfmt: it formats one file at a time, several times slower, and has no Markdown, YAML or standalone CSS (the `@TODO` in that test names the gap). The switch, when it comes, puts vize's own options under `vue.fmt` in the unified config (`VUE_OPTIONS`, `vite/vueOptions.ts`), beside the shared `fmt` block, the two merging key by key with `vue.fmt` winning a clash, and sets `sortAttributes: false`: the sort would leave UnoCSS attributify utilities where they stand and move known attributes such as `type` ahead of `class`, which is not the template attribute order in the `vue` skill's `references/ordering.md`.
+## Two formatters
+
+Oxfmt formats every file but a component, and `vize fmt` formats the components: oxfmt has no plugin API, so neither can run inside the other, and vize formats no Markdown, YAML or standalone CSS. Each ignores the other's files. The shared `fmt` block in `vite.config.ts` is oxfmt's configuration, and vize reads it too, with `vue.fmt` (`VUE_OPTIONS`, `vite/vueOptions.ts`) merged over it key by key. Two keys differ there:
+
+- **`ignorePatterns`** is the shared list without `**/*.vue`, which oxfmt adds to its own. Both read `IGNORE_PATTERNS` from `packages/configuration/oxfmt/`.
+- **The attribute order** keeps every attribute as written except `class`, which leads its run of static attributes (`attributeGroups: [["class"], ["*"]]` under `attributeSortOrder: "as-written"`). That is rule 2 of the template order in the `vue` skill's `references/ordering.md`, and the one rule vize can express. A group names attributes rather than their shape, so an attributify utility and a boolean prop look alike, and the attributes no group names always come last, so the `is-*` boolean props cannot follow them. Rejected: a `type` group, since a valued prop follows the utilities in that order.
+
+`vize fmt` writes the blank line between an SFC's top-level blocks, which oxfmt never did. Every format path routes a component to vize:
+
+- **`pnpm format`** and **`format:check`** run `vize fmt` over `**/*.vue` beside `vp fmt`, `format:check` as two cached leaves (`vite/checkTasks.ts`).
+- **The pre-commit hook** formats every staged component from its staged blob through `.githooks/formatComponent.ts`, which calls vize's `format()`: the command line reads no stdin, and under the main checkout's config, which a worktree with no install borrows, it skips the worktree's files as ignored.
+- **`pnpm ai:format`** and the precheck format a component in process with `formatSync`, one file at a time (`scripts/src/services/format/formatSource.ts`).
+
+Each names the root `vite.config.ts` as its configuration. `format()` discovers one from the component's directory otherwise and stops at the nearest Vite or Vitest config, which in an app is the app's `vitest.config.ts`, holding no formatter options.
+
+A blank line inside a multi-line handler attribute keeps the handler's indentation, where every other blank line is written empty, and `vize fmt --check` fails the trimmed form ([Vize issue 13714](https://github.com/ubugeeei-prod/vize/issues/13714)). It is invisible at runtime, and the next format after the fix rewrites those lines.
 
 ## Key files
 
@@ -88,12 +104,13 @@ The type-aware rules read the `.ts` files of the program and never a component's
 | `scripts/src/oxlint/`                               | The local JS plugins, one entrypoint each                                             |
 | `scripts/src/oxlint/pinia.ts`                       | The Pinia rules enabled under `pinia/<rule>`                                          |
 | `scripts/src/services/oxlint/selectorBan/syntaxes/` | The selector-ban lists behind `selector-ban/no-restricted-syntax`                     |
-| `vite/vueOptions.ts`                                | Vize's rules and its per-path entries                                                 |
+| `vite/vueOptions.ts`                                | Vize's rules, its per-path entries and its formatter options                          |
 | `vite/services/`                                    | Vize's template ban lists, and the HTML data behind the scoped-styles ban             |
 | `vite/checkTasks.ts`                                | The `lint`, `lint:fix` and per-pass tasks                                             |
 | `knip.config.ts`                                    | Knip's entries, which include the oxlint plugins                                      |
 | `scripts/src/workspace/`                            | The tests for what no linter reads                                                    |
-| `oxfmt.config.ts`, `packages/configuration/oxfmt/`  | The formatter and its import order                                                    |
+| `oxfmt.config.ts`, `packages/configuration/oxfmt/`  | The formatters' shared settings, import order and ignore list                         |
+| `.githooks/formatComponent.ts`                      | A partly staged component's staged copy through vize's `format()`                     |
 
 ## The HTML data behind the scoped-styles ban
 

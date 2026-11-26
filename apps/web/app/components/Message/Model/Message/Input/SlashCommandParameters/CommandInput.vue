@@ -29,14 +29,12 @@ useFocusWhenActive(input, () => isFocused);
       @keydown.space.prevent="emit('navigate:next')"
       @keydown.tab.prevent="emit('navigate:next')"
       @keydown.delete="!modelValue && emit('delete')"
-      @keydown.right.exact="
-        (event) => {
-          if (checkIsCaretAtEnd(event.target)) {
-            event.preventDefault();
-            emit('navigate:next');
-          }
+      @keydown.right.exact="(event) => {
+        if (checkIsCaretAtEnd(event.target)) {
+          event.preventDefault();
+          emit('navigate:next');
         }
-      "
+      }"
     />
   </div>
 </template>

@@ -21,36 +21,30 @@ const { activeSelectedFilter, isMenuOpen, isSearchQueryEmpty, searchQuery, selec
     :get-token-title="getFilterDisplayValue"
     label="Search"
     :text="searchQuery"
-    @submit="
-      async () => {
-        // Enter only ever searches: the colon is what converts a keyword, so by the time Enter is pressed the query
-        // is search text. It never fills a pending chip either — only a picker gives a filter its value
-        if (isSearchQueryEmpty) return;
-        await readSearchedMessages();
-      }
-    "
-    @update:text="
-      (value) => {
-        const filterType = getFilterTypeFromSearchQuery(value);
-        // The keyword and its colon become the chip, so the text they were typed into is left empty
-        if (filterType) {
-          createFilter(filterType);
-          searchQuery = '';
-        } else searchQuery = value;
-      }
-    "
+    @submit="async () => {
+      // Enter only ever searches: the colon is what converts a keyword, so by the time Enter is pressed the query
+      // is search text. It never fills a pending chip either — only a picker gives a filter its value
+      if (isSearchQueryEmpty) return;
+      await readSearchedMessages();
+    }"
+    @update:text="(value) => {
+      const filterType = getFilterTypeFromSearchQuery(value);
+      // The keyword and its colon become the chip, so the text they were typed into is left empty
+      if (filterType) {
+        createFilter(filterType);
+        searchQuery = '';
+      } else searchQuery = value;
+    }"
   >
     <template #panel="{ focus }">
       <component
         :is="SearchFilterComponentMap[activeSelectedFilter.type]"
         v-if="activeSelectedFilter && checkIsFilterPending(activeSelectedFilter)"
-        @select="
-          (value) => {
-            if (!activeSelectedFilter) return;
-            activeSelectedFilter.value = value;
-            focus();
-          }
-        "
+        @select="(value) => {
+          if (!activeSelectedFilter) return;
+          activeSelectedFilter.value = value;
+          focus();
+        }"
       />
       <template v-else>
         <MessageRightSideBarSearchOptions />

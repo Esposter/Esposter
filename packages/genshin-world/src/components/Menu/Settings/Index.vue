@@ -87,8 +87,8 @@ onMounted(() => {
       <MenuGlyph :glyph="closeMark.glyph" class="close-glyph" />
     </GameButton>
     <MenuSettingsTabs v-model:tab="tab" :game-text="shownGameText" />
-    <div :key="tab" ref="page" class="page" role="tabpanel" tabindex="0" @scroll="updateScrollThumb()">
-      <div ref="content" class="content">
+    <div :key="tab" class="page" ref="page" role="tabpanel" tabindex="0" @scroll="updateScrollThumb()">
+      <div class="content" ref="content">
         <template v-for="{ headingKey, rows } of SettingsTabSectionsMap[tab] ?? []" :key="headingKey">
           <p class="heading" role="heading" aria-level="2">{{ shownGameText[headingKey] }}</p>
           <MenuSettingsRow

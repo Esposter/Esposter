@@ -31,12 +31,10 @@ const altText = ref("");
       flex
       gap-2
       items-end
-      @submit="
-        () => {
-          editor?.chain().focus().updateAttributes('image', { alt: altText }).run();
-          isAltTextMenuOpen = false;
-        }
-      "
+      @submit="() => {
+        editor?.chain().focus().updateAttributes('image', { alt: altText }).run();
+        isAltTextMenuOpen = false;
+      }"
     >
       <div w-64>
         <UiTextField v-model="altText" is-autofocus label="Alt text" placeholder="Describe the image" />

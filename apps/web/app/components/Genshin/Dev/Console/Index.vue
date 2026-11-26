@@ -49,11 +49,9 @@ useCommands(() =>
     right-0
     fixed
     title="Developer console"
-    @keydown.stop="
-      (event: KeyboardEvent) => {
-        if (event.code === 'Escape') isOpen = false;
-      }
-    "
+    @keydown.stop="(event: KeyboardEvent) => {
+      if (event.code === 'Escape') isOpen = false;
+    }"
   >
     <ol max-h="[40dvh]" flex flex-col gap-1 of-y-auto>
       <li v-for="(entry, index) in entries" :key="index" ui-row>
@@ -65,13 +63,11 @@ useCommands(() =>
       </li>
     </ol>
     <UiForm
-      @submit="
-        () => {
-          if (!checkIsBlankText(line))
-            entries = [...entries, { line, result: registry.run(line) }].slice(-GENSHIN_DEV_CONSOLE_HISTORY_LENGTH);
-          line = '';
-        }
-      "
+      @submit="() => {
+        if (!checkIsBlankText(line))
+          entries = [...entries, { line, result: registry.run(line) }].slice(-GENSHIN_DEV_CONSOLE_HISTORY_LENGTH);
+        line = '';
+      }"
     >
       <UiTextField
         v-model="line"

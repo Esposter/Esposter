@@ -39,8 +39,7 @@ defineProps<Props>();
             hover:underline
             hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
             transition="[background-color_var(--ui-motion-short)]"
-            >{{ title }}</NuxtLink
-          >
+          >{{ title }}</NuxtLink>
         </Breadcrumbs.Item>
       </template>
     </Breadcrumbs.List>

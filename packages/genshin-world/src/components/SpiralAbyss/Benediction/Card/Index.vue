@@ -48,8 +48,7 @@ const emit = defineEmits<{ choose: [] }>();
 .card {
   --state-duration: v-bind(INTERACTION_REST_DURATION);
   --lit-border: calc(var(--unit) * 4) solid #263d57;
-  --lit-shadow:
-    0 0 0 calc(var(--unit) * 2) #8599a9, 0 0 calc(var(--unit) * 12) calc(var(--unit) * 2) rgb(70 120 180 / 40%);
+  --lit-shadow: 0 0 0 calc(var(--unit) * 2) #8599a9, 0 0 calc(var(--unit) * 12) calc(var(--unit) * 2) rgb(70 120 180 / 40%);
   position: relative;
   box-sizing: border-box;
   width: calc(var(--unit) * 240);

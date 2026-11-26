@@ -14,9 +14,9 @@ defineProps<Props>();
 
 <template>
   <span class="pill auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
-  <span class="pill filter" aria-hidden="true"
-    >{{ gameText[GameTextKey.WeaponMaterialsThreeStarAndUnder] }}<span class="caret"
-  /></span>
+  <span class="pill filter" aria-hidden="true">{{ gameText[GameTextKey.WeaponMaterialsThreeStarAndUnder] }}<span
+      class="caret"
+    /></span>
   <span class="sparkle-button" aria-hidden="true" />
 </template>
 

@@ -68,12 +68,10 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
     <UiOverflowMenu
       :items="menuItems"
       label="More"
-      @update:is-open="
-        (isOpen) => {
-          optionsMenuMessageId = isOpen ? message.id : 0;
-          emit('update:menu', isOpen);
-        }
-      "
+      @update:is-open="(isOpen) => {
+        optionsMenuMessageId = isOpen ? message.id : 0;
+        emit('update:menu', isOpen);
+      }"
     />
   </div>
 </template>

@@ -24,14 +24,12 @@ const { consumeNotificationAction, dismissSnackbar } = notificationStore;
     <template v-if="snackbarNotification.action" #actions>
       <AppNotificationActionButton
         :action="snackbarNotification.action"
-        @complete="
-          () => {
-            if (!snackbarNotification) return;
-            const { id } = snackbarNotification;
-            consumeNotificationAction(id);
-            dismissSnackbar(id);
-          }
-        "
+        @complete="() => {
+          if (!snackbarNotification) return;
+          const { id } = snackbarNotification;
+          consumeNotificationAction(id);
+          dismissSnackbar(id);
+        }"
       />
     </template>
   </UiToast>

@@ -111,31 +111,25 @@ const isLiftable = computed(() => {
     :max-stamina
     :name="characterName"
     :stat-tables
-    @ascend="
-      () => {
-        const ascended = ascendResult;
-        if (!ascended) return;
-        characters = replaceCharacterInRoster(characters, ascended.character);
-        inventory = ascended.inventory;
-        wallet = ascended.wallet;
-      }
-    "
-    @level-up="
-      () => {
-        const raised = levelUpResult;
-        if (!raised) return;
-        characters = replaceCharacterInRoster(characters, raised.character);
-        inventory = raised.inventory;
-        wallet = raised.wallet;
-      }
-    "
-    @lift="
-      () => {
-        if (!isLiftable) return;
-        const lifted = liftCharacterLevel(character, { inventory, lifts: statTables.masterlessLevelLiftMap });
-        characters = replaceCharacterInRoster(characters, lifted.character);
-        inventory = lifted.inventory;
-      }
-    "
+    @ascend="() => {
+      const ascended = ascendResult;
+      if (!ascended) return;
+      characters = replaceCharacterInRoster(characters, ascended.character);
+      inventory = ascended.inventory;
+      wallet = ascended.wallet;
+    }"
+    @level-up="() => {
+      const raised = levelUpResult;
+      if (!raised) return;
+      characters = replaceCharacterInRoster(characters, raised.character);
+      inventory = raised.inventory;
+      wallet = raised.wallet;
+    }"
+    @lift="() => {
+      if (!isLiftable) return;
+      const lifted = liftCharacterLevel(character, { inventory, lifts: statTables.masterlessLevelLiftMap });
+      characters = replaceCharacterInRoster(characters, lifted.character);
+      inventory = lifted.inventory;
+    }"
   />
 </template>

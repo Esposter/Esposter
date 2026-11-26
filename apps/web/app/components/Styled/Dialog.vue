@@ -74,11 +74,9 @@ const { answer, isPending } = useDialogAnswer(isOpen);
             :form="formId"
             :type="formId ? 'submit' : 'button'"
             :variant="confirmVariant"
-            @click="
-              async () => {
-                if (!formId && confirm) await answer(confirm, awaitedBecause);
-              }
-            "
+            @click="async () => {
+              if (!formId && confirm) await answer(confirm, awaitedBecause);
+            }"
           >
             {{ confirmLabel }}
           </UiButton>

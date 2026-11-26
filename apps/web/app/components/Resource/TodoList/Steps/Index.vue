@@ -28,22 +28,16 @@ const addStep = () => {
         v-for="step of modelValue"
         :key="step.id"
         :step
-        @remove="
-          () => {
-            const remainingSteps = modelValue?.filter(({ id }) => id !== step.id) ?? [];
-            modelValue = remainingSteps.length > 0 ? remainingSteps : undefined;
-          }
-        "
-        @rename="
-          (newName) => {
-            step.name = newName;
-          }
-        "
-        @toggle="
-          () => {
-            step.completedAt = step.completedAt ? undefined : new Date();
-          }
-        "
+        @remove="() => {
+          const remainingSteps = modelValue?.filter(({ id }) => id !== step.id) ?? [];
+          modelValue = remainingSteps.length > 0 ? remainingSteps : undefined;
+        }"
+        @rename="(newName) => {
+          step.name = newName;
+        }"
+        @toggle="() => {
+          step.completedAt = step.completedAt ? undefined : new Date();
+        }"
       />
     </ul>
     <!-- Inside the dialog's own form, so Enter here adds the step and is kept from saving the dialog -->
@@ -51,11 +45,9 @@ const addStep = () => {
       flex
       gap-2
       items-start
-      @keydown.enter.prevent="
-        (event: KeyboardEvent) => {
-          if (!event.isComposing) addStep();
-        }
-      "
+      @keydown.enter.prevent="(event: KeyboardEvent) => {
+        if (!event.isComposing) addStep();
+      }"
     >
       <UiTextField
         v-model="name"

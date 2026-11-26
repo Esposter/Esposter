@@ -73,14 +73,12 @@ const getNudgeDuration = (key: string) => {
         w-full
         justify-start
         @click="emit('open')"
-        @keydown.alt="
-          (keyboardEvent: KeyboardEvent) => {
-            const duration = getNudgeDuration(keyboardEvent.key);
-            if (!duration) return;
-            keyboardEvent.preventDefault();
-            emit('nudge', duration);
-          }
-        "
+        @keydown.alt="(keyboardEvent: KeyboardEvent) => {
+          const duration = getNudgeDuration(keyboardEvent.key);
+          if (!duration) return;
+          keyboardEvent.preventDefault();
+          emit('nudge', duration);
+        }"
       >
         <!-- A day of the month is too narrow on a phone for the time beside the title, so the time is only read out
           there; the title is what tells one event from another -->

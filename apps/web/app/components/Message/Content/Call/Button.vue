@@ -34,12 +34,10 @@ const roomParticipantMap = useCallRoomParticipantMap();
     <template #footer="{ close }">
       <UiButton
         :variant="UiButtonVariant.Danger"
-        @click="
-          () => {
-            close();
-            leaveCall();
-          }
-        "
+        @click="() => {
+          close();
+          leaveCall();
+        }"
       >
         <UiIcon :meaning="UiIconMeaning.HangUp" />
         Leave Call

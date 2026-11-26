@@ -16,22 +16,18 @@ const { setLayout } = dashboardStore;
       label="Packing"
       :items="DashboardEditorPackingItems"
       :model-value="dashboard.compactType"
-      @update:model-value="
-        (compactType) => {
-          if (compactType) setLayout({ collision: dashboard.collision, compactType });
-        }
-      "
+      @update:model-value="(compactType) => {
+        if (compactType) setLayout({ collision: dashboard.collision, compactType });
+      }"
     />
     <p text-muted>Overlaps</p>
     <UiRadioGroup
       label="Overlaps"
       :items="DashboardEditorOverlapItems"
       :model-value="dashboard.collision"
-      @update:model-value="
-        (collision) => {
-          if (collision) setLayout({ collision, compactType: dashboard.compactType });
-        }
-      "
+      @update:model-value="(collision) => {
+        if (collision) setLayout({ collision, compactType: dashboard.compactType });
+      }"
     />
   </div>
 </template>

@@ -24,12 +24,10 @@ const animationCompleteEventKey = getAnimationCompleteEventKey(AttackKey["Ice Sh
       :spritesheet-key="AttackKey['Ice Shard']"
       :is-to-enemy
       :configuration="{ type: AttackGameObjectType.Sprite }"
-      :create-animation-configurations="
-        (scene) => [
-          getAnimationConfiguration(scene, AttackKey['Ice Shard']),
-          getAnimationConfiguration(scene, AttackKey['Ice Shard Start']),
-        ]
-      "
+      :create-animation-configurations="(scene) => [
+        getAnimationConfiguration(scene, AttackKey['Ice Shard']),
+        getAnimationConfiguration(scene, AttackKey['Ice Shard Start']),
+      ]"
       :play-animation-key="playAnimationKey.value"
       @[animationCompleteEventKey]="playAnimationKey.value = AttackKey['Ice Shard']"
     />

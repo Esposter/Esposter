@@ -14,14 +14,12 @@ const { findValue, isFindReplaceOpen } = storeToRefs(findReplaceStore);
     is-autofocus
     label="Find"
     :type="UiTextFieldType.Search"
-    @keydown="
-      (event: KeyboardEvent) => {
-        if (event.isComposing) return;
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          goToOccurrence(event.shiftKey ? -1 : 1);
-        } else if (event.key === 'Escape') isFindReplaceOpen = false;
-      }
-    "
+    @keydown="(event: KeyboardEvent) => {
+      if (event.isComposing) return;
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        goToOccurrence(event.shiftKey ? -1 : 1);
+      } else if (event.key === 'Escape') isFindReplaceOpen = false;
+    }"
   />
 </template>

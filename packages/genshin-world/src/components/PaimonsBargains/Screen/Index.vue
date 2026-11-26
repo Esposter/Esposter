@@ -251,19 +251,17 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
       :goods="goodCells"
       :tabs
       :title="gameText[GameTextKey.PaimonsBargains]"
-      @buy="
-        (good, buyCount) => {
-          // Buys the picked good and keeps what the purchase leaves, then clears the picked good
-          const offer = offers.find(({ good: offered }) => offered.goodsId === good.id);
-          const bought = offer && buyOffer(offer, buyCount);
-          if (!bought) return;
-          characters = bought.characters;
-          inventory = bought.inventory;
-          purchases = bought.purchases;
-          wallet = bought.wallet;
-          resetShopPick();
-        }
-      "
+      @buy="(good, buyCount) => {
+        // Buys the picked good and keeps what the purchase leaves, then clears the picked good
+        const offer = offers.find(({ good: offered }) => offered.goodsId === good.id);
+        const bought = offer && buyOffer(offer, buyCount);
+        if (!bought) return;
+        characters = bought.characters;
+        inventory = bought.inventory;
+        purchases = bought.purchases;
+        wallet = bought.wallet;
+        resetShopPick();
+      }"
       @close="emit('close')"
     />
   </GameScreen>

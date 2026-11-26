@@ -11,16 +11,12 @@ const emit = defineEmits<{ submit: [] }>();
 
 <template>
   <Form
-    @update:model-value="
-      (value) => {
-        isValid = value !== false;
-      }
-    "
-    @submit="
-      (event) => {
-        if (event.valid) emit('submit');
-      }
-    "
+    @update:model-value="(value) => {
+      isValid = value !== false;
+    }"
+    @submit="(event) => {
+      if (event.valid) emit('submit');
+    }"
   >
     <slot />
   </Form>

@@ -102,11 +102,9 @@ const clearFilter = (filterType: ResourceListFilterType) => {
       :items="availableFilterItems"
       label="Add filter"
       :variant="UiButtonVariant.Quiet"
-      @select="
-        (filterType) => {
-          addedFilterTypes = [...addedFilterTypes, filterType];
-        }
-      "
+      @select="(filterType) => {
+        addedFilterTypes = [...addedFilterTypes, filterType];
+      }"
     >
       <UiIcon :meaning="UiIconMeaning.Create" />
       Add filter
@@ -114,12 +112,10 @@ const clearFilter = (filterType: ResourceListFilterType) => {
     <UiButton
       v-if="hasActiveFilters"
       :variant="UiButtonVariant.Quiet"
-      @click="
-        () => {
-          addedFilterTypes = [];
-          emit('clear');
-        }
-      "
+      @click="() => {
+        addedFilterTypes = [];
+        emit('clear');
+      }"
     >
       Clear filters
     </UiButton>

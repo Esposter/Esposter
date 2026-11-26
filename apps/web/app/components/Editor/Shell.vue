@@ -152,13 +152,11 @@ defineExpose({ setActivePanel, toggleRegion });
       :region
       :registry
       @select-panel="(panelId) => setActivePanel(region.id, panelId)"
-      @toggle="
-        async () => {
-          toggleRegion(region.id);
-          await nextTick();
-          openerElement?.focus();
-        }
-      "
+      @toggle="async () => {
+        toggleRegion(region.id);
+        await nextTick();
+        openerElement?.focus();
+      }"
     />
   </div>
 </template>

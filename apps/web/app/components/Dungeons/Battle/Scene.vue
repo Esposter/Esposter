@@ -21,16 +21,14 @@ const { resetActiveMonster } = battlePlayerStore;
 <template>
   <DungeonsScene
     :scene-key="SceneKey.Battle"
-    @create="
-      (scene) =>
-        getResultAsync(async () => {
-          playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiDecisiveBattle);
-          battleStateMachine.scene = scene;
-          battleStateMachine.stateMap = StateMap;
-          resetActiveMonster();
-          await battleStateMachine.setState(StateName.Intro);
-        }).match(noop, console.error)
-    "
+    @create="(scene) =>
+      getResultAsync(async () => {
+        playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiDecisiveBattle);
+        battleStateMachine.scene = scene;
+        battleStateMachine.stateMap = StateMap;
+        resetActiveMonster();
+        await battleStateMachine.setState(StateName.Intro);
+      }).match(noop, console.error)"
     @update="onPlayerInput($event, controls.getInput())"
     @shutdown="() => getResultAsync(() => battleStateMachine.setState()).match(noop, console.error)"
   >

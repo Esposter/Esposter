@@ -33,15 +33,10 @@ await loadContent();
         :items="DataSourceTypeItemCategoryDefinitions"
         label="File type"
         :model-value="settings.type"
-        @update:model-value="
-          (type) => {
-            if (type)
-              sheetResource.settings = {
-                ...createDefaultSheetSettings(type),
-                columnIdWidthMap: settings.columnIdWidthMap,
-              };
-          }
-        "
+        @update:model-value="(type) => {
+          if (type)
+            sheetResource.settings = { ...createDefaultSheetSettings(type), columnIdWidthMap: settings.columnIdWidthMap };
+        }"
       />
     </UiFrame>
     <UiFrame :title="`${DataSourceTypeItemCategoryDefinitionMap[settings.type].title} options`">

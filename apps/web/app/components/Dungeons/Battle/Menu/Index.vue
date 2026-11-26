@@ -38,11 +38,9 @@ onSceneEvent(SceneEventKey.ShowMessage, () => {
       fillColor: PANEL_FILL_COLOR,
       strokeStyle: [MENU_PADDING * 2, HIGHLIGHT_BORDER_COLOR],
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
-      () => {
-        if (activePanel === ActivePanel.Info) controls.setInput(PlayerSpecialInput.Confirm);
-      }
-    "
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="() => {
+      if (activePanel === ActivePanel.Info) controls.setInput(PlayerSpecialInput.Confirm);
+    }"
   />
   <DungeonsBattleMenuPanelAttackOption />
   <DungeonsBattleMenuPanelInfo />

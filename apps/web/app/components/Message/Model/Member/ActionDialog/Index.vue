@@ -28,7 +28,9 @@ const isOpen = computed({
   <MessageModelMemberActionDialogConfirm
     v-else-if="type === MemberDialogType.SoftBan"
     v-model="isOpen"
-    :text="`Are you sure you want to soft-ban ${displayName}? They will be kicked and their recent messages deleted, but can rejoin via invite.`"
+    :text="
+      `Are you sure you want to soft-ban ${displayName}? They will be kicked and their recent messages deleted, but can rejoin via invite.`
+    "
     :title="`Soft ban ${displayName}`"
     :type="AdminActionType.SoftBan"
     :user
@@ -44,7 +46,9 @@ const isOpen = computed({
   <MessageModelMemberActionDialogConfirm
     v-else-if="type === MemberDialogType.Warn"
     v-model="isOpen"
-    :text="`Are you sure you want to warn ${displayName}? They will see a warning, and it is recorded in the audit log.`"
+    :text="
+      `Are you sure you want to warn ${displayName}? They will see a warning, and it is recorded in the audit log.`
+    "
     :title="`Warn ${displayName}`"
     :type="AdminActionType.Warn"
     :user

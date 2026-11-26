@@ -41,16 +41,12 @@ const isDeployBlocked = computed(() => deployReviews.value.some(({ isNameEmpty }
     <UiButton
       :="activatorProps"
       :disabled="isDisabled"
-      @click="
-        () => {
-          // Each open starts fresh: fields prefilled from their defaults, previous results cleared
-          parameterValues = Object.fromEntries(
-            blueprint.parameters.map(({ defaultValue, key }) => [key, defaultValue]),
-          );
-          deployments = [];
-          isOpen = true;
-        }
-      "
+      @click="() => {
+        // Each open starts fresh: fields prefilled from their defaults, previous results cleared
+        parameterValues = Object.fromEntries(blueprint.parameters.map(({ defaultValue, key }) => [key, defaultValue]));
+        deployments = [];
+        isOpen = true;
+      }"
     >
       <UiIcon :meaning="UiIconMeaning.Deploy" />
       Deploy
@@ -64,25 +60,20 @@ const isDeployBlocked = computed(() => deployReviews.value.some(({ isNameEmpty }
         flex
         flex-col
         gap-3
-        @submit="
-          async () => {
-            const resourceValue = resource;
-            if (!resourceValue) return;
-
-            // The results list what the server created, so the deploy is awaited for them
-            await executeMutation(
-              () => $trpc.blueprint.deployBlueprint.mutate({ id: resourceValue.id, parameterValues }),
-              {
-                awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-                key: resourceValue.id,
-                onError: createErrorNotification,
-                onSuccess: (newDeployments) => {
-                  deployments = newDeployments;
-                },
-              },
-            );
-          }
-        "
+        @submit="async () => {
+          const resourceValue = resource;
+          if (!resourceValue) return;
+        
+          // The results list what the server created, so the deploy is awaited for them
+          await executeMutation(() => $trpc.blueprint.deployBlueprint.mutate({ id: resourceValue.id, parameterValues }), {
+            awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+            key: resourceValue.id,
+            onError: createErrorNotification,
+            onSuccess: (newDeployments) => {
+              deployments = newDeployments;
+            },
+          });
+        }"
       >
         <p v-if="blueprint.parameters.length === 0" text-muted>
           This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.

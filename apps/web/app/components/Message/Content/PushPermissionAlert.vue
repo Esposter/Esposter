@@ -17,11 +17,9 @@ const requestPermission = () => window.Notification.requestPermission();
     <div flex gap-2 items-center>
       <span flex-1>Turn on desktop notifications to hear about new messages while you are away.</span>
       <UiButton
-        @click="
-          async () => {
-            await requestPermission();
-          }
-        "
+        @click="async () => {
+          await requestPermission();
+        }"
       >
         Enable
       </UiButton>

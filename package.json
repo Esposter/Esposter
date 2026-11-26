@@ -99,7 +99,7 @@
     "bundle-sizes:gen": "pnpm -C scripts bundle-sizes:gen",
     "coverage": "vitest run --coverage",
     "crossOS": "pnpm -C scripts crossOS",
-    "format": "vp fmt",
+    "format": "vp fmt && vize fmt --write \"**/*.vue\"",
     "globe:gen": "pnpm -C scripts globe:gen",
     "graph:gen": "pnpm -C scripts graph:gen",
     "lint:fix:oxlint": "vp lint --debug=timings --format=default --fix --disable-nested-config",

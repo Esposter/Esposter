@@ -20,24 +20,22 @@ const isPending = ref(false);
   <UiButton
     w-full
     :is-pending
-    @click="
-      async () => {
-        isPending = true;
-        // `onError` is the auth client's own report of a refused sign-in; a rejection here is the redirect
-        // Never starting at all, which nothing else would say — and the spinner has to clear on both paths
-        await getResultAsync(() =>
-          signIn.social(
-            { provider },
-            {
-              onError: ({ error }) => {
-                createAlert(error.message, 'error');
-              },
+    @click="async () => {
+      isPending = true;
+      // `onError` is the auth client's own report of a refused sign-in; a rejection here is the redirect
+      // Never starting at all, which nothing else would say — and the spinner has to clear on both paths
+      await getResultAsync(() =>
+        signIn.social(
+          { provider },
+          {
+            onError: ({ error }) => {
+              createAlert(error.message, 'error');
             },
-          ),
-        ).match(noop, createErrorAlert);
-        isPending = false;
-      }
-    "
+          },
+        ),
+      ).match(noop, createErrorAlert);
+      isPending = false;
+    }"
   >
     <component :is="logo" v-if="!isPending" size-5 fill-current aria-hidden="true" />
     Continue with {{ toTitleCase(provider) }}

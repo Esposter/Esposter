@@ -33,11 +33,9 @@ onShutdown((scene) => {
 <template>
   <Tilemap
     :configuration="{ key: tilemapKey }"
-    @complete="
-      (scene, tilemap) => {
-        createTilemapAssets(tilemap);
-        initializeBounds(scene, tilemap);
-      }
-    "
+    @complete="(scene, tilemap) => {
+      createTilemapAssets(tilemap);
+      initializeBounds(scene, tilemap);
+    }"
   />
 </template>

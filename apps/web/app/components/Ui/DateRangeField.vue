@@ -20,12 +20,10 @@ const isOpen = ref(false);
     :is-empty="!from && !to"
     :label
     :placeholder
-    @clear="
-      () => {
-        from = undefined;
-        to = undefined;
-      }
-    "
+    @clear="() => {
+      from = undefined;
+      to = undefined;
+    }"
   >
     <template #value>
       <NuxtTime v-if="from" :datetime="from.toString()" date-style="medium" time-zone="UTC" />
@@ -37,11 +35,9 @@ const isOpen = ref(false);
       v-model:to="to"
       is-range
       :label
-      @update:to="
-        (newTo) => {
-          if (newTo) isOpen = false;
-        }
-      "
+      @update:to="(newTo) => {
+        if (newTo) isOpen = false;
+      }"
     />
   </UiPopoverField>
 </template>

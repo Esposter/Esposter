@@ -26,11 +26,9 @@ const uiMenuItems = computed(() => getUiMenuItems(items));
     :label
     :variant="UiButtonVariant.Quiet"
     px-0
-    @select="
-      async (value, event) => {
-        await getMenuItemByValue(items, value)?.onClick?.(event);
-      }
-    "
+    @select="async (value, event) => {
+      await getMenuItemByValue(items, value)?.onClick?.(event);
+    }"
   >
     <UiIcon :meaning />
   </UiMenu>

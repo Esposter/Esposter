@@ -32,32 +32,26 @@ const hasShapeFill = computed(() =>
       <UiColorField
         :model-value="fill.isMixed ? '' : fill.value"
         label="Fill"
-        @update:model-value="
-          (value) => {
-            commitOperations(
-              selectedElements.flatMap(({ element, index }) =>
-                'fill' in element
-                  ? updatePositionedElementProperty(whiteboard, index, { property: 'fill', value })
-                  : [],
-              ),
-            );
-          }
-        "
+        @update:model-value="(value) => {
+          commitOperations(
+            selectedElements.flatMap(({ element, index }) =>
+              'fill' in element ? updatePositionedElementProperty(whiteboard, index, { property: 'fill', value }) : [],
+            ),
+          );
+        }"
       />
       <span v-if="fill.isMixed" ui-body>Mixed</span>
       <UiButton
         v-if="hasShapeFill"
-        @click="
-          () => {
-            commitOperations(
-              selectedElements.flatMap(({ element, index }) =>
-                element.type === PositionedElementType.Shape
-                  ? updatePositionedElementProperty(whiteboard, index, { property: 'fill', value: '' })
-                  : [],
-              ),
-            );
-          }
-        "
+        @click="() => {
+          commitOperations(
+            selectedElements.flatMap(({ element, index }) =>
+              element.type === PositionedElementType.Shape
+                ? updatePositionedElementProperty(whiteboard, index, { property: 'fill', value: '' })
+                : [],
+            ),
+          );
+        }"
       >
         No fill
       </UiButton>

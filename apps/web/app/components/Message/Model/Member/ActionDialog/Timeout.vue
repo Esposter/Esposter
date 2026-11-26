@@ -18,14 +18,12 @@ const selectedDurationMs = ref(String(TimeoutDurationMap["1 minute"]));
 <template>
   <MessageModelMemberActionDialogShell
     v-model="isOpen"
-    :get-input="
-      (roomId) => ({
-        durationMs: Number(selectedDurationMs),
-        roomId,
-        targetUserId: user.id,
-        type: AdminActionType.TimeoutUser,
-      })
-    "
+    :get-input="(roomId) => ({
+      durationMs: Number(selectedDurationMs),
+      roomId,
+      targetUserId: user.id,
+      type: AdminActionType.TimeoutUser,
+    })"
     submit-label="Timeout"
     :submit-variant="UiButtonVariant.Danger"
     :title="`Timeout ${displayName}`"

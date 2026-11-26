@@ -45,14 +45,12 @@ watchImmediate(isCancelButtonActive, (newIsCancelButtonActive) => {
         fillColor: PANEL_FILL_COLOR,
         strokeStyle: [8, PANEL_BORDER_COLOR],
       }"
-      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
-        () => {
-          // Disambiguate two input sources, active only while waiting for player special input:
-          // 1. Monster panel item input
-          // 2. Info panel input (this component)
-          if (isWaitingForPlayerSpecialInput) controls.setInput(PlayerSpecialInput.Confirm);
-        }
-      "
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="() => {
+        // Disambiguate two input sources, active only while waiting for player special input:
+        // 1. Monster panel item input
+        // 2. Info panel input (this component)
+        if (isWaitingForPlayerSpecialInput) controls.setInput(PlayerSpecialInput.Confirm);
+      }"
     />
     <Text
       :configuration="{ x: 15, y: 14, text: infoDialogMessage.text, style: MenuTextStyle }"

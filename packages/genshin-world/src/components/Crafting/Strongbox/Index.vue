@@ -82,13 +82,11 @@ const confirmSegments = computed(() =>
         <GameButton
           :kind="GameButtonKind.Row"
           tip=""
-          @click="
-            () => {
-              pickedStrongboxId = strongbox.id;
-              pickedIds = [];
-              isConfirming = false;
-            }
-          "
+          @click="() => {
+            pickedStrongboxId = strongbox.id;
+            pickedIds = [];
+            isConfirming = false;
+          }"
         >
           {{ names[strongbox.nameTextId] ?? "" }}
         </GameButton>
@@ -100,11 +98,9 @@ const confirmSegments = computed(() =>
           :disabled="isOfferingFull && !pickedIds.includes(item.id)"
           :kind="GameButtonKind.Row"
           tip=""
-          @click="
-            pickedIds = pickedIds.includes(item.id)
-              ? pickedIds.filter((pickedId) => pickedId !== item.id)
-              : [...pickedIds, item.id]
-          "
+          @click="pickedIds = pickedIds.includes(item.id)
+            ? pickedIds.filter((pickedId) => pickedId !== item.id)
+            : [...pickedIds, item.id]"
         >
           {{ item.definition.name }}
         </GameButton>
@@ -125,32 +121,29 @@ const confirmSegments = computed(() =>
       <GameButton
         :kind="GameButtonKind.Row"
         tip=""
-        @click="
-          () => {
-            if (pickedStrongbox === undefined) return;
-            const pickUp = craftStrongbox(
-              props.inventory,
-              props.wallet,
-              pickedStrongbox,
-              pickedIds,
-              {
-                artifactDropTables: props.artifactDropTables,
-                materialDataMap: props.materialDataMap,
-                names: props.names,
-                random: props.random,
-                reliquaryPieceEntryMap: props.reliquaryPieceEntryMap,
-                weaponDataMap: props.weaponDataMap,
-              },
-              props.itemRooms,
-            );
-            isConfirming = false;
-            if (pickUp === undefined) return;
-            pickedIds = [];
-            emit('craft', pickUp);
-          }
-        "
-        >{{ gameText[GameTextKey.Confirm] }}</GameButton
-      >
+        @click="() => {
+          if (pickedStrongbox === undefined) return;
+          const pickUp = craftStrongbox(
+            props.inventory,
+            props.wallet,
+            pickedStrongbox,
+            pickedIds,
+            {
+              artifactDropTables: props.artifactDropTables,
+              materialDataMap: props.materialDataMap,
+              names: props.names,
+              random: props.random,
+              reliquaryPieceEntryMap: props.reliquaryPieceEntryMap,
+              weaponDataMap: props.weaponDataMap,
+            },
+            props.itemRooms,
+          );
+          isConfirming = false;
+          if (pickUp === undefined) return;
+          pickedIds = [];
+          emit('craft', pickUp);
+        }"
+      >{{ gameText[GameTextKey.Confirm] }}</GameButton>
     </template>
     <GameButton :kind="GameButtonKind.Row" tip="" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
   </GameScreen>

@@ -49,6 +49,8 @@ export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, OXFMT_CONF
 // The formatter's answer for a file type it has no parser for. The pre-commit hook passes such a file by path, and the
 // Formatter skips it there, so the scripts skip it too rather than keep a list of the extensions it formats
 export const OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE = "Unsupported file type for stdin-filepath";
+// The unified config, which holds vize's options, the component formatter's among them
+export const VITE_CONFIGURATION_FILE = "vite.config.ts";
 // The most characters of paths one formatter run takes on its command line. Windows refuses a command line past 32,767
 // Characters without spawning it, so a changed set is formatted in runs of at most this, the rest of the line being the
 // Binary, the configuration and the flags

@@ -51,7 +51,7 @@ defineExpose({ focusWorldLevelInfo: () => info.value?.focusWorldLevelInfo() });
   <div v-else class="avatar" />
   <p class="name">{{ accountName || gameText[GameTextKey.PlayerDefaultName] }}</p>
   <div class="edit">
-    <span v-if="alertedIcons.includes(MenuFrameIcon.Edit)" aria-hidden="true" class="alert" />
+    <span v-if="alertedIcons.includes(MenuFrameIcon.Edit)" class="alert" aria-hidden="true" />
   </div>
   <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
   <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>

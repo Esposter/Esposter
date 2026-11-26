@@ -27,12 +27,10 @@ const skinToneItems = skinToneEmoji
     position-area="top span-left"
     :variant="UiButtonVariant.Quiet"
     px-0
-    @select="
-      (name) => {
-        const skinTone = SkinToneEntries.find(([skinToneName]) => skinToneName === name)?.[1];
-        if (skinTone !== undefined) modelValue = skinTone;
-      }
-    "
+    @select="(name) => {
+      const skinTone = SkinToneEntries.find(([skinToneName]) => skinToneName === name)?.[1];
+      if (skinTone !== undefined) modelValue = skinTone;
+    }"
   >
     <span ui-title>{{ applySkinTone(skinToneEmoji, modelValue) }}</span>
   </UiMenu>

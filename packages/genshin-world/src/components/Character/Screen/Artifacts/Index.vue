@@ -113,49 +113,37 @@ const equipDisabledSlots = computed(() =>
     :totals="artifactTotals"
     :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
     :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
-    @enhance="
-      (index) => {
-        // The Enhance button opens the picker over the worn artifact's slot, with nothing chosen yet
-        artifactNotice = '';
-        enhanceSlot = ARTIFACT_SLOT_ORDER[index];
-        enhanceFodderIds = [];
-        enhanceMaterialCounts = {};
+    @enhance="(index) => {
+      // The Enhance button opens the picker over the worn artifact's slot, with nothing chosen yet
+      artifactNotice = '';
+      enhanceSlot = ARTIFACT_SLOT_ORDER[index];
+      enhanceFodderIds = [];
+      enhanceMaterialCounts = {};
+    }"
+    @equip="(index) => {
+      artifactNotice = '';
+      equipSlot = ARTIFACT_SLOT_ORDER[index];
+    }"
+    @lock="(index) => {
+      // The picked slot's worn artifact is locked or unlocked, which keeps it out of fodder
+      const slot = ARTIFACT_SLOT_ORDER[index];
+      if (!slot) return;
+      artifactNotice = '';
+      characters = replaceCharacterInRoster(characters, toggleCharacterArtifactLock(character, slot));
+    }"
+    @unequip="(index) => {
+      // The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag
+      // Has no room for it
+      const slot = ARTIFACT_SLOT_ORDER[index];
+      if (!slot) return;
+      const unequipped = unequipArtifactToBag(inventory, character, slot, { itemRooms, names: nameText, reliquarySets });
+      if (unequipped.isBagFull) {
+        artifactNotice = gameText[GameTextKey.ArtifactInventoryFull];
+        return;
       }
-    "
-    @equip="
-      (index) => {
-        artifactNotice = '';
-        equipSlot = ARTIFACT_SLOT_ORDER[index];
-      }
-    "
-    @lock="
-      (index) => {
-        // The picked slot's worn artifact is locked or unlocked, which keeps it out of fodder
-        const slot = ARTIFACT_SLOT_ORDER[index];
-        if (!slot) return;
-        artifactNotice = '';
-        characters = replaceCharacterInRoster(characters, toggleCharacterArtifactLock(character, slot));
-      }
-    "
-    @unequip="
-      (index) => {
-        // The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag
-        // Has no room for it
-        const slot = ARTIFACT_SLOT_ORDER[index];
-        if (!slot) return;
-        const unequipped = unequipArtifactToBag(inventory, character, slot, {
-          itemRooms,
-          names: nameText,
-          reliquarySets,
-        });
-        if (unequipped.isBagFull) {
-          artifactNotice = gameText[GameTextKey.ArtifactInventoryFull];
-          return;
-        }
-        artifactNotice = '';
-        characters = replaceCharacterInRoster(characters, unequipped.character);
-        inventory = unequipped.inventory;
-      }
-    "
+      artifactNotice = '';
+      characters = replaceCharacterInRoster(characters, unequipped.character);
+      inventory = unequipped.inventory;
+    }"
   />
 </template>

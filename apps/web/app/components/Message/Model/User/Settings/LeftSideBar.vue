@@ -49,12 +49,10 @@ const scrollToSection = (section: SettingsSection) => {
       <UiList
         :items="typeItems"
         label="Settings"
-        @select="
-          (settingsType) => {
-            modelValue = settingsType;
-            isDrawerOpen = false;
-          }
-        "
+        @select="(settingsType) => {
+          modelValue = settingsType;
+          isDrawerOpen = false;
+        }"
       />
       <section v-if="sectionItems.length > 0" flex flex-col gap-1>
         <h3 text-muted px-2 ui-title>On this page</h3>

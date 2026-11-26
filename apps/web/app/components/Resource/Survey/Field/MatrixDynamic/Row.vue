@@ -89,13 +89,8 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn) => ({
           :disabled="isDisabled"
           :label="getSurveyChoiceText(choice)"
           :model-value="isChosen(row[column.name], choice.value)"
-          @update:model-value="
-            (newModelValue) =>
-              emit(
-                'update',
-                withSurveyAnswer(row, column.name, toggleChoice(row[column.name], choice.value, newModelValue)),
-              )
-          "
+          @update:model-value="(newModelValue) =>
+            emit('update', withSurveyAnswer(row, column.name, toggleChoice(row[column.name], choice.value, newModelValue)))"
         />
       </div>
       <UiCheckbox

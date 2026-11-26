@@ -28,11 +28,9 @@ const id = useId();
     :disabled="isDisabled"
     :label
     renderless
-    @update:model-value="
-      (value) => {
-        if (value !== undefined) modelValue = value;
-      }
-    "
+    @update:model-value="(value) => {
+      if (value !== undefined) modelValue = value;
+    }"
   >
     <div :="mergeProps(attrs, $attrs)" flex flex-col>
       <Radio.Root

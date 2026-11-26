@@ -35,7 +35,7 @@ const deliciousZonePath = computed(() => toArcPath(zones.delicious, COOKING_ZONE
 </script>
 
 <template>
-  <svg aria-hidden="true" class="stage" viewBox="0 0 1920 1080">
+  <svg class="stage" aria-hidden="true" viewBox="0 0 1920 1080">
     <defs>
       <radialGradient id="cooking-heat">
         <stop offset="0" stop-color="rgb(214 52 34 / 42%)" />

@@ -45,8 +45,8 @@ useResizeObserver(tile, (entries) => {
 
 <template>
   <div
-    ref="tile"
     class="dashboard-grid-tile"
+    ref="tile"
     :class="{ 'touch-none': isEditable }"
     absolute
     :aria-label="isEditable ? label : altText || label"
@@ -59,22 +59,20 @@ useResizeObserver(tile, (entries) => {
       transform: isDragged ? `translate(${offset.x}px, ${offset.y}px)` : undefined,
       zIndex: isDragged ? 2 : undefined,
     }"
-    @keydown="
-      (event) => {
-        // A key pressed on a control inside the visual is that control's, so only the tile's own focus takes it
-        if (!isEditable || event.target !== event.currentTarget) return;
-
-        if (event.key === 'Enter') {
-          emit('open');
-          return;
-        }
-        const step = getKeyStep(event);
-        if (!step) return;
-
-        event.preventDefault();
-        emit('step', step);
+    @keydown="(event) => {
+      // A key pressed on a control inside the visual is that control's, so only the tile's own focus takes it
+      if (!isEditable || event.target !== event.currentTarget) return;
+    
+      if (event.key === 'Enter') {
+        emit('open');
+        return;
       }
-    "
+      const step = getKeyStep(event);
+      if (!step) return;
+    
+      event.preventDefault();
+      emit('step', step);
+    }"
     @pointerdown="(event) => emit('press', event)"
   >
     <!-- An editable tile is a control of the canvas, handles included: the canvas's click passes over a press on it,

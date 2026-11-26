@@ -24,12 +24,10 @@ const { isOpen, item: deletingRowIds } = useSingletonDialog(deletingIds, () =>
     v-model="isOpen"
     confirm-label="Delete"
     :title="`Delete ${pluralize('row', deletingRowIds.length)}`"
-    :confirm="
-      () => {
-        if (!deletingRowIds) return;
-        return deleteRows(deletingRowIds);
-      }
-    "
+    :confirm="() => {
+      if (!deletingRowIds) return;
+      return deleteRows(deletingRowIds);
+    }"
   >
     <p>
       Delete {{ deletingRowIds.length === 1 ? "this row" : `${deletingRowIds.length} rows` }}? The toolbar's Undo brings

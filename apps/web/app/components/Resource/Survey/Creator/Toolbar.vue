@@ -172,12 +172,10 @@ const groups = computed<EditorToolbarGroup[]>(() => [
     <EditorProblems
       :findings
       :get-node-title
-      @select="
-        (nodeId) => {
-          const nodePointer = getSurveyNodePointerById(surveyDocument, nodeId);
-          if (nodePointer) select(nodePointer);
-        }
-      "
+      @select="(nodeId) => {
+        const nodePointer = getSurveyNodePointerById(surveyDocument, nodeId);
+        if (nodePointer) select(nodePointer);
+      }"
     />
     <UiConfirmDialog v-model="isClearOpen" confirm-label="Clear" :confirm="() => clearSurvey()" title="Clear survey">
       <p>Replace every page of this survey with an empty one? Undo brings it back.</p>

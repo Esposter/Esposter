@@ -126,7 +126,7 @@ onClickOutside(table, () => {
 </script>
 
 <template>
-  <div ref="table" class="sheet" flex flex-col gap-2>
+  <div class="sheet" ref="table" flex flex-col gap-2>
     <!-- The selection toolbar takes the search row's place rather than a row of its own, so the table holds still
       when a selection starts -->
     <ResourceSheetRowTextSlot v-if="selectedRowIds.length === 0" />
@@ -152,25 +152,20 @@ onClickOutside(table, () => {
       label="Rows"
       :search
       @reorder="(ids) => reorderRows(getReorderedItems(dataSource.rows, ids))"
-      @edit-cell="
-        (tableColumn, row) => {
-          const column = columnKeyMap.get(tableColumn.key)?.column;
-          const rowIndex = rowIdIndexMap.get(row.id);
-          if (column && rowIndex !== undefined && checkIsEditableColumnValue(column))
-            requestFocus(rowIndex, column.name);
-        }
-      "
-      @update:active-cell="
-        (activeCell) => {
-          const columnIndex = activeCell && columnKeyMap.get(activeCell.columnKey)?.columnIndex;
-          const rowIndex = activeCell && rowIdIndexMap.get(activeCell.itemId);
-          // A cell the keys move to is the selection, as a spreadsheet's active cell is; one a press already selected,
-          // Or extended the selection to, is left as it is
-          if (columnIndex === undefined || rowIndex === undefined) clearCellSelection();
-          else if (focusedCell?.rowIndex !== rowIndex || focusedCell.columnIndex !== columnIndex)
-            startCellSelection(rowIndex, columnIndex);
-        }
-      "
+      @edit-cell="(tableColumn, row) => {
+        const column = columnKeyMap.get(tableColumn.key)?.column;
+        const rowIndex = rowIdIndexMap.get(row.id);
+        if (column && rowIndex !== undefined && checkIsEditableColumnValue(column)) requestFocus(rowIndex, column.name);
+      }"
+      @update:active-cell="(activeCell) => {
+        const columnIndex = activeCell && columnKeyMap.get(activeCell.columnKey)?.columnIndex;
+        const rowIndex = activeCell && rowIdIndexMap.get(activeCell.itemId);
+        // A cell the keys move to is the selection, as a spreadsheet's active cell is; one a press already selected,
+        // Or extended the selection to, is left as it is
+        if (columnIndex === undefined || rowIndex === undefined) clearCellSelection();
+        else if (focusedCell?.rowIndex !== rowIndex || focusedCell.columnIndex !== columnIndex)
+          startCellSelection(rowIndex, columnIndex);
+      }"
     >
       <template #header="{ column: tableColumn }">
         <ResourceSheetRowHeaderSlot :column="columnKeyMap.get(tableColumn.key)?.column" />

@@ -32,12 +32,10 @@ onCreate((scene) => {
       alpha,
       scrollFactor: 0,
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="
-      () => {
-        alpha = 0.7;
-        controls.setInput(PlayerSpecialInput.Confirm);
-      }
-    "
+    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="() => {
+      alpha = 0.7;
+      controls.setInput(PlayerSpecialInput.Confirm);
+    }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="alpha = 1"
     @[`${Input.Events.GAMEOBJECT_POINTER_OUT}`]="alpha = 1"
   />

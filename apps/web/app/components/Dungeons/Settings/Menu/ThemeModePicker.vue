@@ -35,14 +35,9 @@ const cursorY = textY + THEME_MODE_PICKER_CURSOR_OFFSET_Y;
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.Left)"
   />
   <Text
-    :configuration="{
-      x: THEME_MODE_PICKER_TEXT_X,
-      y: textY,
-      originX: 0.5,
-      originY: 0,
-      text: themeModeSetting,
-      style: MenuTextStyle,
-    }"
+    :configuration="
+      { x: THEME_MODE_PICKER_TEXT_X, y: textY, originX: 0.5, originY: 0, text: themeModeSetting, style: MenuTextStyle }
+    "
   />
   <Image
     :configuration="{

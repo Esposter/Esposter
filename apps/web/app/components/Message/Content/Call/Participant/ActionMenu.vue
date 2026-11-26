@@ -39,12 +39,10 @@ const actionItems = computed(() =>
           v-if="actionItems.length > 0"
           :items="actionItems"
           label="Actions"
-          @select="
-            async (title, event) => {
-              close();
-              await actions.find((action) => action.title === title)?.onClick?.(event);
-            }
-          "
+          @select="async (title, event) => {
+            close();
+            await actions.find((action) => action.title === title)?.onClick?.(event);
+          }"
         />
       </div>
     </template>

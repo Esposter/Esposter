@@ -51,25 +51,21 @@ useEventListener(["pointerup", "pointercancel"], () => {
     :min
     :step
     renderless
-    @update:model-value="
-      (value) => {
-        if (typeof value !== 'number') return;
-        modelValue = value;
-        if (!isPointerDown) emit('end', value);
-      }
-    "
-    @end="
-      (value) => {
-        isPointerDown = false;
-        if (typeof value === 'number') emit('end', value);
-      }
-    "
+    @update:model-value="(value) => {
+      if (typeof value !== 'number') return;
+      modelValue = value;
+      if (!isPointerDown) emit('end', value);
+    }"
+    @end="(value) => {
+      isPointerDown = false;
+      if (typeof value === 'number') emit('end', value);
+    }"
   >
     <div :="attrs" :class="{ 'op-disabled': isDisabled }" flex flex-col gap-1>
       <div flex gap-2>
-        <span :id="labelId" :class="{ 'sr-only': isLabelHidden }" flex-1
-          >{{ label }} <UiRequiredMark v-if="isRequired"
-        /></span>
+        <span :id="labelId" :class="{ 'sr-only': isLabelHidden }" flex-1>{{ label }} <UiRequiredMark
+            v-if="isRequired"
+          /></span>
         <span text-muted>{{ valueText }}</span>
       </div>
       <div
@@ -79,11 +75,9 @@ useEventListener(["pointerup", "pointercancel"], () => {
         h-6
         items-center
         relative
-        @pointerdown.capture="
-          (event: PointerEvent) => {
-            isPointerDown = event.button === 0;
-          }
-        "
+        @pointerdown.capture="(event: PointerEvent) => {
+          isPointerDown = event.button === 0;
+        }"
       >
         <Slider.Track
           class="track"

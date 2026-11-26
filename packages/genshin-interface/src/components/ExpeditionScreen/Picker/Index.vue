@@ -32,12 +32,10 @@ const emit = defineEmits<{ send: [placeId: number, characterId: number, hours: n
           :disabled="!!statusLabel"
           :kind="GameButtonKind.Row"
           tip=""
-          @click="
-            () => {
-              isPicking = false;
-              emit('send', detail.id, id, hours);
-            }
-          "
+          @click="() => {
+            isPicking = false;
+            emit('send', detail.id, id, hours);
+          }"
         >
           <span class="character-name">{{ label }}</span>
           <span class="character-bonus">{{ bonusLabel }}</span>

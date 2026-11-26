@@ -31,11 +31,9 @@ const isUnchanged = computed(
     v-model="isEditRoomDialogOpen"
     confirm-label="Save"
     :is-confirm-disabled="isUnchanged || undefined"
-    :submit="
-      () => {
-        saveRoom({ image: editedImage, name: editedName });
-      }
-    "
+    :submit="() => {
+      saveRoom({ image: editedImage, name: editedName });
+    }"
     title="Edit Room"
   >
     <MessageContentHeaderEditRoomImageField v-model="editedImage" :name="roomName" :room-id="room.id" />

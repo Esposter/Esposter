@@ -33,18 +33,16 @@ onClickExceptDrag(
     ref="button"
     touch-none
     :variant="UiButtonVariant.Quiet"
-    @pointerdown="
-      (event) => {
-        // Dropped on a group's grid, the visual is added inside that group, and on the dashboard's own grid it is added at the top.
-        // A group dropped on a group at the depth cap is refused by that grid, so it pushes nothing aside for a group it will not add
-        startExternalDrag(
-          event,
-          new Visual({ type }),
-          (cell, target) => addVisual(type, cell, target.dataset.groupId),
-          (_item, target) => type === VisualType.Group && checkIsGroupTooDeep(dashboardVisuals, target.dataset.groupId),
-        );
-      }
-    "
+    @pointerdown="(event) => {
+      // Dropped on a group's grid, the visual is added inside that group, and on the dashboard's own grid it is added at the top.
+      // A group dropped on a group at the depth cap is refused by that grid, so it pushes nothing aside for a group it will not add
+      startExternalDrag(
+        event,
+        new Visual({ type }),
+        (cell, target) => addVisual(type, cell, target.dataset.groupId),
+        (_item, target) => type === VisualType.Group && checkIsGroupTooDeep(dashboardVisuals, target.dataset.groupId),
+      );
+    }"
   >
     <UiIcon :meaning="UiIconMeaning.Chart" />
     {{ title }}

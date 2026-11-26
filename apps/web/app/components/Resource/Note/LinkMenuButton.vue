@@ -31,13 +31,11 @@ const linkUrl = ref("");
       flex
       gap-2
       items-end
-      @submit="
-        () => {
-          if (linkUrl) editor?.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run();
-          else editor?.chain().focus().extendMarkRange('link').unsetLink().run();
-          isLinkMenuOpen = false;
-        }
-      "
+      @submit="() => {
+        if (linkUrl) editor?.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run();
+        else editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+        isLinkMenuOpen = false;
+      }"
     >
       <div w-64>
         <UiTextField v-model="linkUrl" is-autofocus label="Link address" placeholder="https://example.com" />

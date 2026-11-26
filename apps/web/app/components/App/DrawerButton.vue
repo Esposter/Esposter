@@ -23,11 +23,9 @@ const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutSto
     :label
     :meaning
     :variant="UiButtonVariant.Quiet"
-    @click="
-      () => {
-        if (isEnd) isRightDrawerOpen = true;
-        else isLeftDrawerOpen = true;
-      }
-    "
+    @click="() => {
+      if (isEnd) isRightDrawerOpen = true;
+      else isLeftDrawerOpen = true;
+    }"
   />
 </template>

@@ -17,15 +17,13 @@ const nameRules = [UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
     flex-1
     min-w-0
     @keydown.esc="name = ''"
-    @submit="
-      () => {
-        const submittedName = name;
-        name = '';
-        addItem(submittedName, () => {
-          if (!name) name = submittedName;
-        });
-      }
-    "
+    @submit="() => {
+      const submittedName = name;
+      name = '';
+      addItem(submittedName, () => {
+        if (!name) name = submittedName;
+      });
+    }"
   >
     <UiTextField v-model="name" is-label-hidden label="Add a todo" placeholder="Add a todo" :rules="nameRules" />
   </UiForm>

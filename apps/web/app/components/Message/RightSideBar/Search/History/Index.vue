@@ -33,16 +33,14 @@ const listItems = computed(() =>
       <UiList
         :items="listItems"
         label="History"
-        @select="
-          async (id) => {
-            const searchHistory = items.find((item) => item.id === id);
-            if (!searchHistory) return;
-            searchQuery = searchHistory.query;
-            // A copy, since the search being edited adds to and writes into these filters, and the entry keeps what it ran
-            selectedFilters = searchHistory.filters.map((filter) => ({ ...filter }));
-            await readSearchedMessages();
-          }
-        "
+        @select="async (id) => {
+          const searchHistory = items.find((item) => item.id === id);
+          if (!searchHistory) return;
+          searchQuery = searchHistory.query;
+          // A copy, since the search being edited adds to and writes into these filters, and the entry keeps what it ran
+          selectedFilters = searchHistory.filters.map((filter) => ({ ...filter }));
+          await readSearchedMessages();
+        }"
       />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreSearchHistories(onComplete)" />
     </template>

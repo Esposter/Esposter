@@ -70,41 +70,35 @@ const emitWheel = (event: WheelEvent) => {
     tabindex="0"
     role="application"
     aria-label="Whiteboard"
-    @pointerdown="
-      (event) => {
-        canvas?.setPointerCapture(event.pointerId);
-        emitPointer(GesturePointerAction.Down, event);
-      }
-    "
+    @pointerdown="(event) => {
+      canvas?.setPointerCapture(event.pointerId);
+      emitPointer(GesturePointerAction.Down, event);
+    }"
     @pointermove="(event) => emitPointer(GesturePointerAction.Move, event)"
     @pointerup="(event) => emitPointer(GesturePointerAction.Up, event)"
     @pointercancel="(event) => emitPointer(GesturePointerAction.Cancel, event)"
     @dblclick="(event) => emit('doubleClick', getScreenPoint(event))"
     @wheel.prevent="(event) => emitWheel(event)"
-    @paste="
-      (event) => {
-        insertImages([...(event.clipboardData?.files ?? [])]);
-        emit('paste', event.clipboardData?.getData(MimeType.PlainText) ?? '');
-      }
-    "
-    @dragover="
-      (event) => {
-        if (event.dataTransfer?.types.includes('Files')) event.preventDefault();
-      }
-    "
-    @drop="
-      (event) => {
-        const files = [...(event.dataTransfer?.files ?? [])];
-        if (files.length === 0) return;
-
-        event.preventDefault();
-        insertImages(files, getDropPoint(event));
-      }
-    "
+    @paste="(event) => {
+      insertImages([...(event.clipboardData?.files ?? [])]);
+      emit('paste', event.clipboardData?.getData(MimeType.PlainText) ?? '');
+    }"
+    @dragover="(event) => {
+      if (event.dataTransfer?.types.includes('Files')) event.preventDefault();
+    }"
+    @drop="(event) => {
+      const files = [...(event.dataTransfer?.files ?? [])];
+      if (files.length === 0) return;
+    
+      event.preventDefault();
+      insertImages(files, getDropPoint(event));
+    }"
   >
     <svg text-text size-full block>
       <g
-        :transform="`translate(${-viewport.x * viewport.scale} ${-viewport.y * viewport.scale}) scale(${viewport.scale})`"
+        :transform="
+          `translate(${-viewport.x * viewport.scale} ${-viewport.y * viewport.scale}) scale(${viewport.scale})`
+        "
       >
         <ResourceWhiteboardElement v-for="element in displayedDocument.elements" :key="element.id" :element />
         <slot name="overlay" />

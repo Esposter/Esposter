@@ -16,8 +16,7 @@ import { SITE_NAME } from "@esposter/shared";
       <p text-muted>
         Made by
         <NuxtLink text-info no-underline hover:underline target="_blank" :to="LINKEDIN_PROFILE_URL"
-          >Jimmy Chen</NuxtLink
-        >
+        >Jimmy Chen</NuxtLink>
       </p>
     </div>
     <VisualGem size-32 />

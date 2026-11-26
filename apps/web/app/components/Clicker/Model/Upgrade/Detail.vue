@@ -36,12 +36,10 @@ const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
       <UiButton
         :disabled="!isAffordable"
         :variant="UiButtonVariant.Accent"
-        @click="
-          () => {
-            createBoughtUpgrade(upgrade);
-            play();
-          }
-        "
+        @click="() => {
+          createBoughtUpgrade(upgrade);
+          play();
+        }"
       >
         Buy
       </UiButton>

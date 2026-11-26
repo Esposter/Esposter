@@ -26,8 +26,7 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
     <span role="status" text-sm text-muted text-right min-w-16 text-nowrap self-center>
       <template v-if="findValue && occurrences.length === 0">No matches</template>
       <template v-else-if="occurrences.length > 0"
-        >{{ currentOccurrenceIndex + 1 }} / {{ occurrences.length }}</template
-      >
+      >{{ currentOccurrenceIndex + 1 }} / {{ occurrences.length }}</template>
     </span>
     <ResourceSheetFindReplacePreviousOccurrenceButton />
     <ResourceSheetFindReplaceNextOccurrenceButton />

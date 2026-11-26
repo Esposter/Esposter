@@ -16,12 +16,10 @@ const emit = defineEmits<{ delete: [ids: string[]] }>();
     <span text-muted truncate>{{ selectedIds.length }} selected</span>
     <UiButton
       :variant="UiButtonVariant.Danger"
-      @click="
-        () => {
-          emit('delete', selectedIds);
-          selectedIds = [];
-        }
-      "
+      @click="() => {
+        emit('delete', selectedIds);
+        selectedIds = [];
+      }"
     >
       Delete
     </UiButton>

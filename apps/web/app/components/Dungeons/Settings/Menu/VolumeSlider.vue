@@ -50,40 +50,29 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
     @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="(pointer: Input.Pointer) => onSliderBarClick(pointer)"
   />
   <Rectangle
-    :configuration="{
-      originX: 0,
-      originY: 0.5,
-      width: VOLUME_SLIDER_WIDTH,
-      height: VOLUME_SLIDER_HEIGHT,
-      fillColor: 0xff2222,
+    :configuration="
+      { originX: 0, originY: 0.5, width: VOLUME_SLIDER_WIDTH, height: VOLUME_SLIDER_HEIGHT, fillColor: 0xff2222 }
+    "
+    :on-complete="(_scene, rectangle) => {
+      volumeSlider = markRaw(
+        createSlider(rectangle, {
+          start: { x: VOLUME_SLIDER_START_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
+          end: { x: VOLUME_SLIDER_END_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
+          value: volumePercentage / 100,
+          // The drag keeps the thumb where the pointer is, so the store follows without moving it back
+          onValueChange: (newValue) => setVolume(Math.floor(newValue * 100), false),
+        }),
+      );
     }"
-    :on-complete="
-      (_scene, rectangle) => {
-        volumeSlider = markRaw(
-          createSlider(rectangle, {
-            start: { x: VOLUME_SLIDER_START_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
-            end: { x: VOLUME_SLIDER_END_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
-            value: volumePercentage / 100,
-            // The drag keeps the thumb where the pointer is, so the store follows without moving it back
-            onValueChange: (newValue) => setVolume(Math.floor(newValue * 100), false),
-          }),
-        );
-      }
-    "
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
-      () => {
-        if (!volumeSlider) return;
-        // Sync the slider to the valid volume once the user finishes adjusting.
-        volumeSlider.value = volumePercentage / 100;
-      }
-    "
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="() => {
+      if (!volumeSlider) return;
+      // Sync the slider to the valid volume once the user finishes adjusting.
+      volumeSlider.value = volumePercentage / 100;
+    }"
   />
   <Text
-    :configuration="{
-      x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
-      y: baseY,
-      text: `${volumePercentage}%`,
-      style: MenuTextStyle,
-    }"
+    :configuration="
+      { x: INITIAL_SETTINGS_VALUE_POSITION.x + 340, y: baseY, text: `${volumePercentage}%`, style: MenuTextStyle }
+    "
   />
 </template>

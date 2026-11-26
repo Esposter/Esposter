@@ -176,13 +176,11 @@ watch(from, (newFrom) => {
         :aria-multiselectable="isRange"
         role="grid"
         tabindex="-1"
-        @keydown="
-          (event: KeyboardEvent) => {
-            // Escape lets go of the end a range is waiting for and keeps its start
-            if (event.key === 'Escape') previewDate = undefined;
-            onGridKeydown(event);
-          }
-        "
+        @keydown="(event: KeyboardEvent) => {
+          // Escape lets go of the end a range is waiting for and keeps its start
+          if (event.key === 'Escape') previewDate = undefined;
+          onGridKeydown(event);
+        }"
         @mouseleave="previewDate = undefined"
       >
         <thead>
@@ -213,12 +211,10 @@ watch(from, (newFrom) => {
                 :is-marked="markedDates.includes(date.toString())"
                 :is-outside="outside"
                 :is-previewed="checkIsPreviewed(date)"
-                @press="
-                  () => {
-                    setFocusedDate(date);
-                    if (!disabled) choose(date);
-                  }
-                "
+                @press="() => {
+                  setFocusedDate(date);
+                  if (!disabled) choose(date);
+                }"
                 @preview="previewDate = $event"
               />
             </td>

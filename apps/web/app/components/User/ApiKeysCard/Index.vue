@@ -53,19 +53,17 @@ const deleteKey = async () => {
   <UserSettingsSection :section>
     <template #actions>
       <UserApiKeysCardCreateButton
-        :create="
-          async (input) => {
-            const outcome = await executeMutation(() => $trpc.user.createApiKey.mutate(input), {
-              // The key is minted by the server and shown once, so the dialog waits for it before it draws it
-              awaitedBecause: AwaitedReason.ServerIssuedValue,
-              key: API_KEYS_MUTATION_KEY,
-              onSuccess: async () => {
-                await refresh();
-              },
-            });
-            return outcome.status === MutationStatus.Succeeded ? (outcome.result ?? '') : '';
-          }
-        "
+        :create="async (input) => {
+          const outcome = await executeMutation(() => $trpc.user.createApiKey.mutate(input), {
+            // The key is minted by the server and shown once, so the dialog waits for it before it draws it
+            awaitedBecause: AwaitedReason.ServerIssuedValue,
+            key: API_KEYS_MUTATION_KEY,
+            onSuccess: async () => {
+              await refresh();
+            },
+          });
+          return outcome.status === MutationStatus.Succeeded ? (outcome.result ?? '') : '';
+        }"
       />
     </template>
     <UiAsyncBody

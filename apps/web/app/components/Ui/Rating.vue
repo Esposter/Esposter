@@ -34,12 +34,10 @@ const filledTo = computed(
     :model-value
     :label
     renderless
-    @update:model-value="
-      (value) => {
-        if (value !== undefined) modelValue = value;
-        hovered = undefined;
-      }
-    "
+    @update:model-value="(value) => {
+      if (value !== undefined) modelValue = value;
+      hovered = undefined;
+    }"
   >
     <div
       :="mergeProps(attrs, $attrs)"
@@ -66,11 +64,9 @@ const filledTo = computed(
           ui-button
           px-0
           type="button"
-          @pointerenter="
-            () => {
-              if (!isDisabled) hovered = value;
-            }
-          "
+          @pointerenter="() => {
+            if (!isDisabled) hovered = value;
+          }"
         >
           <slot name="mark" :is-on="value <= filledTo" :value />
         </button>

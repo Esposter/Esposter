@@ -26,12 +26,10 @@ defineProps<Props>();
     :disabled="isDisabled"
     :model-value
     :multiple="Array.isArray(modelValue)"
-    @update:model-value="
-      (value) => {
-        if ((typeof value === 'string' || Array.isArray(value)) && !checkIsDeepEqual(value, modelValue))
-          modelValue = value as TModel;
-      }
-    "
+    @update:model-value="(value) => {
+      if ((typeof value === 'string' || Array.isArray(value)) && !checkIsDeepEqual(value, modelValue))
+        modelValue = value as TModel;
+    }"
   >
     <UiSelectActivator :="$attrs" :items :label :placeholder />
     <Select.Content ui-popover>

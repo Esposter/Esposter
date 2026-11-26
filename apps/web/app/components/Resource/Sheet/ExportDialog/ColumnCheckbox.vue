@@ -15,12 +15,10 @@ defineProps<Props>();
     is-label-visible
     :label="column.name"
     :model-value="selectedColumnIds.includes(column.id)"
-    @update:model-value="
-      (newModelValue) => {
-        selectedColumnIds = newModelValue
-          ? [...selectedColumnIds, column.id]
-          : selectedColumnIds.filter((selectedColumnId) => selectedColumnId !== column.id);
-      }
-    "
+    @update:model-value="(newModelValue) => {
+      selectedColumnIds = newModelValue
+        ? [...selectedColumnIds, column.id]
+        : selectedColumnIds.filter((selectedColumnId) => selectedColumnId !== column.id);
+    }"
   />
 </template>

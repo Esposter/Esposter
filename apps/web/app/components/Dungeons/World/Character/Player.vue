@@ -82,26 +82,20 @@ onShutdown((scene) => {
     :direction="player.direction"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"
     :walking-animation-mapping="PlayerWalkingAnimationMapping"
-    :on-position-change-finished="
-      (scene, { enterTile }) => {
-        const tile = layerMap?.get(LayerName.Encounter)?.getTileAt(enterTile.x, enterTile.y, false);
-        if (!tile) return;
-
-        getDungeonsSoundEffect(scene, DungeonsKeys.ThirdPartyLeohpazStepGrass).play();
-        rollRandomEncounter(scene);
-      }
-    "
-    :on-complete="
-      (scene, newSprite) => {
-        sprite = markRaw(newSprite);
-        scene.cameras.main.startFollow(sprite, true);
-        scene.cameras.main.setFollowOffset(-sprite.width, -sprite.height);
-      }
-    "
-    @update:direction="
-      (newDirection) => {
-        if (newDirection) player.direction = newDirection;
-      }
-    "
+    :on-position-change-finished="(scene, { enterTile }) => {
+      const tile = layerMap?.get(LayerName.Encounter)?.getTileAt(enterTile.x, enterTile.y, false);
+      if (!tile) return;
+    
+      getDungeonsSoundEffect(scene, DungeonsKeys.ThirdPartyLeohpazStepGrass).play();
+      rollRandomEncounter(scene);
+    }"
+    :on-complete="(scene, newSprite) => {
+      sprite = markRaw(newSprite);
+      scene.cameras.main.startFollow(sprite, true);
+      scene.cameras.main.setFollowOffset(-sprite.width, -sprite.height);
+    }"
+    @update:direction="(newDirection) => {
+      if (newDirection) player.direction = newDirection;
+    }"
   />
 </template>

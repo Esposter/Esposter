@@ -26,7 +26,7 @@ onMounted(() => {
        Its title over the world, veiled as a menu veils it, and the way back -->
   <GameScreen class="menu-placeholder" role="dialog" aria-modal="true" :aria-label="title">
     <p class="title" role="heading" aria-level="2">{{ title }}</p>
-    <GameButton ref="backButton" class="back" :kind="GameButtonKind.Pill" tip="" @click="emit('close')">
+    <GameButton class="back" ref="backButton" :kind="GameButtonKind.Pill" tip="" @click="emit('close')">
       {{ gameText[GameTextKey.Back] }}
     </GameButton>
   </GameScreen>

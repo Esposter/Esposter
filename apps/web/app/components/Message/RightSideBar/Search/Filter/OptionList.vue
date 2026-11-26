@@ -19,11 +19,9 @@ const listItems = computed(() =>
   <UiList
     :items="listItems"
     label="Options"
-    @select="
-      (value) => {
-        const option = items.find((item) => String(item.value) === value);
-        if (option) emit('select', option.value);
-      }
-    "
+    @select="(value) => {
+      const option = items.find((item) => String(item.value) === value);
+      if (option) emit('select', option.value);
+    }"
   />
 </template>

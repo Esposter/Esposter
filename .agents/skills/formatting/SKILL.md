@@ -12,13 +12,13 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 - **No blank lines between consecutive `const` assignments** — group them tightly.
 - **No blank line before a `return`** that immediately follows a `const` in a small function (including composables that return a function directly — `return` follows the last setup line with no gap).
 - **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block. (Exception: consecutive top-level `watch`/lifecycle-hook registrations in a Vue `<script setup>` each get a blank line between them — the `vue` skill, `references/lifecycle-and-ssr.md`.)
-- **Blank line between an SFC's top-level blocks** — checked by `scripts/src/workspace/templates/templateTextRules.test.ts`, which fails a missing one and writes none. The wait for `vize fmt` to pad them, and the switch's plan, are in `openspec/specs/architecture/lint-toolchain/design.md`.
+- **Blank line between an SFC's top-level blocks** — written by `vize fmt`, which formats every component (`pnpm format`); the split between the two formatters is `openspec/specs/architecture/lint-toolchain/design.md`'s.
 - **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-page-composition` skill (`references/granularity.md`).
 - **Imports** — order and blank lines are oxfmt's `sortImports` (`packages/configuration/oxfmt/oxfmtConfiguration.ts`), applied on every format. `internalPattern: []` is what collapses every source (`external-pkg`, `#shared`, `@vueuse/*`, `#src/`) into one bucket per kind, so the formatter produces a contiguous `import type` group, one blank line, then a contiguous value group. Don't hand-place import blank lines.
 
 ## Object Literals
 
-An object literal that fits the width is on one line — `oxfmt`'s `objectWrap: "collapse"` decides it, and an inline snapshot is the one place it does not reach (`references/object-literals.md`).
+An object literal that fits the width is on one line — the shared `objectWrap: "collapse"` decides it, in a component too, and an inline snapshot is the one place it does not reach (`references/object-literals.md`).
 
 ## Comments
 
@@ -35,7 +35,7 @@ An object literal that fits the width is on one line — `oxfmt`'s `objectWrap: 
 
 ## Line Endings
 
-- Enforced by `.gitattributes` (`* text=auto eol=lf` — every text file checks out LF whatever "core.autocrlf" says on the machine; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.
+- Enforced by `.gitattributes` (`* text=auto eol=lf` — every text file checks out LF whatever "core.autocrlf" says on the machine; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by the formatters (`pnpm format`). Never hand-convert line endings.
 
 ## Deep Dives
 

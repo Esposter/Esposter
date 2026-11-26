@@ -27,12 +27,9 @@ const text = computed(() => prettify(item.id));
   >
     <DungeonsInventoryItemListRow :text @click="emit('click')">
       <Text
-        :configuration="{
-          x: INITIAL_CURSOR_POSITION.x + 590,
-          y: 3,
-          text: 'x',
-          style: { ...MenuTextStyle, fontFamily: 'Courier' },
-        }"
+        :configuration="
+          { x: INITIAL_CURSOR_POSITION.x + 590, y: 3, text: 'x', style: { ...MenuTextStyle, fontFamily: 'Courier' } }
+        "
       />
       <Text :configuration="{ x: INITIAL_CURSOR_POSITION.x + 620, text: `${item.quantity}`, style: MenuTextStyle }" />
     </DungeonsInventoryItemListRow>

@@ -94,38 +94,22 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
       playerAction((currentDuel) => declareGcgRoundEnd(currentDuel, GCG_PLAYER_SIDE_INDEX, currentDuel.rule))
     "
     @leave="(won) => emit('leave', won)"
-    @play-card="
-      (handIndex, targetIndex, dieIndices, choice) =>
-        playerAction((currentDuel) =>
-          playGcgCard(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, targetIndex, dieIndices, choice),
-        )
-    "
-    @prepare="
-      (switchedHandIndices, activeIndex) =>
-        playerAction((currentDuel) =>
-          prepareGcgSide(currentDuel, GCG_PLAYER_SIDE_INDEX, switchedHandIndices, activeIndex),
-        )
-    "
+    @play-card="(handIndex, targetIndex, dieIndices, choice) =>
+      playerAction((currentDuel) =>
+        playGcgCard(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, targetIndex, dieIndices, choice),
+      )"
+    @prepare="(switchedHandIndices, activeIndex) =>
+      playerAction((currentDuel) => prepareGcgSide(currentDuel, GCG_PLAYER_SIDE_INDEX, switchedHandIndices, activeIndex))"
     @reroll="
       (dieIndices) => playerAction((currentDuel) => rerollGcgDice(currentDuel, GCG_PLAYER_SIDE_INDEX, dieIndices))
     "
-    @replace-character="
-      (characterIndex) =>
-        playerAction((currentDuel) => replaceGcgCharacter(currentDuel, GCG_PLAYER_SIDE_INDEX, characterIndex))
-    "
-    @switch-character="
-      (characterIndex, dieIndices) =>
-        playerAction((currentDuel) =>
-          switchGcgCharacter(currentDuel, GCG_PLAYER_SIDE_INDEX, characterIndex, dieIndices),
-        )
-    "
-    @tune-die="
-      (handIndex, dieIndex) =>
-        playerAction((currentDuel) => tuneGcgDie(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, dieIndex))
-    "
-    @use-skill="
-      (skillId, dieIndices) =>
-        playerAction((currentDuel) => useGcgSkill(currentDuel, GCG_PLAYER_SIDE_INDEX, skillId, dieIndices))
-    "
+    @replace-character="(characterIndex) =>
+      playerAction((currentDuel) => replaceGcgCharacter(currentDuel, GCG_PLAYER_SIDE_INDEX, characterIndex))"
+    @switch-character="(characterIndex, dieIndices) =>
+      playerAction((currentDuel) => switchGcgCharacter(currentDuel, GCG_PLAYER_SIDE_INDEX, characterIndex, dieIndices))"
+    @tune-die="(handIndex, dieIndex) =>
+      playerAction((currentDuel) => tuneGcgDie(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, dieIndex))"
+    @use-skill="(skillId, dieIndices) =>
+      playerAction((currentDuel) => useGcgSkill(currentDuel, GCG_PLAYER_SIDE_INDEX, skillId, dieIndices))"
   />
 </template>

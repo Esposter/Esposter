@@ -18,7 +18,7 @@ const uiStyle = useUiStyle();
       transparent 40%,
       color-mix(in srgb, var(--ui-border) 60%, transparent) 40% 60%,
       transparent 60%
-    )
+  )
     color-mix(in srgb, var(--ui-text) 8%, transparent);
   background-size: 250% 100%;
 }

@@ -53,11 +53,9 @@ const languageValue = computed(() => getLanguageDisplayName(settings.value.langu
     :disabled="!checkIsActiveRow(row.kind)"
     :kind="GameButtonKind.Row"
     tip=""
-    @click="
-      row.kind === SettingsRowKind.Toggle
-        ? (settings = { ...settings, [row.setting]: !settings[row.setting] })
-        : (openedList = openedList === row.kind ? undefined : row.kind)
-    "
+    @click="row.kind === SettingsRowKind.Toggle
+      ? (settings = { ...settings, [row.setting]: !settings[row.setting] })
+      : (openedList = openedList === row.kind ? undefined : row.kind)"
   >
     <svg
       v-for="isFaint of [false, true]"

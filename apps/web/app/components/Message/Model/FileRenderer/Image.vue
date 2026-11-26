@@ -24,10 +24,8 @@ const isThumbnailRendered = computed(
     :src="isThumbnailRendered ? inlineThumbnailUrl : url"
     :alt="file.filename"
     :class="isPreview ? 'size-full object-cover' : undefined"
-    @error="
-      () => {
-        if (isThumbnailRendered) failedThumbnailUrls.add(inlineThumbnailUrl);
-      }
-    "
+    @error="() => {
+      if (isThumbnailRendered) failedThumbnailUrls.add(inlineThumbnailUrl);
+    }"
   />
 </template>

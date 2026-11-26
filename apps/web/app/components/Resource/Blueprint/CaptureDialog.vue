@@ -41,27 +41,22 @@ onUnmounted(() => {
     confirm-label="Create"
     :is-confirm-disabled="overLimitCount > 0 || undefined"
     :title="SAVE_AS_BLUEPRINT_TITLE"
-    :submit="
-      async () => {
-        const outcome = await executeMutation(
-          () => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }),
-          {
-            awaitedBecause: AwaitedReason.ServerIssuedValue,
-            key: Symbol('captureBlueprint'),
-            onError: createErrorNotification,
-            onSuccess: async (newBlueprint) => {
-              createNotification({
-                action: { title: 'Go to blueprint', to: RoutePath.Resource(newBlueprint.id) },
-                severity: NotificationSeverity.Success,
-                title: `Created blueprint “${newBlueprint.name}”`,
-              });
-              await navigateTo(RoutePath.Resource(newBlueprint.id));
-            },
-          },
-        );
-        return outcome.status === MutationStatus.Succeeded;
-      }
-    "
+    :submit="async () => {
+      const outcome = await executeMutation(() => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }), {
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
+        key: Symbol('captureBlueprint'),
+        onError: createErrorNotification,
+        onSuccess: async (newBlueprint) => {
+          createNotification({
+            action: { title: 'Go to blueprint', to: RoutePath.Resource(newBlueprint.id) },
+            severity: NotificationSeverity.Success,
+            title: `Created blueprint “${newBlueprint.name}”`,
+          });
+          await navigateTo(RoutePath.Resource(newBlueprint.id));
+        },
+      });
+      return outcome.status === MutationStatus.Succeeded;
+    }"
   >
     <p text-muted>
       Capture {{ captureIds.length }} {{ pluralize("resource", captureIds.length) }} into a new blueprint.

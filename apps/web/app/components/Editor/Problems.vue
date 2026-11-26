@@ -43,12 +43,10 @@ const findingItems = computed<UiListItem<string>[]>(() =>
       <UiList
         :items="findingItems"
         label="Problems"
-        @select="
-          (value) => {
-            emit('select', takeOne(findings, Number(value)).nodeId);
-            close();
-          }
-        "
+        @select="(value) => {
+          emit('select', takeOne(findings, Number(value)).nodeId);
+          close();
+        }"
       />
     </template>
   </UiPopover>

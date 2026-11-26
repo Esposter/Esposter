@@ -30,13 +30,11 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
     v-model="isDeleteOpen"
     confirm-label="Delete"
     :title="`Delete ${prettify(deletingVisual.type)} visual`"
-    :confirm="
-      () => {
-        if (!deletingVisual) return;
-
-        return deleteVisual({ id: deletingVisual.id });
-      }
-    "
+    :confirm="() => {
+      if (!deletingVisual) return;
+    
+      return deleteVisual({ id: deletingVisual.id });
+    }"
   >
     <p>{{ getVisualDeleteDescription(deletingVisual) }}</p>
   </UiConfirmDialog>

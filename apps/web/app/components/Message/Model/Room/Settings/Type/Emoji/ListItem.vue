@@ -33,18 +33,13 @@ watch(
       is-label-hidden
       flex-1
       min-w-0
-      @focusout="
-        () => {
-          if (
-            editedName === roomEmoji.name ||
-            !selectRoomEmojiInMessageSchema.shape.name.safeParse(editedName).success
-          ) {
-            editedName = roomEmoji.name;
-            return;
-          }
-          updateRoomEmoji({ id: roomEmoji.id, name: editedName, roomId });
+      @focusout="() => {
+        if (editedName === roomEmoji.name || !selectRoomEmojiInMessageSchema.shape.name.safeParse(editedName).success) {
+          editedName = roomEmoji.name;
+          return;
         }
-      "
+        updateRoomEmoji({ id: roomEmoji.id, name: editedName, roomId });
+      }"
     />
     <MessageModelRoomSettingsTypeEmojiDeleteButton :id="roomEmoji.id" />
   </div>

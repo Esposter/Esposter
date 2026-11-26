@@ -93,11 +93,9 @@ defineExpose({ element });
       :max="maxZonedDateTime?.toPlainDate()"
       :min="minZonedDateTime?.toPlainDate()"
       :model-value="zonedDateTime?.toPlainDate()"
-      @update:model-value="
-        (value) => {
-          if (value) chooseDate(value);
-        }
-      "
+      @update:model-value="(value) => {
+        if (value) chooseDate(value);
+      }"
     />
     <UiTextField
       v-if="isTime"

@@ -21,20 +21,18 @@ const isRequestingJoin = ref(false);
   <UiButton
     :is-pending="isRequestingJoin"
     :variant="UiButtonVariant.Accent"
-    @click="
-      async () => {
-        isRequestingJoin = true;
-        await withFinalizerAsync(
-          async () => {
-            if (isCreator) await joinCall(callId);
-            else await knockCall(callId);
-          },
-          () => {
-            isRequestingJoin = false;
-          },
-        );
-      }
-    "
+    @click="async () => {
+      isRequestingJoin = true;
+      await withFinalizerAsync(
+        async () => {
+          if (isCreator) await joinCall(callId);
+          else await knockCall(callId);
+        },
+        () => {
+          isRequestingJoin = false;
+        },
+      );
+    }"
   >
     {{ isCreator ? "Join now" : "Request to join" }}
   </UiButton>

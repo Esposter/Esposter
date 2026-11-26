@@ -19,13 +19,9 @@ const emit = defineEmits<{ "update:displayWidth": [value?: number] }>();
 
 <template>
   <Image
-    :configuration="{
-      visible: !isHiddenWhenEmpty || (displayWidth ?? 0) > 0,
-      ...imagePosition,
-      texture,
-      displayWidth,
-      scaleY,
-    }"
+    :configuration="
+      { visible: !isHiddenWhenEmpty || (displayWidth ?? 0) > 0, ...imagePosition, texture, displayWidth, scaleY }
+    "
     @update:display-width="emit('update:displayWidth', $event)"
   />
 </template>

@@ -51,7 +51,7 @@ const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, ti
 </script>
 
 <template>
-  <div ref="grid" class="dashboard-grid" relative :style="{ height: `${gridHeight}px` }">
+  <div class="dashboard-grid" ref="grid" relative :style="{ height: `${gridHeight}px` }">
     <DashboardGridTile
       v-for="{ geometry, isDragged, item, offset } of tiles"
       :key="item.id"

@@ -44,15 +44,13 @@ const isNameValid = computed(() => selectRoomEmojiInMessageSchema.shape.name.saf
     confirm-label="Save"
     :is-confirm-disabled="isFull || !fileValidation?.isValid || !isNameValid || undefined"
     title="Add Emoji"
-    :submit="
-      async () => {
-        if (!file) return false;
-
-        if (!(await createRoomEmoji({ name, roomId }, file))) return false;
-        name = '';
-        files = [];
-      }
-    "
+    :submit="async () => {
+      if (!file) return false;
+    
+      if (!(await createRoomEmoji({ name, roomId }, file))) return false;
+      name = '';
+      files = [];
+    }"
   >
     <div flex flex-col gap-4 ui-body>
       <p>

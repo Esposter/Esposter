@@ -27,12 +27,10 @@ const isRoleManageable = computed(() => checkIsRoleManageable(roomId, role.posit
     <MessageModelRoomSettingsUnsavedChangesBar
       v-if="isDirty"
       @reset="reset()"
-      @save="
-        () => {
-          updateRole({ id: role.id, permissions: editedPermissions, roomId });
-          settle();
-        }
-      "
+      @save="() => {
+        updateRole({ id: role.id, permissions: editedPermissions, roomId });
+        settle();
+      }"
     />
   </div>
 </template>

@@ -32,7 +32,8 @@ const displayOfflineCap = formatDuration(OFFLINE_CAP_MS);
         out -->
       While you were away for {{ displayElapsedDuration }}, your buildings produced
       <span :style="{ color: clickerItemProperties.color }">{{ displayAwardedPoints }}</span>
-      {{ clickerItemProperties.pluralName
+      {{
+        clickerItemProperties.pluralName
       }}<template v-if="isCapped"> (production is capped at {{ displayOfflineCap }})</template>.
     </p>
     <template #footer>

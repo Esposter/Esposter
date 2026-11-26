@@ -53,12 +53,10 @@ const confirmSegments = computed(() => {
         :aria-pressed="monthChoice === month"
         :kind="GameButtonKind.Row"
         tip=""
-        @click="
-          () => {
-            month = monthChoice;
-            if (day !== undefined && day > getBirthdayDayCount(monthChoice)) day = undefined;
-          }
-        "
+        @click="() => {
+          month = monthChoice;
+          if (day !== undefined && day > getBirthdayDayCount(monthChoice)) day = undefined;
+        }"
       >
         {{ monthChoice }}
       </GameButton>

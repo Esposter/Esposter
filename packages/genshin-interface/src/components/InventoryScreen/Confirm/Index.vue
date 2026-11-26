@@ -48,8 +48,8 @@ defineExpose({ focus: () => cancelButton.value?.focus() });
     </template>
     <div class="confirm-buttons">
       <GameButton
-        ref="cancelButton"
         class="translucent-button"
+        ref="cancelButton"
         :kind="GameButtonKind.Row"
         tip=""
         @click="emit('cancelDestroy')"

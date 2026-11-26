@@ -31,14 +31,12 @@ const { isOpen, item: post } = useSingletonDialog(
     :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Delete"
     title="Delete post"
-    :confirm="
-      async () => {
-        if (!post) return;
-        const isDeleted = await deletePost(post.id);
-        if (isDeleted) await navigateTo(RoutePath.Index);
-        return isDeleted;
-      }
-    "
+    :confirm="async () => {
+      if (!post) return;
+      const isDeleted = await deletePost(post.id);
+      if (isDeleted) await navigateTo(RoutePath.Index);
+      return isDeleted;
+    }"
   >
     <p>Are you sure you want to delete this post?</p>
     <PostPreview :post />

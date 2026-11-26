@@ -81,24 +81,20 @@ const getNextSize = (event: KeyboardEvent) => {
     z-10
     touch-none
     focus-visible:outline-hidden
-    @keydown="
-      (event: KeyboardEvent) => {
-        const nextSize = getNextSize(event);
-        if (nextSize === undefined) return;
-        event.preventDefault();
-        size = clamp(nextSize);
-      }
-    "
+    @keydown="(event: KeyboardEvent) => {
+      const nextSize = getNextSize(event);
+      if (nextSize === undefined) return;
+      event.preventDefault();
+      size = clamp(nextSize);
+    }"
     @pointercancel="endDrag($event)"
     @pointerdown="startDrag($event)"
-    @pointermove="
-      (event: PointerEvent) => {
-        if (event.pointerId !== dragPointerId) return;
-        const delta = getPosition(event) - dragStart.position;
-        // A pointer's position can be fractional, and a saved size is a whole pixel count
-        size = clamp(Math.round(dragStart.size + (isReversed ? -delta : delta)));
-      }
-    "
+    @pointermove="(event: PointerEvent) => {
+      if (event.pointerId !== dragPointerId) return;
+      const delta = getPosition(event) - dragStart.position;
+      // A pointer's position can be fractional, and a saved size is a whole pixel count
+      size = clamp(Math.round(dragStart.size + (isReversed ? -delta : delta)));
+    }"
     @pointerup="endDrag($event)"
   />
 </template>

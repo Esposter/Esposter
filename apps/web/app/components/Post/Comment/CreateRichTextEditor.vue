@@ -21,18 +21,15 @@ const description = ref("");
         v-if="editor"
         :disabled="EMPTY_TEXT_REGEX.test(description)"
         :variant="UiButtonVariant.Accent"
-        @click="
-          () => {
-            // The comment is drawn as it is sent, so the editor clears at once. A refused comment hands its text back,
-            // Unless the reader has started another one since
-            const submittedDescription = description;
-            editor?.commands.clearContent(true);
-            createComment({ parentId, description: submittedDescription }, () => {
-              if (EMPTY_TEXT_REGEX.test(description))
-                editor?.commands.setContent(submittedDescription, { emitUpdate: true });
-            });
-          }
-        "
+        @click="() => {
+          // The comment is drawn as it is sent, so the editor clears at once. A refused comment hands its text back,
+          // Unless the reader has started another one since
+          const submittedDescription = description;
+          editor?.commands.clearContent(true);
+          createComment({ parentId, description: submittedDescription }, () => {
+            if (EMPTY_TEXT_REGEX.test(description)) editor?.commands.setContent(submittedDescription, { emitUpdate: true });
+          });
+        }"
       >
         Comment
       </UiButton>

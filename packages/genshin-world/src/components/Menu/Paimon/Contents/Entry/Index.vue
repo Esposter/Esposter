@@ -36,7 +36,7 @@ const emit = defineEmits<{ open: [] }>();
   >
     <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
     <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
-    <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
+    <span v-if="alertedIcons.includes(icon)" class="alert" aria-hidden="true" />
   </GameButton>
 </template>
 

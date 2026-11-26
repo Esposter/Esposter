@@ -35,26 +35,24 @@ const excludedUserIds = computed(() => {
     confirm-label="Add"
     :is-confirm-disabled="selectedUserIds.length === 0 || undefined"
     title="Add People"
-    :submit="
-      async () => {
-        // The server may refuse the add, so the picked friends stay in the dialog until it is kept, and the picker
-        // Clears only then
-        const isAdded = await writeAwaited(
-          async () => {
-            // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive
-            // As their join events, and the answer names nothing to arrive
-            await $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds });
-            return [];
-          },
-          { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
-        );
-        if (isAdded) {
-          selectedUserIds = [];
-          friendPicker?.reset();
-        }
-        return isAdded;
+    :submit="async () => {
+      // The server may refuse the add, so the picked friends stay in the dialog until it is kept, and the picker
+      // Clears only then
+      const isAdded = await writeAwaited(
+        async () => {
+          // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive
+          // As their join events, and the answer names nothing to arrive
+          await $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds });
+          return [];
+        },
+        { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
+      );
+      if (isAdded) {
+        selectedUserIds = [];
+        friendPicker?.reset();
       }
-    "
+      return isAdded;
+    }"
   >
     <MessageModelRoomDirectMessageFriendPicker ref="friendPicker" v-model="selectedUserIds" :excluded-user-ids />
   </StyledFormDialog>

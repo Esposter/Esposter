@@ -43,12 +43,10 @@ const hasManageEmojis = computed(
     <template v-if="hasManageEmojis" #footer>
       <!-- The picker steps aside for the dialog, which the list mounts once for every message -->
       <UiButton
-        @click.stop="
-          () => {
-            isOpen = false;
-            isCreateOpen = true;
-          }
-        "
+        @click.stop="() => {
+          isOpen = false;
+          isCreateOpen = true;
+        }"
       >
         Add Emoji
       </UiButton>

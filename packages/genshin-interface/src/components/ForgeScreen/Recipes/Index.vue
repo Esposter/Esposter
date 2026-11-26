@@ -51,7 +51,7 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
       class="queue"
       :data-state="queue.state"
     >
-      <span aria-hidden="true" class="queue-tile" />
+      <span class="queue-tile" aria-hidden="true" />
       <span class="queue-name">{{ queue.name }}</span>
       <span class="queue-progress">{{ queue.progressLabel }}</span>
       <span class="queue-ready">{{ queue.readyLabel }}</span>
@@ -59,8 +59,8 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
     </li>
   </ul>
   <template v-if="tab === ForgeTab.Materials">
-    <span aria-hidden="true" class="sort" />
-    <span aria-hidden="true" class="sort-toggle" />
+    <span class="sort" aria-hidden="true" />
+    <span class="sort-toggle" aria-hidden="true" />
   </template>
 </template>
 

@@ -33,10 +33,8 @@ onUnmounted(() => {
     v-model:is-moving="npc.isMoving"
     :direction="npc.direction"
     :npc
-    @update:direction="
-      (newDirection) => {
-        if (newDirection) npc.direction = newDirection;
-      }
-    "
+    @update:direction="(newDirection) => {
+      if (newDirection) npc.direction = newDirection;
+    }"
   />
 </template>

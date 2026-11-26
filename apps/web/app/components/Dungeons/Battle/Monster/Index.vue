@@ -21,12 +21,9 @@ onUnmounted(() => {
 <template>
   <Image
     v-if="activeMonster"
-    :configuration="{
-      ...monsterPosition,
-      texture: getMonsterFileKey(activeMonster.key),
-      flipX: !isEnemy,
-      tween: monsterTween,
-    }"
+    :configuration="
+      { ...monsterPosition, texture: getMonsterFileKey(activeMonster.key), flipX: !isEnemy, tween: monsterTween }
+    "
   />
   <DungeonsBattleMonsterAvailableListContainer v-if="!isEnemy" />
   <DungeonsBattleMonsterInfoContainer v-if="activeMonster" :is-enemy />

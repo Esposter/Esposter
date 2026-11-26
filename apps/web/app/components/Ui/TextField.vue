@@ -76,9 +76,10 @@ defineExpose({ element });
   >
     <!-- oxlint-disable a11y/label-has-for -- the control is the primitive's, which takes the id this
       label names -->
-    <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted
-      >{{ label }} <UiRequiredMark v-if="isRequired" is-silent
-    /></label>
+    <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted>{{ label }} <UiRequiredMark
+        v-if="isRequired"
+        is-silent
+      /></label>
     <!-- oxlint-enable a11y/label-has-for -->
     <div flex gap-2 items-start>
       <div flex-1 min-w-0 relative>
@@ -116,11 +117,9 @@ defineExpose({ element });
             w-full
             resize-y
             ui-field
-            @keydown.esc="
-              () => {
-                if (isSearch && modelValue) modelValue = '';
-              }
-            "
+            @keydown.esc="() => {
+              if (isSearch && modelValue) modelValue = '';
+            }"
           />
           <!-- oxlint-enable vue/no-restricted-syntax -->
         </Input.Control>

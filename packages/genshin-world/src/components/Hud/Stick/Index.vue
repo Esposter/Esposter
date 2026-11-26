@@ -120,8 +120,8 @@ onUnmounted(() => {
     while the character walks, and While it runs a cyan arc with an arrow at the rim, inside the back's faint dark
     ring. Provisional: the chevrons' shape, The back's stroke and the arrow's size, which the recordings show too
     small to measure -->
-  <div ref="area" class="area">
-    <svg ref="group" class="group" :style="groupStyle" aria-hidden="true" :viewBox>
+  <div class="area" ref="area">
+    <svg class="group" ref="group" :style="groupStyle" aria-hidden="true" :viewBox>
       <circle v-if="stick.isHeld && isRunning" class="back" r="107" />
       <g v-if="stick.isHeld && push > 0" :transform="`rotate(${markAngle})`">
         <path v-if="isRunning" class="run" :d="runArcPath" />

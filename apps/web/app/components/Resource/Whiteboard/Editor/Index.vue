@@ -121,12 +121,10 @@ if (editState.value.document.elements.length > 0)
     >
       <ResourceWhiteboardEditorCanvas
         :="getContextMenuGestureProps(onOpenContextMenu)"
-        @double-click="
-          (screen) => {
-            const elementId = getElementIdAt(screen);
-            if (elementId !== undefined) startTextEdit(elementId);
-          }
-        "
+        @double-click="(screen) => {
+          const elementId = getElementIdAt(screen);
+          if (elementId !== undefined) startTextEdit(elementId);
+        }"
         @paste="(text) => pasteClipboardText(text)"
         @pointer="(event) => onPointer(event)"
         @wheel="(event) => onWheel(event)"

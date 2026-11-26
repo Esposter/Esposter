@@ -43,12 +43,9 @@ const monsterName = computed(() => prettify(monster.key));
     <Image :configuration="{ x: 35, y: 20, texture: getMonsterFileKey(monster.key), origin: 0, scale: 0.35 }" />
     <Text :configuration="{ x: 162, y: 36, text: monsterName, style: { color: 'white', fontSize: 30 } }" />
     <Text
-      :configuration="{
-        x: 26,
-        y: 116,
-        text: `LV. ${monster.statistics.level}`,
-        style: { color: 'white', fontSize: 22 },
-      }"
+      :configuration="
+        { x: 26, y: 116, text: `LV. ${monster.statistics.level}`, style: { color: 'white', fontSize: 22 } }
+      "
     />
     <Text :configuration="{ x: 164, y: 66, text: 'HP', style: HealthLabelTextStyle }" />
     <DungeonsUIBarContainer

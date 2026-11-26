@@ -63,13 +63,11 @@ const onClick = (settingsType: SettingsType) => {
         :items
         :title="getCategoryTitle(category)"
         @select="(settingsType) => onClick(settingsType)"
-        @update:is-open="
-          (newIsOpen) => {
-            openedCategories = newIsOpen
-              ? [...openedCategories, category]
-              : openedCategories.filter((openedCategory) => openedCategory !== category);
-          }
-        "
+        @update:is-open="(newIsOpen) => {
+          openedCategories = newIsOpen
+            ? [...openedCategories, category]
+            : openedCategories.filter((openedCategory) => openedCategory !== category);
+        }"
       />
       <div my-1 bg-divider h="[var(--ui-border-width)]" />
       <!-- The destructive row says what it does to this reader: the owner deletes the room, everyone else leaves it -->

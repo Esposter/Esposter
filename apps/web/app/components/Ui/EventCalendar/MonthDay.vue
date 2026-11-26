@@ -64,12 +64,10 @@ const create = () => {
     @keydown.enter.self.prevent="create()"
     @dragover.prevent="isDropTarget = true"
     @dragleave="isDropTarget = false"
-    @drop.prevent="
-      () => {
-        isDropTarget = false;
-        emit('drop');
-      }
-    "
+    @drop.prevent="() => {
+      isDropTarget = false;
+      emit('drop');
+    }"
   >
     <button
       :aria-current="isToday ? 'date' : undefined"

@@ -46,12 +46,10 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
     ui-button
     justify-start
     @pointerdown="isOpenOnPointerDown = isOpen"
-    @click="
-      () => {
-        if (isOpenOnPointerDown) close();
-        isOpenOnPointerDown = false;
-      }
-    "
+    @click="() => {
+      if (isOpenOnPointerDown) close();
+      isOpenOnPointerDown = false;
+    }"
   >
     <!-- A chosen option with no mark leaves the trigger no column for one, so its title starts at the field's edge -->
     <UiItemContent

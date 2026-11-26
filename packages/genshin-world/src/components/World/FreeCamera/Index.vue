@@ -42,4 +42,4 @@ onBeforeRender(({ delta }) => {
 useCanvasPointerLock(renderer.domElement);
 </script>
 
-<template />
+<template></template>

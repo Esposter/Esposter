@@ -53,8 +53,7 @@ defineProps<Props>();
   font: inherit;
   font-size: calc(var(--unit) * 48);
   line-height: calc(var(--unit) * 72);
-  --pin-rest-shadow:
-    inset 0 0 0 calc(var(--unit) * 4) #fbfbfb, 0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
+  --pin-rest-shadow: inset 0 0 0 calc(var(--unit) * 4) #fbfbfb, 0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
   --pin-lit-shadow: var(--pin-rest-shadow), 0 0 0 calc(var(--unit) * 3) rgb(30 49 63 / 0.5);
   box-shadow: var(--pin-rest-shadow);
 }

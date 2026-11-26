@@ -2,6 +2,8 @@
   "[javascript][typescript][vue]": {
     "editor.codeActionsOnSave": { "source.fixAll.oxc": "explicit", "source.organizeImports": "explicit" }
   },
+  // vize formats the components, which oxfmt ignores
+  "[vue]": { "editor.defaultFormatter": "ubugeeei.vize" },
   "[xml]": { "editor.formatOnSave": false },
   "debug.internalConsoleOptions": "neverOpen",
   "editor.defaultFormatter": "oxc.oxc-vscode",
@@ -21,5 +23,6 @@
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
   "search.followSymlinks": false,
+  "vize.formatting.enable": true,
   "vize.typecheck.enable": false
 }

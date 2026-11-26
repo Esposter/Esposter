@@ -41,11 +41,9 @@ const getDate = ({ updatedAt }: DraftItem) => updatedAt;
     v-if="deletingDraftItem"
     v-model="isDeleteOpen"
     title="Delete draft"
-    :confirm="
-      () =>
-        deletingDraftItem &&
-        clearComposer({ roomId: deletingDraftItem.room.id, threadRootId: deletingDraftItem.threadRootId })
-    "
+    :confirm="() =>
+      deletingDraftItem &&
+      clearComposer({ roomId: deletingDraftItem.room.id, threadRootId: deletingDraftItem.threadRootId })"
   >
     <p>Are you sure you want to delete this draft?</p>
   </MessageDraftsAndSentDeleteConfirmDialog>

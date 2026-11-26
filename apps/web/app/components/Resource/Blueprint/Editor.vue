@@ -31,19 +31,17 @@ const errorMessage = ref("");
       <UiButton
         :is-pending="isSaving"
         :variant="UiButtonVariant.Accent"
-        @click="
-          () => {
-            errorMessage = '';
-            const parsedManifest = getResult(() => parseBlueprintManifest(manifestJson))
-              .orTee((error) => {
-                errorMessage = error.message;
-              })
-              .unwrapOr(undefined);
-            if (!parsedManifest) return;
-
-            saveBlueprint(parsedManifest);
-          }
-        "
+        @click="() => {
+          errorMessage = '';
+          const parsedManifest = getResult(() => parseBlueprintManifest(manifestJson))
+            .orTee((error) => {
+              errorMessage = error.message;
+            })
+            .unwrapOr(undefined);
+          if (!parsedManifest) return;
+        
+          saveBlueprint(parsedManifest);
+        }"
       >
         <UiIcon v-if="!isSaving" :meaning="UiIconMeaning.Save" />
         Save

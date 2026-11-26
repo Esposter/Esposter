@@ -93,11 +93,9 @@ const overflowItems: Item[] = [
       <EditorProblems
         :findings
         :get-node-title
-        @select="
-          (nodeId) => {
-            if (nodeId) setSelectedNodeId(resourceId, nodeId);
-          }
-        "
+        @select="(nodeId) => {
+          if (nodeId) setSelectedNodeId(resourceId, nodeId);
+        }"
       />
       <UiOverflowMenu :items="overflowItems" label="More email actions" />
     </div>

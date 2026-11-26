@@ -71,12 +71,10 @@ const emojis = computed(() =>
         :emojis
         :skin-tone
         @hover="previewEmoji = $event"
-        @select="
-          (emoji: PickableEmoji) => {
-            createRecentEmojiSlug(emoji.slug);
-            emit('select', getPickableEmojiTag(emoji, skinTone), emoji);
-          }
-        "
+        @select="(emoji: PickableEmoji) => {
+          createRecentEmojiSlug(emoji.slug);
+          emit('select', getPickableEmojiTag(emoji, skinTone), emoji);
+        }"
       />
       <UiEmptyState
         v-else

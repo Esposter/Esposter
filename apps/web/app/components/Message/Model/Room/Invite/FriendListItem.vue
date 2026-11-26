@@ -35,14 +35,12 @@ const checkIsRecipientPending = ({ id, isGroup }: InviteRecipient) =>
         :disabled="!isInviteSendable"
         :is-pending="checkIsRecipientPending(recipient)"
         :variant="UiButtonVariant.Accent"
-        @click="
-          async () => {
-            const inviteLink = await getUsableInviteLink(room);
-            if (!inviteLink) return;
-            if (recipient.isGroup) await inviteDirectMessage(recipient.id, inviteLink);
-            else await inviteFriend(recipient.id, inviteLink);
-          }
-        "
+        @click="async () => {
+          const inviteLink = await getUsableInviteLink(room);
+          if (!inviteLink) return;
+          if (recipient.isGroup) await inviteDirectMessage(recipient.id, inviteLink);
+          else await inviteFriend(recipient.id, inviteLink);
+        }"
       >
         Invite
       </UiButton>

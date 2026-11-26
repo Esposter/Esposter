@@ -119,11 +119,9 @@ const askRemove = (index: number): void => {
     <UiConfirmDialog
       v-model="isRemoveOpen"
       confirm-label="Remove"
-      :confirm="
-        () => {
-          if (removingIndex !== undefined) removeValue(removingIndex);
-        }
-      "
+      :confirm="() => {
+        if (removingIndex !== undefined) removeValue(removingIndex);
+      }"
       title="Remove calculated value"
     >
       <p>Remove this calculated value from the survey?</p>

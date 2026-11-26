@@ -124,8 +124,7 @@ const questDistanceTexts = computed(
   height: calc(var(--unit) * 85);
   margin: 0;
   border-left: calc(var(--unit) * 5) solid #7c98e5;
-  background:
-    linear-gradient(to top, rgb(77 96 160 / 0.6), transparent calc(var(--unit) * 14)),
+  background: linear-gradient(to top, rgb(77 96 160 / 0.6), transparent calc(var(--unit) * 14)),
     linear-gradient(to right, rgb(60 80 150 / 0.5), transparent calc(var(--unit) * 110)),
     linear-gradient(to left, rgb(60 80 150 / 0.5), transparent calc(var(--unit) * 40)), rgb(45 58 74 / 0.85);
   box-shadow: 0 0 0 calc(var(--unit) * 1) rgb(76 95 161 / 0.6);

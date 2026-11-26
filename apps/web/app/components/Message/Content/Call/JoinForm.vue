@@ -14,20 +14,18 @@ const isJoinable = computed(() => selectCallSessionInMessageSchema.shape.id.safe
     flex
     gap-2
     items-end
-    @submit="
-      async () => {
-        if (!isJoinable) return;
-        isPending = true;
-        await withFinalizerAsync(
-          async () => {
-            await navigateTo(RoutePath.Calls(callId));
-          },
-          () => {
-            isPending = false;
-          },
-        );
-      }
-    "
+    @submit="async () => {
+      if (!isJoinable) return;
+      isPending = true;
+      await withFinalizerAsync(
+        async () => {
+          await navigateTo(RoutePath.Calls(callId));
+        },
+        () => {
+          isPending = false;
+        },
+      );
+    }"
   >
     <UiTextField v-model="callCodeOrLink" flex-1 min-w-0 label="Enter a code or link" />
     <UiButton :disabled="!isJoinable" :is-pending type="submit"> Join </UiButton>

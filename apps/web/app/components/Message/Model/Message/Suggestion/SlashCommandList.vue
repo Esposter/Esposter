@@ -48,9 +48,7 @@ defineExpose({ onKeyDown });
     :title="getSuggestionListTitle('COMMANDS', SuggestionTrigger.Slash, query)"
   >
     <MessageModelMessageSuggestionOption
-      v-for="(
-        { description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index
-      ) of commandItems"
+      v-for="({ description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index) of commandItems"
       :key="type"
       :is-selected="selectedIndex === index"
       @select="selectItem(index)"

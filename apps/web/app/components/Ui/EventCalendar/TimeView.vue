@@ -108,7 +108,7 @@ onMounted(() => {
       :style="{ gridTemplateColumns: `auto repeat(${days.length}, minmax(0, 1fr))` }"
     >
       <!-- One row across the grid on its columns, so a heading always sits over its day, scrollbar or not -->
-      <div ref="header" class="header" ui-bar>
+      <div class="header" ref="header" ui-bar>
         <span />
         <div
           v-for="day of days"

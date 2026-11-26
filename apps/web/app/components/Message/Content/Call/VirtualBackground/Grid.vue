@@ -48,8 +48,8 @@ onMounted(async () => {
           :aria-label="title"
           :aria-pressed="selectedVirtualBackground === id"
           :style="{ backgroundImage: url ? `url(${url})` : undefined }"
-          type="button"
           class="aria-pressed:shadow-[0_0_0_var(--ui-indicator-width)_var(--ui-accent)]"
+          type="button"
           flex
           aspect-square
           cursor-pointer
@@ -83,15 +83,13 @@ onMounted(async () => {
       <UiHiddenFileInput
         ref="fileInput"
         :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
-        @select="
-          async (file) => {
-            fileInput?.reset();
-            if (!file) return;
-            if (!validateFileWithAlert(file, MAX_CALL_BACKGROUND_SIZE_BYTES)) return;
-
-            await createCallBackground(file);
-          }
-        "
+        @select="async (file) => {
+          fileInput?.reset();
+          if (!file) return;
+          if (!validateFileWithAlert(file, MAX_CALL_BACKGROUND_SIZE_BYTES)) return;
+        
+          await createCallBackground(file);
+        }"
       />
     </div>
     <UiConfirmDialog

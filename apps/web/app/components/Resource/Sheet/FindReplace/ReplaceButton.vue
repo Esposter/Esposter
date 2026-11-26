@@ -11,12 +11,10 @@ const findReplace = useFindReplace();
   <UiButton
     :disabled="occurrences.length === 0"
     :variant="UiButtonVariant.Quiet"
-    @click="
-      () => {
-        const occurrence = occurrences.at(currentOccurrenceIndex);
-        if (occurrence) findReplace(findValue, replaceValue, occurrence);
-      }
-    "
+    @click="() => {
+      const occurrence = occurrences.at(currentOccurrenceIndex);
+      if (occurrence) findReplace(findValue, replaceValue, occurrence);
+    }"
   >
     Replace
   </UiButton>

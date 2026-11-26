@@ -28,13 +28,11 @@ const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
     :meaning="voteDefinition.meaning"
     :variant="isCast ? voteDefinition.castVariant : UiButtonVariant.Quiet"
     ui-pill
-    @click="
-      isCast
-        ? deleteLike(post.id)
-        : post.viewerLike
-          ? updateLike({ postId: post.id, value })
-          : createLike({ postId: post.id, value })
-    "
+    @click="isCast
+      ? deleteLike(post.id)
+      : post.viewerLike
+        ? updateLike({ postId: post.id, value })
+        : createLike({ postId: post.id, value })"
   />
   <!-- oxlint-enable vue/no-restricted-syntax -->
 </template>

@@ -44,7 +44,7 @@ defineExpose({ scrollToListScroll });
 </script>
 
 <template>
-  <div ref="listElement" class="list" role="tabpanel" :aria-label="title">
+  <div class="list" ref="listElement" role="tabpanel" :aria-label="title">
     <QuestScreenListSection
       v-for="{ chapters, questCategory, rowQuests } of questGroups"
       :key="questCategory"

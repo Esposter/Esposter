@@ -21,12 +21,10 @@ const selectedValues = computed(() => [modelValue.value]);
       :items="ResourceStatusFilterItems"
       :meaning="UiIconMeaning.Publish"
       :selected-values
-      @toggle="
-        (value) => {
-          modelValue = value;
-          close();
-        }
-      "
+      @toggle="(value) => {
+        modelValue = value;
+        close();
+      }"
     />
   </ResourceListFilterPill>
 </template>

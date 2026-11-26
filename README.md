@@ -71,7 +71,7 @@
       <td valign="top">
         <h3><a href="https://github.com/ubugeeei-prod/vize">Vize</a></h3>
         <p>
-          The Vue toolchain in Rust: it compiles the Vue packages' components, lints every template, and gives tsrs the
+          The Vue toolchain in Rust: it compiles the Vue packages' components, lints every template, formats every component, and gives tsrs the
           <code>.vue</code> files to typecheck.
         </p>
       </td>

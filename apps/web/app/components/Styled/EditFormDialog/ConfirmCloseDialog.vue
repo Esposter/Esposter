@@ -26,12 +26,10 @@ const itemLabel = computed(() => prettify(itemType));
     editing.
     <template #prepend-confirm>
       <UiButton
-        @click="
-          () => {
-            isOpen = false;
-            emit('discard');
-          }
-        "
+        @click="() => {
+          isOpen = false;
+          emit('discard');
+        }"
       >
         Discard changes
       </UiButton>

@@ -245,19 +245,17 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
         :role="isCellNavigable ? 'grid' : undefined"
         :style="{ '--data-table-selection-width': `${selectionColumnWidth}px` }"
         w-full
-        @keydown="
-          async (event: KeyboardEvent) => {
-            if (isCellNavigable) onGridKeydown(event);
-            await onReorderKeydown(event);
-          }
-        "
+        @keydown="async (event: KeyboardEvent) => {
+          if (isCellNavigable) onGridKeydown(event);
+          await onReorderKeydown(event);
+        }"
       >
         <thead>
           <tr>
             <th
               v-if="isSelectable"
-              ref="selectionHeaderCell"
               class="header cell selection"
+              ref="selectionHeaderCell"
               :class="selectionPinClass"
               px-3
               w-0
@@ -272,8 +270,8 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
             <th
               v-for="(column, columnIndex) of columns"
               :key="column.key"
-              ref="headerCells"
               class="header cell"
+              ref="headerCells"
               :class="getColumnPinClass(columnIndex)"
               :aria-sort="getAriaSort(column.key)"
               :data-column-key="column.key"
@@ -298,9 +296,7 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
                 <UiIcon
                   v-if="getSortOrder(column.key)"
                   :meaning="
-                    getSortOrder(column.key) === SortOrder.Asc
-                      ? UiIconMeaning.SortAscending
-                      : UiIconMeaning.SortDescending
+                    getSortOrder(column.key) === SortOrder.Asc ? UiIconMeaning.SortAscending : UiIconMeaning.SortDescending
                   "
                 />
               </button>
@@ -372,11 +368,9 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
                 focus-visible:outline-offset="[var(--ui-focus-inset)]"
                 hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
                 focus-visible:bg="[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]"
-                @click="
-                  (event: MouseEvent) => {
-                    if (!checkIsNestedInteraction(event)) onOpen?.(item);
-                  }
-                "
+                @click="(event: MouseEvent) => {
+                  if (!checkIsNestedInteraction(event)) onOpen?.(item);
+                }"
                 @keydown.enter.self="onOpen?.(item)"
               >
                 <!-- The whole cell is the checkbox's, so a click that misses the box does not open the row -->
@@ -402,27 +396,19 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
                   :data-item-id="isCellNavigable ? item.id : undefined"
                   :role="isCellNavigable ? 'gridcell' : undefined"
                   :tabindex="
-                    isCellNavigable
-                      ? tabStopCell?.itemId === item.id && tabStopCell.columnKey === column.key
-                        ? 0
-                        : -1
-                      : undefined
+                    isCellNavigable ? (tabStopCell?.itemId === item.id && tabStopCell.columnKey === column.key ? 0 : -1) : undefined
                   "
                   :="getCellProps?.(column, item)"
                   px-3
-                  @focus="
-                    () => {
-                      if (isCellNavigable && (activeCell?.itemId !== item.id || activeCell.columnKey !== column.key))
-                        activeCell = { columnKey: column.key, itemId: item.id };
-                    }
-                  "
-                  @keydown.enter.self="
-                    (event: KeyboardEvent) => {
-                      if (!isCellNavigable) return;
-                      event.preventDefault();
-                      onEditCell?.(column, item);
-                    }
-                  "
+                  @focus="() => {
+                    if (isCellNavigable && (activeCell?.itemId !== item.id || activeCell.columnKey !== column.key))
+                      activeCell = { columnKey: column.key, itemId: item.id };
+                  }"
+                  @keydown.enter.self="(event: KeyboardEvent) => {
+                    if (!isCellNavigable) return;
+                    event.preventDefault();
+                    onEditCell?.(column, item);
+                  }"
                 >
                   <slot name="cell" :column :item :value="getCellValue(column, item)">{{
                     getCellValue(column, item)

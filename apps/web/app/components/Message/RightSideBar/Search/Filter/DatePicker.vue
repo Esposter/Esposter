@@ -14,10 +14,8 @@ const select = (date: Temporal.PlainDate) => {
   <UiCalendar
     label="Day"
     :max="today"
-    @update:model-value="
-      (value) => {
-        if (value) select(value);
-      }
-    "
+    @update:model-value="(value) => {
+      if (value) select(value);
+    }"
   />
 </template>

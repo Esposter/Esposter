@@ -38,7 +38,7 @@ onMounted(() => {
       <span class="rule rule-top" />
       <span class="rule rule-bottom" />
       <p class="question">{{ gameText[GameTextKey.QuitConfirmQuestion] }}</p>
-      <GameButton ref="cancelButton" class="choice cancel" :kind="GameButtonKind.Choice" tip="" @click="emit('close')">
+      <GameButton class="choice cancel" ref="cancelButton" :kind="GameButtonKind.Choice" tip="" @click="emit('close')">
         <span class="icon icon-cancel" />
         <span class="label">{{ gameText[GameTextKey.Cancel] }}</span>
       </GameButton>

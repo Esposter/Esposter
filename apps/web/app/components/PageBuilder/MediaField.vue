@@ -36,24 +36,22 @@ const uploadFile = useUploadResourceFile(type, () => resourceId);
       :accept="acceptedMimetypes.join(',')"
       :label="`Upload ${category.toLowerCase()}`"
       :model-value="[]"
-      @update:model-value="
-        async (files) => {
-          const [file] = files;
-          if (!file) return;
-          if (!acceptedMimetypes.includes(file.type)) {
-            createAlert(`Choose a file of one of these types: ${acceptedMimetypes.join(', ')}`, 'error');
-            return;
-          }
-          if (file.size > MAX_FILE_REQUEST_SIZE) {
-            createAlert(`Files over ${MAX_FILE_REQUEST_SIZE / MEGABYTE} MB cannot be uploaded`, 'error');
-            return;
-          }
-
-          const pickedNodeId = getSelectedNodeId(resourceId);
-          const uploadResult = await getResultAsync(() => uploadFile(file));
-          uploadResult.match((src) => emit('update', src, pickedNodeId), createErrorAlert);
+      @update:model-value="async (files) => {
+        const [file] = files;
+        if (!file) return;
+        if (!acceptedMimetypes.includes(file.type)) {
+          createAlert(`Choose a file of one of these types: ${acceptedMimetypes.join(', ')}`, 'error');
+          return;
         }
-      "
+        if (file.size > MAX_FILE_REQUEST_SIZE) {
+          createAlert(`Files over ${MAX_FILE_REQUEST_SIZE / MEGABYTE} MB cannot be uploaded`, 'error');
+          return;
+        }
+      
+        const pickedNodeId = getSelectedNodeId(resourceId);
+        const uploadResult = await getResultAsync(() => uploadFile(file));
+        uploadResult.match((src) => emit('update', src, pickedNodeId), createErrorAlert);
+      }"
     />
     <PageBuilderFilePicker
       :category

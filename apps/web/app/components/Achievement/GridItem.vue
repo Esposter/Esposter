@@ -40,18 +40,17 @@ const targetAmount = computed(() => achievementDefinition.amount ?? 1);
       <div flex flex-1 flex-col min-w-0>
         <h3 truncate ui-heading>{{ displayName }}</h3>
         <p text-sm text-muted truncate>
-          {{ achievementDefinition.category
+          {{
+            achievementDefinition.category
           }}<template v-if="achievementDefinition.points">
-            · <span text-warning>{{ achievementDefinition.points }} points</span></template
-          >
+            · <span text-warning>{{ achievementDefinition.points }} points</span></template>
         </p>
       </div>
     </div>
     <p text-muted>{{ achievementDefinition.description }}</p>
     <p v-if="rarity !== undefined" text-sm text-muted>
       {{ Math.round(rarity * 10) / 10 }}% of users<span v-if="rarity < RARE_ACHIEVEMENT_THRESHOLD" text-warning>
-        · Rare</span
-      >
+        · Rare</span>
     </p>
     <div flex-1 />
     <p v-if="checkIsUnlockedUserAchievement(userAchievement)" text-sm text-success>

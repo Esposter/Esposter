@@ -27,10 +27,8 @@ onUnmounted(() => {
 <template>
   <PathFollower
     :configuration="{ visible: isVisible, path, texture, scale, alpha: 1 }"
-    @complete="
-      (_scene, newPathFollower) => {
-        pathFollower = markRaw(newPathFollower);
-      }
-    "
+    @complete="(_scene, newPathFollower) => {
+      pathFollower = markRaw(newPathFollower);
+    }"
   />
 </template>

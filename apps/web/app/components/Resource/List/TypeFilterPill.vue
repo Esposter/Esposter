@@ -18,13 +18,11 @@ const selectedTypesText = computed(() =>
       :items="ResourceTypeListItems"
       :meaning="UiIconMeaning.Filter"
       :selected-values="modelValue"
-      @toggle="
-        (type) => {
-          modelValue = modelValue.includes(type)
-            ? modelValue.filter((selectedType) => selectedType !== type)
-            : [...modelValue, type];
-        }
-      "
+      @toggle="(type) => {
+        modelValue = modelValue.includes(type)
+          ? modelValue.filter((selectedType) => selectedType !== type)
+          : [...modelValue, type];
+      }"
     />
   </ResourceListFilterPill>
 </template>

@@ -39,8 +39,8 @@ const onZoomPointerUp = () => {
 
 <template>
   <svg
-    ref="zoomTrack"
     class="zoom"
+    ref="zoomTrack"
     :viewBox="`0 0 56 ${MAP_ZOOM_DRAWING_HEIGHT}`"
     role="group"
     :aria-label="gameText[GameTextKey.Zoom]"

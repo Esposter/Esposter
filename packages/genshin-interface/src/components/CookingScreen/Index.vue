@@ -34,7 +34,7 @@ const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: 
 
 <template>
   <div class="cooking-screen">
-    <svg aria-hidden="true" class="chef" viewBox="3 0 48 50">
+    <svg class="chef" aria-hidden="true" viewBox="3 0 48 50">
       <path d="M11 24 C3 23 3 11 12 11 C11 2 25 0 27 8 C30 0 44 2 42 11 C51 11 51 23 43 24 L43 50 L11 50 Z" />
     </svg>
     <p class="title" role="heading" aria-level="1">{{ title }}</p>

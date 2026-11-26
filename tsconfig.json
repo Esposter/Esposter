@@ -2,6 +2,7 @@
   "extends": "./packages/configuration/tsconfig.node.json",
   "include": [
     "*.ts",
+    ".githooks/*.ts",
     "oxlint/**/*.ts",
     "vite/**/*.ts",
     "scripts/src/models/oxlint/selectorBan/*.ts",

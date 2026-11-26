@@ -67,11 +67,9 @@ const titleId = useId();
         :model-value="'name' in view.node.props ? answers[view.node.props.name] : undefined"
         :node="fieldNode"
         :seed
-        @update:model-value="
-          (value) => {
-            if ('name' in view.node.props) emit('answer', view.node.props.name, value);
-          }
-        "
+        @update:model-value="(value) => {
+          if ('name' in view.node.props) emit('answer', view.node.props.name, value);
+        }"
       />
     </div>
   </div>

@@ -35,23 +35,21 @@ const columnsLabelId = useId();
   <StyledDialog
     v-model="isOpen"
     confirm-label="Export"
-    :confirm="
-      async () => {
-        const configuration = DataSourceConfigurationMap[dataSourceType];
-        // Exporting as another format falls back to that format's default settings (e.g. comma-delimited CSV)
-        const exportSettings = settings.type === dataSourceType ? settings : createDefaultSheetSettings(dataSourceType);
-        const filteredRows = filterDataSourceRows(dataSource.rows, columnFilters);
-        const exportRows =
-          selectedRowIds.length > 0 ? filteredRows.filter((row) => selectedRowIds.includes(row.id)) : filteredRows;
-        const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, selectedColumnIds);
-        await exportFile(
-          (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, exportSettings, mimeType),
-          resource?.name ?? 'export',
-          configuration.mimeType,
-          configuration.accept,
-        );
-      }
-    "
+    :confirm="async () => {
+      const configuration = DataSourceConfigurationMap[dataSourceType];
+      // Exporting as another format falls back to that format's default settings (e.g. comma-delimited CSV)
+      const exportSettings = settings.type === dataSourceType ? settings : createDefaultSheetSettings(dataSourceType);
+      const filteredRows = filterDataSourceRows(dataSource.rows, columnFilters);
+      const exportRows =
+        selectedRowIds.length > 0 ? filteredRows.filter((row) => selectedRowIds.includes(row.id)) : filteredRows;
+      const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, selectedColumnIds);
+      await exportFile(
+        (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, exportSettings, mimeType),
+        resource?.name ?? 'export',
+        configuration.mimeType,
+        configuration.accept,
+      );
+    }"
     :is-confirm-disabled="selectedColumnIds.length === 0 || undefined"
     :title="`Export as ${dataSourceType}`"
   >

@@ -219,11 +219,9 @@ watchImmediate(modelValue, (value) => {
             :label="item.title"
             :meaning="item.meaning"
             :shortcut="item.shortcut"
-            @click="
-              async () => {
-                if (!item.isDisabled) await item.onClick?.();
-              }
-            "
+            @click="async () => {
+              if (!item.isDisabled) await item.onClick?.();
+            }"
           />
           <span v-if="item.description" :id="getDescriptionId(item.value)" hidden>{{ item.description }}</span>
         </template>

@@ -125,53 +125,45 @@ const isEnhanceConfirmDisabled = computed(
     :mora-label="gameText[GameTextKey.Mora]"
     :notice="isEnhanceMaxed ? gameText[GameTextKey.ArtifactLevelMax] : ''"
     :title="gameText[GameTextKey.ArtifactActionEnhance]"
-    @auto-add="
-      () => {
-        const artifact = enhanceArtifactWorn;
-        if (!artifact) return;
-        enhanceFodderIds = getAutoAddFodders({
-          artifact,
-          artifactRarityDataMap: statTables.artifactRarityDataMap,
-          inventory,
-          maxRarity: ENHANCE_AUTO_ADD_MAX_RARITY,
-        });
-      }
-    "
+    @auto-add="() => {
+      const artifact = enhanceArtifactWorn;
+      if (!artifact) return;
+      enhanceFodderIds = getAutoAddFodders({
+        artifact,
+        artifactRarityDataMap: statTables.artifactRarityDataMap,
+        inventory,
+        maxRarity: ENHANCE_AUTO_ADD_MAX_RARITY,
+      });
+    }"
     @cancel="emit('close')"
-    @confirm="
-      () => {
-        if (isEnhanceConfirmDisabled) return;
-        // The worn artifact is enhanced first, and the chosen fodder and materials leave the bag only once it is
-        const enhanced = enhanceCharacterArtifact(character, artifactSlot, {
-          artifactRarityDataMap: statTables.artifactRarityDataMap,
-          fodders: enhanceFodders,
-          materialExperience: enhanceMaterialExperience,
-          random: Math.random,
-          wallet,
-        });
-        const taken = takeFodderArtifacts(inventory, enhanceFodderIds);
-        characters = replaceCharacterInRoster(characters, enhanced.character);
-        wallet = enhanced.wallet;
-        inventory = { ...taken, items: takeItemCounts(taken.items, enhanceMaterialItemCounts, 1) };
-        emit('close');
-      }
-    "
-    @fodder="
-      (id) => {
-        const entryId = Number(id);
-        enhanceFodderIds = enhanceFodderIds.includes(entryId)
-          ? enhanceFodderIds.filter((chosen) => chosen !== entryId)
-          : [...enhanceFodderIds, entryId];
-      }
-    "
-    @material="
-      (id, delta) => {
-        // A material's chosen count moves by one, kept between none and what the bag holds
-        const itemId = Number(id);
-        const held = inventory.items.find(({ definition }) => definition.id === itemId)?.quantity ?? 0;
-        const selected = enhanceMaterialCounts[itemId] ?? 0;
-        enhanceMaterialCounts = { ...enhanceMaterialCounts, [itemId]: Math.min(Math.max(selected + delta, 0), held) };
-      }
-    "
+    @confirm="() => {
+      if (isEnhanceConfirmDisabled) return;
+      // The worn artifact is enhanced first, and the chosen fodder and materials leave the bag only once it is
+      const enhanced = enhanceCharacterArtifact(character, artifactSlot, {
+        artifactRarityDataMap: statTables.artifactRarityDataMap,
+        fodders: enhanceFodders,
+        materialExperience: enhanceMaterialExperience,
+        random: Math.random,
+        wallet,
+      });
+      const taken = takeFodderArtifacts(inventory, enhanceFodderIds);
+      characters = replaceCharacterInRoster(characters, enhanced.character);
+      wallet = enhanced.wallet;
+      inventory = { ...taken, items: takeItemCounts(taken.items, enhanceMaterialItemCounts, 1) };
+      emit('close');
+    }"
+    @fodder="(id) => {
+      const entryId = Number(id);
+      enhanceFodderIds = enhanceFodderIds.includes(entryId)
+        ? enhanceFodderIds.filter((chosen) => chosen !== entryId)
+        : [...enhanceFodderIds, entryId];
+    }"
+    @material="(id, delta) => {
+      // A material's chosen count moves by one, kept between none and what the bag holds
+      const itemId = Number(id);
+      const held = inventory.items.find(({ definition }) => definition.id === itemId)?.quantity ?? 0;
+      const selected = enhanceMaterialCounts[itemId] ?? 0;
+      enhanceMaterialCounts = { ...enhanceMaterialCounts, [itemId]: Math.min(Math.max(selected + delta, 0), held) };
+    }"
   />
 </template>

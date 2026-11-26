@@ -23,16 +23,14 @@ const targets = computed(() => getVisualMoveTargets(visuals.value, visual.id));
     <UiRadioGroup
       label="Move to"
       :items="targets"
-      @update:model-value="
-        (targetGroupId) => {
-          if (targetGroupId !== undefined) {
-            // A radio option's value is a string, so the dashboard's own option carries an empty one, which the dialog
-            // Converts to no group
-            moveVisual({ id: visual.id }, targetGroupId || undefined);
-            isOpen = false;
-          }
+      @update:model-value="(targetGroupId) => {
+        if (targetGroupId !== undefined) {
+          // A radio option's value is a string, so the dashboard's own option carries an empty one, which the dialog
+          // Converts to no group
+          moveVisual({ id: visual.id }, targetGroupId || undefined);
+          isOpen = false;
         }
-      "
+      }"
     />
   </UiDialog>
 </template>

@@ -51,11 +51,9 @@ const { isVoting, vote } = await useVotePoll(() => message, isPreview);
         :is-disabled="isPreview || isVoting"
         :items="pollOptionItems"
         :label="pollContent.question"
-        @update:model-value="
-          (optionId) => {
-            if (optionId) vote(optionId);
-          }
-        "
+        @update:model-value="(optionId) => {
+          if (optionId) vote(optionId);
+        }"
       >
         <template #append="{ value }">
           <MessageModelMessageTypePollOption

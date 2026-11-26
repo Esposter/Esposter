@@ -24,16 +24,14 @@ const { displayRecentPages } = storeToRefs(recentPageStore);
     v-if="session && !RECENT_PAGE_EXCLUDED_PATHS.includes(currentRoute.path)"
     type="button"
     ui-item
-    @click="
-      () => {
-        const pageMark = getPageMark(currentRoute.path);
-        const pageLabel = getPageLabel(
-          currentRoute.path,
-          displayRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? '',
-        );
-        toggleBookmark({ mark: pageMark, path: currentRoute.path, title: pageLabel });
-      }
-    "
+    @click="() => {
+      const pageMark = getPageMark(currentRoute.path);
+      const pageLabel = getPageLabel(
+        currentRoute.path,
+        displayRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? '',
+      );
+      toggleBookmark({ mark: pageMark, path: currentRoute.path, title: pageLabel });
+    }"
   >
     <UiItemContent
       v-if="bookmarkPaths.has(currentRoute.path)"

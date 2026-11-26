@@ -3,6 +3,7 @@ import type { VueOptions } from "vize";
 import { BLOCKED_SPELLING_SYNTAXES } from "#vite/services/blockedSpellingSyntaxes";
 import { SCOPED_STYLE_SYNTAXES } from "#vite/services/scopedStyleSyntaxes";
 import { TEMPLATE_RESTRICTED_SYNTAXES } from "#vite/services/templateRestrictedSyntaxes";
+import { IGNORE_PATTERNS } from "@esposter/configuration/oxfmt";
 
 // The Vue rules, which vize's own lint runs over each whole component: oxlint reads only a component's script. The
 // Incremental preset runs the rules listed here and nothing vize would add by default, so a rule is on because this map
@@ -34,6 +35,15 @@ export const VUE_OPTIONS: VueOptions = {
       },
     },
   ],
+  // `vize fmt` formats the components over the shared `fmt` block, this block winning a clash key by key. Oxfmt formats
+  // Everything else and ignores them, so this list is the shared one without that entry. The attributes are left as
+  // Written except `class`, which leads its run of static attributes, as the template order in the `vue` skill puts it
+  fmt: {
+    attributeGroups: [["class"], ["*"]],
+    attributeSortOrder: "as-written",
+    ignorePatterns: IGNORE_PATTERNS,
+    sortAttributes: true,
+  },
   linter: {
     preset: "incremental",
     ruleOptions: {

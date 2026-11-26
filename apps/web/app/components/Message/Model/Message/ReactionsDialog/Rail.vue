@@ -26,12 +26,10 @@ const selectedValues = computed(() => [modelValue.value]);
     :model-value="selectedValues"
     shrink-0
     w-28
-    @update:model-value="
-      (value) => {
-        const [emojiTag] = value ?? [];
-        if (emojiTag) modelValue = emojiTag;
-      }
-    "
+    @update:model-value="(value) => {
+      const [emojiTag] = value ?? [];
+      if (emojiTag) modelValue = emojiTag;
+    }"
   >
     <template #mark="{ item }">
       <span ui-title><MessageModelMessageEmojiTag :emoji-tag="item.value" /></span>

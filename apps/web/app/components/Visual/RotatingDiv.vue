@@ -5,7 +5,7 @@ const transform = useRotatingTransform(container);
 </script>
 
 <template>
-  <div ref="container" class="container">
+  <div class="container" ref="container">
     <slot />
   </div>
 </template>

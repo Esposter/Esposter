@@ -69,7 +69,7 @@ const onUpdateFile = async (newFile?: File | File[]) => {
 </script>
 
 <template>
-  <div ref="dropZone" class="drop-zone" :data-over="isOverDropZone || undefined" p-4 flex flex-col gap-3 ui-field>
+  <div class="drop-zone" ref="dropZone" :data-over="isOverDropZone || undefined" p-4 flex flex-col gap-3 ui-field>
     <p text-muted>
       Drop a {{ DATA_SOURCE_ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </p>
@@ -94,12 +94,10 @@ const onUpdateFile = async (newFile?: File | File[]) => {
         label="Remove file"
         :meaning="UiIconMeaning.Remove"
         :variant="UiButtonVariant.Quiet"
-        @click="
-          async () => {
-            if (fileInput) fileInput.value = '';
-            await onUpdateFile();
-          }
-        "
+        @click="async () => {
+          if (fileInput) fileInput.value = '';
+          await onUpdateFile();
+        }"
       />
     </div>
     <p v-if="error" role="alert" text-error>{{ error }}</p>

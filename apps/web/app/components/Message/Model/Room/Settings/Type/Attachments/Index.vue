@@ -68,16 +68,14 @@ const save = () => {
           is-label-visible
           :label="category"
           :model-value="editedAllowedMimeCategories.includes(category)"
-          @update:model-value="
-            (newModelValue) => {
-              editedAllowedMimeCategories = newModelValue
-                ? MimeCategories.filter(
-                    (mimeCategory) => mimeCategory === category || editedAllowedMimeCategories.includes(mimeCategory),
-                  )
-                : editedAllowedMimeCategories.filter((mimeCategory) => mimeCategory !== category);
-              save();
-            }
-          "
+          @update:model-value="(newModelValue) => {
+            editedAllowedMimeCategories = newModelValue
+              ? MimeCategories.filter(
+                  (mimeCategory) => mimeCategory === category || editedAllowedMimeCategories.includes(mimeCategory),
+                )
+              : editedAllowedMimeCategories.filter((mimeCategory) => mimeCategory !== category);
+            save();
+          }"
         />
       </div>
     </MessageModelRoomSettingsField>

@@ -129,7 +129,9 @@ watchImmediate([page, itemsPerPage, sortBy], async () => {
         <UiErrorState v-if="error" :error @retry="refresh()" />
         <UiEmptyState
           v-else
-          :description="`Deleted resources appear here for ${RECYCLE_BIN_RETENTION_DAYS} days before they are permanently removed.`"
+          :description="
+            `Deleted resources appear here for ${RECYCLE_BIN_RETENTION_DAYS} days before they are permanently removed.`
+          "
           :meaning="UiIconMeaning.Delete"
           title="Recycle bin is empty"
         />

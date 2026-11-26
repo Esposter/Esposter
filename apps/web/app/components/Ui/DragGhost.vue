@@ -16,8 +16,8 @@ defineProps<Props>();
   <Teleport to="body">
     <div
       :style="{ left: `calc(${point.x}px + 0.75rem)`, top: `calc(${point.y}px + 0.75rem)` }"
-      aria-hidden="true"
       class="drag-ghost"
+      aria-hidden="true"
       text-sm
       px-2
       py-1

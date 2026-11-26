@@ -36,7 +36,7 @@ const mark = computed(() => getMenuFrameMark(icon));
     @click="emit('open')"
   >
     <MenuGlyph :glyph="mark.glyph" />
-    <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
+    <span v-if="alertedIcons.includes(icon)" class="alert" aria-hidden="true" />
   </GameButton>
 </template>
 

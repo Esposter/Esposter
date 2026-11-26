@@ -66,13 +66,11 @@ watch(isOpen, (newIsOpen) => {
     :overline
     :title
     :size="UiDialogSize.Large"
-    @update:model-value="
-      (value) => {
-        if (value) isOpen = true;
-        else if (isDirty) isConfirmCloseDialogOpen = true;
-        else isOpen = false;
-      }
-    "
+    @update:model-value="(value) => {
+      if (value) isOpen = true;
+      else if (isDirty) isConfirmCloseDialogOpen = true;
+      else isOpen = false;
+    }"
   >
     <template #actions>
       <!-- Held through the dialog's leave with the form, so the bar rises out whole -->

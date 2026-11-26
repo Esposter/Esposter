@@ -177,11 +177,9 @@ const getOperatorItems = (questionName: string) =>
     <UiConfirmDialog
       v-model="isRemoveOpen"
       confirm-label="Remove"
-      :confirm="
-        () => {
-          if (removingRow !== undefined) removeRow(removingRow.prop, removingRow.index);
-        }
-      "
+      :confirm="() => {
+        if (removingRow !== undefined) removeRow(removingRow.prop, removingRow.index);
+      }"
       title="Remove condition"
     >
       <p>Remove this condition from the expression?</p>

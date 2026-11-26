@@ -28,10 +28,10 @@ const emit = defineEmits<{ start: [] }>();
   <input v-model.number="amount" :aria-label="amountLabel" class="amount" :max="amountMaximum" min="1" type="range" />
   <p class="total-time">{{ totalTimeLabel }}</p>
   <p class="amount-label">{{ amountLabel }}</p>
-  <span aria-hidden="true" class="amount-step amount-minus">−</span>
+  <span class="amount-step amount-minus" aria-hidden="true">−</span>
   <span class="amount-end amount-min">1</span>
   <span class="amount-end amount-max">{{ amountMaximum }}</span>
-  <span aria-hidden="true" class="amount-step amount-plus">+</span>
+  <span class="amount-step amount-plus" aria-hidden="true">+</span>
   <p class="required-label">{{ requiredLabel }}</p>
   <p class="required">{{ requiredCoins }}</p>
   <GameButton v-if="!refusalLabel" class="action" :kind="GameButtonKind.Row" tip="" @click="emit('start')">

@@ -42,12 +42,10 @@ const editorExtensions = computed(() => [...extensions, ...extraExtensions]);
       <RichTextEditorCustomAudioRecorderButton @upload-file="(files) => uploadFiles(files)" />
       <MessageModelMessageInputSendMessageButton
         :disabled="!checkIsInputValid(target, editor)"
-        @click="
-          () => {
-            if (!editor) return;
-            sendComposerMessage(editor, target);
-          }
-        "
+        @click="() => {
+          if (!editor) return;
+          sendComposerMessage(editor, target);
+        }"
       />
     </template>
     <template v-if="slots['prepend-outer-footer']" #prepend-outer-footer>

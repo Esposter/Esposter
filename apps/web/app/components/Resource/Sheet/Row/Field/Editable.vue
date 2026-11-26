@@ -64,29 +64,23 @@ const focusGridCell = (event: KeyboardEvent) => {
     @blur.capture="submitEdit()"
     @keydown.arrow-down.stop="rowIndex + 1 < displayRows.length && focusCell(rowIndex + 1, column.name)"
     @keydown.arrow-up.stop="rowIndex - 1 >= 0 && focusCell(rowIndex - 1, column.name)"
-    @keydown.enter.stop="
-      (event: KeyboardEvent) => {
-        if (event.isComposing) return;
-        submitEdit();
-        focusGridCell(event);
-      }
-    "
-    @keydown.esc.stop="
-      (event: KeyboardEvent) => {
-        discardEdit();
-        focusGridCell(event);
-      }
-    "
-    @keydown.tab.stop="
-      (event) => {
-        const columnIndex = editableColumns.findIndex(({ name }) => name === column.name);
-        if (columnIndex === -1) return;
-        const nextIndex = event.shiftKey ? columnIndex - 1 : columnIndex + 1;
-        if (nextIndex < 0 || nextIndex >= editableColumns.length) return;
-        event.preventDefault();
-        focusCell(rowIndex, takeOne(editableColumns, nextIndex).name);
-      }
-    "
+    @keydown.enter.stop="(event: KeyboardEvent) => {
+      if (event.isComposing) return;
+      submitEdit();
+      focusGridCell(event);
+    }"
+    @keydown.esc.stop="(event: KeyboardEvent) => {
+      discardEdit();
+      focusGridCell(event);
+    }"
+    @keydown.tab.stop="(event) => {
+      const columnIndex = editableColumns.findIndex(({ name }) => name === column.name);
+      if (columnIndex === -1) return;
+      const nextIndex = event.shiftKey ? columnIndex - 1 : columnIndex + 1;
+      if (nextIndex < 0 || nextIndex >= editableColumns.length) return;
+      event.preventDefault();
+      focusCell(rowIndex, takeOne(editableColumns, nextIndex).name);
+    }"
   >
     <ResourceSheetRowFieldInput v-model="editedValue" :column is-inline />
   </div>

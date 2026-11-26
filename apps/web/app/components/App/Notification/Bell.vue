@@ -23,11 +23,9 @@ if (session.value) await readNotifications();
     px-0
     size-10
     relative
-    @update:is-open="
-      (value) => {
-        if (!value) markAllAsRead();
-      }
-    "
+    @update:is-open="(value) => {
+      if (!value) markAllAsRead();
+    }"
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Notifications" />

@@ -48,21 +48,19 @@ const { isLoading, uploadImage } = useUploadImage((file) =>
     <UiHiddenFileInput
       ref="fileInput"
       :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
-      @select="
-        async (file) => {
-          if (!file) return;
-
-          if (!validateFileWithAlert(file)) return;
-
-          await getResultAsync(() =>
-            uploadImage(file, () => {
-              fileInput?.reset();
-            }),
-          ).match((newImage) => {
-            modelValue = newImage;
-          }, createErrorAlert);
-        }
-      "
+      @select="async (file) => {
+        if (!file) return;
+      
+        if (!validateFileWithAlert(file)) return;
+      
+        await getResultAsync(() =>
+          uploadImage(file, () => {
+            fileInput?.reset();
+          }),
+        ).match((newImage) => {
+          modelValue = newImage;
+        }, createErrorAlert);
+      }"
     />
     <UiButton v-if="modelValue" :disabled="isLoading" :variant="UiButtonVariant.Quiet" @click="modelValue = ''">
       Remove Image

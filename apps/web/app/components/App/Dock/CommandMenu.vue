@@ -34,12 +34,10 @@ const items = computed(() =>
     :variant="UiButtonVariant.Quiet"
     p-0
     size-10
-    @select="
-      async (value) => {
-        const command = commands.find(({ id }) => id === value);
-        if (command) await runCommand(command);
-      }
-    "
+    @select="async (value) => {
+      const command = commands.find(({ id }) => id === value);
+      if (command) await runCommand(command);
+    }"
   >
     <slot />
   </UiMenu>

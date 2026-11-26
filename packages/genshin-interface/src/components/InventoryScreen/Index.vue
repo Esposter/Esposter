@@ -142,8 +142,8 @@ useDestroyFocus(() => isConfirming);
         @use="(id, amount) => emit('use', id, amount)"
       />
       <GameButton
-        ref="trashButton"
         class="trash foot-disc"
+        ref="trashButton"
         :aria-label="destroyLabel"
         :aria-pressed="isDestroying"
         :kind="GameButtonKind.Disc"

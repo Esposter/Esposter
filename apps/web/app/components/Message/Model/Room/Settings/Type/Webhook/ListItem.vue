@@ -35,14 +35,12 @@ const nameRules = [
       flex-1
       min-w-0
       :rules="nameRules"
-      @focusout="
-        () => {
-          if (!isDirty || !checkIsNameValid(editedName)) return;
-
-          updateWebhook({ id: webhook.id, name: editedName, roomId });
-          settle();
-        }
-      "
+      @focusout="() => {
+        if (!isDirty || !checkIsNameValid(editedName)) return;
+      
+        updateWebhook({ id: webhook.id, name: editedName, roomId });
+        settle();
+      }"
     />
     <MessageModelRoomSettingsTypeWebhookActionButton :id="webhook.id" :action="WebhookDialogAction.Regenerate" />
     <MessageModelRoomSettingsTypeWebhookActionButton :id="webhook.id" :action="WebhookDialogAction.Delete" />

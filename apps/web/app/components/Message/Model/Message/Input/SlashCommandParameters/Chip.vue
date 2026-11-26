@@ -57,22 +57,18 @@ useFocusWhenActive(input, () => Boolean(isFocused));
       "
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('delete')"
-      @keydown.left.exact="
-        (event) => {
-          if (checkIsCaretAtStart(event.target)) {
-            event.preventDefault();
-            emit('navigate:previous');
-          }
+      @keydown.left.exact="(event) => {
+        if (checkIsCaretAtStart(event.target)) {
+          event.preventDefault();
+          emit('navigate:previous');
         }
-      "
-      @keydown.right.exact="
-        (event) => {
-          if (checkIsCaretAtEnd(event.target)) {
-            event.preventDefault();
-            emit('navigate:next');
-          }
+      }"
+      @keydown.right.exact="(event) => {
+        if (checkIsCaretAtEnd(event.target)) {
+          event.preventDefault();
+          emit('navigate:next');
         }
-      "
+      }"
     />
   </div>
 </template>

@@ -133,8 +133,8 @@ const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegment
     screen Reader beside the hidden drawing. A landmark chosen on the map or in the list jumps there -->
   <GameScreen class="map-overlay" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Map]">
     <svg
-      ref="map"
       class="map"
+      ref="map"
       :viewBox="`${-metres / 2} ${-metres / 2} ${metres} ${metres}`"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"

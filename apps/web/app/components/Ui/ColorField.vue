@@ -55,11 +55,11 @@ const getCheckColor = (fill: string) => getContrastingColor(readHexColor(fill) ?
       <button
         v-for="swatch in swatches"
         :key="swatch.name"
+        class="aria-pressed:ui-selected"
         type="button"
         ui-button
         ui-ring-outside
         rd-full
-        class="aria-pressed:ui-selected"
         :aria-label="swatch.name"
         :aria-pressed="checkIsSelected(swatch.name)"
         :style="{ backgroundColor: swatch.value }"

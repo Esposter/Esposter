@@ -52,12 +52,10 @@ const emptyState = { description: "", meaning: UiIconMeaning.Bookmark, title: "T
         v-if="run.isFollowable"
         :items="run.rows"
         label="Outline"
-        @select="
-          (key) => {
-            const item = keyItemMap.get(key);
-            if (item) followBookmark(item);
-          }
-        "
+        @select="(key) => {
+          const item = keyItemMap.get(key);
+          if (item) followBookmark(item);
+        }"
       >
         <template #title="{ item }">
           <span :style="{ paddingInlineStart: `${item.depth}rem` }">{{ item.title }}</span>

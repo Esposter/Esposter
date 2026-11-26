@@ -21,8 +21,8 @@ defineExpose({ focusWorldLevelInfo: () => worldLevelInfoButton.value?.focus() })
 
 <template>
   <GameButton
-    ref="worldLevelInfoButton"
     class="info"
+    ref="worldLevelInfoButton"
     :aria-label="label"
     :kind="GameButtonKind.Plain"
     :style="infoMark.style"

@@ -32,21 +32,19 @@ const fileMessage = ref("");
         <UiHiddenFileInput
           ref="fileInput"
           :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
-          @select="
-            async (file) => {
-              // Cleared, so choosing the same file again after a refusal is a change too
-              fileInput?.reset();
-              if (!file) return;
-
-              const fileValidation = validateFile(file.size);
-              fileMessage = fileValidation.isValid ? '' : fileValidation.message;
-              if (!fileValidation.isValid) return;
-
-              await getResultAsync(() => uploadImage(file)).match((newImage) => {
-                modelValue = newImage;
-              }, createErrorAlert);
-            }
-          "
+          @select="async (file) => {
+            // Cleared, so choosing the same file again after a refusal is a change too
+            fileInput?.reset();
+            if (!file) return;
+          
+            const fileValidation = validateFile(file.size);
+            fileMessage = fileValidation.isValid ? '' : fileValidation.message;
+            if (!fileValidation.isValid) return;
+          
+            await getResultAsync(() => uploadImage(file)).match((newImage) => {
+              modelValue = newImage;
+            }, createErrorAlert);
+          }"
         />
         <UiButton :is-pending="isLoading" @click="fileInput?.open()">
           <UiIcon v-if="!isLoading" :meaning="UiIconMeaning.Upload" />

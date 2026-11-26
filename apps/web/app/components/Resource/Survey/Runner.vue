@@ -88,12 +88,10 @@ const focusFirstError = () => {
         :question-numbers
         :seed
         :view
-        @answer="
-          (name, value) => {
-            setAnswer(name, value);
-            emitChange();
-          }
-        "
+        @answer="(name, value) => {
+          setAnswer(name, value);
+          emitChange();
+        }"
       />
     </section>
     <div flex gap-2 justify-end>
@@ -111,13 +109,11 @@ const focusFirstError = () => {
         v-if="isLastPage"
         :is-pending="isCompleting"
         :variant="UiButtonVariant.Accent"
-        @click="
-          () => {
-            const answers = complete();
-            if (answers) emit('complete', answers);
-            nextTick(focusFirstError);
-          }
-        "
+        @click="() => {
+          const answers = complete();
+          if (answers) emit('complete', answers);
+          nextTick(focusFirstError);
+        }"
       >
         {{ checkIsBlankText(rootProps.completeText) ? "Complete" : rootProps.completeText }}
       </UiButton>

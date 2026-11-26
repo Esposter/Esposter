@@ -41,12 +41,10 @@ watch(isOpen, (newIsOpen) => {
       <StyledEmojiPickerPanel
         v-if="isPanelMounted"
         :custom-emojis
-        @select="
-          (emojiTag: string, emoji: PickableEmoji) => {
-            emit('select', emojiTag, emoji);
-            close();
-          }
-        "
+        @select="(emojiTag: string, emoji: PickableEmoji) => {
+          emit('select', emojiTag, emoji);
+          close();
+        }"
       >
         <template #footer><slot name="footer" /></template>
       </StyledEmojiPickerPanel>

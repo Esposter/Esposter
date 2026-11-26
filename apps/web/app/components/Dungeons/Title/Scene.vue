@@ -19,14 +19,12 @@ const versionY = ref<number>();
 <template>
   <DungeonsScene
     :scene-key="SceneKey.Title"
-    @create="
-      (scene) => {
-        playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiTitleTheme);
-        x = scene.scale.width / 2;
-        versionX = scene.scale.width - 150;
-        versionY = scene.scale.height - 50;
-      }
-    "
+    @create="(scene) => {
+      playDungeonsBackgroundMusic(scene, DungeonsKeys.ThirdPartyXDeviruchiTitleTheme);
+      x = scene.scale.width / 2;
+      versionX = scene.scale.width - 150;
+      versionY = scene.scale.height - 50;
+    }"
     @update="onPlayerInput($event, controls.getInput(true))"
   >
     <Image :configuration="{ origin: 0, texture: DungeonsKeys.SceneTitleScreenBackground, scale: 0.58 }" />
@@ -34,12 +32,9 @@ const versionY = ref<number>();
     <Image :configuration="{ x, y: 150, texture: DungeonsKeys.SceneTitleText, scale: 0.55, alpha: 0.5 }" />
     <DungeonsTitleMenuContainer />
     <Text
-      :configuration="{
-        x: versionX,
-        y: versionY,
-        text: `ver: ${buildVersion}`,
-        style: { color: 'white', fontSize: 24 },
-      }"
+      :configuration="
+        { x: versionX, y: versionY, text: `ver: ${buildVersion}`, style: { color: 'white', fontSize: 24 } }
+      "
     />
   </DungeonsScene>
 </template>

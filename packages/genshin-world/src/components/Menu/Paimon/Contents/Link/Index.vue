@@ -25,7 +25,7 @@ defineProps<Props>();
   <GameButton class="entry link" :kind="GameButtonKind.Row" tip="" disabled>
     <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
     <span class="label">{{ gameText[labelKey] }}</span>
-    <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
+    <span v-if="alertedIcons.includes(icon)" class="alert" aria-hidden="true" />
   </GameButton>
 </template>
 

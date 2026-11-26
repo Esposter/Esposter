@@ -39,7 +39,7 @@ useEventListener(layer, ["pointerup", "pointercancel"], (event) => {
 <template>
   <!-- The touch layout's look under every piece of the HUD on the screen's right half, the left half being the stick's:
        A drag there turns the look, as the game's touch controls do outside the stick's area -->
-  <div ref="layer" class="touch-layer" />
+  <div class="touch-layer" ref="layer" />
 </template>
 
 <style scoped>

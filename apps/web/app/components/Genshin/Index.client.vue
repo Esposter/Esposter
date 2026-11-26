@@ -104,8 +104,7 @@ const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.va
       <p>This game was started in another session, which now holds your save.</p>
       <template #footer>
         <UiButton :is-pending="isStartPending" :variant="UiButtonVariant.Accent" @click="takeBack()"
-          >Take back</UiButton
-        >
+        >Take back</UiButton>
       </template>
     </UiDialog>
     <!-- A start that could not take the lease is retried with backoff, and the page's retry asks for it at once -->

@@ -1035,7 +1035,7 @@ useWorldSaveSync({
 </script>
 
 <template>
-  <div ref="worldScreen" class="world-screen">
+  <div class="world-screen" ref="worldScreen">
     <TresCanvas
       ref="canvas"
       :dpr="canvasDpr"
@@ -1044,12 +1044,10 @@ useWorldSaveSync({
       :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows
       :shadow-map-type="PCFShadowMap"
-      @before-loop="
-        (context) => {
-          stepFrame(context);
-          stepHolds(context.delta);
-        }
-      "
+      @before-loop="(context) => {
+        stepFrame(context);
+        stepHolds(context.delta);
+      }"
       @error="emit('ready')"
     >
       <TresPerspectiveCamera
@@ -1083,12 +1081,10 @@ useWorldSaveSync({
           @drown="respawnParty()"
           @party-health-changed="(change) => events.emit('partyHealthChanged', change)"
           @reaction-triggered="(enemy, reactions) => events.emit('reactionTriggered', enemy, reactions)"
-          @strike-ore="
-            (body, hit) => {
-              strikeGatheringOres(body, hit, kitContext.random);
-              strikeMiningOutcrops(body, hit, kitContext.random);
-            }
-          "
+          @strike-ore="(body, hit) => {
+            strikeGatheringOres(body, hit, kitContext.random);
+            strikeMiningOutcrops(body, hit, kitContext.random);
+          }"
           @strike-puzzle="(body, hit) => strikeWorldPuzzles(body, hit)"
         />
         <WorldFreeCamera
@@ -1155,12 +1151,10 @@ useWorldSaveSync({
         @leave-combat="events.emit('leaveCombat')"
         @shield-break="(enemy) => events.emit('shieldBreak', enemy)"
         @ready="emit('ready')"
-        @respawn="
-          (spawnKey) => {
-            forgetTrounceBlossom(spawnKey);
-            forgetBossDefeat(spawnKey);
-          }
-        "
+        @respawn="(spawnKey) => {
+          forgetTrounceBlossom(spawnKey);
+          forgetBossDefeat(spawnKey);
+        }"
         @save-boss-defeat="(spawnKey, defeatedAt) => setBossDefeatAt(spawnKey, defeatedAt)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
         @sheer-cold="(value) => (hudFrame.sheerCold = value)"
@@ -1294,12 +1288,10 @@ useWorldSaveSync({
           :subarea-labels
           :wallet
           @close="closeScreen()"
-          @jump="
-            (pose) => {
-              closeScreen();
-              teleport(pose, jumpTo);
-            }
-          "
+          @jump="(pose) => {
+            closeScreen();
+            teleport(pose, jumpTo);
+          }"
         />
       </template>
       <template v-if="achievementData" #[ScreenKind.Achievements]>
@@ -1487,12 +1479,10 @@ useWorldSaveSync({
           :clock-minutes="windrise.gameClock.minutes"
           :game-text
           @close="closeScreen()"
-          @confirm="
-            (minutes) => {
-              if (windrise) windrise.gameClock.minutes = minutes;
-              closeScreen();
-            }
-          "
+          @confirm="(minutes) => {
+            if (windrise) windrise.gameClock.minutes = minutes;
+            closeScreen();
+          }"
         />
       </template>
       <template #[ScreenKind.Settings]>
@@ -1559,13 +1549,11 @@ useWorldSaveSync({
       :game-id="gcgGameId"
       :game-text
       :language
-      @leave="
-        (won) => {
-          payCardGameReward(gcgGameId, won);
-          gcgGameId = undefined;
-          closeScreen();
-        }
-      "
+      @leave="(won) => {
+        payCardGameReward(gcgGameId, won);
+        gcgGameId = undefined;
+        closeScreen();
+      }"
     />
     <FishingScreen v-if="screenKind === ScreenKind.Fishing" :game-text :view="castView" />
     <ShopScreen
@@ -1652,12 +1640,10 @@ useWorldSaveSync({
       :floors="abyssFloorsOffered"
       :game-text
       :name-text
-      @choose="
-        (floorId, chamberId) => {
-          enterAbyssChamber(floorId, chamberId);
-          closeScreen();
-        }
-      "
+      @choose="(floorId, chamberId) => {
+        enterAbyssChamber(floorId, chamberId);
+        closeScreen();
+      }"
       @close="closeScreen()"
     />
     <SpiralAbyssBenediction
@@ -1757,13 +1743,11 @@ useWorldSaveSync({
     <div
       class="teleport-fade"
       :class="{ faded: jumpPose }"
-      @transitionend="
-        () => {
-          if (!jumpPose) return;
-          character?.place(jumpPose);
-          jumpPose = undefined;
-        }
-      "
+      @transitionend="() => {
+        if (!jumpPose) return;
+        character?.place(jumpPose);
+        jumpPose = undefined;
+      }"
     />
   </div>
 </template>

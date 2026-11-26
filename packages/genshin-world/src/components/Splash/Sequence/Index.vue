@@ -82,7 +82,7 @@ watch(
 
 <template>
   <div class="splash-sequence">
-    <div :key="splashIndex" ref="stage" class="stage">
+    <div :key="splashIndex" class="stage" ref="stage">
       <component :is="splash?.component" :="splash?.props" />
     </div>
   </div>

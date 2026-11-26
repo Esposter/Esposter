@@ -189,11 +189,9 @@ useCommands((): UiCommand[] => [
         :model-value="date"
         label="Go to a day"
         :marked-dates
-        @update:model-value="
-          (newDate) => {
-            if (newDate) date = newDate;
-          }
-        "
+        @update:model-value="(newDate) => {
+          if (newDate) date = newDate;
+        }"
       />
     </aside>
     <div flex flex-1 flex-col gap-3 min-w-0>

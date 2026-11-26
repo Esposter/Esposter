@@ -39,15 +39,13 @@ watch(isFocusWithin, (newIsFocusWithin) => {
   <div
     ref="container"
     relative
-    @keydown.esc.capture="
-      (event: KeyboardEvent) => {
-        if (event.target === input) return;
-        event.preventDefault();
-        event.stopPropagation();
-        focus();
-        isOpen = false;
-      }
-    "
+    @keydown.esc.capture="(event: KeyboardEvent) => {
+      if (event.target === input) return;
+      event.preventDefault();
+      event.stopPropagation();
+      focus();
+      isOpen = false;
+    }"
   >
     <div
       ref="field"
@@ -68,12 +66,10 @@ watch(isFocusWithin, (newIsFocusWithin) => {
         v-for="{ index, title } of chips"
         :key="index"
         :remove-label="`Remove ${title}`"
-        @remove="
-          () => {
-            tokens = tokens.toSpliced(index, 1);
-            focus();
-          }
-        "
+        @remove="() => {
+          tokens = tokens.toSpliced(index, 1);
+          focus();
+        }"
       >
         {{ title }}
       </UiChip>
@@ -92,20 +88,16 @@ watch(isFocusWithin, (newIsFocusWithin) => {
         focus-visible:outline-none
         @focus="isOpen = true"
         @input="isOpen = true"
-        @keydown.backspace="
-          (event: KeyboardEvent) => {
-            if (event.isComposing || text || tokens.length === 0) return;
-            tokens = tokens.slice(0, -1);
-          }
-        "
+        @keydown.backspace="(event: KeyboardEvent) => {
+          if (event.isComposing || text || tokens.length === 0) return;
+          tokens = tokens.slice(0, -1);
+        }"
         @keydown.enter="handleKeyAction($event, () => emit('submit'))"
-        @keydown.esc="
-          (event: KeyboardEvent) => {
-            if (event.isComposing) return;
-            if (isOpen) isOpen = false;
-            else input?.blur();
-          }
-        "
+        @keydown.esc="(event: KeyboardEvent) => {
+          if (event.isComposing) return;
+          if (isOpen) isOpen = false;
+          else input?.blur();
+        }"
       />
       <UiIconButton
         v-if="text || tokens.length > 0"
@@ -113,13 +105,11 @@ watch(isFocusWithin, (newIsFocusWithin) => {
         :meaning="UiIconMeaning.Remove"
         :variant="UiButtonVariant.Quiet"
         ui-pill
-        @click="
-          () => {
-            text = '';
-            tokens = [];
-            focus();
-          }
-        "
+        @click="() => {
+          text = '';
+          tokens = [];
+          focus();
+        }"
       />
     </div>
     <UiPopover v-model:is-open="isOpen" :anchor="field ?? undefined" :label>

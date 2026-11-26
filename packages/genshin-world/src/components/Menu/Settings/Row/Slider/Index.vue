@@ -46,23 +46,19 @@ const dragSetting = (event: PointerEvent): void => {
     :aria-valuemax="row.range.max"
     :aria-valuemin="row.range.min"
     :aria-valuenow="trackValue"
-    @keydown="
-      (event) => {
-        if (!isBacked) return;
-
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') setBackedValue(trackValue - row.range.step);
-        else if (event.key === 'ArrowRight' || event.key === 'ArrowUp') setBackedValue(trackValue + row.range.step);
-        else return;
-
-        event.preventDefault();
-      }
-    "
-    @pointerdown="
-      (event) => {
-        (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-        dragSetting(event);
-      }
-    "
+    @keydown="(event) => {
+      if (!isBacked) return;
+    
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') setBackedValue(trackValue - row.range.step);
+      else if (event.key === 'ArrowRight' || event.key === 'ArrowUp') setBackedValue(trackValue + row.range.step);
+      else return;
+    
+      event.preventDefault();
+    }"
+    @pointerdown="(event) => {
+      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+      dragSetting(event);
+    }"
     @pointermove="dragSetting($event)"
   >
     <span class="knob" :style="{ left: `${getTrackShare(trackValue, row.range) * 100}%` }" />

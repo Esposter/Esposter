@@ -25,13 +25,11 @@ const create = (scene: SceneWithPlugins) => {
   <DungeonsScene
     :scene-key="SceneKey.World"
     @create="(scene) => create(scene)"
-    @update="
-      (scene, _time, delta) => {
-        update(scene);
-        // The grid engine steps its characters with the frame's delta, once the frame's input has resolved
-        updateGridEngine(delta);
-      }
-    "
+    @update="(scene, _time, delta) => {
+      update(scene);
+      // The grid engine steps its characters with the frame's delta, once the frame's input has resolved
+      updateGridEngine(delta);
+    }"
   >
     <DungeonsWorldMap />
     <DungeonsWorldCharacterPlayer />

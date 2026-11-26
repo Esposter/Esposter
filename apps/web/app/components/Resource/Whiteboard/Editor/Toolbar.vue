@@ -85,11 +85,9 @@ const groups = computed<EditorToolbarGroup[]>(() => [
   <UiHiddenFileInput
     ref="imageInput"
     :accept="WHITEBOARD_IMAGE_ACCEPT"
-    @select="
-      (file) => {
-        imageInput?.reset();
-        if (file) insertImages([file]);
-      }
-    "
+    @select="(file) => {
+      imageInput?.reset();
+      if (file) insertImages([file]);
+    }"
   />
 </template>

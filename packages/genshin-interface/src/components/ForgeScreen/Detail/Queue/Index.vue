@@ -22,7 +22,7 @@ const emit = defineEmits<{ obtain: [queueId: number] }>();
 
 <template>
   <p class="detail-heading">{{ headingLabel }}</p>
-  <span v-if="progress < 1" aria-hidden="true" class="detail-ring" />
+  <span v-if="progress < 1" class="detail-ring" aria-hidden="true" />
   <p class="detail-forged">{{ forgedLabel }}</p>
   <span class="detail-track">
     <span class="detail-fill" :style="{ width: `${progress * 100}%` }" />

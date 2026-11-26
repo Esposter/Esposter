@@ -85,22 +85,17 @@ const talentPanel = computed(() => {
     v-if="talentPanel"
     :="talentPanel"
     :upgrade-label="gameText[GameTextKey.TalentLevelUp]"
-    @upgrade="
-      (index) => {
-        const talent = COMBAT_TALENT_ORDER[index];
-        const talentGroupIds = talentKit?.talentGroupIds;
-        if (!talentGroupIds || !talent) return;
-        const raised = upgradeCharacterTalent(
-          characters,
-          character,
-          talent,
-          talentUpgradeMap[talentGroupIds[talent]] ?? [],
-          { inventory, wallet },
-        );
-        characters = raised.characters;
-        inventory = raised.inventory;
-        wallet = raised.wallet;
-      }
-    "
+    @upgrade="(index) => {
+      const talent = COMBAT_TALENT_ORDER[index];
+      const talentGroupIds = talentKit?.talentGroupIds;
+      if (!talentGroupIds || !talent) return;
+      const raised = upgradeCharacterTalent(characters, character, talent, talentUpgradeMap[talentGroupIds[talent]] ?? [], {
+        inventory,
+        wallet,
+      });
+      characters = raised.characters;
+      inventory = raised.inventory;
+      wallet = raised.wallet;
+    }"
   />
 </template>

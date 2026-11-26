@@ -32,13 +32,11 @@ const memberItems = computed(() =>
     flex
     gap-2
     items-start
-    @submit="
-      () => {
-        const newName = name;
-        name = '';
-        createRole({ name: newName, permissions: 0n, position: 0, roomId });
-      }
-    "
+    @submit="() => {
+      const newName = name;
+      name = '';
+      createRole({ name: newName, permissions: 0n, position: 0, roomId });
+    }"
   >
     <UiTextField
       v-model="name"

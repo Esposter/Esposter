@@ -50,11 +50,9 @@ onUnmounted(() => {
       texture: DungeonsKeys.UIJoystickBase,
       depth: JOYSTICK_DEPTH,
     }"
-    :on-complete="
-      (_scene, image) => {
-        base = markRaw(image);
-      }
-    "
+    :on-complete="(_scene, image) => {
+      base = markRaw(image);
+    }"
   />
   <Image
     :configuration="{
@@ -63,10 +61,8 @@ onUnmounted(() => {
       texture: DungeonsKeys.UIJoystickThumb,
       depth: JOYSTICK_DEPTH,
     }"
-    :on-complete="
-      (_scene, image) => {
-        thumb = markRaw(image);
-      }
-    "
+    :on-complete="(_scene, image) => {
+      thumb = markRaw(image);
+    }"
   />
 </template>

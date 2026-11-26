@@ -152,13 +152,11 @@ const selectTab = (isGift: boolean) => {
         :now
         :row="entry.row"
         :text-map
-        @select="
-          (mail) => {
-            selectedMail = mail;
-            isConfirmingDeleteGift = false;
-            emit('read', mail);
-          }
-        "
+        @select="(mail) => {
+          selectedMail = mail;
+          isConfirmingDeleteGift = false;
+          emit('read', mail);
+        }"
       />
     </div>
     <div v-if="visibleEntries.length === 0" class="empty">
@@ -174,12 +172,10 @@ const selectTab = (isGift: boolean) => {
       :text="gameText[GameTextKey.MailDeleteReadConfirm]"
       title=""
       @cancel="isConfirmingDeleteRead = false"
-      @confirm="
-        () => {
-          isConfirmingDeleteRead = false;
-          emit('deleteRead');
-        }
-      "
+      @confirm="() => {
+        isConfirmingDeleteRead = false;
+        emit('deleteRead');
+      }"
     />
     <MailScreenDetail
       v-if="selectedEntry"

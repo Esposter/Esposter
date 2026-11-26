@@ -123,11 +123,9 @@ await refreshResponses();
         read to drop it -->
       <ResourceSurveyResponseDeleteDialog
         :survey-id="id"
-        @delete="
-          (responseId) => {
-            if (records) records = { ...records, rows: records.rows.filter((row) => row.responseId !== responseId) };
-          }
-        "
+        @delete="(responseId) => {
+          if (records) records = { ...records, rows: records.rows.filter((row) => row.responseId !== responseId) };
+        }"
         @refresh="refreshResponses()"
       />
     </template>

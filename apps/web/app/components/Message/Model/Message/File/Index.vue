@@ -81,13 +81,11 @@ const view = () => {
       absolute
       :filename="file.filename"
       :url
-      @delete="
-        () => {
-          deletingRoomId = message.roomId;
-          deletingMessageId = message.id;
-          deletingFileId = file.id;
-        }
-      "
+      @delete="() => {
+        deletingRoomId = message.roomId;
+        deletingMessageId = message.id;
+        deletingFileId = file.id;
+      }"
     />
   </div>
 </template>

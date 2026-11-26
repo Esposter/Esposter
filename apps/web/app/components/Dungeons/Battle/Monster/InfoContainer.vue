@@ -37,13 +37,9 @@ const { barPercentage: experienceBarPercentage } = useExperience(monster);
       }"
     />
     <Text
-      :configuration="{
-        x: 30,
-        y: 20,
-        text: monsterName,
-        style: { color: '#7e3d3f', fontSize: 32 },
-        displayWidth: nameDisplayWidth,
-      }"
+      :configuration="
+        { x: 30, y: 20, text: monsterName, style: { color: '#7e3d3f', fontSize: 32 }, displayWidth: nameDisplayWidth }
+      "
       @update:display-width="nameDisplayWidth = $event"
     />
     <Text

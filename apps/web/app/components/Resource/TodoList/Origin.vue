@@ -27,12 +27,10 @@ const modelValue = defineModel<TodoListItemOrigin>({ required: true });
         — its notes say why.
       </span>
       <UiButton
-        @click="
-          () => {
-            const { handedBackAt: _handedBackAt, ...origin } = modelValue;
-            modelValue = origin;
-          }
-        "
+        @click="() => {
+          const { handedBackAt: _handedBackAt, ...origin } = modelValue;
+          modelValue = origin;
+        }"
       >
         Return to the drain
       </UiButton>

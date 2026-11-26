@@ -66,7 +66,8 @@ const itemTiles = computed(() =>
       {{ senderLine }}
     </p>
     <p class="date">
-      {{ dateLine[0]
+      {{
+        dateLine[0]
       }}<NuxtTime
         :datetime="entry.mail.deliveredAt"
         year="numeric"

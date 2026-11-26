@@ -104,12 +104,10 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       v-if="selectedResources.length > 0"
       :selected-resources
       @clear="clearSelection()"
-      @delete="
-        (resources) => {
-          clearSelection();
-          deletingIds = resources.map(({ id }) => id);
-        }
-      "
+      @delete="(resources) => {
+        clearSelection();
+        deletingIds = resources.map(({ id }) => id);
+      }"
     />
     <ResourceListFilterBar
       v-else
@@ -129,13 +127,11 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       :error="typeCountsError"
       :is-pending="isTypeCountsPending"
       @retry="refreshTypeCounts()"
-      @select="
-        (type) => {
-          types = [type];
-          page = 1;
-          isSummaryView = false;
-        }
-      "
+      @select="(type) => {
+        types = [type];
+        page = 1;
+        isSummaryView = false;
+      }"
     />
     <UiDataTable
       v-else

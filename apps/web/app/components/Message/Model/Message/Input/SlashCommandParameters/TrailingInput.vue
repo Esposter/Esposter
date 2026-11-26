@@ -49,47 +49,45 @@ useFocusWhenActive(input, () => isFocused);
       :placeholder="hiddenParameters.length > 0 ? optionsLabel : ''"
       @focus="emit('focus')"
       @blur="emit('blur')"
-      @keydown="
-        (event) => {
-          if (event.key === 'ArrowLeft' && checkIsCaretAtStart(event.target)) {
+      @keydown="(event) => {
+        if (event.key === 'ArrowLeft' && checkIsCaretAtStart(event.target)) {
+          event.preventDefault();
+          emit('navigate:previous');
+          return;
+        }
+      
+        if (event.key === 'Backspace' && !trailingMessage) {
+          event.preventDefault();
+          if (activeParameters.length > 0) emit('deleteLastParameter');
+          else emit('collapse');
+          return;
+        }
+      
+        if (hiddenParameters.length === 0) {
+          if (event.key === 'Enter') {
             event.preventDefault();
-            emit('navigate:previous');
-            return;
+            emit('submit');
           }
-
-          if (event.key === 'Backspace' && !trailingMessage) {
-            event.preventDefault();
-            if (activeParameters.length > 0) emit('deleteLastParameter');
-            else emit('collapse');
-            return;
-          }
-
-          if (hiddenParameters.length === 0) {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              emit('submit');
-            }
-            return;
-          }
-
-          if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            selectPreviousHiddenParameter();
-          } else if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            selectNextHiddenParameter();
-          } else if (event.key === 'Enter') {
-            event.preventDefault();
-            if (selectedHiddenParameter) emit('createParameter', selectedHiddenParameter.name);
-          } else if (event.key.length === 1 && !checkHasChordModifier(event)) {
-            event.preventDefault();
-            if (selectedHiddenParameter) {
-              emit('createParameter', selectedHiddenParameter.name);
-              emit('updateParameterValue', selectedHiddenParameter.name, event.key);
-            }
+          return;
+        }
+      
+        if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          selectPreviousHiddenParameter();
+        } else if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          selectNextHiddenParameter();
+        } else if (event.key === 'Enter') {
+          event.preventDefault();
+          if (selectedHiddenParameter) emit('createParameter', selectedHiddenParameter.name);
+        } else if (event.key.length === 1 && !checkHasChordModifier(event)) {
+          event.preventDefault();
+          if (selectedHiddenParameter) {
+            emit('createParameter', selectedHiddenParameter.name);
+            emit('updateParameterValue', selectedHiddenParameter.name, event.key);
           }
         }
-      "
+      }"
     />
   </span>
 </template>
