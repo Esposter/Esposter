@@ -236,7 +236,7 @@ catalogs:
       specifier: ^4.3.2
       version: 4.3.2
     '@iconify-json/lucide':
-      specifier: ^1.2.159
+      specifier: ^1.2.160
       version: 1.2.160
     '@iconify-json/mdi':
       specifier: ^1.2.3
