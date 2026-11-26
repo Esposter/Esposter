@@ -34,6 +34,7 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
     },
     contentMappers: [{ extensions: [".vue"], options: { optionsApi: false }, package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
+    include: ["../../../packages/configuration/types/vue/dataAttributes.d.ts"],
     vueCompilerOptions: {
       // @TODO: https://github.com/ubugeeei-prod/vize/issues/13721 — strictComponentAttrs on, here and shared
       // The template checks of `@esposter/configuration/tsconfig.vue.json`, which Nuxt's generated tsconfigs cannot

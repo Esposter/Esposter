@@ -1,11 +1,6 @@
-// The DOM attributes Vue's element types leave out, and the `data-*` attributes a component passes to
-// Its root, which a generic component's prop check reads in their camelCase spelling
+// The DOM attributes Vue's element types leave out. The `data-*` attributes a component passes to its root are
+// Declared once, in `packages/configuration/types/vue`, which the app's tsconfig includes
 declare module "vue" {
-  interface AllowedComponentProps {
-    [key: `data-${string}`]: unknown;
-    [key: `data${Capitalize<string>}`]: unknown;
-  }
-
   // @TODO: https://github.com/vuejs/core/pull/10977
   interface ButtonHTMLAttributes {
     popovertarget?: string;
