@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
+
+### Bug Fixes
+
+* **ci:** the lint and test reds the format, bucket and typecheck changes left ([585c96c](https://github.com/Esposter/Esposter/commit/585c96cba778fb31cb479c66cd5ac95ef7f6fb25))
+* **scripts:** a constructor's protect option is read from its own call only ([49ab36d](https://github.com/Esposter/Esposter/commit/49ab36db86e1ca114da4882be41d8f051452009e))
+* **scripts:** a root-level workspace member reads its own lockfile importer ([a9c560b](https://github.com/Esposter/Esposter/commit/a9c560bd2265ef416bf2197a1d43fad48c1099e9))
+* **scripts:** each infra constructor is checked for its own protect option ([66a37eb](https://github.com/Esposter/Esposter/commit/66a37eb4237efe8425b111313d58d0a121337556))
+* **sweeps:** the stale-name scan skips generated files again, not every component ([7a1f65c](https://github.com/Esposter/Esposter/commit/7a1f65c9ad93716662891f05699ed9289444b7b1))
+* the queue's red test shards ([99ee046](https://github.com/Esposter/Esposter/commit/99ee046e92734208d39e6e5f75fbc1da81eaae05))
+* the queue's red typecheck and lint ([353c410](https://github.com/Esposter/Esposter/commit/353c410e7ce6ac7bbd2903b2af485183f521c65c))
+* **web:** the session a render gates on is the payload's, so a signed-in feed hydrates as the server rendered it ([36c65bd](https://github.com/Esposter/Esposter/commit/36c65bd9c631cab58f1d124211cc124063daa1d2))
+
+### Features
+
+* **format:** vize fmt formats the components and oxfmt the rest ([355750f](https://github.com/Esposter/Esposter/commit/355750fbd2d35e6fc91d631bb1e90ff9a3f62d39)), closes [vize#13682](https://github.com/vize/issues/13682) [vize#13701](https://github.com/vize/issues/13701) [vize#13679](https://github.com/vize/issues/13679) [vize#13666](https://github.com/vize/issues/13666) [vize#13714](https://github.com/vize/issues/13714)
+* **precheck:** --fix rewrites a ledger row whose unit was reworded ([e68d38c](https://github.com/Esposter/Esposter/commit/e68d38c9f077a57fa99256e34117331dc4b0b115))
+
 # [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
 
 ### Bug Fixes
