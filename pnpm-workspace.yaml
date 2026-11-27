@@ -194,7 +194,7 @@ catalog:
   vitest-browser-vue: ^3.1.0
   vize: ^0.799.0
   vue: ^3.5.46
-  vue-router: ^5.5.1
+  vue-router: ^5.5.3
   web-push: ^4.0.0
   wrangler: ^4.168.0
   write-excel-file: ^4.1.1
