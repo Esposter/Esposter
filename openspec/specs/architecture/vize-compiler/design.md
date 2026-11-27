@@ -35,11 +35,15 @@ The library builds hand Vize the TresJS elements as `tresCustomElements`, a list
 
 ## What the Nuxt module costs
 
-The module is measured against the same tree without it, on an eight-core Windows desktop with 32 GB of memory, on a clean production build of each. On the release the module first left the app, a build took about three times as long. On the current release it takes about a sixth longer: roughly a minute and a quarter with the module against a minute without it. The client and the server pass each take about a quarter longer, and the Nitro pass is within a second. The client bundle's size is the same to within a fraction of a percent, and every component compiles with none failing.
+The module is measured against the same tree without it, on an eight-core Windows desktop with 32 GB of memory, on clean production builds of each. On the release the module first left the app, a build took about three times as long. On the current release three builds with the module took between about a minute and a minute and a quarter, and two without it took about a minute, so it costs a few seconds to about a sixth of the build, and the spread between runs is several seconds. The client and server passes each take between a twentieth and a quarter longer, and the Nitro pass is within a second. The client bundle's size is the same to within a fraction of a percent, and every component compiles with none failing.
 
-The dev server is ready in about twenty to forty seconds, as without the module.
+The dev server is ready in about twenty to forty seconds, as without the module. Every public route answers 200 and renders the same body markup as the baseline's, apart from attribute order, a template's own HTML comment, which the module drops from the development output, and the fragment anchors around it.
 
-The build makes three passes over the app's components (client, server and Nitro), and the module pre-compiles every component before any module is requested. The costs that made that about three times as long are fixed upstream except the ones below.
+A timing plugin in each pass shows where the remainder sits:
+
+- **The pre-compile holds no pass.** The wait between a pass's `buildStart` and its first module request is about a fifth of a second with the module and without it, so no pass waits on a pre-compile.
+- **The compile callbacks cost what `@vitejs/plugin-vue`'s cost.** In the client pass the module's SFC transform is about 1,500 calls and under five seconds, against about 2,100 calls and five seconds. In the server pass it is about 300 calls and about a second, against about 600 calls and one and a half seconds, because the client pass's compile is shared.
+- **The difference is the module's other hooks.** The client pass's module graph takes two to three seconds longer. The transform bridge adds about a second across every module of the pass, and the module's resolver is entered several thousand times in the client pass where `@vitejs/plugin-vue`'s is not. Neither shows a time in the build's own report, so the remainder is not attributed.
 
 ## What is still open upstream
 
@@ -50,9 +54,7 @@ The build makes three passes over the app's components (client, server and Nitro
 - **Files the plugin already holds are touched again.** Each pass reads and stats every component anew, one cheap call per component per pass ([Vize issue 13561](https://github.com/ubugeeei-prod/vize/issues/13561)).
 - **A compile outside the pre-compile is a standalone native call.** A hot update's dependents used to compile one file at a time; a wave now compiles in native batches, and the issue stays open for the first load of the server environment ([Vize issue 13565](https://github.com/ubugeeei-prod/vize/issues/13565)).
 
-Turning the pre-compile off with `scanPatterns: []` is no remedy. The plugin then compiles each component on request, one at a time and outside the native batches, which is the measurement that moved Vize's Nuxt module from on-demand compiles to the pre-compile ([Vize issue 9900](https://github.com/ubugeeei-prod/vize/issues/9900)). The pre-compile also feeds the production `components.css` from every scanned component.
-
-The module compiles every component without `typescript` in `apps/web`, and its client, server and Nitro outputs match the baseline's sizes to within a percent. The app keeps `typescript` as a dev dependency for `@vue/compiler-sfc`, which `@nuxt/vite-builder` still installs through `@vitejs/plugin-vue`: no Nuxt option turns that package off, so it stays in the lockfile.
+The module compiles every component without `typescript` in `apps/web`, and the app typechecks without it, with its client, server and Nitro outputs matching the baseline's sizes to within a percent. The app keeps it as a dev dependency for `@vue/compiler-sfc`, which the Vitest component tests still compile through, since the Vitest module list leaves the Vize module out. `@vue/compiler-sfc` resolves a props type imported from another file through `typescript`, which `vue` loads as its optional peer. Without the direct dependency the peer is installed on its own and today lands on the same 6.x only because one transitive package's range stops below 7, so the direct dependency is the pin the `renovate.json` rule caps ([vuejs/core#15997](https://github.com/vuejs/core/issues/15997)). `@nuxt/vite-builder` also depends on `@vitejs/plugin-vue` unconditionally and no Nuxt option turns it off, so the package stays in the lockfile.
 
 ## What holds the module in the app
 
@@ -87,7 +89,6 @@ The module compiles every component without `typescript` in `apps/web`, and its 
 - [Vize issue 12059](https://github.com/ubugeeei-prod/vize/issues/12059) — the cost of a star barrel, which each call walked in full. Closed as completed by pull request 12063.
 - [Vize issue 12062](https://github.com/ubugeeei-prod/vize/issues/12062) — the growth with the square of a star barrel whose modules import different types from a shared star barrel. Closed as completed by pull request 12063.
 - [Vize pull request 12063](https://github.com/ubugeeei-prod/vize/pull/12063) — the bound on a star export's walk and the validation shared across the calls of one turn.
-- [Vize issue 9900](https://github.com/ubugeeei-prod/vize/issues/9900) — the Nuxt module's on-demand compiles measured against the pre-compile's native batches, which moved the module's default to the pre-compile. Closed as completed.
 - [Vize issue 12151](https://github.com/ubugeeei-prod/vize/issues/12151) — the transform hook's cache key on Windows, under which the client pass compiled every component again. Closed as completed.
 - [Vize issue 12153](https://github.com/ubugeeei-prod/vize/issues/12153) — the cache the server environment's hook reads, which the pre-compile never filled. Closed as completed by pull request 12156, which keeps a client and a server cache that both reuse the pre-compile.
 - [Vize issue 13557](https://github.com/ubugeeei-prod/vize/issues/13557) — the uncached `realpathSync.native` call per dependency per compiled component, with a reproduction of a thousand components typed through a star barrel, in one environment and in three. Closed as completed.
