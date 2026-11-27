@@ -112,8 +112,7 @@ describe("resourceWhiteboardEditor", () => {
   const mountEditor = async (elements: PositionedElement[]) => {
     trpcMsw.whiteboard.readResourceContent.query(() => ({ elements }));
     const component = await mountSuspended(ResourceWhiteboardEditor);
-    // The afterEach moves the clock back to the real timers once it has written any edit still held.
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- write any edit still held, then restores the real timers
+    // The afterEach writes any edit still held, then restores the real timers
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     return component;
   };

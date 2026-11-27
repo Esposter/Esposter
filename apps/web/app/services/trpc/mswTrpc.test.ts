@@ -8,6 +8,10 @@ import { setupServer } from "msw/node";
 import { createTRPCMsw } from "trpc-msw";
 import { afterAll, afterEach, beforeAll, describe, expect, vi } from "vitest";
 
+// The timer the harness bounds its wait with, taken as the module loads, before any test fakes the clock, so a suite
+// May fake `setTimeout` and the harness still waits its one turn on the real one
+const { setTimeout: realSetTimeout } = globalThis;
+
 // What every mocked call is answered with. The headers a resolver appends to it are sent back on the call's response
 interface MswContext {
   responseHeaders: Headers;
@@ -80,11 +84,11 @@ export const setupMswTrpc = () => {
     await Promise.race([
       Promise.all(Array.from(pendingRequestMap.values(), ({ settled }) => settled.promise)),
       new Promise((resolve) => {
-        setTimeout(resolve, 0);
+        realSetTimeout(resolve, 0);
       }),
     ]);
     await new Promise((resolve) => {
-      setTimeout(resolve, 0);
+      realSetTimeout(resolve, 0);
     });
     const heldRequestUrls = Array.from(pendingRequestMap.values(), ({ url }) => url);
     pendingRequestMap.clear();

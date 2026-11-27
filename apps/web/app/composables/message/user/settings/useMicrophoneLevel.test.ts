@@ -49,6 +49,9 @@ describe(useMicrophoneLevel, () => {
 
   afterEach(() => {
     wrapper.unmount();
+    // The unmount's stop closes the context, and a close stays pending until released, so every one is released here
+    // Before the shared setup drains the stop
+    for (const releaseClose of releaseCloses) releaseClose();
     vi.unstubAllGlobals();
   });
 

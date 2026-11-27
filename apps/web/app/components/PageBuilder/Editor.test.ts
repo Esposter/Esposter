@@ -310,8 +310,7 @@ describe("pageBuilderEditor", () => {
   test("an unsaved edit changes the findings", async () => {
     expect.hasAssertions();
     // The findings settle on the autosave's cadence, so the test moves the clock past it rather than waiting for it
-    // The findings debounce is counted by the clock, and the afterEach above restores the real timers.
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- timers are faked before the harness waits on setTimeout
+    // The findings debounce is counted by the clock
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setDocument } = pageBuilderDocumentStore;

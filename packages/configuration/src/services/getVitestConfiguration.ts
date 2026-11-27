@@ -1,6 +1,7 @@
 import type { SetRequired } from "type-fest";
 import type { ViteUserConfig } from "vitest/config";
 
+import { getMockDatabaseGlobalSetup } from "#src/internal/services/getMockDatabaseGlobalSetup";
 import { BROWSER_TEST_GLOB, SOURCE_CONDITION } from "#src/services/constants";
 import { getBenchmarkTestConfiguration } from "#src/services/getBenchmarkTestConfiguration";
 import { getVitestProjectName } from "#src/services/getVitestProjectName";
@@ -27,6 +28,7 @@ export const getVitestConfiguration = (
     },
     test: {
       exclude: [...configDefaults.exclude, BROWSER_TEST_GLOB],
+      ...(projectDirectory ? { globalSetup: getMockDatabaseGlobalSetup(projectDirectory) } : {}),
       // A `beforeAll` booting Miniflare's D1 takes well under a second on an idle machine and several on a loaded one,
       // Because a run spawns a worker per file and they compete for cores — the 10s default is a starvation
       // Detector rather than a hook bound, and this is the one setting that keeps a green suite green

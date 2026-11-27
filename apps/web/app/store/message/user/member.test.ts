@@ -23,7 +23,7 @@ import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
@@ -75,6 +75,11 @@ describe(useMemberStore, () => {
   beforeEach(() => {
     setRouteId(roomId);
     serveCounts(0, []);
+  });
+
+  // Registered after setupMswTrpc, so it runs before the harness waits a turn on setTimeout
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   // The member's roles are read into the store, so a leave can clear the group they were counted in
@@ -137,6 +142,9 @@ describe(useMemberStore, () => {
       isGroupReadFailed = true;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
+    // The retry waits out the backoff, so the clock is the test's: it lands the retry by running the timers, not by
+    // Waiting for the backoff to pass
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     arriveLeftMember(leftRow(member.id, roomId));
     await isFailureLogged;
     consoleError.mockRestore();
@@ -144,7 +152,7 @@ describe(useMemberStore, () => {
     expect(memberCount.value).toBe(2);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 2, roleId: role.id }]);
 
-    await refreshMemberCounts([roomId]);
+    await vi.runAllTimersAsync();
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);

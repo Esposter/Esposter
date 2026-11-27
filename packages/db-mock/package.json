@@ -35,6 +35,10 @@
       "source": "./src/cloudflareWorkers.ts",
       "default": "./dist/cloudflare-workers.js"
     },
+    "./global-setup": {
+      "source": "./src/globalSetup.ts",
+      "default": "./dist/global-setup.js"
+    },
     "./vitest": {
       "source": "./src/setupMockBucket.ts",
       "default": "./dist/vitest.js"
@@ -50,6 +54,7 @@
       ".": "./dist/index.js",
       "./cache": "./dist/cache.js",
       "./cloudflare-workers": "./dist/cloudflare-workers.js",
+      "./global-setup": "./dist/global-setup.js",
       "./vitest": "./dist/vitest.js",
       "./workers": "./dist/workers.js",
       "./package.json": "./package.json"

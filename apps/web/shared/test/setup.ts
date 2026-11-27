@@ -3,7 +3,7 @@
 import type { Pinia } from "pinia";
 
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
-import { checkIsServer, waitForSynchronizedFunctions } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
 
 // The node environment has no storage at all: the shared Vitest configuration switches node's own Web Storage
@@ -149,9 +149,12 @@ beforeEach(() => {
 // Every fire-and-forget a test started settles inside it — the tRPC error link's session check and its login
 // Navigation among them — so none runs on once the environment is torn down, where `history` and `window` are gone.
 // Vitest runs a file's after hooks last-registered first, so the drain lands before the auto-unmount above. A test that
-// Leaves one never settling fails here within the timeout rather than holding the run for the whole hook timeout
+// Leaves one never settling fails here within the timeout rather than holding the run for the whole hook timeout. The
+// Drain is imported as the hook runs: this file's own imports load before the environment's module graph, so a static
+// One reaches a second copy of `@esposter/shared` whose set holds none of the work the app and the tests start
 afterEach(
   async () => {
+    const { waitForSynchronizedFunctions } = await import("@esposter/shared");
     await waitForSynchronizedFunctions();
     globalThis.localStorage.clear();
     globalThis.sessionStorage.clear();

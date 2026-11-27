@@ -21,15 +21,9 @@ time through `Date.now()` and nothing it runs on a timer is under test, so `toFa
 the code reads `Temporal.Now`) loses nothing. `testing/fake-clock-only` reports any other list, or none, in a suite
 importing `@esposter/db-mock` or the app's `trpc/context.test`.
 
-**A suite that imports `setupMswTrpc` never fakes `setTimeout`.** The harness's `afterEach` waits one timer boundary for
-msw to answer what is still in flight, and under a frozen clock that boundary never comes, so the suite hangs at its
-end. The test client sends each call as its own request, so no batch timer is armed for a faked clock to hold.
-`testing/no-faked-set-timeout` reports it in any suite importing `setupMswTrpc`. Name the timers the code under test actually runs on instead: `vi.useFakeTimers({ toFake: ["Date", "setInterval",
-"clearInterval"] })` for an interval sweep.
-
-The one exception is a debounce counted by the requests it sends. That suite restores real timers in its own `afterEach`:
-Vitest runs hooks last-in first-out, so the restore runs before the harness's wait, which then runs on the real clock. The
-line that fakes `setTimeout` carries `oxlint-disable-next-line testing/no-faked-set-timeout` with that reason.
+**The `setupMswTrpc` teardown uses a real timer boundary.** It captures `setTimeout` when the helper module loads, before
+tests install fake timers, so the wait for in-flight requests still runs even when the code under test uses a fake
+`setTimeout`. Tests restore real timers in `afterEach` so the next test starts with the real clock.
 
 ## A timer a library sets as it mounts is advanced, not waited out
 

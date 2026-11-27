@@ -111,14 +111,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     // A test's double stands in for a class instance without its constructor, which is what the rule reports
     { files: ["**/*.test.ts", "**/*.fixture.ts"], rules: { "typescript/no-unsafe-class-instance-assignment": "off" } },
-    {
-      files: ["**/*.test.ts"],
-      rules: {
-        "testing/fake-clock-only": "error",
-        "testing/no-faked-set-timeout": "error",
-        "testing/require-suite": "error",
-      },
-    },
+    { files: ["**/*.test.ts"], rules: { "testing/fake-clock-only": "error", "testing/require-suite": "error" } },
     {
       // Nuxt auto-imports Vue into the app tree alone: a package, the Nuxt configuration and `shared/` reach it by
       // Import

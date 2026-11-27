@@ -116,8 +116,7 @@ describe("resourceDashboardEditor", () => {
       savedVisualTypes.push(dashboard.value.visuals.map(({ type }) => type));
     });
     await mountSuspended(ResourceDashboardEditor);
-    /* oxlint-disable-next-line testing/no-faked-set-timeout -- the autosave debounce is counted by the clock; the
-       afterEach above restores the real timers before the harness waits a turn on setTimeout */
+    // The autosave debounce is counted by the clock
     vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
     const visualStore = useVisualStore();
     const { createVisual } = visualStore;

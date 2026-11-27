@@ -14,10 +14,13 @@ import { mergeConfig } from "tsdown";
 // Then be held to the Miniflare clock rule. The entry names its file, so the barrel never lists it.
 // `vitest` is the suite fixtures, which register Vitest hooks. It is its own entry because the barrel reaches the
 // Dev seed and the Nitro config, which run outside Vitest. The entry names its file, so the barrel never lists it.
+// `global-setup` is the Vitest global setup that builds the migrated template once, before any worker starts. It is a
+// Default export, which Vitest reads from a global setup module, so it is its own entry rather than in the barrel.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
   entry: {
     cache: "src/services/createMockCache.ts",
     "cloudflare-workers": "src/cloudflareWorkers.ts",
+    "global-setup": "src/globalSetup.ts",
     index: "src/index.ts",
     vitest: "src/setupMockBucket.ts",
     workers: "src/workers/index.ts",

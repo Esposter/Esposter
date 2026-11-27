@@ -50,15 +50,16 @@ Not every piece of test scaffolding is a workaround, and treating them alike wou
 
 ## Key files
 
-| File                                                             | Role                                                                                       |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `packages/configuration/src/services/getVueTestConfiguration.ts` | The upstream Vue log filter                                                                |
-| `packages/configuration/src/services/getVitestConfiguration.ts`  | `--no-webstorage` for every member                                                         |
-| `apps/web/shared/test/setup.ts`                                  | Storage, the storage and runtime-config mocks, the warm-up hook, and auto-unmount          |
-| `apps/web/vitest.config.ts`                                      | `setupFiles` including `fake-indexeddb/auto`, the node default, and the timeouts around it |
-| `apps/web/app/services/trpc/mswTrpc.test.ts`                     | The msw `fetch` realignment                                                                |
-| `apps/web/configuration/modules.ts`                              | The Vitest module allowlist                                                                |
-| `packages/vue-phaserjs/src/test/setupCanvas.ts`                  | The canvas context mock Phaser boots against                                               |
-| `packages/configuration/src/services/dynamicJsonImportPlugin.ts` | The dynamic JSON import attribute workaround                                               |
-| `packages/genshin-world/vitest.browser.config.ts`                | The browser suite wiring it                                                                |
-| `packages/genshin-world/parity/vite.config.ts`                   | The parity page wiring it                                                                  |
+| File                                                             | Role                                                                                   |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `packages/configuration/src/services/getVueTestConfiguration.ts` | The upstream Vue log filter                                                            |
+| `packages/configuration/src/services/getVitestConfiguration.ts`  | `--no-webstorage` and manifest-selected mock database setup                            |
+| `packages/db-mock/src/globalSetup.ts`                            | Builds the migrated database template before test workers start                        |
+| `apps/web/shared/test/setup.ts`                                  | Storage, mocks, warm-up, auto-unmount and the synchronized-callback drain              |
+| `apps/web/vitest.config.ts`                                      | Setup files, node default, timeouts and combined database and wake-check global setups |
+| `apps/web/app/services/trpc/mswTrpc.test.ts`                     | The `fetch` realignment and real-timer request boundary                                |
+| `apps/web/configuration/modules.ts`                              | The Vitest module allowlist                                                            |
+| `packages/vue-phaserjs/src/test/setupCanvas.ts`                  | The canvas context mock Phaser boots against                                           |
+| `packages/configuration/src/services/dynamicJsonImportPlugin.ts` | The dynamic JSON import attribute workaround                                           |
+| `packages/genshin-world/vitest.browser.config.ts`                | The browser suite wiring it                                                            |
+| `packages/genshin-world/parity/vite.config.ts`                   | The parity page wiring it                                                              |

@@ -8,6 +8,7 @@ import MessageModelFileRendererPdf from "#src/components/Message/Model/FileRende
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { loadPdfRenderer } from "#src/services/pdf/loadPdfRenderer";
 import { UiDialogFrameClassMap } from "#src/services/ui/UiDialogFrameClassMap";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -99,8 +100,10 @@ describe("messageModelFileRendererPdf", () => {
   test("a re-minted link keeps the loaded document", async () => {
     expect.hasAssertions();
 
-    // The first page never arrives, so the thumbnail draws nothing from the document it is handed
-    const pdfDocument = { getPage: (_pageNumber: number) => new Promise<PDFPageProxy>(() => {}) } as PDFDocumentProxy;
+    // The first page does not arrive while the test runs, so the thumbnail draws nothing from the document it is
+    // Handed. It is refused once the test is done, so the draw waiting on it settles before the shared setup's drain
+    const { promise: firstPage, reject: refuseFirstPage } = Promise.withResolvers<PDFPageProxy>();
+    const pdfDocument = { getPage: (_pageNumber: number) => firstPage } as PDFDocumentProxy;
     const task = {
       destroy: vi.fn<PDFDocumentLoadingTask["destroy"]>(() => Promise.resolve()),
       promise: Promise.resolve(pdfDocument),
@@ -126,5 +129,7 @@ describe("messageModelFileRendererPdf", () => {
       url,
       wasmUrl: "",
     });
+
+    refuseFirstPage(new InvalidOperationError(Operation.Read, "getPage", "the test is done"));
   });
 });

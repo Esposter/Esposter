@@ -16,6 +16,8 @@ vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
 
 describe("pageBuilderMediaField", () => {
   const TEST_IMAGE_FILE_NAME = "a";
+  // The picker beside the upload reads the resource's files, which its own suite answers; these tests are the upload's
+  const global = { stubs: { PageBuilderFilePicker: true } };
 
   test("a picked image uploads, and its asset url is emitted as the source of the node selected when it was picked", async () => {
     expect.hasAssertions();
@@ -24,6 +26,7 @@ describe("pageBuilderMediaField", () => {
     setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderMediaField, {
+      global,
       props: { category: MimeCategory.Image, resourceId: TEST_ID, type: ResourceType.Email },
     });
     component
@@ -43,6 +46,7 @@ describe("pageBuilderMediaField", () => {
     upload.result = promise;
 
     const component = await mountSuspended(PageBuilderMediaField, {
+      global,
       props: { category: MimeCategory.Image, resourceId: TEST_ID, type: ResourceType.Email },
     });
     component

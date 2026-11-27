@@ -4,7 +4,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                          |   Bytes |    KiB |
 | :------------------------- | :---------------------------- | ------: | -----: |
-| genshin-world              | **/*.js                       | 4213563 | 4114.8 |
+| genshin-world              | **/*.js                       | 4213590 | 4114.8 |
 | genshin-world              | **/*.d.ts                     | 2787204 | 2721.9 |
 | @esposter/db               | **/*.js                       |  826869 |  807.5 |
 | genshin-text               | **/*.js                       |  625628 |  611.0 |
@@ -41,7 +41,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | survey-expression          | **/*.d.ts                     |   32318 |   31.6 |
 | @esposter/shared           | index.d.ts                    |   28452 |   27.8 |
 | vue-phaserjs               | index.d.ts                    |   27273 |   26.6 |
-| @esposter/configuration    | **/*.js                       |   26059 |   25.4 |
+| @esposter/configuration    | **/*.js                       |   26816 |   26.2 |
 | vue-survey-engine-headless | index.d.ts                    |   25061 |   24.5 |
 | vue-grid-layout-headless   | **/*.js                       |   23626 |   23.1 |
 | @esposter/shared           | index.js                      |   23015 |   22.5 |
@@ -153,6 +153,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | keyframe-store             | createKeyframeStore.d.ts      |     354 |    0.3 |
 | tresjs-nuxt                | **/*.d.ts                     |     353 |    0.3 |
 | @esposter/db-mock          | createMockBucket.js           |     350 |    0.3 |
+| @esposter/db-mock          | global-setup.js               |     337 |    0.3 |
 | @esposter/shared-node      | check-is-process-running.js   |     334 |    0.3 |
 | vue-canvas-frame-headless  | index.js                      |     329 |    0.3 |
 | vue-canvas-frame-headless  | index.d.ts                    |     328 |    0.3 |
@@ -179,4 +180,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts                |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts        |       9 |    0.0 |
 
-**Total:** 174 files, 13142282 bytes, 12834.3 KiB, 12.53 MiB
+**Total:** 175 files, 13143403 bytes, 12835.4 KiB, 12.53 MiB

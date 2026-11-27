@@ -35,8 +35,12 @@ const vitestConfig = await defineVitestProject({ test });
 vitestConfig.test ??= {};
 vitestConfig.test.environment = "node";
 // The live topic wake check's run-level half: it clears the records of an earlier run, then fails a full run that
-// Leaves a watched procedure uncalled by every suite (`server/trpc/liveTopicWakeCheckGlobal.ts`)
-vitestConfig.test.globalSetup = ["./server/trpc/liveTopicWakeCheckGlobal.ts"];
+// Leaves a watched procedure uncalled by every suite (`server/trpc/liveTopicWakeCheckGlobal.ts`). It joins the shared
+// Factory's own global setup rather than replacing it
+vitestConfig.test.globalSetup = [
+  ...[vitestConfig.test.globalSetup ?? []].flat(),
+  "./server/trpc/liveTopicWakeCheckGlobal.ts",
+];
 // `cloudflare:workers` exists only in the Workers runtime, so the server's imports of it resolve to the package whose
 // `env` `createMockDb` fills with the file's Miniflare bindings
 vitestConfig.resolve = {

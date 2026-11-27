@@ -1,5 +1,3 @@
-/* oxlint-disable testing/no-faked-set-timeout -- the afterEach above restores the real clock before the harness
-   waits a turn on setTimeout */
 // @vitest-environment nuxt
 import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
 
