@@ -26,9 +26,9 @@
       "matchPackageNames": ["drizzle-kit", "drizzle-orm"]
     },
     {
-      "description": "`@vizejs/unplugin` and `@vizejs/vite-plugin` pin the Vize packages they build on to their own version exactly, and `vize` pins `@vizejs/native`, so a bump of one alone installs a second copy of the others and the plugins, the mapper and the scripts' parser would compile with different Vize builds. They move in one branch.",
+      "description": "`@vizejs/nuxt`, `@vizejs/unplugin` and `@vizejs/vite-plugin` pin the Vize packages they build on to their own version exactly, and `vize` pins `@vizejs/native`, so a bump of one alone installs a second copy of the others and the plugins, the mapper and the scripts' parser would compile with different Vize builds. They move in one branch.",
       "groupName": "vize",
-      "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/unplugin", "@vizejs/vite-plugin"]
+      "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/nuxt", "@vizejs/unplugin", "@vizejs/vite-plugin"]
     },
     {
       "description": "`wrangler` depends on one exact `miniflare` build, and `@esposter/db-mock` runs the tests on `miniflare` directly, so the catalog holds `miniflare` at the exact version the installed `wrangler` names, beta tag included. A `miniflare` bump alone installs a second copy beside wrangler's, so the two move in one branch.",
