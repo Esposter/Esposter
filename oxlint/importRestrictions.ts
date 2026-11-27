@@ -55,7 +55,8 @@ export const APP_RESTRICTED_IMPORT_PATHS: RestrictedImportPath[] = [
 ];
 export const VUETIFY_IMPORT_PATH: RestrictedImportPath = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
 export const VUETIFY_IMPORT_PATTERN: RestrictedImportPattern = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
-// Every workspace library, read from the manifests under `packages/`, so a new one is banned with no list kept here
+// Every workspace library, read from the manifests under `packages/`, so a new one is banned with no list kept here.
+// The `@esposter/*` scope also reaches `scripts` and the apps' packages, which live outside `packages/`
 const WORKSPACE_LIBRARY_NAMES = readdirSync(new URL("../packages/", import.meta.url))
   .map((name) => new URL(`../packages/${name}/package.json`, import.meta.url))
   .filter((manifestUrl) => existsSync(manifestUrl))
@@ -67,7 +68,7 @@ const WORKSPACE_LIBRARY_NAMES = readdirSync(new URL("../packages/", import.meta.
   });
 const WORKSPACE_LIBRARY_IMPORT_PATTERN: RestrictedImportPattern = {
   allowTypeImports: true,
-  group: WORKSPACE_LIBRARY_NAMES,
+  group: ["@esposter/*", ...WORKSPACE_LIBRARY_NAMES],
   message:
     "The Nuxt configuration and the app's local modules load in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one by its name fails every fresh install. Import the npm package the library wraps, or the library's source file by its path; types are fine.",
 };
