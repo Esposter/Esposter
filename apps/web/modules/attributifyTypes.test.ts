@@ -10,7 +10,7 @@ describe(getAttributifyNames, () => {
     const generator = await createGenerator(unoConfig);
     const code = `<template><div flex-col flx-col hover:bg="border" /></template>`;
 
-    const names = await getAttributifyNames(generator, [{ code, id: "Example.vue" }]);
+    const names = await getAttributifyNames(generator, [{ code, id: "a.vue" }]);
 
     expect(names).toStrictEqual(["flex-col", "flexCol", "hover:bg"]);
   });
