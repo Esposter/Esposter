@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.19.0](https://github.com/Esposter/Esposter/compare/v4.18.0...v4.19.0) (2026-11-27)
+
+### Features
+
+* **web:** the app compiles its components through the Vize Nuxt module again, and the catalog takes the newest releases ([5e78324](https://github.com/Esposter/Esposter/commit/5e78324d0500911eae0676155ebc3ed7cb391d53)), closes [ubugeeei-prod/vize#13567](https://github.com/ubugeeei-prod/vize/issues/13567)
+
 # [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
 
 ### Bug Fixes
