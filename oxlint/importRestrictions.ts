@@ -109,24 +109,14 @@ export const WEB_ALIAS_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   },
   SUBPATH_QUERY_IMPORT_PATTERN,
 ];
-// The app's configuration and scripts reach `db-schema`'s and `shared-node`'s source by path, their one relative
-// Import: Nuxt loads them at install, before any workspace package is built, and a subpath import never targets a file
-// Outside its own package
-export const WEB_IMPORT_PATTERNS: RestrictedImportPattern[] = [
-  ...WEB_ALIAS_IMPORT_PATTERNS,
-  {
-    group: [
-      ...RELATIVE_IMPORT_GROUP,
-      ...["db-schema", "shared-node"].flatMap((name) => [
-        `!../../../packages/${name}/src/**`,
-        `!../../../../packages/${name}/src/**`,
-      ]),
-    ],
-    message: RELATIVE_IMPORT_MESSAGE,
-  },
-];
+const RELATIVE_IMPORT_PATTERN: RestrictedImportPattern = {
+  group: RELATIVE_IMPORT_GROUP,
+  message: RELATIVE_IMPORT_MESSAGE,
+};
+export const WEB_IMPORT_PATTERNS: RestrictedImportPattern[] = [...WEB_ALIAS_IMPORT_PATTERNS, RELATIVE_IMPORT_PATTERN];
 // The files Nuxt loads at install, before any workspace package is built, reach a package's code by its path, since
-// Its name resolves to the `dist` a fresh clone does not have yet (`WORKSPACE_LIBRARY_IMPORT_PATTERN`)
+// Its name resolves to the `dist` a fresh clone does not have yet (`WORKSPACE_LIBRARY_IMPORT_PATTERN`), and a subpath
+// Import never targets a file outside its own package
 export const WEB_LOADER_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   ...WEB_ALIAS_IMPORT_PATTERNS,
   WORKSPACE_LIBRARY_IMPORT_PATTERN,
@@ -135,13 +125,9 @@ export const WEB_LOADER_IMPORT_PATTERNS: RestrictedImportPattern[] = [
     message: RELATIVE_IMPORT_MESSAGE,
   },
 ];
-const PACKAGE_RELATIVE_IMPORT_PATTERN: RestrictedImportPattern = {
-  group: RELATIVE_IMPORT_GROUP,
-  message: RELATIVE_IMPORT_MESSAGE,
-};
 export const PACKAGE_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_ALIAS_IMPORT_PATTERN,
-  PACKAGE_RELATIVE_IMPORT_PATTERN,
+  RELATIVE_IMPORT_PATTERN,
   SUBPATH_QUERY_IMPORT_PATTERN,
 ];
 // The Worker deploy gate reads each Worker's environment model from its app's source by path.
