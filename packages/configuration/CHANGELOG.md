@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
+
+### Bug Fixes
+
+* **configuration:** the auto-import declarations are written to Vite's root, not the working directory ([aa86078](https://github.com/Esposter/Esposter/commit/aa860784b54ca18816b67bf962d793c2d5183aad))
+* **sweeps:** the stale-name scan skips generated files again, not every component ([7a1f65c](https://github.com/Esposter/Esposter/commit/7a1f65c9ad93716662891f05699ed9289444b7b1))
+
+### Features
+
+* **configuration:** the Vue packages type-check their templates strictly ([8083805](https://github.com/Esposter/Esposter/commit/8083805b6565fbcbe6d28b41926c9b74306db32e))
+* **format:** vize fmt formats the components and oxfmt the rest ([355750f](https://github.com/Esposter/Esposter/commit/355750fbd2d35e6fc91d631bb1e90ff9a3f62d39)), closes [vize#13682](https://github.com/vize/issues/13682) [vize#13701](https://github.com/vize/issues/13701) [vize#13679](https://github.com/vize/issues/13679) [vize#13666](https://github.com/vize/issues/13666) [vize#13714](https://github.com/vize/issues/13714)
+* **typecheck:** the Vue packages and the app run every template check that can fire here ([5bca6c7](https://github.com/Esposter/Esposter/commit/5bca6c7562a055e6e8c06e1aa581bac703480703))
+* **typecheck:** the Vue packages declare the data-* attributes they pass to a root ([fe51edf](https://github.com/Esposter/Esposter/commit/fe51edf24aa41f9efc5fd4d233588e0c0789f710)), closes [vize#13721](https://github.com/vize/issues/13721)
+
+### Performance Improvements
+
+* **configuration:** the vize content mapper skips Options API binding resolution ([553a383](https://github.com/Esposter/Esposter/commit/553a383586ee6c6ce19a2941d9f78ee5d7d5508a))
+
 # [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
 
 ### Bug Fixes

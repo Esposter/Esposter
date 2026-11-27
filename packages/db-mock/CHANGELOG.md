@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
+
+### Bug Fixes
+
+* **ci:** the lint and test reds the format, bucket and typecheck changes left ([585c96c](https://github.com/Esposter/Esposter/commit/585c96cba778fb31cb479c66cd5ac95ef7f6fb25))
+* **db-mock:** a locked abandoned copy is kept, not thrown on ([ec35a3b](https://github.com/Esposter/Esposter/commit/ec35a3b5599e4c11d80086bfb4b73cd890d7d4b9))
+
 # [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
 
 ### Bug Fixes

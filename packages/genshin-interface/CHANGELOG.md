@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
+
+### Bug Fixes
+
+* **vize:** ref leads class in the format, and the bars check is a selector ban ([eda7495](https://github.com/Esposter/Esposter/commit/eda7495da58200f687e5d8ffbab524167f2fb834)), closes [vize#13665](https://github.com/vize/issues/13665) [vize#13664](https://github.com/vize/issues/13664) [vize#13685](https://github.com/vize/issues/13685) [#13686](https://github.com/Esposter/Esposter/issues/13686)
+
+### Features
+
+* **configuration:** the Vue packages type-check their templates strictly ([8083805](https://github.com/Esposter/Esposter/commit/8083805b6565fbcbe6d28b41926c9b74306db32e))
+* **format:** vize fmt formats the components and oxfmt the rest ([355750f](https://github.com/Esposter/Esposter/commit/355750fbd2d35e6fc91d631bb1e90ff9a3f62d39)), closes [vize#13682](https://github.com/vize/issues/13682) [vize#13701](https://github.com/vize/issues/13701) [vize#13679](https://github.com/vize/issues/13679) [vize#13666](https://github.com/vize/issues/13666) [vize#13714](https://github.com/vize/issues/13714)
+
 # [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
 
 ### Bug Fixes

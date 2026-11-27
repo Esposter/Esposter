@@ -1,6 +1,6 @@
 {
   "name": "grid-engine-headless",
-  "version": "4.17.0",
+  "version": "4.18.0",
   "description": "A headless grid movement engine: tile collision, characters on integer tiles that step in four directions, and five typed events, with no rendering and no Phaser.",
   "keywords": [
     "collision",

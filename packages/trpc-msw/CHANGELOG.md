@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
+
+### Bug Fixes
+
+* the suites the stricter msw teardown caught answer every read ([6e021d7](https://github.com/Esposter/Esposter/commit/6e021d70225979ae0287c31127a930736dfb4ce3))
+
+### Features
+
+* **trpc-msw:** report a call no resolver answers, and fail the test on it ([09471a6](https://github.com/Esposter/Esposter/commit/09471a65491a1a518a7a21a6f3b2489131973609))
+
 # [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
 
 ### Bug Fixes

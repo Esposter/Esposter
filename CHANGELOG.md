@@ -3,6 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
+
+### Bug Fixes
+
+* **anime:** the carousel's note sits outside its transition, so the development build hydrates the drawing ([19fcafd](https://github.com/Esposter/Esposter/commit/19fcafd32946c31778ce6bf838d671c02ae9542a))
+* **ci:** the lint and test reds the format, bucket and typecheck changes left ([585c96c](https://github.com/Esposter/Esposter/commit/585c96cba778fb31cb479c66cd5ac95ef7f6fb25))
+* **ci:** the reds the dependency pass and the held-save fix left on ai/queue ([4dd319d](https://github.com/Esposter/Esposter/commit/4dd319de5b2148b62dfe7d7e4e65d3ac8590ec5d))
+* **ci:** the web build takes full history, so its build version counts every commit ([0cb28b3](https://github.com/Esposter/Esposter/commit/0cb28b3a877b04ee156e0b25001214409217170d))
+* **configuration:** the auto-import declarations are written to Vite's root, not the working directory ([aa86078](https://github.com/Esposter/Esposter/commit/aa860784b54ca18816b67bf962d793c2d5183aad))
+* **db-mock:** a locked abandoned copy is kept, not thrown on ([ec35a3b](https://github.com/Esposter/Esposter/commit/ec35a3b5599e4c11d80086bfb4b73cd890d7d4b9))
+* **dungeons:** the license notice match is held to thirdParty, and the design's key file row names the exception ([83914c1](https://github.com/Esposter/Esposter/commit/83914c1483b4b5477d7383b4d4949b7560e00d69))
+* **post:** guests see the vote pill and a press reaches login ([8c0beb3](https://github.com/Esposter/Esposter/commit/8c0beb3e1f0ca09f319b1eb24c274d616e867a9a))
+* **resource:** a late row of the device's own earlier save reloads nothing over the latest edit ([2ae8fc6](https://github.com/Esposter/Esposter/commit/2ae8fc6abbf2a22c47b1c1fd4c4e29a21a478a01))
+* **resource:** an edit made while another device's save is adopted is held behind the notice, not overwritten ([08c96d2](https://github.com/Esposter/Esposter/commit/08c96d26a02e591f9a709e6c9b8f66770b113e41))
+* **resource:** an edit parked behind a save in flight survives a restore's answer ([34fec8e](https://github.com/Esposter/Esposter/commit/34fec8e5c858c0fdf72272445c688b6128f3f277))
+* **scripts:** a constructor's protect option is read from its own call only ([49ab36d](https://github.com/Esposter/Esposter/commit/49ab36db86e1ca114da4882be41d8f051452009e))
+* **scripts:** a root-level workspace member reads its own lockfile importer ([a9c560b](https://github.com/Esposter/Esposter/commit/a9c560bd2265ef416bf2197a1d43fad48c1099e9))
+* **scripts:** each infra constructor is checked for its own protect option ([66a37eb](https://github.com/Esposter/Esposter/commit/66a37eb4237efe8425b111313d58d0a121337556))
+* **sweeps:** the stale-name scan skips generated files again, not every component ([7a1f65c](https://github.com/Esposter/Esposter/commit/7a1f65c9ad93716662891f05699ed9289444b7b1))
+* the note editor and schema form suites answer the reads and writes they make ([294ea0f](https://github.com/Esposter/Esposter/commit/294ea0f53e130779c84a6279ef2e263305ca6b6d))
+* the queue's red test shards ([99ee046](https://github.com/Esposter/Esposter/commit/99ee046e92734208d39e6e5f75fbc1da81eaae05))
+* the queue's red typecheck and lint ([353c410](https://github.com/Esposter/Esposter/commit/353c410e7ce6ac7bbd2903b2af485183f521c65c))
+* the suites the stricter msw teardown caught answer every read ([6e021d7](https://github.com/Esposter/Esposter/commit/6e021d70225979ae0287c31127a930736dfb4ce3))
+* **vize:** ref leads class in the format, and the bars check is a selector ban ([eda7495](https://github.com/Esposter/Esposter/commit/eda7495da58200f687e5d8ffbab524167f2fb834)), closes [vize#13665](https://github.com/vize/issues/13665) [vize#13664](https://github.com/vize/issues/13664) [vize#13685](https://github.com/vize/issues/13685) [#13686](https://github.com/Esposter/Esposter/issues/13686)
+* **web:** a character's v-model:is-moving stands before its binds ([42689d8](https://github.com/Esposter/Esposter/commit/42689d8e2163e043d954e8cb261d3e4e955492a1))
+* **web:** a drain waits for the retry a failed batched refresh scheduled ([2efb3d4](https://github.com/Esposter/Esposter/commit/2efb3d4226460d66eb2501043471fa4a7b638b60))
+* **web:** a transition naming a motion token generates its shorthand ([6c12156](https://github.com/Esposter/Esposter/commit/6c12156172d3371f7bb2580e6d278291e10b1b1f))
+* **web:** the build version is the commit count the build bakes in, not a runtime read of GitHub ([65e672b](https://github.com/Esposter/Esposter/commit/65e672b33c874eb56ca505773c952ea22b097534))
+* **web:** the Nuxt config reads execFileSync from shared-node's source, since it loads at install before any package is built ([458ec05](https://github.com/Esposter/Esposter/commit/458ec05b2a307e867e96c333b7715a2793c9af47))
+* **web:** the session a render gates on is the payload's, so a signed-in feed hydrates as the server rendered it ([36c65bd](https://github.com/Esposter/Esposter/commit/36c65bd9c631cab58f1d124211cc124063daa1d2))
+* **web:** the transition slot guard reads built-in tags in their kebab form too ([b5b791b](https://github.com/Esposter/Esposter/commit/b5b791b5244d63b3f84187fd325fb1d789ab22a6))
+* **web:** the webpage settings' share image field is the UI library's file field ([a0b83ae](https://github.com/Esposter/Esposter/commit/a0b83ae744bf9c4d3d0da0b3fe9e085da01f30d5))
+
+### Features
+
+* **app:** the demos are a Labs group in the launcher rather than account-menu links ([8ecce18](https://github.com/Esposter/Esposter/commit/8ecce18f9df391931c8a94e5bab33c1c45538c3f))
+* **configuration:** the Vue packages type-check their templates strictly ([8083805](https://github.com/Esposter/Esposter/commit/8083805b6565fbcbe6d28b41926c9b74306db32e))
+* **format:** vize fmt formats the components and oxfmt the rest ([355750f](https://github.com/Esposter/Esposter/commit/355750fbd2d35e6fc91d631bb1e90ff9a3f62d39)), closes [vize#13682](https://github.com/vize/issues/13682) [vize#13701](https://github.com/vize/issues/13701) [vize#13679](https://github.com/vize/issues/13679) [vize#13666](https://github.com/vize/issues/13666) [vize#13714](https://github.com/vize/issues/13714)
+* **precheck:** --fix rewrites a ledger row whose unit was reworded ([e68d38c](https://github.com/Esposter/Esposter/commit/e68d38c9f077a57fa99256e34117331dc4b0b115))
+* **trpc-msw:** report a call no resolver answers, and fail the test on it ([09471a6](https://github.com/Esposter/Esposter/commit/09471a65491a1a518a7a21a6f3b2489131973609))
+* **typecheck:** the app checks unknown events, typed through the fallthrough root ([a5b56de](https://github.com/Esposter/Esposter/commit/a5b56de084ead2bbc5f3f79a51d353bfa549c071)), closes [vize#13720](https://github.com/vize/issues/13720) [vize#13721](https://github.com/vize/issues/13721)
+* **typecheck:** the Vue packages and the app run every template check that can fire here ([5bca6c7](https://github.com/Esposter/Esposter/commit/5bca6c7562a055e6e8c06e1aa581bac703480703))
+* **typecheck:** the Vue packages declare the data-* attributes they pass to a root ([fe51edf](https://github.com/Esposter/Esposter/commit/fe51edf24aa41f9efc5fd4d233588e0c0789f710)), closes [vize#13721](https://github.com/vize/issues/13721)
+* **web:** the app type-checks its templates strictly ([cd625b6](https://github.com/Esposter/Esposter/commit/cd625b612acba2c9c52a5681954430effa6299be))
+* **web:** the app's templates run the unknown-prop check ([4d6e06c](https://github.com/Esposter/Esposter/commit/4d6e06c863fcf2706eff9319b484a8344f793c8c))
+* **web:** the deploy's hydration check loads every page signed in as well ([9aef5b3](https://github.com/Esposter/Esposter/commit/9aef5b32f48795f5193b3d6de3714cd91de848ad))
+
+### Performance Improvements
+
+* **configuration:** the vize content mapper skips Options API binding resolution ([553a383](https://github.com/Esposter/Esposter/commit/553a383586ee6c6ce19a2941d9f78ee5d7d5508a))
+
 # [4.17.0](https://github.com/Esposter/Esposter/compare/v4.16.0...v4.17.0) (2026-11-25)
 
 ### Bug Fixes
