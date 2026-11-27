@@ -15,9 +15,10 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const neverSettles = <TResult>() => new Promise<TResult>(() => {});
-
 describe(useOverlayStore, () => {
+  // Every write a test holds pending answers this one deferred, which the test's teardown answers with nothing, so the
+  // Shared setup's drain of every fire-and-forget finds them settled
+  let heldWrite = Promise.withResolvers<WriteResponse>();
   const rowTable = createRowTable();
   const table = createTable(rowTable);
   // A membership as the viewer holds it, with a column a member's projection drops, and the projection of it
@@ -57,11 +58,13 @@ describe(useOverlayStore, () => {
   const freshDeletedAt = new Date(TOMBSTONE_RETENTION_MS * 1.5);
 
   beforeEach(() => {
+    heldWrite = Promise.withResolvers<WriteResponse>();
     setActivePinia(createPinia());
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(() => {
+    heldWrite.resolve({ arrivals: [], confirmed: [] });
     vi.useRealTimers();
   });
 
@@ -286,7 +289,7 @@ describe(useOverlayStore, () => {
     const thrown = new Error(" ");
     arrive(table, { deletedAt: null, id: "a", name, version: 1 });
     arrive(table, { deletedAt: null, id: "b", name, version: 1 });
-    writeOptimistic(() => neverSettles(), {
+    writeOptimistic(() => heldWrite.promise, {
       entry: (view) => {
         setRowName(view, otherName);
         if (view.get(table, ["b"])?.deletedAt) throw thrown;
@@ -316,7 +319,7 @@ describe(useOverlayStore, () => {
     const overlayStore = useOverlayStore();
     const { arrive, view: readView, writeOptimistic } = overlayStore;
     const onError = vi.fn<(error: Error) => void>();
-    const mutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const mutate = vi.fn<() => Promise<WriteResponse>>(() => heldWrite.promise);
     const thrown = new Error(" ");
     arrive(table, { deletedAt: null, id: "a", name, version: 1 });
     writeOptimistic(mutate, {
@@ -357,8 +360,8 @@ describe(useOverlayStore, () => {
 
     const overlayStore = useOverlayStore();
     const { writeOptimistic } = overlayStore;
-    const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
-    const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => heldWrite.promise);
+    const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => heldWrite.promise);
     writeOptimistic(firstMutate, { entry: writeFirstRow, onError: noop });
     writeOptimistic(secondMutate, { entry: writeOtherRow, onError: noop });
     await flushPromises();
@@ -372,7 +375,7 @@ describe(useOverlayStore, () => {
 
     const overlayStore = useOverlayStore();
     const { writeOptimistic } = overlayStore;
-    const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => heldWrite.promise);
     const readMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
     writeOptimistic(firstMutate, { entry: writeFirstRow, onError: noop });
     writeOptimistic(readMutate, { entry: readFirstRow, onError: noop });
@@ -402,13 +405,13 @@ describe(useOverlayStore, () => {
     const overlayStore = useOverlayStore();
     const { arrive, view: readView, writeOptimistic } = overlayStore;
     arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    writeOptimistic(() => neverSettles(), {
+    writeOptimistic(() => heldWrite.promise, {
       entry: (view) => {
         setRowName(view, otherName);
       },
       onError: noop,
     });
-    writeOptimistic(() => neverSettles(), {
+    writeOptimistic(() => heldWrite.promise, {
       entry: (view) => {
         setRowName(view, serverName);
       },
@@ -536,7 +539,7 @@ describe(useOverlayStore, () => {
 
     const overlayStore = useOverlayStore();
     const { writeAwaited, writeOptimistic } = overlayStore;
-    const optimisticMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const optimisticMutate = vi.fn<() => Promise<WriteResponse>>(() => heldWrite.promise);
     const awaitedMutate = vi.fn<() => Promise<Arrival[]>>(() => Promise.resolve([]));
     writeOptimistic(optimisticMutate, { entry: writeFirstRow, onError: noop });
     await writeAwaited(awaitedMutate, { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: noop });

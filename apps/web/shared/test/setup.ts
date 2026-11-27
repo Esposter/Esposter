@@ -3,7 +3,7 @@
 import type { Pinia } from "pinia";
 
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
-import { checkIsServer } from "@esposter/shared";
+import { checkIsServer, waitForSynchronizedFunctions } from "@esposter/shared";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
 
 // The node environment has no storage at all: the shared Vitest configuration switches node's own Web Storage
@@ -146,11 +146,19 @@ beforeEach(() => {
   if (checkIsServer()) vi.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
 });
 
-afterEach(() => {
-  globalThis.localStorage.clear();
-  globalThis.sessionStorage.clear();
-  if (checkIsServer()) vi.useRealTimers();
-});
+// Every fire-and-forget a test started settles inside it — the tRPC error link's session check and its login
+// Navigation among them — so none runs on once the environment is torn down, where `history` and `window` are gone.
+// Vitest runs a file's after hooks last-registered first, so the drain lands before the auto-unmount above. A test that
+// Leaves one never settling fails here within the timeout rather than holding the run for the whole hook timeout
+afterEach(
+  async () => {
+    await waitForSynchronizedFunctions();
+    globalThis.localStorage.clear();
+    globalThis.sessionStorage.clear();
+    if (checkIsServer()) vi.useRealTimers();
+  },
+  Temporal.Duration.from({ seconds: 10 }).total("milliseconds"),
+);
 
 afterAll(() => {
   vi.restoreAllMocks();

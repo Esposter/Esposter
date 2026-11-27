@@ -10,7 +10,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useUploadFileStore } from "#src/store/message/input/uploadFile";
 import { setRouteId } from "#src/util/router/setRouteId.test";
-import { noop, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -109,9 +109,6 @@ describe(useUploadFiles, () => {
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     await useUploadFiles(target)([createFile()]);
-    // The refusal's link goes on to ask for the session and send a signed-out reader to login, after the call has
-    // Answered, so it is drained here rather than left to run once the environment is torn down
-    await waitForSynchronizedFunctions();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
 
