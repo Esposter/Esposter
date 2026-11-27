@@ -49,10 +49,13 @@ export default defineNuxtModule({
   setup: (_options, nuxt) => {
     // oxlint-disable-next-line no-underscore-dangle -- `_prepare` is Nuxt's own flag for `nuxt prepare`
     if (!nuxt.options._prepare && !nuxt.options.dev) return;
+    // One generator for the session: `nuxt dev` regenerates every template on each edit, and a fresh generator's first
+    // Generate costs seconds where a reused one answers from its own cache
+    const generatorPromise = createGenerator(unoConfig);
     addTypeTemplate({
       filename: "types/attributify.d.ts",
       getContents: async () => {
-        const generator = await createGenerator(unoConfig);
+        const generator = await generatorPromise;
         const paths = await Array.fromAsync(glob("**/*.vue", { cwd: nuxt.options.srcDir }));
         const sources = await Promise.all(
           paths.map(async (id) => ({ code: await readFile(join(nuxt.options.srcDir, id), "utf8"), id })),
