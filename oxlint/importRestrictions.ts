@@ -3,6 +3,11 @@ import type { RestrictedImportPattern } from "#oxlint/models/RestrictedImportPat
 
 import { CONTEXT_MESSAGE, USE_ROUTE_MESSAGE, VUETIFY_MESSAGE } from "#oxlint/messages";
 import { getAutoImportedPaths } from "#oxlint/services/getAutoImportedPaths";
+import { existsSync, readdirSync } from "node:fs";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
 
 // An id is minted by `v7` from `uuid` alone: `randomUUID` and `v4` both make a version 4, which the id validators
 // Refuse
@@ -50,11 +55,21 @@ export const APP_RESTRICTED_IMPORT_PATHS: RestrictedImportPath[] = [
 ];
 export const VUETIFY_IMPORT_PATH: RestrictedImportPath = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
 export const VUETIFY_IMPORT_PATTERN: RestrictedImportPattern = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
-export const WORKSPACE_LIBRARY_IMPORT_PATTERN: RestrictedImportPattern = {
+// Every workspace library, read from the manifests under `packages/`, so a new one is banned with no list kept here
+const WORKSPACE_LIBRARY_NAMES = readdirSync(new URL("../packages/", import.meta.url))
+  .map((name) => new URL(`../packages/${name}/package.json`, import.meta.url))
+  .filter((manifestUrl) => existsSync(manifestUrl))
+  .flatMap((manifestUrl) => {
+    const manifest: unknown = require(fileURLToPath(manifestUrl));
+    return typeof manifest === "object" && manifest !== null && "name" in manifest && typeof manifest.name === "string"
+      ? [manifest.name]
+      : [];
+  });
+const WORKSPACE_LIBRARY_IMPORT_PATTERN: RestrictedImportPattern = {
   allowTypeImports: true,
-  group: ["@esposter/*", "keyframe-store", "parse-tmx", "vue-phaserjs"],
+  group: WORKSPACE_LIBRARY_NAMES,
   message:
-    "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine.",
+    "The Nuxt configuration and the app's local modules load in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one by its name fails every fresh install. Import the npm package the library wraps, or the library's source file by its path; types are fine.",
 };
 export const SHARED_APP_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["#src/**"],
@@ -107,6 +122,16 @@ export const WEB_IMPORT_PATTERNS: RestrictedImportPattern[] = [
         `!../../../../packages/${name}/src/**`,
       ]),
     ],
+    message: RELATIVE_IMPORT_MESSAGE,
+  },
+];
+// The files Nuxt loads at install, before any workspace package is built, reach a package's code by its path, since
+// Its name resolves to the `dist` a fresh clone does not have yet (`WORKSPACE_LIBRARY_IMPORT_PATTERN`)
+export const WEB_LOADER_IMPORT_PATTERNS: RestrictedImportPattern[] = [
+  ...WEB_ALIAS_IMPORT_PATTERNS,
+  WORKSPACE_LIBRARY_IMPORT_PATTERN,
+  {
+    group: [...RELATIVE_IMPORT_GROUP, "!../../packages/**", "!../../../packages/**"],
     message: RELATIVE_IMPORT_MESSAGE,
   },
 ];

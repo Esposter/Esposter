@@ -20,8 +20,8 @@ import {
   VUETIFY_IMPORT_PATTERN,
   WEB_ALIAS_IMPORT_PATTERNS,
   WEB_IMPORT_PATTERNS,
+  WEB_LOADER_IMPORT_PATTERNS,
   WORKER_SECRETS_IMPORT_PATTERNS,
-  WORKSPACE_LIBRARY_IMPORT_PATTERN,
 } from "#oxlint/importRestrictions";
 import { JS_PLUGINS } from "#oxlint/jsPlugins";
 import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "#oxlint/messages";
@@ -81,13 +81,13 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
     },
     {
-      files: ["apps/web/configuration/**", "apps/web/nuxt.config.ts"],
+      files: ["apps/web/configuration/**", "apps/web/modules/**", "apps/web/nuxt.config.ts"],
       rules: {
         "no-restricted-imports": [
           "error",
           {
             paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
-            patterns: [VUETIFY_IMPORT_PATTERN, WORKSPACE_LIBRARY_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
+            patterns: [VUETIFY_IMPORT_PATTERN, ...WEB_LOADER_IMPORT_PATTERNS],
           },
         ],
       },

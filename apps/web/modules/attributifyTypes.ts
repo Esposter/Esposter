@@ -1,18 +1,11 @@
 import type { UnoGenerator } from "unocss";
 
 import unoConfig from "#uno.config";
-import { errAsync, okAsync } from "neverthrow";
 import { glob, readFile } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import { addTypeTemplate, defineNuxtModule } from "nuxt/kit";
 import { createGenerator } from "unocss";
 import { camelize } from "vue";
-
-// The shared helpers are imported by their source rather than the package name: `nuxt prepare` loads this module from
-// The app's `postinstall`, before any workspace package is built, and the name resolves to the `dist` a fresh clone
-// Does not have yet
-import { getResultAsync } from "../../../packages/shared/src/services/error/getResultAsync.ts";
-import { noop } from "../../../packages/shared/src/util/function/noop.ts";
 
 // Attributify matches an attribute as `[name=""]` when it is valueless and `[name~="value"]` when it has one, so the
 // Name runs up to whichever of the two closes it; a variant's own brackets, as in `data-[state=open]:op`, hold neither
@@ -30,11 +23,14 @@ export const getAttributifyNames = async (generator: UnoGenerator, tokens: Set<s
   }
   return [...names].toSorted();
 };
-// A reported file may be gone by the time it is read, and a file that is gone holds no tokens, so it is read as empty
-const readContents = (path: string) =>
-  getResultAsync(() => readFile(path, "utf8")).orElse((error) =>
-    error instanceof Error && "code" in error && error.code === "ENOENT" ? okAsync("") : errAsync(error),
-  );
+// A reported file may be gone by the time it is read, and a file that is gone holds no tokens, so it is read as empty.
+// Any other failure fails the template
+const readContents = async (path: string) => {
+  const [outcome] = await Promise.allSettled([readFile(path, "utf8")]);
+  if (outcome.status === "fulfilled") return outcome.value;
+  else if (outcome.reason instanceof Error && "code" in outcome.reason && outcome.reason.code === "ENOENT") return "";
+  else throw outcome.reason;
+};
 // Every template's tokens, kept by file with a count of the files holding each token, so a file's update costs that
 // File alone. An update reports whether a token entered or left the whole set, the one case the declaration can move
 const createTokenIndex = () => {
@@ -105,13 +101,8 @@ export const createAttributifyTemplate = (directory: string, generatorPromise: P
       const updates = await Promise.all(
         paths.map(async (path) => {
           const tokens = new Set<string>();
-          await readContents(path)
-            .andThen((text) =>
-              getResultAsync(() => generator.applyExtractors(text, relative(srcDirectory, path), tokens)),
-            )
-            .match(noop, (error) => {
-              throw error;
-            });
+          const text = await readContents(path);
+          await generator.applyExtractors(text, relative(srcDirectory, path), tokens);
           return { path, tokens };
         }),
       );
