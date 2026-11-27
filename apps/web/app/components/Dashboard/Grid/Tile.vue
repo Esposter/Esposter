@@ -62,14 +62,14 @@ useResizeObserver(tile, (entries) => {
     @keydown="(event) => {
       // A key pressed on a control inside the visual is that control's, so only the tile's own focus takes it
       if (!isEditable || event.target !== event.currentTarget) return;
-    
+
       if (event.key === 'Enter') {
         emit('open');
         return;
       }
       const step = getKeyStep(event);
       if (!step) return;
-    
+
       event.preventDefault();
       emit('step', step);
     }"

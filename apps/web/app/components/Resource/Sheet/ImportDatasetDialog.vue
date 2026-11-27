@@ -93,7 +93,7 @@ watch(isOpen, async (newIsOpen) => {
             const survey = surveys?.find(({ id }) => id === selectedSurveyId);
             // Nothing to import leaves the dialog open on the choice, rather than closing as an import that landed
             if (!survey) return false;
-          
+
             const setDataSource = getDataSourceSetter();
             // A Sheet import keeps the working copy as a revision before it replaces it, and an import whose revision did
             // Not land reads nothing and leaves the sheet as it was

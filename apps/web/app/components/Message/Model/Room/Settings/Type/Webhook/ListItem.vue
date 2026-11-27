@@ -37,7 +37,7 @@ const nameRules = [
       :rules="nameRules"
       @focusout="() => {
         if (!isDirty || !checkIsNameValid(editedName)) return;
-      
+
         updateWebhook({ id: webhook.id, name: editedName, roomId });
         settle();
       }"

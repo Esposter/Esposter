@@ -48,11 +48,11 @@ const dragSetting = (event: PointerEvent): void => {
     :aria-valuenow="trackValue"
     @keydown="(event) => {
       if (!isBacked) return;
-    
+
       if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') setBackedValue(trackValue - row.range.step);
       else if (event.key === 'ArrowRight' || event.key === 'ArrowUp') setBackedValue(trackValue + row.range.step);
       else return;
-    
+
       event.preventDefault();
     }"
     @pointerdown="(event) => {

@@ -36,7 +36,7 @@ const isAnimatingLevelUp = ref(false);
     @start:display-width="isAnimating = true"
     @update:display-width="(value) => {
       if (isAnimatingLevelUp || value < BAR_WIDTH) return;
-    
+
       isAnimatingLevelUp = true;
       emit('level-up', () => {
         isAnimatingLevelUp = isSkipAnimations = false;

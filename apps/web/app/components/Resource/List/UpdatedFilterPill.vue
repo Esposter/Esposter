@@ -31,7 +31,7 @@ const updatedBeforeDay = createDayBound(updatedBefore);
       @toggle="(preset) => {
         updatedFilter = preset;
         if (preset === ResourceUpdatedFilter.Custom) return;
-      
+
         updatedAfter = undefined;
         updatedBefore = undefined;
       }"

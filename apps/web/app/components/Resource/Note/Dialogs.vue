@@ -47,7 +47,7 @@ const html = computed(() => (previewDoc.value ? renderNoteHtml(previewDoc.value)
             const writeContent = getContentWriter();
             if (!doc || !(await saveResourceRevision())) return false;
             if (!writeContent({ doc })) return false;
-          
+
             saveNote();
             // The editor holds its own copy of the document, which would write the replaced one back on its next edit
             await ResourceContentHookMap.Adopt.run(ResourceType.Note);

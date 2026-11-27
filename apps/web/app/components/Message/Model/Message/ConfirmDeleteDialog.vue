@@ -24,7 +24,7 @@ const creator = useCreator(message);
     :confirm="() => {
       const target = getMessageWriteTarget(message, getSlice);
       if (!target) return;
-    
+
       return deleteMessage({ id: target.messageId, roomId: target.roomId });
     }"
     confirm-label="Delete"

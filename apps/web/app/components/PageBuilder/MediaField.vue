@@ -47,7 +47,7 @@ const uploadFile = useUploadResourceFile(type, () => resourceId);
           createAlert(`Files over ${MAX_FILE_REQUEST_SIZE / MEGABYTE} MB cannot be uploaded`, 'error');
           return;
         }
-      
+
         const pickedNodeId = getSelectedNodeId(resourceId);
         const uploadResult = await getResultAsync(() => uploadFile(file));
         uploadResult.match((src) => emit('update', src, pickedNodeId), createErrorAlert);

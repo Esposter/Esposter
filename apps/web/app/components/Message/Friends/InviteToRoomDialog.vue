@@ -36,7 +36,7 @@ const roomItems = computed<UiListItem<string>[]>(() =>
       @select="async (roomId) => {
         const room = invitableRooms.find(({ id }) => id === roomId);
         if (!room || !friend) return;
-      
+
         const { id: friendId } = friend;
         await answer(async () => {
           const inviteLink = await getUsableInviteLink(room);

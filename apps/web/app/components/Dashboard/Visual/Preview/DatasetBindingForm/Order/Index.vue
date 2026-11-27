@@ -44,7 +44,7 @@ const directionItems = DatasetOrderDirections.map((value) => ({ title: value, va
             order = undefined;
             return;
           }
-        
+
           const direction = order?.direction ?? DatasetOrderDirection.Ascending;
           order = choice === DASHBOARD_TABLE_CATEGORY_KEY ? { direction } : { direction, seriesIndex: Number(choice) };
         }"

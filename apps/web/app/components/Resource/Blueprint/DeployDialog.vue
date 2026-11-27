@@ -63,7 +63,7 @@ const isDeployBlocked = computed(() => deployReviews.value.some(({ isNameEmpty }
         @submit="async () => {
           const resourceValue = resource;
           if (!resourceValue) return;
-        
+
           // The results list what the server created, so the deploy is awaited for them
           await executeMutation(() => $trpc.blueprint.deployBlueprint.mutate({ id: resourceValue.id, parameterValues }), {
             awaitedBecause: AwaitedReason.ServerDecidedOutcome,

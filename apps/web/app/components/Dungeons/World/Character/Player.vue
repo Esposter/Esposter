@@ -85,7 +85,7 @@ onShutdown((scene) => {
     :on-position-change-finished="(scene, { enterTile }) => {
       const tile = layerMap?.get(LayerName.Encounter)?.getTileAt(enterTile.x, enterTile.y, false);
       if (!tile) return;
-    
+
       getDungeonsSoundEffect(scene, DungeonsKeys.ThirdPartyLeohpazStepGrass).play();
       rollRandomEncounter(scene);
     }"

@@ -46,7 +46,7 @@ const isNameValid = computed(() => selectRoomEmojiInMessageSchema.shape.name.saf
     title="Add Emoji"
     :submit="async () => {
       if (!file) return false;
-    
+
       if (!(await createRoomEmoji({ name, roomId }, file))) return false;
       name = '';
       files = [];

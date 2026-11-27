@@ -55,14 +55,14 @@ useFocusWhenActive(input, () => isFocused);
           emit('navigate:previous');
           return;
         }
-      
+
         if (event.key === 'Backspace' && !trailingMessage) {
           event.preventDefault();
           if (activeParameters.length > 0) emit('deleteLastParameter');
           else emit('collapse');
           return;
         }
-      
+
         if (hiddenParameters.length === 0) {
           if (event.key === 'Enter') {
             event.preventDefault();
@@ -70,7 +70,7 @@ useFocusWhenActive(input, () => isFocused);
           }
           return;
         }
-      
+
         if (event.key === 'ArrowUp') {
           event.preventDefault();
           selectPreviousHiddenParameter();

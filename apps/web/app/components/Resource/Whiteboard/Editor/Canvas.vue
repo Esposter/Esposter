@@ -89,7 +89,7 @@ const emitWheel = (event: WheelEvent) => {
     @drop="(event) => {
       const files = [...(event.dataTransfer?.files ?? [])];
       if (files.length === 0) return;
-    
+
       event.preventDefault();
       insertImages(files, getDropPoint(event));
     }"

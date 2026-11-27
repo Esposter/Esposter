@@ -87,7 +87,7 @@ onMounted(async () => {
           fileInput?.reset();
           if (!file) return;
           if (!validateFileWithAlert(file, MAX_CALL_BACKGROUND_SIZE_BYTES)) return;
-        
+
           await createCallBackground(file);
         }"
       />

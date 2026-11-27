@@ -32,7 +32,7 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
     :title="`Delete ${prettify(deletingVisual.type)} visual`"
     :confirm="() => {
       if (!deletingVisual) return;
-    
+
       return deleteVisual({ id: deletingVisual.id });
     }"
   >

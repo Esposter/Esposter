@@ -50,9 +50,9 @@ const { isLoading, uploadImage } = useUploadImage((file) =>
       :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
       @select="async (file) => {
         if (!file) return;
-      
+
         if (!validateFileWithAlert(file)) return;
-      
+
         await getResultAsync(() =>
           uploadImage(file, () => {
             fileInput?.reset();

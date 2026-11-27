@@ -39,7 +39,7 @@ const errorMessage = ref("");
             })
             .unwrapOr(undefined);
           if (!parsedManifest) return;
-        
+
           saveBlueprint(parsedManifest);
         }"
       >

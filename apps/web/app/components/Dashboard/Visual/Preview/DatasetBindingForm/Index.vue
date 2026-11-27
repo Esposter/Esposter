@@ -54,7 +54,7 @@ watch(dataset, (newDataset) => {
           modelValue = undefined;
           return;
         }
-      
+
         pickedReference = newReference;
       }"
     />
