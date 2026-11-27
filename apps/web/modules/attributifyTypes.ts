@@ -1,13 +1,18 @@
 import type { UnoGenerator } from "unocss";
 
 import unoConfig from "#uno.config";
-import { getResultAsync, noop } from "@esposter/shared";
 import { errAsync, okAsync } from "neverthrow";
 import { glob, readFile } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import { addTypeTemplate, defineNuxtModule } from "nuxt/kit";
 import { createGenerator } from "unocss";
 import { camelize } from "vue";
+
+// The shared helpers are imported by their source rather than the package name: `nuxt prepare` loads this module from
+// The app's `postinstall`, before any workspace package is built, and the name resolves to the `dist` a fresh clone
+// Does not have yet
+import { getResultAsync } from "../../../packages/shared/src/services/error/getResultAsync.ts";
+import { noop } from "../../../packages/shared/src/util/function/noop.ts";
 
 // Attributify matches an attribute as `[name=""]` when it is valueless and `[name~="value"]` when it has one, so the
 // Name runs up to whichever of the two closes it; a variant's own brackets, as in `data-[state=open]:op`, hold neither
