@@ -1,6 +1,6 @@
 {
   "name": "hosted-assets",
-  "version": "4.18.0",
+  "version": "4.19.0",
   "description": "Hosted assets: content-addressed objects under a committed lock, one url builder, one cache contract and one preloader for any product that loads its files by url.",
   "keywords": [
     "cache",

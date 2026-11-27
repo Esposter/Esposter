@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.19.0](https://github.com/Esposter/Esposter/compare/v4.18.0...v4.19.0) (2026-11-27)
+
+### Features
+
+* **lint:** a drain that is an app test's last statement is refused, since the shared setup drains after every test ([8755349](https://github.com/Esposter/Esposter/commit/8755349ef1398bc62adf1bf85d59dffa2cee005e))
+
 # [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
 
 ### Bug Fixes

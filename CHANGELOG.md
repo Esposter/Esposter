@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.19.0](https://github.com/Esposter/Esposter/compare/v4.18.0...v4.19.0) (2026-11-27)
+
+### Bug Fixes
+
+* **lint:** the files Nuxt loads at install refuse a workspace library by its name, read from the manifests, and may reach any package's files by path ([69c4d2b](https://github.com/Esposter/Esposter/commit/69c4d2b10b66679f52332d6cdab4516226e82bc7))
+* **lint:** the workspace-library ban keeps the [@esposter](https://github.com/esposter) scope, so scripts and the apps' packages stay banned by name ([3aad378](https://github.com/Esposter/Esposter/commit/3aad3784763ff5f41ce806f843ebc86564c6036f))
+* **web:** the attributify types module imports the shared helpers by their source, since `nuxt prepare` loads it at postinstall before any package is built ([d552eea](https://github.com/Esposter/Esposter/commit/d552eeaf6b7a9c0e6146f7389552a54317182a4a))
+* **web:** the attributify types template reads a reported file that is gone as empty, and watches a file named with two leading dots ([52094af](https://github.com/Esposter/Esposter/commit/52094af57f908b9ca560a4fd4102be5b7e63082a))
+
+### Features
+
+* **lint:** a drain that is an app test's last statement is refused, since the shared setup drains after every test ([8755349](https://github.com/Esposter/Esposter/commit/8755349ef1398bc62adf1bf85d59dffa2cee005e))
+* **web:** the app compiles its components through the Vize Nuxt module again, and the catalog takes the newest releases ([5e78324](https://github.com/Esposter/Esposter/commit/5e78324d0500911eae0676155ebc3ed7cb391d53)), closes [ubugeeei-prod/vize#13567](https://github.com/ubugeeei-prod/vize/issues/13567)
+
+### Performance Improvements
+
+* **web:** the attributify types template regenerates incrementally, reading only the files the watcher reported ([461d4be](https://github.com/Esposter/Esposter/commit/461d4bef91c398fa08007450571905d36cf3c58f))
+* **web:** the attributify types template reuses one UnoCSS generator for the session ([2cb065a](https://github.com/Esposter/Esposter/commit/2cb065aa677fb493581714058819677f8df1bc24))
+
 # [4.18.0](https://github.com/Esposter/Esposter/compare/v4.17.0...v4.18.0) (2026-11-27)
 
 ### Bug Fixes
