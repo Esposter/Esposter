@@ -70,6 +70,18 @@ describe(createAttributifyTemplate, () => {
     await expect(template.getContents()).resolves.toContain(name);
   });
 
+  test("declares a utility an edit adds to a file whose own name begins with two dots", async () => {
+    expect.hasAssertions();
+
+    const template = createAttributifyTemplate(directory, createGenerator(unoConfig));
+    await template.getContents();
+    const path = join(directory, "..Card.vue");
+    await writeFile(path, withName);
+    template.onWatch("add", path);
+
+    await expect(template.getContents()).resolves.toContain(name);
+  });
+
   test("ignores a file outside the directory whose path shares its prefix", async () => {
     expect.hasAssertions();
 

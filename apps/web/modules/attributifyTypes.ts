@@ -1,10 +1,10 @@
-import type { NuxtHooks } from "nuxt/schema";
 import type { UnoGenerator } from "unocss";
 
 import unoConfig from "#uno.config";
-import { existsSync } from "node:fs";
+import { getResultAsync, noop } from "@esposter/shared";
+import { errAsync, okAsync } from "neverthrow";
 import { glob, readFile } from "node:fs/promises";
-import { isAbsolute, relative, resolve } from "node:path";
+import { isAbsolute, relative, resolve, sep } from "node:path";
 import { addTypeTemplate, defineNuxtModule } from "nuxt/kit";
 import { createGenerator } from "unocss";
 import { camelize } from "vue";
@@ -25,6 +25,11 @@ export const getAttributifyNames = async (generator: UnoGenerator, tokens: Set<s
   }
   return [...names].toSorted();
 };
+// A reported file may be gone by the time it is read, and a file that is gone holds no tokens, so it is read as empty
+const readContents = (path: string) =>
+  getResultAsync(() => readFile(path, "utf8")).orElse((error) =>
+    error instanceof Error && "code" in error && error.code === "ENOENT" ? okAsync("") : errAsync(error),
+  );
 // Every template's tokens, kept by file with a count of the files holding each token, so a file's update costs that
 // File alone. An update reports whether a token entered or left the whole set, the one case the declaration can move
 const createTokenIndex = () => {
@@ -95,8 +100,13 @@ export const createAttributifyTemplate = (directory: string, generatorPromise: P
       const updates = await Promise.all(
         paths.map(async (path) => {
           const tokens = new Set<string>();
-          if (existsSync(path))
-            await generator.applyExtractors(await readFile(path, "utf8"), relative(srcDirectory, path), tokens);
+          await readContents(path)
+            .andThen((text) =>
+              getResultAsync(() => generator.applyExtractors(text, relative(srcDirectory, path), tokens)),
+            )
+            .match(noop, (error) => {
+              throw error;
+            });
           return { path, tokens };
         }),
       );
@@ -107,10 +117,10 @@ export const createAttributifyTemplate = (directory: string, generatorPromise: P
       }
       return contents;
     },
-    onWatch: (event: Parameters<NuxtHooks["builder:watch"]>[0], path: string) => {
+    onWatch: (event: string, path: string) => {
       const absolutePath = resolve(srcDirectory, path);
       const relativePath = relative(srcDirectory, absolutePath);
-      if (relativePath.startsWith("..") || isAbsolute(relativePath)) return;
+      if (relativePath === ".." || relativePath.startsWith(`..${sep}`) || isAbsolute(relativePath)) return;
       // A directory's own event may stand for files the watcher reports nothing else about
       if (event === "addDir" || event === "unlinkDir") isScanNeeded = true;
       else if (absolutePath.endsWith(".vue")) dirtyPaths.add(absolutePath);
