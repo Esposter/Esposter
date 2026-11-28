@@ -236,8 +236,8 @@ catalogs:
       specifier: ^4.3.2
       version: 4.3.2
     '@iconify-json/lucide':
-      specifier: ^1.2.160
-      version: 1.2.160
+      specifier: ^1.2.161
+      version: 1.2.161
     '@iconify-json/mdi':
       specifier: ^1.2.3
       version: 1.2.3
@@ -1107,7 +1107,7 @@ importers:
         version: link:../../packages/shared-node
       '@iconify-json/lucide':
         specifier: 'catalog:'
-        version: 1.2.160
+        version: 1.2.161
       '@iconify-json/mdi':
         specifier: 'catalog:'
         version: 1.2.3
@@ -2929,8 +2929,8 @@ packages:
   '@huggingface/transformers@4.3.2':
     resolution: {integrity: sha512-V3+dqf3iWlRYJ9I9GreM3zGQd0lAXnnoPeddmkOQYWAEE4l/+Fi6p7tx/qVUJlKQgLXGim2W76rTOzz+eC0i7g==}
 
-  '@iconify-json/lucide@1.2.160':
-    resolution: {integrity: sha512-811QWUxsgfjFZewGJG45+TG62TNaeGMhsQr6XGiheTJpoe9Dc/vY2RHPLjOE1EuZ6vt70060MBkqz0whJG9I3w==}
+  '@iconify-json/lucide@1.2.161':
+    resolution: {integrity: sha512-vqnIm6PfUnSnfD1boZSS74iJbYOL+ckFczHNIGFKUQTIynz7E4RH8szrehBPjGIUe1SioCaXsRNgnamDeSAmDg==}
 
   '@iconify-json/mdi@1.2.3':
     resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
@@ -11570,7 +11570,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@iconify-json/lucide@1.2.160':
+  '@iconify-json/lucide@1.2.161':
     dependencies:
       '@iconify/types': 2.0.0
 
