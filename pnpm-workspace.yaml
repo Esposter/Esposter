@@ -117,7 +117,7 @@ catalog:
   "@vueuse/core": ^15.1.0
   "@vueuse/nuxt": ^15.1.0
   "@vueuse/router": ^15.1.0
-  apexcharts: ^8.9.1
+  apexcharts: ^8.9.2
   better-auth: ^1.7.28
   citty: ^0.2.2
   codemirror: ^6.0.2
