@@ -5,6 +5,7 @@ import type { VNodeProps } from "vue";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { Radio } from "@vuetify/v0";
+import { mergeProps } from "vue";
 
 interface Props {
   isDisabled?: true | undefined;
