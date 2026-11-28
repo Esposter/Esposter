@@ -353,11 +353,11 @@ catalogs:
       specifier: ^5.12.0
       version: 5.12.0
     '@trpc/client':
-      specifier: ^11.31.6
-      version: 11.31.6
+      specifier: ^11.32.2
+      version: 11.32.2
     '@trpc/server':
-      specifier: ^11.31.6
-      version: 11.31.6
+      specifier: ^11.32.2
+      version: 11.32.2
     '@tsdown/css':
       specifier: ^0.23.7
       version: 0.23.7
@@ -947,10 +947,10 @@ importers:
         version: 5.12.0(@types/three@0.187.0)(three@0.187.0)(vue@3.5.46(typescript@6.0.3))
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.31.6(@trpc/server@11.31.6(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)
+        version: 11.32.2(@trpc/server@11.32.2(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.31.6(@types/ws@8.18.2)(typescript@6.0.3)
+        version: 11.32.2(@types/ws@8.18.2)(typescript@6.0.3)
       '@vuetify/v0':
         specifier: 'catalog:'
         version: 1.4.0(@floating-ui/dom@1.8.0)(@vue/devtools-api@8.2.1)(vue@3.5.46(typescript@6.0.3))
@@ -1898,7 +1898,7 @@ importers:
         version: link:../shared-node
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.31.6(@types/ws@8.18.2)(typescript@6.0.3)
+        version: 11.32.2(@types/ws@8.18.2)(typescript@6.0.3)
       msw:
         specifier: 'catalog:'
         version: 3.0.8(@types/node@26.6.11)(supports-color@10.2.2)(typescript@6.0.3)(vite@8.4.0(@types/node@26.6.11)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.4)(yaml@2.9.1))
@@ -1914,7 +1914,7 @@ importers:
         version: 1.1.0
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.31.6(@trpc/server@11.31.6(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)
+        version: 11.32.2(@trpc/server@11.32.2(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.11
@@ -1944,10 +1944,10 @@ importers:
         version: '@nuxt/schema-nightly@5.0.0-2611271955-e6bf4a9(a7a6beb4b857a6eafb572d2cb1c684c1)'
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.31.6(@trpc/server@11.31.6(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)
+        version: 11.32.2(@trpc/server@11.32.2(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.31.6(@types/ws@8.18.2)(typescript@6.0.3)
+        version: 11.32.2(@types/ws@8.18.2)(typescript@6.0.3)
       crossws:
         specifier: 'catalog:'
         version: 0.4.17(srvx@1.0.8)
@@ -5297,14 +5297,14 @@ packages:
       three: '>=0.133'
       vue: '>=3.4'
 
-  '@trpc/client@11.31.6':
-    resolution: {integrity: sha512-e0/E+Luv8jpzt1Mn2ySDPuAOnFpz/3gyj7cx2VxTaEiEFCHRDufQPjfTH7vMVKb/dHuUZNA9DWEv3mC5ns4urQ==}
+  '@trpc/client@11.32.2':
+    resolution: {integrity: sha512-YPpPQ7QBZzAHKIZZzy6XggezCTyo3PQ0CuY3JvV1gk9XFywHIHkypBdIgSfrruDU0wczoK+Tky+0S/1a7EyU0w==}
     peerDependencies:
-      '@trpc/server': 11.31.6
+      '@trpc/server': 11.32.2
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.31.6':
-    resolution: {integrity: sha512-yWvnsDewt8m9wNgha+Gg8oGUIf2eoaUg4mCwwwPhWVmwK39L2O/eTmM5tOhxGvBepRMRerw2to4LWw6hgmMC7Q==}
+  '@trpc/server@11.32.2':
+    resolution: {integrity: sha512-4DEsVi9Y0IY9kYaofrUCXOL/B4MYutTTnfSknxi00VEXyANxZZFZYIF+XKpI1Z5zQQoSGAnB9NolF7ghiYM6uQ==}
     peerDependencies:
       '@types/aws-lambda': '*'
       '@types/express': '*'
@@ -14145,12 +14145,12 @@ snapshots:
       three: 0.187.0
       vue: 3.5.46(typescript@6.0.3)
 
-  '@trpc/client@11.31.6(@trpc/server@11.31.6(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)':
+  '@trpc/client@11.32.2(@trpc/server@11.32.2(@types/ws@8.18.2)(typescript@6.0.3))(typescript@6.0.3)':
     dependencies:
-      '@trpc/server': 11.31.6(@types/ws@8.18.2)(typescript@6.0.3)
+      '@trpc/server': 11.32.2(@types/ws@8.18.2)(typescript@6.0.3)
       typescript: 6.0.3
 
-  '@trpc/server@11.31.6(@types/ws@8.18.2)(typescript@6.0.3)':
+  '@trpc/server@11.32.2(@types/ws@8.18.2)(typescript@6.0.3)':
     dependencies:
       typescript: 6.0.3
     optionalDependencies:
