@@ -37,7 +37,9 @@ beforeEach(() => {
   heldWrite = Promise.withResolvers<WriteResponse>();
 });
 
-afterEach(() => heldWrite.resolve({ arrivals: [], confirmed: [] }));
+afterEach(() => {
+  heldWrite.resolve({ arrivals: [], confirmed: [] });
+});
 
 const createOverlay = (entries: Entry[]) => {
   setActivePinia(createPinia());
