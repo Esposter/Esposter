@@ -9,11 +9,12 @@ import { friendsInSocial } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { createPinia, setActivePinia } from "pinia";
-import { describe, test } from "vitest";
+import { afterEach, beforeEach, describe, test } from "vitest";
 
 const table = createTable(friendsInSocial);
 const epoch = new Date(0);
-const neverSettles = () => new Promise<WriteResponse>(() => {});
+let heldWrite = Promise.withResolvers<WriteResponse>();
+const neverSettles = () => heldWrite.promise;
 const createFriend = (index: number, version: number): FriendInSocial => ({
   createdAt: epoch,
   deletedAt: null,
@@ -32,6 +33,12 @@ const createDeleteEntry = (index: number): Entry =>
   getHeldRowEntry(table, [String(index)], (row) => ({ ...row, deletedAt: epoch }));
 const deleteEntries = [0, 1, 2].map((index) => createDeleteEntry(index));
 const readRowCount = (view: { readonly value: readonly unknown[] }) => view.value.length;
+beforeEach(() => {
+  heldWrite = Promise.withResolvers<WriteResponse>();
+});
+
+afterEach(() => heldWrite.resolve({ arrivals: [], confirmed: [] }));
+
 const createOverlay = (entries: Entry[]) => {
   setActivePinia(createPinia());
   const overlayStore = useOverlayStore();

@@ -9,15 +9,15 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: dfd478fc01
+- Commit: f2249d4832
 - Node: v26.13.1
-- OS: darwin 27.0.0 (arm64)
-- CPU: Apple M1 × 8
-- RAM: 16.0 GiB
+- OS: win32 10.0.19045 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 31.9 GiB
 
 ## useStore > recompute a page of 50 friend rows with 3 pending entries
 
 | task                    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ----------------------- | ------- | --------- | ------- | -------- | ------- |
-| without pending entries | 1.00×   | 0.0236    | ±7.02%  | 0.0278   | 10      |
-| with 3 pending entries  | 0.69×   | 0.0341    | ±10.11% | 0.0463   | 10      |
+| without pending entries | 1.00×   | 0.0246    | ±3.24%  | 0.0267   | 10      |
+| with 3 pending entries  | 0.65×   | 0.0379    | ±10.31% | 0.0518   | 10      |
